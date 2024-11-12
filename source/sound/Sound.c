@@ -1,4 +1,4 @@
-/**
+/*
  * VUEngine Core
  *
  * © Jorge Eremiev <jorgech3@gmail.com> and Christian Radke <c.radke@posteo.de>
@@ -8,9 +8,9 @@
  */
 
 
-//---------------------------------------------------------------------------------------------------------
-//												INCLUDES
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// INCLUDES
+//=========================================================================================================
 
 #include <MessageDispatcher.h>
 #include <Printing.h>
@@ -23,10 +23,19 @@
 #include "Sound.h"
 
 
-//---------------------------------------------------------------------------------------------------------
-//												DECLARATIONS
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// CLASS' DECLARATIONS
+//=========================================================================================================
 
+friend class VirtualNode;
+friend class VirtualList;
+
+extern SoundRegistry* const _soundRegistries;
+
+
+//=========================================================================================================
+// CLASS' MACROS
+//=========================================================================================================
 
 // Must redefine these because they are defined as strings
 #undef __CHAR_DARK_RED_BOX
@@ -35,44 +44,45 @@
 #define __CHAR_BRIGHT_RED_BOX		'\x10'
 
 
+//=========================================================================================================
+// CLASS' ATTRIBUTES
+//=========================================================================================================
+
+static Mirror _mirror = {false, false, false};
+static uint16 _pcmTargetPlaybackRefreshRate = 4000;
+
+
+//=========================================================================================================
+// CLASS' STATIC METHODS
+//=========================================================================================================
 
 //---------------------------------------------------------------------------------------------------------
-//												 FRIENDS
-//---------------------------------------------------------------------------------------------------------
-
-friend class VirtualNode;
-friend class VirtualList;
-
-extern SoundRegistry* const _soundRegistries;
-
-Mirror _mirror = {false, false, false};
-
-//---------------------------------------------------------------------------------------------------------
-//												CLASS'S METHODS
-//---------------------------------------------------------------------------------------------------------
-
 static void Sound::setMirror(Mirror mirror)
 {
 	_mirror = mirror;
 }
+//---------------------------------------------------------------------------------------------------------
+static void Sound::setPCMTargetPlaybackRefreshRate(uint16 pcmTargetPlaybackRefreshRate)
+{
+	_pcmTargetPlaybackRefreshRate = pcmTargetPlaybackRefreshRate;
+}
+//---------------------------------------------------------------------------------------------------------
 
-/**
- * Class constructor
- *
- * @param channel	Channel*
- */
-void Sound::constructor(const SoundSpec* soundSpec, VirtualList channels, int8* waves, uint16 pcmTargetPlaybackRefreshRate, EventListener soundReleaseListener, ListenerObject scope)
+//=========================================================================================================
+// CLASS' PUBLIC METHODS
+//=========================================================================================================
+
+//---------------------------------------------------------------------------------------------------------
+void Sound::constructor(const SoundSpec* soundSpec, VirtualList channels, int8* waves, EventListener soundReleaseListener, ListenerObject scope)
 {
 	// construct base Container
 	Base::constructor();
 
-	this->turnedOn = false;
-	this->paused = true;
+	this->state = kSoundOff;
 	this->soundSpec = soundSpec;
-	this->hasMIDITracks = false;
-	this->hasPCMTracks = false;
+	this->MIDITracks = 0;
+	this->PCMTracks = 0;
 	this->speed = __I_TO_FIX7_9_EXT(1);
-	this->pcmTargetPlaybackRefreshRate = pcmTargetPlaybackRefreshRate;
 	this->previouslyElapsedTicks = 0;
 	this->totalPlaybackMilliseconds = 0;
 	this->autoReleaseOnFinish = true;
@@ -85,16 +95,13 @@ void Sound::constructor(const SoundSpec* soundSpec, VirtualList channels, int8* 
 	this->unmute = 0xFF;
 #endif
 
-	// Compute target timerCounter factor
-	Sound::computeTimerResolutionFactor(this);
-
 	this->mainChannel = NULL;
 	this->channels = channels;
 	this->position = NULL;
 	this->volumeReduction = 0;
 	this->volumeReductionMultiplier = 1;
 	this->volumenScalePower = 0;
-	this->frequencyModifier = 0;
+	this->frequencyDelta = 0;
 
 	Sound::setupChannels(this, waves);
 	Sound::configureSoundRegistries(this);
@@ -104,10 +111,7 @@ void Sound::constructor(const SoundSpec* soundSpec, VirtualList channels, int8* 
 		Sound::addEventListener(this, scope, soundReleaseListener, kEventSoundReleased);
 	}
 }
-
-/**
- * Class destructor
- */
+//---------------------------------------------------------------------------------------------------------
 void Sound::destructor()
 {
 	this->soundSpec = NULL;
@@ -122,7 +126,7 @@ void Sound::destructor()
 		this->channels = NULL;
 	}
 
-	if(this->hasPCMTracks)
+	if(0 < this->PCMTracks)
 	{
 		CACHE_RESET;
 	}
@@ -131,175 +135,7 @@ void Sound::destructor()
 	// must always be called at the end of the destructor
 	Base::destructor();
 }
-
-bool Sound::isUsingChannel(Channel* channel)
-{
-	if(NULL == this->soundSpec)
-	{
-		return false;
-	}
-
-	if(isDeleted(this->channels))
-	{
-		return false;
-	}
-
-	// Prepare channels
-	for(VirtualNode node = this->channels->head; NULL != node; node = node->next)
-	{
-		if((Channel*)node->data == channel)
-		{
-			return true;
-		}
-	}
-
-	return false;
-}
-
-void Sound::computeTimerResolutionFactor()
-{
-	uint16 timerResolutionUS = TimerManager::getResolutionInUS(TimerManager::getInstance());
-	uint16 timerCounter = TimerManager::getTimerCounter(TimerManager::getInstance()) + __TIMER_COUNTER_DELTA;
-	uint16 timerUsPerInterrupt = timerCounter * __SOUND_TARGET_US_PER_TICK;
-	uint16 targetTimerResolutionUS = 0 != this->soundSpec->targetTimerResolutionUS ? this->soundSpec->targetTimerResolutionUS : 1000;
-	uint16 soundTargetUsPerInterrupt = (__TIME_US(targetTimerResolutionUS) + __TIMER_COUNTER_DELTA) * __SOUND_TARGET_US_PER_TICK;
-
-	NM_ASSERT(0 < timerResolutionUS, "Sound::computeTimerResolutionFactor: zero timerResolutionUS");
-	NM_ASSERT(0 < soundTargetUsPerInterrupt, "Sound::computeTimerResolutionFactor: zero soundTargetUsPerInterrupt");
-
-	this->targetTimerResolutionFactor = __FIX7_9_EXT_DIV(__I_TO_FIX7_9_EXT(timerUsPerInterrupt), __I_TO_FIX7_9_EXT(soundTargetUsPerInterrupt));
-
-	// Compensate for the difference in speed between 20US and 100US timer resolution
-	fix7_9_ext timerResolutionRatioReduction = __I_TO_FIX7_9_EXT(1) - __FIX7_9_EXT_DIV(__I_TO_FIX7_9_EXT(__SOUND_TARGET_US_PER_TICK), __I_TO_FIX7_9_EXT(timerResolutionUS));
-
-	if(0 != timerResolutionRatioReduction)
-	{
-		timerResolutionRatioReduction = __I_TO_FIX7_9_EXT(1) - __FIX7_9_EXT_DIV(__I_TO_FIX7_9_EXT(__SOUND_TARGET_US_PER_TICK), __I_TO_FIX7_9_EXT(timerResolutionUS - 0*(timerResolutionUS >> 3)));
-
-		this->targetTimerResolutionFactor = __FIX7_9_EXT_MULT(this->targetTimerResolutionFactor, timerResolutionRatioReduction);
-	}
-}
-
-void Sound::setFrequencyModifier(uint16 frequencyModifier)
-{
-	this->frequencyModifier = frequencyModifier;
-}
-
-uint16 Sound::getFrequencyModifier()
-{
-	return this->frequencyModifier;
-}
-
-/**
- * Set playback speed. Changing the speed during playback may cause
- * the tracks to go out of sync because of the channel's current ticks.
- *
- * @speed 	fix7_9_ext PCM playback max speed is 100%
- */
-void Sound::setSpeed(fix7_9_ext speed)
-{
-	// Prevent timer interrupts to unsync tracks
-	if(!this->hasPCMTracks)
-	{
-		this->speed = 0 >= speed ? __F_TO_FIX7_9_EXT(0.01f) : speed < __I_TO_FIX7_9_EXT(16) ? speed : __I_TO_FIX7_9_EXT(16);
-	}
-}
-
-/**
- * Return playback speed.
- */
-fix7_9_ext Sound::getSpeed()
-{
-	return this->speed;
-}
-
-void Sound::setVolumenScalePower(uint8 volumenScalePower)
-{
-	if(4 < volumenScalePower)
-	{
-		volumenScalePower = 4;
-	}
-
-	this->volumenScalePower = volumenScalePower;
-}
-
-/**
- * Set volume reduction
- */
-void Sound::setVolumeReduction(int8 volumeReduction)
-{
-	if(Sound::isFadingIn(this) || Sound::isFadingOut(this))
-	{
-		return;
-	}
-
-	this->volumeReduction = volumeReduction;
-}
-
-/**
- * Is playing?
- *
- * @return bool
- */
-bool Sound::isPlaying()
-{
-	return Sound::isTurnedOn(this) && !this->paused;
-}
-
-/**
- * Is paused?
- *
- * @return bool
- */
-bool Sound::isPaused()
-{
-	return Sound::isTurnedOn(this) && this->paused;
-}
-
-/**
- * Is turned on?
- *
- * @return bool
- */
-bool Sound::isTurnedOn()
-{
-	return this->turnedOn;
-}
-
-/**
- *  Has PCM tracks?
- *
- * @return bool
- */
-bool Sound::hasPCMTracks()
-{
-	return this->hasPCMTracks;
-}
-
-/**
- *  Is fading in?
- *
- * @return bool
- */
-bool Sound::isFadingIn()
-{
-	return kSoundPlaybackFadeIn == this->playbackType;
-}
-
-/**
- *  Is fading out?
- *
- * @return bool
- */
-bool Sound::isFadingOut()
-{
-	return kSoundPlaybackFadeOut == this->playbackType || kSoundPlaybackFadeOutAndRelease == this->playbackType;
-}
-
-/**
- * Play
- *
- */
+//---------------------------------------------------------------------------------------------------------
 void Sound::play(const Vector3D* position, uint32 playbackType)
 {
 	if(NULL == this->soundSpec)
@@ -316,11 +152,11 @@ void Sound::play(const Vector3D* position, uint32 playbackType)
 	{
 		case kSoundPlaybackFadeIn:
 
-			if(this->paused || !this->turnedOn)
+			if(kSoundPlaying != this->state)
 			{
 				Sound::setVolumeReduction(this, __MAXIMUM_VOLUME * this->volumeReductionMultiplier);
 			}
-			else if(!this->paused)
+			else
 			{
 				return;
 			}
@@ -341,10 +177,9 @@ void Sound::play(const Vector3D* position, uint32 playbackType)
 		case kSoundPlaybackFadeIn:
 		case kSoundPlaybackNormal:
 			{
-				bool wasPaused = this->paused && this->turnedOn;
+				bool wasPaused = kSoundPaused == this->state;
 
-				this->paused = false;
-				this->turnedOn = true;
+				this->state = kSoundPlaying;
 
 				this->position = position;
 
@@ -371,7 +206,7 @@ void Sound::play(const Vector3D* position, uint32 playbackType)
 				{
 					this->previouslyElapsedTicks = 0;
 					
-					if(this->hasPCMTracks)
+					if(0 < this->PCMTracks)
 					{
 						CACHE_DISABLE;
 						CACHE_CLEAR;
@@ -382,148 +217,7 @@ void Sound::play(const Vector3D* position, uint32 playbackType)
 			break;
 	}
 }
-
-/**
- * Pause
- *
- */
-void Sound::pause()
-{
-	if(NULL == this->soundSpec)
-	{
-		return;
-	}
-
-	if(isDeleted(this->channels))
-	{
-		return;
-	}
-
-	if(!this->paused && this->turnedOn)
-	{
-		this->paused = true;
-
-		for(VirtualNode node = this->channels->head; NULL != node; node = node->next)
-		{
-			Channel* channel = (Channel*)node->data;
-			_soundRegistries[channel->index].SxINT |= __SOUND_WRAPPER_STOP_SOUND;
-		}
-	}
-}
-
-/**
- * Unpause
- *
- */
-void Sound::unpause()
-{
-	if(NULL == this->soundSpec)
-	{
-		return;
-	}
-
-	if(isDeleted(this->channels))
-	{
-		return;
-	}
-
-	if(this->paused && this->turnedOn)
-	{
-		for(VirtualNode node = this->channels->head; NULL != node; node = node->next)
-		{
-			Channel* channel = (Channel*)node->data;
-			_soundRegistries[channel->index].SxLRV = 0x00;
-			_soundRegistries[channel->index].SxINT = channel->soundChannelConfiguration.SxINT | 0x80;
-		}
-
-		this->paused = false;
-	}
-}
-
-/**
- * Turn off
- *
- */
-void Sound::turnOff()
-{
-	if(NULL == this->soundSpec)
-	{
-		return;
-	}
-
-	if(isDeleted(this->channels))
-	{
-		return;
-	}
-
-	this->turnedOn = false;
-
-	for(VirtualNode node = this->channels->head; NULL != node; node = node->next)
-	{
-		Channel* channel = (Channel*)node->data;
-		_soundRegistries[channel->index].SxINT |= __SOUND_WRAPPER_STOP_SOUND;
-	}
-}
-
-/**
- * Turn on
- *
- */
-void Sound::turnOn()
-{
-	if(NULL == this->soundSpec)
-	{
-		return;
-	}
-
-	if(isDeleted(this->channels))
-	{
-		return;
-	}
-
-	for(VirtualNode node = this->channels->head; NULL != node; node = node->next)
-	{
-		Channel* channel = (Channel*)node->data;
-		_soundRegistries[channel->index].SxLRV = 0x00;
-		_soundRegistries[channel->index].SxINT = channel->soundChannelConfiguration.SxINT | 0x80;
-	}
-
-	this->turnedOn = true;
-}
-
-/**
- * Rewind
- *
- */
-void Sound::rewind()
-{
-	if(NULL == this->soundSpec)
-	{
-		return;
-	}
-
-	if(isDeleted(this->channels))
-	{
-		return;
-	}
-	
-	this->previouslyElapsedTicks = 0;
-
-	for(VirtualNode node = this->channels->head; NULL != node; node = node->next)
-	{
-		Channel* channel = (Channel*)node->data;
-		channel->finished = false;
-		channel->cursor = 0;
-		channel->elapsedTicks = 0;
-		channel->nextElapsedTicksTarget = 0;
-		channel->tickStep = __FIX7_9_EXT_MULT(this->speed, this->targetTimerResolutionFactor);
-	}
-}
-
-/**
- * Stop
- *
- */
+//---------------------------------------------------------------------------------------------------------
 void Sound::stop()
 {
 	if(NULL == this->soundSpec)
@@ -536,8 +230,7 @@ void Sound::stop()
 		return;
 	}
 
-	this->turnedOn = false;
-	this->paused = true;
+	this->state = kSoundOff;
 
 	for(VirtualNode node = this->channels->head; NULL != node; node = node->next)
 	{
@@ -551,11 +244,142 @@ void Sound::stop()
 		_soundRegistries[channel->index].SxINT |= __SOUND_WRAPPER_STOP_SOUND;
 	}
 }
+//---------------------------------------------------------------------------------------------------------
+void Sound::pause()
+{
+	if(NULL == this->soundSpec)
+	{
+		return;
+	}
 
-/**
- * Release
- *
- */
+	if(isDeleted(this->channels))
+	{
+		return;
+	}
+
+	if(kSoundPlaying == this->state)
+	{
+		this->state = kSoundPaused;
+
+		for(VirtualNode node = this->channels->head; NULL != node; node = node->next)
+		{
+			Channel* channel = (Channel*)node->data;
+			_soundRegistries[channel->index].SxINT |= __SOUND_WRAPPER_STOP_SOUND;
+		}
+	}
+}
+//---------------------------------------------------------------------------------------------------------
+void Sound::unpause()
+{
+	if(NULL == this->soundSpec)
+	{
+		return;
+	}
+
+	if(isDeleted(this->channels))
+	{
+		return;
+	}
+
+	if(kSoundPaused == this->state)
+	{
+		this->state = kSoundPlaying;
+
+		for(VirtualNode node = this->channels->head; NULL != node; node = node->next)
+		{
+			Channel* channel = (Channel*)node->data;
+			_soundRegistries[channel->index].SxLRV = 0x00;
+			_soundRegistries[channel->index].SxINT = channel->soundChannelConfiguration.SxINT | 0x80;
+		}
+	}
+}
+//---------------------------------------------------------------------------------------------------------
+void Sound::suspend()
+{
+	if(NULL == this->soundSpec)
+	{
+		return;
+	}
+
+	if(isDeleted(this->channels))
+	{
+		return;
+	}
+
+	if(kSoundPlaying != this->state)
+	{
+		return;
+	}
+
+	for(VirtualNode node = this->channels->head; NULL != node; node = node->next)
+	{
+		Channel* channel = (Channel*)node->data;
+		_soundRegistries[channel->index].SxINT |= __SOUND_WRAPPER_STOP_SOUND;
+	}
+}
+//---------------------------------------------------------------------------------------------------------
+void Sound::resume()
+{
+	if(NULL == this->soundSpec)
+	{
+		return;
+	}
+
+	if(isDeleted(this->channels))
+	{
+		return;
+	}
+
+	if(kSoundPlaying != this->state)
+	{
+		return;
+	}
+
+	for(VirtualNode node = this->channels->head; NULL != node; node = node->next)
+	{
+		Channel* channel = (Channel*)node->data;
+		_soundRegistries[channel->index].SxLRV = 0x00;
+		_soundRegistries[channel->index].SxINT = channel->soundChannelConfiguration.SxINT | 0x80;
+	}
+}
+//---------------------------------------------------------------------------------------------------------
+void Sound::mute()
+{
+	this->unmute = 0x00;
+}
+//---------------------------------------------------------------------------------------------------------
+void Sound::unmute()
+{
+	this->unmute = 0xFF;
+}
+//---------------------------------------------------------------------------------------------------------
+void Sound::rewind()
+{
+	if(NULL == this->soundSpec)
+	{
+		return;
+	}
+
+	if(isDeleted(this->channels))
+	{
+		return;
+	}
+
+	fix7_9_ext targetTimerResolutionFactor = Sound::computeTimerResolutionFactor(this);
+
+	this->previouslyElapsedTicks = 0;
+
+	for(VirtualNode node = this->channels->head; NULL != node; node = node->next)
+	{
+		Channel* channel = (Channel*)node->data;
+		channel->finished = false;
+		channel->cursor = 0;
+		channel->elapsedTicks = 0;
+		channel->nextElapsedTicksTarget = 0;
+		channel->tickStep = __FIX7_9_EXT_MULT(this->speed, targetTimerResolutionFactor);
+	}
+}
+//---------------------------------------------------------------------------------------------------------
 void Sound::release()
 {
 	if(NULL == this->soundSpec)
@@ -581,351 +405,113 @@ void Sound::release()
 		NM_ASSERT(!isDeleted(this), "Sound::release: deleted this during kEventSoundReleased");
 	}
 }
-
-/**
- * Release
- *
- */
-void Sound::autoReleaseOnFinish(bool value)
-{
-	this->autoReleaseOnFinish = value;
-}
-
-void Sound::mute()
-{
-	this->unmute = 0x00;
-}
-
-void Sound::unmute()
-{
-	this->unmute = 0xFF;
-}
-
+//---------------------------------------------------------------------------------------------------------
 void Sound::lock()
 {
 	this->locked = true;
 }
-
+//---------------------------------------------------------------------------------------------------------
 void Sound::unlock()
 {
 	this->locked = false;
 }
-
-void Sound::setupChannels(int8* waves)
+//---------------------------------------------------------------------------------------------------------
+void Sound::autoReleaseOnFinish(bool autoReleaseOnFinish)
 {
-	if(NULL == this->soundSpec)
-	{
-		return;
-	}
-
-	if(isDeleted(this->channels))
-	{
-		return;
-	}
-
-	VirtualNode node = this->channels->head;
-	this->mainChannel = (Channel*)node->data;
-
-	uint16 i = 0;
-
-	for(; NULL != node; node = node->next, i++)
-	{
-		Channel* channel = (Channel*)node->data;
-
-		channel->soundSpec = this->soundSpec;
-		channel->finished = false;
-		channel->cursor = 0;
-		channel->soundChannel = i;
-		channel->soundChannelConfiguration = *channel->soundSpec->soundChannels[i]->soundChannelConfiguration;
-		channel->soundChannelConfiguration.SxRAM = waves[i];
-		channel->ticks = 0;
-		channel->nextElapsedTicksTarget = 0;
-		channel->tickStep = __FIX7_9_EXT_MULT(this->speed, this->targetTimerResolutionFactor);
-
-		switch(channel->soundChannelConfiguration.trackType)
-		{
-			case kMIDI:
-
-				this->hasMIDITracks = true;
-				channel->soundTrack.dataMIDI = (uint16*)this->soundSpec->soundChannels[channel->soundChannel]->soundTrack.dataMIDI;
-				Sound::computeMIDITrackSamples(channel);
-				break;
-
-			case kPCM:
-
-				this->hasPCMTracks = true;
-				channel->soundTrack.dataPCM = (uint8*)this->soundSpec->soundChannels[channel->soundChannel]->soundTrack.dataPCM;
-				channel->ticks = channel->samples = this->soundSpec->soundChannels[channel->soundChannel]->samples;
-				break;
-
-#ifndef __RELEASE
-			case kUnknownType:
-
-				NM_ASSERT(false, "Sound::setupChannels: unknown track type");
-				break;
-#endif
-			default:
-
-				NM_ASSERT(false, "Sound::setupChannels: invalid track type");
-				break;
-		}
-
-		channel->elapsedTicks = 0;
-	}
-
-	node = this->channels->head;
-
-	Channel* channelWithLongestTrack = (Channel*)node->data;
-
-	// Find the the channel with the longest track
-	for(node = node->next; NULL != node; node = node->next)
-	{
-		Channel* channel = (Channel*)node->data;
-
-		if(channelWithLongestTrack->ticks < channel->ticks)
-		{
-			channelWithLongestTrack = channel;
-		}
-	}
-
-	this->mainChannel = channelWithLongestTrack;
-
-#ifdef __SOUND_TEST
-	this->totalPlaybackMilliseconds = Sound::getTotalPlaybackMilliseconds(this, channelWithLongestTrack);
-#endif
-
-	this->volumeReductionMultiplier = this->hasPCMTracks ? VirtualList::getCount(this->channels) : 1;
+	this->autoReleaseOnFinish = autoReleaseOnFinish;
 }
+//---------------------------------------------------------------------------------------------------------
+void Sound::setSpeed(fix7_9_ext speed)
+{
+	// Prevent timer interrupts to unsync tracks
+	if(0 == this->PCMTracks)
+	{
+		this->speed = 0 >= speed ? __F_TO_FIX7_9_EXT(0.01f) : speed < __I_TO_FIX7_9_EXT(16) ? speed : __I_TO_FIX7_9_EXT(16);
+	}
+}
+//---------------------------------------------------------------------------------------------------------
+fix7_9_ext Sound::getSpeed()
+{
+	return this->speed;
+}
+//---------------------------------------------------------------------------------------------------------
+void Sound::setVolumenScalePower(uint8 volumenScalePower)
+{
+	if(4 < volumenScalePower)
+	{
+		volumenScalePower = 4;
+	}
 
-void Sound::configureSoundRegistries()
+	this->volumenScalePower = volumenScalePower;
+}
+//---------------------------------------------------------------------------------------------------------
+void Sound::setFrequencyDelta(uint16 frequencyDelta)
+{
+	this->frequencyDelta = frequencyDelta;
+}
+//---------------------------------------------------------------------------------------------------------
+uint16 Sound::getFrequencyDelta()
+{
+	return this->frequencyDelta;
+}
+//---------------------------------------------------------------------------------------------------------
+bool Sound::hasMIDITracks()
+{
+	return 0 < this->MIDITracks;
+}
+//---------------------------------------------------------------------------------------------------------
+bool Sound::hasPCMTracks()
+{
+	return 0 < this->PCMTracks;
+}
+//---------------------------------------------------------------------------------------------------------
+bool Sound::isUsingChannel(Channel* channel)
 {
 	if(NULL == this->soundSpec)
 	{
-		return;
+		return false;
 	}
 
 	if(isDeleted(this->channels))
 	{
-		return;
+		return false;
 	}
 
+	// Prepare channels
 	for(VirtualNode node = this->channels->head; NULL != node; node = node->next)
 	{
-		Channel* channel = (Channel*)node->data;
-
-		_soundRegistries[channel->index].SxINT = 0x00;
-		_soundRegistries[channel->index].SxLRV = 0x00;
-		_soundRegistries[channel->index].SxEV0 = channel->soundChannelConfiguration.SxEV0;
-		_soundRegistries[channel->index].SxEV1 = channel->soundChannelConfiguration.SxEV1;
-		_soundRegistries[channel->index].SxFQH = channel->soundChannelConfiguration.SxFQH;
-		_soundRegistries[channel->index].SxFQL = channel->soundChannelConfiguration.SxFQL;
-		_soundRegistries[channel->index].SxRAM = channel->soundChannelConfiguration.SxRAM;
-
-		if(kChannelModulation == channel->type)
+		if((Channel*)node->data == channel)
 		{
-			_soundRegistries[channel->index].S5SWP = 0;
-		}
-	}
-}
-
-static void Sound::computeMIDITrackSamples(Channel* channel)
-{
-	uint16* soundTrackData = (uint16*)channel->soundTrack.dataMIDI;
-
-	NM_ASSERT(soundTrackData, "Sound::computeMIDITrackSamples: null soundTrack");
-
-	for(channel->samples = 0; ENDSOUND != soundTrackData[channel->samples] && LOOPSOUND != soundTrackData[channel->samples]; channel->samples++);
-
-	for(uint16 sample = 0; sample < channel->samples; sample++, channel->ticks += soundTrackData[channel->samples + sample]);
-
-}
-
-static inline uint8 Sound::clampMIDIOutputValue(int8 value)
-{
-	if(value < 0)
-	{
-		return 0;
-	}
-	else if(value > __MAXIMUM_VOLUME)
-	{
-		return __MAXIMUM_VOLUME;
-	}
-
-	return (uint8)value;
-}
-
-static inline bool Sound::checkIfPlaybackFinishedOnChannel(Channel* channel)
-{
-	return channel->cursor >= channel->samples;
-}
-
-void Sound::completedPlayback()
-{
-	if(!this->soundSpec->loop)
-	{
-		if(this->autoReleaseOnFinish)
-		{
-			Sound::release(this);
-		}
-		else
-		{
-			Sound::stop(this);
-		}
-	}
-	else
-	{
-		Sound::rewind(this);
-	}
-
-	if(!isDeleted(this->events))
-	{
-		Sound::fireEvent(this, kEventSoundFinished);
-		NM_ASSERT(!isDeleted(this), "Sound::completedPlayback: deleted this during kEventSoundFinished");
-	}
-}
-
-void Sound::playMIDINote(Channel* channel, fixed_t leftVolumeFactor, fixed_t rightVolumeFactor)
-{
-	int16 note = channel->soundTrack.dataMIDI[channel->cursor];
-	uint8 volume = Sound::clampMIDIOutputValue(channel->soundTrack.dataMIDI[(channel->samples << 1) + 1 + channel->cursor] - this->volumeReduction) & this->unmute;
-
-	int16 leftVolume = volume;
-	int16 rightVolume = volume;
-
-	if(0 != volume)
-	{
-		fixed_t volumeHelper = __I_TO_FIXED(volume);
-
-		if(0 <= leftVolumeFactor)
-		{
-			leftVolume = __FIXED_TO_I(__FIXED_MULT(volumeHelper, leftVolumeFactor));
-		}
-
-		if(0 <= rightVolumeFactor)
-		{
-			rightVolume = __FIXED_TO_I(__FIXED_MULT(volumeHelper, rightVolumeFactor));
+			return true;
 		}
 	}
 
-	leftVolume >>= this->volumenScalePower;
-	rightVolume >>= this->volumenScalePower;
-
-	uint8 SxLRV = ((leftVolume << 4) | rightVolume) & channel->soundChannelConfiguration.volume;
-
-	switch(note)
-	{
-		case PAU:
-
-			_soundRegistries[channel->index].SxEV1 = channel->soundChannelConfiguration.SxEV1 | 0x1;
-			break;
-
-		case HOLD:
-
-#ifdef __SOUND_TEST
-			_soundRegistries[channel->index].SxLRV = channel->soundChannelConfiguration.SxLRV = SxLRV;
-#else
-#ifdef __SHOW_SOUND_STATUS
-			_soundRegistries[channel->index].SxLRV = channel->soundChannelConfiguration.SxLRV = SxLRV;
-#else
-			_soundRegistries[channel->index].SxLRV = SxLRV;
-#endif
-#endif
-			break;
-
-		default:
-
-			note += this->frequencyModifier;
-
-			if(0 > note)
-			{
-				note = 0;
-			}
-
-#ifdef __SOUND_TEST
-			channel->soundChannelConfiguration.SxLRV = SxLRV;
-			channel->soundChannelConfiguration.SxFQL = (note & 0xFF);
-			channel->soundChannelConfiguration.SxFQH = (note >> 8);
-#else
-#ifdef __SHOW_SOUND_STATUS
-			channel->soundChannelConfiguration.SxLRV = SxLRV;
-			channel->soundChannelConfiguration.SxFQL = (note & 0xFF);
-			channel->soundChannelConfiguration.SxFQH = (note >> 8);
-#endif
-#endif
-
-			_soundRegistries[channel->index].SxLRV = SxLRV;
-			_soundRegistries[channel->index].SxFQH = (note >> 8);
-			_soundRegistries[channel->index].SxFQL = (note & 0xFF);
-			_soundRegistries[channel->index].SxEV0 = channel->soundChannelConfiguration.SxEV0;
-			_soundRegistries[channel->index].SxEV1 = channel->soundChannelConfiguration.SxEV1;
-
-			if(kChannelNoise == channel->soundChannelConfiguration.channelType)
-			{
-				uint8 tapLocation = channel->soundTrack.dataMIDI[(channel->samples * 3) + 1 + channel->cursor];
-				_soundRegistries[channel->index].SxEV1 = (tapLocation << 4) | (0x0F & channel->soundChannelConfiguration.SxEV1);
-			}
-			
-			break;
-
-	}
+	return false;
 }
-
-__attribute__((noinline)) 
-void Sound::updateVolumeReduction()
+//---------------------------------------------------------------------------------------------------------
+bool Sound::isPlaying()
 {
-	uint32 elapsedMilliseconds = this->soundSpec->targetTimerResolutionUS * (this->mainChannel->elapsedTicks - this->previouslyElapsedTicks) / __MICROSECONDS_PER_MILLISECOND;
-
-	if(VUEngine::getGameFrameDuration(_vuEngine) <= elapsedMilliseconds)
-	{
-		switch(this->playbackType)
-		{
-			case kSoundPlaybackFadeIn:
-
-				this->volumeReduction -= (this->volumeReductionMultiplier >> 1) + 1;
-
-				if(0 >= this->volumeReduction)
-				{
-					this->volumeReduction = 0;
-					this->playbackType = kSoundPlaybackNormal;
-				}
-
-				break;
-
-			case kSoundPlaybackFadeOut:
-
-				this->volumeReduction += (this->volumeReductionMultiplier >> 1) + 1;
-
-				if(__MAXIMUM_VOLUME * this->volumeReductionMultiplier <= this->volumeReduction)
-				{
-					this->volumeReduction = __MAXIMUM_VOLUME * this->volumeReductionMultiplier;
-					this->playbackType = kSoundPlaybackNone;
-					Sound::pause(this);
-				}
-
-				break;
-
-			case kSoundPlaybackFadeOutAndRelease:
-
-				this->volumeReduction += (this->volumeReductionMultiplier >> 1) + 1;
-
-				if(__MAXIMUM_VOLUME * this->volumeReductionMultiplier <= this->volumeReduction)
-				{
-					this->volumeReduction = __MAXIMUM_VOLUME * this->volumeReductionMultiplier;
-					this->playbackType = kSoundPlaybackNone;
-					Sound::release(this);
-				}
-
-				break;
-		}
-
-		this->previouslyElapsedTicks = this->mainChannel->elapsedTicks;
-	}
+	return kSoundPlaying == this->state;
 }
-
+//---------------------------------------------------------------------------------------------------------
+bool Sound::isPaused()
+{
+	return kSoundPaused == this->state;
+}
+//---------------------------------------------------------------------------------------------------------
+bool Sound::isFadingIn()
+{
+	return kSoundPlaybackFadeIn == this->playbackType;
+}
+//---------------------------------------------------------------------------------------------------------
+bool Sound::isFadingOut()
+{
+	return kSoundPlaybackFadeOut == this->playbackType || kSoundPlaybackFadeOutAndRelease == this->playbackType;
+}
+//---------------------------------------------------------------------------------------------------------
 void Sound::updateMIDIPlayback(uint32 elapsedMicroseconds __attribute__((unused)))
 {
-	// Optimization, if no soundSpec or paused, the sum will be different than 0
-	if(this->paused + (!this->turnedOn))
+	if(kSoundPlaying !=	this->state)
 	{
 		return;
 	}
@@ -1030,13 +616,12 @@ void Sound::updateMIDIPlayback(uint32 elapsedMicroseconds __attribute__((unused)
 		Sound::updateVolumeReduction(this);
 	}
 }
-
+//---------------------------------------------------------------------------------------------------------
 void Sound::updatePCMPlayback(uint32 elapsedMicroseconds, uint32 targetPCMUpdates)
 {
 	CACHE_ENABLE;
 
-	// Optimization, if no soundSpec or paused, the sum will be different than 0
-	if(this->paused + (!this->turnedOn))
+	if(kSoundPlaying !=	this->state)
 	{
 		return;
 	}
@@ -1080,236 +665,8 @@ void Sound::updatePCMPlayback(uint32 elapsedMicroseconds, uint32 targetPCMUpdate
 
 	CACHE_DISABLE;
 }
-
-#ifndef __SHIPPING
+//---------------------------------------------------------------------------------------------------------
 void Sound::print(int32 x, int32 y)
-{
-	if(NULL == this->soundSpec)
-	{
-		return;
-	}
-
-	if(isDeleted(this->channels))
-	{
-		return;
-	}
-
-	int32 xDisplacement = 9;
-
-	// Prepare channels
-	for(VirtualNode node = this->channels->head; NULL != node; node = node->next)
-	{
-		Channel* channel = (Channel*)node->data;
-
-		PRINT_TEXT("CHANNEL: ", x, y);
-		PRINT_INT(channel->index, x + xDisplacement, y);
-
-		PRINT_TEXT("Type:         ", x, ++y);
-
-		char* soundType = "?";
-		switch(channel->soundChannelConfiguration.trackType)
-		{
-			case kMIDI:
-
-				soundType = "MIDI";
-				break;
-
-			case kPCM:
-
-				soundType = "PCM";
-				break;
-		}
-
-		PRINT_TEXT(soundType, x + xDisplacement, y);
-
-		PRINT_TEXT("Cursor:        ", x, ++y);
-		PRINT_INT(channel->cursor, x + xDisplacement, y);
-
-		PRINT_TEXT("Snd Chnl: ", x, ++y);
-		PRINT_INT(channel->soundChannel, x + xDisplacement, y);
-
-		PRINT_TEXT("SxINT: ", x, ++y);
-		PRINT_HEX_EXT(channel->soundChannelConfiguration.SxINT | (NULL == channel->soundSpec ? 0 : 0x80), x + xDisplacement, y, 2);
-
-		PRINT_TEXT("SxLRV: ", x, ++y);
-		PRINT_HEX_EXT(channel->soundChannelConfiguration.SxLRV, x + xDisplacement, y, 2);
-
-		PRINT_TEXT("SxRAM: ", x, ++y);
-		PRINT_HEX_EXT(channel->soundChannelConfiguration.SxRAM, x + xDisplacement, y, 2);
-
-		PRINT_TEXT("SxEV0: ", x, ++y);
-		PRINT_HEX_EXT(channel->soundChannelConfiguration.SxEV0, x + xDisplacement, y, 2);
-
-		PRINT_TEXT("SxEV1: ", x, ++y);
-		PRINT_HEX_EXT(channel->soundChannelConfiguration.SxEV1, x + xDisplacement, y, 2);
-
-		PRINT_TEXT("SxFQH: ", x, ++y);
-		PRINT_HEX_EXT(channel->soundChannelConfiguration.SxFQH, x + xDisplacement, y, 2);
-
-		PRINT_TEXT("SxFQH: ", x, ++y);
-		PRINT_HEX_EXT(channel->soundChannelConfiguration.SxFQL, x + xDisplacement, y, 2);
-
-		PRINT_TEXT("Loop: ", x, ++y);
-		PRINT_TEXT(channel->soundSpec->loop ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, x + xDisplacement, y);
-
-		PRINT_TEXT("Length: ", x, ++y);
-		PRINT_INT(channel->samples, x + xDisplacement, y);
-
-		PRINT_TEXT("Note: ", x, ++y);
-		switch(channel->soundChannelConfiguration.trackType)
-		{
-			case kMIDI:
-
-				PRINT_HEX_EXT(channel->soundTrack.dataMIDI[channel->cursor], x + xDisplacement, y, 2);
-				break;
-
-			case kPCM:
-
-				PRINT_HEX_EXT(channel->soundTrack.dataPCM[channel->cursor], x + xDisplacement, y, 2);
-				break;
-		}
-	}
-}
-#endif
-
-uint32 Sound::getTotalPlaybackMilliseconds(Channel* channel)
-{
-	switch(channel->soundChannelConfiguration.trackType)
-	{
-		case kMIDI:
-			{
-				uint32 totalTicks = 0;
-
-				for(VirtualNode node = this->channels->head; NULL != node; node = node->next)
-				{
-					Channel* channel = (Channel*)node->data;
-
-					if(totalTicks < channel->ticks)
-					{
-						totalTicks = channel->ticks;
-					}
-				}
-
-				return (uint32)((long)totalTicks * this->soundSpec->targetTimerResolutionUS / __MICROSECONDS_PER_MILLISECOND);
-			}
-			break;
-
-		case kPCM:
-
-			return (channel->samples * __MICROSECONDS_PER_MILLISECOND) / this->pcmTargetPlaybackRefreshRate;
-			break;
-	}
-
-	return 0;
-}
-
-void Sound::printPlaybackProgress(int32 x, int32 y)
-{
-	if(NULL == this->mainChannel || 0 == this->mainChannel->ticks)
-	{
-		return;
-	}
-
-	float elapsedTicksProportion = 0;
-	
-	if(this->hasPCMTracks)
-	{
-		elapsedTicksProportion = (float)this->mainChannel->cursor / this->mainChannel->samples;
-	}
-	else
-	{
-		elapsedTicksProportion = __FIX7_9_EXT_TO_F(this->mainChannel->elapsedTicks) / this->mainChannel->ticks;
-	}
-
-	if(0 > elapsedTicksProportion || 1 < elapsedTicksProportion)
-	{
-		elapsedTicksProportion = 1;		
-	}
-
-	uint32 position = elapsedTicksProportion * 32;
-
-	char boxesArray[33] = 
-	{
-		__CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX,
-		__CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX,
-		__CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX,
-		__CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, '\0'
-	};
-
-	for(uint16 i = 0; i < position && 32 >= i; i++)
-	{
-		boxesArray[i] = __CHAR_BRIGHT_RED_BOX;
-	}
-
-	PRINT_TEXT(boxesArray, x, y);
-}
-
-void Sound::printTiming(uint32 seconds, int32 x, int32 y)
-{
-	uint32 minutes = seconds / 60;
-	seconds = seconds - minutes * 60;
-
-	int32 minutesDigits = Math::getDigitsCount(minutes);
-
-	PRINT_INT(minutes, x, y);
-	PRINT_TEXT(":", x + minutesDigits, y);
-
-	if(0 == seconds)
-	{
-		PRINT_TEXT("00", x + minutesDigits + 1, y);
-	}
-	else if(seconds < 10)
-	{
-		PRINT_TEXT("0", x + minutesDigits + 1, y);
-		PRINT_INT(seconds, x + minutesDigits + 2, y);
-	}
-	else
-	{
-		PRINT_INT(seconds, x + minutesDigits + 1, y);
-	}
-}
-
-void Sound::printPlaybackTime(int32 x, int32 y)
-{
-	static uint32 previousSecond = 0;
-
-	if(NULL == this->mainChannel || 0 == this->mainChannel->ticks)
-	{
-		return;
-	}
-
-	float elapsedTicksProportion = 0;
-	
-	if(this->hasPCMTracks)
-	{
-		elapsedTicksProportion = (float)this->mainChannel->cursor / this->mainChannel->samples;
-	}
-	else
-	{
-		elapsedTicksProportion = __FIX7_9_EXT_TO_F(this->mainChannel->elapsedTicks) / this->mainChannel->ticks;
-	}
-
-	if(0 > elapsedTicksProportion || 1 < elapsedTicksProportion)
-	{
-		elapsedTicksProportion = 1;
-	}
-
-	uint32 currentSecond = elapsedTicksProportion * this->totalPlaybackMilliseconds / __MILLISECONDS_PER_SECOND;
-
-	if(previousSecond > currentSecond)
-	{
-		previousSecond = currentSecond;
-	}
-
-	if(currentSecond > previousSecond)
-	{
-		previousSecond = currentSecond;
-
-		Sound::printTiming(this, currentSecond, x, y);
-	}
-}
-
-void Sound::printMetadata(int32 x, int32 y, bool printDetails)
 {
 	PRINT_TEXT("                                  ", x, y);
 	PRINT_TEXT(this->soundSpec->name, x, y++);
@@ -1332,22 +689,17 @@ void Sound::printMetadata(int32 x, int32 y, bool printDetails)
 	PRINT_INT(speed, x + 6, y);
 	PRINT_TEXT("%", x + 6 + ((speed < 10) ? 1 : (speed < 100) ? 2 : 3), y);
 
-	PRINT_TEXT(this->paused ? " \x0B " : "\x07\x07", x + 15, y++);
-
-	if(!printDetails)
-	{
-		return;
-	}
+	PRINT_TEXT(kSoundPaused == this->state ? " \x0B " : "\x07\x07", x + 15, y++);
 
 	y+=2;
 
 	PRINT_TEXT("TRACK INFO", trackInfoXOffset, y++);
 
 	PRINT_TEXT("MIDI", trackInfoXOffset, ++y);
-	PRINT_TEXT(this->hasMIDITracks ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, trackInfoXOffset + trackInfoValuesXOffset, y);
+	PRINT_TEXT(0 < this->MIDITracks ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, trackInfoXOffset + trackInfoValuesXOffset, y);
 
 	PRINT_TEXT("PCM", trackInfoXOffset, ++y);
-	PRINT_TEXT(this->hasPCMTracks ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, trackInfoXOffset + trackInfoValuesXOffset, y);
+	PRINT_TEXT(0 < this->PCMTracks ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, trackInfoXOffset + trackInfoValuesXOffset, y);
 
 	PRINT_TEXT("Channels", trackInfoXOffset, ++y);
 	PRINT_INT(VirtualList::getCount(this->channels), trackInfoXOffset + trackInfoValuesXOffset, y);
@@ -1357,10 +709,10 @@ void Sound::printMetadata(int32 x, int32 y, bool printDetails)
 
 	Sound::printVolume(this, 1, y, true);
 }
-
+//---------------------------------------------------------------------------------------------------------
 void Sound::printVolume(int32 x, int32 y, bool printHeader)
 {
-	if(this->hasPCMTracks)
+	if(0 < this->PCMTracks)
 	{
 		return;
 	}
@@ -1455,3 +807,496 @@ void Sound::printVolume(int32 x, int32 y, bool printHeader)
 		y++;
 	}
 }
+//---------------------------------------------------------------------------------------------------------
+void Sound::printPlaybackTime(int32 x, int32 y)
+{
+	static uint32 previousSecond = 0;
+
+	if(NULL == this->mainChannel || 0 == this->mainChannel->ticks)
+	{
+		return;
+	}
+
+	float elapsedTicksProportion = 0;
+	
+	if(0 < this->PCMTracks)
+	{
+		elapsedTicksProportion = (float)this->mainChannel->cursor / this->mainChannel->samples;
+	}
+	else
+	{
+		elapsedTicksProportion = __FIX7_9_EXT_TO_F(this->mainChannel->elapsedTicks) / this->mainChannel->ticks;
+	}
+
+	if(0 > elapsedTicksProportion || 1 < elapsedTicksProportion)
+	{
+		elapsedTicksProportion = 1;
+	}
+
+	uint32 currentSecond = elapsedTicksProportion * this->totalPlaybackMilliseconds / __MILLISECONDS_PER_SECOND;
+
+	if(previousSecond > currentSecond)
+	{
+		previousSecond = currentSecond;
+	}
+
+	if(currentSecond > previousSecond)
+	{
+		previousSecond = currentSecond;
+
+		Sound::printTiming(this, currentSecond, x, y);
+	}
+}
+//---------------------------------------------------------------------------------------------------------
+void Sound::printPlaybackProgress(int32 x, int32 y)
+{
+	if(NULL == this->mainChannel || 0 == this->mainChannel->ticks)
+	{
+		return;
+	}
+
+	float elapsedTicksProportion = 0;
+	
+	if(0 < this->PCMTracks)
+	{
+		elapsedTicksProportion = (float)this->mainChannel->cursor / this->mainChannel->samples;
+	}
+	else
+	{
+		elapsedTicksProportion = __FIX7_9_EXT_TO_F(this->mainChannel->elapsedTicks) / this->mainChannel->ticks;
+	}
+
+	if(0 > elapsedTicksProportion || 1 < elapsedTicksProportion)
+	{
+		elapsedTicksProportion = 1;		
+	}
+
+	uint32 position = elapsedTicksProportion * 32;
+
+	char boxesArray[33] = 
+	{
+		__CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX,
+		__CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX,
+		__CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX,
+		__CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, '\0'
+	};
+
+	for(uint16 i = 0; i < position && 32 >= i; i++)
+	{
+		boxesArray[i] = __CHAR_BRIGHT_RED_BOX;
+	}
+
+	PRINT_TEXT(boxesArray, x, y);
+}
+//---------------------------------------------------------------------------------------------------------
+
+//=========================================================================================================
+// CLASS' PRIVATE METHODS
+//=========================================================================================================
+
+//---------------------------------------------------------------------------------------------------------
+fix7_9_ext Sound::computeTimerResolutionFactor()
+{
+	uint16 timerResolutionUS = TimerManager::getResolutionInUS(TimerManager::getInstance());
+	uint16 timerCounter = TimerManager::getTimerCounter(TimerManager::getInstance()) + __TIMER_COUNTER_DELTA;
+	uint16 timerUsPerInterrupt = timerCounter * __SOUND_TARGET_US_PER_TICK;
+	uint16 targetTimerResolutionUS = 0 != this->soundSpec->targetTimerResolutionUS ? this->soundSpec->targetTimerResolutionUS : 1000;
+	uint16 soundTargetUsPerInterrupt = (__TIME_US(targetTimerResolutionUS) + __TIMER_COUNTER_DELTA) * __SOUND_TARGET_US_PER_TICK;
+
+	NM_ASSERT(0 < timerResolutionUS, "Sound::computeTimerResolutionFactor: zero timerResolutionUS");
+	NM_ASSERT(0 < soundTargetUsPerInterrupt, "Sound::computeTimerResolutionFactor: zero soundTargetUsPerInterrupt");
+
+	fix7_9_ext targetTimerResolutionFactor = __FIX7_9_EXT_DIV(__I_TO_FIX7_9_EXT(timerUsPerInterrupt), __I_TO_FIX7_9_EXT(soundTargetUsPerInterrupt));
+
+	// Compensate for the difference in speed between 20US and 100US timer resolution
+	fix7_9_ext timerResolutionRatioReduction = __I_TO_FIX7_9_EXT(1) - __FIX7_9_EXT_DIV(__I_TO_FIX7_9_EXT(__SOUND_TARGET_US_PER_TICK), __I_TO_FIX7_9_EXT(timerResolutionUS));
+
+	if(0 != timerResolutionRatioReduction)
+	{
+		timerResolutionRatioReduction = __I_TO_FIX7_9_EXT(1) - __FIX7_9_EXT_DIV(__I_TO_FIX7_9_EXT(__SOUND_TARGET_US_PER_TICK), __I_TO_FIX7_9_EXT(timerResolutionUS - 0*(timerResolutionUS >> 3)));
+
+		targetTimerResolutionFactor = __FIX7_9_EXT_MULT(targetTimerResolutionFactor, timerResolutionRatioReduction);
+	}
+
+	return targetTimerResolutionFactor;
+}
+//---------------------------------------------------------------------------------------------------------
+void Sound::setVolumeReduction(int8 volumeReduction)
+{
+	if(Sound::isFadingIn(this) || Sound::isFadingOut(this))
+	{
+		return;
+	}
+
+	this->volumeReduction = volumeReduction;
+}
+//---------------------------------------------------------------------------------------------------------
+void Sound::setupChannels(int8* waves)
+{
+	if(NULL == this->soundSpec)
+	{
+		return;
+	}
+
+	if(isDeleted(this->channels))
+	{
+		return;
+	}
+
+	VirtualNode node = this->channels->head;
+	this->mainChannel = (Channel*)node->data;
+
+	uint16 i = 0;
+
+	fix7_9_ext targetTimerResolutionFactor = Sound::computeTimerResolutionFactor(this);
+
+	for(; NULL != node; node = node->next, i++)
+	{
+		Channel* channel = (Channel*)node->data;
+
+		channel->soundSpec = this->soundSpec;
+		channel->finished = false;
+		channel->cursor = 0;
+		channel->soundChannel = i;
+		channel->soundChannelConfiguration = *channel->soundSpec->soundChannels[i]->soundChannelConfiguration;
+		channel->soundChannelConfiguration.SxRAM = waves[i];
+		channel->ticks = 0;
+		channel->nextElapsedTicksTarget = 0;
+		channel->tickStep = __FIX7_9_EXT_MULT(this->speed, targetTimerResolutionFactor);
+
+		switch(channel->soundChannelConfiguration.trackType)
+		{
+			case kMIDI:
+
+				this->MIDITracks++;
+				channel->soundTrack.dataMIDI = (uint16*)this->soundSpec->soundChannels[channel->soundChannel]->soundTrack.dataMIDI;
+				Sound::computeMIDITrackSamples(channel);
+				break;
+
+			case kPCM:
+
+				this->PCMTracks++;
+				channel->soundTrack.dataPCM = (uint8*)this->soundSpec->soundChannels[channel->soundChannel]->soundTrack.dataPCM;
+				channel->ticks = channel->samples = this->soundSpec->soundChannels[channel->soundChannel]->samples;
+				break;
+
+#ifndef __RELEASE
+			case kUnknownType:
+
+				NM_ASSERT(false, "Sound::setupChannels: unknown track type");
+				break;
+#endif
+			default:
+
+				NM_ASSERT(false, "Sound::setupChannels: invalid track type");
+				break;
+		}
+
+		channel->elapsedTicks = 0;
+	}
+
+	node = this->channels->head;
+
+	Channel* channelWithLongestTrack = (Channel*)node->data;
+
+	// Find the the channel with the longest track
+	for(node = node->next; NULL != node; node = node->next)
+	{
+		Channel* channel = (Channel*)node->data;
+
+		if(channelWithLongestTrack->ticks < channel->ticks)
+		{
+			channelWithLongestTrack = channel;
+		}
+	}
+
+	this->mainChannel = channelWithLongestTrack;
+
+#ifdef __SOUND_TEST
+	this->totalPlaybackMilliseconds = Sound::getTotalPlaybackMilliseconds(this, channelWithLongestTrack);
+#endif
+
+	this->volumeReductionMultiplier = 0 < this->PCMTracks ? VirtualList::getCount(this->channels) : 1;
+}
+//---------------------------------------------------------------------------------------------------------
+void Sound::configureSoundRegistries()
+{
+	if(NULL == this->soundSpec)
+	{
+		return;
+	}
+
+	if(isDeleted(this->channels))
+	{
+		return;
+	}
+
+	for(VirtualNode node = this->channels->head; NULL != node; node = node->next)
+	{
+		Channel* channel = (Channel*)node->data;
+
+		_soundRegistries[channel->index].SxINT = 0x00;
+		_soundRegistries[channel->index].SxLRV = 0x00;
+		_soundRegistries[channel->index].SxEV0 = channel->soundChannelConfiguration.SxEV0;
+		_soundRegistries[channel->index].SxEV1 = channel->soundChannelConfiguration.SxEV1;
+		_soundRegistries[channel->index].SxFQH = channel->soundChannelConfiguration.SxFQH;
+		_soundRegistries[channel->index].SxFQL = channel->soundChannelConfiguration.SxFQL;
+		_soundRegistries[channel->index].SxRAM = channel->soundChannelConfiguration.SxRAM;
+
+		if(kChannelModulation == channel->type)
+		{
+			_soundRegistries[channel->index].S5SWP = 0;
+		}
+	}
+}
+//---------------------------------------------------------------------------------------------------------
+static void Sound::computeMIDITrackSamples(Channel* channel)
+{
+	uint16* soundTrackData = (uint16*)channel->soundTrack.dataMIDI;
+
+	NM_ASSERT(soundTrackData, "Sound::computeMIDITrackSamples: null soundTrack");
+
+	for(channel->samples = 0; ENDSOUND != soundTrackData[channel->samples] && LOOPSOUND != soundTrackData[channel->samples]; channel->samples++);
+
+	for(uint16 sample = 0; sample < channel->samples; sample++, channel->ticks += soundTrackData[channel->samples + sample]);
+
+}
+//---------------------------------------------------------------------------------------------------------
+static inline uint8 Sound::clampMIDIOutputValue(int8 value)
+{
+	if(value < 0)
+	{
+		return 0;
+	}
+	else if(value > __MAXIMUM_VOLUME)
+	{
+		return __MAXIMUM_VOLUME;
+	}
+
+	return (uint8)value;
+}
+//---------------------------------------------------------------------------------------------------------
+static inline bool Sound::checkIfPlaybackFinishedOnChannel(Channel* channel)
+{
+	return channel->cursor >= channel->samples;
+}
+//---------------------------------------------------------------------------------------------------------
+void Sound::completedPlayback()
+{
+	if(!this->soundSpec->loop)
+	{
+		if(this->autoReleaseOnFinish)
+		{
+			Sound::release(this);
+		}
+		else
+		{
+			Sound::stop(this);
+		}
+	}
+	else
+	{
+		Sound::rewind(this);
+	}
+
+	if(!isDeleted(this->events))
+	{
+		Sound::fireEvent(this, kEventSoundFinished);
+		NM_ASSERT(!isDeleted(this), "Sound::completedPlayback: deleted this during kEventSoundFinished");
+	}
+}
+//---------------------------------------------------------------------------------------------------------
+void Sound::playMIDINote(Channel* channel, fixed_t leftVolumeFactor, fixed_t rightVolumeFactor)
+{
+	int16 note = channel->soundTrack.dataMIDI[channel->cursor];
+	uint8 volume = Sound::clampMIDIOutputValue(channel->soundTrack.dataMIDI[(channel->samples << 1) + 1 + channel->cursor] - this->volumeReduction) & this->unmute;
+
+	int16 leftVolume = volume;
+	int16 rightVolume = volume;
+
+	if(0 != volume)
+	{
+		fixed_t volumeHelper = __I_TO_FIXED(volume);
+
+		if(0 <= leftVolumeFactor)
+		{
+			leftVolume = __FIXED_TO_I(__FIXED_MULT(volumeHelper, leftVolumeFactor));
+		}
+
+		if(0 <= rightVolumeFactor)
+		{
+			rightVolume = __FIXED_TO_I(__FIXED_MULT(volumeHelper, rightVolumeFactor));
+		}
+	}
+
+	leftVolume >>= this->volumenScalePower;
+	rightVolume >>= this->volumenScalePower;
+
+	uint8 SxLRV = ((leftVolume << 4) | rightVolume) & channel->soundChannelConfiguration.volume;
+
+	switch(note)
+	{
+		case PAU:
+
+			_soundRegistries[channel->index].SxEV1 = channel->soundChannelConfiguration.SxEV1 | 0x1;
+			break;
+
+		case HOLD:
+
+#ifdef __SOUND_TEST
+			_soundRegistries[channel->index].SxLRV = channel->soundChannelConfiguration.SxLRV = SxLRV;
+#else
+#ifdef __SHOW_SOUND_STATUS
+			_soundRegistries[channel->index].SxLRV = channel->soundChannelConfiguration.SxLRV = SxLRV;
+#else
+			_soundRegistries[channel->index].SxLRV = SxLRV;
+#endif
+#endif
+			break;
+
+		default:
+
+			note += this->frequencyDelta;
+
+			if(0 > note)
+			{
+				note = 0;
+			}
+
+#ifdef __SOUND_TEST
+			channel->soundChannelConfiguration.SxLRV = SxLRV;
+			channel->soundChannelConfiguration.SxFQL = (note & 0xFF);
+			channel->soundChannelConfiguration.SxFQH = (note >> 8);
+#else
+#ifdef __SHOW_SOUND_STATUS
+			channel->soundChannelConfiguration.SxLRV = SxLRV;
+			channel->soundChannelConfiguration.SxFQL = (note & 0xFF);
+			channel->soundChannelConfiguration.SxFQH = (note >> 8);
+#endif
+#endif
+
+			_soundRegistries[channel->index].SxLRV = SxLRV;
+			_soundRegistries[channel->index].SxFQH = (note >> 8);
+			_soundRegistries[channel->index].SxFQL = (note & 0xFF);
+			_soundRegistries[channel->index].SxEV0 = channel->soundChannelConfiguration.SxEV0;
+			_soundRegistries[channel->index].SxEV1 = channel->soundChannelConfiguration.SxEV1;
+
+			if(kChannelNoise == channel->soundChannelConfiguration.channelType)
+			{
+				uint8 tapLocation = channel->soundTrack.dataMIDI[(channel->samples * 3) + 1 + channel->cursor];
+				_soundRegistries[channel->index].SxEV1 = (tapLocation << 4) | (0x0F & channel->soundChannelConfiguration.SxEV1);
+			}
+			
+			break;
+
+	}
+}
+//---------------------------------------------------------------------------------------------------------
+__attribute__((noinline)) 
+void Sound::updateVolumeReduction()
+{
+	uint32 elapsedMilliseconds = this->soundSpec->targetTimerResolutionUS * (this->mainChannel->elapsedTicks - this->previouslyElapsedTicks) / __MICROSECONDS_PER_MILLISECOND;
+
+	if(VUEngine::getGameFrameDuration(_vuEngine) <= elapsedMilliseconds)
+	{
+		switch(this->playbackType)
+		{
+			case kSoundPlaybackFadeIn:
+
+				this->volumeReduction -= (this->volumeReductionMultiplier >> 1) + 1;
+
+				if(0 >= this->volumeReduction)
+				{
+					this->volumeReduction = 0;
+					this->playbackType = kSoundPlaybackNormal;
+				}
+
+				break;
+
+			case kSoundPlaybackFadeOut:
+
+				this->volumeReduction += (this->volumeReductionMultiplier >> 1) + 1;
+
+				if(__MAXIMUM_VOLUME * this->volumeReductionMultiplier <= this->volumeReduction)
+				{
+					this->volumeReduction = __MAXIMUM_VOLUME * this->volumeReductionMultiplier;
+					this->playbackType = kSoundPlaybackNone;
+					Sound::pause(this);
+				}
+
+				break;
+
+			case kSoundPlaybackFadeOutAndRelease:
+
+				this->volumeReduction += (this->volumeReductionMultiplier >> 1) + 1;
+
+				if(__MAXIMUM_VOLUME * this->volumeReductionMultiplier <= this->volumeReduction)
+				{
+					this->volumeReduction = __MAXIMUM_VOLUME * this->volumeReductionMultiplier;
+					this->playbackType = kSoundPlaybackNone;
+					Sound::release(this);
+				}
+
+				break;
+		}
+
+		this->previouslyElapsedTicks = this->mainChannel->elapsedTicks;
+	}
+}
+//---------------------------------------------------------------------------------------------------------
+uint32 Sound::getTotalPlaybackMilliseconds(Channel* channel)
+{
+	switch(channel->soundChannelConfiguration.trackType)
+	{
+		case kMIDI:
+			{
+				uint32 totalTicks = 0;
+
+				for(VirtualNode node = this->channels->head; NULL != node; node = node->next)
+				{
+					Channel* channel = (Channel*)node->data;
+
+					if(totalTicks < channel->ticks)
+					{
+						totalTicks = channel->ticks;
+					}
+				}
+
+				return (uint32)((long)totalTicks * this->soundSpec->targetTimerResolutionUS / __MICROSECONDS_PER_MILLISECOND);
+			}
+			break;
+
+		case kPCM:
+
+			return (channel->samples * __MICROSECONDS_PER_MILLISECOND) / _pcmTargetPlaybackRefreshRate;
+			break;
+	}
+
+	return 0;
+}
+//---------------------------------------------------------------------------------------------------------
+void Sound::printTiming(uint32 seconds, int32 x, int32 y)
+{
+	uint32 minutes = seconds / 60;
+	seconds = seconds - minutes * 60;
+
+	int32 minutesDigits = Math::getDigitsCount(minutes);
+
+	PRINT_INT(minutes, x, y);
+	PRINT_TEXT(":", x + minutesDigits, y);
+
+	if(0 == seconds)
+	{
+		PRINT_TEXT("00", x + minutesDigits + 1, y);
+	}
+	else if(seconds < 10)
+	{
+		PRINT_TEXT("0", x + minutesDigits + 1, y);
+		PRINT_INT(seconds, x + minutesDigits + 2, y);
+	}
+	else
+	{
+		PRINT_INT(seconds, x + minutesDigits + 1, y);
+	}
+}
+//---------------------------------------------------------------------------------------------------------

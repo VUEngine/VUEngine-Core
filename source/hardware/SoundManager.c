@@ -32,22 +32,12 @@ friend class VirtualList;
 
 
 //=========================================================================================================
-// CLASS' ATTRIBUTES
-//=========================================================================================================
-
-static SoundManager _soundManager = NULL;
-SoundRegistry* const _soundRegistries =	(SoundRegistry*)0x01000400; //(SoundRegistry*)0x010003C0;
-static Camera _camera = NULL;
-
-
-//=========================================================================================================
 // CLASS' MACROS
 //=========================================================================================================
 
 #define __WAVE_ADDRESS(n)			(uint8*)(0x01000000 + (n * 128))
 #define __MODULATION_DATA			(uint8*)0x01000280;
 #define __SSTOP						*(uint8*)0x01000580
-
 
 //=========================================================================================================
 // CLASS' DATA
@@ -64,6 +54,15 @@ typedef struct QueuedSound
 	ListenerObject scope;
 
 } QueuedSound;
+
+
+//=========================================================================================================
+// CLASS' ATTRIBUTES
+//=========================================================================================================
+
+static SoundManager _soundManager = NULL;
+SoundRegistry* const _soundRegistries =	(SoundRegistry*)0x01000400; //(SoundRegistry*)0x010003C0;
+static Camera _camera = NULL;
 
 
 //=========================================================================================================
@@ -189,9 +188,7 @@ void SoundManager::reset()
 		this->channels[i].type = kChannelNoise;
 	}
 
-	this->pcmTargetPlaybackRefreshRate = __DEFAULT_PCM_HZ;
-	this->targetPCMUpdates = __MICROSECONDS_PER_SECOND / this->pcmTargetPlaybackRefreshRate;
-
+	SoundManager::setPCMTargetPlaybackRefreshRate(this, __DEFAULT_PCM_HZ);
 	SoundManager::stopAllSounds(this, false, NULL);
 	SoundManager::unlock(this);
 }
@@ -204,14 +201,14 @@ void SoundManager::update()
 //---------------------------------------------------------------------------------------------------------
 void SoundManager::setPCMTargetPlaybackRefreshRate(uint16 pcmTargetPlaybackRefreshRate)
 {
-	this->pcmTargetPlaybackRefreshRate = pcmTargetPlaybackRefreshRate;
-
-	if(0 == this->pcmTargetPlaybackRefreshRate)
+	if(0 == pcmTargetPlaybackRefreshRate)
 	{
-		this->pcmTargetPlaybackRefreshRate = __DEFAULT_PCM_HZ;
+		pcmTargetPlaybackRefreshRate = __DEFAULT_PCM_HZ;
 	}
 
-	this->targetPCMUpdates = __MICROSECONDS_PER_SECOND / this->pcmTargetPlaybackRefreshRate;
+	this->targetPCMUpdates = __MICROSECONDS_PER_SECOND / pcmTargetPlaybackRefreshRate;
+
+	Sound::setPCMTargetPlaybackRefreshRate(pcmTargetPlaybackRefreshRate);
 }
 //---------------------------------------------------------------------------------------------------------
 bool SoundManager::isPlayingSound(const SoundSpec* soundSpec)
@@ -297,7 +294,7 @@ Sound SoundManager::findSound(const SoundSpec* soundSpec, EventListener soundRel
 	return NULL;
 }
 //---------------------------------------------------------------------------------------------------------
-void SoundManager::muteAllSounds(uint32 type)
+void SoundManager::muteAllSounds()
 {
 	VirtualNode node = this->sounds->head;
 
@@ -305,34 +302,11 @@ void SoundManager::muteAllSounds(uint32 type)
 	{
 		Sound sound = Sound::safeCast(node->data);
 
-		switch(type)
-		{
-			case kMIDI:
-
-				if(sound->hasMIDITracks)
-				{
-					Sound::mute(sound);
-				}
-				break;
-
-			case kPCM:
-
-				if(sound->hasPCMTracks)
-				{
-					Sound::mute(sound);
-				}
-				break;
-
-			default:
-
-				NM_ASSERT(false, "SoundManager::muteAllSounds: unknown track type");
-				break;
-
-		}
+		Sound::mute(sound);
 	}
 }
 //---------------------------------------------------------------------------------------------------------
-void SoundManager::unmuteAllSounds(uint32 type)
+void SoundManager::unmuteAllSounds()
 {
 	VirtualNode node = this->sounds->head;
 
@@ -340,34 +314,11 @@ void SoundManager::unmuteAllSounds(uint32 type)
 	{
 		Sound sound = Sound::safeCast(node->data);
 
-		switch(type)
-		{
-			case kMIDI:
-
-				if(sound->hasMIDITracks)
-				{
-					Sound::unmute(sound);
-				}
-				break;
-
-			case kPCM:
-
-				if(sound->hasPCMTracks)
-				{
-					Sound::unmute(sound);
-				}
-				break;
-
-			default:
-
-				NM_ASSERT(false, "SoundManager::unmuteAllSounds: unknown track type");
-				break;
-
-		}
+		Sound::unmute(sound);
 	}
 }
 //---------------------------------------------------------------------------------------------------------
-void SoundManager::rewindAllSounds(uint32 type)
+void SoundManager::rewindAllSounds()
 {
 	VirtualNode node = this->sounds->head;
 
@@ -375,29 +326,7 @@ void SoundManager::rewindAllSounds(uint32 type)
 	{
 		Sound sound = Sound::safeCast(node->data);
 
-		switch(type)
-		{
-			case kMIDI:
-
-				if(sound->hasMIDITracks)
-				{
-					Sound::rewind(sound);
-				}
-				break;
-
-			case kPCM:
-
-				if(sound->hasPCMTracks)
-				{
-					Sound::rewind(sound);
-				}
-				break;
-
-			default:
-
-				NM_ASSERT(false, "SoundManager::rewindAllSounds: unknown track type");
-				break;
-		}
+		Sound::rewind(sound);
 	}
 }
 //---------------------------------------------------------------------------------------------------------
@@ -670,8 +599,7 @@ void SoundManager::constructor()
 
 	this->queuedSounds = new VirtualList();
 	this->lock = false;
-	this->pcmTargetPlaybackRefreshRate = __DEFAULT_PCM_HZ;
-	this->targetPCMUpdates = __MICROSECONDS_PER_SECOND / this->pcmTargetPlaybackRefreshRate;
+	this->targetPCMUpdates = 0;
 
 	_soundManager = this;
 }
@@ -776,16 +704,16 @@ Sound SoundManager::doGetSound(const SoundSpec* soundSpec, uint32 command, Event
 
 				if(0 < VirtualList::getCount(availableChannels))
 				{
-					sound = new Sound(soundSpec, availableChannels, waves, this->pcmTargetPlaybackRefreshRate, soundReleaseListener, scope);
+					sound = new Sound(soundSpec, availableChannels, waves, soundReleaseListener, scope);
 
 					VirtualList::pushBack(this->sounds, sound);
 
-					if(sound->hasMIDITracks)
+					if(Sound::hasMIDITracks(sound))
 					{
 						VirtualList::pushBack(this->soundsMIDI, sound);
 					}
 
-					if(sound->hasPCMTracks)
+					if(Sound::hasPCMTracks(sound))
 					{
 						VirtualList::pushBack(this->soundsPCM, sound);
 					}
@@ -838,7 +766,7 @@ void SoundManager::setWaveform(Waveform* waveform, const int8* data)
 		HardwareManager::suspendInterrupts();
 
 		// Must stop all soundSpec before writing the waveforms
-		SoundManager::turnOffPlayingSounds(this);
+		SoundManager::suspendPlayingSounds(this);
 
 		for(uint32 i = 0; i < 32; i++)
 		{
@@ -846,7 +774,7 @@ void SoundManager::setWaveform(Waveform* waveform, const int8* data)
 		}
 
 		// Resume playing sounds
-		SoundManager::turnOnPlayingSounds(this);
+		SoundManager::resumePlayingSounds(this);
 
 		// Turn back interrupts on
 		HardwareManager::resumeInterrupts();
@@ -1063,7 +991,7 @@ void SoundManager::releaseSoundChannel(Channel* channel)
 	}
 }
 //---------------------------------------------------------------------------------------------------------
-void SoundManager::turnOffPlayingSounds()
+void SoundManager::suspendPlayingSounds()
 {
 	VirtualNode node = this->sounds->head;
 
@@ -1073,7 +1001,7 @@ void SoundManager::turnOffPlayingSounds()
 
 		if(!isDeleted(sound) && !Sound::isPaused(sound))
 		{
-			Sound::turnOff(sound);
+			Sound::suspend(sound);
 		}
 	}
 
@@ -1084,7 +1012,7 @@ void SoundManager::turnOffPlayingSounds()
 	}
 }
 //---------------------------------------------------------------------------------------------------------
-void SoundManager::turnOnPlayingSounds()
+void SoundManager::resumePlayingSounds()
 {
 	VirtualNode node = this->sounds->head;
 
@@ -1094,7 +1022,7 @@ void SoundManager::turnOnPlayingSounds()
 
 		if(!isDeleted(sound) && !Sound::isPaused(sound))
 		{
-			Sound::turnOn(sound);
+			Sound::resume(sound);
 		}
 	}
 }

@@ -1,4 +1,4 @@
-/**
+/*
  * VUEngine Core
  *
  * © Jorge Eremiev <jorgech3@gmail.com> and Christian Radke <c.radke@posteo.de>
@@ -79,6 +79,16 @@ enum SoundPlaybackTypes
 	kSoundPlaybackFadeIn,
 	kSoundPlaybackFadeOut,
 	kSoundPlaybackFadeOutAndRelease
+};
+
+
+/// Sound state
+/// @memberof Sound
+enum SoundState
+{
+	kSoundOff = 0,
+	kSoundPaused,
+	kSoundPlaying,
 };
 
 /// Sound channel configuration struct
@@ -265,78 +275,201 @@ typedef struct Channel
 /// @ingroup sound
 class Sound : ListenerObject
 {
+	/// @protectedsection
+
+	/// Pointer to the spec that defines how to initialize the sound 
 	const SoundSpec* soundSpec;
+
+	/// Pointer to vector for spatial positioning of the sound
 	const Vector3D* position;
+
+	/// List of VSU channels used by the sound
 	VirtualList channels;
+
+	/// Channel used for PCM playback
 	Channel* mainChannel;
+
+	/// Playback speed
 	fix7_9_ext speed;
-	fix7_9_ext targetTimerResolutionFactor;
+
+	/// Sound's state
+	uint32 state;
+
+	/// Elapsed ticks in the previous update
 	uint32 previouslyElapsedTicks;
+
+	/// Total playback time
 	uint32 totalPlaybackMilliseconds;
+
+	/// Target refresh rate for PCM playback
 	uint16 pcmTargetPlaybackRefreshRate;
-	uint16 frequencyModifier;
+
+	/// Delta added to the frequency registers
+	uint16 frequencyDelta;
+
+	/// Multiplier used for fade effects
 	uint16 volumeReductionMultiplier;
+
+	/// Volume reduction used for fade effects
 	int8 volumeReduction;
+
+	/// 2's power to divide to the final volume value
 	uint8 volumenScalePower;
+
+	/// Type of playback to perform (SoundPlaybackTypes)
 	uint8 playbackType;
-	bool turnedOn;
-	bool paused;
-	bool hasMIDITracks;
-	bool hasPCMTracks;
+
+	/// MIDI tracks count
+	bool MIDITracks;
+
+	/// PCM tracks count
+	bool PCMTracks;
+
+	/// If true, sound is not muted
 	bool unmute;
+
+	/// If true, the sound is released when playback is complete
 	bool autoReleaseOnFinish;
+
+	/// If locked, it cannot be released by external calls
 	bool locked;
 
 	/// @publicsection
+
+	/// Mirror the spatial positioning of the sound.
+	/// @param mirror: Struct with a flag for each axis to mirror
 	static void setMirror(Mirror mirror);
 
-	void constructor(const SoundSpec* soundSpec, VirtualList channels, int8* waves, uint16 pcmTargetPlaybackRefreshRate, EventListener soundReleaseListener, ListenerObject scope);
+	/// Set the target refresh rate for PCM playback.
+	/// @param pcmTargetPlaybackRefreshRate: Target refresh rate for PCM playback
+	static void setPCMTargetPlaybackRefreshRate(uint16 pcmTargetPlaybackRefreshRate);
 
+	/// Class' constructor
+	/// @param soundSpec: Specification that determines how to configure the sound
+	/// @param channels: Linked list of VSU channels to use
+	/// @param waves: Array of indexes of waveforms to use
+	/// @param soundReleaseListener: Callback for when the sound is released
+	/// @param scope: Object that listens for the releasing event
+	void constructor(const SoundSpec* soundSpec, VirtualList channels, int8* waves, EventListener soundReleaseListener, ListenerObject scope);
+
+	/// Play the sound.
+	/// @param position: Pointer to the spatial position of the sound
+	/// @param playbackType: Specifies how the playback should start
 	void play(const Vector3D* position, uint32 playbackType);
-	void stop();
-	void updateMIDIPlayback(uint32 elapsedMicroseconds);
-	void updatePCMPlayback(uint32 elapsedMicroseconds, uint32 targetPCMUpdates);
 
+	/// Stop the playback.
+	void stop();
+
+	/// Pause the playback.
 	void pause();
+
+	/// Unpause the playback.
 	void unpause();
 
-	void turnOn();
-	void turnOff();
+	/// Suspend the output of sound.
+	void suspend();
 
+	/// Resume the output of sound.
+	void resume();
+
+	/// Mute the sound.
 	void mute();
+
+	/// Unmute the sound.
 	void unmute();
 
-	void lock();
-	void unlock();
-
+	/// Rewind the playack
 	void rewind();
+
+	/// Release this sound.
 	void release();
 
-	void autoReleaseOnFinish(bool value);
+	/// Prevent other requests to get a sound to steal this sound's channels
+	void lock();
 
+	/// Allow other requests to get a sound to steal this sound's channels
+	void unlock();
+
+	/// Set the flag that allows the sound to auto release itself when playback is complete.
+	/// @param autoReleaseOnFinish: If true, the sound is released when playaback is complete
+	void autoReleaseOnFinish(bool autoReleaseOnFinish);
+
+	/// Set the playback's speed.
+	/// @param speed: Target playback speed
 	void setSpeed(fix7_9_ext speed);
+
+	/// Retrieve the playback's speed.
+	/// @return Target playback speed
 	fix7_9_ext getSpeed();
 
-	void setVolumeReduction(int8 volumeReduction);
+	/// Set the factor (2's power) by which the final volume is reduced.
+	/// @param volumenScalePower: Factor by which the final volume is reduced
 	void setVolumenScalePower(uint8 volumenScalePower);
 
-	void computeTimerResolutionFactor();
+	/// Set the frequency delta to be added to the VSU's frequency registers.
+	/// @param frequencyDelta: Delta to be added to the frequency
+	void setFrequencyDelta(uint16 frequencyDelta);
 
-	void setFrequencyModifier(uint16 frequencyModifier);
-	uint16 getFrequencyModifier();
+	/// Retrieve the frequency delta added to the VSU's frequency registers.
+	/// @param frequencyDelta: Delta added to the frequency
+	uint16 getFrequencyDelta();
 
+	/// Check if the sound has MIDI tracks.
+	/// @return True if the sound has at least one MIDI track; false otherwise
+	bool hasMIDITracks();
+
+	/// Check if the sound is using the provided VSU channel.
+	/// @return True if the sound has at least one PCM track; false otherwise
 	bool hasPCMTracks();
+
+	/// Check if the sound is using the provided VSU channel.
+	/// @return True if the sound uses the provided channel
 	bool isUsingChannel(Channel* channel);
+
+	/// Check if the sound is playing.
+	/// @return True if playback is going on
 	bool isPlaying();
+
+	/// Check if the sound is paused.
+	/// @return True if playback is paused
 	bool isPaused();
-	bool isTurnedOn();
+
+	/// Check if the sound is fading in.
+	/// @return True if playback fading in
 	bool isFadingIn();
+
+	/// Check if the sound is fading out.
+	/// @return True if playback fading out
 	bool isFadingOut();
 
+	/// Advance the playback on the sound's MIDI tracks.
+	/// @param elapsedMicroseconds: Elapsed time since the last call
+	void updateMIDIPlayback(uint32 elapsedMicroseconds);
+
+	/// Advance the playback on the sound's PCM tracks.
+	/// @param elapsedMicroseconds: Elapsed time since the last call
+	/// @param targetPCMUpdates: Ideal Elapsed time since the last call
+	void updatePCMPlayback(uint32 elapsedMicroseconds, uint32 targetPCMUpdates);
+
+	/// Print the sounds's properties.
+	/// @param x: Screen x coordinate where to print
+	/// @param y: Screen y coordinate where to print
 	void print(int32 x, int32 y);
-	void printMetadata(int32 x, int32 y, bool printDetails);
+
+	/// Print the sounds's volume.
+	/// @param x: Screen x coordinate where to print
+	/// @param y: Screen y coordinate where to print
+	/// @param printHeader: If true it print's the header's info
 	void printVolume(int32 x, int32 y, bool printHeader);
+
+	/// Print the sounds's playback time.
+	/// @param x: Screen x coordinate where to print
+	/// @param y: Screen y coordinate where to print
 	void printPlaybackTime(int32 x, int32 y);
+
+	/// Print the sounds's playback progress.
+	/// @param x: Screen x coordinate where to print
+	/// @param y: Screen y coordinate where to print
 	void printPlaybackProgress(int32 x, int32 y);
 }
 

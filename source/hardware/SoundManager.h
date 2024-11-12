@@ -110,9 +110,6 @@ singleton class SoundManager : ListenerObject
 	/// Target PCM cycles per game cycle
 	uint32 targetPCMUpdates;
 
-	/// Target refresh rate for PCM playback 
-	uint16 pcmTargetPlaybackRefreshRate;
-
 	/// If raised, no petitions to play or allocate sounds are processed
 	bool lock;
 
@@ -162,17 +159,14 @@ singleton class SoundManager : ListenerObject
 	/// @param scope: Object on which to perform the callback
 	Sound findSound(const SoundSpec* soundSpec, EventListener soundReleaseListener, ListenerObject scope);
 
-	/// Mute all playing sounds of the provided type (MIDI or PCM).
-	/// @param type: Type of sounds to mute
-	void muteAllSounds(uint32 type);
+	/// Mute all playing sounds
+	void muteAllSounds();
 
-	/// Unmute all playing sounds of the provided type (MIDI or PCM).
-	/// @param type: Type of sounds to unmute
-	void unmuteAllSounds(uint32 type);
+	/// Unmute all playing sounds
+	void unmuteAllSounds();
 
-	/// Rewind all playing sounds of the provided type (MIDI or PCM).
-	/// @param type: Type of sounds to rewind
-	void rewindAllSounds(uint32 type);
+	/// Rewind all playing sounds
+	void rewindAllSounds();
 
 	/// Stop all playing sounds.
 	/// @param excludedSounds: Array of sound specs to not stop

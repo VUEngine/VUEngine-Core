@@ -198,7 +198,7 @@ void SoundTest::printGUI(bool clearScreen)
 	Printing::text(printing, "T.Res. \x1F\x1C\x1D", xControls, yControls++, NULL);
 
 	SoundTest::printTimer(this);
-	Sound::printMetadata(this->sound, 1, 4, true);
+	Sound::print(this->sound, 1, 4);
 }
 
 void SoundTest::processUserInput(uint16 pressedKey)
@@ -349,7 +349,6 @@ void SoundTest::processUserInput(uint16 pressedKey)
 		{
 			Sound::pause(this->sound);
 			Sound::rewind(this->sound);
-			Sound::computeTimerResolutionFactor(this->sound);
 
 			if(!Sound::isPaused(this->sound))
 			{
@@ -360,7 +359,7 @@ void SoundTest::processUserInput(uint16 pressedKey)
 
 	if(!isDeleted(this->sound))
 	{
-		Sound::printMetadata(this->sound, 1, 4, true);
+		Sound::print(this->sound, 1, 4);
 	}
 }
 
@@ -433,7 +432,6 @@ void SoundTest::loadSound()
 	if(!isDeleted(this->sound))
 	{
 		Sound::addEventListener(this->sound, ListenerObject::safeCast(this), (EventListener)SoundTest::onSoundFinish, kEventSoundFinished);
-		Sound::computeTimerResolutionFactor(this->sound);
 		SoundTest::applyTimerSettings(this);
 
 #ifdef __SOUND_TEST
