@@ -31,7 +31,7 @@ class AnimationController;
 // CLASS' DATA
 //=========================================================================================================
 
-/// A SpriteSpec
+/// A Sprite Spec
 /// @memberof Sprite
 typedef struct SpriteSpec
 {
@@ -50,6 +50,7 @@ typedef struct SpriteSpec
 
 } SpriteSpec;
 
+/// A Sprite spec that is stored in ROM
 /// @memberof Sprite
 typedef const SpriteSpec SpriteROMSpec;
 

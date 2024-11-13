@@ -1,4 +1,4 @@
-/**
+/*
  * VUEngine Core
  *
  * © Jorge Eremiev <jorgech3@gmail.com> and Christian Radke <c.radke@posteo.de>
@@ -8,9 +8,9 @@
  */
 
 
-//---------------------------------------------------------------------------------------------------------
-//												INCLUDES
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// INCLUDES
+//=========================================================================================================
 
 #include <ParticleSystem.h>
 #include <Sprite.h>
@@ -21,24 +21,18 @@
 #include "Particle.h"
 
 
-//---------------------------------------------------------------------------------------------------------
-//												MACROS
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// CLASS' MACROS
+//=========================================================================================================
 
 #define __PARTICLE_VISIBILITY_PADDING	8
 
 
+//=========================================================================================================
+// CLASS' PUBLIC METHODS
+//=========================================================================================================
+
 //---------------------------------------------------------------------------------------------------------
-//												CLASS'S METHODS
-//---------------------------------------------------------------------------------------------------------
-
-
-/**
- * Class constructor
- *
- * @param particleSpec	Spec of the Particle
- */
-
 void Particle::constructor(const ParticleSpec* particleSpec __attribute__((unused)), ParticleSystem creator __attribute__((unused)))
 {
 	// construct base Container
@@ -49,10 +43,7 @@ void Particle::constructor(const ParticleSpec* particleSpec __attribute__((unuse
 	this->wireframe = NULL;
 	this->expired = false;
 }
-
-/**
- * Class destructor
- */
+//---------------------------------------------------------------------------------------------------------
 void Particle::destructor()
 {
 	Particle::destroyGraphics(this);
@@ -61,228 +52,7 @@ void Particle::destructor()
 	// must always be called at the end of the destructor
 	Base::destructor();
 }
-
-void Particle::destroyGraphics()
-{
-	if(!isDeleted(this->sprite))
-	{
-		SpriteManager::destroySprite(SpriteManager::getInstance(), this->sprite);
-	}
-
-	this->sprite = NULL;
-
-	if(!isDeleted(this->wireframe))
-	{
-		WireframeManager::destroyWireframe(WireframeManager::getInstance(), this->wireframe);
-	}
-
-	this->wireframe = NULL;
-}
-
-/**
- * Add a sprite
- *
- * @private
- */
-void Particle::addSprite(const SpriteSpec* spriteSpec)
-{
-	if(NULL != spriteSpec && NULL == this->sprite)
-	{
-		// call the appropriate allocator to support inheritance
-		this->sprite = SpriteManager::createSprite(SpriteManager::getInstance(), SpatialObject::safeCast(this), (SpriteSpec*)spriteSpec);
-
-		ASSERT(this->sprite, "Particle::addSprite: sprite not created");
-	}
-}
-
-/**
- * Add wireframe
- *
- * @private
- */
-void Particle::addWireframe(const WireframeSpec* wireframeSpec)
-{
-	if(NULL != wireframeSpec && NULL == this->wireframe)
-	{
-		this->wireframe = WireframeManager::createWireframe(WireframeManager::getInstance(), wireframeSpec, SpatialObject::safeCast(this));
-
-		NM_ASSERT(this->wireframe, "Particle::addWireframe: wireframe not created");
-	}
-}
-
-/**
- * Change the animation
- *
- * @param animationName		Char*
- */
-void Particle::changeAnimation(const AnimationFunction** animationFunctions, const char* animationName, bool force)
-{
-	if(!isDeleted(this->sprite) && NULL != animationName)
-	{
-		if(force || !Sprite::replay(this->sprite, animationFunctions))
-		{
-			Sprite::play(this->sprite, animationFunctions, (char*)animationName, ListenerObject::safeCast(this));
-		}
-	}
-}
-
-/**
- * Update
- *
- * @param behavior
- * @return				Returns true if the particle's life span has elapsed
- */
-bool Particle::update(uint32 elapsedTime, void (* behavior)(Particle particle))
-{
-	if(0 <= this->lifeSpan)
-	{
-		this->lifeSpan -= elapsedTime;
-
-		if(0 > this->lifeSpan)
-		{
-			Particle::expire(this);
-			return true;
-		}
-
-		if(NULL != behavior)
-		{
-			behavior(this);
-		}
-	}
-
-	return false;
-}
-
-/**
- * Add force
- *
- * @param force
- * @param movementType
- */
-void Particle::applyForce(const Vector3D* force __attribute__ ((unused)), uint32 movementType __attribute__ ((unused)))
-{
-}
-
-/**
- * Set lifespan
- *
- * @param lifeSpan
- */
-void Particle::setLifeSpan(int16 lifeSpan)
-{
-	this->lifeSpan = lifeSpan;
-}
-
-/**
- * Set mass
- *
- * @param mass
- */
-void Particle::setMass(fixed_t mass __attribute__ ((unused)))
-{
-}
-
-/**
- * Change mass
- *
- */
-void Particle::changeMass()
-{
-}
-
-/**
- * Make Particle visible
- */
-void Particle::show()
-{
-	if(!isDeleted(this->sprite))
-	{
-		Sprite::show(this->sprite);
-	}
-
-	if(!isDeleted(this->wireframe))
-	{
-		Wireframe::show(this->wireframe);
-	}
-}
-
-/**
- * Set sprite's transparency
- */
-void Particle::setTransparent(uint8 transparent)
-{
-	if(!isDeleted(this->sprite))
-	{
-		Sprite::setTransparent(this->sprite, transparent);
-	}
-}
-
-/**
- * Make Particle expire
- */
-void Particle::expire()
-{
-	this->expired = true;
-
-	Particle::hide(this);
-}
-
-/**
- * Make Particle invisible
- */
-void Particle::hide()
-{
-	if(!isDeleted(this->sprite))
-	{
-		Sprite::hide(this->sprite);
-	}
-
-	if(!isDeleted(this->wireframe))
-	{
-		Wireframe::hide(this->wireframe);
-	}
-}
-
-/**
- * Can move over axis?
- *
- * @param acceleration
- * @return				Boolean that tells whether the Particle's body can move over axis (defaults to true)
- */
-bool Particle::isSubjectToGravity(Vector3D gravity __attribute__ ((unused)))
-{
-	return false;
-}
-
-/**
- * Resume
- */
-void Particle::resume(const SpriteSpec* spriteSpec, const WireframeSpec* wireframeSpec, const AnimationFunction** animationFunctions, const char* animationName)
-{
-	Particle::addSprite(this, spriteSpec);
-	Particle::addWireframe(this, wireframeSpec);
-	Particle::changeAnimation(this, animationFunctions, animationName, true);
-}
-
-/**
- * Pause
- */
-void Particle::suspend()
-{
-	Particle::destroyGraphics(this);
-}
-
-/**
- * Reset
- */
-void Particle::reset()
-{
-	this->expired = false;
-}
-
-/**
- * Setup
- */
+//---------------------------------------------------------------------------------------------------------
 void Particle::setup(const SpriteSpec* spriteSpec, const WireframeSpec* wireframeSpec, int16 lifeSpan, const Vector3D* position, const Vector3D* force, uint32 movementType, const AnimationFunction** animationFunctions, const char* animationName, bool forceAnimation)
 {
 	if(Particle::overrides(this, reset))
@@ -294,9 +64,9 @@ void Particle::setup(const SpriteSpec* spriteSpec, const WireframeSpec* wirefram
 		this->expired = false;
 	}
 
-	if(Particle::overrides(this, changeMass))
+	if(Particle::overrides(this, configureMass))
 	{
-		Particle::changeMass(this);
+		Particle::configureMass(this);
 	}
 
 	// TOOD: the preprocessor does't catch properly this override check with Particle 	
@@ -324,12 +94,65 @@ void Particle::setup(const SpriteSpec* spriteSpec, const WireframeSpec* wirefram
 
 	Particle::show(this);
 }
+//---------------------------------------------------------------------------------------------------------
+void Particle::resume(const SpriteSpec* spriteSpec, const WireframeSpec* wireframeSpec, const AnimationFunction** animationFunctions, const char* animationName)
+{
+	Particle::addSprite(this, spriteSpec);
+	Particle::addWireframe(this, wireframeSpec);
+	Particle::changeAnimation(this, animationFunctions, animationName, true);
+}
+//---------------------------------------------------------------------------------------------------------
+void Particle::suspend()
+{
+	Particle::destroyGraphics(this);
+}
+//---------------------------------------------------------------------------------------------------------
+void Particle::expire()
+{
+	this->expired = true;
 
-/**
- * Is visible
- *
- * @return		True if within camera's reach
- */
+	Particle::hide(this);
+}
+//---------------------------------------------------------------------------------------------------------
+void Particle::show()
+{
+	if(!isDeleted(this->sprite))
+	{
+		Sprite::show(this->sprite);
+	}
+
+	if(!isDeleted(this->wireframe))
+	{
+		Wireframe::show(this->wireframe);
+	}
+}
+//---------------------------------------------------------------------------------------------------------
+void Particle::hide()
+{
+	if(!isDeleted(this->sprite))
+	{
+		Sprite::hide(this->sprite);
+	}
+
+	if(!isDeleted(this->wireframe))
+	{
+		Wireframe::hide(this->wireframe);
+	}
+}
+//---------------------------------------------------------------------------------------------------------
+void Particle::setTransparent(uint8 transparent)
+{
+	if(!isDeleted(this->sprite))
+	{
+		Sprite::setTransparent(this->sprite, transparent);
+	}
+
+	if(!isDeleted(this->wireframe))
+	{
+		Wireframe::setTransparent(this->wireframe, transparent);
+	}
+}
+//---------------------------------------------------------------------------------------------------------
 bool Particle::isVisible()
 {
 	PixelVector pixelVector;
@@ -375,3 +198,105 @@ bool Particle::isVisible()
 
 	return true;
 }
+//---------------------------------------------------------------------------------------------------------
+void Particle::reset()
+{
+	this->expired = false;
+}
+//---------------------------------------------------------------------------------------------------------
+bool Particle::update(uint32 elapsedTime, void (* behavior)(Particle particle))
+{
+	if(0 <= this->lifeSpan)
+	{
+		this->lifeSpan -= elapsedTime;
+
+		if(0 > this->lifeSpan)
+		{
+			Particle::expire(this);
+			return true;
+		}
+
+		if(NULL != behavior)
+		{
+			behavior(this);
+		}
+	}
+
+	return false;
+}
+//---------------------------------------------------------------------------------------------------------
+void Particle::applyForce(const Vector3D* force __attribute__ ((unused)), uint32 movementType __attribute__ ((unused)))
+{}
+//---------------------------------------------------------------------------------------------------------
+void Particle::configureMass()
+{}
+//---------------------------------------------------------------------------------------------------------
+bool Particle::isSubjectToGravity(Vector3D gravity __attribute__ ((unused)))
+{
+	return false;
+}
+//---------------------------------------------------------------------------------------------------------
+
+//=========================================================================================================
+// CLASS' PRIVATE METHODS
+//=========================================================================================================
+
+//---------------------------------------------------------------------------------------------------------
+void Particle::addSprite(const SpriteSpec* spriteSpec)
+{
+	if(NULL != spriteSpec && NULL == this->sprite)
+	{
+		// call the appropriate allocator to support inheritance
+		this->sprite = SpriteManager::createSprite(SpriteManager::getInstance(), SpatialObject::safeCast(this), (SpriteSpec*)spriteSpec);
+
+		ASSERT(this->sprite, "Particle::addSprite: sprite not created");
+	}
+}
+//---------------------------------------------------------------------------------------------------------
+void Particle::addWireframe(const WireframeSpec* wireframeSpec)
+{
+	if(NULL != wireframeSpec && NULL == this->wireframe)
+	{
+		this->wireframe = WireframeManager::createWireframe(WireframeManager::getInstance(), wireframeSpec, SpatialObject::safeCast(this));
+
+		NM_ASSERT(this->wireframe, "Particle::addWireframe: wireframe not created");
+	}
+}
+//---------------------------------------------------------------------------------------------------------
+void Particle::destroyGraphics()
+{
+	if(!isDeleted(this->sprite))
+	{
+		SpriteManager::destroySprite(SpriteManager::getInstance(), this->sprite);
+	}
+
+	this->sprite = NULL;
+
+	if(!isDeleted(this->wireframe))
+	{
+		WireframeManager::destroyWireframe(WireframeManager::getInstance(), this->wireframe);
+	}
+
+	this->wireframe = NULL;
+}
+//---------------------------------------------------------------------------------------------------------
+void Particle::changeAnimation(const AnimationFunction** animationFunctions, const char* animationName, bool force)
+{
+	if(!isDeleted(this->sprite) && NULL != animationName)
+	{
+		if(force || !Sprite::replay(this->sprite, animationFunctions))
+		{
+			Sprite::play(this->sprite, animationFunctions, (char*)animationName, ListenerObject::safeCast(this));
+		}
+	}
+}
+//---------------------------------------------------------------------------------------------------------
+void Particle::setLifeSpan(int16 lifeSpan)
+{
+	this->lifeSpan = lifeSpan;
+}
+//---------------------------------------------------------------------------------------------------------
+void Particle::setMass(fixed_t mass __attribute__ ((unused)))
+{
+}
+//---------------------------------------------------------------------------------------------------------

@@ -127,7 +127,7 @@ void PhysicalParticle::applyForce(const Vector3D* force, uint32 movementType)
  * Change mass
  *
  */
-void PhysicalParticle::changeMass()
+void PhysicalParticle::configureMass()
 {
 	Body::setMass(this->body, this->physicalParticleSpec->minimumMass + (this->physicalParticleSpec->massDelta ? Math::random(_gameRandomSeed, this->physicalParticleSpec->massDelta) : 0));
 }
