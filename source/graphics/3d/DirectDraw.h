@@ -57,10 +57,10 @@ singleton class DirectDraw : Object
 	static bool drawColorPointInterlaced(PixelVector point, int32 color, uint8 bufferIndex);
 	static bool drawColorLine(PixelVector fromPoint, PixelVector toPoint, int32 color, uint8 bufferIndex, bool interlaced);
 	static bool drawColorCircle(PixelVector center, int16 radius, int32 color, uint8 bufferIndex, bool interlaced);
-	static bool drawColorCircumference(PixelVector center, int16 radius, int32 color, uint8 bufferIndex, bool interlaced);
-	static bool drawSolidRhumbus(PixelVector center, int16 radius, int32 color, uint8 bufferIndex, bool interlaced);
-	static bool drawColorCross(PixelVector center, int16 length, int32 color, uint8 bufferIndex, bool interlaced);
 	static bool drawColorX(PixelVector center, int16 length, int32 color, uint8 bufferIndex, bool interlaced);
+	static bool drawColorCross(PixelVector center, int16 length, int32 color, uint8 bufferIndex, bool interlaced);
+	static bool drawSolidCircle(PixelVector center, int16 radius, int32 color, uint8 bufferIndex, bool interlaced);
+	static bool drawSolidRhumbus(PixelVector center, int16 radius, int32 color, uint8 bufferIndex, bool interlaced);
 
 	/// Reset the manager's state
 	void reset();
