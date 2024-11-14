@@ -92,8 +92,7 @@ class Particle : SpatialObject
 
 	/// Class' constructor
 	/// @param particleSpec: Specification that determines how to configure the particle
-	/// @param creator: Particle system that creates the particle
-	void constructor(const ParticleSpec* particleSpec, ParticleSystem creator);
+	void constructor(const ParticleSpec* particleSpec);
 	
 	/// Configure the particle with the provided arguments.
 	/// @param spriteSpec: Specification for a sprite to add to the particle

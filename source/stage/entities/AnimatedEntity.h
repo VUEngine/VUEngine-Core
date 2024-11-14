@@ -60,7 +60,6 @@ class AnimatedEntity : Entity
 
 	/// @publicsection
 	void constructor(AnimatedEntitySpec* animatedEntitySpec, int16 internalId, const char* const name);
-	const AnimationFunction** getAnimationFunctions();
 	int16 getActualFrame();
 	int32 getNumberOfFrames();
 	bool isAnimationLoaded(char* animationName);

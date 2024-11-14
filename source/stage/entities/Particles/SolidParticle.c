@@ -38,12 +38,11 @@ friend class VirtualNode;
 //=========================================================================================================
 
 //---------------------------------------------------------------------------------------------------------
-void SolidParticle::constructor(const SolidParticleSpec* solidParticleSpec, ParticleSystem creator)
+void SolidParticle::constructor(const SolidParticleSpec* solidParticleSpec)
 {
 	// construct base Container
-	Base::constructor(&solidParticleSpec->physicalParticleSpec, creator);
+	Base::constructor(&solidParticleSpec->physicalParticleSpec);
 
-	this->creator = creator;
 	this->solidParticleSpec = solidParticleSpec;
 
 	this->colliderSpec = new ColliderSpec;
@@ -172,9 +171,10 @@ bool SolidParticle::collisionStarts(const CollisionInformation* collisionInforma
 			returnValue = true;
 		}
 
-		if(NULL != this->solidParticleSpec->onCollisionAnimation && !isDeleted(this->creator))
+		if(NULL != this->solidParticleSpec->onCollisionAnimation)
 		{
-			Sprite::play(this->sprite, ParticleSystem::getAnimationFunctions(this->creator), this->solidParticleSpec->onCollisionAnimation, ListenerObject::safeCast(this));
+			
+			Sprite::play(this->sprite, ((ParticleSpec*)this->solidParticleSpec)->animationFunctions, this->solidParticleSpec->onCollisionAnimation, ListenerObject::safeCast(this));
 		}
 	}
 

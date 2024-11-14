@@ -76,8 +76,7 @@ class PhysicalParticle : Particle
 
 	/// Class' constructor
 	/// @param physicalParticleSpec: Specification that determines how to configure the particle
-	/// @param creator: Particle system that creates the particle
-	void constructor(const PhysicalParticleSpec* physicalParticleSpec, ParticleSystem creator);
+	void constructor(const PhysicalParticleSpec* physicalParticleSpec);
 
 	/// Retrieve the particle's velocity vector.
 	/// @return Pointer to the direction towards which the particle is moving

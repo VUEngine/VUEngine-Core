@@ -192,13 +192,6 @@ const char* AnimatedEntity::getPlayingAnimationName()
 	return Sprite::getPlayingAnimationName(sprite);
 }
 
-
-// get animation spec
-const AnimationFunction** AnimatedEntity::getAnimationFunctions()
-{
-	return this->animationFunctions;
-}
-
 void AnimatedEntity::setActualFrame(int16 frame)
 {
 	if(isDeleted(this->sprites))

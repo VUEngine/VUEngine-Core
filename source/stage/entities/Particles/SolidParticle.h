@@ -17,7 +17,6 @@
 
 #include <Collider.h>
 #include <PhysicalParticle.h>
-#include <ParticleSystem.h>
 
 
 //=========================================================================================================
@@ -76,9 +75,6 @@ class SolidParticle : PhysicalParticle
 {
 	/// @protectedsection
 
-	/// Particle system that creates the particle
-	ParticleSystem creator;
-	
 	/// Collider for collision detection
 	Collider collider;
 
@@ -92,8 +88,7 @@ class SolidParticle : PhysicalParticle
 
 	/// Class' constructor
 	/// @param solidParticleSpec: Specification that determines how to configure the particle
-	/// @param creator: Particle system that creates the particle
-	void constructor(const SolidParticleSpec* solidParticleSpec, ParticleSystem creator);
+	void constructor(const SolidParticleSpec* solidParticleSpec);
 
 	/// Receive and process a Telegram.
 	/// @param telegram: Received telegram to process

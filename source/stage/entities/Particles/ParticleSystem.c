@@ -172,27 +172,6 @@ void ParticleSystem::deleteAllParticles()
 	this->aliveParticlesCount = 0;
 }
 
-void ParticleSystem::expireAllParticles()
-{
-	if(!isDeleted(this->particles))
-	{
-		for(VirtualNode node = this->particles->head; NULL != node; node = node->next)
-		{
-			Particle particle = Particle::safeCast(node->data);
-
-			if(particle->expired)
-			{
-				continue;
-			}
-
-			Particle::expire(particle);
-			this->aliveParticlesCount--;
-
-			NM_ASSERT(0 <= this->aliveParticlesCount, "ParticleSystem::update: negative particle count");
-		}
-	}
-}
-
 bool ParticleSystem::getLoop()
 {
 	return this->loop;
@@ -455,25 +434,6 @@ bool ParticleSystem::appliesForceToParticles()
 	return false;
 } 
 
-/**
- * Spawn all particles at once. This function's intended use is for recyclable particles mainly.
- */
-void ParticleSystem::spawnAllParticles()
-{
-	VirtualList particles = this->particles;
-	this->particles = NULL;
-
-	while(this->aliveParticlesCount < this->maximumNumberOfAliveParticles)
-	{
-		Particle particle = ParticleSystem::spawnParticle(this);
-		Particle::hide(particle);
-		VirtualList::pushBack(particles, particle);
-		this->aliveParticlesCount++;
-	}
-
-	this->particles = particles;
-}
-
 const SpriteSpec* ParticleSystem::getSpriteSpec()
 {
 	if(0 == this->numberOfSpriteSpecs)
@@ -524,7 +484,7 @@ void ParticleSystem::particleRecycled(Particle particle __attribute__ ((unused))
 Particle ParticleSystem::spawnParticle()
 {
 	// call the appropriate allocator to support inheritance
-	Particle particle = ((Particle (*)(const ParticleSpec*, ParticleSystem)) ((ParticleSystemSpec*)this->entitySpec)->particleSpec->allocator)(((ParticleSystemSpec*)this->entitySpec)->particleSpec, this);
+	Particle particle = ((Particle (*)(const ParticleSpec*)) ((ParticleSystemSpec*)this->entitySpec)->particleSpec->allocator)(((ParticleSystemSpec*)this->entitySpec)->particleSpec);
 
 	int16 lifeSpan = ((ParticleSystemSpec*)this->entitySpec)->particleSpec->minimumLifeSpan + Math::random(_gameRandomSeed, ((ParticleSystemSpec*)this->entitySpec)->particleSpec->lifeSpanDelta);
 	Vector3D position = ParticleSystem::getParticleSpawnPosition(this);
@@ -545,16 +505,6 @@ Particle ParticleSystem::spawnParticle()
 	return particle;
 }
 
-/**
- * Handles incoming messages
- *
- * @param telegram	The received message
- * @return			Always returns false
- */
-bool ParticleSystem::handleMessage(Telegram telegram __attribute__ ((unused)))
-{
-	return false;
-}
 
 void ParticleSystem::show()
 {
@@ -668,15 +618,6 @@ int32 ParticleSystem::computeNextSpawnTime()
 
 /**
  * @public
- * @param maximumNumberOfAliveParticles		Maximum number of particles alive
- */
-void ParticleSystem::setMaximumNumberOfAliveParticles(uint8 maximumNumberOfAliveParticles)
-{
-	this->maximumNumberOfAliveParticles = maximumNumberOfAliveParticles;
-}
-
-/**
- * @public
  * @param selfDestroyWhenDone		Set to true to destroy the particle system when all the particles have expired
  */
 void ParticleSystem::setSelfDestroyWhenDone(bool selfDestroyWhenDone)
@@ -725,11 +666,6 @@ void ParticleSystem::unpause()
 bool ParticleSystem::isPaused()
 {
 	return this->paused && 0 == this->aliveParticlesCount;
-}
-
-const AnimationFunction** ParticleSystem::getAnimationFunctions()
-{
-	return ((ParticleSystemSpec*)this->entitySpec)->particleSpec->animationFunctions;
 }
 
 void ParticleSystem::print(int16 x, int16 y)

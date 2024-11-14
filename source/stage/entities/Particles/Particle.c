@@ -33,7 +33,7 @@
 //=========================================================================================================
 
 //---------------------------------------------------------------------------------------------------------
-void Particle::constructor(const ParticleSpec* particleSpec __attribute__((unused)), ParticleSystem creator __attribute__((unused)))
+void Particle::constructor(const ParticleSpec* particleSpec __attribute__((unused)))
 {
 	// construct base Container
 	Base::constructor();

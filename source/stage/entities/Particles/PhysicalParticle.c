@@ -26,9 +26,9 @@
 //=========================================================================================================
 
 //---------------------------------------------------------------------------------------------------------
-void PhysicalParticle::constructor(const PhysicalParticleSpec* physicalParticleSpec, ParticleSystem creator)
+void PhysicalParticle::constructor(const PhysicalParticleSpec* physicalParticleSpec)
 {
-	Base::constructor(&physicalParticleSpec->particleSpec, creator);
+	Base::constructor(&physicalParticleSpec->particleSpec);
 
 	this->physicalParticleSpec = physicalParticleSpec;
 	fixed_t mass = this->physicalParticleSpec->minimumMass + (this->physicalParticleSpec->massDelta ? Math::random(_gameRandomSeed, this->physicalParticleSpec->massDelta) : 0);

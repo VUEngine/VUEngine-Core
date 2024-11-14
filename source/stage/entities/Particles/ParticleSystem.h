@@ -91,6 +91,8 @@ typedef const ParticleSystemSpec ParticleSystemROMSpec;
 /// @ingroup stage-entities-particles
 class ParticleSystem : Entity
 {
+	/// @protectedsection
+
 	/// Linked list of particles
 	VirtualList particles;
 
@@ -140,22 +142,29 @@ class ParticleSystem : Entity
 	bool applyForceToParticles;
 
 	/// @publicsection
+
+	/// Class' constructor
+	/// @param particleSystemSpec: Specification that determines how to configure the particle system
+	/// @param internalId: ID to internally identify this instance
+	/// @param name: Instance's name
 	void constructor(const ParticleSystemSpec* particleSystemSpec,  int16 internalId, const char* const name);
+
 	void setParticleSystemSpec(ParticleSystemSpec* particleSystemSpec, bool reset);
-	bool handleMessage(Telegram telegram);
-	bool isPaused();
+
+	void deleteAllParticles();
+
+	void start();
 	void pause();
 	void unpause();
-	void spawnAllParticles();
-	void start();
-	bool getLoop();
+
+	bool isPaused();
+
 	void setLoop(bool value);
-	void deleteAllParticles();
-	void expireAllParticles();
-	void setMaximumNumberOfAliveParticles(uint8 maximumNumberOfAliveParticles);
+	bool getLoop();
+
 	void setSelfDestroyWhenDone(bool selfDestroyWhenDone);
 	void setElapsedTime(uint32 elapsedTime);
-	const AnimationFunction** getAnimationFunctions();
+
 	void print(int16 x, int16 y);
 
 	override void update();
@@ -164,6 +173,7 @@ class ParticleSystem : Entity
 	override void show();
 	override void hide();
 	override void setTransparent(uint8 transparent);
+
 	virtual void particleSpawned(Particle particle);
 	virtual void particleRecycled(Particle particle);
 }
