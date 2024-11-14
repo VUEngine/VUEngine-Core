@@ -103,15 +103,13 @@ class Particle : SpatialObject
 	/// @param movementType: Movement type on each axis
 	/// @param animationFunctions: Array of animations
 	/// @param animationName: Animation to play
-	/// @param forceAnimation: If true, the animation starts to play even if already playing
-	void setup(const SpriteSpec* spriteSpec, const WireframeSpec* wireframeSpec, int16 lifeSpan, const Vector3D* position, const Vector3D* force, uint32 movementType, const AnimationFunction** animationFunctions, const char* animationName, bool forceAnimation);
+	void setup(const SpriteSpec* spriteSpec, const WireframeSpec* wireframeSpec, int16 lifeSpan, const Vector3D* position, const Vector3D* force, uint32 movementType, const AnimationFunction** animationFunctions, const char* animationName);
 
 	/// Configure the particle with the provided arguments after unpausing the game.
 	/// @param spriteSpec: Specification for a sprite to add to the particle
 	/// @param wireframeSpec: Specification for a wireframe to add to the particle
 	/// @param animationFunctions: Array of animations
 	/// @param animationName: Animation to play
-	/// @param forceAnimation: If true, the animation starts to play even if already playing
 	void resume(const SpriteSpec* spriteSpec, const WireframeSpec* wireframeSpec, const AnimationFunction** animationFunctions, const char* animationName);
 
 	/// Prepares the particle to become inactive in this state.

@@ -1,4 +1,4 @@
-/**
+/*
  * VUEngine Core
  *
  * © Jorge Eremiev <jorgech3@gmail.com> and Christian Radke <c.radke@posteo.de>
@@ -131,9 +131,6 @@ class ParticleSystem : Entity
 	/// of spawned particles equals the maximum number of alive particles
 	bool loop;
 	
-	/// Flag to trigger animations in the particles
-	bool animationChanged;
-
 	/// If true, the particle system auto destroys when the total number 
 	/// of spawned particles equals the maximum number of alive particles
 	bool selfDestroyWhenDone;
@@ -149,7 +146,8 @@ class ParticleSystem : Entity
 	/// @param name: Instance's name
 	void constructor(const ParticleSystemSpec* particleSystemSpec,  int16 internalId, const char* const name);
 
-	void setParticleSystemSpec(ParticleSystemSpec* particleSystemSpec, bool reset);
+	/// Set the particle systems's spec.
+	/// @param particleSystemSpec: Specification that determines how to configure the particle system
 
 	void deleteAllParticles();
 
@@ -167,15 +165,17 @@ class ParticleSystem : Entity
 
 	void print(int16 x, int16 y);
 
+	virtual void particleSpawned(Particle particle);
+	virtual void particleRecycled(Particle particle);
+
 	override void update();
 	override void resume();
 	override void suspend();
 	override void show();
 	override void hide();
 	override void setTransparent(uint8 transparent);
+	override void setSpec(void* particleSystemSpec);
 
-	virtual void particleSpawned(Particle particle);
-	virtual void particleRecycled(Particle particle);
 }
 
 

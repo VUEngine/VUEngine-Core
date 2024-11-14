@@ -1,4 +1,4 @@
-/**
+/*
  * VUEngine Core
  *
  * © Jorge Eremiev <jorgech3@gmail.com> and Christian Radke <c.radke@posteo.de>
@@ -55,11 +55,10 @@ void ParticleSystem::constructor(const ParticleSystemSpec* particleSystemSpec, i
 	this->spawnPositionDisplacement = Vector3D::zero();
 	this->spawnForceDelta = Vector3D::zero();
 	this->maximumNumberOfAliveParticles = 0;
-	this->animationChanged = true;
 	this->selfDestroyWhenDone = false;
 	this->elapsedTime = __MILLISECONDS_PER_SECOND / __TARGET_FPS;
 
-	ParticleSystem::setup(this, particleSystemSpec);
+	ParticleSystem::setup(this);
 }
 
 /**
@@ -77,31 +76,22 @@ void ParticleSystem::destructor()
 /**
  * Class set ParticleSystemSpec
  */
-void ParticleSystem::setParticleSystemSpec(ParticleSystemSpec* particleSystemSpec, bool reset)
+void ParticleSystem::setSpec(void* particleSystemSpec)
 {
-	if(reset)
+	if(NULL == particleSystemSpec)
 	{
-		ParticleSystem::reset(this);
-		ParticleSystem::setup(this, particleSystemSpec);
+		return;
 	}
-	else if(NULL != particleSystemSpec && particleSystemSpec != (ParticleSystemSpec*)this->entitySpec)
-	{
-		this->animationChanged = ((ParticleSystemSpec*)this->entitySpec)->particleSpec->initialAnimation != particleSystemSpec->particleSpec->initialAnimation;
-		ParticleSystem::setSpec(this, (EntitySpec*)particleSystemSpec);
-		ParticleSystem::configure(this);
-	}
+
+	Base::setSpec(this, particleSystemSpec);
+	ParticleSystem::setup(this);
 }
 
 /**
  * Class setup
  */
-void ParticleSystem::setup(const ParticleSystemSpec* particleSystemSpec)
+void ParticleSystem::setup()
 {
-	this->animationChanged = NULL == this->entitySpec || ((ParticleSystemSpec*)this->entitySpec)->particleSpec->initialAnimation != particleSystemSpec->particleSpec->initialAnimation;
-
-	// save spec
-	ParticleSystem::setSpec(this, (EntitySpec*)particleSystemSpec);
-
 	NM_ASSERT(this->entitySpec, "ParticleSystem::setup: NULL spec");
 
 	if(NULL == this->entitySpec)
@@ -109,8 +99,9 @@ void ParticleSystem::setup(const ParticleSystemSpec* particleSystemSpec)
 		return;
 	}
 
-	this->particles = new VirtualList();
+	ParticleSystem::reset(this);
 
+	this->particles = new VirtualList();
 	this->aliveParticlesCount = 0;
 	this->totalSpawnedParticles = 0;
 	this->loop = true;
@@ -334,11 +325,11 @@ bool ParticleSystem::recycleParticle()
 			if(this->applyForceToParticles)
 			{
 				Vector3D force = ParticleSystem::getParticleSpawnForce(this);
-				Particle::setup(particle, ParticleSystem::getSpriteSpec(this), ParticleSystem::getWireframeSpec(this), lifeSpan, &position, &force, ((ParticleSystemSpec*)this->entitySpec)->movementType, ((ParticleSystemSpec*)this->entitySpec)->particleSpec->animationFunctions, ((ParticleSystemSpec*)this->entitySpec)->particleSpec->initialAnimation, this->animationChanged);
+				Particle::setup(particle, ParticleSystem::getSpriteSpec(this), ParticleSystem::getWireframeSpec(this), lifeSpan, &position, &force, ((ParticleSystemSpec*)this->entitySpec)->movementType, ((ParticleSystemSpec*)this->entitySpec)->particleSpec->animationFunctions, ((ParticleSystemSpec*)this->entitySpec)->particleSpec->initialAnimation);
 			}
 			else
 			{
-				Particle::setup(particle, ParticleSystem::getSpriteSpec(this), ParticleSystem::getWireframeSpec(this), lifeSpan, &position, NULL, ((ParticleSystemSpec*)this->entitySpec)->movementType, ((ParticleSystemSpec*)this->entitySpec)->particleSpec->animationFunctions, ((ParticleSystemSpec*)this->entitySpec)->particleSpec->initialAnimation, this->animationChanged);
+				Particle::setup(particle, ParticleSystem::getSpriteSpec(this), ParticleSystem::getWireframeSpec(this), lifeSpan, &position, NULL, ((ParticleSystemSpec*)this->entitySpec)->movementType, ((ParticleSystemSpec*)this->entitySpec)->particleSpec->animationFunctions, ((ParticleSystemSpec*)this->entitySpec)->particleSpec->initialAnimation);
 			}
 
 			if(ParticleSystem::overrides(this, particleRecycled))
@@ -495,7 +486,7 @@ Particle ParticleSystem::spawnParticle()
 		force = ParticleSystem::getParticleSpawnForce(this);
 	}
 
-	Particle::setup(particle, ParticleSystem::getSpriteSpec(this), ParticleSystem::getWireframeSpec(this), lifeSpan, &position, &force, ((ParticleSystemSpec*)this->entitySpec)->movementType, ((ParticleSystemSpec*)this->entitySpec)->particleSpec->animationFunctions, ((ParticleSystemSpec*)this->entitySpec)->particleSpec->initialAnimation, this->animationChanged);
+	Particle::setup(particle, ParticleSystem::getSpriteSpec(this), ParticleSystem::getWireframeSpec(this), lifeSpan, &position, &force, ((ParticleSystemSpec*)this->entitySpec)->movementType, ((ParticleSystemSpec*)this->entitySpec)->particleSpec->animationFunctions, ((ParticleSystemSpec*)this->entitySpec)->particleSpec->initialAnimation);
 
 	if(ParticleSystem::overrides(this, particleSpawned))
 	{

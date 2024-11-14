@@ -191,7 +191,6 @@ class Entity : Container
 	bool isSpriteVisible(Sprite sprite, int32 pad);
 	VirtualList getColliders();
 	void updateSprites(uint32 updatePosition, uint32 updateScale, uint32 updateRotation, uint32 updateProjection);
-	void setSpec(void* entitySpec);
 	void setSize(Size size);
 	bool isInCameraRange(int16 padding, bool recursive);
 	fixed_t getWidth();
@@ -201,6 +200,7 @@ class Entity : Container
 	virtual void setNormalizedDirection(NormalizedDirection normalizedDirection);
 	virtual void setExtraInfo(void* extraInfo);
 	virtual bool respawn();
+	virtual void setSpec(void* entitySpec);
 
 	/// Retrieve the object's radius.
 	/// @return Radius

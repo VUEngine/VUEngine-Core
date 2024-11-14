@@ -53,7 +53,7 @@ void Particle::destructor()
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------
-void Particle::setup(const SpriteSpec* spriteSpec, const WireframeSpec* wireframeSpec, int16 lifeSpan, const Vector3D* position, const Vector3D* force, uint32 movementType, const AnimationFunction** animationFunctions, const char* animationName, bool forceAnimation)
+void Particle::setup(const SpriteSpec* spriteSpec, const WireframeSpec* wireframeSpec, int16 lifeSpan, const Vector3D* position, const Vector3D* force, uint32 movementType, const AnimationFunction** animationFunctions, const char* animationName)
 {
 	if(Particle::overrides(this, reset))
 	{
@@ -81,7 +81,7 @@ void Particle::setup(const SpriteSpec* spriteSpec, const WireframeSpec* wirefram
 
 	Particle::addSprite(this, spriteSpec);
 	Particle::addWireframe(this, wireframeSpec);
-	Particle::changeAnimation(this, animationFunctions, animationName, forceAnimation);
+	Particle::changeAnimation(this, animationFunctions, animationName);
 	Particle::setLifeSpan(this, lifeSpan);
 
 	if(NULL != force)
@@ -99,7 +99,7 @@ void Particle::resume(const SpriteSpec* spriteSpec, const WireframeSpec* wirefra
 {
 	Particle::addSprite(this, spriteSpec);
 	Particle::addWireframe(this, wireframeSpec);
-	Particle::changeAnimation(this, animationFunctions, animationName, true);
+	Particle::changeAnimation(this, animationFunctions, animationName);
 }
 //---------------------------------------------------------------------------------------------------------
 void Particle::suspend()
@@ -280,11 +280,11 @@ void Particle::destroyGraphics()
 	this->wireframe = NULL;
 }
 //---------------------------------------------------------------------------------------------------------
-void Particle::changeAnimation(const AnimationFunction** animationFunctions, const char* animationName, bool force)
+void Particle::changeAnimation(const AnimationFunction** animationFunctions, const char* animationName)
 {
 	if(!isDeleted(this->sprite) && NULL != animationName)
 	{
-		if(force || !Sprite::replay(this->sprite, animationFunctions))
+		if(!Sprite::replay(this->sprite, animationFunctions))
 		{
 			Sprite::play(this->sprite, animationFunctions, (char*)animationName, ListenerObject::safeCast(this));
 		}
