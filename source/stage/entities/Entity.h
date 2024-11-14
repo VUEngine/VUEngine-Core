@@ -220,7 +220,7 @@ class Entity : Container
 
 	override void addChild(Container child);
 	override void createComponents();
-	override void setTransparent(uint8 transparent);
+	override void setTransparency(uint8 transparency);
 	override bool handlePropagatedMessage(int32 message);
 	override void suspend();
 	override void resume();

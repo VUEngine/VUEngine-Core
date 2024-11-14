@@ -40,8 +40,8 @@ abstract class VisualComponent : Component
 {
 	/// @protectedsection
 
-	/// Transparent mode (__TRANSPARENT_NONE, __TRANSPARENT_EVEN or __TRANSPARENT_ODD)
-	uint8 transparent;
+	/// Transparecy effect (__TRANSPARENCY_NONE, __TRANSPARENCY_EVEN or __TRANSPARENCY_ODD)
+	uint8 transparency;
 
 	/// Show state flag (__HIDE, __SHOW_NEXT_FRAME, __SHOW)
 	uint8 show;
@@ -62,13 +62,13 @@ abstract class VisualComponent : Component
 	/// Make the visual component invisible.
 	void hide();
 
-	/// Retrieve the transparent mode
-	/// @return Transparent mode
+	/// Retrieve the transparency mode
+	/// @return Transparecy effect
 	uint8 getTransparent();
 
-	/// Set the transparent mode
-	/// @param value: Transparent mode (__TRANSPARENT_NONE, __TRANSPARENT_EVEN or __TRANSPARENT_ODD)
-	void setTransparent(uint8 value);
+	/// Set the transparency mode
+	/// @param transparency: Transparecy effect (__TRANSPARENCY_NONE, __TRANSPARENCY_EVEN or __TRANSPARENCY_ODD)
+	void setTransparency(uint8 transparency);
 }
 
 

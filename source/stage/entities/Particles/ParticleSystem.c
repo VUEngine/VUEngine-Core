@@ -8,9 +8,9 @@
  */
 
 
-//---------------------------------------------------------------------------------------------------------
-//												INCLUDES
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// INCLUDES
+//=========================================================================================================
 
 #include <Particle.h>
 #include <Printing.h>
@@ -21,27 +21,20 @@
 #include "ParticleSystem.h"
 
 
-//---------------------------------------------------------------------------------------------------------
-//											CLASS'S DEFINITION
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// CLASS' DECLARATIONS
+//=========================================================================================================
 
 friend class Particle;
 friend class VirtualNode;
 friend class VirtualList;
 
 
-//---------------------------------------------------------------------------------------------------------
-//												CLASS'S METHODS
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// CLASS' PUBLIC METHODS
+//=========================================================================================================
 
-/**
- * Class constructor
- *
- * @param particleSystemSpec	Spec of the ParticleSystem
- * @param id
- * @param internalId
- * @param name
- */
+//---------------------------------------------------------------------------------------------------------
 void ParticleSystem::constructor(const ParticleSystemSpec* particleSystemSpec, int16 internalId, const char* const name)
 {
 	// construct base
@@ -60,99 +53,54 @@ void ParticleSystem::constructor(const ParticleSystemSpec* particleSystemSpec, i
 
 	ParticleSystem::setup(this);
 }
-
-/**
- * Class destructor
- */
+//---------------------------------------------------------------------------------------------------------
 void ParticleSystem::destructor()
 {
-	ParticleSystem::reset(this);
+	ParticleSystem::deleteAllParticles(this);
+
+	if(!isDeleted(this->particles))
+	{
+		delete this->particles;
+		this->particles = NULL;
+	}
 
 	// destroy the super Container
 	// must always be called at the end of the destructor
 	Base::destructor();
 }
-
-/**
- * Class set ParticleSystemSpec
- */
-void ParticleSystem::setSpec(void* particleSystemSpec)
+//---------------------------------------------------------------------------------------------------------
+void ParticleSystem::start()
 {
-	if(NULL == particleSystemSpec)
-	{
-		return;
-	}
-
-	Base::setSpec(this, particleSystemSpec);
-	ParticleSystem::setup(this);
-}
-
-/**
- * Class setup
- */
-void ParticleSystem::setup()
-{
-	NM_ASSERT(this->entitySpec, "ParticleSystem::setup: NULL spec");
-
-	if(NULL == this->entitySpec)
-	{
-		return;
-	}
-
-	ParticleSystem::reset(this);
-
-	this->particles = new VirtualList();
-	this->aliveParticlesCount = 0;
-	this->totalSpawnedParticles = 0;
-	this->loop = true;
-	this->paused = !((ParticleSystemSpec*)this->entitySpec)->autoStart;
-	this->maximumNumberOfAliveParticles = 0;
-
-	ParticleSystem::configure(this);
-
-	this->update = ((ParticleSystemSpec*)this->entitySpec)->autoStart;
-	this->applyForceToParticles = ParticleSystem::appliesForceToParticles(this);
-}
-
-void ParticleSystem::configure()
-{
-	this->size.x += __ABS(((ParticleSystemSpec*)this->entitySpec)->maximumRelativeSpawnPosition.x - ((ParticleSystemSpec*)this->entitySpec)->minimumRelativeSpawnPosition.x);
-	this->size.y += __ABS(((ParticleSystemSpec*)this->entitySpec)->maximumRelativeSpawnPosition.y - ((ParticleSystemSpec*)this->entitySpec)->minimumRelativeSpawnPosition.y);
-	this->size.z += __ABS(((ParticleSystemSpec*)this->entitySpec)->maximumRelativeSpawnPosition.z - ((ParticleSystemSpec*)this->entitySpec)->minimumRelativeSpawnPosition.z);
-
-	this->spawnPositionDisplacement = Vector3D::absolute(Vector3D::sub(((ParticleSystemSpec*)this->entitySpec)->maximumRelativeSpawnPosition, ((ParticleSystemSpec*)this->entitySpec)->minimumRelativeSpawnPosition));
-	this->spawnForceDelta = Vector3D::absolute(Vector3D::sub(((ParticleSystemSpec*)this->entitySpec)->maximumForce, ((ParticleSystemSpec*)this->entitySpec)->minimumForce));
-
+	this->update = true;
 	this->nextSpawnTime = 0;
-	this->maximumNumberOfAliveParticles = ((ParticleSystemSpec*)this->entitySpec)->maximumNumberOfAliveParticles;
-
-	// Calculate the number of sprite specs
-	for(this->numberOfSpriteSpecs = 0; 0 <= this->numberOfSpriteSpecs && NULL != ((ParticleSystemSpec*)this->entitySpec)->spriteSpecs && NULL != ((ParticleSystemSpec*)this->entitySpec)->spriteSpecs[this->numberOfSpriteSpecs]; this->numberOfSpriteSpecs++);
-	
-	// Calculate the number of wireframe specs
-	for(this->numberOfWireframeSpecs = 0; 0 <= this->numberOfWireframeSpecs && NULL != ((ParticleSystemSpec*)this->entitySpec)->wireframeSpecs && NULL != ((ParticleSystemSpec*)this->entitySpec)->wireframeSpecs[this->numberOfWireframeSpecs]; this->numberOfWireframeSpecs++);
+	this->totalSpawnedParticles = 0;
+	this->paused = false;
+	ParticleSystem::show(this);
 }
-
-/**
- * Class reset
- */
-void ParticleSystem::reset()
+//---------------------------------------------------------------------------------------------------------
+void ParticleSystem::pause()
 {
-	if(!isDeleted(this->particles))
+	this->paused = true;
+}
+//---------------------------------------------------------------------------------------------------------
+void ParticleSystem::unpause()
+{
+	this->update = true;
+
+	if(this->paused)
 	{
-		VirtualList::deleteData(this->particles);
-		delete this->particles;
-		this->particles = NULL;
+		this->paused = false;
+		this->nextSpawnTime = 0;
 	}
 
-	this->aliveParticlesCount	= 0;
+	this->transformation.invalid |= __INVALIDATE_POSITION;
 }
-
-void ParticleSystem::setLoop(bool value)
+//---------------------------------------------------------------------------------------------------------
+bool ParticleSystem::isPaused()
 {
-	this->loop = value;
+	return this->paused && 0 == this->aliveParticlesCount;
 }
-
+//---------------------------------------------------------------------------------------------------------
 void ParticleSystem::deleteAllParticles()
 {
 	if(!isDeleted(this->particles))
@@ -162,49 +110,92 @@ void ParticleSystem::deleteAllParticles()
 
 	this->aliveParticlesCount = 0;
 }
-
+//---------------------------------------------------------------------------------------------------------
+void ParticleSystem::setLoop(bool value)
+{
+	this->loop = value;
+}
+//---------------------------------------------------------------------------------------------------------
 bool ParticleSystem::getLoop()
 {
 	return this->loop;
 }
-
-/**
- * @private
- */
-void ParticleSystem::processExpiredParticles()
+//---------------------------------------------------------------------------------------------------------
+void ParticleSystem::setSelfDestroyWhenDone(bool selfDestroyWhenDone)
 {
-	if(!((ParticleSystemSpec*)this->entitySpec)->recycleParticles)
+	this->selfDestroyWhenDone = selfDestroyWhenDone;
+}
+//---------------------------------------------------------------------------------------------------------
+void ParticleSystem::setElapsedTime(uint32 elapsedTime)
+{
+	this->elapsedTime = elapsedTime;
+}
+//---------------------------------------------------------------------------------------------------------
+void ParticleSystem::print(int16 x, int16 y)
+{
+	Printing::text(Printing::getInstance(), "PARTICLE SYSTEM ", x, y++, NULL);
+	Printing::text(Printing::getInstance(), "Particles", x, ++y, NULL);
+	Printing::text(Printing::getInstance(), "Maximum:    ", x + 1, ++y, NULL);
+	Printing::int32(Printing::getInstance(), this->maximumNumberOfAliveParticles, x + 10, y, NULL);
+	Printing::text(Printing::getInstance(), "Spawned:    ", x + 1, ++y, NULL);
+	Printing::int32(Printing::getInstance(), VirtualList::getCount(this->particles), x + 10, y, NULL);
+	Printing::text(Printing::getInstance(), "Alive:      ", x + 1, ++y, NULL);
+	Printing::int32(Printing::getInstance(), this->aliveParticlesCount, x + 10, y, NULL);
+}
+//---------------------------------------------------------------------------------------------------------
+void ParticleSystem::particleSpawned(Particle particle __attribute__ ((unused)))
+{}
+//---------------------------------------------------------------------------------------------------------
+void ParticleSystem::particleRecycled(Particle particle __attribute__ ((unused)))
+{}
+//---------------------------------------------------------------------------------------------------------
+void ParticleSystem::show()
+{
+	if(!this->hidden)
 	{
-		if(!isDeleted(this->particles))
+		return;
+	}
+
+	Base::show(this);
+
+	if(isDeleted(this->particles))
+	{
+		return;
+	}
+
+	for(VirtualNode node = this->particles->head; NULL != node; node = node->next)
+	{
+		Particle particle = Particle::safeCast(node->data);
+
+		if(particle->expired)
 		{
-			VirtualList particles = this->particles;
-			this->particles = NULL;
-
-			for(VirtualNode node = particles->head, nextNode; NULL != node; node = nextNode)
-			{
-				nextNode = node->next;
-
-				Particle particle = Particle::safeCast(node->data);
-
-				if(particle->expired)
-				{
-					VirtualList::removeNode(particles, node);
-
-					NM_ASSERT(!isDeleted(particle), "ParticleSystem::processExpiredParticles: deleted particle");
-
-					delete particle;
-					this->aliveParticlesCount--;
-				}
-			}
-
-			this->particles = particles;
+			continue;
 		}
+
+		Particle::show(particle);
 	}
 }
+//---------------------------------------------------------------------------------------------------------
+void ParticleSystem::hide()
+{
+	if(this->hidden)
+	{
+		return;
+	}
 
-/**
- * @public
- */
+	Base::hide(this);
+
+	if(isDeleted(this->particles))
+	{
+		return;
+	}
+
+	for(VirtualNode node = this->particles->head; NULL != node; node = node->next)
+	{
+		Particle::hide(Particle::safeCast(node->data));
+	}
+}
+//---------------------------------------------------------------------------------------------------------
 void ParticleSystem::update()
 {
 	if(ParticleSystem::isPaused(this))
@@ -306,11 +297,147 @@ void ParticleSystem::update()
 		while(++spawnedParticles < ((ParticleSystemSpec*)this->entitySpec)->maximumNumberOfParticlesToSpawnPerCycle && 0 == ((ParticleSystemSpec*)this->entitySpec)->minimumSpawnDelay && this->aliveParticlesCount < this->maximumNumberOfAliveParticles);
 	}
 }
+//---------------------------------------------------------------------------------------------------------
+void ParticleSystem::suspend()
+{
+	Base::suspend(this);
 
-/**
- * @private
- * @return		Boolean
- */
+	ParticleSystem::processExpiredParticles(this);
+
+	if(isDeleted(this->particles))
+	{
+		return;
+	}
+
+	for(VirtualNode node = this->particles->head; NULL != node; node = node->next)
+	{
+		Particle::suspend(node->data);
+	}
+}
+//---------------------------------------------------------------------------------------------------------
+void ParticleSystem::resume()
+{
+	if(isDeleted(this->particles))
+	{
+		return;
+	}
+
+	for(VirtualNode node = this->particles->head; NULL != node; node = node->next)
+	{
+		Particle particle = Particle::safeCast(node->data);
+
+		Particle::resume(particle, ParticleSystem::getSpriteSpec(this), ParticleSystem::getWireframeSpec(this), ((ParticleSystemSpec*)this->entitySpec)->particleSpec->animationFunctions, ((ParticleSystemSpec*)this->entitySpec)->particleSpec->initialAnimation);
+	}
+
+	this->nextSpawnTime = ParticleSystem::computeNextSpawnTime(this);
+
+	// Now call base
+	Base::resume(this);
+}
+//---------------------------------------------------------------------------------------------------------
+void ParticleSystem::setTransparency(uint8 transparency)
+{
+	Base::setTransparency(this, transparency);
+
+	if(isDeleted(this->particles))
+	{
+		return;
+	}
+
+	for(VirtualNode node = this->particles->head; NULL != node; node = node->next)
+	{
+		Particle::setTransparency(Particle::safeCast(node->data), transparency);
+	}
+}
+//---------------------------------------------------------------------------------------------------------
+void ParticleSystem::setSpec(void* particleSystemSpec)
+{
+	if(NULL == particleSystemSpec)
+	{
+		return;
+	}
+
+	Base::setSpec(this, particleSystemSpec);
+	ParticleSystem::setup(this);
+}
+//---------------------------------------------------------------------------------------------------------
+
+//=========================================================================================================
+// CLASS' PRIVATE METHODS
+//=========================================================================================================
+
+//---------------------------------------------------------------------------------------------------------
+void ParticleSystem::setup()
+{
+	NM_ASSERT(this->entitySpec, "ParticleSystem::setup: NULL spec");
+
+	if(NULL == this->entitySpec)
+	{
+		return;
+	}
+
+	ParticleSystem::deleteAllParticles(this);
+
+	if(isDeleted(this->particles))
+	{
+		this->particles = new VirtualList();
+	}
+
+	this->aliveParticlesCount = 0;
+	this->totalSpawnedParticles = 0;
+	this->loop = true;
+	this->paused = !((ParticleSystemSpec*)this->entitySpec)->autoStart;
+	this->maximumNumberOfAliveParticles = 0;
+
+	ParticleSystem::configure(this);
+
+	this->update = ((ParticleSystemSpec*)this->entitySpec)->autoStart;
+	this->applyForceToParticles = ParticleSystem::appliesForceToParticles(this);
+}
+//---------------------------------------------------------------------------------------------------------
+void ParticleSystem::configure()
+{
+	this->size.x += __ABS(((ParticleSystemSpec*)this->entitySpec)->maximumRelativeSpawnPosition.x - ((ParticleSystemSpec*)this->entitySpec)->minimumRelativeSpawnPosition.x);
+	this->size.y += __ABS(((ParticleSystemSpec*)this->entitySpec)->maximumRelativeSpawnPosition.y - ((ParticleSystemSpec*)this->entitySpec)->minimumRelativeSpawnPosition.y);
+	this->size.z += __ABS(((ParticleSystemSpec*)this->entitySpec)->maximumRelativeSpawnPosition.z - ((ParticleSystemSpec*)this->entitySpec)->minimumRelativeSpawnPosition.z);
+
+	this->spawnPositionDisplacement = Vector3D::absolute(Vector3D::sub(((ParticleSystemSpec*)this->entitySpec)->maximumRelativeSpawnPosition, ((ParticleSystemSpec*)this->entitySpec)->minimumRelativeSpawnPosition));
+	this->spawnForceDelta = Vector3D::absolute(Vector3D::sub(((ParticleSystemSpec*)this->entitySpec)->maximumForce, ((ParticleSystemSpec*)this->entitySpec)->minimumForce));
+
+	this->nextSpawnTime = 0;
+	this->maximumNumberOfAliveParticles = ((ParticleSystemSpec*)this->entitySpec)->maximumNumberOfAliveParticles;
+
+	// Calculate the number of sprite specs
+	for(this->numberOfSpriteSpecs = 0; 0 <= this->numberOfSpriteSpecs && NULL != ((ParticleSystemSpec*)this->entitySpec)->spriteSpecs && NULL != ((ParticleSystemSpec*)this->entitySpec)->spriteSpecs[this->numberOfSpriteSpecs]; this->numberOfSpriteSpecs++);
+	
+	// Calculate the number of wireframe specs
+	for(this->numberOfWireframeSpecs = 0; 0 <= this->numberOfWireframeSpecs && NULL != ((ParticleSystemSpec*)this->entitySpec)->wireframeSpecs && NULL != ((ParticleSystemSpec*)this->entitySpec)->wireframeSpecs[this->numberOfWireframeSpecs]; this->numberOfWireframeSpecs++);
+}
+//---------------------------------------------------------------------------------------------------------
+Particle ParticleSystem::spawnParticle()
+{
+	// call the appropriate allocator to support inheritance
+	Particle particle = ((Particle (*)(const ParticleSpec*)) ((ParticleSystemSpec*)this->entitySpec)->particleSpec->allocator)(((ParticleSystemSpec*)this->entitySpec)->particleSpec);
+
+	int16 lifeSpan = ((ParticleSystemSpec*)this->entitySpec)->particleSpec->minimumLifeSpan + Math::random(_gameRandomSeed, ((ParticleSystemSpec*)this->entitySpec)->particleSpec->lifeSpanDelta);
+	Vector3D position = ParticleSystem::getParticleSpawnPosition(this);
+	Vector3D force = Vector3D::zero();
+
+	if(this->applyForceToParticles)
+	{
+		force = ParticleSystem::getParticleSpawnForce(this);
+	}
+
+	Particle::setup(particle, ParticleSystem::getSpriteSpec(this), ParticleSystem::getWireframeSpec(this), lifeSpan, &position, &force, ((ParticleSystemSpec*)this->entitySpec)->movementType, ((ParticleSystemSpec*)this->entitySpec)->particleSpec->animationFunctions, ((ParticleSystemSpec*)this->entitySpec)->particleSpec->initialAnimation);
+
+	if(ParticleSystem::overrides(this, particleSpawned))
+	{
+		ParticleSystem::particleSpawned(this, particle);
+	}
+
+	return particle;
+}
+//---------------------------------------------------------------------------------------------------------
 bool ParticleSystem::recycleParticle()
 {
 	for(VirtualNode node = this->particles->head; NULL != node; node = node->next)
@@ -343,11 +470,7 @@ bool ParticleSystem::recycleParticle()
 
 	return false;
 }
-
-/**
- * @private
- * @return		Spawn position
- */
+//---------------------------------------------------------------------------------------------------------
 Vector3D ParticleSystem::getParticleSpawnPosition()
 {
 	Vector3D position = this->transformation.position;
@@ -369,11 +492,7 @@ Vector3D ParticleSystem::getParticleSpawnPosition()
 
 	return position;
 }
-
-/**
- * @private
- * @return		Vector3D
- */
+//---------------------------------------------------------------------------------------------------------
 Vector3D ParticleSystem::getParticleSpawnForce()
 {
 	Vector3D force = ((ParticleSystemSpec*)this->entitySpec)->minimumForce;
@@ -395,11 +514,7 @@ Vector3D ParticleSystem::getParticleSpawnForce()
 
 	return force;
 }
-
-/**
- * @private
- * @return		Bool
- */
+//---------------------------------------------------------------------------------------------------------
 bool ParticleSystem::appliesForceToParticles()
 {
 	if
@@ -424,7 +539,7 @@ bool ParticleSystem::appliesForceToParticles()
 
 	return false;
 } 
-
+//---------------------------------------------------------------------------------------------------------
 const SpriteSpec* ParticleSystem::getSpriteSpec()
 {
 	if(0 == this->numberOfSpriteSpecs)
@@ -441,7 +556,7 @@ const SpriteSpec* ParticleSystem::getSpriteSpec()
 
 	return (const SpriteSpec*)((ParticleSystemSpec*)this->entitySpec)->spriteSpecs[specIndex];
 }
-
+//---------------------------------------------------------------------------------------------------------
 const WireframeSpec* ParticleSystem::getWireframeSpec()
 {
 	if(0 == this->numberOfWireframeSpecs)
@@ -458,215 +573,40 @@ const WireframeSpec* ParticleSystem::getWireframeSpec()
 
 	return (const WireframeSpec*)((ParticleSystemSpec*)this->entitySpec)->wireframeSpecs[specIndex];
 }
-
-void ParticleSystem::particleSpawned(Particle particle __attribute__ ((unused)))
-{
-}
-
-void ParticleSystem::particleRecycled(Particle particle __attribute__ ((unused)))
-{
-}
-
-/**
- * Spawn a particle
- *
- * @private
- */
-Particle ParticleSystem::spawnParticle()
-{
-	// call the appropriate allocator to support inheritance
-	Particle particle = ((Particle (*)(const ParticleSpec*)) ((ParticleSystemSpec*)this->entitySpec)->particleSpec->allocator)(((ParticleSystemSpec*)this->entitySpec)->particleSpec);
-
-	int16 lifeSpan = ((ParticleSystemSpec*)this->entitySpec)->particleSpec->minimumLifeSpan + Math::random(_gameRandomSeed, ((ParticleSystemSpec*)this->entitySpec)->particleSpec->lifeSpanDelta);
-	Vector3D position = ParticleSystem::getParticleSpawnPosition(this);
-	Vector3D force = Vector3D::zero();
-
-	if(this->applyForceToParticles)
-	{
-		force = ParticleSystem::getParticleSpawnForce(this);
-	}
-
-	Particle::setup(particle, ParticleSystem::getSpriteSpec(this), ParticleSystem::getWireframeSpec(this), lifeSpan, &position, &force, ((ParticleSystemSpec*)this->entitySpec)->movementType, ((ParticleSystemSpec*)this->entitySpec)->particleSpec->animationFunctions, ((ParticleSystemSpec*)this->entitySpec)->particleSpec->initialAnimation);
-
-	if(ParticleSystem::overrides(this, particleSpawned))
-	{
-		ParticleSystem::particleSpawned(this, particle);
-	}
-
-	return particle;
-}
-
-
-void ParticleSystem::show()
-{
-	if(!this->hidden)
-	{
-		return;
-	}
-
-	Base::show(this);
-
-	if(isDeleted(this->particles))
-	{
-		return;
-	}
-
-	for(VirtualNode node = this->particles->head; NULL != node; node = node->next)
-	{
-		Particle particle = Particle::safeCast(node->data);
-
-		if(particle->expired)
-		{
-			continue;
-		}
-
-		Particle::show(particle);
-	}
-}
-
-void ParticleSystem::hide()
-{
-	if(this->hidden)
-	{
-		return;
-	}
-
-	Base::hide(this);
-
-	if(isDeleted(this->particles))
-	{
-		return;
-	}
-
-	for(VirtualNode node = this->particles->head; NULL != node; node = node->next)
-	{
-		Particle::hide(Particle::safeCast(node->data));
-	}
-}
-
-void ParticleSystem::setTransparent(uint8 transparent)
-{
-	Base::setTransparent(this, transparent);
-
-	if(isDeleted(this->particles))
-	{
-		return;
-	}
-
-	for(VirtualNode node = this->particles->head; NULL != node; node = node->next)
-	{
-		Particle::setTransparent(Particle::safeCast(node->data), transparent);
-	}
-}
-
-
-void ParticleSystem::resume()
-{
-	if(isDeleted(this->particles))
-	{
-		return;
-	}
-
-	for(VirtualNode node = this->particles->head; NULL != node; node = node->next)
-	{
-		Particle particle = Particle::safeCast(node->data);
-
-		Particle::resume(particle, ParticleSystem::getSpriteSpec(this), ParticleSystem::getWireframeSpec(this), ((ParticleSystemSpec*)this->entitySpec)->particleSpec->animationFunctions, ((ParticleSystemSpec*)this->entitySpec)->particleSpec->initialAnimation);
-	}
-
-	this->nextSpawnTime = ParticleSystem::computeNextSpawnTime(this);
-
-	// Now call base
-	Base::resume(this);
-}
-
-void ParticleSystem::suspend()
-{
-	Base::suspend(this);
-
-	ParticleSystem::processExpiredParticles(this);
-
-	if(isDeleted(this->particles))
-	{
-		return;
-	}
-
-	for(VirtualNode node = this->particles->head; NULL != node; node = node->next)
-	{
-		Particle::suspend(node->data);
-	}
-}
-
-/**
- * @private
- * @return		Time
- */
+//---------------------------------------------------------------------------------------------------------
 int32 ParticleSystem::computeNextSpawnTime()
 {
 	return ((ParticleSystemSpec*)this->entitySpec)->minimumSpawnDelay +
 			(((ParticleSystemSpec*)this->entitySpec)->spawnDelayDelta ? Math::random(_gameRandomSeed, ((ParticleSystemSpec*)this->entitySpec)->spawnDelayDelta) : 0);
 }
-
-/**
- * @public
- * @param selfDestroyWhenDone		Set to true to destroy the particle system when all the particles have expired
- */
-void ParticleSystem::setSelfDestroyWhenDone(bool selfDestroyWhenDone)
+//---------------------------------------------------------------------------------------------------------
+void ParticleSystem::processExpiredParticles()
 {
-	this->selfDestroyWhenDone = selfDestroyWhenDone;
-}
-
-/**
- * @public
- * @param elapsedTime		Elapsed time per tick
- */
-void ParticleSystem::setElapsedTime(uint32 elapsedTime)
-{
-	this->elapsedTime = elapsedTime;
-}
-
-void ParticleSystem::start()
-{
-	this->update = true;
-	this->nextSpawnTime = 0;
-	this->totalSpawnedParticles = 0;
-	this->paused = false;
-//	this->transformed = false;
-	ParticleSystem::show(this);
-}
-
-void ParticleSystem::pause()
-{
-	this->paused = true;
-}
-
-void ParticleSystem::unpause()
-{
-	this->update = true;
-
-	if(this->paused)
+	if(!((ParticleSystemSpec*)this->entitySpec)->recycleParticles)
 	{
-		this->paused = false;
-//		this->transformed = false;
-		this->nextSpawnTime = 0;
+		if(!isDeleted(this->particles))
+		{
+			VirtualList particles = this->particles;
+			this->particles = NULL;
+
+			for(VirtualNode node = particles->head, nextNode; NULL != node; node = nextNode)
+			{
+				nextNode = node->next;
+
+				Particle particle = Particle::safeCast(node->data);
+
+				if(particle->expired)
+				{
+					VirtualList::removeNode(particles, node);
+
+					NM_ASSERT(!isDeleted(particle), "ParticleSystem::processExpiredParticles: deleted particle");
+
+					delete particle;
+					this->aliveParticlesCount--;
+				}
+			}
+
+			this->particles = particles;
+		}
 	}
-
-	this->transformation.invalid |= __INVALIDATE_POSITION;
-}
-
-bool ParticleSystem::isPaused()
-{
-	return this->paused && 0 == this->aliveParticlesCount;
-}
-
-void ParticleSystem::print(int16 x, int16 y)
-{
-	Printing::text(Printing::getInstance(), "PARTICLE SYSTEM ", x, y++, NULL);
-	Printing::text(Printing::getInstance(), "Particles", x, ++y, NULL);
-	Printing::text(Printing::getInstance(), "Maximum:    ", x + 1, ++y, NULL);
-	Printing::int32(Printing::getInstance(), this->maximumNumberOfAliveParticles, x + 10, y, NULL);
-	Printing::text(Printing::getInstance(), "Spawned:    ", x + 1, ++y, NULL);
-	Printing::int32(Printing::getInstance(), VirtualList::getCount(this->particles), x + 10, y, NULL);
-	Printing::text(Printing::getInstance(), "Alive:      ", x + 1, ++y, NULL);
-	Printing::int32(Printing::getInstance(), this->aliveParticlesCount, x + 10, y, NULL);
-}
+}//---------------------------------------------------------------------------------------------------------

@@ -886,9 +886,9 @@ void Container::invalidateTransformation()
 /**
  * Set transparency 
  *
- * @param transparent 	Transparency flag
+ * @param transparency 	Transparency flag
  */
-void Container::setTransparent(uint8 transparent)
+void Container::setTransparency(uint8 transparency)
 {
 	if(NULL == this->children)
 	{
@@ -899,7 +899,7 @@ void Container::setTransparent(uint8 transparent)
 	{
 		Container child = Container::safeCast(node->data);
 
-		Container::setTransparent(child, transparent);
+		Container::setTransparency(child, transparency);
 	}
 }
 
@@ -1278,11 +1278,6 @@ bool Container::getChildren(ClassPointer classPointer, VirtualList children)
 	}
 
 	return 0 < VirtualList::getCount(children);
-}
-
-bool Container::isTransformed()
-{
-	return __VALID_TRANSFORMATION == this->transformation.invalid;
 }
 
 Rotation Container::getRotationFromDirection(const Vector3D* direction, uint8 axis)

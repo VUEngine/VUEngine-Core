@@ -2024,15 +2024,15 @@ void Entity::setCollidersLayersToIgnore(uint32 layersToIgnore)
  *
  * @param uint8	Transparency value
  */
-void Entity::setTransparent(uint8 transparent)
+void Entity::setTransparency(uint8 transparency)
 {
-	Base::setTransparent(this, transparent);
+	Base::setTransparency(this, transparency);
 
 	if(!isDeleted(this->sprites))
 	{
 		for(VirtualNode node = this->sprites->head; NULL != node ; node = node->next)
 		{
-			Sprite::setTransparent(node->data, transparent);
+			Sprite::setTransparency(node->data, transparency);
 		}
 	}
 
@@ -2040,7 +2040,7 @@ void Entity::setTransparent(uint8 transparent)
 	{
 		for(VirtualNode node = this->wireframes->head; NULL != node ; node = node->next)
 		{
-			Wireframe::setTransparent(node->data, transparent);
+			Wireframe::setTransparency(node->data, transparency);
 		}
 	}
 }

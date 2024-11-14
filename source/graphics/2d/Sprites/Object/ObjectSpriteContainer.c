@@ -120,7 +120,7 @@ void ObjectSpriteContainer::constructor()
 	this->firstObjectIndex = 0;
 	this->lastObjectIndex = 0;
 	this->objectSprites = new VirtualList();
-	this->transparent = __TRANSPARENCY_NONE;
+	this->transparency = __TRANSPARENCY_NONE;
 	this->hideSprites = false;
 	this->sortingSpriteNode = NULL;
 }
@@ -256,7 +256,7 @@ void ObjectSpriteContainer::renderSprites(bool evenFrame, bool updateAnimations)
 
 			// Saves on method calls quite a bit when there are lots of
 			// sprites. Don't remove.
-			if(__HIDE == objectSprite->show || (objectSprite->transparent & evenFrame) || (0 > _objectIndex - objectSprite->totalObjects))
+			if(__HIDE == objectSprite->show || (objectSprite->transparency & evenFrame) || (0 > _objectIndex - objectSprite->totalObjects))
 			{
 				NM_ASSERT(0 < _objectIndex - objectSprite->totalObjects, "ObjectSpriteContainer::renderSprites: OBJECTS depleted");
 				objectSprite->index = __NO_RENDER_INDEX;

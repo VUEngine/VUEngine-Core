@@ -543,11 +543,11 @@ void Printing::setWorldSize(uint16 w __attribute__ ((unused)), uint16 h __attrib
 }
 #endif
 //---------------------------------------------------------------------------------------------------------
-void Printing::setTransparent(uint8 value)
+void Printing::setTransparency(uint8 transparency)
 {
 	if(!isDeleted(this->activePrintingSprite))
 	{
-		Sprite::setTransparent(this->activePrintingSprite, value);
+		Sprite::setTransparency(this->activePrintingSprite, transparency);
 	}
 }
 //---------------------------------------------------------------------------------------------------------

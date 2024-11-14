@@ -124,9 +124,9 @@ class Particle : SpatialObject
 	/// Make the particle's visual components invisible.
 	void hide();
 
-	/// Set the transparent mode of the visual components.
-	/// @param value: Transparent mode (__TRANSPARENT_NONE, __TRANSPARENT_EVEN or __TRANSPARENT_ODD)
-	void setTransparent(uint8 transparent);
+	/// Set the transparency mode of the visual components.
+	/// @param value: Transparecy effect (__TRANSPARENCY_NONE, __TRANSPARENCY_EVEN or __TRANSPARENCY_ODD)
+	void setTransparency(uint8 transparency);
 
 	/// Check if the visual components are visible.
 	/// @return True if the the particle's sprite or wireframe are visible; false otherwise

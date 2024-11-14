@@ -44,14 +44,14 @@ void Wireframe::constructor(SpatialObject owner, const WireframeSpec* wireframeS
 		this->color = __COLOR_BRIGHT_RED;
 		this->displacement = Vector3D::zero();
 		this->interlaced = false;
-		this->transparent = __TRANSPARENCY_NONE;
+		this->transparency = __TRANSPARENCY_NONE;
 	}
 	else
 	{
 		this->color = wireframeSpec->color;
 		this->displacement = ((WireframeSpec*)this->componentSpec)->displacement;
 		this->interlaced = ((WireframeSpec*)this->componentSpec)->interlaced;
-		this->transparent = wireframeSpec->transparent;
+		this->transparency = wireframeSpec->transparency;
 	}
 
 	this->bufferIndex = 0;

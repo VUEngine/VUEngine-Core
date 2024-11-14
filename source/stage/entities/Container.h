@@ -99,7 +99,7 @@ class Container : SpatialObject
 	int32 propagateMessage(int32 (*propagatedMessageHandler)(void*, va_list), ...);
 	int32 propagateString(int32 (*propagatedMessageHandler)(void*, va_list), ...);
 	void purgeChildren();
-	void setLocalScale(const Scale* scale);
+
 	void setName(const char* const name);
 	void setInheritEnvironment(uint8 inheritEnvironment);
 	void updateChildren();
@@ -113,24 +113,44 @@ class Container : SpatialObject
 	bool getChildren(ClassPointer classPointer, VirtualList children);
 	void transformChildren(uint8 invalidateTransformationFlag);
 	
-	virtual void ready(bool recursive);
-	virtual void update();
-	virtual void transform(const Transformation* environmentTransform, uint8 invalidateTransformationFlag);
 	virtual void createComponents();
+
+	virtual void destroyComponents();
+	
+	virtual void ready(bool recursive);
+
+	/// Make this instance visible.
+	virtual void show();
+
+	/// Make this instance invisible.
+	virtual void hide();
+
+	/// Update this instance's logic.
+	virtual void update();
+
+	/// Prepare to suspend this instance's logic.
+	virtual void suspend();
+
+	/// Prepare to resume this instance's logic.
+	virtual void resume();
+
+	virtual void transform(const Transformation* environmentTransform, uint8 invalidateTransformationFlag);
+
+	/// Set this instance's transparency effects.
+	/// @param transparency: Transparecy effect (__TRANSPARENCY_NONE, __TRANSPARENCY_EVEN or __TRANSPARENCY_ODD)
+	virtual void setTransparency(uint8 transparency);
+
 	virtual void setLocalPosition(const Vector3D* position);
 	virtual void setLocalRotation(const Rotation* rotation);
-	virtual void setTransparent(uint8 transparent);
+	virtual void setLocalScale(const Scale* scale);
+
 	virtual bool handlePropagatedMessage(int32 message);
 	virtual bool handlePropagatedString(const char* string);
+
 	virtual void addChild(Container child);
 	virtual void removeChild(Container child, bool deleteChild);
+
 	virtual void changeEnvironment(Transformation* environmentTransform);
-	virtual void suspend();
-	virtual void resume();
-	virtual void show();
-	virtual void hide();
-	virtual bool isTransformed();
-	virtual void destroyComponents();
 
 	override void setPosition(const Vector3D* position);
 	override void setRotation(const Rotation* rotation);

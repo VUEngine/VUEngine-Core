@@ -344,7 +344,7 @@ void SpriteManager::render()
 
 		// Saves on method calls quite a bit when there are lots of
 		// sprites. Don't remove.
-		if(__HIDE == sprite->show || (sprite->transparent & this->evenFrame))
+		if(__HIDE == sprite->show || (sprite->transparency & this->evenFrame))
 		{
 			sprite->index = __NO_RENDER_INDEX;
 			continue;

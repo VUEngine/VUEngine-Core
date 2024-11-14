@@ -51,7 +51,7 @@ typedef struct WireframeSpec
 
 	/// Transparency mode
 	/// (__TRANSPARENCY_NONE, __TRANSPARENCY_EVEN or __TRANSPARENCY_ODD)
-	uint8 transparent;
+	uint8 transparency;
 
 	/// Flag to render the wireframe in interlaced mode
 	bool interlaced;

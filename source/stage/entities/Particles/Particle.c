@@ -140,16 +140,16 @@ void Particle::hide()
 	}
 }
 //---------------------------------------------------------------------------------------------------------
-void Particle::setTransparent(uint8 transparent)
+void Particle::setTransparency(uint8 transparency)
 {
 	if(!isDeleted(this->sprite))
 	{
-		Sprite::setTransparent(this->sprite, transparent);
+		Sprite::setTransparency(this->sprite, transparency);
 	}
 
 	if(!isDeleted(this->wireframe))
 	{
-		Wireframe::setTransparent(this->wireframe, transparent);
+		Wireframe::setTransparency(this->wireframe, transparency);
 	}
 }
 //---------------------------------------------------------------------------------------------------------

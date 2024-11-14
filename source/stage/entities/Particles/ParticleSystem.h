@@ -146,36 +146,77 @@ class ParticleSystem : Entity
 	/// @param name: Instance's name
 	void constructor(const ParticleSystemSpec* particleSystemSpec,  int16 internalId, const char* const name);
 
-	/// Set the particle systems's spec.
-	/// @param particleSystemSpec: Specification that determines how to configure the particle system
-
-	void deleteAllParticles();
-
+	/// Start spawning particles.
 	void start();
+
+	//// Pause the spawning of particles.
 	void pause();
+
+	/// Resume the spawning of particles. 
 	void unpause();
 
+	/// Check if the spawning of particles is paused.
+	/// @return True if the spawning of particles is paused; false otherwise
 	bool isPaused();
 
-	void setLoop(bool value);
+	/// Delete all spawned particles.
+	void deleteAllParticles();
+
+	/// Set the looping behavior of the particle system.
+	/// @param loop: If false, the spawning or particles stops once the total number 
+	/// of spawned particles equals the maximum number of alive particles
+	void setLoop(bool loop);
+
+	/// Check the looping behavior of the particle system.
+	/// @return False if the spawning or particles stops once the total number 
+	/// of spawned particles equals the maximum number of alive particles
 	bool getLoop();
 
+	/// Set the particle system to auto destroy or not when the total number 
+	/// of spawned particles equals the maximum number of alive particles.
+	/// @param selfDestroyWhenDone: If true, the particle system auto destroys when the
+	/// total number of spawned particles equals the maximum number of alive particles.
 	void setSelfDestroyWhenDone(bool selfDestroyWhenDone);
+
+	/// Set the elapsed time between calls to the update method.
+	/// @param elapsedTime: Elapsed time between calls to the update method
 	void setElapsedTime(uint32 elapsedTime);
 
+	/// Print the particle system's status.
+	/// @param x: Screen x coordinate where to print
+	/// @param y: Screen y coordinate where to print
 	void print(int16 x, int16 y);
 
+	/// Informs itself when a particle is spawned.
+	/// @param particle: The newly spawned particle 
 	virtual void particleSpawned(Particle particle);
+
+	/// Informs itself when a particle is recycled.
+	/// @param particle: The recycled particle 
 	virtual void particleRecycled(Particle particle);
 
-	override void update();
-	override void resume();
-	override void suspend();
+	/// Make this instance visible.
 	override void show();
-	override void hide();
-	override void setTransparent(uint8 transparent);
-	override void setSpec(void* particleSystemSpec);
 
+	/// Make this instance invisible.
+	override void hide();
+
+	/// Update this instance's logic.
+	override void update();
+
+	/// Prepare to suspend this instance's logic.
+	override void suspend();
+
+	/// Prepare to resume this instance's logic.
+	override void resume();
+
+	/// Set this instance's transparency effects.
+	/// @param transparency: Transparecy effect (__TRANSPARENCY_NONE, __TRANSPARENCY_EVEN or __TRANSPARENCY_ODD)
+	override void setTransparency(uint8 transparency);
+
+	/// Set the particle systems's spec.
+	/// @param particleSystemSpec: Specification that determines how to configure the particle system
+	override void setSpec(void* particleSystemSpec);
 }
 
 

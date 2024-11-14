@@ -153,7 +153,7 @@ void CharSet::putPixel(const uint32 charToReplace, const Pixel* charSetPixel, BY
 		uint16 displacement = (charSetPixel->y << 1) + (charSetPixel->x >> 2);
 		uint16 pixelToReplaceDisplacement = (charSetPixel->x % 4) << 1;
 
-		// TODO: review this, only works with non transparent pixels
+		// TODO: review this, only works with non transparency pixels
 		auxChar[displacement] &= (~(0x03 << pixelToReplaceDisplacement) | ((uint16)newPixelColor << pixelToReplaceDisplacement));
 //		auxChar[displacement] |= (uint16)newPixelColor << pixelToReplaceDisplacement;
 

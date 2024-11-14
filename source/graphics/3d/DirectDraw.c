@@ -85,8 +85,8 @@ void DirectDraw::constructor()
 
 	Base::constructor();
 
-	this->drawPixels = 0;
-	this->maximuDrawPixels = 0;
+	this->drawnPixelsCounter = 0;
+	this->maximumPixelsToDraw = 0;
 
 	DirectDraw::reset(this);
 
@@ -106,11 +106,11 @@ void DirectDraw::destructor()
 
 bool DirectDraw::onVIPManagerGAMESTARTDuringXPEND(ListenerObject eventFirer __attribute__ ((unused)))
 {
-	this->maximuDrawPixels = this->drawPixels - __DIRECT_DRAW_MAXIMUM_NUMBER_OF_PIXELS_OVERHEAD;
+	this->maximumPixelsToDraw = this->drawnPixelsCounter - __DIRECT_DRAW_MAXIMUM_NUMBER_OF_PIXELS_OVERHEAD;
 
-	if(__DIRECT_DRAW_MINIMUM_NUMBER_OF_PIXELS > this->maximuDrawPixels)
+	if(__DIRECT_DRAW_MINIMUM_NUMBER_OF_PIXELS > this->maximumPixelsToDraw)
 	{
-		this->maximuDrawPixels = __DIRECT_DRAW_MINIMUM_NUMBER_OF_PIXELS;
+		this->maximumPixelsToDraw = __DIRECT_DRAW_MINIMUM_NUMBER_OF_PIXELS;
 	}
 
 	return true;
@@ -121,7 +121,7 @@ bool DirectDraw::onVIPManagerGAMESTARTDuringXPEND(ListenerObject eventFirer __at
  */
 void DirectDraw::reset()
 {
-	this->maximuDrawPixels = __DIRECT_DRAW_MAXIMUM_NUMBER_OF_PIXELS;
+	this->maximumPixelsToDraw = __DIRECT_DRAW_MAXIMUM_NUMBER_OF_PIXELS;
 
 	DirectDraw::setFrustum(this, (CameraFrustum)
 	{
@@ -135,16 +135,16 @@ void DirectDraw::print(int16 x, int16 y)
 	Printing::text(Printing::getInstance(), "DIRECT DRAW", x, y++, NULL);
 	y++;
 	Printing::text(Printing::getInstance(), "Drawn pixels:      ", x, y, NULL);
-	Printing::int32(Printing::getInstance(), this->drawPixels, x + 14, y++, NULL);
+	Printing::int32(Printing::getInstance(), this->drawnPixelsCounter, x + 14, y++, NULL);
 	Printing::text(Printing::getInstance(), "Max. pixels:       ", x, y, NULL);
-	Printing::int32(Printing::getInstance(), this->maximuDrawPixels, x + 14, y++, NULL);
+	Printing::int32(Printing::getInstance(), this->maximumPixelsToDraw, x + 14, y++, NULL);
 }
 #endif
 
 /**
  * Reset
  */
-void DirectDraw::startDrawing()
+void DirectDraw::preparteToDraw()
 {
 
 #ifdef __SHOW_DIRECT_DRAWING_PROFILING
@@ -157,17 +157,17 @@ void DirectDraw::startDrawing()
 	}
 #endif
 
-	if(this->drawPixels <= this->maximuDrawPixels)
+	if(this->drawnPixelsCounter <= this->maximumPixelsToDraw)
 	{
-		this->maximuDrawPixels += __DIRECT_DRAW_MAXIMUM_NUMBER_OF_PIXELS_RECOVERY;
+		this->maximumPixelsToDraw += __DIRECT_DRAW_MAXIMUM_NUMBER_OF_PIXELS_RECOVERY;
 
-		if(__DIRECT_DRAW_MAXIMUM_NUMBER_OF_PIXELS < this->maximuDrawPixels)
+		if(__DIRECT_DRAW_MAXIMUM_NUMBER_OF_PIXELS < this->maximumPixelsToDraw)
 		{
-			this->maximuDrawPixels = __DIRECT_DRAW_MAXIMUM_NUMBER_OF_PIXELS;
+			this->maximumPixelsToDraw = __DIRECT_DRAW_MAXIMUM_NUMBER_OF_PIXELS;
 		}
 	}
 
-	this->drawPixels = 0;
+	this->drawnPixelsCounter = 0;
 }
 
 void DirectDraw::setFrustum(CameraFrustum frustum)
@@ -367,28 +367,7 @@ static void DirectDraw::drawBlackPixel(BYTE* leftBuffer, BYTE* rightBuffer, int1
 		rightBuffer[displacement] &= pixel;
 	}
 
-	_directDraw->drawPixels++;
-}
-
-/**
- * Draws a point on screen in the given color
- *
- * @param point 	Point to draw
- * @param color		The color to draw (0-3)
- */
-void DirectDraw::drawPoint(PixelVector point, int32 color)
-{
-	uint32 leftBuffer = *_currentDrawingFrameBufferSet | __LEFT_FRAME_BUFFER_0;
-	uint32 rightBuffer = *_currentDrawingFrameBufferSet | __RIGHT_FRAME_BUFFER_0;
-
-	if(color == __COLOR_BLACK)
-	{
-		DirectDraw::drawBlackPixel((BYTE*)leftBuffer, (BYTE*)rightBuffer, point.x, point.y, point.parallax);
-	}
-	else
-	{
-		DirectDraw::drawColorPixel((BYTE*)leftBuffer, (BYTE*)rightBuffer, point.x, point.y, point.parallax, color);
-	}
+	_directDraw->drawnPixelsCounter++;
 }
 
 static inline bool DirectDraw::shrinkLineToScreenSpace(fixed_ext_t* x0, fixed_ext_t* y0, fixed_ext_t* parallax0, fixed_ext_t dx, fixed_ext_t dy, fixed_ext_t dParallax, fixed_ext_t x1, fixed_ext_t y1, fixed_ext_t parallax1)
@@ -724,9 +703,9 @@ static bool DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint
 		totalPixels = __FIXED_EXT_TO_I(toPointY - fromPointY) + totalPixelRounding;
 	}
 
-	_directDraw->drawPixels += totalPixels;
+	_directDraw->drawnPixelsCounter += totalPixels;
 
-	if(_directDraw->drawPixels > _directDraw->maximuDrawPixels)
+	if(_directDraw->drawnPixelsCounter > _directDraw->maximumPixelsToDraw)
 	{
 		return false;
 	}

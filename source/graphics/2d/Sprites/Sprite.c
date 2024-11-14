@@ -53,7 +53,7 @@ void Sprite::constructor(SpatialObject owner, const SpriteSpec* spriteSpec)
 	this->halfHeight = 0;
 	this->animationController = NULL;
 	this->texture = NULL;
-	this->transparent = spriteSpec ? spriteSpec->transparent : __TRANSPARENCY_NONE;
+	this->transparency = spriteSpec ? spriteSpec->transparency : __TRANSPARENCY_NONE;
 	this->updateAnimationFrame = false;
 	this->checkIfWithinScreenSpace = true;
 	this->position = (PixelVector){0, 0, 0, 0};
@@ -128,7 +128,7 @@ int16 Sprite::render(int16 index, bool updateAnimation)
 	// it saves on method calls quite a bit when there are lots of
 	// sprites. Don't uncomment.
 /*
-	if(!(((this->transparent == __TRANSPARENCY_NONE) || (0x01 & (this->transparent ^ evenFrame))) && Sprite::isWithinScreenSpace(this)))
+	if(!(((this->transparency == __TRANSPARENCY_NONE) || (0x01 & (this->transparency ^ evenFrame))) && Sprite::isWithinScreenSpace(this)))
 	{
 		return this->index;
 	}
@@ -605,8 +605,8 @@ void Sprite::setScale(const PixelScale* scale __attribute__((unused)))
 void Sprite::print(int32 x, int32 y)
 {
 	// Allow normal rendering once for WORLD values to populate properly
-	uint8 transparent = this->transparent;
-	this->transparent = __TRANSPARENCY_NONE;
+	uint8 transparency = this->transparency;
+	this->transparency = __TRANSPARENCY_NONE;
 
 	Printing::text(Printing::getInstance(), "SPRITE ", x, y++, NULL);
 	Printing::text(Printing::getInstance(), "Class: ", x, ++y, NULL);
@@ -635,8 +635,8 @@ void Sprite::print(int32 x, int32 y)
 	Printing::text(Printing::getInstance(), "Head:                         ", x, ++y, NULL);
 	Printing::hex(Printing::getInstance(), Sprite::getEffectiveHead(this), x + 18, y, 8, NULL);
 	Printing::text(Printing::getInstance(), "Transparent:                         ", x, ++y, NULL);
-	Printing::text(Printing::getInstance(), (transparent > 0) ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, x + 18, y, NULL);
-	Printing::text(Printing::getInstance(), (transparent == 1) ? "(Even)" : (transparent == 2) ? "(Odd)" : "", x + 20, y, NULL);
+	Printing::text(Printing::getInstance(), (transparency > 0) ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, x + 18, y, NULL);
+	Printing::text(Printing::getInstance(), (transparency == 1) ? "(Even)" : (transparency == 2) ? "(Odd)" : "", x + 20, y, NULL);
 	Printing::text(Printing::getInstance(), "Shown:                         ", x, ++y, NULL);
 	Printing::text(Printing::getInstance(), (__HIDE != this->show) ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, x + 18, y, NULL);
 
@@ -693,7 +693,7 @@ void Sprite::print(int32 x, int32 y)
 		}
 	}
 
-	this->transparent = transparent;
+	this->transparency = transparency;
 }
 //---------------------------------------------------------------------------------------------------------
 

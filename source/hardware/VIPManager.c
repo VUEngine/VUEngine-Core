@@ -16,7 +16,6 @@
 #include <Debug.h>
 #endif
 #include <DebugConfig.h>
-#include <DirectDraw.h>
 #include <HardwareManager.h>
 #include <Mem.h>
 #include <ObjectSprite.h>
@@ -72,7 +71,6 @@ uint32* _currentDrawingFrameBufferSet __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUT
 static VIPManager _vipManager = NULL;
 static WireframeManager _wireframeManager = NULL;
 static SpriteManager _spriteManager = NULL;
-static DirectDraw _directDraw = NULL;
 static uint16* const _columnTableBaseAddressLeft =	(uint16*)0x0003DC00; // base address of Column Table (Left Eye)
 static uint16* const _columnTableBaseAddressRight =	(uint16*)0x0003DE00; // base address of Column Table (Right Eye)
 
@@ -416,7 +414,6 @@ void VIPManager::constructor()
 	_vipManager = this;
 	_spriteManager = SpriteManager::getInstance();
 	_wireframeManager = WireframeManager::getInstance();
-	_directDraw = DirectDraw::getInstance();
 
 	_currentDrawingFrameBufferSet = &this->currentDrawingFrameBufferSet;
 }
@@ -543,7 +540,6 @@ void VIPManager::processInterrupt(uint16 interrupt)
 				}
 
 				SpriteManager::writeDRAM(_spriteManager);
-				DirectDraw::startDrawing(_directDraw);
 				WireframeManager::draw(_wireframeManager);
 				VIPManager::applyPostProcessingEffects(_vipManager);
 

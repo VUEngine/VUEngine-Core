@@ -51,11 +51,11 @@ void VisualComponent::hide()
 //---------------------------------------------------------------------------------------------------------
 uint8 VisualComponent::getTransparent()
 {
-	return this->transparent;
+	return this->transparency;
 }
 //---------------------------------------------------------------------------------------------------------
-void VisualComponent::setTransparent(uint8 value)
+void VisualComponent::setTransparency(uint8 transparency)
 {
-	this->transparent = value;
+	this->transparency = transparency;
 }
 //---------------------------------------------------------------------------------------------------------

@@ -37,11 +37,11 @@ extern Rotation _previousCameraInvertedRotationBuffer __INITIALIZED_GLOBAL_DATA_
 //=========================================================================================================
 
 ///
-/// Class Wireframe
+/// Class WireframeManager
 ///
-/// Inherits from VisualComponent
+/// Inherits from ListenerObject
 ///
-/// Draws 3D shapes to the frame buffers.
+/// Manages instances of Wireframe.
 /// @ingroup graphics-3d
 singleton class WireframeManager : ListenerObject
 {
@@ -70,7 +70,7 @@ singleton class WireframeManager : ListenerObject
 	/// @return WireframeManager singleton
 	static WireframeManager getInstance();
 
-	/// Reset the manager's state
+	/// Reset the manager's state.
 	void reset();
 
 	/// Enable wireframe rendering and drawing.
@@ -115,7 +115,7 @@ singleton class WireframeManager : ListenerObject
 	/// @return True if there are any registered wireframes; false otherwise
 	bool hasWireframes();	
 
-	/// Print the sprite's state.
+	/// Print the manager's state.
 	/// @param x: Screen x coordinate where to print
 	/// @param y: Screen y coordinate where to print
 	void print(int32 x, int32 y);

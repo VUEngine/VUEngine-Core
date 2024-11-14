@@ -43,7 +43,7 @@ typedef struct SpriteSpec
 
 	/// Transparency mode
 	/// (__TRANSPARENCY_NONE, __TRANSPARENCY_EVEN or __TRANSPARENCY_ODD)
-	uint8 transparent;
+	uint8 transparency;
 
 	/// Displacement added to the sprite's position
 	PixelVector displacement;

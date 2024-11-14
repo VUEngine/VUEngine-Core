@@ -164,7 +164,7 @@ void WireframeManager::render()
 
 		wireframe->rendered = false;
 
-		if((__HIDE == wireframe->show) || (wireframe->transparent & this->evenFrame) || __NON_TRANSFORMED == wireframe->transformation->invalid)
+		if((__HIDE == wireframe->show) || (wireframe->transparency & this->evenFrame) || __NON_TRANSFORMED == wireframe->transformation->invalid)
 		{
 #ifdef __WIREFRAME_MANAGER_SORT_FOR_DRAWING
 			wireframe->squaredDistanceToCamera = __WIREFRAME_MAXIMUM_SQUARE_DISTANCE_TO_CAMERA;
@@ -211,6 +211,8 @@ void WireframeManager::draw()
 		return;
 	}
 
+	DirectDraw::preparteToDraw(DirectDraw::getInstance());
+
 	this->stopDrawing = false;
 
 #ifdef __PROFILE_WIREFRAMES
@@ -229,7 +231,7 @@ void WireframeManager::draw()
 			continue;
 		}
 
-		if((__HIDE == wireframe->show) || (wireframe->transparent & this->evenFrame))
+		if((__HIDE == wireframe->show) || (wireframe->transparency & this->evenFrame))
 		{
 			continue;
 		}

@@ -321,9 +321,9 @@ singleton class Printing : ListenerObject
 	/// @param h: WORLD's height
 	void setWorldSize(uint16 w, uint16 h);
 
-	/// Set sprite's transparent
-	/// @param value: Transparent value (__TRANSPARENCY_NONE, __TRANSPARENCY_EVEN or __TRANSPARENCY_ODD)
-	void setTransparent(uint8 value);
+	/// Set sprite's transparency
+	/// @param transparency: Transparent value (__TRANSPARENCY_NONE, __TRANSPARENCY_EVEN or __TRANSPARENCY_ODD)
+	void setTransparency(uint8 transparency);
 
 	/// Set palette for the printing area.
 	/// @param palette: Palette for the printing area
