@@ -70,7 +70,7 @@ typedef const ParticleSpec ParticleROMSpec;
 ///
 /// Inherits from SpatialObject
 ///
-/// Displays a Texture on the screen.
+/// Implements a particle that is spawned by particle systems.
 /// @ingroup stage-entities-particles
 class Particle : SpatialObject
 {

@@ -1,4 +1,4 @@
-/**
+/*
  * VUEngine Core
  *
  * © Jorge Eremiev <jorgech3@gmail.com> and Christian Radke <c.radke@posteo.de>
@@ -11,91 +11,116 @@
 #define SOLID_PARTICLE_H_
 
 
-//---------------------------------------------------------------------------------------------------------
-//												INCLUDES
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// INCLUDES
+//=========================================================================================================
 
 #include <Collider.h>
 #include <PhysicalParticle.h>
 #include <ParticleSystem.h>
 
 
-//---------------------------------------------------------------------------------------------------------
-//											TYPE DEFINITIONS
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// CLASS' DATA
+//=========================================================================================================
 
-
-/**
- * Defines a SolidParticle
- *
- * @memberof	SolidParticle
- */
+/// A SolidParticle Spec
+/// @memberof SolidParticle
 typedef struct SolidParticleSpec
 {
-	/// the class type
 	PhysicalParticleSpec physicalParticleSpec;
 
-	/// ball's radius
+	/// Collider's radius
 	fixed_t radius;
 
-	/// friction for physics
+	/// Particle's friction
 	fixed_t frictionCoefficient;
 
-	/// bounciness for physics
+	/// Particle's bounciness
 	fixed_t bounciness;
 
-	/// object's in-game type
+	/// Particles's in-game type
 	uint32 inGameType;
 
-	/// layers in which I live
+	/// Layers in which the collider lives
 	uint32 layers;
 
-	/// layers to ignore when checking for collisions
+	/// Layers to ignore when checking for collisions
 	uint32 layersToIgnore;
 
-	/// disable collision detection when the particle stops
+	/// If true, collisions detectionis disabled whenn the particle stops
 	bool disableCollisionOnStop;
 
-	/// animation to play upon collision
+	/// Animation to play upon collision
 	const char* onCollisionAnimation;
 
 } SolidParticleSpec;
 
-/**
- * A SolidParticle that is stored in ROM
- *
- * @memberof	SolidParticle
- */
+/// A SolidParticle spec that is stored in ROM
+/// @memberof SolidParticle
 typedef const SolidParticleSpec SolidParticleROMSpec;
 
 
-//---------------------------------------------------------------------------------------------------------
-//											CLASS'S DECLARATION
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// CLASS' DECLARATION
+//=========================================================================================================
 
+///
+/// Class SolidParticle
+///
+/// Inherits from PhysicalParticle
+///
+/// Implements a physical particle that collides with other objects in the game stage.
 /// @ingroup stage-entities-particles
 class SolidParticle : PhysicalParticle
 {
+	/// @protectedsection
+
+	/// Particle system that creates the particle
 	ParticleSystem creator;
-	// Particle's collider for collision detection
+	
+	/// Collider for collision detection
 	Collider collider;
-	//
+
+	/// Specification for the collider
 	ColliderSpec* colliderSpec;
+
+	/// Specification that determines how to configure the particle
 	const SolidParticleSpec* solidParticleSpec;
 
 	/// @publicsection
+
+	/// Class' constructor
+	/// @param solidParticleSpec: Specification that determines how to configure the particle
+	/// @param creator: Particle system that creates the particle
 	void constructor(const SolidParticleSpec* solidParticleSpec, ParticleSystem creator);
-	Collider getCollider();
-	VirtualList getColliders();
-	override fixed_t getWidth();
-	override fixed_t getHeight();
-	override fixed_t getDepth();
-	override bool collisionStarts(const CollisionInformation* collisionInformation);
-	override void collisionEnds(const CollisionInformation* collisionInformation);
-	override bool isSubjectToGravity(Vector3D gravity);
+
+	/// Receive and process a Telegram.
+	/// @param telegram: Received telegram to process
+	/// @return True if the telegram was processed
 	override bool handleMessage(Telegram telegram);
+
+	/// Retrieve the particle's radius.
+	/// @return Radius
+	override fixed_t getRadius();
+
+	/// Check if the particle is subject to provided gravity vector.
+	/// @return True if the provided gravity vector can affect the particle; false otherwise
+	override bool isSubjectToGravity(Vector3D gravity);
+
+	/// Retrieve the enum that determines the type of game object.
+	/// @return The enum that determines the type of game object
 	override uint32 getInGameType();
-	override const Vector3D* getVelocity();
+
+	/// Process a newly detected collision by one of the component colliders.
+	/// @param collisionInformation: Information struct about the collision to resolve 
+	override bool collisionStarts(const CollisionInformation* collisionInformation);
+
+	/// Process when a previously detected collision by one of the component colliders stops.
+	/// @param collisionInformation: Information struct about the collision to resolve
+	override void collisionEnds(const CollisionInformation* collisionInformation);
+
+	/// Reset the particle's state.
 	override void reset();
 }
 

@@ -1,4 +1,4 @@
-/**
+/*
  * VUEngine Core
  *
  * © Jorge Eremiev <jorgech3@gmail.com> and Christian Radke <c.radke@posteo.de>
@@ -8,9 +8,9 @@
  */
 
 
-//---------------------------------------------------------------------------------------------------------
-//												INCLUDES
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// INCLUDES
+//=========================================================================================================
 
 #include <Body.h>
 #include <PhysicalWorld.h>
@@ -21,21 +21,11 @@
 #include "PhysicalParticle.h"
 
 
-//---------------------------------------------------------------------------------------------------------
-//												MACROS
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// CLASS' PUBLIC METHODS
+//=========================================================================================================
 
-
 //---------------------------------------------------------------------------------------------------------
-//												CLASS'S METHODS
-//---------------------------------------------------------------------------------------------------------
-
-/**
- * Class constructor
- *
- * @param particleSpec	Spec of the PhysicalParticle
- * @param creator		Owner Particle System
- */
 void PhysicalParticle::constructor(const PhysicalParticleSpec* physicalParticleSpec, ParticleSystem creator)
 {
 	// construct base Container
@@ -46,10 +36,7 @@ void PhysicalParticle::constructor(const PhysicalParticleSpec* physicalParticleS
 	PhysicalProperties physicalProperties = {mass, 0, 0, Vector3D::zero(), 0};
 	this->body = PhysicalWorld::createBody(VUEngine::getPhysicalWorld(_vuEngine), SpatialObject::safeCast(this), &physicalProperties, physicalParticleSpec->axisSubjectToGravity);
 }
-
-/**
- * Class destructor
- */
+//---------------------------------------------------------------------------------------------------------
 void PhysicalParticle::destructor()
 {
 	// remove a body
@@ -64,32 +51,84 @@ void PhysicalParticle::destructor()
 	// must always be called at the end of the destructor
 	Base::destructor();
 }
+//---------------------------------------------------------------------------------------------------------
+const Vector3D* PhysicalParticle::getVelocity()
+{
+	if(isDeleted(this->body))
+	{
+		return NULL;
+	}
 
-/**
- * Update
- *
- * @param behavior
- * @return				Boolean that tells whether a body was set active(?)
- */
+	return Body::getVelocity(this->body);
+}
+//---------------------------------------------------------------------------------------------------------
+void PhysicalParticle::setPosition(const Vector3D* position)
+{
+	if(isDeleted(this->body))
+	{
+		return;
+	}
+
+	if(Body::getPosition(this->body) != position)
+	{
+		Body::setPosition(this->body, position, SpatialObject::safeCast(this));
+	}
+
+	Base::setPosition(this, position);
+}
+//---------------------------------------------------------------------------------------------------------
+bool PhysicalParticle::isSubjectToGravity(Vector3D gravity __attribute__ ((unused)))
+{
+	if(isDeleted(this->body))
+	{
+		return false;
+	}
+
+	return (bool)Body::getAxisSubjectToGravity(this->body);
+}
+//---------------------------------------------------------------------------------------------------------
+void PhysicalParticle::reset()
+{
+	Base::reset(this);
+
+	if(!isDeleted(this->body))
+	{
+		Body::reset(this->body);
+	}
+}
+//---------------------------------------------------------------------------------------------------------
 bool PhysicalParticle::update(uint32 elapsedTime, void (* behavior)(Particle particle))
 {
 	if(Base::update(this, elapsedTime, behavior))
 	{
-		Body::stopMovement(this->body, __ALL_AXIS);
+		if(!isDeleted(this->body))
+		{
+			Body::stopMovement(this->body, __ALL_AXIS);
+		}
+
 		return true;
 	}
 
 	return false;
 }
+//---------------------------------------------------------------------------------------------------------
+void PhysicalParticle::configureMass()
+{
+	if(isDeleted(this->body))
+	{
+		return;
+	}
 
-/**
- * Add force
- *
- * @param force
- * @param movementType
- */
+	Body::setMass(this->body, this->physicalParticleSpec->minimumMass + (this->physicalParticleSpec->massDelta ? Math::random(_gameRandomSeed, this->physicalParticleSpec->massDelta) : 0));
+}
+//---------------------------------------------------------------------------------------------------------
 void PhysicalParticle::applyForce(const Vector3D* force, uint32 movementType)
 {
+	if(isDeleted(this->body))
+	{
+		return;
+	}
+
 	if(__UNIFORM_MOVEMENT == movementType)
 	{
 		fixed_t mass = Body::getMass(this->body);
@@ -122,49 +161,4 @@ void PhysicalParticle::applyForce(const Vector3D* force, uint32 movementType)
 		Body::applyForce(this->body, force);
 	}
 }
-
-/**
- * Change mass
- *
- */
-void PhysicalParticle::configureMass()
-{
-	Body::setMass(this->body, this->physicalParticleSpec->minimumMass + (this->physicalParticleSpec->massDelta ? Math::random(_gameRandomSeed, this->physicalParticleSpec->massDelta) : 0));
-}
-
-/**
- * Set position
- *
- * @param position
- */
-void PhysicalParticle::setPosition(const Vector3D* position)
-{
-	ASSERT(this->body, "Particle::setPosition: null body");
-
-	if(Body::getPosition(this->body) != position)
-	{
-		Body::setPosition(this->body, position, SpatialObject::safeCast(this));
-	}
-
-	Base::setPosition(this, position);
-}
-
-/**
- * Can move over axis?
- *
- * @param acceleration
- * @return				Boolean that tells whether the PhysicalParticle's body can move over axis (defaults to true)
- */
-bool PhysicalParticle::isSubjectToGravity(Vector3D gravity __attribute__ ((unused)))
-{
-	return (bool)Body::getAxisSubjectToGravity(this->body);
-}
-
-/**
- * Reset
- */
-void PhysicalParticle::reset()
-{
-	Base::reset(this);
-	Body::reset(this->body);
-}
+//---------------------------------------------------------------------------------------------------------

@@ -231,18 +231,18 @@ class Body : ListenerObject
 	const Vector3D* getVelocity();
 	
 	/// Set the direction towards which the body must move.
-	/// @param velocity: Pointer to a direction vector
+	/// @param direction: Pointer to a direction vector
 	void setDirection(const Vector3D* direction);
 
 	/// Retrieve the direction towards which the body is moving.
-	/// @param velocity: Pointer to the direction towards which the body is moving
+	/// @param direction: Pointer to the direction towards which the body is moving
 	const Vector3D* getDirection();
 	
 	/// Set the axises on which the body is subject to gravity.
 	/// @param axisSubjectToGravity: Flag containing the axises on which the body is subject to gravity
 	void setAxisSubjectToGravity(uint16 axisSubjectToGravity);
 
-	/// Rretrieve the axises on which the body is subject to gravity.
+	/// Retrieve the axises on which the body is subject to gravity.
 	/// @return Flag containing the axises on which the body is subject to gravity
 	uint16 getAxisSubjectToGravity();
 

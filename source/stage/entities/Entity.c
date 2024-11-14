@@ -1125,6 +1125,36 @@ static Entity Entity::instantiate(const EntitySpec* const entitySpec, int16 inte
 	return entity;
 }
 
+fixed_t Entity::getRadius()
+{
+	fixed_t width = Entity::getWidth(this);
+	fixed_t height = Entity::getHeight(this);
+	fixed_t depth = Entity::getDepth(this);
+
+	if(width > height)
+	{
+		if(width > depth)
+		{
+			return width >> 1;
+		}
+		else
+		{
+			return depth >> 1;
+		}
+
+	}
+	else if(height > depth)
+	{
+		return height >> 1;
+	}
+	else
+	{
+		return depth >> 1;
+	}
+
+	return 0;
+}
+
 /**
  * Add a child Container
  *
@@ -1389,16 +1419,6 @@ void Entity::createComponents()
 EntitySpec* Entity::getSpec()
 {
 	return this->entitySpec;
-}
-
-/**
- * Retrieve size
- *
- * @return		Size
- */
-const Size* Entity::getSize()
-{
-	return &this->size;
 }
 
 /**

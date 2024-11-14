@@ -250,7 +250,6 @@ abstract class Collider : Component
 
 	/// Resolve a collision by moving the owner to a position where the collision ceases.
 	/// @param collisionInformation: Information struct about the collision to resolve 
-	/// @param registerOtherCollider:
 	void resolveCollision(const CollisionInformation* collisionInformation);
 
 	/// Check if there is some collider blocking in the provided direction.

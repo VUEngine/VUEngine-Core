@@ -194,27 +194,39 @@ class Entity : Container
 	void setSpec(void* entitySpec);
 	void setSize(Size size);
 	bool isInCameraRange(int16 padding, bool recursive);
+	fixed_t getWidth();
+	fixed_t getHeight();
+	fixed_t getDepth();
 
 	virtual void setNormalizedDirection(NormalizedDirection normalizedDirection);
 	virtual void setExtraInfo(void* extraInfo);
 	virtual bool respawn();
 
+	/// Retrieve the object's radius.
+	/// @return Radius
+	override fixed_t getRadius();
+
+	/// Retrieve the object's bounciness factor.
+	/// @return Object's bounciness factor
+	override fixed_t getBounciness();
+
+	/// Retrieve the object's friction coefficient.
+	/// @return Object's friction coefficient
+	override fixed_t getFrictionCoefficient();
+
+	/// Retrieve the enum that determines the type of game object.
+	/// @return The enum that determines the type of game object
+	override uint32 getInGameType();
+
 	override void addChild(Container child);
 	override void createComponents();
 	override void setTransparent(uint8 transparent);
 	override bool handlePropagatedMessage(int32 message);
-	override const Size* getSize();
-	override fixed_t getWidth();
-	override fixed_t getHeight();
-	override fixed_t getDepth();
 	override void suspend();
 	override void resume();
 	override bool isSubjectToGravity(Vector3D gravity);
 	override void show();
 	override void hide();
-	override fixed_t getBounciness();
-	override fixed_t getFrictionCoefficient();
-	override uint32 getInGameType();
 	override void destroyComponents();
 }
 

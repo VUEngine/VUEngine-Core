@@ -1,4 +1,4 @@
-/**
+/*
  * VUEngine Core
  *
  * © Jorge Eremiev <jorgech3@gmail.com> and Christian Radke <c.radke@posteo.de>
@@ -8,9 +8,9 @@
  */
 
 
-//---------------------------------------------------------------------------------------------------------
-//												INCLUDES
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// INCLUDES
+//=========================================================================================================
 
 #include <Ball.h>
 #include <Body.h>
@@ -24,25 +24,20 @@
 #include "SolidParticle.h"
 
 
-//---------------------------------------------------------------------------------------------------------
-//											CLASS'S DEFINITION
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// CLASS' DECLARATIONS
+//=========================================================================================================
 
 friend class Collider;
 friend class VirtualList;
 friend class VirtualNode;
 
 
-//---------------------------------------------------------------------------------------------------------
-//												CLASS'S METHODS
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// CLASS' PUBLIC METHODS
+//=========================================================================================================
 
-/**
- * Class constructor
- *
- * @param solidParticleSpec	Spec of the SolidParticle
- * @param creator		Owner Particle System
- */
+//---------------------------------------------------------------------------------------------------------
 void SolidParticle::constructor(const SolidParticleSpec* solidParticleSpec, ParticleSystem creator)
 {
 	// construct base Container
@@ -87,10 +82,7 @@ void SolidParticle::constructor(const SolidParticleSpec* solidParticleSpec, Part
 	Body::setBounciness(this->body, this->solidParticleSpec->bounciness);
 	Body::setFrictionCoefficient(this->body, this->solidParticleSpec->frictionCoefficient);
 }
-
-/**
- * Class destructor
- */
+//---------------------------------------------------------------------------------------------------------
 void SolidParticle::destructor()
 {
 	// unregister the collider for collision detection
@@ -108,54 +100,55 @@ void SolidParticle::destructor()
 	// must always be called at the end of the destructor
 	Base::destructor();
 }
-
-/**
- * Retrieve collider
- *
- * @return		Particle's collider
- */
-Collider SolidParticle::getCollider()
+//---------------------------------------------------------------------------------------------------------
+bool SolidParticle::handleMessage(Telegram telegram)
 {
-	return this->collider;
-}
+	switch(Telegram::getMessage(telegram))
+	{
+		case kMessageBodyStartedMoving:
 
-/**
- * Get width
- *
- * @return		Width
- */
-fixed_t SolidParticle::getWidth()
-{
-	return this->solidParticleSpec->radius;
-}
+			Collider::checkCollisions(this->collider, true);
+			return true;
+			break;
 
-/**
- * Get height
- *
- * @return		Height
- */
-fixed_t SolidParticle::getHeight()
+		case kMessageBodyStopped:
+
+			if(this->solidParticleSpec->disableCollisionOnStop && !Body::getMovementOnAllAxis(this->body))
+			{
+				Collider::checkCollisions(this->collider, false);
+			}
+			break;
+	}
+
+	return false;
+}
+//---------------------------------------------------------------------------------------------------------
+fixed_t SolidParticle::getRadius()
 {
 	return this->solidParticleSpec->radius;
 }
-
-/**
- * Get depth
- *
- * @return		Depth
- */
-fixed_t SolidParticle::getDepth()
+//---------------------------------------------------------------------------------------------------------
+bool SolidParticle::isSubjectToGravity(Vector3D gravity)
 {
-	// must calculate based on the scale because not affine object must be enlarged
-	return this->solidParticleSpec->radius;
-}
+	ASSERT(this->collider, "Particle::isSubjectToGravity: null collider");
 
-/**
- * Process collisions
- *
- * @param collisionInformation			Information about the collision
- * @return								True if successfully processed, false otherwise
- */
+	fixed_t collisionCheckDistance = __I_TO_FIXED(1);
+
+	Vector3D displacement =
+	{
+		gravity.x ? 0 < gravity.x ? collisionCheckDistance : -collisionCheckDistance : 0,
+		gravity.y ? 0 < gravity.y ? collisionCheckDistance : -collisionCheckDistance : 0,
+		gravity.z ? 0 < gravity.z ? collisionCheckDistance : -collisionCheckDistance : 0
+	};
+
+	return Collider::canMoveTowards(this->collider, displacement);
+}
+//---------------------------------------------------------------------------------------------------------
+uint32 SolidParticle::getInGameType()
+{
+	return this->solidParticleSpec->inGameType;
+}
+//---------------------------------------------------------------------------------------------------------
 bool SolidParticle::collisionStarts(const CollisionInformation* collisionInformation)
 {
 	ASSERT(this->body, "SolidParticle::resolveCollision: null body");
@@ -187,103 +180,7 @@ bool SolidParticle::collisionStarts(const CollisionInformation* collisionInforma
 
 	return returnValue;
 }
-
-/**
- * Can move over axis?
- *
- * @param acceleration
- * @return				Boolean that tells whether the Particle's body can move over axis (defaults to true)
- */
-bool SolidParticle::isSubjectToGravity(Vector3D gravity)
-{
-	ASSERT(this->collider, "Particle::isSubjectToGravity: null collider");
-
-	fixed_t collisionCheckDistance = __I_TO_FIXED(1);
-
-	Vector3D displacement =
-	{
-		gravity.x ? 0 < gravity.x ? collisionCheckDistance : -collisionCheckDistance : 0,
-		gravity.y ? 0 < gravity.y ? collisionCheckDistance : -collisionCheckDistance : 0,
-		gravity.z ? 0 < gravity.z ? collisionCheckDistance : -collisionCheckDistance : 0
-	};
-
-	return Collider::canMoveTowards(this->collider, displacement);
-}
-
-/**
- * Handles incoming messages
- *
- * @param telegram
- * @return			True if successfully processed, false otherwise
- */
-bool SolidParticle::handleMessage(Telegram telegram)
-{
-	switch(Telegram::getMessage(telegram))
-	{
-		case kMessageBodyStartedMoving:
-
-			Collider::checkCollisions(this->collider, true);
-			return true;
-			break;
-
-		case kMessageBodyStopped:
-
-			if(this->solidParticleSpec->disableCollisionOnStop && !Body::getMovementOnAllAxis(this->body))
-			{
-				Collider::checkCollisions(this->collider, false);
-			}
-			break;
-	}
-
-	return false;
-}
-
-/**
- * Retrieve colliders list
- *
- * @return		SolidParticle's Collider list
- */
-VirtualList SolidParticle::getColliders()
-{
-	static VirtualList collidersList = NULL;
-
-	if(!collidersList)
-	{
-		collidersList = new VirtualList();
-	}
-
-	VirtualList::clear(collidersList);
-
-	VirtualList::pushBack(collidersList, this->collider);
-
-	return collidersList;
-}
-
-/**
- * Get in game type
- *
- * @return		Type of entity within the game's logic
- */
-uint32 SolidParticle::getInGameType()
-{
-	return this->solidParticleSpec->inGameType;
-}
-
-/**
- * Get velocity
- *
- * @return		Vector3D vector
- */
-const Vector3D* SolidParticle::getVelocity()
-{
-	return Body::getVelocity(this->body);
-}
-
-/**
- * Inform me about not colliding collider
- *
- * @param colliderNotCollidingAnymore		Collider that is no longer colliding
- */
+//---------------------------------------------------------------------------------------------------------
 void SolidParticle::collisionEnds(const CollisionInformation* collisionInformation)
 {
 	ASSERT(this->body, "SolidParticle::collisionEnds: null this");
@@ -301,12 +198,10 @@ void SolidParticle::collisionEnds(const CollisionInformation* collisionInformati
 	Body::clearNormal(this->body, ListenerObject::safeCast(collisionInformation->otherCollider));
 	Body::setSurroundingFrictionCoefficient(this->body, Collider::getCollidingFrictionCoefficient(collisionInformation->collider));
 }
-
-/**
- * Reset
- */
+//---------------------------------------------------------------------------------------------------------
 void SolidParticle::reset()
 {
 	Base::reset(this);
 	Collider::discardCollisions(this->collider);
 }
+//---------------------------------------------------------------------------------------------------------

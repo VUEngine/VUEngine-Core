@@ -1,4 +1,4 @@
-/**
+/*
  * VUEngine Core
  *
  * © Jorge Eremiev <jorgech3@gmail.com> and Christian Radke <c.radke@posteo.de>
@@ -8,22 +8,20 @@
  */
 
 
-//---------------------------------------------------------------------------------------------------------
-//												INCLUDES
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// INCLUDES
+//=========================================================================================================
 
 #include <string.h>
-
-#include <Collider.h>
 
 #include "SpatialObject.h"
 
 
-//---------------------------------------------------------------------------------------------------------
-//												CLASS'S METHODS
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// CLASS' PUBLIC METHODS
+//=========================================================================================================
 
-// class's constructor
+//---------------------------------------------------------------------------------------------------------
 void SpatialObject::constructor()
 {
 	// construct base object
@@ -38,175 +36,104 @@ void SpatialObject::constructor()
 	// set scale
 	this->transformation.scale = Scale::unit();
 }
-
-// class's destructor
+//---------------------------------------------------------------------------------------------------------
 void SpatialObject::destructor()
 {
 	// destroy the super SpatialObject
 	// must always be called at the end of the destructor
 	Base::destructor();
 }
-
-// defaults to true
-bool SpatialObject::isSubjectToGravity(Vector3D gravity __attribute__ ((unused)))
-{
-	return false;
-}
-
-fixed_t SpatialObject::getRadius()
-{
-	fixed_t width = SpatialObject::getWidth(this);
-	fixed_t height = SpatialObject::getHeight(this);
-	fixed_t depth = SpatialObject::getDepth(this);
-
-	if(width > height)
-	{
-		if(width > depth)
-		{
-			return width >> 1;
-		}
-		else
-		{
-			return depth >> 1;
-		}
-
-	}
-	else if(height > depth)
-	{
-		return height >> 1;
-	}
-	else
-	{
-		return depth >> 1;
-	}
-
-	return 0;
-}
-
-/**
- * Retrieve transformation
- *
- * @return		Pointer to Transformation
- */
+//---------------------------------------------------------------------------------------------------------
 const Transformation* SpatialObject::getTransformation()
 {
 	return &this->transformation;
 }
-
-fixed_t SpatialObject::getWidth()
-{
-	return 0;
-}
-
-fixed_t SpatialObject::getHeight()
-{
-	return 0;
-}
-
-fixed_t SpatialObject::getDepth()
-{
-	return 0;
-}
-
+//---------------------------------------------------------------------------------------------------------
 const Vector3D* SpatialObject::getPosition()
 {
 	return &this->transformation.position;
 }
-
-void SpatialObject::setPosition(const Vector3D* position)
-{
-	this->transformation.position = *position;
-}
-
+//---------------------------------------------------------------------------------------------------------
 const Rotation* SpatialObject::getRotation()
 {
 	return &this->transformation.rotation;
-
 }
-
-void SpatialObject::setRotation(const Rotation* rotation)
-{
-	this->transformation.rotation = *rotation;
-}
-
+//---------------------------------------------------------------------------------------------------------
 const Scale* SpatialObject::getScale()
 {
 	return &this->transformation.scale;
 }
-
-void SpatialObject::setScale(const Scale* scale)
-{
-	this->transformation.scale = *scale;
-}
-
-const Size* SpatialObject::getSize()
-{
-	static Size size =
-	{
-		0, 0, 0
-	};
-
-	return &size;
-}
-
-void SpatialObject::setDirection(const Vector3D* direction __attribute__ ((unused)))
-{}
-
-// get bounciness
-fixed_t SpatialObject::getBounciness()
+//---------------------------------------------------------------------------------------------------------
+fixed_t SpatialObject::getRadius()
 {
 	return 0;
 }
-
-// get friction
-fixed_t SpatialObject::getFrictionCoefficient()
-{
-	return 0;
-}
-
-// get velocity
+//---------------------------------------------------------------------------------------------------------
 const Vector3D* SpatialObject::getVelocity()
 {
-	return NULL;
-}
+	static Vector3D dummyVelocity = {0, 0, 0};
 
-const Vector3D* SpatialObject::getDirection()
-{
-	return NULL;
+	return &dummyVelocity;
 }
-
+//---------------------------------------------------------------------------------------------------------
 fixed_t SpatialObject::getSpeed()
 {
 	return 0;
 }
-
-fixed_t SpatialObject::getMaximumSpeed()
+//---------------------------------------------------------------------------------------------------------
+fixed_t SpatialObject::getBounciness()
 {
 	return 0;
 }
-
-bool SpatialObject::collisionStarts(const CollisionInformation* collisionInformation __attribute__ ((unused)))
+//---------------------------------------------------------------------------------------------------------
+fixed_t SpatialObject::getFrictionCoefficient()
 {
-	return false;
+	return 0;
 }
-
-bool SpatialObject::collisionPersists(const CollisionInformation* collisionInformation __attribute__ ((unused)))
+//---------------------------------------------------------------------------------------------------------
+void SpatialObject::setPosition(const Vector3D* position)
 {
-	return false;
+	this->transformation.position = *position;
 }
-
-void SpatialObject::collisionEnds(const CollisionInformation* collisionInformation __attribute__ ((unused)))
+//---------------------------------------------------------------------------------------------------------
+void SpatialObject::setRotation(const Rotation* rotation)
+{
+	this->transformation.rotation = *rotation;
+}
+//---------------------------------------------------------------------------------------------------------
+void SpatialObject::setScale(const Scale* scale)
+{
+	this->transformation.scale = *scale;
+}
+//---------------------------------------------------------------------------------------------------------
+void SpatialObject::setDirection(const Vector3D* direction __attribute__ ((unused)))
 {}
+//---------------------------------------------------------------------------------------------------------
+const Vector3D* SpatialObject::getDirection()
+{
+	static Vector3D dummyDirection = {0, 0, 0};
 
-/**
- * Retrieve colliders list
- *
- * @memberof	SpatialObject
- * @public
- *
- * @return		no type
- */
+	return &dummyDirection;
+}
+//---------------------------------------------------------------------------------------------------------
+bool SpatialObject::isSubjectToGravity(Vector3D gravity __attribute__ ((unused)))
+{
+	return false;
+}
+//---------------------------------------------------------------------------------------------------------
 uint32 SpatialObject::getInGameType()
 {
 	return kTypeNone;
 }
+//---------------------------------------------------------------------------------------------------------
+bool SpatialObject::collisionStarts(const CollisionInformation* collisionInformation __attribute__ ((unused)))
+{
+	return false;
+}
+//---------------------------------------------------------------------------------------------------------
+void SpatialObject::collisionPersists(const CollisionInformation* collisionInformation __attribute__ ((unused)))
+{}
+//---------------------------------------------------------------------------------------------------------
+void SpatialObject::collisionEnds(const CollisionInformation* collisionInformation __attribute__ ((unused)))
+{}
+//---------------------------------------------------------------------------------------------------------
