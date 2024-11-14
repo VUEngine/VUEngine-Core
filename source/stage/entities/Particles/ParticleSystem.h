@@ -138,9 +138,6 @@ class ParticleSystem : Entity
 	
 	/// Flag to prevent computing force when not necessary
 	bool applyForceToParticles;
-	
-	// Raise flag when transformed to reset particles' positions
-	bool transformed;
 
 	/// @publicsection
 	void constructor(const ParticleSystemSpec* particleSystemSpec,  int16 internalId, const char* const name);
@@ -162,7 +159,6 @@ class ParticleSystem : Entity
 	void print(int16 x, int16 y);
 
 	override void update();
-	override void transform(const Transformation* environmentTransform, uint8 invalidateTransformationFlag);
 	override void resume();
 	override void suspend();
 	override void show();

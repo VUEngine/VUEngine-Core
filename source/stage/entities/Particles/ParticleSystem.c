@@ -58,7 +58,6 @@ void ParticleSystem::constructor(const ParticleSystemSpec* particleSystemSpec, i
 	this->animationChanged = true;
 	this->selfDestroyWhenDone = false;
 	this->elapsedTime = __MILLISECONDS_PER_SECOND / __TARGET_FPS;
-	this->transformed = false;
 
 	ParticleSystem::setup(this, particleSystemSpec);
 }
@@ -255,7 +254,7 @@ void ParticleSystem::update()
 
 	ParticleSystem::processExpiredParticles(this);
 
-	if(this->transformation.invalid && !this->transformed)
+	if(__VALID_TRANSFORMATION != this->transformation.invalid)
 	{
 		return;
 	}
@@ -293,7 +292,7 @@ void ParticleSystem::update()
 		return;
 	}
 
-	if(!this->transformed || this->paused || this->hidden)
+	if(this->paused || this->hidden)
 	{
 		return;
 	}
@@ -547,44 +546,6 @@ Particle ParticleSystem::spawnParticle()
 }
 
 /**
- * @param environmentTransform
- */
-void ParticleSystem::transform(const Transformation* environmentTransform, uint8 invalidateTransformationFlag)
-{
-	bool transformed = this->transformed;
-
-	Base::transform(this, environmentTransform, invalidateTransformationFlag);
-
-	this->transformed = true;
-
-	if(!transformed)
-	{
-		ParticleSystem::resetParticlesPositions(this);
-	}
-}
-
-void ParticleSystem::resetParticlesPositions()
-{
-	if(isDeleted(this->particles))
-	{
-		return;
-	}
-
-	for(VirtualNode node = this->particles->head; NULL != node; node = node->next)
-	{
-		Particle particle = Particle::safeCast(node->data);
-
-		if(particle->expired)
-		{
-			continue;
-		}
-
-		Vector3D position = ParticleSystem::getParticleSpawnPosition(this);
-		Particle::setPosition(particle, &position);
-	}
-}
-
-/**
  * Handles incoming messages
  *
  * @param telegram	The received message
@@ -738,7 +699,7 @@ void ParticleSystem::start()
 	this->nextSpawnTime = 0;
 	this->totalSpawnedParticles = 0;
 	this->paused = false;
-	this->transformed = false;
+//	this->transformed = false;
 	ParticleSystem::show(this);
 }
 
@@ -754,7 +715,7 @@ void ParticleSystem::unpause()
 	if(this->paused)
 	{
 		this->paused = false;
-		this->transformed = false;
+//		this->transformed = false;
 		this->nextSpawnTime = 0;
 	}
 
