@@ -28,7 +28,6 @@
 //---------------------------------------------------------------------------------------------------------
 void PhysicalParticle::constructor(const PhysicalParticleSpec* physicalParticleSpec, ParticleSystem creator)
 {
-	// construct base Container
 	Base::constructor(&physicalParticleSpec->particleSpec, creator);
 
 	this->physicalParticleSpec = physicalParticleSpec;

@@ -56,7 +56,6 @@ void ParticleSystem::constructor(const ParticleSystemSpec* particleSystemSpec, i
 	this->spawnForceDelta = (Vector3DFlag){false, false, false};
 	this->maximumNumberOfAliveParticles = 0;
 	this->animationChanged = true;
-	this->previousGlobalPosition = (Vector3D){0, 0, 0};
 	this->selfDestroyWhenDone = false;
 	this->elapsedTime = __MILLISECONDS_PER_SECOND / __TARGET_FPS;
 	this->transformed = false;
@@ -127,7 +126,6 @@ void ParticleSystem::setup(const ParticleSystemSpec* particleSystemSpec)
 
 void ParticleSystem::configure()
 {
-	// set size from spec
 	this->size.x += __ABS(((ParticleSystemSpec*)this->entitySpec)->maximumRelativeSpawnPosition.x - ((ParticleSystemSpec*)this->entitySpec)->minimumRelativeSpawnPosition.x);
 	this->size.y += __ABS(((ParticleSystemSpec*)this->entitySpec)->maximumRelativeSpawnPosition.y - ((ParticleSystemSpec*)this->entitySpec)->minimumRelativeSpawnPosition.y);
 	this->size.z += __ABS(((ParticleSystemSpec*)this->entitySpec)->maximumRelativeSpawnPosition.z - ((ParticleSystemSpec*)this->entitySpec)->minimumRelativeSpawnPosition.z);
@@ -143,9 +141,10 @@ void ParticleSystem::configure()
 	this->nextSpawnTime = 0;
 	this->maximumNumberOfAliveParticles = ((ParticleSystemSpec*)this->entitySpec)->maximumNumberOfAliveParticles;
 
-	// calculate the number of sprite specs
+	// Calculate the number of sprite specs
 	for(this->numberOfSpriteSpecs = 0; 0 <= this->numberOfSpriteSpecs && NULL != ((ParticleSystemSpec*)this->entitySpec)->spriteSpecs && NULL != ((ParticleSystemSpec*)this->entitySpec)->spriteSpecs[this->numberOfSpriteSpecs]; this->numberOfSpriteSpecs++);
-	// calculate the number of wireframe specs
+	
+	// Calculate the number of wireframe specs
 	for(this->numberOfWireframeSpecs = 0; 0 <= this->numberOfWireframeSpecs && NULL != ((ParticleSystemSpec*)this->entitySpec)->wireframeSpecs && NULL != ((ParticleSystemSpec*)this->entitySpec)->wireframeSpecs[this->numberOfWireframeSpecs]; this->numberOfWireframeSpecs++);
 }
 
@@ -413,13 +412,6 @@ Vector3D ParticleSystem::getParticleSpawnPosition()
  */
 Vector3D ParticleSystem::getParticleSpawnForce()
 {
-	if(((ParticleSystemSpec*)this->entitySpec)->useMovementVector)
-	{
-		Vector3D direction = Vector3D::normalize(Vector3D::get(this->previousGlobalPosition, this->transformation.position));
-		fixed_t strength = (Vector3D::length(((ParticleSystemSpec*)this->entitySpec)->minimumForce) + Vector3D::length(((ParticleSystemSpec*)this->entitySpec)->maximumForce)) >> 1;
-		return Vector3D::scalarProduct(direction, strength);
-	}
-
 	Vector3D force = ((ParticleSystemSpec*)this->entitySpec)->minimumForce;
 
 	if(0 != this->spawnForceDelta.x)
@@ -446,11 +438,6 @@ Vector3D ParticleSystem::getParticleSpawnForce()
  */
 bool ParticleSystem::appliesForceToParticles()
 {
-	if(((ParticleSystemSpec*)this->entitySpec)->useMovementVector)
-	{
-		return true;
-	}
-
 	if
 	(
 		0 != ((ParticleSystemSpec*)this->entitySpec)->minimumForce.x ||
@@ -569,8 +556,6 @@ Particle ParticleSystem::spawnParticle()
  */
 void ParticleSystem::transform(const Transformation* environmentTransform, uint8 invalidateTransformationFlag)
 {
-	this->previousGlobalPosition = this->transformation.position;
-
 	bool transformed = this->transformed;
 
 	Base::transform(this, environmentTransform, invalidateTransformationFlag);

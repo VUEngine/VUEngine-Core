@@ -11,98 +11,97 @@
 #define PARTICLE_SYSTEM_H_
 
 
-//---------------------------------------------------------------------------------------------------------
-//												INCLUDES
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// INCLUDES
+//=========================================================================================================
 
 #include <Entity.h>
 #include <Particle.h>
 
 
-//---------------------------------------------------------------------------------------------------------
-//											TYPE DEFINITIONS
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// CLASS' DATA
+//=========================================================================================================
 
+/// A ParticleSystem Spec
+/// @memberof ParticleSystem
 typedef struct ParticleSystemSpec
 {
-	/// it has an Entity at the beginning
 	EntitySpec entitySpec;
 
-	/// reuse expired particles?
+	/// Reuse expired particles?
 	uint8 recycleParticles;
 
-	/// minimum generation delay in milliseconds
+	/// Minimum generation delay in milliseconds
 	uint16 minimumSpawnDelay;
 
-	/// generation delay delta in milliseconds
+	/// gGneration delay delta in milliseconds
 	uint16 spawnDelayDelta;
 
-	/// maximum number of alive particles
+	/// Maximum number of alive particles
 	uint8 maximumNumberOfAliveParticles;
 
-	/// maximum number of particles to spawn in each cycle
+	/// Maximum number of particles to spawn in each cycle
 	uint8 maximumNumberOfParticlesToSpawnPerCycle;
 
-	/// array of sprites to select randomly
+	/// Array of sprites to select randomly
 	const SpriteSpec** spriteSpecs;
 
-	/// array of wireframes to select randomly
+	/// Array of wireframes to select randomly
 	const WireframeSpec** wireframeSpecs;
 
-	/// auto start
+	/// Auto start
 	bool autoStart;
 
-	/// particle's spec
+	/// Particle's spec
 	ParticleSpec* particleSpec;
 
-	/// minimum relative spawn position
+	/// Minimum relative spawn position
 	Vector3D minimumRelativeSpawnPosition;
 
-	/// maximum relative spawn position
+	/// Maximum relative spawn position
 	Vector3D maximumRelativeSpawnPosition;
 
-	/// minimum force to apply (use int32 values in the spec to avoid overflow)
+	/// Minimum force to apply (use int32 values in the spec to avoid overflow)
 	Vector3D minimumForce;
 
-	/// maximum force to apply (use int32 values in the spec to avoid overflow)
+	/// Maximum force to apply (use int32 values in the spec to avoid overflow)
 	Vector3D maximumForce;
 
-	/// type of movement for the particles
+	/// Type of movement for the particles
 	uint32 movementType;
-
-	/// use particle system movement vector for the force to apply to the particles
-	bool useMovementVector;
 
 } ParticleSystemSpec;
 
-/**
- * A ParticleSystem that is stored in ROM
- *
- * @memberof	ParticleSystem
- */
+/// A ParticleSystem spec that is stored in ROM
+/// @memberof ParticleSystem
 typedef const ParticleSystemSpec ParticleSystemROMSpec;
 
 
-//---------------------------------------------------------------------------------------------------------
-//											CLASS'S DECLARATION
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// CLASS' DECLARATION
+//=========================================================================================================
 
+///
+/// Class ParticleSystem
+///
+/// Inherits from Entity
+///
+/// Implements an entity that generates particles.
 /// @ingroup stage-entities-particles
 class ParticleSystem : Entity
 {
-	// Vector for particles' movement
-	Vector3D previousGlobalPosition;
-	// particle list
+	/// Linked list of particles
 	VirtualList particles;
-	// Flags to speed up particle spawning
+
+	/// Flags to speed up particle spawning
 	Vector3DFlag spawnPositionDisplacement;
 	Vector3DFlag spawnForceDelta;
+	
 	// elapsed time per tick
 	uint32 elapsedTime;
 	// next spawn time
 	int32 nextSpawnTime;
-	// particles' life span increment
-	int16 particleLifeSpanIncrement;
 	// number of specs
 	int8 numberOfSpriteSpecs;
 	int8 numberOfWireframeSpecs;
