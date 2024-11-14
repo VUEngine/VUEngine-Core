@@ -94,33 +94,51 @@ class ParticleSystem : Entity
 	/// Linked list of particles
 	VirtualList particles;
 
-	/// Flags to speed up particle spawning
-	Vector3DFlag spawnPositionDisplacement;
-	Vector3DFlag spawnForceDelta;
+	/// Range for random displacement upon particle spawning
+	Vector3D spawnPositionDisplacement;
+
+	/// Range for random force delta to be adde to the force applied 
+	/// to newly spawned particles
+	Vector3D spawnForceDelta;
 	
-	// elapsed time per tick
+	/// Elapsed time per tick
 	uint32 elapsedTime;
-	// next spawn time
+
+	/// Time when the next particle has to be spawned
 	int32 nextSpawnTime;
-	// number of specs
+
+	/// Number of available sprite specs for particles
 	int8 numberOfSpriteSpecs;
+
+	/// Number of available wireframes specs for particles
 	int8 numberOfWireframeSpecs;
-	// particle count
-	int8 particleCount;
-	// pause flag
-	bool paused;
-	// Flag to keep spawning particles
-	bool loop;
-	// Counter of total spawned particles
+
+	/// Number of alive particles
+	int8 aliveParticlesCount;
+
+	/// Counter of total spawned particles
 	int8 totalSpawnedParticles;
-	// Particles' animation name
+
+	/// Maximum number of alive particles at any given moment
 	uint8 maximumNumberOfAliveParticles;
-	// Flag to trigger animations in the particles
+
+	/// Flag to pause the generation of particles
+	bool paused;
+
+	/// If false, the spawning or particles stops once the total number 
+	/// of spawned particles equals the maximum number of alive particles
+	bool loop;
+	
+	/// Flag to trigger animations in the particles
 	bool animationChanged;
-	// Flag to auto destroy when done
+
+	/// If true, the particle system auto destroys when the total number 
+	/// of spawned particles equals the maximum number of alive particles
 	bool selfDestroyWhenDone;
-	// Flag to prevent computing force when not necessary
+	
+	/// Flag to prevent computing force when not necessary
 	bool applyForceToParticles;
+	
 	// Raise flag when transformed to reset particles' positions
 	bool transformed;
 

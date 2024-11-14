@@ -68,6 +68,11 @@ static class Vector3D : Object
 	/// @return Difference vector between the provided vectors
 	static inline Vector3D sub(Vector3D a, Vector3D b);
 
+	/// Compute the absulte values for the vector's components.
+	/// @param vector: Vector to convert
+	/// @return Vector whose components are all absolute
+	static inline Vector3D absolute(Vector3D vector);
+
 	/// Compute the intermediate vector between two provided vectors.
 	/// @param a: First vector
 	/// @param b: Second vector
@@ -295,6 +300,16 @@ static inline Vector3D Vector3D::sum(Vector3D a, Vector3D b)
 static inline Vector3D Vector3D::sub(Vector3D a, Vector3D b)
 {
 	return (Vector3D){a.x - b.x, a.y - b.y, a.z - b.z};
+}
+//---------------------------------------------------------------------------------------------------------
+static inline Vector3D Vector3D::absolute(Vector3D vector)
+{
+	return (Vector3D)
+	{
+		__ABS(vector.x),
+		__ABS(vector.y),
+		__ABS(vector.z)
+	};
 }
 //---------------------------------------------------------------------------------------------------------
 static inline Vector3D Vector3D::intermediate(Vector3D a, Vector3D b)
