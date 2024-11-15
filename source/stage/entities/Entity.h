@@ -218,7 +218,6 @@ class Entity : Container
 	/// @return The enum that determines the type of game object
 	override uint32 getInGameType();
 
-	override void addChild(Container child);
 	override void createComponents();
 	override void setTransparency(uint8 transparency);
 	override bool handlePropagatedMessage(int32 message);

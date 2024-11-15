@@ -221,9 +221,11 @@ class Stage : Container
 	void addEntityLoadingListener(ListenerObject context, EventListener callback);
 	bool registerEntityId(int16 internalId, EntitySpec* entitySpec);
 	void registerEntities(VirtualList positionedEntitiesToIgnore);
+
 	void spawnEntity(PositionedEntity* positionedEntity, Container requester, EventListener callback);
 	Entity spawnChildEntity(const PositionedEntity* const positionedEntity, bool permanent);
-	Entity addChildEntityWithId(const PositionedEntity* const positionedEntity, bool permanent, int16 internalId);
+	void destroyChildEntity(Entity child);
+
 	StageSpec* getStageSpec();
 	void showStreamingProfiling(int32 x, int32 y);
 	bool unloadOutOfRangeEntities(int32 defer);
@@ -246,7 +248,6 @@ class Stage : Container
 	
 	override void suspend();
 	override void resume();
-	override void removeChild(Container child, bool deleteChild);
 }
 
 

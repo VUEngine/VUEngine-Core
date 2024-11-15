@@ -126,6 +126,8 @@ void Stage::constructor(StageSpec *stageSpec)
 // class's destructor
 void Stage::destructor()
 {
+	this->deleteMe = true;
+	
 	Stage::setFocusEntity(this, NULL);
 
 	if(!isDeleted(this->entityLoadingListeners))
@@ -394,11 +396,6 @@ Entity Stage::spawnChildEntity(const PositionedEntity* const positionedEntity, b
 	return Stage::doAddChildEntity(this, positionedEntity, permanent, this->nextEntityId++);
 }
 
-Entity Stage::addChildEntityWithId(const PositionedEntity* const positionedEntity, bool permanent, int16 internalId)
-{
-	return Stage::doAddChildEntity(this, positionedEntity, permanent, internalId);
-}
-
 // add entity to the stage
 Entity Stage::doAddChildEntity(const PositionedEntity* const positionedEntity, bool permanent __attribute__ ((unused)), int16 internalId)
 {
@@ -472,7 +469,7 @@ void Stage::spawnEntity(PositionedEntity* positionedEntity, Container requester,
 }
 
 // remove entity from the stage
-void Stage::removeChild(Container child, bool deleteChild)
+void Stage::destroyChildEntity(Entity child)
 {
 	NM_ASSERT(!isDeleted(child), "Stage::removeEntity: null child");
 
@@ -481,9 +478,9 @@ void Stage::removeChild(Container child, bool deleteChild)
 		return;
 	}
 
-	Base::removeChild(this, child, deleteChild);
-
 	int16 internalId = Entity::getInternalId(child);
+
+	Stage::removeChild(this, Container::safeCast(child), true);
 
 	VirtualNode node = this->stageEntityDescriptions->head;
 
@@ -740,7 +737,7 @@ bool Stage::unloadOutOfRangeEntities(int32 defer __attribute__((unused)))
 			}
 
 			// unload it
-			Base::removeChild(this, Container::safeCast(entity), true);
+			Stage::destroyChildEntity(this, entity);
 
 			// remove from list of entities that are to be loaded by the streaming,
 			// if the entity is not to be respawned

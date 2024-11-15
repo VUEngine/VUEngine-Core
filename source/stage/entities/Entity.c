@@ -181,16 +181,6 @@ void Entity::destroyColliders()
 }
 
 /**
- * Become subject to the governing streaming algorithm
- *
- * @private
- */
-void Entity::streamOut()
-{
-	this->dontStreamOut = false;
-}
-
-/**
  * Create behaviors
  */
 bool Entity::createBehaviors()
@@ -1153,18 +1143,6 @@ fixed_t Entity::getRadius()
 	}
 
 	return 0;
-}
-
-/**
- * Add a child Container
- *
- * @param child	Child Container to add
- */
-void Entity::addChild(Container child)
-{
-	Base::addChild(this, child);
-
-	Entity::streamOut(child, false);
 }
 
 /**

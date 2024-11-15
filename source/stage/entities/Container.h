@@ -24,20 +24,6 @@
 //											 CLASS'S MACROS
 //---------------------------------------------------------------------------------------------------------
 
-/*
-// position
-	   1 X = 01
-	  10 Y = 02
-	 100 Z = 04
-// rotation
-	1000 X = 08
-   10000 Y = 10
-  100000 Z = 20
-//scale
- 1000000 X = 40
-10000000 Y = 80
-*/
-
 #define __MAX_CONTAINER_NAME_LENGTH			16
 
 
@@ -75,17 +61,12 @@ class Container : SpatialObject
 
 	/// @publicsection
 	void constructor(const char* const name);
-	void concatenateTransform(Transformation *environmentTransform, Transformation* transformation);
-	void streamOut(bool streamOut);
 	void deleteMyself();
-	void deleteAllChildren();
-	int32 doKeyHold(int32 pressedKey);
-	int32 doKeyPressed(int32 pressedKey);
-	int32 doKeyUp(int32 pressedKey);
+
+	void streamOut(bool streamOut);
 	Container getChildByName(const char* childName, bool recursive);
 	Container getChildAtPosition(int16 position);
 	int32 getChildCount();
-	Transformation getEnvironmentTransform();
 	const Vector3D* getGlobalPosition();
 	const Vector3D* getLocalPosition();
 	const Rotation* getLocalRotation();
@@ -103,7 +84,6 @@ class Container : SpatialObject
 	void setName(const char* const name);
 	void setInheritEnvironment(uint8 inheritEnvironment);
 	void updateChildren();
-	void updateChildren();
 	void translate(const Vector3D* translation);
 	void rotate(const Rotation* rotation);
 	void scale(const Scale* scale);
@@ -113,6 +93,9 @@ class Container : SpatialObject
 	bool getChildren(ClassPointer classPointer, VirtualList children);
 	void transformChildren(uint8 invalidateTransformationFlag);
 	
+	void addChild(Container child);
+	void removeChild(Container child, bool deleteChild);
+
 	virtual void createComponents();
 
 	virtual void destroyComponents();
@@ -147,8 +130,6 @@ class Container : SpatialObject
 	virtual bool handlePropagatedMessage(int32 message);
 	virtual bool handlePropagatedString(const char* string);
 
-	virtual void addChild(Container child);
-	virtual void removeChild(Container child, bool deleteChild);
 
 	virtual void changeEnvironment(Transformation* environmentTransform);
 

@@ -47,6 +47,8 @@ void UIContainer::constructor(UIContainerSpec* uiContainerSpec)
 // class's destructor
 void UIContainer::destructor()
 {
+	this->deleteMe = true;
+
 	// destroy base
 	// must always be called at the end of the destructor
 	Base::destructor();

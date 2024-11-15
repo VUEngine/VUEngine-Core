@@ -46,13 +46,8 @@ void Container::constructor(const char* const name)
 	this->update = Container::overrides(this, update);
 	this->transform = Container::overrides(this, transform);
 
-	// set position
 	this->localTransformation.position = Vector3D::zero();
-
-	// set rotation
 	this->localTransformation.rotation = Rotation::zero();
-
-	// set scale
 	this->localTransformation.scale = Scale::unit();
 
 	// force global position calculation on the next transformation cycle
@@ -62,10 +57,10 @@ void Container::constructor(const char* const name)
 	this->parent = NULL;
 	this->children = NULL;
 	this->deleteMe = false;
-	this->hidden = false;
-	this->inheritEnvironment = __INHERIT_TRANSFORMATION;
-	this->dontStreamOut = false;
 	this->ready = false;
+	this->hidden = false;
+	this->dontStreamOut = false;
+	this->inheritEnvironment = __INHERIT_POSITION;
 
 	this->name = NULL;
 	Container::setName(this, name);
@@ -76,6 +71,20 @@ void Container::constructor(const char* const name)
  */
 void Container::destructor()
 {
+#ifndef __RELEASE
+	if(!this->deleteMe || NULL != this->parent)
+	{
+		Printing::setDebugMode(Printing::getInstance());
+		Printing::clear(Printing::getInstance());
+		Printing::text(Printing::getInstance(), "Me: ", 20, 12, NULL);
+		Printing::text(Printing::getInstance(), __GET_CLASS_NAME(this), 24, 12, NULL);
+		Printing::text(Printing::getInstance(), "Parent: ", 20, 15, NULL);
+		Printing::hex(Printing::getInstance(), (uint32)this->parent, 29, 15, 8, NULL);
+
+		NM_ASSERT(false, "Container::destructor: illegal destruction of a Container");
+	}
+#endif
+	
 	// if I have children
 	if(NULL != this->children)
 	{
@@ -101,6 +110,7 @@ void Container::destructor()
 #endif
 
 			child->parent = NULL;
+			child->deleteMe = true;
 			delete child;
 		}
 
@@ -159,21 +169,6 @@ void Container::deleteMyself()
 void Container::streamOut(bool streamOut)
 {
 	this->dontStreamOut = !streamOut;
-}
-
-void Container::deleteAllChildren()
-{
-	if(NULL == this->children)
-	{
-		return;
-	}
-
-
-	for(VirtualNode node = this->children->head; NULL != node; node = node->next)
-	{			
-		Container child = Container::safeCast(node->data);
-		child->deleteMe = true;
-	}
 }
 
 /**
@@ -336,6 +331,7 @@ void Container::purgeChildren()
 		{
 			VirtualList::removeNode(this->children, node);
 			child->parent = NULL;
+			child->deleteMe = true;
 			delete child;
 		}
 	}
@@ -591,7 +587,6 @@ void Container::doTransform(const Transformation* environmentTransformation, uin
 
 	if(0 != ((__INVALIDATE_POSITION | __INVALIDATE_ROTATION) & invalidateTransformationFlagHelper))
 	{
-		// apply environment transformation
 		if(0 != (__INHERIT_POSITION & this->inheritEnvironment))
 		{
 			Container::applyEnvironmentToPosition(this, environmentTransformation);
