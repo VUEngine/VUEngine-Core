@@ -52,7 +52,7 @@ void Line::render(Vector3D relativePosition)
 //---------------------------------------------------------------------------------------------------------
 bool Line::draw()
 {
-	bool drawn = DirectDraw::drawColorLine
+	bool drawn = DirectDraw::drawLine
 	(
 		this->a,
 		this->b,

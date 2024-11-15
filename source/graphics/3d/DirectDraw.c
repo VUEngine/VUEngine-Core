@@ -269,31 +269,31 @@ static inline bool DirectDraw::shrinkLineToScreenSpace(fixed_ext_t* x0, fixed_ex
 
 
 //---------------------------------------------------------------------------------------------------------
-static bool DirectDraw::drawColorPoint(PixelVector point, int32 color)
+static bool DirectDraw::drawPoint(PixelVector point, int32 color, uint8 bufferIndex, bool interlaced)
 {
-	uint32 leftBuffer = *_currentDrawingFrameBufferSet | __LEFT_FRAME_BUFFER_0;
-	uint32 rightBuffer = *_currentDrawingFrameBufferSet | __RIGHT_FRAME_BUFFER_0;
-
-	if(!DirectDraw::isPointInsideFrustum(point))
+	if(interlaced)
 	{
-		return false;
+		uint32 buffer = *_currentDrawingFrameBufferSet | (bufferIndex << __FRAME_BUFFER_SIDE_BIT_INDEX);
+
+		DirectDraw::drawColorPixelInterlaced((BYTE*)buffer, point.x, point.y, 0!= bufferIndex ? -point.parallax : point.parallax, color);
+	}
+	else
+	{
+		uint32 leftBuffer = *_currentDrawingFrameBufferSet | __LEFT_FRAME_BUFFER_0;
+		uint32 rightBuffer = *_currentDrawingFrameBufferSet | __RIGHT_FRAME_BUFFER_0;
+
+		if(!DirectDraw::isPointInsideFrustum(point))
+		{
+			return false;
+		}
+
+		DirectDraw::drawColorPixel((BYTE*)leftBuffer, (BYTE*)rightBuffer, point.x, point.y, point.parallax, color);
 	}
 
-	DirectDraw::drawColorPixel((BYTE*)leftBuffer, (BYTE*)rightBuffer, point.x, point.y, point.parallax, color);
-
 	return true;
 }
 //---------------------------------------------------------------------------------------------------------
-static bool DirectDraw::drawColorPointInterlaced(PixelVector point, int32 color, uint8 bufferIndex)
-{
-	uint32 buffer = *_currentDrawingFrameBufferSet | (bufferIndex << __FRAME_BUFFER_SIDE_BIT_INDEX);
-
-	DirectDraw::drawColorPixelInterlaced((BYTE*)buffer, point.x, point.y, 0!= bufferIndex ? -point.parallax : point.parallax, color);
-
-	return true;
-}
-//---------------------------------------------------------------------------------------------------------
-static bool DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint, int32 color, uint8 bufferIndex, bool interlaced)
+static bool DirectDraw::drawLine(PixelVector fromPoint, PixelVector toPoint, int32 color, uint8 bufferIndex, bool interlaced)
 {
 	uint16 xFromDeltaLeft = (unsigned)(fromPoint.x - fromPoint.parallax - _frustum.x0);
 	uint16 xFromDeltaRight = (unsigned)(fromPoint.x +  fromPoint.parallax - _frustum.x0);
@@ -510,7 +510,7 @@ static bool DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint
 	return true;
 }
 //---------------------------------------------------------------------------------------------------------
-static bool DirectDraw::drawColorCircle(PixelVector center, int16 radius, int32 color, uint8 bufferIndex, bool interlaced)
+static bool DirectDraw::drawCircle(PixelVector center, int16 radius, int32 color, uint8 bufferIndex, bool interlaced)
 {
 	if(0 >= radius)
 	{
@@ -640,7 +640,7 @@ static bool DirectDraw::drawColorCircle(PixelVector center, int16 radius, int32 
 	return true;
 }
 //---------------------------------------------------------------------------------------------------------
-static bool DirectDraw::drawColorX(PixelVector center, int16 length, int32 color, uint8 bufferIndex, bool interlaced)
+static bool DirectDraw::drawX(PixelVector center, int16 length, int32 color, uint8 bufferIndex, bool interlaced)
 {
 	if(!DirectDraw::isPointInsideFrustum(center))
 	{
@@ -690,7 +690,7 @@ static bool DirectDraw::drawColorX(PixelVector center, int16 length, int32 color
 	return true;
 }
 //---------------------------------------------------------------------------------------------------------
-static bool DirectDraw::drawColorCross(PixelVector center, int16 length, int32 color, uint8 bufferIndex, bool interlaced)
+static bool DirectDraw::drawCross(PixelVector center, int16 length, int32 color, uint8 bufferIndex, bool interlaced)
 {
 	if(!DirectDraw::isPointInsideFrustum(center))
 	{
@@ -767,7 +767,7 @@ static bool DirectDraw::drawSolidCircle(PixelVector center, int16 radius, int32 
 	{
 		int16 y = Math::squareRoot(radiusSquare - x * x);
 
-		DirectDraw::drawColorLine((PixelVector){center.x + x, center.y - y, center.z, center.parallax}, (PixelVector){center.x + x, center.y + y, center.z, center.parallax}, color, bufferIndex, interlaced);
+		DirectDraw::drawLine((PixelVector){center.x + x, center.y - y, center.z, center.parallax}, (PixelVector){center.x + x, center.y + y, center.z, center.parallax}, color, bufferIndex, interlaced);
 	}
 
 	return true;

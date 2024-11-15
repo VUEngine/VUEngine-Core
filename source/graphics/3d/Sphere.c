@@ -79,11 +79,11 @@ bool Sphere::draw()
 
 	bool drawn = false;
 
-	drawn = DirectDraw::drawColorCircle(this->position, this->scaledRadius, this->color, this->bufferIndex, this->interlaced);
+	drawn = DirectDraw::drawCircle(this->position, this->scaledRadius, this->color, this->bufferIndex, this->interlaced);
 
 	if(this->drawCenter)
 	{
-		DirectDraw::drawColorPoint(this->position, this->color);
+		DirectDraw::drawPoint(this->position, this->color, this->bufferIndex, this->interlaced);
 	}
 
 	this->bufferIndex = !this->bufferIndex;

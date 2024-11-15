@@ -53,13 +53,66 @@ singleton class DirectDraw : Object
 	/// @return DirectDraw singleton
 	static DirectDraw getInstance();
 
-	static bool drawColorPoint(PixelVector point, int32 color);
-	static bool drawColorPointInterlaced(PixelVector point, int32 color, uint8 bufferIndex);
-	static bool drawColorLine(PixelVector fromPoint, PixelVector toPoint, int32 color, uint8 bufferIndex, bool interlaced);
-	static bool drawColorCircle(PixelVector center, int16 radius, int32 color, uint8 bufferIndex, bool interlaced);
-	static bool drawColorX(PixelVector center, int16 length, int32 color, uint8 bufferIndex, bool interlaced);
-	static bool drawColorCross(PixelVector center, int16 length, int32 color, uint8 bufferIndex, bool interlaced);
+	/// Draw a single point.
+	/// @param point: Screen coordinate where to draw the point
+	/// @param color: Color of the point to draw (only non black)
+	/// @param bufferIndex: Buffer set index for interlaced drawing
+	/// @param interlaced: If true, the drawing is interlaced
+	/// @return True if a pixel was written to the frame buffers
+	static bool drawPoint(PixelVector point, int32 color, uint8 bufferIndex, bool interlaced);
+
+	/// Draw a line.
+	/// @param fromPoint: Line's starting point
+	/// @param toPoint: Line's ending point
+	/// @param color: Color of the point to draw (only non black)
+	/// @param bufferIndex: Buffer set index for interlaced drawing
+	/// @param interlaced: If true, the drawing is interlaced
+	/// @return True if a pixel was written to the frame buffers
+	static bool drawLine(PixelVector fromPoint, PixelVector toPoint, int32 color, uint8 bufferIndex, bool interlaced);
+
+	/// Draw a circle.
+	/// @param center: Circle's center
+	/// @param radius: Circle's radius
+	/// @param color: Color of the point to draw (only non black)
+	/// @param bufferIndex: Buffer set index for interlaced drawing
+	/// @param interlaced: If true, the drawing is interlaced
+	/// @return True if a pixel was written to the frame buffers
+	static bool drawCircle(PixelVector center, int16 radius, int32 color, uint8 bufferIndex, bool interlaced);
+
+	/// Draw an X.
+	/// @param center: X's center
+	/// @param length: X's arms length
+	/// @param color: Color of the point to draw (only non black)
+	/// @param bufferIndex: Buffer set index for interlaced drawing
+	/// @param interlaced: If true, the drawing is interlaced
+	/// @return True if a pixel was written to the frame buffers
+	static bool drawX(PixelVector center, int16 length, int32 color, uint8 bufferIndex, bool interlaced);
+
+	/// Draw a cross.
+	/// @param center: Cross' center
+	/// @param length: Cross' arms length
+	/// @param color: Color of the point to draw (only non black)
+	/// @param bufferIndex: Buffer set index for interlaced drawing
+	/// @param interlaced: If true, the drawing is interlaced
+	/// @return True if a pixel was written to the frame buffers
+	static bool drawCross(PixelVector center, int16 length, int32 color, uint8 bufferIndex, bool interlaced);
+
+	/// Draw a solid circle.
+	/// @param center: Circle's center
+	/// @param radius: Circle's radius
+	/// @param color: Color of the point to draw (only non black)
+	/// @param bufferIndex: Buffer set index for interlaced drawing
+	/// @param interlaced: If true, the drawing is interlaced
+	/// @return True if a pixel was written to the frame buffers
 	static bool drawSolidCircle(PixelVector center, int16 radius, int32 color, uint8 bufferIndex, bool interlaced);
+
+	/// Draw a solid rhombus.
+	/// @param center: Rhombus' center
+	/// @param radius: Rhombus' radius
+	/// @param color: Color of the point to draw (only non black)
+	/// @param bufferIndex: Buffer set index for interlaced drawing
+	/// @param interlaced: If true, the drawing is interlaced
+	/// @return True if a pixel was written to the frame buffers
 	static bool drawSolidRhumbus(PixelVector center, int16 radius, int32 color, uint8 bufferIndex, bool interlaced);
 
 	/// Reset the manager's state

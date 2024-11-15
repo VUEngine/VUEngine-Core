@@ -269,7 +269,7 @@ bool Mesh::drawInterlaced()
 		MeshSegment* meshSegment = (MeshSegment*)node->data;
 
 		// draw the line in both buffers
-		drawn |= DirectDraw::drawColorLine(meshSegment->fromVertex->pixelVector, meshSegment->toVertex->pixelVector, this->color, this->bufferIndex, true) || this->drawn;
+		drawn |= DirectDraw::drawLine(meshSegment->fromVertex->pixelVector, meshSegment->toVertex->pixelVector, this->color, this->bufferIndex, true) || this->drawn;
 	}
 
 	this->bufferIndex = !this->bufferIndex;
@@ -405,7 +405,7 @@ bool Mesh::draw()
 		MeshSegment* meshSegment = (MeshSegment*)node->data;
 
 		// draw the line in both buffers
-		drawn |= DirectDraw::drawColorLine(meshSegment->fromVertex->pixelVector, meshSegment->toVertex->pixelVector, this->color, this->bufferIndex, this->interlaced);
+		drawn |= DirectDraw::drawLine(meshSegment->fromVertex->pixelVector, meshSegment->toVertex->pixelVector, this->color, this->bufferIndex, this->interlaced);
 	}
 
 	this->bufferIndex = !this->bufferIndex;
