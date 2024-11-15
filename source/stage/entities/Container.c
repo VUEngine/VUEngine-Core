@@ -1,4 +1,4 @@
-/**
+/*
  * VUEngine Core
  *
  * © Jorge Eremiev <jorgech3@gmail.com> and Christian Radke <c.radke@posteo.de>
@@ -8,9 +8,9 @@
  */
 
 
-//---------------------------------------------------------------------------------------------------------
-//												INCLUDES
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// INCLUDES
+//=========================================================================================================
 
 #include <string.h>
 
@@ -20,23 +20,19 @@
 #include "Container.h"
 
 
-//---------------------------------------------------------------------------------------------------------
-//											CLASS'S DEFINITION
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// CLASS' DECLARATIONS
+//=========================================================================================================
 
 friend class VirtualNode;
 friend class VirtualList;
 
 
-//---------------------------------------------------------------------------------------------------------
-//												CLASS'S METHODS
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// CLASS' PUBLIC METHODS
+//=========================================================================================================
 
-/**
- * Class constructor
- *
- * @param name
- */
+//---------------------------------------------------------------------------------------------------------
 void Container::constructor(const char* const name)
 {
 	// construct base object
@@ -65,10 +61,7 @@ void Container::constructor(const char* const name)
 	this->name = NULL;
 	Container::setName(this, name);
 }
-
-/**
- * Class destructor
- */
+//---------------------------------------------------------------------------------------------------------
 void Container::destructor()
 {
 #ifndef __RELEASE
@@ -144,10 +137,7 @@ void Container::destructor()
 	// must always be called at the end of the destructor
 	Base::destructor();
 }
-
-/**
- * Safe call to delete entities within a normal stage
- */
+//---------------------------------------------------------------------------------------------------------
 void Container::deleteMyself()
 {
 	ASSERT(!isDeleted(this), "Container::deleteMyself: deleted this");
@@ -165,17 +155,47 @@ void Container::deleteMyself()
 		delete this;
 	}
 }
+//---------------------------------------------------------------------------------------------------------
+void Container::setName(const char* const name)
+{
+	if(NULL != this->name)
+	{
+		delete this->name;
+	}
 
+	if(NULL == name)
+	{
+		return;
+	}
+
+	typedef struct NameWrapper
+	{
+		char name[__MAX_CONTAINER_NAME_LENGTH + 1];
+
+	} NameWrapper;
+
+	NameWrapper* nameWrapper = (NameWrapper*)new NameWrapper;
+	this->name = nameWrapper->name;
+
+	strncpy(this->name, name, __MAX_CONTAINER_NAME_LENGTH);
+	this->name[__MAX_CONTAINER_NAME_LENGTH] = '\0';
+}
+//---------------------------------------------------------------------------------------------------------
+const char* Container::getName()
+{
+	return this->name;
+}
+//---------------------------------------------------------------------------------------------------------
 void Container::streamOut(bool streamOut)
 {
 	this->dontStreamOut = !streamOut;
 }
-
-/**
- * Add a child Container
- *
- * @param child	Child Container to add
- */
+//---------------------------------------------------------------------------------------------------------
+Container Container::getParent()
+{
+	return this->parent;
+}
+//---------------------------------------------------------------------------------------------------------
 void Container::addChild(Container child)
 {
 	// check if child is valid
@@ -231,13 +251,7 @@ void Container::addChild(Container child)
 		child->ready = true;
 	}
 }
-
-/**
- * Remove a child Container
- *
- * @param child			Child Container to remove
- * @param deleteChild
- */
+//---------------------------------------------------------------------------------------------------------
 void Container::removeChild(Container child, bool deleteChild)
 {
 	ASSERT(this == child->parent, "Container::removeChild: not my child");
@@ -282,25 +296,7 @@ void Container::removeChild(Container child, bool deleteChild)
 	}
 #endif
 }
-
-void Container::destroyComponents()
-{
-	if(NULL == this->children)
-	{
-		return;
-	}
-
-	for(VirtualNode node = this->children->head; NULL != node; node = node->next)
-	{
-		Container child = Container::safeCast(node->data);
-
-		Container::destroyComponents(child);
-	}
-}
-
-/**
- * Process removed children
- */
+//---------------------------------------------------------------------------------------------------------
 void Container::purgeChildren()
 {
 	if(NULL == this->children)
@@ -342,43 +338,61 @@ void Container::purgeChildren()
 		this->children = NULL;
 	}
 }
-
-/**
- * Container is ready
- *
- * @param recursive
- */
-void Container::ready(bool recursive)
+//---------------------------------------------------------------------------------------------------------
+bool Container::getChildren(ClassPointer classPointer, VirtualList children)
 {
-	if(!recursive || NULL == this->children)
+	if(isDeleted(this->children) || isDeleted(children))
 	{
-		return;
+		return false;
 	}
 
-	for(VirtualNode childNode = this->children->head; childNode; childNode = childNode->next)
+	for(VirtualNode node = this->children->head; NULL != node; node = node->next)
 	{
-		Container::ready(childNode->data, recursive);
+		Container child = Container::safeCast(node->data);
+
+		if(NULL == classPointer || Object::getCast(child, classPointer, NULL))
+		{
+			VirtualList::pushBack(children, child);
+		}
 	}
 
-	if(this->hidden)
-	{
-		Container::hide(this);
-	}
+	return 0 < VirtualList::getCount(children);
 }
-
-/**
- * Update container
- *
- */
-void Container::update()
+//---------------------------------------------------------------------------------------------------------
+Container Container::getChildByName(const char* childName, bool recursive)
 {
-	Container::updateChildren(this);
-}
+	Container foundChild = NULL;
 
-/**
- * Update container's children
- *
- */
+	if(!this->deleteMe && childName && this->children)
+	{
+		// search through direct children
+		foundChild = Container::findChildByName(this, this->children, childName, false);
+
+		// if no direct child could be found, do a recursive search, if applicable
+		if(!foundChild && recursive)
+		{
+			foundChild = Container::findChildByName(this, this->children, childName, true);
+		}
+	}
+
+	return !isDeleted(foundChild) && !foundChild->deleteMe ? foundChild : NULL;
+}
+//---------------------------------------------------------------------------------------------------------
+Container Container::getChildAtPosition(int16 position)
+{
+	if(isDeleted(this->children))
+	{
+		return NULL;
+	}
+
+	return Container::safeCast(VirtualList::getDataAtIndex(this->children, position));
+}
+//---------------------------------------------------------------------------------------------------------
+int32 Container::getChildrenCount()
+{
+	return NULL != this->children ? VirtualList::getCount(this->children) : 0;
+}
+//---------------------------------------------------------------------------------------------------------
 void Container::updateChildren()
 {
 	// if I have children
@@ -421,180 +435,27 @@ void Container::updateChildren()
 		Container::update(child);
 	}
 }
-
-/**
- * Retrieve environment transformation
- *
- * @return				Environment Transformation
- */
-Transformation Container::getEnvironmentTransform()
+//---------------------------------------------------------------------------------------------------------
+void Container::invalidateTransformation()
 {
-	if(NULL == this->parent)
+	this->transformation.invalid = __INVALIDATE_TRANSFORMATION;
+
+	if(!isDeleted(this->children))
 	{
-		Transformation environmentTransformation =
+		// update each child
+		for(VirtualNode node = this->children->head; NULL != node; node = node->next)
 		{
-			// spatial position
-			{0, 0, 0},
-		
-			// spatial rotation
-			{0, 0, 0},
-		
-			// spatial scale
-			{__1I_FIX7_9, __1I_FIX7_9, __1I_FIX7_9},
-
-			// invalidity
-			__VALID_TRANSFORMATION
-		};
-
-		return environmentTransformation;
-	}
-
-	return this->parent->transformation;
-}
-
-/**
- * Contatenate transformation
- *
- * @param concatenatedTransformation
- * @param transformation
- */
-void Container::concatenateTransform(Transformation* concatenatedTransformation, Transformation* localTransformation)
-{
-	ASSERT(concatenatedTransformation, "Container::concatenateTransform: null concatenatedTransformation");
-	ASSERT(localTransformation, "Container::concatenateTransform: null localTransformation");
-
-	// tranlate position
-	concatenatedTransformation->position = Vector3D::sum(concatenatedTransformation->position, localTransformation->position);
-
-	// propagate rotation
-	concatenatedTransformation->rotation = Rotation::sum(concatenatedTransformation->rotation, localTransformation->rotation);
-
-	// propagate scale
-	concatenatedTransformation->scale = Scale::product(concatenatedTransformation->scale, localTransformation->scale);
-}
-
-/**
- * Change environment
- *
- * @param environmentTransformation
- */
-void Container::changeEnvironment(Transformation* environmentTransformation)
-{
-	Vector3D localPosition = Vector3D::sub(this->transformation.position, environmentTransformation->position);
-	Rotation localRotation = Rotation::sub(this->transformation.rotation, environmentTransformation->rotation);
-	Scale localScale = Scale::division(this->transformation.scale, environmentTransformation->scale);
-
-	Container::setLocalPosition(this, &localPosition);
-	Container::setLocalRotation(this, &localRotation);
-	Container::setLocalScale(this, &localScale);
-
-	// force global position calculation on the next transformation cycle
-	Container::invalidateTransformation(this);
-}
-
-/**
- *
- *
- * @private
- * @param environmentTransformation
- */
-inline void Container::applyEnvironmentToPosition(const Transformation* environmentTransformation)
-{
-	Vector3D localPosition = this->localTransformation.position;
-
-	if(0 != (environmentTransformation->rotation.x | environmentTransformation->rotation.y | environmentTransformation->rotation.z))
-	{
-		localPosition = Vector3D::rotate(localPosition, environmentTransformation->rotation);
-	}
-
-	if(0 != (environmentTransformation->scale.x | environmentTransformation->scale.y | environmentTransformation->scale.z))
-	{
-		localPosition = Vector3D::scale(localPosition, environmentTransformation->scale);
-	}
-
-	this->transformation.position = Vector3D::sum(environmentTransformation->position, localPosition);
-}
-
-/**
- *
- *
- * @private
- * @param environmentTransformation
- */
-inline void Container::applyEnvironmentToRotation(const Transformation* environmentTransformation)
-{
-	this->transformation.rotation = Rotation::sum(environmentTransformation->rotation, this->localTransformation.rotation);
-}
-
-/**
- *
- *
- * @private
- * @param environmentTransformation
- */
-inline void Container::applyEnvironmentToScale(const Transformation* environmentTransformation)
-{
-	this->transformation.scale = Scale::product(environmentTransformation->scale, this->localTransformation.scale);
-}
-
-/**
- * Propagate call to createComponents
- *
- */
-void Container::createComponents()
-{
-	if(isDeleted(this->children))
-	{
-		return;
-	}
-
-	for(VirtualNode node = this->children->head; NULL != node; node = node->next)
-	{
-		Container child = Container::safeCast(node->data);
-
-		Container::createComponents(child);
+			// make sure child recalculates its global position
+			Container::invalidateTransformation(node->data);
+		}
 	}
 }
-
-/**
- * Initial transformation
- *
- * @param environmentTransformation
- * @param invalidateTransformationFlag
- */
-
-void Container::doTransform(const Transformation* environmentTransformation, uint8 invalidateTransformationFlag)
+//---------------------------------------------------------------------------------------------------------
+void Container::setInheritEnvironment(uint8 inheritEnvironment)
 {
-	ASSERT(environmentTransformation, "Container::transform: null environmentTransformation");
-
-	uint8 invalidateTransformationFlagHelper = (invalidateTransformationFlag | this->transformation.invalid) & this->inheritEnvironment;
-
-	if(0 != (__INVALIDATE_SCALE & invalidateTransformationFlagHelper))
-	{
-		Container::applyEnvironmentToScale(this, environmentTransformation);
-	}
-
-	if(0 != (__INVALIDATE_ROTATION & invalidateTransformationFlagHelper))
-	{
-		Container::applyEnvironmentToRotation(this, environmentTransformation);
-	}
-
-	if(0 != ((__INVALIDATE_POSITION | __INVALIDATE_ROTATION) & invalidateTransformationFlagHelper))
-	{
-		Container::applyEnvironmentToPosition(this, environmentTransformation);
-	}
-
-	Container::transformChildren(this, invalidateTransformationFlagHelper);
-
-	// don't update position on next transformation cycle
-	this->transformation.invalid = __VALID_TRANSFORMATION;
+	this->inheritEnvironment = inheritEnvironment;
 }
-
-void Container::transform(const Transformation* environmentTransformation, uint8 invalidateTransformationFlag)
-{
-	Container::doTransform(this, environmentTransformation, invalidateTransformationFlag);
-}
-
+//---------------------------------------------------------------------------------------------------------
 void Container::transformChildren(uint8 invalidateTransformationFlag)
 {
 	if(NULL == this->children)
@@ -644,46 +505,97 @@ void Container::transformChildren(uint8 invalidateTransformationFlag)
 		}
 	}
 }
+//---------------------------------------------------------------------------------------------------------
 
-/**
- * Retrieve local position
- *
- * @return		Pointer to local position
- */
+bool Container::propagateMessage(bool (*propagatedMessageHandler)(void*, va_list), ...)
+{
+	ASSERT(propagatedMessageHandler, "Container::propagateMessage: null propagatedMessageHandler");
+
+	va_list args;
+	va_start(args, propagatedMessageHandler);
+	bool result = Container::propagateArguments(this, propagatedMessageHandler, args);
+	va_end(args);
+
+	return result;
+}
+//---------------------------------------------------------------------------------------------------------
+bool Container::onPropagatedMessage(va_list args)
+{
+	int32 message = va_arg(args, int32);
+	return  Container::handlePropagatedMessage(this, message);
+}
+//---------------------------------------------------------------------------------------------------------
+bool Container::propagateString(bool (*propagatedStringHandler)(void*, va_list), ...)
+{
+	ASSERT(propagatedStringHandler, "Container::propagateMessage: null propagatedStringHandler");
+
+	va_list args;
+	va_start(args, propagatedStringHandler);
+	bool result = Container::propagateArguments(this, propagatedStringHandler, args);
+	va_end(args);
+
+	return result;
+}
+//---------------------------------------------------------------------------------------------------------
+bool Container::onPropagatedString(va_list args)
+{
+	const char* string = va_arg(args, char*);
+	return  Container::handlePropagatedString(this, string);
+}
+//---------------------------------------------------------------------------------------------------------
+void Container::translate(const Vector3D* translation)
+{
+	Vector3D position = Vector3D::sum(this->localTransformation.position, *translation);
+
+	if(this->localTransformation.position.z != position.z)
+	{
+		this->transformation.invalid |= __INVALIDATE_POSITION;
+		this->transformation.invalid |= __INVALIDATE_SCALE;
+	}
+	else if(this->localTransformation.position.x != position.x)
+	{
+		this->transformation.invalid |= __INVALIDATE_POSITION;
+	}
+	else if(this->localTransformation.position.y != position.y)
+	{
+		this->transformation.invalid |= __INVALIDATE_POSITION;
+	}
+
+	this->localTransformation.position = position;
+}
+//---------------------------------------------------------------------------------------------------------
+void Container::rotate(const Rotation* rotation)
+{
+	if(0 != rotation->x || 0 != rotation->y || 0 != rotation->z)
+	{
+		this->transformation.invalid |= __INVALIDATE_ROTATION;
+	}
+
+	this->localTransformation.rotation = Rotation::sum(this->localTransformation.rotation, *rotation);	
+}
+//---------------------------------------------------------------------------------------------------------
+void Container::scale(const Scale* scale)
+{
+	this->transformation.invalid |= __INVALIDATE_SCALE;
+
+	this->localTransformation.scale = Scale::product(this->localTransformation.scale, *scale);	
+}
+//---------------------------------------------------------------------------------------------------------
 const Vector3D* Container::getLocalPosition()
 {
 	return &this->localTransformation.position;
 }
-
-void Container::setPosition(const Vector3D* position)
+//---------------------------------------------------------------------------------------------------------
+const Rotation* Container::getLocalRotation()
 {
-	Vector3D displacement = Vector3D::sub(*position, this->transformation.position);
-
-	Container::translate(this, &displacement);
-	this->transformation.position = *position;
+	return &this->localTransformation.rotation;
 }
-
-void Container::setRotation(const Rotation* rotation)
+//---------------------------------------------------------------------------------------------------------
+const Scale* Container::getLocalScale()
 {
-	Rotation displacement = Rotation::sub(*rotation, this->transformation.rotation);
-
-	Container::rotate(this, &displacement);
-	this->transformation.rotation = *rotation;
+	return &this->localTransformation.scale;
 }
-
-void Container::setScale(const Scale* scale)
-{
-	Scale factor = Scale::division(*scale, this->transformation.scale);
-
-	Container::scale(this, &factor);
-	this->transformation.scale = *scale;
-}
-
-/**
- * Set local position
- *
- * @param position	Pointer to position
- */
+//---------------------------------------------------------------------------------------------------------
 void Container::setLocalPosition(const Vector3D* position)
 {
 	// force global position calculation on the next transformation cycle
@@ -711,22 +623,7 @@ void Container::setLocalPosition(const Vector3D* position)
 		this->localTransformation.position = *position;
 	}
 }
-
-/**
- * Retrieve local rotation
- *
- * @return		Pointer to local Rotation
- */
-const Rotation* Container::getLocalRotation()
-{
-	return &this->localTransformation.rotation;
-}
-
-/**
- * Set local rotation
- *
- * @param rotation	Pointer to Rotation
- */
+//---------------------------------------------------------------------------------------------------------
 void Container::setLocalRotation(const Rotation* rotation)
 {
 	Rotation auxRotation = Rotation::clamp(rotation->x, rotation->y, rotation->z);
@@ -746,22 +643,7 @@ void Container::setLocalRotation(const Rotation* rotation)
 
 	this->localTransformation.rotation = auxRotation;
 }
-
-/**
- * Retrieve local scale
- *
- * @return		Pointer to local Scale
- */
-const Scale* Container::getLocalScale()
-{
-	return &this->localTransformation.scale;
-}
-
-/**
- * Set local scale
- *
- * @param scale	Pointer to Scale
- */
+//---------------------------------------------------------------------------------------------------------
 void Container::setLocalScale(const Scale* scale)
 {
 	if(scale == &this->localTransformation.scale)
@@ -786,83 +668,147 @@ void Container::setLocalScale(const Scale* scale)
 		this->localTransformation.scale = *scale;
 	}
 }
-
-/**
- * Translate 
- *
- * @param translation 	Pointer to a Vector3D
- */
-void Container::translate(const Vector3D* translation)
+//---------------------------------------------------------------------------------------------------------
+void Container::changeEnvironment(Transformation* environmentTransformation)
 {
-	Vector3D position = Vector3D::sum(this->localTransformation.position, *translation);
+	Vector3D localPosition = Vector3D::sub(this->transformation.position, environmentTransformation->position);
+	Rotation localRotation = Rotation::sub(this->transformation.rotation, environmentTransformation->rotation);
+	Scale localScale = Scale::division(this->transformation.scale, environmentTransformation->scale);
 
-	if(this->localTransformation.position.z != position.z)
-	{
-		this->transformation.invalid |= __INVALIDATE_POSITION;
-		this->transformation.invalid |= __INVALIDATE_SCALE;
-	}
-	else if(this->localTransformation.position.x != position.x)
-	{
-		this->transformation.invalid |= __INVALIDATE_POSITION;
-	}
-	else if(this->localTransformation.position.y != position.y)
-	{
-		this->transformation.invalid |= __INVALIDATE_POSITION;
-	}
+	Container::setLocalPosition(this, &localPosition);
+	Container::setLocalRotation(this, &localRotation);
+	Container::setLocalScale(this, &localScale);
 
-	this->localTransformation.position = position;
+	// force global position calculation on the next transformation cycle
+	Container::invalidateTransformation(this);
 }
-
-/**
- * Rotate 
- *
- * @param translation 	Pointer to a Vector3D
- */
-void Container::rotate(const Rotation* rotation)
+//---------------------------------------------------------------------------------------------------------
+void Container::createComponents()
 {
-	if(0 != rotation->x || 0 != rotation->y || 0 != rotation->z)
+	if(isDeleted(this->children))
 	{
-		this->transformation.invalid |= __INVALIDATE_ROTATION;
+		return;
 	}
 
-	this->localTransformation.rotation = Rotation::sum(this->localTransformation.rotation, *rotation);	
-}
-
-/**
- * Scale 
- *
- * @param translation 	Pointer to a Vector3D
- */
-void Container::scale(const Scale* scale)
-{
-	this->transformation.invalid |= __INVALIDATE_SCALE;
-
-	this->localTransformation.scale = Scale::product(this->localTransformation.scale, *scale);	
-}
-
-/**
- * Invalidate global transformation
- */
-void Container::invalidateTransformation()
-{
-	this->transformation.invalid = __INVALIDATE_TRANSFORMATION;
-
-	if(!isDeleted(this->children))
+	for(VirtualNode node = this->children->head; NULL != node; node = node->next)
 	{
-		// update each child
-		for(VirtualNode node = this->children->head; NULL != node; node = node->next)
-		{
-			// make sure child recalculates its global position
-			Container::invalidateTransformation(node->data);
-		}
+		Container child = Container::safeCast(node->data);
+
+		Container::createComponents(child);
 	}
 }
+//---------------------------------------------------------------------------------------------------------
+void Container::destroyComponents()
+{
+	if(NULL == this->children)
+	{
+		return;
+	}
 
-/**
- * Set transparency 
- *
- * @param transparency 	Transparency flag
- */
+	for(VirtualNode node = this->children->head; NULL != node; node = node->next)
+	{
+		Container child = Container::safeCast(node->data);
+
+		Container::destroyComponents(child);
+	}
+}
+//---------------------------------------------------------------------------------------------------------
+void Container::ready(bool recursive)
+{
+	if(!recursive || NULL == this->children)
+	{
+		return;
+	}
+
+	for(VirtualNode childNode = this->children->head; childNode; childNode = childNode->next)
+	{
+		Container::ready(childNode->data, recursive);
+	}
+
+	if(this->hidden)
+	{
+		Container::hide(this);
+	}
+}
+//---------------------------------------------------------------------------------------------------------
+void Container::show()
+{
+	this->hidden = false;
+
+	Container::invalidateTransformation(this);
+
+	if(NULL == this->children)
+	{
+		return;
+	}
+
+	for(VirtualNode node = this->children->head; NULL != node; node = node->next)
+	{
+		Container child = Container::safeCast(node->data);
+
+		Container::show(child);
+	}
+}
+//---------------------------------------------------------------------------------------------------------
+void Container::hide()
+{
+	this->hidden = true;
+
+	if(NULL == this->children)
+	{
+		return;
+	}
+
+	for(VirtualNode node = this->children->head; NULL != node; node = node->next)
+	{
+		Container::hide(node->data);
+	}
+}
+//---------------------------------------------------------------------------------------------------------
+void Container::transform(const Transformation* environmentTransformation, uint8 invalidateTransformationFlag)
+{
+	Container::doTransform(this, environmentTransformation, invalidateTransformationFlag);
+}
+//---------------------------------------------------------------------------------------------------------
+void Container::update()
+{
+	Container::updateChildren(this);
+}
+//---------------------------------------------------------------------------------------------------------
+void Container::suspend()
+{
+	Container::purgeChildren(this);
+
+	if(NULL == this->children)
+	{
+		return;
+	}
+
+	for(VirtualNode node = this->children->head; NULL != node; node = node->next)
+	{
+		Container child = Container::safeCast(node->data);
+
+		Container::suspend(child);
+	}
+}
+//---------------------------------------------------------------------------------------------------------
+void Container::resume()
+{
+	Container::invalidateTransformation(this);
+
+	if(NULL == this->children)
+	{
+		return;
+	}
+
+	for(VirtualNode node = this->children->head; NULL != node; node = node->next)
+	{
+		Container child = Container::safeCast(node->data);
+
+		Container::resume(child);
+	}
+}
+//---------------------------------------------------------------------------------------------------------
 void Container::setTransparency(uint8 transparency)
 {
 	if(NULL == this->children)
@@ -877,203 +823,47 @@ void Container::setTransparency(uint8 transparency)
 		Container::setTransparency(child, transparency);
 	}
 }
-
-/**
- * Propagate a message to the child wrapper
- *
- * @param propagatedMessageHandler
- * @param args						va_list of propagated message parameters
-
- * @return							Result
- */
-bool Container::propagateMessage(bool (*propagatedMessageHandler)(void*, va_list), ...)
-{
-	ASSERT(propagatedMessageHandler, "Container::propagateMessage: null propagatedMessageHandler");
-
-	va_list args;
-	va_start(args, propagatedMessageHandler);
-	bool result = Container::propagateArguments(this, propagatedMessageHandler, args);
-	va_end(args);
-
-	return result;
-}
-
-/**
- * Propagate a string to the child wrapper
- *
- * @param propagatedMessageHandler
- * @param args						va_list of propagated string parameters
-
- * @return							Result
- */
-bool Container::propagateString(bool (*propagatedStringHandler)(void*, va_list), ...)
-{
-	ASSERT(propagatedStringHandler, "Container::propagateMessage: null propagatedStringHandler");
-
-	va_list args;
-	va_start(args, propagatedStringHandler);
-	bool result = Container::propagateArguments(this, propagatedStringHandler, args);
-	va_end(args);
-
-	return result;
-}
-
-
-/**
- * Pass message to children recursively
- *
- * @param propagationHandler		Method used to actually propagate the arguments
- * @param args						va_list of propagated message parameters
-
- * @return							Result
- */
-bool Container::propagateArguments(bool (*propagationHandler)(void*, va_list), va_list args)
-{
-	// if message is valid
-	if(NULL == propagationHandler)
-	{
-		return false;
-	}
-
-	// propagate if I have children
-	if(NULL != this->children)
-	{
-		for(VirtualNode node = this->children->head; NULL != node; node = node->next)
-		{
-			Container child = Container::safeCast(node->data);
-
-			// pass message to each child
-			if(!child->deleteMe && Container::propagateArguments(child, propagationHandler, args))
-			{
-				return true;
-			}
-		}
-	}
-
-	// if no child processed the message, I process it
-	return propagationHandler(this, args);
-}
-
-/**
- * Process message
- *
- * @param args	va_list of propagated message parameters
-
- * @return		Result
- */
-bool Container::onPropagatedMessage(va_list args)
-{
-	int32 message = va_arg(args, int32);
-	return  Container::handlePropagatedMessage(this, message);
-}
-
-/**
- * Process string
- *
- * @param args	va_list of propagated string parameters
-
- * @return		Result
- */
-bool Container::onPropagatedString(va_list args)
-{
-	const char* string = va_arg(args, char*);
-	return  Container::handlePropagatedString(this, string);
-}
-
-/**
- * Handle propagated message
- *
- * @param message	Message
-
- * @return			Result
- */
+//---------------------------------------------------------------------------------------------------------
 bool Container::handlePropagatedMessage(int32 message __attribute__ ((unused)))
 {
 	return false;
 }
-
-/**
- * Handle propagated string
- *
- * @param message	Message
-
- * @return			Result
- */
+//---------------------------------------------------------------------------------------------------------
 bool Container::handlePropagatedString(const char* string __attribute__ ((unused)))
 {
 	return false;
 }
-
-/**
- * Retrieve parent
- *
-
- * @return		Parent Container
- */
-Container Container::getParent()
+//---------------------------------------------------------------------------------------------------------
+void Container::setPosition(const Vector3D* position)
 {
-	return this->parent;
+	Vector3D displacement = Vector3D::sub(*position, this->transformation.position);
+
+	Container::translate(this, &displacement);
+	this->transformation.position = *position;
 }
-
-/**
- * Retrieve children count
- *
-
- * @return		Children count
- */
-int32 Container::getChildrenCount()
+//---------------------------------------------------------------------------------------------------------
+void Container::setRotation(const Rotation* rotation)
 {
-	return NULL != this->children ? VirtualList::getCount(this->children) : 0;
-}
+	Rotation displacement = Rotation::sub(*rotation, this->transformation.rotation);
 
-/**
- * Set name
- *
- * @param name	Name
- */
-void Container::setName(const char* const name)
+	Container::rotate(this, &displacement);
+	this->transformation.rotation = *rotation;
+}
+//---------------------------------------------------------------------------------------------------------
+void Container::setScale(const Scale* scale)
 {
-	if(NULL != this->name)
-	{
-		delete this->name;
-	}
+	Scale factor = Scale::division(*scale, this->transformation.scale);
 
-	if(NULL == name)
-	{
-		return;
-	}
-
-	typedef struct NameWrapper
-	{
-		char name[__MAX_CONTAINER_NAME_LENGTH + 1];
-
-	} NameWrapper;
-
-	NameWrapper* nameWrapper = (NameWrapper*)new NameWrapper;
-	this->name = nameWrapper->name;
-
-	strncpy(this->name, name, __MAX_CONTAINER_NAME_LENGTH);
-	this->name[__MAX_CONTAINER_NAME_LENGTH] = '\0';
+	Container::scale(this, &factor);
+	this->transformation.scale = *scale;
 }
+//---------------------------------------------------------------------------------------------------------
 
-/**
- * Retrieve name
- *
- * @return		Name
- */
-const char* Container::getName()
-{
-	return this->name;
-}
+//=========================================================================================================
+// CLASS' PRIVATE METHODS
+//=========================================================================================================
 
-/**
- * Find child by name in given list
- *
- * @param children	List to search
- * @param childName	Name of child to search for
- * @param recursive	Whether to search recursively
- * @return			Child Container
- */
+//---------------------------------------------------------------------------------------------------------
 Container Container::findChildByName(VirtualList children, const char* childName, bool recursive)
 {
 	if(this->deleteMe)
@@ -1108,145 +898,123 @@ Container Container::findChildByName(VirtualList children, const char* childName
 
 	return NULL;
 }
-
-/**
- * Get child by name
- *
- * @param childName	Name of child to search for
- * @param recursive	Whether to search recursively
- * @return			Child Container
- */
-Container Container::getChildByName(const char* childName, bool recursive)
+//---------------------------------------------------------------------------------------------------------
+Transformation Container::getEnvironmentTransform()
 {
-	Container foundChild = NULL;
-
-	if(!this->deleteMe && childName && this->children)
+	if(NULL == this->parent)
 	{
-		// search through direct children
-		foundChild = Container::findChildByName(this, this->children, childName, false);
-
-		// if no direct child could be found, do a recursive search, if applicable
-		if(!foundChild && recursive)
+		Transformation environmentTransformation =
 		{
-			foundChild = Container::findChildByName(this, this->children, childName, true);
-		}
+			// spatial position
+			{0, 0, 0},
+		
+			// spatial rotation
+			{0, 0, 0},
+		
+			// spatial scale
+			{__1I_FIX7_9, __1I_FIX7_9, __1I_FIX7_9},
+
+			// invalidity
+			__VALID_TRANSFORMATION
+		};
+
+		return environmentTransformation;
 	}
 
-	return !isDeleted(foundChild) && !foundChild->deleteMe ? foundChild : NULL;
+	return this->parent->transformation;
 }
-
-/**
- * Get child by its position in my children list
- *
- * @param position	Index
- * @return			Child Container
- */
-Container Container::getChildAtPosition(int16 position)
+//---------------------------------------------------------------------------------------------------------
+void Container::concatenateTransform(Transformation* concatenatedTransformation, Transformation* localTransformation)
 {
-	if(isDeleted(this->children))
-	{
-		return NULL;
-	}
+	ASSERT(concatenatedTransformation, "Container::concatenateTransform: null concatenatedTransformation");
+	ASSERT(localTransformation, "Container::concatenateTransform: null localTransformation");
 
-	return Container::safeCast(VirtualList::getDataAtIndex(this->children, position));
+	// tranlate position
+	concatenatedTransformation->position = Vector3D::sum(concatenatedTransformation->position, localTransformation->position);
+
+	// propagate rotation
+	concatenatedTransformation->rotation = Rotation::sum(concatenatedTransformation->rotation, localTransformation->rotation);
+
+	// propagate scale
+	concatenatedTransformation->scale = Scale::product(concatenatedTransformation->scale, localTransformation->scale);
 }
-
-/**
- * Suspend for pause
- */
-void Container::suspend()
+//---------------------------------------------------------------------------------------------------------
+inline void Container::applyEnvironmentToPosition(const Transformation* environmentTransformation)
 {
-	Container::purgeChildren(this);
+	Vector3D localPosition = this->localTransformation.position;
 
-	if(NULL == this->children)
+	if(0 != (environmentTransformation->rotation.x | environmentTransformation->rotation.y | environmentTransformation->rotation.z))
 	{
-		return;
+		localPosition = Vector3D::rotate(localPosition, environmentTransformation->rotation);
 	}
 
-	for(VirtualNode node = this->children->head; NULL != node; node = node->next)
+	if(0 != (environmentTransformation->scale.x | environmentTransformation->scale.y | environmentTransformation->scale.z))
 	{
-		Container child = Container::safeCast(node->data);
-
-		Container::suspend(child);
+		localPosition = Vector3D::scale(localPosition, environmentTransformation->scale);
 	}
+
+	this->transformation.position = Vector3D::sum(environmentTransformation->position, localPosition);
 }
-
-/**
- * Resume after pause
- */
-void Container::resume()
+//---------------------------------------------------------------------------------------------------------
+inline void Container::applyEnvironmentToRotation(const Transformation* environmentTransformation)
 {
-	Container::invalidateTransformation(this);
-
-	if(NULL == this->children)
-	{
-		return;
-	}
-
-	for(VirtualNode node = this->children->head; NULL != node; node = node->next)
-	{
-		Container child = Container::safeCast(node->data);
-
-		Container::resume(child);
-	}
+	this->transformation.rotation = Rotation::sum(environmentTransformation->rotation, this->localTransformation.rotation);
 }
-
-void Container::show()
+//---------------------------------------------------------------------------------------------------------
+inline void Container::applyEnvironmentToScale(const Transformation* environmentTransformation)
 {
-	this->hidden = false;
-
-	Container::invalidateTransformation(this);
-
-	if(NULL == this->children)
-	{
-		return;
-	}
-
-	for(VirtualNode node = this->children->head; NULL != node; node = node->next)
-	{
-		Container child = Container::safeCast(node->data);
-
-		Container::show(child);
-	}
+	this->transformation.scale = Scale::product(environmentTransformation->scale, this->localTransformation.scale);
 }
-
-void Container::hide()
+//---------------------------------------------------------------------------------------------------------
+void Container::doTransform(const Transformation* environmentTransformation, uint8 invalidateTransformationFlag)
 {
-	this->hidden = true;
+	ASSERT(environmentTransformation, "Container::transform: null environmentTransformation");
 
-	if(NULL == this->children)
+	uint8 invalidateTransformationFlagHelper = (invalidateTransformationFlag | this->transformation.invalid) & this->inheritEnvironment;
+
+	if(0 != (__INVALIDATE_SCALE & invalidateTransformationFlagHelper))
 	{
-		return;
+		Container::applyEnvironmentToScale(this, environmentTransformation);
 	}
 
-	for(VirtualNode node = this->children->head; NULL != node; node = node->next)
+	if(0 != (__INVALIDATE_ROTATION & invalidateTransformationFlagHelper))
 	{
-		Container::hide(node->data);
+		Container::applyEnvironmentToRotation(this, environmentTransformation);
 	}
-}
 
-void Container::setInheritEnvironment(uint8 inheritEnvironment)
-{
-	this->inheritEnvironment = inheritEnvironment;
-}
+	if(0 != ((__INVALIDATE_POSITION | __INVALIDATE_ROTATION) & invalidateTransformationFlagHelper))
+	{
+		Container::applyEnvironmentToPosition(this, environmentTransformation);
+	}
 
-bool Container::getChildren(ClassPointer classPointer, VirtualList children)
+	Container::transformChildren(this, invalidateTransformationFlagHelper);
+
+	// don't update position on next transformation cycle
+	this->transformation.invalid = __VALID_TRANSFORMATION;
+}
+//---------------------------------------------------------------------------------------------------------
+bool Container::propagateArguments(bool (*propagationHandler)(void*, va_list), va_list args)
 {
-	if(isDeleted(this->children) || isDeleted(children))
+	if(NULL == propagationHandler)
 	{
 		return false;
 	}
 
-	for(VirtualNode node = this->children->head; NULL != node; node = node->next)
+	if(NULL != this->children)
 	{
-		Container child = Container::safeCast(node->data);
-
-		if(NULL == classPointer || Object::getCast(child, classPointer, NULL))
+		for(VirtualNode node = this->children->head; NULL != node; node = node->next)
 		{
-			VirtualList::pushBack(children, child);
+			Container child = Container::safeCast(node->data);
+
+			// Pass message to each child
+			if(!child->deleteMe && Container::propagateArguments(child, propagationHandler, args))
+			{
+				return true;
+			}
 		}
 	}
 
-	return 0 < VirtualList::getCount(children);
+	// If no child processed the message, I process it
+	return propagationHandler(this, args);
 }
-
+//---------------------------------------------------------------------------------------------------------

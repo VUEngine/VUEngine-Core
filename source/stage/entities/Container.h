@@ -1,4 +1,4 @@
-/**
+/*
  * VUEngine Core
  *
  * © Jorge Eremiev <jorgech3@gmail.com> and Christian Radke <c.radke@posteo.de>
@@ -106,15 +106,6 @@ class Container : SpatialObject
 	/// outside of the camera's reach
 	void streamOut(bool streamOut);
 
-	/// Invalidate the transformation to force it to be recomputed in the next
-	/// game cycle.
-	void invalidateTransformation();
-
-	/// Set the flags that determine which of the transformation's components must
-	/// inherit those from this container's parent's
-	/// @param inheritEnvironment: Transformation inheritance flags
-	void setInheritEnvironment(uint8 inheritEnvironment);
-
 	/// Retrieve this container's parent container.
 	/// @return Parent container
 	Container getParent();
@@ -155,6 +146,15 @@ class Container : SpatialObject
 	
 	/// Update the children of this container.
 	void updateChildren();
+
+	/// Invalidate the transformation to force it to be recomputed in the next
+	/// game cycle.
+	void invalidateTransformation();
+
+	/// Set the flags that determine which of the transformation's components must
+	/// inherit those from this container's parent's
+	/// @param inheritEnvironment: Transformation inheritance flags
+	void setInheritEnvironment(uint8 inheritEnvironment);
 
 	/// Apply the transformations to this container's children.
 	/// @param invalidateTransformationFlag: Flag that determines which transfomation's components 
