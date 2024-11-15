@@ -238,7 +238,7 @@ uint32 EntityFactory::transformEntities()
 			
 			if(NULL != entitySpec && NULL != entitySpec->spriteSpecs && NULL != entitySpec->spriteSpecs[positionedEntityDescription->componentIndex])
 			{
-				bool createdComponent = NULL != Entity::addSprite(positionedEntityDescription->entity, entitySpec->spriteSpecs[positionedEntityDescription->componentIndex], SpriteManager::getInstance());
+				bool createdComponent = NULL != Entity::addSprite(positionedEntityDescription->entity, entitySpec->spriteSpecs[positionedEntityDescription->componentIndex], NULL);
 				positionedEntityDescription->componentIndex++;
 
 				if(createdComponent)
@@ -257,7 +257,7 @@ uint32 EntityFactory::transformEntities()
 			
 			if(NULL != entitySpec && NULL != entitySpec->wireframeSpecs && NULL != entitySpec->wireframeSpecs[positionedEntityDescription->componentIndex])
 			{
-				bool createdComponent = NULL != Entity::addWireframe(positionedEntityDescription->entity, entitySpec->wireframeSpecs[positionedEntityDescription->componentIndex], WireframeManager::getInstance());
+				bool createdComponent = NULL != Entity::addWireframe(positionedEntityDescription->entity, entitySpec->wireframeSpecs[positionedEntityDescription->componentIndex], NULL);
 				positionedEntityDescription->componentIndex++;
 
 				if(createdComponent)
@@ -276,7 +276,7 @@ uint32 EntityFactory::transformEntities()
 			
 			if(NULL != entitySpec && NULL != entitySpec->colliderSpecs[positionedEntityDescription->componentIndex].allocator)
 			{
-				bool createdComponent = NULL != Entity::addCollider(positionedEntityDescription->entity, &entitySpec->colliderSpecs[positionedEntityDescription->componentIndex], VUEngine::getCollisionManager(VUEngine::getInstance()));
+				bool createdComponent = NULL != Entity::addCollider(positionedEntityDescription->entity, &entitySpec->colliderSpecs[positionedEntityDescription->componentIndex], NULL);
 				positionedEntityDescription->componentIndex++;
 
 				if(createdComponent)

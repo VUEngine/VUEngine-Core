@@ -86,7 +86,7 @@ void Entity::constructor(EntitySpec* entitySpec, int16 internalId, const char* c
  */
 void Entity::destructor()
 {
-	Entity::destroyComponents(this);
+	Entity::removeComponents(this);
 
 	if(NULL != this->centerDisplacement)
 	{
@@ -103,11 +103,11 @@ void Entity::destructor()
 	Base::destructor();
 }
 
-void Entity::destroyComponents()
+void Entity::removeComponents()
 {
-	Entity::destroyWireframes(this);
-	Entity::destroySprites(this);
-	Entity::destroyColliders(this);
+	Entity::removeWireframes(this);
+	Entity::removeSprites(this);
+	Entity::removeColliders(this);
 	Entity::destroyBehaviors(this);
 }
 
@@ -162,7 +162,7 @@ void Entity::setSpec(void* entitySpec)
  *
  * @private
  */
-void Entity::destroyColliders()
+void Entity::removeColliders()
 {
 	if(NULL != this->colliders)
 	{
@@ -299,7 +299,7 @@ void Entity::addSprites(SpriteSpec** spriteSpecs, bool destroyOldSprites)
 
 	if(destroyOldSprites)
 	{
-		Entity::destroySprites(this);
+		Entity::removeSprites(this);
 	}
 
 	SpriteManager spriteManager = SpriteManager::getInstance();
@@ -339,11 +339,21 @@ Sprite Entity::addSprite(SpriteSpec* spriteSpec, SpriteManager spriteManager)
 	return sprite;
 }
 
+void Entity::removeSprite(Sprite sprite)
+{
+	if(isDeleted(this->sprites) || !VirtualList::find(this->sprites, sprite))
+	{
+		return;
+	}
+
+	SpriteManager::destroySprite(SpriteManager::getInstance(), sprite);
+}
+
 /**
  * Delete all of the Entity's sprites
  *
  */
-void Entity::destroySprites()
+void Entity::removeSprites()
 {
 #ifndef __SHIPPING
 #ifndef __RELEASE
@@ -373,10 +383,10 @@ void Entity::destroySprites()
 				Printing::text(Printing::getInstance(), "Caller address: ", 1, 27, NULL);
 				Printing::hex(Printing::getInstance(), lp, 1, 12, 8, NULL);
 #endif
-				Error::triggerException("Entity::destroySprites: trying to dispose dead sprite", NULL);		
+				Error::triggerException("Entity::removeSprites: trying to dispose dead sprite", NULL);		
 			}
 #endif
-			NM_ASSERT(!isDeleted(Sprite::safeCast(node->data)), "Entity::destroySprites: trying to dispose dead sprite");
+			NM_ASSERT(!isDeleted(Sprite::safeCast(node->data)), "Entity::removeSprites: trying to dispose dead sprite");
 
 			SpriteManager::destroySprite(spriteManager, Sprite::safeCast(node->data));
 		}
@@ -418,7 +428,7 @@ void Entity::addWireframes(WireframeSpec** wireframeSpecs, bool destroyOldWirefr
 
 	if(destroyOldWireframes)
 	{
-		Entity::destroyWireframes(this);
+		Entity::removeWireframes(this);
 	}
 
 	WireframeManager wireframeManager = WireframeManager::getInstance();
@@ -427,6 +437,16 @@ void Entity::addWireframes(WireframeSpec** wireframeSpecs, bool destroyOldWirefr
 	{
 		Entity::addWireframe(this, wireframeSpecs[i], wireframeManager);
 	}
+}
+
+void Entity::removeWireframe(Wireframe wireframe)
+{
+	if(isDeleted(this->wireframes) || !VirtualList::find(this->wireframes, wireframe))
+	{
+		return;
+	}
+
+	WireframeManager::destroyWireframe(WireframeManager::getInstance(), wireframe);
 }
 
 /**
@@ -469,7 +489,7 @@ Wireframe Entity::addWireframe(WireframeSpec* wireframeSpec, WireframeManager wi
  *
  * @private
  */
-void Entity::destroyWireframes()
+void Entity::removeWireframes()
 {
 	if(!isDeleted(this->wireframes))
 	{
@@ -517,7 +537,7 @@ void Entity::addColliders(ColliderSpec* colliderSpecs, bool destroyOldColliders)
 
 	if(destroyOldColliders)
 	{
-		Entity::destroyColliders(this);
+		Entity::removeColliders(this);
 	}
 
 	CollisionManager collisionManager = VUEngine::getCollisionManager(_vuEngine);
@@ -1030,55 +1050,6 @@ static PixelRightBox Entity::getBoundingBoxFromSpec(const PositionedEntity* posi
 }
 
 /**
- * Find child by name in given list
- *
- * @param childrenSpecs	Function scope
- * @param environmentPosition
- * @param childName
- * @return						Entity's global position
- */
-static Vector3D* Entity::calculateGlobalPositionFromSpecByName(const struct PositionedEntity* childrenSpecs, Vector3D environmentPosition, const char* childName)
-{
-	ASSERT(childrenSpecs, "Entity::calculateGlobalPositionFromSpecByName: null positionedEntity");
-
-	if(!childrenSpecs)
-	{
-		return NULL;
-	}
-
-	static Vector3D position;
-
-	int32 i = 0;
-	for(; childrenSpecs[i].entitySpec; i++)
-	{
-		if(!strncmp(childName, childrenSpecs[i].name, __MAX_CONTAINER_NAME_LENGTH))
-		{
-			position.x = environmentPosition.x + __PIXELS_TO_METERS(childrenSpecs[i].onScreenPosition.x);
-			position.y = environmentPosition.y + __PIXELS_TO_METERS(childrenSpecs[i].onScreenPosition.y);
-			position.z = environmentPosition.z + __PIXELS_TO_METERS(childrenSpecs[i].onScreenPosition.z);
-			return &position;
-		}
-
-		if(childrenSpecs[i].childrenSpecs)
-		{
-			Vector3D concatenatedEnvironmentPosition = environmentPosition;
-			concatenatedEnvironmentPosition.x += __PIXELS_TO_METERS(childrenSpecs[i].onScreenPosition.x);
-			concatenatedEnvironmentPosition.y += __PIXELS_TO_METERS(childrenSpecs[i].onScreenPosition.y);
-			concatenatedEnvironmentPosition.z += __PIXELS_TO_METERS(childrenSpecs[i].onScreenPosition.z);
-
-			Vector3D* position = Entity::calculateGlobalPositionFromSpecByName(childrenSpecs[i].childrenSpecs, concatenatedEnvironmentPosition, childName);
-
-			if(position)
-			{
-				return position;
-			}
-		}
-	}
-
-	return NULL;
-}
-
-/**
  * Instantiate an Entity using the provided allocator
  *
  * @param entitySpec
@@ -1098,7 +1069,7 @@ static Entity Entity::instantiate(const EntitySpec* const entitySpec, int16 inte
 		return NULL;
 	}
 
-	// call the appropriate allocator to support inheritance
+	// Call the appropriate allocator to support inheritance
 	Entity entity = ((Entity (*)(EntitySpec*, int16, const char* const)) entitySpec->allocator)((EntitySpec*)entitySpec, internalId, name);
 
 	// process extra info
@@ -1373,11 +1344,11 @@ void Entity::setExtraInfo(void* extraInfo __attribute__ ((unused)))
 {
 }
 
-void Entity::createComponents()
+void Entity::addComponents()
 {
 	if(!isDeleted(this->children))
 	{
-		Base::createComponents(this);
+		Base::addComponents(this);
 	}
 
 	Entity::createSprites(this);
@@ -1454,8 +1425,8 @@ bool Entity::handlePropagatedMessage(int32 message)
 	{
 		case kMessageReleaseVisualComponents:
 
-			Entity::destroySprites(this);
-			Entity::destroyWireframes(this);
+			Entity::removeSprites(this);
+			Entity::removeWireframes(this);
 			break;
 
 		case kMessageReloadVisualComponents:
@@ -1671,8 +1642,8 @@ void Entity::suspend()
 {
 	Base::suspend(this);
 
-	Entity::destroySprites(this);
-	Entity::destroyWireframes(this);
+	Entity::removeSprites(this);
+	Entity::removeWireframes(this);
 }
 
 /**
@@ -1814,15 +1785,6 @@ void Entity::disableCollisions()
 }
 
 /**
- * Retrieve allowing collision status
- */
-bool Entity::doesAllowCollisions()
-{
-	return this->collisionsEnabled;
-}
-
-
-/**
  * Returns whether I have collision colliders or not
  */
 bool Entity::hasColliders()
@@ -1885,11 +1847,6 @@ void Entity::setNormalizedDirection(NormalizedDirection normalizedDirection)
 	Entity::setLocalRotation(this, &rotation);
 }
 
-/**
- * Get direction
- *
- * @return		NormalizedDirection
- */
 NormalizedDirection Entity::getNormalizedDirection()
 {
 	NormalizedDirection normalizedDirection =
@@ -2022,11 +1979,11 @@ void Entity::setTransparency(uint8 transparency)
 }
 
 /**
- * Whether to respawn this Entity after it has been streamed out
+ * Whether to alwaysStreamIn this Entity after it has been streamed out
  *
- * @return		Boolean whether to respawn this Entity
+ * @return		Boolean whether to alwaysStreamIn this Entity
  */
-bool Entity::respawn()
+bool Entity::alwaysStreamIn()
 {
 	return true;
 }

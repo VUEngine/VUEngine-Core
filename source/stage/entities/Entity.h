@@ -114,27 +114,39 @@ typedef const PositionedEntity PositionedEntityROMSpec;
 /// @ingroup stage-entities
 class Entity : Container
 {
-	// Flag to signal if collisions are allowed
+	/// Signals if collisions against this entity's colliders are allowed
 	bool collisionsEnabled;
-	// Flag to signal if collisions are checked
+
+	/// Signals if collisions are against other entity's colliders are allowed
 	bool checkingCollisions;
-	// Entity's internal id, set by the engine
+	
+	/// Entity's internal id, set by the engine
 	int16 internalId;
-	// Used for collisions and streaming
+	
+	/// Size of the entity in function of its components and its children's, grand children's,
+	/// etc. components
 	Size size;
-	// Entity factory
+
+	/// Factory to create this entity's children
 	EntityFactory entityFactory;
-	// components list
+
+	/// Linked list of attached sprites
 	VirtualList sprites;
-	// Colliders for collision detection
-	VirtualList colliders;
-	// wireframes
+
+	/// Linked list of attached wireframes
 	VirtualList wireframes;
-	// Bahaviors list
+
+	/// Linked list of attached colliders
+	VirtualList colliders;
+
+	/// Linked list of attached behaviors
 	VirtualList behaviors;
-	// Entity's spec
+
+	/// Pointer to the spec that defines how to initialize the entity 
 	EntitySpec* entitySpec;
-	// Center displacement
+
+	/// Diplacement between the entity's bounding box's center and its local position
+	/// used to speed up the visibility check of the entity withing the camera's frustum
 	Vector3D* centerDisplacement;
 
 	/// @publicsection
@@ -142,65 +154,82 @@ class Entity : Container
 	static Entity loadEntity(const PositionedEntity* const positionedEntity, int16 internalId);
 	static Entity loadEntityDeferred(const PositionedEntity* const positionedEntity, int16 internalId);
 	static PixelRightBox getBoundingBoxFromSpec(const PositionedEntity* positionedEntity, const PixelVector* environmentPosition);
-	static Vector3D* calculateGlobalPositionFromSpecByName(const struct PositionedEntity* childrenSpecs, Vector3D environmentPosition, const char* childName);
 
 	void constructor(EntitySpec* entitySpec, int16 internalId, const char* const name);
+
+	EntitySpec* getSpec();
+
+	int16 getInternalId();
+
+	void setNormalizedDirection(NormalizedDirection normalizedDirection);
+	NormalizedDirection getNormalizedDirection();
+
+	Entity spawnChildEntity(const PositionedEntity* const positionedEntity);
 	void addChildEntities(const PositionedEntity* childrenSpecs);
 	void addChildEntitiesDeferred(const PositionedEntity* childrenSpecs);
-	bool createSprites();
-	bool createWireframes();
-	bool createColliders();
-	bool createBehaviors();
-	Sprite addSprite(SpriteSpec* spriteSpec, SpriteManager spriteManager);
-	void addSprites(SpriteSpec** spriteSpecs, bool destroyOldSprites);
-	Wireframe addWireframe(WireframeSpec* wireframeSpec, WireframeManager wireframeManager);
-	void addWireframes(WireframeSpec** wireframeSpecs, bool destroyOldWireframes);
-	Collider addCollider(ColliderSpec* colliderSpec, CollisionManager collisionManager);
-	void addColliders(ColliderSpec* colliderSpecs, bool destroyOldColliders);
-	Behavior addBehavior(BehaviorSpec* behaviorSpec);
-	void destroySprites();
-	void destroyWireframes();
-	void destroyColliders();
-	void calculateSize(bool force);
-	Entity spawnChildEntity(const PositionedEntity* const positionedEntity);
+	
 	uint32 areAllChildrenInstantiated();
 	uint32 areAllChildrenTransformed();
 	uint32 areAllChildrenReady();
 	Entity getChildById(int16 id);
-	EntitySpec* getSpec();
-	int32 getMapParallax();
-	int16 getId();
-	int16 getInternalId();
-	VirtualList getSprites();
-	VirtualList getWireframes();
+
+	Behavior addBehavior(BehaviorSpec* behaviorSpec);
 	bool getBehaviors(ClassPointer classPointer, VirtualList behaviors);
-	void setAnimation(void (*animation)());
-	void checkCollisions(bool activate);
+
+	Sprite addSprite(SpriteSpec* spriteSpec, SpriteManager spriteManager);
+	void removeSprite(Sprite sprite);
+	void addSprites(SpriteSpec** spriteSpecs, bool destroyOldSprites);
+	VirtualList getSprites();
+	void removeSprites();
+	
+	Wireframe addWireframe(WireframeSpec* wireframeSpec, WireframeManager wireframeManager);
+	void addWireframes(WireframeSpec** wireframeSpecs, bool destroyOldWireframes);
+	void removeWireframe(Wireframe wireframe);
+	VirtualList getWireframes();
+	void removeWireframes();
+	
+	Collider addCollider(ColliderSpec* colliderSpec, CollisionManager collisionManager);
+	void addColliders(ColliderSpec* colliderSpecs, bool destroyOldColliders);
+	void removeCollider(Collider collider);
+	VirtualList getColliders();
+	void removeColliders();
+	
 	void enableCollisions();
 	void disableCollisions();
+	void checkCollisions(bool activate);
 	void registerCollisions(bool value);
-	bool doesAllowCollisions();
+
+	void setCollidersLayers(uint32 layers);
+	uint32 getCollidersLayers();
+
+	void setCollidersLayersToIgnore(uint32 layersToIgnore);
+	uint32 getCollidersLayersToIgnore();
+
 	bool hasColliders();
 	void showColliders();
 	void hideColliders();
-	NormalizedDirection getNormalizedDirection();
-	uint32 getCollidersLayers();
-	void setCollidersLayers(uint32 layers);
-	uint32 getCollidersLayersToIgnore();
-	void setCollidersLayersToIgnore(uint32 layersToIgnore);
-	bool isSpriteVisible(Sprite sprite, int32 pad);
-	VirtualList getColliders();
-	void updateSprites(uint32 updatePosition, uint32 updateScale, uint32 updateRotation, uint32 updateProjection);
+	
+
 	void setSize(Size size);
-	bool isInCameraRange(int16 padding, bool recursive);
+	void calculateSize(bool force);
+
 	fixed_t getWidth();
 	fixed_t getHeight();
 	fixed_t getDepth();
 
-	virtual void setNormalizedDirection(NormalizedDirection normalizedDirection);
-	virtual void setExtraInfo(void* extraInfo);
-	virtual bool respawn();
+	bool isInCameraRange(int16 padding, bool recursive);
+
+	/// Set the particle systems's spec.
+	/// @param particleSystemSpec: Specification that determines how to configure the particle system
 	virtual void setSpec(void* entitySpec);
+
+	/// Set any extra info provided by the PositionedEntity struct used to instantiate this entity.
+	/// @param extraInfo: Pointer to the extra information that the entity might need
+	virtual void setExtraInfo(void* extraInfo);
+
+	/// Check if the entity must be streamed in after being streamed out or destroyed.
+	/// @return True if the streaming must spawn this entity back when deleted
+	virtual bool alwaysStreamIn();
 
 	/// Retrieve the object's radius.
 	/// @return Radius
@@ -214,19 +243,40 @@ class Entity : Container
 	/// @return Object's friction coefficient
 	override fixed_t getFrictionCoefficient();
 
+	/// Check if the object is subject to provided gravity vector.
+	/// @return True if the provided gravity vector can affect the object; false otherwise
+	override bool isSubjectToGravity(Vector3D gravity);
+
 	/// Retrieve the enum that determines the type of game object.
 	/// @return The enum that determines the type of game object
 	override uint32 getInGameType();
 
-	override void createComponents();
-	override void setTransparency(uint8 transparency);
-	override bool handlePropagatedMessage(int32 message);
-	override void suspend();
-	override void resume();
-	override bool isSubjectToGravity(Vector3D gravity);
+	/// Add the components that must attach to this entity. 
+	override void addComponents();
+
+	/// Remove the components that attach to this entity. 	
+	override void removeComponents();
+
+	/// Make this instance visible.
 	override void show();
+
+	/// Make this instance invisible.
 	override void hide();
-	override void destroyComponents();
+
+	/// Prepare to suspend this instance's logic.
+	override void suspend();
+
+	/// Prepare to resume this instance's logic.
+	override void resume();
+
+	/// Set this instance's transparency effects.
+	/// @param transparency: Transparecy effect (__TRANSPARENCY_NONE, __TRANSPARENCY_EVEN or __TRANSPARENCY_ODD)
+	override void setTransparency(uint8 transparency);
+
+	/// Default interger message handler for propagateMessage
+	/// @param message: Propagated integer message
+	/// @return True if the propagation must stop; false if the propagation must reach other containers
+	override bool handlePropagatedMessage(int32 message);
 }
 
 

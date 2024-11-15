@@ -92,7 +92,7 @@ class Actor : AnimatedEntity
 	override void changeEnvironment(Transformation* environmentTransform);
 	override bool collisionStarts(const CollisionInformation* collisionInformation);
 	override void collisionEnds(const CollisionInformation* collisionInformation);
-	override void destroyComponents();
+	override void removeComponents();
 }
 
 

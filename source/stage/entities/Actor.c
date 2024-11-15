@@ -111,9 +111,9 @@ void Actor::initializeStateMachine(State state)
 	this->update = true;
 }
 
-void Actor::destroyComponents()
+void Actor::removeComponents()
 {
-	Base::destroyComponents(this);
+	Base::removeComponents(this);
 
 	// destroy body to prevent any more physical interactions
 	if(!isDeleted(this->body))

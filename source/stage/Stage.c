@@ -740,8 +740,8 @@ bool Stage::unloadOutOfRangeEntities(int32 defer __attribute__((unused)))
 			Stage::destroyChildEntity(this, entity);
 
 			// remove from list of entities that are to be loaded by the streaming,
-			// if the entity is not to be respawned
-			if(!Entity::respawn(entity))
+			// if the entity is not to be alwaysStreamIned
+			if(!Entity::alwaysStreamIn(entity))
 			{
 				VirtualList::removeNode(this->stageEntityDescriptions, auxNode);
 			}
