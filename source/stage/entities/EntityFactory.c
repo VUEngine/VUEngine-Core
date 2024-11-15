@@ -37,7 +37,7 @@ static const StreamingPhase _streamingPhases[] =
 {
 	&EntityFactory::instantiateEntities,
 	&EntityFactory::transformEntities,
-	&EntityFactory::makeReadyEntities
+	&EntityFactory::addChildEntities
 };
 
 static int32 _streamingPhasesCount = sizeof(_streamingPhases) / sizeof(StreamingPhase);
@@ -172,7 +172,9 @@ uint32 EntityFactory::instantiateEntities()
 	{
 		if(!isDeleted(positionedEntityDescription->entity))
 		{
-			if(Entity::areAllChildrenInstantiated(positionedEntityDescription->entity))
+			EntityFactory entityFactory = Entity::getEntityFactory(positionedEntityDescription->entity);
+
+			if(NULL == entityFactory || __LIST_EMPTY == EntityFactory::instantiateEntities(entityFactory))
 			{
 				VirtualList::pushBack(this->entitiesToTransform, positionedEntityDescription);
 				VirtualList::removeData(this->entitiesToInstantiate, positionedEntityDescription);
@@ -308,7 +310,9 @@ uint32 EntityFactory::transformEntities()
 			positionedEntityDescription->componentIndex = 0;
 		}
 
-		if(Entity::areAllChildrenTransformed(positionedEntityDescription->entity))
+		EntityFactory entityFactory = Entity::getEntityFactory(positionedEntityDescription->entity);
+
+		if(NULL == entityFactory || __LIST_EMPTY == EntityFactory::transformEntities(entityFactory))
 		{
 			VirtualList::pushBack(this->entitiesToMakeReady, positionedEntityDescription);
 			VirtualList::removeData(this->entitiesToTransform, positionedEntityDescription);
@@ -333,7 +337,7 @@ uint32 EntityFactory::transformEntities()
 	return __ENTITY_PROCESSED;
 }
 
-uint32 EntityFactory::makeReadyEntities()
+uint32 EntityFactory::addChildEntities()
 {
 	if(NULL == this->entitiesToMakeReady->head)
 	{
@@ -353,9 +357,11 @@ uint32 EntityFactory::makeReadyEntities()
 			return __ENTITY_PENDING_PROCESSING;
 		}
 
-		if(Entity::areAllChildrenReady(positionedEntityDescription->entity))
+		EntityFactory entityFactory = Entity::getEntityFactory(positionedEntityDescription->entity);
+
+		if(NULL == entityFactory || __LIST_EMPTY == EntityFactory::addChildEntities(entityFactory))
 		{
-			NM_ASSERT(!isDeleted(positionedEntityDescription->parent), "EntityFactory::makeReadyEntities: deleted parent");
+			NM_ASSERT(!isDeleted(positionedEntityDescription->parent), "EntityFactory::addChildEntities: deleted parent");
 
 			// Must add the child to its parent before making it ready
 			Container::addChild(positionedEntityDescription->parent, Container::safeCast(positionedEntityDescription->entity));
@@ -475,7 +481,7 @@ void EntityFactory::prepareAllEntities()
 
 	while(!isDeleted(this->entitiesToMakeReady->head))
 	{
-		EntityFactory::makeReadyEntities(this);
+		EntityFactory::addChildEntities(this);
 	}
 
 	EntityFactory::cleanUp(this);

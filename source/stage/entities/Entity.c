@@ -87,15 +87,11 @@ void Entity::constructor(EntitySpec* entitySpec, int16 internalId, const char* c
 void Entity::destructor()
 {
 	Entity::removeComponents(this);
+	Entity::destroyEntityFactory(this);
 
 	if(NULL != this->centerDisplacement)
 	{
 		delete this->centerDisplacement;
-	}
-
-	if(this->entityFactory)
-	{
-		delete this->entityFactory;
 	}
 
 	// destroy the super Container
@@ -119,6 +115,11 @@ void Entity::removeComponents()
 int16 Entity::getInternalId()
 {
 	return this->internalId;
+}
+
+EntityFactory Entity::getEntityFactory()
+{
+	return this->entityFactory;
 }
 
 /**
@@ -1201,12 +1202,34 @@ void Entity::addChildEntitiesDeferred(const PositionedEntity* childrenSpecs)
 	if(isDeleted(this->entityFactory))
 	{
 		this->entityFactory = new EntityFactory();
+
+		Entity::addEventListener(this, ListenerObject::safeCast(this), (EventListener)Entity::onEntityLoadedDeferred, kEventEntityLoaded);
 	}
 
 	for(int32 i = 0; NULL != childrenSpecs[i].entitySpec; i++)
 	{
 		EntityFactory::spawnEntity(this->entityFactory, &childrenSpecs[i], Container::safeCast(this), NULL, this->internalId + Entity::getChildrenCount(this));
 	}
+}
+
+bool Entity::onEntityLoadedDeferred(ListenerObject eventFirer __attribute__ ((unused)))
+{
+	if(ListenerObject::safeCast(this) != eventFirer)
+	{
+		return false;
+	} 
+
+	if(isDeleted(this->entityFactory))
+	{
+		return false;
+	}
+
+	if(!EntityFactory::hasEntitiesPending(this->entityFactory))
+	{
+		Entity::destroyEntityFactory(this);
+	}
+
+	return false;
 }
 
 /**
@@ -1282,57 +1305,13 @@ Entity Entity::spawnChildEntity(const PositionedEntity* const positionedEntity)
 	return NULL;
 }
 
-/**
- * Are all children instantiated?
- *
- * @return		Boolean whether all children are instantiated
- */
-uint32 Entity::areAllChildrenInstantiated()
+void Entity::destroyEntityFactory()
 {
 	if(!isDeleted(this->entityFactory))
 	{
-		return __LIST_EMPTY == EntityFactory::instantiateEntities(this->entityFactory);
+		delete this->entityFactory;
+		this->entityFactory = NULL;
 	}
-
-	return true;
-}
-
-/**
- * Are all children transformed?
- *
- * @return		Boolean whether all children are transformed
- */
-uint32 Entity::areAllChildrenTransformed()
-{
-	if(!isDeleted(this->entityFactory))
-	{
-		return __LIST_EMPTY == EntityFactory::transformEntities(this->entityFactory);
-	}
-
-	return true;
-}
-
-/**
- * Are all children ready?
- *
- * @return		Boolean whether all children are ready
- */
-uint32 Entity::areAllChildrenReady()
-{
-	if(!isDeleted(this->entityFactory))
-	{
-		uint32 returnValue = __LIST_EMPTY == EntityFactory::makeReadyEntities(this->entityFactory);
-
-		if(!EntityFactory::hasEntitiesPending(this->entityFactory))
-		{
-			delete this->entityFactory;
-			this->entityFactory = NULL;
-		}
-
-		return returnValue;
-	}
-
-	return true;
 }
 
 /**

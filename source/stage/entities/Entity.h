@@ -161,6 +161,8 @@ class Entity : Container
 
 	int16 getInternalId();
 
+	EntityFactory getEntityFactory();
+
 	void setNormalizedDirection(NormalizedDirection normalizedDirection);
 	NormalizedDirection getNormalizedDirection();
 
@@ -168,9 +170,6 @@ class Entity : Container
 	void addChildEntities(const PositionedEntity* childrenSpecs);
 	void addChildEntitiesDeferred(const PositionedEntity* childrenSpecs);
 	
-	uint32 areAllChildrenInstantiated();
-	uint32 areAllChildrenTransformed();
-	uint32 areAllChildrenReady();
 	Entity getChildById(int16 id);
 
 	Behavior addBehavior(BehaviorSpec* behaviorSpec);

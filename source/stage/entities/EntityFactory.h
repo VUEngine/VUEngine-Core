@@ -89,8 +89,7 @@ class EntityFactory : ListenerObject
 	uint32 hasEntitiesPending();
 	uint32 instantiateEntities();
 	uint32 transformEntities();
-	uint32 makeReadyEntities();
-	uint32 callLoadedEntities();
+	uint32 addChildEntities();
 	void showStatus(int32 x, int32 y);
 }
 
