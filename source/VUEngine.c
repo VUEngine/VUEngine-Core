@@ -726,11 +726,11 @@ void VUEngine::nextGameCycleStarted(uint16 gameFrameDuration)
 	// focus the camera once collisions are resolved
 	VUEngine::focusCamera(this);
 
-	UIContainer uiContainer = VUEngine::getUIContainer(this);
-
-	if(!isDeleted(uiContainer))
+	GameState gameState = VUEngine::getCurrentState(this);
+	
+	if(!isDeleted(gameState))
 	{
-		UIContainer::prepareToRender(uiContainer);
+		GameState::transformUI(gameState);
 	}
 
 	ClockManager::update(this->clockManager, gameFrameDuration);

@@ -1,4 +1,4 @@
-/**
+/*
  * VUEngine Core
  *
  * © Jorge Eremiev <jorgech3@gmail.com> and Christian Radke <c.radke@posteo.de>
@@ -8,9 +8,9 @@
  */
 
 
-//---------------------------------------------------------------------------------------------------------
-//												INCLUDES
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// INCLUDES
+//=========================================================================================================
 
 #include <Camera.h>
 #include <Printing.h>
@@ -19,32 +19,32 @@
 #include "UIContainer.h"
 
 
-//---------------------------------------------------------------------------------------------------------
-//												CLASS'S DECLARATIONS
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// CLASS' ATTRIBUTES
+//=========================================================================================================
 
 static Camera _camera = NULL;
 
 
-//---------------------------------------------------------------------------------------------------------
-//												CLASS'S METHODS
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// CLASS' PUBLIC METHODS
+//=========================================================================================================
 
-// class's constructor
-void UIContainer::constructor(UIContainerSpec* uiContainerSpec)
+//---------------------------------------------------------------------------------------------------------
+void UIContainer::constructor(PositionedEntity* childrenPositionedEntities)
 {
-	// construct base object
-	Base::constructor(NULL);
+	_camera = Camera::getInstance();
 
-	// add entities in the spec
-	UIContainer::addEntities(this, uiContainerSpec->entities);
+	Base::constructor(NULL);
 
 	this->inheritEnvironment = __INHERIT_POSITION;
 
-	_camera = Camera::getInstance();
+	for(int16 i = 0; NULL != childrenPositionedEntities && NULL != childrenPositionedEntities[i].entitySpec; i++)
+	{
+		UIContainer::spawnChildEntity(this, &childrenPositionedEntities[i]);
+	}
 }
-
-// class's destructor
+//---------------------------------------------------------------------------------------------------------
 void UIContainer::destructor()
 {
 	this->deleteMe = true;
@@ -53,21 +53,7 @@ void UIContainer::destructor()
 	// must always be called at the end of the destructor
 	Base::destructor();
 }
-
-// add entities
-void UIContainer::addEntities(PositionedEntity* entities)
-{
-	ASSERT(entities, "UIContainer::addEntities: null entities");
-
-	int32 i = 0;
-
-	for(;NULL != entities && NULL != entities[i].entitySpec; i++)
-	{
-		UIContainer::spawnChildEntity(this, &entities[i]);
-	}
-}
-
-// add entity to the stage
+//---------------------------------------------------------------------------------------------------------
 Entity UIContainer::spawnChildEntity(const PositionedEntity* const positionedEntity)
 {
 	if(NULL != positionedEntity)
@@ -86,8 +72,8 @@ Entity UIContainer::spawnChildEntity(const PositionedEntity* const positionedEnt
 
 	return NULL;
 }
-
-void UIContainer::prepareToRender()
+//---------------------------------------------------------------------------------------------------------
+void UIContainer::transform(const Transformation* environmentTransform __attribute__((unused)), uint8 invalidateTransformationFlag __attribute__((unused)))
 {
 	extern Transformation neutralEnvironmentTransformation;
 
@@ -97,3 +83,4 @@ void UIContainer::prepareToRender()
 
 	Base::transform(this, &neutralEnvironmentTransformation, __INVALIDATE_POSITION | __INVALIDATE_ROTATION);
 }
+//---------------------------------------------------------------------------------------------------------

@@ -133,6 +133,8 @@ typedef const PositionedEntity PositionedEntityROMSpec;
 /// @ingroup stage-entities
 class Entity : Container
 {
+	/// @protectedsection
+
 	/// Signals if collisions against this entity's colliders are allowed
 	bool collisionsEnabled;
 

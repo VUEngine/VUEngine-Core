@@ -140,8 +140,16 @@ typedef struct StageSpec
 
 	struct Entities
 	{
-		// ui's spec
-		UIContainerSpec uiContainerSpec;
+		/// UI configuration
+		struct 
+		{
+			// ui's entities
+			PositionedEntity* childrenSpecs;
+
+			// class allocator
+			AllocatorPointer allocator;
+
+		} UI;
 
 		// each of the stage's entities
 		PositionedEntity* children;

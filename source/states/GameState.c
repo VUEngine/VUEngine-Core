@@ -448,6 +448,23 @@ void GameState::transform()
 }
 
 /**
+ * Start a transformation cycle on the Stage
+ */
+void GameState::transformUI()
+{
+	if(!this->transform)
+	{
+		return;
+	}
+
+	NM_ASSERT(this->uiContainer, "GameState::transform: null uiContainer");
+
+	extern Transformation neutralEnvironmentTransformation;
+
+	UIContainer::transform(this->uiContainer, NULL, __INVALIDATE_TRANSFORMATION);
+}
+
+/**
  * Start a physics simulation cycle on the Stage
  */
 void GameState::updatePhysics()
@@ -563,14 +580,12 @@ void GameState::setupUI(StageSpec* stageSpec)
 		this->uiContainer = NULL;
 	}
 
-	if(NULL != stageSpec->entities.uiContainerSpec.allocator)
+	if(NULL != stageSpec->entities.UI.allocator)
 	{
-		// call the appropriate allocator to support inheritance
-		this->uiContainer = ((UIContainer (*)(UIContainerSpec*)) stageSpec->entities.uiContainerSpec.allocator)(&stageSpec->entities.uiContainerSpec);
+		this->uiContainer = ((UIContainer (*)(PositionedEntity*)) stageSpec->entities.UI.allocator)(stageSpec->entities.UI.childrenSpecs);
 	}
 	else
 	{
-		// call the appropriate allocator to support inheritance
 		this->uiContainer = new UIContainer(NULL);
 	}
 

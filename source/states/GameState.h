@@ -71,6 +71,7 @@ class GameState : State
 	void pauseClocks();
 	void pauseMessagingClock(bool pause);
 	void transform();
+	void transformUI();
 	uint32 processCollisions();
 	void pausePhysics(bool pause);
 	void pauseMessaging(bool pause);
