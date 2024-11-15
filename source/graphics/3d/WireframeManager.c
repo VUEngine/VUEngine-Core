@@ -14,7 +14,6 @@
 
 #include <Camera.h>
 #include <DebugConfig.h>
-#include <DirectDraw.h>
 #include <Printing.h>
 #include <VirtualList.h>
 #include <VIPManager.h>
@@ -210,8 +209,6 @@ void WireframeManager::draw()
 	{
 		return;
 	}
-
-	DirectDraw::preparteToDraw(DirectDraw::getInstance());
 
 	this->stopDrawing = false;
 
