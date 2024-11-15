@@ -735,7 +735,7 @@ void Entity::addSprites(SpriteSpec** spriteSpecs, bool destroyOldSprites)
 //---------------------------------------------------------------------------------------------------------
 void Entity::removeSprite(Sprite sprite)
 {
-	if(isDeleted(this->sprites) || !VirtualList::find(this->sprites, sprite))
+	if(isDeleted(this->sprites) || !VirtualList::removeData(this->sprites, sprite))
 	{
 		return;
 	}
@@ -844,7 +844,7 @@ void Entity::addWireframes(WireframeSpec** wireframeSpecs, bool destroyOldWirefr
 //---------------------------------------------------------------------------------------------------------
 void Entity::removeWireframe(Wireframe wireframe)
 {
-	if(isDeleted(this->wireframes) || !VirtualList::find(this->wireframes, wireframe))
+	if(isDeleted(this->wireframes) || !VirtualList::removeData(this->wireframes, wireframe))
 	{
 		return;
 	}
@@ -925,9 +925,9 @@ void Entity::addColliders(ColliderSpec* colliderSpecs, bool destroyOldColliders)
 	}
 }
 //---------------------------------------------------------------------------------------------------------
-void removeCollider(Collider collider)
+void Entity::removeCollider(Collider collider)
 {
-	if(isDeleted(this->colliders) || !VirtualList::find(this->colliders, collider))
+	if(isDeleted(this->colliders) || !VirtualList::removeData(this->colliders, collider))
 	{
 		return;
 	}
