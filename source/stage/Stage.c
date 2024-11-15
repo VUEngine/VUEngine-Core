@@ -401,7 +401,7 @@ Entity Stage::doAddChildEntity(const PositionedEntity* const positionedEntity, b
 {
 	if(NULL != positionedEntity)
 	{
-		Entity entity = Entity::loadEntity(positionedEntity, internalId);
+		Entity entity = Entity::createEntity(positionedEntity, internalId);
 		ASSERT(entity, "Stage::doAddChildEntity: entity not loaded");
 
 		if(!isDeleted(entity))
