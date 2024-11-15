@@ -158,6 +158,79 @@ void Actor::setLocalPosition(const Vector3D* position)
 	this->transformation.invalid |= (displacement.x ? __X_AXIS: 0) | (displacement.y ? __Y_AXIS: 0) | (displacement.y ? __Z_AXIS: 0);
 }
 
+Rotation Actor::getRotationFromDirection(const Vector3D* direction, uint8 axis)
+{
+	Rotation rotation = this->localTransformation.rotation;
+
+	if(__X_AXIS & axis)
+	{
+		fixed_ext_t z = direction->z;
+
+		if(direction->x)
+		{
+			z = Math::squareRootFixed(__FIXED_EXT_MULT(direction->x, direction->x) + __FIXED_EXT_MULT(direction->z, direction->z));
+
+			z = 0 > direction->z ? -z : z;
+		}
+
+		rotation.x = __I_TO_FIXED(Math::getAngle(__FIXED_TO_FIX7_9(direction->y), __FIXED_TO_FIX7_9(z))) - __QUARTER_ROTATION_DEGREES;
+	}
+	
+	if(__Y_AXIS & axis)
+	{
+		fixed_ext_t x = direction->x;
+
+		if(direction->y)
+		{
+			x = Math::squareRootFixed(__FIXED_EXT_MULT(direction->y, direction->y) + __FIXED_EXT_MULT(direction->x, direction->x));
+
+			x = 0 > direction->x ? -x : x;
+		}
+
+		rotation.y = __I_TO_FIXED(Math::getAngle(__FIXED_TO_FIX7_9((direction->z)), __FIXED_TO_FIX7_9(x)));
+	}
+
+	if(__Z_AXIS & axis)
+	{
+		fixed_ext_t y = direction->y;
+
+		if(direction->z)
+		{
+			y = Math::squareRootFixed(__FIXED_EXT_MULT(direction->z, direction->z) + __FIXED_EXT_MULT(direction->y, direction->y));
+
+			y = 0 > direction->y ? -y : y;
+		}
+
+		rotation.z = __I_TO_FIXED(Math::getAngle(__FIXED_TO_FIX7_9((direction->x)), __FIXED_TO_FIX7_9(y)));
+	}
+
+	if(__X_AXIS & axis)
+	{
+		if(__QUARTER_ROTATION_DEGREES < rotation.z)
+		{
+			rotation.x = rotation.x - __HALF_ROTATION_DEGREES;
+		}
+	}
+
+	if(__Y_AXIS & axis)
+	{
+		if(__QUARTER_ROTATION_DEGREES < rotation.x)
+		{
+			rotation.y = rotation.y - __HALF_ROTATION_DEGREES;
+		}
+	}
+
+	if(__Z_AXIS & axis)
+	{
+		if(__QUARTER_ROTATION_DEGREES < rotation.y)
+		{
+			rotation.z = rotation.z - __HALF_ROTATION_DEGREES;
+		}
+	}
+
+	return Rotation::clamp(rotation.x, rotation.y, rotation.z);	
+}
+
 void Actor::setDirection(const Vector3D* direction)
 {
 	if(NULL == direction)

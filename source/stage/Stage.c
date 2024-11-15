@@ -1164,7 +1164,7 @@ void Stage::setFocusEntity(Entity focusEntity)
 	{
 		Entity::addEventListener(this->focusEntity, ListenerObject::safeCast(this), (EventListener)Stage::onFocusEntityDeleted, kEventContainerDeleted);
 
-		Vector3D focusEntityPosition = *Container::getGlobalPosition(this->focusEntity);
+		Vector3D focusEntityPosition = *Container::getPosition(this->focusEntity);
 		focusEntityPosition.x = __METERS_TO_PIXELS(focusEntityPosition.x);
 		focusEntityPosition.y = __METERS_TO_PIXELS(focusEntityPosition.y);
 		focusEntityPosition.z = __METERS_TO_PIXELS(focusEntityPosition.z);

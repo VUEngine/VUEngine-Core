@@ -1234,7 +1234,7 @@ void Entity::addChildEntitiesDeferred(const PositionedEntity* childrenSpecs)
 
 	for(int32 i = 0; NULL != childrenSpecs[i].entitySpec; i++)
 	{
-		EntityFactory::spawnEntity(this->entityFactory, &childrenSpecs[i], Container::safeCast(this), NULL, this->internalId + Entity::getChildCount(this));
+		EntityFactory::spawnEntity(this->entityFactory, &childrenSpecs[i], Container::safeCast(this), NULL, this->internalId + Entity::getChildrenCount(this));
 	}
 }
 
@@ -1296,7 +1296,7 @@ Entity Entity::spawnChildEntity(const PositionedEntity* const positionedEntity)
 {
 	if(NULL != positionedEntity)
 	{
-		Entity entity = Entity::loadEntity(positionedEntity, this->internalId + Entity::getChildCount(this));
+		Entity entity = Entity::loadEntity(positionedEntity, this->internalId + Entity::getChildrenCount(this));
 		NM_ASSERT(!isDeleted(entity), "Stage::doAddChildEntity: entity not loaded");
 
 		if(!isDeleted(entity))
@@ -1621,7 +1621,6 @@ void Entity::show()
 {
 	Base::show(this);
 
-	// show all sprites
 	if(!isDeleted(this->sprites))
 	{
 		for(VirtualNode node = this->sprites->head; NULL != node ; node = node->next)
@@ -1630,7 +1629,6 @@ void Entity::show()
 		}
 	}
 
-	// show all wireframes
 	if(!isDeleted(this->wireframes))
 	{
 		for(VirtualNode node = this->wireframes->head; NULL != node ; node = node->next)
