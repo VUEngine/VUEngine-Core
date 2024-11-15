@@ -83,7 +83,6 @@ class Container : SpatialObject
 
 	void setName(const char* const name);
 	void setInheritEnvironment(uint8 inheritEnvironment);
-	void updateChildren();
 	void translate(const Vector3D* translation);
 	void rotate(const Rotation* rotation);
 	void scale(const Scale* scale);
@@ -91,6 +90,7 @@ class Container : SpatialObject
 
 	// Use: typeofclass(ClassName)
 	bool getChildren(ClassPointer classPointer, VirtualList children);
+	void updateChildren();
 	void transformChildren(uint8 invalidateTransformationFlag);
 	
 	void addChild(Container child);

@@ -60,7 +60,7 @@ void Container::constructor(const char* const name)
 	this->ready = false;
 	this->hidden = false;
 	this->dontStreamOut = false;
-	this->inheritEnvironment = __INHERIT_POSITION;
+	this->inheritEnvironment = __INHERIT_TRANSFORMATION;
 
 	this->name = NULL;
 	Container::setName(this, name);
@@ -567,33 +567,23 @@ void Container::doTransform(const Transformation* environmentTransformation, uin
 {
 	ASSERT(environmentTransformation, "Container::transform: null environmentTransformation");
 
-	uint8 invalidateTransformationFlagHelper = invalidateTransformationFlag | this->transformation.invalid;
+	uint8 invalidateTransformationFlagHelper = (invalidateTransformationFlag | this->transformation.invalid) & this->inheritEnvironment;
 
 	if(0 != (__INVALIDATE_SCALE & invalidateTransformationFlagHelper))
 	{
-		if(0 != (__INHERIT_SCALE & this->inheritEnvironment))
-		{
-			Container::applyEnvironmentToScale(this, environmentTransformation);
-		}
+		Container::applyEnvironmentToScale(this, environmentTransformation);
 	}
 
 	if(0 != (__INVALIDATE_ROTATION & invalidateTransformationFlagHelper))
 	{
-		if(0 != (__INHERIT_ROTATION & this->inheritEnvironment))
-		{
-			Container::applyEnvironmentToRotation(this, environmentTransformation);
-		}
+		Container::applyEnvironmentToRotation(this, environmentTransformation);
 	}
 
 	if(0 != ((__INVALIDATE_POSITION | __INVALIDATE_ROTATION) & invalidateTransformationFlagHelper))
 	{
-		if(0 != (__INHERIT_POSITION & this->inheritEnvironment))
-		{
-			Container::applyEnvironmentToPosition(this, environmentTransformation);
-		}
+		Container::applyEnvironmentToPosition(this, environmentTransformation);
 	}
 
-	// Check since the call is virtual
 	Container::transformChildren(this, invalidateTransformationFlagHelper);
 
 	// don't update position on next transformation cycle
