@@ -11,20 +11,19 @@
 #define BEHAVIOR_H_
 
 
-//---------------------------------------------------------------------------------------------------------
-//												INCLUDES
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// INCLUDES
+//=========================================================================================================
 
 #include <Component.h>
 
 
-//---------------------------------------------------------------------------------------------------------
-//											TYPE DEFINITIONS
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// CLASS' DATA
+//=========================================================================================================
 
-class Entity;
-
-// defines an entity in ROM memory
+/// A Behavior Spec
+/// @memberof Behavior
 typedef struct BehaviorSpec
 {
 	/// class allocator
@@ -35,25 +34,46 @@ typedef struct BehaviorSpec
 
 } BehaviorSpec;
 
+/// A Behavior spec that is stored in ROM
+/// @memberof Behavior
 typedef const BehaviorSpec BehaviorROMSpec;
 
 
-//---------------------------------------------------------------------------------------------------------
-//											CLASS'S DECLARATION
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// CLASS' DECLARATION
+//=========================================================================================================
 
-/// @ingroup base
+///
+/// Class Behavior
+///
+/// Inherits from Component
+///
+/// Implements a container whose children are always fixed to the camera
+/// @ingroup stage-entities
 abstract class Behavior : Component
 {
+	/// Flag to allow or prohibit the behavior to perform its operations
 	bool enabled;
 
+	/// Class' constructor
+	/// @param owner: SpatialObject to which the behavior attaches to
+	/// @param behaviorSpec: Specification that determines how to configure the behavior
 	static Behavior create(SpatialObject owner, const BehaviorSpec* behaviorSpec);
 
+	/// Class' constructor
+	/// @param owner: SpatialObject to which the behavior attaches to
+	/// @param behaviorSpec: Specification that determines how to configure the behavior
 	void constructor(SpatialObject owner, const BehaviorSpec* behaviorSpec);
 
-	bool isEnabled();
-	void setEnabled(bool value);
+	/// Enable the behavior's operations.
+	void enable();
 
+	/// Disable the behavior's operations.
+	void disable();
+
+	/// Check if the behavior's operations are enabled.
+	/// @return True if the behavior's operations are enabled; false otherwise
+	bool isEnabled();
 }
 
 
