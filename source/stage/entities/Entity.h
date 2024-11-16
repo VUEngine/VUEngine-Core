@@ -198,6 +198,53 @@ class Entity : Container
 	/// @param name: Name to assign to the new instance
 	void constructor(EntitySpec* entitySpec, int16 internalId, const char* const name);
 
+	/// Retrieve the object's radius.
+	/// @return Radius
+	override fixed_t getRadius();
+
+	/// Retrieve the object's bounciness factor.
+	/// @return Object's bounciness factor
+	override fixed_t getBounciness();
+
+	/// Retrieve the object's friction coefficient.
+	/// @return Object's friction coefficient
+	override fixed_t getFrictionCoefficient();
+
+	/// Check if the object is subject to provided gravity vector.
+	/// @return True if the provided gravity vector can affect the object; false otherwise
+	override bool isSubjectToGravity(Vector3D gravity);
+
+	/// Retrieve the enum that determines the type of game object.
+	/// @return The enum that determines the type of game object
+	override uint32 getInGameType();
+
+	/// Add the components that must attach to this entity. 
+	override void addComponents();
+
+	/// Remove the components that attach to this entity. 	
+	override void removeComponents();
+
+	/// Make this instance visible.
+	override void show();
+
+	/// Make this instance invisible.
+	override void hide();
+
+	/// Prepare to suspend this instance's logic.
+	override void suspend();
+
+	/// Prepare to resume this instance's logic.
+	override void resume();
+
+	/// Set this instance's transparency effects.
+	/// @param transparency: Transparecy effect (__TRANSPARENCY_NONE, __TRANSPARENCY_EVEN or __TRANSPARENCY_ODD)
+	override void setTransparency(uint8 transparency);
+
+	/// Default interger message handler for propagateMessage
+	/// @param message: Propagated integer message
+	/// @return True if the propagation must stop; false if the propagation must reach other containers
+	override bool handlePropagatedMessage(int32 message);
+
 	/// Retrieve the entity's spec.
 	/// @return Specification that determines how the entity was configured
 	EntitySpec* getSpec();
@@ -394,53 +441,6 @@ class Entity : Container
 	/// Check if the entity must be streamed in after being streamed out or destroyed.
 	/// @return True if the streaming must spawn this entity back when deleted
 	virtual bool alwaysStreamIn();
-
-	/// Retrieve the object's radius.
-	/// @return Radius
-	override fixed_t getRadius();
-
-	/// Retrieve the object's bounciness factor.
-	/// @return Object's bounciness factor
-	override fixed_t getBounciness();
-
-	/// Retrieve the object's friction coefficient.
-	/// @return Object's friction coefficient
-	override fixed_t getFrictionCoefficient();
-
-	/// Check if the object is subject to provided gravity vector.
-	/// @return True if the provided gravity vector can affect the object; false otherwise
-	override bool isSubjectToGravity(Vector3D gravity);
-
-	/// Retrieve the enum that determines the type of game object.
-	/// @return The enum that determines the type of game object
-	override uint32 getInGameType();
-
-	/// Add the components that must attach to this entity. 
-	override void addComponents();
-
-	/// Remove the components that attach to this entity. 	
-	override void removeComponents();
-
-	/// Make this instance visible.
-	override void show();
-
-	/// Make this instance invisible.
-	override void hide();
-
-	/// Prepare to suspend this instance's logic.
-	override void suspend();
-
-	/// Prepare to resume this instance's logic.
-	override void resume();
-
-	/// Set this instance's transparency effects.
-	/// @param transparency: Transparecy effect (__TRANSPARENCY_NONE, __TRANSPARENCY_EVEN or __TRANSPARENCY_ODD)
-	override void setTransparency(uint8 transparency);
-
-	/// Default interger message handler for propagateMessage
-	/// @param message: Propagated integer message
-	/// @return True if the propagation must stop; false if the propagation must reach other containers
-	override bool handlePropagatedMessage(int32 message);
 }
 
 

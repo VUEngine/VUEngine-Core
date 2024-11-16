@@ -75,6 +75,35 @@ class ObjectSpriteContainer : Sprite
 	/// Class' constructor
 	void constructor();
 
+	/// Register this sprite with the appropriate sprites manager.
+	override void registerWithManager();
+
+	/// Unegister this sprite with the appropriate sprites manager.	
+	override void unregisterWithManager();
+
+	/// Render the sprite by configuring the DRAM assigned to it by means of the provided index.
+	/// @param index: Determines the region of DRAM that this sprite is allowed to configure
+	/// @return The index that determines the region of DRAM that this sprite manages
+	override int16 doRender(int16 index);
+	
+	/// Retrieve the total number of pixels actually displayed by all the managed sprites.
+	/// @return Total number of pixels displayed by all the managed sprites
+	override int32 getTotalPixels();
+
+	/// Invalidate the render flag
+	override void invalidateRendering();
+	
+	/// Forcefully show the sprites
+	override void forceShow();
+
+	/// Forcefully hide the sprites
+	override void forceHide();
+
+	/// Print the container's statistics.
+	/// @param x: Screen x coordinate where to print
+	/// @param y: Screen y coordinate where to print
+	override void print(int32 x, int32 y);
+
 	/// Register a sprite to be managed
 	/// @param objectSprite: Sprite to be managed
 	/// @return True if the sprite was successfully registered; false otherwise
@@ -105,35 +134,6 @@ class ObjectSpriteContainer : Sprite
 	/// Retrieve the total number of OBJECTs used by all the managed sprites.
 	/// @return Total number of OBJECTs used by all the managed sprites
 	int32 getTotalUsedObjects();
-
-	/// Register this sprite with the appropriate sprites manager.
-	override void registerWithManager();
-
-	/// Unegister this sprite with the appropriate sprites manager.	
-	override void unregisterWithManager();
-
-	/// Render the sprite by configuring the DRAM assigned to it by means of the provided index.
-	/// @param index: Determines the region of DRAM that this sprite is allowed to configure
-	/// @return The index that determines the region of DRAM that this sprite manages
-	override int16 doRender(int16 index);
-	
-	/// Retrieve the total number of pixels actually displayed by all the managed sprites.
-	/// @return Total number of pixels displayed by all the managed sprites
-	override int32 getTotalPixels();
-
-	/// Invalidate the render flag
-	override void invalidateRendering();
-	
-	/// Forcefully show the sprites
-	override void forceShow();
-
-	/// Forcefully hide the sprites
-	override void forceHide();
-
-	/// Print the container's statistics.
-	/// @param x: Screen x coordinate where to print
-	/// @param y: Screen y coordinate where to print
-	override void print(int32 x, int32 y);
 }
 
 

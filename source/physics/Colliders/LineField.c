@@ -76,28 +76,6 @@ void LineField::destructor()
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------
-void LineField::displace(fixed_t displacement)
-{
-	this->a = Vector3D::sum(this->a, Vector3D::scalarProduct(this->normal, displacement));
-	this->b = Vector3D::sum(this->b, Vector3D::scalarProduct(this->normal, displacement));
-}
-//---------------------------------------------------------------------------------------------------------
-Vector3D LineField::getCenter()
-{
-	return Vector3D::sum(Vector3D::sum(this->transformation->position, Vector3D::intermediate(this->a, this->b)), Vector3D::getFromPixelVector(((ColliderSpec*)this->componentSpec)->displacement));
-}
-//---------------------------------------------------------------------------------------------------------
-void LineField::getVertexes(Vector3D vertexes[__LINE_FIELD_VERTEXES])
-{
-	vertexes[0] = Vector3D::sum(this->a, Vector3D::sum(this->transformation->position, Vector3D::getFromPixelVector(((ColliderSpec*)this->componentSpec)->displacement)));
-	vertexes[1] = Vector3D::sum(this->b, Vector3D::sum(this->transformation->position, Vector3D::getFromPixelVector(((ColliderSpec*)this->componentSpec)->displacement)));
-}
-//---------------------------------------------------------------------------------------------------------
-void LineField::setNormalLength(fixed_t normalLength)
-{
-	this->normalLength = normalLength;
-}
-//---------------------------------------------------------------------------------------------------------
 Vector3D LineField::getNormal()
 {
 	return this->normal;
@@ -192,6 +170,28 @@ void LineField::print(int32 x, int32 y)
 	Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(this->a.z), x + 8, y++, NULL);
 }
 #endif
+//---------------------------------------------------------------------------------------------------------
+void LineField::displace(fixed_t displacement)
+{
+	this->a = Vector3D::sum(this->a, Vector3D::scalarProduct(this->normal, displacement));
+	this->b = Vector3D::sum(this->b, Vector3D::scalarProduct(this->normal, displacement));
+}
+//---------------------------------------------------------------------------------------------------------
+Vector3D LineField::getCenter()
+{
+	return Vector3D::sum(Vector3D::sum(this->transformation->position, Vector3D::intermediate(this->a, this->b)), Vector3D::getFromPixelVector(((ColliderSpec*)this->componentSpec)->displacement));
+}
+//---------------------------------------------------------------------------------------------------------
+void LineField::getVertexes(Vector3D vertexes[__LINE_FIELD_VERTEXES])
+{
+	vertexes[0] = Vector3D::sum(this->a, Vector3D::sum(this->transformation->position, Vector3D::getFromPixelVector(((ColliderSpec*)this->componentSpec)->displacement)));
+	vertexes[1] = Vector3D::sum(this->b, Vector3D::sum(this->transformation->position, Vector3D::getFromPixelVector(((ColliderSpec*)this->componentSpec)->displacement)));
+}
+//---------------------------------------------------------------------------------------------------------
+void LineField::setNormalLength(fixed_t normalLength)
+{
+	this->normalLength = normalLength;
+}
 //---------------------------------------------------------------------------------------------------------
 
 //=========================================================================================================

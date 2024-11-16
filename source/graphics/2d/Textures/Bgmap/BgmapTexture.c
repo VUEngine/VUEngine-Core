@@ -68,6 +68,56 @@ void BgmapTexture::destructor()
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------
+bool BgmapTexture::write(int16 maximumTextureRowsToWrite)
+{
+	if(isDeleted(this->charSet))
+	{
+		// make sure to force full writing if no char set
+		this->remainingRowsToBeWritten = this->textureSpec->rows;
+	}
+	
+	uint8 status = this->status;
+
+	if(!Base::write(this, maximumTextureRowsToWrite))
+	{
+		return false;
+	}
+
+	if(0 >= this->remainingRowsToBeWritten)
+	{
+		this->remainingRowsToBeWritten = this->textureSpec->rows;
+	}
+
+	uint16 charSetOffset = (uint16)CharSet::getOffset(this->charSet);
+	
+	if(BgmapTexture::isMultiframe(this))
+	{
+		BgmapTexture::writeAllFrames(this, maximumTextureRowsToWrite, this->xOffset, this->yOffset, charSetOffset);
+	}
+	else
+	{
+		BgmapTexture::writeFrame(this, maximumTextureRowsToWrite, kTexturePendingWriting < status && kTextureFrameChanged >= status, this->xOffset, this->yOffset, charSetOffset, 0);
+	}
+
+	if(kTexturePendingRewriting == status)
+	{
+		this->status = 0 >= this->remainingRowsToBeWritten ? kTextureWritten : kTexturePendingRewriting;
+	}
+	else
+	{
+		this->status = 0 >= this->remainingRowsToBeWritten ? kTextureWritten : kTexturePendingWriting;
+	}
+	
+	return true;
+}
+//---------------------------------------------------------------------------------------------------------
+void BgmapTexture::rewrite()
+{
+	Base::rewrite(this);
+
+	this->remainingRowsToBeWritten = this->textureSpec->rows;
+}
+//---------------------------------------------------------------------------------------------------------
 void BgmapTexture::setSegment(int8 segment)
 {
 	this->segment = segment;
@@ -131,56 +181,6 @@ void BgmapTexture::setVerticalFlip(bool value)
 int8 BgmapTexture::getRemainingRowsToBeWritten()
 {
 	return this->remainingRowsToBeWritten;
-}
-//---------------------------------------------------------------------------------------------------------
-bool BgmapTexture::write(int16 maximumTextureRowsToWrite)
-{
-	if(isDeleted(this->charSet))
-	{
-		// make sure to force full writing if no char set
-		this->remainingRowsToBeWritten = this->textureSpec->rows;
-	}
-	
-	uint8 status = this->status;
-
-	if(!Base::write(this, maximumTextureRowsToWrite))
-	{
-		return false;
-	}
-
-	if(0 >= this->remainingRowsToBeWritten)
-	{
-		this->remainingRowsToBeWritten = this->textureSpec->rows;
-	}
-
-	uint16 charSetOffset = (uint16)CharSet::getOffset(this->charSet);
-	
-	if(BgmapTexture::isMultiframe(this))
-	{
-		BgmapTexture::writeAllFrames(this, maximumTextureRowsToWrite, this->xOffset, this->yOffset, charSetOffset);
-	}
-	else
-	{
-		BgmapTexture::writeFrame(this, maximumTextureRowsToWrite, kTexturePendingWriting < status && kTextureFrameChanged >= status, this->xOffset, this->yOffset, charSetOffset, 0);
-	}
-
-	if(kTexturePendingRewriting == status)
-	{
-		this->status = 0 >= this->remainingRowsToBeWritten ? kTextureWritten : kTexturePendingRewriting;
-	}
-	else
-	{
-		this->status = 0 >= this->remainingRowsToBeWritten ? kTextureWritten : kTexturePendingWriting;
-	}
-	
-	return true;
-}
-//---------------------------------------------------------------------------------------------------------
-void BgmapTexture::rewrite()
-{
-	Base::rewrite(this);
-
-	this->remainingRowsToBeWritten = this->textureSpec->rows;
 }
 //---------------------------------------------------------------------------------------------------------
 

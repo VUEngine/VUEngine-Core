@@ -132,105 +132,6 @@ void BgmapSprite::destructor()
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------
-//---------------------------------------------------------------------------------------------------------
-void BgmapSprite::setMode(uint16 display, uint16 mode)
-{
-	this->head &= ~(__WORLD_BGMAP | __WORLD_AFFINE | __WORLD_HBIAS);
-
-	if(((__WORLD_AFFINE | __WORLD_HBIAS) & this->head) && 0 != this->param)
-	{
-		// free param table space
-		ParamTableManager::free(ParamTableManager::getInstance(), this);
-
-		this->param = 0;
-	}
-
-	if(0 == this->param && !isDeleted(this->texture))
-	{
-		switch(mode)
-		{
-			case __WORLD_BGMAP:
-
-				// set map head
-				this->head = display | __WORLD_BGMAP;
-				break;
-
-			case __WORLD_AFFINE:
-
-				// set map head
-				this->head = display | __WORLD_AFFINE;
-				this->param = ParamTableManager::allocate(ParamTableManager::getInstance(), this);
-				this->applyParamTableEffect = NULL != this->applyParamTableEffect ? this->applyParamTableEffect : BgmapSprite::doApplyAffineTransformations;
-				break;
-
-			case __WORLD_HBIAS:
-
-				// set map head
-				this->head = display | __WORLD_HBIAS;
-
-				if(NULL != this->applyParamTableEffect)
-				{
-					this->param = ParamTableManager::allocate(ParamTableManager::getInstance(), this);
-				}
-
-				break;
-		}
-	}
-
-	this->head &= ~__WORLD_END;
-}
-//---------------------------------------------------------------------------------------------------------
-void BgmapSprite::setParam(uint32 param)
-{
-	this->param = param;
-
-	// set flag to rewrite texture's param table
-	BgmapSprite::invalidateParamTable(this);
-}
-//---------------------------------------------------------------------------------------------------------
-uint32 BgmapSprite::getParam()
-{
-	return this->param;
-}
-//---------------------------------------------------------------------------------------------------------
-int16 BgmapSprite::getParamTableRow()
-{
-	return this->paramTableRow;
-}
-//---------------------------------------------------------------------------------------------------------
-void BgmapSprite::invalidateParamTable()
-{
-	if(__WORLD_AFFINE & this->head)
-	{
-		BgmapSprite::applyAffineTransformations(this);
-	}
-	else if(__WORLD_HBIAS & this->head)
-	{
-		BgmapSprite::applyHbiasEffects(this);
-	}
-}
-//---------------------------------------------------------------------------------------------------------
-bool BgmapSprite::onTextureRewritten(ListenerObject eventFirer __attribute__ ((unused)))
-{
-	BgmapSprite::processEffects(this);
-
-	return true;
-}
-//---------------------------------------------------------------------------------------------------------
-void BgmapSprite::applyAffineTransformations()
-{
-	ASSERT(this->texture, "BgmapSprite::applyAffineTransformations: null texture");
-
-	this->paramTableRow = 0;
-}
-//---------------------------------------------------------------------------------------------------------
-void BgmapSprite::applyHbiasEffects()
-{
-	ASSERT(this->texture, "BgmapSprite::applyHbiasEffects: null texture");
-
-	this->paramTableRow = 0;
-}
-//---------------------------------------------------------------------------------------------------------
 void BgmapSprite::registerWithManager()
 {
 	SpriteManager::registerSprite(SpriteManager::getInstance(), Sprite::safeCast(this));
@@ -487,6 +388,104 @@ int32 BgmapSprite::getTotalPixels()
 	}
 
 	return 0;
+}
+//---------------------------------------------------------------------------------------------------------
+void BgmapSprite::setMode(uint16 display, uint16 mode)
+{
+	this->head &= ~(__WORLD_BGMAP | __WORLD_AFFINE | __WORLD_HBIAS);
+
+	if(((__WORLD_AFFINE | __WORLD_HBIAS) & this->head) && 0 != this->param)
+	{
+		// free param table space
+		ParamTableManager::free(ParamTableManager::getInstance(), this);
+
+		this->param = 0;
+	}
+
+	if(0 == this->param && !isDeleted(this->texture))
+	{
+		switch(mode)
+		{
+			case __WORLD_BGMAP:
+
+				// set map head
+				this->head = display | __WORLD_BGMAP;
+				break;
+
+			case __WORLD_AFFINE:
+
+				// set map head
+				this->head = display | __WORLD_AFFINE;
+				this->param = ParamTableManager::allocate(ParamTableManager::getInstance(), this);
+				this->applyParamTableEffect = NULL != this->applyParamTableEffect ? this->applyParamTableEffect : BgmapSprite::doApplyAffineTransformations;
+				break;
+
+			case __WORLD_HBIAS:
+
+				// set map head
+				this->head = display | __WORLD_HBIAS;
+
+				if(NULL != this->applyParamTableEffect)
+				{
+					this->param = ParamTableManager::allocate(ParamTableManager::getInstance(), this);
+				}
+
+				break;
+		}
+	}
+
+	this->head &= ~__WORLD_END;
+}
+//---------------------------------------------------------------------------------------------------------
+void BgmapSprite::setParam(uint32 param)
+{
+	this->param = param;
+
+	// set flag to rewrite texture's param table
+	BgmapSprite::invalidateParamTable(this);
+}
+//---------------------------------------------------------------------------------------------------------
+uint32 BgmapSprite::getParam()
+{
+	return this->param;
+}
+//---------------------------------------------------------------------------------------------------------
+int16 BgmapSprite::getParamTableRow()
+{
+	return this->paramTableRow;
+}
+//---------------------------------------------------------------------------------------------------------
+void BgmapSprite::invalidateParamTable()
+{
+	if(__WORLD_AFFINE & this->head)
+	{
+		BgmapSprite::applyAffineTransformations(this);
+	}
+	else if(__WORLD_HBIAS & this->head)
+	{
+		BgmapSprite::applyHbiasEffects(this);
+	}
+}
+//---------------------------------------------------------------------------------------------------------
+bool BgmapSprite::onTextureRewritten(ListenerObject eventFirer __attribute__ ((unused)))
+{
+	BgmapSprite::processEffects(this);
+
+	return true;
+}
+//---------------------------------------------------------------------------------------------------------
+void BgmapSprite::applyAffineTransformations()
+{
+	ASSERT(this->texture, "BgmapSprite::applyAffineTransformations: null texture");
+
+	this->paramTableRow = 0;
+}
+//---------------------------------------------------------------------------------------------------------
+void BgmapSprite::applyHbiasEffects()
+{
+	ASSERT(this->texture, "BgmapSprite::applyHbiasEffects: null texture");
+
+	this->paramTableRow = 0;
 }
 //---------------------------------------------------------------------------------------------------------
 

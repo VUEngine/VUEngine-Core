@@ -64,6 +64,16 @@ void StateMachine::destructor()
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------
+bool StateMachine::handleMessage(Telegram telegram)
+{
+	if(this->currentState )
+	{
+		return  State::processMessage(this->currentState, this->owner, telegram);
+	}
+
+	return false;
+}
+//---------------------------------------------------------------------------------------------------------
 bool StateMachine::transitionTo(State state, int16 transition)
 {
 	if(kStateMachineIdle != this->transition || NULL == state || kStateMachineIdle == transition)
@@ -232,16 +242,6 @@ State StateMachine::getPreviousState()
 int32 StateMachine::getStackSize()
 {
 	return VirtualList::getCount(this->stateStack);
-}
-//---------------------------------------------------------------------------------------------------------
-bool StateMachine::handleMessage(Telegram telegram)
-{
-	if(this->currentState )
-	{
-		return  State::processMessage(this->currentState, this->owner, telegram);
-	}
-
-	return false;
 }
 //---------------------------------------------------------------------------------------------------------
 

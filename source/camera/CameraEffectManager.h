@@ -80,6 +80,11 @@ singleton class CameraEffectManager : ListenerObject
 	/// Class' constructor
 	void constructor();
 
+	/// Receive and process a Telegram.
+	/// @param telegram: Received telegram to process
+	/// @return True if the telegram was processed
+	override bool handleMessage(Telegram telegram);
+
 	/// Reset the manager's state
 	void reset();
 
@@ -99,11 +104,6 @@ singleton class CameraEffectManager : ListenerObject
 	/// Stop a camera effect.
 	/// @param effect: Code of the effect to stop
 	virtual void stopEffect(int32 effect);
-	
-	/// Receive and process a Telegram.
-	/// @param telegram: Received telegram to process
-	/// @return True if the telegram was processed
-	override bool handleMessage(Telegram telegram);
 }
 
 

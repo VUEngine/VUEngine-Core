@@ -39,6 +39,23 @@ void PrintingSprite::destructor()
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------
+int16 PrintingSprite::doRender(int16 index)
+{
+	WorldAttributes* worldPointer = &_worldAttributesCache[index];
+
+	worldPointer->mx = this->bgmapTextureSource.mx;
+	worldPointer->mp = this->bgmapTextureSource.mp;
+	worldPointer->my = this->bgmapTextureSource.my;
+	worldPointer->gx = this->position.x;
+	worldPointer->gp = this->position.parallax;
+	worldPointer->gy = this->position.y;
+	worldPointer->w = this->halfWidth << 1;
+	worldPointer->h = this->halfHeight << 1;
+	worldPointer->head = __WORLD_ON | __WORLD_BGMAP | __WORLD_OVR | this->printingBgmapSegment;
+
+	return index;
+}
+//---------------------------------------------------------------------------------------------------------
 void PrintingSprite::reset()
 {
 	this->position.x = 0;
@@ -79,22 +96,5 @@ void PrintingSprite::setSize(uint16 width, uint16 height)
 {
 	this->halfWidth = width >> 1;
 	this->halfHeight = height >> 1;
-}
-//---------------------------------------------------------------------------------------------------------
-int16 PrintingSprite::doRender(int16 index)
-{
-	WorldAttributes* worldPointer = &_worldAttributesCache[index];
-
-	worldPointer->mx = this->bgmapTextureSource.mx;
-	worldPointer->mp = this->bgmapTextureSource.mp;
-	worldPointer->my = this->bgmapTextureSource.my;
-	worldPointer->gx = this->position.x;
-	worldPointer->gp = this->position.parallax;
-	worldPointer->gy = this->position.y;
-	worldPointer->w = this->halfWidth << 1;
-	worldPointer->h = this->halfHeight << 1;
-	worldPointer->head = __WORLD_ON | __WORLD_BGMAP | __WORLD_OVR | this->printingBgmapSegment;
-
-	return index;
 }
 //---------------------------------------------------------------------------------------------------------

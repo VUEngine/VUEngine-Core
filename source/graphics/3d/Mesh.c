@@ -183,100 +183,6 @@ void Mesh::destructor()
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------
-void Mesh::addSegments(PixelVector (*segments)[2], Vector3D displacement)
-{
-	if(NULL == segments)
-	{
-		return;
-	}
-
-	bool isEndSegment = false;
-	uint16 i = 0;
-
-	// Prevent rendering when modifying the mesh because if segments are added after the initial render
-	// there can be graphical glitches if XPEND kicks in in the mist of adding new vertexes
-	this->rendered = false;
-
-	do
-	{
-		Vector3D startVector = Vector3D::getFromPixelVector(segments[i][0]);
-		Vector3D endVector = Vector3D::getFromPixelVector(segments[i][1]);
-
-		isEndSegment = Vector3D::areEqual(Vector3D::zero(), startVector) && Vector3D::areEqual(Vector3D::zero(), endVector);
-
-		if(!isEndSegment)
-		{
-			Mesh::addSegment(this, Vector3D::sum(startVector, displacement), Vector3D::sum(endVector, displacement));
-		}
-
-		i++;
-	}
-	while(!isEndSegment);
-}
-//---------------------------------------------------------------------------------------------------------
-void Mesh::addSegment(Vector3D startVector, Vector3D endVector)
-{
-	MeshSegment* newMeshSegment = new MeshSegment;
-	newMeshSegment->fromVertex = NULL;
-	newMeshSegment->toVertex = NULL;
-
-	for(VirtualNode node = this->vertices->head; NULL != node; node = node->next)
-	{
-		Vertex* vertex = (Vertex*)node->data;
-
-		if(NULL == newMeshSegment->fromVertex && Vector3D::areEqual(vertex->vector, startVector))
-		{
-			newMeshSegment->fromVertex = vertex;
-		}
-		else if(NULL == newMeshSegment->toVertex && Vector3D::areEqual(vertex->vector, endVector))
-		{
-			newMeshSegment->toVertex = vertex;
-		}
-
-		if(NULL != newMeshSegment->fromVertex && NULL != newMeshSegment->toVertex)
-		{
-			break;
-		}
-	}
-
-	if(NULL == newMeshSegment->fromVertex)
-	{
-		newMeshSegment->fromVertex = new Vertex;
-		newMeshSegment->fromVertex->vector = startVector;
-		newMeshSegment->fromVertex->pixelVector = (PixelVector){0, 0, 0, 0};
-
-		VirtualList::pushBack(this->vertices, newMeshSegment->fromVertex);
-	}
-
-	if(NULL == newMeshSegment->toVertex)
-	{
-		newMeshSegment->toVertex = new Vertex;
-		newMeshSegment->toVertex->vector = endVector;
-		newMeshSegment->toVertex->pixelVector = (PixelVector){0, 0, 0, 0};
-
-		VirtualList::pushBack(this->vertices, newMeshSegment->toVertex);
-	}
-
-	VirtualList::pushBack(this->segments, newMeshSegment);
-}
-//---------------------------------------------------------------------------------------------------------
-bool Mesh::drawInterlaced()
-{
-	bool drawn = false;
-
-	for(VirtualNode node = this->segments->head; NULL != node; node = node->next)
-	{
-		MeshSegment* meshSegment = (MeshSegment*)node->data;
-
-		// draw the line in both buffers
-		drawn |= DirectDraw::drawLine(meshSegment->fromVertex->pixelVector, meshSegment->toVertex->pixelVector, this->color, this->bufferIndex, true) || this->drawn;
-	}
-
-	this->bufferIndex = !this->bufferIndex;
-
-	return drawn;
-}
-//---------------------------------------------------------------------------------------------------------
 PixelRightBox Mesh::getPixelRightBox()
 {
 	PixelRightBox pixelRightBox = {0, 0, 0, 0, 0, 0};
@@ -406,6 +312,100 @@ bool Mesh::draw()
 
 		// draw the line in both buffers
 		drawn |= DirectDraw::drawLine(meshSegment->fromVertex->pixelVector, meshSegment->toVertex->pixelVector, this->color, this->bufferIndex, this->interlaced);
+	}
+
+	this->bufferIndex = !this->bufferIndex;
+
+	return drawn;
+}
+//---------------------------------------------------------------------------------------------------------
+void Mesh::addSegments(PixelVector (*segments)[2], Vector3D displacement)
+{
+	if(NULL == segments)
+	{
+		return;
+	}
+
+	bool isEndSegment = false;
+	uint16 i = 0;
+
+	// Prevent rendering when modifying the mesh because if segments are added after the initial render
+	// there can be graphical glitches if XPEND kicks in in the mist of adding new vertexes
+	this->rendered = false;
+
+	do
+	{
+		Vector3D startVector = Vector3D::getFromPixelVector(segments[i][0]);
+		Vector3D endVector = Vector3D::getFromPixelVector(segments[i][1]);
+
+		isEndSegment = Vector3D::areEqual(Vector3D::zero(), startVector) && Vector3D::areEqual(Vector3D::zero(), endVector);
+
+		if(!isEndSegment)
+		{
+			Mesh::addSegment(this, Vector3D::sum(startVector, displacement), Vector3D::sum(endVector, displacement));
+		}
+
+		i++;
+	}
+	while(!isEndSegment);
+}
+//---------------------------------------------------------------------------------------------------------
+void Mesh::addSegment(Vector3D startVector, Vector3D endVector)
+{
+	MeshSegment* newMeshSegment = new MeshSegment;
+	newMeshSegment->fromVertex = NULL;
+	newMeshSegment->toVertex = NULL;
+
+	for(VirtualNode node = this->vertices->head; NULL != node; node = node->next)
+	{
+		Vertex* vertex = (Vertex*)node->data;
+
+		if(NULL == newMeshSegment->fromVertex && Vector3D::areEqual(vertex->vector, startVector))
+		{
+			newMeshSegment->fromVertex = vertex;
+		}
+		else if(NULL == newMeshSegment->toVertex && Vector3D::areEqual(vertex->vector, endVector))
+		{
+			newMeshSegment->toVertex = vertex;
+		}
+
+		if(NULL != newMeshSegment->fromVertex && NULL != newMeshSegment->toVertex)
+		{
+			break;
+		}
+	}
+
+	if(NULL == newMeshSegment->fromVertex)
+	{
+		newMeshSegment->fromVertex = new Vertex;
+		newMeshSegment->fromVertex->vector = startVector;
+		newMeshSegment->fromVertex->pixelVector = (PixelVector){0, 0, 0, 0};
+
+		VirtualList::pushBack(this->vertices, newMeshSegment->fromVertex);
+	}
+
+	if(NULL == newMeshSegment->toVertex)
+	{
+		newMeshSegment->toVertex = new Vertex;
+		newMeshSegment->toVertex->vector = endVector;
+		newMeshSegment->toVertex->pixelVector = (PixelVector){0, 0, 0, 0};
+
+		VirtualList::pushBack(this->vertices, newMeshSegment->toVertex);
+	}
+
+	VirtualList::pushBack(this->segments, newMeshSegment);
+}
+//---------------------------------------------------------------------------------------------------------
+bool Mesh::drawInterlaced()
+{
+	bool drawn = false;
+
+	for(VirtualNode node = this->segments->head; NULL != node; node = node->next)
+	{
+		MeshSegment* meshSegment = (MeshSegment*)node->data;
+
+		// draw the line in both buffers
+		drawn |= DirectDraw::drawLine(meshSegment->fromVertex->pixelVector, meshSegment->toVertex->pixelVector, this->color, this->bufferIndex, true) || this->drawn;
 	}
 
 	this->bufferIndex = !this->bufferIndex;

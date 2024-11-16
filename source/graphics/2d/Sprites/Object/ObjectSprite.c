@@ -96,18 +96,6 @@ void ObjectSprite::destructor()
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------
-void ObjectSprite::resetTotalObjects()
-{
-	this->totalObjects = Texture::getCols(this->texture) * Texture::getRows(this->texture);
-}
-//---------------------------------------------------------------------------------------------------------
-int16 ObjectSprite::getTotalObjects()
-{
-	ASSERT(0 < this->totalObjects, "ObjectSprite::getTotalObjects: null totalObjects");
-
-	return this->totalObjects;
-}
-//---------------------------------------------------------------------------------------------------------
 void ObjectSprite::registerWithManager()
 {
 	if(NULL == this->objectSpriteContainer)
@@ -267,6 +255,18 @@ int32 ObjectSprite::getTotalPixels()
 	}
 
 	return 0;
+}
+//---------------------------------------------------------------------------------------------------------//---------------------------------------------------------------------------------------------------------
+void ObjectSprite::resetTotalObjects()
+{
+	this->totalObjects = Texture::getCols(this->texture) * Texture::getRows(this->texture);
+}
+//---------------------------------------------------------------------------------------------------------
+int16 ObjectSprite::getTotalObjects()
+{
+	ASSERT(0 < this->totalObjects, "ObjectSprite::getTotalObjects: null totalObjects");
+
+	return this->totalObjects;
 }
 //---------------------------------------------------------------------------------------------------------
 

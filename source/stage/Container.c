@@ -138,6 +138,30 @@ void Container::destructor()
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------
+void Container::setPosition(const Vector3D* position)
+{
+	Vector3D displacement = Vector3D::sub(*position, this->transformation.position);
+
+	Container::translate(this, &displacement);
+	this->transformation.position = *position;
+}
+//---------------------------------------------------------------------------------------------------------
+void Container::setRotation(const Rotation* rotation)
+{
+	Rotation displacement = Rotation::sub(*rotation, this->transformation.rotation);
+
+	Container::rotate(this, &displacement);
+	this->transformation.rotation = *rotation;
+}
+//---------------------------------------------------------------------------------------------------------
+void Container::setScale(const Scale* scale)
+{
+	Scale factor = Scale::division(*scale, this->transformation.scale);
+
+	Container::scale(this, &factor);
+	this->transformation.scale = *scale;
+}
+//---------------------------------------------------------------------------------------------------------
 void Container::deleteMyself()
 {
 	ASSERT(!isDeleted(this), "Container::deleteMyself: deleted this");
@@ -832,30 +856,6 @@ bool Container::handlePropagatedMessage(int32 message __attribute__ ((unused)))
 bool Container::handlePropagatedString(const char* string __attribute__ ((unused)))
 {
 	return false;
-}
-//---------------------------------------------------------------------------------------------------------
-void Container::setPosition(const Vector3D* position)
-{
-	Vector3D displacement = Vector3D::sub(*position, this->transformation.position);
-
-	Container::translate(this, &displacement);
-	this->transformation.position = *position;
-}
-//---------------------------------------------------------------------------------------------------------
-void Container::setRotation(const Rotation* rotation)
-{
-	Rotation displacement = Rotation::sub(*rotation, this->transformation.rotation);
-
-	Container::rotate(this, &displacement);
-	this->transformation.rotation = *rotation;
-}
-//---------------------------------------------------------------------------------------------------------
-void Container::setScale(const Scale* scale)
-{
-	Scale factor = Scale::division(*scale, this->transformation.scale);
-
-	Container::scale(this, &factor);
-	this->transformation.scale = *scale;
 }
 //---------------------------------------------------------------------------------------------------------
 

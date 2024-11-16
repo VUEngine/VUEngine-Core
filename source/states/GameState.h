@@ -1,4 +1,4 @@
-/**
+/*
  * VUEngine Core
  *
  * © Jorge Eremiev <jorgech3@gmail.com> and Christian Radke <c.radke@posteo.de>
@@ -57,6 +57,15 @@ class GameState : State
 
 	/// @publicsection
 	void constructor();
+
+	override void enter(void* owner);
+	override void execute(void* owner);
+	override void exit(void* owner);
+	override void suspend(void* owner);
+	override void resume(void* owner);
+	override bool handleMessage(Telegram telegram);
+	override bool processMessage(void* owner, Telegram telegram);
+
 	CollisionManager getCollisionManager();
 	Clock getMessagingClock();
 	PhysicalWorld getPhysicalWorld();
@@ -101,13 +110,6 @@ class GameState : State
 	/// @return True if at least some entity was streamed in or out
 	virtual bool stream();
 
-	override void enter(void* owner);
-	override void execute(void* owner);
-	override void exit(void* owner);
-	override void suspend(void* owner);
-	override void resume(void* owner);
-	override bool handleMessage(Telegram telegram);
-	override bool processMessage(void* owner, Telegram telegram);
 }
 
 

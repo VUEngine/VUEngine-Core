@@ -453,6 +453,194 @@ void Entity::destructor()
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------
+fixed_t Entity::getRadius()
+{
+	fixed_t width = Entity::getWidth(this);
+	fixed_t height = Entity::getHeight(this);
+	fixed_t depth = Entity::getDepth(this);
+
+	if(width > height)
+	{
+		if(width > depth)
+		{
+			return width >> 1;
+		}
+		else
+		{
+			return depth >> 1;
+		}
+
+	}
+	else if(height > depth)
+	{
+		return height >> 1;
+	}
+	else
+	{
+		return depth >> 1;
+	}
+
+	return 0;
+}
+//---------------------------------------------------------------------------------------------------------
+fixed_t Entity::getBounciness()
+{
+	return this->entitySpec->physicalProperties ? this->entitySpec->physicalProperties->bounciness : 0;
+}
+//---------------------------------------------------------------------------------------------------------
+fixed_t Entity::getFrictionCoefficient()
+{
+	return this->entitySpec->physicalProperties ? this->entitySpec->physicalProperties->frictionCoefficient : 0;
+}
+//---------------------------------------------------------------------------------------------------------
+bool Entity::isSubjectToGravity(Vector3D gravity __attribute__ ((unused)))
+{
+	return true;
+}
+//---------------------------------------------------------------------------------------------------------
+uint32 Entity::getInGameType()
+{
+	return this->entitySpec->inGameType;
+}
+//---------------------------------------------------------------------------------------------------------
+void Entity::addComponents()
+{
+	if(!isDeleted(this->children))
+	{
+		Base::addComponents(this);
+	}
+
+	Entity::createSprites(this);
+	Entity::createWireframes(this);
+	Entity::createColliders(this);
+	Entity::createBehaviors(this);
+
+	Entity::calculateSize(this, false);
+}
+//---------------------------------------------------------------------------------------------------------
+void Entity::removeComponents()
+{
+	Entity::removeWireframes(this);
+	Entity::removeSprites(this);
+	Entity::removeColliders(this);
+	Entity::removeBehaviors(this);
+}
+//---------------------------------------------------------------------------------------------------------
+void Entity::show()
+{
+	Base::show(this);
+
+	if(!isDeleted(this->sprites))
+	{
+		for(VirtualNode node = this->sprites->head; NULL != node ; node = node->next)
+		{
+			Sprite::show(node->data);
+		}
+	}
+
+	if(!isDeleted(this->wireframes))
+	{
+		for(VirtualNode node = this->wireframes->head; NULL != node ; node = node->next)
+		{
+			Wireframe::show(node->data);
+		}
+	}
+}
+//---------------------------------------------------------------------------------------------------------
+void Entity::hide()
+{
+	Base::hide(this);
+
+	// hide all sprites
+	if(!isDeleted(this->sprites))
+	{
+		for(VirtualNode node = this->sprites->head; NULL != node ; node = node->next)
+		{
+			Sprite::hide(node->data);
+		}
+	}
+
+	// hide all wireframes
+	if(!isDeleted(this->wireframes))
+	{
+		for(VirtualNode node = this->wireframes->head; NULL != node ; node = node->next)
+		{
+			Wireframe::hide(node->data);
+		}
+	}
+}
+//---------------------------------------------------------------------------------------------------------
+void Entity::suspend()
+{
+	Base::suspend(this);
+
+	Entity::removeSprites(this);
+	Entity::removeWireframes(this);
+}
+//---------------------------------------------------------------------------------------------------------
+void Entity::resume()
+{
+	Base::resume(this);
+
+	// initialize sprites
+	if(NULL != this->entitySpec)
+	{
+		Entity::createSprites(this);
+		Entity::createWireframes(this);
+	}
+
+	if(this->hidden)
+	{
+		// Force syncronization even if hidden
+		this->hidden = false;
+		Entity::hide(this);
+	}
+}
+//---------------------------------------------------------------------------------------------------------
+void Entity::setTransparency(uint8 transparency)
+{
+	Base::setTransparency(this, transparency);
+
+	if(!isDeleted(this->sprites))
+	{
+		for(VirtualNode node = this->sprites->head; NULL != node ; node = node->next)
+		{
+			Sprite::setTransparency(node->data, transparency);
+		}
+	}
+
+	if(!isDeleted(this->wireframes))
+	{
+		for(VirtualNode node = this->wireframes->head; NULL != node ; node = node->next)
+		{
+			Wireframe::setTransparency(node->data, transparency);
+		}
+	}
+}
+//---------------------------------------------------------------------------------------------------------
+bool Entity::handlePropagatedMessage(int32 message)
+{
+	switch(message)
+	{
+		case kMessageReleaseVisualComponents:
+
+			Entity::removeSprites(this);
+			Entity::removeWireframes(this);
+			break;
+
+		case kMessageReloadVisualComponents:
+
+			if(NULL != this->entitySpec)
+			{
+				Entity::createSprites(this);
+				Entity::createWireframes(this);
+			}
+			break;
+	}
+
+	return false;
+}
+//---------------------------------------------------------------------------------------------------------
 EntitySpec* Entity::getSpec()
 {
 	return this->entitySpec;
@@ -1262,194 +1450,6 @@ void Entity::setExtraInfo(void* extraInfo __attribute__ ((unused)))
 bool Entity::alwaysStreamIn()
 {
 	return true;
-}
-//---------------------------------------------------------------------------------------------------------
-fixed_t Entity::getRadius()
-{
-	fixed_t width = Entity::getWidth(this);
-	fixed_t height = Entity::getHeight(this);
-	fixed_t depth = Entity::getDepth(this);
-
-	if(width > height)
-	{
-		if(width > depth)
-		{
-			return width >> 1;
-		}
-		else
-		{
-			return depth >> 1;
-		}
-
-	}
-	else if(height > depth)
-	{
-		return height >> 1;
-	}
-	else
-	{
-		return depth >> 1;
-	}
-
-	return 0;
-}
-//---------------------------------------------------------------------------------------------------------
-fixed_t Entity::getBounciness()
-{
-	return this->entitySpec->physicalProperties ? this->entitySpec->physicalProperties->bounciness : 0;
-}
-//---------------------------------------------------------------------------------------------------------
-fixed_t Entity::getFrictionCoefficient()
-{
-	return this->entitySpec->physicalProperties ? this->entitySpec->physicalProperties->frictionCoefficient : 0;
-}
-//---------------------------------------------------------------------------------------------------------
-bool Entity::isSubjectToGravity(Vector3D gravity __attribute__ ((unused)))
-{
-	return true;
-}
-//---------------------------------------------------------------------------------------------------------
-uint32 Entity::getInGameType()
-{
-	return this->entitySpec->inGameType;
-}
-//---------------------------------------------------------------------------------------------------------
-void Entity::addComponents()
-{
-	if(!isDeleted(this->children))
-	{
-		Base::addComponents(this);
-	}
-
-	Entity::createSprites(this);
-	Entity::createWireframes(this);
-	Entity::createColliders(this);
-	Entity::createBehaviors(this);
-
-	Entity::calculateSize(this, false);
-}
-//---------------------------------------------------------------------------------------------------------
-void Entity::removeComponents()
-{
-	Entity::removeWireframes(this);
-	Entity::removeSprites(this);
-	Entity::removeColliders(this);
-	Entity::removeBehaviors(this);
-}
-//---------------------------------------------------------------------------------------------------------
-void Entity::show()
-{
-	Base::show(this);
-
-	if(!isDeleted(this->sprites))
-	{
-		for(VirtualNode node = this->sprites->head; NULL != node ; node = node->next)
-		{
-			Sprite::show(node->data);
-		}
-	}
-
-	if(!isDeleted(this->wireframes))
-	{
-		for(VirtualNode node = this->wireframes->head; NULL != node ; node = node->next)
-		{
-			Wireframe::show(node->data);
-		}
-	}
-}
-//---------------------------------------------------------------------------------------------------------
-void Entity::hide()
-{
-	Base::hide(this);
-
-	// hide all sprites
-	if(!isDeleted(this->sprites))
-	{
-		for(VirtualNode node = this->sprites->head; NULL != node ; node = node->next)
-		{
-			Sprite::hide(node->data);
-		}
-	}
-
-	// hide all wireframes
-	if(!isDeleted(this->wireframes))
-	{
-		for(VirtualNode node = this->wireframes->head; NULL != node ; node = node->next)
-		{
-			Wireframe::hide(node->data);
-		}
-	}
-}
-//---------------------------------------------------------------------------------------------------------
-void Entity::suspend()
-{
-	Base::suspend(this);
-
-	Entity::removeSprites(this);
-	Entity::removeWireframes(this);
-}
-//---------------------------------------------------------------------------------------------------------
-void Entity::resume()
-{
-	Base::resume(this);
-
-	// initialize sprites
-	if(NULL != this->entitySpec)
-	{
-		Entity::createSprites(this);
-		Entity::createWireframes(this);
-	}
-
-	if(this->hidden)
-	{
-		// Force syncronization even if hidden
-		this->hidden = false;
-		Entity::hide(this);
-	}
-}
-//---------------------------------------------------------------------------------------------------------
-void Entity::setTransparency(uint8 transparency)
-{
-	Base::setTransparency(this, transparency);
-
-	if(!isDeleted(this->sprites))
-	{
-		for(VirtualNode node = this->sprites->head; NULL != node ; node = node->next)
-		{
-			Sprite::setTransparency(node->data, transparency);
-		}
-	}
-
-	if(!isDeleted(this->wireframes))
-	{
-		for(VirtualNode node = this->wireframes->head; NULL != node ; node = node->next)
-		{
-			Wireframe::setTransparency(node->data, transparency);
-		}
-	}
-}
-//---------------------------------------------------------------------------------------------------------
-bool Entity::handlePropagatedMessage(int32 message)
-{
-	switch(message)
-	{
-		case kMessageReleaseVisualComponents:
-
-			Entity::removeSprites(this);
-			Entity::removeWireframes(this);
-			break;
-
-		case kMessageReloadVisualComponents:
-
-			if(NULL != this->entitySpec)
-			{
-				Entity::createSprites(this);
-				Entity::createWireframes(this);
-			}
-			break;
-	}
-
-	return false;
 }
 //---------------------------------------------------------------------------------------------------------
 

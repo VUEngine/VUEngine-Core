@@ -54,6 +54,11 @@ class PrintingSprite : BgmapSprite
 	
 	/// @publicsection
 	void constructor(SpatialObject owner, const PrintingSpriteSpec* printingSpriteSpec);
+	
+	/// Render the sprite by configuring the DRAM assigned to it by means of the provided index.
+	/// @param index: Determines the region of DRAM that this sprite is allowed to configure
+	/// @return The index that determines the region of DRAM that this sprite manages
+	override int16 doRender(int16 index);
 
 	/// Reset the sprite's rendering configuration.
 	void reset();
@@ -78,11 +83,6 @@ class PrintingSprite : BgmapSprite
 	/// @param width: Width of the WORLD to by used to display the text
 	/// @param height: Height of the WORLD to by used to display the text
 	void setSize(uint16 width, uint16 height);
-	
-	/// Render the sprite by configuring the DRAM assigned to it by means of the provided index.
-	/// @param index: Determines the region of DRAM that this sprite is allowed to configure
-	/// @return The index that determines the region of DRAM that this sprite manages
-	override int16 doRender(int16 index);
 }
 
 

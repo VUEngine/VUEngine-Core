@@ -191,6 +191,74 @@ void Stage::destructor()
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------
+void Stage::suspend()
+{
+	// Save the camera position for resume reconfiguration
+	this->cameraPosition = Camera::getPosition(Camera::getInstance());
+
+	// stream all pending entities to avoid having manually recover
+	// the stage entity registries
+	while(EntityFactory::createNextEntity(this->entityFactory));
+
+	Base::suspend(this);
+
+	// relinquish camera focus priority
+	if(!isDeleted(this->focusEntity))
+	{
+		if(this->focusEntity == Camera::getFocusEntity(Camera::getInstance()))
+		{
+			// relinquish focus entity
+			Camera::setFocusEntity(Camera::getInstance(), NULL);
+		}
+	}
+	else
+	{
+		Stage::setFocusEntity(this, Camera::getFocusEntity(Camera::getInstance()));
+	}
+
+	delete this->entityFactory;
+	this->entityFactory = NULL;
+}
+//---------------------------------------------------------------------------------------------------------
+void Stage::resume()
+{
+	// Set camera to its previous position
+	Camera::setStageSize(Camera::getInstance(), Size::getFromPixelSize(this->stageSpec->level.pixelSize));
+	Camera::setPosition(Camera::getInstance(), this->cameraPosition, true);
+	Camera::setup(Camera::getInstance(), this->stageSpec->rendering.pixelOptical, this->stageSpec->level.cameraFrustum);
+
+	// Setup timer
+	Stage::configureTimer(this);
+
+	// load background sounds
+	Stage::setupSounds(this);
+
+	// set physics
+	PhysicalWorld::setFrictionCoefficient(VUEngine::getPhysicalWorld(_vuEngine), this->stageSpec->physics.frictionCoefficient);
+	PhysicalWorld::setGravity(VUEngine::getPhysicalWorld(_vuEngine), this->stageSpec->physics.gravity);
+
+	Stage::prepareGraphics(this);
+
+	if(!isDeleted(this->focusEntity))
+	{
+		// recover focus entity
+		Camera::setFocusEntity(Camera::getInstance(), Entity::safeCast(this->focusEntity));
+	}
+
+	Base::resume(this);
+
+	// apply transformations
+	Stage::transform(this, &_neutralEnvironmentTransformation, __INVALIDATE_TRANSFORMATION);
+
+	// setup colors and brightness
+	VIPManager::setBackgroundColor(VIPManager::getInstance(), this->stageSpec->rendering.colorConfig.backgroundColor);
+	// TODO: properly handle brightness and brightness repeat on resume
+
+	this->entityFactory = new EntityFactory();
+
+	Stage::loadPostProcessingEffects(this);
+}
+//---------------------------------------------------------------------------------------------------------
 StageSpec* Stage::getSpec()
 {
 	return this->stageSpec;
@@ -529,74 +597,6 @@ void Stage::configure(VirtualList positionedEntitiesToIgnore)
 
 	// apply transformations
 	Stage::transform(this, &_neutralEnvironmentTransformation, __INVALIDATE_TRANSFORMATION);
-
-	Stage::loadPostProcessingEffects(this);
-}
-//---------------------------------------------------------------------------------------------------------
-void Stage::suspend()
-{
-	// Save the camera position for resume reconfiguration
-	this->cameraPosition = Camera::getPosition(Camera::getInstance());
-
-	// stream all pending entities to avoid having manually recover
-	// the stage entity registries
-	while(EntityFactory::createNextEntity(this->entityFactory));
-
-	Base::suspend(this);
-
-	// relinquish camera focus priority
-	if(!isDeleted(this->focusEntity))
-	{
-		if(this->focusEntity == Camera::getFocusEntity(Camera::getInstance()))
-		{
-			// relinquish focus entity
-			Camera::setFocusEntity(Camera::getInstance(), NULL);
-		}
-	}
-	else
-	{
-		Stage::setFocusEntity(this, Camera::getFocusEntity(Camera::getInstance()));
-	}
-
-	delete this->entityFactory;
-	this->entityFactory = NULL;
-}
-//---------------------------------------------------------------------------------------------------------
-void Stage::resume()
-{
-	// Set camera to its previous position
-	Camera::setStageSize(Camera::getInstance(), Size::getFromPixelSize(this->stageSpec->level.pixelSize));
-	Camera::setPosition(Camera::getInstance(), this->cameraPosition, true);
-	Camera::setup(Camera::getInstance(), this->stageSpec->rendering.pixelOptical, this->stageSpec->level.cameraFrustum);
-
-	// Setup timer
-	Stage::configureTimer(this);
-
-	// load background sounds
-	Stage::setupSounds(this);
-
-	// set physics
-	PhysicalWorld::setFrictionCoefficient(VUEngine::getPhysicalWorld(_vuEngine), this->stageSpec->physics.frictionCoefficient);
-	PhysicalWorld::setGravity(VUEngine::getPhysicalWorld(_vuEngine), this->stageSpec->physics.gravity);
-
-	Stage::prepareGraphics(this);
-
-	if(!isDeleted(this->focusEntity))
-	{
-		// recover focus entity
-		Camera::setFocusEntity(Camera::getInstance(), Entity::safeCast(this->focusEntity));
-	}
-
-	Base::resume(this);
-
-	// apply transformations
-	Stage::transform(this, &_neutralEnvironmentTransformation, __INVALIDATE_TRANSFORMATION);
-
-	// setup colors and brightness
-	VIPManager::setBackgroundColor(VIPManager::getInstance(), this->stageSpec->rendering.colorConfig.backgroundColor);
-	// TODO: properly handle brightness and brightness repeat on resume
-
-	this->entityFactory = new EntityFactory();
 
 	Stage::loadPostProcessingEffects(this);
 }

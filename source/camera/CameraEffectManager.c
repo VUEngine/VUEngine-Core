@@ -59,6 +59,17 @@ void CameraEffectManager::destructor()
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------
+bool CameraEffectManager::handleMessage(Telegram telegram)
+{
+	switch(Telegram::getMessage(telegram))
+	{
+		case kFadeTo:
+			CameraEffectManager::fxFadeAsync(this);
+			break;
+	}
+	return true;
+}
+//---------------------------------------------------------------------------------------------------------
 void CameraEffectManager::reset()
 {
 	this->fadeEffectIncrement = __CAMERA_EFFECT_FADE_INCREMENT;
@@ -138,17 +149,6 @@ void CameraEffectManager::stopEffect(int32 effect)
 			CameraEffectManager::fxFadeAsyncStop(this);
 			break;
 	}
-}
-//---------------------------------------------------------------------------------------------------------
-bool CameraEffectManager::handleMessage(Telegram telegram)
-{
-	switch(Telegram::getMessage(telegram))
-	{
-		case kFadeTo:
-			CameraEffectManager::fxFadeAsync(this);
-			break;
-	}
-	return true;
 }
 //---------------------------------------------------------------------------------------------------------
 

@@ -38,15 +38,15 @@ class UIContainer : Container
 	/// @param childrenPositionedEntities: Array of specs that define how to configure the container's children
 	void constructor(PositionedEntity* childrenPositionedEntities);
 
-	/// Spawn a new child and configure it with the provided positioned entity struct.
-	/// @param positionedEntity: Struct that defines which entity spec to use to configure the new child
-	Entity spawnChildEntity(const PositionedEntity* const positionedEntity);
-
 	/// Compute the container's global transformation.
 	/// @param environmentTransform: Reference environment for the local transformation
 	/// @param invalidateTransformationFlag: Flag that determines which transfomation's components 
 	/// must be recomputed
 	override void transform(const Transformation* environmentTransform, uint8 invalidateTransformationFlag);
+
+	/// Spawn a new child and configure it with the provided positioned entity struct.
+	/// @param positionedEntity: Struct that defines which entity spec to use to configure the new child
+	Entity spawnChildEntity(const PositionedEntity* const positionedEntity);
 }
 
 

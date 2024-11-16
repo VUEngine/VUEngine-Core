@@ -81,59 +81,6 @@ class Actor : AnimatedEntity
 	/// @param name: Name to assign to the new instance
 	void constructor(const ActorSpec* actorSpec, int16 internalId, const char* const name);
 
-	/// Create the state machine and inintialize it with the provided state.
-	/// @param state: State that the state machine must enter
-	void createStateMachine(State state);
-
-	/// Retrieve the actor's physical body.
-	/// @return Actor's physical body
-	Body getBody();
-
-	/// Check if the actor is moving.
-	/// @return True if the actor's body is moving; false otherwise
-	bool isMoving();
-
-	/// Stop all actor's movement.
-	void stopAllMovement();
-
-	/// Stop the actor's movement in the specified axis.
-	/// @param axis: Axis on which to stop the movement of the actor's body
-	void stopMovement(uint16 axis);
-
-	/// Retrieve the actor's maximum speed.
-	/// @return Maximum speed at which the actor's body is allowed to move
-	fixed_t getMaximumSpeed();
-
-	/// Set the actor's velocity vector.
-	/// @param vector: Velocity vector to assign to the actor's body
-	/// @param checkIfCanMove: If true, the actor checks that none of its colliders will
-	/// enter a collision if it were to move in the direction of the provided velocity
-	/// @return True if the actor started to move in the direction specified by the
-	/// provided velocity vector
-	bool setVelocity(const Vector3D* velocity, bool checkIfCanMove);
-
-	/// Apply a force to the actor's body.
-	/// @param force: Force to be applied
-	/// @param checkIfCanMove: If true, the actor checks that none of its colliders will
-	/// @return True if the force was succesfully applied to the actor's body
-	virtual bool applyForce(const Vector3D* force, bool checkIfCanMove);
-
-	/// Check if the actor will enter a collision if it were to move in the provided direction
-	/// @param direction: Direction vector to check
-	virtual bool canMoveTowards(Vector3D direction);
-
-	/// Check if the actor bounces when it collides with another object.
-	/// @return True if the actor bounces when it collides with another object
-	virtual bool isBouncy();
-
-	/// Check if when the actor bounces it has to take into account the colliding object's bounciness.
-	/// @return True if the actor has to take into account the colliding object's bounciness when bouncing
-	virtual bool isSensibleToCollidingObjectBouncinessOnCollision(SpatialObject collidingObject);
-
-	/// Check if when the actor bounces it has to take into account the colliding object's friction coefficient.
-	/// @return True if the actor has to take into account the colliding object's friction coefficient when bouncing
-	virtual bool isSensibleToCollidingObjectFrictionOnCollision(SpatialObject collidingObject);
-
 	/// Process a Telegram.
 	/// @param telegram: Telegram to process
 	/// @return True if the Telegram was processed
@@ -189,6 +136,59 @@ class Actor : AnimatedEntity
 
 	/// Update this instance's logic.
 	override void update();
+
+	/// Create the state machine and inintialize it with the provided state.
+	/// @param state: State that the state machine must enter
+	void createStateMachine(State state);
+
+	/// Retrieve the actor's physical body.
+	/// @return Actor's physical body
+	Body getBody();
+
+	/// Check if the actor is moving.
+	/// @return True if the actor's body is moving; false otherwise
+	bool isMoving();
+
+	/// Stop all actor's movement.
+	void stopAllMovement();
+
+	/// Stop the actor's movement in the specified axis.
+	/// @param axis: Axis on which to stop the movement of the actor's body
+	void stopMovement(uint16 axis);
+
+	/// Retrieve the actor's maximum speed.
+	/// @return Maximum speed at which the actor's body is allowed to move
+	fixed_t getMaximumSpeed();
+
+	/// Set the actor's velocity vector.
+	/// @param vector: Velocity vector to assign to the actor's body
+	/// @param checkIfCanMove: If true, the actor checks that none of its colliders will
+	/// enter a collision if it were to move in the direction of the provided velocity
+	/// @return True if the actor started to move in the direction specified by the
+	/// provided velocity vector
+	bool setVelocity(const Vector3D* velocity, bool checkIfCanMove);
+
+	/// Apply a force to the actor's body.
+	/// @param force: Force to be applied
+	/// @param checkIfCanMove: If true, the actor checks that none of its colliders will
+	/// @return True if the force was succesfully applied to the actor's body
+	virtual bool applyForce(const Vector3D* force, bool checkIfCanMove);
+
+	/// Check if the actor will enter a collision if it were to move in the provided direction
+	/// @param direction: Direction vector to check
+	virtual bool canMoveTowards(Vector3D direction);
+
+	/// Check if the actor bounces when it collides with another object.
+	/// @return True if the actor bounces when it collides with another object
+	virtual bool isBouncy();
+
+	/// Check if when the actor bounces it has to take into account the colliding object's bounciness.
+	/// @return True if the actor has to take into account the colliding object's bounciness when bouncing
+	virtual bool isSensibleToCollidingObjectBouncinessOnCollision(SpatialObject collidingObject);
+
+	/// Check if when the actor bounces it has to take into account the colliding object's friction coefficient.
+	/// @return True if the actor has to take into account the colliding object's friction coefficient when bouncing
+	virtual bool isSensibleToCollidingObjectFrictionOnCollision(SpatialObject collidingObject);
 }
 
 

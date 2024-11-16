@@ -213,6 +213,11 @@ abstract class Collider : Component
 
 	/// Class' constructor
 	void constructor(SpatialObject owner, const ColliderSpec* colliderSpec);
+	
+	/// Process a Telegram.
+	/// @param telegram: Telegram to process
+	/// @return True if the Telegram was processed
+	override bool handleMessage(Telegram telegram);
 
 	/// Enable the collider for collision checks.
 	void enable();
@@ -285,12 +290,6 @@ abstract class Collider : Component
 	/// @param x: Screen x coordinate where to print
 	/// @param y: Screen y coordinate where to print
 	virtual void print(int32 x, int32 y);
-	
-	/// Process a Telegram.
-	/// @param telegram: Telegram to process
-	/// @return True if the Telegram was processed
-	override bool handleMessage(Telegram telegram);
 }
-
 
 #endif

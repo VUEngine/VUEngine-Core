@@ -101,39 +101,6 @@ class BgmapSprite : Sprite
 	/// @param bgmapSpriteSpec: Specification that determines how to configure the sprite
 	void constructor(SpatialObject owner, const BgmapSpriteSpec* bgmapSpriteSpec);
 	
-	/// Configure the displays on which to show the sprite and how it will be displayed
-	/// @param display: Displays on which to show the sprite (__WORLD_ON, __WORLD_LON or __WORLD_RON)
-	/// @param mode: The mode to use to display the sprite (__WORLD_BGMAP | __WORLD_AFFINE | __WORLD_HBIAS)
-	void setMode(uint16 display, uint16 mode);
-
-	/// Set the offset within param table space that determines the area where 
-	/// this sprite is allowed to write.
-	/// @param param: Offset within param table space
-	void setParam(uint32 param);
-
-	/// Retrieve the offset within param table space that determines the area where 
-	/// this sprite is allowed to write
-	/// @return Offset within param table space
-	uint32 getParam();
-
-	/// Retrieve the offset that keeps track of where to continue writing in param table
-	/// @return Offset within param table space
-	int16 getParamTableRow();
-
-	/// Force the rewrite of the sprite's param table during the next rendering cycle
-	void invalidateParamTable();
-
-	/// Callback for when the sprite's texture is rewriten.
-	/// @param eventFirer: The rewrite texture
-	/// @return True if the listener must be kept; false to remove after the current call
-	bool onTextureRewritten(ListenerObject eventFirer);
-
-	/// Start rewriting the sprite's param table for affine transformations.
-	void applyAffineTransformations();
-
-	/// Start rewriting the sprite's param table for hbias effects.
-	void applyHbiasEffects();
-
 	/// Register this sprite with the appropriate sprites manager.
 	override void registerWithManager();
 
@@ -167,6 +134,39 @@ class BgmapSprite : Sprite
 	/// Retrieve the sprite's total number of pixels actually displayed.
 	/// @return Sprite's total number of pixels actually displayed
 	override int32 getTotalPixels();
+	
+	/// Configure the displays on which to show the sprite and how it will be displayed
+	/// @param display: Displays on which to show the sprite (__WORLD_ON, __WORLD_LON or __WORLD_RON)
+	/// @param mode: The mode to use to display the sprite (__WORLD_BGMAP | __WORLD_AFFINE | __WORLD_HBIAS)
+	void setMode(uint16 display, uint16 mode);
+
+	/// Set the offset within param table space that determines the area where 
+	/// this sprite is allowed to write.
+	/// @param param: Offset within param table space
+	void setParam(uint32 param);
+
+	/// Retrieve the offset within param table space that determines the area where 
+	/// this sprite is allowed to write
+	/// @return Offset within param table space
+	uint32 getParam();
+
+	/// Retrieve the offset that keeps track of where to continue writing in param table
+	/// @return Offset within param table space
+	int16 getParamTableRow();
+
+	/// Force the rewrite of the sprite's param table during the next rendering cycle
+	void invalidateParamTable();
+
+	/// Callback for when the sprite's texture is rewriten.
+	/// @param eventFirer: The rewrite texture
+	/// @return True if the listener must be kept; false to remove after the current call
+	bool onTextureRewritten(ListenerObject eventFirer);
+
+	/// Start rewriting the sprite's param table for affine transformations.
+	void applyAffineTransformations();
+
+	/// Start rewriting the sprite's param table for hbias effects.
+	void applyHbiasEffects();
 }
 
 

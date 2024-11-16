@@ -71,6 +71,14 @@ class BgmapTexture : Texture
 	/// @param id: Texture's identificator
 	void constructor(BgmapTextureSpec* bgmapTextureSpec, uint16 id);
 
+	/// Write graphical data to the allocated BGMAP space.
+	/// @param maximumTextureRowsToWrite: Number of texture rows to write during this call
+	/// @return True if the texture was written; false if it fails
+	override bool write(int16 maximumTextureRowsToWrite);
+
+	/// Rewrite graphical data to the allocated BGMAP space.
+	override void rewrite();
+
 	/// Set the BGMAP segment where the graphical data is allocated.
 	/// @param segment: BGMAP segment where the graphical data is allocated
 	void setSegment(int8 segment);
@@ -104,14 +112,6 @@ class BgmapTexture : Texture
 	/// Retrieve the number of remaining rows to be written to graphical memory.
 	/// @return Number of remaining rows to be written to graphical memory
 	int8 getRemainingRowsToBeWritten();
-
-	/// Write graphical data to the allocated BGMAP space.
-	/// @param maximumTextureRowsToWrite: Number of texture rows to write during this call
-	/// @return True if the texture was written; false if it fails
-	override bool write(int16 maximumTextureRowsToWrite);
-
-	/// Rewrite graphical data to the allocated BGMAP space.
-	override void rewrite();
 }
 
 

@@ -1437,7 +1437,7 @@ void Debug::hardwareRegistersPage(int32 increment __attribute__ ((unused)), int3
 {
 	Debug::removeSubPages(this);
 
-	HardwareManager::print(1, 5);
+	HardwareManager::print(x, y);
 }
 
 /**

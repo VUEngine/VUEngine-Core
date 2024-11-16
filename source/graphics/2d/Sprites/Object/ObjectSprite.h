@@ -109,13 +109,6 @@ class ObjectSprite : Sprite
 	/// @param objectSpriteSpec: Specification that determines how to configure the sprite
 	void constructor(SpatialObject owner, const ObjectSpriteSpec* objectSpriteSpec);
 
-	/// Force the computation of the number of OBJECTs that the sprite uses.
-	void resetTotalObjects();
-
-	/// Retrieve the number of OBJECTs that the sprite uses.
-	/// @return Number of OBJECTs that the sprite uses
-	int16 getTotalObjects();
-
 	/// Register this sprite with the appropriate sprites manager.
 	override void registerWithManager();
 
@@ -134,6 +127,13 @@ class ObjectSprite : Sprite
 	/// Retrieve the sprite's total number of pixels actually displayed.
 	/// @return Sprite's total number of pixels actually displayed
 	override int32 getTotalPixels();
+
+	/// Force the computation of the number of OBJECTs that the sprite uses.
+	void resetTotalObjects();
+
+	/// Retrieve the number of OBJECTs that the sprite uses.
+	/// @return Number of OBJECTs that the sprite uses
+	int16 getTotalObjects();
 }
 
 

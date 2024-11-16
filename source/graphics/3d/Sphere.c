@@ -53,16 +53,6 @@ void Sphere::destructor()
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------
-void Sphere::setRadius(fixed_t radius)
-{
-	this->radius = __ABS(radius);
-}
-//---------------------------------------------------------------------------------------------------------
-fixed_t Sphere::getRadius()
-{
-	return this->radius;
-}
-//---------------------------------------------------------------------------------------------------------
 void Sphere::render(Vector3D relativePosition)
 {
 	NM_ASSERT(NULL != this->transformation, "Sphere::render: NULL transformation");
@@ -89,5 +79,15 @@ bool Sphere::draw()
 	this->bufferIndex = !this->bufferIndex;
 
 	return drawn;
+}
+//---------------------------------------------------------------------------------------------------------
+void Sphere::setRadius(fixed_t radius)
+{
+	this->radius = __ABS(radius);
+}
+//---------------------------------------------------------------------------------------------------------
+fixed_t Sphere::getRadius()
+{
+	return this->radius;
 }
 //---------------------------------------------------------------------------------------------------------

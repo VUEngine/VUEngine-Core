@@ -94,20 +94,6 @@ class Mesh : Wireframe
 	/// @param owner: SpatialObject to which the wireframe attaches to
 	/// @param asteriskSpec: Specification that determines how to configure the wireframe
 	void constructor(SpatialObject owner, const MeshSpec* meshSpec);
-	
-	/// Create new segments from the provided array.
-	/// @param segments: Array of segments holding their spatial data
-	/// @displacement: Displacement to add to the segments' vertices
-	void addSegments(PixelVector (*segments)[2], Vector3D displacement);
-	
-	/// Create a new segment from provided vectors.
-	/// @param startVector: New segment's starting point
-	/// @param endVector: New segment's end point
-	void addSegment(Vector3D startVector, Vector3D endVector);
-
-	/// Draw the wireframe to the frame buffers in interlaced mode.
-	/// @return True if at least one pixel is drawn; false otherwise
-	bool drawInterlaced();
 
 	/// Retrieve the mesh's bounding box in pixel units.
 	/// @return Bounding box of the mesh
@@ -124,6 +110,20 @@ class Mesh : Wireframe
 	/// Draw the wireframe to the frame buffers.
 	/// @return True if at least one pixel is drawn; false otherwise
 	override bool draw();
+	
+	/// Create new segments from the provided array.
+	/// @param segments: Array of segments holding their spatial data
+	/// @displacement: Displacement to add to the segments' vertices
+	void addSegments(PixelVector (*segments)[2], Vector3D displacement);
+	
+	/// Create a new segment from provided vectors.
+	/// @param startVector: New segment's starting point
+	/// @param endVector: New segment's end point
+	void addSegment(Vector3D startVector, Vector3D endVector);
+
+	/// Draw the wireframe to the frame buffers in interlaced mode.
+	/// @return True if at least one pixel is drawn; false otherwise
+	bool drawInterlaced();
 }
 
 

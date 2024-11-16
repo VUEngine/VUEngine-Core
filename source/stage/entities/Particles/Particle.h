@@ -93,6 +93,11 @@ class Particle : SpatialObject
 	/// Class' constructor
 	/// @param particleSpec: Specification that determines how to configure the particle
 	void constructor(const ParticleSpec* particleSpec);
+
+	/// Check if the particle is subject to gravity.
+	/// @param gravity: Gravity vector
+	/// @return True if gravity can affect the particle; false otherwise
+	override bool isSubjectToGravity(Vector3D gravity);
 	
 	/// Configure the particle with the provided arguments.
 	/// @param spriteSpec: Specification for a sprite to add to the particle
@@ -147,11 +152,6 @@ class Particle : SpatialObject
 
 	/// Configure the particle's mass.
 	virtual void configureMass();
-
-	/// Check if the particle is subject to gravity.
-	/// @param gravity: Gravity vector
-	/// @return True if gravity can affect the particle; false otherwise
-	override bool isSubjectToGravity(Vector3D gravity);
 }
 
 #endif

@@ -61,6 +61,18 @@ class LineField : Collider
 	/// Class' constructor
 	void constructor(SpatialObject owner, const ColliderSpec* colliderSpec);
 
+	/// Retrieve the normal to the collider.
+	/// @return Normal to the collider
+	override Vector3D getNormal();
+
+	/// Configure the wireframe used to show the collider.
+	override void configureWireframe();
+
+	/// Print collider's state.
+	/// @param x: Screen x coordinate where to print
+	/// @param y: Screen y coordinate where to print
+	override void print(int32 x, int32 y);
+
 	/// Displace the line filed.
 	/// @param displacement: Displacement vector
 	void displace(fixed_t displacement);
@@ -76,18 +88,6 @@ class LineField : Collider
 	/// Set the length of the line field's normal.
 	/// @param normalLength: Length of the line field's normal
 	void setNormalLength(fixed_t normalLength);
-
-	/// Retrieve the normal to the collider.
-	/// @return Normal to the collider
-	override Vector3D getNormal();
-
-	/// Configure the wireframe used to show the collider.
-	override void configureWireframe();
-
-	/// Print collider's state.
-	/// @param x: Screen x coordinate where to print
-	/// @param y: Screen y coordinate where to print
-	override void print(int32 x, int32 y);
 }
 
 

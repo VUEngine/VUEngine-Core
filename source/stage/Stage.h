@@ -273,6 +273,12 @@ class Stage : Container
 	/// Class' constructor
 	/// @param stageSpec: Specification that determines how to configure the stage
 	void constructor(StageSpec* stageSpec);
+	
+	/// Prepare to suspend this instance's logic.
+	override void suspend();
+
+	/// Prepare to resume this instance's logic.
+	override void resume();
 
 	/// Retrieve the stage's spec.
 	/// @return Specification that determines how the stage was configured
@@ -329,12 +335,6 @@ class Stage : Container
 	/// Configure the stage with the entities defined in its spec.
 	/// @param positionedEntitiesToIgnore: List of positioned entity structs to register for streaming
 	virtual void configure(VirtualList positionedEntitiesToIgnore);
-	
-	/// Prepare to suspend this instance's logic.
-	override void suspend();
-
-	/// Prepare to resume this instance's logic.
-	override void resume();
 
 	/// @privatesection
 

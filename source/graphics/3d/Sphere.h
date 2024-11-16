@@ -75,14 +75,6 @@ class Sphere : Wireframe
 	/// @param owner: SpatialObject to which the wireframe attaches to
 	/// @param asteriskSpec: Specification that determines how to configure the wireframe
 	void constructor(SpatialObject owner, const SphereSpec* sphereSpec);
-
-	/// Set the sphere's radius.
-	/// @param radius: Sphere's radius
-	void setRadius(fixed_t radius);
-
-	/// Retrieve the sphere's radius.
-	/// @return Sphere's radius
-	fixed_t getRadius();
 	
 	/// Prepare the wireframe for drawing.
 	/// @param relativePosition: Position relative to the camera's
@@ -91,6 +83,14 @@ class Sphere : Wireframe
 	/// Draw the wireframe to the frame buffers.
 	/// @return True if at least one pixel is drawn; false otherwise
 	override bool draw();
+
+	/// Set the sphere's radius.
+	/// @param radius: Sphere's radius
+	void setRadius(fixed_t radius);
+
+	/// Retrieve the sphere's radius.
+	/// @return Sphere's radius
+	fixed_t getRadius();
 }
 
 

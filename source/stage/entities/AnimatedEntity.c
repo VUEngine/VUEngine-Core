@@ -53,6 +53,37 @@ void AnimatedEntity::destructor()
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------
+void AnimatedEntity::ready(bool recursive)
+{
+	ASSERT(this->entitySpec, "AnimatedEntity::ready: null animatedEntitySpec");
+
+	Base::ready(this, recursive);
+
+	AnimatedEntity::playAnimation(this, ((AnimatedEntitySpec*)this->entitySpec)->initialAnimation);
+}
+//---------------------------------------------------------------------------------------------------------
+void AnimatedEntity::resume()
+{
+	Base::resume(this);
+
+	AnimatedEntity::playAnimation(this, this->playingAnimationName);
+}
+//---------------------------------------------------------------------------------------------------------
+bool AnimatedEntity::handlePropagatedString(const char* string __attribute__ ((unused)))
+{
+	/* TODO: play only if the string contains the correct command */
+	/*
+	if (NULL == strnstr(string, __MAX_ANIMATION_FUNCTION_NAME_LENGTH, __ANIMATION_COMMAND)) 
+	{
+		return false;
+	}
+	*/
+
+	AnimatedEntity::playAnimation(this, string);
+	
+	return false;
+}
+//---------------------------------------------------------------------------------------------------------
 bool AnimatedEntity::playAnimation(const char* animationName)
 {
 	if(NULL == this->sprites || NULL == animationName)
@@ -215,36 +246,5 @@ int32 AnimatedEntity::getNumberOfFrames()
 	}
 
 	return -1;
-}
-//---------------------------------------------------------------------------------------------------------
-void AnimatedEntity::ready(bool recursive)
-{
-	ASSERT(this->entitySpec, "AnimatedEntity::ready: null animatedEntitySpec");
-
-	Base::ready(this, recursive);
-
-	AnimatedEntity::playAnimation(this, ((AnimatedEntitySpec*)this->entitySpec)->initialAnimation);
-}
-//---------------------------------------------------------------------------------------------------------
-void AnimatedEntity::resume()
-{
-	Base::resume(this);
-
-	AnimatedEntity::playAnimation(this, this->playingAnimationName);
-}
-//---------------------------------------------------------------------------------------------------------
-bool AnimatedEntity::handlePropagatedString(const char* string __attribute__ ((unused)))
-{
-	/* TODO: play only if the string contains the correct command */
-	/*
-	if (NULL == strnstr(string, __MAX_ANIMATION_FUNCTION_NAME_LENGTH, __ANIMATION_COMMAND)) 
-	{
-		return false;
-	}
-	*/
-
-	AnimatedEntity::playAnimation(this, string);
-	
-	return false;
 }
 //---------------------------------------------------------------------------------------------------------

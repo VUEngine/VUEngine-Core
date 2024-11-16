@@ -89,6 +89,18 @@ class Container : SpatialObject
 	/// @param name: Name to assign to the new instance
 	void constructor(const char* const name);
 
+	/// Set the container's position.
+	/// @param position: 3D vector defining the object's new position
+	override void setPosition(const Vector3D* position);
+
+	/// Set the container's rotation.
+	/// @param rotation: Rotation
+	override void setRotation(const Rotation* rotation);
+
+	/// Set the container's scale.
+	/// @param scale: Scale
+	override void setScale(const Scale* scale);
+
 	/// Delete this container when appropriate.
 	/// Containers must not be deleted nor created directly by the client code
 	void deleteMyself();
@@ -263,18 +275,6 @@ class Container : SpatialObject
 	/// @param string: Propagated string
 	/// @return True if the propagation must stop; false if the propagation must reach other containers
 	virtual bool handlePropagatedString(const char* string);
-
-	/// Set the container's position.
-	/// @param position: 3D vector defining the object's new position
-	override void setPosition(const Vector3D* position);
-
-	/// Set the container's rotation.
-	/// @param rotation: Rotation
-	override void setRotation(const Rotation* rotation);
-
-	/// Set the container's scale.
-	/// @param scale: Scale
-	override void setScale(const Scale* scale);
 }
 
 

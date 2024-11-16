@@ -69,86 +69,6 @@ void ParticleSystem::destructor()
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------
-void ParticleSystem::start()
-{
-	this->update = true;
-	this->nextSpawnTime = 0;
-	this->totalSpawnedParticles = 0;
-	this->paused = false;
-	ParticleSystem::show(this);
-}
-//---------------------------------------------------------------------------------------------------------
-void ParticleSystem::pause()
-{
-	this->paused = true;
-}
-//---------------------------------------------------------------------------------------------------------
-void ParticleSystem::unpause()
-{
-	this->update = true;
-
-	if(this->paused)
-	{
-		this->paused = false;
-		this->nextSpawnTime = 0;
-	}
-
-	this->transformation.invalid |= __INVALIDATE_POSITION;
-}
-//---------------------------------------------------------------------------------------------------------
-bool ParticleSystem::isPaused()
-{
-	return this->paused && 0 == this->aliveParticlesCount;
-}
-//---------------------------------------------------------------------------------------------------------
-void ParticleSystem::deleteAllParticles()
-{
-	if(!isDeleted(this->particles))
-	{
-		VirtualList::deleteData(this->particles);
-	}
-
-	this->aliveParticlesCount = 0;
-}
-//---------------------------------------------------------------------------------------------------------
-void ParticleSystem::setLoop(bool value)
-{
-	this->loop = value;
-}
-//---------------------------------------------------------------------------------------------------------
-bool ParticleSystem::getLoop()
-{
-	return this->loop;
-}
-//---------------------------------------------------------------------------------------------------------
-void ParticleSystem::setSelfDestroyWhenDone(bool selfDestroyWhenDone)
-{
-	this->selfDestroyWhenDone = selfDestroyWhenDone;
-}
-//---------------------------------------------------------------------------------------------------------
-void ParticleSystem::setElapsedTime(uint32 elapsedTime)
-{
-	this->elapsedTime = elapsedTime;
-}
-//---------------------------------------------------------------------------------------------------------
-void ParticleSystem::print(int16 x, int16 y)
-{
-	Printing::text(Printing::getInstance(), "PARTICLE SYSTEM ", x, y++, NULL);
-	Printing::text(Printing::getInstance(), "Particles", x, ++y, NULL);
-	Printing::text(Printing::getInstance(), "Maximum:    ", x + 1, ++y, NULL);
-	Printing::int32(Printing::getInstance(), this->maximumNumberOfAliveParticles, x + 10, y, NULL);
-	Printing::text(Printing::getInstance(), "Spawned:    ", x + 1, ++y, NULL);
-	Printing::int32(Printing::getInstance(), VirtualList::getCount(this->particles), x + 10, y, NULL);
-	Printing::text(Printing::getInstance(), "Alive:      ", x + 1, ++y, NULL);
-	Printing::int32(Printing::getInstance(), this->aliveParticlesCount, x + 10, y, NULL);
-}
-//---------------------------------------------------------------------------------------------------------
-void ParticleSystem::particleSpawned(Particle particle __attribute__ ((unused)))
-{}
-//---------------------------------------------------------------------------------------------------------
-void ParticleSystem::particleRecycled(Particle particle __attribute__ ((unused)))
-{}
-//---------------------------------------------------------------------------------------------------------
 void ParticleSystem::show()
 {
 	if(!this->hidden)
@@ -360,6 +280,86 @@ void ParticleSystem::setSpec(void* particleSystemSpec)
 	Base::setSpec(this, particleSystemSpec);
 	ParticleSystem::setup(this);
 }
+//---------------------------------------------------------------------------------------------------------
+void ParticleSystem::start()
+{
+	this->update = true;
+	this->nextSpawnTime = 0;
+	this->totalSpawnedParticles = 0;
+	this->paused = false;
+	ParticleSystem::show(this);
+}
+//---------------------------------------------------------------------------------------------------------
+void ParticleSystem::pause()
+{
+	this->paused = true;
+}
+//---------------------------------------------------------------------------------------------------------
+void ParticleSystem::unpause()
+{
+	this->update = true;
+
+	if(this->paused)
+	{
+		this->paused = false;
+		this->nextSpawnTime = 0;
+	}
+
+	this->transformation.invalid |= __INVALIDATE_POSITION;
+}
+//---------------------------------------------------------------------------------------------------------
+bool ParticleSystem::isPaused()
+{
+	return this->paused && 0 == this->aliveParticlesCount;
+}
+//---------------------------------------------------------------------------------------------------------
+void ParticleSystem::deleteAllParticles()
+{
+	if(!isDeleted(this->particles))
+	{
+		VirtualList::deleteData(this->particles);
+	}
+
+	this->aliveParticlesCount = 0;
+}
+//---------------------------------------------------------------------------------------------------------
+void ParticleSystem::setLoop(bool value)
+{
+	this->loop = value;
+}
+//---------------------------------------------------------------------------------------------------------
+bool ParticleSystem::getLoop()
+{
+	return this->loop;
+}
+//---------------------------------------------------------------------------------------------------------
+void ParticleSystem::setSelfDestroyWhenDone(bool selfDestroyWhenDone)
+{
+	this->selfDestroyWhenDone = selfDestroyWhenDone;
+}
+//---------------------------------------------------------------------------------------------------------
+void ParticleSystem::setElapsedTime(uint32 elapsedTime)
+{
+	this->elapsedTime = elapsedTime;
+}
+//---------------------------------------------------------------------------------------------------------
+void ParticleSystem::print(int16 x, int16 y)
+{
+	Printing::text(Printing::getInstance(), "PARTICLE SYSTEM ", x, y++, NULL);
+	Printing::text(Printing::getInstance(), "Particles", x, ++y, NULL);
+	Printing::text(Printing::getInstance(), "Maximum:    ", x + 1, ++y, NULL);
+	Printing::int32(Printing::getInstance(), this->maximumNumberOfAliveParticles, x + 10, y, NULL);
+	Printing::text(Printing::getInstance(), "Spawned:    ", x + 1, ++y, NULL);
+	Printing::int32(Printing::getInstance(), VirtualList::getCount(this->particles), x + 10, y, NULL);
+	Printing::text(Printing::getInstance(), "Alive:      ", x + 1, ++y, NULL);
+	Printing::int32(Printing::getInstance(), this->aliveParticlesCount, x + 10, y, NULL);
+}
+//---------------------------------------------------------------------------------------------------------
+void ParticleSystem::particleSpawned(Particle particle __attribute__ ((unused)))
+{}
+//---------------------------------------------------------------------------------------------------------
+void ParticleSystem::particleRecycled(Particle particle __attribute__ ((unused)))
+{}
 //---------------------------------------------------------------------------------------------------------
 
 //=========================================================================================================

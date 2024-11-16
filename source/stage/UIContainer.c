@@ -54,6 +54,17 @@ void UIContainer::destructor()
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------
+void UIContainer::transform(const Transformation* environmentTransform __attribute__((unused)), uint8 invalidateTransformationFlag __attribute__((unused)))
+{
+	extern Transformation _neutralEnvironmentTransformation;
+
+	this->localTransformation.position = *_cameraPosition;
+	this->localTransformation.rotation = *_cameraInvertedRotation;
+	this->transformation.invalid = __INVALIDATE_POSITION | __INVALIDATE_ROTATION;
+
+	Base::transform(this, &_neutralEnvironmentTransformation, __INVALIDATE_POSITION | __INVALIDATE_ROTATION);
+}
+//---------------------------------------------------------------------------------------------------------
 Entity UIContainer::spawnChildEntity(const PositionedEntity* const positionedEntity)
 {
 	if(NULL != positionedEntity)
@@ -71,16 +82,5 @@ Entity UIContainer::spawnChildEntity(const PositionedEntity* const positionedEnt
 	}
 
 	return NULL;
-}
-//---------------------------------------------------------------------------------------------------------
-void UIContainer::transform(const Transformation* environmentTransform __attribute__((unused)), uint8 invalidateTransformationFlag __attribute__((unused)))
-{
-	extern Transformation _neutralEnvironmentTransformation;
-
-	this->localTransformation.position = *_cameraPosition;
-	this->localTransformation.rotation = *_cameraInvertedRotation;
-	this->transformation.invalid = __INVALIDATE_POSITION | __INVALIDATE_ROTATION;
-
-	Base::transform(this, &_neutralEnvironmentTransformation, __INVALIDATE_POSITION | __INVALIDATE_ROTATION);
 }
 //---------------------------------------------------------------------------------------------------------

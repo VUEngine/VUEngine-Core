@@ -77,132 +77,6 @@ void Actor::destructor()
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------
-void Actor::createStateMachine(State state)
-{
-	if(isDeleted(this->stateMachine))
-	{
-		this->stateMachine = new StateMachine(this);
-	}
-
-	StateMachine::swapState(this->stateMachine, state);
-
-	this->update = true;
-}
-//---------------------------------------------------------------------------------------------------------
-Body Actor::getBody()
-{
-	return this->body;
-}
-//---------------------------------------------------------------------------------------------------------
-bool Actor::isMoving()
-{
-	return isDeleted(this->body) ? false : Body::getMovementOnAllAxis(this->body);
-}
-//---------------------------------------------------------------------------------------------------------
-void Actor::stopAllMovement()
-{
-	Actor::stopMovement(this, __ALL_AXIS);
-}
-//---------------------------------------------------------------------------------------------------------
-void Actor::stopMovement(uint16 axis)
-{
-	if(!isDeleted(this->body))
-	{
-		Body::stopMovement(this->body, axis);
-	}
-}
-//---------------------------------------------------------------------------------------------------------
-fixed_t Actor::getMaximumSpeed()
-{
-	return !isDeleted(this->body) ? Body::getMaximumSpeed(this->body) : 0;
-}
-//---------------------------------------------------------------------------------------------------------
-bool Actor::setVelocity(const Vector3D* velocity, bool checkIfCanMove)
-{
-	ASSERT(this->body, "Actor::applyForce: null body");
-
-	if(!this->body)
-	{
-		return false;
-	}
-
-	if(checkIfCanMove)
-	{
-		if(!Actor::canMoveTowards(this, *velocity))
-		{
-			return false;
-		}
-	}
-
-	Body::setVelocity(this->body, velocity);
-
-	return true;
-}
-//---------------------------------------------------------------------------------------------------------
-bool Actor::applyForce(const Vector3D* force, bool checkIfCanMove)
-{
-	ASSERT(this->body, "Actor::applyForce: null body");
-
-	if(!this->body)
-	{
-		return false;
-	}
-
-	if(checkIfCanMove)
-	{
-		if(!Actor::canMoveTowards(this, *force))
-		{
-			return false;
-		}
-	}
-
-	Body::applyForce(this->body, force);
-
-	return true;
-}
-//---------------------------------------------------------------------------------------------------------
-bool Actor::canMoveTowards(Vector3D direction)
-{
-	fixed_t collisionCheckDistance = __I_TO_FIXED(1);
-
-	Vector3D displacement =
-	{
-		direction.x ? 0 < direction.x ? collisionCheckDistance : -collisionCheckDistance : 0,
-		direction.y ? 0 < direction.y ? collisionCheckDistance : -collisionCheckDistance : 0,
-		direction.z ? 0 < direction.z ? collisionCheckDistance : -collisionCheckDistance : 0
-	};
-
-	bool canMove = true;
-
-	if(this->colliders)
-	{
-		VirtualNode node = this->colliders->head;
-
-		for(; NULL != node; node = node->next)
-		{
-			Collider collider = Collider::safeCast(node->data);
-			canMove &= Collider::canMoveTowards(collider, displacement);
-		}
-	}
-
-	return canMove;
-}
-//---------------------------------------------------------------------------------------------------------
-bool Actor::isBouncy()
-{
-	return true;
-}
-//---------------------------------------------------------------------------------------------------------
-bool Actor::isSensibleToCollidingObjectBouncinessOnCollision(SpatialObject collidingObject __attribute__ ((unused)))
-{
-	return  true;
-}
-//---------------------------------------------------------------------------------------------------------
-bool Actor::isSensibleToCollidingObjectFrictionOnCollision(SpatialObject collidingObject __attribute__ ((unused)))
-{
-	return  true;
-}
-//---------------------------------------------------------------------------------------------------------
 bool Actor::handleMessage(Telegram telegram)
 {
 	if(!this->stateMachine || !StateMachine::handleMessage(this->stateMachine, telegram))
@@ -447,6 +321,132 @@ void Actor::update()
 //	Body::print(this->body, 1, 0);
 //	Collider::print(VirtualList::front(this->colliders), 1, 20);
 //	Printing::resetCoordinates(Printing::getInstance());
+}
+//---------------------------------------------------------------------------------------------------------
+void Actor::createStateMachine(State state)
+{
+	if(isDeleted(this->stateMachine))
+	{
+		this->stateMachine = new StateMachine(this);
+	}
+
+	StateMachine::swapState(this->stateMachine, state);
+
+	this->update = true;
+}
+//---------------------------------------------------------------------------------------------------------
+Body Actor::getBody()
+{
+	return this->body;
+}
+//---------------------------------------------------------------------------------------------------------
+bool Actor::isMoving()
+{
+	return isDeleted(this->body) ? false : Body::getMovementOnAllAxis(this->body);
+}
+//---------------------------------------------------------------------------------------------------------
+void Actor::stopAllMovement()
+{
+	Actor::stopMovement(this, __ALL_AXIS);
+}
+//---------------------------------------------------------------------------------------------------------
+void Actor::stopMovement(uint16 axis)
+{
+	if(!isDeleted(this->body))
+	{
+		Body::stopMovement(this->body, axis);
+	}
+}
+//---------------------------------------------------------------------------------------------------------
+fixed_t Actor::getMaximumSpeed()
+{
+	return !isDeleted(this->body) ? Body::getMaximumSpeed(this->body) : 0;
+}
+//---------------------------------------------------------------------------------------------------------
+bool Actor::setVelocity(const Vector3D* velocity, bool checkIfCanMove)
+{
+	ASSERT(this->body, "Actor::applyForce: null body");
+
+	if(!this->body)
+	{
+		return false;
+	}
+
+	if(checkIfCanMove)
+	{
+		if(!Actor::canMoveTowards(this, *velocity))
+		{
+			return false;
+		}
+	}
+
+	Body::setVelocity(this->body, velocity);
+
+	return true;
+}
+//---------------------------------------------------------------------------------------------------------
+bool Actor::applyForce(const Vector3D* force, bool checkIfCanMove)
+{
+	ASSERT(this->body, "Actor::applyForce: null body");
+
+	if(!this->body)
+	{
+		return false;
+	}
+
+	if(checkIfCanMove)
+	{
+		if(!Actor::canMoveTowards(this, *force))
+		{
+			return false;
+		}
+	}
+
+	Body::applyForce(this->body, force);
+
+	return true;
+}
+//---------------------------------------------------------------------------------------------------------
+bool Actor::canMoveTowards(Vector3D direction)
+{
+	fixed_t collisionCheckDistance = __I_TO_FIXED(1);
+
+	Vector3D displacement =
+	{
+		direction.x ? 0 < direction.x ? collisionCheckDistance : -collisionCheckDistance : 0,
+		direction.y ? 0 < direction.y ? collisionCheckDistance : -collisionCheckDistance : 0,
+		direction.z ? 0 < direction.z ? collisionCheckDistance : -collisionCheckDistance : 0
+	};
+
+	bool canMove = true;
+
+	if(this->colliders)
+	{
+		VirtualNode node = this->colliders->head;
+
+		for(; NULL != node; node = node->next)
+		{
+			Collider collider = Collider::safeCast(node->data);
+			canMove &= Collider::canMoveTowards(collider, displacement);
+		}
+	}
+
+	return canMove;
+}
+//---------------------------------------------------------------------------------------------------------
+bool Actor::isBouncy()
+{
+	return true;
+}
+//---------------------------------------------------------------------------------------------------------
+bool Actor::isSensibleToCollidingObjectBouncinessOnCollision(SpatialObject collidingObject __attribute__ ((unused)))
+{
+	return  true;
+}
+//---------------------------------------------------------------------------------------------------------
+bool Actor::isSensibleToCollidingObjectFrictionOnCollision(SpatialObject collidingObject __attribute__ ((unused)))
+{
+	return  true;
 }
 //---------------------------------------------------------------------------------------------------------
 

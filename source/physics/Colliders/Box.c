@@ -93,86 +93,6 @@ void Box::destructor()
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------
-void Box::getVertexes(Vector3D vertexes[__BOX_VERTEXES])
-{
-	Vector3D leftTopNear 		= {this->rightBox.x0, this->rightBox.y0, this->rightBox.z0};
-	Vector3D rightTopNear 		= {this->rightBox.x1, this->rightBox.y0, this->rightBox.z0};
-	Vector3D leftBottomNear 	= {this->rightBox.x0, this->rightBox.y1, this->rightBox.z0};
-	Vector3D rightBottomNear	= {this->rightBox.x1, this->rightBox.y1, this->rightBox.z0};
-	Vector3D leftTopFar 		= {this->rightBox.x0, this->rightBox.y0, this->rightBox.z1};
-	Vector3D rightTopFar 		= {this->rightBox.x1, this->rightBox.y0, this->rightBox.z1};
-	Vector3D leftBottomFar 		= {this->rightBox.x0, this->rightBox.y1, this->rightBox.z1};
-	Vector3D rightBottomFar 	= {this->rightBox.x1, this->rightBox.y1, this->rightBox.z1};
-
-	if(0 != this->rotationVertexDisplacement.x || 0 != this->rotationVertexDisplacement.y || 0 != this->rotationVertexDisplacement.z)
-	{
-		if(0 == this->rotationVertexDisplacement.z)
-		{
-			leftTopNear.y 		+= this->rotationVertexDisplacement.y;
-			rightTopNear.x 		-= this->rotationVertexDisplacement.x;
-			leftBottomNear.x 	+= this->rotationVertexDisplacement.x;
-			rightBottomNear.y 	-= this->rotationVertexDisplacement.y;
-
-			leftTopFar.y 		+= this->rotationVertexDisplacement.y;
-			rightTopFar.x 		-= this->rotationVertexDisplacement.x;
-			leftBottomFar.x 	+= this->rotationVertexDisplacement.x;
-			rightBottomFar.y 	-= this->rotationVertexDisplacement.y;
-		}
-		else if(0 == this->rotationVertexDisplacement.y)
-		{
-			leftTopNear.x 		+= this->rotationVertexDisplacement.x;
-			rightTopNear.z 		+= this->rotationVertexDisplacement.z;
-			leftBottomNear.x 	+= this->rotationVertexDisplacement.x;
-			rightBottomNear.z 	+= this->rotationVertexDisplacement.z;
-
-			leftTopFar.z 		-= this->rotationVertexDisplacement.z;
-			rightTopFar.x 		-= this->rotationVertexDisplacement.x;
-			leftBottomFar.z 	-= this->rotationVertexDisplacement.z;
-			rightBottomFar.x 	-= this->rotationVertexDisplacement.x;
-		}
-		else if(0 == this->rotationVertexDisplacement.x)
-		{
-			leftTopNear.z 		+= this->rotationVertexDisplacement.z;
-			rightTopNear.z 		+= this->rotationVertexDisplacement.z;
-			leftBottomNear.y 	-= this->rotationVertexDisplacement.y;
-			rightBottomNear.y 	-= this->rotationVertexDisplacement.y;
-
-			leftTopFar.y 		+= this->rotationVertexDisplacement.y;
-			rightTopFar.y 		+= this->rotationVertexDisplacement.y;
-			leftBottomFar.z 	-= this->rotationVertexDisplacement.z;
-			rightBottomFar.z 	-= this->rotationVertexDisplacement.z;
-		}
-	}
-
-	vertexes[0] = Vector3D::sum(leftTopNear, this->transformation->position);
-	vertexes[1] = Vector3D::sum(rightTopNear, this->transformation->position);
-	vertexes[2] = Vector3D::sum(leftBottomNear, this->transformation->position);
-	vertexes[3] = Vector3D::sum(rightBottomNear, this->transformation->position);
-
-	vertexes[4] = Vector3D::sum(leftTopFar, this->transformation->position);
-	vertexes[5] = Vector3D::sum(rightTopFar, this->transformation->position);
-	vertexes[6] = Vector3D::sum(leftBottomFar, this->transformation->position);
-	vertexes[7] = Vector3D::sum(rightBottomFar, this->transformation->position);
-}
-//---------------------------------------------------------------------------------------------------------
-void Box::projectOntoItself()
-{
-	Vector3D vertexes[__BOX_VERTEXES];
-	Box::getVertexes(this, vertexes);
-
-	// Compute normals
-	Box::computeNormals(this, vertexes);
-
-	// Has to project all points on all the normals of the tilted box
-	int32 normalIndex = 0;
-
-	// Initialize vertex projections
-	for(; normalIndex < __COLLIDER_NORMALS; normalIndex++)
-	{
-		Box::project(vertexes, this->normals->vectors[normalIndex], &this->vertexProjections[normalIndex].min, &this->vertexProjections[normalIndex].max);
-	}
-}
-//---------------------------------------------------------------------------------------------------------
 void Box::resize(fixed_t sizeDelta __attribute__((unused)))
 {
 	// add displacement
@@ -272,6 +192,86 @@ void Box::print(int32 x, int32 y)
 	Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(rightBox.z1 + this->transformation->position.z), x + 8, y++, NULL);
 }
 #endif
+//---------------------------------------------------------------------------------------------------------
+void Box::getVertexes(Vector3D vertexes[__BOX_VERTEXES])
+{
+	Vector3D leftTopNear 		= {this->rightBox.x0, this->rightBox.y0, this->rightBox.z0};
+	Vector3D rightTopNear 		= {this->rightBox.x1, this->rightBox.y0, this->rightBox.z0};
+	Vector3D leftBottomNear 	= {this->rightBox.x0, this->rightBox.y1, this->rightBox.z0};
+	Vector3D rightBottomNear	= {this->rightBox.x1, this->rightBox.y1, this->rightBox.z0};
+	Vector3D leftTopFar 		= {this->rightBox.x0, this->rightBox.y0, this->rightBox.z1};
+	Vector3D rightTopFar 		= {this->rightBox.x1, this->rightBox.y0, this->rightBox.z1};
+	Vector3D leftBottomFar 		= {this->rightBox.x0, this->rightBox.y1, this->rightBox.z1};
+	Vector3D rightBottomFar 	= {this->rightBox.x1, this->rightBox.y1, this->rightBox.z1};
+
+	if(0 != this->rotationVertexDisplacement.x || 0 != this->rotationVertexDisplacement.y || 0 != this->rotationVertexDisplacement.z)
+	{
+		if(0 == this->rotationVertexDisplacement.z)
+		{
+			leftTopNear.y 		+= this->rotationVertexDisplacement.y;
+			rightTopNear.x 		-= this->rotationVertexDisplacement.x;
+			leftBottomNear.x 	+= this->rotationVertexDisplacement.x;
+			rightBottomNear.y 	-= this->rotationVertexDisplacement.y;
+
+			leftTopFar.y 		+= this->rotationVertexDisplacement.y;
+			rightTopFar.x 		-= this->rotationVertexDisplacement.x;
+			leftBottomFar.x 	+= this->rotationVertexDisplacement.x;
+			rightBottomFar.y 	-= this->rotationVertexDisplacement.y;
+		}
+		else if(0 == this->rotationVertexDisplacement.y)
+		{
+			leftTopNear.x 		+= this->rotationVertexDisplacement.x;
+			rightTopNear.z 		+= this->rotationVertexDisplacement.z;
+			leftBottomNear.x 	+= this->rotationVertexDisplacement.x;
+			rightBottomNear.z 	+= this->rotationVertexDisplacement.z;
+
+			leftTopFar.z 		-= this->rotationVertexDisplacement.z;
+			rightTopFar.x 		-= this->rotationVertexDisplacement.x;
+			leftBottomFar.z 	-= this->rotationVertexDisplacement.z;
+			rightBottomFar.x 	-= this->rotationVertexDisplacement.x;
+		}
+		else if(0 == this->rotationVertexDisplacement.x)
+		{
+			leftTopNear.z 		+= this->rotationVertexDisplacement.z;
+			rightTopNear.z 		+= this->rotationVertexDisplacement.z;
+			leftBottomNear.y 	-= this->rotationVertexDisplacement.y;
+			rightBottomNear.y 	-= this->rotationVertexDisplacement.y;
+
+			leftTopFar.y 		+= this->rotationVertexDisplacement.y;
+			rightTopFar.y 		+= this->rotationVertexDisplacement.y;
+			leftBottomFar.z 	-= this->rotationVertexDisplacement.z;
+			rightBottomFar.z 	-= this->rotationVertexDisplacement.z;
+		}
+	}
+
+	vertexes[0] = Vector3D::sum(leftTopNear, this->transformation->position);
+	vertexes[1] = Vector3D::sum(rightTopNear, this->transformation->position);
+	vertexes[2] = Vector3D::sum(leftBottomNear, this->transformation->position);
+	vertexes[3] = Vector3D::sum(rightBottomNear, this->transformation->position);
+
+	vertexes[4] = Vector3D::sum(leftTopFar, this->transformation->position);
+	vertexes[5] = Vector3D::sum(rightTopFar, this->transformation->position);
+	vertexes[6] = Vector3D::sum(leftBottomFar, this->transformation->position);
+	vertexes[7] = Vector3D::sum(rightBottomFar, this->transformation->position);
+}
+//---------------------------------------------------------------------------------------------------------
+void Box::projectOntoItself()
+{
+	Vector3D vertexes[__BOX_VERTEXES];
+	Box::getVertexes(this, vertexes);
+
+	// Compute normals
+	Box::computeNormals(this, vertexes);
+
+	// Has to project all points on all the normals of the tilted box
+	int32 normalIndex = 0;
+
+	// Initialize vertex projections
+	for(; normalIndex < __COLLIDER_NORMALS; normalIndex++)
+	{
+		Box::project(vertexes, this->normals->vectors[normalIndex], &this->vertexProjections[normalIndex].min, &this->vertexProjections[normalIndex].max);
+	}
+}
 //---------------------------------------------------------------------------------------------------------
 
 //=========================================================================================================

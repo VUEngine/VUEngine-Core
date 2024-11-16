@@ -53,6 +53,11 @@ void Particle::destructor()
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------
+bool Particle::isSubjectToGravity(Vector3D gravity __attribute__ ((unused)))
+{
+	return false;
+}
+//---------------------------------------------------------------------------------------------------------
 void Particle::setup(const SpriteSpec* spriteSpec, const WireframeSpec* wireframeSpec, int16 lifeSpan, const Vector3D* position, const Vector3D* force, uint32 movementType, const AnimationFunction** animationFunctions, const char* animationName)
 {
 	if(Particle::overrides(this, reset))
@@ -230,11 +235,6 @@ void Particle::applyForce(const Vector3D* force __attribute__ ((unused)), uint32
 //---------------------------------------------------------------------------------------------------------
 void Particle::configureMass()
 {}
-//---------------------------------------------------------------------------------------------------------
-bool Particle::isSubjectToGravity(Vector3D gravity __attribute__ ((unused)))
-{
-	return false;
-}
 //---------------------------------------------------------------------------------------------------------
 
 //=========================================================================================================

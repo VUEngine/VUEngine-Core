@@ -146,6 +146,29 @@ class ParticleSystem : Entity
 	/// @param name: Instance's name
 	void constructor(const ParticleSystemSpec* particleSystemSpec,  int16 internalId, const char* const name);
 
+	/// Make this instance visible.
+	override void show();
+
+	/// Make this instance invisible.
+	override void hide();
+
+	/// Update this instance's logic.
+	override void update();
+
+	/// Prepare to suspend this instance's logic.
+	override void suspend();
+
+	/// Prepare to resume this instance's logic.
+	override void resume();
+
+	/// Set this instance's transparency effects.
+	/// @param transparency: Transparecy effect (__TRANSPARENCY_NONE, __TRANSPARENCY_EVEN or __TRANSPARENCY_ODD)
+	override void setTransparency(uint8 transparency);
+
+	/// Set the particle systems's spec.
+	/// @param particleSystemSpec: Specification that determines how to configure the particle system
+	override void setSpec(void* particleSystemSpec);
+
 	/// Start spawning particles.
 	void start();
 
@@ -194,29 +217,6 @@ class ParticleSystem : Entity
 	/// Informs itself when a particle is recycled.
 	/// @param particle: The recycled particle 
 	virtual void particleRecycled(Particle particle);
-
-	/// Make this instance visible.
-	override void show();
-
-	/// Make this instance invisible.
-	override void hide();
-
-	/// Update this instance's logic.
-	override void update();
-
-	/// Prepare to suspend this instance's logic.
-	override void suspend();
-
-	/// Prepare to resume this instance's logic.
-	override void resume();
-
-	/// Set this instance's transparency effects.
-	/// @param transparency: Transparecy effect (__TRANSPARENCY_NONE, __TRANSPARENCY_EVEN or __TRANSPARENCY_ODD)
-	override void setTransparency(uint8 transparency);
-
-	/// Set the particle systems's spec.
-	/// @param particleSystemSpec: Specification that determines how to configure the particle system
-	override void setSpec(void* particleSystemSpec);
 }
 
 

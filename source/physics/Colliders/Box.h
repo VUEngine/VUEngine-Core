@@ -65,13 +65,6 @@ class Box : Collider
 	/// Class' constructor
 	void constructor(SpatialObject owner, const ColliderSpec* colliderSpec);
 
-	/// Retrieve the vertexes that define the box.
-	/// @param out vertexes: Array of vectors that define the box
-	void getVertexes(Vector3D vertexes[__BOX_VERTEXES]);
-
-	/// Project the box's vertexes onto its normals.
-	void projectOntoItself();
-
 	/// Resize the colliders add the provided increment.
 	/// @param sizeDelta: Delta to add to the collider's size
 	override void resize(fixed_t sizeDelta);
@@ -83,6 +76,13 @@ class Box : Collider
 	/// @param x: Screen x coordinate where to print
 	/// @param y: Screen y coordinate where to print
 	override void print(int32 x, int32 y);
+
+	/// Retrieve the vertexes that define the box.
+	/// @param out vertexes: Array of vectors that define the box
+	void getVertexes(Vector3D vertexes[__BOX_VERTEXES]);
+
+	/// Project the box's vertexes onto its normals.
+	void projectOntoItself();
 }
 
 

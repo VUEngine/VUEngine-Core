@@ -79,8 +79,10 @@ class StateMachine : ListenerObject
 	/// Class' constructor
 	void constructor(void* owner);
 
-	/// Class' destructor
-	void destructor();
+	/// Process a Telegram.
+	/// @param telegram: Telegram to process
+	/// @return True if the Telegram was processed
+	override bool handleMessage(Telegram telegram);
 
 	/// Instructs the machine to change to the provided state by the transition specified by command
 	/// @param state: State to transition to
@@ -134,11 +136,6 @@ class StateMachine : ListenerObject
 	/// Retrieve the number of states in the stack.
 	/// @return Number of states in the stack
 	int32 getStackSize();
-
-	/// Process a Telegram.
-	/// @param telegram: Telegram to process
-	/// @return True if the Telegram was processed
-	override bool handleMessage(Telegram telegram);
 }
 
 

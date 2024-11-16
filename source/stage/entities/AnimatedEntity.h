@@ -65,6 +65,18 @@ class AnimatedEntity : Entity
 	/// @publicsection
 	void constructor(AnimatedEntitySpec* animatedEntitySpec, int16 internalId, const char* const name);
 
+	/// Make the animated entity ready to starts operating once it has been completely intialized.
+	/// @param recursive: If true, the ready call is propagated to its children, grand children, etc.
+	override void ready(bool recursive);
+
+	/// Prepare to resume this instance's logic.
+	override void resume();
+
+	/// Default string handler for propagateString
+	/// @param string: Propagated string
+	/// @return True if the propagation must stop; false if the propagation must reach other containers
+	override bool handlePropagatedString(const char* string);
+
 	/// Play the animation with the provided name.
 	/// @param animationName: Name of the animation to play
 	/// @return True if the animation started playing; false otherwise
@@ -108,18 +120,6 @@ class AnimatedEntity : Entity
 	/// Retrieve the number of frames in the currently playing animation if any.
 	/// @return The numer of frames if an animation is playing; o otherwise
 	int32 getNumberOfFrames();
-
-	/// Make the animated entity ready to starts operating once it has been completely intialized.
-	/// @param recursive: If true, the ready call is propagated to its children, grand children, etc.
-	override void ready(bool recursive);
-
-	/// Prepare to resume this instance's logic.
-	override void resume();
-
-	/// Default string handler for propagateString
-	/// @param string: Propagated string
-	/// @return True if the propagation must stop; false if the propagation must reach other containers
-	override bool handlePropagatedString(const char* string);
 }
 
 
