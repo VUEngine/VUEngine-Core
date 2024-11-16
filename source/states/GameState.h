@@ -91,9 +91,14 @@ class GameState : State
 	void showEntityWithName(const char* entityName);
 	void changeFrameRate(int16 targetFPS, int32 duration);
 
+	/// Process the provided user input.
+	/// @param userInput: Struct with the current user input information
 	virtual void processUserInput(const UserInput*  userInput);
 	virtual bool processUserInputRegardlessOfInput();
 	virtual bool isVersusMode();
+
+	/// Stream in or out the stage entities within or outside the camera's range.
+	/// @return True if at least some entity was streamed in or out
 	virtual bool stream();
 
 	override void enter(void* owner);

@@ -1,4 +1,4 @@
-/**
+/*
  * VUEngine Core
  *
  * © Jorge Eremiev <jorgech3@gmail.com> and Christian Radke <c.radke@posteo.de>
@@ -7,66 +7,40 @@
  * that was distributed with this source code.
  */
 
+
 #ifdef __TOOLS
 
-
-//---------------------------------------------------------------------------------------------------------
-//												INCLUDES
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// INCLUDES
+//=========================================================================================================
 
 #include <Debug.h>
 
 #include "DebugState.h"
 
 
+//=========================================================================================================
+// CLASS' PUBLIC METHODS
+//=========================================================================================================
+
 //---------------------------------------------------------------------------------------------------------
-//												CLASS'S METHODS
-//---------------------------------------------------------------------------------------------------------
-
-/**
- * Get instance
- *
- * @fn			DebugState::getInstance()
- * @memberof	DebugState
- * @public
- * @return		DebugState instance
- */
-
-
-/**
- * Class constructor
- *
- * @private
- */
 void DebugState::constructor()
 {
 	Base::constructor();
 
 	this->tool = Tool::safeCast(Debug::getInstance());
 }
-
-/**
- * Class destructor
- *
- * @private
- */
+//---------------------------------------------------------------------------------------------------------
 void DebugState::destructor()
 {
 	// destroy base
 	Base::destructor();
 }
-
-/**
- * Check if key combinations invokes me
- *
- * @public
- * @param userInput		UserInput
- *
- * @return bool
- */
+//---------------------------------------------------------------------------------------------------------
 bool DebugState::isKeyCombination(const UserInput* userInput)
 {
 	return ((userInput->holdKey & K_A) && (userInput->holdKey & K_B) && (userInput->releasedKey & K_RU));
 }
+//---------------------------------------------------------------------------------------------------------
 
 #endif

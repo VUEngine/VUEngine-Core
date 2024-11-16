@@ -805,7 +805,7 @@ void VUEngine::nextFrameStarted(uint16 gameFrameDuration)
 #ifdef __TOOLS
 	if(VUEngine::isInSoundTest(this))
 	{
-		SoundManager::printPlaybackTime(this->soundManager);
+		SoundManager::printPlaybackTime(this->soundManager, 1, 6);
 	}
 #endif
 }

@@ -1,4 +1,4 @@
-/**
+/*
  * VUEngine Core
  *
  * © Jorge Eremiev <jorgech3@gmail.com> and Christian Radke <c.radke@posteo.de>
@@ -9,58 +9,33 @@
 
 #ifdef __TOOLS
 
-
-//---------------------------------------------------------------------------------------------------------
-//												INCLUDES
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// INCLUDES
+//=========================================================================================================
 
 #include <SoundTest.h>
 
 #include "SoundTestState.h"
 
 
+//=========================================================================================================
+// CLASS' PUBLIC METHODS
+//=========================================================================================================
+
 //---------------------------------------------------------------------------------------------------------
-//												CLASS'S METHODS
-//---------------------------------------------------------------------------------------------------------
-
-/**
- * Get instance
- *
- * @fn			SoundTestState::getInstance()
- * @memberof	SoundTestState
- * @public
- * @return		SoundTestState instance
- */
-
-
-/**
- * Class constructor
- *
- * @private
- */
 void SoundTestState::constructor()
 {
 	Base::constructor();
 
 	this->tool = Tool::safeCast(SoundTest::getInstance());
 }
-
-/**
- * Class destructor
- *
- * @private
- */
+//---------------------------------------------------------------------------------------------------------
 void SoundTestState::destructor()
 {
 	// destroy base
 	Base::destructor();
 }
-
-/**
- * Method called when the Game's StateMachine enters to this state
- *
- * @param owner		StateMachine's owner
- */
+//---------------------------------------------------------------------------------------------------------
 void SoundTestState::enter(void* owner __attribute__ ((unused)))
 {
 	Base::enter(this, owner);
@@ -70,18 +45,11 @@ void SoundTestState::enter(void* owner __attribute__ ((unused)))
 	this->updatePhysics = false;
 	this->processCollisions = false;
 }
-
-/**
- * Check if key combinations invokes me
- *
- * @public
- * @param userInput		UserInput
- *
- * @return bool
- */
+//---------------------------------------------------------------------------------------------------------
 bool SoundTestState::isKeyCombination(const UserInput* userInput)
 {
 	return ((userInput->holdKey & K_A) && (userInput->holdKey & K_B) && (userInput->releasedKey & K_RD));
 }
+//---------------------------------------------------------------------------------------------------------
 
 #endif

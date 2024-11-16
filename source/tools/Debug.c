@@ -589,7 +589,6 @@ void Debug::memoryStatusShowFirstPage(int32 increment __attribute__ ((unused)), 
 		{&CharSetManager_getObjectSize, 				"CharSetManager"},
 		{&ClockManager_getObjectSize, 					"ClockManager"},
 		{&CollisionManager_getObjectSize, 				"CollisionManager"},
-		{&HardwareManager_getObjectSize, 				"HardwareManager"},
 		{&KeypadManager_getObjectSize, 					"KeypadManager"},
 		{&ParamTableManager_getObjectSize, 				"ParamTableManager"},
 		{&CameraEffectManager_getObjectSize, 			"CameraEff.Manager"},
@@ -1438,7 +1437,7 @@ void Debug::hardwareRegistersPage(int32 increment __attribute__ ((unused)), int3
 {
 	Debug::removeSubPages(this);
 
-	HardwareManager::print(HardwareManager::getInstance(), 1, y);
+	HardwareManager::print(1, 5);
 }
 
 /**

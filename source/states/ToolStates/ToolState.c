@@ -1,4 +1,4 @@
-/**
+/*
  * VUEngine Core
  *
  * © Jorge Eremiev <jorgech3@gmail.com> and Christian Radke <c.radke@posteo.de>
@@ -8,9 +8,9 @@
  */
 
 
-//---------------------------------------------------------------------------------------------------------
-//												INCLUDES
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// INCLUDES
+//=========================================================================================================
 
 #include <StateMachine.h>
 #include <Tool.h>
@@ -19,37 +19,18 @@
 #include "ToolState.h"
 
 
+//=========================================================================================================
+// CLASS' PUBLIC METHODS
+//=========================================================================================================
+
 //---------------------------------------------------------------------------------------------------------
-//												CLASS'S METHODS
-//---------------------------------------------------------------------------------------------------------
-
-/**
- * Get instance
- *
- * @fn			ToolState::getInstance()
- * @memberof	ToolState
- * @public
- * @return		ToolState instance
- */
-
-
-/**
- * Class constructor
- *
- * @private
- */
 void ToolState::constructor()
 {
 	Base::constructor();
 
 	this->tool = NULL;
 }
-
-/**
- * Class destructor
- *
- * @private
- */
+//---------------------------------------------------------------------------------------------------------
 void ToolState::destructor()
 {
 	this->tool = NULL;
@@ -57,12 +38,7 @@ void ToolState::destructor()
 	// destroy base
 	Base::destructor();
 }
-
-/**
- * Method called when the Game's StateMachine enters to this state
- *
- * @param owner		StateMachine's owner
- */
+//---------------------------------------------------------------------------------------------------------
 void ToolState::enter(void* owner __attribute__ ((unused)))
 {
 	Base::enter(this, owner);
@@ -80,17 +56,7 @@ void ToolState::enter(void* owner __attribute__ ((unused)))
 		Tool::show(this->tool);
 	}
 }
-
-bool ToolState::stream()
-{
-	return false;
-}
-
-/**
- * Method called when by the StateMachine's update method
- *
- * @param owner		StateMachine's owner
- */
+//---------------------------------------------------------------------------------------------------------
 void ToolState::execute(void* owner __attribute__ ((unused)))
 {
 	if(!isDeleted(this->tool))
@@ -98,12 +64,7 @@ void ToolState::execute(void* owner __attribute__ ((unused)))
 		Tool::update(this->tool);
 	}
 }
-
-/**
- * Method called when the Game's StateMachine exits from this state
- *
- * @param owner		StateMachine's owner
- */
+//---------------------------------------------------------------------------------------------------------
 void ToolState::exit(void* owner __attribute__ ((unused)))
 {
 	if(!isDeleted(this->tool))
@@ -114,12 +75,7 @@ void ToolState::exit(void* owner __attribute__ ((unused)))
 	GameState::resumeClocks(GameState::safeCast(StateMachine::getPreviousState(VUEngine::getStateMachine(VUEngine::getInstance()))));
 	Base::exit(this, owner);
 }
-
-/**
- * Process user input
- *
- * @param userInput		User input
- */
+//---------------------------------------------------------------------------------------------------------
 void ToolState::processUserInput(const UserInput* userInput)
 {
 	if(!isDeleted(this->tool))
@@ -127,3 +83,9 @@ void ToolState::processUserInput(const UserInput* userInput)
 		Tool::processUserInput(this->tool, userInput->releasedKey);
 	}
 }
+//---------------------------------------------------------------------------------------------------------
+bool ToolState::stream()
+{
+	return false;
+}
+//---------------------------------------------------------------------------------------------------------

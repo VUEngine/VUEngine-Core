@@ -351,7 +351,7 @@ void StageEditor::getCollider()
 
 		Collider::transform(this->collider, Entity::getPosition(entity), Entity::getRotation(entity), Entity::getScale(entity), &size);
 */
-		Collider::setReady(this->collider, false);
+//		Collider::setReady(this->collider, false);
 	}
 }
 

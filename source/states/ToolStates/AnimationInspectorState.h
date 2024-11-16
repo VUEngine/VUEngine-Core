@@ -1,4 +1,4 @@
-/**
+/*
  * VUEngine Core
  *
  * © Jorge Eremiev <jorgech3@gmail.com> and Christian Radke <c.radke@posteo.de>
@@ -11,23 +11,34 @@
 #define ANIMATION_INSPECTOR_STATE_H_
 
 
-//---------------------------------------------------------------------------------------------------------
-//												INCLUDES
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// INCLUDES
+//=========================================================================================================
 
 #include <ToolState.h>
 
 
-//---------------------------------------------------------------------------------------------------------
-//											CLASS'S DECLARATION
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// CLASS' DECLARATION
+//=========================================================================================================
 
+///
+/// Class AnimationInspectorState
+///
+/// Inherits from ToolState
+///
+/// Implements a tool state to inspect animations.
 /// @ingroup states
 singleton class AnimationInspectorState : ToolState
 {
 	/// @publicsection
+
+	/// Method to retrieve the singleton instance
+	/// @return AnimationInspectorState singleton
 	static AnimationInspectorState getInstance();
 
+	/// Check if the provided user input unlocks the tool managed by this state.
+	/// @return True if the input matches the combination defined by the state
 	override bool isKeyCombination(const UserInput* userInput);
 }
 
