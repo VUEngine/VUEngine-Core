@@ -361,6 +361,7 @@ bool Sprite::play(const AnimationFunction* animationFunctions[], const char* ani
 
 	return playBackStarted;
 }
+//---------------------------------------------------------------------------------------------------------
 bool Sprite::replay(const AnimationFunction* animationFunctions[])
 {
 	if(!isDeleted(this->animationController))
@@ -373,7 +374,7 @@ bool Sprite::replay(const AnimationFunction* animationFunctions[])
 
 	return false;
 }
-
+//---------------------------------------------------------------------------------------------------------
 void Sprite::pause(bool pause)
 {
 	if(!isDeleted(this->animationController))
@@ -382,6 +383,7 @@ void Sprite::pause(bool pause)
 		AnimationController::pause(this->animationController, pause);
 	}
 }
+//---------------------------------------------------------------------------------------------------------
 void Sprite::stop()
 {
 	if(!isDeleted(this->animationController))

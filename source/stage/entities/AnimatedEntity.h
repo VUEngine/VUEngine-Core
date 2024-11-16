@@ -64,15 +64,49 @@ class AnimatedEntity : Entity
 
 	/// @publicsection
 	void constructor(AnimatedEntitySpec* animatedEntitySpec, int16 internalId, const char* const name);
+
+	/// Play the animation with the provided name.
+	/// @param animationName: Name of the animation to play
+	/// @return True if the animation started playing; false otherwise
 	bool playAnimation(const char* animationName);
-	bool isPlaying();
-	bool isPlayingAnimation(char* animationName);
-	const char* getPlayingAnimationName();
+
+	/// Pause or unpause the currently playing animation if any.
+	/// @param pause: Flag that signals if the animation must be paused or unpaused
 	void pauseAnimation(bool pause);
+
+	/// Stop any playing animation if any.
+	void stopAnimation();
+
+	/// Check if an animation is playing.
+	/// @return True if an animation is playing; false otherwise
+	bool isPlaying();
+
+	/// Check if the animation whose name is provided is playing.
+	/// @param animationName: Name of the animation to check
+	/// @return True if an animation is playing; false otherwise
+	bool isPlayingAnimation(char* animationName);
+
+	/// Retrieve the animation function's name currently playing if any
+	/// @return Animation function's name currently playing if any
+	const char* getPlayingAnimationName();
+
+	/// Skip the currently playing animation to the provided frame.
+	/// @param actualFrame: The frame of the playing animation to skip to
+	/// @return True if the actual frame was changed; false otherwise
 	void setActualFrame(int16 frame);
+
+	/// Skip the currently playing animation to the next frame.
 	void nextFrame();
+
+	/// Rewind the currently playing animation to the previous frame.
 	void previousFrame();
+
+	/// Retrieve the actual frame of the playing animation if any.
+	/// @return Actual frame of the playing animation if any
 	int16 getActualFrame();
+
+	/// Retrieve the number of frames in the currently playing animation if any.
+	/// @return The numer of frames if an animation is playing; o otherwise
 	int32 getNumberOfFrames();
 
 	/// Make the animated entity ready to starts operating once it has been completely intialized.

@@ -1,4 +1,4 @@
-/**
+/*
  * VUEngine Core
  *
  * © Jorge Eremiev <jorgech3@gmail.com> and Christian Radke <c.radke@posteo.de>
@@ -8,9 +8,9 @@
  */
 
 
-//---------------------------------------------------------------------------------------------------------
-//												INCLUDES
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// INCLUDES
+//=========================================================================================================
 
 #include <string.h>
 
@@ -21,20 +21,20 @@
 #include "AnimatedEntity.h"
 
 
-//---------------------------------------------------------------------------------------------------------
-//											CLASS'S DEFINITION
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// CLASS' DECLARATIONS
+//=========================================================================================================
 
 friend class VirtualNode;
 friend class VirtualList;
 friend class Sprite;
 
 
-//---------------------------------------------------------------------------------------------------------
-//												CLASS'S METHODS
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// CLASS' PUBLIC METHODS
+//=========================================================================================================
 
-// class's constructor
+//---------------------------------------------------------------------------------------------------------
 void AnimatedEntity::constructor(AnimatedEntitySpec* animatedEntitySpec, int16 internalId, const char* const name)
 {
 	// construct base object
@@ -45,43 +45,14 @@ void AnimatedEntity::constructor(AnimatedEntitySpec* animatedEntitySpec, int16 i
 
 	this->playingAnimationName = NULL;
 }
-
-// class's destructor
+//---------------------------------------------------------------------------------------------------------
 void AnimatedEntity::destructor()
 {
 	// destroy the super object
 	// must always be called at the end of the destructor
 	Base::destructor();
 }
-
-// ready method
-void AnimatedEntity::ready(bool recursive)
-{
-	ASSERT(this->entitySpec, "AnimatedEntity::ready: null animatedEntitySpec");
-
-	Base::ready(this, recursive);
-
-	AnimatedEntity::playAnimation(this, ((AnimatedEntitySpec*)this->entitySpec)->initialAnimation);
-}
-
-// pause animation
-void AnimatedEntity::pauseAnimation(bool pause)
-{
-	ASSERT(this->sprites, "AnimatedEntity::pauseAnimation: null sprites");
-
-	if(isDeleted(this->sprites))
-	{
-		return;
-	}
-
-	// play animation on each sprite
-	for(VirtualNode node = this->sprites->head; node && this->sprites; node = node->next)
-	{
-		Sprite::pause(node->data, pause);
-	}
-}
-
-// play an animation
+//---------------------------------------------------------------------------------------------------------
 bool AnimatedEntity::playAnimation(const char* animationName)
 {
 	if(NULL == this->sprites || NULL == animationName)
@@ -110,8 +81,23 @@ bool AnimatedEntity::playAnimation(const char* animationName)
 
 	return result;
 }
+//---------------------------------------------------------------------------------------------------------
+void AnimatedEntity::pauseAnimation(bool pause)
+{
+	ASSERT(this->sprites, "AnimatedEntity::pauseAnimation: null sprites");
 
-// play an animation
+	if(isDeleted(this->sprites))
+	{
+		return;
+	}
+
+	// play animation on each sprite
+	for(VirtualNode node = this->sprites->head; node && this->sprites; node = node->next)
+	{
+		Sprite::pause(node->data, pause);
+	}
+}
+//---------------------------------------------------------------------------------------------------------
 void AnimatedEntity::stopAnimation()
 {
 	if(isDeleted(this->sprites))
@@ -127,8 +113,51 @@ void AnimatedEntity::stopAnimation()
 		Sprite::stop(node->data);
 	}
 }
+//---------------------------------------------------------------------------------------------------------
+bool AnimatedEntity::isPlaying()
+{
+	ASSERT(this->sprites, "AnimatedEntity::isPlaying: null sprites");
 
-// skip to next frame
+	return Sprite::isPlaying(Sprite::safeCast(VirtualNode::getData(this->sprites->head)));
+}
+//---------------------------------------------------------------------------------------------------------
+bool AnimatedEntity::isPlayingAnimation(char* animationName)
+{
+	if(isDeleted(this->sprites))
+	{
+		return false;
+	}
+
+	Sprite sprite = Sprite::safeCast(VirtualNode::getData(this->sprites->head));
+
+	return Sprite::isPlayingAnimation(sprite, animationName);
+}
+//---------------------------------------------------------------------------------------------------------
+const char* AnimatedEntity::getPlayingAnimationName()
+{
+	if(isDeleted(this->sprites))
+	{
+		return "None";
+	}
+
+	Sprite sprite = Sprite::safeCast(VirtualNode::getData(this->sprites->head));
+
+	return Sprite::getPlayingAnimationName(sprite);
+}
+//---------------------------------------------------------------------------------------------------------
+void AnimatedEntity::setActualFrame(int16 frame)
+{
+	if(isDeleted(this->sprites))
+	{
+		return;
+	}
+
+	for(VirtualNode node = this->sprites->head; node ; node = node->next)
+	{
+		Sprite::setActualFrame(node->data, frame);
+	}
+}
+//---------------------------------------------------------------------------------------------------------
 void AnimatedEntity::nextFrame()
 {
 	if(isDeleted(this->sprites))
@@ -142,8 +171,7 @@ void AnimatedEntity::nextFrame()
 		Sprite::nextFrame(node->data);
 	}
 }
-
-// rewind to previous frame
+//---------------------------------------------------------------------------------------------------------
 void AnimatedEntity::previousFrame()
 {
 	if(isDeleted(this->sprites))
@@ -157,85 +185,7 @@ void AnimatedEntity::previousFrame()
 		Sprite::previousFrame(node->data);
 	}
 }
-
-// is playing an animation
-bool AnimatedEntity::isPlaying()
-{
-	ASSERT(this->sprites, "AnimatedEntity::isPlaying: null sprites");
-
-	return Sprite::isPlaying(Sprite::safeCast(VirtualNode::getData(this->sprites->head)));
-}
-
-// is animation selected
-bool AnimatedEntity::isPlayingAnimation(char* animationName)
-{
-	if(isDeleted(this->sprites))
-	{
-		return false;
-	}
-
-	Sprite sprite = Sprite::safeCast(VirtualNode::getData(this->sprites->head));
-
-	return Sprite::isPlayingAnimation(sprite, animationName);
-}
-
-// get loaded animation's name
-const char* AnimatedEntity::getPlayingAnimationName()
-{
-	if(isDeleted(this->sprites))
-	{
-		return "None";
-	}
-
-	Sprite sprite = Sprite::safeCast(VirtualNode::getData(this->sprites->head));
-
-	return Sprite::getPlayingAnimationName(sprite);
-}
-
-void AnimatedEntity::setActualFrame(int16 frame)
-{
-	if(isDeleted(this->sprites))
-	{
-		return;
-	}
-
-	for(VirtualNode node = this->sprites->head; node ; node = node->next)
-	{
-		Sprite::setActualFrame(node->data, frame);
-	}
-}
-
-// resume method
-void AnimatedEntity::resume()
-{
-	Base::resume(this);
-
-	AnimatedEntity::playAnimation(this, this->playingAnimationName);
-}
-
-/**
- * Handle propagated string
- *
- * @param message	Message
-
- * @return			Result
- */
-bool AnimatedEntity::handlePropagatedString(const char* string __attribute__ ((unused)))
-{
-	/* TODO: play only if the string contains the correct command */
-	/*
-	if (NULL == strnstr(string, __MAX_ANIMATION_FUNCTION_NAME_LENGTH, __ANIMATION_COMMAND)) 
-	{
-		return false;
-	}
-	*/
-
-	AnimatedEntity::playAnimation(this, string);
-	
-	return false;
-}
-
-
+//---------------------------------------------------------------------------------------------------------
 int16 AnimatedEntity::getActualFrame()
 {
 	if(isDeleted(this->sprites))
@@ -250,7 +200,7 @@ int16 AnimatedEntity::getActualFrame()
 
 	return -1;
 }
-
+//---------------------------------------------------------------------------------------------------------
 int32 AnimatedEntity::getNumberOfFrames()
 {
 	if(isDeleted(this->sprites))
@@ -266,3 +216,35 @@ int32 AnimatedEntity::getNumberOfFrames()
 
 	return -1;
 }
+//---------------------------------------------------------------------------------------------------------
+void AnimatedEntity::ready(bool recursive)
+{
+	ASSERT(this->entitySpec, "AnimatedEntity::ready: null animatedEntitySpec");
+
+	Base::ready(this, recursive);
+
+	AnimatedEntity::playAnimation(this, ((AnimatedEntitySpec*)this->entitySpec)->initialAnimation);
+}
+//---------------------------------------------------------------------------------------------------------
+void AnimatedEntity::resume()
+{
+	Base::resume(this);
+
+	AnimatedEntity::playAnimation(this, this->playingAnimationName);
+}
+//---------------------------------------------------------------------------------------------------------
+bool AnimatedEntity::handlePropagatedString(const char* string __attribute__ ((unused)))
+{
+	/* TODO: play only if the string contains the correct command */
+	/*
+	if (NULL == strnstr(string, __MAX_ANIMATION_FUNCTION_NAME_LENGTH, __ANIMATION_COMMAND)) 
+	{
+		return false;
+	}
+	*/
+
+	AnimatedEntity::playAnimation(this, string);
+	
+	return false;
+}
+//---------------------------------------------------------------------------------------------------------

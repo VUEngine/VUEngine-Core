@@ -417,7 +417,7 @@ const char* AnimationController::getPlayingAnimationName()
 //---------------------------------------------------------------------------------------------------------
 int32 AnimationController::getNumberOfFrames()
 {
-	if(this->animationFunction)
+	if(NULL != this->animationFunction)
 	{
 		return this->animationFunction->numberOfFrames;
 	}
