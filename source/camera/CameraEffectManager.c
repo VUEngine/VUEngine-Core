@@ -88,7 +88,7 @@ Brightness CameraEffectManager::getDefaultBrightness()
 		
 		if(!isDeleted(stage))
 		{
-			StageSpec* stageSpec = Stage::getStageSpec(stage);
+			StageSpec* stageSpec = Stage::getSpec(stage);
 			brightness = stageSpec->rendering.colorConfig.brightness;
 		}
 	}

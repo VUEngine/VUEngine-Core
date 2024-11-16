@@ -66,7 +66,7 @@ class GameState : State
 	Stage getStage();
 	UIContainer getUIContainer();
 	Clock getUpdateClock();
-	void loadStage(StageSpec* stageSpec, VirtualList positionedEntitiesToIgnore, bool overrideCameraPosition, bool forceNoPopIn);
+	void loadStage(StageSpec* stageSpec, VirtualList positionedEntitiesToIgnore, bool overrideCameraPosition);
 	void pauseAnimations(bool pause);
 	void pauseClocks();
 	void pauseMessagingClock(bool pause);

@@ -212,16 +212,17 @@ class Stage : Container
 	uint32 cameraPreviousDistance;
 	// next entity's id
 	int16 nextEntityId;
-	// flag to prevent loading entities that are within the screen's space
-	bool forceNoPopIn;
 	// flag to determine the direction of the stream in
 	bool reverseStreaming;
 
 	/// @publicsection
 	void constructor(StageSpec* stageSpec);
+
+	StageSpec* getSpec();
+
 	void setupPalettes();
 	PaletteConfig getPaletteConfig();
-	void loadPostProcessingEffects();
+
 	void setupTimer();
 	PixelSize getPixelSize();
 	PixelOptical getPixelOptical();
@@ -234,18 +235,14 @@ class Stage : Container
 	Entity spawnChildEntity(const PositionedEntity* const positionedEntity, bool permanent);
 	void destroyChildEntity(Entity child);
 
-	StageSpec* getStageSpec();
 	void showStreamingProfiling(int32 x, int32 y);
-	bool unloadOutOfRangeEntities(int32 defer);
-    bool loadInRangeEntities(int32 defer);
 	Entity findChildByInternalId(int16 internalId);
-	bool updateEntityFactory();
-	EntityFactory getEntityFactory();
+
 	VirtualList getSounds();
+	
 	bool streamAll();
 	bool streamInAll();
 	bool streamOutAll();
-	void forceNoPopIn(bool forceNoPopIn);
 	VirtualList getStageEntityDescriptions();
 	void fadeSounds(uint32 playbackType);
 	void pauseSounds();
@@ -254,8 +251,19 @@ class Stage : Container
 	virtual void load(VirtualList positionedEntitiesToIgnore, bool overrideCameraPosition);
 	virtual bool stream();
 	
+	/// Prepare to suspend this instance's logic.
 	override void suspend();
+
+	/// Prepare to resume this instance's logic.
 	override void resume();
+
+	/// @privatesection
+
+	/// These are not meant to be called externally. They are declared here
+	/// because of the preprocessor's limitations for forward declarations
+	/// in source files. Don't called these.
+	bool unloadOutOfRangeEntities(int32 defer);
+    bool loadInRangeEntities(int32 defer);
 }
 
 

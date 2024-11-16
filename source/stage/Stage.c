@@ -119,7 +119,6 @@ void Stage::constructor(StageSpec *stageSpec)
 	this->sounds = NULL;
 	this->streaming = this->stageSpec->streaming;
 	this->streamingAmplitude = this->streaming.streamingAmplitude;
-	this->forceNoPopIn = false;
 	this->reverseStreaming = false;
 }
 
@@ -235,7 +234,7 @@ void Stage::unpauseSounds()
 }
 
 // determine if a point is visible
-int32 Stage::isEntityInLoadRange(ScreenPixelVector onScreenPosition, const PixelRightBox* pixelRightBox, bool forceNoPopIn __attribute__((unused)))
+int32 Stage::isEntityInLoadRange(ScreenPixelVector onScreenPosition, const PixelRightBox* pixelRightBox)
 {
 	if(NULL == pixelRightBox)
 	{
@@ -318,6 +317,8 @@ void Stage::load(VirtualList positionedEntitiesToIgnore, bool overrideCameraPosi
 
 	// apply transformations
 	Stage::transform(this, &neutralEnvironmentTransformation, __INVALIDATE_TRANSFORMATION);
+
+	Stage::loadPostProcessingEffects(this);
 }
 
 void Stage::loadPostProcessingEffects()
@@ -654,7 +655,7 @@ void Stage::loadInitialEntities()
 		if(-1 == stageEntityDescription->internalId)
 		{
 			// if entity in load range
-			if(stageEntityDescription->positionedEntity->loadRegardlessOfPosition || Stage::isEntityInLoadRange(this, stageEntityDescription->positionedEntity->onScreenPosition, &stageEntityDescription->pixelRightBox, false))
+			if(stageEntityDescription->positionedEntity->loadRegardlessOfPosition || Stage::isEntityInLoadRange(this, stageEntityDescription->positionedEntity->onScreenPosition, &stageEntityDescription->pixelRightBox))
 			{
 				stageEntityDescription->internalId = this->nextEntityId++;
 				Entity entity = Stage::doAddChildEntity(this, stageEntityDescription->positionedEntity, false, stageEntityDescription->internalId);
@@ -795,7 +796,7 @@ bool Stage::loadInRangeEntities(int32 defer)
 			if(0 > stageEntityDescription->internalId)
 			{
 				// if entity in load range
-				if(Stage::isEntityInLoadRange(this, stageEntityDescription->positionedEntity->onScreenPosition, stageEntityDescription->validRightBox ? &stageEntityDescription->pixelRightBox : NULL, this->forceNoPopIn))
+				if(Stage::isEntityInLoadRange(this, stageEntityDescription->positionedEntity->onScreenPosition, stageEntityDescription->validRightBox ? &stageEntityDescription->pixelRightBox : NULL))
 				{
 					loadedEntities = true;
 
@@ -840,7 +841,7 @@ bool Stage::loadInRangeEntities(int32 defer)
 			if(0 > stageEntityDescription->internalId)
 			{
 				// if entity in load range
-				if(Stage::isEntityInLoadRange(this, stageEntityDescription->positionedEntity->onScreenPosition, stageEntityDescription->validRightBox ? &stageEntityDescription->pixelRightBox : NULL, this->forceNoPopIn))
+				if(Stage::isEntityInLoadRange(this, stageEntityDescription->positionedEntity->onScreenPosition, stageEntityDescription->validRightBox ? &stageEntityDescription->pixelRightBox : NULL))
 				{
 					loadedEntities = true;
 
@@ -899,11 +900,6 @@ bool Stage::updateEntityFactory()
 #endif
 
 	return preparingEntities;
-}
-
-EntityFactory Stage::getEntityFactory()
-{
-	return this->entityFactory;
 }
 
 VirtualList Stage::getSounds()
@@ -1064,6 +1060,8 @@ void Stage::resume()
 	// TODO: properly handle brightness and brightness repeat on resume
 
 	this->entityFactory = new EntityFactory();
+
+	Stage::loadPostProcessingEffects(this);
 }
 
 void Stage::prepareGraphics()
@@ -1175,14 +1173,9 @@ void Stage::setFocusEntity(Entity focusEntity)
 }
 
 // get stage spec
-StageSpec* Stage::getStageSpec()
+StageSpec* Stage::getSpec()
 {
 	return this->stageSpec;
-}
-
-void Stage::forceNoPopIn(bool forceNoPopIn)
-{
-	this->forceNoPopIn = forceNoPopIn;
 }
 
 VirtualList Stage::getStageEntityDescriptions()

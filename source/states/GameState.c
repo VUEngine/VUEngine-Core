@@ -241,13 +241,13 @@ void GameState::resume(void* owner __attribute__ ((unused)))
 		Camera::setup(Camera::getInstance(), Stage::getPixelOptical(this->stage), Stage::getCameraFrustum(this->stage));
 
 		// Reset the engine state
-		VUEngine::reset(VUEngine::getInstance(), NULL == Stage::getStageSpec(this->stage)->assets.sounds);
+		VUEngine::reset(VUEngine::getInstance(), NULL == Stage::getSpec(this->stage)->assets.sounds);
 
 		// Resume the stage
-		Container::resume(this->stage);
+		Stage::resume(this->stage);
 
 		// Resume the UI		
-		Container::resume(this->uiContainer);
+		UIContainer::resume(this->uiContainer);
 
 		// Move the camera to its previous position
 		Camera::focus(Camera::getInstance());
@@ -258,12 +258,6 @@ void GameState::resume(void* owner __attribute__ ((unused)))
 		// Force all streaming right now
 		GameState::streamAll(this);
 	}
-
-	// Restore timer
-	Stage::setupTimer(this->stage);
-
-	// load post processing effects
-	Stage::loadPostProcessingEffects(this->stage);
 
 	// unpause clock
 	Clock::pause(this->messagingClock, false);
@@ -508,9 +502,8 @@ uint32 GameState::processCollisions()
  * @param stageSpec				Stage's configuration
  * @param positionedEntitiesToIgnore	List of entities from the spec to not load
  * @param overrideCameraPosition		Flag to override or not the Camera's current position
- * @param forceNoPopIn					Flag to prevent streaming in entities that are within the screen's space
  */
-void GameState::loadStage(StageSpec* stageSpec, VirtualList positionedEntitiesToIgnore, bool overrideCameraPosition, bool forceNoPopIn)
+void GameState::loadStage(StageSpec* stageSpec, VirtualList positionedEntitiesToIgnore, bool overrideCameraPosition)
 {
 	if(NULL == stageSpec)
 	{
@@ -528,7 +521,7 @@ void GameState::loadStage(StageSpec* stageSpec, VirtualList positionedEntitiesTo
 	Camera::setFocusEntity(Camera::getInstance(), NULL);
 
 	// setup the stage
-	GameState::setupStage(this, stageSpec, positionedEntitiesToIgnore, overrideCameraPosition, forceNoPopIn);
+	GameState::setupStage(this, stageSpec, positionedEntitiesToIgnore, overrideCameraPosition);
 
 	// load the UI
 	GameState::setupUI(this, stageSpec);
@@ -550,7 +543,7 @@ void GameState::loadStage(StageSpec* stageSpec, VirtualList positionedEntitiesTo
 	GameState::changeFrameRate(this, __TARGET_FPS >> 1, 100);
 }
 
-void GameState::setupStage(StageSpec* stageSpec, VirtualList positionedEntitiesToIgnore, bool overrideCameraPosition, bool forceNoPopIn)
+void GameState::setupStage(StageSpec* stageSpec, VirtualList positionedEntitiesToIgnore, bool overrideCameraPosition)
 {
 	if(!isDeleted(this->stage))
 	{
@@ -562,13 +555,8 @@ void GameState::setupStage(StageSpec* stageSpec, VirtualList positionedEntitiesT
 	this->stage = ((Stage (*)(StageSpec*)) stageSpec->allocator)((StageSpec*)stageSpec);
 	ASSERT(this->stage, "GameState::loadStage: null stage");
 
-	Stage::forceNoPopIn(this->stage, forceNoPopIn);
-
 	// load the stage
 	Stage::load(this->stage, positionedEntitiesToIgnore, overrideCameraPosition);
-
-	// load post processing effects
-	Stage::loadPostProcessingEffects(this->stage);
 }
 
 // setup ui
