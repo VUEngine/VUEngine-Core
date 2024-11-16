@@ -11,25 +11,20 @@
 #define ANIMATED_ENTITY_H_
 
 
-//---------------------------------------------------------------------------------------------------------
-//												INCLUDES
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// INCLUDES
+//=========================================================================================================
 
 #include <Entity.h>
 #include <Sprite.h>
 
 
-//---------------------------------------------------------------------------------------------------------
-//												MACROS
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// CLASS' DATA
+//=========================================================================================================
 
-#define __ANIMATION_COMMAND_PLAY								"play:"
-
-
-//---------------------------------------------------------------------------------------------------------
-//											TYPE DEFINITIONS
-//---------------------------------------------------------------------------------------------------------
-
+/// An AnimatedEntity Spec
+/// @memberof AnimatedEntity
 typedef struct AnimatedEntitySpec
 {
 	// it has an Entity at the beginning
@@ -43,13 +38,21 @@ typedef struct AnimatedEntitySpec
 
 } AnimatedEntitySpec;
 
+/// A AnimatedEntity spec that is stored in ROM
+/// @memberof AnimatedEntity
 typedef const AnimatedEntitySpec AnimatedEntityROMSpec;
 
 
-//---------------------------------------------------------------------------------------------------------
-//											CLASS'S DECLARATION
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// CLASS' DECLARATION
+//=========================================================================================================
 
+///
+/// Class AnimatedEntity
+///
+/// Inherits from Entity
+///
+/// Implements an entity that proxies animation related methods to its sprites.
 /// @ingroup stage-entities
 class AnimatedEntity : Entity
 {
@@ -72,8 +75,16 @@ class AnimatedEntity : Entity
 	int16 getActualFrame();
 	int32 getNumberOfFrames();
 
+	/// Make the animated entity ready to starts operating once it has been completely intialized.
+	/// @param recursive: If true, the ready call is propagated to its children, grand children, etc.
 	override void ready(bool recursive);
+
+	/// Prepare to resume this instance's logic.
 	override void resume();
+
+	/// Default string handler for propagateString
+	/// @param string: Propagated string
+	/// @return True if the propagation must stop; false if the propagation must reach other containers
 	override bool handlePropagatedString(const char* string);
 }
 

@@ -225,8 +225,7 @@ class Container : SpatialObject
 	/// Destroy the components that attach to this container. 	
 	virtual void removeComponents();
 
-	/// Make the container ready to starts operating once it has been completely
-	/// intialized.
+	/// Make the container ready to starts operating once it has been completely intialized.
 	/// @param recursive: If true, the ready call is propagated to its children, grand children, etc.
 	virtual void ready(bool recursive);
 
