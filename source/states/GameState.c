@@ -424,9 +424,9 @@ void GameState::transform()
 
 	NM_ASSERT(this->stage, "GameState::transform: null stage");
 
-	extern Transformation neutralEnvironmentTransformation;
+	extern Transformation _neutralEnvironmentTransformation;
 
-	Stage::transform(this->stage, &neutralEnvironmentTransformation, Camera::getTransformationFlags(_camera));
+	Stage::transform(this->stage, &_neutralEnvironmentTransformation, Camera::getTransformationFlags(_camera));
 }
 
 /**
@@ -441,7 +441,7 @@ void GameState::transformUI()
 
 	NM_ASSERT(this->uiContainer, "GameState::transform: null uiContainer");
 
-	extern Transformation neutralEnvironmentTransformation;
+	extern Transformation _neutralEnvironmentTransformation;
 
 	UIContainer::transform(this->uiContainer, NULL, __INVALIDATE_TRANSFORMATION);
 }
@@ -568,10 +568,10 @@ void GameState::setupUI(StageSpec* stageSpec)
 	// setup ui if allocated and constructed
 	if(!isDeleted(this->uiContainer))
 	{
-		extern Transformation neutralEnvironmentTransformation;
+		extern Transformation _neutralEnvironmentTransformation;
 	
 		// apply transformations
-		UIContainer::transform(this->uiContainer, &neutralEnvironmentTransformation, Camera::getTransformationFlags(_camera));
+		UIContainer::transform(this->uiContainer, &_neutralEnvironmentTransformation, Camera::getTransformationFlags(_camera));
 	}
 }
 

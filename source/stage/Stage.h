@@ -287,14 +287,18 @@ class Stage : Container
 	/// Retrieve the palette configuration for the stage.
 	/// @return Palette configuration struct
 	PaletteConfig getPaletteConfig();
+	
+	/// Register the stage's spec entities in the streaming list
+	void registerEntities(VirtualList positionedEntitiesToIgnore);
+
+	/// Retrieve the list of stage entity descriptions.
+	/// @return List of stage entity descriptions used to initialize the entities that populate the stage
+	VirtualList getStageEntityDescriptions();
 
 	/// Register an event listener for the event when a new entity is instantiated.
 	/// @param scope: Object that will be notified of event
 	/// @param callback: Callback to inform the parent when the new entity is loaded
 	void addEntityLoadingListener(ListenerObject scope, EventListener callback);
-	
-	/// Register the stage's spec entities in the streaming list
-	void registerEntities(VirtualList positionedEntitiesToIgnore);
 
 	/// Spawn a new child and configure it with the provided positioned entity struct.
 	/// @param positionedEntity: Struct that defines which entity spec to use to configure the new child
@@ -305,10 +309,6 @@ class Stage : Container
 	/// @param in: If true, it tries to load all entities in the camera's range
 	/// @param out: If true, it tries to unload all entities out of the camera's range
 	bool streamAll(bool in, bool out);
-
-	/// Retrieve the list of stage entity descriptions.
-	/// @return List of stage entity descriptions used to initialize the entities that populate the stage
-	VirtualList getStageEntityDescriptions();
 
 	/// Retrieve the sounds that are playing in the stage.
 	/// @return List of playing sounds

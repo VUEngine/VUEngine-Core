@@ -75,12 +75,12 @@ Entity UIContainer::spawnChildEntity(const PositionedEntity* const positionedEnt
 //---------------------------------------------------------------------------------------------------------
 void UIContainer::transform(const Transformation* environmentTransform __attribute__((unused)), uint8 invalidateTransformationFlag __attribute__((unused)))
 {
-	extern Transformation neutralEnvironmentTransformation;
+	extern Transformation _neutralEnvironmentTransformation;
 
 	this->localTransformation.position = *_cameraPosition;
 	this->localTransformation.rotation = *_cameraInvertedRotation;
 	this->transformation.invalid = __INVALIDATE_POSITION | __INVALIDATE_ROTATION;
 
-	Base::transform(this, &neutralEnvironmentTransformation, __INVALIDATE_POSITION | __INVALIDATE_ROTATION);
+	Base::transform(this, &_neutralEnvironmentTransformation, __INVALIDATE_POSITION | __INVALIDATE_ROTATION);
 }
 //---------------------------------------------------------------------------------------------------------
