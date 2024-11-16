@@ -171,7 +171,7 @@ void VUEngine::initialize()
 	HardwareManager::initialize();
 
 	// make sure timer interrupts are enable
-	VUEngine::setupTimer(this, __TIMER_100US, 10, kMS);
+	VUEngine::configureTimer(this, __TIMER_100US, 10, kMS);
 
 	// Reset sounds
 	SoundManager::reset(this->soundManager);
@@ -195,7 +195,7 @@ void VUEngine::initialize()
 #endif
 }
 
-void VUEngine::setupTimer(uint16 timerResolution, uint16 targetTimePerInterrupt, uint16 targetTimePerInterrupttUnits)
+void VUEngine::configureTimer(uint16 timerResolution, uint16 targetTimePerInterrupt, uint16 targetTimePerInterrupttUnits)
 {
 	TimerManager::setResolution(this->timerManager, timerResolution);
 	TimerManager::setTargetTimePerInterruptUnits(this->timerManager, targetTimePerInterrupttUnits);
@@ -763,7 +763,7 @@ void VUEngine::nextFrameStarted(uint16 gameFrameDuration)
 		if(!VUEngine::isInToolState(this))
 		{
 			Printing::resetCoordinates(Printing::getInstance());
-			Stage::showStreamingProfiling(VUEngine::getStage(this), 1, 1);
+			Stage::print(VUEngine::getStage(this), 1, 1);
 		}
 #endif
 

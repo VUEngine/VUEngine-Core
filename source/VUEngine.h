@@ -141,7 +141,7 @@ singleton class VUEngine : ListenerObject
 	void nextGameCycleStarted(uint16 gameFrameDuration);
 	ListenerObject getSaveDataManager();
 	void setSaveDataManager(ListenerObject saveDataManager);
-	void setupTimer(uint16 timerResolution, uint16 targetTimePerInterrupt, uint16 targetTimePerInterrupttUnits);
+	void configureTimer(uint16 timerResolution, uint16 targetTimePerInterrupt, uint16 targetTimePerInterrupttUnits);
 
 	override bool handleMessage(Telegram telegram);
 }

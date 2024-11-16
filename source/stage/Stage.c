@@ -90,7 +90,7 @@ static uint32 timeBeforeProcess = 0;
 
 typedef struct EntityLoadingListener
 {
-	ListenerObject context;
+	ListenerObject scope;
 	EventListener callback;
 } EntityLoadingListener;
 
@@ -113,13 +113,12 @@ void Stage::constructor(StageSpec *stageSpec)
 	this->stageEntityDescriptions = NULL;
 	this->focusEntity = NULL;
 	this->streamingHeadNode = NULL;
-	this->cameraPreviousDistance = 0;
 	this->nextEntityId = 0;
 	this->streamingPhase = 0;
 	this->sounds = NULL;
-	this->streaming = this->stageSpec->streaming;
-	this->streamingAmplitude = this->streaming.streamingAmplitude;
+	this->streamingAmplitude = this->stageSpec->streaming.streamingAmplitude;
 	this->reverseStreaming = false;
+	this->cameraPosition = Vector3D::getFromPixelVector(this->stageSpec->level.cameraInitialPosition);
 }
 
 // class's destructor
@@ -244,7 +243,7 @@ int32 Stage::isEntityInLoadRange(ScreenPixelVector onScreenPosition, const Pixel
 			0, 0, 0
 		};
 
-		if(!PixelVector::isVector3DVisible(Vector3D::getFromScreenPixelVector(onScreenPosition), helperPixelRightBox, this->streaming.loadPadding))
+		if(!PixelVector::isVector3DVisible(Vector3D::getFromScreenPixelVector(onScreenPosition), helperPixelRightBox, this->stageSpec->streaming.loadPadding))
 		{
 			return false;
 		}
@@ -265,9 +264,9 @@ void Stage::setObjectSpritesContainers()
 	SpriteManager::setupObjectSpriteContainers(SpriteManager::getInstance(), this->stageSpec->rendering.objectSpritesContainersSize, this->stageSpec->rendering.objectSpritesContainersZPosition);
 }
 
-void Stage::setupPalettes()
+void Stage::configurePalettes()
 {
-	VIPManager::setupPalettes(VIPManager::getInstance(), &this->stageSpec->rendering.paletteConfig);
+	VIPManager::configurePalettes(VIPManager::getInstance(), &this->stageSpec->rendering.paletteConfig);
 }
 
 PaletteConfig Stage::getPaletteConfig()
@@ -275,21 +274,17 @@ PaletteConfig Stage::getPaletteConfig()
 	return this->stageSpec->rendering.paletteConfig;
 }
 
-// load stage's entites
-void Stage::load(VirtualList positionedEntitiesToIgnore, bool overrideCameraPosition)
+void Stage::configure(VirtualList positionedEntitiesToIgnore)
 {
 	// Setup timer
-	Stage::setupTimer(this);
+	Stage::configureTimer(this);
 
 	// load background music
 	Stage::setupSounds(this);
 
-	if(overrideCameraPosition)
-	{
-		Camera::reset(Camera::getInstance());
-		Camera::setStageSize(Camera::getInstance(), Size::getFromPixelSize(this->stageSpec->level.pixelSize));
-		Camera::setPosition(Camera::getInstance(), Vector3D::getFromPixelVector(this->stageSpec->level.cameraInitialPosition), true);
-	}
+	Camera::reset(Camera::getInstance());
+	Camera::setStageSize(Camera::getInstance(), Size::getFromPixelSize(this->stageSpec->level.pixelSize));
+	Camera::setPosition(Camera::getInstance(), this->cameraPosition, true);
 
 	// set optical values
 	Camera::setup(Camera::getInstance(), this->stageSpec->rendering.pixelOptical, this->stageSpec->level.cameraFrustum);
@@ -333,22 +328,6 @@ void Stage::loadPostProcessingEffects()
 	}
 }
 
-PixelSize Stage::getPixelSize()
-{
-	ASSERT(this->stageSpec, "Stage::getPixelSize: null stageSpec");
-
-	// set world's limits
-	return this->stageSpec->level.pixelSize;
-}
-
-CameraFrustum Stage::getCameraFrustum()
-{
-	ASSERT(this->stageSpec, "Stage::getCameraFrustum: null stageSpec");
-
-	// set world's limits
-	return this->stageSpec->level.cameraFrustum;
-}
-
 PixelOptical Stage::getPixelOptical()
 {
 	ASSERT(this->stageSpec, "Stage::getPixelOptical: null stageSpec");
@@ -380,9 +359,9 @@ void Stage::alertOfLoadedEntity(Entity entity)
 	{
 		EntityLoadingListener* entityLoadingListener = (EntityLoadingListener*)node->data;
 
-		if(!isDeleted(entityLoadingListener->context))
+		if(!isDeleted(entityLoadingListener->scope))
 		{
-			Entity::addEventListener(entity, entityLoadingListener->context, entityLoadingListener->callback, kEventEntityLoaded);
+			Entity::addEventListener(entity, entityLoadingListener->scope, entityLoadingListener->callback, kEventEntityLoaded);
 		}
 	}
 
@@ -421,9 +400,9 @@ Entity Stage::doAddChildEntity(const PositionedEntity* const positionedEntity, b
 	return NULL;
 }
 
-void Stage::addEntityLoadingListener(ListenerObject context, EventListener callback)
+void Stage::addEntityLoadingListener(ListenerObject scope, EventListener callback)
 {
-	if(isDeleted(context) || NULL == callback)
+	if(isDeleted(scope) || NULL == callback)
 	{
 		return;
 	}
@@ -434,39 +413,10 @@ void Stage::addEntityLoadingListener(ListenerObject context, EventListener callb
 	}
 
 	EntityLoadingListener* entityLoadingListener = new EntityLoadingListener;
-	entityLoadingListener->context = context;
+	entityLoadingListener->scope = scope;
 	entityLoadingListener->callback = callback;
 
 	VirtualList::pushBack(this->entityLoadingListeners, entityLoadingListener);
-}
-
-bool Stage::registerEntityId(int16 internalId, EntitySpec* entitySpec)
-{
-	VirtualNode node = this->stageEntityDescriptions->head;
-
-	for(; NULL != node; node = node->next)
-	{
-		StageEntityDescription* stageEntityDescription = (StageEntityDescription*)node->data;
-
-		if(entitySpec == stageEntityDescription->positionedEntity->entitySpec)
-		{
-			stageEntityDescription->internalId = internalId;
-			return true;
-		}
-	}
-
-	return false;
-}
-
-void Stage::spawnEntity(PositionedEntity* positionedEntity, Container requester, EventListener callback)
-{
-	if(NULL == requester && !isDeleted(this->entityLoadingListeners))
-	{
-		requester = Container::safeCast(this);
-		callback = (EventListener)Stage::onEntityLoaded;
-	}
-
-	EntityFactory::spawnEntity(this->entityFactory, positionedEntity, requester, callback, this->nextEntityId++);
 }
 
 // remove entity from the stage
@@ -534,12 +484,12 @@ StageEntityDescription* Stage::registerEntity(PositionedEntity* positionedEntity
 	stageEntityDescription->validRightBox = (0 != stageEntityDescription->pixelRightBox.x1 - stageEntityDescription->pixelRightBox.x0) || (0 != stageEntityDescription->pixelRightBox.y1 - stageEntityDescription->pixelRightBox.y0) || (0 != stageEntityDescription->pixelRightBox.z1 - stageEntityDescription->pixelRightBox.z0);
 
 	// Bake the padding in the bounding box to save on performance
-	stageEntityDescription->pixelRightBox.x0 -= this->streaming.loadPadding;
-	stageEntityDescription->pixelRightBox.x1 += this->streaming.loadPadding;
-	stageEntityDescription->pixelRightBox.y0 -= this->streaming.loadPadding;
-	stageEntityDescription->pixelRightBox.y1 += this->streaming.loadPadding;
-	stageEntityDescription->pixelRightBox.z0 -= this->streaming.loadPadding;
-	stageEntityDescription->pixelRightBox.z1 += this->streaming.loadPadding;
+	stageEntityDescription->pixelRightBox.x0 -= this->stageSpec->streaming.loadPadding;
+	stageEntityDescription->pixelRightBox.x1 += this->stageSpec->streaming.loadPadding;
+	stageEntityDescription->pixelRightBox.y0 -= this->stageSpec->streaming.loadPadding;
+	stageEntityDescription->pixelRightBox.y1 += this->stageSpec->streaming.loadPadding;
+	stageEntityDescription->pixelRightBox.z0 -= this->stageSpec->streaming.loadPadding;
+	stageEntityDescription->pixelRightBox.z1 += this->stageSpec->streaming.loadPadding;
 
 	return stageEntityDescription;
 }
@@ -553,7 +503,6 @@ static uint32 Stage::computeDistanceToOrigin(StageEntityDescription* stageEntity
 	return x * x + y * y + z * z;
 } 
 
-// register the stage's spec entities in the streaming list
 void Stage::registerEntities(VirtualList positionedEntitiesToIgnore)
 {
 	if(!isDeleted(this->stageEntityDescriptions))
@@ -708,7 +657,7 @@ bool Stage::unloadOutOfRangeEntities(int32 defer __attribute__((unused)))
 		// if the entity isn't visible inside the view field, unload it
 		if(!entity->deleteMe && entity->parent == Container::safeCast(this))
 		{
-			if(Entity::isInCameraRange(entity, this->streaming.loadPadding + this->streaming.unloadPadding, true))
+			if(Entity::isInCameraRange(entity, this->stageSpec->streaming.loadPadding + this->stageSpec->streaming.unloadPadding, true))
 			{
 				continue;
 			}
@@ -933,32 +882,45 @@ bool Stage::stream()
 		this->streamingPhase = 0;
 	}
 
-	return _streamingPhases[this->streamingPhase](this, this->streaming.deferred);
+	return _streamingPhases[this->streamingPhase](this, this->stageSpec->streaming.deferred);
 }
 
-bool Stage::streamAll()
+bool Stage::streamAll(bool in, bool out)
 {
-	this->streamingPhase = 0;
-	this->streamingHeadNode = NULL;
-	this->streamingAmplitude = (uint16)-1;
-
-	bool result = false;
-
-	do
+	if(in && out)
 	{
-		// Force deletion
-		Stage::purgeChildren(this);
+		this->streamingPhase = 0;
+		this->streamingHeadNode = NULL;
+		this->streamingAmplitude = (uint16)-1;
 
-		result = Stage::stream(this);
+		bool result = false;
 
-		// Force deletion
-		Stage::purgeChildren(this);
+		do
+		{
+			// Force deletion
+			Stage::purgeChildren(this);
+
+			result = Stage::stream(this);
+
+			// Force deletion
+			Stage::purgeChildren(this);
+		}
+		while(result);
+
+		this->streamingAmplitude = this->stageSpec->streaming.streamingAmplitude;
+
+		return EntityFactory::hasEntitiesPending(this->entityFactory);
 	}
-	while(result);
+	else if(in)
+	{
+		return Stage::streamInAll(this);
+	}
+	else if(out)
+	{
+		return Stage::streamOutAll(this);
+	}
 
-	this->streamingAmplitude = this->streaming.streamingAmplitude;
-
-	return EntityFactory::hasEntitiesPending(this->entityFactory);
+	return false;
 }
 
 bool Stage::streamInAll()
@@ -975,7 +937,7 @@ bool Stage::streamInAll()
 
 	bool result = Stage::loadInRangeEntities(this, false);
 
-	this->streamingAmplitude = this->streaming.streamingAmplitude;
+	this->streamingAmplitude = this->stageSpec->streaming.streamingAmplitude;
 
 	return result || EntityFactory::hasEntitiesPending(this->entityFactory);
 }
@@ -1002,6 +964,9 @@ bool Stage::streamOutAll()
 // suspend for pause
 void Stage::suspend()
 {
+	// Save the camera position for resume reconfiguration
+	this->cameraPosition = Camera::getPosition(Camera::getInstance());
+
 	// stream all pending entities to avoid having manually recover
 	// the stage entity registries
 	while(EntityFactory::createNextEntity(this->entityFactory));
@@ -1029,14 +994,16 @@ void Stage::suspend()
 // resume after pause
 void Stage::resume()
 {
+	// Set camera to its previous position
+	Camera::setStageSize(Camera::getInstance(), Size::getFromPixelSize(this->stageSpec->level.pixelSize));
+	Camera::setPosition(Camera::getInstance(), this->cameraPosition, true);
+	Camera::setup(Camera::getInstance(), this->stageSpec->rendering.pixelOptical, this->stageSpec->level.cameraFrustum);
+
 	// Setup timer
-	Stage::setupTimer(this);
+	Stage::configureTimer(this);
 
 	// load background sounds
 	Stage::setupSounds(this);
-
-	// set back optical values
-	Camera::setup(Camera::getInstance(), this->stageSpec->rendering.pixelOptical, this->stageSpec->level.cameraFrustum);
 
 	// set physics
 	PhysicalWorld::setFrictionCoefficient(VUEngine::getPhysicalWorld(_vuEngine), this->stageSpec->physics.frictionCoefficient);
@@ -1070,7 +1037,7 @@ void Stage::prepareGraphics()
 	SpriteManager::reset(SpriteManager::getInstance());
 
 	// set palettes
-	Stage::setupPalettes(this);
+	Stage::configurePalettes(this);
 
 	// setup OBJs
 	Stage::setObjectSpritesContainers(this);
@@ -1128,9 +1095,9 @@ bool Stage::onSoundReleased(ListenerObject eventFirer __attribute__((unused)))
 	return false;
 }
 
-void Stage::setupTimer()
+void Stage::configureTimer()
 {
-	VUEngine::setupTimer(VUEngine::getInstance(), this->stageSpec->timer.resolution, this->stageSpec->timer.targetTimePerInterrupt, this->stageSpec->timer.targetTimePerInterrupttUnits);
+	VUEngine::configureTimer(VUEngine::getInstance(), this->stageSpec->timer.resolution, this->stageSpec->timer.targetTimePerInterrupt, this->stageSpec->timer.targetTimePerInterrupttUnits);
 }
 
 bool Stage::onFocusEntityDeleted(ListenerObject eventFirer __attribute__ ((unused)))
@@ -1165,10 +1132,6 @@ void Stage::setFocusEntity(Entity focusEntity)
 		focusEntityPosition.x = __METERS_TO_PIXELS(focusEntityPosition.x);
 		focusEntityPosition.y = __METERS_TO_PIXELS(focusEntityPosition.y);
 		focusEntityPosition.z = __METERS_TO_PIXELS(focusEntityPosition.z);
-
-		this->cameraPreviousDistance = (long)focusEntityPosition.x * (long)focusEntityPosition.x +
-											(long)focusEntityPosition.y * (long)focusEntityPosition.y +
-											(long)focusEntityPosition.z * (long)focusEntityPosition.z;
 	}
 }
 
@@ -1184,7 +1147,7 @@ VirtualList Stage::getStageEntityDescriptions()
 }
 
 #ifndef __SHIPPING
-void Stage::showStreamingProfiling(int32 x, int32 y)
+void Stage::print(int32 x, int32 y)
 {
 	Printing::text(Printing::getInstance(), "STREAMING STATUS", x, y++, NULL);
 

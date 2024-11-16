@@ -58,10 +58,6 @@ void GameState::constructor()
 	this->physicalWorld = NULL;
 	this->collisionManager = NULL;
 
-	this->cameraPosition.x = 0;
-	this->cameraPosition.y = 0;
-	this->cameraPosition.z = 0;
-
 	this->stream = true;
 	this->transform = true;
 	this->updatePhysics = true;
@@ -198,9 +194,6 @@ void GameState::suspend(void* owner __attribute__ ((unused)))
 	if(!VUEngine::isEnteringToolState(VUEngine::getInstance()))
 #endif
 	{
-		// Save the camera position for resume reconfiguration
-		this->cameraPosition = Camera::getPosition(Camera::getInstance());
-
 		// Make sure collision colliders are not drawn while suspended
 		if(this->collisionManager)
 		{
@@ -235,11 +228,6 @@ void GameState::resume(void* owner __attribute__ ((unused)))
 
 	if(!VUEngine::isExitingToolState(VUEngine::getInstance()))
 	{
-		// Set camera to its previous position
-		Camera::setStageSize(Camera::getInstance(), Size::getFromPixelSize(Stage::getPixelSize(this->stage)));
-		Camera::setPosition(Camera::getInstance(), this->cameraPosition, true);
-		Camera::setup(Camera::getInstance(), Stage::getPixelOptical(this->stage), Stage::getCameraFrustum(this->stage));
-
 		// Reset the engine state
 		VUEngine::reset(VUEngine::getInstance(), NULL == Stage::getSpec(this->stage)->assets.sounds);
 
@@ -357,7 +345,7 @@ bool GameState::stream()
 /**
  * Streaming everything on the Stage
  */
-void GameState::doStreamAll(bool(*stageStreamMethod)(void*))
+void GameState::doStreamAll(bool in, bool out)
 {
 	HardwareManager::suspendInterrupts();
 
@@ -376,7 +364,7 @@ void GameState::doStreamAll(bool(*stageStreamMethod)(void*))
 		GameState::transform(this);
 
 		// Stream in and out all relevant entities
-		bool streamingComplete = !stageStreamMethod(this->stage);
+		bool streamingComplete = !Stage::streamAll(this->stage, in, out);
 
 		// Make sure all graphics are ready
 		VUEngine::prepareGraphics(VUEngine::getInstance());
@@ -405,7 +393,7 @@ void GameState::streamAll()
 
 void GameState::streamInAll()
 {
-	GameState::doStreamAll(this, Stage::streamInAll);
+	GameState::doStreamAll(this, true, false);
 }
 
 /**
@@ -413,7 +401,7 @@ void GameState::streamInAll()
  */
 void GameState::streamOutAll()
 {
-	GameState::doStreamAll(this, Stage::streamOutAll);
+	GameState::doStreamAll(this, false, true);
 }
 
 /**
@@ -501,9 +489,8 @@ uint32 GameState::processCollisions()
  *
  * @param stageSpec				Stage's configuration
  * @param positionedEntitiesToIgnore	List of entities from the spec to not load
- * @param overrideCameraPosition		Flag to override or not the Camera's current position
  */
-void GameState::loadStage(StageSpec* stageSpec, VirtualList positionedEntitiesToIgnore, bool overrideCameraPosition)
+void GameState::loadStage(StageSpec* stageSpec, VirtualList positionedEntitiesToIgnore)
 {
 	if(NULL == stageSpec)
 	{
@@ -521,7 +508,7 @@ void GameState::loadStage(StageSpec* stageSpec, VirtualList positionedEntitiesTo
 	Camera::setFocusEntity(Camera::getInstance(), NULL);
 
 	// setup the stage
-	GameState::setupStage(this, stageSpec, positionedEntitiesToIgnore, overrideCameraPosition);
+	GameState::setupStage(this, stageSpec, positionedEntitiesToIgnore);
 
 	// load the UI
 	GameState::setupUI(this, stageSpec);
@@ -543,7 +530,7 @@ void GameState::loadStage(StageSpec* stageSpec, VirtualList positionedEntitiesTo
 	GameState::changeFrameRate(this, __TARGET_FPS >> 1, 100);
 }
 
-void GameState::setupStage(StageSpec* stageSpec, VirtualList positionedEntitiesToIgnore, bool overrideCameraPosition)
+void GameState::setupStage(StageSpec* stageSpec, VirtualList positionedEntitiesToIgnore)
 {
 	if(!isDeleted(this->stage))
 	{
@@ -551,12 +538,11 @@ void GameState::setupStage(StageSpec* stageSpec, VirtualList positionedEntitiesT
 		this->stage = NULL;
 	}
 
-	// construct the stage
 	this->stage = ((Stage (*)(StageSpec*)) stageSpec->allocator)((StageSpec*)stageSpec);
-	ASSERT(this->stage, "GameState::loadStage: null stage");
+	
+	NM_ASSERT(!isDeleted(this->stage), "GameState::loadStage: null stage");
 
-	// load the stage
-	Stage::load(this->stage, positionedEntitiesToIgnore, overrideCameraPosition);
+	Stage::configure(this->stage, positionedEntitiesToIgnore);
 }
 
 // setup ui

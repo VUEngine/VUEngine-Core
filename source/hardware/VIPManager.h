@@ -354,7 +354,7 @@ singleton class VIPManager : ListenerObject
 
 	/// Configure the VIP's palettes with the provided configuration.
 	/// @param paletteConfig: Palettes configuration
-	void setupPalettes(PaletteConfig* paletteConfig);
+	void configurePalettes(PaletteConfig* paletteConfig);
 
 	/// Setup the column table with the provided spec.
 	/// @param columnTableSpec: Specification for the configuration of the column table

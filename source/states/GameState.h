@@ -43,8 +43,6 @@ class GameState : State
 	Stage stage;
 	// the ui container
 	UIContainer uiContainer;
-	// must save to allow pause
-	Vector3D cameraPosition;
 	// clock for messaging
 	Clock messagingClock;
 	// clock for update cycle
@@ -66,7 +64,7 @@ class GameState : State
 	Stage getStage();
 	UIContainer getUIContainer();
 	Clock getUpdateClock();
-	void loadStage(StageSpec* stageSpec, VirtualList positionedEntitiesToIgnore, bool overrideCameraPosition);
+	void loadStage(StageSpec* stageSpec, VirtualList positionedEntitiesToIgnore);
 	void pauseAnimations(bool pause);
 	void pauseClocks();
 	void pauseMessagingClock(bool pause);

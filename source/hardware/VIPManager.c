@@ -233,7 +233,7 @@ void VIPManager::setFrameCycle(uint8 frameCycle __attribute__((unused)))
 	_vipRegisters[__FRMCYC] = frameCycle;
 }
 //---------------------------------------------------------------------------------------------------------
-void VIPManager::setupPalettes(PaletteConfig* paletteConfig)
+void VIPManager::configurePalettes(PaletteConfig* paletteConfig)
 {
 	while(_vipRegisters[__XPSTTS] & __XPBSY);
 

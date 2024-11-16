@@ -860,7 +860,7 @@ void Debug::streamingPage(int32 increment __attribute__ ((unused)), int32 x __at
  */
 void Debug::streamingShowStatus(int32 increment __attribute__ ((unused)), int32 x __attribute__ ((unused)), int32 y __attribute__ ((unused)))
 {
-	Stage::showStreamingProfiling(GameState::getStage(GameState::safeCast(StateMachine::getPreviousState(VUEngine::getStateMachine(VUEngine::getInstance())))), x, y);
+	Stage::print(GameState::getStage(GameState::safeCast(StateMachine::getPreviousState(VUEngine::getStateMachine(VUEngine::getInstance())))), x, y);
 }
 
 /**

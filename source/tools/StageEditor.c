@@ -963,7 +963,7 @@ void StageEditor::applyTranslationToCamera(Vector3D translation)
 	Camera::translate(Camera::getInstance(), translation, true);
 	GameState::transform(this->gameState);
 	StageEditor::printCameraPosition(this);
-	Stage::streamAll(GameState::getStage(this->gameState));
+	Stage::streamAll(GameState::getStage(this->gameState), true, true);
 }
 
 /**

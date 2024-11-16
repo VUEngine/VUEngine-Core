@@ -83,7 +83,7 @@ void Tool::lightUpGame()
 {
 	if(!isDeleted(this->gameState))
 	{
-		Stage::setupPalettes(GameState::getStage(this->gameState));
+		Stage::configurePalettes(GameState::getStage(this->gameState));
 	}
 }
 
