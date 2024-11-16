@@ -175,14 +175,14 @@ class Entity : Container
 	/// Create a new entity instance and configure it with the provided arguments.
 	/// @param positionedEntity: Struct that defines which entity spec to use to configure the new entity
 	/// and the spatial information about where and how to positione it
-	/// @param internalId: ID to internally keep track of the new instance
+	/// @param internalId: ID to keep track internally of the new instance
 	/// @return The new entity
 	static Entity createEntity(const PositionedEntity* const positionedEntity, int16 internalId);
 
 	/// Create a new entity instance and configure it over time with the provided arguments.
 	/// @param positionedEntity: Struct that defines which entity spec to use to configure the new entity
 	/// and the spatial information about where and how to positione it
-	/// @param internalId: ID to internally keep track of the new instance
+	/// @param internalId: ID to keep track internally of the new instance
 	/// @return The new, still not configured entity
 	static Entity createEntityDeferred(const PositionedEntity* const positionedEntity, int16 internalId);
 

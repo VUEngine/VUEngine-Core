@@ -8,9 +8,9 @@
  */
 
 
-//---------------------------------------------------------------------------------------------------------
-// 												INCLUDES
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// INCLUDES
+//=========================================================================================================
 
 #include <CollisionManager.h>
 #include <DebugConfig.h>
@@ -24,30 +24,59 @@
 #include "EntityFactory.h"
 
 
-//---------------------------------------------------------------------------------------------------------
-// 											CLASS'S DEFINITION
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// CLASS' DECLARATIONS
+//=========================================================================================================
+
 
 friend class VirtualNode;
 friend class VirtualList;
 
-typedef uint32 (*StreamingPhase)(void*);
 
-static const StreamingPhase _streamingPhases[] =
+//=========================================================================================================
+// CLASS' DATA
+//=========================================================================================================
+
+typedef uint32 (*InstantiationPhase)(void*);
+
+/// @memberof EntityFactory
+typedef struct PositionedEntityDescription
+{
+	const PositionedEntity* positionedEntity;
+	Container parent;
+	Entity entity;
+	EventListener callback;
+	int16 internalId;
+	uint8 componentIndex;
+	bool spritesCreated;
+	bool wireframesCreated;
+	bool collidersCreated;
+	bool behaviorsCreated;
+	bool transformed;
+	bool graphicsSynchronized;
+
+} PositionedEntityDescription;
+
+
+//=========================================================================================================
+// CLASS' ATTRIBUTES
+//=========================================================================================================
+
+static const InstantiationPhase _instantiationPhases[] =
 {
 	&EntityFactory::instantiateEntities,
 	&EntityFactory::transformEntities,
 	&EntityFactory::addChildEntities
 };
 
-static int32 _streamingPhasesCount = sizeof(_streamingPhases) / sizeof(StreamingPhase);
+static int32 _instantiationPhasesCount = sizeof(_instantiationPhases) / sizeof(InstantiationPhase);
 
+
+//=========================================================================================================
+// CLASS' PUBLIC METHODS
+//=========================================================================================================
 
 //---------------------------------------------------------------------------------------------------------
-// 												CLASS'S METHODS
-//---------------------------------------------------------------------------------------------------------
-
-// class's constructor
 void EntityFactory::constructor()
 {
 	// construct base object
@@ -55,13 +84,12 @@ void EntityFactory::constructor()
 
 	this->entitiesToInstantiate = new VirtualList();
 	this->entitiesToTransform = new VirtualList();
-	this->entitiesToMakeReady = new VirtualList();
+	this->entitiesToAddAsChildren = new VirtualList();
 	this->spawnedEntities = new VirtualList();
 
-	this->streamingPhase = 0;
+	this->instantiationPhase = 0;
 }
-
-// class's destructor
+//---------------------------------------------------------------------------------------------------------
 void EntityFactory::destructor()
 {
 	VirtualNode node = this->entitiesToInstantiate->head;
@@ -98,7 +126,7 @@ void EntityFactory::destructor()
 	delete this->entitiesToTransform;
 	this->entitiesToTransform = NULL;
 
-	node = this->entitiesToMakeReady->head;
+	node = this->entitiesToAddAsChildren->head;
 
 	for(; NULL != node; node = node->next)
 	{
@@ -112,8 +140,8 @@ void EntityFactory::destructor()
 		delete positionedEntityDescription;
 	}
 
-	delete this->entitiesToMakeReady;
-	this->entitiesToMakeReady = NULL;
+	delete this->entitiesToAddAsChildren;
+	this->entitiesToAddAsChildren = NULL;
 
 	node = this->spawnedEntities->head;
 
@@ -131,7 +159,7 @@ void EntityFactory::destructor()
 	// must always be called at the end of the destructor
 	Base::destructor();
 }
-
+//---------------------------------------------------------------------------------------------------------
 void EntityFactory::spawnEntity(const PositionedEntity* positionedEntity, Container parent, EventListener callback, int16 internalId)
 {
 	if(NULL == positionedEntity || NULL == parent)
@@ -156,7 +184,83 @@ void EntityFactory::spawnEntity(const PositionedEntity* positionedEntity, Contai
 
 	VirtualList::pushBack(this->entitiesToInstantiate, positionedEntityDescription);
 }
+//---------------------------------------------------------------------------------------------------------
+bool EntityFactory::createNextEntity()
+{
+	EntityFactory::cleanUp(this);
 
+	if(this->instantiationPhase >= _instantiationPhasesCount)
+	{
+		this->instantiationPhase = 0;
+	}
+
+	uint32 result = _instantiationPhases[this->instantiationPhase](this);
+
+	int32 counter = _instantiationPhasesCount;
+
+	while(__LIST_EMPTY == result)
+	{
+		if(!--counter)
+		{
+			return false;
+		}
+
+		this->instantiationPhase++;
+
+		if(this->instantiationPhase >= _instantiationPhasesCount)
+		{
+			this->instantiationPhase = 0;
+		}
+
+		result = _instantiationPhases[this->instantiationPhase](this);
+	}
+
+	this->instantiationPhase += __ENTITY_PENDING_PROCESSING != result ? 1 : 0;
+
+	return __LIST_EMPTY != result;
+}
+//---------------------------------------------------------------------------------------------------------
+bool EntityFactory::hasEntitiesPending()
+{
+	return NULL != this->entitiesToInstantiate->head ||
+			NULL != this->entitiesToTransform->head ||
+			NULL != this->entitiesToAddAsChildren->head;
+}
+//---------------------------------------------------------------------------------------------------------
+#ifndef __SHIPPING
+#ifdef __PROFILE_STREAMING
+void EntityFactory::print(int32 x, int32 y)
+{	int32 xDisplacement = 18;
+
+	Printing::text(Printing::getInstance(), "Factory's status", x, y++, NULL);
+	Printing::text(Printing::getInstance(), "", x, y++, NULL);
+
+	Printing::text(Printing::getInstance(), "Phase: ", x, y, NULL);
+	Printing::int32(Printing::getInstance(), this->instantiationPhase, x + xDisplacement, y++, NULL);
+
+	Printing::text(Printing::getInstance(), "Entities pending...", x, y++, NULL);
+
+	Printing::text(Printing::getInstance(), "1 Instantiation:			", x, y, NULL);
+	Printing::int32(Printing::getInstance(), VirtualList::getCount(this->entitiesToInstantiate), x + xDisplacement, y++, NULL);
+
+	Printing::text(Printing::getInstance(), "2 Transformation:			", x, y, NULL);
+	Printing::int32(Printing::getInstance(), VirtualList::getCount(this->entitiesToTransform), x + xDisplacement, y++, NULL);
+
+	Printing::text(Printing::getInstance(), "3 Make ready:			", x, y, NULL);
+	Printing::int32(Printing::getInstance(), VirtualList::getCount(this->entitiesToAddAsChildren), x + xDisplacement, y++, NULL);
+
+	Printing::text(Printing::getInstance(), "4 Call listeners:			", x, y, NULL);
+	Printing::int32(Printing::getInstance(), VirtualList::getCount(this->spawnedEntities), x + xDisplacement, y++, NULL);
+}
+#endif
+#endif
+//---------------------------------------------------------------------------------------------------------
+
+//=========================================================================================================
+// CLASS' PRIVATE METHODS
+//=========================================================================================================
+
+//---------------------------------------------------------------------------------------------------------
 uint32 EntityFactory::instantiateEntities()
 {
 	ASSERT(this, "EntityFactory::spawnEntities: null spawnEntities");
@@ -208,8 +312,7 @@ uint32 EntityFactory::instantiateEntities()
 
 	return __ENTITY_PROCESSED;
 }
-
-// transformation spawned entities
+//---------------------------------------------------------------------------------------------------------
 uint32 EntityFactory::transformEntities()
 {
 	if(NULL == this->entitiesToTransform->head)
@@ -314,7 +417,7 @@ uint32 EntityFactory::transformEntities()
 
 		if(NULL == entityFactory || __LIST_EMPTY == EntityFactory::transformEntities(entityFactory))
 		{
-			VirtualList::pushBack(this->entitiesToMakeReady, positionedEntityDescription);
+			VirtualList::pushBack(this->entitiesToAddAsChildren, positionedEntityDescription);
 			VirtualList::removeData(this->entitiesToTransform, positionedEntityDescription);
 
 			return __ENTITY_PROCESSED;
@@ -336,15 +439,15 @@ uint32 EntityFactory::transformEntities()
 
 	return __ENTITY_PROCESSED;
 }
-
+//---------------------------------------------------------------------------------------------------------
 uint32 EntityFactory::addChildEntities()
 {
-	if(NULL == this->entitiesToMakeReady->head)
+	if(NULL == this->entitiesToAddAsChildren->head)
 	{
 		return __LIST_EMPTY;
 	}
 
-	PositionedEntityDescription* positionedEntityDescription = (PositionedEntityDescription*)this->entitiesToMakeReady->head->data;
+	PositionedEntityDescription* positionedEntityDescription = (PositionedEntityDescription*)this->entitiesToAddAsChildren->head->data;
 
 	if(!isDeleted(positionedEntityDescription->parent))
 	{
@@ -367,7 +470,7 @@ uint32 EntityFactory::addChildEntities()
 			Container::addChild(positionedEntityDescription->parent, Container::safeCast(positionedEntityDescription->entity));
 
 			VirtualList::pushBack(this->spawnedEntities, positionedEntityDescription);
-			VirtualList::removeData(this->entitiesToMakeReady, positionedEntityDescription);
+			VirtualList::removeData(this->entitiesToAddAsChildren, positionedEntityDescription);
 
 			return __ENTITY_PROCESSED;
 		}
@@ -376,7 +479,7 @@ uint32 EntityFactory::addChildEntities()
 	}
 	else
 	{
-		VirtualList::removeData(this->entitiesToMakeReady, positionedEntityDescription);
+		VirtualList::removeData(this->entitiesToAddAsChildren, positionedEntityDescription);
 
 		// don't need to delete the created entity since the parent takes care of that at this point
 
@@ -385,7 +488,7 @@ uint32 EntityFactory::addChildEntities()
 
 	return __ENTITY_PROCESSED;
 }
-
+//---------------------------------------------------------------------------------------------------------
 uint32 EntityFactory::cleanUp()
 {
 	if(NULL == this->spawnedEntities->head)
@@ -417,100 +520,4 @@ uint32 EntityFactory::cleanUp()
 
 	return __ENTITY_PROCESSED;
 }
-
-uint32 EntityFactory::prepareEntities()
-{
-	EntityFactory::cleanUp(this);
-
-	if(this->streamingPhase >= _streamingPhasesCount)
-	{
-		this->streamingPhase = 0;
-	}
-
-	uint32 result = _streamingPhases[this->streamingPhase](this);
-
-	int32 counter = _streamingPhasesCount;
-
-	while(__LIST_EMPTY == result)
-	{
-		if(!--counter)
-		{
-			return false;
-		}
-
-		this->streamingPhase++;
-
-		if(this->streamingPhase >= _streamingPhasesCount)
-		{
-			this->streamingPhase = 0;
-		}
-
-		result = _streamingPhases[this->streamingPhase](this);
-	}
-
-	this->streamingPhase += __ENTITY_PENDING_PROCESSING != result ? 1 : 0;
-
-	return __LIST_EMPTY != result;
-}
-
-uint32 EntityFactory::hasEntitiesPending()
-{
-	return NULL != this->entitiesToInstantiate->head ||
-			NULL != this->entitiesToTransform->head ||
-			NULL != this->entitiesToMakeReady->head;
-}
-
-int32 EntityFactory::getPhase()
-{
-	return this->streamingPhase >= _streamingPhasesCount ? 0 : this->streamingPhase;
-}
-
-
-// Something is not working properly
-void EntityFactory::prepareAllEntities()
-{
-	while(!isDeleted(this->entitiesToInstantiate->head))
-	{
-		EntityFactory::instantiateEntities(this);
-	}
-
-	while(!isDeleted(this->entitiesToTransform->head))
-	{
-		EntityFactory::transformEntities(this);
-	}
-
-	while(!isDeleted(this->entitiesToMakeReady->head))
-	{
-		EntityFactory::addChildEntities(this);
-	}
-
-	EntityFactory::cleanUp(this);
-}
-
-#ifndef __SHIPPING
-#ifdef __PROFILE_STREAMING
-void EntityFactory::showStatus(int32 x, int32 y)
-{	int32 xDisplacement = 18;
-
-	Printing::text(Printing::getInstance(), "Factory's status", x, y++, NULL);
-	Printing::text(Printing::getInstance(), "", x, y++, NULL);
-
-	Printing::text(Printing::getInstance(), "Phase: ", x, y, NULL);
-	Printing::int32(Printing::getInstance(), this->streamingPhase, x + xDisplacement, y++, NULL);
-
-	Printing::text(Printing::getInstance(), "Entities pending...", x, y++, NULL);
-
-	Printing::text(Printing::getInstance(), "1 Instantiation:			", x, y, NULL);
-	Printing::int32(Printing::getInstance(), VirtualList::getCount(this->entitiesToInstantiate), x + xDisplacement, y++, NULL);
-
-	Printing::text(Printing::getInstance(), "2 Transformation:			", x, y, NULL);
-	Printing::int32(Printing::getInstance(), VirtualList::getCount(this->entitiesToTransform), x + xDisplacement, y++, NULL);
-
-	Printing::text(Printing::getInstance(), "3 Make ready:			", x, y, NULL);
-	Printing::int32(Printing::getInstance(), VirtualList::getCount(this->entitiesToMakeReady), x + xDisplacement, y++, NULL);
-
-	Printing::text(Printing::getInstance(), "4 Call listeners:			", x, y, NULL);
-	Printing::int32(Printing::getInstance(), VirtualList::getCount(this->spawnedEntities), x + xDisplacement, y++, NULL);
-}
-#endif
-#endif
+//---------------------------------------------------------------------------------------------------------

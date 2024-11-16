@@ -1,4 +1,4 @@
-/**
+/*
  * VUEngine Core
  *
  * © Jorge Eremiev <jorgech3@gmail.com> and Christian Radke <c.radke@posteo.de>
@@ -891,7 +891,7 @@ bool Stage::updateEntityFactory()
 	timeBeforeProcess = TimerManager::getElapsedMilliseconds(TimerManager::getInstance());
 #endif
 
-	bool preparingEntities = EntityFactory::prepareEntities(this->entityFactory);
+	bool preparingEntities = EntityFactory::createNextEntity(this->entityFactory);
 
 #ifdef __PROFILE_STREAMING
 	uint32 processTime = -_renderingProcessTimeHelper + TimerManager::getElapsedMilliseconds(TimerManager::getInstance()) - timeBeforeProcess;
@@ -916,7 +916,7 @@ bool Stage::stream()
 #ifdef __SHOW_STREAMING_PROFILING
 	if(!VUEngine::isInToolState(_vuEngine))
 	{
-		EntityFactory::showStatus(this->entityFactory, 25, 3);
+		EntityFactory::print(this->entityFactory, 25, 3);
 	}
 #endif
 
@@ -972,7 +972,7 @@ bool Stage::streamInAll()
 	this->streamingAmplitude = (uint16)-1;
 
 	// make sure that the entity factory doesn't have any pending operations
-	while(EntityFactory::prepareEntities(this->entityFactory));
+	while(EntityFactory::createNextEntity(this->entityFactory));
 
 	// Force deletion
 	Stage::purgeChildren(this);
@@ -990,7 +990,7 @@ bool Stage::streamOutAll()
 	this->streamingHeadNode = NULL;
 
 	// make sure that the entity factory doesn't have any pending operations
-	while(EntityFactory::prepareEntities(this->entityFactory));
+	while(EntityFactory::createNextEntity(this->entityFactory));
 
 	// Force deletion
 	Stage::purgeChildren(this);
@@ -1008,8 +1008,7 @@ void Stage::suspend()
 {
 	// stream all pending entities to avoid having manually recover
 	// the stage entity registries
-	while(EntityFactory::prepareEntities(this->entityFactory));
-//	EntityFactory::prepareAllEntities(this->entityFactory); // It seems buggy
+	while(EntityFactory::createNextEntity(this->entityFactory));
 
 	Base::suspend(this);
 

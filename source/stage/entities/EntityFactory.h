@@ -11,86 +11,95 @@
 #define ENTITY_FACTORY_H_
 
 
-//---------------------------------------------------------------------------------------------------------
-//												INCLUDES
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// INCLUDES
+//=========================================================================================================
 
-#include <ListenerObject.h>
-#include <Behavior.h>
-#include <Body.h>
+#include <Object.h>
 #include <Entity.h>
-#include <Sprite.h>
-#include <Collider.h>
-#include <Wireframe.h>
 
 
-//---------------------------------------------------------------------------------------------------------
-//												MACROS
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// FORWARD DECLARATIONS
+//=========================================================================================================
+
+class VirtualList;
+
+
+//=========================================================================================================
+// CLASS' MACROS
+//=========================================================================================================
 
 #define __ENTITY_PENDING_PROCESSING		0x00
 #define __LIST_EMPTY					0x01
 #define __ENTITY_PROCESSED				0x02
 
 
-//---------------------------------------------------------------------------------------------------------
-//											TYPE DEFINITIONS
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// CLASS' DECLARATION
+//=========================================================================================================
 
-
-/**
- * Positioned Entity Description
- *
- * @memberof EntityFactory
- */
-typedef struct PositionedEntityDescription
-{
-	const PositionedEntity* positionedEntity;
-	Container parent;
-	Entity entity;
-	EventListener callback;
-	int16 internalId;
-	uint8 componentIndex;
-	bool spritesCreated;
-	bool wireframesCreated;
-	bool collidersCreated;
-	bool behaviorsCreated;
-	bool transformed;
-	bool graphicsSynchronized;
-
-} PositionedEntityDescription;
-
-
-//---------------------------------------------------------------------------------------------------------
-//											CLASS'S DECLARATION
-//---------------------------------------------------------------------------------------------------------
-
-class VirtualList;
-
+///
+/// Class EntityFactory
+///
+/// Inherits from Object
+///
+/// Implements a factory that creates entities over time.
 /// @ingroup stage-entities
-class EntityFactory : ListenerObject
+class EntityFactory : Object
 {
-	// the EntityFactory entities to test for streaming
+	/// @protectedsection
+
+	/// List of entities pending instantiation
 	VirtualList entitiesToInstantiate;
-	// streaming's non yet transformed entities
+
+	/// List of entities pending transformation
 	VirtualList entitiesToTransform;
-	// streaming's non yet transformed entities
-	VirtualList entitiesToMakeReady;
-	// entities loaded
+
+	/// List of entities pending being added to their parent
+	VirtualList entitiesToAddAsChildren;
+
+	/// List of entities that have been completely instantianted and configured
 	VirtualList spawnedEntities;
-	// index for method to execute
-	int32 streamingPhase;
+
+	/// Index of the current phase to process for the instantiation and configuration
+	/// of entities
+	int32 instantiationPhase;
 
 	/// @publicsection
+	
+	/// Class' constructor
 	void constructor();
-	uint32 prepareEntities();
-	void prepareAllEntities();
+
+	/// Create a new entity instance and configure it with the provided arguments.
+	/// @param positionedEntity: Struct that defines which entity spec to use to configure the new entity
+	/// and the spatial information about where and how to positione it
+	/// @param parent: The parent of the new entity instance
+	/// @param callback: Callback to inform the parent when the new entity is ready
+	/// @param internalId: ID to keep track internally of the new instance
 	void spawnEntity(const PositionedEntity* positionedEntity, Container parent, EventListener callback, int16 internalId);
-	uint32 hasEntitiesPending();
+
+	/// Create the next queued entity.
+	/// @return False if there are no entities pending instantiation; true otherwise
+	bool createNextEntity();
+
+	/// Check if there are entities pending instantiation.
+	/// @return True if there are entities pending instantiation; false otherwise
+	bool hasEntitiesPending();
+
+	/// Print the factory's state.
+	/// @param x: Screen x coordinate where to print
+	/// @param y: Screen y coordinate where to print
+	void print(int32 x, int32 y);
+
+	/// @privatesection
+
+	/// These are not meant to be called externally. They are declared here
+	/// because of the preprocessor's limitations for forward declarations
+	/// in source files. Don't called these.
 	uint32 instantiateEntities();
 	uint32 transformEntities();
 	uint32 addChildEntities();
-	void showStatus(int32 x, int32 y);
 }
 
 
