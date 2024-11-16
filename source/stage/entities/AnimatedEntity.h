@@ -53,26 +53,25 @@ typedef const AnimatedEntitySpec AnimatedEntityROMSpec;
 /// @ingroup stage-entities
 class AnimatedEntity : Entity
 {
-	// Pointer to the animation description
+	/// Pointer to the animations available to this instance
 	const AnimationFunction** animationFunctions;
-	// need to save for pausing
-	const char* currentAnimationName;
+
+	/// Name of the currently playing animation
+	const char* playingAnimationName;
 
 	/// @publicsection
 	void constructor(AnimatedEntitySpec* animatedEntitySpec, int16 internalId, const char* const name);
+	bool playAnimation(const char* animationName);
+	bool isPlaying();
+	bool isPlayingAnimation(char* animationName);
+	const char* getPlayingAnimationName();
+	void pauseAnimation(bool pause);
+	void setActualFrame(int16 frame);
+	void nextFrame();
+	void previousFrame();
 	int16 getActualFrame();
 	int32 getNumberOfFrames();
-	bool isAnimationLoaded(char* animationName);
-	const char* getPlayingAnimationName();
-	bool isPlayingAnimation();
-	void nextFrame();
-	void pauseAnimation(bool pause);
-	bool playAnimation(const char* animationName);
-	void previousFrame();
-	void setActualFrame(int16 frame);
-	void setAnimationFunction(const AnimationFunction** animationFunctions);
-	bool onAnimationCompleteHide(ListenerObject eventFirer);
-	void animate();
+
 	override void ready(bool recursive);
 	override void resume();
 	override bool handlePropagatedString(const char* string);

@@ -43,7 +43,7 @@ void AnimatedEntity::constructor(AnimatedEntitySpec* animatedEntitySpec, int16 i
 	// save ROM spec
 	this->animationFunctions = animatedEntitySpec->animationFunctions;
 
-	this->currentAnimationName = NULL;
+	this->playingAnimationName = NULL;
 }
 
 // class's destructor
@@ -105,7 +105,7 @@ bool AnimatedEntity::playAnimation(const char* animationName)
 
 	if(result)
 	{
-		this->currentAnimationName = animationName;
+		this->playingAnimationName = animationName;
 	}
 
 	return result;
@@ -119,7 +119,7 @@ void AnimatedEntity::stopAnimation()
 		return;
 	}
 
-	this->currentAnimationName = NULL;
+	this->playingAnimationName = NULL;
 
 	// play animation on each sprite
 	for(VirtualNode node = this->sprites->head; node && this->sprites; node = node->next)
@@ -159,15 +159,15 @@ void AnimatedEntity::previousFrame()
 }
 
 // is playing an animation
-bool AnimatedEntity::isPlayingAnimation()
+bool AnimatedEntity::isPlaying()
 {
-	ASSERT(this->sprites, "AnimatedEntity::isPlayingAnimation: null sprites");
+	ASSERT(this->sprites, "AnimatedEntity::isPlaying: null sprites");
 
 	return Sprite::isPlaying(Sprite::safeCast(VirtualNode::getData(this->sprites->head)));
 }
 
 // is animation selected
-bool AnimatedEntity::isAnimationLoaded(char* animationName)
+bool AnimatedEntity::isPlayingAnimation(char* animationName)
 {
 	if(isDeleted(this->sprites))
 	{
@@ -205,20 +205,12 @@ void AnimatedEntity::setActualFrame(int16 frame)
 	}
 }
 
-// set animation description
-void AnimatedEntity::setAnimationFunction(const AnimationFunction** animationFunctions)
-{
-	this->animationFunctions = animationFunctions;
-
-	AnimatedEntity::stopAnimation(this);
-}
-
 // resume method
 void AnimatedEntity::resume()
 {
 	Base::resume(this);
 
-	AnimatedEntity::playAnimation(this, this->currentAnimationName);
+	AnimatedEntity::playAnimation(this, this->playingAnimationName);
 }
 
 /**
@@ -273,11 +265,4 @@ int32 AnimatedEntity::getNumberOfFrames()
 	}
 
 	return -1;
-}
-
-bool AnimatedEntity::onAnimationCompleteHide(ListenerObject eventFirer __attribute__((unused)))
-{
-	AnimatedEntity::hide(this);
-
-	return true;
 }
