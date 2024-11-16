@@ -72,7 +72,7 @@ void ToolState::exit(void* owner __attribute__ ((unused)))
 		Tool::hide(this->tool);
 	}
 
-	GameState::resumeClocks(GameState::safeCast(StateMachine::getPreviousState(VUEngine::getStateMachine(VUEngine::getInstance()))));
+	GameState::unpauseClocks(GameState::safeCast(StateMachine::getPreviousState(VUEngine::getStateMachine(VUEngine::getInstance()))));
 	Base::exit(this, owner);
 }
 //---------------------------------------------------------------------------------------------------------

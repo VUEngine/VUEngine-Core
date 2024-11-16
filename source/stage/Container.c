@@ -530,7 +530,6 @@ void Container::transformChildren(uint8 invalidateTransformationFlag)
 	}
 }
 //---------------------------------------------------------------------------------------------------------
-
 bool Container::propagateMessage(bool (*propagatedMessageHandler)(void*, va_list), ...)
 {
 	ASSERT(propagatedMessageHandler, "Container::propagateMessage: null propagatedMessageHandler");

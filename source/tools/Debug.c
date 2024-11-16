@@ -504,7 +504,7 @@ void Debug::generalStatusPage(int32 increment __attribute__ ((unused)), int32 x 
 	Printing::text(Printing::getInstance(), "In game clock's time: ", 1, ++y, NULL);
 	Clock::print(GameState::getMessagingClock(GameState::safeCast(StateMachine::getPreviousState(VUEngine::getStateMachine(VUEngine::getInstance())))), 26, y, NULL);
 	Printing::text(Printing::getInstance(), "Animations clock's time: ", 1, ++y, NULL);
-	Clock::print(GameState::getUpdateClock(GameState::safeCast(StateMachine::getPreviousState(VUEngine::getStateMachine(VUEngine::getInstance())))), 26, y, NULL);
+	Clock::print(GameState::getLogicsClock(GameState::safeCast(StateMachine::getPreviousState(VUEngine::getStateMachine(VUEngine::getInstance())))), 26, y, NULL);
 	Printing::text(Printing::getInstance(), "Physics clock's time: ", 1, ++y, NULL);
 	Clock::print(GameState::getPhysicsClock(GameState::safeCast(StateMachine::getPreviousState(VUEngine::getStateMachine(VUEngine::getInstance())))), 26, y, NULL);
 	y+=3;

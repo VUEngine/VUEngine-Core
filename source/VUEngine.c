@@ -555,7 +555,7 @@ void VUEngine::processUserInput(GameState currentGameState)
 	}
 #endif
 
-	if(0 != (userInput.pressedKey + userInput.holdKey + userInput.releasedKey) || GameState::processUserInputRegardlessOfInput(currentGameState))
+	if(0 != (userInput.dummyKey | userInput.pressedKey | userInput.holdKey | userInput.releasedKey))
 	{
 		GameState::processUserInput(currentGameState, &userInput);
 	}
@@ -619,14 +619,14 @@ void VUEngine::updateSound()
 }
 
 // update game's physics subsystem
-void VUEngine::updatePhysics(GameState gameState)
+void VUEngine::simulatePhysics(GameState gameState)
 {
 #ifdef __REGISTER_LAST_PROCESS_NAME
 	this->lastProcessName = PROCESS_NAME_PHYSICS;
 #endif
 
 	// simulate physics
-	GameState::updatePhysics(gameState);
+	GameState::simulatePhysics(gameState);
 
 #ifdef __ENABLE_PROFILER
 	Profiler::lap(Profiler::getInstance(), kProfilerLapTypeNormalProcess, PROCESS_NAME_PHYSICS);
@@ -844,7 +844,7 @@ void VUEngine::run(GameState currentGameState)
 		VUEngine::processUserInput(this, currentGameState);
 
 		// simulate physics
-		VUEngine::updatePhysics(this, currentGameState);
+		VUEngine::simulatePhysics(this, currentGameState);
 
 		// apply transformations
 		VUEngine::processTransformations(this, currentGameState);
@@ -927,10 +927,10 @@ Clock VUEngine::getMessagingClock()
 }
 
 // retrieve animations' clock
-Clock VUEngine::getUpdateClock()
+Clock VUEngine::getLogicsClock()
 {
 	State state = StateMachine::getCurrentState(this->stateMachine);
-	return isDeleted(state) ? NULL : GameState::getUpdateClock(GameState::safeCast(state));
+	return isDeleted(state) ? NULL : GameState::getLogicsClock(GameState::safeCast(state));
 }
 
 // retrieve in physics' clock

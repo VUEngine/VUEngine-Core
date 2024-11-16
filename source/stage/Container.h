@@ -142,7 +142,7 @@ class Container : SpatialObject
 	bool getChildren(ClassPointer classPointer, VirtualList children);
 
 	/// Find a child with the provided name.
-	/// @param childName: Name to search for
+	/// @param childName: Name to look for
 	/// @param recursive: If true, the seach extends to grand children, grand grand children, etc.
 	/// @return The first child container whose name equals the provided one 
 	Container getChildByName(const char* childName, bool recursive);

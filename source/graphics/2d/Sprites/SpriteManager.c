@@ -91,6 +91,7 @@ void SpriteManager::reset()
 		_objectAttributesCache[i].tile = 0;
 	}
 
+	this->animationsClock = NULL;
 	this->sprites = new VirtualList();
 	this->objectSpriteContainers = new VirtualList();
 	this->specialSprites = new VirtualList();
@@ -106,6 +107,11 @@ void SpriteManager::reset()
 	this->evenFrame = __TRANSPARENCY_EVEN;
 
 	HardwareManager::resumeInterrupts();
+}
+//---------------------------------------------------------------------------------------------------------
+void SpriteManager::setAnimationsClock(Clock clock)
+{
+	this->animationsClock = clock;
 }
 //---------------------------------------------------------------------------------------------------------
 Sprite SpriteManager::createSprite(SpatialObject owner, const SpriteSpec* spriteSpec)
@@ -334,7 +340,12 @@ void SpriteManager::render()
 
 	this->freeLayer = __TOTAL_LAYERS - 1;
 
-	bool updateAnimations = !Clock::isPaused(VUEngine::getUpdateClock(VUEngine::getInstance()));
+	bool updateAnimations = true;
+	
+	if(!isDeleted(this->animationsClock))
+	{
+		updateAnimations = !Clock::isPaused(this->animationsClock);
+	}
 
 	for(VirtualNode node = this->sprites->tail; NULL != node && 0 < this->freeLayer; node = node->previous)
 	{
@@ -727,6 +738,7 @@ void SpriteManager::constructor()
 	this->deferParamTableEffects = false;
 	this->evenFrame = __TRANSPARENCY_EVEN;
 
+	this->animationsClock = NULL;
 	this->printing = Printing::getInstance();
 	this->paramTableManager = ParamTableManager::getInstance();
 	this->charSetManager = CharSetManager::getInstance();

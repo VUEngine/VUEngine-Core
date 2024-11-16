@@ -90,6 +90,10 @@ typedef struct UserInput
 	/// Low power flag
 	uint16 powerFlag;
 
+	/// Dummy input to force user input processing even if 
+	/// there is not a real one
+	uint16 dummyKey;
+
 } UserInput;
 
 
@@ -149,6 +153,12 @@ singleton class KeypadManager : ListenerObject
 	/// Retrieve the user input during the last game frame
 	/// @return User input struct with the key presses of the last game frame
 	UserInput readUserInput();
+
+	/// Enable the dummy key to force user input processing.
+	void enableDummyKey();
+
+	/// Disable the dummy key to not enforce user input processing.
+	void disableDummyKey();
 
 	/// Register the user input according to the provided flags.
 	/// @param inputToRegister: Flags to select which inputs to register and which to ignore

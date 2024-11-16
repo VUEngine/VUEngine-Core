@@ -15,6 +15,7 @@
 // INCLUDES
 //=========================================================================================================
 
+#include <Clock.h>
 #include <Object.h>
 #include <Sprite.h>
 
@@ -53,6 +54,9 @@ class VirtualList;
 singleton class SpriteManager : Object
 {
 	/// @protectedsection
+
+	/// Clock for the animations
+	Clock animationsClock;
 
 	/// Cache printing manager
 	Printing printing;
@@ -113,6 +117,10 @@ singleton class SpriteManager : Object
 
 	/// Reset the manager's state
 	void reset();
+
+	/// Set the clock that determines if the animations must be updated or not.
+	/// @param animationsClock: Clock for the animations
+	void setAnimationsClock(Clock clock);
 	
 	/// Create a sprite with the provided spec.
 	/// @param owner: Object to which the sprite will attach to

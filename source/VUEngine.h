@@ -109,7 +109,7 @@ singleton class VUEngine : ListenerObject
 	void enableKeypad();
 	void resetClock();
 	Clock getClock();
-	Clock getUpdateClock();
+	Clock getLogicsClock();
 	Clock getMessagingClock();
 	Clock getPhysicsClock();
 	CollisionManager getCollisionManager();

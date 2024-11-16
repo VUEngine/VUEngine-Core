@@ -91,7 +91,7 @@ bool AnimationController::play(const AnimationFunction* animationFunctions[], co
 	{
 		int32 i = 0;
 
-		// search for the animation function
+		// Look for the animation function
 		for(; NULL != animationFunctions[i]; i++ )
 		{
 			// compare function's names

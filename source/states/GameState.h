@@ -11,9 +11,9 @@
 #define GAME_STATE_H_
 
 
-//---------------------------------------------------------------------------------------------------------
-//												INCLUDES
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// INCLUDES
+//=========================================================================================================
 
 #include <State.h>
 #include <KeypadManager.h>
@@ -21,9 +21,9 @@
 #include <UIContainer.h>
 
 
-//---------------------------------------------------------------------------------------------------------
-//											CLASS'S DECLARATION
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// FORWARD DECLARATIONS
+//=========================================================================================================
 
 class Clock;
 class CollisionManager;
@@ -32,84 +32,235 @@ class PhysicalWorld;
 class Telegram;
 class VirtualList;
 
+
+//=========================================================================================================
+// CLASS' DECLARATION
+//=========================================================================================================
+
+///
+/// Class GameState
+///
+/// Inherits from State
+///
+/// Implements a state that the VUEngine's state machine can transition into.
 /// @ingroup states
 class GameState : State
 {
-	// a pointer to the game's stage
-	PhysicalWorld physicalWorld;
-	// a pointer to the game's stage
-	CollisionManager collisionManager;
-	// a pointer to the game's stage
-	Stage stage;
-	// the ui container
+	/// A container for entities that componse the UI
 	UIContainer uiContainer;
-	// clock for messaging
+
+	/// A container for the game entites 
+	Stage stage;
+
+	/// A world where physical bodies exist
+	PhysicalWorld physicalWorld;
+
+	/// A manager for collisions and colliders
+	CollisionManager collisionManager;
+	
+	/// A clock for logics
+	Clock logicsClock;
+
+	/// A clock for messaging
 	Clock messagingClock;
-	// clock for update cycle
-	Clock updateClock;
-	// clock for physics
+
+	/// A clock for animations
+	Clock animationsClock;
+
+	/// A clock for physics
 	Clock physicsClock;
-	// Flags to disable some processes
+	
+	/// Flags to enable or disable the streaming
 	bool stream;
+
+	/// Flags to enable or disable the transformations
 	bool transform;
+	
+	/// Flags to enable or disable the physical simulations
 	bool updatePhysics;
+
+	/// Flags to enable or disable the collision detection and processing
 	bool processCollisions;
 
 	/// @publicsection
+
+	/// Class' constructor
 	void constructor();
 
-	override void enter(void* owner);
-	override void execute(void* owner);
-	override void exit(void* owner);
-	override void suspend(void* owner);
-	override void resume(void* owner);
+	/// Receive and process a Telegram.
+	/// @param telegram: Received telegram to process
+	/// @return True if the telegram was processed
 	override bool handleMessage(Telegram telegram);
+
+	/// Prepares the object to enter this state.
+	/// @param owner: Object that is entering in this state
+	override void enter(void* owner);
+
+	/// Updates the object in this state.
+	/// @param owner: Object that is in this state
+	override void execute(void* owner);
+	
+	/// Prepares the object to exit this state.
+	/// @param owner: Object that is exiting this state
+	override void exit(void* owner);
+
+	/// Prepares the object to become inactive in this state.
+	/// @param owner: Object that is in this state
+	override void suspend(void* owner);
+
+	/// Prepares the object to become active in this state.
+	/// @param owner: Object that is in this state
+	override void resume(void* owner);
+
+	/// Process a Telegram sent to an object that is in this state.
+	/// @param owner: Object that is in this state
+	/// @param telegram: Telegram to process
 	override bool processMessage(void* owner, Telegram telegram);
 
-	CollisionManager getCollisionManager();
-	Clock getMessagingClock();
-	PhysicalWorld getPhysicalWorld();
-	Clock getPhysicsClock();
-	Stage getStage();
+	/// Configure the stage with the provided stage spec.
+	/// @param stageSpec: Specification that determines how to configure the stage
+	/// @param positionedEntitiesToIgnore: List of positioned entity structs to register for streaming
+	void configureStage(StageSpec* stageSpec, VirtualList positionedEntitiesToIgnore);
+
+	/// Retrieve the UI container.
+	/// @return UI Container
 	UIContainer getUIContainer();
-	Clock getUpdateClock();
-	void loadStage(StageSpec* stageSpec, VirtualList positionedEntitiesToIgnore);
-	void pauseAnimations(bool pause);
-	void pauseClocks();
-	void pauseMessagingClock(bool pause);
-	void transform();
-	void transformUI();
-	uint32 processCollisions();
-	void pausePhysics(bool pause);
-	void pauseMessaging(bool pause);
-	int32 propagateMessage(int32 message);
-	int32 propagateString(const char* string);
-	void resumeClocks();
-	void startAnimations();
+
+	/// Retrieve the stage instance.
+	/// @return Game state's stage
+	Stage getStage();
+	
+	/// Retrieve the physical world.
+	/// @return Game state's physical world
+	PhysicalWorld getPhysicalWorld();
+
+	/// Retrieve the collision manager.
+	/// @return Game state's collision manager
+	CollisionManager getCollisionManager();
+
+	/// Retrieve the clock that serves to control the game's logic.
+	/// @return Game state's logics clock
+	Clock getLogicsClock();
+
+	/// Retrieve the clock that is used for the timing of messaging.
+	/// @return Game state's messaging clock
+	Clock getMessagingClock();
+
+	/// Retrieve the clock that serves to control the animations.
+	/// @return Game state's animations clocks
+	Clock getAnimationsClock();
+
+	/// Retrieve the clock that serves to control the game's physics.
+	/// @return Game state's physics clock
+	Clock getPhysicsClock();
+
+	/// Start all the clocks.
 	void startClocks();
-	void startDispatchingDelayedMessages();
-	void startPhysics();
+
+	/// Pause all the clocks.
+	void pauseClocks();
+
+	/// Unpause all the clocks.
+	void unpauseClocks();
+
+	/// Stop all the clocks.
 	void stopClocks();
-	void updatePhysics();
-	void streamAll();
-	void streamInAll();
-	void streamOutAll();
-	Clock getClock();
+
+	/// Start the clock used for logics.
+	void startLogics();
+
+	/// Pause the clock used for logics.
+	void pauseLogics();
+
+	/// Unpause the clock used for logics.
+	void unpauseLogics();
+
+	/// Start the clock used for delayed messages.
+	void startMessaging();
+
+	/// Pause the clock used for delayed messages.
+	void pauseMessaging();
+
+	/// Unpause the clock used for delayed messages.
+	void unpauseMessaging();
+
+	/// Start the clock used for animations.
+	void startAnimations();
+
+	/// Pause the clock used for animations.
+	void pauseAnimations();
+
+	/// Unpause the clock used for animations.
+	void unpauseAnimations();
+
+	/// Start the clock used for physics simulations.
+	void startPhysics();
+
+	/// Pause the clock used for physics simulations.
+	void pausePhysics();
+
+	/// Unpause the clock used for physics simulations.
+	void unpausePhysics();
+
+	/// Update the stage's children' global transformations.
+	void transform();
+
+	/// Update the UI's children' global transformations.
+	void transformUI();
+
+	/// Continue physics simulations.
+	void simulatePhysics();
+	
+	/// Test and process collisions./
+	void processCollisions();
+
+	/// Propagate an integer message through the whole parenting hierarchy of the stage (children, grand children, etc.).
+	/// @param propagatedMessageHandler: Method that handles the message
+	/// @return True if some entity processed the message
+	bool propagateMessage(int32 message);
+
+	/// Propagate a string through the whole parenting hierarchy of the stage (children, grand children, etc.).
+	/// @param propagatedMessageHandler: Method that handles the string
+	/// @return True if some entity processed the string
+	bool propagateString(const char* string);
+
+	/// Find a stage's child (grand child, etc.) by its name.
+	/// @param entityName: Name to look for
 	Entity getEntityByName(const char* entityName);
-	void hideEntityWithName(const char* entityName);
+
+	/// Show a stage's child (grand child, etc.) with the provided name.
+	/// @param entityName: Name to look for
 	void showEntityWithName(const char* entityName);
+
+	/// Hide a stage's child (grand child, etc.) with the provided name.
+	/// @param entityName: Name to look for
+	void hideEntityWithName(const char* entityName);
+
+	/// Change the target frame rate.
+	/// @param targetFPS: New target frame rate
+	/// @param duration: Amount of time to keep the change on the frame rate before
+	/// setting back the default target (0 to make it permanent as long as the state
+	// is active)
 	void changeFrameRate(int16 targetFPS, int32 duration);
 
-	/// Process the provided user input.
-	/// @param userInput: Struct with the current user input information
-	virtual void processUserInput(const UserInput*  userInput);
-	virtual bool processUserInputRegardlessOfInput();
-	virtual bool isVersusMode();
+	/// Force to completely stream in and out entities and to initialize all.
+	/// @param in: If true, all entities within the camera's reach are streamed in
+	/// and completely initialized
+	/// @param out: If true, every entities outside of the camera's reach are streamed out
+	/// and destroyed
+	void streamAll(bool in, bool out);
 
 	/// Stream in or out the stage entities within or outside the camera's range.
 	/// @return True if at least some entity was streamed in or out
 	virtual bool stream();
 
+	/// Process the provided user input.
+	/// @param userInput: Struct with the current user input information
+	virtual void processUserInput(const UserInput*  userInput);
+
+	/// Check if the game state is in versus mode.
+	/// @return True if the state is in versus mode; false otherwise
+	virtual bool isVersusMode();
 }
 
 

@@ -301,7 +301,7 @@ static void MemoryPool::free(BYTE* object)
 
 	HardwareManager::suspendInterrupts();
 
-	// search for the pool in which it is allocated
+	// Look for the pool in which it is allocated
 	for(uint32 i = 0, displacement = 0; i < numberOfBlocks; i++, displacement += this->poolSizes[pool][eBlockSize])
 	{
 		// if the object has been found

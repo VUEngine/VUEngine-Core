@@ -45,12 +45,14 @@ static void KeypadManager::interruptHandler()
 //---------------------------------------------------------------------------------------------------------
 void KeypadManager::reset()
 {
+	this->userInput.dummyKey = K_NON;
+
 	KeypadManager::flush(this);
 
 	this->reseted = true;
 	this->enabled = false;
 	this->accumulatedUserInput = 0;
-	this->userInputToRegister = (UserInput){0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF};
+	this->userInputToRegister = (UserInput){0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF};
 }
 //---------------------------------------------------------------------------------------------------------
 void KeypadManager::enable()
@@ -76,7 +78,7 @@ UserInput KeypadManager::readUserInput()
 #ifdef __UNLOCK_FPS
 	if(*_readingStatus & __S_STAT)
 	{
-		return (UserInput){0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000};
+		return (UserInput){K_NON, K_NON, K_NON, K_NON, K_NON, K_NON, K_NON};
 	}
 #else
 	// wait for keypad to stabilize
@@ -124,6 +126,16 @@ UserInput KeypadManager::readUserInput()
 	this->reseted = false;
 
 	return this->userInput;
+}
+//---------------------------------------------------------------------------------------------------------
+void KeypadManager::enableDummyKey()
+{
+	this->userInput.dummyKey = K_ANY;
+}
+//---------------------------------------------------------------------------------------------------------
+void KeypadManager::disableDummyKey()
+{
+	this->userInput.dummyKey = K_NON;
 }
 //---------------------------------------------------------------------------------------------------------
 void KeypadManager::registerInput(uint16 inputToRegister)
@@ -205,7 +217,7 @@ void KeypadManager::disableInterrupt()
 //---------------------------------------------------------------------------------------------------------
 void KeypadManager::flush()
 {
-	this->userInput = (UserInput){0, 0, 0, 0, 0, 0, 0};
+	this->userInput = (UserInput){K_NON, K_NON, K_NON, K_NON, K_NON, K_NON, K_NON, this->userInput.dummyKey};
 }
 //---------------------------------------------------------------------------------------------------------
 uint16 KeypadManager::getPressedKey()
