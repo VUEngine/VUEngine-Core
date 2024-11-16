@@ -39,7 +39,6 @@ enum MessagesTypes
 	kMessageBodyStopped,
 	kMessageBodyBounced,
 	kMessageBodyStartedMoving,
-	kMessageBodyChangedDirection,
 	kMessageColliderShow,
 	kMessageColliderHide,
 

@@ -193,6 +193,8 @@ class Entity : Container
 	static PixelRightBox getBoundingBoxFromSpec(const PositionedEntity* positionedEntity, const PixelVector* environmentPosition);
 
 	/// Class' constructor
+	/// @param entitySpec: Specification that determines how to configure the entity
+	/// @param internalId: ID to keep track internally of the new instance
 	/// @param name: Name to assign to the new instance
 	void constructor(EntitySpec* entitySpec, int16 internalId, const char* const name);
 

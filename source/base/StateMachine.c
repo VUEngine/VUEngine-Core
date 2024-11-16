@@ -84,6 +84,11 @@ bool StateMachine::transitionTo(State state, int16 transition)
 //---------------------------------------------------------------------------------------------------------
 void StateMachine::swapState(State newState)
 {
+	if(isDeleted(newState))
+	{
+		return;
+	}
+
 	NM_ASSERT(!isDeleted(newState), "StateMachine::swapState: null newState");
 
 	// update the stack
