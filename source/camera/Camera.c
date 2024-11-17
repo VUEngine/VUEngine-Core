@@ -290,6 +290,16 @@ void Camera::focus()
 //---------------------------------------------------------------------------------------------------------
 void Camera::startEffect(int32 effect, ...)
 {
+	if(VUEngine::isEnteringToolState(VUEngine::getInstance()))
+	{
+		return;
+	}
+
+	if(VUEngine::isExitingToolState(VUEngine::getInstance()))
+	{
+		return;
+	}
+
 	va_list args;
 	va_start(args, effect);
 	CameraEffectManager::startEffect(this->cameraEffectManager, effect, args);
@@ -298,6 +308,16 @@ void Camera::startEffect(int32 effect, ...)
 //---------------------------------------------------------------------------------------------------------
 void Camera::stopEffect(int32 effect)
 {
+	if(VUEngine::isEnteringToolState(VUEngine::getInstance()))
+	{
+		return;
+	}
+
+	if(VUEngine::isExitingToolState(VUEngine::getInstance()))
+	{
+		return;
+	}
+
 	CameraEffectManager::stopEffect(this->cameraEffectManager, effect);
 }
 //---------------------------------------------------------------------------------------------------------

@@ -11,17 +11,39 @@
 #define VUENGINE_H_
 
 
-//---------------------------------------------------------------------------------------------------------
-//												INCLUDES
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// INCLUDES
+//=========================================================================================================
 
 #include <ListenerObject.h>
 #include <VIPManager.h>
 
 
-//---------------------------------------------------------------------------------------------------------
-//												MACROS
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// FORWARD DECLARATIONS
+//=========================================================================================================
+
+class Clock;
+class CollisionManager;
+class CommunicationManager;
+class GameState;
+class PhysicalWorld;
+class SoundManager;
+class SpatialObject;
+class SpriteManager;
+class StateMachine;
+class Stage;
+class ToolState;
+class UIContainer;
+class VUEngine;
+class WireframeManager;
+
+extern VUEngine _vuEngine __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE;
+
+
+//=========================================================================================================
+// CLASS' MACROS
+//=========================================================================================================
 
 #define PROCESS_NAME_CAMERA					"CAMERA"
 #define PROCESS_NAME_COLLISIONS				"COLLISIONS"
@@ -46,54 +68,68 @@
 #define PROCESS_NAME_COMMUNICATIONS			"COMMS"
 
 
-//---------------------------------------------------------------------------------------------------------
-//											CLASS'S DECLARATION
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// CLASS' DECLARATION
+//=========================================================================================================
 
-class Clock;
-class CollisionManager;
-class CommunicationManager;
-class GameState;
-class PhysicalWorld;
-class SoundManager;
-class SpatialObject;
-class SpriteManager;
-class StateMachine;
-class Stage;
-class ToolState;
-class UIContainer;
-class VUEngine;
-class WireframeManager;
-
-extern VUEngine _vuEngine __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE;
-
+///
+/// Class VUEngine
+///
+/// Inherits from ListenerObject
+///
+/// Implements the game's life cycle.
 /// @ingroup base
 singleton class VUEngine : ListenerObject
 {
-	// game's state machine
+	/// Engine's main state machine
 	StateMachine stateMachine;
-	// engine's global timer
+
+	/// Global timer
 	Clock clock;
-	// managers
+
+	/// Clocks manager
 	ClockManager clockManager;
+
+	/// Keypad manager
 	KeypadManager keypadManager;
+
+	/// VIP manager
 	VIPManager vipManager;
+
+	/// Wireframe manager
 	WireframeManager wireframeManager;
+
+	/// Spritems manager
 	SpriteManager spriteManager;
+
+	/// Timer manager
 	TimerManager timerManager;
+
+	/// Communication manager
 	CommunicationManager communicationManager;
+
+	/// Sound manager
 	SoundManager soundManager;
+
+	/// Frame manager
 	FrameRate frameRate;
+
+	/// Game's camera
 	Camera camera;
-	// current save data manager
+	
+	/// Saved data manager
 	ListenerObject saveDataManager;
-	// last process' name
-	char* lastProcessName;
-	// frame flags
+
+	/// Current process' name
+	char* processName;
+
+	/// frame flags
 	volatile bool currentGameCycleEnded;
 	volatile bool nextGameCycleStarted;
+	
 	// game paused flag
 	bool isPaused;
+	
 	bool isToolStateTransition;
 
 	/// @publicsection
@@ -113,7 +149,7 @@ singleton class VUEngine : ListenerObject
 	Clock getMessagingClock();
 	Clock getPhysicsClock();
 	CollisionManager getCollisionManager();
-	char* getLastProcessName();
+	char* getProcessName();
 	void setLastProcessName(char* processName);
 	PhysicalWorld getPhysicalWorld();
 	uint32 getElapsedMilliseconds();

@@ -132,7 +132,7 @@ void VUEngine::constructor()
 #endif
 
 	// to make debugging easier
-	this->lastProcessName = PROCESS_NAME_START_UP;
+	this->processName = PROCESS_NAME_START_UP;
 
 	// setup engine parameters
 	VUEngine::initialize(this);
@@ -210,7 +210,7 @@ void VUEngine::debug()
 #endif
 
 #ifdef __REGISTER_LAST_PROCESS_NAME
-	this->lastProcessName = PROCESS_NAME_END_FRAME;
+	this->processName = PROCESS_NAME_END_FRAME;
 #endif
 
 #ifdef __SHOW_SOUND_STATUS
@@ -292,7 +292,7 @@ bool VUEngine::cleaniningStatesStack(ListenerObject eventFirer)
 	}
 
 #ifdef __REGISTER_LAST_PROCESS_NAME
-	this->lastProcessName = PROCESS_NAME_STATE_SWAP;
+	this->processName = PROCESS_NAME_STATE_SWAP;
 #endif
 
 	VIPManager::stopDisplaying(this->vipManager);
@@ -325,7 +325,7 @@ bool VUEngine::pushingState(ListenerObject eventFirer)
 	}
 
 #ifdef __REGISTER_LAST_PROCESS_NAME
-	this->lastProcessName = PROCESS_NAME_STATE_SWAP;
+	this->processName = PROCESS_NAME_STATE_SWAP;
 #endif
 
 #ifdef __TOOLS
@@ -346,7 +346,7 @@ bool VUEngine::swappingState(ListenerObject eventFirer)
 	}
 
 #ifdef __REGISTER_LAST_PROCESS_NAME
-	this->lastProcessName = PROCESS_NAME_STATE_SWAP;
+	this->processName = PROCESS_NAME_STATE_SWAP;
 #endif
 
 	VIPManager::stopDisplaying(this->vipManager);
@@ -372,7 +372,7 @@ bool VUEngine::poppingState(ListenerObject eventFirer)
 	}
 
 #ifdef __REGISTER_LAST_PROCESS_NAME
-	this->lastProcessName = PROCESS_NAME_STATE_SWAP;
+	this->processName = PROCESS_NAME_STATE_SWAP;
 #endif
 
 	VIPManager::stopDisplaying(this->vipManager);
@@ -543,7 +543,7 @@ void VUEngine::processUserInput(GameState currentGameState)
 	}
 
 #ifdef __REGISTER_LAST_PROCESS_NAME
-	this->lastProcessName = PROCESS_NAME_INPUT;
+	this->processName = PROCESS_NAME_INPUT;
 #endif
 
 	UserInput userInput = KeypadManager::readUserInput(this->keypadManager);
@@ -568,7 +568,7 @@ void VUEngine::processUserInput(GameState currentGameState)
 void VUEngine::dispatchDelayedMessages()
 {
 #ifdef __REGISTER_LAST_PROCESS_NAME
-	this->lastProcessName = PROCESS_NAME_MESSAGES;
+	this->processName = PROCESS_NAME_MESSAGES;
 #endif
 
 #ifndef __ENABLE_PROFILER
@@ -591,7 +591,7 @@ void VUEngine::dispatchDelayedMessages()
 GameState VUEngine::updateLogic(GameState currentGameState)
 {
 #ifdef __REGISTER_LAST_PROCESS_NAME
-	this->lastProcessName = PROCESS_NAME_LOGIC;
+	this->processName = PROCESS_NAME_LOGIC;
 #endif
 
 	// update the game's logic
@@ -610,7 +610,7 @@ void VUEngine::updateSound()
 	SoundManager::update(this->soundManager);
 
 #ifdef __REGISTER_LAST_PROCESS_NAME
-	this->lastProcessName = PROCESS_NAME_SOUND_SETUP;
+	this->processName = PROCESS_NAME_SOUND_SETUP;
 #endif
 
 #ifdef __ENABLE_PROFILER
@@ -622,7 +622,7 @@ void VUEngine::updateSound()
 void VUEngine::simulatePhysics(GameState gameState)
 {
 #ifdef __REGISTER_LAST_PROCESS_NAME
-	this->lastProcessName = PROCESS_NAME_PHYSICS;
+	this->processName = PROCESS_NAME_PHYSICS;
 #endif
 
 	// simulate physics
@@ -636,7 +636,7 @@ void VUEngine::simulatePhysics(GameState gameState)
 void VUEngine::focusCamera()
 {
 #ifdef __REGISTER_LAST_PROCESS_NAME
-	this->lastProcessName = PROCESS_NAME_CAMERA;
+	this->processName = PROCESS_NAME_CAMERA;
 #endif
 
 #ifdef __TOOLS
@@ -657,7 +657,7 @@ void VUEngine::focusCamera()
 void VUEngine::processTransformations(GameState gameState)
 {
 #ifdef __REGISTER_LAST_PROCESS_NAME
-	this->lastProcessName = PROCESS_NAME_TRANSFORMS;
+	this->processName = PROCESS_NAME_TRANSFORMS;
 #endif
 
 	// apply world transformations
@@ -672,7 +672,7 @@ void VUEngine::processCollisions(GameState gameState)
 {
 	// process the collisions after the transformations have taken place
 #ifdef __REGISTER_LAST_PROCESS_NAME
-	this->lastProcessName = PROCESS_NAME_COLLISIONS;
+	this->processName = PROCESS_NAME_COLLISIONS;
 #endif
 
 	// process collisions
@@ -686,7 +686,7 @@ void VUEngine::processCollisions(GameState gameState)
 bool VUEngine::stream(GameState gameState)
 {
 #ifdef __REGISTER_LAST_PROCESS_NAME
-	this->lastProcessName = PROCESS_NAME_STREAMING;
+	this->processName = PROCESS_NAME_STREAMING;
 #endif
 
 #ifndef __ENABLE_PROFILER
@@ -810,12 +810,6 @@ void VUEngine::nextFrameStarted(uint16 gameFrameDuration)
 #endif
 }
 
-bool VUEngine::hasCurrentFrameEnded()
-{
-	// raise flag to allow the next frame to start
-	return this->currentGameCycleEnded;
-}
-
 void VUEngine::run(GameState currentGameState)
 {
 	// Set state
@@ -888,9 +882,9 @@ void VUEngine::run(GameState currentGameState)
 }
 
 #ifdef __REGISTER_LAST_PROCESS_NAME
-void VUEngine::setLastProcessName(char* processName)
+void VUEngine::setprocessName(char* processName)
 {
-	this->lastProcessName = processName;
+	this->processName = processName;
 }
 #endif
 
@@ -946,9 +940,9 @@ uint16 VUEngine::getGameFrameDuration()
 }
 
 // retrieve last process' name
-char* VUEngine::getLastProcessName()
+char* VUEngine::getProcessName()
 {
-	return this->lastProcessName;
+	return this->processName;
 }
 
 void VUEngine::setGameFrameRate(uint16 gameFrameRate)

@@ -212,7 +212,9 @@ void GameState::resume(void* owner __attribute__ ((unused)))
 
 	HardwareManager::suspendInterrupts();
 
+#ifdef __TOOLS
 	if(!VUEngine::isExitingToolState(VUEngine::getInstance()))
+#endif
 	{
 		// Reset the engine state
 		VUEngine::reset(VUEngine::getInstance(), NULL == Stage::getSpec(this->stage)->assets.sounds);
