@@ -123,63 +123,167 @@ singleton class VUEngine : ListenerObject
 	/// Current process' name
 	char* processName;
 
-	/// frame flags
+	/// Flag used to measure the FPS
 	volatile bool currentGameCycleEnded;
-	volatile bool nextGameCycleStarted;
+
+	/// Flag used to lock the frame rate
+	volatile bool gameFrameStarted;
 	
-	// game paused flag
+	/// If true, the game is paused
 	bool isPaused;
 	
-	bool isToolStateTransition;
+	/// Flag raised when entering or exiting a tool state
+	bool isInToolStateTransition;
 
 	/// @publicsection
-	static VUEngine getInstance();
-	static bool isConstructed();
-	void pushFrontPostProcessingEffect(PostProcessingEffect postProcessingEffect, SpatialObject spatialObject);
-	void pushBackPostProcessingEffect(PostProcessingEffect postProcessingEffect, SpatialObject spatialObject);
-	void removePostProcessingEffect(PostProcessingEffect postProcessingEffect, SpatialObject spatialObject);
-	void addState(GameState state);
-	void changeState(GameState state);
-	void setState(GameState state);
-	void disableKeypad();
-	void enableKeypad();
-	void resetClock();
-	Clock getClock();
-	Clock getLogicsClock();
-	Clock getMessagingClock();
-	Clock getPhysicsClock();
-	CollisionManager getCollisionManager();
-	char* getProcessName();
-	void setLastProcessName(char* processName);
-	PhysicalWorld getPhysicalWorld();
-	uint32 getElapsedMilliseconds();
-	Stage getStage();
-	UIContainer getUIContainer();
-	GameState getCurrentState();
-	GameState getPreviousState();
-	uint16 getGameFrameDuration();
-	void setGameFrameRate(uint16 gameFrameRate);
-	bool isEnteringToolState();
-	bool isExitingToolState();
-	bool isPaused();
-	bool isInToolState();
-	void pause(GameState pauseState);
-	void printClassSizes(int32 x, int32 y);
-	void reset(bool resetSounds);
-	void start(GameState state);
-	void unpause(GameState pauseState);
-	void wait(uint32 milliSeconds);
-	void prepareGraphics();
-	void startProfiling();
-	void resetProfiling();
-	void openTool(ToolState toolState);
-	void nextFrameStarted(uint16 gameFrameDuration);
-	void nextGameCycleStarted(uint16 gameFrameDuration);
-	ListenerObject getSaveDataManager();
-	void setSaveDataManager(ListenerObject saveDataManager);
-	void configureTimer(uint16 timerResolution, uint16 targetTimePerInterrupt, uint16 targetTimePerInterrupttUnits);
 
+	/// Method to retrieve the singleton instance
+	/// @return Camera singleton
+	static VUEngine getInstance();
+
+	/// Receive and process a Telegram.
+	/// @param telegram: Received telegram to process
+	/// @return True if the telegram was processed
 	override bool handleMessage(Telegram telegram);
+
+	/// Reset the engine's sub components.
+	/// @param resetSounds: If false, any playing sounds will keep playing
+	void reset(bool resetSounds);
+
+	/// Reset the engine's main clock.
+	void resetClock();
+
+	/// Start the game with the provided game state.
+	/// @param state: Game state the engine must enter when starting
+	void start(GameState state);
+
+	/// Pause the game by pushing the provided game state into the engine's state machine's stack.
+	/// @param pauseState: Pause game state
+	void pause(GameState pauseState);
+
+	/// Pause the game by removing the provided game state from the engine's state machine's stack.
+	/// @param pauseState: Pause game state
+	void unpause(GameState pauseState);
+
+	/// Add a game state to the top of the engine's state machine's stack.
+	/// @param state: Game state to push
+	void addState(GameState state);
+
+	/// Swap the game state at the top of the engine's state machine's stack wht the provided one.
+	/// @param state: Game state to swap to
+	void changeState(GameState state);
+
+	/// Check if the engine's state machine is entering or exiting a tool state.
+	/// @return True if the engine's state machine is entering or exiting a tool state
+	bool isInToolStateTransition();
+
+	/// Retrieve the current state.
+	/// @return Current game state
+	GameState getCurrentState();
+
+	/// Retrieve the previous state.
+	/// @return Previous game state
+	GameState getPreviousState();
+
+	/// Retrieve the current UI container.
+	/// @return Current game state's UI container
+	UIContainer getUIContainer();
+
+	/// Retrieve the current stage.
+	/// @return Current game state's stage
+	Stage getStage();
+
+	/// Retrieve the current game state's physical world.
+	/// @return Current game state's physical world
+	PhysicalWorld getPhysicalWorld();
+
+	/// Retrieve the current game state's collision manager.
+	/// @return Current game state's collision manager
+	CollisionManager getCollisionManager();
+
+	/// Retrieve the engine's state machine.
+	/// @return Engine's state machine
+	StateMachine getStateMachine();
+
+	/// Retrieve the engine's main clock.
+	/// @return Engine's main clock
+	Clock getClock();
+
+	/// Retrieve the current game state's logics clock.
+	/// @return Current game state's logics clock
+	Clock getLogicsClock();
+
+	/// Retrieve the current game state's messaging clock.
+	/// @return Current game state's messaging clock
+	Clock getMessagingClock();
+
+	/// Retrieve the current game state's physics clock.
+	/// @return Current game state's physics clock
+	Clock getPhysicsClock();
+
+	/// Retrieve the current process' name.
+	/// @return Current process' name
+	char* getProcessName();
+
+	/// Retrieve the duration of game frames.
+	/// @return Duration in milliseconds of game frames
+	uint16 getGameFrameDuration();
+	
+	/// Set the target frame rate.
+	/// @param gameFrameRate: New frame rate target
+	void setGameFrameRate(uint16 gameFrameRate);
+
+	/// Enable user input.
+	void enableKeypad();
+
+	/// Disable user input.
+	void disableKeypad();
+
+	/// Set the saved data manager.
+	/// @param saveDataManager:: Save data manager to use
+	void setSaveDataManager(ListenerObject saveDataManager);
+
+	/// Retrieve the saved data manager.
+	/// @return Save data manager
+	ListenerObject getSaveDataManager();
+
+	/// Push a post processing effect at the start of the list of effects.
+	/// @param postProcessingEffect: Post-processing effect function
+	/// @param spatialObject: Post-processing effect function's scope
+	void pushFrontPostProcessingEffect(PostProcessingEffect postProcessingEffect, SpatialObject spatialObject);
+	
+	/// Push a post processing effect at the end of the list of effects.
+	/// @param postProcessingEffect: Post-processing effect function
+	/// @param spatialObject: Post-processing effect function's scope
+	void pushBackPostProcessingEffect(PostProcessingEffect postProcessingEffect, SpatialObject spatialObject);
+
+	/// Remove a post-processing effect from the list of effects.
+	/// @param postProcessingEffect: Post-processing effect function
+ 	/// @param spatialObject: Post-processing effect function's scope
+	void removePostProcessingEffect(PostProcessingEffect postProcessingEffect, SpatialObject spatialObject);
+
+	/// Called when the VIP reaches FRAMESTART.
+	/// @param gameFrameDuration: Time in milliseconds that each game frame lasts.
+	void frameStarted(uint16 gameFrameDuration);
+
+	/// Called when the VIP reaches GAMESTART.
+	/// @param gameFrameDuration: Time in milliseconds that each game frame lasts.
+	void gameFrameStarted(uint16 gameFrameDuration);
+
+	/// Check if the game is paused.
+	/// @return True if the game is paused; false otherwise
+	bool isPaused();
+
+	/// Halt the game by the provided time.
+	/// @param milliseconds: Time to halt the game
+	void wait(uint32 milliSeconds);
+
+	/// Force the complete initialization of all graphics.
+	void prepareGraphics();
+
+	/// Start profiling the game.
+	void startProfiling();
+
 }
 
 

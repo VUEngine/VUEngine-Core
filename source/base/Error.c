@@ -103,7 +103,7 @@ static void Error::triggerException(char* message __attribute__((unused)), char*
 	Printing::text(printing, "\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08 EXCEPTION \x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08" , x, y++, NULL);
 	Printing::text(printing, "                                                " , x, y++, NULL);
 	Printing::text(printing, " Last process:                                  ", x, y, NULL);
-	Printing::text(printing, VUEngine::isConstructed() ? VUEngine::getProcessName(VUEngine::getInstance()) : "constructor", x + 15, y++, NULL);
+	Printing::text(printing, VUEngine::getProcessName(VUEngine::getInstance()), x + 15, y++, NULL);
 	Printing::text(printing, " LP:                                  " , x, y, NULL);
 	Printing::hex(printing, lp, x + 8, y, 8, NULL);
 	Printing::text(printing, " SP: 		                         " , x, ++y, NULL);

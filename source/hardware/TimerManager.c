@@ -118,6 +118,14 @@ void TimerManager::resetTimerCounter()
 	_hardwareRegisters[__THR] = (timerCounter >> 8);
 }
 //---------------------------------------------------------------------------------------------------------
+void TimerManager::configure(uint16 timerResolution, uint16 targetTimePerInterrupt, uint16 targetTimePerInterrupttUnits)
+{
+	TimerManager::setResolution(this, timerResolution);
+	TimerManager::setTargetTimePerInterruptUnits(this, targetTimePerInterrupttUnits);
+	TimerManager::setTargetTimePerInterrupt(this, targetTimePerInterrupt);
+	TimerManager::applySettings(this, true);
+}
+//---------------------------------------------------------------------------------------------------------
 void TimerManager::applySettings(bool enable)
 {
 	TimerManager::disable(this);
@@ -414,7 +422,7 @@ void TimerManager::repeatMethodCall(uint32 callTimes, uint32 duration, ListenerO
 	}
 }
 //---------------------------------------------------------------------------------------------------------
-void TimerManager::nextFrameStarted(uint32 elapsedMicroseconds)
+void TimerManager::frameStarted(uint32 elapsedMicroseconds)
 {
 	this->elapsedMilliseconds = 0;
 	this->elapsedMicroseconds = 0;

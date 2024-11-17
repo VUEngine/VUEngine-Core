@@ -456,7 +456,7 @@ void VIPManager::processInterrupt(uint16 interrupt)
 #endif
 
 				this->FRAMESTARTDuringXPEND = this->processingXPEND;
-				VUEngine::nextFrameStarted(_vuEngine, __MILLISECONDS_PER_SECOND / __MAXIMUM_FPS);
+				VUEngine::frameStarted(_vuEngine, __MILLISECONDS_PER_SECOND / __MAXIMUM_FPS);
 				break;
 
 			case __GAMESTART:
@@ -492,7 +492,7 @@ void VIPManager::processInterrupt(uint16 interrupt)
 				}
 
 				// Process game's logic
-				VUEngine::nextGameCycleStarted(_vuEngine, this->gameFrameDuration);
+				VUEngine::gameFrameStarted(_vuEngine, this->gameFrameDuration);
 				SpriteManager::render(_spriteManager);
 				WireframeManager::render(_wireframeManager);
 

@@ -181,7 +181,7 @@ void GameState::suspend(void* owner __attribute__ ((unused)))
 	Clock::pause(this->messagingClock, true);
 
 #ifdef __TOOLS
-	if(!VUEngine::isEnteringToolState(VUEngine::getInstance()))
+	if(!VUEngine::isInToolStateTransition(VUEngine::getInstance()))
 #endif
 	{
 		// Make sure collision colliders are not drawn while suspended
@@ -213,7 +213,7 @@ void GameState::resume(void* owner __attribute__ ((unused)))
 	HardwareManager::suspendInterrupts();
 
 #ifdef __TOOLS
-	if(!VUEngine::isExitingToolState(VUEngine::getInstance()))
+	if(!VUEngine::isInToolStateTransition(VUEngine::getInstance()))
 #endif
 	{
 		// Reset the engine state

@@ -123,6 +123,12 @@ singleton class TimerManager : Object
 	/// Reset timer's counter.
 	void resetTimerCounter();
 
+	/// Configure the timer with the provided arguments.
+	/// @param timerResolution: Timer's resolution (__TIMER_100US or __TIMER_20US)
+	/// @param targetTimePerInterrupt: Target elapsed time between timer interrupts
+	/// @param targetTimePerInterrupttUnits: Timer interrupt's target time units
+	void configure(uint16 timerResolution, uint16 targetTimePerInterrupt, uint16 targetTimePerInterrupttUnits);
+
 	/// Apply the settings to the hardware timer.
 	/// @param enable: If true, the hardware timer is enabled
 	void applySettings(bool enable);
@@ -202,7 +208,7 @@ singleton class TimerManager : Object
 
 	/// Call when the next frame starts.
 	/// @param elapsedMicroseconds: Elapsed microseconds between calls
-	void nextFrameStarted(uint32 elapsedMicroseconds);
+	void frameStarted(uint32 elapsedMicroseconds);
 
 	/// Call when the next second starts.
 	void nextSecondStarted();

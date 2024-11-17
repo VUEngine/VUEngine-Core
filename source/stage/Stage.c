@@ -266,7 +266,7 @@ StageSpec* Stage::getSpec()
 //---------------------------------------------------------------------------------------------------------
 void Stage::configureTimer()
 {
-	VUEngine::configureTimer(VUEngine::getInstance(), this->stageSpec->timer.resolution, this->stageSpec->timer.targetTimePerInterrupt, this->stageSpec->timer.targetTimePerInterrupttUnits);
+	TimerManager::configure(TimerManager::getInstance(), this->stageSpec->timer.resolution, this->stageSpec->timer.targetTimePerInterrupt, this->stageSpec->timer.targetTimePerInterrupttUnits);
 }
 //---------------------------------------------------------------------------------------------------------
 void Stage::configurePalettes()

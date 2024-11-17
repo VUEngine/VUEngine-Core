@@ -290,12 +290,12 @@ void Camera::focus()
 //---------------------------------------------------------------------------------------------------------
 void Camera::startEffect(int32 effect, ...)
 {
-	if(VUEngine::isEnteringToolState(VUEngine::getInstance()))
+	if(VUEngine::isInToolStateTransition(VUEngine::getInstance()))
 	{
 		return;
 	}
 
-	if(VUEngine::isExitingToolState(VUEngine::getInstance()))
+	if(VUEngine::isInToolStateTransition(VUEngine::getInstance()))
 	{
 		return;
 	}
@@ -308,12 +308,12 @@ void Camera::startEffect(int32 effect, ...)
 //---------------------------------------------------------------------------------------------------------
 void Camera::stopEffect(int32 effect)
 {
-	if(VUEngine::isEnteringToolState(VUEngine::getInstance()))
+	if(VUEngine::isInToolStateTransition(VUEngine::getInstance()))
 	{
 		return;
 	}
 
-	if(VUEngine::isExitingToolState(VUEngine::getInstance()))
+	if(VUEngine::isInToolStateTransition(VUEngine::getInstance()))
 	{
 		return;
 	}
