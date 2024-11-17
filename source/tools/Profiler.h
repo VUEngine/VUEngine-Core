@@ -1,4 +1,4 @@
-/**
+/*
  * VUEngine Core
  *
  * © Jorge Eremiev <jorgech3@gmail.com> and Christian Radke <c.radke@posteo.de>
@@ -11,16 +11,23 @@
 #define PROFILER_H_
 
 
-//---------------------------------------------------------------------------------------------------------
-//												INCLUDES
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// INCLUDES
+//=========================================================================================================
 
 #include <ListenerObject.h>
 
 
-//---------------------------------------------------------------------------------------------------------
-//												MACROS
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// FORWARD DECLARATIONS
+//=========================================================================================================
+
+class TimerManager;
+
+
+//=========================================================================================================
+// CLASS' DATA
+//=========================================================================================================
 
 enum ProfilerLapTypes
 {
@@ -34,16 +41,23 @@ enum ProfilerLapTypes
 };
 
 
-//---------------------------------------------------------------------------------------------------------
-//											CLASS'S DECLARATION
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// CLASS' DECLARATION
+//=========================================================================================================
 
-class TimerManager;
-
-/// @ingroup hardware
+///
+/// Class SoundTest
+///
+/// Inherits from ListenerObject
+///
+/// Implements profiler that permits to measure how much time a process takes to complete.
+/// @ingroup tools
 singleton class Profiler : ListenerObject
 {
+	/// Laps during the current profiling cycle
 	VirtualList laps;
+
+	/// 
 	TimerManager timerManager;
 	float timeProportion;
 	float lastCycleTotalTime;
@@ -64,14 +78,26 @@ singleton class Profiler : ListenerObject
 	bool processedCommunications;
 
 	/// @publicsection
+	/// Method to retrieve the singleton instance
+	/// @return Profiler singleton
 	static Profiler getInstance();
+
+	/// Initialize the profiler.
 	void initialize();
+
+	/// Reset the profiler's state.
 	void reset();
+
+	/// Start a new cycle of profiling.
 	void start();
-	void startInterrupt();
+
+	/// End the current profiling cycle.
 	void end();
+
+	/// Register a lap during the current profiling cycle.
+	/// @param lapType: Type of lap to record
+	/// @param processName: Name of the process during the lap
 	void lap(uint32 lapType, const char* processName);
-	void interruptLap(uint32 lapType, const char* processName);
 }
 
 #endif

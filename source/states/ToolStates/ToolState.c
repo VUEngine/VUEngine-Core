@@ -42,7 +42,7 @@ void ToolState::destructor()
 void ToolState::enter(void* owner __attribute__ ((unused)))
 {
 	Base::enter(this, owner);
-	GameState::pauseClocks(GameState::safeCast(StateMachine::getPreviousState(VUEngine::getStateMachine(VUEngine::getInstance()))));
+	GameState::pauseClocks(GameState::safeCast(VUEngine::getPreviousState(VUEngine::getInstance())));
 	GameState::startClocks(this);
 
 	this->stream = false;
@@ -52,7 +52,7 @@ void ToolState::enter(void* owner __attribute__ ((unused)))
 
 	if(!isDeleted(this->tool))
 	{
-		Tool::setGameState(this->tool, GameState::safeCast(StateMachine::getPreviousState(VUEngine::getStateMachine(VUEngine::getInstance()))));
+		Tool::setStage(this->tool, GameState::getStage(GameState::safeCast(VUEngine::getPreviousState(VUEngine::getInstance()))));
 		Tool::show(this->tool);
 	}
 }
@@ -72,7 +72,7 @@ void ToolState::exit(void* owner __attribute__ ((unused)))
 		Tool::hide(this->tool);
 	}
 
-	GameState::unpauseClocks(GameState::safeCast(StateMachine::getPreviousState(VUEngine::getStateMachine(VUEngine::getInstance()))));
+	GameState::unpauseClocks(GameState::safeCast(VUEngine::getPreviousState(VUEngine::getInstance())));
 	Base::exit(this, owner);
 }
 //---------------------------------------------------------------------------------------------------------

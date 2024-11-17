@@ -1,4 +1,4 @@
-/**
+/*
  * VUEngine Core
  *
  * © Jorge Eremiev <jorgech3@gmail.com> and Christian Radke <c.radke@posteo.de>
@@ -11,59 +11,79 @@
 #define STAGE_EDITOR_H_
 
 
-//---------------------------------------------------------------------------------------------------------
-//												INCLUDES
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// INCLUDES
+//=========================================================================================================
 
 #include <Tool.h>
 #include <Entity.h>
 
 
-//---------------------------------------------------------------------------------------------------------
-//											TYPE DEFINITIONS
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// CLASS' DATA
+//=========================================================================================================
 
-/**
- * For level editing
- *
- * @memberof 		StageEditor
- */
+/// A struct to map an entity spec to a name
+/// @memberof	AnimationInspector
 typedef struct UserObject
 {
-	/// Pointer to EntitySpec
+	/// Specification for an entity
 	EntitySpec* entitySpec;
-	/// Name of the Entity
+
+	/// Entity spec's name
 	char* name;
 
 } UserObject;
 
 
-//---------------------------------------------------------------------------------------------------------
-//											CLASS' DECLARATION
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// CLASS' DECLARATION
+//=========================================================================================================
 
-/// In-game stage editor for debug and productivity purposes
+///
+/// Class SoundTest
+///
+/// Inherits from Tool
+///
+/// Implements a tool that permits to manipulate a stage's entities.
 /// @ingroup tools
 singleton class StageEditor : Tool
 {
-	// Current in game entity
-	VirtualNode currentEntityNode;
-	// Current entity's collider
+	/// Node of the stage's selected entity
+	VirtualNode entityNode;
+
+	/// Current entity's collider
 	Collider collider;
-	// Mode
-	int32 mode;
-	// Actors selector
-	OptionsSelector userObjectsSelector;
+
+	/// Sprite to display new entities to be added to the stage
+	Sprite userEntitySprite;
+	
+	// Selector of user defined entities
+	OptionsSelector userEntitySelector;
+
+	/// Editor's state
+	int32 state;
+	
 	// Translation step size
 	int32 translationStepSize;
-	// Current user's object's sprite
-	Sprite userObjectSprite;
-
+	
 	/// @publicsection
+
+	/// Method to retrieve the singleton instance
+	/// @return StageEditor singleton
 	static StageEditor getInstance();
-	override void show();
-	override void hide();
+
+	/// Update the tool's state.
 	override void update();
+
+	/// Show the tool.
+	override void show();
+
+	/// Hide the tool.
+	override void hide();
+
+	/// Process the provided user pressed key.
+	/// @param pressedKey: User pressed key
 	override void processUserInput(uint16 pressedKey);
 }
 

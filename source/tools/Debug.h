@@ -1,4 +1,4 @@
-/**
+/*
  * VUEngine Core
  *
  * © Jorge Eremiev <jorgech3@gmail.com> and Christian Radke <c.radke@posteo.de>
@@ -11,67 +11,90 @@
 #define DEBUG_H_
 
 
-//---------------------------------------------------------------------------------------------------------
-//												INCLUDES
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// INCLUDES
+//=========================================================================================================
 
 #include <Tool.h>
 
 
-//---------------------------------------------------------------------------------------------------------
-//											TYPE DEFINITIONS
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// CLASS' DATA
+//=========================================================================================================
 
-/**
- * For debugging
- *
- * @memberof	Debug
- */
+/// A struct to map a class size function to a name
+/// @memberof	AnimationInspector
 typedef struct ClassSizeData
 {
-	/// size
+	/// Class' method
 	int32 (*classSizeFunction)(void);
-	/// name
+
+	/// Class' name
 	char* name;
 
 } ClassSizeData;
 
 
-//---------------------------------------------------------------------------------------------------------
-//											CLASS'S DECLARATION
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// CLASS' DECLARATION
+//=========================================================================================================
 
+///
+/// Class Debug
+///
+/// Inherits from Tool
+///
+/// Implements a tool that displays various debug information.
 /// @ingroup tools
 singleton class Debug : Tool
 {
-	// pages
+	/// Degug pages
 	VirtualList pages;
-	// sub pages
+
+	/// Debug sub pages
 	VirtualList subPages;
-	// current page
+
+	/// Current page's node
 	VirtualNode currentPage;
-	// current sub page
+
+	/// Current sub page's node
 	VirtualNode currentSubPage;
-	// current layer
-	int8 currentSprite;
-	// part of bgmap memory current viewed
-	uint8 viewedMapPart;
-	// current bgmap
-	int32 bgmapSegment;
-	// current obj segment
+
+	/// Current sprite's index
+	int8 spriteIndex;
+	
+	/// Currently displayed BGMAP segment
+	int8 bgmapSegment;
+
+	/// Currently displayed part of BGMAP memory
+	uint8 bgmapSegmentDiplayedSection;
+	
+	/// Currently displayed OBJECT segment
 	int32 objectSegment;
-	// current char segment
+
+	/// Currently displayed CHAR memory segment
 	int32 charSegment;
-	// current page in sram inspector
+
+	/// Currently displayed SRAM page
 	int32 sramPage;
-	// update function pointer
-	void (*update)(void *);
 
 	/// @publicsection
+
+	/// Method to retrieve the singleton instance
+	/// @return Debug singleton
 	static Debug getInstance();
+
+	/// Update the tool's state.
 	override void update();
+
+	/// Show the tool.
 	override void show();
+
+	/// Hide the tool.
 	override void hide();
+
+	/// Process the provided user pressed key.
+	/// @param pressedKey: User pressed key
 	override void processUserInput(uint16 pressedKey);
 }
 

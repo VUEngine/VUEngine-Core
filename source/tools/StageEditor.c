@@ -1,4 +1,4 @@
-/**
+/*
  * VUEngine Core
  *
  * © Jorge Eremiev <jorgech3@gmail.com> and Christian Radke <c.radke@posteo.de>
@@ -10,9 +10,9 @@
 #ifdef __TOOLS
 
 
-//---------------------------------------------------------------------------------------------------------
-//												INCLUDES
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// INCLUDES
+//=========================================================================================================
 
 #include <BgmapTextureManager.h>
 #include <Box.h>
@@ -36,181 +36,96 @@
 #include "StageEditor.h"
 
 
-//---------------------------------------------------------------------------------------------------------
-//												CLASS' MACROS
-//---------------------------------------------------------------------------------------------------------
-
-#define __DEFAULT_TRANSLATION_STEP			8
-#define __MAX_TRANSLATION_STEP				__PIXELS_TO_METERS(32)
-#define __MAXIMUM_VIEW_DISTANCE_STEP		1
-
-
-//---------------------------------------------------------------------------------------------------------
-//											CLASS' DEFINITION
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// CLASS' DECLARATIONS
+//=========================================================================================================
 
 friend class VirtualNode;
 friend class VirtualList;
 friend class Sprite;
 friend class Container;
 
+extern Transformation _neutralEnvironmentTransformation;
+extern UserObject _userObjects[];
 
-//---------------------------------------------------------------------------------------------------------
-//												ENUMS
-//---------------------------------------------------------------------------------------------------------
 
-/**
- * The different modes of the StageEditor
- *
- * @memberof	AnimationInspector
- */
-enum Modes
+//=========================================================================================================
+// CLASS' MACROS
+//=========================================================================================================
+
+#define __DEFAULT_TRANSLATION_STEP			8
+#define __MAX_TRANSLATION_STEP				__PIXELS_TO_METERS(32)
+#define __MAXIMUM_VIEW_DISTANCE_STEP		1
+
+
+//=========================================================================================================
+// CLASS' DATA
+//=========================================================================================================
+
+/// @memberof StageEditor
+enum StageEditorStates
 {
-	kFirstMode = 0,
+	kFirstState = 0,
 	kMoveCamera,
 	kChangeProjection,
 	kTranslateEntities,
 	kAddObjects,
 
-	kLastMode
+	kLastState
 };
 
 
-//---------------------------------------------------------------------------------------------------------
-//												GLOBALS
-//---------------------------------------------------------------------------------------------------------
-
-// globals
-extern UserObject _userObjects[];
-
+//=========================================================================================================
+// CLASS' PUBLIC METHODS
+//=========================================================================================================
 
 //---------------------------------------------------------------------------------------------------------
-//												CLASS' METHODS
-//---------------------------------------------------------------------------------------------------------
-
-/**
- * Get instance
- *
- * @fn			StageEditor::getInstance()
- * @memberof	StageEditor
- * @public
- * @return		StageEditor instance
- */
-
-
-/**
- * Class constructor
- *
- * @private
- */
-void StageEditor::constructor()
-{
-	Base::constructor();
-
-	this->currentEntityNode = NULL;
-	this->gameState = NULL;
-	this->userObjectSprite = NULL;
-	this->mode = kFirstMode + 1;
-	this->collider = NULL;
-	this->userObjectsSelector = new OptionsSelector(2, 12, NULL, NULL, NULL);
-
-	VirtualList userObjects = new VirtualList();
-
-	int32 i = 0;
-	for(;  _userObjects[i].entitySpec; i++)
-	{
-		Option* option = new Option;
-		option->value = _userObjects[i].name;
-		option->type = kString;
-		VirtualList::pushBack(userObjects, option);
-	}
-
-	if(VirtualList::getCount(userObjects))
-	{
-		OptionsSelector::setOptions(this->userObjectsSelector, userObjects);
-	}
-
-	delete userObjects;
-
-	this->translationStepSize = __DEFAULT_TRANSLATION_STEP;
-}
-
-/**
- * Class destructor
- */
-void StageEditor::destructor()
-{
-	if(this->userObjectsSelector)
-	{
-		delete this->userObjectsSelector;
-	}
-
-	// allow a new construct
-	Base::destructor();
-}
-
-/**
- * Update
- */
 void StageEditor::update()
 {}
-
-/**
- * Show editor
- *
- * @param gameState Current game state
- */
+//---------------------------------------------------------------------------------------------------------
 void StageEditor::show()
 {
-	this->mode = kFirstMode + 1;
-	this->userObjectSprite = NULL;
+	this->state = kFirstState + 1;
+	this->userEntitySprite = NULL;
 
 	StageEditor::releaseCollider(this);
-	StageEditor::setupMode(this);
+	StageEditor::configureState(this);
 
 	StageEditor::dimmGame(this);
 }
-
-/**
- * Hide editor
- */
+//---------------------------------------------------------------------------------------------------------
 void StageEditor::hide()
 {
-	CollisionManager::hideColliders(GameState::getCollisionManager(GameState::safeCast(StateMachine::getPreviousState(VUEngine::getStateMachine(VUEngine::getInstance())))));
+	CollisionManager::hideColliders(GameState::getCollisionManager(GameState::safeCast(VUEngine::getPreviousState(VUEngine::getInstance()))));
 	Printing::clear(Printing::getInstance());
 	StageEditor::removePreviousSprite(this);
 	StageEditor::releaseCollider(this);
-	this->currentEntityNode = NULL;
+	this->entityNode = NULL;
 
 	Tool::lightUpGame(this);
 }
-
-/**
- * Process  input
- *
- * @param pressedKey	User input
- */
+//---------------------------------------------------------------------------------------------------------
 void StageEditor::processUserInput(uint16 pressedKey)
 {
-	if(!this->gameState)
+	if(isDeleted(this->stage))
 	{
 		return;
 	}
 
 	if(pressedKey & K_SEL)
 	{
-		this->mode++;
+		this->state++;
 
-		if(kLastMode <= this->mode)
+		if(kLastState <= this->state)
 		{
-			this->mode = kFirstMode + 1;
+			this->state = kFirstState + 1;
 		}
 
-		StageEditor::setupMode(this);
+		StageEditor::configureState(this);
 		return;
 	}
 
-	switch(this->mode)
+	switch(this->state)
 	{
 		case kMoveCamera:
 
@@ -233,37 +148,75 @@ void StageEditor::processUserInput(uint16 pressedKey)
 			break;
 	}
 }
+//---------------------------------------------------------------------------------------------------------
 
-/**
- * Print header
- *
- * @private
- */
+//=========================================================================================================
+// CLASS' PRIVATE METHODS
+//=========================================================================================================
+
+//---------------------------------------------------------------------------------------------------------
+void StageEditor::constructor()
+{
+	Base::constructor();
+
+	this->entityNode = NULL;
+	this->userEntitySprite = NULL;
+	this->state = kFirstState + 1;
+	this->collider = NULL;
+	this->userEntitySelector = new OptionsSelector(2, 12, NULL, NULL, NULL);
+
+	VirtualList userObjects = new VirtualList();
+
+	int32 i = 0;
+	for(;  _userObjects[i].entitySpec; i++)
+	{
+		Option* option = new Option;
+		option->value = _userObjects[i].name;
+		option->type = kString;
+		VirtualList::pushBack(userObjects, option);
+	}
+
+	if(VirtualList::getCount(userObjects))
+	{
+		OptionsSelector::setOptions(this->userEntitySelector, userObjects);
+	}
+
+	delete userObjects;
+
+	this->translationStepSize = __DEFAULT_TRANSLATION_STEP;
+}
+//---------------------------------------------------------------------------------------------------------
+void StageEditor::destructor()
+{
+	if(this->userEntitySelector)
+	{
+		delete this->userEntitySelector;
+	}
+
+	// allow a new construct
+	Base::destructor();
+}
+//---------------------------------------------------------------------------------------------------------
 void StageEditor::printHeader()
 {
 	Printing::text(Printing::getInstance(), "\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08", 0, 0, NULL);
 	Printing::text(Printing::getInstance(), " LEVEL EDITOR ", 1, 0, NULL);
 	Printing::text(Printing::getInstance(), "  /  ", 16, 0, NULL);
-	Printing::int32(Printing::getInstance(), this->mode, 17, 0, NULL);
-	Printing::int32(Printing::getInstance(), kLastMode - 1, 19, 0, NULL);
+	Printing::int32(Printing::getInstance(), this->state, 17, 0, NULL);
+	Printing::int32(Printing::getInstance(), kLastState - 1, 19, 0, NULL);
 }
-
-/**
- * Print title
- *
- * @private
- */
-void StageEditor::setupMode()
+//---------------------------------------------------------------------------------------------------------
+void StageEditor::configureState()
 {
 	Printing::clear(Printing::getInstance());
 	StageEditor::printHeader(this);
 	StageEditor::removePreviousSprite(this);
 
-	switch(this->mode)
+	switch(this->state)
 	{
 		case kAddObjects:
 
-			if(OptionsSelector::getNumberOfOptions(this->userObjectsSelector))
+			if(OptionsSelector::getNumberOfOptions(this->userEntitySelector))
 			{
 				StageEditor::releaseCollider(this);
 				StageEditor::printUserObjects(this);
@@ -271,7 +224,7 @@ void StageEditor::setupMode()
 				break;
 			}
 
-			this->mode = kMoveCamera;
+			this->state = kMoveCamera;
 
 		case kMoveCamera:
 
@@ -289,7 +242,7 @@ void StageEditor::setupMode()
 
 		case kTranslateEntities:
 
-			if(!this->currentEntityNode)
+			if(!this->entityNode)
 			{
 				StageEditor::selectNextEntity(this);
 			}
@@ -304,17 +257,12 @@ void StageEditor::setupMode()
 			break;
 	}
 }
-
-/**
- * Release collider
- *
- * @private
- */
+//---------------------------------------------------------------------------------------------------------
 void StageEditor::releaseCollider()
 {
-	if(this->currentEntityNode)
+	if(this->entityNode)
 	{
-		Entity entity = Entity::safeCast(VirtualNode::getData(this->currentEntityNode));
+		Entity entity = Entity::safeCast(VirtualNode::getData(this->entityNode));
 		Entity::hideColliders(entity);
 
 		if(!Entity::hasColliders(entity) && this->collider)
@@ -325,20 +273,15 @@ void StageEditor::releaseCollider()
 		this->collider = NULL;
 	}
 }
-
-/**
- * Get collider
- *
- * @private
- */
+//---------------------------------------------------------------------------------------------------------
 void StageEditor::getCollider()
 {
-	if(!this->currentEntityNode)
+	if(!this->entityNode)
 	{
 		return;
 	}
 
-	Entity entity = Entity::safeCast(VirtualNode::getData(this->currentEntityNode));
+	Entity entity = Entity::safeCast(VirtualNode::getData(this->entityNode));
 	Entity::showColliders(entity);
 
 	if(!Entity::hasColliders(entity))
@@ -346,7 +289,7 @@ void StageEditor::getCollider()
 		this->collider = Collider::safeCast(new Box(SpatialObject::safeCast(entity), NULL));
 
 /*
-		Entity entity = Entity::safeCast(VirtualNode::getData(this->currentEntityNode));
+		Entity entity = Entity::safeCast(VirtualNode::getData(this->entityNode));
 		Size size = {Entity::getWidth(entity), Entity::getHeight(entity), 0};
 
 		Collider::transform(this->collider, Entity::getPosition(entity), Entity::getRotation(entity), Entity::getScale(entity), &size);
@@ -354,21 +297,15 @@ void StageEditor::getCollider()
 //		Collider::setReady(this->collider, false);
 	}
 }
-
-/**
- * Position collider
- *
- * @memberof 	StageEditor
- * @private
- */
+//---------------------------------------------------------------------------------------------------------
 void StageEditor::positionCollider()
 {
-	if(!this->currentEntityNode)
+	if(!this->entityNode)
 	{
 		return;
 	}
 
-	Entity entity = Entity::safeCast(VirtualNode::getData(this->currentEntityNode));
+	Entity entity = Entity::safeCast(VirtualNode::getData(this->entityNode));
 	Entity::showColliders(entity);
 /*
 	if(!Entity::hasColliders(entity) && this->collider)
@@ -379,16 +316,10 @@ void StageEditor::positionCollider()
 	}
 */
 }
-
-/**
- * Highlight entity
- *
- * @memberof 	StageEditor
- * @private
- */
+//---------------------------------------------------------------------------------------------------------
 void StageEditor::highLightEntity()
 {
-	if(this->currentEntityNode)
+	if(this->entityNode)
 	{
 		StageEditor::printEntityPosition(this);
 		StageEditor::positionCollider(this);
@@ -398,80 +329,71 @@ void StageEditor::highLightEntity()
 		Printing::text(Printing::getInstance(), "No entities in stage", 1, 4, NULL);
 	}
 }
-
-/**
- * Select the previous entity
- *
- * @memberof 	StageEditor
- * @private
- */
+//---------------------------------------------------------------------------------------------------------
 void StageEditor::selectPreviousEntity()
 {
+	if(isDeleted(this->stage))
+	{
+		return;
+	}
+
 	StageEditor::releaseCollider(this);
 
-	VirtualList stageEntities = (Container::safeCast(GameState::getStage(this->gameState)))->children;
+	VirtualList stageEntities = (Container::safeCast(this->stage))->children;
 
-	if(!this->currentEntityNode)
+	if(!this->entityNode)
 	{
-		this->currentEntityNode = stageEntities ? stageEntities->tail : NULL;
+		this->entityNode = stageEntities ? stageEntities->tail : NULL;
 	}
 	else
 	{
-		this->currentEntityNode = VirtualNode::getPrevious(this->currentEntityNode);
+		this->entityNode = VirtualNode::getPrevious(this->entityNode);
 
-		if(!this->currentEntityNode)
+		if(!this->entityNode)
 		{
-			this->currentEntityNode = stageEntities ? stageEntities->tail : NULL;
+			this->entityNode = stageEntities ? stageEntities->tail : NULL;
 		}
 	}
 
-	if(this->currentEntityNode)
+	if(this->entityNode)
 	{
 		StageEditor::getCollider(this);
 		StageEditor::highLightEntity(this);
 	}
 }
-
-/**
- * Select the next entity
- *
- * @memberof 	StageEditor
- * @private
- */
+//---------------------------------------------------------------------------------------------------------
 void StageEditor::selectNextEntity()
 {
+	if(isDeleted(this->stage))
+	{
+		return;
+	}
+
 	StageEditor::releaseCollider(this);
 
-	VirtualList stageEntities = (Container::safeCast(GameState::getStage(this->gameState)))->children;
+	VirtualList stageEntities = (Container::safeCast(this->stage))->children;
 
-	if(!this->currentEntityNode)
+	if(!this->entityNode)
 	{
-		this->currentEntityNode = stageEntities ? stageEntities->head : NULL;
+		this->entityNode = stageEntities ? stageEntities->head : NULL;
 	}
 	else
 	{
-		this->currentEntityNode = this->currentEntityNode->next;
+		this->entityNode = this->entityNode->next;
 
-		if(!this->currentEntityNode)
+		if(!this->entityNode)
 		{
-			this->currentEntityNode = stageEntities ? stageEntities->head : NULL;
+			this->entityNode = stageEntities ? stageEntities->head : NULL;
 		}
 	}
 
-	if(this->currentEntityNode)
+	if(this->entityNode)
 	{
 		StageEditor::getCollider(this);
 		StageEditor::highLightEntity(this);
 	}
 }
-
-/**
- * Move the camera
- *
- * @memberof 			StageEditor
- * @private
- * @param pressedKey	The controller button pressed by the 
- */
+//---------------------------------------------------------------------------------------------------------
 void StageEditor::moveCamera(uint32 pressedKey)
 {
 	if(pressedKey & K_LL)
@@ -559,16 +481,14 @@ void StageEditor::moveCamera(uint32 pressedKey)
 		StageEditor::printTranslationStepSize(this, 38, 7);
 	}
 }
-
-/**
- * Modify projection values
- *
- * @memberof StageEditor
- * @private
- * @param pressedKey	The controller button pressed by the 
- */
+//---------------------------------------------------------------------------------------------------------
 void StageEditor::changeProjection(uint32 pressedKey)
 {
+	if(isDeleted(this->stage))
+	{
+		return;
+	}
+
 	Optical optical = *_optical;
 
 	if(pressedKey & K_LL)
@@ -637,16 +557,10 @@ void StageEditor::changeProjection(uint32 pressedKey)
 	Camera::setOptical(Camera::getInstance(), optical);
 
 	StageEditor::printProjectionValues(this);
-	GameState::transform(this->gameState);
-}
 
-/**
- * Translate an entity
- *
- * @memberof 			StageEditor
- * @private
- * @param pressedKey	The controller button pressed by the 
- */
+	Stage::transform(this->stage, &_neutralEnvironmentTransformation, Camera::getTransformationFlags(Camera::getInstance()));
+}
+//---------------------------------------------------------------------------------------------------------
 void StageEditor::translateEntity(uint32 pressedKey)
 {
 	if(pressedKey & K_LL)
@@ -742,19 +656,17 @@ void StageEditor::translateEntity(uint32 pressedKey)
 		StageEditor::selectNextEntity(this);
 	}
 }
-
-/**
- * Apply a translation to an entity
- *
- * @memberof 			StageEditor
- * @private
- * @param translation	Translation vector
- */
+//---------------------------------------------------------------------------------------------------------
 void StageEditor::applyTranslationToEntity(Vector3D translation)
 {
-	if(this->currentEntityNode)
+	if(isDeleted(this->stage))
 	{
-		Container container = Container::safeCast(this->currentEntityNode->data);
+		return;
+	}
+
+	if(this->entityNode)
+	{
+		Container container = Container::safeCast(this->entityNode->data);
 		Vector3D localPosition = *Container::getLocalPosition(container);
 
 		localPosition.x += translation.x;
@@ -763,7 +675,7 @@ void StageEditor::applyTranslationToEntity(Vector3D translation)
 
 		Container::setLocalPosition(container, &localPosition);
 
-		GameState::transform(this->gameState);
+		Stage::transform(this->stage, &_neutralEnvironmentTransformation, Camera::getTransformationFlags(Camera::getInstance()));
 
 		StageEditor::positionCollider(this);
 
@@ -774,54 +686,42 @@ void StageEditor::applyTranslationToEntity(Vector3D translation)
 		StageEditor::printTranslationStepSize(this, 38, 8);
 	}
 }
-
-/**
- * Remove previous sprite
- *
- * @memberof 	StageEditor
- * @private
- */
+//---------------------------------------------------------------------------------------------------------
 void StageEditor::removePreviousSprite()
 {
-	if(this->userObjectSprite)
+	if(this->userEntitySprite)
 	{
-		delete this->userObjectSprite;
-		this->userObjectSprite = NULL;
+		delete this->userEntitySprite;
+		this->userEntitySprite = NULL;
 	}
 
 	SpriteManager::sortSprites(SpriteManager::getInstance());
 }
-
-/**
- * Show selected  object
- *
- * @memberof 	StageEditor
- * @private
- */
+//---------------------------------------------------------------------------------------------------------
 void StageEditor::showSelectedUserObject()
 {
 	StageEditor::removePreviousSprite(this);
 
-	SpriteSpec* spriteSpec = (SpriteSpec*)_userObjects[OptionsSelector::getSelectedOption(this->userObjectsSelector)].entitySpec->spriteSpecs[0];
+	SpriteSpec* spriteSpec = (SpriteSpec*)_userObjects[OptionsSelector::getSelectedOption(this->userEntitySelector)].entitySpec->spriteSpecs[0];
 
 	if(spriteSpec)
 	{
-		this->userObjectSprite = ((Sprite (*)(SpatialObject, SpriteSpec*)) spriteSpec->allocator)(NULL, (SpriteSpec*)spriteSpec);
-		ASSERT(this->userObjectSprite, "AnimationInspector::createSprite: null animatedSprite");
-		ASSERT(Sprite::getTexture(this->userObjectSprite), "AnimationInspector::createSprite: null texture");
+		this->userEntitySprite = ((Sprite (*)(SpatialObject, SpriteSpec*)) spriteSpec->allocator)(NULL, (SpriteSpec*)spriteSpec);
+		ASSERT(this->userEntitySprite, "AnimationInspector::createSprite: null animatedSprite");
+		ASSERT(Sprite::getTexture(this->userEntitySprite), "AnimationInspector::createSprite: null texture");
 
-		PixelVector spritePosition = Sprite::getDisplacedPosition(this->userObjectSprite);
-		spritePosition.x = __I_TO_FIXED((__HALF_SCREEN_WIDTH) - (Texture::getCols(Sprite::getTexture(this->userObjectSprite)) << 2));
-		spritePosition.y = __I_TO_FIXED((__HALF_SCREEN_HEIGHT) - (Texture::getRows(Sprite::getTexture(this->userObjectSprite)) << 2));
+		PixelVector spritePosition = Sprite::getDisplacedPosition(this->userEntitySprite);
+		spritePosition.x = __I_TO_FIXED((__HALF_SCREEN_WIDTH) - (Texture::getCols(Sprite::getTexture(this->userEntitySprite)) << 2));
+		spritePosition.y = __I_TO_FIXED((__HALF_SCREEN_HEIGHT) - (Texture::getRows(Sprite::getTexture(this->userEntitySprite)) << 2));
 		spritePosition.parallax = Optics::calculateParallax(spritePosition.z);
 
 		Rotation spriteRotation = {0, 0, 0};
 		PixelScale spriteScale = {1, 1};
-		Sprite::setPosition(this->userObjectSprite, &spritePosition);
-		Sprite::setRotation(this->userObjectSprite, &spriteRotation);
-		Sprite::setScale(this->userObjectSprite, &spriteScale);
+		Sprite::setPosition(this->userEntitySprite, &spritePosition);
+		Sprite::setRotation(this->userEntitySprite, &spriteRotation);
+		Sprite::setScale(this->userEntitySprite, &spriteScale);
 
-		this->userObjectSprite->updateAnimationFrame = true;
+		this->userEntitySprite->updateAnimationFrame = true;
 		SpriteManager::writeTextures(SpriteManager::getInstance());
 		SpriteManager::sortSprites(SpriteManager::getInstance());
 		SpriteManager::deferParamTableEffects(SpriteManager::getInstance(), false);
@@ -829,24 +729,22 @@ void StageEditor::showSelectedUserObject()
 		SpriteManager::deferParamTableEffects(SpriteManager::getInstance(), true);
 	}
 }
-
-/**
- * Select  object
- *
- * @memberof 			StageEditor
- * @private
- * @param pressedKey	The controller button pressed by the 
- */
+//---------------------------------------------------------------------------------------------------------
 void StageEditor::selectUserObject(uint32 pressedKey)
 {
+	if(isDeleted(this->stage))
+	{
+		return;
+	}
+
 	if(pressedKey & K_LU)
 	{
-		OptionsSelector::selectPrevious(this->userObjectsSelector);
+		OptionsSelector::selectPrevious(this->userEntitySelector);
 		StageEditor::showSelectedUserObject(this);
 	}
 	else if(pressedKey & K_LD)
 	{
-		OptionsSelector::selectNext(this->userObjectsSelector);
+		OptionsSelector::selectNext(this->userEntitySelector);
 		StageEditor::showSelectedUserObject(this);
 	}
 	else if(pressedKey & K_A)
@@ -862,7 +760,7 @@ void StageEditor::selectUserObject(uint32 pressedKey)
 
 		PositionedEntity DUMMY_ENTITY =
 		{
-			(EntitySpec*)_userObjects[OptionsSelector::getSelectedOption(this->userObjectsSelector)].entitySpec,
+			(EntitySpec*)_userObjects[OptionsSelector::getSelectedOption(this->userEntitySelector)].entitySpec,
 			{__METERS_TO_PIXELS(cameraPosition.x) + __HALF_SCREEN_WIDTH, __METERS_TO_PIXELS(cameraPosition.y) + __HALF_SCREEN_HEIGHT, __METERS_TO_PIXELS(cameraPosition.z)},
 			{0, 0, 0},
 			{1, 1, 1},
@@ -873,15 +771,15 @@ void StageEditor::selectUserObject(uint32 pressedKey)
 			false
 		};
 
-		Stage::spawnChildEntity(GameState::getStage(this->gameState), &DUMMY_ENTITY, false);
+		Stage::spawnChildEntity(this->stage, &DUMMY_ENTITY, false);
 		SpriteManager::sortSprites(SpriteManager::getInstance());
 
-		VirtualList stageEntities = (Container::safeCast(GameState::getStage(this->gameState)))->children;
-		this->currentEntityNode = stageEntities ? stageEntities->tail : NULL;
+		VirtualList stageEntities = (Container::safeCast(this->stage))->children;
+		this->entityNode = stageEntities ? stageEntities->tail : NULL;
 
 		// select the added entity
-		this->mode = kTranslateEntities;
-		StageEditor::setupMode(this);
+		this->state = kTranslateEntities;
+		StageEditor::configureState(this);
 
 		StageEditor::removePreviousSprite(this);
 		SpriteManager::sortSprites(SpriteManager::getInstance());
@@ -891,13 +789,7 @@ void StageEditor::selectUserObject(uint32 pressedKey)
 		SpriteManager::deferParamTableEffects(SpriteManager::getInstance(), true);
 	}
 }
-
-/**
- * Print entity position
- *
- * @memberof 	StageEditor
- * @private
- */
+//---------------------------------------------------------------------------------------------------------
 void StageEditor::printEntityPosition()
 {
 	int32 x = 1;
@@ -913,9 +805,9 @@ void StageEditor::printEntityPosition()
 	Printing::text(Printing::getInstance(), "Move\x1E\x1A\x1B\x1C\x1D", controlsXPos, controlsYPos++, NULL);
 	Printing::text(Printing::getInstance(), "      \x1F\x1A\x1B", controlsXPos, controlsYPos++, NULL);
 
-	if(this->currentEntityNode)
+	if(this->entityNode)
 	{
-		Entity entity = Entity::safeCast(VirtualNode::getData(this->currentEntityNode));
+		Entity entity = Entity::safeCast(VirtualNode::getData(this->entityNode));
 		const Vector3D* globalPosition =  SpatialObject::getPosition(entity);
 		const Rotation* globalRotation =  SpatialObject::getRotation(entity);
 		const Scale* globalScale =  SpatialObject::getScale(entity);
@@ -950,39 +842,25 @@ void StageEditor::printEntityPosition()
 		Printing::int32(Printing::getInstance(), 		Entity::getSprites(entity) ? VirtualList::getCount(Entity::getSprites(entity)) : 0, 				x + 10, y, 		NULL);
 	}
 }
-
-/**
- * Apply a translation to the camera
- *
- * @memberof 			StageEditor
- * @private
- * @param translation   Translation vector
- */
+//---------------------------------------------------------------------------------------------------------
 void StageEditor::applyTranslationToCamera(Vector3D translation)
 {
-	Camera::translate(Camera::getInstance(), translation, true);
-	GameState::transform(this->gameState);
-	StageEditor::printCameraPosition(this);
-	Stage::streamAll(GameState::getStage(this->gameState), true, true);
-}
+	if(isDeleted(this->stage))
+	{
+		return;
+	}
 
-/**
- * Print the camera position
- *
- * @memberof 	StageEditor
- * @private
- */
+	Camera::translate(Camera::getInstance(), translation, true);
+	Stage::transform(this->stage, &_neutralEnvironmentTransformation, Camera::getTransformationFlags(Camera::getInstance()));
+	StageEditor::printCameraPosition(this);
+	Stage::streamAll(this->stage, true, true);
+}
+//---------------------------------------------------------------------------------------------------------
 void StageEditor::printCameraPosition()
 {
 	Camera::print(Camera::getInstance(), 1, 2, true);
 }
-
-/**
- * Print projection values
- *
- * @memberof 	StageEditor
- * @private
- */
+//---------------------------------------------------------------------------------------------------------
 void StageEditor::printProjectionValues()
 {
 	int32 x = 1;
@@ -1010,13 +888,7 @@ void StageEditor::printProjectionValues()
 	Printing::text(Printing::getInstance(), "Base Distance:                  ", x, ++y, NULL);
 	Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(_optical->baseDistance), x + 25, y, NULL);
 }
-
-/**
- * Print  objects
- *
- * @memberof 	StageEditor
- * @private
- */
+//---------------------------------------------------------------------------------------------------------
 void StageEditor::printUserObjects()
 {
 	uint8 controlsXPos = 38;
@@ -1029,20 +901,15 @@ void StageEditor::printUserObjects()
 	controlsYPos++;
 	Printing::text(Printing::getInstance(), "Accept  \x13", controlsXPos, controlsYPos++, NULL);
 
-	OptionsSelector::printOptions(this->userObjectsSelector, 1, 4, kOptionsAlignLeft, 0);
+	OptionsSelector::print(this->userEntitySelector, 1, 4, kOptionsAlignLeft, 0);
 }
-
-/**
- * Print translation step size
- *
- * @memberof 	StageEditor
- * @private
- */
+//---------------------------------------------------------------------------------------------------------
 void StageEditor::printTranslationStepSize(uint8 x, uint8 y)
 {
 	Printing::text(Printing::getInstance(), "Step  \x1F\x1C\x1D", x, y, NULL);
 	Printing::text(Printing::getInstance(), "+     ", x, ++y, NULL);
 	Printing::int32(Printing::getInstance(), this->translationStepSize, x + 1, y, NULL);
 }
+//---------------------------------------------------------------------------------------------------------
 
 #endif

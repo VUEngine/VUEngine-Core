@@ -117,10 +117,10 @@ singleton class VUEngine : ListenerObject
 	void setLastProcessName(char* processName);
 	PhysicalWorld getPhysicalWorld();
 	uint32 getElapsedMilliseconds();
-	StateMachine getStateMachine();
 	Stage getStage();
 	UIContainer getUIContainer();
 	GameState getCurrentState();
+	GameState getPreviousState();
 	uint16 getGameFrameDuration();
 	void setGameFrameRate(uint16 gameFrameRate);
 	bool isEnteringToolState();

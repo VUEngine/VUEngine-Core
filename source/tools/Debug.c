@@ -1,4 +1,4 @@
-/**
+/*
  * VUEngine Core
  *
  * © Jorge Eremiev <jorgech3@gmail.com> and Christian Radke <c.radke@posteo.de>
@@ -10,9 +10,9 @@
 #ifdef __TOOLS
 
 
-//---------------------------------------------------------------------------------------------------------
-//												INCLUDES
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// INCLUDES
+//=========================================================================================================
 
 #include <Actor.h>
 #include <AnimationController.h>
@@ -81,17 +81,9 @@
 #include "Debug.h"
 
 
-//---------------------------------------------------------------------------------------------------------
-//											CLASS' MACROS
-//---------------------------------------------------------------------------------------------------------
-
-#define __CHARS_PER_SEGMENT_TO_SHOW		512
-#define __CHARS_PER_ROW_TO_SHOW			32
-
-
-//---------------------------------------------------------------------------------------------------------
-//											CLASS'S DEFINITION
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// CLASS' DECLARATIONS
+//=========================================================================================================
 
 friend class VirtualNode;
 friend class VirtualList;
@@ -101,100 +93,27 @@ extern ClassSizeData _userClassesSizeData[];
 #endif
 
 
+//=========================================================================================================
+// CLASS' MACROS
+//=========================================================================================================
+
+#define __CHARS_PER_SEGMENT_TO_SHOW			512
+#define __CHARS_PER_ROW_TO_SHOW				32
+
+
+//=========================================================================================================
+// CLASS' PUBLIC METHODS
+//=========================================================================================================
+
 //---------------------------------------------------------------------------------------------------------
-//												CLASS'S METHODS
-//---------------------------------------------------------------------------------------------------------
-
-/**
- * Get instance
- *
- * @fn			Debug::getInstance()
- * @memberof	Debug
- * @public
- * @return		Debug instance
- */
-
-
-/**
- * Class constructor
- *
- * @private
- */
-void Debug::constructor()
-{
-	Base::constructor();
-
-	this->pages = new VirtualList();
-	this->subPages = new VirtualList();
-	this->currentPage = NULL;
-	this->currentSubPage = NULL;
-
-	this->gameState = NULL;
-
-	this->currentSprite = -1;
-	this->bgmapSegment = 0;
-	this->objectSegment = 0;
-	this->charSegment = 0;
-	this->sramPage = 0;
-
-	this->update = NULL;
-
-	this->viewedMapPart = 0;
-
-	Debug::setupPages(this);
-}
-
-/**
- * Class destructor
- */
-void Debug::destructor()
-{
-	delete this->pages;
-	delete this->subPages;
-
-	// allow a new construct
-	Base::destructor();
-}
-
-// setup pages
-void Debug::setupPages()
-{
-	VirtualList::pushBack(this->pages, &Debug::generalStatusPage);
-	VirtualList::pushBack(this->pages, &Debug::memoryStatusPage);
-	VirtualList::pushBack(this->pages, &Debug::gameProfilingPage);
-	VirtualList::pushBack(this->pages, &Debug::streamingPage);
-	VirtualList::pushBack(this->pages, &Debug::spritesPage);
-	VirtualList::pushBack(this->pages, &Debug::texturesPage);
-	VirtualList::pushBack(this->pages, &Debug::objectsPage);
-	VirtualList::pushBack(this->pages, &Debug::charMemoryPage);
-	VirtualList::pushBack(this->pages, &Debug::physicsPage);
-	VirtualList::pushBack(this->pages, &Debug::hardwareRegistersPage);
-	VirtualList::pushBack(this->pages, &Debug::sramPage);
-
-	this->currentPage = this->pages->head;
-}
-
-/**
- * Update
- */
 void Debug::update()
 {
-	if(this->update)
-	{
-		((void (*)(Debug))this->update)(this);
-	}
-
 	if(this->currentPage->data == &Debug::texturesPage && 0 <= this->bgmapSegment)
 	{
 		Debug::showBgmapSegment(this);
 	}
 }
-
-/**
- * Show debugging screens
- *
- * @param gameState Current game state
- */
+//---------------------------------------------------------------------------------------------------------
 void Debug::show()
 {
 	Printing::clear(Printing::getInstance());
@@ -204,37 +123,14 @@ void Debug::show()
 
 	Debug::showPage(this, 0);
 }
-
-/**
- * Hide debugging screens
- */
+//---------------------------------------------------------------------------------------------------------
 void Debug::hide()
 {
-	CollisionManager::hideColliders(GameState::getCollisionManager(GameState::safeCast(StateMachine::getPreviousState(VUEngine::getStateMachine(VUEngine::getInstance())))));
+	CollisionManager::hideColliders(GameState::getCollisionManager(VUEngine::getPreviousState(VUEngine::getInstance())));
 	Printing::clear(Printing::getInstance());
 	SpriteManager::showSprites(SpriteManager::getInstance(), NULL, true);
 }
-
-/**
- * Get the position in the pages list of the current page
- *
- * @return 			Current page's node's position
- */
-uint8 Debug::getCurrentPageNumber()
-{
-	return VirtualList::getNodeIndex(this->pages, this->currentPage) + 1;
-}
-
-void Debug::setBlackBackground()
-{
-	SpriteManager::hideSprites(SpriteManager::getInstance(), NULL, false);
-}
-
-/**
- * Process user input
- *
- * @param pressedKey	User input
- */
+//---------------------------------------------------------------------------------------------------------
 void Debug::processUserInput(uint16 pressedKey)
 {
 	if(pressedKey & K_LL)
@@ -270,10 +166,67 @@ void Debug::processUserInput(uint16 pressedKey)
 		Debug::displaceDown(this);
 	}
 }
+//---------------------------------------------------------------------------------------------------------
 
-/**
- * Show previous debugging page
- */
+//=========================================================================================================
+// CLASS' PRIVATTE METHODS
+//=========================================================================================================
+
+//---------------------------------------------------------------------------------------------------------
+void Debug::constructor()
+{
+	Base::constructor();
+
+	this->pages = new VirtualList();
+	this->subPages = new VirtualList();
+	this->currentPage = NULL;
+	this->currentSubPage = NULL;
+	this->spriteIndex = -1;
+	this->bgmapSegment = 0;
+	this->objectSegment = 0;
+	this->charSegment = 0;
+	this->sramPage = 0;
+	this->bgmapSegmentDiplayedSection = 0;
+
+	Debug::setupPages(this);
+}
+//---------------------------------------------------------------------------------------------------------
+void Debug::destructor()
+{
+	delete this->pages;
+	delete this->subPages;
+
+	// allow a new construct
+	Base::destructor();
+}
+//---------------------------------------------------------------------------------------------------------
+void Debug::setupPages()
+{
+	VirtualList::pushBack(this->pages, &Debug::generalStatusPage);
+	VirtualList::pushBack(this->pages, &Debug::memoryStatusPage);
+	VirtualList::pushBack(this->pages, &Debug::gameProfilingPage);
+	VirtualList::pushBack(this->pages, &Debug::streamingPage);
+	VirtualList::pushBack(this->pages, &Debug::spritesPage);
+	VirtualList::pushBack(this->pages, &Debug::texturesPage);
+	VirtualList::pushBack(this->pages, &Debug::objectsPage);
+	VirtualList::pushBack(this->pages, &Debug::charMemoryPage);
+	VirtualList::pushBack(this->pages, &Debug::physicsPage);
+	VirtualList::pushBack(this->pages, &Debug::hardwareRegistersPage);
+	VirtualList::pushBack(this->pages, &Debug::sramPage);
+
+	this->currentPage = this->pages->head;
+}
+//---------------------------------------------------------------------------------------------------------
+uint8 Debug::getCurrentPageNumber()
+{
+	return VirtualList::getNodeIndex(this->pages, this->currentPage) + 1;
+}
+//---------------------------------------------------------------------------------------------------------
+void Debug::setBlackBackground()
+{
+	SpriteManager::hideSprites(SpriteManager::getInstance(), NULL, false);
+}
+//---------------------------------------------------------------------------------------------------------
 void Debug::showPreviousPage()
 {
 	SpriteManager::showSprites(SpriteManager::getInstance(), NULL, true);
@@ -287,10 +240,7 @@ void Debug::showPreviousPage()
 
 	Debug::showPage(this, -1);
 }
-
-/**
- * Show next debugging page
- */
+//---------------------------------------------------------------------------------------------------------
 void Debug::showNextPage()
 {
 	SpriteManager::showSprites(SpriteManager::getInstance(), NULL, true);
@@ -304,10 +254,7 @@ void Debug::showNextPage()
 
 	Debug::showPage(this, 1);
 }
-
-/**
- * Show previous debugging sub-page
- */
+//---------------------------------------------------------------------------------------------------------
 void Debug::showPreviousSubPage()
 {
 	if(!this->currentSubPage)
@@ -324,10 +271,7 @@ void Debug::showPreviousSubPage()
 
 	Debug::showSubPage(this, -1);
 }
-
-/**
- * Show next debugging sub-page
- */
+//---------------------------------------------------------------------------------------------------------
 void Debug::showNextSubPage()
 {
 	if(!this->currentSubPage)
@@ -344,12 +288,7 @@ void Debug::showNextSubPage()
 
 	Debug::showSubPage(this, 1);
 }
-
-/**
- * Print header
- *
- * @private
- */
+//---------------------------------------------------------------------------------------------------------
 void Debug::printHeader()
 {
 	Printing::text(Printing::getInstance(), "\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08", 0, 0, NULL);
@@ -358,18 +297,11 @@ void Debug::printHeader()
 	Printing::int32(Printing::getInstance(), Debug::getCurrentPageNumber(this), Debug::getCurrentPageNumber(this) < 10 ? 18 : 17, 0, NULL);
 	Printing::int32(Printing::getInstance(), VirtualList::getCount(this->pages), 20, 0, NULL);
 }
-
-/**
- * Show current debugging page
- *
- * @param increment		Increment
- */
+//---------------------------------------------------------------------------------------------------------
 void Debug::showPage(int32 increment)
 {
 	if(this->currentPage && this->currentPage->data)
 	{
-		this->update = NULL;
-
 		Printing::clear(Printing::getInstance());
 		SpriteManager::showSprites(SpriteManager::getInstance(), NULL, true);
 
@@ -378,25 +310,18 @@ void Debug::showPage(int32 increment)
 
 		Debug::setBlackBackground(this);
 
-		CollisionManager::hideColliders(GameState::getCollisionManager(GameState::safeCast(StateMachine::getPreviousState(VUEngine::getStateMachine(VUEngine::getInstance())))));
+		CollisionManager::hideColliders(GameState::getCollisionManager(VUEngine::getPreviousState(VUEngine::getInstance())));
 
 		((void (*)(Debug, int32, int32, int32))this->currentPage->data)(this, increment, 1, 2);
 	}
 
 	Printing::show(Printing::getInstance());
 }
-
-/**
- * Show current debugging sub-page
- *
- * @param increment		Increment
- */
+//---------------------------------------------------------------------------------------------------------
 void Debug::showSubPage(int32 increment)
 {
 	if(this->currentSubPage && VirtualNode::getData(this->currentSubPage))
 	{
-		this->update = NULL;
-
 		Printing::clear(Printing::getInstance());
 
 		Debug::printHeader(this);
@@ -407,81 +332,56 @@ void Debug::showSubPage(int32 increment)
 
 	Printing::show(Printing::getInstance());
 }
-
-/**
- * Displace window to the left
- */
+//---------------------------------------------------------------------------------------------------------
 void Debug::displaceLeft()
 {
-	if(this->viewedMapPart % 2 == 1)
+	if(this->bgmapSegmentDiplayedSection % 2 == 1)
 	{
-		this->viewedMapPart--;
+		this->bgmapSegmentDiplayedSection--;
 	}
 	Debug::showDebugBgmap(this);
 }
-
-/**
- * Displace window to the right
- */
+//---------------------------------------------------------------------------------------------------------
 void Debug::displaceRight()
 {
-	if(this->viewedMapPart % 2 == 0)
+	if(this->bgmapSegmentDiplayedSection % 2 == 0)
 	{
-		this->viewedMapPart++;
+		this->bgmapSegmentDiplayedSection++;
 	}
 	Debug::showDebugBgmap(this);
 }
-
-/**
- * Displace window up
- */
+//---------------------------------------------------------------------------------------------------------
 void Debug::displaceUp()
 {
-	if(this->viewedMapPart > 1)
+	if(this->bgmapSegmentDiplayedSection > 1)
 	{
-		this->viewedMapPart -= 2;
+		this->bgmapSegmentDiplayedSection -= 2;
 	}
 	Debug::showDebugBgmap(this);
 }
-
-/**
- * Displace window down
- */
+//---------------------------------------------------------------------------------------------------------
 void Debug::displaceDown()
 {
-	if(this->viewedMapPart < 4)
+	if(this->bgmapSegmentDiplayedSection < 4)
 	{
-		this->viewedMapPart += 2;
+		this->bgmapSegmentDiplayedSection += 2;
 	}
 	Debug::showDebugBgmap(this);
 }
-
-/**
- * Remove sub-pages
- *
- * @private
- */
+//---------------------------------------------------------------------------------------------------------
 void Debug::removeSubPages()
 {
 	VirtualList::clear(this->subPages);
 	this->currentSubPage = NULL;
 }
-
-/**
- * Setup Game's general status pages
- *
- * @private
- * @param increment		Increment
- * @param x				Camera's x coordinate
- * @param y				Camera's y coordinate
- */
+//---------------------------------------------------------------------------------------------------------
 void Debug::generalStatusPage(int32 increment __attribute__ ((unused)), int32 x __attribute__ ((unused)), int32 y)
 {
 	Debug::removeSubPages(this);
 
 	Printing::text(Printing::getInstance(), "GAME STATUS", 1, y++, NULL);
 	Printing::text(Printing::getInstance(), "Current State:", 1, ++y, NULL);
-	Printing::text(Printing::getInstance(), __GET_CLASS_NAME_UNSAFE(this->gameState), 20, y, NULL);
+	Printing::text(Printing::getInstance(), __GET_CLASS_NAME_UNSAFE(VUEngine::getPreviousState(VUEngine::getInstance())), 20, y, NULL);
 
 	Printing::text(Printing::getInstance(), "Save Data Manager:", 1, ++y, NULL);
 	if(VUEngine::getSaveDataManager(VUEngine::getInstance()))
@@ -502,22 +402,14 @@ void Debug::generalStatusPage(int32 increment __attribute__ ((unused)), int32 x 
 	Printing::text(Printing::getInstance(), "General clock time: ", 1, ++y, NULL);
 	Clock::print(VUEngine::getClock(VUEngine::getInstance()), 26, y, NULL);
 	Printing::text(Printing::getInstance(), "In game clock's time: ", 1, ++y, NULL);
-	Clock::print(GameState::getMessagingClock(GameState::safeCast(StateMachine::getPreviousState(VUEngine::getStateMachine(VUEngine::getInstance())))), 26, y, NULL);
+	Clock::print(GameState::getMessagingClock(VUEngine::getPreviousState(VUEngine::getInstance())), 26, y, NULL);
 	Printing::text(Printing::getInstance(), "Animations clock's time: ", 1, ++y, NULL);
-	Clock::print(GameState::getLogicsClock(GameState::safeCast(StateMachine::getPreviousState(VUEngine::getStateMachine(VUEngine::getInstance())))), 26, y, NULL);
+	Clock::print(GameState::getLogicsClock(VUEngine::getPreviousState(VUEngine::getInstance())), 26, y, NULL);
 	Printing::text(Printing::getInstance(), "Physics clock's time: ", 1, ++y, NULL);
-	Clock::print(GameState::getPhysicsClock(GameState::safeCast(StateMachine::getPreviousState(VUEngine::getStateMachine(VUEngine::getInstance())))), 26, y, NULL);
+	Clock::print(GameState::getPhysicsClock(VUEngine::getPreviousState(VUEngine::getInstance())), 26, y, NULL);
 	y+=3;
 }
-
-/**
- * Setup Memory Pool's status pages
- *
- * @private
- * @param increment		Increment
- * @param x				Camera's x coordinate
- * @param y				Camera's y coordinate
- */
+//---------------------------------------------------------------------------------------------------------
 void Debug::memoryStatusPage(int32 increment __attribute__ ((unused)), int32 x __attribute__ ((unused)), int32 y __attribute__ ((unused)))
 {
 	Debug::removeSubPages(this);
@@ -542,15 +434,7 @@ void Debug::memoryStatusPage(int32 increment __attribute__ ((unused)), int32 x _
 }
 
 #ifdef __DEBUG_TOOL
-
-/**
- * Show classes' memory footprint
- *
- * @private
- * @param increment		Increment
- * @param x				Camera's x coordinate
- * @param y				Camera's y coordinate
- */
+//---------------------------------------------------------------------------------------------------------
 void Debug::memoryStatusShowZeroPage(int32 increment __attribute__ ((unused)), int32 x, int32 y)
 {
 	MemoryPool::printDetailedUsage(MemoryPool::getInstance(), x, y);
@@ -570,15 +454,7 @@ void Debug::memoryStatusShowZeroPage(int32 increment __attribute__ ((unused)), i
 
 	Debug::printClassSizes(this, classesSizeData, sizeof(classesSizeData) / sizeof(ClassSizeData), x + 21, y, "VUEngine classes:");
 }
-
-/**
- * Show classes' memory footprint
- *
- * @private
- * @param increment		Increment
- * @param x				Camera's x coordinate
- * @param y				Camera's y coordinate
- */
+//---------------------------------------------------------------------------------------------------------
 void Debug::memoryStatusShowFirstPage(int32 increment __attribute__ ((unused)), int32 x, int32 y)
 {
 	MemoryPool::printDetailedUsage(MemoryPool::getInstance(), x, y);
@@ -602,15 +478,7 @@ void Debug::memoryStatusShowFirstPage(int32 increment __attribute__ ((unused)), 
 
 	Debug::printClassSizes(this, classesSizeData, sizeof(classesSizeData) / sizeof(ClassSizeData), x + 21, y, "VUEngine classes:");
 }
-
-/**
- * Show classes' memory footprint
- *
- * @private
- * @param increment		Increment
- * @param x				Camera's x coordinate
- * @param y				Camera's y coordinate
- */
+//---------------------------------------------------------------------------------------------------------
 void Debug::memoryStatusShowSecondPage(int32 increment __attribute__ ((unused)), int32 x, int32 y)
 {
 	MemoryPool::printDetailedUsage(MemoryPool::getInstance(), x, y);
@@ -629,15 +497,7 @@ void Debug::memoryStatusShowSecondPage(int32 increment __attribute__ ((unused)),
 
 	Debug::printClassSizes(this, classesSizeData, sizeof(classesSizeData) / sizeof(ClassSizeData), x + 21, y, "VUEngine classes:");
 }
-
-/**
- * Show classes' memory footprint
- *
- * @private
- * @param increment		Increment
- * @param x				Camera's x coordinate
- * @param y				Camera's y coordinate
- */
+//---------------------------------------------------------------------------------------------------------
 void Debug::memoryStatusShowThirdPage(int32 increment __attribute__ ((unused)), int32 x, int32 y)
 {
 	MemoryPool::printDetailedUsage(MemoryPool::getInstance(), x, y);
@@ -662,15 +522,7 @@ void Debug::memoryStatusShowThirdPage(int32 increment __attribute__ ((unused)), 
 
 	Debug::printClassSizes(this, classesSizeData, sizeof(classesSizeData) / sizeof(ClassSizeData), x + 21, y, "VUEngine classes:");
 }
-
-/**
- * Show classes' memory footprint
- *
- * @private
- * @param increment		Increment
- * @param x				Camera's x coordinate
- * @param y				Camera's y coordinate
- */
+//---------------------------------------------------------------------------------------------------------
 void Debug::memoryStatusShowFourthPage(int32 increment __attribute__ ((unused)), int32 x, int32 y)
 {
 	MemoryPool::printDetailedUsage(MemoryPool::getInstance(), x, y);
@@ -690,15 +542,7 @@ void Debug::memoryStatusShowFourthPage(int32 increment __attribute__ ((unused)),
 
 	Debug::printClassSizes(this, classesSizeData, sizeof(classesSizeData) / sizeof(ClassSizeData), x + 21, y, "VUEngine classes:");
 }
-
-/**
- * Show classes' memory footprint
- *
- * @private
- * @param increment		Increment
- * @param x				Camera's x coordinate
- * @param y				Camera's y coordinate
- */
+//---------------------------------------------------------------------------------------------------------
 void Debug::memoryStatusShowFifthPage(int32 increment __attribute__ ((unused)), int32 x, int32 y)
 {
 	MemoryPool::printDetailedUsage(MemoryPool::getInstance(), x, y);
@@ -716,15 +560,7 @@ void Debug::memoryStatusShowFifthPage(int32 increment __attribute__ ((unused)), 
 
 	Debug::printClassSizes(this, classesSizeData, sizeof(classesSizeData) / sizeof(ClassSizeData), x + 21, y, "VUEngine classes:");
 }
-
-/**
- * Show classes' memory footprint
- *
- * @private
- * @param increment		Increment
- * @param x				Camera's x coordinate
- * @param y				Camera's y coordinate
- */
+//---------------------------------------------------------------------------------------------------------
 void Debug::memoryStatusShowSixthPage(int32 increment __attribute__ ((unused)), int32 x, int32 y)
 {
 	MemoryPool::printDetailedUsage(MemoryPool::getInstance(), x, y);
@@ -741,15 +577,7 @@ void Debug::memoryStatusShowSixthPage(int32 increment __attribute__ ((unused)), 
 
 	Debug::printClassSizes(this, classesSizeData, sizeof(classesSizeData) / sizeof(ClassSizeData), x + 21, y, "VUEngine classes:");
 }
-
-/**
- * Show classes' memory footprint
- *
- * @private
- * @param increment		Increment
- * @param x				Camera's x coordinate
- * @param y				Camera's y coordinate
- */
+//---------------------------------------------------------------------------------------------------------
 void Debug::memoryStatusShowSeventhPage(int32 increment __attribute__ ((unused)), int32 x, int32 y)
 {
 	MemoryPool::printDetailedUsage(MemoryPool::getInstance(), x, y);
@@ -766,31 +594,13 @@ void Debug::memoryStatusShowSeventhPage(int32 increment __attribute__ ((unused))
 
 	Debug::printClassSizes(this, classesSizeData, sizeof(classesSizeData) / sizeof(ClassSizeData), x + 21, y, "VUEngine classes:");
 }
-
-/**
- * Show classes' memory footprint
- *
- * @private
- * @param increment		Increment
- * @param x				Camera's x coordinate
- * @param y				Camera's y coordinate
- */
+//---------------------------------------------------------------------------------------------------------
 void Debug::memoryStatusShowUserDefinedClassesSizes(int32 increment __attribute__ ((unused)), int32 x, int32 y)
 {
 	MemoryPool::printDetailedUsage(MemoryPool::getInstance(), x, y);
 	Debug::printClassSizes(this, _userClassesSizeData, 0, x + 21, y, "User defined classes:");
 }
-
-/**
- * Print classes' sizes
- *
- * @private
- * @param classesSizeData		Array with a class names and their sizes
- * @param count					Number of entries to print
- * @param x						Camera's x coordinate
- * @param y						Camera's y coordinate
- * @param message				Message to add to the output
- */
+//---------------------------------------------------------------------------------------------------------
 void Debug::printClassSizes(ClassSizeData* classesSizeData, int32 count, int32 x, int32 y, char* message)
 {
 	int32 columnIncrement = 20;
@@ -814,15 +624,7 @@ void Debug::printClassSizes(ClassSizeData* classesSizeData, int32 count, int32 x
 	}
 }
 #endif
-
-/**
- * Show Game's profiling
- *
- * @private
- * @param increment		Increment
- * @param x				Camera's x coordinate
- * @param y				Camera's y coordinate
- */
+//---------------------------------------------------------------------------------------------------------
 void Debug::gameProfilingPage(int32 increment __attribute__ ((unused)), int32 x __attribute__ ((unused)), int32 y __attribute__ ((unused)))
 {
 	Debug::removeSubPages(this);
@@ -830,15 +632,7 @@ void Debug::gameProfilingPage(int32 increment __attribute__ ((unused)), int32 x 
 	// TODO: show profiler
 	PRINT_TEXT("TODO: Show profiler", 1, 6);
 }
-
-/**
- * Setup streaming's status pages
- *
- * @private
- * @param increment		Increment
- * @param x				Camera's x coordinate
- * @param y				Camera's y coordinate
- */
+//---------------------------------------------------------------------------------------------------------
 void Debug::streamingPage(int32 increment __attribute__ ((unused)), int32 x __attribute__ ((unused)), int32 y __attribute__ ((unused)))
 {
 	Debug::removeSubPages(this);
@@ -848,28 +642,12 @@ void Debug::streamingPage(int32 increment __attribute__ ((unused)), int32 x __at
 
 	Debug::showSubPage(this, 0);
 }
-
-/**
- * Show State's streaming status
- *
- * @private
- * @param increment		Increment
- * @param x				Camera's x coordinate
- * @param y				Camera's y coordinate
- */
+//---------------------------------------------------------------------------------------------------------
 void Debug::streamingShowStatus(int32 increment __attribute__ ((unused)), int32 x __attribute__ ((unused)), int32 y __attribute__ ((unused)))
 {
-	Stage::print(GameState::getStage(GameState::safeCast(StateMachine::getPreviousState(VUEngine::getStateMachine(VUEngine::getInstance())))), x, y);
+	Stage::print(GameState::getStage(VUEngine::getPreviousState(VUEngine::getInstance())), x, y);
 }
-
-/**
- * Setup CHAR memory's status pages
- *
- * @private
- * @param increment		Increment
- * @param x				Camera's x coordinate
- * @param y				Camera's y coordinate
- */
+//---------------------------------------------------------------------------------------------------------
 void Debug::charMemoryPage(int32 increment __attribute__ ((unused)), int32 x __attribute__ ((unused)), int32 y __attribute__ ((unused)))
 {
 	Debug::removeSubPages(this);
@@ -882,15 +660,7 @@ void Debug::charMemoryPage(int32 increment __attribute__ ((unused)), int32 x __a
 
 	Debug::showSubPage(this, 0);
 }
-
-/**
- * Show CHAR memory's state
- *
- * @private
- * @param increment		Increment
- * @param x				Camera's x coordinate
- * @param y				Camera's y coordinate
- */
+//---------------------------------------------------------------------------------------------------------
 void Debug::charMemoryShowStatus(int32 increment __attribute__ ((unused)), int32 x, int32 y)
 {
 	this->charSegment += increment;
@@ -926,15 +696,7 @@ void Debug::charMemoryShowStatus(int32 increment __attribute__ ((unused)), int32
 		CharSetManager::print(CharSetManager::getInstance(), x, y);
 	}
 }
-
-/**
- * Show CHAR memory segments's state
- *
- * @private
- * @param increment		Increment
- * @param x				Camera's x coordinate
- * @param y				Camera's y coordinate
- */
+//---------------------------------------------------------------------------------------------------------
 void Debug::charMemoryShowMemory(int32 increment __attribute__ ((unused)), int32 x __attribute__ ((unused)), int32 y)
 {
 	Debug::setBlackBackground(this);
@@ -980,15 +742,7 @@ void Debug::charMemoryShowMemory(int32 increment __attribute__ ((unused)), int32
 		);
 	}
 }
-
-/**
- * Setup BGMAP memory's status pages
- *
- * @private
- * @param increment		Increment
- * @param x				Camera's x coordinate
- * @param y				Camera's y coordinate
- */
+//---------------------------------------------------------------------------------------------------------
 void Debug::texturesPage(int32 increment __attribute__ ((unused)), int32 x __attribute__ ((unused)), int32 y __attribute__ ((unused)))
 {
 	Debug::removeSubPages(this);
@@ -998,16 +752,11 @@ void Debug::texturesPage(int32 increment __attribute__ ((unused)), int32 x __att
 	this->currentSubPage = this->subPages->head;
 
 	this->bgmapSegment = -1;
-	this->viewedMapPart = 0;
+	this->bgmapSegmentDiplayedSection = 0;
 
 	Debug::showSubPage(this, 0);
 }
-
-/**
- * Show BGMAP memory's status
- *
- * @private
- */
+//---------------------------------------------------------------------------------------------------------
 void Debug::showDebugBgmap()
 {
 	if(this->currentPage->data != &Debug::texturesPage ||
@@ -1021,12 +770,7 @@ void Debug::showDebugBgmap()
 	Debug::lightUpGame(this);
 	Debug::showBgmapSegment(this);
 }
-
-/**
- * Force display BGMAP memory's status
- *
- * @private
- */
+//---------------------------------------------------------------------------------------------------------
 void Debug::showBgmapSegment()
 {
 	uint32 printingBgmap = BgmapTextureManager::getPrintingBgmapSegment(BgmapTextureManager::getInstance());;
@@ -1041,7 +785,7 @@ void Debug::showBgmapSegment()
 	uint8 yOffset = 4;
 
 	// print box
-	switch(this->viewedMapPart)
+	switch(this->bgmapSegmentDiplayedSection)
 	{
 		case 0:
 		{
@@ -1174,15 +918,7 @@ void Debug::showBgmapSegment()
 		);
 	}
 }
-
-/**
- * Setup BGMAP segment's status
- *
- * @private
- * @param increment		Increment
- * @param x				Camera's x coordinate
- * @param y				Camera's y coordinate
- */
+//---------------------------------------------------------------------------------------------------------
 void Debug::texturesShowStatus(int32 increment, int32 x, int32 y)
 {
 	this->bgmapSegment += increment;
@@ -1204,7 +940,7 @@ void Debug::texturesShowStatus(int32 increment, int32 x, int32 y)
 		Printing::text(Printing::getInstance(), "BGMAP TEXTURES INSPECTOR           Segment: ", x, y, NULL);
 		Printing::int32(Printing::getInstance(), this->bgmapSegment, x + 44, y, NULL);
 
-		this->viewedMapPart = 0;
+		this->bgmapSegmentDiplayedSection = 0;
 
 		Debug::showDebugBgmap(this);
 	}
@@ -1216,15 +952,7 @@ void Debug::texturesShowStatus(int32 increment, int32 x, int32 y)
 		ParamTableManager::print(ParamTableManager::getInstance(), x + 27, y);
 	}
 }
-
-/**
- * Setup OBJECT memory's status pages
- *
- * @private
- * @param increment		Increment
- * @param x				Camera's x coordinate
- * @param y				Camera's y coordinate
- */
+//---------------------------------------------------------------------------------------------------------
 void Debug::objectsPage(int32 increment __attribute__ ((unused)), int32 x __attribute__ ((unused)), int32 y __attribute__ ((unused)))
 {
 	Debug::removeSubPages(this);
@@ -1237,15 +965,7 @@ void Debug::objectsPage(int32 increment __attribute__ ((unused)), int32 x __attr
 
 	Debug::showSubPage(this, 0);
 }
-
-/**
- * Show OBJECT memory's status
- *
- * @private
- * @param increment		Increment
- * @param x				Camera's x coordinate
- * @param y				Camera's y coordinate
- */
+//---------------------------------------------------------------------------------------------------------
 void Debug::objectsShowStatus(int32 increment, int32 x, int32 y)
 {
 	this->objectSegment += increment;
@@ -1297,15 +1017,7 @@ void Debug::objectsShowStatus(int32 increment, int32 x, int32 y)
 		SpriteManager::printObjectSpriteContainersStatus(SpriteManager::getInstance(), x, y);
 	}
 }
-
-/**
- * Setup WORLD memory's status pages
- *
- * @private
- * @param increment		Increment
- * @param x				Camera's x coordinate
- * @param y				Camera's y coordinate
- */
+//---------------------------------------------------------------------------------------------------------
 void Debug::spritesPage(int32 increment __attribute__ ((unused)), int32 x __attribute__ ((unused)), int32 y __attribute__ ((unused)))
 {
 	Debug::removeSubPages(this);
@@ -1314,40 +1026,32 @@ void Debug::spritesPage(int32 increment __attribute__ ((unused)), int32 x __attr
 	VirtualList::pushBack(this->subPages, &Debug::spritesShowStatus);
 	this->currentSubPage = this->subPages->head;
 
-	this->currentSprite = -1;
+	this->spriteIndex = -1;
 
 	Debug::showSubPage(this, 0);
 }
-
-/**
- * Show WORLD memory's status
- *
- * @private
- * @param increment		Increment
- * @param x				Camera's x coordinate
- * @param y				Camera's y coordinate
- */
+//---------------------------------------------------------------------------------------------------------
 void Debug::spritesShowStatus(int32 increment, int32 x, int32 y)
 {
-	this->currentSprite -= increment;
+	this->spriteIndex -= increment;
 
 	Debug::dimmGame(this);
 
 	int32 numberOfSprites = SpriteManager::getNumberOfSprites(SpriteManager::getInstance());
 
-	if(this->currentSprite > numberOfSprites)
+	if(this->spriteIndex > numberOfSprites)
 	{
-		this->currentSprite = 0;
+		this->spriteIndex = 0;
 	}
 
-	if(numberOfSprites == this->currentSprite)
+	if(numberOfSprites == this->spriteIndex)
 	{
 		Debug::setBlackBackground(this);
 		SpriteManager::print(SpriteManager::getInstance(), x, y, false);
 	}
-	else if(0 <= this->currentSprite && this->currentSprite < numberOfSprites)
+	else if(0 <= this->spriteIndex && this->spriteIndex < numberOfSprites)
 	{
-		Sprite sprite = SpriteManager::getSpriteAtIndex(SpriteManager::getInstance(), this->currentSprite);
+		Sprite sprite = SpriteManager::getSpriteAtIndex(SpriteManager::getInstance(), this->spriteIndex);
 		SpriteManager::hideSprites(SpriteManager::getInstance(), sprite, false);
 		SpriteManager::renderAndDraw(SpriteManager::getInstance());
 		Printing::text(Printing::getInstance(), "SPRITES INSPECTOR", x, y++, NULL);
@@ -1355,21 +1059,13 @@ void Debug::spritesShowStatus(int32 increment, int32 x, int32 y)
 	}
 	else
 	{
-		this->currentSprite = numberOfSprites;
+		this->spriteIndex = numberOfSprites;
 
 		Debug::setBlackBackground(this);
 		SpriteManager::print(SpriteManager::getInstance(), x, y, false);
 	}
 }
-
-/**
- * Setup physics' status pages
- *
- * @private
- * @param increment		Increment
- * @param x				Camera's x coordinate
- * @param y				Camera's y coordinate
- */
+//---------------------------------------------------------------------------------------------------------
 void Debug::physicsPage(int32 increment __attribute__ ((unused)), int32 x __attribute__ ((unused)), int32 y __attribute__ ((unused)))
 {
 	Debug::removeSubPages(this);
@@ -1380,74 +1076,32 @@ void Debug::physicsPage(int32 increment __attribute__ ((unused)), int32 x __attr
 
 	Debug::showSubPage(this, 0);
 }
-
-/**
- * Show physics' status
- *
- * @private
- * @param increment		Increment
- * @param x				Camera's x coordinate
- * @param y				Camera's y coordinate
- */
+//---------------------------------------------------------------------------------------------------------
 void Debug::physicStatusShowStatistics(int32 increment __attribute__ ((unused)), int32 x, int32 y)
 {
-	PhysicalWorld::print(GameState::getPhysicalWorld(GameState::safeCast(StateMachine::getPreviousState(VUEngine::getStateMachine(VUEngine::getInstance())))), x, y);
-	CollisionManager::print(GameState::getCollisionManager(GameState::safeCast(StateMachine::getPreviousState(VUEngine::getStateMachine(VUEngine::getInstance())))), x, y + 6);
-	CollisionManager::hideColliders(GameState::getCollisionManager(GameState::safeCast(StateMachine::getPreviousState(VUEngine::getStateMachine(VUEngine::getInstance())))));
+	PhysicalWorld::print(GameState::getPhysicalWorld(VUEngine::getPreviousState(VUEngine::getInstance())), x, y);
+	CollisionManager::print(GameState::getCollisionManager(VUEngine::getPreviousState(VUEngine::getInstance())), x, y + 6);
+	CollisionManager::hideColliders(GameState::getCollisionManager(VUEngine::getPreviousState(VUEngine::getInstance())));
 
 	Debug::setBlackBackground(this);
 }
-
-/**
- * Setup physics sub-pages
- *
- * @private
- * @param increment		Increment
- * @param x				Camera's x coordinate
- * @param y				Camera's y coordinate
- */
+//---------------------------------------------------------------------------------------------------------
 void Debug::physicStatusShowColliders(int32 increment __attribute__ ((unused)), int32 x, int32 y)
 {
 	Printing::text(Printing::getInstance(), "COLLISION SHAPES", x, y++, NULL);
-	this->update = (void (*)(void *))&Debug::showCollisionColliders;
 
 	SpriteManager::showSprites(SpriteManager::getInstance(), NULL, true);
 	Debug::dimmGame(this);
+	CollisionManager::showColliders(GameState::getCollisionManager(VUEngine::getPreviousState(VUEngine::getInstance())));
 }
-
-/**
- * Show collision boxes
- *
- * @private
- */
-void Debug::showCollisionColliders()
-{
-	CollisionManager::showColliders(GameState::getCollisionManager(GameState::safeCast(StateMachine::getPreviousState(VUEngine::getStateMachine(VUEngine::getInstance())))));
-}
-
-/**
- * Setup hardware register's status pages
- *
- * @private
- * @param increment		Increment
- * @param x				Camera's x coordinate
- * @param y				Camera's y coordinate
- */
+//---------------------------------------------------------------------------------------------------------
 void Debug::hardwareRegistersPage(int32 increment __attribute__ ((unused)), int32 x __attribute__ ((unused)), int32 y)
 {
 	Debug::removeSubPages(this);
 
 	HardwareManager::print(x, y);
 }
-
-/**
- * Setup SRAM's status pages
- *
- * @private
- * @param increment		Increment
- * @param x				Camera's x coordinate
- * @param y				Camera's y coordinate
- */
+//---------------------------------------------------------------------------------------------------------
 void Debug::sramPage(int32 increment __attribute__ ((unused)), int32 x __attribute__ ((unused)), int32 y __attribute__ ((unused)))
 {
 	Debug::removeSubPages(this);
@@ -1460,15 +1114,7 @@ void Debug::sramPage(int32 increment __attribute__ ((unused)), int32 x __attribu
 
 	Debug::showSubPage(this, 0);
 }
-
-/**
- * Show SRAM's status
- *
- * @private
- * @param increment		Increment
- * @param x				Camera's x coordinate
- * @param y				Camera's y coordinate
- */
+//---------------------------------------------------------------------------------------------------------
 void Debug::showSramPage(int32 increment __attribute__ ((unused)), int32 x __attribute__ ((unused)), int32 y)
 {
 	uint8 value;
@@ -1542,5 +1188,6 @@ void Debug::showSramPage(int32 increment __attribute__ ((unused)), int32 x __att
 	// mark scroll bar position
 	Printing::text(Printing::getInstance(), __CHAR_BRIGHT_RED_BOX, 46, y - 15 + (this->sramPage / (totalPages / 16)), NULL);
 }
+//---------------------------------------------------------------------------------------------------------
 
 #endif

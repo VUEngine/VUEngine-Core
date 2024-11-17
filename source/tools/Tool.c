@@ -1,4 +1,4 @@
-/**
+/*
  * VUEngine Core
  *
  * © Jorge Eremiev <jorgech3@gmail.com> and Christian Radke <c.radke@posteo.de>
@@ -8,84 +8,20 @@
  */
 
 
-//---------------------------------------------------------------------------------------------------------
-//												INCLUDES
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// INCLUDES
+//=========================================================================================================
 
 #include <Printing.h>
 
 #include "Tool.h"
 
 
-//---------------------------------------------------------------------------------------------------------
-//											CLASS'S DEFINITION
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// CLASS' DECLARATIONS
+//=========================================================================================================
 
-
-//---------------------------------------------------------------------------------------------------------
-//												CLASS'S METHODS
-//---------------------------------------------------------------------------------------------------------
-
-/**
- * Get instance
- *
- * @fn			Tool::getInstance()
- * @memberof	Tool
- * @public
- * @return		Tool instance
- */
-
-
-/**
- * Class constructor
- *
- * @private
- */
-void Tool::constructor()
-{
-	Base::constructor();
-
-	this->gameState = NULL;
-}
-
-/**
- * Class destructor
- */
-void Tool::destructor()
-{
-	// allow a new construct
-	Base::destructor();
-}
-
-void Tool::setGameState(GameState gameState)
-{
-	this->gameState = gameState;
-}
-
-void Tool::dimmGame()
-{
-	// Doens't work that well
-	/*
-	_vipRegisters[__GPLT0] = 0x50;
-	_vipRegisters[__GPLT1] = 0x50;
-	_vipRegisters[__GPLT2] = 0x50;
-	_vipRegisters[__GPLT3] = 0x50;
-	_vipRegisters[__JPLT0] = 0x50;
-	_vipRegisters[__JPLT1] = 0x50;
-	_vipRegisters[__JPLT2] = 0x50;
-	_vipRegisters[__JPLT3] = 0x50;
-
-	_vipRegisters[0x30 | __PRINTING_PALETTE] = 0x90;
-	*/
-}
-
-void Tool::lightUpGame()
-{
-	if(!isDeleted(this->gameState))
-	{
-		Stage::configurePalettes(GameState::getStage(this->gameState));
-	}
-}
+// This is a hack to prevent linker errors when the tools are not enabled.
 
 #ifndef __TOOLS
 
@@ -107,3 +43,52 @@ void StageEditorState::setVTable(){}
 void Profiler::setVTable(){}
 #endif
 
+
+//=========================================================================================================
+// CLASS' PUBLIC METHODS
+//=========================================================================================================
+
+//---------------------------------------------------------------------------------------------------------
+void Tool::constructor()
+{
+	Base::constructor();
+
+	this->stage = NULL;
+}
+//---------------------------------------------------------------------------------------------------------
+void Tool::destructor()
+{
+	// allow a new construct
+	Base::destructor();
+}
+//---------------------------------------------------------------------------------------------------------
+void Tool::setStage(Stage stage)
+{
+	this->stage = stage;
+}
+//---------------------------------------------------------------------------------------------------------
+void Tool::dimmGame()
+{
+	// Doens't work that well
+	/*
+	_vipRegisters[__GPLT0] = 0x50;
+	_vipRegisters[__GPLT1] = 0x50;
+	_vipRegisters[__GPLT2] = 0x50;
+	_vipRegisters[__GPLT3] = 0x50;
+	_vipRegisters[__JPLT0] = 0x50;
+	_vipRegisters[__JPLT1] = 0x50;
+	_vipRegisters[__JPLT2] = 0x50;
+	_vipRegisters[__JPLT3] = 0x50;
+
+	_vipRegisters[0x30 | __PRINTING_PALETTE] = 0x90;
+	*/
+}
+//---------------------------------------------------------------------------------------------------------
+void Tool::lightUpGame()
+{
+	if(!isDeleted(this->stage))
+	{
+		Stage::configurePalettes(this->stage);
+	}
+}
+//---------------------------------------------------------------------------------------------------------

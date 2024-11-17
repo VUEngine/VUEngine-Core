@@ -1,4 +1,4 @@
-/**
+/*
  * VUEngine Core
  *
  * © Jorge Eremiev <jorgech3@gmail.com> and Christian Radke <c.radke@posteo.de>
@@ -11,53 +11,45 @@
 #define OPTIONS_SELECTOR_H_
 
 
-//---------------------------------------------------------------------------------------------------------
-//												INCLUDES
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// INCLUDES
+//=========================================================================================================
 
 #include <ListenerObject.h>
 
 
-//---------------------------------------------------------------------------------------------------------
-//												MACROS
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// CLASS' MACROS
+//=========================================================================================================
 
 #define __OPTIONS_SELECT_MAX_COLS		__SCREEN_WIDTH >> 5
 #define __OPTIONS_SELECT_MAX_ROWS		__SCREEN_HEIGHT >> 3
 
 
-//---------------------------------------------------------------------------------------------------------
-//											TYPE DEFINITIONS
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// CLASS' DATA
+//=========================================================================================================
 
-/**
- * An option of the OptionsSelector
- *
- * @memberof	OptionsSelector
- */
+/// An option for the options selector
+/// @memberof	OptionsSelector
 typedef struct Option
 {
-	/// value of Option
+	/// Option's value
 	void* value;
-	/// OptionType
+
+	/// Option's type
 	uint8 type;
-	/// callback function to be executed for this menu option
+
+	/// Callback function to be executed for this menu option
 	void (*callback)(ListenerObject);
-	/// scope of callback function
-	ListenerObject callbackScope;
+
+	/// Scope of callback function
+	ListenerObject scope;
 
 } Option;
 
-
-//---------------------------------------------------------------------------------------------------------
-//												ENUMS
-//---------------------------------------------------------------------------------------------------------
-
-/**
- * The types of an Option
- *
- * @memberof	OptionsSelector
- */
+/// Types of Options
+/// @memberof	OptionsSelector
 enum OptionTypes
 {
 	/// a string
@@ -72,6 +64,8 @@ enum OptionTypes
 	kChar
 };
 
+/// Types of text alignments
+/// @memberof	OptionsSelector
 enum OptionsAlignment
 {
 	kOptionsAlignLeft = 0,
@@ -80,60 +74,119 @@ enum OptionsAlignment
 };
 
 
-//---------------------------------------------------------------------------------------------------------
-//											CLASS' DECLARATION
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// CLASS' DECLARATION
+//=========================================================================================================
 
-/// Utility class to render a menu
+///
+/// Class Sprite
+///
+/// Inherits from VisualComponent
+///
+/// Implements a simple interactive menu.
 /// @ingroup tools
 class OptionsSelector : ListenerObject
 {
-	// List of pages, each being a VirtualLists of Options
+	/// @protectedsection
+
+	/// List of pages, each being a VirtualLists of Options
 	VirtualList pages;
-	// Current page node
+
+	/// Current page's node
 	VirtualNode currentPage;
-	// Current option node
+	
+	/// Current option's node
 	VirtualNode currentOption;
-	// Printing column
-	int8 x;
-	int8 optionsLength;
-	// Printing row
-	int8 y;
-	uint32 alignment;
-	int8 spacing;
-	// Number of columns per page
-	uint16 cols;
-	// Number of rows per page
-	uint16 rows;
-	// Width of a column (in chars)
-	uint8 columnWidth;
-	// Total number of options
+	
+	/// Total number of options
 	int32 totalOptions;
-	// Current page index
+	
+	/// Current page index
 	int32 currentPageIndex;
+
 	// Current option index
 	int32 currentOptionIndex;
-	// Selection mark character
+
+	/// Screen x coordinate where to print
+	int8 x;
+	
+	/// Screen y coordinate where to print
+	int8 y;
+
+	/// The maximum length of all the options
+	int8 optionsLength;
+	
+	/// Text alignement
+	uint32 alignment;
+
+	/// Text row spacing
+	int8 spacing;
+
+	/// Number of columns per page
+	uint16 cols;
+	
+	/// Number of rows per page
+	uint16 rows;
+	
+	/// Width of a column (in chars)
+	uint8 columnWidth;
+
+	/// Left selection mark character
 	char* leftMark;
+
+	/// Right selection mark character
 	char* rightMark;
-	// Font to use for printing the OptionsSelector
+	
+	/// Font to use for printing the options
 	char* font;
 
 	/// @publicsection
+
+	/// Class' constructor
+	/// @param cols: Number of columns per page
+	/// @param rows: Number of rows per page
+	/// @param fong: Font to use for printing the options
+	/// @param leftMark: Left selection mark character
+	/// @param rightMark: Right selection mark character
 	void constructor(uint16 cols, uint16 rows, char* font, char* leftMark, char* rightMark);
-	void doCurrentSelectionCallback();
+
+	/// Set the maximum with of each column.
+	/// @param width: Columns' with
 	void setColumnWidth(uint8 width);
+
+	/// Set the markers characters.
+	/// @param leftMark: Left selection mark character
+	/// @param rightMark: Right selection mark character
 	void setMarkCharacters(char* leftMark, char* rightMark);
-	uint8 getWidth();
+
+	/// Set the available options.
+	/// @param options: List of options to set
 	void setOptions(VirtualList options);
-	void selectNext();
-	void selectPrevious();
-	bool selectNextColumn();
-	bool selectPreviousColumn();
+
+	/// Set the selection option.
+	/// @param optionIndex: Index of the option to select
 	bool setSelectedOption(int32 optionIndex);
+
+	/// Select the next option.
+	void selectNext();
+
+	/// Select the previous option.
+	void selectPrevious();
+
+	/// Retrieve the selected option's index.
+	/// @return Index of the selected option
 	int32 getSelectedOption();
-	void printOptions(uint8 x, uint8 y, uint32 alignment, uint8 spacing);
+
+	/// Retrieve the total number of options.
+	/// @return The total number of options
 	int32 getNumberOfOptions();
+
+	/// Print the options.
+	/// @param x: Screen x coordinate where to print
+	/// @param y: Screen y coordinate where to print
+	/// @param alignment: Text alignment
+	/// @param spacing: Text spacing
+	void print(uint8 x, uint8 y, uint32 alignment, uint8 spacing);
 }
 
 

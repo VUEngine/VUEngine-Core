@@ -1,4 +1,4 @@
-/**
+/*
  * VUEngine Core
  *
  * © Jorge Eremiev <jorgech3@gmail.com> and Christian Radke <c.radke@posteo.de>
@@ -10,9 +10,9 @@
 #ifdef __TOOLS
 
 
-//---------------------------------------------------------------------------------------------------------
-//												INCLUDES
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// INCLUDES
+//=========================================================================================================
 
 #include <string.h>
 
@@ -33,39 +33,31 @@
 #include "AnimationInspector.h"
 
 
-//---------------------------------------------------------------------------------------------------------
-//											CLASS'S DEFINITION
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// CLASS' DECLARATIONS
+//=========================================================================================================
 
 friend class Sprite;
 
 extern UserAnimatedEntity _userAnimatedEntities[];
 
 
-//---------------------------------------------------------------------------------------------------------
-//												ENUMS
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// CLASS' DATA
+//=========================================================================================================
 
-/**
- * The different modes of the AnimationInspector
- *
- * @memberof	AnimationInspector
- */
-enum Modes
+/// @memberof AnimationInspector
+enum AnimationInspectorStates
 {
-	kFirstMode = 0,
+	kFirstState = 0,
 	kSelectActor,
 	kSelectSprite,
 	kSelectAnimation,
 	kEditAnimation,
-	kLastMode
+	kLastState
 };
 
-/**
- * Properties of a Animation
- *
- * @memberof	AnimationInspector
- */
+/// @memberof AnimationInspector
 enum AnimationProperties
 {
 	kNumberOfFrames = 0,
@@ -75,92 +67,14 @@ enum AnimationProperties
 };
 
 
+//=========================================================================================================
+// CLASS' PUBLIC METHODS
+//=========================================================================================================
+
 //---------------------------------------------------------------------------------------------------------
-//												CLASS'S METHODS
-//---------------------------------------------------------------------------------------------------------
-
-/**
- * Get instance
- *
- * @fn			AnimationInspector::getInstance()
- * @memberof	AnimationInspector
- * @public
- * @return		AnimationInspector instance
- */
-
-
-/**
- * Class constructor
- *
- * @private
- */
-void AnimationInspector::constructor()
-{
-	Base::constructor();
-
-	this->animatedSprite = NULL;
-	this->gameState = NULL;
-	this->animatedEntitySelector = NULL;
-	this->spriteSelector = NULL;
-	this->animationsSelector = NULL;
-	this->animationEditionSelector = NULL;
-	this->frameEditionSelector = NULL;
-
-	this->mode = kFirstMode + 1;
-
-	int32 i = 0;
-	for(; i < __MAX_FRAMES_PER_ANIMATION_FUNCTION; i++)
-	{
-		this->animationFunction.frames[i] = 0;
-	}
-}
-
-/**
- * Class destructor
- */
-void AnimationInspector::destructor()
-{
-	if(this->animatedEntitySelector)
-	{
-		delete this->animatedEntitySelector;
-	}
-
-	if(this->animatedEntitySelector)
-	{
-		delete this->spriteSelector;
-	}
-
-	if(this->animationsSelector)
-	{
-		delete this->animationsSelector;
-	}
-
-	if(this->animationEditionSelector)
-	{
-		delete this->animationEditionSelector;
-	}
-
-	if(this->frameEditionSelector)
-	{
-		delete this->frameEditionSelector;
-	}
-
-	// allow a new construct
-	Base::destructor();
-}
-
-/**
- * Update
- */
 void AnimationInspector::update()
-{
-}
-
-/**
- * Show editor
- *
- * @param gameState Current game state
- */
+{}
+//---------------------------------------------------------------------------------------------------------
 void AnimationInspector::show()
 {
 	Printing::clear(Printing::getInstance());
@@ -176,7 +90,7 @@ void AnimationInspector::show()
 		return;
 	}
 
-	this->animatedSprite = NULL;
+	this->sprite = NULL;
 
 	this->animationsSelector = NULL;
 	this->animationEditionSelector = NULL;
@@ -203,18 +117,15 @@ void AnimationInspector::show()
 	OptionsSelector::setOptions(this->animatedEntitySelector, animatedEntitiesNames);
 	delete animatedEntitiesNames;
 
-	this->mode = kFirstMode + 1;
-	AnimationInspector::setupMode(this);
+	this->state = kFirstState + 1;
+	AnimationInspector::configureState(this);
 	SpriteManager::hideSprites(SpriteManager::getInstance(), NULL, false);
 	
 	// make sure all textures are written right now
 	SpriteManager::writeTextures(SpriteManager::getInstance());
 	SpriteManager::deferParamTableEffects(SpriteManager::getInstance(), false);
 }
-
-/**
- * Hide editor
- */
+//---------------------------------------------------------------------------------------------------------
 void AnimationInspector::hide()
 {
 	if(NULL == _userAnimatedEntities[0].animatedEntitySpec)
@@ -257,76 +168,9 @@ void AnimationInspector::hide()
 	SpriteManager::showSprites(SpriteManager::getInstance(), NULL, true);
 	SpriteManager::deferParamTableEffects(SpriteManager::getInstance(), true);
 }
-
-/**
- * Setup editor's current page
- *
- * @private
- */
-void AnimationInspector::setupMode()
-{
-	Printing printing = Printing::getInstance();
-
-	Printing::clear(Printing::getInstance());
-	Printing::text(printing, "\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08", 0, 0, NULL);
-	Printing::text(printing, " ANIMATION INSPECTOR ", 1, 0, NULL);
-	Printing::text(printing, "             ", 39, 2, NULL);
-	Printing::text(printing, "             ", 39, 3, NULL);
-
-	switch(this->mode)
-	{
-		case kSelectActor:
-
-			AnimationInspector::removePreviousSprite(this);
-			Printing::text(printing, "Select \x13  ", 39, 2, NULL);
-			AnimationInspector::printUserAnimatedEntities(this);
-			break;
-
-		case kSelectSprite:
-
-			Printing::text(printing, "Select \x13  ", 39, 2, NULL);
-			Printing::text(printing, "Back   \x14  ", 39, 3, NULL);
-			AnimationInspector::createSpriteSelector(this);
-			AnimationInspector::printSprites(this);
-			AnimationInspector::createSprite(this);
-			Sprite::pause(this->animatedSprite, true);
-			break;
-
-		case kSelectAnimation:
-
-			Printing::text(printing, "Select \x13  ", 39, 2, NULL);
-			Printing::text(printing, "Back   \x14  ", 39, 3, NULL);
-			AnimationInspector::createAnimationsSelector(this);
-			Sprite::pause(this->animatedSprite, true);
-			AnimationInspector::printAnimatedEntityAnimations(this);
-			break;
-
-		case kEditAnimation:
-
-			AnimationInspector::loadAnimationFunction(this);
-			AnimationInspector::createAnimationEditionSelector(this);
-			AnimationInspector::createFrameEditionSelector(this);
-			AnimationController::playAnimationFunction(Sprite::getAnimationController(this->animatedSprite), &this->animationFunction, NULL);
-			Sprite::updateAnimation(this->animatedSprite);
-			Sprite::pause(this->animatedSprite, true);
-			Sprite::pause(this->animatedSprite, false);
-			AnimationInspector::printAnimationConfig(this);
-			break;
-	}
-}
-
-/**
- * Process user input
- *
- * @param pressedKey	User input
- */
+//---------------------------------------------------------------------------------------------------------
 void AnimationInspector::processUserInput(uint16 pressedKey)
 {
-	if(!this->gameState)
-	{
-		return;
-	}
-
 	if(NULL == _userAnimatedEntities[0].animatedEntitySpec)
 	{
 		return;
@@ -334,21 +178,21 @@ void AnimationInspector::processUserInput(uint16 pressedKey)
 
 	if(pressedKey & K_B)
 	{
-		this->mode--;
+		this->state--;
 
-		if(kFirstMode >= this->mode)
+		if(kFirstState >= this->state)
 		{
-			this->mode = kFirstMode + 1;
+			this->state = kFirstState + 1;
 		}
 		else
 		{
-			AnimationInspector::setupMode(this);
+			AnimationInspector::configureState(this);
 		}
 
 		return;
 	}
 
-	switch(this->mode)
+	switch(this->state)
 	{
 		case kSelectActor:
 
@@ -371,13 +215,116 @@ void AnimationInspector::processUserInput(uint16 pressedKey)
 			break;
 	}
 }
+//---------------------------------------------------------------------------------------------------------
 
-/**
- * Select AnimatedEntity to work on
- *
- * @private
- * @param pressedKey		User input
- */
+//=========================================================================================================
+// CLASS' PRIVATE METHODS
+//=========================================================================================================
+
+//---------------------------------------------------------------------------------------------------------
+void AnimationInspector::constructor()
+{
+	Base::constructor();
+
+	this->sprite = NULL;
+	this->animatedEntitySelector = NULL;
+	this->spriteSelector = NULL;
+	this->animationsSelector = NULL;
+	this->animationEditionSelector = NULL;
+	this->frameEditionSelector = NULL;
+
+	this->state = kFirstState + 1;
+
+	int32 i = 0;
+	for(; i < __MAX_FRAMES_PER_ANIMATION_FUNCTION; i++)
+	{
+		this->animationFunction.frames[i] = 0;
+	}
+}
+//---------------------------------------------------------------------------------------------------------
+void AnimationInspector::destructor()
+{
+	if(this->animatedEntitySelector)
+	{
+		delete this->animatedEntitySelector;
+	}
+
+	if(this->animatedEntitySelector)
+	{
+		delete this->spriteSelector;
+	}
+
+	if(this->animationsSelector)
+	{
+		delete this->animationsSelector;
+	}
+
+	if(this->animationEditionSelector)
+	{
+		delete this->animationEditionSelector;
+	}
+
+	if(this->frameEditionSelector)
+	{
+		delete this->frameEditionSelector;
+	}
+
+	// allow a new construct
+	Base::destructor();
+}
+//---------------------------------------------------------------------------------------------------------
+void AnimationInspector::configureState()
+{
+	Printing printing = Printing::getInstance();
+
+	Printing::clear(Printing::getInstance());
+	Printing::text(printing, "\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08", 0, 0, NULL);
+	Printing::text(printing, " ANIMATION INSPECTOR ", 1, 0, NULL);
+	Printing::text(printing, "             ", 39, 2, NULL);
+	Printing::text(printing, "             ", 39, 3, NULL);
+
+	switch(this->state)
+	{
+		case kSelectActor:
+
+			AnimationInspector::removePreviousSprite(this);
+			Printing::text(printing, "Select \x13  ", 39, 2, NULL);
+			AnimationInspector::printUserAnimatedEntities(this);
+			break;
+
+		case kSelectSprite:
+
+			Printing::text(printing, "Select \x13  ", 39, 2, NULL);
+			Printing::text(printing, "Back   \x14  ", 39, 3, NULL);
+			AnimationInspector::createSpriteSelector(this);
+			AnimationInspector::printSprites(this);
+			AnimationInspector::createSprite(this);
+			Sprite::pause(this->sprite, true);
+			break;
+
+		case kSelectAnimation:
+
+			Printing::text(printing, "Select \x13  ", 39, 2, NULL);
+			Printing::text(printing, "Back   \x14  ", 39, 3, NULL);
+			AnimationInspector::createAnimationsSelector(this);
+			Sprite::pause(this->sprite, true);
+			AnimationInspector::printAnimatedEntityAnimations(this);
+			break;
+
+		case kEditAnimation:
+
+			AnimationInspector::loadAnimationFunction(this);
+			AnimationInspector::createAnimationEditionSelector(this);
+			AnimationInspector::createFrameEditionSelector(this);
+			AnimationController::playAnimationFunction(Sprite::getAnimationController(this->sprite), &this->animationFunction, NULL);
+			Sprite::updateAnimation(this->sprite);
+			Sprite::pause(this->sprite, true);
+			Sprite::pause(this->sprite, false);
+			AnimationInspector::printAnimationConfig(this);
+			break;
+	}
+}
+//---------------------------------------------------------------------------------------------------------
 void AnimationInspector::selectAnimatedEntity(uint32 pressedKey)
 {
 	int32 userAnimatedEntitiesCount = 0;
@@ -395,17 +342,11 @@ void AnimationInspector::selectAnimatedEntity(uint32 pressedKey)
 	else if(pressedKey & K_A)
 	{
 		// select the added entity
-		this->mode = kSelectSprite;
-		AnimationInspector::setupMode(this);
+		this->state = kSelectSprite;
+		AnimationInspector::configureState(this);
 	}
 }
-
-/**
- * Select the Sprite to work on
- *
- * @private
- * @param pressedKey		User input
- */
+//---------------------------------------------------------------------------------------------------------
 void AnimationInspector::selectSprite(uint32 pressedKey)
 {
 	int32 userAnimatedEntitiesCount = 0;
@@ -425,31 +366,20 @@ void AnimationInspector::selectSprite(uint32 pressedKey)
 	else if(pressedKey & K_A)
 	{
 		// select the added entity
-		this->mode = kSelectAnimation;
-		AnimationInspector::setupMode(this);
+		this->state = kSelectAnimation;
+		AnimationInspector::configureState(this);
 	}
 }
-
-/**
- * Discard previous selected Sprite
- *
- * @private
- */
+//---------------------------------------------------------------------------------------------------------
 void AnimationInspector::removePreviousSprite()
 {
-	if(!isDeleted(this->animatedSprite))
+	if(!isDeleted(this->sprite))
 	{
-		SpriteManager::destroySprite(SpriteManager::getInstance(), this->animatedSprite);
-		this->animatedSprite = NULL;
+		SpriteManager::destroySprite(SpriteManager::getInstance(), this->sprite);
+		this->sprite = NULL;
 	}
 }
-
-/**
- * Select the animation to work on
- *
- * @private
- * @param pressedKey		User input
- */
+//---------------------------------------------------------------------------------------------------------
 void AnimationInspector::selectAnimation(uint32 pressedKey)
 {
 	this->animationFunctions = _userAnimatedEntities[OptionsSelector::getSelectedOption(this->animatedEntitySelector)].animatedEntitySpec->animationFunctions;
@@ -467,28 +397,22 @@ void AnimationInspector::selectAnimation(uint32 pressedKey)
 	}
 	else if(pressedKey & K_A)
 	{
-		this->mode = kEditAnimation;
-		AnimationInspector::setupMode(this);
+		this->state = kEditAnimation;
+		AnimationInspector::configureState(this);
 	}
 }
-
-/**
- * Start editing the selected animation
- *
- * @private
- * @param pressedKey		User input
- */
+//---------------------------------------------------------------------------------------------------------
 void AnimationInspector::editAnimation(uint32 pressedKey)
 {
 	if(pressedKey & K_A)
 	{
-		if(Sprite::isPlaying(this->animatedSprite))
+		if(Sprite::isPlaying(this->sprite))
 		{
-			Sprite::pause(this->animatedSprite, true);
+			Sprite::pause(this->sprite, true);
 		}
 		else
 		{
-			AnimationController::playAnimationFunction(Sprite::getAnimationController(this->animatedSprite), &this->animationFunction, NULL);
+			AnimationController::playAnimationFunction(Sprite::getAnimationController(this->sprite), &this->animationFunction, NULL);
 		}
 	}
 	else if((pressedKey & K_LU))
@@ -613,9 +537,9 @@ void AnimationInspector::editAnimation(uint32 pressedKey)
 		{
 			case kFrames:
 				{
-					NM_ASSERT(this->animatedSprite, "AnimationInspector::selectAnimation: null animatedSprite");
+					NM_ASSERT(this->sprite, "AnimationInspector::selectAnimation: null sprite");
 
-					Texture texture = Sprite::getTexture(this->animatedSprite);
+					Texture texture = Sprite::getTexture(this->sprite);
 					NM_ASSERT(texture, "AnimationInspector::selectAnimation: null texture");
 
 					TextureSpec* textureSpec = Texture::getSpec(texture);
@@ -632,51 +556,31 @@ void AnimationInspector::editAnimation(uint32 pressedKey)
 
 	AnimationInspector::printAnimationConfig(this);
 }
-
-/**
- * Print the list of user AnimatedEntities
- *
- * @private
- */
+//---------------------------------------------------------------------------------------------------------
 void AnimationInspector::printUserAnimatedEntities()
 {
 	Printing printing = Printing::getInstance();
 	Printing::text(printing, "OBJECTS", 1, 2, NULL);
 	Printing::text(printing, "                       ", 1, 3, NULL);
-	OptionsSelector::printOptions(this->animatedEntitySelector, 1, 4, kOptionsAlignLeft, 0);
+	OptionsSelector::print(this->animatedEntitySelector, 1, 4, kOptionsAlignLeft, 0);
 }
-
-/**
- * Print available sprites for the selected AnimatedEntity
- *
- * @private
- */
+//---------------------------------------------------------------------------------------------------------
 void AnimationInspector::printSprites()
 {
 	Printing printing = Printing::getInstance();
 	Printing::text(printing, "SPRITES", 1, 2, NULL);
 	Printing::text(printing, "                       ", 1, 3, NULL);
-	OptionsSelector::printOptions(this->spriteSelector, 1, 4, kOptionsAlignLeft, 0);
+	OptionsSelector::print(this->spriteSelector, 1, 4, kOptionsAlignLeft, 0);
 }
-
-/**
- * Print a list of animation for the selected AnimatedEntity
- *
- * @private
- */
+//---------------------------------------------------------------------------------------------------------
 void AnimationInspector::printAnimatedEntityAnimations()
 {
 	Printing printing = Printing::getInstance();
 	Printing::text(printing, "AVAILABLE ANIMATIONS", 1, 2, NULL);
 	Printing::text(printing, "                       ", 1, 3, NULL);
-	OptionsSelector::printOptions(this->animationsSelector, 1, 4, kOptionsAlignLeft, 0);
+	OptionsSelector::print(this->animationsSelector, 1, 4, kOptionsAlignLeft, 0);
 }
-
-/**
- * Print selected animation' values
- *
- * @private
- */
+//---------------------------------------------------------------------------------------------------------
 void AnimationInspector::printAnimationConfig()
 {
 	int32 x = 1;
@@ -685,16 +589,16 @@ void AnimationInspector::printAnimationConfig()
 
 	Printing::text(printing, "Animation: ", x, y, NULL);
 	Printing::text(printing, this->animationFunction.name, x + 11, y++, NULL);
-	OptionsSelector::printOptions(this->animationEditionSelector, x, ++y, kOptionsAlignLeft, 0);
+	OptionsSelector::print(this->animationEditionSelector, x, ++y, kOptionsAlignLeft, 0);
 
 	Printing::int32(printing, this->animationFunction.numberOfFrames, x + 19, y++, NULL);
 	Printing::int32(printing, this->animationFunction.delay, x + 19, y++, NULL);
 	Printing::text(printing, this->animationFunction.loop ? "true" : "false", x + 19, y++, NULL);
 
-	OptionsSelector::printOptions(this->frameEditionSelector, x, ++y + 1, kOptionsAlignLeft, 0);
+	OptionsSelector::print(this->frameEditionSelector, x, ++y + 1, kOptionsAlignLeft, 0);
 
 	Printing::text(printing, "Back     \x14 ", 37, 2, NULL);
-	if(!Sprite::isPlaying(this->animatedSprite))
+	if(!Sprite::isPlaying(this->sprite))
 	{
 		Printing::text(printing, "Play     \x13 ", 37, 3, NULL);
 	}
@@ -722,12 +626,7 @@ void AnimationInspector::printAnimationConfig()
 			break;
 	}
 }
-
-/**
- * Load the selected animation function to edit
- *
- * @private
- */
+//---------------------------------------------------------------------------------------------------------
 void AnimationInspector::loadAnimationFunction()
 {
 	if(NULL == _userAnimatedEntities[0].animatedEntitySpec)
@@ -751,12 +650,7 @@ void AnimationInspector::loadAnimationFunction()
 	this->animationFunction.loop = animationFunction->loop;
 	this->animationFunction.onAnimationComplete = (EventListener)&AnimationInspector_onAnimationComplete;
 }
-
-/**
- * Create a Sprite to work on
- *
- * @private
- */
+//---------------------------------------------------------------------------------------------------------
 void AnimationInspector::createSprite()
 {
 	if(NULL == _userAnimatedEntities[0].animatedEntitySpec)
@@ -776,38 +670,33 @@ void AnimationInspector::createSprite()
 
 	NM_ASSERT(spriteSpec, "AnimationInspector::createSprite: null spriteSpec");
 
-	this->animatedSprite = Sprite::safeCast(SpriteManager::createSprite(SpriteManager::getInstance(), NULL, (SpriteSpec*)spriteSpec));
-	ASSERT(this->animatedSprite, "AnimationInspector::createSprite: null animatedSprite");
-	ASSERT(Sprite::getTexture(this->animatedSprite), "AnimationInspector::createSprite: null texture");
+	this->sprite = Sprite::safeCast(SpriteManager::createSprite(SpriteManager::getInstance(), NULL, (SpriteSpec*)spriteSpec));
+	ASSERT(this->sprite, "AnimationInspector::createSprite: null sprite");
+	ASSERT(Sprite::getTexture(this->sprite), "AnimationInspector::createSprite: null texture");
 
-	PixelVector spritePosition = Sprite::getDisplacedPosition(this->animatedSprite);
-	spritePosition.x = ((__HALF_SCREEN_WIDTH) - (Texture::getCols(Sprite::getTexture(this->animatedSprite)) << 2));
-	spritePosition.y = ((__HALF_SCREEN_HEIGHT) - (Texture::getRows(Sprite::getTexture(this->animatedSprite)) << 2));
+	PixelVector spritePosition = Sprite::getDisplacedPosition(this->sprite);
+	spritePosition.x = ((__HALF_SCREEN_WIDTH) - (Texture::getCols(Sprite::getTexture(this->sprite)) << 2));
+	spritePosition.y = ((__HALF_SCREEN_HEIGHT) - (Texture::getRows(Sprite::getTexture(this->sprite)) << 2));
 	spritePosition.parallax = Optics::calculateParallax(spritePosition.z);
 
-	Sprite::setPosition(this->animatedSprite, &spritePosition);
-	Sprite::processEffects(this->animatedSprite);
+	Sprite::setPosition(this->sprite, &spritePosition);
+	Sprite::processEffects(this->sprite);
 
 	Rotation spriteRotation = {0, 0, 0};
 	PixelScale spriteScale = {1, 1};
 
-	Sprite::setPosition(this->animatedSprite, &spritePosition);
-	Sprite::setRotation(this->animatedSprite, &spriteRotation);
-	Sprite::setScale(this->animatedSprite, &spriteScale);
+	Sprite::setPosition(this->sprite, &spritePosition);
+	Sprite::setRotation(this->sprite, &spriteRotation);
+	Sprite::setScale(this->sprite, &spriteScale);
 
-	this->animatedSprite->updateAnimationFrame = true;
+	this->sprite->updateAnimationFrame = true;
 
-	SpriteManager::hideSprites(SpriteManager::getInstance(), this->animatedSprite, false);
+	SpriteManager::hideSprites(SpriteManager::getInstance(), this->sprite, false);
 	SpriteManager::writeTextures(SpriteManager::getInstance());
 	SpriteManager::sortSprites(SpriteManager::getInstance());
 	SpriteManager::render(SpriteManager::getInstance());
 }
-
-/**
- * Create OptionSelector for sprites
- *
- * @private
- */
+//---------------------------------------------------------------------------------------------------------
 void AnimationInspector::createSpriteSelector()
 {
 	if(!isDeleted(this->spriteSelector))
@@ -834,12 +723,7 @@ void AnimationInspector::createSpriteSelector()
 	OptionsSelector::setOptions(this->spriteSelector, spriteIndexes);
 	delete spriteIndexes;
 }
-
-/**
- * Create OptionSelector for animations
- *
- * @private
- */
+//---------------------------------------------------------------------------------------------------------
 void AnimationInspector::createAnimationsSelector()
 {
 	if(NULL == _userAnimatedEntities[0].animatedEntitySpec)
@@ -877,12 +761,7 @@ void AnimationInspector::createAnimationsSelector()
 		//TODO
 	}
 }
-
-/**
- * Create OptionSelector for editing the animation
- *
- * @private
- */
+//---------------------------------------------------------------------------------------------------------
 void AnimationInspector::createAnimationEditionSelector()
 {
 	if(this->animationEditionSelector)
@@ -918,14 +797,9 @@ void AnimationInspector::createAnimationEditionSelector()
 	OptionsSelector::setOptions(this->animationEditionSelector, optionsNames);
 	delete optionsNames;
 
-	this->mode = kEditAnimation;
+	this->state = kEditAnimation;
 }
-
-/**
- * Create OptionSelector for the frames of the current animation
- *
- * @private
- */
+//---------------------------------------------------------------------------------------------------------
 void AnimationInspector::createFrameEditionSelector()
 {
 	if(this->frameEditionSelector)
@@ -950,13 +824,7 @@ void AnimationInspector::createFrameEditionSelector()
 	OptionsSelector::setOptions(this->frameEditionSelector, framesIndexes);
 	delete framesIndexes;
 }
-
-/**
- * Callback for when animation completes its playback
- *
- * @private
- * @param eventFirer		AnimationController
- */
+//---------------------------------------------------------------------------------------------------------
 bool AnimationInspector::onAnimationComplete(ListenerObject eventFirer __attribute__ ((unused)))
 {
 	if(!this->animationFunction.loop)
@@ -966,5 +834,6 @@ bool AnimationInspector::onAnimationComplete(ListenerObject eventFirer __attribu
 
 	return true;
 }
+//---------------------------------------------------------------------------------------------------------
 
 #endif

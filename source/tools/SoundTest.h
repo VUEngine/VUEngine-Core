@@ -1,4 +1,4 @@
-/**
+/*
  * VUEngine Core
  *
  * © Jorge Eremiev <jorgech3@gmail.com> and Christian Radke <c.radke@posteo.de>
@@ -11,37 +11,51 @@
 #define SOUND_TEST_H_
 
 
-//---------------------------------------------------------------------------------------------------------
-//												INCLUDES
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// INCLUDES
+//=========================================================================================================
 
 #include <Tool.h>
 #include <Sound.h>
 #include <SoundManager.h>
 
 
-//---------------------------------------------------------------------------------------------------------
-//											TYPE DEFINITIONS
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// CLASS' DECLARATION
+//=========================================================================================================
 
-
-//---------------------------------------------------------------------------------------------------------
-//											CLASS'S DECLARATION
-//---------------------------------------------------------------------------------------------------------
-
+///
+/// Class SoundTest
+///
+/// Inherits from Tool
+///
+/// Implements a tool to test sounds.
 /// @ingroup tools
 singleton class SoundTest : Tool
 {
+	/// Currently tested sound
 	Sound sound;
-	uint16 selectedSound;
+
+	/// Index of the selected sound
+	uint16 soundIndex;
 
 	/// @publicsection
+
+	/// Method to retrieve the singleton instance
+	/// @return SoundTest singleton
 	static SoundTest getInstance();
-	void printVolumeState();
-	void printPlaybackPosition(uint32 elapsedMilliseconds);
+
+	/// Update the tool's state.
 	override void update();
+
+	/// Show the tool.
 	override void show();
+
+	/// Hide the tool.
 	override void hide();
+
+	/// Process the provided user pressed key.
+	/// @param pressedKey: User pressed key
 	override void processUserInput(uint16 pressedKey);
 }
 

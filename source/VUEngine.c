@@ -1051,10 +1051,15 @@ UIContainer VUEngine::getUIContainer()
 	return isDeleted(state) ? NULL : GameState::getUIContainer(GameState::safeCast(state));
 }
 
-// retrieve current state
 GameState VUEngine::getCurrentState()
 {
 	State state = StateMachine::getCurrentState(this->stateMachine);
+	return isDeleted(state) ? NULL : GameState::safeCast(state);
+}
+
+GameState VUEngine::getPreviousState()
+{
+	State state = StateMachine::getPreviousState(this->stateMachine);
 	return isDeleted(state) ? NULL : GameState::safeCast(state);
 }
 

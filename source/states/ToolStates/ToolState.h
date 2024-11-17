@@ -34,7 +34,7 @@ class Tool;
 ///
 /// Inherits from GameState
 ///
-/// Implements aan interface for game states that uses various debug tools.
+/// Defines an interface for game states that uses various debug tools.
 /// @ingroup states
 abstract class ToolState : GameState
 {

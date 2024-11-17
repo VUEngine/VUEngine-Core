@@ -1,4 +1,4 @@
-/**
+/*
  * VUEngine Core
  *
  * © Jorge Eremiev <jorgech3@gmail.com> and Christian Radke <c.radke@posteo.de>
@@ -11,41 +11,59 @@
 #define TOOL_H_
 
 
-//---------------------------------------------------------------------------------------------------------
-//												INCLUDES
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// INCLUDES
+//=========================================================================================================
 
 #include <ListenerObject.h>
-#include <GameState.h>
+#include <Stage.h>
 
 
-//---------------------------------------------------------------------------------------------------------
-//											TYPE DEFINITIONS
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// CLASS' DECLARATION
+//=========================================================================================================
 
-
-//---------------------------------------------------------------------------------------------------------
-//											CLASS'S DECLARATION
-//---------------------------------------------------------------------------------------------------------
-
+///
+/// Class Tool
+///
+/// Inherits from Object
+///
+/// Defines an interface for debugging tools.
 /// @ingroup tools
 abstract class Tool : Object
 {
-	GameState gameState;
+	/// @protectedsection
+
+	/// The stage to work with
+	Stage stage;
 
 	/// @publicsection
+
+	/// Class' constructor
 	void constructor();
 
-	static Tool getInstance();
+	/// Set the stage to work with.
+	/// @param stage: Stage to work with
+	void setStage(Stage stage);
 
-	void setGameState(GameState gameState);
-
-	virtual void update() = 0;
-	virtual void show() = 0;
-	virtual void hide() = 0;
+	/// Process the provided user pressed key.
+	/// @param pressedKey: User pressed key
 	virtual void processUserInput(uint16 pressedKey) = 0;
+
+	/// Dimm down the game.
 	virtual void dimmGame();
+
+	/// Light up the game.
 	virtual void lightUpGame();
+
+	/// Update the tool's state.
+	virtual void update() = 0;
+
+	/// Show the tool.
+	virtual void show() = 0;
+
+	/// Hide the tool.
+	virtual void hide() = 0;
 }
 
 #endif

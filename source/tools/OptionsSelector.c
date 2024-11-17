@@ -1,4 +1,4 @@
-/**
+/*
  * VUEngine Core
  *
  * © Jorge Eremiev <jorgech3@gmail.com> and Christian Radke <c.radke@posteo.de>
@@ -8,9 +8,9 @@
  */
 
 
-//---------------------------------------------------------------------------------------------------------
-//												INCLUDES
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// INCLUDES
+//=========================================================================================================
 
 #include <string.h>
 
@@ -76,27 +76,20 @@
 #include "OptionsSelector.h"
 
 
-//---------------------------------------------------------------------------------------------------------
-//											CLASS' DEFINITION
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// CLASS' DECLARATIONS
+//=========================================================================================================
 
 friend class VirtualList;
 friend class VirtualNode;
 friend class Printing;
 
 
-//---------------------------------------------------------------------------------------------------------
-//												CLASS' METHODS
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// CLASS' PUBLIC METHODS
+//=========================================================================================================
 
-/**
- * Class constructor
- *
- * @private
- * @param cols	Number of columns
- * @param rows	Number of rows
- * @param font	Font to use for printing selector
- */
+//---------------------------------------------------------------------------------------------------------
 void OptionsSelector::constructor(uint16 cols, uint16 rows, char* font, char* leftMark, char* rightMark)
 {
 	Base::constructor();
@@ -119,10 +112,7 @@ void OptionsSelector::constructor(uint16 cols, uint16 rows, char* font, char* le
 	this->font = font;
 	this->columnWidth = (__SCREEN_WIDTH_IN_CHARS) / this->cols;
 }
-
-/**
- * Class destructor
- */
+//---------------------------------------------------------------------------------------------------------
 void OptionsSelector::destructor()
 {
 	OptionsSelector::flushPages(this);
@@ -131,52 +121,7 @@ void OptionsSelector::destructor()
 	// must always be called at the end of the destructor
 	Base::destructor();
 }
-
-/**
- * Flush internal list of pages and options
- */
-void OptionsSelector::flushPages()
-{
-	if(this->pages)
-	{
-		VirtualNode node = this->pages->head;
-
-		for(; NULL != node; node = node->next)
-		{
-			ASSERT(node->data, "flushPages: null node data");
-
-			VirtualNode optionsNode = (VirtualList::safeCast(node->data))->head;
-
-			for(; optionsNode; optionsNode = optionsNode->next)
-			{
-				delete optionsNode->data;
-			}
-
-			delete node->data;
-		}
-
-		delete this->pages;
-	}
-
-	this->pages = NULL;
-}
-
-/**
- * Set character to use as selection mark
- *
- * @param mark	Selection mark character
- */
-void OptionsSelector::setMarkCharacters(char* leftMark, char* rightMark)
-{
-	this->leftMark = leftMark;
-	this->rightMark = rightMark;
-}
-
-/**
- * Set column width
- *
- * @param width Width (in font chars)
- */
+//---------------------------------------------------------------------------------------------------------
 void OptionsSelector::setColumnWidth(uint8 width)
 {
 	FontData* fontData = Printing::getFontByName(Printing::getInstance(), this->font);
@@ -189,22 +134,13 @@ void OptionsSelector::setColumnWidth(uint8 width)
 		this->columnWidth = width;
 	}
 }
-
-/**
- * Get total width of options selector (in chars)
- *
- * @return		Total width of options selector (in chars)
- */
-uint8 OptionsSelector::getWidth()
+//---------------------------------------------------------------------------------------------------------
+void OptionsSelector::setMarkCharacters(char* leftMark, char* rightMark)
 {
-	return this->columnWidth * this->cols;
+	this->leftMark = leftMark;
+	this->rightMark = rightMark;
 }
-
-/**
- * Set options
- *
- * @param options	List of options
- */
+//---------------------------------------------------------------------------------------------------------
 void OptionsSelector::setOptions(VirtualList options)
 {
 	ASSERT(options, "OptionsSelector::setOptions: null options");
@@ -249,10 +185,37 @@ void OptionsSelector::setOptions(VirtualList options)
 	this->currentPageIndex = 0;
 	this->currentOptionIndex = 0;
 }
+//---------------------------------------------------------------------------------------------------------
+bool OptionsSelector::setSelectedOption(int32 optionIndex)
+{
+	bool changed = false;
 
-/**
- * Select next option
- */
+	// check if desired option index is within bounds
+	if(optionIndex >= 0 && optionIndex <= this->totalOptions)
+	{
+		if(optionIndex < this->currentOptionIndex)
+		{
+			// if desired option index is smaller than the current one, select previous until desired option is set
+			while(this->currentOptionIndex != optionIndex)
+			{
+				OptionsSelector::selectNext(this);
+				changed = true;
+			}
+		}
+		else if(optionIndex > this->currentOptionIndex)
+		{
+			// if desired option index is larger than the current one, select next until desired option is set
+			while(this->currentOptionIndex != optionIndex)
+			{
+				OptionsSelector::selectPrevious(this);
+				changed = true;
+			}
+		}
+	}
+
+	return changed;
+}
+//---------------------------------------------------------------------------------------------------------
 void OptionsSelector::selectNext()
 {
 	if(this->currentOption)
@@ -288,7 +251,7 @@ void OptionsSelector::selectNext()
 				ASSERT(this->currentOption, "selectNext: null current option");
 
 				// render new page
-				OptionsSelector::printOptions(this, this->x, this->y, this->alignment, this->spacing - 1);
+				OptionsSelector::print(this, this->x, this->y, this->alignment, this->spacing - 1);
 			}
 			else
 			{
@@ -303,10 +266,7 @@ void OptionsSelector::selectNext()
 		OptionsSelector::printSelectorMark(this, this->rightMark, this->optionsLength);
 	}
 }
-
-/**
- * Select previous option
- */
+//---------------------------------------------------------------------------------------------------------
 void OptionsSelector::selectPrevious()
 {
 	if(this->currentOption)
@@ -342,7 +302,7 @@ void OptionsSelector::selectPrevious()
 				ASSERT(this->currentOption, "selectPrevious: current option data");
 
 				// render new page
-				OptionsSelector::printOptions(this, this->x, this->y, this->alignment, this->spacing - 1);
+				OptionsSelector::print(this, this->x, this->y, this->alignment, this->spacing - 1);
 			}
 			else
 			{
@@ -357,60 +317,18 @@ void OptionsSelector::selectPrevious()
 		OptionsSelector::printSelectorMark(this, this->rightMark, this->optionsLength);
 	}
 }
-
-/**
- * Set selected option
- *
- * @param optionIndex	Index of desired option
- * @return				Boolean that indicated whether a new option was selected
- */
-bool OptionsSelector::setSelectedOption(int32 optionIndex)
-{
-	bool changed = false;
-
-	// check if desired option index is within bounds
-	if(optionIndex >= 0 && optionIndex <= this->totalOptions)
-	{
-		if(optionIndex < this->currentOptionIndex)
-		{
-			// if desired option index is smaller than the current one, select previous until desired option is set
-			while(this->currentOptionIndex != optionIndex)
-			{
-				OptionsSelector::selectNext(this);
-				changed = true;
-			}
-		}
-		else if(optionIndex > this->currentOptionIndex)
-		{
-			// if desired option index is larger than the current one, select next until desired option is set
-			while(this->currentOptionIndex != optionIndex)
-			{
-				OptionsSelector::selectPrevious(this);
-				changed = true;
-			}
-		}
-	}
-
-	return changed;
-}
-
-/**
- * Retrieve selected options index
- *
- * @return				Index of selected option
- */
+//---------------------------------------------------------------------------------------------------------
 int32 OptionsSelector::getSelectedOption()
 {
 	return this->currentOptionIndex;
 }
-
-/**
- * Print the list of options
- *
- * @param x	 X coordinate to start printing at (in chars)
- * @param y	 Y coordinate to start printing at (in chars)
- */
-void OptionsSelector::printOptions(uint8 x, uint8 y, uint32 alignment, uint8 spacing)
+//---------------------------------------------------------------------------------------------------------
+int32 OptionsSelector::getNumberOfOptions()
+{
+	return this->totalOptions;
+}
+//---------------------------------------------------------------------------------------------------------
+void OptionsSelector::print(uint8 x, uint8 y, uint32 alignment, uint8 spacing)
 {
 	Printing printing = Printing::getInstance();
 
@@ -425,7 +343,7 @@ void OptionsSelector::printOptions(uint8 x, uint8 y, uint32 alignment, uint8 spa
 		this->alignment = alignment;
 		this->spacing = spacing;
 
-		ASSERT(this->currentPage, "printOptions: currentPage");
+		ASSERT(this->currentPage, "print: currentPage");
 		VirtualNode node = (VirtualList::safeCast(VirtualNode::getData(this->currentPage)))->head;
 
 		int8 jStart = 0;
@@ -453,8 +371,8 @@ void OptionsSelector::printOptions(uint8 x, uint8 y, uint32 alignment, uint8 spa
 
 		for(int32 counter = 0; NULL != node; node = node->next, counter++)
 		{
-			ASSERT(node, "printOptions: push null node");
-			ASSERT(node->data, "printOptions: push null node data");
+			ASSERT(node, "print: push null node");
+			ASSERT(node->data, "print: push null node data");
 
 			int8 optionsLength = 0;
 			int8 optionsLengthDivisor = 1;
@@ -526,13 +444,39 @@ void OptionsSelector::printOptions(uint8 x, uint8 y, uint32 alignment, uint8 spa
 		OptionsSelector::printSelectorMark(this, this->rightMark, this->optionsLength);
 	}
 }
+//---------------------------------------------------------------------------------------------------------
 
-/**
- * Print the selector mark
- *
- * @private
- * @param mark	The character to use
- */
+//=========================================================================================================
+// CLASS' PRIVATE METHODS
+//=========================================================================================================
+
+//---------------------------------------------------------------------------------------------------------
+void OptionsSelector::flushPages()
+{
+	if(this->pages)
+	{
+		VirtualNode node = this->pages->head;
+
+		for(; NULL != node; node = node->next)
+		{
+			ASSERT(node->data, "flushPages: null node data");
+
+			VirtualNode optionsNode = (VirtualList::safeCast(node->data))->head;
+
+			for(; optionsNode; optionsNode = optionsNode->next)
+			{
+				delete optionsNode->data;
+			}
+
+			delete node->data;
+		}
+
+		delete this->pages;
+	}
+
+	this->pages = NULL;
+}
+//---------------------------------------------------------------------------------------------------------
 void OptionsSelector::printSelectorMark(char* mark, int8 optionsLength)
 {
 	if(this->currentPage && NULL != mark)
@@ -573,26 +517,14 @@ void OptionsSelector::printSelectorMark(char* mark, int8 optionsLength)
 		);
 	}
 }
-
-/**
- * Execute the callback of the currently selected option
- */
+//---------------------------------------------------------------------------------------------------------
 void OptionsSelector::doCurrentSelectionCallback()
 {
 	Option* option = VirtualNode::getData(this->currentOption);
 
-	if(option->callback && option->callbackScope)
+	if(option->callback && option->scope)
 	{
-		option->callback(option->callbackScope);
+		option->callback(option->scope);
 	}
 }
-
-/**
- * Retrieve the total number of options
- *
- * @return		The number of options
- */
-int32 OptionsSelector::getNumberOfOptions()
-{
-	return this->totalOptions;
-}
+//---------------------------------------------------------------------------------------------------------

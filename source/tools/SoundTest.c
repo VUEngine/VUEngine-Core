@@ -1,4 +1,4 @@
-/**
+/*
  * VUEngine Core
  *
  * © Jorge Eremiev <jorgech3@gmail.com> and Christian Radke <c.radke@posteo.de>
@@ -7,10 +7,12 @@
  * that was distributed with this source code.
  */
 
+#ifdef __SOUND_TEST
 
-//---------------------------------------------------------------------------------------------------------
-//												INCLUDES
-//---------------------------------------------------------------------------------------------------------
+
+//=========================================================================================================
+// INCLUDES
+//=========================================================================================================
 
 #include <BgmapTextureManager.h>
 #include <HardwareManager.h>
@@ -25,61 +27,18 @@
 #include "SoundTest.h"
 
 
-//---------------------------------------------------------------------------------------------------------
-//											CLASS'S DEFINITION
-//---------------------------------------------------------------------------------------------------------
-
-#ifdef __SOUND_TEST
+//=========================================================================================================
+// CLASS' DECLARATIONS
+//=========================================================================================================
 
 extern SoundROMSpec* _userSounds[];
 
 
+//=========================================================================================================
+// CLASS' PUBLIC METHODS
+//=========================================================================================================
+
 //---------------------------------------------------------------------------------------------------------
-//												CLASS'S METHODS
-//---------------------------------------------------------------------------------------------------------
-
-/**
- * Class constructor
- *
- * @private
- */
-void SoundTest::constructor()
-{
-	Base::constructor();
-
-	this->sound = NULL;
-	this->selectedSound = 0;
-}
-
-/**
- * Class destructor
- */
-void SoundTest::destructor()
-{
-	SoundTest::releaseSound(this);
-
-	this->sound = NULL;
-
-	// allow a new construct
-	Base::destructor();
-}
-
-/**
- * Release sound
- */
-void SoundTest::releaseSound()
-{
-	if(!isDeleted(this->sound))
-	{
-		Sound::release(this->sound);
-
-		this->sound = NULL;
-	}
-}
-
-/**
- * Update
- */
 void SoundTest::update()
 {
 	if(!isDeleted(this->sound))
@@ -106,15 +65,10 @@ void SoundTest::update()
 		}
 	}
 }
-
-/**
- * Show editor
- *
- * @param gameState Current game state
- */
+//---------------------------------------------------------------------------------------------------------
 void SoundTest::show()
 {
-	this->selectedSound = 0;
+	this->soundIndex = 0;
 
 	SoundManager::reset(SoundManager::getInstance());
 
@@ -131,10 +85,7 @@ void SoundTest::show()
 	SoundTest::loadSound(this);
 	SoundTest::dimmGame(this);
 }
-
-/**
- * Hide editor
- */
+//---------------------------------------------------------------------------------------------------------
 void SoundTest::hide()
 {
 	SoundTest::releaseSound(this);
@@ -142,68 +93,10 @@ void SoundTest::hide()
 	SpriteManager::showSprites(SpriteManager::getInstance(), NULL, true);
 	SoundTest::lightUpGame(this);
 }
-
-void SoundTest::printGUI(bool clearScreen)
-{
-	Printing printing = Printing::getInstance();
-
-	if(clearScreen)
-	{
-		Printing::clear(printing);
-	}
-
-	Printing::text(printing, "\x08 SOUND TEST \x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08", 0, 0, NULL);
-
-	if(NULL == _userSounds[this->selectedSound])
-	{
-		Printing::text(printing, "No sounds found", 1, 4, NULL);
-		Printing::text(printing, "Define some in _userSounds global variable", 1, 6, NULL);
-		return;
-	}
-
-	Printing::text(printing, __CHAR_SELECTOR_LEFT, 1, 2, NULL);
-
-	uint16 totalSounds = SoundTest::getTotalSounds(this);
-
-	int32 selectedSoundDigits = Math::getDigitsCount(this->selectedSound + 1);
-	int32 totalSoundsDigits = Math::getDigitsCount(totalSounds);
-	Printing::int32(printing, this->selectedSound + 1, 1 + 1, 2, NULL);
-	Printing::text(printing, "/" , 1 + 1 + selectedSoundDigits, 2, NULL);
-	Printing::int32(printing, SoundTest::getTotalSounds(this), 1 + 1 + selectedSoundDigits + 1, 2, NULL);
-	Printing::text(printing, __CHAR_SELECTOR, 1 + 1 + selectedSoundDigits + 1 + totalSoundsDigits, 2, NULL);
-
-	if(isDeleted(this->sound))
-	{
-		return;
-	}
-
-	int32 xControls = 37;
-	int32 yControls = 4;
-
-	// Controls
-	if(!Sound::isPlaying(this->sound))
-	{
-		Printing::text(printing, "Play     \x13", xControls, yControls++, NULL);
-	}
-	else
-	{
-		Printing::text(printing, "Pause    \x13", xControls, yControls++, NULL);
-	}
-	Printing::text(printing, "Rewind   \x14", xControls, yControls++, NULL);
-	Printing::text(printing, "Track  \x1E\x1C\x1D", xControls, yControls++, NULL);
-	Printing::text(printing, Sound::hasPCMTracks(this->sound) ? "          " : "Speed  \x1E\x1A\x1B", xControls, yControls++, NULL);
-	yControls++;
-	Printing::text(printing, "T.Freq. \x1F\x1A", xControls, yControls++, NULL);
-	Printing::text(printing, "T.Scale \x1F\x1B", xControls, yControls++, NULL);
-	Printing::text(printing, "T.Res. \x1F\x1C\x1D", xControls, yControls++, NULL);
-
-	SoundTest::printTimer(this);
-	Sound::print(this->sound, 1, 4);
-}
-
+//---------------------------------------------------------------------------------------------------------
 void SoundTest::processUserInput(uint16 pressedKey)
 {
-	if(NULL == _userSounds[this->selectedSound])
+	if(NULL == _userSounds[this->soundIndex])
 	{
 		return;
 	}
@@ -362,7 +255,41 @@ void SoundTest::processUserInput(uint16 pressedKey)
 		Sound::print(this->sound, 1, 4);
 	}
 }
+//---------------------------------------------------------------------------------------------------------
 
+//=========================================================================================================
+// CLASS' PRIVATE METHODS
+//=========================================================================================================
+
+//---------------------------------------------------------------------------------------------------------
+void SoundTest::constructor()
+{
+	Base::constructor();
+
+	this->sound = NULL;
+	this->soundIndex = 0;
+}
+//---------------------------------------------------------------------------------------------------------
+void SoundTest::destructor()
+{
+	SoundTest::releaseSound(this);
+
+	this->sound = NULL;
+
+	// allow a new construct
+	Base::destructor();
+}
+//---------------------------------------------------------------------------------------------------------
+void SoundTest::releaseSound()
+{
+	if(!isDeleted(this->sound))
+	{
+		Sound::release(this->sound);
+
+		this->sound = NULL;
+	}
+}
+//---------------------------------------------------------------------------------------------------------
 uint16 SoundTest::getTotalSounds()
 {
 	uint16 totalSounds = 0;
@@ -371,41 +298,42 @@ uint16 SoundTest::getTotalSounds()
 
 	return totalSounds;
 }
-
+//---------------------------------------------------------------------------------------------------------
 void SoundTest::loadPreviousSound()
 {
 	uint16 totalSounds = SoundTest::getTotalSounds(this);
 
-	if(0 == this->selectedSound)
+	if(0 == this->soundIndex)
 	{
-		this->selectedSound = totalSounds - 1;
+		this->soundIndex = totalSounds - 1;
 	}
 	else
 	{
-		this->selectedSound--;
+		this->soundIndex--;
 	}
 
 	SoundTest::loadSound(this);
 }
+//---------------------------------------------------------------------------------------------------------
 void SoundTest::loadNextSound()
 {
 	uint16 totalSounds = SoundTest::getTotalSounds(this);
 
-	if(totalSounds - 1 == this->selectedSound)
+	if(totalSounds - 1 == this->soundIndex)
 	{
-		this->selectedSound = 0;
+		this->soundIndex = 0;
 	}
 	else
 	{
-		this->selectedSound++;
+		this->soundIndex++;
 	}
 
 	SoundTest::loadSound(this);
 }
-
+//---------------------------------------------------------------------------------------------------------
 void SoundTest::loadSound()
 {
-	if(NULL == _userSounds[this->selectedSound])
+	if(NULL == _userSounds[this->soundIndex])
 	{
 		SoundTest::printGUI(this, false);
 		return;
@@ -423,9 +351,9 @@ void SoundTest::loadSound()
 	TimerManager::reset(TimerManager::getInstance());
 	TimerManager::setResolution(TimerManager::getInstance(), __TIMER_20US);
 	TimerManager::setTargetTimePerInterruptUnits(TimerManager::getInstance(), kUS);
-	TimerManager::setTargetTimePerInterrupt(TimerManager::getInstance(), _userSounds[this->selectedSound]->targetTimerResolutionUS);
+	TimerManager::setTargetTimePerInterrupt(TimerManager::getInstance(), _userSounds[this->soundIndex]->targetTimerResolutionUS);
 
-	this->sound = SoundManager::getSound(SoundManager::getInstance(), (SoundSpec*)_userSounds[this->selectedSound], kPlayAll, (EventListener)SoundTest::onSoundReleased, ListenerObject::safeCast(this));
+	this->sound = SoundManager::getSound(SoundManager::getInstance(), (SoundSpec*)_userSounds[this->soundIndex], kPlayAll, (EventListener)SoundTest::onSoundReleased, ListenerObject::safeCast(this));
 
 	NM_ASSERT(!isDeleted(this->sound), "SoundTest::loadSound: no sound");
 
@@ -443,7 +371,7 @@ void SoundTest::loadSound()
 
 	SoundTest::printGUI(this, false);
 }
-
+//---------------------------------------------------------------------------------------------------------
 bool SoundTest::onSoundFinish(ListenerObject eventFirer __attribute__((unused)))
 {
 	if(!isDeleted(this->sound))
@@ -454,7 +382,7 @@ bool SoundTest::onSoundFinish(ListenerObject eventFirer __attribute__((unused)))
 
 	return true;
 }
-
+//---------------------------------------------------------------------------------------------------------
 bool SoundTest::onSoundReleased(ListenerObject eventFirer __attribute__((unused)))
 {
 	if(Sound::safeCast(eventFirer) == this->sound)
@@ -464,22 +392,81 @@ bool SoundTest::onSoundReleased(ListenerObject eventFirer __attribute__((unused)
 
 	return false;
 }
-
-void SoundTest::printTimer()
-{
-	if(NULL == _userSounds[this->selectedSound])
-	{
-		return;
-	}
-
-	TimerManager::print(TimerManager::getInstance(), 1, 11);
-}
-
+//---------------------------------------------------------------------------------------------------------
 void SoundTest::applyTimerSettings()
 {
 	TimerManager::applySettings(TimerManager::getInstance(), true);
 
 	SoundTest::printTimer(this);
 }
+//---------------------------------------------------------------------------------------------------------
+void SoundTest::printTimer()
+{
+	if(NULL == _userSounds[this->soundIndex])
+	{
+		return;
+	}
+
+	TimerManager::print(TimerManager::getInstance(), 1, 11);
+}
+//---------------------------------------------------------------------------------------------------------
+void SoundTest::printGUI(bool clearScreen)
+{
+	Printing printing = Printing::getInstance();
+
+	if(clearScreen)
+	{
+		Printing::clear(printing);
+	}
+
+	Printing::text(printing, "\x08 SOUND TEST \x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08", 0, 0, NULL);
+
+	if(NULL == _userSounds[this->soundIndex])
+	{
+		Printing::text(printing, "No sounds found", 1, 4, NULL);
+		Printing::text(printing, "Define some in _userSounds global variable", 1, 6, NULL);
+		return;
+	}
+
+	Printing::text(printing, __CHAR_SELECTOR_LEFT, 1, 2, NULL);
+
+	uint16 totalSounds = SoundTest::getTotalSounds(this);
+
+	int32 selectedSoundDigits = Math::getDigitsCount(this->soundIndex + 1);
+	int32 totalSoundsDigits = Math::getDigitsCount(totalSounds);
+	Printing::int32(printing, this->soundIndex + 1, 1 + 1, 2, NULL);
+	Printing::text(printing, "/" , 1 + 1 + selectedSoundDigits, 2, NULL);
+	Printing::int32(printing, SoundTest::getTotalSounds(this), 1 + 1 + selectedSoundDigits + 1, 2, NULL);
+	Printing::text(printing, __CHAR_SELECTOR, 1 + 1 + selectedSoundDigits + 1 + totalSoundsDigits, 2, NULL);
+
+	if(isDeleted(this->sound))
+	{
+		return;
+	}
+
+	int32 xControls = 37;
+	int32 yControls = 4;
+
+	// Controls
+	if(!Sound::isPlaying(this->sound))
+	{
+		Printing::text(printing, "Play     \x13", xControls, yControls++, NULL);
+	}
+	else
+	{
+		Printing::text(printing, "Pause    \x13", xControls, yControls++, NULL);
+	}
+	Printing::text(printing, "Rewind   \x14", xControls, yControls++, NULL);
+	Printing::text(printing, "Track  \x1E\x1C\x1D", xControls, yControls++, NULL);
+	Printing::text(printing, Sound::hasPCMTracks(this->sound) ? "          " : "Speed  \x1E\x1A\x1B", xControls, yControls++, NULL);
+	yControls++;
+	Printing::text(printing, "T.Freq. \x1F\x1A", xControls, yControls++, NULL);
+	Printing::text(printing, "T.Scale \x1F\x1B", xControls, yControls++, NULL);
+	Printing::text(printing, "T.Res. \x1F\x1C\x1D", xControls, yControls++, NULL);
+
+	SoundTest::printTimer(this);
+	Sound::print(this->sound, 1, 4);
+}
+//---------------------------------------------------------------------------------------------------------
 
 #endif

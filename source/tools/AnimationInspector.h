@@ -1,4 +1,4 @@
-/**
+/*
  * VUEngine Core
  *
  * © Jorge Eremiev <jorgech3@gmail.com> and Christian Radke <c.radke@posteo.de>
@@ -11,64 +11,88 @@
 #define ANIMATION_INSPECTOR_H_
 
 
-//---------------------------------------------------------------------------------------------------------
-//												INCLUDES
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// INCLUDES
+//=========================================================================================================
 
 #include <Tool.h>
 #include <AnimatedEntity.h>
 
 
-//---------------------------------------------------------------------------------------------------------
-//											TYPE DEFINITIONS
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// CLASS' DATA
+//=========================================================================================================
 
-/**
- * For animation
- *
- * @memberof	AnimationInspector
- */
+/// A struct to map an animated entity spec to a name
+/// @memberof	AnimationInspector
 typedef struct UserAnimatedEntity
 {
-	/// spec
+	/// Specification for an animated entity
 	const AnimatedEntitySpec* animatedEntitySpec;
-	/// name
+
+	/// Animated entity spec's name
 	const char* name;
 
 } UserAnimatedEntity;
 
 
-//---------------------------------------------------------------------------------------------------------
-//											CLASS'S DECLARATION
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// CLASS' DECLARATION
+//=========================================================================================================
 
+///
+/// Class AnimationInspector
+///
+/// Inherits from Tool
+///
+/// Implements a tool that manipulates animations.
 /// @ingroup tools
 singleton class AnimationInspector : Tool
 {
-	// current animated sprite
-	Sprite animatedSprite;
-	// current animation description
+	/// Currently inspected sprite
+	Sprite sprite;
+
+	/// Animations to apply to the animated sprite
 	const AnimationFunction** animationFunctions;
-	// current animation function
+
+	/// Currently applied animation
 	AnimationFunction animationFunction;
-	// animated in game entity selector
+	
+	/// Selector for the animated entities
 	OptionsSelector animatedEntitySelector;
-	// animated sprite selector
+	
+	/// Selector for the animated sprite sprite selector
 	OptionsSelector spriteSelector;
-	// animations selector
+	
+	/// Selector for the animations to play
 	OptionsSelector animationsSelector;
-	// animation edition selector
+	
+	/// Selector for the animation's properties
 	OptionsSelector animationEditionSelector;
-	// frame edition selector
+	
+	/// Selector for the animation's frames
 	OptionsSelector frameEditionSelector;
-	// mode
-	int32 mode;
+	
+	/// Inspector's state
+	int32 state;
 
 	/// @publicsection
+
+	/// Method to retrieve the singleton instance
+	/// @return AnimationInspector singleton
 	static AnimationInspector getInstance();
+
+	/// Update the tool's state.
 	override void update();
+
+	/// Show the tool.
 	override void show();
+
+	/// Hide the tool.
 	override void hide();
+
+	/// Process the provided user pressed key.
+	/// @param pressedKey: User pressed key
 	override void processUserInput(uint16 pressedKey);
 }
 
