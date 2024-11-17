@@ -347,11 +347,7 @@ typedef struct PixelRightBox
 } PixelRightBox;
 
 
-/**
- * Camera frustum
- *
- * @memberof 	Camera
- */
+/// Camera frustum
 typedef struct CameraFrustum
 {
 	/// x0 frustum

@@ -234,7 +234,7 @@ fixed_t PhysicalWorld::getFrictionCoefficient()
 }
 //---------------------------------------------------------------------------------------------------------
 #ifndef __SHIPPING
-/**
+/*
  * Print status
  *
  * @param x

@@ -1,4 +1,4 @@
-/**
+/*
  * VUEngine Core
  *
  * © Jorge Eremiev <jorgech3@gmail.com> and Christian Radke <c.radke@posteo.de>
@@ -70,10 +70,7 @@ void ObjectTextureManager::constructor()
 {
 	Base::constructor();
 }
-
-/**
- * Class destructor
- */
+//---------------------------------------------------------------------------------------------------------
 void ObjectTextureManager::destructor()
 {
 	ObjectTextureManager::reset(this);

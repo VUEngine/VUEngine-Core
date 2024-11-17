@@ -38,7 +38,7 @@ void StageEditorState::destructor()
 //---------------------------------------------------------------------------------------------------------
 bool StageEditorState::isKeyCombination(const UserInput* userInput)
 {
-	return ((userInput->holdKey & K_A) && (userInput->holdKey & K_B) && (userInput->releasedKey & K_RL));
+	return ((userInput->holdKey & K_SEL) && (userInput->holdKey & K_RT) && (userInput->releasedKey & K_RL));
 }
 //---------------------------------------------------------------------------------------------------------
 

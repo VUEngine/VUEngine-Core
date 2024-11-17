@@ -40,7 +40,7 @@ void AnimationInspectorState::destructor()
 //---------------------------------------------------------------------------------------------------------
 bool AnimationInspectorState::isKeyCombination(const UserInput* userInput)
 {
-	return ((userInput->holdKey & K_A) && (userInput->holdKey & K_B) && (userInput->releasedKey & K_RR));
+	return ((userInput->holdKey & K_SEL) && (userInput->holdKey & K_RT) && (userInput->releasedKey & K_RR));
 }
 //---------------------------------------------------------------------------------------------------------
 

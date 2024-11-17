@@ -81,7 +81,7 @@ void Profiler::initialize()
 	Printing::resetCoordinates(Printing::getInstance());
 
 	this->initialized = true;
-	/**/
+
 	_vipRegisters[__GPLT0] = 0x50;
 	_vipRegisters[__GPLT1] = 0x50;
 	_vipRegisters[__GPLT2] = 0x50;
@@ -92,7 +92,6 @@ void Profiler::initialize()
 	_vipRegisters[__JPLT3] = 0x50;
 
 	_vipRegisters[0x30 | __PRINTING_PALETTE] = 0xE0;
-	/**/
 }
 //---------------------------------------------------------------------------------------------------------
 void Profiler::reset()
