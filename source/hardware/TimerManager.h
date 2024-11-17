@@ -120,6 +120,9 @@ singleton class TimerManager : Object
 	/// Reset the manager's state.
 	void reset();
 
+	/// Reset timer's counter.
+	void resetTimerCounter();
+
 	/// Apply the settings to the hardware timer.
 	/// @param enable: If true, the hardware timer is enabled
 	void applySettings(bool enable);

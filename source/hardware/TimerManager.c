@@ -111,6 +111,13 @@ void TimerManager::reset()
 	this->elapsedMicrosecondsPerInterrupt = TimerManager::getTargetTimePerInterruptInUS(this);
 }
 //---------------------------------------------------------------------------------------------------------
+void TimerManager::resetTimerCounter()
+{
+	uint16 timerCounter = TimerManager::computeTimerCounter(this);
+	_hardwareRegisters[__TLR] = (timerCounter & 0xFF);
+	_hardwareRegisters[__THR] = (timerCounter >> 8);
+}
+//---------------------------------------------------------------------------------------------------------
 void TimerManager::applySettings(bool enable)
 {
 	TimerManager::disable(this);
@@ -555,13 +562,6 @@ void TimerManager::disableInterrupt()
 	this->tcrValue &= ~__TIMER_INT;
 
 	_hardwareRegisters[__TCR] = this->tcrValue;
-}
-//---------------------------------------------------------------------------------------------------------
-void TimerManager::resetTimerCounter()
-{
-	uint16 timerCounter = TimerManager::computeTimerCounter(this);
-	_hardwareRegisters[__TLR] = (timerCounter & 0xFF);
-	_hardwareRegisters[__THR] = (timerCounter >> 8);
 }
 //---------------------------------------------------------------------------------------------------------
 void TimerManager::setTimerResolution()
