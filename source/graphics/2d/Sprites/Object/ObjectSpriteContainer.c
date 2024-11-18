@@ -306,12 +306,16 @@ bool ObjectSpriteContainer::sortProgressively(bool complete)
 
 			if(!complete)
 			{
-				this->sortingSpriteNode = this->sortingSpriteNode->next;
 				break;
 			}
 		}
 	}
 	while(complete && swapped);
+
+	if(!complete)
+	{
+		this->sortingSpriteNode = this->sortingSpriteNode->next;
+	}
 
 	return swapped;
 }
