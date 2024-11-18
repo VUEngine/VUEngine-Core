@@ -177,6 +177,10 @@ singleton class VUEngine : ListenerObject
 	/// @param state: Game state to swap to
 	void changeState(GameState state);
 
+	/// Check if the engine's state machine is in a tool state.
+	/// @return True if the engine's state machine is in a tool state
+	bool isInToolState();
+
 	/// Check if the engine's state machine is entering or exiting a tool state.
 	/// @return True if the engine's state machine is entering or exiting a tool state
 	bool isInToolStateTransition();

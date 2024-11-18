@@ -84,7 +84,9 @@ void FrameRate::gameFrameStarted(bool gameCycleEnded)
 #ifdef __PRINT_FRAMERATE
 #ifdef __PRINT_FRAMERATE_AT_X
 #ifdef __PRINT_FRAMERATE_AT_Y
+#ifndef __TOOLS
 		if(!VUEngine::isInToolState(VUEngine::getInstance()))
+#endif
 		{
 			FrameRate::print(this, __PRINT_FRAMERATE_AT_X, __PRINT_FRAMERATE_AT_Y);
 		}

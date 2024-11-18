@@ -230,6 +230,20 @@ void VUEngine::changeState(GameState gameState)
 	StateMachine::transitionTo(this->stateMachine, State::safeCast(gameState), kStateMachineSwapState);
 }
 //---------------------------------------------------------------------------------------------------------
+bool VUEngine::isInToolState()
+{
+	int32 isInToolState = false;
+
+#ifdef __TOOLS
+	isInToolState |= VUEngine::isInDebugMode(this);
+	isInToolState |= VUEngine::isInStageEditor(this);
+	isInToolState |= VUEngine::isInAnimationInspector(this);
+	isInToolState |= VUEngine::isInSoundTest(this);
+#endif
+
+	return isInToolState;
+}
+//---------------------------------------------------------------------------------------------------------
 bool VUEngine::isInToolStateTransition()
 {
 	return this->isInToolStateTransition;
@@ -1100,18 +1114,4 @@ bool VUEngine::isInSoundTest()
 	return VUEngine::isInState(this, GameState::safeCast(SoundTestState::getInstance()));
 }
 #endif
-//---------------------------------------------------------------------------------------------------------
-bool VUEngine::isInToolState()
-{
-	int32 isInToolState = false;
-
-#ifdef __TOOLS
-	isInToolState |= VUEngine::isInDebugMode(this);
-	isInToolState |= VUEngine::isInStageEditor(this);
-	isInToolState |= VUEngine::isInAnimationInspector(this);
-	isInToolState |= VUEngine::isInSoundTest(this);
-#endif
-
-	return isInToolState;
-}
 //---------------------------------------------------------------------------------------------------------
