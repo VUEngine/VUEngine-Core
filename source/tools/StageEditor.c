@@ -22,6 +22,7 @@
 #include <Entity.h>
 #include <GameState.h>
 #include <KeypadManager.h>
+#include <Mesh.h>
 #include <Optics.h>
 #include <OptionsSelector.h>
 #include <PhysicalWorld.h>
@@ -88,7 +89,7 @@ void StageEditor::show()
 	this->state = kFirstState + 1;
 	this->userEntitySprite = NULL;
 
-	StageEditor::releaseCollider(this);
+	StageEditor::releaseWireframe(this);
 	StageEditor::configureState(this);
 
 	StageEditor::dimmGame(this);
@@ -99,7 +100,7 @@ void StageEditor::hide()
 	CollisionManager::hideColliders(GameState::getCollisionManager(GameState::safeCast(VUEngine::getPreviousState(VUEngine::getInstance()))));
 	Printing::clear(Printing::getInstance());
 	StageEditor::removePreviousSprite(this);
-	StageEditor::releaseCollider(this);
+	StageEditor::releaseWireframe(this);
 	this->entityNode = NULL;
 
 	Tool::lightUpGame(this);
@@ -162,7 +163,7 @@ void StageEditor::constructor()
 	this->entityNode = NULL;
 	this->userEntitySprite = NULL;
 	this->state = kFirstState + 1;
-	this->collider = NULL;
+	this->wireframe = NULL;
 	this->userEntitySelector = new OptionsSelector(2, 12, NULL, NULL, NULL);
 
 	VirtualList userObjects = new VirtualList();
@@ -218,7 +219,7 @@ void StageEditor::configureState()
 
 			if(OptionsSelector::getNumberOfOptions(this->userEntitySelector))
 			{
-				StageEditor::releaseCollider(this);
+				StageEditor::releaseWireframe(this);
 				StageEditor::printUserObjects(this);
 				StageEditor::showSelectedUserObject(this);
 				break;
@@ -228,14 +229,14 @@ void StageEditor::configureState()
 
 		case kMoveCamera:
 
-			StageEditor::releaseCollider(this);
+			StageEditor::releaseWireframe(this);
 			StageEditor::printCameraPosition(this);
 			StageEditor::printTranslationStepSize(this, 38, 7);
 			break;
 
 		case kChangeProjection:
 
-			StageEditor::releaseCollider(this);
+			StageEditor::releaseWireframe(this);
 			StageEditor::printProjectionValues(this);
 			StageEditor::printTranslationStepSize(this, 38, 10);
 			break;
@@ -248,7 +249,6 @@ void StageEditor::configureState()
 			}
 			else
 			{
-				StageEditor::getCollider(this);
 				StageEditor::highLightEntity(this);
 			}
 
@@ -258,71 +258,81 @@ void StageEditor::configureState()
 	}
 }
 //---------------------------------------------------------------------------------------------------------
-void StageEditor::releaseCollider()
+void StageEditor::releaseWireframe()
 {
-	if(this->entityNode)
+	if(!isDeleted(this->wireframe))
 	{
-		Entity entity = Entity::safeCast(VirtualNode::getData(this->entityNode));
-		Entity::hideColliders(entity);
+		WireframeManager::destroyWireframe(WireframeManager::getInstance(), this->wireframe);
 
-		if(!Entity::hasColliders(entity) && this->collider)
-		{
-			delete this->collider;
-		}
-
-		this->collider = NULL;
+		this->wireframe = NULL;
 	}
-}
-//---------------------------------------------------------------------------------------------------------
-void StageEditor::getCollider()
-{
-	if(!this->entityNode)
-	{
-		return;
-	}
-
-	Entity entity = Entity::safeCast(VirtualNode::getData(this->entityNode));
-	Entity::showColliders(entity);
-
-	if(!Entity::hasColliders(entity))
-	{
-		this->collider = Collider::safeCast(new Box(SpatialObject::safeCast(entity), NULL));
-
-/*
-		Entity entity = Entity::safeCast(VirtualNode::getData(this->entityNode));
-		Size size = {Entity::getWidth(entity), Entity::getHeight(entity), 0};
-
-		Collider::transform(this->collider, Entity::getPosition(entity), Entity::getRotation(entity), Entity::getScale(entity), &size);
-*/
-//		Collider::setReady(this->collider, false);
-	}
-}
-//---------------------------------------------------------------------------------------------------------
-void StageEditor::positionCollider()
-{
-	if(!this->entityNode)
-	{
-		return;
-	}
-
-	Entity entity = Entity::safeCast(VirtualNode::getData(this->entityNode));
-	Entity::showColliders(entity);
-/*
-	if(!Entity::hasColliders(entity) && this->collider)
-	{
-		Size size = {Entity::getWidth(entity), Entity::getHeight(entity), 0};
-		Collider::transform(this->collider, Entity::getPosition(entity), Entity::getRotation(entity), Entity::getScale(entity), &size);
-		Collider::show(this->collider);
-	}
-*/
 }
 //---------------------------------------------------------------------------------------------------------
 void StageEditor::highLightEntity()
 {
-	if(this->entityNode)
+	if(NULL != this->entityNode)
 	{
 		StageEditor::printEntityPosition(this);
-		StageEditor::positionCollider(this);
+
+		Entity entity = Entity::safeCast(VirtualNode::getData(this->entityNode));
+
+		if(!isDeleted(entity))
+		{
+			int16 width = __METERS_TO_PIXELS(Entity::getWidth(entity)) << 2;
+			int16 height = __METERS_TO_PIXELS(Entity::getHeight(entity)) << 2;
+			fixed_t parallax = Optics::calculateParallax(Entity::getPosition(entity)->z);
+
+			const PixelVector MeshesSegments[][2]=
+			{
+				{
+					PixelVector::getFromVector3D((Vector3D){-width / 2, -height / 2, 0}, parallax),
+					PixelVector::getFromVector3D((Vector3D){width / 2, -height / 2, 0}, parallax),
+				},
+				{
+					PixelVector::getFromVector3D((Vector3D){-width / 2, height / 2, 0}, parallax),
+					PixelVector::getFromVector3D((Vector3D){width / 2, height / 2, 0}, parallax),
+				},
+				{
+					PixelVector::getFromVector3D((Vector3D){-width / 2, -height / 2, 0}, parallax),
+					PixelVector::getFromVector3D((Vector3D){-width / 2, height / 2, 0}, parallax),
+				},
+				{
+					PixelVector::getFromVector3D((Vector3D){width / 2, -height / 2, 0}, parallax),
+					PixelVector::getFromVector3D((Vector3D){width / 2, height / 2, 0}, parallax),
+				},
+
+				// limiter
+				{
+					{0, 0, 0, 0}, 
+					{0, 0, 0, 0}
+				},
+			};
+
+			MeshSpec meshSpec =
+			{
+				{
+					__TYPE(Mesh),
+
+					/// displacement
+					{0, 0, 0},
+
+					/// color
+					__COLOR_BRIGHT_RED,
+
+					/// transparency
+					__TRANSPARENCY_NONE,
+				
+					/// interlaced
+					false
+				},
+
+				// segments
+				(PixelVector(*)[2])MeshesSegments
+			};
+
+
+			this->wireframe = WireframeManager::createWireframe(WireframeManager::getInstance(), (WireframeSpec*)&meshSpec, SpatialObject::safeCast(entity));
+		}
 	}
 	else
 	{
@@ -337,7 +347,7 @@ void StageEditor::selectPreviousEntity()
 		return;
 	}
 
-	StageEditor::releaseCollider(this);
+	StageEditor::releaseWireframe(this);
 
 	VirtualList stageEntities = (Container::safeCast(this->stage))->children;
 
@@ -357,7 +367,6 @@ void StageEditor::selectPreviousEntity()
 
 	if(this->entityNode)
 	{
-		StageEditor::getCollider(this);
 		StageEditor::highLightEntity(this);
 	}
 }
@@ -369,7 +378,7 @@ void StageEditor::selectNextEntity()
 		return;
 	}
 
-	StageEditor::releaseCollider(this);
+	StageEditor::releaseWireframe(this);
 
 	VirtualList stageEntities = (Container::safeCast(this->stage))->children;
 
@@ -389,7 +398,6 @@ void StageEditor::selectNextEntity()
 
 	if(this->entityNode)
 	{
-		StageEditor::getCollider(this);
 		StageEditor::highLightEntity(this);
 	}
 }
@@ -676,8 +684,6 @@ void StageEditor::applyTranslationToEntity(Vector3D translation)
 		Container::setLocalPosition(container, &localPosition);
 
 		Stage::transform(this->stage, &_neutralEnvironmentTransformation, Camera::getTransformationFlags(Camera::getInstance()));
-
-		StageEditor::positionCollider(this);
 
 		StageEditor::printEntityPosition(this);
 

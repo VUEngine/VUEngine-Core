@@ -52,8 +52,8 @@ singleton class StageEditor : Tool
 	/// Node of the stage's selected entity
 	VirtualNode entityNode;
 
-	/// Current entity's collider
-	Collider collider;
+	/// Current entity's wireframe
+	Wireframe wireframe;
 
 	/// Sprite to display new entities to be added to the stage
 	Sprite userEntitySprite;
