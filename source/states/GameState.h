@@ -244,11 +244,7 @@ class GameState : State
 	void changeFrameRate(int16 targetFPS, int32 duration);
 
 	/// Force to completely stream in and out entities and to initialize all.
-	/// @param in: If true, all entities within the camera's reach are streamed in
-	/// and completely initialized
-	/// @param out: If true, every entities outside of the camera's reach are streamed out
-	/// and destroyed
-	void streamAll(bool in, bool out);
+	void streamAll();
 
 	/// Stream in or out the stage entities within or outside the camera's range.
 	/// @return True if at least some entity was streamed in or out

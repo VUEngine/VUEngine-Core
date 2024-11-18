@@ -853,7 +853,7 @@ void StageEditor::applyTranslationToCamera(Vector3D translation)
 	Camera::translate(Camera::getInstance(), translation, true);
 	Stage::transform(this->stage, &_neutralEnvironmentTransformation, Camera::getTransformationFlags(Camera::getInstance()));
 	StageEditor::printCameraPosition(this);
-	Stage::streamAll(this->stage, true, true);
+	Stage::streamAll(this->stage);
 }
 //---------------------------------------------------------------------------------------------------------
 void StageEditor::printCameraPosition()

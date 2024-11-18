@@ -232,7 +232,7 @@ void GameState::resume(void* owner __attribute__ ((unused)))
 		GameState::transform(this);
 
 		// Force all streaming right now
-		GameState::streamAll(this, true, true);
+		GameState::streamAll(this);
 	}
 
 	// unpause clock
@@ -548,22 +548,6 @@ void GameState::changeFrameRate(int16 targetFPS, int32 duration)
 	}
 }
 //---------------------------------------------------------------------------------------------------------
-void GameState::streamAll(bool in, bool out)
-{
-	if(in && out)
-	{
-		GameState::doStreamAll(this, true, true);
-	}
-	else if(in)
-	{
-		GameState::doStreamAll(this, true, false);
-	}
-	else if(out)
-	{
-		GameState::doStreamAll(this, false, true);
-	}
-}
-//---------------------------------------------------------------------------------------------------------
 bool GameState::stream()
 {
 	if(!this->stream)
@@ -634,7 +618,7 @@ void GameState::configureUI(StageSpec* stageSpec)
 	}
 }
 //---------------------------------------------------------------------------------------------------------
-void GameState::doStreamAll(bool in, bool out)
+void GameState::streamAll()
 {
 	HardwareManager::suspendInterrupts();
 
@@ -653,7 +637,7 @@ void GameState::doStreamAll(bool in, bool out)
 		GameState::transform(this);
 
 		// Stream in and out all relevant entities
-		bool streamingComplete = !Stage::streamAll(this->stage, in, out);
+		bool streamingComplete = !Stage::streamAll(this->stage);
 
 		// Make sure all graphics are ready
 		VUEngine::prepareGraphics(VUEngine::getInstance());

@@ -312,9 +312,7 @@ class Stage : Container
 	Entity spawnChildEntity(const PositionedEntity* const positionedEntity, bool permanent);
 
 	/// Stream in or/and out all pending entities.
-	/// @param in: If true, it tries to load all entities in the camera's range
-	/// @param out: If true, it tries to unload all entities out of the camera's range
-	bool streamAll(bool in, bool out);
+	bool streamAll();
 
 	/// Retrieve the sounds that are playing in the stage.
 	/// @return List of playing sounds

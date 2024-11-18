@@ -396,51 +396,11 @@ Entity Stage::spawnChildEntity(const PositionedEntity* const positionedEntity, b
 	return Stage::doAddChildEntity(this, positionedEntity, permanent, this->nextEntityId++);
 }
 //---------------------------------------------------------------------------------------------------------
-bool Stage::streamAll(bool in, bool out)
+bool Stage::streamAll()
 {
-	if(in && out)
-	{
-		this->streamingPhase = 0;
-		this->streamingHeadNode = NULL;
-		this->streamingAmplitude = (uint16)-1;
+	bool result = false;
 
-		bool result = false;
-
-		do
-		{
-			// Force deletion
-			Stage::purgeChildren(this);
-
-			result = Stage::stream(this);
-
-			// Force deletion
-			Stage::purgeChildren(this);
-		}
-		while(result);
-
-		this->streamingAmplitude = this->stageSpec->streaming.streamingAmplitude;
-
-		return EntityFactory::hasEntitiesPending(this->entityFactory);
-	}
-	else if(in)
-	{
-		this->streamingPhase = 0;
-		this->streamingHeadNode = NULL;
-		this->streamingAmplitude = (uint16)-1;
-
-		// make sure that the entity factory doesn't have any pending operations
-		while(EntityFactory::createNextEntity(this->entityFactory));
-
-		// Force deletion
-		Stage::purgeChildren(this);
-
-		bool result = Stage::loadInRangeEntities(this, false);
-
-		this->streamingAmplitude = this->stageSpec->streaming.streamingAmplitude;
-
-		return result || EntityFactory::hasEntitiesPending(this->entityFactory);
-	}
-	else if(out)
+	do
 	{
 		this->streamingPhase = 0;
 		this->streamingHeadNode = NULL;
@@ -456,10 +416,50 @@ bool Stage::streamAll(bool in, bool out)
 		// Force deletion
 		Stage::purgeChildren(this);
 
-		return result;
-	}
+	}while(result);
 
-	return false;
+	do
+	{
+		this->streamingPhase = 0;
+		this->streamingHeadNode = NULL;
+		this->streamingAmplitude = (uint16)-1;
+
+		// make sure that the entity factory doesn't have any pending operations
+		while(EntityFactory::createNextEntity(this->entityFactory));
+
+		// Force deletion
+		Stage::purgeChildren(this);
+
+		bool result = Stage::loadInRangeEntities(this, false);
+
+		this->streamingAmplitude = this->stageSpec->streaming.streamingAmplitude;
+
+	}while(result || EntityFactory::hasEntitiesPending(this->entityFactory));
+	
+
+	/*
+	this->streamingPhase = 0;
+	this->streamingHeadNode = NULL;
+	this->streamingAmplitude = (uint16)-1;
+
+	bool result = false;
+
+	do
+	{
+		// Force deletion
+		Stage::purgeChildren(this);
+
+		result = Stage::stream(this);
+
+		// Force deletion
+		Stage::purgeChildren(this);
+	}
+	while(result);
+
+	this->streamingAmplitude = this->stageSpec->streaming.streamingAmplitude;
+
+	return EntityFactory::hasEntitiesPending(this->entityFactory);
+	*/
 }
 //---------------------------------------------------------------------------------------------------------
 VirtualList Stage::getSounds()
