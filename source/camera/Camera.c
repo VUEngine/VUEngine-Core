@@ -19,6 +19,7 @@
 #include <Entity.h>
 #include <Optics.h>
 #include <Printing.h>
+#include <VUEngine.h>
 
 #include "Camera.h"
 
@@ -290,15 +291,12 @@ void Camera::focus()
 //---------------------------------------------------------------------------------------------------------
 void Camera::startEffect(int32 effect, ...)
 {
+#ifdef __TOOLS
 	if(VUEngine::isInToolStateTransition(VUEngine::getInstance()))
 	{
 		return;
 	}
-
-	if(VUEngine::isInToolStateTransition(VUEngine::getInstance()))
-	{
-		return;
-	}
+#endif
 
 	va_list args;
 	va_start(args, effect);
@@ -308,15 +306,12 @@ void Camera::startEffect(int32 effect, ...)
 //---------------------------------------------------------------------------------------------------------
 void Camera::stopEffect(int32 effect)
 {
+#ifdef __TOOLS
 	if(VUEngine::isInToolStateTransition(VUEngine::getInstance()))
 	{
 		return;
 	}
-
-	if(VUEngine::isInToolStateTransition(VUEngine::getInstance()))
-	{
-		return;
-	}
+#endif
 
 	CameraEffectManager::stopEffect(this->cameraEffectManager, effect);
 }
