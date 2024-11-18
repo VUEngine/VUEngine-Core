@@ -194,6 +194,18 @@ void VUEngine::unpause(GameState pauseState)
 	}
 }
 //---------------------------------------------------------------------------------------------------------
+void VUEngine::setState(GameState gameState)
+{
+#ifdef __TOOLS
+	this->isInToolStateTransition = false;
+#endif
+
+	StateMachine::removeAllEventListeners(this->stateMachine);
+	StateMachine::addEventListener(this->stateMachine, ListenerObject::safeCast(this), (EventListener)VUEngine::cleaniningStatesStack, kEventStateMachineWillCleanStack);
+	StateMachine::addEventListener(this->stateMachine, ListenerObject::safeCast(this), (EventListener)VUEngine::changedState, kEventStateMachineCleanedStack);
+	StateMachine::transitionTo(this->stateMachine, NULL != gameState ? State::safeCast(gameState) : NULL, kStateMachineCleanStack);
+}
+//---------------------------------------------------------------------------------------------------------
 void VUEngine::addState(GameState gameState)
 {
 #ifdef __TOOLS
@@ -591,18 +603,6 @@ void VUEngine::initialize()
 	VUEngine::wait(VUEngine::getInstance(), 4000);
 #endif
 #endif
-}
-//---------------------------------------------------------------------------------------------------------
-void VUEngine::setState(GameState gameState)
-{
-#ifdef __TOOLS
-	this->isInToolStateTransition = false;
-#endif
-
-	StateMachine::removeAllEventListeners(this->stateMachine);
-	StateMachine::addEventListener(this->stateMachine, ListenerObject::safeCast(this), (EventListener)VUEngine::cleaniningStatesStack, kEventStateMachineWillCleanStack);
-	StateMachine::addEventListener(this->stateMachine, ListenerObject::safeCast(this), (EventListener)VUEngine::changedState, kEventStateMachineCleanedStack);
-	StateMachine::transitionTo(this->stateMachine, NULL != gameState ? State::safeCast(gameState) : NULL, kStateMachineCleanStack);
 }
 //---------------------------------------------------------------------------------------------------------
 void VUEngine::removeState(GameState gameState)

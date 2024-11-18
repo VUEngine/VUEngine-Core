@@ -165,6 +165,10 @@ singleton class VUEngine : ListenerObject
 	/// @param pauseState: Pause game state
 	void unpause(GameState pauseState);
 
+	/// Ste the current game state at the top of the engine's state machine's stack.
+	/// @param state: Game state to set
+	void setState(GameState gameState);
+
 	/// Add a game state to the top of the engine's state machine's stack.
 	/// @param state: Game state to push
 	void addState(GameState state);
