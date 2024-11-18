@@ -312,7 +312,7 @@ class Stage : Container
 	Entity spawnChildEntity(const PositionedEntity* const positionedEntity, bool permanent);
 
 	/// Stream in or/and out all pending entities.
-	bool streamAll();
+	void streamAll();
 
 	/// Retrieve the sounds that are playing in the stage.
 	/// @return List of playing sounds

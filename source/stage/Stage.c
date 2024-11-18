@@ -396,70 +396,41 @@ Entity Stage::spawnChildEntity(const PositionedEntity* const positionedEntity, b
 	return Stage::doAddChildEntity(this, positionedEntity, permanent, this->nextEntityId++);
 }
 //---------------------------------------------------------------------------------------------------------
-bool Stage::streamAll()
+void Stage::streamAll()
 {
-	bool result = false;
+	Stage::transform(this, &_neutralEnvironmentTransformation, __INVALIDATE_TRANSFORMATION);
+
+	this->streamingHeadNode = NULL;
+
+	// Make sure that the entity factory doesn't have any pending operations
+	while(EntityFactory::createNextEntity(this->entityFactory));
 
 	do
 	{
-		this->streamingPhase = 0;
 		this->streamingHeadNode = NULL;
 
-		// make sure that the entity factory doesn't have any pending operations
-		while(EntityFactory::createNextEntity(this->entityFactory));
-
-		// Force deletion
 		Stage::purgeChildren(this);
 
-		bool result = Stage::unloadOutOfRangeEntities(this, false);
+		VUEngine::prepareGraphics(VUEngine::getInstance());
 
-		// Force deletion
-		Stage::purgeChildren(this);
+	}while(Stage::unloadOutOfRangeEntities(this, false));
 
-	}while(result);
-
-	do
-	{
-		this->streamingPhase = 0;
-		this->streamingHeadNode = NULL;
-		this->streamingAmplitude = (uint16)-1;
-
-		// make sure that the entity factory doesn't have any pending operations
-		while(EntityFactory::createNextEntity(this->entityFactory));
-
-		// Force deletion
-		Stage::purgeChildren(this);
-
-		bool result = Stage::loadInRangeEntities(this, false);
-
-		this->streamingAmplitude = this->stageSpec->streaming.streamingAmplitude;
-
-	}while(result || EntityFactory::hasEntitiesPending(this->entityFactory));
-	
-
-	/*
-	this->streamingPhase = 0;
 	this->streamingHeadNode = NULL;
 	this->streamingAmplitude = (uint16)-1;
 
-	bool result = false;
+	while(Stage::loadInRangeEntities(this, false));
 
-	do
+	while(EntityFactory::createNextEntity(this->entityFactory))
 	{
-		// Force deletion
-		Stage::purgeChildren(this);
+		Stage::transform(this, &_neutralEnvironmentTransformation, __INVALIDATE_TRANSFORMATION);
 
-		result = Stage::stream(this);
-
-		// Force deletion
-		Stage::purgeChildren(this);
+		VUEngine::prepareGraphics(VUEngine::getInstance());
 	}
-	while(result);
+
+	VUEngine::prepareGraphics(VUEngine::getInstance());
 
 	this->streamingAmplitude = this->stageSpec->streaming.streamingAmplitude;
-
-	return EntityFactory::hasEntitiesPending(this->entityFactory);
-	*/
+	this->streamingHeadNode = NULL;
 }
 //---------------------------------------------------------------------------------------------------------
 VirtualList Stage::getSounds()

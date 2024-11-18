@@ -622,38 +622,26 @@ void GameState::streamAll()
 {
 	HardwareManager::suspendInterrupts();
 
-	do
+	// Make sure that the focus entity is transformed before focusing the camera
+	GameState::transform(this);
+
+	// Move the camera to its initial position
+	Camera::focus(Camera::getInstance());
+
+	// invalidate transformations
+	Stage::invalidateTransformation(this->stage);
+
+	// Transformation everything
+	GameState::transform(this);
+
+	// Stream in and out all relevant entities
+	Stage::streamAll(this->stage);
+
+	// Force collision purging
+	if(!isDeleted(this->collisionManager))
 	{
-		// Make sure that the focus entity is transformed before focusing the camera
-		GameState::transform(this);
-
-		// Move the camera to its initial position
-		Camera::focus(Camera::getInstance());
-
-		// invalidate transformations
-		Stage::invalidateTransformation(this->stage);
-
-		// Transformation everything
-		GameState::transform(this);
-
-		// Stream in and out all relevant entities
-		bool streamingComplete = !Stage::streamAll(this->stage);
-
-		// Make sure all graphics are ready
-		VUEngine::prepareGraphics(VUEngine::getInstance());
-
-		// Force collision purging
-		if(!isDeleted(this->collisionManager))
-		{
-			CollisionManager::purgeDestroyedColliders(this->collisionManager);
-		}
-
-		if(streamingComplete)
-		{
-			break;
-		}
+		CollisionManager::purgeDestroyedColliders(this->collisionManager);
 	}
-	while(true);
 
 	HardwareManager::resumeInterrupts();
 }
