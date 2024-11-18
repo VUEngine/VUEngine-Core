@@ -674,27 +674,19 @@ void AnimationInspector::createSprite()
 	ASSERT(this->sprite, "AnimationInspector::createSprite: null sprite");
 	ASSERT(Sprite::getTexture(this->sprite), "AnimationInspector::createSprite: null texture");
 
-	PixelVector spritePosition = Sprite::getDisplacedPosition(this->sprite);
-	spritePosition.x = ((__HALF_SCREEN_WIDTH) - (Texture::getCols(Sprite::getTexture(this->sprite)) << 2));
-	spritePosition.y = ((__HALF_SCREEN_HEIGHT) - (Texture::getRows(Sprite::getTexture(this->sprite)) << 2));
-	spritePosition.parallax = Optics::calculateParallax(spritePosition.z);
-
-	Sprite::setPosition(this->sprite, &spritePosition);
-	Sprite::processEffects(this->sprite);
-
+	PixelVector spritePosition = {__SCREEN_WIDTH / 2, __SCREEN_HEIGHT / 2, 1, 2};
 	Rotation spriteRotation = {0, 0, 0};
-	PixelScale spriteScale = {1, 1};
+	PixelScale spriteScale = {__F_TO_FIX7_9(1.0f), __F_TO_FIX7_9(1.0f)};
 
 	Sprite::setPosition(this->sprite, &spritePosition);
 	Sprite::setRotation(this->sprite, &spriteRotation);
 	Sprite::setScale(this->sprite, &spriteScale);
+	Sprite::processEffects(this->sprite);
 
 	this->sprite->updateAnimationFrame = true;
 
 	SpriteManager::hideSprites(SpriteManager::getInstance(), this->sprite, false);
-	SpriteManager::writeTextures(SpriteManager::getInstance());
-	SpriteManager::sortSprites(SpriteManager::getInstance());
-	SpriteManager::render(SpriteManager::getInstance());
+	SpriteManager::prepareAll(SpriteManager::getInstance());
 }
 //---------------------------------------------------------------------------------------------------------
 void AnimationInspector::createSpriteSelector()

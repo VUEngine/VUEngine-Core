@@ -354,7 +354,7 @@ void BgmapSprite::setScale(const PixelScale* scale)
 
 		if(!isDeleted(this->texture))
 		{
-			// add 1 pixel to the width and 7 to the height to avoid cutting off the graphics
+			// Add 1 pixel to the width and 7 to the height to avoid cutting off the graphics
 			this->halfWidth = __FIXED_TO_I(__ABS(__FIXED_MULT(
 				__FIX7_9_TO_FIXED(__COS(__FIXED_TO_I(this->transformation->rotation.y))),
 				__FIXED_MULT(
@@ -370,7 +370,6 @@ void BgmapSprite::setScale(const PixelScale* scale)
 					__FIX7_9_TO_FIXED(scale->y)
 				)
 			))) + 1;
-
 		}
 
 		if(0 < this->param)
