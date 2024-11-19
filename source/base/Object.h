@@ -48,8 +48,8 @@ abstract class Object : Object
 
 	/// @publicsection
 
-	/// Run time type checking
-	/// @param object: object to cast
+	/// Cast an object at runtime to a give class.
+	/// @param object: Object to cast
 	/// @param targetClassGetClassMethod: pointer to the target class' identifier method
 	/// @param baseClassGetClassMethod: pointer to the object's base class' identifier method
 	/// @return Pointer to the object if the cast succeeds, NULL otherwhise.
@@ -57,9 +57,6 @@ abstract class Object : Object
 
 	/// Class' constructor
 	void constructor();
-
-	/// Class' destructor
-	void destructor();
 
  	/// Retrieve the object's virtual table pointer
 	/// @return	Pointer to the object's virtual table pointer
