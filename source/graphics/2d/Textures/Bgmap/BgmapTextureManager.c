@@ -193,7 +193,7 @@ BgmapTexture BgmapTextureManager::getTexture(BgmapTextureSpec* bgmapTextureSpec,
 	{
 		bgmapTexture = BgmapTextureManager::allocateTexture(this, bgmapTextureSpec, minimumSegment, mustLiveAtEvenSegment, scValue);
 
-		NM_ASSERT(!isDeleted(bgmapTexture), "BgmapTextureManager::getTexture: (animated) texture no allocated");
+		ASSERT(!isDeleted(bgmapTexture), "BgmapTextureManager::getTexture: (animated) texture no allocated");
 	}
 	else
 	{
@@ -214,7 +214,7 @@ BgmapTexture BgmapTextureManager::getTexture(BgmapTextureSpec* bgmapTextureSpec,
 				bgmapTexture = BgmapTextureManager::allocateTexture(this, bgmapTextureSpec, minimumSegment, mustLiveAtEvenSegment, scValue);
 			}
 
-			NM_ASSERT(bgmapTexture, "BgmapTextureManager::getTexture: (animated) texture no allocated");
+			ASSERT(bgmapTexture, "BgmapTextureManager::getTexture: (animated) texture no allocated");
 		}
 		else
 		{
@@ -232,11 +232,11 @@ BgmapTexture BgmapTextureManager::getTexture(BgmapTextureSpec* bgmapTextureSpec,
 				bgmapTexture = BgmapTextureManager::allocateTexture(this, bgmapTextureSpec, minimumSegment, mustLiveAtEvenSegment, scValue);
 			}
 
-			NM_ASSERT(!isDeleted(bgmapTexture), "BgmapTextureManager::getTexture: (shared) texture no allocated");
+			ASSERT(!isDeleted(bgmapTexture), "BgmapTextureManager::getTexture: (shared) texture no allocated");
 		}
 	}
 
-	if(kTextureWritten != bgmapTexture->status)
+	if(!isDeleted(bgmapTexture) && kTextureWritten != bgmapTexture->status)
 	{
 		BgmapTexture::prepare(bgmapTexture);
 	}
@@ -564,7 +564,7 @@ int32 BgmapTextureManager::doAllocate(uint16 id, TextureSpec* textureSpec, int16
 		}
 	}
 
-#ifndef __SHIPPING
+#ifdef __DEBUG
 	Printing::setDebugMode(Printing::getInstance());
 	Printing::clear(Printing::getInstance());
 	BgmapTextureManager::print(this, 1, 10);

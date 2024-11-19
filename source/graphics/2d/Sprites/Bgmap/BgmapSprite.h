@@ -134,6 +134,9 @@ class BgmapSprite : Sprite
 	/// Retrieve the sprite's total number of pixels actually displayed.
 	/// @return Sprite's total number of pixels actually displayed
 	override int32 getTotalPixels();
+
+	/// Configure the sprite's texture.
+	void configureTexture();
 	
 	/// Configure the displays on which to show the sprite and how it will be displayed
 	/// @param display: Displays on which to show the sprite (__WORLD_ON, __WORLD_LON or __WORLD_RON)

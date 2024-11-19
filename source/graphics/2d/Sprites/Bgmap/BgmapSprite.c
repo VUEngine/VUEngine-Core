@@ -80,47 +80,25 @@ void BgmapSprite::constructor(SpatialObject owner, const BgmapSpriteSpec* bgmapS
 {
 	Base::constructor(owner, (SpriteSpec*)&bgmapSpriteSpec->spriteSpec);
 
-	// create the texture
-	if(NULL != bgmapSpriteSpec->spriteSpec.textureSpec)
-	{
-		this->texture = Texture::safeCast(BgmapTextureManager::getTexture(BgmapTextureManager::getInstance(), bgmapSpriteSpec->spriteSpec.textureSpec, 0, false, __WORLD_1x1));
-		NM_ASSERT(!isDeleted(this->texture), "BgmapSprite::constructor: null texture");
-	}
-
-	if(!isDeleted(this->texture))
-	{
-		// set texture position
-		this->bgmapTextureSource.mx = BgmapTexture::getXOffset(this->texture) << 3;
-		this->bgmapTextureSource.my = BgmapTexture::getYOffset(this->texture) << 3;
-		this->bgmapTextureSource.mp = 0;
-
-		this->halfWidth = Texture::getCols(this->texture) << 2;
-		this->halfHeight = Texture::getRows(this->texture) << 2;
-	}
-	else
-	{
-		this->bgmapTextureSource.mx = 0;
-		this->bgmapTextureSource.my = 0;
-		this->bgmapTextureSource.mp = 0;
-	}
+	this->bgmapTextureSource.mx = 0;
+	this->bgmapTextureSource.my = 0;
+	this->bgmapTextureSource.mp = 0;
 
 	this->displacement = bgmapSpriteSpec->spriteSpec.displacement;
 
 	this->param = 0;
 	this->paramTableRow = 0;
 
-	// set WORLD layer's head according to map's render mode
 	this->applyParamTableEffect = bgmapSpriteSpec->applyParamTableEffect;
-	BgmapSprite::setMode(this, bgmapSpriteSpec->display, bgmapSpriteSpec->bgmapMode);
 
-	if(0 != this->param && !isDeleted(this->texture))
-	{
-		Texture::addEventListener(this->texture, ListenerObject::safeCast(this), (EventListener)BgmapSprite::onTextureRewritten, kEventTextureRewritten);
-	}
+	BgmapSprite::configureTexture(this);
 }
 //---------------------------------------------------------------------------------------------------------
 void BgmapSprite::destructor()
 {
+	// Make sure that the texture is not loaded again
+	this->componentSpec = NULL;
+
 	BgmapSprite::removeFromCache(this);
 
 	ASSERT(this, "BgmapSprite::destructor: null cast");
@@ -170,6 +148,13 @@ void BgmapSprite::processEffects()
 //---------------------------------------------------------------------------------------------------------
 int16 BgmapSprite::doRender(int16 index)
 {
+	if(isDeleted(this->texture))
+	{
+		BgmapSprite::configureTexture(this);
+
+		return __NO_RENDER_INDEX;
+	}
+
 	NM_ASSERT(!isDeleted(this->texture), "BgmapSprite::doRender: null texture");
 
 	WorldAttributes* worldPointer = &_worldAttributesCache[index];
@@ -387,6 +372,42 @@ int32 BgmapSprite::getTotalPixels()
 	}
 
 	return 0;
+}
+//---------------------------------------------------------------------------------------------------------
+void BgmapSprite::configureTexture()
+{
+	if(!isDeleted(this->texture))
+	{
+		return;
+	}
+
+	TextureSpec* textureSpec =((BgmapSpriteSpec*)this->componentSpec)->spriteSpec.textureSpec;
+
+	if(NULL == textureSpec)
+	{
+		return;
+	}
+
+	this->texture = Texture::safeCast(BgmapTextureManager::getTexture(BgmapTextureManager::getInstance(), textureSpec, 0, false, __WORLD_1x1));
+
+	if(isDeleted(this->texture))
+	{
+		return;
+	}
+
+	this->bgmapTextureSource.mx = BgmapTexture::getXOffset(this->texture) << 3;
+	this->bgmapTextureSource.my = BgmapTexture::getYOffset(this->texture) << 3;
+	this->bgmapTextureSource.mp = 0;
+
+	this->halfWidth = Texture::getCols(this->texture) << 2;
+	this->halfHeight = Texture::getRows(this->texture) << 2;
+
+	BgmapSprite::setMode(this, ((BgmapSpriteSpec*)this->componentSpec)->display, ((BgmapSpriteSpec*)this->componentSpec)->bgmapMode);
+
+	if(0 != this->param && !isDeleted(this->texture))
+	{
+		Texture::addEventListener(this->texture, ListenerObject::safeCast(this), (EventListener)BgmapSprite::onTextureRewritten, kEventTextureRewritten);
+	}
 }
 //---------------------------------------------------------------------------------------------------------
 void BgmapSprite::setMode(uint16 display, uint16 mode)
