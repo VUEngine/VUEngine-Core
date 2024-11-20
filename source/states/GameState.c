@@ -102,7 +102,7 @@ void GameState::destructor()
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------
-bool GameState::handleMessage(Telegram telegram __attribute__ ((unused)))
+bool GameState::handleMessage(Telegram telegram)
 {
 	switch(Telegram::getMessage(telegram))
 	{
