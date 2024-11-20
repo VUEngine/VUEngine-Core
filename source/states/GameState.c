@@ -108,7 +108,7 @@ bool GameState::handleMessage(Telegram telegram __attribute__ ((unused)))
 	{
 		case kMessageRestoreFPS:
 
-			VUEngine::setGameFrameRate(VUEngine::getInstance(), __MAXIMUM_FPS);
+			VUEngine::setGameFrameRate(VUEngine::getInstance(), __TARGET_FPS);
 			break;
 	}
 
