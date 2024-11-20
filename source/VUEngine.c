@@ -1059,7 +1059,10 @@ void VUEngine::run(GameState currentGameState)
 		while(!this->gameFrameStarted)
 		{
 			// Stream the heck out of the pending entities
-			VUEngine::stream(this, currentGameState);
+			if(!VUEngine::stream(this, currentGameState))
+			{
+				this->currentGameCycleEnded = true;
+			}
 		}
 #endif
 #endif

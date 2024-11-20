@@ -21,8 +21,8 @@ enum Events
 	kEventEngineFirst = 0,
 
 	// add events here
-	kEventTornFrame,
-	kEventFrameRateDipped,
+	kEventFramerateReady,
+	kEventFramerateDipped,
 
 	kEventSpatialObjectDeleted,
 	kEventContainerDeleted,

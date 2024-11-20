@@ -60,6 +60,11 @@ void FrameRate::gameFrameStarted(bool gameCycleEnded)
 		this->totalFPS += this->FPS;
 		this->totalUnevenFPS += this->unevenFPS;
 
+		if(!isDeleted(this->events))
+		{
+			FrameRate::fireEvent(this, kEventFramerateReady);
+		}
+
 		if(this->targetFPS > this->FPS)
 		{
 #ifdef __PRINT_FRAMERATE_DIP
@@ -71,7 +76,7 @@ void FrameRate::gameFrameStarted(bool gameCycleEnded)
 #endif
 			if(!isDeleted(this->events))
 			{
-				FrameRate::fireEvent(this, kEventFrameRateDipped);
+				FrameRate::fireEvent(this, kEventFramerateDipped);
 			}
 		}
 
@@ -107,13 +112,10 @@ void FrameRate::print(int32 x, int32 y)
 	Printing::int32(printing, this->totalFPS / this->seconds, x + 7, y, NULL);
 #else
 	Printing printing = Printing::getInstance();
-	Printing::text(printing, "FPS   /   ", x, y, NULL);
+	Printing::text(printing, "FPS     |TORN  |AVR     ", x, y, NULL);
 	Printing::int32(printing, this->FPS, x + 4, y, NULL);
-	Printing::int32(printing, this->unevenFPS, x + 7, y, NULL);
-
-	Printing::text(printing, "AVR   /   ", x + 10, y, NULL);
-	Printing::int32(printing, this->totalFPS / this->seconds, x + 4 + 10, y, NULL);
-	Printing::int32(printing, this->unevenFPS / this->seconds, x + 7 + 10, y, NULL);
+	Printing::int32(printing, this->unevenFPS, x + 14, y, NULL);
+	Printing::int32(printing, ((float)this->totalFPS / this->seconds) + 0.5f, x + 20, y, NULL);
 #endif
 }
 //---------------------------------------------------------------------------------------------------------
