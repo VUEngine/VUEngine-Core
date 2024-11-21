@@ -285,7 +285,7 @@ void GameState::configureStage(StageSpec* stageSpec, VirtualList positionedEntit
 
 	HardwareManager::resumeInterrupts();
 
-	GameState::changeFrameRate(this, __TARGET_FPS >> 1, 100);
+	GameState::changeFramerate(this, __TARGET_FPS >> 1, 100);
 }
 //---------------------------------------------------------------------------------------------------------
 UIContainer GameState::getUIContainer()
@@ -538,11 +538,13 @@ void GameState::hideEntityWithName(const char* entityName)
 	}
 }
 //---------------------------------------------------------------------------------------------------------
-void GameState::changeFrameRate(int16 targetFPS, int32 duration)
+void GameState::changeFramerate(int16 targetFPS, int32 duration)
 {
+	GameState::discardMessages(this, kMessageRestoreFPS);
+	
 	VUEngine::setGameFrameRate(VUEngine::getInstance(), targetFPS);
 
-	if(0 <= duration)
+	if(0 < duration)
 	{
 		GameState::sendMessageToSelf(this, kMessageRestoreFPS, duration + 1, 0);
 	}

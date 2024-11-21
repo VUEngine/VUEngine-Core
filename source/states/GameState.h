@@ -239,9 +239,9 @@ class GameState : State
 	/// Change the target frame rate.
 	/// @param targetFPS: New target frame rate
 	/// @param duration: Amount of time to keep the change on the frame rate before
-	/// setting back the default target (0 to make it permanent as long as the state
-	// is active)
-	void changeFrameRate(int16 targetFPS, int32 duration);
+	/// setting back the default target (0 or negative to make it permanent as long 
+	/// as the state is active)
+	void changeFramerate(int16 targetFPS, int32 duration);
 
 	/// Force to completely stream in and out entities and to initialize all.
 	void streamAll();
