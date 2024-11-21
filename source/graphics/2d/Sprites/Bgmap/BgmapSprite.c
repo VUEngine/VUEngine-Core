@@ -399,9 +399,6 @@ void BgmapSprite::configureTexture()
 	this->bgmapTextureSource.my = BgmapTexture::getYOffset(this->texture) << 3;
 	this->bgmapTextureSource.mp = 0;
 
-	this->halfWidth = Texture::getCols(this->texture) << 2;
-	this->halfHeight = Texture::getRows(this->texture) << 2;
-
 	BgmapSprite::setMode(this, ((BgmapSpriteSpec*)this->componentSpec)->display, ((BgmapSpriteSpec*)this->componentSpec)->bgmapMode);
 
 	if(0 != this->param && !isDeleted(this->texture))

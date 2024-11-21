@@ -43,8 +43,6 @@ void ObjectSprite::constructor(SpatialObject owner, const ObjectSpriteSpec* obje
 	this->totalObjects = 0;
 
 	this->displacement = objectSpriteSpec->spriteSpec.displacement;
-	this->halfWidth = 0;
-	this->halfHeight = 0;
 	this->xDisplacementIncrement = 8;
 	this->yDisplacementIncrement = 8;
 	this->xDisplacementDelta = 0;
@@ -60,9 +58,6 @@ void ObjectSprite::constructor(SpatialObject owner, const ObjectSpriteSpec* obje
 		NM_ASSERT(this->texture, "ObjectSprite::constructor: null texture");
 
 		Texture::addEventListener(this->texture, ListenerObject::safeCast(this), (EventListener)ObjectSprite::onTextureRewritten, kEventTextureRewritten);
-
-		this->halfWidth = this->texture->textureSpec->cols << 2;
-		this->halfHeight = this->texture->textureSpec->rows << 2;
 
 		this->totalObjects = objectSpriteSpec->spriteSpec.textureSpec->cols * objectSpriteSpec->spriteSpec.textureSpec->rows;
 

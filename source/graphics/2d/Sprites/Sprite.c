@@ -49,11 +49,11 @@ void Sprite::constructor(SpatialObject owner, const SpriteSpec* spriteSpec)
 	// clear values
 	this->index = __NO_RENDER_INDEX;
 	this->head = 0;
+	this->texture = NULL;
 	this->halfWidth = 0;
 	this->halfHeight = 0;
 	this->animationController = NULL;
-	this->texture = NULL;
-	this->transparency = spriteSpec ? spriteSpec->transparency : __TRANSPARENCY_NONE;
+	this->transparency = __TRANSPARENCY_NONE;
 	this->updateAnimationFrame = false;
 	this->checkIfWithinScreenSpace = true;
 	this->position = (PixelVector){0, 0, 0, 0};
@@ -61,6 +61,17 @@ void Sprite::constructor(SpatialObject owner, const SpriteSpec* spriteSpec)
 	this->scale = (PixelScale){__1I_FIX7_9, __1I_FIX7_9};
 	this->transformed = false;
 	this->displacement = PixelVector::zero();
+
+	if(NULL != spriteSpec)
+	{
+		this->transparency = spriteSpec->transparency;
+		
+		if(NULL != spriteSpec->textureSpec)
+		{
+			this->halfWidth = spriteSpec->textureSpec->cols << 2;
+			this->halfHeight = spriteSpec->textureSpec->rows << 2;
+		}
+	}
 }
 //---------------------------------------------------------------------------------------------------------
 void Sprite::destructor()

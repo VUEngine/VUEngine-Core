@@ -1399,8 +1399,6 @@ bool Entity::isInCameraRange(int16 padding, bool recursive)
 		position3D = Vector3D::sum(position3D, *this->centerDisplacement);
 	}
 
-	bool inCameraRange = true;
-
 	PixelRightBox pixelRightBox	=
 	{
 		- __METERS_TO_PIXELS(this->size.x >> 1) - padding,
@@ -1412,10 +1410,7 @@ bool Entity::isInCameraRange(int16 padding, bool recursive)
 		__METERS_TO_PIXELS(this->size.z >> 1) + padding,
 	};
 
-	if(!PixelVector::isVector3DVisible(position3D, pixelRightBox, 0))
-	{
-		inCameraRange = false;
-	}
+	bool inCameraRange = PixelVector::isVector3DVisible(position3D, pixelRightBox, 0);
 
 	if(!inCameraRange && recursive && NULL != this->children)
 	{
