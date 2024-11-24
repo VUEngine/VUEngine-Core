@@ -396,6 +396,44 @@ Entity Stage::spawnChildEntity(const PositionedEntity* const positionedEntity, b
 	return Stage::doAddChildEntity(this, positionedEntity, permanent, this->nextEntityId++);
 }
 //---------------------------------------------------------------------------------------------------------
+void Stage::destroyChildEntity(Entity child)
+{
+	NM_ASSERT(!isDeleted(child), "Stage::removeEntity: null child");
+
+	if(isDeleted(child))
+	{
+		return;
+	}
+
+	int16 internalId = Entity::getInternalId(child);
+
+	Stage::removeChild(this, Container::safeCast(child), true);
+
+	VirtualNode node = this->stageEntityDescriptions->head;
+
+	for(; NULL != node; node = node->next)
+	{
+		StageEntityDescription* stageEntityDescription = (StageEntityDescription*)node->data;
+
+		if(stageEntityDescription->internalId == internalId)
+		{
+			stageEntityDescription->internalId = -1;
+			break;
+		}
+	}
+
+	if(NULL != node)
+	{
+		if(this->streamingHeadNode == node)
+		{
+			this->streamingHeadNode = this->reverseStreaming ? this->streamingHeadNode->next : this->streamingHeadNode->previous;
+		}
+
+		delete node->data;
+		VirtualList::removeNode(this->stageEntityDescriptions, node);
+	}
+}
+//---------------------------------------------------------------------------------------------------------
 void Stage::streamAll()
 {
 	Stage::transform(this, &_neutralEnvironmentTransformation, __INVALIDATE_TRANSFORMATION);
@@ -858,44 +896,6 @@ void Stage::alertOfLoadedEntity(Entity entity)
 	Entity::fireEvent(entity, kEventEntityLoaded);
 	NM_ASSERT(!isDeleted(entity), "Stage::alertOfLoadedEntity: deleted entity during kEventEntityLoaded");
 	Entity::removeEventListeners(entity, NULL, kEventEntityLoaded);
-}
-//---------------------------------------------------------------------------------------------------------
-void Stage::destroyChildEntity(Entity child)
-{
-	NM_ASSERT(!isDeleted(child), "Stage::removeEntity: null child");
-
-	if(isDeleted(child))
-	{
-		return;
-	}
-
-	int16 internalId = Entity::getInternalId(child);
-
-	Stage::removeChild(this, Container::safeCast(child), true);
-
-	VirtualNode node = this->stageEntityDescriptions->head;
-
-	for(; NULL != node; node = node->next)
-	{
-		StageEntityDescription* stageEntityDescription = (StageEntityDescription*)node->data;
-
-		if(stageEntityDescription->internalId == internalId)
-		{
-			stageEntityDescription->internalId = -1;
-			break;
-		}
-	}
-
-	if(NULL != node)
-	{
-		if(this->streamingHeadNode == node)
-		{
-			this->streamingHeadNode = this->reverseStreaming ? this->streamingHeadNode->next : this->streamingHeadNode->previous;
-		}
-
-		delete node->data;
-		VirtualList::removeNode(this->stageEntityDescriptions, node);
-	}
 }
 //---------------------------------------------------------------------------------------------------------
 int32 Stage::isEntityInLoadRange(ScreenPixelVector onScreenPosition, const PixelRightBox* pixelRightBox)

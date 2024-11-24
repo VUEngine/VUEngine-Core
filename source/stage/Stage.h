@@ -311,6 +311,10 @@ class Stage : Container
 	/// @param permanent: If true, the entity is not subject to the streaming
 	Entity spawnChildEntity(const PositionedEntity* const positionedEntity, bool permanent);
 
+	/// Destroy a stage's child.
+	/// @param child: Entity to destroy
+	void destroyChildEntity(Entity child);
+
 	/// Stream in or/and out all pending entities.
 	void streamAll();
 
