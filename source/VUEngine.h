@@ -81,6 +81,8 @@ extern VUEngine _vuEngine __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE;
 /// @ingroup base
 singleton class VUEngine : ListenerObject
 {
+	/// @protectedsection
+
 	/// Engine's main state machine
 	StateMachine stateMachine;
 
@@ -138,7 +140,7 @@ singleton class VUEngine : ListenerObject
 	/// @publicsection
 
 	/// Method to retrieve the singleton instance
-	/// @return Camera singleton
+	/// @return VUEngine singleton
 	static VUEngine getInstance();
 
 	/// Receive and process a Telegram.
