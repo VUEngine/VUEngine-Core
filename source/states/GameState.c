@@ -407,12 +407,12 @@ void GameState::startAnimations()
 //---------------------------------------------------------------------------------------------------------
 void GameState::pauseAnimations()
 {
-	Clock::pause(this->logicsClock, true);
+	Clock::pause(this->animationsClock, true);
 }
 //---------------------------------------------------------------------------------------------------------
 void GameState::unpauseAnimations()
 {
-	Clock::pause(this->logicsClock, false);
+	Clock::pause(this->animationsClock, false);
 }
 //---------------------------------------------------------------------------------------------------------
 void GameState::startPhysics()
@@ -589,6 +589,8 @@ void GameState::createStage(StageSpec* stageSpec, VirtualList positionedEntities
 	NM_ASSERT(!isDeleted(this->stage), "GameState::configureStage: null stage");
 
 	Stage::configure(this->stage, positionedEntitiesToIgnore);
+
+	SpriteManager::setAnimationsClock(SpriteManager::getInstance(), this->animationsClock);
 }
 //---------------------------------------------------------------------------------------------------------
 void GameState::configureUI(StageSpec* stageSpec)
