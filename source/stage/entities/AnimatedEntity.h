@@ -63,9 +63,13 @@ class AnimatedEntity : Entity
 	const char* playingAnimationName;
 
 	/// @publicsection
+
+	/// @param animatedEntitySpec: Specification that determines how to configure the actor
+	/// @param internalId: ID to keep track internally of the new instance
+	/// @param name: Name to assign to the new instance
 	void constructor(AnimatedEntitySpec* animatedEntitySpec, int16 internalId, const char* const name);
 
-	/// Make the animated entity ready to starts operating once it has been completely intialized.
+	/// Make the animated entity ready to start operating once it has been completely intialized.
 	/// @param recursive: If true, the ready call is propagated to its children, grand children, etc.
 	override void ready(bool recursive);
 

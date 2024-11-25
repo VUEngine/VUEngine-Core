@@ -352,7 +352,7 @@ abstract class Sprite : VisualComponent
 	/// Update the animation.
 	virtual void updateAnimation();
 
-	/// Process special effects
+	/// Process special effects.
 	virtual void processEffects();
 
 	/// Set the current multiframe.

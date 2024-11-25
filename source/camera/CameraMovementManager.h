@@ -25,6 +25,7 @@
 class Camera;
 class Entity;
 
+
 //=========================================================================================================
 // CLASS' DECLARATION
 //=========================================================================================================
@@ -38,6 +39,8 @@ class Entity;
 /// @ingroup camera
 singleton class CameraMovementManager : ListenerObject
 {
+	/// @protectedsection
+
 	/// Displacement to the focus entity's position to focus
 	/// the camera on
 	Vector3D focusEntityPositionDisplacement;
@@ -54,7 +57,7 @@ singleton class CameraMovementManager : ListenerObject
 	/// @publicsection
 
 	/// Method to retrieve the singleton instance
-	/// @return Camera singleton
+	/// @return CameraMovementManager singleton
 	static CameraMovementManager getInstance();
 
 	/// Class' constructor
