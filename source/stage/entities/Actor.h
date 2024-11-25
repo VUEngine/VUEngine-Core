@@ -76,6 +76,7 @@ class Actor : AnimatedEntity
 
 	/// @publicsection
 
+	/// Class' constructor
 	/// @param actorSpec: Specification that determines how to configure the actor
 	/// @param internalId: ID to keep track internally of the new instance
 	/// @param name: Name to assign to the new instance
