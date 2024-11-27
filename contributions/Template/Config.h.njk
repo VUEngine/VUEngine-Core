@@ -274,7 +274,7 @@
 {%- set dramLength = compiler.memorySections.dram.length %}
 {%- set bgmapEndAddress = ((compiler.memorySections.dram.origin | hexToInt) - dramLength * 1024) %}
 {%- set bgmapStartAddress = ("0x20000") | hexToInt %}
-#define __TOTAL_NUMBER_OF_BGMAPS_SEGMENTS 							{{ ((bgmapEndAddress - bgmapStartAddress) / 8192 - 0.5) | round }}
+#define __TOTAL_NUMBER_OF_BGMAPS_SEGMENTS 							{{ ((bgmapEndAddress - bgmapStartAddress) / 8192) | floor }}
 
 // number of segments for param tables
 #define __PARAM_TABLE_SEGMENTS										{{ config.texture.paramTableSegments }}
