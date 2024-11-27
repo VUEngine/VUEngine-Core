@@ -176,6 +176,7 @@ void Container::deleteMyself()
 	}
 	else if(!this->deleteMe)
 	{
+		this->deleteMe = true;
 		delete this;
 	}
 }
