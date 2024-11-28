@@ -52,8 +52,12 @@ typedef const BehaviorSpec BehaviorROMSpec;
 /// @ingroup stage-entities
 abstract class Behavior : Component
 {
+	/// @protectedsection
+
 	/// Flag to allow or prohibit the behavior to perform its operations
 	bool enabled;
+
+	/// @publicsection
 
 	/// Class' constructor
 	/// @param owner: SpatialObject to which the behavior attaches to
