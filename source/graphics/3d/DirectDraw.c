@@ -262,12 +262,6 @@ static inline bool DirectDraw::shrinkLineToScreenSpace(fixed_ext_t* x0, fixed_ex
 
 	return true;
 }
-
-
-
-
-
-
 //---------------------------------------------------------------------------------------------------------
 static bool DirectDraw::drawPoint(PixelVector point, int32 color, uint8 bufferIndex, bool interlaced)
 {
