@@ -163,7 +163,7 @@ singleton class VUEngine : ListenerObject
 	/// @param pauseState: Pause game state
 	void pause(GameState pauseState);
 
-	/// Pause the game by removing the provided game state from the engine's state machine's stack.
+	/// Unpause the game by removing the provided game state from the engine's state machine's stack.
 	/// @param pauseState: Pause game state
 	void unpause(GameState pauseState);
 

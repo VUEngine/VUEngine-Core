@@ -45,7 +45,7 @@ class VirtualList : Object
 	/// Class' constructor
 	void constructor();
 
-	/// Class' constructor
+	/// Class' destructor
 	void destructor();
 
 	/// Retrieve the first data element of the list.
@@ -73,7 +73,7 @@ class VirtualList : Object
 	/// @param data: Pointer to the data to look for
 	/// @return The index of the data in the linked list
 	int32 getDataIndex(const void* const data);
-	
+
 	/// Retrieve the node at provided position within the list.
 	/// @param index: Index within the list
 	/// @return Node at the provided index
@@ -132,7 +132,7 @@ class VirtualList : Object
 	/// @param data: Pointer to the data to remove from the list
 	/// @return True if the data was successfully removed
 	bool removeData(const void* const data);
-		
+
 	/// Reverse the nodes of the list.
 	void reverse();
 

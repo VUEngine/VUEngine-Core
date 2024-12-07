@@ -235,7 +235,7 @@ singleton class Printing : ListenerObject
 	void clearRow(uint16 row);
 
 	/// Print a string.
-	/// @param string: String to print.
+	/// @param string: String to print
 	/// @param x: Column to start printing at
 	/// @param y: Row to start printing at
 	/// @param font: Name of font to use for printing

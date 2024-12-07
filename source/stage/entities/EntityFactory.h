@@ -96,7 +96,7 @@ class EntityFactory : Object
 
 	/// These are not meant to be called externally. They are declared here
 	/// because of the preprocessor's limitations for forward declarations
-	/// in source files. Don't called these.
+	/// in source files. Don't call these.
 	uint32 instantiateEntities();
 	uint32 transformEntities();
 	uint32 addChildEntities();

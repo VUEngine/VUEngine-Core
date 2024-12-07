@@ -110,7 +110,7 @@ abstract class ListenerObject : Object
 	bool hasActiveEventListeners();
 
 	/// Fire an event with the provided code
-	/// @param eventCode: code of the event to fire
+	/// @param eventCode: Code of the event to fire
 	void fireEvent(uint16 eventCode);
 
 	/// Send a message to another object.
