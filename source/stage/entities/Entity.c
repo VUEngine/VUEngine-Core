@@ -415,7 +415,6 @@ static Entity Entity::instantiate(const PositionedEntity* const positionedEntity
 //---------------------------------------------------------------------------------------------------------
 void Entity::constructor(EntitySpec* entitySpec, int16 internalId, const char* const name)
 {
-	// construct base Container
 	Base::constructor(name);
 
 	// set the ids

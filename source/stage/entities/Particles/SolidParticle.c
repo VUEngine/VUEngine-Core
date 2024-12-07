@@ -40,7 +40,6 @@ friend class VirtualNode;
 //---------------------------------------------------------------------------------------------------------
 void SolidParticle::constructor(const SolidParticleSpec* solidParticleSpec)
 {
-	// construct base Container
 	Base::constructor(&solidParticleSpec->physicalParticleSpec);
 
 	this->solidParticleSpec = solidParticleSpec;
