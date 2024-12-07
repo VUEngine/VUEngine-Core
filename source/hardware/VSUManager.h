@@ -148,8 +148,8 @@ singleton class VSUManager : Object
 {
 	/// @protectedsection
 
-	/// List of playing sounds
-	VirtualList queuedVSUSoundSourceConfigurations;
+	/// List of pending sound source configurations
+	VirtualList pendingVSUSoundSourceConfigurations;
 
 	/// Mapping of VSU sound source configurations
 	VSUSoundSourceConfiguration vsuSoundSourceConfigurations[__TOTAL_SOUND_SOURCES];

@@ -132,7 +132,7 @@ void VSUManager::applySoundSourceConfiguration(const VSUSoundSourceConfiguration
 
 	if(0 > vsuSoundSourceIndex)
 	{
-//		VSUManager::queueSoundSourceConfiguration(this, &vsuSoundSourceConfiguration);
+		VSUManager::registerPendingSoundSourceConfiguration(this, &vsuSoundSourceConfiguration);
 	}
 	else
 	{
@@ -143,7 +143,8 @@ void VSUManager::applySoundSourceConfiguration(const VSUSoundSourceConfiguration
 void VSUManager::reset()
 {
 	this->ticks = 0;
-	VirtualList::deleteData(this->queuedVSUSoundSourceConfigurations);
+
+	VirtualList::deleteData(this->pendingVSUSoundSourceConfigurations);
 
 	for(int16 i = 0; i < __TOTAL_SOUND_SOURCES; i++)
 	{
@@ -204,6 +205,8 @@ void VSUManager::reset()
 void VSUManager::update()
 {
 	this->ticks += __I_TO_FIX7_9_EXT(1);
+
+	VSUManager::dispatchPendingSoundSourceConfigurations(this);
 }
 //---------------------------------------------------------------------------------------------------------
 void VSUManager::stopAllSounds()
@@ -223,7 +226,7 @@ void VSUManager::unlock()
 //---------------------------------------------------------------------------------------------------------
 void VSUManager::flushQueuedSounds()
 {
-	VirtualList::deleteData(this->queuedVSUSoundSourceConfigurations);
+	VirtualList::deleteData(this->pendingVSUSoundSourceConfigurations);
 }
 //---------------------------------------------------------------------------------------------------------
 #ifndef __SHIPPING
@@ -328,7 +331,7 @@ void VSUManager::constructor()
 {
 	Base::constructor();
 
-	this->queuedVSUSoundSourceConfigurations = new VirtualList();
+	this->pendingVSUSoundSourceConfigurations = new VirtualList();
 	this->lock = false;
 	this->targetPCMUpdates = 0;
 
@@ -337,11 +340,11 @@ void VSUManager::constructor()
 //---------------------------------------------------------------------------------------------------------
 void VSUManager::destructor()
 {
-	if(!isDeleted(this->queuedVSUSoundSourceConfigurations))
+	if(!isDeleted(this->pendingVSUSoundSourceConfigurations))
 	{
-		VirtualList::deleteData(this->queuedVSUSoundSourceConfigurations);
-		delete this->queuedVSUSoundSourceConfigurations;
-		this->queuedVSUSoundSourceConfigurations = NULL;
+		VirtualList::deleteData(this->pendingVSUSoundSourceConfigurations);
+		delete this->pendingVSUSoundSourceConfigurations;
+		this->pendingVSUSoundSourceConfigurations = NULL;
 	}
 
 	Base::destructor();
@@ -387,18 +390,43 @@ int16 VSUManager::findAvailableSoundSource()
 	return -1;
 }
 //---------------------------------------------------------------------------------------------------------
-void VSUManager::queueSoundSourceConfiguration(const VSUSoundSourceConfiguration* vsuSoundSourceConfiguration)
+void VSUManager::dispatchPendingSoundSourceConfigurations()
 {
-	if(NULL == vsuSoundSourceConfiguration || isDeleted(this->queuedVSUSoundSourceConfigurations))
+	if(isDeleted(this->pendingVSUSoundSourceConfigurations))
 	{
 		return;
 	}
 
-	VSUSoundSourceConfiguration* queuedVSUSoundSourceConfiguration = new VSUSoundSourceConfiguration;
-	*queuedVSUSoundSourceConfiguration = *vsuSoundSourceConfiguration;
-	queuedVSUSoundSourceConfiguration->timeout = this->ticks + vsuSoundSourceConfiguration->timeout;
+	for(VirtualNode node = this->pendingVSUSoundSourceConfigurations->head, nextNode = NULL; NULL != node; node = nextNode)
+	{
+		nextNode = node->next;
 
-	VirtualList::pushBack(this->queuedVSUSoundSourceConfigurations, queuedVSUSoundSourceConfiguration);
+		VSUSoundSourceConfiguration* queuedVSUSoundSourceConfiguration = (VSUSoundSourceConfiguration*)node->data;
+
+		int16 vsuSoundSourceIndex = VSUManager::findAvailableSoundSource(this);
+
+		if(0 <= vsuSoundSourceIndex)
+		{
+			VSUManager::configureSoundSource(this, vsuSoundSourceIndex, queuedVSUSoundSourceConfiguration);
+
+			VirtualList::removeNode(this->pendingVSUSoundSourceConfigurations, node);
+
+			delete queuedVSUSoundSourceConfiguration;
+		}
+	}
+}
+//---------------------------------------------------------------------------------------------------------
+void VSUManager::registerPendingSoundSourceConfiguration(const VSUSoundSourceConfiguration* vsuSoundSourceConfiguration)
+{
+	if(NULL == vsuSoundSourceConfiguration || isDeleted(this->pendingVSUSoundSourceConfigurations))
+	{
+		return;
+	}
+
+	VSUSoundSourceConfiguration* pendingVSUSoundSourceConfiguration = new VSUSoundSourceConfiguration;
+	*pendingVSUSoundSourceConfiguration = *vsuSoundSourceConfiguration;
+
+	VirtualList::pushBack(this->pendingVSUSoundSourceConfigurations, pendingVSUSoundSourceConfiguration);
 
 }
 //---------------------------------------------------------------------------------------------------------

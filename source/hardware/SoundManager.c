@@ -82,6 +82,8 @@ static void SoundManager::playSounds(uint32 elapsedMicroseconds)
 //---------------------------------------------------------------------------------------------------------
 void SoundManager::reset()
 {
+	VSUManager::reset(_vsuManager);
+
 	for(VirtualNode node = this->sounds->head; NULL != node; node = node->next)
 	{
 		Sound sound = Sound::safeCast(node->data);
