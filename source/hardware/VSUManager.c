@@ -206,6 +206,8 @@ void VSUManager::update()
 {
 	this->ticks += __I_TO_FIX7_9_EXT(1);
 
+	VSUManager::releaseSoundSources(this);
+
 	VSUManager::dispatchPendingSoundSourceConfigurations(this);
 }
 //---------------------------------------------------------------------------------------------------------
@@ -388,6 +390,18 @@ int16 VSUManager::findAvailableSoundSource()
 	}
 
 	return -1;
+}
+//---------------------------------------------------------------------------------------------------------
+void VSUManager::releaseSoundSources()
+{
+	for(int16 i = 0; i < __TOTAL_SOUND_SOURCES; i++)
+	{
+		if(this->ticks >= this->vsuSoundSourceConfigurations[i].timeout)
+		{
+			VSUSoundSource* vsuSoundSource = this->vsuSoundSourceConfigurations[i].vsuSoundSource;
+			this->vsuSoundSourceConfigurations[i].SxINT = vsuSoundSource->SxINT = __SOUND_WRAPPER_STOP_SOUND;
+		}
+	}
 }
 //---------------------------------------------------------------------------------------------------------
 void VSUManager::dispatchPendingSoundSourceConfigurations()
