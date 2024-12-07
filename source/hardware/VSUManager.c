@@ -145,10 +145,7 @@ void VSUManager::reset()
 	this->ticks = 0;
 	VirtualList::deleteData(this->queuedVSUSoundSourceConfigurations);
 
-	int32 i = 0;
-
-	// Reset all channels
-	for(i = 0; i < __TOTAL_SOUND_SOURCES; i++)
+	for(int16 i = 0; i < __TOTAL_SOUND_SOURCES; i++)
 	{
 		VSUSoundSource* vsuSoundSource = &_vsuSoundSources[i];
 
@@ -164,8 +161,7 @@ void VSUManager::reset()
 		this->vsuSoundSourceConfigurations[i].SxSWP = vsuSoundSource->SxSWP = 0;
 	}
 
-	// Reset all waveforms
-	for(i = 0; i < __TOTAL_WAVEFORMS; i++)
+	for(int16 i = 0; i < __TOTAL_WAVEFORMS; i++)
 	{
 		this->waveforms[i].index = i;
 		this->waveforms[i].usageCount = 0;
@@ -175,39 +171,34 @@ void VSUManager::reset()
 
 		for(uint32 j = 0; j < 128; j++)
 		{
-			this->waveforms[i].wave[j] = j;
+			this->waveforms[i].wave[j] = 0;
 		}
 	}
 
-	// Reset modulation data
 	uint8* modulationData = __MODULATION_DATA;
-	for(i = 0; i <= 32 * 4; i++)
+
+	for(int16 i = 0; i <= 32 * 4; i++)
 	{
 		modulationData[i] = 0;
 	}
 
-	for(i = 0; i < __TOTAL_NORMAL_CHANNELS; i++)
+	for(int16 i = 0; i < __TOTAL_NORMAL_CHANNELS; i++)
 	{
 		this->vsuSoundSourceConfigurations[i].type = kSoundSourceNormal;
 	}
 
-	for(i = __TOTAL_NORMAL_CHANNELS; i < __TOTAL_NORMAL_CHANNELS + __TOTAL_MODULATION_CHANNELS; i++)
+	for(int16 i = __TOTAL_NORMAL_CHANNELS; i < __TOTAL_NORMAL_CHANNELS + __TOTAL_MODULATION_CHANNELS; i++)
 	{
 		this->vsuSoundSourceConfigurations[i].type = kSoundSourceModulation;
 	}
 
-	for(i = __TOTAL_NORMAL_CHANNELS + __TOTAL_MODULATION_CHANNELS; i < __TOTAL_NORMAL_CHANNELS + __TOTAL_MODULATION_CHANNELS + __TOTAL_NOISE_CHANNELS; i++)
+	for(int16 i = __TOTAL_NORMAL_CHANNELS + __TOTAL_MODULATION_CHANNELS; i < __TOTAL_NORMAL_CHANNELS + __TOTAL_MODULATION_CHANNELS + __TOTAL_NOISE_CHANNELS; i++)
 	{
 		this->vsuSoundSourceConfigurations[i].type = kSoundSourceNoise;
 	}
 
 	VSUManager::stopAllSounds(this);
 	VSUManager::unlock(this);
-
-	/// REMOVE
-extern const int8 SawtoothWaveForm[];
-
-	VSUManager::setWaveform(this, this->waveforms[0].wave, SawSquareWaveForm);
 }
 //---------------------------------------------------------------------------------------------------------
 void VSUManager::update()
@@ -298,7 +289,7 @@ void VSUManager::print(int32 x, int32 y)
 		PRINT_HEX_EXT(vsuSoundSourceConfiguration->SxEV1, x + 9, y, 2);
 
 		PRINT_TEXT("SxRAM  :     ", x, ++y);
-		PRINT_HEX_EXT(vsuSoundSourceConfiguration->SxRAM, x + 9, y, 2);
+		PRINT_HEX_EXT((uint32)vsuSoundSourceConfiguration->SxRAM, x + 9, y, 2);
 
 		PRINT_TEXT("SxSWP  :     ", x, ++y);
 		PRINT_HEX_EXT(vsuSoundSourceConfiguration->SxSWP, x + 9, y, 2);
@@ -337,23 +328,15 @@ void VSUManager::constructor()
 {
 	Base::constructor();
 
-	this->clock = new Clock();
 	this->queuedVSUSoundSourceConfigurations = new VirtualList();
 	this->lock = false;
 	this->targetPCMUpdates = 0;
 
 	VSUManager::reset(this);
-	Clock::start(this->clock);
 }
 //---------------------------------------------------------------------------------------------------------
 void VSUManager::destructor()
 {
-	if(!isDeleted(this->clock))
-	{
-		delete this->clock;
-		this->clock = NULL;
-	}
-
 	if(!isDeleted(this->queuedVSUSoundSourceConfigurations))
 	{
 		VirtualList::deleteData(this->queuedVSUSoundSourceConfigurations);
@@ -384,14 +367,8 @@ void VSUManager::configureSoundSource(int16 vsuSoundSourceIndex, const VSUSoundS
 	vsuSoundSource->SxFQH = vsuSoundSourceConfiguration->SxFQH;
 	vsuSoundSource->SxEV0 = vsuSoundSourceConfiguration->SxEV0;
 	vsuSoundSource->SxEV1 = vsuSoundSourceConfiguration->SxEV1;
-	vsuSoundSource->SxRAM = VSUManager::findWaveform(this, vsuSoundSourceConfiguration->SxRAM);
+	vsuSoundSource->SxRAM = VSUManager::findWaveform(this, vsuSoundSourceConfiguration->SxRAM)->index;
 	vsuSoundSource->SxSWP = vsuSoundSourceConfiguration->SxSWP;
-
-	/// TAP Location
-	//_soundRegistries[soundTrack->index].SxEV1 = (tapLocation << 4) | (0x0F & soundTrack->soundsoundTrackConfiguration.SxEV1);
-
-// REMOVE
-//	PRINT_INT(vsuSoundSourceIndex, 1, 9);
 
 //	VSUManager::printVSUSoundSourceConfiguration(&this->vsuSoundSourceConfigurations[vsuSoundSourceIndex], 1, 10);
 //	VSUManager::printVSUSoundSource(vsuSoundSource, 20, 10);
@@ -410,11 +387,6 @@ int16 VSUManager::findAvailableSoundSource()
 	return -1;
 }
 //---------------------------------------------------------------------------------------------------------
-int16 VSUManager::findWaveform(const Waveform* waveform)
-{
-	return 0;
-}
-//---------------------------------------------------------------------------------------------------------
 void VSUManager::queueSoundSourceConfiguration(const VSUSoundSourceConfiguration* vsuSoundSourceConfiguration)
 {
 	if(NULL == vsuSoundSourceConfiguration || isDeleted(this->queuedVSUSoundSourceConfigurations))
@@ -424,15 +396,45 @@ void VSUManager::queueSoundSourceConfiguration(const VSUSoundSourceConfiguration
 
 	VSUSoundSourceConfiguration* queuedVSUSoundSourceConfiguration = new VSUSoundSourceConfiguration;
 	*queuedVSUSoundSourceConfiguration = *vsuSoundSourceConfiguration;
-	queuedVSUSoundSourceConfiguration->timeout = Clock::getMilliseconds(this->clock) + vsuSoundSourceConfiguration->timeout;
+	queuedVSUSoundSourceConfiguration->timeout = this->ticks + vsuSoundSourceConfiguration->timeout;
 
 	VirtualList::pushBack(this->queuedVSUSoundSourceConfigurations, queuedVSUSoundSourceConfiguration);
 
 }
 //---------------------------------------------------------------------------------------------------------
+Waveform* VSUManager::findWaveform(const int8* waveFormData)
+{
+	for(int16 i = 0; i < __TOTAL_WAVEFORMS; i++)
+	{
+		if(this->waveforms[i].data == waveFormData)
+		{
+			this->waveforms[i].usageCount++;
+
+			return &this->waveforms[i];
+		}
+	}
+
+	for(int16 i = 0; i < __TOTAL_WAVEFORMS; i++)
+	{
+		if(0 == this->waveforms[i].usageCount)
+		{
+			this->waveforms[i].usageCount = 1;
+
+			this->waveforms[i].data = waveFormData;
+
+			VSUManager::setWaveform(this, &this->waveforms[i], waveFormData);
+
+			return &this->waveforms[i];
+		}
+	}
+
+	/// Fallback
+	return &this->waveforms[0];
+}
+//---------------------------------------------------------------------------------------------------------
 void VSUManager::setWaveform(Waveform* waveform, const int8* data)
 {
-	if(NULL != waveform && waveform->overwrite)
+	if(NULL != waveform)// && waveform->overwrite)
 	{
 		waveform->data = (int8*)data;
 		waveform->overwrite = false;
@@ -467,58 +469,6 @@ void VSUManager::setWaveform(Waveform* waveform, const int8* data)
 		}
 		*/
 	}
-}
-//---------------------------------------------------------------------------------------------------------
-int8 VSUManager::getWaveform(const int8* waveFormData)
-{
-	if(NULL == waveFormData)
-	{
-		return -1;
-	}
-
-	Waveform* freeWaveformPriority1 = NULL;
-	Waveform* freeWaveformPriority2 = NULL;
-
-	// Reset all sounds and channels
-//	for(int16 i = __TOTAL_WAVEFORMS - 1; 0 <= i; i--)
-	for(int32 i = 0; i < __TOTAL_WAVEFORMS; i++)
-	{
-		if(NULL == this->waveforms[i].data)
-		{
-			freeWaveformPriority1 = &this->waveforms[i];
-		}
-
-		if(0 == this->waveforms[i].usageCount)
-		{
-			freeWaveformPriority2 = &this->waveforms[i];
-		}
-
-		if(waveFormData == this->waveforms[i].data)
-		{
-			this->waveforms[i].usageCount++;
-			return this->waveforms[i].index;
-		}
-	}
-
-	if(NULL != freeWaveformPriority1)
-	{
-		freeWaveformPriority1->overwrite = freeWaveformPriority1->data != waveFormData;
-		freeWaveformPriority1->data = waveFormData;
-		freeWaveformPriority1->usageCount = 1;
-
-		return freeWaveformPriority1->index;
-	}
-
-	if(NULL != freeWaveformPriority2)
-	{
-		freeWaveformPriority2->overwrite = freeWaveformPriority2->data != waveFormData;
-		freeWaveformPriority2->data = waveFormData;
-		freeWaveformPriority2->usageCount = 1;
-
-		return freeWaveformPriority2->index;
-	}
-
-	return -1;
 }
 //---------------------------------------------------------------------------------------------------------
 void VSUManager::releaseWaveform(int8 waveFormIndex, const int8* waveFormData)

@@ -15,8 +15,7 @@
 // INCLUDES
 //=========================================================================================================
 
-#include <Clock.h>
-#include <ListenerObject.h>
+#include <Object.h>
 
 
 //=========================================================================================================
@@ -141,16 +140,13 @@ typedef struct VSUSoundSourceConfiguration
 ///
 /// Class VSUManager
 ///
-/// Inherits from ListenerObject
+/// Inherits from Object
 ///
 /// Manages the VSU.
 /// @ingroup hardware
-singleton class VSUManager : ListenerObject
+singleton class VSUManager : Object
 {
 	/// @protectedsection
-
-	/// Clock to keep track of time
-	Clock clock;
 
 	/// List of playing sounds
 	VirtualList queuedVSUSoundSourceConfigurations;
