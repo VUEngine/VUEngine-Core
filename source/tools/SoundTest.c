@@ -353,7 +353,7 @@ void SoundTest::loadSound()
 	TimerManager::setTargetTimePerInterruptUnits(TimerManager::getInstance(), kUS);
 	TimerManager::setTargetTimePerInterrupt(TimerManager::getInstance(), _userSounds[this->soundIndex]->targetTimerResolutionUS);
 
-	this->sound = SoundManager::getSound(SoundManager::getInstance(), (SoundSpec*)_userSounds[this->soundIndex], kPlayAll, (EventListener)SoundTest::onSoundReleased, ListenerObject::safeCast(this));
+	this->sound = SoundManager::getSound(SoundManager::getInstance(), (SoundSpec*)_userSounds[this->soundIndex], (EventListener)SoundTest::onSoundReleased, ListenerObject::safeCast(this));
 
 	NM_ASSERT(!isDeleted(this->sound), "SoundTest::loadSound: no sound");
 

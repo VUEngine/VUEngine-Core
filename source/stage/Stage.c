@@ -1022,7 +1022,7 @@ void Stage::setupSounds()
 
 		if(isDeleted(sound))
 		{
-			sound = SoundManager::getSound(SoundManager::getInstance(), this->stageSpec->assets.sounds[i], kPlayAll, (EventListener)Stage::onSoundReleased, ListenerObject::safeCast(this));
+			sound = SoundManager::getSound(SoundManager::getInstance(), this->stageSpec->assets.sounds[i], (EventListener)Stage::onSoundReleased, ListenerObject::safeCast(this));
 		}
 
 		if(!isDeleted(sound))
