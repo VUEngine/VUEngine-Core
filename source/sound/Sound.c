@@ -378,6 +378,7 @@ void Sound::release()
 
 	if(!isDeleted(this->soundTracks))
 	{
+		VirtualList::deleteData(this->soundTracks);
 		delete this->soundTracks;
 		this->soundTracks = NULL;
 	}
