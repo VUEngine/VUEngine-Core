@@ -181,7 +181,7 @@ bool SoundTrack::update(fix7_9_ext tickStep, fix7_9_ext targetTimerResolutionFac
 
 	VSUManager::applySoundSourceConfiguration(VSUManager::getInstance(), &vsuChannelConfiguration);
 
-	this->finished = ++this->cursor > this->samples;
+	this->finished = ++this->cursor >= this->samples;
 
 	return false;
 }
@@ -249,16 +249,14 @@ void SoundTrack::computeLength()
 	this->samples = 0;
 
 	int32 keyframe = 0;
-	SoundTrackKeyframe soundTrackKeyframe = this->soundTrackSpec->trackKeyframes[keyframe];
 
-	while(kSoundTrackEventEnd != soundTrackKeyframe.events)
+	while(kSoundTrackEventEnd != this->soundTrackSpec->trackKeyframes[keyframe].events)
 	{
+		keyframe++;
 		this->samples++;
-		this->ticks += soundTrackKeyframe.tick;
-
-		soundTrackKeyframe = this->soundTrackSpec->trackKeyframes[keyframe++];
+		this->ticks += this->soundTrackSpec->trackKeyframes[keyframe].tick;
 	}
 
-	this->ticks += soundTrackKeyframe.tick;
+	this->ticks += this->soundTrackSpec->trackKeyframes[keyframe].tick;
 }
 //---------------------------------------------------------------------------------------------------------
