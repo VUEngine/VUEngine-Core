@@ -149,7 +149,7 @@ void VSUManager::reset()
 	for(int16 i = 0; i < __TOTAL_SOUND_SOURCES; i++)
 	{
 		this->vsuSoundSourceConfigurations[i].vsuSoundSource = &_vsuSoundSources[i];
-		this->vsuSoundSourceConfigurations[i].timeout = 0;
+		this->vsuSoundSourceConfigurations[i].timeout = -1;
 		this->vsuSoundSourceConfigurations[i].SxINT = 0;
 		this->vsuSoundSourceConfigurations[i].SxLRV = 0;
 		this->vsuSoundSourceConfigurations[i].SxFQL = 0;
@@ -374,7 +374,7 @@ void VSUManager::configureSoundSource(int16 vsuSoundSourceIndex, const VSUSoundS
 	this->vsuSoundSourceConfigurations[vsuSoundSourceIndex].SxRAM = vsuSoundSourceConfiguration->SxRAM;
 	this->vsuSoundSourceConfigurations[vsuSoundSourceIndex].SxSWP = vsuSoundSourceConfiguration->SxSWP;
 
-	Waveform* waveform = VSUManager::findWaveform(this, vsuSoundSourceConfiguration->SxRAM)->index;
+	Waveform* waveform = VSUManager::findWaveform(this, vsuSoundSourceConfiguration->SxRAM);
 
 	vsuSoundSource->SxINT = vsuSoundSourceConfiguration->SxINT;
 	vsuSoundSource->SxLRV = vsuSoundSourceConfiguration->SxLRV;
@@ -422,10 +422,47 @@ void VSUManager::releaseSoundSources()
 {
 	for(int16 i = 0; i < __TOTAL_SOUND_SOURCES; i++)
 	{
+		if(0 > this->vsuSoundSourceConfigurations[i].timeout)
+		{
+			continue;
+		}
+
 		if(this->ticks >= this->vsuSoundSourceConfigurations[i].timeout)
 		{
-			VSUSoundSource* vsuSoundSource = this->vsuSoundSourceConfigurations[i].vsuSoundSource;
-			this->vsuSoundSourceConfigurations[i].SxINT = vsuSoundSource->SxINT = __SOUND_WRAPPER_STOP_SOUND;
+			this->vsuSoundSourceConfigurations[i].timeout = -1;
+			this->vsuSoundSourceConfigurations[i].SxINT = 0;
+			this->vsuSoundSourceConfigurations[i].vsuSoundSource->SxINT |= __SOUND_WRAPPER_STOP_SOUND;
+			VSUManager::releaseWaveform(this, this->vsuSoundSourceConfigurations[i].vsuSoundSource->SxRAM, this->vsuSoundSourceConfigurations[i].SxRAM);
+		}
+	}
+}
+//---------------------------------------------------------------------------------------------------------
+void VSUManager::releaseWaveform(int8 waveFormIndex, const int8* waveFormData)
+{
+	if(0 <= waveFormIndex && waveFormIndex < __TOTAL_WAVEFORMS)
+	{
+		if(NULL == waveFormData || this->waveforms[waveFormIndex].data == waveFormData)
+		{
+			this->waveforms[waveFormIndex].usageCount -= 1;
+
+			if(0 >= this->waveforms[waveFormIndex].usageCount)
+			{
+				this->waveforms[waveFormIndex].usageCount = 0;
+			}
+		}
+		else
+		{
+#ifndef __RELEASE
+			Printing::setDebugMode(Printing::getInstance());
+			Printing::clear(Printing::getInstance());
+			Printing::text(Printing::getInstance(), "Waveform index: ", 1, 12, NULL);
+			Printing::int32(Printing::getInstance(), waveFormIndex, 18, 12, NULL);
+			Printing::text(Printing::getInstance(), "Waveform data: ", 1, 13, NULL);
+			Printing::hex(Printing::getInstance(), (int32)waveFormData, 18, 13, 8, NULL);
+			Printing::text(Printing::getInstance(), "Waveform data[]: ", 1, 14, NULL);
+			Printing::hex(Printing::getInstance(), (int32)this->waveforms[waveFormIndex].data, 18, 14, 8, NULL);
+#endif
+			NM_ASSERT(false, "VSUManager::releaseWaveform: mismatch between index and data");
 		}
 	}
 }
@@ -536,36 +573,6 @@ void VSUManager::setWaveform(Waveform* waveform, const int8* data)
 			moddata[i << 2] = kModData[i];
 		}
 		*/
-	}
-}
-//---------------------------------------------------------------------------------------------------------
-void VSUManager::releaseWaveform(int8 waveFormIndex, const int8* waveFormData)
-{
-	if(0 <= waveFormIndex && waveFormIndex < __TOTAL_SOUND_SOURCES)
-	{
-		if(NULL == waveFormData || this->waveforms[waveFormIndex].data == waveFormData)
-		{
-			this->waveforms[waveFormIndex].usageCount -= 1;
-
-			if(0 >= this->waveforms[waveFormIndex].usageCount)
-			{
-				this->waveforms[waveFormIndex].usageCount = 0;
-			}
-		}
-		else
-		{
-#ifndef __RELEASE
-			Printing::setDebugMode(Printing::getInstance());
-			Printing::clear(Printing::getInstance());
-			Printing::text(Printing::getInstance(), "Waveform index: ", 1, 12, NULL);
-			Printing::int32(Printing::getInstance(), waveFormIndex, 18, 12, NULL);
-			Printing::text(Printing::getInstance(), "Waveform data: ", 1, 13, NULL);
-			Printing::hex(Printing::getInstance(), (int32)waveFormData, 18, 13, 8, NULL);
-			Printing::text(Printing::getInstance(), "Waveform data[]: ", 1, 14, NULL);
-			Printing::hex(Printing::getInstance(), (int32)this->waveforms[waveFormIndex].data, 18, 14, 8, NULL);
-#endif
-			NM_ASSERT(false, "VSUManager::releaseWaveform: mismatch between index and data");
-		}
 	}
 }
 //---------------------------------------------------------------------------------------------------------
