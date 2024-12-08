@@ -132,7 +132,7 @@ void VSUManager::applySoundSourceConfiguration(const VSUSoundSourceConfiguration
 
 	if(0 > vsuSoundSourceIndex)
 	{
-		VSUManager::registerPendingSoundSourceConfiguration(this, &vsuSoundSourceConfiguration);
+		VSUManager::registerPendingSoundSourceConfiguration(this, vsuSoundSourceConfiguration);
 	}
 	else
 	{
@@ -148,18 +148,25 @@ void VSUManager::reset()
 
 	for(int16 i = 0; i < __TOTAL_SOUND_SOURCES; i++)
 	{
-		VSUSoundSource* vsuSoundSource = &_vsuSoundSources[i];
-
-		this->vsuSoundSourceConfigurations[i].vsuSoundSource = vsuSoundSource;
+		this->vsuSoundSourceConfigurations[i].vsuSoundSource = &_vsuSoundSources[i];
 		this->vsuSoundSourceConfigurations[i].timeout = 0;
-		this->vsuSoundSourceConfigurations[i].SxINT = vsuSoundSource->SxINT = 0;
-		this->vsuSoundSourceConfigurations[i].SxLRV = vsuSoundSource->SxLRV = 0;
-		this->vsuSoundSourceConfigurations[i].SxFQL = vsuSoundSource->SxFQL = 0;
-		this->vsuSoundSourceConfigurations[i].SxFQH = vsuSoundSource->SxFQH = 0;
-		this->vsuSoundSourceConfigurations[i].SxEV0 = vsuSoundSource->SxEV0 = 0;
-		this->vsuSoundSourceConfigurations[i].SxEV1 = vsuSoundSource->SxEV1 = 0;
-		this->vsuSoundSourceConfigurations[i].SxRAM = vsuSoundSource->SxRAM = 0;
-		this->vsuSoundSourceConfigurations[i].SxSWP = vsuSoundSource->SxSWP = 0;
+		this->vsuSoundSourceConfigurations[i].SxINT = 0;
+		this->vsuSoundSourceConfigurations[i].SxLRV = 0;
+		this->vsuSoundSourceConfigurations[i].SxFQL = 0;
+		this->vsuSoundSourceConfigurations[i].SxFQH = 0;
+		this->vsuSoundSourceConfigurations[i].SxEV0 = 0;
+		this->vsuSoundSourceConfigurations[i].SxEV1 = 0;
+		this->vsuSoundSourceConfigurations[i].SxRAM = NULL;
+		this->vsuSoundSourceConfigurations[i].SxSWP = 0;
+
+		this->vsuSoundSourceConfigurations[i].vsuSoundSource->SxINT = 0;
+		this->vsuSoundSourceConfigurations[i].vsuSoundSource->SxLRV = 0;
+		this->vsuSoundSourceConfigurations[i].vsuSoundSource->SxFQL = 0;
+		this->vsuSoundSourceConfigurations[i].vsuSoundSource->SxFQH = 0;
+		this->vsuSoundSourceConfigurations[i].vsuSoundSource->SxEV0 = 0;
+		this->vsuSoundSourceConfigurations[i].vsuSoundSource->SxEV1 = 0;
+		this->vsuSoundSourceConfigurations[i].vsuSoundSource->SxRAM = 0;
+		this->vsuSoundSourceConfigurations[i].vsuSoundSource->SxSWP = 0;
 	}
 
 	for(int16 i = 0; i < __TOTAL_WAVEFORMS; i++)

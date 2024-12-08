@@ -19,6 +19,13 @@
 
 
 //=========================================================================================================
+// CLASS' MACROS
+//=========================================================================================================
+
+#define __MAXIMUM_VOLUME						0xF
+
+
+//=========================================================================================================
 // CLASS' DATA
 //=========================================================================================================
 
@@ -189,8 +196,10 @@ class SoundTrack : Object
 	/// @param targetTimerResolutionFactor: Factor to apply to the tick step
 	/// @param leftVolumeFactor: Factor to apply to the left speaker's volume
 	/// @param rightVolumeFactor: Factor to apply to the right speaker's volume
+	/// @param volumeReduction: Volume reduction used for fade effects
+	/// @param volumenScalePower: 2's power to divide to the final volume value
 	/// @return True if the playback is complete; false otherwise
-	bool update(fix7_9_ext tickStep, fix7_9_ext targetTimerResolutionFactor, fixed_t leftVolumeFactor, fixed_t rightVolumeFactor);
+	bool update(fix7_9_ext tickStep, fix7_9_ext targetTimerResolutionFactor, fixed_t leftVolumeFactor, fixed_t rightVolumeFactor, int8 volumeReduction, uint8 volumenScalePower);
 
 	/// Retrieve the sound track's total ticks.
 	/// @return Total number of ticks

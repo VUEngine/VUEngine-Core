@@ -42,7 +42,6 @@ friend class VirtualList;
 #undef __CHAR_BRIGHT_RED_BOX
 #define __CHAR_BRIGHT_RED_BOX					'\x10'
 
-#define __MAXIMUM_VOLUME						0xF
 #define __MIDI_CONVERTER_FREQUENCY_US			20
 #define __SOUND_TARGET_US_PER_TICK				__MIDI_CONVERTER_FREQUENCY_US
 
@@ -532,7 +531,7 @@ void Sound::update(uint32 elapsedMicroseconds __attribute__((unused)))
 	{
 		SoundTrack soundTrack = SoundTrack::safeCast(node->data);
 
-		finished = SoundTrack::update(soundTrack, this->tickStep, this->targetTimerResolutionFactor, leftVolumeFactor, rightVolumeFactor) && finished;
+		finished = SoundTrack::update(soundTrack, this->tickStep, this->targetTimerResolutionFactor, leftVolumeFactor, rightVolumeFactor, this->volumeReduction, this->volumenScalePower) && finished;
 	}
 
 	if(finished)

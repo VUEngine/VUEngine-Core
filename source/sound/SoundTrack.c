@@ -57,7 +57,7 @@ void SoundTrack::rewind()
 	SoundTrack::reset(this);
 }
 //---------------------------------------------------------------------------------------------------------
-bool SoundTrack::update(fix7_9_ext tickStep, fix7_9_ext targetTimerResolutionFactor, fixed_t leftVolumeFactor, fixed_t rightVolumeFactor)
+bool SoundTrack::update(fix7_9_ext tickStep, fix7_9_ext targetTimerResolutionFactor, fixed_t leftVolumeFactor, fixed_t rightVolumeFactor, int8 volumeReduction, uint8 volumenScalePower)
 {
 	if(this->finished)
 	{
@@ -121,13 +121,58 @@ bool SoundTrack::update(fix7_9_ext tickStep, fix7_9_ext targetTimerResolutionFac
 		this->cursorSxSWP++;
 	}
 
+//	uint8 volume = SoundTrack::clampOutputValue(this->soundTrackSpec->SxINT[this->cursorSxLRV]/* - this->volumeReduction*/) /*& this->unmute*/;
+	uint8 volume = this->soundTrackSpec->SxINT[this->cursorSxLRV];
+	
+	int16 leftVolume = volume >> 4;
+	int16 rightVolume = volume & 0xF;
+
+	if(0 != volume)
+	{
+		fixed_t volumeHelper = __I_TO_FIXED(volume);
+
+		if(0 <= leftVolumeFactor)
+		{
+			leftVolume = __FIXED_TO_I(__FIXED_MULT(volumeHelper, leftVolumeFactor));
+		}
+
+		if(0 <= rightVolumeFactor)
+		{
+			rightVolume = __FIXED_TO_I(__FIXED_MULT(volumeHelper, rightVolumeFactor));
+		}		
+	}
+
+	leftVolume -= volumeReduction;
+	rightVolume -= volumeReduction;
+
+	if(leftVolume < 0)
+	{
+		leftVolume = 0;
+	}
+	else if(leftVolume > __MAXIMUM_VOLUME)
+	{
+		leftVolume = __MAXIMUM_VOLUME;
+	}
+
+	if(rightVolume < 0)
+	{
+		rightVolume = 0;
+	}
+	else if(rightVolume > __MAXIMUM_VOLUME)
+	{
+		rightVolume = __MAXIMUM_VOLUME;
+	}
+
+	leftVolume >>= volumenScalePower;
+	rightVolume >>= volumenScalePower;
+
 	VSUSoundSourceConfiguration vsuChannelConfiguration = 
 	{
 		NULL,
 		__FIX7_9_EXT_DIV(__I_TO_FIX7_9_EXT(soundTrackKeyframe.tick), targetTimerResolutionFactor),
 		kSoundSourceNormal,
 		this->soundTrackSpec->SxINT[this->cursorSxINT],
-		this->soundTrackSpec->SxLRV[this->cursorSxLRV],
+		(leftVolume << 4) | rightVolume,
 		this->soundTrackSpec->SxFQ[this->cursorSxFQ] & 0xFF,
 		this->soundTrackSpec->SxFQ[this->cursorSxFQ] >> 8,
 		this->soundTrackSpec->SxEV0[this->cursorSxEV0],
