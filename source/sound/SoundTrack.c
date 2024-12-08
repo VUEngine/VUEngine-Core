@@ -54,7 +54,23 @@ void SoundTrack::resume()
 //---------------------------------------------------------------------------------------------------------
 void SoundTrack::rewind()
 {
-	SoundTrack::reset(this);
+	if(this->finished)
+	{
+		this->cursor = 0;
+		this->cursorSxINT = 0;
+		this->cursorSxLRV = 0;
+		this->cursorSxFQ = 0;
+		this->cursorSxEV0 = 0;
+		this->cursorSxEV1 = 0;
+		this->cursorSxRAM = 0;
+		this->cursorSxSWP = 0;
+
+		this->finished = false;
+	}
+	else
+	{
+		SoundTrack::reset(this);
+	}
 }
 //---------------------------------------------------------------------------------------------------------
 bool SoundTrack::update(fix7_9_ext tickStep, fix7_9_ext targetTimerResolutionFactor, fixed_t leftVolumeFactor, fixed_t rightVolumeFactor, int8 volumeReduction, uint8 volumenScalePower)
@@ -231,7 +247,6 @@ void SoundTrack::reset()
 	this->cursorSxEV1 = 0;
 	this->cursorSxRAM = 0;
 	this->cursorSxSWP = 0;
-	this->finished = false;
 
 	this->finished = false;
 	this->elapsedTicks = 0;
