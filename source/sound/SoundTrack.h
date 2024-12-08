@@ -49,7 +49,8 @@ enum SoundEvents
 	kSoundTrackEventSxEV0		 	=			1 << (5),
 	kSoundTrackEventSxEV1		 	=			1 << (6),
 	kSoundTrackEventSxRAM		 	=			1 << (7),
-	kSoundTrackEventSxSWP		 	=			1 << (8)
+	kSoundTrackEventSxSWP		 	=			1 << (8),
+	kSoundTrackEventSxTAP		 	=			1 << (9)
 };
 
 /// A sound keyframe

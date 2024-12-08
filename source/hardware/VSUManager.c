@@ -128,7 +128,7 @@ static void VSUManager::printVSUSoundSourceConfiguration(const VSUSoundSourceCon
 //---------------------------------------------------------------------------------------------------------
 void VSUManager::applySoundSourceConfiguration(const VSUSoundSourceConfiguration* vsuSoundSourceConfiguration)
 {
-	int16 vsuSoundSourceIndex = VSUManager::findAvailableSoundSource(this);
+	int16 vsuSoundSourceIndex = VSUManager::findAvailableSoundSource(this, vsuSoundSourceConfiguration);
 
 	if(0 > vsuSoundSourceIndex)
 	{
@@ -158,6 +158,7 @@ void VSUManager::reset()
 		this->vsuSoundSourceConfigurations[i].SxEV1 = 0;
 		this->vsuSoundSourceConfigurations[i].SxRAM = NULL;
 		this->vsuSoundSourceConfigurations[i].SxSWP = 0;
+		this->vsuSoundSourceConfigurations[i].noise = false;
 
 		this->vsuSoundSourceConfigurations[i].vsuSoundSource->SxINT = 0;
 		this->vsuSoundSourceConfigurations[i].vsuSoundSource->SxLRV = 0;
@@ -386,10 +387,26 @@ void VSUManager::configureSoundSource(int16 vsuSoundSourceIndex, const VSUSoundS
 //	VSUManager::printVSUSoundSource(vsuSoundSource, 20, 10);
 }
 //---------------------------------------------------------------------------------------------------------
-int16 VSUManager::findAvailableSoundSource()
+int16 VSUManager::findAvailableSoundSource(const VSUSoundSourceConfiguration* vsuSoundSourceConfiguration)
 {
+	uint32 soundSourceType = kSoundSourceNormal;
+
+	if(0 != vsuSoundSourceConfiguration->SxSWP)
+	{
+		soundSourceType = kSoundSourceModulation;
+	}
+	else if(0 != vsuSoundSourceConfiguration->noise)
+	{
+		soundSourceType = kSoundSourceNoise;
+	}
+
 	for(int16 i = 0; i < __TOTAL_SOUND_SOURCES; i++)
 	{
+		if(soundSourceType != this->vsuSoundSourceConfigurations[i].type)
+		{
+			continue;
+		}
+		
 		if(this->ticks >= this->vsuSoundSourceConfigurations[i].timeout)
 		{
 			return i;
@@ -422,17 +439,17 @@ void VSUManager::dispatchPendingSoundSourceConfigurations()
 	{
 		nextNode = node->next;
 
-		VSUSoundSourceConfiguration* queuedVSUSoundSourceConfiguration = (VSUSoundSourceConfiguration*)node->data;
+		VSUSoundSourceConfiguration* pendingVSUSoundSourceConfiguration = (VSUSoundSourceConfiguration*)node->data;
 
-		int16 vsuSoundSourceIndex = VSUManager::findAvailableSoundSource(this);
+		int16 vsuSoundSourceIndex = VSUManager::findAvailableSoundSource(this, pendingVSUSoundSourceConfiguration);
 
 		if(0 <= vsuSoundSourceIndex)
 		{
-			VSUManager::configureSoundSource(this, vsuSoundSourceIndex, queuedVSUSoundSourceConfiguration);
+			VSUManager::configureSoundSource(this, vsuSoundSourceIndex, pendingVSUSoundSourceConfiguration);
 
 			VirtualList::removeNode(this->pendingVSUSoundSourceConfigurations, node);
 
-			delete queuedVSUSoundSourceConfiguration;
+			delete pendingVSUSoundSourceConfiguration;
 		}
 	}
 }

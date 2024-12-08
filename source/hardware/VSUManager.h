@@ -130,6 +130,9 @@ typedef struct VSUSoundSourceConfiguration
 	/// SxSWP values
 	int16 SxSWP;	
 
+	/// Noise?
+	bool noise;	
+
 } VSUSoundSourceConfiguration;
 
 
@@ -185,6 +188,9 @@ singleton class VSUManager : Object
 
 	/// Update the manager.
 	void update();
+
+	/// Stop all sound sources.
+	void stopAllSounds();
 
 	/// Refuse petitions to play or allocate sounds are processed.
 	void lock();

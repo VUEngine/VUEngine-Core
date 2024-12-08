@@ -121,7 +121,13 @@ bool SoundTrack::update(fix7_9_ext tickStep, fix7_9_ext targetTimerResolutionFac
 		this->cursorSxSWP++;
 	}
 
-//	uint8 volume = SoundTrack::clampOutputValue(this->soundTrackSpec->SxINT[this->cursorSxLRV]/* - this->volumeReduction*/) /*& this->unmute*/;
+	bool noise = false;
+
+	if(0 != (kSoundTrackEventSxTAP & soundTrackKeyframe.events))
+	{
+		noise = true;
+	}
+
 	uint8 volume = this->soundTrackSpec->SxINT[this->cursorSxLRV];
 	
 	int16 leftVolume = volume >> 4;
@@ -179,6 +185,7 @@ bool SoundTrack::update(fix7_9_ext tickStep, fix7_9_ext targetTimerResolutionFac
 		this->soundTrackSpec->SxEV1[this->cursorSxEV1],
 		this->soundTrackSpec->SxRAM[this->cursorSxRAM],
 		this->soundTrackSpec->SxSWP[this->cursorSxSWP],
+		noise
 	};
 
 	VSUManager::applySoundSourceConfiguration(VSUManager::getInstance(), &vsuChannelConfiguration);
