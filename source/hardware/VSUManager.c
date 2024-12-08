@@ -374,13 +374,15 @@ void VSUManager::configureSoundSource(int16 vsuSoundSourceIndex, const VSUSoundS
 	this->vsuSoundSourceConfigurations[vsuSoundSourceIndex].SxRAM = vsuSoundSourceConfiguration->SxRAM;
 	this->vsuSoundSourceConfigurations[vsuSoundSourceIndex].SxSWP = vsuSoundSourceConfiguration->SxSWP;
 
+	Waveform* waveform = VSUManager::findWaveform(this, vsuSoundSourceConfiguration->SxRAM)->index;
+
 	vsuSoundSource->SxINT = vsuSoundSourceConfiguration->SxINT;
 	vsuSoundSource->SxLRV = vsuSoundSourceConfiguration->SxLRV;
 	vsuSoundSource->SxFQL = vsuSoundSourceConfiguration->SxFQL;
 	vsuSoundSource->SxFQH = vsuSoundSourceConfiguration->SxFQH;
 	vsuSoundSource->SxEV0 = vsuSoundSourceConfiguration->SxEV0;
 	vsuSoundSource->SxEV1 = vsuSoundSourceConfiguration->SxEV1;
-	vsuSoundSource->SxRAM = VSUManager::findWaveform(this, vsuSoundSourceConfiguration->SxRAM)->index;
+	vsuSoundSource->SxRAM = waveform->index;
 	vsuSoundSource->SxSWP = vsuSoundSourceConfiguration->SxSWP;
 
 //	VSUManager::printVSUSoundSourceConfiguration(&this->vsuSoundSourceConfigurations[vsuSoundSourceIndex], 1, 10);

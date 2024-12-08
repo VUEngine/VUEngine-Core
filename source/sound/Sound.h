@@ -62,7 +62,7 @@ typedef struct SoundSpec
 	/// Play in loop
 	bool loop;
 
-	/// Target timer resolution in us
+	/// Tick duraction in US
 	uint16 targetTimerResolutionUS;
 
 	/// Tracks
