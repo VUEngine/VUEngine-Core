@@ -158,7 +158,7 @@ class SoundTrack : Object
 	/// Ticks before moving the cursor
 	fix7_9_ext elapsedTicks;
 
-	/// Next curst ticks target
+	/// Next ticks target
 	fix7_9_ext nextElapsedTicksTarget;
 
 	/// If true, the playback is complete

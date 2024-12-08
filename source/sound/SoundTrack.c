@@ -73,19 +73,10 @@ bool SoundTrack::update(fix7_9_ext tickStep, fix7_9_ext targetTimerResolutionFac
 
 	this->elapsedTicks -= this->nextElapsedTicksTarget;
 
-	this->cursor++;
-
-	this->finished = this->cursor > this->samples;
-
-	if(this->finished)
-	{
-		return true;
-	}
-
 	SoundTrackKeyframe soundTrackKeyframe = this->soundTrackSpec->trackKeyframes[this->cursor];
-	
+
 	this->nextElapsedTicksTarget = __I_TO_FIX7_9_EXT(soundTrackKeyframe.tick);
-	
+
 	if(0 != (kSoundTrackEventSxINT & soundTrackKeyframe.events))
 	{
 		this->cursorSxINT++;
@@ -189,6 +180,8 @@ bool SoundTrack::update(fix7_9_ext tickStep, fix7_9_ext targetTimerResolutionFac
 	};
 
 	VSUManager::applySoundSourceConfiguration(VSUManager::getInstance(), &vsuChannelConfiguration);
+
+	this->finished = ++this->cursor > this->samples;
 
 	return false;
 }
