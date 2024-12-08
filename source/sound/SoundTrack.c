@@ -119,7 +119,7 @@ bool SoundTrack::update(fix7_9_ext tickStep, fix7_9_ext targetTimerResolutionFac
 		noise = true;
 	}
 
-	uint8 volume = this->soundTrackSpec->SxINT[this->cursorSxLRV];
+	uint8 volume = this->soundTrackSpec->SxLRV[this->cursorSxLRV];
 	
 	int16 leftVolume = volume >> 4;
 	int16 rightVolume = volume & 0xF;
