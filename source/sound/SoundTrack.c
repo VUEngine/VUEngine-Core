@@ -73,13 +73,137 @@ void SoundTrack::rewind()
 	}
 }
 //---------------------------------------------------------------------------------------------------------
-bool SoundTrack::update(fix7_9_ext tickStep, fix7_9_ext targetTimerResolutionFactor, fixed_t leftVolumeFactor, fixed_t rightVolumeFactor, int8 volumeReduction, uint8 volumenScalePower)
+bool SoundTrack::update(uint32 elapsedMicroseconds, uint32 targetPCMUpdates, fix7_9_ext tickStep, fix7_9_ext targetTimerResolutionFactor, fixed_t leftVolumeFactor, fixed_t rightVolumeFactor, int8 volumeReduction, uint8 volumenScalePower)
 {
 	if(this->finished)
 	{
 		return true;
 	}
 
+	if(kTrackPCM == this->soundTrackSpec->trackType)
+	{
+		this->finished = SoundTrack::updatePCM(this, elapsedMicroseconds, targetPCMUpdates, volumeReduction);
+	}
+	else if(kTrackNative == this->soundTrackSpec->trackType)
+	{
+		this->finished = SoundTrack::updateNative(this, tickStep, targetTimerResolutionFactor, leftVolumeFactor, rightVolumeFactor, volumeReduction, volumenScalePower);
+
+	}
+
+	return this->finished;
+}
+//---------------------------------------------------------------------------------------------------------
+uint32 SoundTrack::getTicks()
+{
+	return this->ticks;
+}
+//---------------------------------------------------------------------------------------------------------
+
+//=========================================================================================================
+// CLASS' PRIVATE METHODS
+//=========================================================================================================
+
+//---------------------------------------------------------------------------------------------------------
+void SoundTrack::constructor(const SoundTrackSpec* soundTrackSpec)
+{
+	Base::constructor();
+
+	this->soundTrackSpec = soundTrackSpec;
+	this->samples = this->soundTrackSpec->samples;
+
+	SoundTrack::reset(this);
+
+	if(0 == this->samples)
+	{
+		SoundTrack::computeLength(this);
+	}
+	else
+	{
+		this->ticks = this->samples = this->soundTrackSpec->samples;
+	}
+}
+//---------------------------------------------------------------------------------------------------------
+void SoundTrack::destructor()
+{
+	Base::destructor();
+}
+//---------------------------------------------------------------------------------------------------------
+void SoundTrack::reset()
+{
+	this->cursor = 0;
+	this->cursorSxINT = 0;
+	this->cursorSxLRV = 0;
+	this->cursorSxFQ = 0;
+	this->cursorSxEV0 = 0;
+	this->cursorSxEV1 = 0;
+	this->cursorSxRAM = 0;
+	this->cursorSxSWP = 0;
+
+	this->finished = false;
+	this->elapsedTicks = 0;
+	this->nextElapsedTicksTarget = 0;
+}
+//---------------------------------------------------------------------------------------------------------
+void SoundTrack::computeLength()
+{
+	if(NULL == this->soundTrackSpec || NULL == this->soundTrackSpec->trackKeyframes || NULL == this->soundTrackSpec->SxLRV)
+	{
+		return;
+	}
+
+	this->ticks = 0;
+	this->samples = 0;
+
+	int32 keyframe = 0;
+
+	while(kSoundTrackEventEnd != this->soundTrackSpec->trackKeyframes[keyframe].events)
+	{
+		keyframe++;
+		this->samples++;
+		this->ticks += this->soundTrackSpec->trackKeyframes[keyframe].tick;
+	}
+
+	this->ticks += this->soundTrackSpec->trackKeyframes[keyframe].tick;
+}
+//---------------------------------------------------------------------------------------------------------
+bool SoundTrack::updatePCM(uint32 elapsedMicroseconds, uint32 targetPCMUpdates, int8 volumeReduction)
+{
+	CACHE_ENABLE;
+
+	// Elapsed time during PCM playback is based on the cursor, track's ticks and target Hz
+	this->elapsedTicks += elapsedMicroseconds;
+
+	this->cursorSxLRV = this->elapsedTicks / targetPCMUpdates;
+
+	// PCM playback must be totally in sync on all channels, so, check if completed only
+	// in the first one
+	int8 volume = this->soundTrackSpec->SxLRV[this->cursorSxLRV];// - volumeReduction;
+
+	VSUSoundSourceConfiguration vsuChannelConfiguration = 
+	{
+		NULL,
+		-1,
+		kSoundSourceNormal,
+		this->soundTrackSpec->SxINT[0],
+		0x00,
+		this->soundTrackSpec->SxFQ[0] & 0xFF,
+		this->soundTrackSpec->SxFQ[0] >> 8,
+		this->soundTrackSpec->SxEV0[0],
+		this->soundTrackSpec->SxEV1[0],
+		this->soundTrackSpec->SxRAM[0],
+		this->soundTrackSpec->SxSWP[0],
+		false
+	};
+
+	VSUManager::applySoundSourceConfigurationForPCM(VSUManager::getInstance(), &vsuChannelConfiguration, volume);
+
+	CACHE_DISABLE;
+
+	return this->cursorSxLRV >= this->samples;
+}
+//---------------------------------------------------------------------------------------------------------
+bool SoundTrack::updateNative(fix7_9_ext tickStep, fix7_9_ext targetTimerResolutionFactor, fixed_t leftVolumeFactor, fixed_t rightVolumeFactor, int8 volumeReduction, uint8 volumenScalePower)
+{
 	this->elapsedTicks += tickStep;
 
 	if(this->elapsedTicks < this->nextElapsedTicksTarget)
@@ -197,81 +321,6 @@ bool SoundTrack::update(fix7_9_ext tickStep, fix7_9_ext targetTimerResolutionFac
 
 	VSUManager::applySoundSourceConfiguration(VSUManager::getInstance(), &vsuChannelConfiguration);
 
-	this->finished = ++this->cursor >= this->samples;
-
-	return false;
-}
-//---------------------------------------------------------------------------------------------------------
-uint32 SoundTrack::getTicks()
-{
-	return this->ticks;
-}
-//---------------------------------------------------------------------------------------------------------
-
-//=========================================================================================================
-// CLASS' PRIVATE METHODS
-//=========================================================================================================
-
-//---------------------------------------------------------------------------------------------------------
-void SoundTrack::constructor(const SoundTrackSpec* soundTrackSpec)
-{
-	Base::constructor();
-
-	this->soundTrackSpec = soundTrackSpec;
-	this->samples = this->soundTrackSpec->samples;
-
-	SoundTrack::reset(this);
-
-	if(0 == this->samples)
-	{
-		SoundTrack::computeLength(this);
-	}
-	else
-	{
-		this->ticks = this->samples = this->soundTrackSpec->samples;
-	}
-}
-//---------------------------------------------------------------------------------------------------------
-void SoundTrack::destructor()
-{
-	Base::destructor();
-}
-//---------------------------------------------------------------------------------------------------------
-void SoundTrack::reset()
-{
-	this->cursor = 0;
-	this->cursorSxINT = 0;
-	this->cursorSxLRV = 0;
-	this->cursorSxFQ = 0;
-	this->cursorSxEV0 = 0;
-	this->cursorSxEV1 = 0;
-	this->cursorSxRAM = 0;
-	this->cursorSxSWP = 0;
-
-	this->finished = false;
-	this->elapsedTicks = 0;
-	this->nextElapsedTicksTarget = 0;
-}
-//---------------------------------------------------------------------------------------------------------
-void SoundTrack::computeLength()
-{
-	if(NULL == this->soundTrackSpec || NULL == this->soundTrackSpec->trackKeyframes || NULL == this->soundTrackSpec->SxLRV)
-	{
-		return;
-	}
-
-	this->ticks = 0;
-	this->samples = 0;
-
-	int32 keyframe = 0;
-
-	while(kSoundTrackEventEnd != this->soundTrackSpec->trackKeyframes[keyframe].events)
-	{
-		keyframe++;
-		this->samples++;
-		this->ticks += this->soundTrackSpec->trackKeyframes[keyframe].tick;
-	}
-
-	this->ticks += this->soundTrackSpec->trackKeyframes[keyframe].tick;
+	return ++this->cursor >= this->samples;
 }
 //---------------------------------------------------------------------------------------------------------
