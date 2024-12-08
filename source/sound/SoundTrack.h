@@ -329,6 +329,8 @@ class SoundTrack : Object
 	void rewind();
 
 	/// Advance the playback on the sound's MIDI tracks.
+	/// @param elapsedMicroseconds: Elapsed time since the last call
+	/// @param targetPCMUpdates: Ideal Elapsed time since the last call
 	/// @param tickStep: Tick step per timer interrupt
 	/// @param targetTimerResolutionFactor: Factor to apply to the tick step
 	/// @param leftVolumeFactor: Factor to apply to the left speaker's volume
@@ -336,7 +338,7 @@ class SoundTrack : Object
 	/// @param volumeReduction: Volume reduction used for fade effects
 	/// @param volumenScalePower: 2's power to divide to the final volume value
 	/// @return True if the playback is complete; false otherwise
-	bool update(fix7_9_ext tickStep, fix7_9_ext targetTimerResolutionFactor, fixed_t leftVolumeFactor, fixed_t rightVolumeFactor, int8 volumeReduction, uint8 volumenScalePower);
+	bool update(uint32 elapsedMicroseconds, uint32 targetPCMUpdates, fix7_9_ext tickStep, fix7_9_ext targetTimerResolutionFactor, fixed_t leftVolumeFactor, fixed_t rightVolumeFactor, int8 volumeReduction, uint8 volumenScalePower);
 
 	/// Retrieve the sound track's total ticks.
 	/// @return Total number of ticks

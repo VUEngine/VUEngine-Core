@@ -472,7 +472,7 @@ bool Sound::isFadingOut()
 	return kSoundPlaybackFadeOut == this->playbackType || kSoundPlaybackFadeOutAndRelease == this->playbackType;
 }
 //---------------------------------------------------------------------------------------------------------
-void Sound::update(uint32 elapsedMicroseconds __attribute__((unused)))
+void Sound::update(uint32 elapsedMicroseconds, uint32 targetPCMUpdates)
 {
 	if(kSoundPlaying !=	this->state)
 	{
@@ -532,7 +532,7 @@ void Sound::update(uint32 elapsedMicroseconds __attribute__((unused)))
 	{
 		SoundTrack soundTrack = SoundTrack::safeCast(node->data);
 
-		finished = SoundTrack::update(soundTrack, this->tickStep, this->targetTimerResolutionFactor, leftVolumeFactor, rightVolumeFactor, this->volumeReduction, this->volumenScalePower) && finished;
+		finished = SoundTrack::update(soundTrack, elapsedMicroseconds, targetPCMUpdates, this->tickStep, this->targetTimerResolutionFactor, leftVolumeFactor, rightVolumeFactor, this->volumeReduction, this->volumenScalePower) && finished;
 	}
 
 	if(finished)
@@ -837,6 +837,7 @@ void Sound::configureTracks()
 		{
 			longestSoundTrack = soundTrack;
 		}
+
 	}
 
 	this->mainSoundTrack = longestSoundTrack;

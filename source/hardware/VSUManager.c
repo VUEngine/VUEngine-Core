@@ -36,6 +36,7 @@ friend class VirtualList;
 #define __MODULATION_DATA					(uint8*)0x01000280;
 #define __SSTOP								*(uint8*)0x01000580
 #define __SOUND_WRAPPER_STOP_SOUND 			0x21
+#define __MAXIMUM_VOLUME					0xF
 
 
 //=========================================================================================================
@@ -136,7 +137,36 @@ void VSUManager::applySoundSourceConfiguration(const VSUSoundSourceConfiguration
 	}
 	else
 	{
-		VSUManager::configureSoundSource(this, vsuSoundSourceIndex, vsuSoundSourceConfiguration);
+		Waveform* waveform = VSUManager::findWaveform(this, vsuSoundSourceConfiguration->SxRAM);
+
+		VSUManager::configureSoundSource(this, vsuSoundSourceIndex, vsuSoundSourceConfiguration, waveform);
+	}
+}
+//---------------------------------------------------------------------------------------------------------
+void VSUManager::applySoundSourceConfigurationForPCM(VSUSoundSourceConfiguration* vsuSoundSourceConfiguration, int8 sample)
+{
+	int16 vsuSoundSourceIndex = VSUManager::findAvailableSoundSource(this, vsuSoundSourceConfiguration);
+
+	Waveform* waveform = VSUManager::findWaveform(this, vsuSoundSourceConfiguration->SxRAM);
+
+	vsuSoundSourceConfiguration->timeout -= (this->ticks + 1);
+
+	while(true)
+	{
+		if(__MAXIMUM_VOLUME <= sample)
+		{
+			vsuSoundSourceConfiguration->SxLRV = 0xFF;
+			VSUManager::configureSoundSource(this, vsuSoundSourceIndex, vsuSoundSourceConfiguration, waveform);
+			sample -= __MAXIMUM_VOLUME;
+		}
+		else
+		{
+			vsuSoundSourceConfiguration->SxLRV = ((sample << 4) | sample);
+			VSUManager::configureSoundSource(this, vsuSoundSourceIndex, vsuSoundSourceConfiguration, waveform);
+			break;
+		}
+
+		vsuSoundSourceIndex++;
 	}
 }
 //---------------------------------------------------------------------------------------------------------
@@ -360,7 +390,7 @@ void VSUManager::destructor()
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------
-void VSUManager::configureSoundSource(int16 vsuSoundSourceIndex, const VSUSoundSourceConfiguration* vsuSoundSourceConfiguration)
+void VSUManager::configureSoundSource(int16 vsuSoundSourceIndex, const VSUSoundSourceConfiguration* vsuSoundSourceConfiguration, Waveform* waveform)
 {
 	VSUSoundSource* vsuSoundSource = this->vsuSoundSourceConfigurations[vsuSoundSourceIndex].vsuSoundSource;
 
@@ -373,8 +403,6 @@ void VSUManager::configureSoundSource(int16 vsuSoundSourceIndex, const VSUSoundS
 	this->vsuSoundSourceConfigurations[vsuSoundSourceIndex].SxEV1 = vsuSoundSourceConfiguration->SxEV1;
 	this->vsuSoundSourceConfigurations[vsuSoundSourceIndex].SxRAM = vsuSoundSourceConfiguration->SxRAM;
 	this->vsuSoundSourceConfigurations[vsuSoundSourceIndex].SxSWP = vsuSoundSourceConfiguration->SxSWP;
-
-	Waveform* waveform = VSUManager::findWaveform(this, vsuSoundSourceConfiguration->SxRAM);
 
 	vsuSoundSource->SxINT = vsuSoundSourceConfiguration->SxINT;
 	vsuSoundSource->SxLRV = vsuSoundSourceConfiguration->SxLRV;
@@ -484,7 +512,9 @@ void VSUManager::dispatchPendingSoundSourceConfigurations()
 
 		if(0 <= vsuSoundSourceIndex)
 		{
-			VSUManager::configureSoundSource(this, vsuSoundSourceIndex, pendingVSUSoundSourceConfiguration);
+			Waveform* waveform = VSUManager::findWaveform(this, pendingVSUSoundSourceConfiguration->SxRAM);
+
+			VSUManager::configureSoundSource(this, vsuSoundSourceIndex, pendingVSUSoundSourceConfiguration, waveform);
 
 			VirtualList::removeNode(this->pendingVSUSoundSourceConfigurations, node);
 

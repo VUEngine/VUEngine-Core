@@ -60,7 +60,7 @@ static void SoundManager::playSounds(uint32 elapsedMicroseconds)
 			NM_ASSERT(NULL != node->data, "SoundManager::playMIDISounds: NULL node data");
 			NM_ASSERT(!isDeleted(node->data), "SoundManager::playMIDISounds: deleted node data");
 		
-			Sound::update(Sound::safeCast(node->data), elapsedMicroseconds);
+			Sound::update(Sound::safeCast(node->data), elapsedMicroseconds, _soundManager->targetPCMUpdates);
 
 			node = node->next;
 		}
