@@ -6,7 +6,7 @@
 
 {{ macros.sectionHeader('Includes') }}
 
-#include <SoundTrack.h>
+#include <Sound.h>
 #include <WaveForms.h>
 
 
@@ -65,7 +65,7 @@ const SoundTrackKeyframe {{ sanitizedSpecName }}SoundTrack1Keyframes[] =
 	{0, kSoundTrackEventEnd},
 };
 
-SoundTrackROMSpec {{ sanitizedSpecName }}oundTrack =
+SoundTrackROMSpec {{ sanitizedSpecName }}SoundTrack =
 {
 	/// kTrackNative, kTrackPCM
 	kTrackPCM,
@@ -98,7 +98,7 @@ SoundTrackROMSpec {{ sanitizedSpecName }}oundTrack =
 	(uint8*){{ sanitizedSpecName }}SoundTrack1SxSWP
 };
 
-SoundChannelROM* const {{ sanitizedSpecName }}SoundTracks[] =
+SoundTrackROMSpec* const {{ sanitizedSpecName }}SoundTracks[] =
 {
     {% for i in range(0, item.range) -%}
         &{{ sanitizedSpecName }}SoundTrack,
