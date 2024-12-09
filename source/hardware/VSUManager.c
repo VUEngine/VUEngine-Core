@@ -51,6 +51,22 @@ VSUSoundSource* const _vsuSoundSources = (VSUSoundSource*)0x01000400;
 //=========================================================================================================
 
 //---------------------------------------------------------------------------------------------------------
+static int16 VSUManager::getSoundSourceType(const VSUSoundSourceConfiguration* vsuSoundSourceConfiguration)
+{
+	uint32 soundSourceType = kSoundSourceNormal;
+
+	if(0 != vsuSoundSourceConfiguration->SxSWP)
+	{
+		soundSourceType = kSoundSourceModulation;
+	}
+	else if(0 != vsuSoundSourceConfiguration->noise)
+	{
+		soundSourceType = kSoundSourceNoise;
+	}
+
+	return soundSourceType;
+}
+//---------------------------------------------------------------------------------------------------------
 static void VSUManager::printVSUSoundSource(const VSUSoundSource* vsuSoundSource, int16 x, int y)
 {
 	if(NULL == vsuSoundSource)
@@ -129,7 +145,7 @@ static void VSUManager::printVSUSoundSourceConfiguration(const VSUSoundSourceCon
 //---------------------------------------------------------------------------------------------------------
 void VSUManager::applySoundSourceConfiguration(const VSUSoundSourceConfiguration* vsuSoundSourceConfiguration)
 {
-	int16 vsuSoundSourceIndex = VSUManager::findAvailableSoundSource(this, vsuSoundSourceConfiguration);
+	int16 vsuSoundSourceIndex = VSUManager::findAvailableSoundSource(this, vsuSoundSourceConfiguration, VSUManager::getSoundSourceType(vsuSoundSourceConfiguration));
 
 	if(0 > vsuSoundSourceIndex)
 	{
@@ -145,7 +161,7 @@ void VSUManager::applySoundSourceConfiguration(const VSUSoundSourceConfiguration
 //---------------------------------------------------------------------------------------------------------
 void VSUManager::applySoundSourceConfigurationForPCM(VSUSoundSourceConfiguration* vsuSoundSourceConfiguration, int8 sample)
 {
-	int16 vsuSoundSourceIndex = VSUManager::findAvailableSoundSource(this, vsuSoundSourceConfiguration);
+	int16 vsuSoundSourceIndex = VSUManager::findAvailableSoundSource(this, vsuSoundSourceConfiguration, kSoundSourceNormal);
 
 	Waveform* waveform = VSUManager::findWaveform(this, vsuSoundSourceConfiguration->SxRAM);
 
@@ -168,6 +184,9 @@ void VSUManager::applySoundSourceConfigurationForPCM(VSUSoundSourceConfiguration
 
 		vsuSoundSourceIndex++;
 	}
+
+	/// Release the waveform
+	waveform->usageCount = 0;
 }
 //---------------------------------------------------------------------------------------------------------
 void VSUManager::reset()
@@ -417,19 +436,8 @@ void VSUManager::configureSoundSource(int16 vsuSoundSourceIndex, const VSUSoundS
 //	VSUManager::printVSUSoundSource(vsuSoundSource, 20, 10);
 }
 //---------------------------------------------------------------------------------------------------------
-int16 VSUManager::findAvailableSoundSource(const VSUSoundSourceConfiguration* vsuSoundSourceConfiguration)
+int16 VSUManager::findAvailableSoundSource(const VSUSoundSourceConfiguration* vsuSoundSourceConfiguration, uint32 soundSourceType)
 {
-	uint32 soundSourceType = kSoundSourceNormal;
-
-	if(0 != vsuSoundSourceConfiguration->SxSWP)
-	{
-		soundSourceType = kSoundSourceModulation;
-	}
-	else if(0 != vsuSoundSourceConfiguration->noise)
-	{
-		soundSourceType = kSoundSourceNoise;
-	}
-
 	for(int16 i = 0; i < __TOTAL_SOUND_SOURCES; i++)
 	{
 		if(soundSourceType != this->vsuSoundSourceConfigurations[i].type)
@@ -508,7 +516,7 @@ void VSUManager::dispatchPendingSoundSourceConfigurations()
 
 		VSUSoundSourceConfiguration* pendingVSUSoundSourceConfiguration = (VSUSoundSourceConfiguration*)node->data;
 
-		int16 vsuSoundSourceIndex = VSUManager::findAvailableSoundSource(this, pendingVSUSoundSourceConfiguration);
+		int16 vsuSoundSourceIndex = VSUManager::findAvailableSoundSource(this, pendingVSUSoundSourceConfiguration, VSUManager::getSoundSourceType(pendingVSUSoundSourceConfiguration));
 
 		if(0 <= vsuSoundSourceIndex)
 		{
