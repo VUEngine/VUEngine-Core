@@ -30,6 +30,7 @@
 //=========================================================================================================
 
 static uint16 _pcmTargetPlaybackRefreshRate = 4000;
+static VSUManager _vsuManager = NULL;
 
 
 //=========================================================================================================
@@ -167,6 +168,8 @@ void SoundTrack::constructor(const SoundTrackSpec* soundTrackSpec)
 	{
 		this->ticks = this->samples = this->soundTrackSpec->samples;
 	}
+
+	_vsuManager = VSUManager::getInstance();
 }
 //---------------------------------------------------------------------------------------------------------
 void SoundTrack::destructor()
@@ -225,7 +228,7 @@ bool SoundTrack::updatePCM(uint32 elapsedMicroseconds, uint32 targetPCMUpdates, 
 	// in the first one
 	int8 volume = this->soundTrackSpec->SxLRV[this->cursor] - volumeReduction;
 
-	VSUManager::applyPCMSampleToSoundSource(VSUManager::getInstance(), volume);
+	VSUManager::applyPCMSampleToSoundSource(_vsuManager, volume);
 
 	CACHE_DISABLE;
 
@@ -350,7 +353,7 @@ bool SoundTrack::updateNative(fix7_9_ext tickStep, fix7_9_ext targetTimerResolut
 		this->soundTrackSpec->skippable
 	};
 
-	VSUManager::applySoundSourceConfiguration(VSUManager::getInstance(), &vsuChannelConfiguration);
+	VSUManager::applySoundSourceConfiguration(_vsuManager, &vsuChannelConfiguration);
 
 	return ++this->cursor >= this->samples;
 }
