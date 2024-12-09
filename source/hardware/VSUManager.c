@@ -164,61 +164,35 @@ void VSUManager::applySoundSourceConfiguration(const VSUSoundSourceConfiguration
 //---------------------------------------------------------------------------------------------------------
 void VSUManager::applyPCMSampleToSoundSource(int8 sample)
 {
-	int16 vsuSoundSourceIndex = VSUManager::findAvailableSoundSource(this, kSoundSourceNormal);
-
-	Waveform* waveform = VSUManager::findWaveform(this, PCMWaveForm);
-
+	int16 vsuSoundSourceIndex = 0;
+	
 	while(true)
 	{
 		if(__MAXIMUM_VOLUME <= sample)
 		{
-			VSUManager::configureSoundSourceForPCM(this, vsuSoundSourceIndex, 0xFF, waveform);
+			_vsuSoundSources[vsuSoundSourceIndex].SxLRV = 0xFF;
 			sample -= __MAXIMUM_VOLUME;
 		}
 		else
 		{
-			VSUManager::configureSoundSourceForPCM(this, vsuSoundSourceIndex, ((sample << 4) | sample), waveform);
+			_vsuSoundSources[vsuSoundSourceIndex].SxLRV = ((sample << 4) | sample);
 			break;
 		}
 
 		vsuSoundSourceIndex++;
 	}
-
-	/// Release the waveform
-	waveform->usageCount = 0;
 }
 //---------------------------------------------------------------------------------------------------------
 void VSUManager::reset()
 {
+	VSUManager::stopAllSounds(this);
+	VSUManager::enableQueue(this);
+
 	this->ticks = 0;
 	this->haveUsedSoundSources = false;
 	this->haveQueuedRequests = false;
 
 	VirtualList::deleteData(this->queuedVSUSoundSourceConfigurations);
-
-	for(int16 i = 0; i < __TOTAL_SOUND_SOURCES; i++)
-	{
-		this->vsuSoundSourceConfigurations[i].vsuSoundSource = &_vsuSoundSources[i];
-		this->vsuSoundSourceConfigurations[i].timeout = -1;
-		this->vsuSoundSourceConfigurations[i].SxINT = 0;
-		this->vsuSoundSourceConfigurations[i].SxLRV = 0;
-		this->vsuSoundSourceConfigurations[i].SxFQL = 0;
-		this->vsuSoundSourceConfigurations[i].SxFQH = 0;
-		this->vsuSoundSourceConfigurations[i].SxEV0 = 0;
-		this->vsuSoundSourceConfigurations[i].SxEV1 = 0;
-		this->vsuSoundSourceConfigurations[i].SxRAM = NULL;
-		this->vsuSoundSourceConfigurations[i].SxSWP = 0;
-		this->vsuSoundSourceConfigurations[i].noise = false;
-
-		this->vsuSoundSourceConfigurations[i].vsuSoundSource->SxINT = 0;
-		this->vsuSoundSourceConfigurations[i].vsuSoundSource->SxLRV = 0;
-		this->vsuSoundSourceConfigurations[i].vsuSoundSource->SxFQL = 0;
-		this->vsuSoundSourceConfigurations[i].vsuSoundSource->SxFQH = 0;
-		this->vsuSoundSourceConfigurations[i].vsuSoundSource->SxEV0 = 0;
-		this->vsuSoundSourceConfigurations[i].vsuSoundSource->SxEV1 = 0;
-		this->vsuSoundSourceConfigurations[i].vsuSoundSource->SxRAM = 0;
-		this->vsuSoundSourceConfigurations[i].vsuSoundSource->SxSWP = 0;
-	}
 
 	for(int16 i = 0; i < __TOTAL_WAVEFORMS; i++)
 	{
@@ -256,8 +230,38 @@ void VSUManager::reset()
 		this->vsuSoundSourceConfigurations[i].type = kSoundSourceNoise;
 	}
 
-	VSUManager::stopAllSounds(this);
-	VSUManager::enableQueue(this);
+	for(int16 i = 0; i < __TOTAL_SOUND_SOURCES; i++)
+	{
+		this->vsuSoundSourceConfigurations[i].vsuSoundSource = &_vsuSoundSources[i];
+		this->vsuSoundSourceConfigurations[i].timeout = -1;
+		this->vsuSoundSourceConfigurations[i].SxINT = kPlaybackPCM == this->playbackMode ? 0x9F : 0x00;
+		this->vsuSoundSourceConfigurations[i].SxLRV = 0;
+		this->vsuSoundSourceConfigurations[i].SxFQL = 0;
+		this->vsuSoundSourceConfigurations[i].SxFQH = 0;
+		this->vsuSoundSourceConfigurations[i].SxEV0 = kPlaybackPCM == this->playbackMode ? 0xFF : 0x00;
+		this->vsuSoundSourceConfigurations[i].SxEV1 = 0;
+		this->vsuSoundSourceConfigurations[i].SxRAM = kPlaybackPCM == this->playbackMode ? PCMWaveForm : NULL;
+		this->vsuSoundSourceConfigurations[i].SxSWP = 0;
+		this->vsuSoundSourceConfigurations[i].noise = false;
+
+		Waveform* waveform = VSUManager::findWaveform(this, this->vsuSoundSourceConfigurations[i].SxRAM);
+
+		this->vsuSoundSourceConfigurations[i].vsuSoundSource->SxINT = this->vsuSoundSourceConfigurations[i].SxINT;
+		this->vsuSoundSourceConfigurations[i].vsuSoundSource->SxLRV = this->vsuSoundSourceConfigurations[i].SxLRV;
+		this->vsuSoundSourceConfigurations[i].vsuSoundSource->SxFQL = this->vsuSoundSourceConfigurations[i].SxFQL;
+		this->vsuSoundSourceConfigurations[i].vsuSoundSource->SxFQH = this->vsuSoundSourceConfigurations[i].SxFQH;
+		this->vsuSoundSourceConfigurations[i].vsuSoundSource->SxEV0 = this->vsuSoundSourceConfigurations[i].SxEV0;
+		this->vsuSoundSourceConfigurations[i].vsuSoundSource->SxEV1 = this->vsuSoundSourceConfigurations[i].SxEV1;
+		this->vsuSoundSourceConfigurations[i].vsuSoundSource->SxRAM = NULL == waveform ? 0 : waveform->index;
+		this->vsuSoundSourceConfigurations[i].vsuSoundSource->SxSWP = this->vsuSoundSourceConfigurations[i].SxSWP;
+	}
+}
+//---------------------------------------------------------------------------------------------------------
+void VSUManager::setMode(uint32 playbackMode)
+{
+	this->playbackMode = playbackMode;
+
+	VSUManager::reset(this);
 }
 //---------------------------------------------------------------------------------------------------------
 void VSUManager::update()
@@ -400,6 +404,7 @@ void VSUManager::constructor()
 	this->queuedVSUSoundSourceConfigurations = new VirtualList();
 	this->allowQueueingSoundRequests = false;
 	this->targetPCMUpdates = 0;
+	this->playbackMode = kPlaybackNative;
 	this->allowQueueingSoundRequests = true;
 	this->haveUsedSoundSources = false;
 	this->haveQueuedRequests = false;
@@ -446,21 +451,6 @@ void VSUManager::configureSoundSource(int16 vsuSoundSourceIndex, const VSUSoundS
 
 //	VSUManager::printVSUSoundSourceConfiguration(&this->vsuSoundSourceConfigurations[vsuSoundSourceIndex], 1, 10);
 //	VSUManager::printVSUSoundSource(vsuSoundSource, 20, 10);
-}
-//---------------------------------------------------------------------------------------------------------
-void VSUManager::configureSoundSourceForPCM(int16 vsuSoundSourceIndex, uint8 SxLRV, Waveform* waveform)
-{
-	VSUSoundSource* vsuSoundSource = this->vsuSoundSourceConfigurations[vsuSoundSourceIndex].vsuSoundSource;
-
-	this->vsuSoundSourceConfigurations[vsuSoundSourceIndex].timeout = -1;
-
-	vsuSoundSource->SxINT = 0x9F;
-	vsuSoundSource->SxLRV = SxLRV;
-	vsuSoundSource->SxFQL = 0x00;
-	vsuSoundSource->SxFQH = 0x00;
-	vsuSoundSource->SxEV0 = 0xF0;
-	vsuSoundSource->SxEV1 = 0x00;
-	vsuSoundSource->SxRAM = waveform->index;
 }
 //---------------------------------------------------------------------------------------------------------
 int16 VSUManager::findAvailableSoundSource(uint32 soundSourceType)
@@ -584,6 +574,11 @@ void VSUManager::registerQueuedSoundSourceConfiguration(const VSUSoundSourceConf
 //---------------------------------------------------------------------------------------------------------
 Waveform* VSUManager::findWaveform(const int8* waveFormData)
 {
+	if(NULL == waveFormData)
+	{
+		return NULL;
+	}
+
 	for(int16 i = 0; i < __TOTAL_WAVEFORMS; i++)
 	{
 		if(this->waveforms[i].data == waveFormData)

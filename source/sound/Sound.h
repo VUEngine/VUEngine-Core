@@ -152,10 +152,6 @@ class Sound : ListenerObject
 	/// @param mirror: Struct with a flag for each axis to mirror
 	static void setMirror(Mirror mirror);
 
-	/// Set the target refresh rate for PCM playback.
-	/// @param pcmTargetPlaybackRefreshRate: Target refresh rate for PCM playback
-	static void setPCMTargetPlaybackRefreshRate(uint16 pcmTargetPlaybackRefreshRate);
-
 	/// Class' constructor
 	/// @param soundSpec: Specification that determines how to configure the sound
 	/// @param soundReleaseListener: Callback for when the sound is released

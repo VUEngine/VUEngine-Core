@@ -305,6 +305,10 @@ class SoundTrack : Object
 
 	/// @publicsection
 
+	/// Set the target refresh rate for PCM playback.
+	/// @param pcmTargetPlaybackRefreshRate: Target refresh rate for PCM playback
+	static void setPCMTargetPlaybackRefreshRate(uint16 pcmTargetPlaybackRefreshRate);
+
 	/// Class' constructor
 	/// @param soundTrackSpec: Specification that determines how to configure the sound track
 	void constructor(const SoundTrackSpec* soundTrackSpec);
@@ -354,7 +358,7 @@ class SoundTrack : Object
 	/// Retrieve the total time of playback in milliseconds.
 	/// @param targetTimerResolutionUS: Target timer resolution in US
 	/// @return The total time of playback in milliseconds
-	uint32 getTotalPlaybackMilliseconds(uint16 targetTimerResolutionUS)
+	uint32 getTotalPlaybackMilliseconds(uint16 targetTimerResolutionUS);
 }
 
 

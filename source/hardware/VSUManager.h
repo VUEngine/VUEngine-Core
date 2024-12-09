@@ -35,13 +35,21 @@
 // CLASS' DATA
 //=========================================================================================================
 
-/// A Waveform struct
+/// Sound source types
 /// @memberof VSUManager
 enum VSUSoundSouceTypes
 {
 	kSoundSourceNormal = 0,
 	kSoundSourceModulation,
 	kSoundSourceNoise
+};
+
+/// Playback types
+/// @memberof VSUManager
+enum VSUPlaybackModes
+{
+	kPlaybackNative = 0,
+	kPlaybackPCM
 };
 
 /// A Waveform struct
@@ -125,7 +133,7 @@ typedef struct VSUSoundSourceConfiguration
 	int16 SxEV1;
 
 	/// SxRAM pointers
-	int8* SxRAM;
+	const int8* SxRAM;
 
 	/// SxSWP values
 	int16 SxSWP;	
@@ -169,6 +177,9 @@ singleton class VSUManager : Object
 	/// Target PCM cycles per game cycle
 	uint32 targetPCMUpdates;
 
+	/// Playback mode
+	uint32 playbackMode;
+
 	/// If false and if there are no sound sources availables at the time of request, 
 	/// the petition is ignored
 	bool allowQueueingSoundRequests;
@@ -199,6 +210,10 @@ singleton class VSUManager : Object
 
 	/// Reset the manager's state.
 	void reset();
+
+	/// Set the playback mode (stops any playing sound).
+	/// @param playbackMode: kPlaybackNative or kPlaybackPCM
+	void setMode(uint32 playbackMode);
 
 	/// Update the manager.
 	void update();

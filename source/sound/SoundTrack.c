@@ -56,10 +56,20 @@ void SoundTrack::start(bool wasPaused)
 	{
 		SoundTrack::reset(this);
 	}
+
+	if(kTrackPCM == this->soundTrackSpec->trackType)
+	{
+		VSUManager::setMode(_vsuManager, kPlaybackPCM);
+	}
 }
 //---------------------------------------------------------------------------------------------------------
 void SoundTrack::stop()
-{}
+{
+	if(kTrackPCM == this->soundTrackSpec->trackType)
+	{
+		VSUManager::setMode(_vsuManager, kPlaybackNative);
+	}
+}
 //---------------------------------------------------------------------------------------------------------
 void SoundTrack::pause()
 {}
@@ -224,11 +234,7 @@ bool SoundTrack::updatePCM(uint32 elapsedMicroseconds, uint32 targetPCMUpdates, 
 
 	this->cursor = this->elapsedTicks / targetPCMUpdates;
 
-	// PCM playback must be totally in sync on all channels, so, check if completed only
-	// in the first one
-	int8 volume = this->soundTrackSpec->SxLRV[this->cursor] - volumeReduction;
-
-	VSUManager::applyPCMSampleToSoundSource(_vsuManager, volume);
+	VSUManager::applyPCMSampleToSoundSource(_vsuManager, this->soundTrackSpec->SxLRV[this->cursor] - volumeReduction);
 
 	CACHE_DISABLE;
 
