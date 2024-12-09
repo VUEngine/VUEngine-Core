@@ -51,7 +51,6 @@ friend class VirtualList;
 //=========================================================================================================
 
 static Mirror _mirror = {false, false, false};
-static uint16 _pcmTargetPlaybackRefreshRate = 4000;
 
 
 //=========================================================================================================
@@ -62,11 +61,6 @@ static uint16 _pcmTargetPlaybackRefreshRate = 4000;
 static void Sound::setMirror(Mirror mirror)
 {
 	_mirror = mirror;
-}
-//---------------------------------------------------------------------------------------------------------
-static void Sound::setPCMTargetPlaybackRefreshRate(uint16 pcmTargetPlaybackRefreshRate)
-{
-	_pcmTargetPlaybackRefreshRate = pcmTargetPlaybackRefreshRate;
 }
 //---------------------------------------------------------------------------------------------------------
 
@@ -686,7 +680,7 @@ void Sound::configureTracks()
 	this->mainSoundTrack = longestSoundTrack;
 
 #ifdef __SOUND_TEST
-	this->totalPlaybackMilliseconds = Sound::getTotalPlaybackMilliseconds(this, this->mainSoundTrack);
+	this->totalPlaybackMilliseconds = SoundTrack::getTotalPlaybackMilliseconds(this->mainSoundTrack, this->soundSpec->targetTimerResolutionUS);
 #endif
 
 }
@@ -766,38 +760,6 @@ void Sound::updateVolumeReduction()
 
 		this->previouslyElapsedTicks = this->mainSoundTrack->elapsedTicks;
 	}
-}
-//---------------------------------------------------------------------------------------------------------
-uint32 Sound::getTotalPlaybackMilliseconds(SoundTrack soundTrack)
-{
-	/*
-	switch(soundTrack->soundsoundTrackConfiguration.trackType)
-	{
-		case kMIDI:
-			{
-				uint32 totalTicks = 0;
-
-				for(VirtualNode node = this->soundTracks->head; NULL != node; node = node->next)
-				{
-					SoundTrack soundTrack = SoundTrack::safeCast(node->data);
-
-					if(totalTicks < soundTrack->ticks)
-					{
-						totalTicks = soundTrack->ticks;
-					}
-				}
-
-				return (uint32)((long)totalTicks * this->soundSpec->targetTimerResolutionUS / __MICROSECONDS_PER_MILLISECOND);
-			}
-			break;
-
-		case kPCM:
-
-			return (soundTrack->samples * __MICROSECONDS_PER_MILLISECOND) / _pcmTargetPlaybackRefreshRate;
-			break;
-	}
-*/
-	return 0;
 }
 //---------------------------------------------------------------------------------------------------------
 void Sound::printTiming(uint32 seconds, int32 x, int32 y)

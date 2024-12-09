@@ -26,6 +26,25 @@
 
 
 //=========================================================================================================
+// CLASS' ATTRIBUTES
+//=========================================================================================================
+
+static uint16 _pcmTargetPlaybackRefreshRate = 4000;
+
+
+//=========================================================================================================
+// CLASS' STATIC METHODS
+//=========================================================================================================
+
+//---------------------------------------------------------------------------------------------------------
+static void SoundTrack::setPCMTargetPlaybackRefreshRate(uint16 pcmTargetPlaybackRefreshRate)
+{
+	_pcmTargetPlaybackRefreshRate = pcmTargetPlaybackRefreshRate;
+}
+//---------------------------------------------------------------------------------------------------------
+
+
+//=========================================================================================================
 // CLASS' PUBLIC METHODS
 //=========================================================================================================
 
@@ -88,7 +107,6 @@ bool SoundTrack::update(uint32 elapsedMicroseconds, uint32 targetPCMUpdates, fix
 	else if(kTrackNative == this->soundTrackSpec->trackType)
 	{
 		this->finished = SoundTrack::updateNative(this, tickStep, targetTimerResolutionFactor, leftVolumeFactor, rightVolumeFactor, volumeReduction, volumenScalePower);
-
 	}
 
 	return this->finished;
@@ -107,6 +125,22 @@ float SoundTrack::getElapsedTicksPercentaje()
 	}
 
 	return (float)this->cursor / this->samples;
+}
+//---------------------------------------------------------------------------------------------------------
+uint32 SoundTrack::getTotalPlaybackMilliseconds(uint16 targetTimerResolutionUS)
+{
+	uint32 totalPlaybackMilliseconds = 0;
+
+	if(kTrackPCM == this->soundTrackSpec->trackType)
+	{
+		totalPlaybackMilliseconds = (this->samples * __MICROSECONDS_PER_MILLISECOND) / _pcmTargetPlaybackRefreshRate;
+	}
+	else if(kTrackNative == this->soundTrackSpec->trackType)
+	{
+		totalPlaybackMilliseconds = (uint32)((long)this->ticks * targetTimerResolutionUS / __MICROSECONDS_PER_MILLISECOND);
+	}
+
+	return totalPlaybackMilliseconds;
 }
 //---------------------------------------------------------------------------------------------------------
 

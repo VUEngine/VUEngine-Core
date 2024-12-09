@@ -347,6 +347,11 @@ class SoundTrack : Object
 	/// Retrieve the sound track's percentage of elapsed ticks.
 	/// @return Percentaje of elapsed ticks
 	float getElapsedTicksPercentaje();
+
+	/// Retrieve the total time of playback in milliseconds.
+	/// @param targetTimerResolutionUS: Target timer resolution in US
+	/// @return The total time of playback in milliseconds
+	uint32 getTotalPlaybackMilliseconds(uint16 targetTimerResolutionUS)
 }
 
 

@@ -107,7 +107,7 @@ void SoundManager::setPCMTargetPlaybackRefreshRate(uint16 pcmTargetPlaybackRefre
 
 	this->targetPCMUpdates = __MICROSECONDS_PER_SECOND / pcmTargetPlaybackRefreshRate;
 
-	Sound::setPCMTargetPlaybackRefreshRate(pcmTargetPlaybackRefreshRate);
+	SoundTrack::setPCMTargetPlaybackRefreshRate(pcmTargetPlaybackRefreshRate);
 }
 //---------------------------------------------------------------------------------------------------------
 bool SoundManager::isPlayingSound(const SoundSpec* soundSpec)
