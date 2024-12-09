@@ -209,6 +209,9 @@ typedef struct SoundTrackSpec
 	/// kTrackNative, kTrackPCM
 	uint32 trackType;
 
+	/// Skip if no sound source available?
+	bool skippable;
+
 	/// Total number of samples
 	uint32 samples;
 
@@ -234,7 +237,7 @@ typedef struct SoundTrackSpec
 	int8** SxRAM;
 
 	/// SxSWP values
-	uint8* SxSWP;	
+	uint8* SxSWP;
 
 } SoundTrackSpec;
 

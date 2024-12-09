@@ -131,8 +131,11 @@ typedef struct VSUSoundSourceConfiguration
 	int16 SxSWP;	
 
 	/// Noise?
-	bool noise;	
+	bool noise;
 
+	/// Skip if no sound source available?
+	bool skippable;
+	
 } VSUSoundSourceConfiguration;
 
 
@@ -151,8 +154,8 @@ singleton class VSUManager : Object
 {
 	/// @protectedsection
 
-	/// List of pending sound source configurations
-	VirtualList pendingVSUSoundSourceConfigurations;
+	/// List of queued sound source configurations
+	VirtualList queuedVSUSoundSourceConfigurations;
 
 	/// Mapping of VSU sound source configurations
 	VSUSoundSourceConfiguration vsuSoundSourceConfigurations[__TOTAL_SOUND_SOURCES];
@@ -166,8 +169,9 @@ singleton class VSUManager : Object
 	/// Target PCM cycles per game cycle
 	uint32 targetPCMUpdates;
 
-	/// If raised, no petitions to play or allocate sounds are processed
-	bool lock;
+	/// If false and if there are no sound sources availables at the time of request, 
+	/// the petition is ignored
+	bool allowQueueingSoundRequests;
 
 	/// @publicsection
 
@@ -196,11 +200,13 @@ singleton class VSUManager : Object
 	/// Stop all sound sources.
 	void stopAllSounds();
 
-	/// Refuse petitions to play or allocate sounds are processed.
-	void lock();
+	/// Enable queueing petitions to play sounds.
+	void enableQueue();
 
-	/// Allow petitions to play or allocate sounds are processed.
-	void unlock();
+	/// Disable queueing petitions to play sounds (if there are no
+	/// sound sources availables at the time of request, the petition
+	/// is ignored).
+	void disableQueue();
 
 	/// Print the manager's status.
 	void print(int32 x, int32 y);

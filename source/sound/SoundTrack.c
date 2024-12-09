@@ -346,7 +346,8 @@ bool SoundTrack::updateNative(fix7_9_ext tickStep, fix7_9_ext targetTimerResolut
 		this->soundTrackSpec->SxEV1[this->cursorSxEV1],
 		this->soundTrackSpec->SxRAM[this->cursorSxRAM],
 		this->soundTrackSpec->SxSWP[this->cursorSxSWP],
-		noise
+		noise,
+		this->soundTrackSpec->skippable
 	};
 
 	VSUManager::applySoundSourceConfiguration(VSUManager::getInstance(), &vsuChannelConfiguration);

@@ -149,7 +149,10 @@ void VSUManager::applySoundSourceConfiguration(const VSUSoundSourceConfiguration
 
 	if(0 > vsuSoundSourceIndex)
 	{
-		VSUManager::registerPendingSoundSourceConfiguration(this, vsuSoundSourceConfiguration);
+		if(this->allowQueueingSoundRequests && !vsuSoundSourceConfiguration->skippable)
+		{
+			VSUManager::registerQueuedSoundSourceConfiguration(this, vsuSoundSourceConfiguration);
+		}
 	}
 	else
 	{
@@ -189,7 +192,7 @@ void VSUManager::reset()
 {
 	this->ticks = 0;
 
-	VirtualList::deleteData(this->pendingVSUSoundSourceConfigurations);
+	VirtualList::deleteData(this->queuedVSUSoundSourceConfigurations);
 
 	for(int16 i = 0; i < __TOTAL_SOUND_SOURCES; i++)
 	{
@@ -252,7 +255,7 @@ void VSUManager::reset()
 	}
 
 	VSUManager::stopAllSounds(this);
-	VSUManager::unlock(this);
+	VSUManager::enableQueue(this);
 }
 //---------------------------------------------------------------------------------------------------------
 void VSUManager::update()
@@ -261,7 +264,7 @@ void VSUManager::update()
 
 	VSUManager::releaseSoundSources(this);
 
-	VSUManager::dispatchPendingSoundSourceConfigurations(this);
+	VSUManager::dispatchQueuedSoundSourceConfigurations(this);
 }
 //---------------------------------------------------------------------------------------------------------
 void VSUManager::stopAllSounds()
@@ -269,19 +272,19 @@ void VSUManager::stopAllSounds()
 	__SSTOP = 0x01;
 }
 //---------------------------------------------------------------------------------------------------------
-void VSUManager::lock()
+void VSUManager::enableQueue()
 {
-	this->lock = true;
+	this->allowQueueingSoundRequests = true;
 }
 //---------------------------------------------------------------------------------------------------------
-void VSUManager::unlock()
+void VSUManager::disableQueue()
 {
-	this->lock = false;
+	this->allowQueueingSoundRequests = false;
 }
 //---------------------------------------------------------------------------------------------------------
 void VSUManager::flushQueuedSounds()
 {
-	VirtualList::deleteData(this->pendingVSUSoundSourceConfigurations);
+	VirtualList::deleteData(this->queuedVSUSoundSourceConfigurations);
 }
 //---------------------------------------------------------------------------------------------------------
 #ifndef __SHIPPING
@@ -386,20 +389,21 @@ void VSUManager::constructor()
 {
 	Base::constructor();
 
-	this->pendingVSUSoundSourceConfigurations = new VirtualList();
-	this->lock = false;
+	this->queuedVSUSoundSourceConfigurations = new VirtualList();
+	this->allowQueueingSoundRequests = false;
 	this->targetPCMUpdates = 0;
+	this->allowQueueingSoundRequests = true;
 
 	VSUManager::reset(this);
 }
 //---------------------------------------------------------------------------------------------------------
 void VSUManager::destructor()
 {
-	if(!isDeleted(this->pendingVSUSoundSourceConfigurations))
+	if(!isDeleted(this->queuedVSUSoundSourceConfigurations))
 	{
-		VirtualList::deleteData(this->pendingVSUSoundSourceConfigurations);
-		delete this->pendingVSUSoundSourceConfigurations;
-		this->pendingVSUSoundSourceConfigurations = NULL;
+		VirtualList::deleteData(this->queuedVSUSoundSourceConfigurations);
+		delete this->queuedVSUSoundSourceConfigurations;
+		this->queuedVSUSoundSourceConfigurations = NULL;
 	}
 
 	Base::destructor();
@@ -514,45 +518,45 @@ void VSUManager::releaseWaveform(int8 waveFormIndex, const int8* waveFormData)
 	}
 }
 //---------------------------------------------------------------------------------------------------------
-void VSUManager::dispatchPendingSoundSourceConfigurations()
+void VSUManager::dispatchQueuedSoundSourceConfigurations()
 {
-	if(isDeleted(this->pendingVSUSoundSourceConfigurations))
+	if(isDeleted(this->queuedVSUSoundSourceConfigurations))
 	{
 		return;
 	}
 
-	for(VirtualNode node = this->pendingVSUSoundSourceConfigurations->head, nextNode = NULL; NULL != node; node = nextNode)
+	for(VirtualNode node = this->queuedVSUSoundSourceConfigurations->head, nextNode = NULL; NULL != node; node = nextNode)
 	{
 		nextNode = node->next;
 
-		VSUSoundSourceConfiguration* pendingVSUSoundSourceConfiguration = (VSUSoundSourceConfiguration*)node->data;
+		VSUSoundSourceConfiguration* queuedVSUSoundSourceConfiguration = (VSUSoundSourceConfiguration*)node->data;
 
-		int16 vsuSoundSourceIndex = VSUManager::findAvailableSoundSource(this, VSUManager::getSoundSourceType(pendingVSUSoundSourceConfiguration));
+		int16 vsuSoundSourceIndex = VSUManager::findAvailableSoundSource(this, VSUManager::getSoundSourceType(queuedVSUSoundSourceConfiguration));
 
 		if(0 <= vsuSoundSourceIndex)
 		{
-			Waveform* waveform = VSUManager::findWaveform(this, pendingVSUSoundSourceConfiguration->SxRAM);
+			Waveform* waveform = VSUManager::findWaveform(this, queuedVSUSoundSourceConfiguration->SxRAM);
 
-			VSUManager::configureSoundSource(this, vsuSoundSourceIndex, pendingVSUSoundSourceConfiguration, waveform);
+			VSUManager::configureSoundSource(this, vsuSoundSourceIndex, queuedVSUSoundSourceConfiguration, waveform);
 
-			VirtualList::removeNode(this->pendingVSUSoundSourceConfigurations, node);
+			VirtualList::removeNode(this->queuedVSUSoundSourceConfigurations, node);
 
-			delete pendingVSUSoundSourceConfiguration;
+			delete queuedVSUSoundSourceConfiguration;
 		}
 	}
 }
 //---------------------------------------------------------------------------------------------------------
-void VSUManager::registerPendingSoundSourceConfiguration(const VSUSoundSourceConfiguration* vsuSoundSourceConfiguration)
+void VSUManager::registerQueuedSoundSourceConfiguration(const VSUSoundSourceConfiguration* vsuSoundSourceConfiguration)
 {
-	if(NULL == vsuSoundSourceConfiguration || isDeleted(this->pendingVSUSoundSourceConfigurations))
+	if(NULL == vsuSoundSourceConfiguration || isDeleted(this->queuedVSUSoundSourceConfigurations))
 	{
 		return;
 	}
 
-	VSUSoundSourceConfiguration* pendingVSUSoundSourceConfiguration = new VSUSoundSourceConfiguration;
-	*pendingVSUSoundSourceConfiguration = *vsuSoundSourceConfiguration;
+	VSUSoundSourceConfiguration* queuedVSUSoundSourceConfiguration = new VSUSoundSourceConfiguration;
+	*queuedVSUSoundSourceConfiguration = *vsuSoundSourceConfiguration;
 
-	VirtualList::pushBack(this->pendingVSUSoundSourceConfigurations, pendingVSUSoundSourceConfiguration);
+	VirtualList::pushBack(this->queuedVSUSoundSourceConfigurations, queuedVSUSoundSourceConfiguration);
 
 }
 //---------------------------------------------------------------------------------------------------------
