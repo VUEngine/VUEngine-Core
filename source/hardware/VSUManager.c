@@ -191,6 +191,8 @@ void VSUManager::applyPCMSampleToSoundSource(int8 sample)
 void VSUManager::reset()
 {
 	this->ticks = 0;
+	this->haveUsedSoundSources = false;
+	this->haveQueuedRequests = false;
 
 	VirtualList::deleteData(this->queuedVSUSoundSourceConfigurations);
 
@@ -262,9 +264,15 @@ void VSUManager::update()
 {
 	this->ticks += __I_TO_FIX7_9_EXT(1);
 
-	VSUManager::releaseSoundSources(this);
+	if(this->haveUsedSoundSources)
+	{
+		VSUManager::releaseSoundSources(this);
+	}
 
-	VSUManager::dispatchQueuedSoundSourceConfigurations(this);
+	if(this->haveQueuedRequests)
+	{
+		VSUManager::dispatchQueuedSoundSourceConfigurations(this);
+	}
 }
 //---------------------------------------------------------------------------------------------------------
 void VSUManager::stopAllSounds()
@@ -393,6 +401,8 @@ void VSUManager::constructor()
 	this->allowQueueingSoundRequests = false;
 	this->targetPCMUpdates = 0;
 	this->allowQueueingSoundRequests = true;
+	this->haveUsedSoundSources = false;
+	this->haveQueuedRequests = false;
 
 	VSUManager::reset(this);
 }
@@ -412,6 +422,8 @@ void VSUManager::destructor()
 void VSUManager::configureSoundSource(int16 vsuSoundSourceIndex, const VSUSoundSourceConfiguration* vsuSoundSourceConfiguration, Waveform* waveform)
 {
 	VSUSoundSource* vsuSoundSource = this->vsuSoundSourceConfigurations[vsuSoundSourceIndex].vsuSoundSource;
+
+	this->haveUsedSoundSources = true;
 
 	this->vsuSoundSourceConfigurations[vsuSoundSourceIndex].timeout = this->ticks + vsuSoundSourceConfiguration->timeout;
 	this->vsuSoundSourceConfigurations[vsuSoundSourceIndex].SxINT = vsuSoundSourceConfiguration->SxINT;
@@ -471,6 +483,8 @@ int16 VSUManager::findAvailableSoundSource(uint32 soundSourceType)
 //---------------------------------------------------------------------------------------------------------
 void VSUManager::releaseSoundSources()
 {
+	this->haveUsedSoundSources = false;
+
 	for(int16 i = 0; i < __TOTAL_SOUND_SOURCES; i++)
 	{
 		if(0 > this->vsuSoundSourceConfigurations[i].timeout)
@@ -484,6 +498,10 @@ void VSUManager::releaseSoundSources()
 			this->vsuSoundSourceConfigurations[i].vsuSoundSource->SxEV0 &= 0xF8;
 			this->vsuSoundSourceConfigurations[i].vsuSoundSource->SxEV1 |= 0x01;
 			VSUManager::releaseWaveform(this, this->vsuSoundSourceConfigurations[i].vsuSoundSource->SxRAM, this->vsuSoundSourceConfigurations[i].SxRAM);
+		}
+		else
+		{
+			this->haveUsedSoundSources = true;
 		}
 	}
 }
@@ -520,7 +538,7 @@ void VSUManager::releaseWaveform(int8 waveFormIndex, const int8* waveFormData)
 //---------------------------------------------------------------------------------------------------------
 void VSUManager::dispatchQueuedSoundSourceConfigurations()
 {
-	if(isDeleted(this->queuedVSUSoundSourceConfigurations))
+	if(isDeleted(this->queuedVSUSoundSourceConfigurations) || NULL == this->queuedVSUSoundSourceConfigurations->head)
 	{
 		return;
 	}
@@ -544,6 +562,8 @@ void VSUManager::dispatchQueuedSoundSourceConfigurations()
 			delete queuedVSUSoundSourceConfiguration;
 		}
 	}
+
+	this->haveQueuedRequests = NULL == this->queuedVSUSoundSourceConfigurations->head;
 }
 //---------------------------------------------------------------------------------------------------------
 void VSUManager::registerQueuedSoundSourceConfiguration(const VSUSoundSourceConfiguration* vsuSoundSourceConfiguration)
@@ -552,6 +572,8 @@ void VSUManager::registerQueuedSoundSourceConfiguration(const VSUSoundSourceConf
 	{
 		return;
 	}
+
+	this->haveQueuedRequests = true;
 
 	VSUSoundSourceConfiguration* queuedVSUSoundSourceConfiguration = new VSUSoundSourceConfiguration;
 	*queuedVSUSoundSourceConfiguration = *vsuSoundSourceConfiguration;

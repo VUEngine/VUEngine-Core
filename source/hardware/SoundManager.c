@@ -49,22 +49,9 @@ static void SoundManager::playSounds(uint32 elapsedMicroseconds)
 {
 	VSUManager::update(_vsuManager);
 
-	VirtualNode node = _soundManager->sounds->head;
-
-	if(NULL != node)
+	for(VirtualNode node = _soundManager->sounds->head; NULL != node; node = node->next)
 	{
-		do
-		{
-			NM_ASSERT(NULL != node, "SoundManager::playMIDISounds: NULL node");
-			NM_ASSERT(!isDeleted(node), "SoundManager::playMIDISounds: deleted node");
-			NM_ASSERT(NULL != node->data, "SoundManager::playMIDISounds: NULL node data");
-			NM_ASSERT(!isDeleted(node->data), "SoundManager::playMIDISounds: deleted node data");
-		
-			Sound::update(Sound::safeCast(node->data), elapsedMicroseconds, _soundManager->targetPCMUpdates);
-
-			node = node->next;
-		}
-		while(NULL != node);
+		Sound::update(Sound::safeCast(node->data), elapsedMicroseconds, _soundManager->targetPCMUpdates);
 	}
 }
 //---------------------------------------------------------------------------------------------------------

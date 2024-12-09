@@ -172,6 +172,12 @@ singleton class VSUManager : Object
 	/// If false and if there are no sound sources availables at the time of request, 
 	/// the petition is ignored
 	bool allowQueueingSoundRequests;
+	
+	/// Flag to skip sound source releasing if not necessary
+	bool haveUsedSoundSources;
+	
+	/// Flag to skip pending sound source dispatching if not necessary
+	bool haveQueuedRequests;
 
 	/// @publicsection
 
