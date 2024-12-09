@@ -343,6 +343,10 @@ class SoundTrack : Object
 	/// Retrieve the sound track's total ticks.
 	/// @return Total number of ticks
 	uint32 getTicks();
+
+	/// Retrieve the sound track's percentage of elapsed ticks.
+	/// @return Percentaje of elapsed ticks
+	float getElapsedTicksPercentaje();
 }
 
 

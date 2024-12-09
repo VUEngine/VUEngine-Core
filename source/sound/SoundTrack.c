@@ -99,6 +99,17 @@ uint32 SoundTrack::getTicks()
 	return this->ticks;
 }
 //---------------------------------------------------------------------------------------------------------
+float SoundTrack::getElapsedTicksPercentaje()
+{
+	if(0 == this->samples)
+	{
+		return 0;
+	}
+
+	return (float)this->cursor / this->samples;
+}
+//---------------------------------------------------------------------------------------------------------
+
 
 //=========================================================================================================
 // CLASS' PRIVATE METHODS
@@ -174,17 +185,17 @@ bool SoundTrack::updatePCM(uint32 elapsedMicroseconds, uint32 targetPCMUpdates, 
 	// Elapsed time during PCM playback is based on the cursor, track's ticks and target Hz
 	this->elapsedTicks += elapsedMicroseconds;
 
-	this->cursorSxLRV = this->elapsedTicks / targetPCMUpdates;
+	this->cursor = this->elapsedTicks / targetPCMUpdates;
 
 	// PCM playback must be totally in sync on all channels, so, check if completed only
 	// in the first one
-	int8 volume = this->soundTrackSpec->SxLRV[this->cursorSxLRV];// - volumeReduction;
+	int8 volume = this->soundTrackSpec->SxLRV[this->cursor] - volumeReduction;
 
 	VSUManager::applyPCMSampleToSoundSource(VSUManager::getInstance(), volume);
 
 	CACHE_DISABLE;
 
-	return this->cursorSxLRV >= this->samples;
+	return this->cursor >= this->samples;
 }
 //---------------------------------------------------------------------------------------------------------
 bool SoundTrack::updateNative(fix7_9_ext tickStep, fix7_9_ext targetTimerResolutionFactor, fixed_t leftVolumeFactor, fixed_t rightVolumeFactor, int8 volumeReduction, uint8 volumenScalePower)

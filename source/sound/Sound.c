@@ -565,23 +565,9 @@ void Sound::printPlaybackTime(int32 x, int32 y)
 		return;
 	}
 
-	float elapsedTicksProportion = 0;
+	float elapsedTicksPercentaje = SoundTrack::getElapsedTicksPercentaje(this->mainSoundTrack);
 	
-/*	if(0 < this->PCMTracks)
-	{
-		elapsedTicksProportion = (float)this->mainSoundTrack->cursor / this->mainSoundTrack->samples;
-	}
-	else
-*/	{
-		elapsedTicksProportion = __FIX7_9_EXT_TO_F(this->mainSoundTrack->elapsedTicks) / this->mainSoundTrack->ticks;
-	}
-
-	if(0 > elapsedTicksProportion || 1 < elapsedTicksProportion)
-	{
-		elapsedTicksProportion = 1;
-	}
-
-	uint32 currentSecond = elapsedTicksProportion * this->totalPlaybackMilliseconds / __MILLISECONDS_PER_SECOND;
+	uint32 currentSecond = elapsedTicksPercentaje * this->totalPlaybackMilliseconds / __MILLISECONDS_PER_SECOND;
 
 	if(previousSecond > currentSecond)
 	{
@@ -603,23 +589,14 @@ void Sound::printPlaybackProgress(int32 x, int32 y)
 		return;
 	}
 
-	float elapsedTicksProportion = 0;
-	
-/*	if(0 < this->PCMTracks)
+	float elapsedTicksPercentaje = SoundTrack::getElapsedTicksPercentaje(this->mainSoundTrack);
+
+	if(0 > elapsedTicksPercentaje || 1 < elapsedTicksPercentaje)
 	{
-		elapsedTicksProportion = (float)this->mainSoundTrack->cursor / this->mainSoundTrack->samples;
-	}
-	else
-*/	{
-		elapsedTicksProportion = __FIX7_9_EXT_TO_F(this->mainSoundTrack->elapsedTicks) / this->mainSoundTrack->ticks;
+		elapsedTicksPercentaje = 1;		
 	}
 
-	if(0 > elapsedTicksProportion || 1 < elapsedTicksProportion)
-	{
-		elapsedTicksProportion = 1;		
-	}
-
-	uint32 position = elapsedTicksProportion * 32;
+	uint32 position = elapsedTicksPercentaje * 32;
 
 	char boxesArray[33] = 
 	{
