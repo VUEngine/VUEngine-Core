@@ -234,7 +234,6 @@ void VSUManager::reset()
 	{
 		this->vsuSoundSourceConfigurations[i].vsuSoundSource = &_vsuSoundSources[i];
 		this->vsuSoundSourceConfigurations[i].timeout = -1;
-		this->vsuSoundSourceConfigurations[i].SxINT = kPlaybackPCM == this->playbackMode ? 0x9F : 0x00;
 		this->vsuSoundSourceConfigurations[i].SxLRV = 0;
 		this->vsuSoundSourceConfigurations[i].SxFQL = 0;
 		this->vsuSoundSourceConfigurations[i].SxFQH = 0;
@@ -243,10 +242,10 @@ void VSUManager::reset()
 		this->vsuSoundSourceConfigurations[i].SxRAM = kPlaybackPCM == this->playbackMode ? PCMWaveForm : NULL;
 		this->vsuSoundSourceConfigurations[i].SxSWP = 0;
 		this->vsuSoundSourceConfigurations[i].noise = false;
+		this->vsuSoundSourceConfigurations[i].SxINT = 0x9F;
 
 		Waveform* waveform = VSUManager::findWaveform(this, this->vsuSoundSourceConfigurations[i].SxRAM);
 
-		this->vsuSoundSourceConfigurations[i].vsuSoundSource->SxINT = this->vsuSoundSourceConfigurations[i].SxINT;
 		this->vsuSoundSourceConfigurations[i].vsuSoundSource->SxLRV = this->vsuSoundSourceConfigurations[i].SxLRV;
 		this->vsuSoundSourceConfigurations[i].vsuSoundSource->SxFQL = this->vsuSoundSourceConfigurations[i].SxFQL;
 		this->vsuSoundSourceConfigurations[i].vsuSoundSource->SxFQH = this->vsuSoundSourceConfigurations[i].SxFQH;
@@ -254,6 +253,7 @@ void VSUManager::reset()
 		this->vsuSoundSourceConfigurations[i].vsuSoundSource->SxEV1 = this->vsuSoundSourceConfigurations[i].SxEV1;
 		this->vsuSoundSourceConfigurations[i].vsuSoundSource->SxRAM = NULL == waveform ? 0 : waveform->index;
 		this->vsuSoundSourceConfigurations[i].vsuSoundSource->SxSWP = this->vsuSoundSourceConfigurations[i].SxSWP;
+		this->vsuSoundSourceConfigurations[i].vsuSoundSource->SxINT = this->vsuSoundSourceConfigurations[i].SxINT;
 	}
 }
 //---------------------------------------------------------------------------------------------------------
@@ -430,8 +430,9 @@ void VSUManager::configureSoundSource(int16 vsuSoundSourceIndex, const VSUSoundS
 
 	this->haveUsedSoundSources = true;
 
+	bool setSxINT = this->vsuSoundSourceConfigurations[vsuSoundSourceIndex].SxINT != vsuSoundSourceConfiguration->SxINT;
+
 	this->vsuSoundSourceConfigurations[vsuSoundSourceIndex].timeout = this->ticks + vsuSoundSourceConfiguration->timeout;
-	this->vsuSoundSourceConfigurations[vsuSoundSourceIndex].SxINT = vsuSoundSourceConfiguration->SxINT;
 	this->vsuSoundSourceConfigurations[vsuSoundSourceIndex].SxLRV = vsuSoundSourceConfiguration->SxLRV;
 	this->vsuSoundSourceConfigurations[vsuSoundSourceIndex].SxFQL = vsuSoundSourceConfiguration->SxFQL;
 	this->vsuSoundSourceConfigurations[vsuSoundSourceIndex].SxFQH = vsuSoundSourceConfiguration->SxFQH;
@@ -439,8 +440,8 @@ void VSUManager::configureSoundSource(int16 vsuSoundSourceIndex, const VSUSoundS
 	this->vsuSoundSourceConfigurations[vsuSoundSourceIndex].SxEV1 = vsuSoundSourceConfiguration->SxEV1;
 	this->vsuSoundSourceConfigurations[vsuSoundSourceIndex].SxRAM = vsuSoundSourceConfiguration->SxRAM;
 	this->vsuSoundSourceConfigurations[vsuSoundSourceIndex].SxSWP = vsuSoundSourceConfiguration->SxSWP;
+	this->vsuSoundSourceConfigurations[vsuSoundSourceIndex].SxINT = vsuSoundSourceConfiguration->SxINT;
 
-	vsuSoundSource->SxINT = vsuSoundSourceConfiguration->SxINT;
 	vsuSoundSource->SxLRV = vsuSoundSourceConfiguration->SxLRV;
 	vsuSoundSource->SxFQL = vsuSoundSourceConfiguration->SxFQL;
 	vsuSoundSource->SxFQH = vsuSoundSourceConfiguration->SxFQH;
@@ -449,7 +450,14 @@ void VSUManager::configureSoundSource(int16 vsuSoundSourceIndex, const VSUSoundS
 	vsuSoundSource->SxRAM = waveform->index;
 	vsuSoundSource->SxSWP = vsuSoundSourceConfiguration->SxSWP;
 
-//	VSUManager::printVSUSoundSourceConfiguration(&this->vsuSoundSourceConfigurations[vsuSoundSourceIndex], 1, 10);
+	/// If SxINT is set every time it can produce the pop sound because it 
+	/// resets various of the VSU's internal counters.
+	if(setSxINT)
+	{
+		vsuSoundSource->SxINT = vsuSoundSourceConfiguration->SxINT;
+	}
+
+//	VSUManager::printVSUSoundSourceConfiguration(&this->vsuSoundSourceConfigurations[vsuSoundSourceIndex], 1 + 20 * vsuSoundSourceIndex, 10);
 //	VSUManager::printVSUSoundSource(vsuSoundSource, 20, 10);
 }
 //---------------------------------------------------------------------------------------------------------
@@ -482,11 +490,19 @@ void VSUManager::releaseSoundSources()
 			continue;
 		}
 
-		if(this->ticks >= this->vsuSoundSourceConfigurations[i].timeout)
+		/// Don't change to >= since it prevents pop sounds when a new sound request
+		/// arrives in during the same timer interrupt as this.
+		if(this->ticks > this->vsuSoundSourceConfigurations[i].timeout)
 		{
 			this->vsuSoundSourceConfigurations[i].timeout = -1;
+			this->vsuSoundSourceConfigurations[i].vsuSoundSource->SxINT |= __SOUND_WRAPPER_STOP_SOUND;
 			this->vsuSoundSourceConfigurations[i].vsuSoundSource->SxEV0 &= 0xF8;
 			this->vsuSoundSourceConfigurations[i].vsuSoundSource->SxEV1 |= 0x01;
+			
+			this->vsuSoundSourceConfigurations[i].vsuSoundSource->SxEV0 &= 0xF8;
+			this->vsuSoundSourceConfigurations[i].vsuSoundSource->SxEV1 |= 0x01;
+			this->vsuSoundSourceConfigurations[i].SxINT |= __SOUND_WRAPPER_STOP_SOUND;
+			
 			VSUManager::releaseWaveform(this, this->vsuSoundSourceConfigurations[i].vsuSoundSource->SxRAM, this->vsuSoundSourceConfigurations[i].SxRAM);
 		}
 		else
