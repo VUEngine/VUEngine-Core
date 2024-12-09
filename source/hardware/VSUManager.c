@@ -477,8 +477,8 @@ void VSUManager::releaseSoundSources()
 		if(this->ticks >= this->vsuSoundSourceConfigurations[i].timeout)
 		{
 			this->vsuSoundSourceConfigurations[i].timeout = -1;
-			this->vsuSoundSourceConfigurations[i].SxINT = 0;
-			this->vsuSoundSourceConfigurations[i].vsuSoundSource->SxINT |= __SOUND_WRAPPER_STOP_SOUND;
+			this->vsuSoundSourceConfigurations[i].vsuSoundSource->SxEV0 &= 0xF8;
+			this->vsuSoundSourceConfigurations[i].vsuSoundSource->SxEV1 |= 0x01;
 			VSUManager::releaseWaveform(this, this->vsuSoundSourceConfigurations[i].vsuSoundSource->SxRAM, this->vsuSoundSourceConfigurations[i].SxRAM);
 		}
 	}
@@ -629,8 +629,8 @@ void VSUManager::suspendPlayingSounds()
 {
 	for(int32 i = 0; i < __TOTAL_SOUND_SOURCES; i++)
 	{
-		_vsuSoundSources[i].SxINT |= __SOUND_WRAPPER_STOP_SOUND;
-		_vsuSoundSources[i].SxLRV = 0x00;
+		this->vsuSoundSourceConfigurations[i].vsuSoundSource->SxEV0 &= 0xF8;
+		this->vsuSoundSourceConfigurations[i].vsuSoundSource->SxEV1 |= 0x01;
 	}
 }
 //---------------------------------------------------------------------------------------------------------
