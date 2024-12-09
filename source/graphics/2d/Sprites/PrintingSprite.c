@@ -66,8 +66,8 @@ void PrintingSprite::reset()
 	this->bgmapTextureSource.my = __PRINTING_BGMAP_Y_OFFSET;
 	this->bgmapTextureSource.mp = __PRINTING_BGMAP_PARALLAX_OFFSET;
 
-	this->halfWidth = (__SCREEN_WIDTH - 1) >> 1;
-	this->halfHeight = (__SCREEN_HEIGHT - 1) >> 1;
+	this->halfWidth = __SCREEN_WIDTH >> 1;
+	this->halfHeight = __SCREEN_HEIGHT >> 1;
 }
 //---------------------------------------------------------------------------------------------------------
 void PrintingSprite::setPrintingBgmapSegment(int8 printingBgmapSegment)
