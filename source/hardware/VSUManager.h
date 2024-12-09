@@ -184,9 +184,8 @@ singleton class VSUManager : Object
 	void applySoundSourceConfiguration(const VSUSoundSourceConfiguration* vsuSoundSourceConfiguration);
 
 	/// Apply a sound source configuration to a VSU sound source with the provided data for PCM playback.
-	/// @param vsuSoundSourceConfiguration: VSU sound source configuration
 	/// @param sample: PCM sample data
-	void applySoundSourceConfigurationForPCM(VSUSoundSourceConfiguration* vsuSoundSourceConfiguration, int8 sample);
+	void applyPCMSampleToSoundSource(int8 sample);
 
 	/// Reset the manager's state.
 	void reset();

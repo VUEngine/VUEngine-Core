@@ -20,6 +20,7 @@
 #include <VirtualList.h>
 #include <VSUManager.h>
 #include <VUEngine.h>
+#include <WaveForms.h>
 
 #include "SoundTrack.h"
 
@@ -179,23 +180,7 @@ bool SoundTrack::updatePCM(uint32 elapsedMicroseconds, uint32 targetPCMUpdates, 
 	// in the first one
 	int8 volume = this->soundTrackSpec->SxLRV[this->cursorSxLRV];// - volumeReduction;
 
-	VSUSoundSourceConfiguration vsuChannelConfiguration = 
-	{
-		NULL,
-		-1,
-		kSoundSourceNormal,
-		this->soundTrackSpec->SxINT[0],
-		0x00,
-		this->soundTrackSpec->SxFQ[0] & 0xFF,
-		this->soundTrackSpec->SxFQ[0] >> 8,
-		this->soundTrackSpec->SxEV0[0],
-		this->soundTrackSpec->SxEV1[0],
-		this->soundTrackSpec->SxRAM[0],
-		this->soundTrackSpec->SxSWP[0],
-		false
-	};
-
-	VSUManager::applySoundSourceConfigurationForPCM(VSUManager::getInstance(), &vsuChannelConfiguration, volume);
+	VSUManager::applyPCMSampleToSoundSource(VSUManager::getInstance(), volume);
 
 	CACHE_DISABLE;
 
