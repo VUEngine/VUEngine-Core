@@ -161,51 +161,20 @@ void VSUManager::applySoundSourceConfiguration(const VSUSoundSourceConfiguration
 //---------------------------------------------------------------------------------------------------------
 void VSUManager::applyPCMSampleToSoundSource(int8 sample)
 {
-	VSUSoundSourceConfiguration vsuSoundSourceConfiguration = 
-	{
-		NULL,
-		// Timeout
-		-1,
-		// Sound source type
-		kSoundSourceNormal,
-		// SxINT
-		0x9F,
-		// SxLRV
-		0x00,
-		// SxFQL
-		0x00,
-		// SxFQH
-		0x00,
-		// SxEV0
-		0xF0,
-		// SxEV1
-		0x00,
-		// SxRAM
-		PCMWaveForm,
-		// SxSWP
-		0x00,
-		// Noise?
-		false
-	};
-
 	int16 vsuSoundSourceIndex = VSUManager::findAvailableSoundSource(this, kSoundSourceNormal);
 
-	Waveform* waveform = VSUManager::findWaveform(this, vsuSoundSourceConfiguration.SxRAM);
-
-	vsuSoundSourceConfiguration.timeout -= (this->ticks + 1);
+	Waveform* waveform = VSUManager::findWaveform(this, PCMWaveForm);
 
 	while(true)
 	{
 		if(__MAXIMUM_VOLUME <= sample)
 		{
-			vsuSoundSourceConfiguration.SxLRV = 0xFF;
-			VSUManager::configureSoundSource(this, vsuSoundSourceIndex, &vsuSoundSourceConfiguration, waveform);
+			VSUManager::configureSoundSourceForPCM(this, vsuSoundSourceIndex, 0xFF, waveform);
 			sample -= __MAXIMUM_VOLUME;
 		}
 		else
 		{
-			vsuSoundSourceConfiguration.SxLRV = ((sample << 4) | sample);
-			VSUManager::configureSoundSource(this, vsuSoundSourceIndex, &vsuSoundSourceConfiguration, waveform);
+			VSUManager::configureSoundSourceForPCM(this, vsuSoundSourceIndex, ((sample << 4) | sample), waveform);
 			break;
 		}
 
@@ -461,6 +430,21 @@ void VSUManager::configureSoundSource(int16 vsuSoundSourceIndex, const VSUSoundS
 
 //	VSUManager::printVSUSoundSourceConfiguration(&this->vsuSoundSourceConfigurations[vsuSoundSourceIndex], 1, 10);
 //	VSUManager::printVSUSoundSource(vsuSoundSource, 20, 10);
+}
+//---------------------------------------------------------------------------------------------------------
+void VSUManager::configureSoundSourceForPCM(int16 vsuSoundSourceIndex, uint8 SxLRV, Waveform* waveform)
+{
+	VSUSoundSource* vsuSoundSource = this->vsuSoundSourceConfigurations[vsuSoundSourceIndex].vsuSoundSource;
+
+	this->vsuSoundSourceConfigurations[vsuSoundSourceIndex].timeout = -1;
+
+	vsuSoundSource->SxINT = 0x9F;
+	vsuSoundSource->SxLRV = SxLRV;
+	vsuSoundSource->SxFQL = 0x00;
+	vsuSoundSource->SxFQH = 0x00;
+	vsuSoundSource->SxEV0 = 0xF0;
+	vsuSoundSource->SxEV1 = 0x00;
+	vsuSoundSource->SxRAM = waveform->index;
 }
 //---------------------------------------------------------------------------------------------------------
 int16 VSUManager::findAvailableSoundSource(uint32 soundSourceType)
