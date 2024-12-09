@@ -81,8 +81,6 @@ void Sound::constructor(const SoundSpec* soundSpec, EventListener soundReleaseLi
 
 	this->state = kSoundOff;
 	this->soundSpec = soundSpec;
-	this->MIDITracks = 0;
-	this->PCMTracks = 0;
 	this->speed = __I_TO_FIX7_9_EXT(1);
 	this->previouslyElapsedTicks = 0;
 	this->totalPlaybackMilliseconds = 0;
@@ -126,11 +124,6 @@ void Sound::destructor()
 		VirtualList::deleteData(this->soundTracks);
 		delete this->soundTracks;
 		this->soundTracks = NULL;
-	}
-
-	if(0 < this->PCMTracks)
-	{
-		CACHE_RESET;
 	}
 
 	// destroy the super Container
@@ -195,13 +188,7 @@ void Sound::play(const Vector3D* position, uint32 playbackType)
 				if(!wasPaused)
 				{
 					this->previouslyElapsedTicks = 0;
-					
-					if(0 < this->PCMTracks)
-					{
-						CACHE_DISABLE;
-						CACHE_CLEAR;
-					}
-				}	
+				}
 			}
 
 			break;
@@ -408,10 +395,7 @@ void Sound::autoReleaseOnFinish(bool autoReleaseOnFinish)
 void Sound::setSpeed(fix7_9_ext speed)
 {
 	// Prevent timer interrupts to unsync tracks
-	if(0 == this->PCMTracks)
-	{
-		this->speed = 0 >= speed ? __F_TO_FIX7_9_EXT(0.01f) : speed < __I_TO_FIX7_9_EXT(16) ? speed : __I_TO_FIX7_9_EXT(16);
-	}
+	this->speed = 0 >= speed ? __F_TO_FIX7_9_EXT(0.01f) : speed < __I_TO_FIX7_9_EXT(16) ? speed : __I_TO_FIX7_9_EXT(16);
 
 	this->targetTimerResolutionFactor = Sound::computeTimerResolutionFactor(this);
 	this->tickStep = __FIX7_9_EXT_MULT(this->speed, this->targetTimerResolutionFactor);
@@ -440,16 +424,6 @@ void Sound::setFrequencyDelta(uint16 frequencyDelta)
 uint16 Sound::getFrequencyDelta()
 {
 	return this->frequencyDelta;
-}
-//---------------------------------------------------------------------------------------------------------
-bool Sound::hasMIDITracks()
-{
-	return 0 < this->MIDITracks;
-}
-//---------------------------------------------------------------------------------------------------------
-bool Sound::hasPCMTracks()
-{
-	return 0 < this->PCMTracks;
 }
 //---------------------------------------------------------------------------------------------------------
 bool Sound::isPlaying()
@@ -575,119 +549,11 @@ void Sound::print(int32 x, int32 y)
 
 	PRINT_TEXT("TRACK INFO", trackInfoXOffset, y++);
 
-	PRINT_TEXT("MIDI", trackInfoXOffset, ++y);
-	PRINT_TEXT(0 < this->MIDITracks ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, trackInfoXOffset + trackInfoValuesXOffset, y);
-
-	PRINT_TEXT("PCM", trackInfoXOffset, ++y);
-	PRINT_TEXT(0 < this->PCMTracks ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, trackInfoXOffset + trackInfoValuesXOffset, y);
-
-	PRINT_TEXT("soundTracks", trackInfoXOffset, ++y);
+	PRINT_TEXT("Tracks", trackInfoXOffset, ++y);
 	PRINT_INT(VirtualList::getCount(this->soundTracks), trackInfoXOffset + trackInfoValuesXOffset, y);
 
 	PRINT_TEXT("Loop", trackInfoXOffset, ++y);
 	PRINT_TEXT(this->soundSpec->loop ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, trackInfoXOffset + trackInfoValuesXOffset, y++);
-
-	Sound::printVolume(this, 1, y, true);
-}
-//---------------------------------------------------------------------------------------------------------
-void Sound::printVolume(int32 x, int32 y, bool printHeader)
-{
-	/*
-	if(0 < this->PCMTracks)
-	{
-		return;
-	}
-
-	VirtualNode node = this->soundTracks->head;
-
-	if(printHeader)
-	{
-		PRINT_TEXT("OUTPUT", x, ++y);
-
-		++y;
-		++y;
-	}
-	else
-	{
-		++y;
-		++y;
-		++y;
-	}
-
-	++x;
-
-	uint16 totalVolume = 0;
-
-	for(node = this->soundTracks->head; NULL != node; node = node->next)
-	{
-		SoundTrack soundTrack = SoundTrack::safeCast(node->data);
-
-		uint16 volume = soundTrack->soundsoundTrackConfiguration.SxLRV;
-
-		totalVolume += volume;
-
-		uint16 leftVolume = (volume) >> 4;
-		uint16 rightVolume = (volume & 0x0F);
-		uint16 i;
-
-		uint16 frequency = (soundTrack->soundsoundTrackConfiguration.SxFQH << 4) | soundTrack->soundsoundTrackConfiguration.SxFQL;
-
-		uint16 leftValue = 0;
-		uint16 rightValue = 0;
-
-		switch(soundTrack->soundsoundTrackConfiguration.trackType)
-		{
-			case kMIDI:
-
-				leftValue = ((frequency * leftVolume) / __MAXIMUM_VOLUME) >> 4;
-				rightValue = ((frequency * rightVolume) / __MAXIMUM_VOLUME) >> 4;
-				break;
-
-			case kPCM:
-
-				leftValue = leftVolume;
-				rightValue = rightVolume;
-				break;
-
-#ifndef __RELEASE
-			case kUnknownType:
-
-				NM_ASSERT(false, "Sound::printVolume: unknown track type");
-				break;
-#endif
-			default:
-
-				NM_ASSERT(false, "Sound::printVolume: invalid soundTrack");
-				break;
-		}
-
-		char boxesArray[] = 
-		{
-			__CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX,
-			__CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX,
-			__CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX,
-			'C', '0' + soundTrack->index,
-			__CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX,
-			__CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX,
-			__CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX,
-			'\0'
-		};
-
-		for(i = 0; i < leftValue && 15 > i; i++)
-		{
-			boxesArray[15 - i - 1] = __CHAR_BRIGHT_RED_BOX;
-		}
-
-		for(i = 0; i < rightValue && 15 > i; i++)
-		{
-			boxesArray[15 + 2 + i] = __CHAR_BRIGHT_RED_BOX;
-		}
-
-		PRINT_TEXT(boxesArray, x, y);
-
-		y++;
-	}
-	*/
 }
 //---------------------------------------------------------------------------------------------------------
 void Sound::printPlaybackTime(int32 x, int32 y)
@@ -701,12 +567,12 @@ void Sound::printPlaybackTime(int32 x, int32 y)
 
 	float elapsedTicksProportion = 0;
 	
-	if(0 < this->PCMTracks)
+/*	if(0 < this->PCMTracks)
 	{
 		elapsedTicksProportion = (float)this->mainSoundTrack->cursor / this->mainSoundTrack->samples;
 	}
 	else
-	{
+*/	{
 		elapsedTicksProportion = __FIX7_9_EXT_TO_F(this->mainSoundTrack->elapsedTicks) / this->mainSoundTrack->ticks;
 	}
 
@@ -739,12 +605,12 @@ void Sound::printPlaybackProgress(int32 x, int32 y)
 
 	float elapsedTicksProportion = 0;
 	
-	if(0 < this->PCMTracks)
+/*	if(0 < this->PCMTracks)
 	{
 		elapsedTicksProportion = (float)this->mainSoundTrack->cursor / this->mainSoundTrack->samples;
 	}
 	else
-	{
+*/	{
 		elapsedTicksProportion = __FIX7_9_EXT_TO_F(this->mainSoundTrack->elapsedTicks) / this->mainSoundTrack->ticks;
 	}
 

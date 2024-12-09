@@ -137,12 +137,6 @@ class Sound : ListenerObject
 	/// Type of playback to perform (SoundPlaybackTypes)
 	uint8 playbackType;
 
-	/// MIDI tracks count
-	bool MIDITracks;
-
-	/// PCM tracks count
-	bool PCMTracks;
-
 	/// If true, sound is not muted
 	bool unmute;
 
@@ -230,14 +224,6 @@ class Sound : ListenerObject
 	/// @param frequencyDelta: Delta added to the frequency
 	uint16 getFrequencyDelta();
 
-	/// Check if the sound has MIDI tracks.
-	/// @return True if the sound has at least one MIDI track; false otherwise
-	bool hasMIDITracks();
-
-	/// Check if the sound is using the provided VSU channel.
-	/// @return True if the sound has at least one PCM track; false otherwise
-	bool hasPCMTracks();
-
 	/// Check if the sound is playing.
 	/// @return True if playback is going on
 	bool isPlaying();
@@ -263,12 +249,6 @@ class Sound : ListenerObject
 	/// @param x: Screen x coordinate where to print
 	/// @param y: Screen y coordinate where to print
 	void print(int32 x, int32 y);
-
-	/// Print the sounds's volume.
-	/// @param x: Screen x coordinate where to print
-	/// @param y: Screen y coordinate where to print
-	/// @param printHeader: If true it print's the header's info
-	void printVolume(int32 x, int32 y, bool printHeader);
 
 	/// Print the sounds's playback time.
 	/// @param x: Screen x coordinate where to print
