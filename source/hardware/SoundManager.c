@@ -333,6 +333,8 @@ void SoundManager::destructor()
 //---------------------------------------------------------------------------------------------------------
 Sound SoundManager::doGetSound(const SoundSpec* soundSpec, EventListener soundReleaseListener, ListenerObject scope)
 {
+	SoundManager::purgeReleasedSounds(this);
+
 	if(NULL == soundSpec)
 	{
 		return NULL;
