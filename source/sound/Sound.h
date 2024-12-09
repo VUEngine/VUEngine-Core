@@ -16,7 +16,7 @@
 //=========================================================================================================
 
 #include <ListenerObject.h>
-#include <MIDI.h>
+#include <SoundTrack.h>
 
 
 //=========================================================================================================
@@ -27,48 +27,8 @@ class VirtualList;
 
 
 //=========================================================================================================
-// CLASS' MACROS
-//=========================================================================================================
-
-#define __SOUND_WRAPPER_STOP_SOUND 											0x21
-
-#define __MAXIMUM_VOLUME													0xF
-#define __MIDI_CONVERTER_FREQUENCY_US										20
-#define __SOUND_TARGET_US_PER_TICK											__MIDI_CONVERTER_FREQUENCY_US
-
-#define __SOUND_LR															0xFF
-#define __SOUND_L															0xF0
-#define __SOUND_R															0x0F
-
-#define __MAXIMUM_MIDI_FREQUENCY											D_8
-
-#define __SOUND_WRAPPER_FADE_DELAY											100
-
-#define __SOUND_TARGET_TIMER_US_PER_INTERRUPT_HELPER(TargetHz)				(1000000 / TargetHz - 66)
-#define __SOUND_TARGET_TIMER_US_PER_INTERRUPT(TargetHz)						(__SOUND_TARGET_TIMER_US_PER_INTERRUPT_HELPER(TargetHz) + 20 * (int)((__SOUND_TARGET_TIMER_US_PER_INTERRUPT_HELPER(TargetHz) % 20) / 20.0f + 0.5f) - (__SOUND_TARGET_TIMER_US_PER_INTERRUPT_HELPER(TargetHz) % 20))
-
-
-//=========================================================================================================
 // CLASS' DATA
 //=========================================================================================================
-
-/// Sound channel types
-/// @memberof Sound
-enum SoundChannelTypes
-{
-	kChannelNormal 			= (1 << 0),
-	kChannelModulation		= (1 << 1),
-	kChannelNoise			= (1 << 2)
-};
-
-/// Sound track types
-/// @memberof Sound
-enum SoundTrackTypes
-{
-	kUnknownType = 0,
-	kMIDI,
-	kPCM
-};
 
 /// Sound playback types
 /// @memberof Sound
@@ -81,7 +41,6 @@ enum SoundPlaybackTypes
 	kSoundPlaybackFadeOutAndRelease
 };
 
-
 /// Sound state
 /// @memberof Sound
 enum SoundState
@@ -91,78 +50,6 @@ enum SoundState
 	kSoundPlaying,
 };
 
-/// Sound channel configuration struct
-/// @memberof Sound
-typedef struct SoundChannelConfiguration
-{
-	/// kMIDI, kPCM
-	uint32 trackType;
-
-	/// SxINT
-	uint8 SxINT;
-
-	/// Volume SxLRV
-	uint8 SxLRV;
-
-	/// SxRAM
-	uint8 SxRAM;
-
-	/// SxEV0
-	uint8 SxEV0;
-
-	/// SxEV1
-	uint8 SxEV1;
-
-	/// SxFQH
-	uint8 SxFQH;
-
-	/// SxFQL
-	uint8 SxFQL;
-
-	/// Ch. 5 only
-	uint8 S5SWP;
-
-	/// Waveform data pointer
-	const int8* waveFormData;
-
-	/// kChannelNormal, kChannelModulation, kChannelNoise
-	uint32 channelType;
-
-	/// Volume
-	uint8 volume;
-
-} SoundChannelConfiguration;
-
-/// A SoundChannelConfiguration spec that is stored in ROM
-/// @memberof Sound
-typedef const SoundChannelConfiguration SoundChannelConfigurationROM;
-
-/// A SoundChannel spec struct
-/// @memberof Sound
-typedef struct SoundChannel
-{
-	/// Configuration
-	SoundChannelConfiguration* soundChannelConfiguration;
-
-	/// Total number of samples
-	uint32 samples;
-
-	/// Sound track
-	union SoundTrack
-	{
-		/// Sound track 8Bit (PCM)
-		const uint8* dataPCM;
-
-		/// Sound track 16Bit (MIDI)
-		const uint16* dataMIDI;
-
-	} soundTrack;
-
-} SoundChannel;
-
-/// A SoundChannel spec that is stored in ROM
-/// @memberof Sound
-typedef const SoundChannel SoundChannelROM;
 
 /// A Sound spec
 /// @memberof Sound
@@ -174,92 +61,17 @@ typedef struct SoundSpec
 	/// Play in loop
 	bool loop;
 
-	/// Target timer resolution in us
+	/// Tick duration in US
 	uint16 targetTimerResolutionUS;
 
 	/// Tracks
-	SoundChannel** soundChannels;
+	SoundTrackSpec** soundTrackSpecs;
 
 } SoundSpec;
 
 /// A Sound spec that is stored in ROM
 /// @memberof Sound
 typedef const SoundSpec SoundROMSpec;
-
-
-/// A Waveform struct
-/// @memberof Sound
-typedef struct Waveform
-{
-	/// Waveform's index
-	uint8 index;
-
-	/// Count of channels using this waveform
-	int8 usageCount;
-
-	/// Pointer to the VSU's waveform address
-	uint8* wave;
-
-	/// If true, waveform data has to be rewritten
-	uint8 overwrite;
-
-	/// Pointer to the waveform's data
-	const int8* data;
-
-} Waveform;
-
-/// A Channel struct
-/// @memberof Sound
-typedef struct Channel
-{
-	/// Channel configuration
-	SoundChannelConfiguration soundChannelConfiguration;
-
-	/// Sound definition
-	const SoundSpec* soundSpec;
-
-	/// Channel's effective length
-	uint32 samples;
-
-	/// Position within the sound track
-	uint32 cursor;
-
-	/// Next curst ticks target
-	fix7_9_ext nextElapsedTicksTarget;
-
-	/// Total number of ticks
-	uint32 ticks;
-
-	/// Ticks before moving the cursor
-	fix7_9_ext elapsedTicks;
-
-	/// Tick step per timer interrupt
-	fix7_9_ext tickStep;
-
-	/// Sound track
-	union ChannelSoundTrack
-	{
-		/// Sound track 8Bit (PCM)
-		const uint8* dataPCM;
-
-		/// Sound track 16Bit (MIDI)
-		const uint16* dataMIDI;
-
-	} soundTrack;
-
-	/// Channel's type (normal, modulation or noise)
-	uint32 type;
-
-	/// Channel's sound registries index
-	uint8 index;
-
-	/// Channel's sound's spec channels index
-	uint8 soundChannel;
-
-	/// If true, the channel's track's playback is complete
-	bool finished;
-
-} Channel;
 
 
 //=========================================================================================================
@@ -283,17 +95,23 @@ class Sound : ListenerObject
 	/// Pointer to vector for spatial positioning of the sound
 	const Vector3D* position;
 
-	/// List of VSU channels used by the sound
-	VirtualList channels;
+	/// List of sound tracks
+	VirtualList soundTracks;
 
-	/// Channel used for PCM playback
-	Channel* mainChannel;
+	/// Main sound track
+	SoundTrack mainSoundTrack;
 
 	/// Playback speed
 	fix7_9_ext speed;
 
 	/// Sound's state
 	uint32 state;
+
+	/// Factor to apply to the tick step
+	fix7_9_ext targetTimerResolutionFactor;
+
+	/// Tick step per timer interrupt
+	fix7_9_ext tickStep;
 
 	/// Elapsed ticks in the previous update
 	uint32 previouslyElapsedTicks;
@@ -319,12 +137,6 @@ class Sound : ListenerObject
 	/// Type of playback to perform (SoundPlaybackTypes)
 	uint8 playbackType;
 
-	/// MIDI tracks count
-	bool MIDITracks;
-
-	/// PCM tracks count
-	bool PCMTracks;
-
 	/// If true, sound is not muted
 	bool unmute;
 
@@ -340,17 +152,11 @@ class Sound : ListenerObject
 	/// @param mirror: Struct with a flag for each axis to mirror
 	static void setMirror(Mirror mirror);
 
-	/// Set the target refresh rate for PCM playback.
-	/// @param pcmTargetPlaybackRefreshRate: Target refresh rate for PCM playback
-	static void setPCMTargetPlaybackRefreshRate(uint16 pcmTargetPlaybackRefreshRate);
-
 	/// Class' constructor
 	/// @param soundSpec: Specification that determines how to configure the sound
-	/// @param channels: Linked list of VSU channels to use
-	/// @param waves: Array of indexes of waveforms to use
 	/// @param soundReleaseListener: Callback for when the sound is released
 	/// @param scope: Object that listens for the releasing event
-	void constructor(const SoundSpec* soundSpec, VirtualList channels, int8* waves, EventListener soundReleaseListener, ListenerObject scope);
+	void constructor(const SoundSpec* soundSpec, EventListener soundReleaseListener, ListenerObject scope);
 
 	/// Play the sound.
 	/// @param position: Pointer to the spatial position of the sound
@@ -414,18 +220,6 @@ class Sound : ListenerObject
 	/// @param frequencyDelta: Delta added to the frequency
 	uint16 getFrequencyDelta();
 
-	/// Check if the sound has MIDI tracks.
-	/// @return True if the sound has at least one MIDI track; false otherwise
-	bool hasMIDITracks();
-
-	/// Check if the sound is using the provided VSU channel.
-	/// @return True if the sound has at least one PCM track; false otherwise
-	bool hasPCMTracks();
-
-	/// Check if the sound is using the provided VSU channel.
-	/// @return True if the sound uses the provided channel
-	bool isUsingChannel(Channel* channel);
-
 	/// Check if the sound is playing.
 	/// @return True if playback is going on
 	bool isPlaying();
@@ -444,23 +238,13 @@ class Sound : ListenerObject
 
 	/// Advance the playback on the sound's MIDI tracks.
 	/// @param elapsedMicroseconds: Elapsed time since the last call
-	void updateMIDIPlayback(uint32 elapsedMicroseconds);
-
-	/// Advance the playback on the sound's PCM tracks.
-	/// @param elapsedMicroseconds: Elapsed time since the last call
 	/// @param targetPCMUpdates: Ideal Elapsed time since the last call
-	void updatePCMPlayback(uint32 elapsedMicroseconds, uint32 targetPCMUpdates);
+	void update(uint32 elapsedMicroseconds, uint32 targetPCMUpdates);
 
 	/// Print the sounds's properties.
 	/// @param x: Screen x coordinate where to print
 	/// @param y: Screen y coordinate where to print
 	void print(int32 x, int32 y);
-
-	/// Print the sounds's volume.
-	/// @param x: Screen x coordinate where to print
-	/// @param y: Screen y coordinate where to print
-	/// @param printHeader: If true it print's the header's info
-	void printVolume(int32 x, int32 y, bool printHeader);
 
 	/// Print the sounds's playback time.
 	/// @param x: Screen x coordinate where to print

@@ -50,18 +50,6 @@ void SoundTest::update()
 			Sound::printPlaybackProgress(this->sound, 1, 6);
 			Sound::printPlaybackTime(this->sound, 24, 8);
 			delay = 0;
-
-#ifndef __SHOW_TIMER_MANAGER_STATUS
-			if(Sound::hasPCMTracks(this->sound))
-			{
-				TimerManager::print(TimerManager::getInstance(), 1, 15);
-				TimerManager::nextSecondStarted(TimerManager::getInstance());
-			}
-#endif
-		}
-		else
-		{
-			Sound::printVolume(this->sound, 1, 17, false);
 		}
 	}
 }
@@ -353,7 +341,7 @@ void SoundTest::loadSound()
 	TimerManager::setTargetTimePerInterruptUnits(TimerManager::getInstance(), kUS);
 	TimerManager::setTargetTimePerInterrupt(TimerManager::getInstance(), _userSounds[this->soundIndex]->targetTimerResolutionUS);
 
-	this->sound = SoundManager::getSound(SoundManager::getInstance(), (SoundSpec*)_userSounds[this->soundIndex], kPlayAll, (EventListener)SoundTest::onSoundReleased, ListenerObject::safeCast(this));
+	this->sound = SoundManager::getSound(SoundManager::getInstance(), (SoundSpec*)_userSounds[this->soundIndex], (EventListener)SoundTest::onSoundReleased, ListenerObject::safeCast(this));
 
 	NM_ASSERT(!isDeleted(this->sound), "SoundTest::loadSound: no sound");
 
@@ -457,8 +445,6 @@ void SoundTest::printGUI(bool clearScreen)
 		Printing::text(printing, "Pause    \x13", xControls, yControls++, NULL);
 	}
 	Printing::text(printing, "Rewind   \x14", xControls, yControls++, NULL);
-	Printing::text(printing, "Track  \x1E\x1C\x1D", xControls, yControls++, NULL);
-	Printing::text(printing, Sound::hasPCMTracks(this->sound) ? "          " : "Speed  \x1E\x1A\x1B", xControls, yControls++, NULL);
 	yControls++;
 	Printing::text(printing, "T.Freq. \x1F\x1A", xControls, yControls++, NULL);
 	Printing::text(printing, "T.Scale \x1F\x1B", xControls, yControls++, NULL);

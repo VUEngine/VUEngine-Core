@@ -505,7 +505,7 @@ void TimerManager::print(int32 x, int32 y)
 	Printing::int32(Printing::getInstance(), this->targetTimePerInterrupt, x + 14, y++, NULL);
 
 	Printing::text(Printing::getInstance(), "Timer counter        ", x, y, NULL);
-	Printing::int32(Printing::getInstance(), TimerManager::computeTimerCounter(this), x + 14, y++, NULL);
+	Printing::int32(Printing::getInstance(), TimerManager::getTimerCounter(this), x + 14, y++, NULL);
 }
 //---------------------------------------------------------------------------------------------------------
 
@@ -551,6 +551,8 @@ uint16 TimerManager::computeTimerCounter()
 			timerCounter = __TIME_MS(this->targetTimePerInterrupt);
 			break;
 
+		default:
+	
 			NM_ASSERT(false, "TimerManager::setTargetTimePerInterruptUnits: wrong resolution scale");
 			break;
 	}

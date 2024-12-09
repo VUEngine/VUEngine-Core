@@ -35,7 +35,6 @@
 //---------------------------------------------------------------------------------------------------------
 void Particle::constructor(const ParticleSpec* particleSpec __attribute__((unused)))
 {
-	// construct base Container
 	Base::constructor();
 
 	this->lifeSpan = 0;
