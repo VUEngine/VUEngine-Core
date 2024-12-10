@@ -242,7 +242,7 @@ void VSUManager::reset()
 		this->vsuSoundSourceConfigurations[i].SxRAM = kPlaybackPCM == this->playbackMode ? PCMWaveForm : NULL;
 		this->vsuSoundSourceConfigurations[i].SxSWP = 0;
 		this->vsuSoundSourceConfigurations[i].noise = false;
-		this->vsuSoundSourceConfigurations[i].SxINT = 0x9F;
+		this->vsuSoundSourceConfigurations[i].SxINT = kPlaybackPCM == this->playbackMode ? 0x9F : 0;
 
 		Waveform* waveform = VSUManager::findWaveform(this, this->vsuSoundSourceConfigurations[i].SxRAM);
 
@@ -426,21 +426,22 @@ void VSUManager::destructor()
 //---------------------------------------------------------------------------------------------------------
 void VSUManager::configureSoundSource(int16 vsuSoundSourceIndex, const VSUSoundSourceConfiguration* vsuSoundSourceConfiguration, Waveform* waveform)
 {
-	VSUSoundSource* vsuSoundSource = this->vsuSoundSourceConfigurations[vsuSoundSourceIndex].vsuSoundSource;
+	int16 i = vsuSoundSourceIndex;
+	VSUSoundSource* vsuSoundSource = this->vsuSoundSourceConfigurations[i].vsuSoundSource;
 
 	this->haveUsedSoundSources = true;
 
-	bool setSxINT = this->vsuSoundSourceConfigurations[vsuSoundSourceIndex].SxINT != vsuSoundSourceConfiguration->SxINT;
+	bool setSxINT = this->vsuSoundSourceConfigurations[i].SxINT != vsuSoundSourceConfiguration->SxINT;
 
-	this->vsuSoundSourceConfigurations[vsuSoundSourceIndex].timeout = this->ticks + vsuSoundSourceConfiguration->timeout;
-	this->vsuSoundSourceConfigurations[vsuSoundSourceIndex].SxLRV = vsuSoundSourceConfiguration->SxLRV;
-	this->vsuSoundSourceConfigurations[vsuSoundSourceIndex].SxFQL = vsuSoundSourceConfiguration->SxFQL;
-	this->vsuSoundSourceConfigurations[vsuSoundSourceIndex].SxFQH = vsuSoundSourceConfiguration->SxFQH;
-	this->vsuSoundSourceConfigurations[vsuSoundSourceIndex].SxEV0 = vsuSoundSourceConfiguration->SxEV0;
-	this->vsuSoundSourceConfigurations[vsuSoundSourceIndex].SxEV1 = vsuSoundSourceConfiguration->SxEV1;
-	this->vsuSoundSourceConfigurations[vsuSoundSourceIndex].SxRAM = vsuSoundSourceConfiguration->SxRAM;
-	this->vsuSoundSourceConfigurations[vsuSoundSourceIndex].SxSWP = vsuSoundSourceConfiguration->SxSWP;
-	this->vsuSoundSourceConfigurations[vsuSoundSourceIndex].SxINT = vsuSoundSourceConfiguration->SxINT;
+	this->vsuSoundSourceConfigurations[i].timeout = this->ticks + vsuSoundSourceConfiguration->timeout;
+	this->vsuSoundSourceConfigurations[i].SxLRV = vsuSoundSourceConfiguration->SxLRV;
+	this->vsuSoundSourceConfigurations[i].SxFQL = vsuSoundSourceConfiguration->SxFQL;
+	this->vsuSoundSourceConfigurations[i].SxFQH = vsuSoundSourceConfiguration->SxFQH;
+	this->vsuSoundSourceConfigurations[i].SxEV0 = vsuSoundSourceConfiguration->SxEV0;
+	this->vsuSoundSourceConfigurations[i].SxEV1 = vsuSoundSourceConfiguration->SxEV1;
+	this->vsuSoundSourceConfigurations[i].SxRAM = vsuSoundSourceConfiguration->SxRAM;
+	this->vsuSoundSourceConfigurations[i].SxSWP = vsuSoundSourceConfiguration->SxSWP;
+	this->vsuSoundSourceConfigurations[i].SxINT = vsuSoundSourceConfiguration->SxINT;
 
 	vsuSoundSource->SxLRV = vsuSoundSourceConfiguration->SxLRV;
 	vsuSoundSource->SxFQL = vsuSoundSourceConfiguration->SxFQL;
@@ -496,12 +497,10 @@ void VSUManager::releaseSoundSources()
 		{
 			this->vsuSoundSourceConfigurations[i].timeout = -1;
 			this->vsuSoundSourceConfigurations[i].SxEV0 &= 0xF8;
-			this->vsuSoundSourceConfigurations[i].SxEV0 |= 0x07;
 			this->vsuSoundSourceConfigurations[i].SxEV1 |= 0x01;
-			this->vsuSoundSourceConfigurations[i].SxINT = __SOUND_WRAPPER_STOP_SOUND;
+			this->vsuSoundSourceConfigurations[i].SxINT |= __SOUND_WRAPPER_STOP_SOUND;
 
 			this->vsuSoundSourceConfigurations[i].vsuSoundSource->SxEV0 &= 0xF8;
-			this->vsuSoundSourceConfigurations[i].vsuSoundSource->SxEV0 |= 0x07;
 			this->vsuSoundSourceConfigurations[i].vsuSoundSource->SxEV1 |= 0x01;
 			this->vsuSoundSourceConfigurations[i].vsuSoundSource->SxINT |= __SOUND_WRAPPER_STOP_SOUND;			
 			
@@ -526,20 +525,6 @@ void VSUManager::releaseWaveform(int8 waveFormIndex, const int8* waveFormData)
 			{
 				this->waveforms[waveFormIndex].usageCount = 0;
 			}
-		}
-		else
-		{
-#ifndef __RELEASE
-			Printing::setDebugMode(Printing::getInstance());
-			Printing::clear(Printing::getInstance());
-			Printing::text(Printing::getInstance(), "Waveform index: ", 1, 12, NULL);
-			Printing::int32(Printing::getInstance(), waveFormIndex, 18, 12, NULL);
-			Printing::text(Printing::getInstance(), "Waveform data: ", 1, 13, NULL);
-			Printing::hex(Printing::getInstance(), (int32)waveFormData, 18, 13, 8, NULL);
-			Printing::text(Printing::getInstance(), "Waveform data[]: ", 1, 14, NULL);
-			Printing::hex(Printing::getInstance(), (int32)this->waveforms[waveFormIndex].data, 18, 14, 8, NULL);
-#endif
-			NM_ASSERT(false, "VSUManager::releaseWaveform: mismatch between index and data");
 		}
 	}
 }
