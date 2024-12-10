@@ -103,9 +103,7 @@ SoundTrackROMSpec {{ sanitizedSpecName }}SoundTrack =
 
 SoundTrackROMSpec* const {{ sanitizedSpecName }}SoundTracks[] =
 {
-    {% for i in range(0, item.range) -%}
-        &{{ sanitizedSpecName }}SoundTrack,
-    {% endfor -%}
+	&{{ sanitizedSpecName }}SoundTrack,
 	NULL
 };
 
