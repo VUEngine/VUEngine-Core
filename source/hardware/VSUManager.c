@@ -266,8 +266,6 @@ void VSUManager::setMode(uint32 playbackMode)
 //---------------------------------------------------------------------------------------------------------
 void VSUManager::update()
 {
-	this->ticks += __I_TO_FIX7_9_EXT(1);
-
 	if(this->haveUsedSoundSources)
 	{
 		VSUManager::releaseSoundSources(this);
@@ -277,6 +275,8 @@ void VSUManager::update()
 	{
 		VSUManager::dispatchQueuedSoundSourceConfigurations(this);
 	}
+
+	this->ticks += __I_TO_FIX7_9_EXT(1);
 }
 //---------------------------------------------------------------------------------------------------------
 void VSUManager::stopAllSounds()
@@ -496,13 +496,8 @@ void VSUManager::releaseSoundSources()
 		if(this->ticks > this->vsuSoundSourceConfigurations[i].timeout)
 		{
 			this->vsuSoundSourceConfigurations[i].timeout = -1;
-			this->vsuSoundSourceConfigurations[i].SxEV0 &= 0xF8;
-			this->vsuSoundSourceConfigurations[i].SxEV1 |= 0x01;
-			this->vsuSoundSourceConfigurations[i].SxINT |= __SOUND_WRAPPER_STOP_SOUND;
 
-			this->vsuSoundSourceConfigurations[i].vsuSoundSource->SxEV0 &= 0xF8;
 			this->vsuSoundSourceConfigurations[i].vsuSoundSource->SxEV1 |= 0x01;
-			this->vsuSoundSourceConfigurations[i].vsuSoundSource->SxINT |= __SOUND_WRAPPER_STOP_SOUND;			
 			
 			VSUManager::releaseWaveform(this, this->vsuSoundSourceConfigurations[i].vsuSoundSource->SxRAM, this->vsuSoundSourceConfigurations[i].SxRAM);
 		}
