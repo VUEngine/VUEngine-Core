@@ -145,7 +145,7 @@ static void VSUManager::printVSUSoundSourceConfiguration(const VSUSoundSourceCon
 //---------------------------------------------------------------------------------------------------------
 void VSUManager::applySoundSourceConfiguration(const VSUSoundSourceConfiguration* vsuSoundSourceConfiguration)
 {
-	int16 vsuSoundSourceIndex = VSUManager::findAvailableSoundSource(this, vsuSoundSourceConfiguration->requester, VSUManager::getSoundSourceType(vsuSoundSourceConfiguration));
+	int16 vsuSoundSourceIndex = VSUManager::findAvailableSoundSource(this, vsuSoundSourceConfiguration->requester, VSUManager::getSoundSourceType(vsuSoundSourceConfiguration), !vsuSoundSourceConfiguration->skippable);
 
 	if(0 > vsuSoundSourceIndex)
 	{
@@ -464,7 +464,7 @@ void VSUManager::configureSoundSource(int16 vsuSoundSourceIndex, const VSUSoundS
 //	VSUManager::printVSUSoundSource(vsuSoundSource, 20, 10);
 }
 //---------------------------------------------------------------------------------------------------------
-int16 VSUManager::findAvailableSoundSource(Object requester, uint32 soundSourceType)
+int16 VSUManager::findAvailableSoundSource(Object requester, uint32 soundSourceType, bool force)
 {
 	// First try to find a sound source that has previously assigned to the same requester
 	for(int16 i = 0; i < __TOTAL_SOUND_SOURCES; i++)
@@ -490,6 +490,20 @@ int16 VSUManager::findAvailableSoundSource(Object requester, uint32 soundSourceT
 
 		if(this->ticks >= this->vsuSoundSourceConfigurations[i].timeout)
 		{
+			return i;
+		}
+	}
+
+	if(force)
+	{
+		// Now try to find a sound source whose timeout has just expired
+		for(int16 i = 0; i < __TOTAL_SOUND_SOURCES; i++)
+		{
+			if(soundSourceType != this->vsuSoundSourceConfigurations[i].type)
+			{
+				continue;
+			}
+
 			return i;
 		}
 	}
@@ -556,7 +570,7 @@ void VSUManager::dispatchQueuedSoundSourceConfigurations()
 
 		VSUSoundSourceConfiguration* queuedVSUSoundSourceConfiguration = (VSUSoundSourceConfiguration*)node->data;
 
-		int16 vsuSoundSourceIndex = VSUManager::findAvailableSoundSource(this, queuedVSUSoundSourceConfiguration->requester, VSUManager::getSoundSourceType(queuedVSUSoundSourceConfiguration));
+		int16 vsuSoundSourceIndex = VSUManager::findAvailableSoundSource(this, queuedVSUSoundSourceConfiguration->requester, VSUManager::getSoundSourceType(queuedVSUSoundSourceConfiguration), !queuedVSUSoundSourceConfiguration->skippable);
 
 		if(0 <= vsuSoundSourceIndex)
 		{
