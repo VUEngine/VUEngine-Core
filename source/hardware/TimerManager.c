@@ -114,6 +114,20 @@ void TimerManager::reset()
 void TimerManager::resetTimerCounter()
 {
 	uint16 timerCounter = TimerManager::computeTimerCounter(this);
+
+	switch(this->resolution)
+	{
+		case __TIMER_20US:
+
+			break;
+
+		case __TIMER_100US:
+
+			// Compensate for the difference in speed between 20US and 100US timer resolution
+			timerCounter += __TIMER_COUNTER_DELTA;
+			break;
+	}
+
 	_hardwareRegisters[__TLR] = (timerCounter & 0xFF);
 	_hardwareRegisters[__THR] = (timerCounter >> 8);
 }

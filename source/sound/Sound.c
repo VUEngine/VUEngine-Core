@@ -635,19 +635,7 @@ fix7_9_ext Sound::computeTimerResolutionFactor()
 	NM_ASSERT(0 < timerResolutionUS, "Sound::computeTimerResolutionFactor: zero timerResolutionUS");
 	NM_ASSERT(0 < soundTargetUsPerInterrupt, "Sound::computeTimerResolutionFactor: zero soundTargetUsPerInterrupt");
 
-	fix7_9_ext targetTimerResolutionFactor = __FIX7_9_EXT_DIV(__I_TO_FIX7_9_EXT(timerUsPerInterrupt), __I_TO_FIX7_9_EXT(soundTargetUsPerInterrupt));
-
-	// Compensate for the difference in speed between 20US and 100US timer resolution
-	fix7_9_ext timerResolutionRatioReduction = __I_TO_FIX7_9_EXT(1) - __FIX7_9_EXT_DIV(__I_TO_FIX7_9_EXT(__SOUND_TARGET_US_PER_TICK), __I_TO_FIX7_9_EXT(timerResolutionUS));
-
-	if(0 != timerResolutionRatioReduction)
-	{
-		timerResolutionRatioReduction = __I_TO_FIX7_9_EXT(1) - __FIX7_9_EXT_DIV(__I_TO_FIX7_9_EXT(__SOUND_TARGET_US_PER_TICK), __I_TO_FIX7_9_EXT(timerResolutionUS - 0*(timerResolutionUS >> 3)));
-
-		targetTimerResolutionFactor = __FIX7_9_EXT_MULT(targetTimerResolutionFactor, timerResolutionRatioReduction);
-	}
-
-	return targetTimerResolutionFactor;
+	return __FIX7_9_EXT_DIV(__I_TO_FIX7_9_EXT(timerUsPerInterrupt), __I_TO_FIX7_9_EXT(soundTargetUsPerInterrupt));
 }
 //---------------------------------------------------------------------------------------------------------
 void Sound::setVolumeReduction(int8 volumeReduction)
