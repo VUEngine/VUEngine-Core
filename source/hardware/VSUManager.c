@@ -145,7 +145,7 @@ static void VSUManager::printVSUSoundSourceConfiguration(const VSUSoundSourceCon
 //---------------------------------------------------------------------------------------------------------
 void VSUManager::applySoundSourceConfiguration(const VSUSoundSourceConfiguration* vsuSoundSourceConfiguration)
 {
-	int16 vsuSoundSourceIndex = VSUManager::findAvailableSoundSource(this, VSUManager::getSoundSourceType(vsuSoundSourceConfiguration));
+	int16 vsuSoundSourceIndex = VSUManager::findAvailableSoundSource(this, vsuSoundSourceConfiguration->requester, VSUManager::getSoundSourceType(vsuSoundSourceConfiguration));
 
 	if(0 > vsuSoundSourceIndex)
 	{
@@ -232,6 +232,7 @@ void VSUManager::reset()
 
 	for(int16 i = 0; i < __TOTAL_SOUND_SOURCES; i++)
 	{
+		this->vsuSoundSourceConfigurations[i].requester = NULL;
 		this->vsuSoundSourceConfigurations[i].vsuSoundSource = &_vsuSoundSources[i];
 		this->vsuSoundSourceConfigurations[i].timeout = -1;
 		this->vsuSoundSourceConfigurations[i].SxLRV = 0;
@@ -433,6 +434,7 @@ void VSUManager::configureSoundSource(int16 vsuSoundSourceIndex, const VSUSoundS
 
 	bool setSxINT = this->vsuSoundSourceConfigurations[i].SxINT != vsuSoundSourceConfiguration->SxINT;
 
+	this->vsuSoundSourceConfigurations[i].requester = vsuSoundSourceConfiguration->requester;
 	this->vsuSoundSourceConfigurations[i].timeout = this->ticks + vsuSoundSourceConfiguration->timeout;
 	this->vsuSoundSourceConfigurations[i].SxLRV = vsuSoundSourceConfiguration->SxLRV;
 	this->vsuSoundSourceConfigurations[i].SxFQL = vsuSoundSourceConfiguration->SxFQL;
@@ -462,15 +464,30 @@ void VSUManager::configureSoundSource(int16 vsuSoundSourceIndex, const VSUSoundS
 //	VSUManager::printVSUSoundSource(vsuSoundSource, 20, 10);
 }
 //---------------------------------------------------------------------------------------------------------
-int16 VSUManager::findAvailableSoundSource(uint32 soundSourceType)
+int16 VSUManager::findAvailableSoundSource(Object requester, uint32 soundSourceType)
 {
+	// First try to find a sound source that has previously assigned to the same requester
 	for(int16 i = 0; i < __TOTAL_SOUND_SOURCES; i++)
 	{
 		if(soundSourceType != this->vsuSoundSourceConfigurations[i].type)
 		{
 			continue;
 		}
-		
+
+		if(requester == this->vsuSoundSourceConfigurations[i].requester)
+		{
+			return i;
+		}
+	}
+
+	// Now try to find a sound source whose timeout has just expired
+	for(int16 i = 0; i < __TOTAL_SOUND_SOURCES; i++)
+	{
+		if(soundSourceType != this->vsuSoundSourceConfigurations[i].type)
+		{
+			continue;
+		}
+
 		if(this->ticks >= this->vsuSoundSourceConfigurations[i].timeout)
 		{
 			return i;
@@ -537,7 +554,7 @@ void VSUManager::dispatchQueuedSoundSourceConfigurations()
 
 		VSUSoundSourceConfiguration* queuedVSUSoundSourceConfiguration = (VSUSoundSourceConfiguration*)node->data;
 
-		int16 vsuSoundSourceIndex = VSUManager::findAvailableSoundSource(this, VSUManager::getSoundSourceType(queuedVSUSoundSourceConfiguration));
+		int16 vsuSoundSourceIndex = VSUManager::findAvailableSoundSource(this, queuedVSUSoundSourceConfiguration->requester, VSUManager::getSoundSourceType(queuedVSUSoundSourceConfiguration));
 
 		if(0 <= vsuSoundSourceIndex)
 		{

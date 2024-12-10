@@ -105,6 +105,9 @@ typedef struct VSUSoundSource
 /// @memberof VSUManager
 typedef struct VSUSoundSourceConfiguration
 {
+	/// Requester object
+	Object requester;
+	
 	/// VSU sound source to configure
 	VSUSoundSource* vsuSoundSource;
 

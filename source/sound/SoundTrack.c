@@ -346,6 +346,7 @@ bool SoundTrack::updateNative(fix7_9_ext tickStep, fix7_9_ext targetTimerResolut
 
 	VSUSoundSourceConfiguration vsuChannelConfiguration = 
 	{
+		Object::safeCast(this),
 		NULL,
 		__FIX7_9_EXT_DIV(__I_TO_FIX7_9_EXT(soundTrackKeyframe.tick), targetTimerResolutionFactor),
 		kSoundSourceNormal,
