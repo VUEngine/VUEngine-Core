@@ -626,13 +626,11 @@ void Sound::printPlaybackProgress(int32 x, int32 y)
 //---------------------------------------------------------------------------------------------------------
 fix7_9_ext Sound::computeTimerResolutionFactor()
 {
-	uint32 timerResolutionUS = TimerManager::getResolutionInUS(TimerManager::getInstance());
 	uint32 timerCounter = TimerManager::getTimerCounter(TimerManager::getInstance()) + __TIMER_COUNTER_DELTA;
 	uint32 timerUsPerInterrupt = timerCounter * __SOUND_TARGET_US_PER_TICK;
 	uint32 targetTimerResolutionUS = 0 != this->soundSpec->targetTimerResolutionUS ? this->soundSpec->targetTimerResolutionUS : 1000;
 	uint32 soundTargetUsPerInterrupt = (__TIME_US(targetTimerResolutionUS) + __TIMER_COUNTER_DELTA) * __SOUND_TARGET_US_PER_TICK;
 
-	NM_ASSERT(0 < timerResolutionUS, "Sound::computeTimerResolutionFactor: zero timerResolutionUS");
 	NM_ASSERT(0 < soundTargetUsPerInterrupt, "Sound::computeTimerResolutionFactor: zero soundTargetUsPerInterrupt");
 
 	return __FIX7_9_EXT_DIV(__I_TO_FIX7_9_EXT(timerUsPerInterrupt), __I_TO_FIX7_9_EXT(soundTargetUsPerInterrupt));
