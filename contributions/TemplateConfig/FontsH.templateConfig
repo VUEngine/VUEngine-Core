@@ -6,9 +6,8 @@
 	"template": "contributions/Template/Fonts.h.njk",
 	"events": [{
 		"type": "installedPluginsChanged"
-		},
-		{
-			"type": "itemOfTypeGotDeleted",
-			"value": "Font"
+	}, {
+		"type": "itemOfTypeGotDeleted",
+		"value": "Font"
 	}]
 }
