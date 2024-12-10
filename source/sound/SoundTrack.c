@@ -104,7 +104,7 @@ void SoundTrack::rewind()
 	}
 }
 //---------------------------------------------------------------------------------------------------------
-bool SoundTrack::update(uint32 elapsedMicroseconds, uint32 targetPCMUpdates, fix7_9_ext tickStep, fix7_9_ext targetTimerResolutionFactor, fixed_t leftVolumeFactor, fixed_t rightVolumeFactor, int8 volumeReduction, uint8 volumenScalePower)
+bool SoundTrack::update(uint32 elapsedMicroseconds, uint32 targetPCMUpdates, fix7_9_ext tickStep, fix7_9_ext targetTimerResolutionFactor, fixed_t leftVolumeFactor, fixed_t rightVolumeFactor, int8 volumeReduction, uint8 volumenScalePower, uint16 frequencyDelta)
 {
 	if(this->finished)
 	{
@@ -117,7 +117,7 @@ bool SoundTrack::update(uint32 elapsedMicroseconds, uint32 targetPCMUpdates, fix
 	}
 	else if(kTrackNative == this->soundTrackSpec->trackType)
 	{
-		this->finished = SoundTrack::updateNative(this, tickStep, targetTimerResolutionFactor, leftVolumeFactor, rightVolumeFactor, volumeReduction, volumenScalePower);
+		this->finished = SoundTrack::updateNative(this, tickStep, targetTimerResolutionFactor, leftVolumeFactor, rightVolumeFactor, volumeReduction, volumenScalePower, frequencyDelta);
 	}
 
 	return this->finished;
@@ -241,7 +241,7 @@ bool SoundTrack::updatePCM(uint32 elapsedMicroseconds, uint32 targetPCMUpdates, 
 	return this->cursor >= this->samples;
 }
 //---------------------------------------------------------------------------------------------------------
-bool SoundTrack::updateNative(fix7_9_ext tickStep, fix7_9_ext targetTimerResolutionFactor, fixed_t leftVolumeFactor, fixed_t rightVolumeFactor, int8 volumeReduction, uint8 volumenScalePower)
+bool SoundTrack::updateNative(fix7_9_ext tickStep, fix7_9_ext targetTimerResolutionFactor, fixed_t leftVolumeFactor, fixed_t rightVolumeFactor, int8 volumeReduction, uint8 volumenScalePower, uint16 frequencyDelta)
 {
 	this->elapsedTicks += tickStep;
 
@@ -342,6 +342,8 @@ bool SoundTrack::updateNative(fix7_9_ext tickStep, fix7_9_ext targetTimerResolut
 	leftVolume >>= volumenScalePower;
 	rightVolume >>= volumenScalePower;
 
+	uint16 note = this->soundTrackSpec->SxFQ[this->cursorSxFQ] + frequencyDelta;
+
 	VSUSoundSourceConfiguration vsuChannelConfiguration = 
 	{
 		NULL,
@@ -349,8 +351,8 @@ bool SoundTrack::updateNative(fix7_9_ext tickStep, fix7_9_ext targetTimerResolut
 		kSoundSourceNormal,
 		this->soundTrackSpec->SxINT[this->cursorSxINT],
 		(leftVolume << 4) | rightVolume,
-		this->soundTrackSpec->SxFQ[this->cursorSxFQ] & 0xFF,
-		this->soundTrackSpec->SxFQ[this->cursorSxFQ] >> 8,
+		note & 0xFF,
+		note >> 8,
 		this->soundTrackSpec->SxEV0[this->cursorSxEV0],
 		this->soundTrackSpec->SxEV1[this->cursorSxEV1],
 		this->soundTrackSpec->SxRAM[this->cursorSxRAM],
