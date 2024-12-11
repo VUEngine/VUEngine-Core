@@ -40,8 +40,8 @@
 ///
 /// Inherits from ListenerObject
 ///
-/// Manages the VSU.
-/// @ingroup hardware
+/// Manages the Sound instances.
+/// @ingroup sound
 singleton class SoundManager : ListenerObject
 {
 	/// @protectedsection
