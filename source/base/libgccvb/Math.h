@@ -114,12 +114,13 @@ extern uint32 _gameRandomSeed __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE;
 
 #define __FIX7_9_TO_FIX7_9(n)							(fix7_9)		((n))
 #define __FIX7_9_TO_FIX10_6(n)							(fix10_6)		((n) >> 3)
-#define __FIX7_9_EXT_TO_FIX10_6(n)						(fix10_6)		((n) >> 3)
-#define __FIX7_9_TO_FIX13_3(n)							(fix13_3)		((n) >> 6)
 #define __FIX7_9_TO_FIX17_15(n)							(fix17_15)		((n) << 6)
 #define __FIX7_9_TO_FIX19_13(n)							(fix19_13)		((n) << 4)
 #define __FIX7_9_TO_FIX7_9_EXT(n)						(fix7_9_ext)	((n))
+#define __FIX7_9_TO_FIX13_3(n)							(fix13_3)		((n) >> 6)
 #define __FIX7_9_EXT_TO_FIX7_9(n)						(fix7_9)		((n))
+#define __FIX7_9_EXT_TO_FIX10_6(n)						(fix10_6)		((n) >> 3)
+#define __FIX7_9_EXT_TO_FIX19_13(n)						(fix19_13)		((n) << 4)
 
 #define __FIX13_3_TO_FIX7_9(n)							(fix7_9)		((n) << 6)
 #define __FIX13_3_TO_FIX10_6(n)							(fix10_6)		((n) << 3)
@@ -131,6 +132,7 @@ extern uint32 _gameRandomSeed __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE;
 #define __FIX19_13_TO_FIX13_3(n)						(fix13_3)		((n) >> 10)
 #define __FIX19_13_TO_FIX17_15(n)						(fix17_15)		((n) << 2)
 #define __FIX19_13_TO_FIX19_13(n)						(fix19_13)		((n))
+#define __FIX19_13_TO_FIX7_9_EXT(n)						(fix7_9_ext)	((n) >> 4)
 
 // Return the integral part
 #define __FIX7_9_INT_PART(n)							(((fix7_9)n) 	& 0xFE00)
@@ -203,6 +205,7 @@ extern const int16 _sinLut[];
 #define __FIXED_EXT_TO_I(n)								__FIX19_13_TO_I(n)
 #define __FIXED_EXT_TO_F(n)								__FIX19_13_TO_F(n)
 #define __FIXED_TO_FIX7_9(n)							__FIX19_13_TO_FIX7_9(n)
+#define __FIXED_TO_FIX7_9_EXT(n)						__FIX19_13_TO_FIX7_9_EXT(n)
 #define __FIXED_TO_FIX13_3(n)							__FIX19_13_TO_FIX13_3(n)
 #define __FIXED_TO_FIX10_6(n)							__FIX19_13_TO_FIX10_6(n)
 #define __FIXED_TO_FIX10_6_EXT(n)						__FIX19_13_TO_FIX10_6_EXT(n)
@@ -212,6 +215,7 @@ extern const int16 _sinLut[];
 #define __FIXED_EXT_TO_FIXED(n)							__FIX19_13_TO_FIX19_13(n)
 #define __FIXED_EXT_TO_FIX7_9(n)						__FIX19_13_TO_FIX7_9(n)
 #define __FIX7_9_TO_FIXED(n)							__FIX7_9_TO_FIX19_13(n)
+#define __FIX7_9_EXT_TO_FIXED(n)						__FIX7_9_EXT_TO_FIX19_13(n)
 #define __FIX13_3_TO_FIXED(n)							__FIX13_3_TO_FIX19_13(n)
 #define __FIX10_6_TO_FIXED(n)							__FIX10_6_TO_FIX19_13(n)
 #define __FIX10_6_EXT_TO_FIXED(n)						__FIX10_6_EXT_TO_FIX19_13(n)
@@ -537,3 +541,4 @@ static inline int32 Math::getDigitsCount(int32 value)
 //---------------------------------------------------------------------------------------------------------
 
 #endif
+
