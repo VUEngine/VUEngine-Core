@@ -107,9 +107,9 @@ static uint32 timeBeforeProcess = 0;
 //---------------------------------------------------------------------------------------------------------
 static uint32 Stage::computeDistanceToOrigin(StageEntityDescription* stageEntityDescription)
 {
-	int32 x = stageEntityDescription->positionedEntity->onScreenPosition.x - (stageEntityDescription->pixelRightBox.x1 - stageEntityDescription->pixelRightBox.x0) / 2;
-	int32 y = stageEntityDescription->positionedEntity->onScreenPosition.y - (stageEntityDescription->pixelRightBox.y1 - stageEntityDescription->pixelRightBox.y0) / 2;
-	int32 z = stageEntityDescription->positionedEntity->onScreenPosition.z - (stageEntityDescription->pixelRightBox.z1 - stageEntityDescription->pixelRightBox.z0) / 2;
+	int32 x = stageEntityDescription->positionedEntity->onScreenPosition.x - __METERS_TO_PIXELS(stageEntityDescription->rightBox.x1 - stageEntityDescription->rightBox.x0) / 2;
+	int32 y = stageEntityDescription->positionedEntity->onScreenPosition.y - __METERS_TO_PIXELS(stageEntityDescription->rightBox.y1 - stageEntityDescription->rightBox.y0) / 2;
+	int32 z = stageEntityDescription->positionedEntity->onScreenPosition.z - __METERS_TO_PIXELS(stageEntityDescription->rightBox.z1 - stageEntityDescription->rightBox.z0) / 2;
 
 	return x * x + y * y + z * z;
 } 
@@ -315,9 +315,9 @@ void Stage::registerEntities(VirtualList positionedEntitiesToIgnore)
 
 		Vector3D stageEntityPosition = (Vector3D)
 		{
-			__PIXELS_TO_METERS(stageEntityDescription->positionedEntity->onScreenPosition.x - (stageEntityDescription->pixelRightBox.x1 - stageEntityDescription->pixelRightBox.x0) / 2),
-			__PIXELS_TO_METERS(stageEntityDescription->positionedEntity->onScreenPosition.y - (stageEntityDescription->pixelRightBox.y1 - stageEntityDescription->pixelRightBox.y0) / 2),
-			__PIXELS_TO_METERS(stageEntityDescription->positionedEntity->onScreenPosition.z - (stageEntityDescription->pixelRightBox.z1 - stageEntityDescription->pixelRightBox.z0) / 2)
+			(__PIXELS_TO_METERS(stageEntityDescription->positionedEntity->onScreenPosition.x) - (stageEntityDescription->rightBox.x1 - stageEntityDescription->rightBox.x0) / 2),
+			(__PIXELS_TO_METERS(stageEntityDescription->positionedEntity->onScreenPosition.y) - (stageEntityDescription->rightBox.y1 - stageEntityDescription->rightBox.y0) / 2),
+			(__PIXELS_TO_METERS(stageEntityDescription->positionedEntity->onScreenPosition.z) - (stageEntityDescription->rightBox.z1 - stageEntityDescription->rightBox.z0) / 2)
 		};
 
 		VirtualNode closestEnitryDescriptionNode = NULL;
@@ -332,9 +332,9 @@ void Stage::registerEntities(VirtualList positionedEntitiesToIgnore)
 
 			Vector3D auxStageEntityPosition = (Vector3D)
 			{
-				__PIXELS_TO_METERS(auxStageEntityDescription->positionedEntity->onScreenPosition.x - (auxStageEntityDescription->pixelRightBox.x1 - auxStageEntityDescription->pixelRightBox.x0) / 2),
-				__PIXELS_TO_METERS(auxStageEntityDescription->positionedEntity->onScreenPosition.y - (auxStageEntityDescription->pixelRightBox.y1 - auxStageEntityDescription->pixelRightBox.y0) / 2),
-				__PIXELS_TO_METERS(auxStageEntityDescription->positionedEntity->onScreenPosition.z - (auxStageEntityDescription->pixelRightBox.z1 - auxStageEntityDescription->pixelRightBox.z0) / 2)
+				(__PIXELS_TO_METERS(auxStageEntityDescription->positionedEntity->onScreenPosition.x) - (auxStageEntityDescription->rightBox.x1 - auxStageEntityDescription->rightBox.x0) / 2),
+				(__PIXELS_TO_METERS(auxStageEntityDescription->positionedEntity->onScreenPosition.y) - (auxStageEntityDescription->rightBox.y1 - auxStageEntityDescription->rightBox.y0) / 2),
+				(__PIXELS_TO_METERS(auxStageEntityDescription->positionedEntity->onScreenPosition.z) - (auxStageEntityDescription->rightBox.z1 - auxStageEntityDescription->rightBox.z0) / 2)
 			};
 
 			fixed_ext_t squaredDistance = Vector3D::squareLength(Vector3D::get(stageEntityPosition, auxStageEntityPosition));
@@ -736,7 +736,7 @@ bool Stage::loadInRangeEntities(int32 defer)
 			if(0 > stageEntityDescription->internalId)
 			{
 				// if entity in load range
-				if(Stage::isEntityInLoadRange(this, stageEntityDescription->positionedEntity->onScreenPosition, stageEntityDescription->validRightBox ? &stageEntityDescription->pixelRightBox : NULL))
+				if(Stage::isEntityInLoadRange(this, stageEntityDescription->positionedEntity->onScreenPosition, stageEntityDescription->validRightBox ? &stageEntityDescription->rightBox : NULL))
 				{
 					loadedEntities = true;
 
@@ -781,7 +781,7 @@ bool Stage::loadInRangeEntities(int32 defer)
 			if(0 > stageEntityDescription->internalId)
 			{
 				// if entity in load range
-				if(Stage::isEntityInLoadRange(this, stageEntityDescription->positionedEntity->onScreenPosition, stageEntityDescription->validRightBox ? &stageEntityDescription->pixelRightBox : NULL))
+				if(Stage::isEntityInLoadRange(this, stageEntityDescription->positionedEntity->onScreenPosition, stageEntityDescription->validRightBox ? &stageEntityDescription->rightBox : NULL))
 				{
 					loadedEntities = true;
 
@@ -821,7 +821,7 @@ void Stage::loadInitialEntities()
 		if(-1 == stageEntityDescription->internalId)
 		{
 			// if entity in load range
-			if(stageEntityDescription->positionedEntity->loadRegardlessOfPosition || Stage::isEntityInLoadRange(this, stageEntityDescription->positionedEntity->onScreenPosition, &stageEntityDescription->pixelRightBox))
+			if(stageEntityDescription->positionedEntity->loadRegardlessOfPosition || Stage::isEntityInLoadRange(this, stageEntityDescription->positionedEntity->onScreenPosition, &stageEntityDescription->rightBox))
 			{
 				stageEntityDescription->internalId = this->nextEntityId++;
 				Entity entity = Stage::doAddChildEntity(this, stageEntityDescription->positionedEntity, false, stageEntityDescription->internalId);
@@ -898,27 +898,24 @@ void Stage::alertOfLoadedEntity(Entity entity)
 	Entity::removeEventListeners(entity, NULL, kEventEntityLoaded);
 }
 //---------------------------------------------------------------------------------------------------------
-int32 Stage::isEntityInLoadRange(ScreenPixelVector onScreenPosition, const PixelRightBox* pixelRightBox)
+int32 Stage::isEntityInLoadRange(ScreenPixelVector onScreenPosition, const RightBox* rightBox)
 {
-	if(NULL == pixelRightBox)
+	if(NULL == rightBox)
 	{
-		PixelRightBox helperPixelRightBox =
+		fixed_t padding = __PIXELS_TO_METERS(this->stageSpec->streaming.loadPadding);
+		
+		RightBox helperRightBox =
 		{
-			0, 0, 0,
-			0, 0, 0
+			-padding, padding,
+			-padding, padding,
+			-padding, padding
 		};
 
-		if(!PixelVector::isVector3DVisible(Vector3D::getFromScreenPixelVector(onScreenPosition), helperPixelRightBox, this->stageSpec->streaming.loadPadding))
-		{
-			return false;
-		}
+		return Entity::isInsideFrustrum(Vector3D::getFromScreenPixelVector(onScreenPosition), helperRightBox);
 	}
 	else
 	{
-		if(!PixelVector::isVector3DVisible(Vector3D::getFromScreenPixelVector(onScreenPosition), *pixelRightBox, 0))
-		{
-			return false;
-		}
+		return Entity::isInsideFrustrum(Vector3D::getFromScreenPixelVector(onScreenPosition), *rightBox);
 	}
 
 	return true;
@@ -963,18 +960,20 @@ StageEntityDescription* Stage::registerEntity(PositionedEntity* positionedEntity
 	stageEntityDescription->internalId = -1;
 	stageEntityDescription->positionedEntity = positionedEntity;
 
-	PixelVector environmentPosition = {0, 0, 0, 0};
-	stageEntityDescription->pixelRightBox = Entity::getBoundingBoxFromSpec(stageEntityDescription->positionedEntity, &environmentPosition);
+	Vector3D environmentPosition = Vector3D::zero();
+	stageEntityDescription->rightBox = Entity::getBoundingBoxFromSpec(stageEntityDescription->positionedEntity, &environmentPosition);
 
-	stageEntityDescription->validRightBox = (0 != stageEntityDescription->pixelRightBox.x1 - stageEntityDescription->pixelRightBox.x0) || (0 != stageEntityDescription->pixelRightBox.y1 - stageEntityDescription->pixelRightBox.y0) || (0 != stageEntityDescription->pixelRightBox.z1 - stageEntityDescription->pixelRightBox.z0);
+	stageEntityDescription->validRightBox = (0 != stageEntityDescription->rightBox.x1 - stageEntityDescription->rightBox.x0) || (0 != stageEntityDescription->rightBox.y1 - stageEntityDescription->rightBox.y0) || (0 != stageEntityDescription->rightBox.z1 - stageEntityDescription->rightBox.z0);
 
+	fixed_t padding = __PIXELS_TO_METERS(this->stageSpec->streaming.loadPadding);
+	
 	// Bake the padding in the bounding box to save on performance
-	stageEntityDescription->pixelRightBox.x0 -= this->stageSpec->streaming.loadPadding;
-	stageEntityDescription->pixelRightBox.x1 += this->stageSpec->streaming.loadPadding;
-	stageEntityDescription->pixelRightBox.y0 -= this->stageSpec->streaming.loadPadding;
-	stageEntityDescription->pixelRightBox.y1 += this->stageSpec->streaming.loadPadding;
-	stageEntityDescription->pixelRightBox.z0 -= this->stageSpec->streaming.loadPadding;
-	stageEntityDescription->pixelRightBox.z1 += this->stageSpec->streaming.loadPadding;
+	stageEntityDescription->rightBox.x0 -= padding;
+	stageEntityDescription->rightBox.x1 += padding;
+	stageEntityDescription->rightBox.y0 -= padding;
+	stageEntityDescription->rightBox.y1 += padding;
+	stageEntityDescription->rightBox.z0 -= padding;
+	stageEntityDescription->rightBox.z1 += padding;
 
 	return stageEntityDescription;
 }

@@ -203,9 +203,9 @@ bool Wireframe::prepareForRender(Vector3D* relativePosition)
 	return __COLOR_BLACK != this->color;
 }
 //---------------------------------------------------------------------------------------------------------
-PixelRightBox Wireframe::getPixelRightBox()
+RightBox Wireframe::getRightBox()
 {
-	return (PixelRightBox){0, 0, 0, 0, 0, 0};
+	return (RightBox){0, 0, 0, 0, 0, 0};
 }
 //---------------------------------------------------------------------------------------------------------
 VirtualList Wireframe::getVertices()

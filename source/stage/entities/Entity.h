@@ -17,10 +17,12 @@
 
 #include <Behavior.h>
 #include <Body.h>
+#include <Camera.h>
 #include <CollisionManager.h>
 #include <Container.h>
 #include <Sprite.h>
 #include <SpriteManager.h>
+#include <Vector3D.h>
 #include <Wireframe.h>
 #include <WireframeManager.h>
 
@@ -190,7 +192,12 @@ class Entity : Container
 	/// @param positionedEntity: Struct that defines which entity spec to use to configure the an entity
 	/// @param environmentPosition: Vector used as the origin with respect to which computed the bounding box's position
 	/// @return Spatially located bounding box of an entity that would be created with the provided positioned entity struct
-	static PixelRightBox getBoundingBoxFromSpec(const PositionedEntity* positionedEntity, const PixelVector* environmentPosition);
+	static RightBox getBoundingBoxFromSpec(const PositionedEntity* positionedEntity, const Vector3D* environmentPosition);
+
+	/// Test if the provided right box lies inside the camera's frustum.
+	/// @param vector3D: RightBox's translation vector
+	/// @param rightBox: RightBox to test
+	static inline bool isInsideFrustrum(Vector3D vector3D, RightBox rightBox);
 
 	/// Class' constructor
 	/// @param entitySpec: Specification that determines how to configure the entity
@@ -442,6 +449,37 @@ class Entity : Container
 	/// @return True if the streaming must spawn this entity back when deleted
 	virtual bool alwaysStreamIn();
 }
+
+//=========================================================================================================
+// CLASS' STATIC METHODS
+//=========================================================================================================
+
+//---------------------------------------------------------------------------------------------------------
+static inline bool Entity::isInsideFrustrum(Vector3D vector3D, RightBox rightBox)
+{
+	extern const CameraFrustum* _cameraFrustum;
+	vector3D = Vector3D::rotate(Vector3D::getRelativeToCamera(vector3D), *_cameraInvertedRotation);
+	
+	if(vector3D.x + rightBox.x0 > __PIXELS_TO_METERS(_cameraFrustum->x1) || vector3D.x + rightBox.x1 < __PIXELS_TO_METERS(_cameraFrustum->x0))
+	{
+		return false;
+	}
+
+	// check y visibility
+	if(vector3D.y + rightBox.y0 > __PIXELS_TO_METERS(_cameraFrustum->y1) || vector3D.y + rightBox.y1 < __PIXELS_TO_METERS(_cameraFrustum->y0))
+	{
+		return false;
+	}
+
+	// check z visibility
+	if(vector3D.z + rightBox.z0 > __PIXELS_TO_METERS(_cameraFrustum->z1) || vector3D.z + rightBox.z1 < __PIXELS_TO_METERS(_cameraFrustum->z0))
+	{
+		return false;
+	}
+
+	return true;
+}
+//---------------------------------------------------------------------------------------------------------
 
 
 #endif

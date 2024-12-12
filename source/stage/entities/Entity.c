@@ -127,20 +127,13 @@ static Entity Entity::createEntityDeferred(const PositionedEntity* const positio
 	return entity;
 }
 //---------------------------------------------------------------------------------------------------------
-static PixelRightBox Entity::getBoundingBoxFromSpec(const PositionedEntity* positionedEntity, const PixelVector* environmentPosition)
+static RightBox Entity::getBoundingBoxFromSpec(const PositionedEntity* positionedEntity, const Vector3D* environmentPosition)
 {
-	PixelRightBox pixelRightBox = {0, 0, 0, 0, 0, 0};
+	RightBox rightBox = {0, 0, 0, 0, 0, 0};
 
-	Entity::getSizeFromSpec(positionedEntity, environmentPosition, &pixelRightBox);
+	Entity::getSizeFromSpec(positionedEntity, environmentPosition, &rightBox);
 
-	pixelRightBox.x0 = pixelRightBox.x0 - positionedEntity->onScreenPosition.x;
-	pixelRightBox.x1 = pixelRightBox.x1 - positionedEntity->onScreenPosition.x;
-	pixelRightBox.y0 = pixelRightBox.y0 - positionedEntity->onScreenPosition.y;
-	pixelRightBox.y1 = pixelRightBox.y1 - positionedEntity->onScreenPosition.y;
-	pixelRightBox.z0 = pixelRightBox.z0 - positionedEntity->onScreenPosition.z;
-	pixelRightBox.z1 = pixelRightBox.z1 - positionedEntity->onScreenPosition.z;
-
-	return pixelRightBox;
+	return rightBox;
 }
 //---------------------------------------------------------------------------------------------------------
 
@@ -149,33 +142,27 @@ static PixelRightBox Entity::getBoundingBoxFromSpec(const PositionedEntity* posi
 //=========================================================================================================
 
 //---------------------------------------------------------------------------------------------------------
-static void Entity::getSizeFromSpec(const PositionedEntity* positionedEntity, const PixelVector* environmentPosition, PixelRightBox* pixelRightBox)
+static void Entity::getSizeFromSpec(const PositionedEntity* positionedEntity, const Vector3D* environmentPosition, RightBox* rightBox)
 {
 	ASSERT(positionedEntity, "Entity::getSizeFromSpec: null positionedEntity");
 	ASSERT(positionedEntity->entitySpec, "Entity::getSizeFromSpec: null entitySpec");
 
-	PixelVector pixelGlobalPosition = *environmentPosition;
-
-	pixelGlobalPosition.x += positionedEntity->onScreenPosition.x;
-	pixelGlobalPosition.y += positionedEntity->onScreenPosition.y;
-	pixelGlobalPosition.z += positionedEntity->onScreenPosition.z;
-
-	int16 left = 0;
-	int16 right = 0;
-	int16 top = 0;
-	int16 bottom = 0;
-	int16 front = 0;
-	int16 back = 0;
-	int16 halfWidth = 0;
-	int16 halfHeight = 0;
-	int16 halfDepth = ENTITY_SPRITE_HALF_DEPTH;
+	fixed_t left = 0;
+	fixed_t right = 0;
+	fixed_t top = 0;
+	fixed_t bottom = 0;
+	fixed_t front = 0;
+	fixed_t back = 0;
+	fixed_t halfWidth = 0;
+	fixed_t halfHeight = 0;
+	fixed_t halfDepth = __PIXELS_TO_METERS(ENTITY_SPRITE_HALF_DEPTH);
 
 	if(0 != positionedEntity->entitySpec->pixelSize.x || 0 != positionedEntity->entitySpec->pixelSize.y || 0 != positionedEntity->entitySpec->pixelSize.z)
 	{
 		// TODO: there should be a class which handles special cases
-		halfWidth = positionedEntity->entitySpec->pixelSize.x >> 1;
-		halfHeight = positionedEntity->entitySpec->pixelSize.y >> 1;
-		halfDepth = positionedEntity->entitySpec->pixelSize.z >> 1;
+		halfWidth = __PIXELS_TO_METERS(positionedEntity->entitySpec->pixelSize.x) >> 1;
+		halfHeight = __PIXELS_TO_METERS(positionedEntity->entitySpec->pixelSize.y) >> 1;
+		halfDepth = __PIXELS_TO_METERS(positionedEntity->entitySpec->pixelSize.z) >> 1;
 
 		left = -halfWidth;
 		right = halfWidth;
@@ -200,87 +187,87 @@ static void Entity::getSizeFromSpec(const PositionedEntity* positionedEntity, co
 
 					halfWidth = 0;
 					halfHeight = 0;
-					halfDepth = ENTITY_SPRITE_HALF_DEPTH;
+					halfDepth = __PIXELS_TO_METERS(ENTITY_SPRITE_HALF_DEPTH);
 
 					for(; mBgmapSpriteSpec->textureSpecs[j]; j++)
 					{
-						if(halfWidth < (int16)(mBgmapSpriteSpec->textureSpecs[j]->cols << 2))
+						if(halfWidth < __PIXELS_TO_METERS(mBgmapSpriteSpec->textureSpecs[j]->cols << 2))
 						{
-							halfWidth = mBgmapSpriteSpec->textureSpecs[j]->cols << 2;
+							halfWidth = __PIXELS_TO_METERS(mBgmapSpriteSpec->textureSpecs[j]->cols << 2);
 						}
 
-						if(halfHeight < (int16)(mBgmapSpriteSpec->textureSpecs[j]->rows << 2))
+						if(halfHeight < __PIXELS_TO_METERS(mBgmapSpriteSpec->textureSpecs[j]->rows << 2))
 						{
-							halfHeight = (int16)(mBgmapSpriteSpec->textureSpecs[j]->rows << 2);
+							halfHeight = __PIXELS_TO_METERS(mBgmapSpriteSpec->textureSpecs[j]->rows << 2);
 						}
 					}
 
-					if(left > -halfWidth + mBgmapSpriteSpec->bgmapSpriteSpec.spriteSpec.displacement.x)
+					if(left > -halfWidth + __PIXELS_TO_METERS(mBgmapSpriteSpec->bgmapSpriteSpec.spriteSpec.displacement.x))
 					{
-						left = -halfWidth + mBgmapSpriteSpec->bgmapSpriteSpec.spriteSpec.displacement.x;
+						left = -halfWidth + __PIXELS_TO_METERS(mBgmapSpriteSpec->bgmapSpriteSpec.spriteSpec.displacement.x);
 					}
 
-					if(right < halfWidth + mBgmapSpriteSpec->bgmapSpriteSpec.spriteSpec.displacement.x)
+					if(right < halfWidth + __PIXELS_TO_METERS(mBgmapSpriteSpec->bgmapSpriteSpec.spriteSpec.displacement.x))
 					{
-						right = halfWidth + mBgmapSpriteSpec->bgmapSpriteSpec.spriteSpec.displacement.x;
+						right = halfWidth + __PIXELS_TO_METERS(mBgmapSpriteSpec->bgmapSpriteSpec.spriteSpec.displacement.x);
 					}
 
-					if(top > -halfHeight + mBgmapSpriteSpec->bgmapSpriteSpec.spriteSpec.displacement.y)
+					if(top > -halfHeight + __PIXELS_TO_METERS(mBgmapSpriteSpec->bgmapSpriteSpec.spriteSpec.displacement.y))
 					{
-						top = -halfHeight + mBgmapSpriteSpec->bgmapSpriteSpec.spriteSpec.displacement.y;
+						top = -halfHeight + __PIXELS_TO_METERS(mBgmapSpriteSpec->bgmapSpriteSpec.spriteSpec.displacement.y);
 					}
 
-					if(bottom < halfHeight + mBgmapSpriteSpec->bgmapSpriteSpec.spriteSpec.displacement.y)
+					if(bottom < halfHeight + __PIXELS_TO_METERS(mBgmapSpriteSpec->bgmapSpriteSpec.spriteSpec.displacement.y))
 					{
-						bottom = halfHeight + mBgmapSpriteSpec->bgmapSpriteSpec.spriteSpec.displacement.y;
+						bottom = halfHeight + __PIXELS_TO_METERS(mBgmapSpriteSpec->bgmapSpriteSpec.spriteSpec.displacement.y);
 					}
 
-					if(front > mBgmapSpriteSpec->bgmapSpriteSpec.spriteSpec.displacement.z)
+					if(front > __PIXELS_TO_METERS(mBgmapSpriteSpec->bgmapSpriteSpec.spriteSpec.displacement.z))
 					{
-						front = mBgmapSpriteSpec->bgmapSpriteSpec.spriteSpec.displacement.z;
+						front = __PIXELS_TO_METERS(mBgmapSpriteSpec->bgmapSpriteSpec.spriteSpec.displacement.z);
 					}
 
-					if(back < halfDepth + mBgmapSpriteSpec->bgmapSpriteSpec.spriteSpec.displacement.z)
+					if(back < halfDepth + __PIXELS_TO_METERS(mBgmapSpriteSpec->bgmapSpriteSpec.spriteSpec.displacement.z))
 					{
-						back = halfDepth + mBgmapSpriteSpec->bgmapSpriteSpec.spriteSpec.displacement.z;
+						back = halfDepth + __PIXELS_TO_METERS(mBgmapSpriteSpec->bgmapSpriteSpec.spriteSpec.displacement.z);
 					}
 
 				}
 				else if(NULL != positionedEntity->entitySpec->spriteSpecs[i]->textureSpec)
 				{
 					SpriteSpec* spriteSpec = (SpriteSpec*)positionedEntity->entitySpec->spriteSpecs[i];
-					halfWidth = spriteSpec->textureSpec->cols << 2;
-					halfHeight = spriteSpec->textureSpec->rows << 2;
-					halfDepth = ENTITY_SPRITE_HALF_DEPTH;
+					halfWidth = __PIXELS_TO_METERS(spriteSpec->textureSpec->cols << 2);
+					halfHeight = __PIXELS_TO_METERS(spriteSpec->textureSpec->rows << 2);
+					halfDepth = __PIXELS_TO_METERS(ENTITY_SPRITE_HALF_DEPTH);
 
-					if(left > -halfWidth + spriteSpec->displacement.x)
+					if(left > -halfWidth + __PIXELS_TO_METERS(spriteSpec->displacement.x))
 					{
-						left = -halfWidth + spriteSpec->displacement.x;
+						left = -halfWidth + __PIXELS_TO_METERS(spriteSpec->displacement.x);
 					}
 
-					if(right < halfWidth + spriteSpec->displacement.x)
+					if(right < halfWidth + __PIXELS_TO_METERS(spriteSpec->displacement.x))
 					{
-						right = halfWidth + spriteSpec->displacement.x;
+						right = halfWidth + __PIXELS_TO_METERS(spriteSpec->displacement.x);
 					}
 
-					if(top > -halfHeight + spriteSpec->displacement.y)
+					if(top > -halfHeight + __PIXELS_TO_METERS(spriteSpec->displacement.y))
 					{
-						top = -halfHeight + spriteSpec->displacement.y;
+						top = -halfHeight + __PIXELS_TO_METERS(spriteSpec->displacement.y);
 					}
 
-					if(bottom < halfHeight + spriteSpec->displacement.y)
+					if(bottom < halfHeight + __PIXELS_TO_METERS(spriteSpec->displacement.y))
 					{
-						bottom = halfHeight + spriteSpec->displacement.y;
+						bottom = halfHeight + __PIXELS_TO_METERS(spriteSpec->displacement.y);
 					}
 
-					if(front > -halfDepth + spriteSpec->displacement.z)
+					if(front > -halfDepth + __PIXELS_TO_METERS(spriteSpec->displacement.z))
 					{
-						front = -halfDepth + spriteSpec->displacement.z;
+						front = -halfDepth + __PIXELS_TO_METERS(spriteSpec->displacement.z);
 					}
 
-					if(back < halfDepth + spriteSpec->displacement.z)
+					if(back < halfDepth + __PIXELS_TO_METERS(spriteSpec->displacement.z))
 					{
-						back = halfDepth + spriteSpec->displacement.z;
+						back = halfDepth + __PIXELS_TO_METERS(spriteSpec->displacement.z);
 					}
 				}
 			}
@@ -294,87 +281,91 @@ static void Entity::getSizeFromSpec(const PositionedEntity* positionedEntity, co
 			{
 				if(__TYPE(Mesh) == __ALLOCATOR_TYPE(positionedEntity->entitySpec->wireframeSpecs[i]->allocator && ((MeshSpec*)positionedEntity->entitySpec->wireframeSpecs[i])->segments[0]))
 				{
-					PixelRightBox pixelRightBox = Mesh::getPixelRightBoxFromSpec((MeshSpec*)positionedEntity->entitySpec->wireframeSpecs[i]);
+					RightBox rightBox = Mesh::getRightBoxFromSpec((MeshSpec*)positionedEntity->entitySpec->wireframeSpecs[i]);
 
-					if(left > pixelRightBox.x0)
+					if(left > rightBox.x0)
 					{
-						left = pixelRightBox.x0;
+						left = rightBox.x0;
 					}
 
-					if(right < pixelRightBox.x1)
+					if(right < rightBox.x1)
 					{
-						right = pixelRightBox.x1;
+						right = rightBox.x1;
 					}
 
-					if(top > pixelRightBox.y0)
+					if(top > rightBox.y0)
 					{
-						top = pixelRightBox.y0;
+						top = rightBox.y0;
 					}
 
-					if(bottom < pixelRightBox.y1)
+					if(bottom < rightBox.y1)
 					{
-						bottom = pixelRightBox.y1;
+						bottom = rightBox.y1;
 					}
 
-					if(front > pixelRightBox.z0)
+					if(front > rightBox.z0)
 					{
-						front = pixelRightBox.z0;
+						front = rightBox.z0;
 					}
 
-					if(back < pixelRightBox.z1)
+					if(back < rightBox.z1)
 					{
-						back = pixelRightBox.z1;
+						back = rightBox.z1;
 					}
 				}
 			}
 		}
 	}	
 
-	if((0 == pixelRightBox->x0) || (pixelGlobalPosition.x + left < pixelRightBox->x0))
+	Vector3D globalPosition = *environmentPosition;
+
+	if((0 == rightBox->x0) || (globalPosition.x + left < rightBox->x0))
 	{
-		pixelRightBox->x0 = pixelGlobalPosition.x + left;
+		rightBox->x0 = globalPosition.x + left;
 	}
 
-	if((0 == pixelRightBox->x1) || (right + pixelGlobalPosition.x > pixelRightBox->x1))
+	if((0 == rightBox->x1) || (right + globalPosition.x > rightBox->x1))
 	{
-		pixelRightBox->x1 = right + pixelGlobalPosition.x;
+		rightBox->x1 = right + globalPosition.x;
 	}
 
-	if((0 == pixelRightBox->y0) || (pixelGlobalPosition.y + top < pixelRightBox->y0))
+	if((0 == rightBox->y0) || (globalPosition.y + top < rightBox->y0))
 	{
-		pixelRightBox->y0 = pixelGlobalPosition.y + top;
+		rightBox->y0 = globalPosition.y + top;
 	}
 
-	if((0 == pixelRightBox->y1) || (bottom + pixelGlobalPosition.y > pixelRightBox->y1))
+	if((0 == rightBox->y1) || (bottom + globalPosition.y > rightBox->y1))
 	{
-		pixelRightBox->y1 = bottom + pixelGlobalPosition.y;
+		rightBox->y1 = bottom + globalPosition.y;
 	}
 
-	if((0 == pixelRightBox->z0) || (pixelGlobalPosition.z + front < pixelRightBox->z0))
+	if((0 == rightBox->z0) || (globalPosition.z + front < rightBox->z0))
 	{
-		pixelRightBox->z0 = pixelGlobalPosition.z + front;
+		rightBox->z0 = globalPosition.z + front;
 	}
 
-	if((0 == pixelRightBox->z1) || (back + pixelGlobalPosition.z > pixelRightBox->z1))
+	if((0 == rightBox->z1) || (back + globalPosition.z > rightBox->z1))
 	{
-		pixelRightBox->z1 = back + pixelGlobalPosition.z;
+		rightBox->z1 = back + globalPosition.z;
 	}
+
+	globalPosition.x += __PIXELS_TO_METERS(positionedEntity->onScreenPosition.x);
+	globalPosition.y += __PIXELS_TO_METERS(positionedEntity->onScreenPosition.y);
+	globalPosition.z += __PIXELS_TO_METERS(positionedEntity->onScreenPosition.z);
 
 	if(NULL != positionedEntity->childrenSpecs)
 	{
-		int32 i = 0;
-		for(; positionedEntity->childrenSpecs[i].entitySpec; i++)
+		for(int32 i = 0; positionedEntity->childrenSpecs[i].entitySpec; i++)
 		{
-			Entity::getSizeFromSpec(&positionedEntity->childrenSpecs[i], &pixelGlobalPosition, pixelRightBox);
+			Entity::getSizeFromSpec(&positionedEntity->childrenSpecs[i], &globalPosition, rightBox);
 		}
 	}
 
 	if(NULL != positionedEntity->entitySpec->childrenSpecs)
 	{
-		int32 i = 0;
-		for(; positionedEntity->entitySpec->childrenSpecs[i].entitySpec; i++)
+		for(int32 i = 0; positionedEntity->entitySpec->childrenSpecs[i].entitySpec; i++)
 		{
-			Entity::getSizeFromSpec(&positionedEntity->entitySpec->childrenSpecs[i], &pixelGlobalPosition, pixelRightBox);
+			Entity::getSizeFromSpec(&positionedEntity->entitySpec->childrenSpecs[i], &globalPosition, rightBox);
 		}
 	}
 }
@@ -1305,15 +1296,15 @@ void Entity::calculateSize(bool force)
 		}
 	}
 
-	PixelRightBox pixelRightBox = {0, 0, 0, 0, 0, 0};
+	RightBox rightBox = {0, 0, 0, 0, 0, 0};
 
-	Entity::calculateSizeFromChildren(this, &pixelRightBox, Vector3D::zero());
+	Entity::calculateSizeFromChildren(this, &rightBox, Vector3D::zero());
 
 	Vector3D centerDisplacement =
 	{
-		__PIXELS_TO_METERS((pixelRightBox.x1 + pixelRightBox.x0) >> 1) - this->localTransformation.position.x,
-		__PIXELS_TO_METERS((pixelRightBox.y1 + pixelRightBox.y0) >> 1) - this->localTransformation.position.y,
-		__PIXELS_TO_METERS((pixelRightBox.z1 + pixelRightBox.z0) >> 1) - this->localTransformation.position.z
+		((rightBox.x1 + rightBox.x0) >> 1) - this->localTransformation.position.x,
+		((rightBox.y1 + rightBox.y0) >> 1) - this->localTransformation.position.y,
+		((rightBox.z1 + rightBox.z0) >> 1) - this->localTransformation.position.z
 	};
 
 	if(0 != (centerDisplacement.x | centerDisplacement.y | centerDisplacement.z))
@@ -1327,9 +1318,9 @@ void Entity::calculateSize(bool force)
 		*this->centerDisplacement = centerDisplacement;
 	}
 
-	this->size.x = __PIXELS_TO_METERS(pixelRightBox.x1 - pixelRightBox.x0);
-	this->size.y = __PIXELS_TO_METERS(pixelRightBox.y1 - pixelRightBox.y0);
-	this->size.z = __PIXELS_TO_METERS(pixelRightBox.z1 - pixelRightBox.z0);
+	this->size.x = rightBox.x1 - rightBox.x0;
+	this->size.y = rightBox.y1 - rightBox.y0;
+	this->size.z = rightBox.z1 - rightBox.z0;
 }
 //---------------------------------------------------------------------------------------------------------
 fixed_t Entity::getWidth()
@@ -1392,24 +1383,29 @@ bool Entity::isInCameraRange(int16 padding, bool recursive)
 	}
 
 	Vector3D position3D = this->transformation.position;
+	Vector3D centerDisplacement = Vector3D::zero();
 
 	if(NULL != this->centerDisplacement)
 	{
-		position3D = Vector3D::sum(position3D, *this->centerDisplacement);
+		centerDisplacement = *this->centerDisplacement;
 	}
 
-	PixelRightBox pixelRightBox	=
-	{
-		- __METERS_TO_PIXELS(this->size.x >> 1) - padding,
-		- __METERS_TO_PIXELS(this->size.y >> 1) - padding,
-		- __METERS_TO_PIXELS(this->size.z >> 1) - padding,
+	fixed_t paddingHelper = __PIXELS_TO_METERS(padding);
 
-		__METERS_TO_PIXELS(this->size.x >> 1) + padding,
-		__METERS_TO_PIXELS(this->size.y >> 1) + padding,
-		__METERS_TO_PIXELS(this->size.z >> 1) + padding,
+	RightBox rightBox	=
+	{
+		// The center of displacement has to be added to the bounding box and not to the 
+		// position because this has to be rotated
+		-(this->size.x >> 1) - paddingHelper + centerDisplacement.x,
+		-(this->size.y >> 1) - paddingHelper + centerDisplacement.y,
+		-(this->size.z >> 1) - paddingHelper + centerDisplacement.z,
+
+		(this->size.x >> 1) + paddingHelper + centerDisplacement.x,
+		(this->size.y >> 1) + paddingHelper + centerDisplacement.y,
+		(this->size.z >> 1) + paddingHelper + centerDisplacement.z
 	};
 
-	bool inCameraRange = PixelVector::isVector3DVisible(position3D, pixelRightBox, 0);
+	bool inCameraRange = Entity::isInsideFrustrum(position3D, rightBox);
 
 	if(!inCameraRange && recursive && NULL != this->children)
 	{
@@ -1498,23 +1494,19 @@ bool Entity::createColliders()
 	return NULL != this->colliders;
 }
 //---------------------------------------------------------------------------------------------------------
-void Entity::calculateSizeFromChildren(PixelRightBox* pixelRightBox, Vector3D environmentPosition)
+void Entity::calculateSizeFromChildren(RightBox* rightBox, Vector3D environmentPosition)
 {
-	PixelVector pixelGlobalPosition = PixelVector::getFromVector3D(environmentPosition, 0);
+	Vector3D globalPosition = Vector3D::sum(environmentPosition, this->localTransformation.position);
 
-	pixelGlobalPosition.x += __METERS_TO_PIXELS(this->localTransformation.position.x);
-	pixelGlobalPosition.y += __METERS_TO_PIXELS(this->localTransformation.position.y);
-	pixelGlobalPosition.z += __METERS_TO_PIXELS(this->localTransformation.position.z);
-
-	int16 left = 0;
-	int16 right = 0;
-	int16 top = 0;
-	int16 bottom = 0;
-	int16 front = 0;
-	int16 back = 0;
-	int16 halfWidth = 0;
-	int16 halfHeight = 0;
-	int16 halfDepth = ENTITY_SPRITE_HALF_DEPTH;
+	fixed_t left = 0;
+	fixed_t right = 0;
+	fixed_t top = 0;
+	fixed_t bottom = 0;
+	fixed_t front = 0;
+	fixed_t back = 0;
+	fixed_t halfWidth = 0;
+	fixed_t halfHeight = 0;
+	fixed_t halfDepth = __PIXELS_TO_METERS(ENTITY_SPRITE_HALF_DEPTH);
 
 	if((0 == this->size.x || 0 == this->size.y || 0 == this->size.z) && (NULL != this->sprites || NULL != this->wireframes))
 	{
@@ -1525,11 +1517,11 @@ void Entity::calculateSizeFromChildren(PixelRightBox* pixelRightBox, Vector3D en
 				Sprite sprite = Sprite::safeCast(spriteNode->data);
 				ASSERT(sprite, "Entity::calculateSizeFromChildren: null sprite");
 
-				halfWidth = Sprite::getHalfWidth(sprite);
-				halfHeight = Sprite::getHalfHeight(sprite);
-				halfDepth = ENTITY_SPRITE_HALF_DEPTH;
+				halfWidth = __PIXELS_TO_METERS(Sprite::getHalfWidth(sprite));
+				halfHeight = __PIXELS_TO_METERS(Sprite::getHalfHeight(sprite));
+				halfDepth = __PIXELS_TO_METERS(ENTITY_SPRITE_HALF_DEPTH);
 
-				PixelVector spriteDisplacement = *Sprite::getDisplacement(sprite);
+				Vector3D spriteDisplacement = Vector3D::getFromPixelVector(*Sprite::getDisplacement(sprite));
 
 				if(left > -halfWidth + spriteDisplacement.x)
 				{
@@ -1570,85 +1562,85 @@ void Entity::calculateSizeFromChildren(PixelRightBox* pixelRightBox, Vector3D en
 				Wireframe wireframe = Wireframe::safeCast(wireframeNode->data);
 				ASSERT(wireframe, "Entity::calculateSizeFromChildren: null wireframe");
 
-				PixelRightBox pixelRightBox = Wireframe::getPixelRightBox(wireframe);
+				RightBox rightBox = Wireframe::getRightBox(wireframe);
 
-				if(left > pixelRightBox.x0)
+				if(left > rightBox.x0)
 				{
-					left = pixelRightBox.x0;
+					left = rightBox.x0;
 				}
 
-				if(right < pixelRightBox.x1)
+				if(right < rightBox.x1)
 				{
-					right = pixelRightBox.x1;
+					right = rightBox.x1;
 				}
 
-				if(top > pixelRightBox.y0)
+				if(top > rightBox.y0)
 				{
-					top = pixelRightBox.y0;
+					top = rightBox.y0;
 				}
 
-				if(bottom < pixelRightBox.y1)
+				if(bottom < rightBox.y1)
 				{
-					bottom = pixelRightBox.y1;
+					bottom = rightBox.y1;
 				}
 
-				if(front > pixelRightBox.z0)
+				if(front > rightBox.z0)
 				{
-					front = pixelRightBox.z0;
+					front = rightBox.z0;
 				}
 
-				if(back < pixelRightBox.z1)
+				if(back < rightBox.z1)
 				{
-					back = pixelRightBox.z1;
+					back = rightBox.z1;
 				}
 			}
 		}
 	}
 	else
 	{
-		right = __METERS_TO_PIXELS(this->size.x >> 1);
+		right = (this->size.x >> 1);
 		left = -right;
-		bottom = __METERS_TO_PIXELS(this->size.y >> 1);
+		bottom = (this->size.y >> 1);
 		top = -bottom;
-		back = __METERS_TO_PIXELS(this->size.z >> 1);
+		back = (this->size.z >> 1);
 		front = -back;
 	}
 
-	if((0 == pixelRightBox->x0) || (pixelGlobalPosition.x + left < pixelRightBox->x0))
+	if((0 == rightBox->x0) || (globalPosition.x + left < rightBox->x0))
 	{
-		pixelRightBox->x0 = pixelGlobalPosition.x + left;
+		rightBox->x0 = globalPosition.x + left;
 	}
 
-	if((0 == pixelRightBox->x1) || (right + pixelGlobalPosition.x > pixelRightBox->x1))
+	if((0 == rightBox->x1) || (right + globalPosition.x > rightBox->x1))
 	{
-		pixelRightBox->x1 = right + pixelGlobalPosition.x;
+		rightBox->x1 = right + globalPosition.x;
 	}
 
-	if((0 == pixelRightBox->y0) || (pixelGlobalPosition.y + top < pixelRightBox->y0))
+	if((0 == rightBox->y0) || (globalPosition.y + top < rightBox->y0))
 	{
-		pixelRightBox->y0 = pixelGlobalPosition.y + top;
+		rightBox->y0 = globalPosition.y + top;
 	}
 
-	if((0 == pixelRightBox->y1) || (bottom + pixelGlobalPosition.y > pixelRightBox->y1))
+	if((0 == rightBox->y1) || (bottom + globalPosition.y > rightBox->y1))
 	{
-		pixelRightBox->y1 = bottom + pixelGlobalPosition.y;
+		rightBox->y1 = bottom + globalPosition.y;
 	}
 
-	if((0 == pixelRightBox->z0) || (pixelGlobalPosition.z + front < pixelRightBox->z0))
+	if((0 == rightBox->z0) || (globalPosition.z + front < rightBox->z0))
 	{
-		pixelRightBox->z0 = pixelGlobalPosition.z + front;
+		rightBox->z0 = globalPosition.z + front;
 	}
 
-	if((0 == pixelRightBox->z1) || (back + pixelGlobalPosition.z > pixelRightBox->z1))
+	if((0 == rightBox->z1) || (back + globalPosition.z > rightBox->z1))
 	{
-		pixelRightBox->z1 = back + pixelGlobalPosition.z;
+		rightBox->z1 = back + globalPosition.z;
 	}
 
 	if(!isDeleted(this->children))
 	{
 		for(VirtualNode childNode = this->children->head; childNode; childNode = childNode->next)
 		{
-			Entity::calculateSizeFromChildren(childNode->data, pixelRightBox, Vector3D::getFromPixelVector(pixelGlobalPosition));
+			Entity::calculateSizeFromChildren(childNode->data, rightBox, globalPosition);
 		}
 	}
 }

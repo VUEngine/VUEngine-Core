@@ -84,9 +84,9 @@ class Mesh : Wireframe
 	/// List of vertices
 	VirtualList vertices;
 
-	/// Retrieve the bounding box in pixel units defined by the provided mesh spec's values.
+	/// Retrieve the bounding box defined by the provided mesh spec's values.
 	/// @return Bounding box of the resulting mesh
-	static PixelRightBox getPixelRightBoxFromSpec(MeshSpec* meshSpec);
+	static RightBox getRightBoxFromSpec(MeshSpec* meshSpec);
 
 	/// @publicsection
 
@@ -95,9 +95,9 @@ class Mesh : Wireframe
 	/// @param asteriskSpec: Specification that determines how to configure the wireframe
 	void constructor(SpatialObject owner, const MeshSpec* meshSpec);
 
-	/// Retrieve the mesh's bounding box in pixel units.
+	/// Retrieve the mesh's bounding box.
 	/// @return Bounding box of the mesh
-	override PixelRightBox getPixelRightBox();
+	override RightBox getRightBox();
 
 	/// Retrieve the list of vertices that compose the mesh.
 	/// @return Linked list of vertices

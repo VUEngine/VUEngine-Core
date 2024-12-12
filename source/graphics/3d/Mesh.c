@@ -35,9 +35,9 @@ friend class VirtualList;
 //=========================================================================================================
 
 //---------------------------------------------------------------------------------------------------------
-static PixelRightBox Mesh::getPixelRightBoxFromSpec(MeshSpec* meshSpec)
+static RightBox Mesh::getRightBoxFromSpec(MeshSpec* meshSpec)
 {
-	PixelRightBox pixelRightBox = {0, 0, 0, 0, 0, 0};
+	RightBox rightBox = {0, 0, 0, 0, 0, 0};
 
 	bool isEndSegment = false;
 	uint16 i = 0;
@@ -51,96 +51,93 @@ static PixelRightBox Mesh::getPixelRightBoxFromSpec(MeshSpec* meshSpec)
 
 		if(!isEndSegment)
 		{
-			PixelVector startPixelVector = PixelVector::getFromVector3D(startVector, 0);
-			PixelVector endPixelVector = PixelVector::getFromVector3D(endVector, 0);
-
-			if(startPixelVector.x < endPixelVector.x)
+			if(startVector.x < endVector.x)
 			{
-				if(startPixelVector.x < pixelRightBox.x0)
+				if(startVector.x < rightBox.x0)
 				{
-					pixelRightBox.x0 = startPixelVector.x;
+					rightBox.x0 = startVector.x;
 				}
 			}
 			else
 			{
-				if(endPixelVector.x < pixelRightBox.x0)
+				if(endVector.x < rightBox.x0)
 				{
-					pixelRightBox.x0 = endPixelVector.x;
+					rightBox.x0 = endVector.x;
 				}
 			}
 
-			if(startPixelVector.x > endPixelVector.x)
+			if(startVector.x > endVector.x)
 			{
-				if(startPixelVector.x > pixelRightBox.x1)
+				if(startVector.x > rightBox.x1)
 				{
-					pixelRightBox.x1 = startPixelVector.x;
+					rightBox.x1 = startVector.x;
 				}
 			}
 			else
 			{
-				if(endPixelVector.x > pixelRightBox.x1)
+				if(endVector.x > rightBox.x1)
 				{
-					pixelRightBox.x1 = endPixelVector.x;
+					rightBox.x1 = endVector.x;
 				}
 			}
 
-			if(startPixelVector.y < endPixelVector.y)
+			if(startVector.y < endVector.y)
 			{
-				if(startPixelVector.y < pixelRightBox.y0)
+				if(startVector.y < rightBox.y0)
 				{
-					pixelRightBox.y0 = startPixelVector.y;
+					rightBox.y0 = startVector.y;
 				}
 			}
 			else
 			{
-				if(endPixelVector.y < pixelRightBox.y0)
+				if(endVector.y < rightBox.y0)
 				{
-					pixelRightBox.y0 = endPixelVector.y;
+					rightBox.y0 = endVector.y;
 				}
 			}
 
-			if(startPixelVector.y > endPixelVector.y)
+			if(startVector.y > endVector.y)
 			{
-				if(startPixelVector.y > pixelRightBox.y1)
+				if(startVector.y > rightBox.y1)
 				{
-					pixelRightBox.y1 = startPixelVector.y;
+					rightBox.y1 = startVector.y;
 				}
 			}
 			else
 			{
-				if(endPixelVector.y > pixelRightBox.y1)
+				if(endVector.y > rightBox.y1)
 				{
-					pixelRightBox.y1 = endPixelVector.y;
-				}
-			}
-						
-			if(startPixelVector.z < endPixelVector.z)
-			{
-				if(startPixelVector.z < pixelRightBox.z0)
-				{
-					pixelRightBox.z0 = startPixelVector.z;
-				}
-			}
-			else
-			{
-				if(endPixelVector.z < pixelRightBox.z0)
-				{
-					pixelRightBox.z0 = endPixelVector.z;
+					rightBox.y1 = endVector.y;
 				}
 			}
 
-			if(startPixelVector.z > endPixelVector.z)
+			if(startVector.z < endVector.z)
 			{
-				if(startPixelVector.z > pixelRightBox.z1)
+				if(startVector.z < rightBox.z0)
 				{
-					pixelRightBox.z1 = startPixelVector.z;
+					rightBox.z0 = startVector.z;
 				}
 			}
 			else
 			{
-				if(endPixelVector.z > pixelRightBox.z1)
+				if(endVector.z < rightBox.z0)
 				{
-					pixelRightBox.z1 = endPixelVector.z;
+					rightBox.z0 = endVector.z;
+				}
+			}
+
+			if(startVector.z > endVector.z)
+			{
+				if(startVector.z > rightBox.z1)
+				{
+					rightBox.z1 = startVector.z;
+				}
+			}
+			else
+			{
+				if(endVector.z > rightBox.z1)
+				{
+					rightBox.z1 = endVector.z;
 				}
 			}
 		}
@@ -149,7 +146,7 @@ static PixelRightBox Mesh::getPixelRightBoxFromSpec(MeshSpec* meshSpec)
 	}
 	while(!isEndSegment);
 
-	return pixelRightBox;
+	return rightBox;
 }
 //---------------------------------------------------------------------------------------------------------
 
@@ -183,48 +180,48 @@ void Mesh::destructor()
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------
-PixelRightBox Mesh::getPixelRightBox()
+RightBox Mesh::getRightBox()
 {
-	PixelRightBox pixelRightBox = {0, 0, 0, 0, 0, 0};
+	RightBox rightBox = {0, 0, 0, 0, 0, 0};
 
 	for(VirtualNode node = this->vertices->head; NULL != node; node = node->next)
 	{
 		Vertex* vertex = (Vertex*)node->data;
 
-		PixelVector pixelVector = PixelVector::getFromVector3D(Vector3D::sum(vertex->vector, this->displacement), 0);
+		Vector3D vector3D = Vector3D::sum(vertex->vector, this->displacement);
 
-		if(pixelVector.x < pixelRightBox.x0)
+		if(vector3D.x < rightBox.x0)
 		{
-			pixelRightBox.x0 = pixelVector.x;
+			rightBox.x0 = vector3D.x;
 		}
 
-		if(pixelVector.x > pixelRightBox.x1)
+		if(vector3D.x > rightBox.x1)
 		{
-			pixelRightBox.x1 = pixelVector.x;
+			rightBox.x1 = vector3D.x;
 		}
 
-		if(pixelVector.y < pixelRightBox.y0)
+		if(vector3D.y < rightBox.y0)
 		{
-			pixelRightBox.y0 = pixelVector.y;
+			rightBox.y0 = vector3D.y;
 		}
 
-		if(pixelVector.y > pixelRightBox.y1)
+		if(vector3D.y > rightBox.y1)
 		{
-			pixelRightBox.y1 = pixelVector.y;
+			rightBox.y1 = vector3D.y;
 		}
 
-		if(pixelVector.z < pixelRightBox.z0)
+		if(vector3D.z < rightBox.z0)
 		{
-			pixelRightBox.z0 = pixelVector.z;
+			rightBox.z0 = vector3D.z;
 		}
 
-		if(pixelVector.z > pixelRightBox.z1)
+		if(vector3D.z > rightBox.z1)
 		{
-			pixelRightBox.z1 = pixelVector.z;
+			rightBox.z1 = vector3D.z;
 		}
 	}
 
-	return pixelRightBox;
+	return rightBox;
 }
 //---------------------------------------------------------------------------------------------------------
 VirtualList Mesh::getVertices()

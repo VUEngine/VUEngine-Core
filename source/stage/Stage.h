@@ -198,7 +198,7 @@ typedef const StageSpec StageROMSpec;
 typedef struct StageEntityDescription
 {
 	/// Bounding box of the entity to 
-	PixelRightBox pixelRightBox;
+	RightBox rightBox;
 	
 	/// Struct that defines which entity spec to use to configure the new entity
 	PositionedEntity* positionedEntity;
