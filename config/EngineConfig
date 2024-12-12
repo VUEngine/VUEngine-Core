@@ -100,7 +100,6 @@
 		"horizontalViewPointCenter": 192,
 		"maximumXViewDistance": 2048,
 		"maximumYViewDistance": 4096,
-		"parallaxCorrectionFactor": 4,
 		"scalingModifierFactor": 1,
 		"screenDepth": 2048,
 		"screenHeight": 224,

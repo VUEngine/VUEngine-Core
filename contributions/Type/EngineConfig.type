@@ -332,11 +332,6 @@
 						"default": 4096,
 						"minimum": 0
 					},
-					"parallaxCorrectionFactor": {
-						"type": "integer",
-						"default": 4,
-						"minimum": 0
-					},
 					"scalingModifierFactor": {
 						"type": "integer",
 						"default": 1,
@@ -951,10 +946,6 @@
 									}
 								],
 								"label": "Maximum View Distance"
-							},
-							{
-								"type": "Control",
-								"scope": "#/properties/optics/properties/parallaxCorrectionFactor"
 							},
 							{
 								"type": "Control",

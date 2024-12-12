@@ -109,9 +109,6 @@
 // Player's eyes' vertical position
 #define __VERTICAL_VIEW_POINT_CENTER			__SCREEN_HEIGHT / 2
 
-// Parallax values are divide by this factor to control their strength
-#define __PARALLAX_CORRECTION_FACTOR			4
-
 // Affects the strength of the scaling
 #define __SCALING_MODIFIER_FACTOR				1.0f
 
