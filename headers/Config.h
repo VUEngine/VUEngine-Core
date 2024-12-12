@@ -112,9 +112,6 @@
 // Affects the strength of the scaling
 #define __SCALING_MODIFIER_FACTOR				1.0f
 
-// minimum number of pixels that the camera can move
-#define __CAMERA_MINIMUM_DISPLACEMENT_PIXELS_POWER	1
-
 //---------------------------------------------------------------------------------------------------------
 //											FRAME RATE CONTROL
 //---------------------------------------------------------------------------------------------------------
@@ -288,9 +285,6 @@
 //---------------------------------------------------------------------------------------------------------
 
 #define __GRAVITY								(2 * 9.8f)
-
-// Number of bodies to check for gravity on each cycle
-#define __BODIES_TO_CHECK_FOR_GRAVITY			10
 
 // divisor to speed up physics simulations
 // bigger numbers equal faster computations

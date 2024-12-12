@@ -49,11 +49,6 @@
 //#define __DIRECT_DRAW_INTERLACED
 //#define __PROFILE_WIREFRAMES
 
-//#undef __SAFE_CAST
-//#define __SAFE_CAST(ClassName, object) (ClassName)object
-//#undef __CAMERA_MINIMUM_DISPLACEMENT_PIXELS_POWER
-//#define __CAMERA_MINIMUM_DISPLACEMENT_PIXELS_POWER	1
-
 
 // do not delete the following macros!
 

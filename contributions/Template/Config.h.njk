@@ -175,9 +175,6 @@
 // affects the strength of the scaling
 #define __SCALING_MODIFIER_FACTOR									{{ config.optics.scalingModifierFactor }}{% if not '.' in '' ~ config.optics.scalingModifierFactor %}.0{% endif %}f
 
-// minimum number of pixels that the camera can move
-#define __CAMERA_MINIMUM_DISPLACEMENT_PIXELS_POWER					{{ config.optics.cameraMinimumDisplacementPixelsPower }}
-
 
 {{ macros.sectionHeader('Frame rate control') }}
 
@@ -301,9 +298,6 @@
 {{ macros.sectionHeader('Physics') }}
 
 #define __GRAVITY													{{ config.physics.gravity }}{% if not '.' in '' ~ config.physics.gravity %}.0{% endif %}f
-
-// number of bodies to check for gravity on each cycle
-#define __BODIES_TO_CHECK_FOR_GRAVITY								{{ config.physics.bodiesToCheckForGravity }}
 
 // maximum friction coefficient
 #define __MAXIMUM_FRICTION_COEFFICIENT								{% if config.physics.maximumFrictionCoefficient %}__I_TO_FIXED({{config.physics.maximumFrictionCoefficient }}){% else %}__I_TO_FIXED(1){% endif %}

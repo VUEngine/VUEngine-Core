@@ -95,7 +95,6 @@
 	},
 	"optics": {
 		"baseFactor": 32,
-		"cameraMinimumDisplacementPixelsPower": 1,
 		"cameraNearPlane": 0,
 		"horizontalViewPointCenter": 192,
 		"maximumXViewDistance": 2048,
@@ -120,7 +119,6 @@
 	},
 	"physics": {
 		"angleToPreventColliderDisplacement": 10,
-		"bodiesToCheckForGravity": 10,
 		"frictionForceFactorPower": 2,
 		"gravity": 10,
 		"highPrecision": false,

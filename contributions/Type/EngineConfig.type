@@ -308,11 +308,6 @@
 						"default": 32,
 						"minimum": 0
 					},
-					"cameraMinimumDisplacementPixelsPower": {
-						"type": "integer",
-						"default": 1,
-						"minimum": 0
-					},
 					"cameraNearPlane": {
 						"type": "integer",
 						"default": 0
@@ -418,12 +413,6 @@
 						"default": 10,
 						"minimum": 0,
 						"maximum": 128
-					},
-					"bodiesToCheckForGravity": {
-						"type": "integer",
-						"description": "Number of bodies to check for gravity on each cycle.",
-						"default": 10,
-						"minimum": 0
 					},
 					"frictionForceFactorPower": {
 						"type": "integer",
@@ -920,10 +909,6 @@
 							},
 							{
 								"type": "Control",
-								"scope": "#/properties/optics/properties/cameraMinimumDisplacementPixelsPower"
-							},
-							{
-								"type": "Control",
 								"scope": "#/properties/optics/properties/cameraNearPlane"
 							},
 							{
@@ -1072,10 +1057,6 @@
 							{
 								"type": "Control",
 								"scope": "#/properties/physics/properties/angleToPreventColliderDisplacement"
-							},
-							{
-								"type": "Control",
-								"scope": "#/properties/physics/properties/bodiesToCheckForGravity"
 							},
 							{
 								"type": "Control",
