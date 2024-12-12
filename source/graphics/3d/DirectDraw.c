@@ -229,33 +229,33 @@ static inline bool DirectDraw::shrinkLineToScreenSpace(fixed_ext_t* x0, fixed_ex
 	}
 
 	// Check for overflows
-	if(*x0 < x1 && x >= x1)
+	if(*x0 < x1 && !(*x0 < x && x < x1))
 	{
 		return false;
 	}
-	else if(*x0 > x1 && x <= x1)
-	{
-		return false;
-	}
-
-	if(*y0 < y1 && y >= y1)
-	{
-		return false;
-	}
-	else if(*y0 > y1 && y <= y1)
+	else if(*x0 > x1 && !(x1 < x && x < *x0))
 	{
 		return false;
 	}
 
-	if(*parallax0 < parallax1 && parallax >= parallax1)
+	if(*y0 < y1 && !(*y0 < y && y < y1))
 	{
 		return false;
 	}
-	else if(*parallax0 > parallax1 && parallax <= parallax1)
+	else if(*y0 > y1 && !(y1 < y && y < *y0))
 	{
 		return false;
 	}
-	
+/*
+	if(*parallax0 < parallax1 && !(*parallax0 < parallax && parallax < parallax1))
+	{
+//		return false;
+	}
+	else if(*parallax0 > parallax1 && !(parallax1 < parallax && parallax < *parallax0))
+	{
+//		return false;
+	}
+*/	
 	*x0 = x;
 	*y0 = y;
 	*parallax0 = parallax;

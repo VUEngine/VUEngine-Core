@@ -19,13 +19,6 @@
 
 
 //=========================================================================================================
-// CLASS' MACROS
-//=========================================================================================================
-
-#define __PROJECTION_PRECISION_INCREMENT				4
-
-
-//=========================================================================================================
 // CLASS' DECLARATION
 //=========================================================================================================
 
@@ -103,12 +96,12 @@ static inline Optical Optical::applyCameraFrustum(Optical optical, CameraFrustum
 	result.farRatio1Near = __FIXED_EXT_DIV(cameraFrustum.z1 + cameraFrustum.z0, cameraFrustum.z1 - cameraFrustum.z0);
 	// farRatio2Near = // (2 * far * near) / (near - far)
 	result.farRatio2Near = __FIXED_EXT_DIV(__FIXED_EXT_MULT(cameraFrustum.z1, cameraFrustum.z0) << 1, cameraFrustum.z0 - cameraFrustum.z1);
-	result.projectionMultiplierHelper = __FIXED_EXT_MULT(result.halfWidth, result.aspectRatioXfov) << __PROJECTION_PRECISION_INCREMENT;
+	result.projectionMultiplierHelper = __FIXED_EXT_MULT(result.halfWidth, result.aspectRatioXfov);
 	result.scalingMultiplier = __FIXED_EXT_MULT(result.halfWidth, result.scalingFactor);
 
 	if(0 == result.cameraNearPlane)
 	{
-		result.cameraNearPlane = result.projectionMultiplierHelper >> __PROJECTION_PRECISION_INCREMENT;
+		result.cameraNearPlane = result.projectionMultiplierHelper;
 	}
 
 	return result;

@@ -479,7 +479,6 @@ static inline fixed_t Vector2D::getScale(fixed_t z, bool applyScalingMultiplier)
 		}
 
 		projectedWidth = __FIXED_EXT_DIV(__FIXED_EXT_MULT(_optical->halfWidth, _optical->projectionMultiplierHelper), z + _optical->cameraNearPlane);
-		projectedWidth >>= __PROJECTION_PRECISION_INCREMENT;
 	}
 
 	return __FIXED_EXT_DIV(projectedWidth, _optical->halfWidth);

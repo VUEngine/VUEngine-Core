@@ -220,12 +220,6 @@ static inline PixelVector PixelVector::projectVector3D(Vector3D vector3D, int16 
 	{
 		x -= (__FIXED_EXT_MULT(x - _optical->horizontalViewPointCenter, z) >> _optical->maximumXViewDistancePower);	
 		y -= (__FIXED_EXT_MULT(y - _optical->verticalViewPointCenter, z) >> _optical->maximumYViewDistancePower);	
-/*
-		fixed_ext_t factor = __FIXED_EXT_DIV(__FIXED_EXT_MULT(_optical->halfWidth, _optical->aspectRatioXfov) << __PROJECTION_PRECISION_INCREMENT, z + _optical->cameraNearPlane);
-
-		x = (__FIXED_EXT_MULT(x - _optical->horizontalViewPointCenter, factor) >> __PROJECTION_PRECISION_INCREMENT) + _optical->horizontalViewPointCenter;	
-		y = (__FIXED_EXT_MULT(y - _optical->verticalViewPointCenter, factor) >> __PROJECTION_PRECISION_INCREMENT) + _optical->verticalViewPointCenter;
-*/
 	}
 #else
 	if(0 == z + _optical->cameraNearPlane)
@@ -259,8 +253,8 @@ static inline PixelVector PixelVector::projectVector3D(Vector3D vector3D, int16 
 		// to reduce from 4 products and 2 divisions to 3 products, 1 division and 3 bit shifts
 		fixed_ext_t factor = __FIXED_EXT_DIV(_optical->projectionMultiplierHelper, z + _optical->cameraNearPlane);
 
-		x = (__FIXED_EXT_MULT(x, factor) >> __PROJECTION_PRECISION_INCREMENT) + _optical->horizontalViewPointCenter;	
-		y = (__FIXED_EXT_MULT(y, factor) >> __PROJECTION_PRECISION_INCREMENT) + _optical->verticalViewPointCenter;
+		x = (__FIXED_EXT_MULT(x, factor)) + _optical->horizontalViewPointCenter;	
+		y = (__FIXED_EXT_MULT(y, factor)) + _optical->verticalViewPointCenter;
 	}
 #endif
 
