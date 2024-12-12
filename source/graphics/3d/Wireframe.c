@@ -119,7 +119,20 @@ bool Wireframe::prepareForRender(Vector3D* relativePosition)
 	}
 	else
 	{
+		int16 cameraViewingAngle = __CAMERA_VIEWING_ANGLE;
 
+		if(__FIXED_SQUARE(__PIXELS_TO_METERS(__SCREEN_WIDTH << 1)) < distanceToCamera)
+		{
+			if(__COS(cameraViewingAngle) > __FIXED_EXT_TO_FIX7_9(Vector3D::dotProduct(Vector3D::normalize(*relativePosition), _cameraDirection)))
+			{
+#ifdef __WIREFRAME_MANAGER_SORT_FOR_DRAWING
+				this->squaredDistanceToCamera = __WIREFRAME_MAXIMUM_SQUARE_DISTANCE_TO_CAMERA;
+#endif
+				this->color = __COLOR_BLACK;
+				return __COLOR_BLACK != this->color;
+			}
+		}
+		
 		if(__FIXED_SQUARE((__DIRECT_DRAW_INTERLACED_THRESHOLD << 1) < distanceToCamera))
 		{
 			this->color = __COLOR_BLACK;
