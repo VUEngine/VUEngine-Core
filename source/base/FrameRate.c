@@ -108,8 +108,9 @@ void FrameRate::print(int32 x, int32 y)
 {
 #ifdef __UNLOCK_FPS
 	Printing printing = Printing::getInstance();
+	Printing::text(printing, "FPS     |AVR     ", x, y, NULL);
 	Printing::int32(printing, this->FPS, x, y, NULL);
-	Printing::int32(printing, this->totalFPS / this->seconds, x + 7, y, NULL);
+	Printing::int32(printing, this->totalFPS / this->seconds, x + 14, y, NULL);
 #else
 	Printing printing = Printing::getInstance();
 	Printing::text(printing, "FPS     |TORN  |AVR     ", x, y, NULL);
