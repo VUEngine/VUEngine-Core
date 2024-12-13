@@ -65,7 +65,7 @@
 {%- endif -%}
 {%- if item.components.wireframes.length -%}
 	{%- for wireframe in item.components.wireframes -%}
-		{%- set includes = (includes.push(wireframe.wireframe.type), includes) -%}
+		{%- set includes = (includes.push(wireframe.type), includes) -%}
 	{%- endfor -%}
 {%- endif -%}
 
@@ -400,7 +400,7 @@ AnimationFunctionROMSpec* const {{ sanitizedSpecName }}AnimationSpecs[] =
 {%- set wireframeName = sanitizedSpecName ~ loop.index -%}
 {%- set wireframeNames = (wireframeNames.push(wireframeName), wireframeNames) -%}
 
-{% if wireframe.wireframe.type == 'Mesh' -%}
+{% if wireframe.type == 'Mesh' -%}
 const PixelVector {{ wireframeName }}WireframeSegments[][2]=
 {
 	{%- for segment in wireframe.segments %}
@@ -419,35 +419,35 @@ const PixelVector {{ wireframeName }}WireframeSegments[][2]=
 
 {% endif -%}
 
-{{ wireframe.wireframe.type }}ROMSpec {{ wireframeName }}WireframeSpec =
+{{ wireframe.type }}ROMSpec {{ wireframeName }}WireframeSpec =
 {
 	{
 		// class allocator
-		__TYPE({{ wireframe.wireframe.type }}),
+		__TYPE({{ wireframe.type }}),
 
 		// displacement
-		{ {{ wireframe.wireframe.displacement.x }}, {{ wireframe.wireframe.displacement.y }}, {{ wireframe.wireframe.displacement.z }}},
+		{ {{ wireframe.displacement.x }}, {{ wireframe.displacement.y }}, {{ wireframe.displacement.z }}},
 		
 		// color
-		{{ ['__COLOR_BLACK', '__COLOR_DARK_RED', '__COLOR_MEDIUM_RED', '__COLOR_BRIGHT_RED'][wireframe.wireframe.color] }},
+		{{ ['__COLOR_BLACK', '__COLOR_DARK_RED', '__COLOR_MEDIUM_RED', '__COLOR_BRIGHT_RED'][wireframe.color] }},
 
 		// transparency
-		__TRANSPARENCY_{{ wireframe.wireframe.transparency | upper }},
+		__TRANSPARENCY_{{ wireframe.transparency | upper }},
 
 		// interlaced
-		{{ wireframe.wireframe.interlaced }},
+		{{ wireframe.interlaced }},
 	},
 
-	{% if wireframe.wireframe.type == 'Sphere' -%}
+	{% if wireframe.type == 'Sphere' -%}
 	// radius
 	__PIXELS_TO_METERS({{ wireframe.radius }}),
 
 	// draw center
 	{{ wireframe.drawCenter }},
-	{%- elseif wireframe.wireframe.type == 'Mesh' -%}
+	{%- elseif wireframe.type == 'Mesh' -%}
 	// segments
 	(PixelVector(*)[2]){{ wireframeName }}WireframeSegments,
-	{%- elseif wireframe.wireframe.type == 'Asterisk' -%}
+	{%- elseif wireframe.type == 'Asterisk' -%}
 	// length
 	{{ wireframe.length }},
 	{%- endif %}
