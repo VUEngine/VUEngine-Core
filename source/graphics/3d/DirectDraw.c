@@ -357,7 +357,6 @@ static bool DirectDraw::drawLine(PixelVector fromPoint, PixelVector toPoint, int
 
 		xToOutside = (unsigned)_frustumFixedPoint.x1 - _frustumFixedPoint.x0 < (unsigned)(toPointX - _frustumFixedPoint.x0);
 		yToOutside = (unsigned)_frustumFixedPoint.y1 - _frustumFixedPoint.y0 < (unsigned)(toPointY - _frustumFixedPoint.y0);
-
 	}
 
 	if((xFromOutside && xToOutside) || (yFromOutside && yToOutside))
@@ -387,49 +386,23 @@ static bool DirectDraw::drawLine(PixelVector fromPoint, PixelVector toPoint, int
 
 	fixed_ext_t parallaxStart = fromPointParallax;
 
-	fixed_ext_t xStep = __1I_FIXED;
-	fixed_ext_t yStep = __1I_FIXED;
+	fixed_ext_t xStep = toPointX < fromPointX ? -__1I_FIXED : __1I_FIXED;
+	fixed_ext_t yStep = toPointY < fromPointY ? -__1I_FIXED : __1I_FIXED;
 	fixed_ext_t parallaxStep = 0;
 	
 	int16 totalPixels = 0;
 
-	if(dyABS == dxABS || dyABS < dxABS || 0 == dy)
+	if(0 <= dxABS - dyABS)
 	{
-		if(toPointX < fromPointX)
-		{
-			fixed_ext_t auxPoint = fromPointX;
-			fromPointX = toPointX;
-			toPointX = auxPoint;
-
-			fromPointY = toPointY;
-			parallaxStart = toPointParallax; 
-
-			dxABS = -dxABS;
-		}
-
 		yStep = __FIXED_EXT_DIV(dy, dxABS);
 		parallaxStep = __FIXED_EXT_DIV(dParallax, dxABS);
-
-		totalPixels = __FIXED_EXT_TO_I(toPointX - fromPointX) + totalPixelRounding;
+		totalPixels = __ABS(__FIXED_EXT_TO_I(toPointX - fromPointX)) + totalPixelRounding;
 	}
-	else if(dxABS < dyABS || 0 == dx)
+	else
 	{
-		if(toPointY < fromPointY)
-		{
-			fixed_ext_t auxPoint = fromPointY;
-			fromPointY = toPointY;
-			toPointY = auxPoint;
-
-			fromPointX = toPointX;
-			parallaxStart = toPointParallax; 
-
-			dyABS = -dyABS;
-		}
-
 		xStep = __FIXED_EXT_DIV(dx, dyABS);
 		parallaxStep = __FIXED_EXT_DIV(dParallax, dyABS);
-
-		totalPixels = __FIXED_EXT_TO_I(toPointY - fromPointY) + totalPixelRounding;
+		totalPixels = __ABS(__FIXED_EXT_TO_I(toPointY - fromPointY)) + totalPixelRounding;
 	}
 
 	_directDraw->drawnPixelsCounter += totalPixels;
