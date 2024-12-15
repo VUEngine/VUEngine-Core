@@ -162,7 +162,7 @@ class Actor : AnimatedEntity
 	fixed_t getMaximumSpeed();
 
 	/// Set the actor's velocity vector.
-	/// @param vector: Velocity vector to assign to the actor's body
+	/// @param velocity: Velocity vector to assign to the actor's body
 	/// @param checkIfCanMove: If true, the actor checks that none of its colliders will
 	/// enter a collision if it were to move in the direction of the provided velocity
 	/// @return True if the actor started to move in the direction specified by the

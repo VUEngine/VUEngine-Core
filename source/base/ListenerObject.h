@@ -82,13 +82,13 @@ abstract class ListenerObject : Object
 
 	/// Register an object that will listen for events.
 	/// @param listener: ListenerObject that listen for the event
-	/// @param method: EventListener callback for the listener object
+	/// @param callback: EventListener callback for the listener object
 	/// @param eventCode: Event's code to listen for
 	void addEventListener(ListenerObject listener, EventListener callback, uint16 eventCode);
 
 	/// Remove a specific listener object from the listening to a give code with the provided callback.
 	/// @param listener: ListenerObject to remove from the list of listeners
-	/// @param method: EventListener callback for the listener object
+	/// @param callback: EventListener callback for the listener object
 	/// @param eventCode: Event's code to stop listen for
 	void removeEventListener(ListenerObject listener, EventListener callback, uint16 eventCode);
 

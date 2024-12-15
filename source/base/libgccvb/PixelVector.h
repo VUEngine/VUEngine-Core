@@ -87,14 +87,13 @@ static class PixelVector : Object
 	static inline PixelVector getRelativeToCamera(PixelVector vector);
 
 	/// Project the 3D vector to a vector in pixel units.
-	/// @param vector: 3D vector to project
+	/// @param vector3D: 3D vector to project
 	/// @param parallax: Parallax component for the resulting vector
 	/// @return Projected vector in pixel units
 	static inline PixelVector projectVector3D(Vector3D vector3D, int16 parallax);
 
 	/// Transform to camera space and project the 3D vector to a vector in pixel units.
 	/// @param vector: 3D vector to transform
-	/// @param parallax: Parallax component for the resulting vector
 	/// @return Projected vector in pixel units
 	static inline PixelVector transformVector3D(Vector3D vector);
 

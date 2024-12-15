@@ -69,27 +69,24 @@ class Clock : ListenerObject
 	static void printTime(uint32 milliseconds, int32 x, int32 y, const char* font, uint32 precision);
 
 	/// Print the total deciseconds in the elapsed time provided.
-	/// @param milliseconds: Total time to print
+	/// @param milliSeconds: Total time to print
 	/// @param x: Screen x coordinate where to print
 	/// @param y: Screen y coordinate where to print
 	/// @param font: Pointer to font's name to use
-	/// @param precision: Precision of the second decimals
 	static void printDeciseconds(uint32 milliSeconds, int32 x, int32 y, const char* font);
 
 	/// Print the total centiseconds in the elapsed time provided.
-	/// @param milliseconds: Total time to print
+	/// @param milliSeconds: Total time to print
 	/// @param x: Screen x coordinate where to print
 	/// @param y: Screen y coordinate where to print
 	/// @param font: Pointer to font's name to use
-	/// @param precision: Precision of the second decimals
 	static void printCentiseconds(uint32 milliSeconds, int32 x, int32 y, const char* font);
 
 	/// Print the total milliseconds in the elapsed time provided.
-	/// @param milliseconds: Total time to print
+	/// @param milliSeconds: Total time to print
 	/// @param x: Screen x coordinate where to print
 	/// @param y: Screen y coordinate where to print
 	/// @param font: Pointer to font's name to use
-	/// @param precision: Precision of the second decimals
 	static void printMilliseconds(uint32 milliSeconds, int32 x, int32 y, const char* font);
 
 	/// @publicsection
@@ -134,8 +131,8 @@ class Clock : ListenerObject
 	uint32 getSeconds();
 
 	/// Print the clock's time in MM::SS:XX format
-	/// @param x: Screen x coordinate where to print
-	/// @param y: Screen y coordinate where to print
+	/// @param col: Screen x coordinate where to print
+	/// @param row: Screen y coordinate where to print
 	/// @param font: Pointer to font's name to use
 	void print(int32 col, int32 row, const char* font);
 }

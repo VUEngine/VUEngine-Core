@@ -82,7 +82,7 @@ class LineField : Collider
 	Vector3D getCenter();
 
 	/// Retrieve the vertexes that define the line field.
-	/// @param out vertexes: Array of vectors that define the linefied
+	/// @param vertexes: Array of vectors that define the linefied
 	void getVertexes(Vector3D vertexes[__LINE_FIELD_VERTEXES]);
 
 	/// Set the length of the line field's normal.

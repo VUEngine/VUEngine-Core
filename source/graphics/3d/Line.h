@@ -66,7 +66,7 @@ class Line : Wireframe
 
 	/// Class' constructor
 	/// @param owner: SpatialObject to which the wireframe attaches to
-	/// @param asteriskSpec: Specification that determines how to configure the wireframe
+	/// @param lineSpec: Specification that determines how to configure the wireframe
 	void constructor(SpatialObject owner, const LineSpec* lineSpec);
 
 	/// Prepare the wireframe for drawing.

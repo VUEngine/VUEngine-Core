@@ -168,7 +168,7 @@ singleton class VUEngine : ListenerObject
 	void unpause(GameState pauseState);
 
 	/// Ste the current game state at the top of the engine's state machine's stack.
-	/// @param state: Game state to set
+	/// @param gameState: Game state to set
 	void setState(GameState gameState);
 
 	/// Add a game state to the top of the engine's state machine's stack.
@@ -285,7 +285,7 @@ singleton class VUEngine : ListenerObject
 	bool isPaused();
 
 	/// Halt the game by the provided time.
-	/// @param milliseconds: Time to halt the game
+	/// @param milliSeconds: Time to halt the game
 	void wait(uint32 milliSeconds);
 
 	/// Force the complete initialization of all graphics.

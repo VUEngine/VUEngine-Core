@@ -69,7 +69,7 @@ static class Mem : Object
 	/// @param destination: Starting destination address
 	/// @param source1: Starting first source address
 	/// @param source2: Starting second source address
-	/// @param numberOfHWORDS: Total number of HWORDs to combine
+	/// @param numberOfWORDS: Total number of HWORDs to combine
 	static inline void combineHWORDs(HWORD* destination, const HWORD* source1, const HWORD* source2, uint32 numberOfWORDS);
 
 	/// Apply a bitwise OR operation to the specified number of WORDs from the provided source addresses and place the results in the destination address onwards

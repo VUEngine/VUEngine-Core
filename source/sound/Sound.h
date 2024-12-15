@@ -217,7 +217,6 @@ class Sound : ListenerObject
 	void setFrequencyDelta(uint16 frequencyDelta);
 
 	/// Retrieve the frequency delta added to the VSU's frequency registers.
-	/// @param frequencyDelta: Delta added to the frequency
 	uint16 getFrequencyDelta();
 
 	/// Check if the sound is playing.

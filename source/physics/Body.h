@@ -235,7 +235,6 @@ class Body : ListenerObject
 	void setDirection(const Vector3D* direction);
 
 	/// Retrieve the direction towards which the body is moving.
-	/// @param direction: Pointer to the direction towards which the body is moving
 	const Vector3D* getDirection();
 	
 	/// Set the axises on which the body is subject to gravity.
@@ -263,7 +262,7 @@ class Body : ListenerObject
 	fixed_t getFrictionCoefficient();
 
 	/// Set the body's mass.
-	/// @param frictionCoefficient: Value to set as the body's mass (between 0.01f and 1)
+	/// @param mass: Value to set as the body's mass (between 0.01f and 1)
 	void setMass(fixed_t mass);
 
 	/// Retrieve the body's mass.

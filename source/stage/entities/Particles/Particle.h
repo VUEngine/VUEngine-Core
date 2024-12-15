@@ -130,7 +130,7 @@ class Particle : SpatialObject
 	void hide();
 
 	/// Set the transparency mode of the visual components.
-	/// @param value: Transparecy effect (__TRANSPARENCY_NONE, __TRANSPARENCY_EVEN or __TRANSPARENCY_ODD)
+	/// @param transparency: Transparecy effect (__TRANSPARENCY_NONE, __TRANSPARENCY_EVEN or __TRANSPARENCY_ODD)
 	void setTransparency(uint8 transparency);
 
 	/// Check if the visual components are visible.

@@ -73,7 +73,7 @@ class Sphere : Wireframe
 
 	/// Class' constructor
 	/// @param owner: SpatialObject to which the wireframe attaches to
-	/// @param asteriskSpec: Specification that determines how to configure the wireframe
+	/// @param sphereSpec: Specification that determines how to configure the wireframe
 	void constructor(SpatialObject owner, const SphereSpec* sphereSpec);
 	
 	/// Prepare the wireframe for drawing.

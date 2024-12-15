@@ -145,7 +145,7 @@ class OptionsSelector : ListenerObject
 	/// Class' constructor
 	/// @param cols: Number of columns per page
 	/// @param rows: Number of rows per page
-	/// @param fong: Font to use for printing the options
+	/// @param font: Font to use for printing the options
 	/// @param leftMark: Left selection mark character
 	/// @param rightMark: Right selection mark character
 	void constructor(uint16 cols, uint16 rows, char* font, char* leftMark, char* rightMark);

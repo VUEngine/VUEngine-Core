@@ -81,7 +81,7 @@ class MBgmapSprite : BgmapSprite
 
 	/// Class' constructor
 	/// @param owner: SpatialObject to which the sprite attaches to
-	/// @param bgmapSpriteSpec: Specification that determines how to configure the sprite
+	/// @param mBgmapSpriteSpec: Specification that determines how to configure the sprite
 	void constructor(SpatialObject owner, const MBgmapSpriteSpec* mBgmapSpriteSpec);
 
 	/// Render the sprite by configuring the DRAM assigned to it by means of the provided index.

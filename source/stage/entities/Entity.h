@@ -437,8 +437,8 @@ class Entity : Container
 	/// @return True if the entity is within the camera's frustum
 	bool isInCameraRange(int16 padding, bool recursive);
 
-	/// Set the particle systems's spec.
-	/// @param particleSystemSpec: Specification that determines how to configure the particle system
+	/// Set the entity's spec.
+	/// @param entitySpec: Specification that determines how to configure the entity
 	virtual void setSpec(void* entitySpec);
 
 	/// Set any extra info provided by the PositionedEntity struct used to instantiate this entity.
