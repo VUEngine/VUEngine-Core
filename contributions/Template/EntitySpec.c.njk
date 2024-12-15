@@ -26,7 +26,7 @@
 
 {#- DETERMINE INCLUDES -#}
 {%- set includes = [entityClass, 'Texture'] -%}
-{%- if item.inGameType != 'None' -%}
+{%- if item.inGameType != '' -%}
 	{%- set includes = (includes.push('InGameTypes'), includes) -%}
 {%- endif -%}
 {%- if item.physics.enabled -%}
@@ -55,7 +55,7 @@
 		{%- endif %}
 	{%- endfor -%}
 {%- endif -%}
-{%- if item.inGameType != 'None' and item.components.colliders | length -%}
+{%- if item.inGameType != '' and item.components.colliders | length -%}
 	{%- for collider in item.components.colliders -%}
 		{%- set includes = (includes.push(collider.type), includes) -%}
 		{%- if collider.layers | length > 0 %}
@@ -465,7 +465,7 @@ WireframeROMSpec* const {{ sanitizedSpecName }}WireframeSpecs[] =
 {% endif %}
 
 {#- PRINT COLLIDERS -#}
-{%- if item.inGameType != 'None' and item.components.colliders | length %}
+{%- if item.inGameType != '' and item.components.colliders | length %}
 
 
 {{ macros.sectionHeader('Colliders') }}
@@ -494,14 +494,26 @@ ColliderROMSpec {{ sanitizedSpecName }}ColliderSpecs[] =
 
 		// layers in which I live
 		{%- if collider.layers | length > 0 %}
-		kLayer{{ collider.layers.join(' | kLayer') }},
+		kLayer
+			{%- for layerId in collider.layers %}
+				{{- project.items.ColliderLayers.project.layers[layerId] | sanitizeSpecName -}}
+				{%- if not loop.last -%}
+					{{- " | kLayer" -}}
+				{%- endif -%}
+			{%- endfor -%},
 		{%- else %}
 		kLayerNone,
 		{%- endif %}
 
 		// layers to ignore when checking for collisions
 		{%- if collider.layersToCheck | length > 0 %}
-		kLayerAll & ~(kLayer{{ collider.layersToCheck.join(' | kLayer') }})
+		kLayerAll & ~(kLayer
+			{%- for layerId in collider.layersToCheck %}
+				{{- project.items.ColliderLayers.project.layers[layerId] | sanitizeSpecName -}}
+				{%- if not loop.last -%}
+					{{- " | kLayer" -}}
+				{%- endif -%}
+			{%- endfor -%}),
 		{%- else %}
 		kLayerAll,
 		{%- endif %}
@@ -620,7 +632,7 @@ PositionedEntityROMSpec {{ sanitizedSpecName }}Children[] =
 			{%- endif %}
 
 			// colliders
-			{%- if item.inGameType != 'None' and item.components.colliders | length %}
+			{%- if item.inGameType != '' and item.components.colliders | length %}
 			(ColliderSpec*){{ sanitizedSpecName }}ColliderSpecs,
 			{%- else %}
 			NULL,
@@ -631,7 +643,7 @@ PositionedEntityROMSpec {{ sanitizedSpecName }}Children[] =
 			{ {{ item.extraProperties.pixelSize.x }}, {{ item.extraProperties.pixelSize.y }}, {{ item.extraProperties.pixelSize.z }} },
 
 			// gameworld's character's type
-			kType{{ item.inGameType | sanitizeSpecName }},
+			kType{{ project.items.InGameTypes.project.types[item.inGameType] | sanitizeSpecName }},
 
 			// physical specification
 			{%- if item.physics.enabled %} 
