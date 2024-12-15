@@ -28,7 +28,6 @@
 /// Inherits from Object
 ///
 /// Catches assertions and hardware exceptions.
-/// @ingroup base
 singleton class Error : Object
 {
 	/// @publicsection

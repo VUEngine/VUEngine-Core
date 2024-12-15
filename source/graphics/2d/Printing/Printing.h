@@ -167,7 +167,6 @@ typedef const FontData FontROMData;
 /// Inherits from ListenerObject
 ///
 /// Manages printing layer and offers various functions to write to it.
-/// @ingroup graphics-2d
 singleton class Printing : ListenerObject
 {
 	/// @protectedsection

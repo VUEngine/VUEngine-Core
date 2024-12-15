@@ -52,7 +52,6 @@ typedef const SphereSpec SphereROMSpec;
 /// Inherits from Wireframe
 ///
 /// Draws a cirle that represents a 3D sphere.
-/// @ingroup graphics-3d
 class Sphere : Wireframe
 {
 	/// @protectedsection

@@ -38,7 +38,6 @@ class ListenerObject;
 /// Inherits from ListenerObject
 ///
 /// Creates instances of animation coordinators.
-/// @ingroup graphics-2d-sprites-animation
 singleton class AnimationCoordinatorFactory : Object
 {
 	/// @protectedsection

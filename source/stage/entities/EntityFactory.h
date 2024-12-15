@@ -45,7 +45,6 @@ class VirtualList;
 /// Inherits from Object
 ///
 /// Implements a factory that creates entities over time.
-/// @ingroup stage-entities
 class EntityFactory : Object
 {
 	/// @protectedsection

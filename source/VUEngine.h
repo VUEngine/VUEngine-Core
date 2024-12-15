@@ -78,7 +78,6 @@ extern VUEngine _vuEngine __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE;
 /// Inherits from ListenerObject
 ///
 /// Implements the game's life cycle.
-/// @ingroup base
 singleton class VUEngine : ListenerObject
 {
 	/// @protectedsection

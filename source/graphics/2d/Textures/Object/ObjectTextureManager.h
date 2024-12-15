@@ -29,7 +29,6 @@
 /// Inherits from Texture
 ///
 /// Manages textures for OBJECT space.
-/// @ingroup graphics-2d-textures-object
 singleton class ObjectTextureManager : Object
 {
 	/// @publicsection

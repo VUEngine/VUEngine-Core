@@ -32,7 +32,6 @@
 /// Inherits from Object
 ///
 /// Implements methods to operate on Vector2D structs.
-/// @ingroup base-libgccvb
 static class Vector2D : Object
 {
 	/// @publicsection

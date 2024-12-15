@@ -29,7 +29,6 @@
 /// Inherits from Object
 ///
 /// Implements methods to operate on Scale structs.
-/// @ingroup base-libgccvb
 static class Scale : Object
 {
 	/// @publicsection

@@ -28,7 +28,6 @@
 /// Inherits from Object
 ///
 /// Computes the values that determine the results from 3D to 2D projection.
-/// @ingroup base-libgccvb
 static class Optical : Object
 {
 	/// @publicsection

@@ -35,7 +35,6 @@ class Stopwatch;
 /// Inherits from Object
 ///
 /// Manages the instances of Stopwatch.
-/// @ingroup base
 singleton class StopwatchManager : Object
 {
 	/// @protectedsection

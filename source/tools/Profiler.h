@@ -51,7 +51,6 @@ enum ProfilerLapTypes
 /// Inherits from ListenerObject
 ///
 /// Implements profiler that permits to measure how much time a process takes to complete.
-/// @ingroup tools
 singleton class Profiler : ListenerObject
 {
 	/// Laps during the current profiling cycle

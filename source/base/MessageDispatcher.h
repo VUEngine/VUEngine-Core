@@ -59,7 +59,6 @@ class Clock;
 /// Inherits from Object
 ///
 /// Implements a dispatcher central of message codes wrapped in a Telegram.
-/// @ingroup base
 singleton class MessageDispatcher : Object
 {
 	/// @protectedsection

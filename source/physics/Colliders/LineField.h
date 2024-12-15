@@ -36,7 +36,6 @@
 /// Inherits from Collider
 ///
 /// Defines a line that is sensible to collision on one of its sides.
-/// @ingroup physics
 class LineField : Collider
 {
 	/// @protectedsection

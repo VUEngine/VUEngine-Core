@@ -41,7 +41,6 @@ typedef const BgmapTextureSpec BgmapTextureROMSpec;
 /// Inherits from Texture
 ///
 /// A texture allocated in BGMAP memory.
-/// @ingroup graphics-2d-textures-bgmap
 class BgmapTexture : Texture
 {
 	/// @protectedsection

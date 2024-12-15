@@ -35,7 +35,6 @@ class Telegram;
 /// Inherits from ListenerObject
 ///
 /// Manages communications on the EXT port.
-/// @ingroup hardware
 singleton class CommunicationManager : ListenerObject
 {
 	/// @protectedsection

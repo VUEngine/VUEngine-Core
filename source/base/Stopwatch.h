@@ -28,7 +28,6 @@
 /// Inherits from ListenerObject
 ///
 /// Implements a stopwatch to keep track of time passage.
-/// @ingroup base
 class Stopwatch : ListenerObject
 {
 	/// @protectedsection

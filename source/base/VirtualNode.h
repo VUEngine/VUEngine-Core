@@ -28,7 +28,6 @@
 /// Inherits from Object
 ///
 /// Implements an element of linked lists.
-/// @ingroup base
 class VirtualNode : Object
 {
 	/// @protectedsection

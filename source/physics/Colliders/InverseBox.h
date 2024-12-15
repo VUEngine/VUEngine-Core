@@ -28,7 +28,6 @@
 /// Inherits from Collider
 ///
 /// Defines a collider with the shape of a box that detects collision outside of it.
-/// @ingroup physics
 class InverseBox : Box
 {
 	/// @publicsection

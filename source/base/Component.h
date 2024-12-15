@@ -36,7 +36,6 @@ typedef const void ComponentSpec;
 /// Inherits from ListenerObject
 ///
 /// Serves as the base class for components of entities.
-/// @ingroup base
 abstract class Component : ListenerObject 
 {
 	/// @protectedsection

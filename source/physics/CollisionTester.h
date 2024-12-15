@@ -36,7 +36,6 @@ class Collider;
 /// Inherits from Object
 ///
 /// Implements collisions tests between two colliders.
-/// @ingroup physics
 static class CollisionTester : Object
 {
 	/// @publicsection

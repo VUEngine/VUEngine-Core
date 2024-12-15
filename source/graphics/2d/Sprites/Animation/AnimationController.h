@@ -36,7 +36,6 @@ class AnimationCoordinator;
 /// Inherits from ListenerObject
 ///
 /// Controls animations.
-/// @ingroup graphics-2d-sprites-animation
 class AnimationController : ListenerObject
 {
 	/// @protectedsection

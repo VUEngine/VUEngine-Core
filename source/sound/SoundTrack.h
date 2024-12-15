@@ -256,7 +256,6 @@ typedef const SoundTrackSpec SoundTrackROMSpec;
 /// Inherits from Object
 ///
 /// Implements a sound track.
-/// @ingroup sound
 class SoundTrack : Object
 {
 	/// @protectedsection

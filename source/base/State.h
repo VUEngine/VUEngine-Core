@@ -35,7 +35,6 @@ class Telegram;
 /// Inherits from ListenerObject
 ///
 /// Implements a behavioral model to be used in a finite state machine.
-/// @ingroup base
 abstract class State : ListenerObject
 {
 	/// @publicsection

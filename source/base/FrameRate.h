@@ -28,7 +28,6 @@
 /// Inherits from ListenerObject
 ///
 /// Keeps track of the program's frame rate.
-/// @ingroup base
 singleton class FrameRate : ListenerObject
 {
 	/// @protectedsection

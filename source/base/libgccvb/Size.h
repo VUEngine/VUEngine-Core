@@ -29,7 +29,6 @@
 /// Inherits from Object
 ///
 /// Implements methods to operate on Size structs.
-/// @ingroup base-libgccvb
 static class Size : Object
 {
 	/// @publicsection

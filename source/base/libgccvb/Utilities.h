@@ -50,7 +50,6 @@ extern const char _itoaNumbers[];
 /// Inherits from Object
 ///
 /// Implements miscellaneous methods related to strings manipulation.
-/// @ingroup base-libgccvb
 static class Utilities : Object
 {
 	/// @publicsection

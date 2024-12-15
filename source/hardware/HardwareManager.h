@@ -61,7 +61,6 @@ extern int16 _suspendInterruptRequest __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUT
 /// Inherits from Object
 ///
 /// Centralizes the management of the hardware.
-/// @ingroup hardware
 static class HardwareManager : Object
 {
 	/// @publicsection

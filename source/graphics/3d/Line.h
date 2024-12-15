@@ -51,7 +51,6 @@ typedef const LineSpec LineROMSpec;
 /// Inherits from Wireframe
 ///
 /// Draws a line.
-/// @ingroup graphics-3d
 class Line : Wireframe
 {
 	/// @protectedsection

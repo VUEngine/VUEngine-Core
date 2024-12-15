@@ -42,7 +42,6 @@ extern Rotation _previousCameraInvertedRotationBuffer __INITIALIZED_GLOBAL_DATA_
 /// Inherits from ListenerObject
 ///
 /// Manages instances of Wireframe.
-/// @ingroup graphics-3d
 singleton class WireframeManager : ListenerObject
 {
 	/// @protectedsection

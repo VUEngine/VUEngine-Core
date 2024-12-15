@@ -84,7 +84,6 @@ typedef const SoundSpec SoundROMSpec;
 /// Inherits from ListenerObject
 ///
 /// Implements sound playback.
-/// @ingroup sound
 class Sound : ListenerObject
 {
 	/// @protectedsection

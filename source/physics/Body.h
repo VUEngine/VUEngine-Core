@@ -85,7 +85,6 @@ typedef struct Vector3DPlus
 /// Inherits from ListenerObject
 ///
 /// Implements newtonian physics.
-/// @ingroup physics
 class Body : ListenerObject
 {
 	/// @protectedsection

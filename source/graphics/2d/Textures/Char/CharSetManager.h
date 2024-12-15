@@ -35,7 +35,6 @@ class VirtualList;
 /// Inherits from Object
 ///
 /// Manages char sets and CHAR memory allocation.
-/// @ingroup graphics-2d-textures-char
 singleton class CharSetManager : Object
 {
 	/// @protectedsection

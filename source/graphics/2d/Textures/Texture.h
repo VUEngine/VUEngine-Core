@@ -84,7 +84,6 @@ typedef const TextureSpec TextureROMSpec;
 /// Inherits from ListenerObject
 ///
 /// A texture to be displayed by a sprite.
-/// @ingroup graphics-2d-textures
 abstract class Texture : ListenerObject
 {
 	/// Pointer to the implementation that updates graphical data in DRAM

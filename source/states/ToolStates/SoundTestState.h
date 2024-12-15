@@ -28,7 +28,6 @@
 /// Inherits from ToolState
 ///
 /// Implements a tool state to test sounds.
-/// @ingroup states
 singleton class SoundTestState : ToolState
 {
 	/// Method to retrieve the singleton instance

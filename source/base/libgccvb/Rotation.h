@@ -37,7 +37,6 @@ extern const Rotation* _cameraRotation __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBU
 /// Inherits from Object
 ///
 /// Implements methods to operate on Rotation structs.
-/// @ingroup base-libgccvb
 static class Rotation : Object
 {
 	/// @publicsection

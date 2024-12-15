@@ -88,7 +88,6 @@ typedef const ParticleSystemSpec ParticleSystemROMSpec;
 /// Inherits from Entity
 ///
 /// Implements an entity that generates particles.
-/// @ingroup stage-entities-particles
 class ParticleSystem : Entity
 {
 	/// @protectedsection
@@ -172,7 +171,7 @@ class ParticleSystem : Entity
 	/// Start spawning particles.
 	void start();
 
-	//// Pause the spawning of particles.
+	/// Pause the spawning of particles.
 	void pause();
 
 	/// Resume the spawning of particles. 

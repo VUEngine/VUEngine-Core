@@ -225,7 +225,6 @@ typedef struct StageEntityDescription
 /// Inherits from Container
 ///
 /// Implements a container that represents a game level.
-/// @ingroup stage
 class Stage : Container
 {
 	/// @protectedsection

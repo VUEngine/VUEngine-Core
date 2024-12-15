@@ -29,7 +29,6 @@
 /// Inherits from Object
 ///
 /// Implements a linked list of non fixed data type elements.
-/// @ingroup base
 class VirtualList : Object
 {
 	/// @protectedsection

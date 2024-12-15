@@ -171,7 +171,6 @@ typedef const ColliderSpec ColliderROMSpec;
 /// Inherits from Component
 ///
 /// Checks collisions against other colliders.
-/// @ingroup physics
 abstract class Collider : Component
 {
 	/// @protectedsection

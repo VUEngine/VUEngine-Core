@@ -35,7 +35,6 @@ class ObjectSprite;
 /// Inherits from Sprite
 ///
 /// Manages ObjectSprites that are displayed in the same SPT.
-/// @ingroup graphics-2d-sprites-object
 class ObjectSpriteContainer : Sprite
 {
 	/// @protectedsection

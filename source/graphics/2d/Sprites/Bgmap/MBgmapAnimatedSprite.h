@@ -45,7 +45,6 @@ typedef const MBgmapAnimatedSpriteSpec MBgmapAnimatedSpriteROMSpec;
 /// Inherits from BgmapSprite
 ///
 /// Animates a sprite whose texture is allocated in BGMAP space.
-/// @ingroup graphics-2d-sprites-bgmap
 class MBgmapAnimatedSprite : MBgmapSprite
 {
 	/// @publicsection

@@ -35,7 +35,6 @@
 /// Inherits from Object
 ///
 /// Implements various draw rutines that manipulate the frame buffers.
-/// @ingroup graphics-3d
 singleton class DirectDraw : Object
 {
 	/// @protectedsection

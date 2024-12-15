@@ -50,7 +50,6 @@ enum OffsetIndex
 /// Inherits from Texture
 ///
 /// Allocates BGMAP space for textures.
-/// @ingroup graphics-2d-textures-bgmap
 singleton class BgmapTextureManager : Object
 {
 	// List of textures with BGMAP space allocated for them

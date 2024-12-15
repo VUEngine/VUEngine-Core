@@ -28,7 +28,6 @@
 /// Inherits from Object
 ///
 /// Computes parallax.
-/// @ingroup base
 static class Optics : Object
 {
 	/// @publicsection

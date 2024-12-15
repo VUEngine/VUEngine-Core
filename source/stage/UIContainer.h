@@ -29,7 +29,6 @@
 /// Inherits from Container
 ///
 /// Implements a container whose children are always fixed to the camera
-/// @ingroup stage
 class UIContainer : Container
 {
 	/// @publicsection

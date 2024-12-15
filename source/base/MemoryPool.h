@@ -56,7 +56,6 @@ enum MemoryPoolSizes
 /// Inherits from Object
 ///
 /// Implements a memory pool for dynamic object allocation.
-/// @ingroup base
 singleton class MemoryPool : Object
 {
 	/// @protectedsection

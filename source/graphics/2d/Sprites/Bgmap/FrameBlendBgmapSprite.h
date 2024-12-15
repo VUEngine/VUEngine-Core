@@ -46,7 +46,6 @@ typedef const FrameBlendBgmapSpriteSpec FrameBlendBgmapSpriteROMSpec;
 /// Inherits from BgmapSprite
 ///
 /// Blends two frames of animation into a single one to achieve hi color images with a single sprite.
-/// @ingroup graphics-2d-sprites-bgmap
 class FrameBlendBgmapSprite : BgmapSprite
 {
 	/// The frame to show during the game cycle

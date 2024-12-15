@@ -53,7 +53,6 @@ enum CameraFX
 /// Inherits from ListenerObject
 ///
 /// Manages camera's special effects, brightness transitions, etc.
-/// @ingroup camera
 singleton class CameraEffectManager : ListenerObject
 {
 	/// Target brightness for the current fade effect

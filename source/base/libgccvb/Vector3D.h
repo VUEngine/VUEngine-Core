@@ -31,7 +31,6 @@
 /// Inherits from Object
 ///
 /// Implements methods to operate on Vector3D structs.
-/// @ingroup base-libgccvb
 static class Vector3D : Object
 {
 	/// @publicsection

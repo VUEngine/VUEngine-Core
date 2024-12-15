@@ -61,7 +61,6 @@ typedef struct Event
 /// Inherits from Object
 ///
 /// Interacts by means of events and messages.
-/// @ingroup base
 abstract class ListenerObject : Object
 {
 	/// @protectedsection

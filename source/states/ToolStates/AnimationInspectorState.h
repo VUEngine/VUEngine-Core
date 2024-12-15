@@ -28,7 +28,6 @@
 /// Inherits from ToolState
 ///
 /// Implements a tool state to inspect animations.
-/// @ingroup states
 singleton class AnimationInspectorState : ToolState
 {
 	/// @publicsection

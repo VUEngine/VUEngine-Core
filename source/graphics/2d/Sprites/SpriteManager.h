@@ -50,7 +50,6 @@ class VirtualList;
 /// Inherits from ListenerObject
 ///
 /// Manages all the sprite instances.
-/// @ingroup graphics-2d-sprites
 singleton class SpriteManager : Object
 {
 	/// @protectedsection

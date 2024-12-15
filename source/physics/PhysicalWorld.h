@@ -38,7 +38,6 @@
 /// Inherits from Object
 ///
 /// Manages the physical bodies in the game states.
-/// @ingroup physics
 class PhysicalWorld : Object
 {
 	/// @protectedsection

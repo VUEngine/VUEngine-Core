@@ -29,7 +29,6 @@
 /// Inherits from ListenerObject
 ///
 /// Defines objects that occupy a place in 3D space.
-/// @ingroup stage
 class SpatialObject : ListenerObject
 {
 	/// @protectedsection

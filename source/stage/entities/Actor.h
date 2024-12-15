@@ -63,7 +63,6 @@ typedef const ActorSpec ActorROMSpec;
 /// Inherits from AnimatedEntity
 ///
 /// Implements an animated entity that can have complex behavior and physical simulations.
-/// @ingroup stage-entities
 class Actor : AnimatedEntity
 {
 	/// @protectedsection

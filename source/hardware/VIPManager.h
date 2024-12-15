@@ -273,7 +273,6 @@ static ObjectAttributes* const	_objectAttributesBaseAddress =	(ObjectAttributes*
 /// Inherits from ListenerObject
 ///
 /// Manages the VIP.
-/// @ingroup hardware
 singleton class VIPManager : ListenerObject
 {
 	/// @protectedsection

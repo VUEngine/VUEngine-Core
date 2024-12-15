@@ -49,7 +49,6 @@ typedef const AsteriskSpec AsteriskROMSpec;
 /// Inherits from Wireframe
 ///
 /// Draws an asterisk.
-/// @ingroup graphics-3d
 class Asterisk : Wireframe
 {
 	/// @protectedsection

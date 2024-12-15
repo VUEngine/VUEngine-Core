@@ -35,7 +35,6 @@
 /// Inherits from Collider
 ///
 /// Defines a collider with the shape of a box.
-/// @ingroup physics
 class Box : Collider
 {
 	/// @protectedsection

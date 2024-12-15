@@ -71,7 +71,6 @@ typedef const ParticleSpec ParticleROMSpec;
 /// Inherits from SpatialObject
 ///
 /// Implements a particle that is spawned by particle systems.
-/// @ingroup stage-entities-particles
 class Particle : SpatialObject
 {
 	/// @protectedsection

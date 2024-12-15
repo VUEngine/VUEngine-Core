@@ -28,7 +28,6 @@
 /// Inherits from Object
 ///
 /// Wraps a message to be sent to an Object.
-/// @ingroup base
 class Telegram : Object
 {
 	/// @protectedsection

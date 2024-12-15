@@ -61,7 +61,6 @@ typedef const PhysicalParticleSpec PhysicalParticleROMSpec;
 /// Inherits from Particle
 ///
 /// Implements a particle that physically moves through a game stage.
-/// @ingroup stage-entities-particles
 class PhysicalParticle : Particle
 {
 	/// @protectedsection

@@ -28,7 +28,6 @@
 /// Inherits from Object
 ///
 /// Implements various affine transformations.
-/// @ingroup base-libgccvb
 static class Affine : Object
 {
 	/// @publicsection

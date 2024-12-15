@@ -48,7 +48,6 @@ typedef const ObjectTextureSpec ObjectTextureROMSpec;
 /// Inherits from Texture
 ///
 /// A texture allocated in OBJECT memory.
-/// @ingroup graphics-2d-textures-object
 class ObjectTexture : Texture
 {
 	/// @publicsection

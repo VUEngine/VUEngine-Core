@@ -76,7 +76,6 @@ typedef const BgmapSpriteSpec BgmapSpriteROMSpec;
 /// Inherits from Sprite
 ///
 /// Displays a texture that is allocated in BGMAP space.
-/// @ingroup graphics-2d-sprites-bgmap
 class BgmapSprite : Sprite
 {
 	/// @protectedsection

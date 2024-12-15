@@ -35,7 +35,6 @@ typedef ComponentSpec VisualComponentSpec;
 /// Inherits from Object
 ///
 /// Implements an element of linked lists.
-/// @ingroup base
 abstract class VisualComponent : Component 
 {
 	/// @protectedsection

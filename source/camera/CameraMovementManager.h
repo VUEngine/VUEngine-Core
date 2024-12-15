@@ -36,7 +36,6 @@ class Entity;
 /// Inherits from ListenerObject
 ///
 /// Manages camera's movement effects, like shaking, etc.
-/// @ingroup camera
 singleton class CameraMovementManager : ListenerObject
 {
 	/// @protectedsection

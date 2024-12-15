@@ -35,7 +35,6 @@
 /// Inherits from ListenerObject
 ///
 /// Performs some memory copy and related procedures.
-/// @ingroup base-libgccvb
 static class Mem : Object
 {
 	/// @publicsection

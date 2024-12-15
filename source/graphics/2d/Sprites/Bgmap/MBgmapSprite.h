@@ -63,7 +63,6 @@ typedef const MBgmapSpriteSpec MBgmapSpriteROMSpec;
 /// Inherits from MBgmapSprite
 ///
 /// Can display various textures across multiple BGMAP memory segments.
-/// @ingroup graphics-2d-sprites-bgmap
 class MBgmapSprite : BgmapSprite
 {
 	/// @protectedsection

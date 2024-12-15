@@ -35,7 +35,6 @@ class VirtualNode;
 /// Inherits from Object
 ///
 /// Implements a circular linked list of non fixed data type elements.
-/// @ingroup base
 class VirtualCircularList : Object
 {
 	/// @protectedsection

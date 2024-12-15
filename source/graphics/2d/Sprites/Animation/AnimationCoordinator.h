@@ -37,7 +37,6 @@ class AnimationController;
 /// Inherits from ListenerObject
 ///
 /// Coordinates animation controllers whose sprites share the same CharSet.
-/// @ingroup graphics-2d-sprites-animation
 class AnimationCoordinator : ListenerObject
 {
 	/// @protectedsection

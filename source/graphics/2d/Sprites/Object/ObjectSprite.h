@@ -63,7 +63,6 @@ typedef const ObjectSpriteSpec ObjectSpriteROMSpec;
 /// Inherits from Sprite
 ///
 /// Displays a texture in OBJECT space.
-/// @ingroup graphics-2d-sprites-object
 class ObjectSprite : Sprite
 {
 	/// @protectedsection

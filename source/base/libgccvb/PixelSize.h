@@ -28,7 +28,6 @@
 /// Inherits from Object
 ///
 /// Implements methods to operate on PixelSize structs.
-/// @ingroup base-libgccvb
 static class PixelSize : Object
 {
 	/// @publicsection

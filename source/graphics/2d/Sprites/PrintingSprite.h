@@ -46,7 +46,6 @@ typedef const PrintingSpriteSpec PrintingSpriteROMSpec;
 /// Inherits from Texture
 ///
 /// Enables the Printing class to output text to the screen.
-/// @ingroup graphics-2d-sprites-bgmap
 class PrintingSprite : BgmapSprite
 {
 	/// BGMAP segment used for printing

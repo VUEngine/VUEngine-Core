@@ -46,7 +46,6 @@ typedef struct UserObject
 /// Inherits from Tool
 ///
 /// Implements a tool that permits to manipulate a stage's entities.
-/// @ingroup tools
 singleton class StageEditor : Tool
 {
 	/// Node of the stage's selected entity

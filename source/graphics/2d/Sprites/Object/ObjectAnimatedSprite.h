@@ -46,7 +46,6 @@ typedef const ObjectAnimatedSpriteSpec ObjectAnimatedSpriteROMSpec;
 /// Inherits from BgmapSprite
 ///
 /// Animates a sprite whose graphics are allocated in OBJECT space.
-/// @ingroup graphics-2d-sprites-object
 class ObjectAnimatedSprite : ObjectSprite
 {	
 	/// @publicsection

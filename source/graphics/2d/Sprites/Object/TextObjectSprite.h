@@ -55,7 +55,6 @@ typedef const TextObjectSpriteSpec TextObjectSpriteROMSpec;
 /// Inherits from Sprite
 ///
 /// Displays a text in OBJECT space.
-/// @ingroup graphics-2d-sprites-object
 class TextObjectSprite : ObjectSprite
 {
 	/// @protectedsection

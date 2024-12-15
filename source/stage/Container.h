@@ -44,7 +44,6 @@ class VirtualList;
 /// Inherits from SpatialObject
 ///
 /// Adds parenting cababilities to spatial objects.
-/// @ingroup stage-entities
 class Container : SpatialObject
 {
 	/// @protectedsection

@@ -30,7 +30,6 @@
 /// Inherits from Tool
 ///
 /// Implements a tool to test sounds.
-/// @ingroup tools
 singleton class SoundTest : Tool
 {
 	/// Currently tested sound

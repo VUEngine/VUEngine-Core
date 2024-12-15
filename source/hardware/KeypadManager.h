@@ -107,7 +107,6 @@ typedef struct UserInput
 /// Inherits from ListenerObject
 ///
 /// Manages keypad inputs.
-/// @ingroup hardware
 singleton class KeypadManager : ListenerObject
 {
 	/// @protectedsection

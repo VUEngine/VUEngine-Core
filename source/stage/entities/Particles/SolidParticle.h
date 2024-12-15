@@ -70,7 +70,6 @@ typedef const SolidParticleSpec SolidParticleROMSpec;
 /// Inherits from PhysicalParticle
 ///
 /// Implements a physical particle that collides with other objects in the game stage.
-/// @ingroup stage-entities-particles
 class SolidParticle : PhysicalParticle
 {
 	/// @protectedsection

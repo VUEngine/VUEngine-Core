@@ -28,7 +28,6 @@
 /// Inherits from Collider
 ///
 /// Defines a collider with the shape of a ball.
-/// @ingroup physics
 class Ball : Collider
 {
 	/// @protectedsection

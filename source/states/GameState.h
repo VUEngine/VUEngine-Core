@@ -43,7 +43,6 @@ class VirtualList;
 /// Inherits from State
 ///
 /// Implements a state that the VUEngine's state machine can transition into.
-/// @ingroup states
 class GameState : State
 {
 	/// A container for entities that componse the UI

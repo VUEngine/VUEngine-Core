@@ -73,7 +73,6 @@ typedef struct MeshSegment
 /// Inherits from Wireframe
 ///
 /// Draws the segments that compose the mesh.
-/// @ingroup graphics-3d
 class Mesh : Wireframe
 {
 	/// @protectedsection

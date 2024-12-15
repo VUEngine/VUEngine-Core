@@ -75,7 +75,6 @@ enum TimerResolutionScales
 /// Inherits from Object
 ///
 /// Manages rumble effects.
-/// @ingroup hardware
 singleton class TimerManager : Object
 {
 	/// Elapsed milliseconds since the last call to reset

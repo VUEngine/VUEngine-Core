@@ -49,7 +49,6 @@ typedef const BehaviorSpec BehaviorROMSpec;
 /// Inherits from Component
 ///
 /// Implements a container whose children are always fixed to the camera
-/// @ingroup stage-entities
 abstract class Behavior : Component
 {
 	/// @protectedsection

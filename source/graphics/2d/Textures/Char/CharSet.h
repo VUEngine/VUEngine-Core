@@ -75,7 +75,6 @@ typedef const CharSetSpec CharSetROMSpec;
 /// Inherits from ListenerObject
 ///
 /// Manages the color data of tile array and writes it to VRAM.
-/// @ingroup graphics-2d-textures-char
 class CharSet : ListenerObject
 {
 	/// @protectedsection

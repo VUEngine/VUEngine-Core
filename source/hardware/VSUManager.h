@@ -160,7 +160,6 @@ typedef struct VSUSoundSourceConfiguration
 /// Inherits from Object
 ///
 /// Manages the VSU.
-/// @ingroup hardware
 singleton class VSUManager : Object
 {
 	/// @protectedsection

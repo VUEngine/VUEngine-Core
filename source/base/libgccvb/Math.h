@@ -328,7 +328,6 @@ extern const int16 _sinLut[];
 /// Inherits from Object
 ///
 /// Implements miscelaneous mathematical functions.
-/// @ingroup base-libgccvb
 static class Math : Object
 {
 	/// @publicsection

@@ -46,7 +46,6 @@ typedef struct UserAnimatedEntity
 /// Inherits from Tool
 ///
 /// Implements a tool that manipulates animations.
-/// @ingroup tools
 singleton class AnimationInspector : Tool
 {
 	/// Currently inspected sprite

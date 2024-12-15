@@ -53,7 +53,6 @@ typedef const AnimatedEntitySpec AnimatedEntityROMSpec;
 /// Inherits from Entity
 ///
 /// Implements an entity that proxies animation related methods to its sprites.
-/// @ingroup stage-entities
 class AnimatedEntity : Entity
 {
 	/// Pointer to the animations available to this instance

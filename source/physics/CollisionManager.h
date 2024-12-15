@@ -44,7 +44,6 @@ class Clock;
 /// Inherits from Object
 ///
 /// Manages the colliders in the game states.
-/// @ingroup physics
 class CollisionManager : Object
 {
 	/// @protectedsection

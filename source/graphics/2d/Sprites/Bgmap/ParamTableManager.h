@@ -107,7 +107,6 @@ typedef struct ParamTableFreeData
 /// Inherits from Object
 ///
 /// Manages param table space allocating and releasing blocks in it.
-/// @ingroup graphics-2d-sprites-bgmap
 singleton class ParamTableManager : Object
 {
 	/// @protectedsection

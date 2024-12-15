@@ -84,7 +84,6 @@ enum OptionsAlignment
 /// Inherits from VisualComponent
 ///
 /// Implements a simple interactive menu.
-/// @ingroup tools
 class OptionsSelector : ListenerObject
 {
 	/// @protectedsection

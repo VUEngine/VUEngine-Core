@@ -73,7 +73,6 @@ typedef const WireframeSpec WireframeROMSpec;
 /// Inherits from VisualComponent
 ///
 /// Draws 3D shapes to the frame buffers.
-/// @ingroup graphics-3d
 abstract class Wireframe : VisualComponent
 {
 	/// Displacement relative to the owner's spatial position

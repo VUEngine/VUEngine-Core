@@ -51,7 +51,6 @@ extern const Optical* _optical __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE;
 /// Inherits from ListenerObject
 ///
 /// Represents the player's view point.
-/// @ingroup camera
 singleton class Camera : ListenerObject
 {
 	/// Optical configuration values used for projections

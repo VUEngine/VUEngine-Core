@@ -29,7 +29,6 @@
 /// Inherits from Object
 ///
 /// Defines an interface for debugging tools.
-/// @ingroup tools
 abstract class Tool : Object
 {
 	/// @protectedsection

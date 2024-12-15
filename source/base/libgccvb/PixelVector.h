@@ -30,7 +30,6 @@
 /// Inherits from Object
 ///
 /// Implements methods to operate on PixelVector structs.
-/// @ingroup base-libgccvb
 static class PixelVector : Object
 {
 	/// @publicsection

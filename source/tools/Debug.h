@@ -45,7 +45,6 @@ typedef struct ClassSizeData
 /// Inherits from Tool
 ///
 /// Implements a tool that displays various debug information.
-/// @ingroup tools
 singleton class Debug : Tool
 {
 	/// Degug pages

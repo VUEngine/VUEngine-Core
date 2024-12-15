@@ -51,7 +51,6 @@ enum StateOperations
 /// Inherits from ListenerObject
 ///
 /// Implements a behavioral model of finite states.
-/// @ingroup base
 class StateMachine : ListenerObject
 {
 	/// @protectedsection
