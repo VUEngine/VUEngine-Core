@@ -218,6 +218,7 @@ singleton class Camera : ListenerObject
 	/// Print the camera's status.
 	/// @param x: Screen x coordinate where to print
 	/// @param y: Screen y coordinate where to print
+	/// @param inPixels: If true, the spatial data is printed in pixel units; in meter, otherwise
 	void print(int32 x, int32 y, bool inPixels);
 }
 

@@ -86,6 +86,7 @@ singleton class MessageDispatcher : Object
 	static bool dispatchMessage(uint32 delay, ListenerObject sender, ListenerObject receiver, int32 message, void* extraInfo);
 
 	/// Dispatch delayed message
+	/// @param clock: Clock on which to check for the delay timeout
 	/// @param delay: Milliseconds to wait before dispatching the message
 	/// @param sender: Object that sends the message
 	/// @param receiver: Object that receives the message

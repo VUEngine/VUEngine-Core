@@ -93,7 +93,7 @@ abstract class ListenerObject : Object
 	void removeEventListener(ListenerObject listener, EventListener callback, uint16 eventCode);
 
 	/// Remove all listener objects for a specific callback and code from the listeners.
-	/// @param method: EventListener callback for the listener object
+	/// @param callback: EventListener callback for the listener object
 	/// @param eventCode: Event's code to stop listen for
 	void removeEventListeners(EventListener callback, uint16 eventCode);
 

@@ -68,6 +68,7 @@ class AnimationController : ListenerObject
 	void constructor();
 
 	/// Play the animation with the provided name from the provided array of animation functions.
+	/// @param animationFunctions: Array of functions where to look for the animation to play
 	/// @param animationName: Name of the animation to play
 	/// @param scope: Object that will be notified of playback events
 	/// @return True if the animation started playing; false otherwise

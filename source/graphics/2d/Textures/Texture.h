@@ -226,6 +226,7 @@ abstract class Texture : ListenerObject
 
 	/// Replace a pixel in the sprite's texture.
 	/// @param texturePixel: Coordinate in texture's space of the CHAR to replace
+	/// @param charSetPixel: Coordinate in CHAR space of the CHAR to replace
 	/// @param newPixelColor: Color data array for the CHAR 
 	void putPixel(const Point* texturePixel, const Pixel* charSetPixel, BYTE newPixelColor);
 	

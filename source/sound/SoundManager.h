@@ -109,6 +109,7 @@ singleton class SoundManager : ListenerObject
 	void rewindAllSounds();
 
 	/// Stop all playing sounds.
+	/// @param release: If true, sounds are not only stopped but released
 	/// @param excludedSounds: Array of sound specs to not stop
 	void stopAllSounds(bool release, SoundSpec** excludedSounds);
 

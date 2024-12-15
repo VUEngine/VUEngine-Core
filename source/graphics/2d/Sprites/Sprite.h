@@ -147,6 +147,7 @@ abstract class Sprite : VisualComponent
 
 	/// Render the sprite by configuring the DRAM assigned to it by means of the provided index.
 	/// @param index: Determines the region of DRAM that this sprite is allowed to configure
+	/// @param updateAnimation: If false, animations are not updated
 	/// @return The index that determines the region of DRAM that this sprite manages
 	int16 render(int16 index, bool updateAnimation);
 
@@ -326,6 +327,7 @@ abstract class Sprite : VisualComponent
 
 	/// Replace a pixel in the sprite's texture.
 	/// @param texturePixel: Coordinate in texture's space of the CHAR to replace
+	/// @param charSetPixel: Coordinate in CHAR space of the CHAR to replace
 	/// @param newPixelColor: Color data array for the CHAR 
 	void putPixel(const Point* texturePixel, const Pixel* charSetPixel, BYTE newPixelColor);
 
