@@ -4,10 +4,10 @@
 		"title": "Events",
 		"properties": {
 			"events": {
-				"type": "array",
-				"items": {
-					"type": "string",
-					"default": ""
+				"type": "object",
+				"properties": {},
+				"additionalProperties": {
+					"type": "string"
 				}
 			}
 		},

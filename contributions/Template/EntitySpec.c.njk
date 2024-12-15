@@ -4,7 +4,7 @@
 {%- set sanitizedSpecName = itemUri | basename(false) | sanitizeSpecName -%}
 
 {%- set isAnimated = false -%}
-{%- if item.components.animations.length -%}
+{%- if item.components.animations | length -%}
 	{%- set isAnimated = true -%}
 {%- endif -%}
 
@@ -32,7 +32,7 @@
 {%- if item.physics.enabled -%}
 	{%- set includes = (includes.push('Body'), includes) -%}
 {%- endif -%}
-{%- if item.components.sprites.length -%}
+{%- if item.components.sprites | length -%}
 	{%- for sprite in item.components.sprites -%}
 		{%- set spriteClass = item.sprites.type ~ 'Sprite' -%}
 		{%- set spriteAllocatorClass = item.sprites.type ~ 'Sprite' -%}
@@ -55,22 +55,22 @@
 		{%- endif %}
 	{%- endfor -%}
 {%- endif -%}
-{%- if item.inGameType != 'None' and item.components.colliders.length -%}
+{%- if item.inGameType != 'None' and item.components.colliders | length -%}
 	{%- for collider in item.components.colliders -%}
 		{%- set includes = (includes.push(collider.type), includes) -%}
-		{%- if collider.layers.length > 0 %}
+		{%- if collider.layers | length > 0 %}
 			{%- set includes = (includes.push('ColliderLayers'), includes) -%}
 		{%- endif %}
 	{%- endfor -%}
 {%- endif -%}
-{%- if item.components.wireframes.length -%}
+{%- if item.components.wireframes | length -%}
 	{%- for wireframe in item.components.wireframes -%}
 		{%- set includes = (includes.push(wireframe.type), includes) -%}
 	{%- endfor -%}
 {%- endif -%}
 
 {#- PRINT INCLUDES -#}
-{%- if includes.length %}
+{%- if includes | length %}
 
 {{ macros.sectionHeader('Includes') }}
 
@@ -80,12 +80,12 @@
 {%- endif %}
 
 {#- PRINT IMAGE DATA AND SPRITES -#}
-{%- if item.components.sprites.length %}
+{%- if item.components.sprites | length %}
 
 {{ macros.sectionHeader('Declarations') }}
 
 {% for sprite in item.components.sprites -%}
-	{%- if not sprite._imageData | int and sprite._imageData.images.length -%}
+	{%- if not sprite._imageData | int and sprite._imageData.images | length -%}
 		{%- for imageData in sprite._imageData.images -%}
 			{#- Tiles -#}
 			{%- if imageData.tiles.data -%}
@@ -125,8 +125,8 @@
 	{%- set spriteAllocatorClass = item.sprites.type ~ 'AnimatedSprite' -%}
 {%- endif -%}
 
-{%- set isStereo = sprite.texture.files2 is defined and sprite.texture.files2.length > 0 -%}
-{%- set isStereoAnimation = sprite._imageData.images and sprite._imageData.images.length == 2 -%}
+{%- set isStereo = sprite.texture.files2 is defined and sprite.texture.files2 | length > 0 -%}
+{%- set isStereoAnimation = sprite._imageData.images and sprite._imageData.images | length == 2 -%}
 {%- for eye in ['L', 'R'] -%}
 {%- if eye === 'L' or isStereo -%}
 {%- set spriteImageData = sprite._imageData -%}
@@ -183,7 +183,7 @@ CharSetROMSpec {{ charsetSpecName }}CharsetSpec =
 	{{ tilesName }}Tiles,
 
 	// pointer to the frames offsets
-	{%- if imageData.tiles.frameOffsets is defined and imageData.tiles.frameOffsets.length %}
+	{%- if imageData.tiles.frameOffsets is defined and imageData.tiles.frameOffsets | length %}
 	{{ tilesName }}TilesFrameOffsets,
 	{%- else %}
 	NULL,
@@ -356,7 +356,7 @@ TextureROMSpec* const {{ spriteName }}TextureSpecs[] =
 AnimationFunctionROMSpec {{ sanitizedSpecName }}Animation{{ loop.index }}AnimationSpec =
 {
 	// number of frames of this animation function
-	{{ animation.frames.length }},
+	{{ animation.frames | length }},
 
 	// frames to play in animation
 	{
@@ -390,7 +390,7 @@ AnimationFunctionROMSpec* const {{ sanitizedSpecName }}AnimationSpecs[] =
 {% endif %}
 
 {#- PRINT WIREFRAMES -#}
-{%- if item.components.wireframes.length %}
+{%- if item.components.wireframes | length %}
 
 
 {{ macros.sectionHeader('Wireframes') }}
@@ -449,7 +449,7 @@ const PixelVector {{ wireframeName }}WireframeSegments[][2]=
 	(PixelVector(*)[2]){{ wireframeName }}WireframeSegments,
 	{%- elseif wireframe.type == 'Asterisk' -%}
 	// length
-	{{ wireframe.length }},
+	{{ wireframe | length }},
 	{%- endif %}
 };
 
@@ -465,7 +465,7 @@ WireframeROMSpec* const {{ sanitizedSpecName }}WireframeSpecs[] =
 {% endif %}
 
 {#- PRINT COLLIDERS -#}
-{%- if item.inGameType != 'None' and item.components.colliders.length %}
+{%- if item.inGameType != 'None' and item.components.colliders | length %}
 
 
 {{ macros.sectionHeader('Colliders') }}
@@ -493,14 +493,14 @@ ColliderROMSpec {{ sanitizedSpecName }}ColliderSpecs[] =
 		{{ collider.checkForCollisions }},
 
 		// layers in which I live
-		{%- if collider.layers.length > 0 %}
+		{%- if collider.layers | length > 0 %}
 		kLayer{{ collider.layers.join(' | kLayer') }},
 		{%- else %}
 		kLayerNone,
 		{%- endif %}
 
 		// layers to ignore when checking for collisions
-		{%- if collider.layersToCheck.length > 0 %}
+		{%- if collider.layersToCheck | length > 0 %}
 		kLayerAll & ~(kLayer{{ collider.layersToCheck.join(' | kLayer') }})
 		{%- else %}
 		kLayerAll,
@@ -540,7 +540,7 @@ PhysicalPropertiesROMSpec {{ sanitizedSpecName }}PhysicalPropertiesSpec =
 {%- endif %}
 
 {#- PRINT BEHAVIORS -#}
-{%- if item.components.behaviors.length %}
+{%- if item.components.behaviors | length %}
 
 BehaviorROMSpec* const {{ sanitizedSpecName }}Behaviors[] =
 {
@@ -552,7 +552,7 @@ BehaviorROMSpec* const {{ sanitizedSpecName }}Behaviors[] =
 {%- endif %}
 
 {#- PRINT CHILDREN -#}
-{%- if item.components.children.length %}
+{%- if item.components.children | length %}
 
 PositionedEntityROMSpec {{ sanitizedSpecName }}Children[] =
 {
@@ -582,14 +582,14 @@ PositionedEntityROMSpec {{ sanitizedSpecName }}Children[] =
 			__TYPE({{ entityClass }}),
 
 			// children
-			{%- if item.components.children.length %}
+			{%- if item.components.children | length %}
 			(struct PositionedEntity*){{ sanitizedSpecName }}Children,
 			{%- else %}
 			NULL,
 			{%- endif %}
 
 			// behaviors
-			{%- if item.components.behaviors.length %}
+			{%- if item.components.behaviors | length %}
 			(BehaviorSpec**){{ sanitizedSpecName }}Behaviors,
 			{%- else %}
 			NULL,
@@ -603,7 +603,7 @@ PositionedEntityROMSpec {{ sanitizedSpecName }}Children[] =
 			{%- endif %}
 
 			// sprites
-			{%- if item.components.sprites.length %}
+			{%- if item.components.sprites | length %}
 			(SpriteSpec**){{ sanitizedSpecName }}SpriteSpecs,
 			{%- else %}
 			NULL,
@@ -613,14 +613,14 @@ PositionedEntityROMSpec {{ sanitizedSpecName }}Children[] =
 			{{ item.sprites.useZDisplacementInProjection }},
 
 			// wireframes
-			{%- if item.components.wireframes.length %}
+			{%- if item.components.wireframes | length %}
 			(WireframeSpec**){{ sanitizedSpecName }}WireframeSpecs,
 			{%- else %}
 			NULL,
 			{%- endif %}
 
 			// colliders
-			{%- if item.inGameType != 'None' and item.components.colliders.length %}
+			{%- if item.inGameType != 'None' and item.components.colliders | length %}
 			(ColliderSpec*){{ sanitizedSpecName }}ColliderSpecs,
 			{%- else %}
 			NULL,
@@ -660,14 +660,14 @@ PositionedEntityROMSpec {{ sanitizedSpecName }}Children[] =
 	{{ item.physics.enabled }},
 
 	// axis subject to gravity
-	{%- if item.physics.gravityAxes is defined and item.physics.gravityAxes is iterable and item.physics.gravityAxes.length %}
+	{%- if item.physics.gravityAxes is defined and item.physics.gravityAxes is iterable and item.physics.gravityAxes | length %}
 	__{{ item.physics.gravityAxes.join(', __') }}
 	{%- else %} 
 	__NO_AXIS,
 	{%- endif %}
 
 	// axis around which to rotate the entity when syncronizing with body
-	{%- if item.physics.rotationAxes is defined and item.physics.rotationAxes is iterable and item.physics.rotationAxes.length %}
+	{%- if item.physics.rotationAxes is defined and item.physics.rotationAxes is iterable and item.physics.rotationAxes | length %}
 	__{{ item.physics.rotationAxes.join(' | __') }}
 	{%- else %} 
 	__NO_AXIS,

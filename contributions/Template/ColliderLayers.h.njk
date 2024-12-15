@@ -13,11 +13,11 @@
 
 {{ macros.sectionHeader('Definitions') }}
 
-{% if layers.layers.length > 0 -%}
+{% if layers.layers | length > 0 -%}
 enum ColliderLayers
 {
 	{%- set current = 0 -%}
-	{%- for layer in layers.layers | removeEmpty | sort -%}
+	{%- for layer in layers.layers | values | removeEmpty | sort -%}
 	{%- set current = current + 1 %}
 	kLayer{{ layer | sanitizeSpecName }} = 1 << (kLayerNone + {{ current }}),
 	{%- endfor %}

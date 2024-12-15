@@ -6,11 +6,11 @@
 {%- set compression = sprite.compression -%}
 
 {%- set frameCount = item.animations.totalFrames -%}
-{%- set isAnimation = item.components.animations.length > 0 -%}
+{%- set isAnimation = item.components.animations | length > 0 -%}
 {%- set mostSpritesOnAFile = 0 -%}
 {% for sprite in item.components.sprites -%}
-	{%- if sprite.texture.files.length > mostSpritesOnAFile -%}
-		{%- set mostSpritesOnAFile = sprite.texture.files.length -%}
+	{%- if sprite.texture.files | length > mostSpritesOnAFile -%}
+		{%- set mostSpritesOnAFile = sprite.texture.files | length -%}
 	{%- endif -%}
 {%- endfor -%}
 {%- set isMultifileAnimation = mostSpritesOnAFile > 1 -%}
@@ -20,9 +20,9 @@
 	{%- set isSpritesheetAnimation = true -%}
 {%- endif -%}
 
-{%- if item.components.sprites.length %}
+{%- if item.components.sprites | length %}
 	{% for sprite in item.components.sprites -%}
-		{%- if not sprite._imageData | int and sprite._imageData.images.length -%}
+		{%- if not sprite._imageData | int and sprite._imageData.images | length -%}
 			{%- for imageData in sprite._imageData.images -%}
 				{%- set tilesName = sanitizedSpecName ~ 'Entity' ~ imageData.tiles.name -%}
 				{%- set customMapPrefix = sanitizedSpecName ~ 'Entity' -%}

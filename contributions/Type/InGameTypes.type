@@ -4,10 +4,10 @@
 		"title": "In-Game Types",
 		"properties": {
 			"types": {
-				"type": "array",
-				"items": {
-					"type": "string",
-					"default": ""
+				"type": "object",
+				"properties": {},
+				"additionalProperties": {
+					"type": "string"
 				}
 			}
 		},

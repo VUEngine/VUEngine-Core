@@ -13,10 +13,10 @@
 
 {{ macros.sectionHeader('Definitions') }}
 
-{% if events.events.length > 0 -%}
+{% if events.events | length > 0 -%}
 enum GameEvents
 {
-	{%- for event in events.events | removeEmpty | sort %}
+	{%- for event in events.events | values | removeEmpty | sort %}
 	kEvent{{ event | sanitizeSpecName }}{% if loop.first %} = kEventEngineLast + 1{% endif %},
 	{%- endfor %}
 };

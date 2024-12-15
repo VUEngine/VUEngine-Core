@@ -13,10 +13,10 @@
 
 {{ macros.sectionHeader('Definitions') }}
 
-{% if types.types.length > 0 -%}
+{% if types.types | length > 0 -%}
 enum InGameTypes
 {
-	{%- for type in types.types | removeEmpty | sort %}
+	{%- for type in types.types | values | removeEmpty | sort %}
 	kType{{ type | sanitizeSpecName }}{% if loop.first %} = kTypeNone + 1{% endif %},
 	{%- endfor %}
 };

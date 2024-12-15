@@ -4,10 +4,10 @@
 		"title": "Messages",
 		"properties": {
 			"messages": {
-				"type": "array",
-				"items": {
-					"type": "string",
-					"default": ""
+				"type": "object",
+				"properties": {},
+				"additionalProperties": {
+					"type": "string"
 				}
 			}
 		},

@@ -13,10 +13,10 @@
 
 {{ macros.sectionHeader('Definitions') }}
 
-{% if messages.messages.length > 0 -%}
+{% if messages.messages | length > 0 -%}
 enum Messages
 {
-	{%- for message in messages.messages | removeEmpty | sort %}
+	{%- for message in messages.messages | values | removeEmpty | sort %}
 	kMessage{{ message | sanitizeSpecName }}{% if loop.first %} = kMessageLastEngine + 1{% endif %},
 	{%- endfor %}
 };

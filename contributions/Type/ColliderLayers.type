@@ -4,10 +4,10 @@
 		"title": "Collider Layers",
 		"properties": {
 			"layers": {
-				"type": "array",
-				"items": {
-					"type": "string",
-					"default": ""
+				"type": "object",
+				"properties": {},
+				"additionalProperties": {
+					"type": "string"
 				}
 			}
 		},
