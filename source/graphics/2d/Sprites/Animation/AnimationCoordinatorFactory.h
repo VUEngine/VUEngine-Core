@@ -58,7 +58,7 @@ singleton class AnimationCoordinatorFactory : Object
 	/// Get an animation coordinator.
 	/// @param animationController: Animation controller to potentially coordinate
 	/// @param scope: Object that might need to listen for playback related events
-	/// @param charSet: CharSet shared by the animation controllers to coordinate   
+	/// @param charSetSpec: CharSetSpec shared by the animation controllers to coordinate   
 	/// @return ClockManager singleton
 	AnimationCoordinator getCoordinator(AnimationController animationController, ListenerObject scope, const CharSetSpec* charSetSpec);
 }

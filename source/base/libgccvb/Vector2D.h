@@ -81,19 +81,20 @@ static class Vector2D : Object
 	/// @return Perpendicular vector
 	static inline Vector2D perpendicular(Vector2D a, bool left);
 
+	/// 
 	/// @param vector: Vector to scale
 	/// @param scale: Scale to apply to the vector's components
 	/// @return Scaled vector
 	static inline Vector2D scale(Vector2D vector, Scale scale);
 
 	/// Apply a scalar product over the vector's components
-	/// @param rotation: Vector to scale
+	/// @param vector: Vector to scale
 	/// @param scalar: Scalar to multiply
 	/// @return Scaled vector
 	static inline Vector2D scalarProduct(Vector2D vector, fixed_t scalar);
 
 	/// Apply a scalar division over the vector's components
-	/// @param rotation: Vector to scale
+	/// @param vector: Vector to scale
 	/// @param scalar: Scalar divisor
 	/// @return Scaled vector
 	static inline Vector2D scalarDivision(Vector2D vector, fixed_t scalar);
@@ -129,7 +130,7 @@ static class Vector2D : Object
 	static inline Vector2D getFromVector3D(Vector3D vector3D);
 
 	/// Transform the provided vector in pixel coordinates into a normal 2D vector.
-	/// @param pixelVector: Vector to transform
+	/// @param screenVector: Vector to transform
 	/// @return 2D vector
 	static inline Vector2D getFromPixelVector(PixelVector screenVector);
 
@@ -193,7 +194,7 @@ static class Vector2D : Object
 	static inline bool areEqual(Vector2D a, Vector2D b);
 	
 	/// Test if a number is within a range.
-	/// @param value: Number to test
+	/// @param number: Number to test
 	/// @param limitA: First limit of the range
 	/// @param limitB: Second limit of the range
 	/// @return True if all the provided number is within the provided limits

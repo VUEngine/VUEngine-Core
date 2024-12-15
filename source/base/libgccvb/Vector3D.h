@@ -104,13 +104,13 @@ static class Vector3D : Object
 	static inline Vector3D scale(Vector3D vector, Scale scale);
 
 	/// Apply a scalar product over the vector's components
-	/// @param rotation: Vector to scale
+	/// @param vector: Vector to scale
 	/// @param scalar: Scalar to multiply
 	/// @return Scaled vector
 	static inline Vector3D scalarProduct(Vector3D vector, fixed_t scalar);
 
 	/// Apply a scalar division over the vector's components
-	/// @param rotation: Vector to scale
+	/// @param vector: Vector to scale
 	/// @param scalar: Scalar divisor
 	/// @return Scaled vector
 	static inline Vector3D scalarDivision(Vector3D vector, fixed_t scalar);
@@ -236,7 +236,7 @@ static class Vector3D : Object
 	static inline bool areEqual(Vector3D a, Vector3D b);
 	
 	/// Test if a number is within a range.
-	/// @param value: Number to test
+	/// @param number: Number to test
 	/// @param limitA: First limit of the range
 	/// @param limitB: Second limit of the range
 	/// @return True if all the provided number is within the provided limits

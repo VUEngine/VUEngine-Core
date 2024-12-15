@@ -42,8 +42,8 @@ class Ball : Collider
 	/// @param center: Center of the circle whose diameter is projected
 	/// @param radius: Radius of the circle whose diameter is projected
 	/// @param vector: Vector onto which to project the circle's diameter
-	/// @param out min: Variable to store the value of the lowest value of the projection
-	/// @param out max: Variable to store the value of the biggest value of the projection
+	/// @param min min: Variable to store the value of the lowest value of the projection
+	/// @param max max: Variable to store the value of the biggest value of the projection
 	static void project(Vector3D center, fixed_t radius, Vector3D vector, fixed_t* min, fixed_t* max);
 
 	/// Class' constructor

@@ -119,7 +119,7 @@ singleton class SpriteManager : Object
 	void reset();
 
 	/// Set the clock that determines if the animations must be updated or not.
-	/// @param animationsClock: Clock for the animations
+	/// @param clock: Clock for the animations
 	void setAnimationsClock(Clock clock);
 	
 	/// Create a sprite with the provided spec.
@@ -200,7 +200,7 @@ singleton class SpriteManager : Object
 
 	/// Hide all sprites except the provided one.
 	/// @param spareSprite: Sprite to not hide
-	/// @param showPrinting: Flag to allow/prohibit the display of the printing sprite
+	/// @param hidePrinting: Flag to allow/prohibit the display of the printing sprite
 	void hideSprites(Sprite spareSprite, bool hidePrinting);
 
 	/// Compute the total pixels drawn.

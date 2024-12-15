@@ -90,7 +90,7 @@ class PhysicalWorld : Object
 	Body createBody(SpatialObject owner, const PhysicalProperties* physicalProperties, uint16 axisSubjectToGravity);
 
 	/// Destroy the provided body.
-	/// @param collider: Body to destroy
+	/// @param body: Body to destroy
 	void destroyBody(Body body);
 
 	/// Set the time scale for time step on each call to update.

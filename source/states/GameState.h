@@ -215,12 +215,12 @@ class GameState : State
 	void processCollisions();
 
 	/// Propagate an integer message through the whole parenting hierarchy of the stage (children, grand children, etc.).
-	/// @param propagatedMessageHandler: Method that handles the message
+	/// @param message: The message to propagate
 	/// @return True if some entity processed the message
 	bool propagateMessage(int32 message);
 
 	/// Propagate a string through the whole parenting hierarchy of the stage (children, grand children, etc.).
-	/// @param propagatedMessageHandler: Method that handles the string
+	/// @param string: The string to propagate
 	/// @return True if some entity processed the string
 	bool propagateString(const char* string);
 

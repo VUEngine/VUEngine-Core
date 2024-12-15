@@ -92,7 +92,7 @@ class Mesh : Wireframe
 
 	/// Class' constructor
 	/// @param owner: SpatialObject to which the wireframe attaches to
-	/// @param asteriskSpec: Specification that determines how to configure the wireframe
+	/// @param meshSpec: Specification that determines how to configure the wireframe
 	void constructor(SpatialObject owner, const MeshSpec* meshSpec);
 
 	/// Retrieve the mesh's bounding box.
@@ -113,7 +113,7 @@ class Mesh : Wireframe
 	
 	/// Create new segments from the provided array.
 	/// @param segments: Array of segments holding their spatial data
-	/// @displacement: Displacement to add to the segments' vertices
+	/// @param displacement: Displacement to add to the segments' vertices
 	void addSegments(PixelVector (*segments)[2], Vector3D displacement);
 	
 	/// Create a new segment from provided vectors.

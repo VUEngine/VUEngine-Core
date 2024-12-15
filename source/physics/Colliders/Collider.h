@@ -234,7 +234,7 @@ abstract class Collider : Component
 	uint32 getLayers();
 
 	/// Set the layers in which live colliders to ignore when testing collisions.
-	/// @param layers: Layers to ignore when checking collisions
+	/// @param layersToIgnore: Layers to ignore when checking collisions
 	void setLayersToIgnore(uint32 layersToIgnore);
 
 	/// Retrieve the layers in which live colliders to ignore when testing collisions.

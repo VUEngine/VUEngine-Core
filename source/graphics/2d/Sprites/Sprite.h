@@ -285,11 +285,10 @@ abstract class Sprite : VisualComponent
 	void setFrameDuration(uint8 frameDuration);
 
 	/// Retrieve the duration in game cycles for each frame of animation.
-	/// @param Duration in game cycles for each frame of animation
 	uint8 getFrameDuration();
 
 	/// Set the decrement to frameDuration in each game cycle for each frame of animation.
-	/// @param frameCycleDecrement: Decrement to frameDuration in each game cycle for each frame of animation
+	/// @param frameDurationDecrement: Decrement to frameDuration in each game cycle for each frame of animation
 	void setFrameDurationDecrement(uint8 frameDurationDecrement);
 
 	/// Retrieve the animation function's name currently playing if any
@@ -301,7 +300,6 @@ abstract class Sprite : VisualComponent
 	void setPosition(const PixelVector* position);
 
 	/// Retrieve the position cache.
-	/// @param position: Cached position
 	const PixelVector* getPosition();
 
 	/// Set the position displacement.
@@ -328,7 +326,7 @@ abstract class Sprite : VisualComponent
 
 	/// Replace a pixel in the sprite's texture.
 	/// @param texturePixel: Coordinate in texture's space of the CHAR to replace
-	/// @param newChar: Color data array for the CHAR 
+	/// @param newPixelColor: Color data array for the CHAR 
 	void putPixel(const Point* texturePixel, const Pixel* charSetPixel, BYTE newPixelColor);
 
 	/// Register this sprite with the appropriate sprites manager.

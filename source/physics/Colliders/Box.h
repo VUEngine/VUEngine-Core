@@ -58,8 +58,8 @@ class Box : Collider
 	/// Project the vertexes onto the provided vector.
 	/// @param vertexes: Array of vectors to project
 	/// @param vector: Vector onto which make the projections
-	/// @param out min: Variable to store the value of the lowest value of the projection
-	/// @param out max: Variable to store the value of the biggest value of the projection
+	/// @param min min: Variable to store the value of the lowest value of the projection
+	/// @param max max: Variable to store the value of the biggest value of the projection
 	static void project(Vector3D vertexes[__BOX_VERTEXES], Vector3D vector, fixed_t* min, fixed_t* max);
 
 	/// Class' constructor
@@ -78,7 +78,7 @@ class Box : Collider
 	override void print(int32 x, int32 y);
 
 	/// Retrieve the vertexes that define the box.
-	/// @param out vertexes: Array of vectors that define the box
+	/// @param vertexes: Array of vectors that define the box
 	void getVertexes(Vector3D vertexes[__BOX_VERTEXES]);
 
 	/// Project the box's vertexes onto its normals.

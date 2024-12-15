@@ -44,7 +44,7 @@ static class CollisionTester : Object
 	/// Check if the provided colliders are overlaping each other.
 	/// @param requesterCollider: Collider asking for the test
 	/// @param otherCollider: Collider against which to test the overlaping
-	/// @param out collisionInformation: Struct holding the information with the results of the test
+	/// @param collisionInformation: Struct holding the information with the results of the test
 	/// @param sizeDelta: Delta to add to the collider's size
 	static void testOverlaping(Collider requesterCollider, Collider otherCollider, CollisionInformation* collisionInformation, fixed_t sizeDelta);
 }

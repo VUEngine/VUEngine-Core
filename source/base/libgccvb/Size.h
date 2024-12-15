@@ -35,7 +35,7 @@ static class Size : Object
 	/// @publicsection
 
 	/// Convert a PixelSize struct to a Size one.
-	/// @param size: PixelSize struct to convert
+	/// @param pixelSize: PixelSize struct to convert
 	/// @return Size struct
 	static inline Size getFromPixelSize(PixelSize pixelSize);
 }

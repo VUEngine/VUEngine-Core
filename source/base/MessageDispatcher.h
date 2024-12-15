@@ -132,7 +132,6 @@ singleton class MessageDispatcher : Object
 	bool discardAllDelayedMessages(ListenerObject listenerObject);
 
 	/// Print all delayed messages sent by an object.
-	/// @param sender: Object that originally sent the message
 	/// @param x: Screen x coordinate where to print
 	/// @param y: Screen y coordinate where to print
 	void print(int32 x, int32 y);

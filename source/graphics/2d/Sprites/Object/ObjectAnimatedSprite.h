@@ -53,7 +53,7 @@ class ObjectAnimatedSprite : ObjectSprite
 
 	/// Class' constructor
 	/// @param owner: SpatialObject to which the sprite attaches to
-	/// @param bgmapAnimatedSpriteSpec: Specification that determines how to configure the sprite
+	/// @param objectAnimatedSpriteSpec: Specification that determines how to configure the sprite
 	void constructor(SpatialObject owner, const ObjectAnimatedSpriteSpec* objectAnimatedSpriteSpec);
 
 	/// Update the animation.

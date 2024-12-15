@@ -96,7 +96,7 @@ static class Scale : Object
 	static inline bool areEqual(Scale a, Scale b);
 
 	/// Print the scale's components.
-	/// @param vector: Scale to print
+	/// @param scale: Scale to print
 	/// @param x: Screen x coordinate where to print
 	/// @param y: Screen y coordinate where to print
 	static void print(Scale scale, int32 x, int32 y);

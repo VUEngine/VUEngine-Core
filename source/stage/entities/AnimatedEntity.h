@@ -107,7 +107,7 @@ class AnimatedEntity : Entity
 	const char* getPlayingAnimationName();
 
 	/// Skip the currently playing animation to the provided frame.
-	/// @param actualFrame: The frame of the playing animation to skip to
+	/// @param frame: The frame of the playing animation to skip to
 	/// @return True if the actual frame was changed; false otherwise
 	void setActualFrame(int16 frame);
 

@@ -126,7 +126,6 @@ class AnimationController : ListenerObject
 	void setFrameDuration(uint8 frameDuration);
 
 	/// Retrieve the duration in game cycles for each frame of animation.
-	/// @param Duration in game cycles for each frame of animation
 	uint8 getFrameDuration();
 
 	/// Set the decrement to frameDuration in each game cycle for each frame of animation.
