@@ -547,7 +547,7 @@ void Sound::print(int32 x, int32 y)
 	PRINT_INT(speed, x + 6, y);
 	PRINT_TEXT("%", x + 6 + ((speed < 10) ? 1 : (speed < 100) ? 2 : 3), y);
 
-	PRINT_TEXT(kSoundPaused == this->state ? " \x0B " : "\x07\x07", x + 15, y++);
+	PRINT_TEXT(kSoundPlaying == this->state ? "\x07\x07" : " \x0B ", x + 15, y++);
 
 	y+=2;
 
