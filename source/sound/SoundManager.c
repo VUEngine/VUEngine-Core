@@ -125,6 +125,7 @@ bool SoundManager::playSound(const SoundSpec* soundSpec, const Vector3D* positio
 
 	if(!isDeleted(sound))
 	{
+		Sound::autoReleaseOnFinish(sound, true);
 		Sound::play(sound, position, playbackType);
 
 		return true;

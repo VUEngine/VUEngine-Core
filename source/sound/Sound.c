@@ -78,7 +78,7 @@ void Sound::constructor(const SoundSpec* soundSpec, EventListener soundReleaseLi
 	this->speed = __I_TO_FIX7_9_EXT(1);
 	this->previouslyElapsedTicks = 0;
 	this->totalPlaybackMilliseconds = 0;
-	this->autoReleaseOnFinish = true;
+	this->autoReleaseOnFinish = false;
 	this->playbackType = kSoundPlaybackNone;
 	this->locked = false;
 
