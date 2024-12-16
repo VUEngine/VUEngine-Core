@@ -23,6 +23,7 @@
 //=========================================================================================================
 
 class Clock;
+class ListenerObject;
 class Telegram;
 
 
@@ -32,12 +33,15 @@ class Telegram;
 
 typedef struct DelayedMessage
 {
-	/// pointer to the telegram to dispatch
+	/// Telegram to dispatch
 	Telegram telegram;
-	/// time of arrival
+
+	/// Telegram's time of arrival
 	uint32 timeOfArrival;
-	/// reference to clock
+
+	/// Reference to clock for the time of arrival
 	Clock clock;
+
 	/// Discarded flag
 	bool discarded;
 
@@ -47,11 +51,6 @@ typedef struct DelayedMessage
 //=========================================================================================================
 // CLASS' DECLARATION
 //=========================================================================================================
-
-class ListenerObject;
-class StateMachine;
-class Telegram;
-class Clock;
 
 ///
 /// Class MessageDispatcher
