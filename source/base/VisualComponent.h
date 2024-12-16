@@ -68,6 +68,10 @@ abstract class VisualComponent : Component
 	/// Set the transparency mode
 	/// @param transparency: Transparecy effect (__TRANSPARENCY_NONE, __TRANSPARENCY_EVEN or __TRANSPARENCY_ODD)
 	void setTransparency(uint8 transparency);
+
+	/// Retrieve the mesh's bounding box.
+	/// @return Bounding box of the mesh
+	virtual RightBox getRightBox();
 }
 
 

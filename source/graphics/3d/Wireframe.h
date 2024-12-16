@@ -112,10 +112,6 @@ abstract class Wireframe : VisualComponent
 	/// @return True if the wireframe is visible within the camera's frustum; false otherwise
 	bool prepareForRender(Vector3D* relativePosition);
 
-	/// Retrieve the mesh's bounding box.
-	/// @return Bounding box of the mesh
-	virtual RightBox getRightBox();
-
 	/// Retrieve the list of vertices that compose the mesh.
 	/// @return Linked list of vertices
 	virtual VirtualList getVertices();

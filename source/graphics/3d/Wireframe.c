@@ -180,11 +180,6 @@ bool Wireframe::prepareForRender(Vector3D* relativePosition)
 	return __COLOR_BLACK != this->color;
 }
 //---------------------------------------------------------------------------------------------------------
-RightBox Wireframe::getRightBox()
-{
-	return (RightBox){0, 0, 0, 0, 0, 0};
-}
-//---------------------------------------------------------------------------------------------------------
 VirtualList Wireframe::getVertices()
 {
 	return NULL;

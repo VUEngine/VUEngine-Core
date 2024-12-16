@@ -59,3 +59,8 @@ void VisualComponent::setTransparency(uint8 transparency)
 	this->transparency = transparency;
 }
 //---------------------------------------------------------------------------------------------------------
+RightBox VisualComponent::getRightBox()
+{
+	return (RightBox){0, 0, 0, 0, 0, 0};
+}
+//---------------------------------------------------------------------------------------------------------

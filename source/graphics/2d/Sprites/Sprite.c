@@ -38,6 +38,14 @@ friend class AnimationController;
 
 
 //=========================================================================================================
+// CLASS' MACROS
+//=========================================================================================================
+
+#define SPRITE_DEPTH						16
+#define SPRITE_HALF_DEPTH					(SPRITE_DEPTH >> 1)
+
+
+//=========================================================================================================
 // CLASS' PUBLIC METHODS
 //=========================================================================================================
 
@@ -87,6 +95,16 @@ void Sprite::destructor()
 	// destroy the super object
 	// must always be called at the end of the destructor
 	Base::destructor();
+}
+//---------------------------------------------------------------------------------------------------------
+RightBox Sprite::getRightBox()
+{
+	return (RightBox) 
+	{
+		-__PIXELS_TO_METERS(this->halfWidth + this->displacement.x), __PIXELS_TO_METERS(this->halfWidth + this->displacement.x),
+		-__PIXELS_TO_METERS(this->halfHeight + this->displacement.y), __PIXELS_TO_METERS(this->halfHeight + this->displacement.y),
+		-__PIXELS_TO_METERS(SPRITE_HALF_DEPTH), __PIXELS_TO_METERS(SPRITE_HALF_DEPTH)
+	};
 }
 //---------------------------------------------------------------------------------------------------------
 int16 Sprite::render(int16 index, bool updateAnimation)

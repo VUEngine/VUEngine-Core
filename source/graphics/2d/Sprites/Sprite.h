@@ -144,6 +144,10 @@ abstract class Sprite : VisualComponent
 	/// @param spriteSpec: Specification that determines how to configure the sprite
 	void constructor(SpatialObject owner, const SpriteSpec* spriteSpec);
 
+	/// Retrieve the sprite's bounding box.
+	/// @return Bounding box of the mesh
+	override RightBox getRightBox();
+
 	/// Render the sprite by configuring the DRAM assigned to it by means of the provided index.
 	/// @param index: Determines the region of DRAM that this sprite is allowed to configure
 	/// @param updateAnimation: If false, animations are not updated
