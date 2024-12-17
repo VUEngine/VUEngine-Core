@@ -550,7 +550,7 @@ void Entity::suspend()
 {
 	Base::suspend(this);
 
-	Entity::destroyComponents(this);
+	VisualComponent::destroyComponents(SpatialObject::safeCast(this), this->components);
 }
 //---------------------------------------------------------------------------------------------------------
 void Entity::resume()

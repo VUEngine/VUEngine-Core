@@ -38,6 +38,17 @@ friend class VirtualNode;
 //=========================================================================================================
 
 //---------------------------------------------------------------------------------------------------------
+static void VisualComponent::destroyComponents(SpatialObject owner, VirtualList components[])
+{
+	if(NULL == owner)
+	{
+		return;
+	}
+
+	ComponentManager::destroyComponents(owner, components, kSpriteComponent);
+	ComponentManager::destroyComponents(owner, components, kWireframeComponent);
+}
+//---------------------------------------------------------------------------------------------------------
 static void VisualComponent::propagateCommand(int32 command, SpatialObject owner, ...)
 {
 	va_list args;
