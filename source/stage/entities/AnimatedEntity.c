@@ -40,18 +40,12 @@ void AnimatedEntity::constructor(AnimatedEntitySpec* animatedEntitySpec, int16 i
 	// construct base object
 	Base::constructor(&animatedEntitySpec->entitySpec, internalId, name);
 
-	this->animatedSprites = NULL;
 	this->animationFunctions = animatedEntitySpec->animationFunctions;
 	this->playingAnimationName = NULL;
 }
 //---------------------------------------------------------------------------------------------------------
 void AnimatedEntity::destructor()
 {
-	if(!isDeleted(this->animatedSprites))
-	{
-		delete this->animatedSprites;
-		this->animatedSprites = NULL;
-	}
 	// destroy the super object
 	// must always be called at the end of the destructor
 	Base::destructor();
@@ -62,6 +56,8 @@ void AnimatedEntity::ready(bool recursive)
 	ASSERT(this->entitySpec, "AnimatedEntity::ready: null animatedEntitySpec");
 
 	Base::ready(this, recursive);
+
+	AnimatedEntity::getComponents(this, kSpriteComponent);
 
 	AnimatedEntity::playAnimation(this, ((AnimatedEntitySpec*)this->entitySpec)->initialAnimation);
 
@@ -96,14 +92,19 @@ bool AnimatedEntity::playAnimation(const char* animationName)
 		return false;
 	}
 
-	AnimatedEntity::getSprites(this);
+	VirtualList sprites = AnimatedEntity::getComponents(this, kSpriteComponent);
+
+	if(isDeleted(sprites))
+	{
+		return false;
+	}
 
 	ListenerObject scope = ListenerObject::safeCast(this);
 
 	bool result = false;
 
 	// play animation on each sprite
-	for(VirtualNode node = this->animatedSprites->head; NULL != node && NULL != this->animatedSprites; node = node->next)
+	for(VirtualNode node = sprites->head; NULL != node && NULL != sprites; node = node->next)
 	{
 		NM_ASSERT(!isDeleted(Sprite::safeCast(node->data)), "AnimatedEntity::playAnimation: invalid sprite node");
 
@@ -124,10 +125,15 @@ bool AnimatedEntity::playAnimation(const char* animationName)
 //---------------------------------------------------------------------------------------------------------
 void AnimatedEntity::pauseAnimation(bool pause)
 {
-	AnimatedEntity::getSprites(this);
+	VirtualList sprites = AnimatedEntity::getComponents(this, kSpriteComponent);
+
+	if(isDeleted(sprites))
+	{
+		return;
+	}
 
 	// play animation on each sprite
-	for(VirtualNode node = this->animatedSprites->head; node && this->animatedSprites; node = node->next)
+	for(VirtualNode node = sprites->head; node && sprites; node = node->next)
 	{
 		Sprite::pause(node->data, pause);
 	}
@@ -135,12 +141,17 @@ void AnimatedEntity::pauseAnimation(bool pause)
 //---------------------------------------------------------------------------------------------------------
 void AnimatedEntity::stopAnimation()
 {
-	AnimatedEntity::getSprites(this);
-
 	this->playingAnimationName = NULL;
 
+	VirtualList sprites = AnimatedEntity::getComponents(this, kSpriteComponent);
+
+	if(isDeleted(sprites))
+	{
+		return;
+	}
+
 	// play animation on each sprite
-	for(VirtualNode node = this->animatedSprites->head; node && this->animatedSprites; node = node->next)
+	for(VirtualNode node = sprites->head; node && sprites; node = node->next)
 	{
 		Sprite::stop(node->data);
 	}
@@ -148,34 +159,54 @@ void AnimatedEntity::stopAnimation()
 //---------------------------------------------------------------------------------------------------------
 bool AnimatedEntity::isPlaying()
 {
-	AnimatedEntity::getSprites(this);
+	VirtualList sprites = AnimatedEntity::getComponents(this, kSpriteComponent);
 
-	return Sprite::isPlaying(Sprite::safeCast(VirtualNode::getData(this->animatedSprites->head)));
+	if(isDeleted(sprites))
+	{
+		return false;
+	}
+
+	return Sprite::isPlaying(Sprite::safeCast(VirtualNode::getData(sprites->head)));
 }
 //---------------------------------------------------------------------------------------------------------
 bool AnimatedEntity::isPlayingAnimation(char* animationName)
 {
-	AnimatedEntity::getSprites(this);
+	VirtualList sprites = AnimatedEntity::getComponents(this, kSpriteComponent);
 
-	Sprite sprite = Sprite::safeCast(VirtualNode::getData(this->animatedSprites->head));
+	if(isDeleted(sprites))
+	{
+		return false;
+	}
+
+	Sprite sprite = Sprite::safeCast(VirtualNode::getData(sprites->head));
 
 	return Sprite::isPlayingAnimation(sprite, animationName);
 }
 //---------------------------------------------------------------------------------------------------------
 const char* AnimatedEntity::getPlayingAnimationName()
 {
-	AnimatedEntity::getSprites(this);
+	VirtualList sprites = AnimatedEntity::getComponents(this, kSpriteComponent);
 
-	Sprite sprite = Sprite::safeCast(VirtualNode::getData(this->animatedSprites->head));
+	if(isDeleted(sprites))
+	{
+		return false;
+	}
+
+	Sprite sprite = Sprite::safeCast(VirtualNode::getData(sprites->head));
 
 	return Sprite::getPlayingAnimationName(sprite);
 }
 //---------------------------------------------------------------------------------------------------------
 void AnimatedEntity::setActualFrame(int16 frame)
 {
-	AnimatedEntity::getSprites(this);
+	VirtualList sprites = AnimatedEntity::getComponents(this, kSpriteComponent);
 
-	for(VirtualNode node = this->animatedSprites->head; node ; node = node->next)
+	if(isDeleted(sprites))
+	{
+		return;
+	}
+
+	for(VirtualNode node = sprites->head; node ; node = node->next)
 	{
 		Sprite::setActualFrame(node->data, frame);
 	}
@@ -183,10 +214,14 @@ void AnimatedEntity::setActualFrame(int16 frame)
 //---------------------------------------------------------------------------------------------------------
 void AnimatedEntity::nextFrame()
 {
-	AnimatedEntity::getSprites(this);
+	VirtualList sprites = AnimatedEntity::getComponents(this, kSpriteComponent);
 
-	// do on each sprite
-	for(VirtualNode node = this->animatedSprites->head; node && this->animatedSprites; node = node->next)
+	if(isDeleted(sprites))
+	{
+		return;
+	}
+
+	for(VirtualNode node = sprites->head; node && sprites; node = node->next)
 	{
 		Sprite::nextFrame(node->data);
 	}
@@ -194,10 +229,14 @@ void AnimatedEntity::nextFrame()
 //---------------------------------------------------------------------------------------------------------
 void AnimatedEntity::previousFrame()
 {
-	AnimatedEntity::getSprites(this);
+	VirtualList sprites = AnimatedEntity::getComponents(this, kSpriteComponent);
 
-	// do on each sprite
-	for(VirtualNode node = this->animatedSprites->head; node && this->animatedSprites; node = node->next)
+	if(isDeleted(sprites))
+	{
+		return;
+	}
+
+	for(VirtualNode node = sprites->head; node && sprites; node = node->next)
 	{
 		Sprite::previousFrame(node->data);
 	}
@@ -205,9 +244,14 @@ void AnimatedEntity::previousFrame()
 //---------------------------------------------------------------------------------------------------------
 int16 AnimatedEntity::getActualFrame()
 {
-	AnimatedEntity::getSprites(this);
+	VirtualList sprites = AnimatedEntity::getComponents(this, kSpriteComponent);
 
-	for(VirtualNode node = this->animatedSprites->head; node ; node = node->next)
+	if(isDeleted(sprites))
+	{
+		return -1;
+	}
+
+	for(VirtualNode node = sprites->head; node ; node = node->next)
 	{
 		return Sprite::getActualFrame(node->data);
 	}
@@ -217,30 +261,19 @@ int16 AnimatedEntity::getActualFrame()
 //---------------------------------------------------------------------------------------------------------
 int32 AnimatedEntity::getNumberOfFrames()
 {
-	AnimatedEntity::getSprites(this);
+	VirtualList sprites = AnimatedEntity::getComponents(this, kSpriteComponent);
 
-	for(VirtualNode node = this->animatedSprites->head; node ; node = node->next)
+	if(isDeleted(sprites))
+	{
+		return -1;
+	}
+
+	for(VirtualNode node = sprites->head; node ; node = node->next)
 	{
 		AnimationController animationController = Sprite::getAnimationController(node->data);
 		return AnimationController::getNumberOfFrames(animationController);
 	}
 
 	return -1;
-}
-//---------------------------------------------------------------------------------------------------------
-
-//=========================================================================================================
-// CLASS' PRIVATE METHODS
-//=========================================================================================================
-
-//---------------------------------------------------------------------------------------------------------
-void AnimatedEntity::getSprites()
-{
-	if(isDeleted(this->animatedSprites))
-	{
-		this->animatedSprites = new VirtualList();	
-	}
-
-	SpriteManager::getSprites(SpriteManager::getInstance(), SpatialObject::safeCast(this), this->animatedSprites);
 }
 //---------------------------------------------------------------------------------------------------------

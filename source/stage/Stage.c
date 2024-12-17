@@ -902,7 +902,7 @@ int32 Stage::isEntityInLoadRange(ScreenPixelVector onScreenPosition, const Right
 {
 	if(NULL == rightBox)
 	{
-		fixed_t padding = __PIXELS_TO_METERS(this->stageSpec->streaming.loadPadding);
+		fixed_t padding = __PIXELS_TO_METERS(this->stageSpec->streaming.loadPadding) >> 1;
 		
 		RightBox helperRightBox =
 		{
@@ -961,7 +961,7 @@ StageEntityDescription* Stage::registerEntity(PositionedEntity* positionedEntity
 	stageEntityDescription->positionedEntity = positionedEntity;
 
 	Vector3D environmentPosition = Vector3D::zero();
-	stageEntityDescription->rightBox = Entity::getBoundingBoxFromSpec(stageEntityDescription->positionedEntity, &environmentPosition);
+	stageEntityDescription->rightBox = Entity::getRightBoxFromSpec(stageEntityDescription->positionedEntity, &environmentPosition);
 
 	stageEntityDescription->validRightBox = (0 != stageEntityDescription->rightBox.x1 - stageEntityDescription->rightBox.x0) || (0 != stageEntityDescription->rightBox.y1 - stageEntityDescription->rightBox.y0) || (0 != stageEntityDescription->rightBox.z1 - stageEntityDescription->rightBox.z0);
 

@@ -37,7 +37,7 @@ friend class VirtualList;
 void Wireframe::constructor(SpatialObject owner, const WireframeSpec* wireframeSpec)
 {
 	// construct base object
-	Base::constructor(owner, wireframeSpec);
+	Base::constructor(owner, (const ComponentSpec*)wireframeSpec);
 
 	if(NULL == wireframeSpec)
 	{

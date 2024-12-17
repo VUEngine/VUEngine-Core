@@ -123,7 +123,7 @@ void ParticleSystem::update()
 		return;
 	}
 
-	if(NULL != this->children && NULL != this->behaviors)
+	if(NULL != this->children)
 	{
 		Base::update(this);
 	}

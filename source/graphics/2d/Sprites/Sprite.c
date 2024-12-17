@@ -52,7 +52,7 @@ friend class AnimationController;
 //---------------------------------------------------------------------------------------------------------
 void Sprite::constructor(SpatialObject owner, const SpriteSpec* spriteSpec)
 {
-	Base::constructor(owner, spriteSpec);
+	Base::constructor(owner, (const ComponentSpec*)spriteSpec);
 
 	// clear values
 	this->index = __NO_RENDER_INDEX;
@@ -104,7 +104,7 @@ RightBox Sprite::getRightBox()
 	{
 		Printing::setDebugMode(Printing::getInstance());
 		Printing::clear(Printing::getInstance());
-		PRINT_HEX(this->componentSpec, 1, 27);
+		PRINT_HEX((uint32)this->componentSpec, 1, 27);
 		Error::triggerException("Sprite::getRightBox: 0 size sprite", NULL);
 	}
 #endif

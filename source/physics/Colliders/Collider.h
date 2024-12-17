@@ -38,6 +38,18 @@ class Collider;
 // CLASS' DATA
 //=========================================================================================================
 
+/// Collider commands
+enum ColliderCommands
+{
+	cColliderComponentLastCommand = cComponentCommandLast + 1,
+	cColliderComponentCommandShow,
+	cColliderComponentCommandHide,
+	cColliderComponentCommandCheckCollisions,
+	cColliderComponentCommandRegisterCollisions,
+	cColliderComponentCommandSetLayers,
+	cColliderComponentCommandSetLayersToIgnore
+};
+
 /// Collision events
 /// @memberof Collider
 typedef enum CollisionResult
@@ -217,6 +229,11 @@ abstract class Collider : Component
 	/// @param telegram: Telegram to process
 	/// @return True if the Telegram was processed
 	override bool handleMessage(Telegram telegram);
+
+	/// Handle a command.
+	/// @param command: Command to handle
+	/// @param args: Variable arguments list depending on the command to handle
+	override void handleCommand(int32 command, va_list args);
 
 	/// Enable the collider for collision checks.
 	void enable();

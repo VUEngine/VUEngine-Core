@@ -24,12 +24,13 @@
 
 typedef ComponentSpec VisualComponentSpec;
 
+/// VisualeComponent commands
 enum VisualeComponentCommands
 {
-	cVisualComponentLastCommand = cComponentLastCommand + 1,
-	cVisualComponentCommandShow,
+	cVisualComponentCommandShow = cComponentCommandLast + 1,
 	cVisualComponentCommandHide,
-	cVisualComponentCommandSetTransparency
+	cVisualComponentCommandSetTransparency,
+	cVisualComponentCommandLast
 };
 
 

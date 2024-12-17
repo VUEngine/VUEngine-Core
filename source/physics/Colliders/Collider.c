@@ -49,7 +49,7 @@ friend class VirtualList;
 void Collider::constructor(SpatialObject owner, const ColliderSpec* colliderSpec)
 {
 	// construct base object
-	Base::constructor(owner, colliderSpec);
+	Base::constructor(owner, (const ComponentSpec*)colliderSpec);
 
 	// not setup yet
 	this->deleteMe = false;
@@ -125,6 +125,47 @@ bool Collider::handleMessage(Telegram telegram)
 	}
 
 	return false;
+}
+//---------------------------------------------------------------------------------------------------------
+void Collider::handleCommand(int32 command, va_list args)
+{
+	switch(command)
+	{
+		case cColliderComponentCommandShow:
+
+			Collider::show(this);
+			break;
+
+		case cColliderComponentCommandHide:
+
+			Collider::hide(this);
+			break;
+
+		case cColliderComponentCommandCheckCollisions:
+
+			Collider::checkCollisions(this, (bool)va_arg(args, uint32));
+			break;
+
+		case cColliderComponentCommandRegisterCollisions:
+
+			Collider::registerCollisions(this, (bool)va_arg(args, uint32));
+			break;
+
+		case cColliderComponentCommandSetLayers:
+
+			Collider::setLayers(this, (bool)va_arg(args, uint32));
+			break;
+
+		case cColliderComponentCommandSetLayersToIgnore:
+
+			Collider::setLayersToIgnore(this, (bool)va_arg(args, uint32));
+			break;
+
+		default:
+
+			Base::handleCommand(this, command, args);
+			break;
+	}
 }
 //---------------------------------------------------------------------------------------------------------
 void Collider::enable()

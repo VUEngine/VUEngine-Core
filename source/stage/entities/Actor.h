@@ -131,8 +131,8 @@ class Actor : AnimatedEntity
 	/// @param environmentTransform: New reference environment for the local transformation
 	override void changeEnvironment(Transformation* environmentTransform);
 
-	/// Destroy the components that attach to this container. 	
-	override void removeComponents();
+	/// Destroy the components that attach to this actor. 	
+	override void destroyComponents();
 
 	/// Update this instance's logic.
 	override void update();

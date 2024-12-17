@@ -41,7 +41,7 @@ static Behavior Behavior::create(SpatialObject owner, const BehaviorSpec* behavi
 //---------------------------------------------------------------------------------------------------------
 void Behavior::constructor(SpatialObject owner, const BehaviorSpec* behaviorSpec)
 {
-	Base::constructor(owner, behaviorSpec);
+	Base::constructor(owner, (const ComponentSpec*)behaviorSpec);
 
 	this->enabled = behaviorSpec->enabled;
 }

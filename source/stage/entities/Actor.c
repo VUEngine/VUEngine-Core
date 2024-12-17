@@ -90,7 +90,7 @@ bool Actor::handleMessage(Telegram telegram)
 			{
 				case kMessageBodyStartedMoving:
 
-					if(this->collisionsEnabled && NULL != this->colliders)
+					if(this->collisionsEnabled)
 					{
 						Actor::checkCollisions(this, true);
 						return true;
@@ -100,7 +100,7 @@ bool Actor::handleMessage(Telegram telegram)
 
 				case kMessageBodyStopped:
 
-					if(__NO_AXIS == Body::getMovementOnAllAxis(this->body) && NULL != this->colliders)
+					if(__NO_AXIS == Body::getMovementOnAllAxis(this->body))
 					{
 						Actor::checkCollisions(this, false);
 					}
@@ -295,9 +295,9 @@ void Actor::changeEnvironment(Transformation* environmentTransform)
 	}
 }
 //---------------------------------------------------------------------------------------------------------
-void Actor::removeComponents()
+void Actor::destroyComponents()
 {
-	Base::removeComponents(this);
+	Base::destroyComponents(this);
 
 	// destroy body to prevent any more physical interactions
 	if(!isDeleted(this->body))
@@ -319,7 +319,6 @@ void Actor::update()
 	}
 
 //	Body::print(this->body, 1, 0);
-//	Collider::print(VirtualList::front(this->colliders), 1, 20);
 //	Printing::resetCoordinates(Printing::getInstance());
 }
 //---------------------------------------------------------------------------------------------------------
@@ -420,9 +419,11 @@ bool Actor::canMoveTowards(Vector3D direction)
 
 	bool canMove = true;
 
-	if(this->colliders)
+	VirtualList colliders = Actor::getComponents(this, kColliderComponent);
+
+	if(NULL != colliders)
 	{
-		VirtualNode node = this->colliders->head;
+		VirtualNode node = colliders->head;
 
 		for(; NULL != node; node = node->next)
 		{
@@ -553,9 +554,11 @@ fixed_t Actor::getSurroundingFrictionCoefficient()
 {
 	fixed_t totalFrictionCoefficient = 0;
 
-	if(!isDeleted(this->colliders))
+	VirtualList colliders = Actor::getComponents(this, kColliderComponent);
+
+	if(NULL != colliders)
 	{
-		VirtualNode node = this->colliders->head;
+		VirtualNode node = colliders->head;
 
 		for(; NULL != node; node = node->next)
 		{

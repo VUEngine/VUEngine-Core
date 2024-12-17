@@ -264,7 +264,7 @@ void Container::addChild(Container child)
 			Container::transform(child, &environmentTransformation, __INVALIDATE_TRANSFORMATION);
 		}
 
-		Container::addComponents(child);
+		Container::createComponents(child);
 
 		//NM_ASSERT(!child->ready, "Container::addChild: child is ready");
 
@@ -305,7 +305,7 @@ void Container::removeChild(Container child, bool deleteChild)
 		if(deleteChild)
 		{
 			Container::discardAllMessages(child);
-			Container::removeComponents(child);
+			Container::destroyComponents(child);
 		}
 	}
 #ifndef __RELEASE
@@ -707,7 +707,7 @@ void Container::changeEnvironment(Transformation* environmentTransformation)
 	Container::invalidateTransformation(this);
 }
 //---------------------------------------------------------------------------------------------------------
-void Container::addComponents()
+void Container::createComponents()
 {
 	if(isDeleted(this->children))
 	{
@@ -718,11 +718,11 @@ void Container::addComponents()
 	{
 		Container child = Container::safeCast(node->data);
 
-		Container::addComponents(child);
+		Container::createComponents(child);
 	}
 }
 //---------------------------------------------------------------------------------------------------------
-void Container::removeComponents()
+void Container::destroyComponents()
 {
 	if(NULL == this->children)
 	{
@@ -733,7 +733,7 @@ void Container::removeComponents()
 	{
 		Container child = Container::safeCast(node->data);
 
-		Container::removeComponents(child);
+		Container::destroyComponents(child);
 	}
 }
 //---------------------------------------------------------------------------------------------------------

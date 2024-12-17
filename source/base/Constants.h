@@ -31,10 +31,6 @@ enum MessagesTypes
 	kMessageHighFps,
 	kMessageEntityRemoved,
 
-	// graphics messages
-	kMessageReleaseVisualComponents,
-	kMessageReloadVisualComponents,
-
 	// physics messages
 	kMessageBodyStopped,
 	kMessageBodyBounced,

@@ -61,11 +61,6 @@ abstract class Behavior : Component
 	/// Class' constructor
 	/// @param owner: SpatialObject to which the behavior attaches to
 	/// @param behaviorSpec: Specification that determines how to configure the behavior
-	static Behavior create(SpatialObject owner, const BehaviorSpec* behaviorSpec);
-
-	/// Class' constructor
-	/// @param owner: SpatialObject to which the behavior attaches to
-	/// @param behaviorSpec: Specification that determines how to configure the behavior
 	void constructor(SpatialObject owner, const BehaviorSpec* behaviorSpec);
 
 	/// Enable the behavior's operations.

@@ -256,7 +256,7 @@ void Particle::addWireframe(const WireframeSpec* wireframeSpec)
 {
 	if(NULL != wireframeSpec && NULL == this->wireframe)
 	{
-		this->wireframe = WireframeManager::createWireframe(WireframeManager::getInstance(), wireframeSpec, SpatialObject::safeCast(this));
+		this->wireframe = WireframeManager::createWireframe(WireframeManager::getInstance(), SpatialObject::safeCast(this), wireframeSpec);
 
 		NM_ASSERT(this->wireframe, "Particle::addWireframe: wireframe not created");
 	}

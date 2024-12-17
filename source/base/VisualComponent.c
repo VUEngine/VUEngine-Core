@@ -57,7 +57,7 @@ static bool VisualComponent::calculateRightBox(SpatialObject owner, RightBox* ri
 	{
 		VirtualList sprites = new VirtualList();
 
-		SpriteManager::getSprites(SpriteManager::getInstance(), owner, sprites);
+		SpriteManager::doGetComponents(SpriteManager::getInstance(), owner, sprites);
 
 		VisualComponent::getRightBoxFromVisualComponents(sprites, rightBox);
 
@@ -70,7 +70,7 @@ static bool VisualComponent::calculateRightBox(SpatialObject owner, RightBox* ri
 	{
 		VirtualList wireframes = new VirtualList();
 
-		WireframeManager::getWireframes(WireframeManager::getInstance(), owner, wireframes);
+		WireframeManager::doGetComponents(WireframeManager::getInstance(), owner, wireframes);
 
 		VisualComponent::getRightBoxFromVisualComponents(wireframes, rightBox);
 

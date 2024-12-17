@@ -67,6 +67,16 @@ int32 _writtenObjectTiles = 0;
 //=========================================================================================================
 
 //---------------------------------------------------------------------------------------------------------
+Sprite SpriteManager::createComponent(SpatialObject owner, const SpriteSpec* spriteSpec)
+{
+	return SpriteManager::createSprite(this, owner, spriteSpec);
+}
+//---------------------------------------------------------------------------------------------------------
+void SpriteManager::destroyComponent(Sprite sprite)
+{
+	SpriteManager::destroySprite(this, sprite);
+}
+//---------------------------------------------------------------------------------------------------------
 bool SpriteManager::isAnyVisible(SpatialObject owner)
 {
 	for(VirtualNode node = this->components->head; NULL != node; node = node->next)
@@ -129,29 +139,6 @@ void SpriteManager::setAnimationsClock(Clock clock)
 	this->animationsClock = clock;
 }
 //---------------------------------------------------------------------------------------------------------
-void SpriteManager::getSprites(SpatialObject owner, VirtualList sprites)
-{
-	if(isDeleted(sprites))
-	{
-		return;
-	}
-
-	if(NULL != this->components->head)
-	{
-		VirtualList::clear(sprites);
-	}
-
-	for(VirtualNode node = this->components->head; NULL != node; node = node->next)
-	{
-		Sprite sprite = Sprite::safeCast(node->data);
-
-		if(owner == sprite->owner)
-		{
-			VirtualList::pushBack(sprites, sprite);
-		}
-	}
-}
-//---------------------------------------------------------------------------------------------------------
 Sprite SpriteManager::createSprite(SpatialObject owner, const SpriteSpec* spriteSpec)
 {
 	NM_ASSERT(NULL != spriteSpec, "SpriteManager::createSprite: null spriteSpec");
@@ -184,19 +171,6 @@ void SpriteManager::destroySprite(Sprite sprite)
 	Sprite::unregisterWithManager(sprite);
 
 	delete sprite;
-}
-//---------------------------------------------------------------------------------------------------------
-void SpriteManager::destroySprites(SpatialObject owner)
-{
-	for(VirtualNode node = this->components->head; NULL != node; node = node->next)
-	{
-		Sprite sprite = Sprite::safeCast(node->data);
-
-		if(owner == sprite->owner)
-		{
-			SpriteManager::destroySprite(this, sprite);
-		}
-	}
 }
 //---------------------------------------------------------------------------------------------------------
 bool SpriteManager::registerSprite(Sprite sprite)

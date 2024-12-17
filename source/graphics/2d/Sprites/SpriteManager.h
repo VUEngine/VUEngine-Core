@@ -122,17 +122,22 @@ singleton class SpriteManager : ComponentManager
 	/// @return True if at least of the sprites that attach to the provided owner is visible
 	override bool isAnyVisible(SpatialObject owner);
 
+	/// Create a sprite with the provided spec.
+	/// @param owner: Object to which the sprite will attach to
+	/// @param spriteSpec: Spec to use to create the sprite
+	/// @return Created sprite
+	override Sprite createComponent(SpatialObject owner, const SpriteSpec* spriteSpec);
+
+	/// Destroy the provided sprite.
+	/// @param sprite: Sprite to destroy
+	override void destroyComponent(Sprite sprite);
+
 	/// Reset the manager's state
 	void reset();
 
 	/// Set the clock that determines if the animations must be updated or not.
 	/// @param clock: Clock for the animations
 	void setAnimationsClock(Clock clock);
-	
-	/// Fill the provided linked list with the sprites belonging to the provided owner.
-	/// @param owner: Object to which the sprites attach to
-	/// @param sprites: Linked list to populate
-	void getSprites(SpatialObject owner, VirtualList sprites);
 
 	/// Create a sprite with the provided spec.
 	/// @param owner: Object to which the sprite will attach to
@@ -144,10 +149,7 @@ singleton class SpriteManager : ComponentManager
 	/// @param sprite: Sprite to destroy
 	void destroySprite(Sprite sprite);
 
-	/// Destroy the sprites belonging to the provided owner.
-	/// @param owner: Object to which the sprites attach to
-	void destroySprites(SpatialObject owner);
-
+	
 	/// Register a sprite to be managed
 	/// @param sprite: Sprite to be managed
 	/// @return True if the sprite was successfully registered; false otherwise

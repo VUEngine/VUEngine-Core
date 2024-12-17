@@ -12,19 +12,17 @@
 // INCLUDES
 //=========================================================================================================
 
-#include <Component.h>
+#include <string.h>
 #include <VirtualList.h>
 
-#include "ComponentManager.h"
+#include "BehaviorManager.h"
 
 
 //=========================================================================================================
 // CLASS' DECLARATIONS
 //=========================================================================================================
 
-friend class Component;
-friend class VirtualNode;
-friend class VirtualList;
+friend class Behavior;
 
 
 //=========================================================================================================
@@ -32,48 +30,37 @@ friend class VirtualList;
 //=========================================================================================================
 
 //---------------------------------------------------------------------------------------------------------
-void ComponentManager::propagateCommand(int32 command, SpatialObject owner, ...)
-{
-	va_list args;
-	va_start(args, owner);
-
-	for(VirtualNode node = this->components->head; NULL != node; node = node->next)
-	{
-		Component component = Component::safeCast(node->data);
-
-		if(NULL != owner && owner != component->owner)
-		{
-			continue;
-		}
-
-		Component::handleCommand(component, command, args);
-	}
-
-	va_end(args);
+void BehaviorManager::reset()
+{	
+	BehaviorManager::cleanUp(this);
 }
 //---------------------------------------------------------------------------------------------------------
-uint16 ComponentManager::getCount(SpatialObject owner)
+Behavior BehaviorManager::createComponent(SpatialObject owner, const BehaviorSpec* behaviorSpec)
 {
-	uint16 count = 0;
+	NM_ASSERT(NULL != behaviorSpec, "BehaviorManager::createBehavior: null behaviorSpec");
+	NM_ASSERT(NULL != behaviorSpec->allocator, "BehaviorManager::createBehavior: no behavior allocator");
 
-	for(VirtualNode node = this->components->head; NULL != node; node = node->next)
-	{
-		Component component = Component::safeCast(node->data);
+	Behavior behavior = ((Behavior (*)(SpatialObject, const BehaviorSpec*)) behaviorSpec->allocator)(owner, (BehaviorSpec*)behaviorSpec);
+	ASSERT(!isDeleted(behavior), "BehaviorManager::createBehavior: failed creating behavior");
 
-		if(NULL != owner && owner != component->owner)
-		{
-			continue;
-		}
-		
-		count++;
-	}
+	VirtualList::pushBack(this->components, behavior);
 
-	return count;
+	return behavior;
 }
 //---------------------------------------------------------------------------------------------------------
-bool ComponentManager::isAnyVisible(SpatialObject owner __attribute((unused)))
+void BehaviorManager::destroyComponent(Behavior behavior)
 {
-	return false;
+	NM_ASSERT(!isDeleted(behavior), "BehaviorManager::destroyBehavior: trying to dispose dead behavior");
+	NM_ASSERT(__GET_CAST(Behavior, behavior), "BehaviorManager::destroyBehavior: trying to dispose a non behavior");
+
+	if(isDeleted(behavior))
+	{
+		return;
+	}
+
+	VirtualList::removeData(this->components, behavior);
+
+	delete behavior;
 }
 //---------------------------------------------------------------------------------------------------------
 
@@ -82,22 +69,25 @@ bool ComponentManager::isAnyVisible(SpatialObject owner __attribute((unused)))
 //=========================================================================================================
 
 //---------------------------------------------------------------------------------------------------------
-void ComponentManager::constructor()
+void BehaviorManager::constructor()
 {
+	// construct base object
 	Base::constructor();
-
-	this->components = new VirtualList();
 }
 //---------------------------------------------------------------------------------------------------------
-void ComponentManager::destructor()
+void BehaviorManager::destructor()
+{
+	BehaviorManager::cleanUp(this);
+
+	// allow a new construct
+	Base::destructor();
+}
+//---------------------------------------------------------------------------------------------------------
+void BehaviorManager::cleanUp()
 {
 	if(!isDeleted(this->components))
 	{
 		VirtualList::deleteData(this->components);
-		delete this->components;
-		this->components = NULL;
 	}
-
-	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------

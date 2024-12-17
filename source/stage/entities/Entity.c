@@ -15,6 +15,7 @@
 #include <string.h>
 
 #include <Behavior.h>
+#include <BehaviorManager.h>
 #include <BgmapSprite.h>
 #include <CollisionManager.h>
 #include <DebugConfig.h>
@@ -127,11 +128,20 @@ static Entity Entity::createEntityDeferred(const PositionedEntity* const positio
 	return entity;
 }
 //---------------------------------------------------------------------------------------------------------
-static RightBox Entity::getBoundingBoxFromSpec(const PositionedEntity* positionedEntity, const Vector3D* environmentPosition)
+static RightBox Entity::getRightBoxFromSpec(const PositionedEntity* positionedEntity, const Vector3D* environmentPosition)
 {
 	RightBox rightBox = {0, 0, 0, 0, 0, 0};
 
-	Entity::getSizeFromSpec(positionedEntity, environmentPosition, &rightBox);
+	Entity::getRightBoxFromChildrenSpec(positionedEntity, environmentPosition, &rightBox);
+
+	Vector3D globalPosition = Vector3D::getFromScreenPixelVector(positionedEntity->onScreenPosition);
+
+	rightBox.x0 -= globalPosition.x;
+	rightBox.x1 -= globalPosition.x;
+	rightBox.y0 -= globalPosition.y;
+	rightBox.y1 -= globalPosition.y;
+	rightBox.z0 -= globalPosition.z;
+	rightBox.z1 -= globalPosition.z;
 
 	return rightBox;
 }
@@ -142,34 +152,26 @@ static RightBox Entity::getBoundingBoxFromSpec(const PositionedEntity* positione
 //=========================================================================================================
 
 //---------------------------------------------------------------------------------------------------------
-static void Entity::getSizeFromSpec(const PositionedEntity* positionedEntity, const Vector3D* environmentPosition, RightBox* rightBox)
+static void Entity::getRightBoxFromChildrenSpec(const PositionedEntity* positionedEntity, const Vector3D* environmentPosition, RightBox* rightBox)
 {
-	ASSERT(positionedEntity, "Entity::getSizeFromSpec: null positionedEntity");
-	ASSERT(positionedEntity->entitySpec, "Entity::getSizeFromSpec: null entitySpec");
+	ASSERT(positionedEntity, "Entity::getRightBoxFromChildrenSpec: null positionedEntity");
+	ASSERT(positionedEntity->entitySpec, "Entity::getRightBoxFromChildrenSpec: null entitySpec");
 
-	fixed_t left = 0;
-	fixed_t right = 0;
-	fixed_t top = 0;
-	fixed_t bottom = 0;
-	fixed_t front = 0;
-	fixed_t back = 0;
-	fixed_t halfWidth = 0;
-	fixed_t halfHeight = 0;
-	fixed_t halfDepth = 0;
+	RightBox myRightBox = {0, 0, 0, 0, 0, 0};
 
 	if(0 != positionedEntity->entitySpec->pixelSize.x || 0 != positionedEntity->entitySpec->pixelSize.y || 0 != positionedEntity->entitySpec->pixelSize.z)
 	{
 		// TODO: there should be a class which handles special cases
-		halfWidth = __PIXELS_TO_METERS(positionedEntity->entitySpec->pixelSize.x) >> 1;
-		halfHeight = __PIXELS_TO_METERS(positionedEntity->entitySpec->pixelSize.y) >> 1;
-		halfDepth = __PIXELS_TO_METERS(positionedEntity->entitySpec->pixelSize.z) >> 1;
+		fixed_t halfWidth = __PIXELS_TO_METERS(positionedEntity->entitySpec->pixelSize.x) >> 1;
+		fixed_t halfHeight = __PIXELS_TO_METERS(positionedEntity->entitySpec->pixelSize.y) >> 1;
+		fixed_t halfDepth = __PIXELS_TO_METERS(positionedEntity->entitySpec->pixelSize.z) >> 1;
 
-		left = -halfWidth;
-		right = halfWidth;
-		top = -halfHeight;
-		bottom = halfHeight;
-		front = -halfDepth;
-		back = halfDepth;
+		myRightBox.x0 = -halfWidth;
+		myRightBox.x1 = halfWidth;
+		myRightBox.y0 = -halfHeight;
+		myRightBox.y1 = halfHeight;
+		myRightBox.z0 = -halfDepth;
+		myRightBox.z1 = halfDepth;
 	}
 	else 
 	{
@@ -179,96 +181,47 @@ static void Entity::getSizeFromSpec(const PositionedEntity* positionedEntity, co
 
 			for(; NULL != positionedEntity->entitySpec->spriteSpecs[i]; i++)
 			{
-				if(__TYPE(MBgmapSprite) == __ALLOCATOR_TYPE(positionedEntity->entitySpec->spriteSpecs[i]->allocator && ((MBgmapSpriteSpec*)positionedEntity->entitySpec->spriteSpecs[i])->textureSpecs[0]))
+				fixed_t halfWidth = __PIXELS_TO_METERS(ENTITY_HALF_MIN_SIZE);
+				fixed_t halfHeight = __PIXELS_TO_METERS(ENTITY_HALF_MIN_SIZE);
+				fixed_t halfDepth = __PIXELS_TO_METERS(ENTITY_HALF_MIN_SIZE);
+
+				SpriteSpec* spriteSpec = (SpriteSpec*)positionedEntity->entitySpec->spriteSpecs[i];
+
+				if(NULL != spriteSpec->textureSpec)
 				{
-					MBgmapSpriteSpec* mBgmapSpriteSpec = (MBgmapSpriteSpec*)positionedEntity->entitySpec->spriteSpecs[i];
-
-					int32 j = 0;
-
-					halfWidth = __PIXELS_TO_METERS(ENTITY_HALF_MIN_SIZE);
-					halfHeight = __PIXELS_TO_METERS(ENTITY_HALF_MIN_SIZE);
-					halfDepth = __PIXELS_TO_METERS(ENTITY_HALF_MIN_SIZE);
-
-					for(; mBgmapSpriteSpec->textureSpecs[j]; j++)
-					{
-						if(halfWidth < __PIXELS_TO_METERS(mBgmapSpriteSpec->textureSpecs[j]->cols << 2))
-						{
-							halfWidth = __PIXELS_TO_METERS(mBgmapSpriteSpec->textureSpecs[j]->cols << 2);
-						}
-
-						if(halfHeight < __PIXELS_TO_METERS(mBgmapSpriteSpec->textureSpecs[j]->rows << 2))
-						{
-							halfHeight = __PIXELS_TO_METERS(mBgmapSpriteSpec->textureSpecs[j]->rows << 2);
-						}
-					}
-
-					if(left > -halfWidth + __PIXELS_TO_METERS(mBgmapSpriteSpec->bgmapSpriteSpec.spriteSpec.displacement.x))
-					{
-						left = -halfWidth + __PIXELS_TO_METERS(mBgmapSpriteSpec->bgmapSpriteSpec.spriteSpec.displacement.x);
-					}
-
-					if(right < halfWidth + __PIXELS_TO_METERS(mBgmapSpriteSpec->bgmapSpriteSpec.spriteSpec.displacement.x))
-					{
-						right = halfWidth + __PIXELS_TO_METERS(mBgmapSpriteSpec->bgmapSpriteSpec.spriteSpec.displacement.x);
-					}
-
-					if(top > -halfHeight + __PIXELS_TO_METERS(mBgmapSpriteSpec->bgmapSpriteSpec.spriteSpec.displacement.y))
-					{
-						top = -halfHeight + __PIXELS_TO_METERS(mBgmapSpriteSpec->bgmapSpriteSpec.spriteSpec.displacement.y);
-					}
-
-					if(bottom < halfHeight + __PIXELS_TO_METERS(mBgmapSpriteSpec->bgmapSpriteSpec.spriteSpec.displacement.y))
-					{
-						bottom = halfHeight + __PIXELS_TO_METERS(mBgmapSpriteSpec->bgmapSpriteSpec.spriteSpec.displacement.y);
-					}
-
-					if(front > __PIXELS_TO_METERS(mBgmapSpriteSpec->bgmapSpriteSpec.spriteSpec.displacement.z))
-					{
-						front = __PIXELS_TO_METERS(mBgmapSpriteSpec->bgmapSpriteSpec.spriteSpec.displacement.z);
-					}
-
-					if(back < halfDepth + __PIXELS_TO_METERS(mBgmapSpriteSpec->bgmapSpriteSpec.spriteSpec.displacement.z))
-					{
-						back = halfDepth + __PIXELS_TO_METERS(mBgmapSpriteSpec->bgmapSpriteSpec.spriteSpec.displacement.z);
-					}
-
-				}
-				else if(NULL != positionedEntity->entitySpec->spriteSpecs[i]->textureSpec)
-				{
-					SpriteSpec* spriteSpec = (SpriteSpec*)positionedEntity->entitySpec->spriteSpecs[i];
 					halfWidth = __PIXELS_TO_METERS(spriteSpec->textureSpec->cols << 2);
 					halfHeight = __PIXELS_TO_METERS(spriteSpec->textureSpec->rows << 2);
 					halfDepth = __PIXELS_TO_METERS(ENTITY_HALF_MIN_SIZE);
+				}
 
-					if(left > -halfWidth + __PIXELS_TO_METERS(spriteSpec->displacement.x))
-					{
-						left = -halfWidth + __PIXELS_TO_METERS(spriteSpec->displacement.x);
-					}
+				if(myRightBox.x0 > -halfWidth + __PIXELS_TO_METERS(spriteSpec->displacement.x))
+				{
+					myRightBox.x0 = -halfWidth + __PIXELS_TO_METERS(spriteSpec->displacement.x);
+				}
 
-					if(right < halfWidth + __PIXELS_TO_METERS(spriteSpec->displacement.x))
-					{
-						right = halfWidth + __PIXELS_TO_METERS(spriteSpec->displacement.x);
-					}
+				if(myRightBox.x1 < halfWidth + __PIXELS_TO_METERS(spriteSpec->displacement.x))
+				{
+					myRightBox.x1 = halfWidth + __PIXELS_TO_METERS(spriteSpec->displacement.x);
+				}
 
-					if(top > -halfHeight + __PIXELS_TO_METERS(spriteSpec->displacement.y))
-					{
-						top = -halfHeight + __PIXELS_TO_METERS(spriteSpec->displacement.y);
-					}
+				if(myRightBox.y0 > -halfHeight + __PIXELS_TO_METERS(spriteSpec->displacement.y))
+				{
+					myRightBox.y0 = -halfHeight + __PIXELS_TO_METERS(spriteSpec->displacement.y);
+				}
 
-					if(bottom < halfHeight + __PIXELS_TO_METERS(spriteSpec->displacement.y))
-					{
-						bottom = halfHeight + __PIXELS_TO_METERS(spriteSpec->displacement.y);
-					}
+				if(myRightBox.y1 < halfHeight + __PIXELS_TO_METERS(spriteSpec->displacement.y))
+				{
+					myRightBox.y1 = halfHeight + __PIXELS_TO_METERS(spriteSpec->displacement.y);
+				}
 
-					if(front > -halfDepth + __PIXELS_TO_METERS(spriteSpec->displacement.z))
-					{
-						front = -halfDepth + __PIXELS_TO_METERS(spriteSpec->displacement.z);
-					}
+				if(myRightBox.z0 > -halfDepth + __PIXELS_TO_METERS(spriteSpec->displacement.z))
+				{
+					myRightBox.z0 = -halfDepth + __PIXELS_TO_METERS(spriteSpec->displacement.z);
+				}
 
-					if(back < halfDepth + __PIXELS_TO_METERS(spriteSpec->displacement.z))
-					{
-						back = halfDepth + __PIXELS_TO_METERS(spriteSpec->displacement.z);
-					}
+				if(myRightBox.z1 < halfDepth + __PIXELS_TO_METERS(spriteSpec->displacement.z))
+				{
+					myRightBox.z1 = halfDepth + __PIXELS_TO_METERS(spriteSpec->displacement.z);
 				}
 			}
 		}
@@ -283,81 +236,78 @@ static void Entity::getSizeFromSpec(const PositionedEntity* positionedEntity, co
 				{
 					RightBox rightBox = Mesh::getRightBoxFromSpec((MeshSpec*)positionedEntity->entitySpec->wireframeSpecs[i]);
 
-					if(left > rightBox.x0)
+					if(myRightBox.x0 > rightBox.x0)
 					{
-						left = rightBox.x0;
+						myRightBox.x0 = rightBox.x0;
 					}
 
-					if(right < rightBox.x1)
+					if(myRightBox.x1 < rightBox.x1)
 					{
-						right = rightBox.x1;
+						myRightBox.x1 = rightBox.x1;
 					}
 
-					if(top > rightBox.y0)
+					if(myRightBox.y0 > rightBox.y0)
 					{
-						top = rightBox.y0;
+						myRightBox.y0 = rightBox.y0;
 					}
 
-					if(bottom < rightBox.y1)
+					if(myRightBox.y1 < rightBox.y1)
 					{
-						bottom = rightBox.y1;
+						myRightBox.y1 = rightBox.y1;
 					}
 
-					if(front > rightBox.z0)
+					if(myRightBox.z0 > rightBox.z0)
 					{
-						front = rightBox.z0;
+						myRightBox.z0 = rightBox.z0;
 					}
 
-					if(back < rightBox.z1)
+					if(myRightBox.z1 < rightBox.z1)
 					{
-						back = rightBox.z1;
+						myRightBox.z1 = rightBox.z1;
 					}
 				}
 			}
 		}
 	}	
 
-	Vector3D globalPosition = *environmentPosition;
+	Vector3D globalPosition = Vector3D::sum(*environmentPosition, Vector3D::getFromScreenPixelVector(positionedEntity->onScreenPosition));
 
-	if((0 == rightBox->x0) || (globalPosition.x + left < rightBox->x0))
+	if((0 == rightBox->x0) || (globalPosition.x + myRightBox.x0 < rightBox->x0))
 	{
-		rightBox->x0 = globalPosition.x + left;
+		rightBox->x0 = globalPosition.x + myRightBox.x0;
 	}
 
-	if((0 == rightBox->x1) || (right + globalPosition.x > rightBox->x1))
+	if((0 == rightBox->x1) || (myRightBox.x1 + globalPosition.x > rightBox->x1))
 	{
-		rightBox->x1 = right + globalPosition.x;
+		rightBox->x1 = myRightBox.x1 + globalPosition.x;
 	}
 
-	if((0 == rightBox->y0) || (globalPosition.y + top < rightBox->y0))
+	if((0 == rightBox->y0) || (globalPosition.y + myRightBox.y0 < rightBox->y0))
 	{
-		rightBox->y0 = globalPosition.y + top;
+		rightBox->y0 = globalPosition.y + myRightBox.y0;
 	}
 
-	if((0 == rightBox->y1) || (bottom + globalPosition.y > rightBox->y1))
+	if((0 == rightBox->y1) || (myRightBox.y1 + globalPosition.y > rightBox->y1))
 	{
-		rightBox->y1 = bottom + globalPosition.y;
+		rightBox->y1 = myRightBox.y1 + globalPosition.y;
 	}
 
-	if((0 == rightBox->z0) || (globalPosition.z + front < rightBox->z0))
+	if((0 == rightBox->z0) || (globalPosition.z + myRightBox.z0 < rightBox->z0))
 	{
-		rightBox->z0 = globalPosition.z + front;
+		rightBox->z0 = globalPosition.z + myRightBox.z0;
 	}
 
-	if((0 == rightBox->z1) || (back + globalPosition.z > rightBox->z1))
+	if((0 == rightBox->z1) || (myRightBox.z1 + globalPosition.z > rightBox->z1))
 	{
-		rightBox->z1 = back + globalPosition.z;
+		rightBox->z1 = myRightBox.z1 + globalPosition.z;
 	}
 
-	globalPosition.x += __PIXELS_TO_METERS(positionedEntity->onScreenPosition.x);
-	globalPosition.y += __PIXELS_TO_METERS(positionedEntity->onScreenPosition.y);
-	globalPosition.z += __PIXELS_TO_METERS(positionedEntity->onScreenPosition.z);
 
 	if(NULL != positionedEntity->childrenSpecs)
 	{
 		for(int32 i = 0; positionedEntity->childrenSpecs[i].entitySpec; i++)
 		{
-			Entity::getSizeFromSpec(&positionedEntity->childrenSpecs[i], &globalPosition, rightBox);
+			Entity::getRightBoxFromChildrenSpec(&positionedEntity->childrenSpecs[i], &globalPosition, rightBox);
 		}
 	}
 
@@ -365,7 +315,7 @@ static void Entity::getSizeFromSpec(const PositionedEntity* positionedEntity, co
 	{
 		for(int32 i = 0; positionedEntity->entitySpec->childrenSpecs[i].entitySpec; i++)
 		{
-			Entity::getSizeFromSpec(&positionedEntity->entitySpec->childrenSpecs[i], &globalPosition, rightBox);
+			Entity::getRightBoxFromChildrenSpec(&positionedEntity->entitySpec->childrenSpecs[i], &globalPosition, rightBox);
 		}
 	}
 }
@@ -415,10 +365,13 @@ void Entity::constructor(EntitySpec* entitySpec, int16 internalId, const char* c
 	this->entitySpec = entitySpec;
 
 	// the sprite must be initialized in the derived class
-	this->colliders = NULL;
+	for(int16 i = 0; i < kComponentTypes; i++)
+	{
+		this->components[i] = NULL;
+	}
+
 	this->centerDisplacement = NULL;
 	this->entityFactory = NULL;
-	this->behaviors = NULL;
 
 	// initialize to 0 for the engine to know that size must be set
 	this->size = Size::getFromPixelSize(entitySpec->pixelSize);
@@ -428,7 +381,7 @@ void Entity::constructor(EntitySpec* entitySpec, int16 internalId, const char* c
 //---------------------------------------------------------------------------------------------------------
 void Entity::destructor()
 {
-	Entity::removeComponents(this);
+	Entity::destroyComponents(this);
 	Entity::destroyEntityFactory(this);
 
 	if(NULL != this->centerDisplacement)
@@ -490,27 +443,98 @@ uint32 Entity::getInGameType()
 	return this->entitySpec->inGameType;
 }
 //---------------------------------------------------------------------------------------------------------
-void Entity::addComponents()
+void Entity::createComponents()
 {
 	if(!isDeleted(this->children))
 	{
-		Base::addComponents(this);
+		Base::createComponents(this);
 	}
 
-	Entity::createSprites(this);
-	Entity::createWireframes(this);
-	Entity::createColliders(this);
-	Entity::createBehaviors(this);
+	ComponentSpecsDirectory componentSpecsDirectory;
+	componentSpecsDirectory.colliderSpecs 	= (ComponentSpec*)this->entitySpec->colliderSpecs;
+	componentSpecsDirectory.spriteSpecs 	= (ComponentSpec**)this->entitySpec->spriteSpecs;
+	componentSpecsDirectory.wireframeSpecs 	= (ComponentSpec**)this->entitySpec->wireframeSpecs;
+	componentSpecsDirectory.behaviorSpecs 	= (ComponentSpec**)this->entitySpec->behaviorSpecs;
+
+	ComponentManager::createComponents(SpatialObject::safeCast(this), &componentSpecsDirectory);
 
 	Entity::calculateSize(this);
 }
 //---------------------------------------------------------------------------------------------------------
-void Entity::removeComponents()
+void Entity::destroyComponents()
 {
-	Entity::removeWireframes(this);
-	Entity::removeSprites(this);
-	Entity::removeColliders(this);
-	Entity::removeBehaviors(this);
+	ComponentManager::destroyComponents(SpatialObject::safeCast(this), this->components, kComponentTypes);
+}
+//---------------------------------------------------------------------------------------------------------
+Component Entity::addComponent(ComponentSpec* componentSpec, uint32 componentType)
+{
+	if(kComponentTypes <= componentType)
+	{
+		return NULL;
+	}
+
+	return ComponentManager::addComponent(SpatialObject::safeCast(this), this->components, componentSpec, componentType);
+}
+//---------------------------------------------------------------------------------------------------------
+void Entity::removeComponent(Component component)
+{
+	if(NULL == component)
+	{
+		return;
+	}
+
+	ComponentManager::removeComponent(this->components, component);
+}
+//---------------------------------------------------------------------------------------------------------
+void Entity::addComponents(ComponentSpec** componentSpecs, uint32 componentType, bool destroyOldComponents)
+{
+	if(kComponentTypes <= componentType)
+	{
+		return;
+	}
+
+	ComponentManager::addComponents(SpatialObject::safeCast(this), this->components, componentSpecs, componentType, destroyOldComponents);
+}
+//---------------------------------------------------------------------------------------------------------
+VirtualList Entity::getComponents(uint32 componentType)
+{
+	if(kComponentTypes <= componentType)
+	{
+		return NULL;
+	}
+
+	return NULL != this->components[componentType] ? this->components[componentType] :
+	ComponentManager::getComponents(SpatialObject::safeCast(this), this->components, componentType);
+}
+//---------------------------------------------------------------------------------------------------------
+bool Entity::getComponentsOfClass(ClassPointer classPointer, VirtualList components, uint32 componentType)
+{
+	if(kComponentTypes <= componentType)
+	{
+		return false;
+	}
+
+	ComponentManager::getComponents(SpatialObject::safeCast(this), this->components, componentType);
+
+	if(!isDeleted(this->components[componentType]) && !isDeleted(components))
+	{
+		for(VirtualNode node = this->components[kBehaviorComponent]->head; NULL != node; node = node->next)
+		{
+			Component component = Component::safeCast(node->data);
+
+			if(!classPointer || Object::getCast(component, classPointer, NULL))
+			{
+				VirtualList::pushBack(components, component);
+			}
+		}
+
+		if(NULL != components->head)
+		{
+			return true;
+		}
+	}
+
+	return false;
 }
 //---------------------------------------------------------------------------------------------------------
 void Entity::show()
@@ -531,8 +555,7 @@ void Entity::suspend()
 {
 	Base::suspend(this);
 
-	Entity::removeSprites(this);
-	Entity::removeWireframes(this);
+	Entity::destroyComponents(this);
 }
 //---------------------------------------------------------------------------------------------------------
 void Entity::resume()
@@ -542,8 +565,7 @@ void Entity::resume()
 	// initialize sprites
 	if(NULL != this->entitySpec)
 	{
-		Entity::createSprites(this);
-		Entity::createWireframes(this);
+		Entity::createComponents(this);
 	}
 
 	if(this->hidden)
@@ -559,29 +581,6 @@ void Entity::setTransparency(uint8 transparency)
 	Base::setTransparency(this, transparency);
 
 	VisualComponent::propagateCommand(cVisualComponentCommandSetTransparency, SpatialObject::safeCast(this), (uint32)transparency);
-}
-//---------------------------------------------------------------------------------------------------------
-bool Entity::handlePropagatedMessage(int32 message)
-{
-	switch(message)
-	{
-		case kMessageReleaseVisualComponents:
-
-			Entity::removeSprites(this);
-			Entity::removeWireframes(this);
-			break;
-
-		case kMessageReloadVisualComponents:
-
-			if(NULL != this->entitySpec)
-			{
-				Entity::createSprites(this);
-				Entity::createWireframes(this);
-			}
-			break;
-	}
-
-	return false;
 }
 //---------------------------------------------------------------------------------------------------------
 EntitySpec* Entity::getSpec()
@@ -731,291 +730,18 @@ Entity Entity::getChildById(int16 id)
 	return NULL;
 }
 //---------------------------------------------------------------------------------------------------------
-Behavior Entity::addBehavior(BehaviorSpec* behaviorSpec)
-{
-	if(NULL == behaviorSpec)
-	{
-		return NULL;
-	}
-
-	if(NULL == this->behaviors)
-	{
-		this->behaviors = new VirtualList();
-	}
-
-	Behavior behavior = Behavior::create(SpatialObject::safeCast(this), behaviorSpec);
-
-	NM_ASSERT(!isDeleted(behavior), "Entity::addBehavior: behavior not created");
-
-	if(!isDeleted(behavior))
-	{
-		VirtualList::pushBack(this->behaviors, behavior);
-	}
-
-	return behavior;
-}
-//---------------------------------------------------------------------------------------------------------
-void Entity::addBehaviors(BehaviorSpec** behaviorSpecs, bool destroyOldBehaviors)
-{
-	if(NULL == behaviorSpecs)
-	{
-		return;
-	}
-
-	if(destroyOldBehaviors)
-	{
-		Entity::removeBehaviors(this);
-	}
-
-	if(NULL == this->behaviors)
-	{
-		this->behaviors = new VirtualList();
-	}
-
-	// go through n behaviors in entity's spec
-	for(int32 i = 0; NULL != behaviorSpecs[i]; i++)
-	{
-		Entity::addBehavior(this, behaviorSpecs[i]);
-		ASSERT(Behavior::safeCast(VirtualList::back(this->behaviors)), "Entity::addBehaviors: behavior not created");
-	}
-}
-//---------------------------------------------------------------------------------------------------------
-void Entity::removeBehaviors()
-{
-	if(!isDeleted(this->behaviors))
-	{
-		ASSERT(!isDeleted(this->behaviors), "Entity::removeBehaviors: dead behaviors");
-
-		VirtualList::deleteData(this->behaviors);
-		delete this->behaviors;
-		this->behaviors = NULL;
-	}
-}
-//---------------------------------------------------------------------------------------------------------
-bool Entity::getBehaviors(ClassPointer classPointer, VirtualList behaviors)
-{
-	if(!isDeleted(this->behaviors) && !isDeleted(behaviors))
-	{
-		for(VirtualNode node = this->behaviors->head; NULL != node; node = node->next)
-		{
-			Behavior behavior = Behavior::safeCast(node->data);
-
-			if(!classPointer || Object::getCast(behavior, classPointer, NULL))
-			{
-				VirtualList::pushBack(behaviors, behavior);
-			}
-		}
-
-		if(NULL != behaviors->head)
-		{
-			return true;
-		}
-	}
-
-	return false;
-}
-//---------------------------------------------------------------------------------------------------------
-Sprite Entity::addSprite(SpriteSpec* spriteSpec, SpriteManager spriteManager)
-{
-	if(NULL == spriteSpec)
-	{
-		return NULL;
-	}
-
-	if(NULL == spriteManager)
-	{
-		spriteManager = SpriteManager::getInstance();
-	}
-
-	return SpriteManager::createSprite(spriteManager, SpatialObject::safeCast(this), spriteSpec);
-}
-//---------------------------------------------------------------------------------------------------------
-void Entity::addSprites(SpriteSpec** spriteSpecs, bool destroyOldSprites)
-{
-	if(NULL == spriteSpecs || NULL == spriteSpecs[0])
-	{
-		return;
-	}
-
-	if(destroyOldSprites)
-	{
-		Entity::removeSprites(this);
-	}
-
-	SpriteManager spriteManager = SpriteManager::getInstance();
-
-	for(int32 i = 0; NULL != spriteSpecs[i] && NULL != spriteSpecs[i]->allocator; i++)
-	{
-		Entity::addSprite(this, (SpriteSpec*)spriteSpecs[i], spriteManager);
-	}
-}
-//---------------------------------------------------------------------------------------------------------
-void Entity::removeSprite(Sprite sprite)
-{
-	SpriteManager::destroySprite(SpriteManager::getInstance(), sprite);
-}
-//---------------------------------------------------------------------------------------------------------
-void Entity::removeSprites()
-{
-	SpriteManager::destroySprites(SpriteManager::getInstance(), SpatialObject::safeCast(this));
-}
-//---------------------------------------------------------------------------------------------------------
-Wireframe Entity::addWireframe(WireframeSpec* wireframeSpec, WireframeManager wireframeManager)
-{
-	if(NULL == wireframeSpec)
-	{
-		return NULL;
-	}
-
-	if(NULL == wireframeManager)
-	{
-		wireframeManager = WireframeManager::getInstance();
-	}
-
-	return WireframeManager::createWireframe(wireframeManager, wireframeSpec, SpatialObject::safeCast(this));
-}
-//---------------------------------------------------------------------------------------------------------
-void Entity::addWireframes(WireframeSpec** wireframeSpecs, bool destroyOldWireframes)
-{
-	if(NULL == wireframeSpecs || NULL == wireframeSpecs[0])
-	{
-		return;
-	}
-
-	if(destroyOldWireframes)
-	{
-		Entity::removeWireframes(this);
-	}
-
-	WireframeManager wireframeManager = WireframeManager::getInstance();
-
-	for(int32 i = 0; NULL != wireframeSpecs[i] && NULL != wireframeSpecs[i]->allocator; i++)
-	{
-		Entity::addWireframe(this, wireframeSpecs[i], wireframeManager);
-	}
-}
-//---------------------------------------------------------------------------------------------------------
-void Entity::removeWireframe(Wireframe wireframe)
-{
-	WireframeManager::destroyWireframe(WireframeManager::getInstance(), wireframe);
-}
-//---------------------------------------------------------------------------------------------------------
-void Entity::removeWireframes()
-{
-	WireframeManager::destroyWireframes(WireframeManager::getInstance(), SpatialObject::safeCast(this));
-}
-//---------------------------------------------------------------------------------------------------------
-Collider Entity::addCollider(ColliderSpec* colliderSpec, CollisionManager collisionManager)
-{
-	if(NULL == colliderSpec)
-	{
-		return NULL;
-	}
-
-	if(NULL == collisionManager)
-	{
-		collisionManager = VUEngine::getCollisionManager(_vuEngine);
-	}
-
-	if(NULL == this->colliders)
-	{
-		this->colliders = new VirtualList();
-	}
-
-	Collider collider = CollisionManager::createCollider(collisionManager, SpatialObject::safeCast(this), colliderSpec);
-
-	NM_ASSERT(!isDeleted(collider), "Entity::addCollider: collider not created");
-
-	if(!isDeleted(collider))
-	{
-		VirtualList::pushBack(this->colliders, collider);
-	}
-
-	return collider;
-}
-//---------------------------------------------------------------------------------------------------------
-void Entity::addColliders(ColliderSpec* colliderSpecs, bool destroyOldColliders)
-{
-	if(NULL == colliderSpecs)
-	{
-		return;
-	}
-
-	if(destroyOldColliders)
-	{
-		Entity::removeColliders(this);
-	}
-
-	CollisionManager collisionManager = VUEngine::getCollisionManager(_vuEngine);
-
-	// go through n sprites in entity's spec
-	for(int32 i = 0; NULL != colliderSpecs[i].allocator; i++)
-	{
-		Entity::addCollider(this, &colliderSpecs[i], collisionManager);
-	}
-}
-//---------------------------------------------------------------------------------------------------------
-void Entity::removeCollider(Collider collider)
-{
-	if(isDeleted(this->colliders) || !VirtualList::removeData(this->colliders, collider))
-	{
-		return;
-	}
-
-	CollisionManager::destroyCollider(VUEngine::getCollisionManager(_vuEngine), collider);
-}
-//---------------------------------------------------------------------------------------------------------
-void Entity::removeColliders()
-{
-	if(NULL != this->colliders)
-	{
-		ASSERT(!isDeleted(this->colliders), "Entity::setSpec: dead colliders");
-
-		CollisionManager collisionManager = VUEngine::getCollisionManager(_vuEngine);
-
-		for(VirtualNode node = this->colliders->head; NULL != node; node = node->next)
-		{
-			CollisionManager::destroyCollider(collisionManager, Collider::safeCast(node->data));
-		}
-
-		delete this->colliders;
-		this->colliders = NULL;
-	}
-}
-//---------------------------------------------------------------------------------------------------------
-VirtualList Entity::getColliders()
-{
-	return this->colliders;
-}
-//---------------------------------------------------------------------------------------------------------
 void Entity::enableCollisions()
 {
 	this->collisionsEnabled = true;
 
-	if(NULL != this->colliders)
-	{
-		for(VirtualNode node = this->colliders->head; NULL != node; node = node->next)
-		{
-			Collider collider = Collider::safeCast(node->data);
-
-			Collider::enable(collider);
-		}
-	}
+	CollisionManager::propagateCommand(VUEngine::getCollisionManager(_vuEngine), cComponentCommandEnable, SpatialObject::safeCast(this));
 }
 //---------------------------------------------------------------------------------------------------------
 void Entity::disableCollisions()
 {
 	this->collisionsEnabled = false;
 
-	if(NULL != this->colliders)
-	{
-		for(VirtualNode node = this->colliders->head; NULL != node; node = node->next)
-		{
-			Collider collider = Collider::safeCast(node->data);
-
-			Collider::disable(collider);
-		}
-	}
+	CollisionManager::propagateCommand(VUEngine::getCollisionManager(_vuEngine), cComponentCommandDisable, SpatialObject::safeCast(this));
 }
 //---------------------------------------------------------------------------------------------------------
 void Entity::checkCollisions(bool active)
@@ -1027,55 +753,30 @@ void Entity::checkCollisions(bool active)
 		this->collisionsEnabled = this->checkingCollisions;
 	}
 
-	if(NULL != this->colliders)
-	{
-		for(VirtualNode node = this->colliders->head; NULL != node; node = node->next)
-		{
-			Collider collider = Collider::safeCast(node->data);
-
-			Collider::checkCollisions(collider, active);
-		}
-	}
+	CollisionManager::propagateCommand(VUEngine::getCollisionManager(_vuEngine), cColliderComponentCommandCheckCollisions, SpatialObject::safeCast(this), (uint32)active);
 }
 //---------------------------------------------------------------------------------------------------------
 void Entity::registerCollisions(bool value)
 {
-	if(NULL != this->colliders)
-	{
-		for(VirtualNode node = this->colliders->head; NULL != node; node = node->next)
-		{
-			Collider collider = Collider::safeCast(node->data);
-
-			Collider::registerCollisions(collider, value);
-		}
-	}
+	CollisionManager::propagateCommand(VUEngine::getCollisionManager(_vuEngine), cColliderComponentCommandRegisterCollisions, SpatialObject::safeCast(this), (uint32)value);
 }
 //---------------------------------------------------------------------------------------------------------
 void Entity::setCollidersLayers(uint32 layers)
 {
-	if(NULL != this->colliders)
-	{
-		for(VirtualNode node = this->colliders->head; NULL != node; node = node->next)
-		{
-			Collider collider = Collider::safeCast(node->data);
-
-			Collider::setLayers(collider, layers);
-		}
-	}
+	CollisionManager::propagateCommand(VUEngine::getCollisionManager(_vuEngine), cColliderComponentCommandSetLayers, SpatialObject::safeCast(this), (uint32)layers);
 }
 //---------------------------------------------------------------------------------------------------------
 uint32 Entity::getCollidersLayers()
 {
 	uint32 collidersLayers = 0;
 
-	if(NULL != this->colliders)
-	{
-		for(VirtualNode node = this->colliders->head; NULL != node; node = node->next)
-		{
-			Collider collider = Collider::safeCast(node->data);
+	VirtualList colliders = Entity::getComponents(this, kColliderComponent);
 
-			collidersLayers |= Collider::getLayers(collider);
-		}
+	for(VirtualNode node = colliders->head; NULL != node; node = node->next)
+	{
+		Collider collider = Collider::safeCast(node->data);
+
+		collidersLayers |= Collider::getLayers(collider);
 	}
 
 	return collidersLayers;
@@ -1083,59 +784,33 @@ uint32 Entity::getCollidersLayers()
 //---------------------------------------------------------------------------------------------------------
 void Entity::setCollidersLayersToIgnore(uint32 layersToIgnore)
 {
-	if(NULL != this->colliders)
-	{
-		for(VirtualNode node = this->colliders->head; NULL != node; node = node->next)
-		{
-			Collider collider = Collider::safeCast(node->data);
-
-			Collider::setLayersToIgnore(collider, layersToIgnore);
-		}
-	}
+	CollisionManager::propagateCommand(VUEngine::getCollisionManager(_vuEngine), cColliderComponentCommandSetLayersToIgnore, SpatialObject::safeCast(this), (uint32)layersToIgnore);
 }
 //---------------------------------------------------------------------------------------------------------
 uint32 Entity::getCollidersLayersToIgnore()
 {
 	uint32 collidersLayersToIgnore = 0;
 
-	if(NULL != this->colliders)
-	{
-		for(VirtualNode node = this->colliders->head; NULL != node; node = node->next)
-		{
-			Collider collider = Collider::safeCast(node->data);
+	VirtualList colliders = Entity::getComponents(this, kColliderComponent);
 
-			collidersLayersToIgnore |= Collider::getLayersToIgnore(collider);
-		}
+	for(VirtualNode node = colliders->head; NULL != node; node = node->next)
+	{
+		Collider collider = Collider::safeCast(node->data);
+
+		collidersLayersToIgnore |= Collider::getLayersToIgnore(collider);
 	}
 
 	return collidersLayersToIgnore;
 }
 //---------------------------------------------------------------------------------------------------------
-bool Entity::hasColliders()
-{
-	return NULL != this->colliders && 0 < VirtualList::getCount(this->colliders);
-}
-//---------------------------------------------------------------------------------------------------------
 void Entity::showColliders()
 {
-	if(NULL != this->colliders)
-	{
-		for(VirtualNode node = this->colliders->head; NULL != node; node = node->next)
-		{
-			Collider::show(node->data);
-		}
-	}
+	CollisionManager::propagateCommand(VUEngine::getCollisionManager(_vuEngine), cColliderComponentCommandShow, SpatialObject::safeCast(this));
 }
 //---------------------------------------------------------------------------------------------------------
 void Entity::hideColliders()
 {
-	if(NULL != this->colliders)
-	{
-		for(VirtualNode node = this->colliders->head; NULL != node; node = node->next)
-		{
-			Collider::hide(node->data);
-		}
-	}
+	CollisionManager::propagateCommand(VUEngine::getCollisionManager(_vuEngine), cColliderComponentCommandHide, SpatialObject::safeCast(this));
 }
 //---------------------------------------------------------------------------------------------------------
 void Entity::calculateSize()
@@ -1175,6 +850,7 @@ fixed_t Entity::getWidth()
 {
 	if(0 == this->size.x)
 	{
+		NM_ASSERT(false, "Entity::getWidth: 0 x size");
 		Entity::calculateSize(this);
 	}
 
@@ -1185,6 +861,7 @@ fixed_t Entity::getHeight()
 {
 	if(0 == this->size.y)
 	{
+		NM_ASSERT(false, "Entity::getHeight: 0 y size");
 		Entity::calculateSize(this);
 	}
 
@@ -1195,6 +872,7 @@ fixed_t Entity::getDepth()
 {
 	if(0 == this->size.z)
 	{
+		NM_ASSERT(false, "Entity::getDepth: 0 z size");
 		Entity::calculateSize(this);
 	}
 
@@ -1273,45 +951,6 @@ bool Entity::alwaysStreamIn()
 // CLASS' PRIVATE METHODS
 //=========================================================================================================
 
-//---------------------------------------------------------------------------------------------------------
-bool Entity::createBehaviors()
-{
-	if(NULL == this->behaviors)
-	{
-		Entity::addBehaviors(this, this->entitySpec->behaviorSpecs, true);
-	}
-
-	return NULL != this->behaviors;
-}
-//---------------------------------------------------------------------------------------------------------
-void Entity::createSprites()
-{
-	// This method can be called multiple times so only add sprites if not already added
-	if(0 == SpriteManager::getCount(SpriteManager::getInstance(), SpatialObject::safeCast(this)))
-	{
-		Entity::addSprites(this, this->entitySpec->spriteSpecs, true);
-	}
-}
-//---------------------------------------------------------------------------------------------------------
-void Entity::createWireframes()
-{
-	// This method can be called multiple times so only add wireframes if not already added
-	if(0 == WireframeManager::getCount(WireframeManager::getInstance(), SpatialObject::safeCast(this)))
-	{
-		Entity::addWireframes(this, this->entitySpec->wireframeSpecs, true);
-	}
-}
-//---------------------------------------------------------------------------------------------------------
-bool Entity::createColliders()
-{
-	// This method can be called multiple times so only add colliders if not already added
-	if(NULL == this->colliders)
-	{
-		Entity::addColliders(this, this->entitySpec->colliderSpecs, true);
-	}
-
-	return NULL != this->colliders;
-}
 //---------------------------------------------------------------------------------------------------------
 void Entity::calculateSizeFromChildren(RightBox* rightBox, Vector3D environmentPosition)
 {

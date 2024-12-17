@@ -62,6 +62,16 @@ bool WireframeManager::isAnyVisible(SpatialObject owner)
 	return false;
 }
 //---------------------------------------------------------------------------------------------------------
+Wireframe WireframeManager::createComponent(SpatialObject owner, const WireframeSpec* wireframeSpec)
+{
+	return WireframeManager::createWireframe(this, owner, wireframeSpec);
+}
+//---------------------------------------------------------------------------------------------------------
+void WireframeManager::destroyComponent(Wireframe wireframe)
+{
+	WireframeManager::destroyWireframe(this, wireframe);
+}
+//---------------------------------------------------------------------------------------------------------
 void WireframeManager::reset()
 {
 	WireframeManager::enable(this);
@@ -86,25 +96,7 @@ void WireframeManager::disable()
 	this->disabled = true;
 }
 //---------------------------------------------------------------------------------------------------------
-void WireframeManager::getWireframes(SpatialObject owner, VirtualList wireframes)
-{
-	if(isDeleted(wireframes))
-	{
-		return;
-	}
-
-	for(VirtualNode node = this->components->head; NULL != node; node = node->next)
-	{
-		Wireframe wireframe = Wireframe::safeCast(node->data);
-
-		if(owner == wireframe->owner)
-		{
-			VirtualList::pushBack(wireframes, wireframe);
-		}
-	}
-}
-//---------------------------------------------------------------------------------------------------------
-Wireframe WireframeManager::createWireframe(const WireframeSpec* wireframeSpec, SpatialObject owner)
+Wireframe WireframeManager::createWireframe(SpatialObject owner, const WireframeSpec* wireframeSpec)
 {
 	NM_ASSERT(NULL != wireframeSpec, "WireframeManager::createWireframe: null wireframeSpec");
 
@@ -141,19 +133,6 @@ void WireframeManager::destroyWireframe(Wireframe wireframe)
 	else
 	{
 		NM_ASSERT(false, "WireframeManager::destroyWireframe: destroying a wireframe that I don't manage");
-	}
-}
-//---------------------------------------------------------------------------------------------------------
-void WireframeManager::destroyWireframes(SpatialObject owner)
-{
-	for(VirtualNode node = this->components->head; NULL != node; node = node->next)
-	{
-		Wireframe wireframe = Wireframe::safeCast(node->data);
-
-		if(owner == wireframe->owner)
-		{
-			WireframeManager::destroyWireframe(this, wireframe);
-		}
 	}
 }
 //---------------------------------------------------------------------------------------------------------

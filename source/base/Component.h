@@ -24,17 +24,38 @@
 //=========================================================================================================
 
 class SpatialObject;
-typedef const void ComponentSpec;
 
 
 //=========================================================================================================
 // CLASS' DATA
 //=========================================================================================================
 
+/// Component commands
 enum ComponentCommands
 {
-	cComponentLastCommand = 0
+	cComponentCommandEnable = 0,
+	cComponentCommandDisable,
+	cComponentCommandLast
 };
+
+/// Component types
+enum ComponentTypes
+{
+	kColliderComponent = 0,
+	kSpriteComponent,
+	kWireframeComponent,
+	kBehaviorComponent,
+	kComponentTypes,
+};
+
+/// A Component Spec
+/// @memberof Sprite
+typedef struct ComponentSpec
+{
+	/// Class' allocator
+	AllocatorPointer allocator;
+
+} ComponentSpec;
 
 
 //=========================================================================================================

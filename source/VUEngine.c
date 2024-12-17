@@ -437,11 +437,11 @@ void VUEngine::frameStarted(uint16 gameFrameDuration)
 		ParamTableManager::print(ParamTableManager::getInstance(), 1 + 27, 5);
 #endif
 
+//			MemoryPool::printDetailedUsage(MemoryPool::getInstance(), 30, 1);
 #ifdef __SHOW_MEMORY_POOL_STATUS
 		if(!VUEngine::isInToolState(this))
 		{
 #ifdef __SHOW_DETAILED_MEMORY_POOL_STATUS
-			MemoryPool::printDetailedUsage(MemoryPool::getInstance(), 30, 1);
 #else
 			MemoryPool::printResumedUsage(MemoryPool::getInstance(), 35, 1);
 #endif

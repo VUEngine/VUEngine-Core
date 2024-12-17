@@ -152,11 +152,8 @@ class Entity : Container
 	/// Factory to create this entity's children
 	EntityFactory entityFactory;
 
-	/// Linked list of attached colliders
-	VirtualList colliders;
-
-	/// Linked list of attached behaviors
-	VirtualList behaviors;
+	/// Linked list of attached components
+	VirtualList components[kComponentTypes];
 
 	/// Pointer to the spec that defines how to initialize the entity 
 	EntitySpec* entitySpec;
@@ -185,7 +182,7 @@ class Entity : Container
 	/// @param positionedEntity: Struct that defines which entity spec to use to configure the an entity
 	/// @param environmentPosition: Vector used as the origin with respect to which computed the bounding box's position
 	/// @return Spatially located bounding box of an entity that would be created with the provided positioned entity struct
-	static RightBox getBoundingBoxFromSpec(const PositionedEntity* positionedEntity, const Vector3D* environmentPosition);
+	static RightBox getRightBoxFromSpec(const PositionedEntity* positionedEntity, const Vector3D* environmentPosition);
 
 	/// Test if the provided right box lies inside the camera's frustum.
 	/// @param vector3D: RightBox's translation vector
@@ -219,10 +216,10 @@ class Entity : Container
 	override uint32 getInGameType();
 
 	/// Add the components that must attach to this entity. 
-	override void addComponents();
+	override void createComponents();
 
-	/// Remove the components that attach to this entity. 	
-	override void removeComponents();
+	/// Destroy the components that attach to this entity. 	
+	override void destroyComponents();
 
 	/// Make this instance visible.
 	override void show();
@@ -239,11 +236,6 @@ class Entity : Container
 	/// Set this instance's transparency effects.
 	/// @param transparency: Transparecy effect (__TRANSPARENCY_NONE, __TRANSPARENCY_EVEN or __TRANSPARENCY_ODD)
 	override void setTransparency(uint8 transparency);
-
-	/// Default interger message handler for propagateMessage
-	/// @param message: Propagated integer message
-	/// @return True if the propagation must stop; false if the propagation must reach other containers
-	override bool handlePropagatedMessage(int32 message);
 
 	/// Retrieve the entity's spec.
 	/// @return Specification that determines how the entity was configured
@@ -282,82 +274,33 @@ class Entity : Container
 	/// @return Child entity whose ID matches the provided one
 	Entity getChildById(int16 id);
 
-	/// Attach a new behavior to the entity and configure it with the provided spec.
-	/// @param behaviorSpec: Specification to be used to configure the new behavior
-	Behavior addBehavior(BehaviorSpec* behaviorSpec);
+	/// Attach a new component to the entity and configure it with the provided spec.
+	/// @param componentSpec: Specification to be used to configure the new component
+	/// @return Added component
+	Component addComponent(ComponentSpec* componentSpec, uint32 componentType);
 
-	/// Attach a new behaviors to the entity and configure them with the provided specs.
-	/// @param behaviorSpecs: Array of specification to be used to configure the new behaviors
-	/// @param destroyOldBehaviors: If true, all previously attached behaviors will be removed
-	void addBehaviors(BehaviorSpec** behaviorSpecs, bool destroyOldBehaviors);
+	/// Remove a component from the entity.
+	/// @param component: Component to remove
+	void removeComponent(Component component);
 
-	/// Remove all attached behaviors.
-	void removeBehaviors();
+	/// Attach a new components to the entity and configure it with the provided specs.
+	/// @param componentSpecs: Specifications to be used to configure the new components
+	/// @param componentType: Type of components to add
+	/// @param destroyOldComponents: If true, any previous component of the same type is destroyed
+	void addComponents(ComponentSpec** componentSpecs, uint32 componentType, bool destroyOldComponents);
 
-	/// Retrieve the linked list of behaviors that are instances of the provided class.
+	/// Retrieve a list with the components of the provided type.
+	/// @param componentType: Type of components to add
+	/// @return Linked list of components of the type provided
+	VirtualList getComponents(uint32 componentType);
+
+	/// Retrieve the linked list of components that are instances of the provided class.
 	/// @param classPointer: Pointer to the class to use as search criteria. Usage: typeofclass(ClassName)
-	/// @param behaviors: Linked list to be filled with the behaviors that meed the search criteria 
+	/// @param components: Linked list to be filled with the behaviors that meed the search criteria 
 	/// (it is externally allocated and must be externally deleted)
+	/// @param componentType: Type of components to retrieve
 	/// @return True if one or more behaviors met the search criteria; false otherwise
-	bool getBehaviors(ClassPointer classPointer, VirtualList behaviors);
-
-	/// Attach a new sprite to the entity and configure it with the provided spec.
-	/// @param spriteSpec: Specification to be used to configure the new sprite
-	/// @param spriteManager: A reference to the SpriteManager used to speed up multiple calls to this method
-	/// @return The new sprite
-	Sprite addSprite(SpriteSpec* spriteSpec, SpriteManager spriteManager);
-
-	/// Attach a new sprites to the entity and configure them with the provided specs.
-	/// @param spriteSpecs: Array of specification to be used to configure the new sprites
-	/// @param destroyOldSprites: If true, all previously attached sprites will be removed
-	void addSprites(SpriteSpec** spriteSpecs, bool destroyOldSprites);
-
-	/// Remove an attached sprite.
-	/// @param sprite: Sprite to be removed
-	void removeSprite(Sprite sprite);
-
-	/// Remove all attached sprites.
-	void removeSprites();
-	
-	/// Attach a new wireframe to the entity and configure it with the provided spec.
-	/// @param wireframeSpec: Specification to be used to configure the new sprite
-	/// @param wireframeManager: A reference to the WireframeManager used to speed up multiple calls to this method
-	/// @return The new wireframe
-	Wireframe addWireframe(WireframeSpec* wireframeSpec, WireframeManager wireframeManager);
-
-	/// Attach a new wireframes to the entity and configure them with the provided specs.
-	/// @param wireframeSpecs: Array of specification to be used to configure the new wireframes
-	/// @param destroyOldWireframes: If true, all previously attached wireframes will be removed
-	void addWireframes(WireframeSpec** wireframeSpecs, bool destroyOldWireframes);
-
-	/// Remove an attached wireframe.
-	/// @param wireframe: Wireframe to be removed
-	void removeWireframe(Wireframe wireframe);
-
-	/// Remove all attached wireframes.
-	void removeWireframes();
-
-	/// Attach a new collider to the entity and configure it with the provided spec.
-	/// @param colliderSpec: Specification to be used to configure the new sprite
-	/// @param collisionManager: A reference to the CollisionManager used to speed up multiple calls to this method
-	/// @return The new collider
-	Collider addCollider(ColliderSpec* colliderSpec, CollisionManager collisionManager);
-
-	/// Attach a new colliders to the entity and configure them with the provided specs.
-	/// @param colliderSpecs: Array of specification to be used to configure the new colliders
-	/// @param destroyOldColliders: If true, all previously attached colliders will be removed
-	void addColliders(ColliderSpec* colliderSpecs, bool destroyOldColliders);
-
-	/// Remove an attached collider.
-	/// @param collider: Collider to be removed
-	void removeCollider(Collider collider);
-
-	/// Remove all attached colliders.
-	void removeColliders();
-
-	/// Retrieve the list of attached colliders.
-	/// @return Linked list of attached colliders
-	VirtualList getColliders();
+	bool getComponentsOfClass(ClassPointer classPointer, VirtualList components, uint32 componentType);
 	
 	/// Enable collision detection on the entity's colliders.
 	void enableCollisions();

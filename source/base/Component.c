@@ -65,7 +65,7 @@ void Component::destructor()
 //---------------------------------------------------------------------------------------------------------
 ComponentSpec* Component::getSpec()
 {
-	return this->componentSpec;
+	return (ComponentSpec*)this->componentSpec;
 }
 //---------------------------------------------------------------------------------------------------------
 SpatialObject Component::getOwner()

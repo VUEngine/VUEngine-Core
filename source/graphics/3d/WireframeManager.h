@@ -71,6 +71,16 @@ singleton class WireframeManager : ComponentManager
 	/// @return True if at least of the sprites that attach to the provided owner is visible
 	override bool isAnyVisible(SpatialObject owner);
 
+	/// Create a wireframe with the provided spec.
+	/// @param owner: Object to which the wireframe will attach to
+	/// @param wireframeSpec: Spec to use to create the wireframe
+	/// @return Created wireframe
+	override Wireframe createComponent(SpatialObject owner, const WireframeSpec* wireframeSpec);
+
+	/// Destroy the provided wireframe.
+	/// @param wireframe: Wireframe to destroy
+	override void destroyComponent(Wireframe wireframe);
+
 	/// Reset the manager's state.
 	void reset();
 
@@ -80,24 +90,15 @@ singleton class WireframeManager : ComponentManager
 	/// Disable wireframe rendering and drawing.
 	void disable();
 
-	/// Fill the provided linked list with the wireframes belonging to the provided owner.
-	/// @param owner: Object to which the wireframes attach to
-	/// @param wireframes: Linked list to populate
-	void getWireframes(SpatialObject owner, VirtualList wireframe);
-
 	/// Create a wireframe with the provided spec.
+	/// @param owner: Object to which the wireframe will attach toc
 	/// @param wireframeSpec: Spec to use to create the wireframe
-	/// @param owner: Object to which the wireframe will attach to
 	/// @return Created wireframe
-	Wireframe createWireframe(const WireframeSpec* wireframeSpec, SpatialObject owner);
+	Wireframe createWireframe(SpatialObject owner, const WireframeSpec* wireframeSpec);
 
 	/// Destroy the provided wireframe.
 	/// @param wireframe: Wireframe to destroy
 	void destroyWireframe(Wireframe wireframe);
-
-	/// Destroy the wireframes belonging to the provided owner.
-	/// @param owner: Object to which the wireframes attach to
-	void destroyWireframes(SpatialObject owner);
 
 	/// Register a wireframe to be managed
 	/// @param wireframe: Wireframe to be managed

@@ -16,7 +16,7 @@
 //=========================================================================================================
 
 #include <Collider.h>
-#include <Object.h>
+#include <ComponentManager.h>
 
 
 //=========================================================================================================
@@ -41,15 +41,12 @@ class Clock;
 ///
 /// Class CollisionManager
 ///
-/// Inherits from Object
+/// Inherits from ComponentManager
 ///
 /// Manages the colliders in the game states.
-class CollisionManager : Object
+class CollisionManager : ComponentManager
 {
 	/// @protectedsection
-
-	/// Linked list of registered colliders
-	VirtualList	colliders;
 
 	/// If false, colliders out of camera's range are culled of from collision testing
 	bool checkCollidersOutOfCameraRange;
@@ -61,6 +58,16 @@ class CollisionManager : Object
 
 	/// Class' constructor
 	void constructor();
+
+	/// Create a collider with the provided spec.
+	/// @param owner: Object to which the collider will attach to
+	/// @param colliderSpec: Spec to use to create the collider
+	/// @return Created collider
+	override Collider createComponent(SpatialObject owner, const ColliderSpec* colliderSpec);
+
+	/// Destroy the provided collider.
+	/// @param collider: Collider to destroy
+	override void destroyComponent(Collider collider);
 
 	/// Reset the manager's state.
 	void reset();

@@ -231,10 +231,10 @@ class Container : SpatialObject
 	virtual void changeEnvironment(Transformation* environmentTransform);
 
 	/// Create the components that must attach to this container. 	
-	virtual void addComponents();
+	virtual void createComponents();
 
 	/// Destroy the components that attach to this container. 	
-	virtual void removeComponents();
+	virtual void destroyComponents();
 
 	/// Make the container ready to start operating once it has been completely intialized.
 	/// @param recursive: If true, the ready call is propagated to its children, grand children, etc.
