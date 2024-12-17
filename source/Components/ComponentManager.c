@@ -322,7 +322,6 @@ static int16 ComponentManager::getSpecDisplacementForComponentType(uint32 compon
 //---------------------------------------------------------------------------------------------------------
 void ComponentManager::propagateCommand(int32 command, SpatialObject owner, ...)
 {
-
 	for(VirtualNode node = this->components->head; NULL != node; node = node->next)
 	{
 		Component component = Component::safeCast(node->data);
