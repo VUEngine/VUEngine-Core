@@ -98,9 +98,9 @@ void WireframeManager::disable()
 //---------------------------------------------------------------------------------------------------------
 Wireframe WireframeManager::createWireframe(SpatialObject owner, const WireframeSpec* wireframeSpec)
 {
-	NM_ASSERT(NULL != wireframeSpec, "WireframeManager::createWireframe: null wireframeSpec");
+	NM_ASSERT(NULL != wireframeSpec && NULL != wireframeSpec->allocator, "WireframeManager::createWireframe: null wireframeSpec");
 
-	if(NULL == wireframeSpec)
+	if(NULL == wireframeSpec || NULL == wireframeSpec->allocator)
 	{
 		return NULL;
 	}

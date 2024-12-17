@@ -94,13 +94,13 @@ void CollisionManager::purgeDestroyedColliders()
 		auxNextNode = auxNode->next;
 
 		// load the current collider to check against
-		Collider colliderToCheck = Collider::safeCast(auxNode->data);
+		Collider collider = Collider::safeCast(auxNode->data);
 
-		if(colliderToCheck->deleteMe)
+		if(collider->deleteMe)
 		{
 			VirtualList::removeNode(this->components, auxNode);
 
-			delete colliderToCheck;
+			delete collider;
 		}
 	}	
 }

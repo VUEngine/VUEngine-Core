@@ -379,7 +379,7 @@ uint32 EntityFactory::transformEntities()
 		{
 			EntitySpec* entitySpec = Entity::getSpec(positionedEntityDescription->entity);
 			
-			if(NULL != entitySpec && NULL != entitySpec->colliderSpecs[positionedEntityDescription->componentIndex].allocator)
+			if(NULL != entitySpec && NULL != entitySpec->colliderSpecs && NULL != entitySpec->colliderSpecs[positionedEntityDescription->componentIndex].allocator)
 			{
 				bool createdComponent = NULL != Entity::addComponent(positionedEntityDescription->entity, (ComponentSpec*)&entitySpec->colliderSpecs[positionedEntityDescription->componentIndex], kColliderComponent);
 				positionedEntityDescription->componentIndex++;

@@ -40,6 +40,11 @@ Behavior BehaviorManager::createComponent(SpatialObject owner, const BehaviorSpe
 	NM_ASSERT(NULL != behaviorSpec, "BehaviorManager::createBehavior: null behaviorSpec");
 	NM_ASSERT(NULL != behaviorSpec->allocator, "BehaviorManager::createBehavior: no behavior allocator");
 
+	if(NULL == behaviorSpec || NULL == behaviorSpec->allocator)
+	{
+		return NULL;
+	}
+
 	Behavior behavior = ((Behavior (*)(SpatialObject, const BehaviorSpec*)) behaviorSpec->allocator)(owner, (BehaviorSpec*)behaviorSpec);
 	ASSERT(!isDeleted(behavior), "BehaviorManager::createBehavior: failed creating behavior");
 

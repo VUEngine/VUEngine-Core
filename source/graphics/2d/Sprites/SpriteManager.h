@@ -149,7 +149,6 @@ singleton class SpriteManager : ComponentManager
 	/// @param sprite: Sprite to destroy
 	void destroySprite(Sprite sprite);
 
-	
 	/// Register a sprite to be managed
 	/// @param sprite: Sprite to be managed
 	/// @return True if the sprite was successfully registered; false otherwise

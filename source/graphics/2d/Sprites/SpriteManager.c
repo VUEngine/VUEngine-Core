@@ -144,6 +144,11 @@ Sprite SpriteManager::createSprite(SpatialObject owner, const SpriteSpec* sprite
 	NM_ASSERT(NULL != spriteSpec, "SpriteManager::createSprite: null spriteSpec");
 	NM_ASSERT(NULL != spriteSpec->allocator, "SpriteManager::createSprite: no sprite allocator");
 
+	if(NULL == spriteSpec || NULL == spriteSpec->allocator)
+	{
+		return NULL;
+	}
+
 	Sprite sprite = ((Sprite (*)(SpatialObject, const SpriteSpec*)) spriteSpec->allocator)(owner, (SpriteSpec*)spriteSpec);
 	ASSERT(!isDeleted(sprite), "SpriteManager::createSprite: failed creating sprite");
 

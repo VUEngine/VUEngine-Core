@@ -35,7 +35,7 @@ class VirtualList;
 typedef struct ComponentSpecsDirectory
 {
 	/// Array of collider specs
-	ComponentSpec* colliderSpecs;
+	ComponentSpec** colliderSpecs;
 
 	/// Array of sprite specs
 	ComponentSpec** spriteSpecs;

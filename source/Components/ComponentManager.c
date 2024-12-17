@@ -74,7 +74,7 @@ static void ComponentManager::createComponents(SpatialObject owner, const Compon
 			{
 				ComponentSpec* componentSpec = &((ComponentSpec*)componentSpecs)[0];
 
-				for(; NULL != componentSpec->allocator; componentSpec += displacement)
+				for(; NULL != componentSpec && NULL != componentSpec->allocator; componentSpec += displacement)
 				{
 					ComponentManager::createComponent(componentManager, owner, componentSpec);
 				}
@@ -301,6 +301,8 @@ static uint32 ComponentManager::getComponentType(Component component)
 //---------------------------------------------------------------------------------------------------------
 static bool ComponentManager::getComponentSpecsForComponentType(const ComponentSpecsDirectory* componentSpecsDirectory, uint32 componentType, ComponentSpec*** componentSpecs, int16* displacement)
 {
+	*componentSpecs = NULL;
+	
 	if(kComponentTypes <= componentType)
 	{
 		return false;
@@ -310,7 +312,7 @@ static bool ComponentManager::getComponentSpecsForComponentType(const ComponentS
 	{
 		case kColliderComponent:
 
-			*componentSpecs = (ComponentSpec**)componentSpecsDirectory->colliderSpecs;
+			*componentSpecs = componentSpecsDirectory->colliderSpecs;
 			*displacement = sizeof(ColliderSpec) >> 2;
 			return false;
 			break;

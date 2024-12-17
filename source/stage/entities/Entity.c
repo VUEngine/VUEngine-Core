@@ -358,25 +358,20 @@ void Entity::constructor(EntitySpec* entitySpec, int16 internalId, const char* c
 {
 	Base::constructor(name);
 
-	// set the ids
 	this->internalId = internalId;
-
-	// save spec
 	this->entitySpec = entitySpec;
-
-	// the sprite must be initialized in the derived class
-	for(int16 i = 0; i < kComponentTypes; i++)
-	{
-		this->components[i] = NULL;
-	}
 
 	this->centerDisplacement = NULL;
 	this->entityFactory = NULL;
 
-	// initialize to 0 for the engine to know that size must be set
 	this->size = Size::getFromPixelSize(entitySpec->pixelSize);
 	this->collisionsEnabled = true;
 	this->checkingCollisions = true;
+
+	for(int16 i = 0; i < kComponentTypes; i++)
+	{
+		this->components[i] = NULL;
+	}
 }
 //---------------------------------------------------------------------------------------------------------
 void Entity::destructor()
@@ -451,7 +446,7 @@ void Entity::createComponents()
 	}
 
 	ComponentSpecsDirectory componentSpecsDirectory;
-	componentSpecsDirectory.colliderSpecs 	= (ComponentSpec*)this->entitySpec->colliderSpecs;
+	componentSpecsDirectory.colliderSpecs 	= (ComponentSpec**)this->entitySpec->colliderSpecs;
 	componentSpecsDirectory.spriteSpecs 	= (ComponentSpec**)this->entitySpec->spriteSpecs;
 	componentSpecsDirectory.wireframeSpecs 	= (ComponentSpec**)this->entitySpec->wireframeSpecs;
 	componentSpecsDirectory.behaviorSpecs 	= (ComponentSpec**)this->entitySpec->behaviorSpecs;
