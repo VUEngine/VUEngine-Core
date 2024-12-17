@@ -536,14 +536,16 @@ void Entity::show()
 {
 	Base::show(this);
 
-	VisualComponent::propagateCommand(cVisualComponentCommandShow, SpatialObject::safeCast(this));
+	SpriteManager::propagateCommand(SpriteManager::getInstance(), cVisualComponentCommandShow, SpatialObject::safeCast(this));
+	WireframeManager::propagateCommand(WireframeManager::getInstance(), cVisualComponentCommandShow, SpatialObject::safeCast(this));
 }
 //---------------------------------------------------------------------------------------------------------
 void Entity::hide()
 {
 	Base::hide(this);
 
-	VisualComponent::propagateCommand(cVisualComponentCommandHide, SpatialObject::safeCast(this));
+	SpriteManager::propagateCommand(SpriteManager::getInstance(), cVisualComponentCommandHide, SpatialObject::safeCast(this));
+	WireframeManager::propagateCommand(WireframeManager::getInstance(), cVisualComponentCommandHide, SpatialObject::safeCast(this));
 }
 //---------------------------------------------------------------------------------------------------------
 void Entity::suspend()
@@ -575,7 +577,8 @@ void Entity::setTransparency(uint8 transparency)
 {
 	Base::setTransparency(this, transparency);
 
-	VisualComponent::propagateCommand(cVisualComponentCommandSetTransparency, SpatialObject::safeCast(this), (uint32)transparency);
+	SpriteManager::propagateCommand(SpriteManager::getInstance(), cVisualComponentCommandSetTransparency, SpatialObject::safeCast(this), (uint32)transparency);
+	WireframeManager::propagateCommand(WireframeManager::getInstance(), cVisualComponentCommandSetTransparency, SpatialObject::safeCast(this), (uint32)transparency);
 }
 //---------------------------------------------------------------------------------------------------------
 EntitySpec* Entity::getSpec()

@@ -49,17 +49,6 @@ static void VisualComponent::destroyComponents(SpatialObject owner, VirtualList 
 	ComponentManager::destroyComponents(owner, components, kWireframeComponent);
 }
 //---------------------------------------------------------------------------------------------------------
-static void VisualComponent::propagateCommand(int32 command, SpatialObject owner, ...)
-{
-	va_list args;
-	va_start(args, owner);
-
-	SpriteManager::propagateCommand(SpriteManager::getInstance(), command, owner, args);
-	WireframeManager::propagateCommand(WireframeManager::getInstance(), command, owner, args);
-
-	va_end(args);
-}
-//---------------------------------------------------------------------------------------------------------
 static bool VisualComponent::calculateRightBox(SpatialObject owner, RightBox* rightBox)
 {
 	bool modified = false;
@@ -198,7 +187,7 @@ void VisualComponent::handleCommand(int32 command, va_list args)
 			break;
 
 		case cVisualComponentCommandSetTransparency:
-	
+
 			VisualComponent::setTransparency(this, (uint8)va_arg(args, uint32));
 			break;
 

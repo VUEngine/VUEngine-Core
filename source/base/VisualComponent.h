@@ -64,12 +64,6 @@ abstract class VisualComponent : Component
 	/// @param components: List of list of visual components
 	static void destroyComponents(SpatialObject owner, VirtualList components[]);
 
-	/// Propagate a command to the sprites.
-	/// @param command: Command to propagate to all the sprites
-	/// @param owner: Owner of the sprites to command (all if NULL)
-	/// @param ...: Variable arguments list depending on the command
-	static void propagateCommand(int32 command, SpatialObject owner, ...);
-
 	/// Compute the rightbox for the owner in base of its visual components.
 	/// @param owner: SpatialObject that the components attaches to
 	/// @param rightBox: Rightbox to configure
