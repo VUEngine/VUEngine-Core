@@ -182,7 +182,7 @@ void Mesh::destructor()
 //---------------------------------------------------------------------------------------------------------
 RightBox Mesh::getRightBox()
 {
-	RightBox rightBox = {0, 0, 0, 0, 0, 0};
+	RightBox rightBox = {-1, -1, -1, 1, 1, 1};
 
 	for(VirtualNode node = this->vertices->head; NULL != node; node = node->next)
 	{
