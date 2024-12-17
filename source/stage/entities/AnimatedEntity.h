@@ -55,6 +55,9 @@ typedef const AnimatedEntitySpec AnimatedEntityROMSpec;
 /// Implements an entity that proxies animation related methods to its sprites.
 class AnimatedEntity : Entity
 {
+	/// Linked list of attached sprites
+	VirtualList animatedSprites;
+
 	/// Pointer to the animations available to this instance
 	const AnimationFunction** animationFunctions;
 

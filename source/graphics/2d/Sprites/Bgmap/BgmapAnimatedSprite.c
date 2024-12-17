@@ -29,7 +29,8 @@
 //---------------------------------------------------------------------------------------------------------
 void BgmapAnimatedSprite::constructor(SpatialObject owner, const BgmapAnimatedSpriteSpec* bgmapAnimatedSpriteSpec)
 {
-	// construct base object
+	NM_ASSERT(NULL != bgmapAnimatedSpriteSpec, "BgmapAnimatedSprite::constructor: NULL bgmapAnimatedSpriteSpec");
+
 	Base::constructor(owner, &bgmapAnimatedSpriteSpec->bgmapSpriteSpec);
 
 	ASSERT(this->texture, "BgmapAnimatedSprite::constructor: null texture");

@@ -844,8 +844,6 @@ void StageEditor::printEntityPosition()
 		Printing::int32(Printing::getInstance(), 		__METERS_TO_PIXELS(Entity::getDepth(entity)), 	x + 24, y++, 	NULL);
 		Printing::text(Printing::getInstance(),		"Children:                       ", 			x, 		++y, 	NULL);
 		Printing::int32(Printing::getInstance(), 		Container::getChildrenCount(entity), 				x + 10, y, 		NULL);
-		Printing::text(Printing::getInstance(),		"Sprites:                       ", 			x, 		++y, 	NULL);
-		Printing::int32(Printing::getInstance(), 		Entity::getSprites(entity) ? VirtualList::getCount(Entity::getSprites(entity)) : 0, 				x + 10, y, 		NULL);
 	}
 }
 //---------------------------------------------------------------------------------------------------------

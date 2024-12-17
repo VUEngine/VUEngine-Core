@@ -15,7 +15,7 @@
 // INCLUDES
 //=========================================================================================================
 
-#include <ListenerObject.h>
+#include <ComponentManager.h>
 #include <Wireframe.h>
 
 
@@ -39,10 +39,10 @@ extern Rotation _previousCameraInvertedRotationBuffer __INITIALIZED_GLOBAL_DATA_
 ///
 /// Class WireframeManager
 ///
-/// Inherits from ListenerObject
+/// Inherits from ComponentManager
 ///
 /// Manages instances of Wireframe.
-singleton class WireframeManager : ListenerObject
+singleton class WireframeManager : ComponentManager
 {
 	/// @protectedsection
 
@@ -60,14 +60,16 @@ singleton class WireframeManager : ListenerObject
 
 	/// Number of drawing wireframes during the last game cycle
 	uint8 drawnWireframes;
-	
-	/// List of wireframes to render and draw
-	VirtualList wireframes;
 
 	/// @publicsection
 	/// Method to retrieve the singleton instance
 	/// @return WireframeManager singleton
 	static WireframeManager getInstance();
+
+	/// Check if at least of the sprites that attach to the provided owner is visible.
+	/// @param owner: Object to which the sprites attach to
+	/// @return True if at least of the sprites that attach to the provided owner is visible
+	override bool isAnyVisible(SpatialObject owner);
 
 	/// Reset the manager's state.
 	void reset();
@@ -78,6 +80,11 @@ singleton class WireframeManager : ListenerObject
 	/// Disable wireframe rendering and drawing.
 	void disable();
 
+	/// Fill the provided linked list with the wireframes belonging to the provided owner.
+	/// @param owner: Object to which the wireframes attach to
+	/// @param wireframes: Linked list to populate
+	void getWireframes(SpatialObject owner, VirtualList wireframe);
+
 	/// Create a wireframe with the provided spec.
 	/// @param wireframeSpec: Spec to use to create the wireframe
 	/// @param owner: Object to which the wireframe will attach to
@@ -87,6 +94,10 @@ singleton class WireframeManager : ListenerObject
 	/// Destroy the provided wireframe.
 	/// @param wireframe: Wireframe to destroy
 	void destroyWireframe(Wireframe wireframe);
+
+	/// Destroy the wireframes belonging to the provided owner.
+	/// @param owner: Object to which the wireframes attach to
+	void destroyWireframes(SpatialObject owner);
 
 	/// Register a wireframe to be managed
 	/// @param wireframe: Wireframe to be managed
@@ -104,11 +115,19 @@ singleton class WireframeManager : ListenerObject
 	/// Draw wireframes to the frame buffers
 	void draw();
 
+	/// Show all wireframes belonging to the provided owner.
+	/// @param owner: Object to which the wireframe will attach to
+	void showWireframes(SpatialObject owner);
+
+	/// Hide all wireframes belonging to the provided owner.
+	/// @param owner: Object to which the wireframe will attach to
+	void hideWireframes(SpatialObject owner);
+
 	/// Show all wireframes.
-	void showWireframes();
+	void showAllWireframes();
 	
 	/// Hide all wireframes.
-	void hideWireframes();
+	void hideAllWireframes();
 
 	/// Check if there are any registered wireframes.
 	/// @return True if there are any registered wireframes; false otherwise

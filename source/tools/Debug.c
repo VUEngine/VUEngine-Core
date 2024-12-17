@@ -118,7 +118,7 @@ void Debug::show()
 {
 	Printing::clear(Printing::getInstance());
 	Printing::setCoordinates(Printing::getInstance(), 0, 0, -64, -2);
-	SpriteManager::showSprites(SpriteManager::getInstance(), NULL, true);
+	SpriteManager::showAllSprites(SpriteManager::getInstance(), NULL, true);
 	SpriteManager::computeTotalPixelsDrawn(SpriteManager::getInstance());
 
 	Debug::showPage(this, 0);
@@ -128,7 +128,7 @@ void Debug::hide()
 {
 	CollisionManager::hideColliders(GameState::getCollisionManager(VUEngine::getPreviousState(VUEngine::getInstance())));
 	Printing::clear(Printing::getInstance());
-	SpriteManager::showSprites(SpriteManager::getInstance(), NULL, true);
+	SpriteManager::showAllSprites(SpriteManager::getInstance(), NULL, true);
 }
 //---------------------------------------------------------------------------------------------------------
 void Debug::processUserInput(uint16 pressedKey)
@@ -224,12 +224,12 @@ uint8 Debug::getCurrentPageNumber()
 //---------------------------------------------------------------------------------------------------------
 void Debug::setBlackBackground()
 {
-	SpriteManager::hideSprites(SpriteManager::getInstance(), NULL, false);
+	SpriteManager::hideAllSprites(SpriteManager::getInstance(), NULL, false);
 }
 //---------------------------------------------------------------------------------------------------------
 void Debug::showPreviousPage()
 {
-	SpriteManager::showSprites(SpriteManager::getInstance(), NULL, true);
+	SpriteManager::showAllSprites(SpriteManager::getInstance(), NULL, true);
 
 	this->currentPage = VirtualNode::getPrevious(this->currentPage);
 
@@ -243,7 +243,7 @@ void Debug::showPreviousPage()
 //---------------------------------------------------------------------------------------------------------
 void Debug::showNextPage()
 {
-	SpriteManager::showSprites(SpriteManager::getInstance(), NULL, true);
+	SpriteManager::showAllSprites(SpriteManager::getInstance(), NULL, true);
 
 	this->currentPage = this->currentPage->next;
 
@@ -303,7 +303,7 @@ void Debug::showPage(int32 increment)
 	if(this->currentPage && this->currentPage->data)
 	{
 		Printing::clear(Printing::getInstance());
-		SpriteManager::showSprites(SpriteManager::getInstance(), NULL, true);
+		SpriteManager::showAllSprites(SpriteManager::getInstance(), NULL, true);
 
 		Debug::printHeader(this);
 		Printing::text(Printing::getInstance(), " \x1E\x1C\x1D ", 42, 0, NULL);
@@ -1000,7 +1000,7 @@ void Debug::objectsShowStatus(int32 increment, int32 x, int32 y)
 
 		if(objectSpriteContainer)
 		{
-			SpriteManager::hideSprites(SpriteManager::getInstance(), Sprite::safeCast(objectSpriteContainer), false);
+			SpriteManager::hideAllSprites(SpriteManager::getInstance(), Sprite::safeCast(objectSpriteContainer), false);
 			ObjectSpriteContainer::print(objectSpriteContainer, x, ++y);
 		}
 		else
@@ -1052,7 +1052,7 @@ void Debug::spritesShowStatus(int32 increment, int32 x, int32 y)
 	else if(0 <= this->spriteIndex && this->spriteIndex < numberOfSprites)
 	{
 		Sprite sprite = SpriteManager::getSpriteAtIndex(SpriteManager::getInstance(), this->spriteIndex);
-		SpriteManager::hideSprites(SpriteManager::getInstance(), sprite, false);
+		SpriteManager::hideAllSprites(SpriteManager::getInstance(), sprite, false);
 		SpriteManager::renderAndDraw(SpriteManager::getInstance());
 		Printing::text(Printing::getInstance(), "SPRITES INSPECTOR", x, y++, NULL);
 		Sprite::print(sprite, x, ++y);
@@ -1090,7 +1090,7 @@ void Debug::physicStatusShowColliders(int32 increment __attribute__ ((unused)), 
 {
 	Printing::text(Printing::getInstance(), "COLLISION SHAPES", x, y++, NULL);
 
-	SpriteManager::showSprites(SpriteManager::getInstance(), NULL, true);
+	SpriteManager::showAllSprites(SpriteManager::getInstance(), NULL, true);
 	Debug::dimmGame(this);
 	CollisionManager::showColliders(GameState::getCollisionManager(VUEngine::getPreviousState(VUEngine::getInstance())));
 }

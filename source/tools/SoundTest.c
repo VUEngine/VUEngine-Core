@@ -61,7 +61,7 @@ void SoundTest::show()
 	SoundManager::reset(SoundManager::getInstance());
 
 	Printing::clear(Printing::getInstance());
-	SpriteManager::hideSprites(SpriteManager::getInstance(), NULL, false);
+	SpriteManager::hideAllSprites(SpriteManager::getInstance(), NULL, false);
 	Printing::resetCoordinates(Printing::getInstance());
 	Printing::show(Printing::getInstance());
 
@@ -78,7 +78,7 @@ void SoundTest::hide()
 {
 	SoundTest::releaseSound(this);
 	Printing::clear(Printing::getInstance());
-	SpriteManager::showSprites(SpriteManager::getInstance(), NULL, true);
+	SpriteManager::showAllSprites(SpriteManager::getInstance(), NULL, true);
 	SoundTest::lightUpGame(this);
 }
 //---------------------------------------------------------------------------------------------------------

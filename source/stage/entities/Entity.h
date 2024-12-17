@@ -152,12 +152,6 @@ class Entity : Container
 	/// Factory to create this entity's children
 	EntityFactory entityFactory;
 
-	/// Linked list of attached sprites
-	VirtualList sprites;
-
-	/// Linked list of attached wireframes
-	VirtualList wireframes;
-
 	/// Linked list of attached colliders
 	VirtualList colliders;
 
@@ -324,10 +318,6 @@ class Entity : Container
 
 	/// Remove all attached sprites.
 	void removeSprites();
-
-	/// Retrieve the list of attached sprites.
-	/// @return Linked list of attached sprites
-	VirtualList getSprites();
 	
 	/// Attach a new wireframe to the entity and configure it with the provided spec.
 	/// @param wireframeSpec: Specification to be used to configure the new sprite
@@ -347,10 +337,6 @@ class Entity : Container
 	/// Remove all attached wireframes.
 	void removeWireframes();
 
-	/// Retrieve the list of attached wireframes.
-	/// @return Linked list of attached wireframes
-	VirtualList getWireframes();
-	
 	/// Attach a new collider to the entity and configure it with the provided spec.
 	/// @param colliderSpec: Specification to be used to configure the new sprite
 	/// @param collisionManager: A reference to the CollisionManager used to speed up multiple calls to this method
@@ -415,8 +401,7 @@ class Entity : Container
 	void hideColliders();
 	
 	/// Configure the entity's size.
-	/// @param force: If true, the size is computed even if has already been computed
-	void calculateSize(bool force);
+	void calculateSize();
 
 	/// Retrieve the entity's width.
 	/// @return Entity's width

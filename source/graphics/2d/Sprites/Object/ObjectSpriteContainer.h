@@ -88,9 +88,6 @@ class ObjectSpriteContainer : Sprite
 	/// Retrieve the total number of pixels actually displayed by all the managed sprites.
 	/// @return Total number of pixels displayed by all the managed sprites
 	override int32 getTotalPixels();
-
-	/// Invalidate the render flag
-	override void invalidateRendering();
 	
 	/// Forcefully show the sprites
 	override void forceShow();
@@ -121,14 +118,6 @@ class ObjectSpriteContainer : Sprite
 	/// @param evenFrame: Flag to control transparency effects
 	/// @param updateAnimations: Flag to allow or prevent animations to be updated
 	void renderSprites(bool evenFrame, bool updateAnimations);
-
-	/// Show all sprites except the provided one.
-	/// @param spareSprite: Sprite to not show
-	void showSprites(ObjectSprite spareSprite);
-
-	/// Hide all sprites except the provided one.
-	/// @param spareSprite: Sprite to not hide
-	void hideSprites(ObjectSprite spareSprite);
 
 	/// Retrieve the total number of OBJECTs used by all the managed sprites.
 	/// @return Total number of OBJECTs used by all the managed sprites

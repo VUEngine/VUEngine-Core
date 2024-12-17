@@ -453,7 +453,7 @@ uint32 EntityFactory::addChildEntities()
 	{
 		if(!positionedEntityDescription->graphicsSynchronized)
 		{
-			Entity::calculateSize(positionedEntityDescription->entity, false);
+			Entity::calculateSize(positionedEntityDescription->entity);
 			Entity::invalidateTransformation(positionedEntityDescription->entity);
 			positionedEntityDescription->graphicsSynchronized = true;
 

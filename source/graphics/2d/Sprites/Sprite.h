@@ -334,6 +334,9 @@ abstract class Sprite : VisualComponent
 	/// @param newPixelColor: Color data array for the CHAR 
 	void putPixel(const Point* texturePixel, const Pixel* charSetPixel, BYTE newPixelColor);
 
+	/// Invalidate the flags that determine if the sprite requires rendering.
+	void invalidateRendering();
+
 	/// Register this sprite with the appropriate sprites manager.
 	virtual void registerWithManager() = 0;
 
@@ -348,9 +351,6 @@ abstract class Sprite : VisualComponent
 	/// @param index: Determines the region of DRAM that this sprite is allowed to configure
 	/// @return The index that determines the region of DRAM that this sprite manages
 	virtual int16 doRender(int16 index) = 0;
-
-	/// Invalidate the flags that determine if the sprite requires rendering.
-	virtual void invalidateRendering();
 
 	/// Update the animation.
 	virtual void updateAnimation();

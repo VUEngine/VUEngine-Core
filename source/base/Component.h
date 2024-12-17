@@ -15,6 +15,7 @@
 // INCLUDES
 //=========================================================================================================
 
+#include <stdarg.h>
 #include <ListenerObject.h>
 
 
@@ -24,6 +25,16 @@
 
 class SpatialObject;
 typedef const void ComponentSpec;
+
+
+//=========================================================================================================
+// CLASS' DATA
+//=========================================================================================================
+
+enum ComponentCommands
+{
+	cComponentLastCommand = 0
+};
 
 
 //=========================================================================================================
@@ -65,6 +76,11 @@ abstract class Component : ListenerObject
 
 	/// Retrieve the collider's owner	
 	SpatialObject getOwner();
+
+	/// Handle a command.
+	/// @param command: Command to handle
+	/// @param args: Variable arguments list depending on the command to handle
+	virtual void handleCommand(int32 command, va_list args);
 }
 
 #endif

@@ -99,11 +99,24 @@ void Sprite::destructor()
 //---------------------------------------------------------------------------------------------------------
 RightBox Sprite::getRightBox()
 {
+#ifndef __RELEASE
+	if(0 == this->halfWidth || 0 == this->halfHeight)
+	{
+		Printing::setDebugMode(Printing::getInstance());
+		Printing::clear(Printing::getInstance());
+		PRINT_HEX(this->componentSpec, 1, 27);
+		Error::triggerException("Sprite::getRightBox: 0 size sprite", NULL);
+	}
+#endif
+
 	return (RightBox) 
 	{
-		-__PIXELS_TO_METERS(this->halfWidth + this->displacement.x), __PIXELS_TO_METERS(this->halfWidth + this->displacement.x),
-		-__PIXELS_TO_METERS(this->halfHeight + this->displacement.y), __PIXELS_TO_METERS(this->halfHeight + this->displacement.y),
-		-__PIXELS_TO_METERS(SPRITE_HALF_DEPTH), __PIXELS_TO_METERS(SPRITE_HALF_DEPTH)
+		__PIXELS_TO_METERS(-this->halfWidth + this->displacement.x),
+		__PIXELS_TO_METERS(-this->halfHeight + this->displacement.y),
+		__PIXELS_TO_METERS(-SPRITE_HALF_DEPTH), 
+		__PIXELS_TO_METERS(this->halfWidth + this->displacement.x),
+		__PIXELS_TO_METERS(this->halfHeight + this->displacement.y),
+		__PIXELS_TO_METERS(SPRITE_HALF_DEPTH),
 	};
 }
 //---------------------------------------------------------------------------------------------------------
@@ -588,15 +601,15 @@ void Sprite::putPixel(const Point* texturePixel, const Pixel* charSetPixel, BYTE
 	Texture::putPixel(this->texture, texturePixel, charSetPixel, newPixelColor);
 }
 //---------------------------------------------------------------------------------------------------------
-bool Sprite::hasSpecialEffects()
-{
-	return false;
-}
-//---------------------------------------------------------------------------------------------------------
 void Sprite::invalidateRendering()
 {
 	this->transformed = false;
 	this->rendered = false;
+}
+//---------------------------------------------------------------------------------------------------------
+bool Sprite::hasSpecialEffects()
+{
+	return false;
 }
 //---------------------------------------------------------------------------------------------------------
 void Sprite::updateAnimation()

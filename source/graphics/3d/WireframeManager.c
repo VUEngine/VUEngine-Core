@@ -47,11 +47,26 @@ Rotation _previousCameraInvertedRotationBuffer __INITIALIZED_GLOBAL_DATA_SECTION
 //=========================================================================================================
 
 //---------------------------------------------------------------------------------------------------------
+bool WireframeManager::isAnyVisible(SpatialObject owner)
+{
+	for(VirtualNode node = this->components->head; NULL != node; node = node->next)
+	{
+		Wireframe wireframe = Wireframe::safeCast(node->data);
+
+		if(owner == wireframe->owner && Wireframe::isVisible(wireframe))
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+//---------------------------------------------------------------------------------------------------------
 void WireframeManager::reset()
 {
 	WireframeManager::enable(this);
 	
-	VirtualList::clear(this->wireframes);
+	VirtualList::clear(this->components);
 	this->disabled = false;
 
 	_previousCameraPosition = *_cameraPosition;
@@ -69,6 +84,24 @@ void WireframeManager::enable()
 void WireframeManager::disable()
 {
 	this->disabled = true;
+}
+//---------------------------------------------------------------------------------------------------------
+void WireframeManager::getWireframes(SpatialObject owner, VirtualList wireframes)
+{
+	if(isDeleted(wireframes))
+	{
+		return;
+	}
+
+	for(VirtualNode node = this->components->head; NULL != node; node = node->next)
+	{
+		Wireframe wireframe = Wireframe::safeCast(node->data);
+
+		if(owner == wireframe->owner)
+		{
+			VirtualList::pushBack(wireframes, wireframe);
+		}
+	}
 }
 //---------------------------------------------------------------------------------------------------------
 Wireframe WireframeManager::createWireframe(const WireframeSpec* wireframeSpec, SpatialObject owner)
@@ -111,6 +144,19 @@ void WireframeManager::destroyWireframe(Wireframe wireframe)
 	}
 }
 //---------------------------------------------------------------------------------------------------------
+void WireframeManager::destroyWireframes(SpatialObject owner)
+{
+	for(VirtualNode node = this->components->head; NULL != node; node = node->next)
+	{
+		Wireframe wireframe = Wireframe::safeCast(node->data);
+
+		if(owner == wireframe->owner)
+		{
+			WireframeManager::destroyWireframe(this, wireframe);
+		}
+	}
+}
+//---------------------------------------------------------------------------------------------------------
 bool WireframeManager::registerWireframe(Wireframe wireframe)
 {
 	NM_ASSERT(!isDeleted(wireframe), "WireframeManager::registerWireframe: coudln't create wireframe");
@@ -120,9 +166,9 @@ bool WireframeManager::registerWireframe(Wireframe wireframe)
 		return false;
 	}
 
-	if(!VirtualList::find(this->wireframes, wireframe))
+	if(!VirtualList::find(this->components, wireframe))
 	{
-		VirtualList::pushBack(this->wireframes, wireframe);
+		VirtualList::pushBack(this->components, wireframe);
 	}
 	else
 	{
@@ -141,12 +187,12 @@ bool WireframeManager::unregisterWireframe(Wireframe wireframe)
 		return false;
 	}
 
-	return VirtualList::removeData(this->wireframes, wireframe);
+	return VirtualList::removeData(this->components, wireframe);
 }
 //---------------------------------------------------------------------------------------------------------
 void WireframeManager::render()
 {
-	if(NULL == this->wireframes->head)
+	if(NULL == this->components->head)
 	{
 		return;
 	}
@@ -157,7 +203,7 @@ void WireframeManager::render()
 	this->renderedWireframes = 0;
 #endif
 
-	for(VirtualNode node = this->wireframes->head; NULL != node; node = node->next)
+	for(VirtualNode node = this->components->head; NULL != node; node = node->next)
 	{
 		Wireframe wireframe = Wireframe::safeCast(node->data);
 
@@ -205,7 +251,7 @@ void WireframeManager::render()
 //---------------------------------------------------------------------------------------------------------
 void WireframeManager::draw()
 {
-	if(this->disabled || NULL == this->wireframes->head)
+	if(this->disabled || NULL == this->components->head)
 	{
 		return;
 	}
@@ -217,7 +263,7 @@ void WireframeManager::draw()
 #endif
 
 	// check the colliders
-	for(VirtualNode node = this->wireframes->head; !this->stopDrawing && NULL != node; node = node->next)
+	for(VirtualNode node = this->components->head; !this->stopDrawing && NULL != node; node = node->next)
 	{
 		Wireframe wireframe = Wireframe::safeCast(node->data);
 
@@ -243,9 +289,35 @@ void WireframeManager::draw()
 	this->evenFrame = __TRANSPARENCY_EVEN == this->evenFrame ? __TRANSPARENCY_ODD : __TRANSPARENCY_EVEN;
 }
 //---------------------------------------------------------------------------------------------------------
-void WireframeManager::showWireframes()
+void WireframeManager::showWireframes(SpatialObject owner)
 {
-	for(VirtualNode node = this->wireframes->head; NULL != node; node = node->next)
+	for(VirtualNode node = this->components->head; NULL != node; node = node->next)
+	{
+		Wireframe wireframe = Wireframe::safeCast(node->data);
+
+		if(owner == wireframe->owner)
+		{
+			Wireframe::show(wireframe);
+		}
+	}
+}
+//---------------------------------------------------------------------------------------------------------
+void WireframeManager::hideWireframes(SpatialObject owner)
+{
+	for(VirtualNode node = this->components->head; NULL != node; node = node->next)
+	{
+		Wireframe wireframe = Wireframe::safeCast(node->data);
+
+		if(owner == wireframe->owner)
+		{
+			Wireframe::hide(wireframe);
+		}
+	}
+}
+//---------------------------------------------------------------------------------------------------------
+void WireframeManager::showAllWireframes()
+{
+	for(VirtualNode node = this->components->head; NULL != node; node = node->next)
 	{
 		Wireframe wireframe = Wireframe::safeCast(node->data);
 
@@ -253,9 +325,9 @@ void WireframeManager::showWireframes()
 	}
 }
 //---------------------------------------------------------------------------------------------------------
-void WireframeManager::hideWireframes()
+void WireframeManager::hideAllWireframes()
 {
-	for(VirtualNode node = this->wireframes->head; NULL != node; node = node->next)
+	for(VirtualNode node = this->components->head; NULL != node; node = node->next)
 	{
 		Wireframe wireframe = Wireframe::safeCast(node->data);
 
@@ -265,7 +337,7 @@ void WireframeManager::hideWireframes()
 //---------------------------------------------------------------------------------------------------------
 bool WireframeManager::hasWireframes()
 {
-	return NULL != this->wireframes && NULL != this->wireframes->head;
+	return NULL != this->components && NULL != this->components->head;
 }
 //---------------------------------------------------------------------------------------------------------
 #ifndef __SHIPPING
@@ -274,7 +346,7 @@ void WireframeManager::print(int32 x, int32 y)
 	Printing::text(Printing::getInstance(), "WIREFRAME MANAGER", x, y++, NULL);
 	y++;
 	Printing::text(Printing::getInstance(), "Wireframes:   ", x, y, NULL);
-	Printing::int32(Printing::getInstance(), VirtualList::getCount(this->wireframes), x + 12, y++, NULL);
+	Printing::int32(Printing::getInstance(), VirtualList::getCount(this->components), x + 12, y++, NULL);
 	Printing::text(Printing::getInstance(), "Rendered:     ", x, y, NULL);
 	Printing::int32(Printing::getInstance(), this->renderedWireframes, x + 12, y++, NULL);
 	Printing::text(Printing::getInstance(), "Drawn:        ", x, y, NULL);
@@ -292,7 +364,7 @@ void WireframeManager::constructor()
 {
 	Base::constructor();
 
-	this->wireframes = new VirtualList();
+	this->components = new VirtualList();
 	this->stopDrawing = false;
 	this->evenFrame = __TRANSPARENCY_EVEN;
 	this->disabled = false;
@@ -304,13 +376,13 @@ void WireframeManager::constructor()
 //---------------------------------------------------------------------------------------------------------
 void WireframeManager::destructor()
 {
-	ASSERT(this->wireframes, "WireframeManager::destructor: null wireframes");
+	ASSERT(this->components, "WireframeManager::destructor: null wireframes");
 
-	if(!isDeleted(this->wireframes))
+	if(!isDeleted(this->components))
 	{
-		VirtualList::deleteData(this->wireframes);
-		delete this->wireframes;
-		this->wireframes = NULL;
+		VirtualList::deleteData(this->components);
+		delete this->components;
+		this->components = NULL;
 	}
 
 	VIPManager::removeEventListener(VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)WireframeManager::onVIPManagerGAMESTARTDuringXPEND, kEventVIPManagerGAMESTARTDuringXPEND);
@@ -328,7 +400,7 @@ bool WireframeManager::sortProgressively()
 {
 	bool swapped = false;
 
-	for(VirtualNode node = this->wireframes->head; NULL != node && NULL != node->next; node = node->next)
+	for(VirtualNode node = this->components->head; NULL != node && NULL != node->next; node = node->next)
 	{
 		VirtualNode nextNode = node->next;
 

@@ -119,7 +119,7 @@ void AnimationInspector::show()
 
 	this->state = kFirstState + 1;
 	AnimationInspector::configureState(this);
-	SpriteManager::hideSprites(SpriteManager::getInstance(), NULL, false);
+	SpriteManager::hideAllSprites(SpriteManager::getInstance(), NULL, false);
 	
 	// make sure all textures are written right now
 	SpriteManager::writeTextures(SpriteManager::getInstance());
@@ -165,7 +165,7 @@ void AnimationInspector::hide()
 
 	// make sure all textures are written right now
 	SpriteManager::writeTextures(SpriteManager::getInstance());
-	SpriteManager::showSprites(SpriteManager::getInstance(), NULL, true);
+	SpriteManager::showAllSprites(SpriteManager::getInstance(), NULL, true);
 	SpriteManager::deferParamTableEffects(SpriteManager::getInstance(), true);
 }
 //---------------------------------------------------------------------------------------------------------
@@ -685,7 +685,7 @@ void AnimationInspector::createSprite()
 
 	this->sprite->updateAnimationFrame = true;
 
-	SpriteManager::hideSprites(SpriteManager::getInstance(), this->sprite, false);
+	SpriteManager::hideAllSprites(SpriteManager::getInstance(), this->sprite, false);
 	SpriteManager::prepareAll(SpriteManager::getInstance());
 }
 //---------------------------------------------------------------------------------------------------------

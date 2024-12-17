@@ -133,8 +133,6 @@ void ObjectSpriteContainer::destructor()
 	{
 		VirtualList objectSprites = this->objectSprites;
 		this->objectSprites = NULL;
-
-		VirtualList::deleteData(objectSprites);
 		delete objectSprites;
 	}
 
@@ -168,14 +166,6 @@ int32 ObjectSpriteContainer::getTotalPixels()
 	}
 
 	return 0;
-}
-//---------------------------------------------------------------------------------------------------------
-void ObjectSpriteContainer::invalidateRendering()
-{
-	for(VirtualNode node = this->objectSprites->tail; NULL != node; node = node->previous)
-	{
-		ObjectSprite::invalidateRendering(ObjectSprite::safeCast(node->data));
-	}
 }
 //---------------------------------------------------------------------------------------------------------
 void ObjectSpriteContainer::forceShow()
@@ -373,43 +363,6 @@ void ObjectSpriteContainer::renderSprites(bool evenFrame, bool updateAnimations)
 	}
 
 	this->lastObjectIndex = _objectIndex;
-}
-//---------------------------------------------------------------------------------------------------------
-void ObjectSpriteContainer::showSprites(ObjectSprite spareSprite)
-{
-	ObjectSpriteContainer::forceShow(this);
-
-	for(VirtualNode node = this->objectSprites->head; NULL != node; node = node->next)
-	{
-		ObjectSprite objectSprite = ObjectSprite::safeCast(node->data);
-
-		if(objectSprite == spareSprite)
-		{
-			ObjectSprite::forceHide(objectSprite);
-			continue;
-		}
-
-		ObjectSprite::forceShow(objectSprite);
-	}
-}
-//---------------------------------------------------------------------------------------------------------
-void ObjectSpriteContainer::hideSprites(ObjectSprite spareSprite)
-{
-	ObjectSpriteContainer::forceHide(this);
-
-	for(VirtualNode node = this->objectSprites->head; NULL != node; node = node->next)
-	{
-		ObjectSprite objectSprite = ObjectSprite::safeCast(node->data);
-
-		if(objectSprite == spareSprite)
-		{
-			ObjectSprite::forceShow(objectSprite);
-			ObjectSpriteContainer::forceShow(this);
-			continue;
-		}
-
-		ObjectSprite::forceHide(objectSprite);
-	}
 }
 //---------------------------------------------------------------------------------------------------------
 int32 ObjectSpriteContainer::getTotalUsedObjects()

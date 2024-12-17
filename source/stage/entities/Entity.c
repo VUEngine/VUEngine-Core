@@ -45,8 +45,8 @@ friend class VirtualList;
 // CLASS' MACROS
 //=========================================================================================================
 
-#define ENTITY_SPRITE_DEPTH						16
-#define ENTITY_SPRITE_HALF_DEPTH				(ENTITY_SPRITE_DEPTH >> 1)
+#define ENTITY_MIN_SIZE							16
+#define ENTITY_HALF_MIN_SIZE					(ENTITY_MIN_SIZE >> 1)
 
 
 //=========================================================================================================
@@ -155,7 +155,7 @@ static void Entity::getSizeFromSpec(const PositionedEntity* positionedEntity, co
 	fixed_t back = 0;
 	fixed_t halfWidth = 0;
 	fixed_t halfHeight = 0;
-	fixed_t halfDepth = __PIXELS_TO_METERS(ENTITY_SPRITE_HALF_DEPTH);
+	fixed_t halfDepth = 0;
 
 	if(0 != positionedEntity->entitySpec->pixelSize.x || 0 != positionedEntity->entitySpec->pixelSize.y || 0 != positionedEntity->entitySpec->pixelSize.z)
 	{
@@ -185,9 +185,9 @@ static void Entity::getSizeFromSpec(const PositionedEntity* positionedEntity, co
 
 					int32 j = 0;
 
-					halfWidth = 0;
-					halfHeight = 0;
-					halfDepth = __PIXELS_TO_METERS(ENTITY_SPRITE_HALF_DEPTH);
+					halfWidth = __PIXELS_TO_METERS(ENTITY_HALF_MIN_SIZE);
+					halfHeight = __PIXELS_TO_METERS(ENTITY_HALF_MIN_SIZE);
+					halfDepth = __PIXELS_TO_METERS(ENTITY_HALF_MIN_SIZE);
 
 					for(; mBgmapSpriteSpec->textureSpecs[j]; j++)
 					{
@@ -238,7 +238,7 @@ static void Entity::getSizeFromSpec(const PositionedEntity* positionedEntity, co
 					SpriteSpec* spriteSpec = (SpriteSpec*)positionedEntity->entitySpec->spriteSpecs[i];
 					halfWidth = __PIXELS_TO_METERS(spriteSpec->textureSpec->cols << 2);
 					halfHeight = __PIXELS_TO_METERS(spriteSpec->textureSpec->rows << 2);
-					halfDepth = __PIXELS_TO_METERS(ENTITY_SPRITE_HALF_DEPTH);
+					halfDepth = __PIXELS_TO_METERS(ENTITY_HALF_MIN_SIZE);
 
 					if(left > -halfWidth + __PIXELS_TO_METERS(spriteSpec->displacement.x))
 					{
@@ -415,11 +415,9 @@ void Entity::constructor(EntitySpec* entitySpec, int16 internalId, const char* c
 	this->entitySpec = entitySpec;
 
 	// the sprite must be initialized in the derived class
-	this->sprites = NULL;
 	this->colliders = NULL;
 	this->centerDisplacement = NULL;
 	this->entityFactory = NULL;
-	this->wireframes = NULL;
 	this->behaviors = NULL;
 
 	// initialize to 0 for the engine to know that size must be set
@@ -459,7 +457,6 @@ fixed_t Entity::getRadius()
 		{
 			return depth >> 1;
 		}
-
 	}
 	else if(height > depth)
 	{
@@ -505,7 +502,7 @@ void Entity::addComponents()
 	Entity::createColliders(this);
 	Entity::createBehaviors(this);
 
-	Entity::calculateSize(this, false);
+	Entity::calculateSize(this);
 }
 //---------------------------------------------------------------------------------------------------------
 void Entity::removeComponents()
@@ -520,44 +517,14 @@ void Entity::show()
 {
 	Base::show(this);
 
-	if(!isDeleted(this->sprites))
-	{
-		for(VirtualNode node = this->sprites->head; NULL != node ; node = node->next)
-		{
-			Sprite::show(node->data);
-		}
-	}
-
-	if(!isDeleted(this->wireframes))
-	{
-		for(VirtualNode node = this->wireframes->head; NULL != node ; node = node->next)
-		{
-			Wireframe::show(node->data);
-		}
-	}
+	VisualComponent::propagateCommand(cVisualComponentCommandShow, SpatialObject::safeCast(this));
 }
 //---------------------------------------------------------------------------------------------------------
 void Entity::hide()
 {
 	Base::hide(this);
 
-	// hide all sprites
-	if(!isDeleted(this->sprites))
-	{
-		for(VirtualNode node = this->sprites->head; NULL != node ; node = node->next)
-		{
-			Sprite::hide(node->data);
-		}
-	}
-
-	// hide all wireframes
-	if(!isDeleted(this->wireframes))
-	{
-		for(VirtualNode node = this->wireframes->head; NULL != node ; node = node->next)
-		{
-			Wireframe::hide(node->data);
-		}
-	}
+	VisualComponent::propagateCommand(cVisualComponentCommandHide, SpatialObject::safeCast(this));
 }
 //---------------------------------------------------------------------------------------------------------
 void Entity::suspend()
@@ -591,21 +558,7 @@ void Entity::setTransparency(uint8 transparency)
 {
 	Base::setTransparency(this, transparency);
 
-	if(!isDeleted(this->sprites))
-	{
-		for(VirtualNode node = this->sprites->head; NULL != node ; node = node->next)
-		{
-			Sprite::setTransparency(node->data, transparency);
-		}
-	}
-
-	if(!isDeleted(this->wireframes))
-	{
-		for(VirtualNode node = this->wireframes->head; NULL != node ; node = node->next)
-		{
-			Wireframe::setTransparency(node->data, transparency);
-		}
-	}
+	VisualComponent::propagateCommand(cVisualComponentCommandSetTransparency, SpatialObject::safeCast(this), (uint32)transparency);
 }
 //---------------------------------------------------------------------------------------------------------
 bool Entity::handlePropagatedMessage(int32 message)
@@ -874,21 +827,7 @@ Sprite Entity::addSprite(SpriteSpec* spriteSpec, SpriteManager spriteManager)
 		spriteManager = SpriteManager::getInstance();
 	}
 
-	if(NULL == this->sprites)
-	{
-		this->sprites = new VirtualList();
-	}
-
-	Sprite sprite = SpriteManager::createSprite(spriteManager, SpatialObject::safeCast(this), spriteSpec);
-
-	NM_ASSERT(!isDeleted(sprite), "Entity::addSprite: sprite not created");
-
-	if(!isDeleted(sprite))
-	{
-		VirtualList::pushBack(this->sprites, sprite);
-	}
-
-	return sprite;
+	return SpriteManager::createSprite(spriteManager, SpatialObject::safeCast(this), spriteSpec);
 }
 //---------------------------------------------------------------------------------------------------------
 void Entity::addSprites(SpriteSpec** spriteSpecs, bool destroyOldSprites)
@@ -913,62 +852,12 @@ void Entity::addSprites(SpriteSpec** spriteSpecs, bool destroyOldSprites)
 //---------------------------------------------------------------------------------------------------------
 void Entity::removeSprite(Sprite sprite)
 {
-	if(isDeleted(this->sprites) || !VirtualList::removeData(this->sprites, sprite))
-	{
-		return;
-	}
-
 	SpriteManager::destroySprite(SpriteManager::getInstance(), sprite);
 }
 //---------------------------------------------------------------------------------------------------------
 void Entity::removeSprites()
 {
-#ifndef __SHIPPING
-#ifndef __RELEASE
-	int32 lp = HardwareManager::getLinkPointer();
-#endif
-#endif
-
-	if(!isDeleted(this->sprites))
-	{
-		SpriteManager spriteManager = SpriteManager::getInstance();
-		
-		// Must use a temporal list to prevent any race condition
-		VirtualList sprites = this->sprites;
-		this->sprites = NULL;
-
-		for(VirtualNode node = sprites->head; NULL != node ; node = node->next)
-		{
-
-#ifndef __SHIPPING
-			if(isDeleted(Sprite::safeCast(node->data)))
-			{
-				Printing::setDebugMode(Printing::getInstance());
-				Printing::clear(Printing::getInstance());
-				Printing::text(Printing::getInstance(), "Onwer type: ", 1, 26, NULL);
-				Printing::text(Printing::getInstance(), __GET_CLASS_NAME(this), 12, 26, NULL);
-#ifndef __RELEASE
-				Printing::text(Printing::getInstance(), "Caller address: ", 1, 27, NULL);
-				Printing::hex(Printing::getInstance(), lp, 1, 12, 8, NULL);
-#endif
-				Error::triggerException("Entity::removeSprites: trying to dispose dead sprite", NULL);		
-			}
-#endif
-			NM_ASSERT(!isDeleted(Sprite::safeCast(node->data)), "Entity::removeSprites: trying to dispose dead sprite");
-
-			SpriteManager::destroySprite(spriteManager, Sprite::safeCast(node->data));
-		}
-
-		// delete the sprites
-		delete sprites;
-	}
-
-	this->sprites = NULL;
-}
-//---------------------------------------------------------------------------------------------------------
-VirtualList Entity::getSprites()
-{
-	return this->sprites;
+	SpriteManager::destroySprites(SpriteManager::getInstance(), SpatialObject::safeCast(this));
 }
 //---------------------------------------------------------------------------------------------------------
 Wireframe Entity::addWireframe(WireframeSpec* wireframeSpec, WireframeManager wireframeManager)
@@ -983,21 +872,7 @@ Wireframe Entity::addWireframe(WireframeSpec* wireframeSpec, WireframeManager wi
 		wireframeManager = WireframeManager::getInstance();
 	}
 
-	if(NULL == this->wireframes)
-	{
-		this->wireframes = new VirtualList();
-	}
-
-	Wireframe wireframe = WireframeManager::createWireframe(wireframeManager, wireframeSpec, SpatialObject::safeCast(this));
-
-	NM_ASSERT(!isDeleted(wireframe), "Entity::addWireframe: wireframe not created");
-
-	if(!isDeleted(wireframe))
-	{
-		VirtualList::pushBack(this->wireframes, wireframe);
-	}
-
-	return wireframe;
+	return WireframeManager::createWireframe(wireframeManager, wireframeSpec, SpatialObject::safeCast(this));
 }
 //---------------------------------------------------------------------------------------------------------
 void Entity::addWireframes(WireframeSpec** wireframeSpecs, bool destroyOldWireframes)
@@ -1022,35 +897,12 @@ void Entity::addWireframes(WireframeSpec** wireframeSpecs, bool destroyOldWirefr
 //---------------------------------------------------------------------------------------------------------
 void Entity::removeWireframe(Wireframe wireframe)
 {
-	if(isDeleted(this->wireframes) || !VirtualList::removeData(this->wireframes, wireframe))
-	{
-		return;
-	}
-
 	WireframeManager::destroyWireframe(WireframeManager::getInstance(), wireframe);
 }
 //---------------------------------------------------------------------------------------------------------
 void Entity::removeWireframes()
 {
-	if(!isDeleted(this->wireframes))
-	{
-		ASSERT(!isDeleted(this->wireframes), "Entity::wireframes: dead colliders");
-
-		WireframeManager wireframeManager = WireframeManager::getInstance();
-
-		for(VirtualNode node = this->wireframes->head; NULL != node; node = node->next)
-		{
-			WireframeManager::destroyWireframe(wireframeManager, Wireframe::safeCast(node->data));
-		}
-
-		delete this->wireframes;
-		this->wireframes = NULL;
-	}
-}
-//---------------------------------------------------------------------------------------------------------
-VirtualList Entity::getWireframes()
-{
-	return this->wireframes;
+	WireframeManager::destroyWireframes(WireframeManager::getInstance(), SpatialObject::safeCast(this));
 }
 //---------------------------------------------------------------------------------------------------------
 Collider Entity::addCollider(ColliderSpec* colliderSpec, CollisionManager collisionManager)
@@ -1286,16 +1138,8 @@ void Entity::hideColliders()
 	}
 }
 //---------------------------------------------------------------------------------------------------------
-void Entity::calculateSize(bool force)
+void Entity::calculateSize()
 {
-	if(!force)
-	{
-		if(0 != this->size.x || 0 != this->size.y || 0 != this->size.z)
-		{
-			return;
-		}
-	}
-
 	RightBox rightBox = {0, 0, 0, 0, 0, 0};
 
 	Entity::calculateSizeFromChildren(this, &rightBox, Vector3D::zero());
@@ -1321,13 +1165,17 @@ void Entity::calculateSize(bool force)
 	this->size.x = rightBox.x1 - rightBox.x0;
 	this->size.y = rightBox.y1 - rightBox.y0;
 	this->size.z = rightBox.z1 - rightBox.z0;
+
+	NM_ASSERT(0 < this->size.x, "Entity::calculateSize: 0 x size");
+	NM_ASSERT(0 < this->size.y, "Entity::calculateSize: 0 y size");
+	NM_ASSERT(0 < this->size.z, "Entity::calculateSize: 0 z size");
 }
 //---------------------------------------------------------------------------------------------------------
 fixed_t Entity::getWidth()
 {
 	if(0 == this->size.x)
 	{
-		Entity::calculateSize(this, false);
+		Entity::calculateSize(this);
 	}
 
 	return this->size.x;
@@ -1337,7 +1185,7 @@ fixed_t Entity::getHeight()
 {
 	if(0 == this->size.y)
 	{
-		Entity::calculateSize(this, false);
+		Entity::calculateSize(this);
 	}
 
 	return this->size.y;
@@ -1347,7 +1195,7 @@ fixed_t Entity::getDepth()
 {
 	if(0 == this->size.z)
 	{
-		Entity::calculateSize(this, false);
+		Entity::calculateSize(this);
 	}
 
 	return this->size.z;
@@ -1355,31 +1203,9 @@ fixed_t Entity::getDepth()
 //---------------------------------------------------------------------------------------------------------
 bool Entity::isInCameraRange(int16 padding, bool recursive)
 {
-	if(!this->hidden && NULL != this->sprites && NULL != this->sprites->head)
+	if(VisualComponent::isAnyVisible(SpatialObject::safeCast(this)))
 	{
-		for(VirtualNode spriteNode = this->sprites->head; NULL != spriteNode; spriteNode = spriteNode->next)
-		{
-			Sprite sprite = Sprite::safeCast(spriteNode->data);
-
-			if(Sprite::isVisible(sprite))
-			{
-				return true;
-			}
-		}
-	}
-
-	// when DirectDraw draws at least a pixel
-	if(!this->hidden && NULL != this->wireframes && NULL != this->wireframes->head)
-	{
-		for(VirtualNode wireframeNode = this->wireframes->head; NULL != wireframeNode; wireframeNode = wireframeNode->next)
-		{
-			Wireframe wireframe = Wireframe::safeCast(wireframeNode->data);
-
-			if(Wireframe::isVisible(wireframe))
-			{
-				return true;
-			}
-		}
+		return true;
 	}
 
 	Vector3D position3D = this->transformation.position;
@@ -1458,34 +1284,27 @@ bool Entity::createBehaviors()
 	return NULL != this->behaviors;
 }
 //---------------------------------------------------------------------------------------------------------
-bool Entity::createSprites()
+void Entity::createSprites()
 {
-	// this method can be called multiple times so only add colliders
-	// if not already done
-	if(NULL == this->sprites)
+	// This method can be called multiple times so only add sprites if not already added
+	if(0 == SpriteManager::getCount(SpriteManager::getInstance(), SpatialObject::safeCast(this)))
 	{
 		Entity::addSprites(this, this->entitySpec->spriteSpecs, true);
 	}
-
-	return NULL != this->sprites;
 }
 //---------------------------------------------------------------------------------------------------------
-bool Entity::createWireframes()
+void Entity::createWireframes()
 {
-	// this method can be called multiple times so only add colliders
-	// if not already done
-	if(NULL == this->wireframes)
+	// This method can be called multiple times so only add wireframes if not already added
+	if(0 == WireframeManager::getCount(WireframeManager::getInstance(), SpatialObject::safeCast(this)))
 	{
 		Entity::addWireframes(this, this->entitySpec->wireframeSpecs, true);
 	}
-
-	return NULL != this->wireframes;
 }
 //---------------------------------------------------------------------------------------------------------
 bool Entity::createColliders()
 {
-	// this method can be called multiple times so only add colliders
-	// if not already done
+	// This method can be called multiple times so only add colliders if not already added
 	if(NULL == this->colliders)
 	{
 		Entity::addColliders(this, this->entitySpec->colliderSpecs, true);
@@ -1498,142 +1317,60 @@ void Entity::calculateSizeFromChildren(RightBox* rightBox, Vector3D environmentP
 {
 	Vector3D globalPosition = Vector3D::sum(environmentPosition, this->localTransformation.position);
 
-	fixed_t left = 0;
-	fixed_t right = 0;
-	fixed_t top = 0;
-	fixed_t bottom = 0;
-	fixed_t front = 0;
-	fixed_t back = 0;
-	fixed_t halfWidth = 0;
-	fixed_t halfHeight = 0;
-	fixed_t halfDepth = __PIXELS_TO_METERS(ENTITY_SPRITE_HALF_DEPTH);
+	RightBox myRightBox = {0, 0, 0, 0, 0, 0};
 
-	if((0 == this->size.x || 0 == this->size.y || 0 == this->size.z) && (NULL != this->sprites || NULL != this->wireframes))
+	if(0 == this->size.x || 0 == this->size.y || 0 == this->size.z)
 	{
-		if(NULL != this->sprites)
+		bool rightBoxComputed = VisualComponent::calculateRightBox(SpatialObject::safeCast(this), &myRightBox);
+
+		if(!rightBoxComputed)
 		{
-			for(VirtualNode spriteNode = this->sprites->head; spriteNode; spriteNode = spriteNode->next)
-			{
-				Sprite sprite = Sprite::safeCast(spriteNode->data);
-				ASSERT(sprite, "Entity::calculateSizeFromChildren: null sprite");
-
-				halfWidth = __PIXELS_TO_METERS(Sprite::getHalfWidth(sprite));
-				halfHeight = __PIXELS_TO_METERS(Sprite::getHalfHeight(sprite));
-				halfDepth = __PIXELS_TO_METERS(ENTITY_SPRITE_HALF_DEPTH);
-
-				Vector3D spriteDisplacement = Vector3D::getFromPixelVector(*Sprite::getDisplacement(sprite));
-
-				if(left > -halfWidth + spriteDisplacement.x)
-				{
-					left = -halfWidth + spriteDisplacement.x;
-				}
-
-				if(right < halfWidth + spriteDisplacement.x)
-				{
-					right = halfWidth + spriteDisplacement.x;
-				}
-
-				if(top > -halfHeight + spriteDisplacement.y)
-				{
-					top = -halfHeight + spriteDisplacement.y;
-				}
-
-				if(bottom < halfHeight + spriteDisplacement.y)
-				{
-					bottom = halfHeight + spriteDisplacement.y;
-				}
-
-				if(front > -halfDepth + spriteDisplacement.z)
-				{
-					front = -halfDepth + spriteDisplacement.z;
-				}
-
-				if(back < halfDepth + spriteDisplacement.z)
-				{
-					back = halfDepth + spriteDisplacement.z;
-				}
-			}
-		}
-
-		if(NULL != this->wireframes)
-		{
-			for(VirtualNode wireframeNode = this->wireframes->head; wireframeNode; wireframeNode = wireframeNode->next)
-			{
-				Wireframe wireframe = Wireframe::safeCast(wireframeNode->data);
-				ASSERT(wireframe, "Entity::calculateSizeFromChildren: null wireframe");
-
-				RightBox rightBox = Wireframe::getRightBox(wireframe);
-
-				if(left > rightBox.x0)
-				{
-					left = rightBox.x0;
-				}
-
-				if(right < rightBox.x1)
-				{
-					right = rightBox.x1;
-				}
-
-				if(top > rightBox.y0)
-				{
-					top = rightBox.y0;
-				}
-
-				if(bottom < rightBox.y1)
-				{
-					bottom = rightBox.y1;
-				}
-
-				if(front > rightBox.z0)
-				{
-					front = rightBox.z0;
-				}
-
-				if(back < rightBox.z1)
-				{
-					back = rightBox.z1;
-				}
-			}
+			myRightBox.x1 = __PIXELS_TO_METERS(ENTITY_HALF_MIN_SIZE);
+			myRightBox.x0 = -__PIXELS_TO_METERS(ENTITY_HALF_MIN_SIZE);
+			myRightBox.y1 = __PIXELS_TO_METERS(ENTITY_HALF_MIN_SIZE);
+			myRightBox.y0 = -__PIXELS_TO_METERS(ENTITY_HALF_MIN_SIZE);
+			myRightBox.z1 = __PIXELS_TO_METERS(ENTITY_HALF_MIN_SIZE);
+			myRightBox.z0 = -__PIXELS_TO_METERS(ENTITY_HALF_MIN_SIZE);
 		}
 	}
 	else
 	{
-		right = (this->size.x >> 1);
-		left = -right;
-		bottom = (this->size.y >> 1);
-		top = -bottom;
-		back = (this->size.z >> 1);
-		front = -back;
+		myRightBox.x1 = (this->size.x >> 1);
+		myRightBox.x0 = -myRightBox.x1;
+		myRightBox.y1 = (this->size.y >> 1);
+		myRightBox.y0 = -myRightBox.y1;
+		myRightBox.z1 = (this->size.z >> 1);
+		myRightBox.z0 = -myRightBox.z1;
 	}
 
-	if((0 == rightBox->x0) || (globalPosition.x + left < rightBox->x0))
+	if((0 == rightBox->x0) || (globalPosition.x + myRightBox.x0 < rightBox->x0))
 	{
-		rightBox->x0 = globalPosition.x + left;
+		rightBox->x0 = globalPosition.x + myRightBox.x0;
 	}
 
-	if((0 == rightBox->x1) || (right + globalPosition.x > rightBox->x1))
+	if((0 == rightBox->x1) || (myRightBox.x1 + globalPosition.x > rightBox->x1))
 	{
-		rightBox->x1 = right + globalPosition.x;
+		rightBox->x1 = myRightBox.x1 + globalPosition.x;
 	}
 
-	if((0 == rightBox->y0) || (globalPosition.y + top < rightBox->y0))
+	if((0 == rightBox->y0) || (globalPosition.y + myRightBox.y0 < rightBox->y0))
 	{
-		rightBox->y0 = globalPosition.y + top;
+		rightBox->y0 = globalPosition.y + myRightBox.y0;
 	}
 
-	if((0 == rightBox->y1) || (bottom + globalPosition.y > rightBox->y1))
+	if((0 == rightBox->y1) || (myRightBox.y1 + globalPosition.y > rightBox->y1))
 	{
-		rightBox->y1 = bottom + globalPosition.y;
+		rightBox->y1 = myRightBox.y1 + globalPosition.y;
 	}
 
-	if((0 == rightBox->z0) || (globalPosition.z + front < rightBox->z0))
+	if((0 == rightBox->z0) || (globalPosition.z + myRightBox.z0 < rightBox->z0))
 	{
-		rightBox->z0 = globalPosition.z + front;
+		rightBox->z0 = globalPosition.z + myRightBox.z0;
 	}
 
-	if((0 == rightBox->z1) || (back + globalPosition.z > rightBox->z1))
+	if((0 == rightBox->z1) || (myRightBox.z1 + globalPosition.z > rightBox->z1))
 	{
-		rightBox->z1 = back + globalPosition.z;
+		rightBox->z1 = myRightBox.z1 + globalPosition.z;
 	}
 
 	if(!isDeleted(this->children))

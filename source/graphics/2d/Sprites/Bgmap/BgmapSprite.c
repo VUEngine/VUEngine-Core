@@ -78,6 +78,8 @@ static int16 BgmapSprite::doApplyAffineTransformations(BgmapSprite bgmapSprite)
 //---------------------------------------------------------------------------------------------------------
 void BgmapSprite::constructor(SpatialObject owner, const BgmapSpriteSpec* bgmapSpriteSpec)
 {
+	NM_ASSERT(NULL != bgmapSpriteSpec, "BgmapSprite::constructor: NULL bgmapSpriteSpec");
+
 	Base::constructor(owner, (SpriteSpec*)&bgmapSpriteSpec->spriteSpec);
 
 	this->bgmapTextureSource.mx = 0;

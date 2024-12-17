@@ -36,6 +36,8 @@ friend class Texture;
 //---------------------------------------------------------------------------------------------------------
 void ObjectSprite::constructor(SpatialObject owner, const ObjectSpriteSpec* objectSpriteSpec)
 {
+	NM_ASSERT(NULL != objectSpriteSpec, "ObjectSprite::constructor: NULL objectSpriteSpec");
+
 	Base::constructor(owner, (SpriteSpec*)objectSpriteSpec);
 
 	this->head = objectSpriteSpec->display & __OBJECT_SPRITE_CHAR_SHOW_MASK;

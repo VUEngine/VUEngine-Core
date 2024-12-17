@@ -16,7 +16,7 @@
 //=========================================================================================================
 
 #include <Clock.h>
-#include <Object.h>
+#include <ComponentManager.h>
 #include <Sprite.h>
 
 
@@ -45,12 +45,12 @@ class VirtualList;
 //=========================================================================================================
 
 ///
-/// Class PrinSpriteManagerting
+/// Class SpriteManager
 ///
-/// Inherits from ListenerObject
+/// Inherits from ComponentManager
 ///
 /// Manages all the sprite instances.
-singleton class SpriteManager : Object
+singleton class SpriteManager : ComponentManager
 {
 	/// @protectedsection
 
@@ -72,8 +72,11 @@ singleton class SpriteManager : Object
 	/// Cache OBJECT texture manager
 	ObjectTextureManager objectTextureManager;
 
-	/// List of sprites to render
+	/// List of all created sprites
 	VirtualList sprites;
+
+	/// List of sprites to render
+	VirtualList bgmapSprites;
 
 	/// List of object sprite containers
 	VirtualList objectSpriteContainers;
@@ -114,6 +117,11 @@ singleton class SpriteManager : Object
 	/// @return SpriteManager singleton
 	static SpriteManager getInstance();
 
+	/// Check if at least of the sprites that attach to the provided owner is visible.
+	/// @param owner: Object to which the sprites attach to
+	/// @return True if at least of the sprites that attach to the provided owner is visible
+	override bool isAnyVisible(SpatialObject owner);
+
 	/// Reset the manager's state
 	void reset();
 
@@ -121,6 +129,11 @@ singleton class SpriteManager : Object
 	/// @param clock: Clock for the animations
 	void setAnimationsClock(Clock clock);
 	
+	/// Fill the provided linked list with the sprites belonging to the provided owner.
+	/// @param owner: Object to which the sprites attach to
+	/// @param sprites: Linked list to populate
+	void getSprites(SpatialObject owner, VirtualList sprites);
+
 	/// Create a sprite with the provided spec.
 	/// @param owner: Object to which the sprite will attach to
 	/// @param spriteSpec: Spec to use to create the sprite
@@ -130,6 +143,10 @@ singleton class SpriteManager : Object
 	/// Destroy the provided sprite.
 	/// @param sprite: Sprite to destroy
 	void destroySprite(Sprite sprite);
+
+	/// Destroy the sprites belonging to the provided owner.
+	/// @param owner: Object to which the sprites attach to
+	void destroySprites(SpatialObject owner);
 
 	/// Register a sprite to be managed
 	/// @param sprite: Sprite to be managed
@@ -191,16 +208,21 @@ singleton class SpriteManager : Object
 
 	/// Force the writing of graphical data to DRAM space.
 	void writeTextures();
-	
-	/// Show all sprites except the provided one.
-	/// @param spareSprite: Sprite to not show
-	/// @param showPrinting: Flag to allow/prohibit the display of the printing sprite
-	void showSprites(Sprite spareSprite, bool showPrinting);
 
 	/// Hide all sprites except the provided one.
 	/// @param spareSprite: Sprite to not hide
 	/// @param hidePrinting: Flag to allow/prohibit the display of the printing sprite
-	void hideSprites(Sprite spareSprite, bool hidePrinting);
+	void hideAllSprites(Sprite spareSprite, bool hidePrinting);
+
+	/// Show all sprites except the provided one.
+	/// @param spareSprite: Sprite to not show
+	/// @param showPrinting: Flag to allow/prohibit the display of the printing sprite
+	void showAllSprites(Sprite spareSprite, bool showPrinting);
+
+	/// Hide all sprites except the provided one.
+	/// @param spareSprite: Sprite to not hide
+	/// @param hidePrinting: Flag to allow/prohibit the display of the printing sprite
+	void hideAllSprites(Sprite spareSprite, bool hidePrinting);
 
 	/// Compute the total pixels drawn.
 	void computeTotalPixelsDrawn();

@@ -73,3 +73,6 @@ SpatialObject Component::getOwner()
 	return this->owner;
 }
 //---------------------------------------------------------------------------------------------------------
+void Component::handleCommand(int32 command __attribute__((unused)), va_list args __attribute__((unused)))
+{}
+//---------------------------------------------------------------------------------------------------------
