@@ -41,7 +41,7 @@ friend class VirtualList;
 //=========================================================================================================
 
 //---------------------------------------------------------------------------------------------------------
-static void ComponentManager::createComponents(SpatialObject owner, const ComponentSpecsDirectory* componentSpecsDirectory)
+static void ComponentManager::createComponents(SpatialObject owner, ComponentSpec** componentSpecsDirectory[])
 {
 	for(int16 componentType = 0; componentType < kComponentTypes; componentType++)
 	{
@@ -57,26 +57,25 @@ static void ComponentManager::createComponents(SpatialObject owner, const Compon
 			continue;
 		}
 
-		ComponentSpec** componentSpecs = NULL;
-		int16 displacement = 0;
-		bool pointerOfPointers = ComponentManager::getComponentSpecsForComponentType(componentSpecsDirectory, componentType, &componentSpecs, &displacement);
+		ComponentSpec** componentSpecs = componentSpecsDirectory[componentType];
+		int16 displacement = ComponentManager::getSpecDisplacementForComponentType(componentType);
 
 		if(NULL != componentSpecs)
 		{
-			if(pointerOfPointers)
-			{
-				for(int16 i = 0; NULL != componentSpecs[i] && NULL != componentSpecs[i]->allocator; i++)
-				{
-					ComponentManager::createComponent(componentManager, owner, componentSpecs[i]);
-				}
-			}
-			else
+			if(sizeof(ComponentSpec*) != displacement)
 			{
 				ComponentSpec* componentSpec = &((ComponentSpec*)componentSpecs)[0];
 
 				for(; NULL != componentSpec && NULL != componentSpec->allocator; componentSpec += displacement)
 				{
 					ComponentManager::createComponent(componentManager, owner, componentSpec);
+				}
+			}
+			else
+			{
+				for(int16 i = 0; NULL != componentSpecs[i] && NULL != componentSpecs[i]->allocator; i++)
+				{
+					ComponentManager::createComponent(componentManager, owner, componentSpecs[i]);
 				}
 			}
 		}
@@ -168,12 +167,6 @@ static void ComponentManager::removeComponent(VirtualList components[], Componen
 		return;
 	}
 
-	if(!isDeleted(components[componentType]))
-	{
-		delete components[componentType];
-		components[componentType] = NULL;
-	}
-
 	ComponentManager componentManager = ComponentManager::getManager(componentType);
 
 	if(NULL == componentManager)
@@ -183,7 +176,8 @@ static void ComponentManager::removeComponent(VirtualList components[], Componen
 
 	if(!isDeleted(components[componentType]))
 	{
-		VirtualList::removeData(components[componentType], component);
+		delete components[componentType];
+		components[componentType] = NULL;
 	}
 
 	ComponentManager::destroyComponent(componentManager, component);
@@ -299,47 +293,24 @@ static uint32 ComponentManager::getComponentType(Component component)
 	return kComponentTypes;
 }
 //---------------------------------------------------------------------------------------------------------
-static bool ComponentManager::getComponentSpecsForComponentType(const ComponentSpecsDirectory* componentSpecsDirectory, uint32 componentType, ComponentSpec*** componentSpecs, int16* displacement)
+static int16 ComponentManager::getSpecDisplacementForComponentType(uint32 componentType)
 {
-	*componentSpecs = NULL;
-	
-	if(kComponentTypes <= componentType)
-	{
-		return false;
-	}
-
 	switch (componentType)
 	{
 		case kColliderComponent:
 
-			*componentSpecs = componentSpecsDirectory->colliderSpecs;
-			*displacement = sizeof(ColliderSpec) >> 2;
-			return false;
+			return sizeof(ColliderSpec) >> 2;
 			break;
 
 		case kSpriteComponent:
-
-			*componentSpecs = componentSpecsDirectory->spriteSpecs;
-			*displacement = sizeof(void*);
-			return true;
-			break;
-
 		case kWireframeComponent:
-
-			*componentSpecs = componentSpecsDirectory->wireframeSpecs;
-			*displacement = sizeof(void*);
-			return true;
-			break;
-
 		case kBehaviorComponent:
 
-			*componentSpecs = componentSpecsDirectory->behaviorSpecs;
-			*displacement = sizeof(void*);
-			return true;
+			return sizeof(ComponentSpec*);
 			break;
 	}
 
-	return false;
+	return 1;
 }
 //---------------------------------------------------------------------------------------------------------
 
@@ -351,8 +322,6 @@ static bool ComponentManager::getComponentSpecsForComponentType(const ComponentS
 //---------------------------------------------------------------------------------------------------------
 void ComponentManager::propagateCommand(int32 command, SpatialObject owner, ...)
 {
-	va_list args;
-	va_start(args, owner);
 
 	for(VirtualNode node = this->components->head; NULL != node; node = node->next)
 	{
@@ -363,10 +332,13 @@ void ComponentManager::propagateCommand(int32 command, SpatialObject owner, ...)
 			continue;
 		}
 
-		Component::handleCommand(component, command, args);
-	}
+		va_list args;
+		va_start(args, owner);
 
-	va_end(args);
+		Component::handleCommand(component, command, args);
+
+		va_end(args);
+	}
 }
 //---------------------------------------------------------------------------------------------------------
 uint16 ComponentManager::getCount(SpatialObject owner)

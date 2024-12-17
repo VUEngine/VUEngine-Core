@@ -445,13 +445,13 @@ void Entity::createComponents()
 		Base::createComponents(this);
 	}
 
-	ComponentSpecsDirectory componentSpecsDirectory;
-	componentSpecsDirectory.colliderSpecs 	= (ComponentSpec**)this->entitySpec->colliderSpecs;
-	componentSpecsDirectory.spriteSpecs 	= (ComponentSpec**)this->entitySpec->spriteSpecs;
-	componentSpecsDirectory.wireframeSpecs 	= (ComponentSpec**)this->entitySpec->wireframeSpecs;
-	componentSpecsDirectory.behaviorSpecs 	= (ComponentSpec**)this->entitySpec->behaviorSpecs;
+	ComponentSpec** componentSpecsDirectory[kComponentTypes];
+	componentSpecsDirectory[kColliderComponent] 	= (ComponentSpec**)this->entitySpec->colliderSpecs;
+	componentSpecsDirectory[kSpriteComponent] 		= (ComponentSpec**)this->entitySpec->spriteSpecs;
+	componentSpecsDirectory[kWireframeComponent] 	= (ComponentSpec**)this->entitySpec->wireframeSpecs;
+	componentSpecsDirectory[kBehaviorComponent] 	= (ComponentSpec**)this->entitySpec->behaviorSpecs;
 
-	ComponentManager::createComponents(SpatialObject::safeCast(this), &componentSpecsDirectory);
+	ComponentManager::createComponents(SpatialObject::safeCast(this), componentSpecsDirectory);
 
 	Entity::calculateSize(this);
 }

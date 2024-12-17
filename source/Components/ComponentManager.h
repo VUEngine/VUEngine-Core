@@ -29,27 +29,6 @@ class VirtualList;
 
 
 //=========================================================================================================
-// CLASS' DATA
-//=========================================================================================================
-
-typedef struct ComponentSpecsDirectory
-{
-	/// Array of collider specs
-	ComponentSpec** colliderSpecs;
-
-	/// Array of sprite specs
-	ComponentSpec** spriteSpecs;
-
-	/// Array of wireframe specs
-	ComponentSpec** wireframeSpecs;
-
-	/// Array of behavior specs
-	ComponentSpec** behaviorSpecs;
-
-} ComponentSpecsDirectory;
-
-
-//=========================================================================================================
 // CLASS' DECLARATION
 //=========================================================================================================
 
@@ -70,8 +49,8 @@ singleton class ComponentManager : Object
 
 	/// Create the components for the specified owner.
 	/// @param owner: Object to which the components attach to
-	/// @param componentSpecsDirectory: Dictionary to the the component specs from
-	static void createComponents(SpatialObject owner, const ComponentSpecsDirectory* componentSpecsDirectory);
+	/// @param componentSpecsDirectory: Array for the the component specs from
+	static void createComponents(SpatialObject owner, ComponentSpec** componentSpecsDirectory[]);
 
 	/// Destroy the components for the specified owner.
 	/// @param owner: Object to which the components attach to
