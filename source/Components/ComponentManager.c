@@ -65,11 +65,9 @@ static void ComponentManager::createComponents(SpatialObject owner, const Compon
 		{
 			if(pointerOfPointers)
 			{
-				ComponentSpec* componentSpec = componentSpecs[0];
-
-				for(; NULL != componentSpec && NULL != componentSpec->allocator; componentSpec += displacement)
+				for(int16 i = 0; NULL != componentSpecs[i] && NULL != componentSpecs[i]->allocator; i++)
 				{
-					ComponentManager::createComponent(componentManager, owner, componentSpec);
+					ComponentManager::createComponent(componentManager, owner, componentSpecs[i]);
 				}
 			}
 			else
