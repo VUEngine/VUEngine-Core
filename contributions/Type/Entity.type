@@ -639,10 +639,6 @@
 					"type": {
 						"type": "string",
 						"default": "Bgmap"
-					},
-					"useZDisplacementInProjection": {
-						"type": "boolean",
-						"default": false
 					}
 				},
 				"additionalProperties": false

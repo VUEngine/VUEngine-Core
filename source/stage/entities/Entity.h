@@ -50,16 +50,13 @@ typedef struct EntitySpec
 	AllocatorPointer allocator;
 
 	/// Component specs
-	ComponentSpecs** componentSpecs;
+	ComponentSpec** componentSpecs;
 
 	/// Children
 	struct PositionedEntity* childrenSpecs;
 
 	/// Extra info
 	void* extraInfo;
-
-	/// Use z displacement in projection
-	bool useZDisplacementInProjection;
 
 	/// If 0, width and height will be inferred from the first sprite's texture's pixelSize
 	PixelSize pixelSize;

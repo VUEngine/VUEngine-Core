@@ -590,8 +590,15 @@ PositionedEntityROMSpec {{ sanitizedSpecName }}Children[] =
 		{%- if isAnimated %}
 		{
 		{%- endif %}
-			// class allocator
+			// Class allocator
 			__TYPE({{ entityClass }}),
+
+			// Components
+			{%- if item.components | length %}
+			(ComponentSpec**){{ sanitizedSpecName }}Components,
+			{%- else %}
+			NULL,
+			{%- endif %}
 
 			// children
 			{%- if item.components.children | length %}
@@ -600,40 +607,9 @@ PositionedEntityROMSpec {{ sanitizedSpecName }}Children[] =
 			NULL,
 			{%- endif %}
 
-			// behaviors
-			{%- if item.components.behaviors | length %}
-			(BehaviorSpec**){{ sanitizedSpecName }}Behaviors,
-			{%- else %}
-			NULL,
-			{%- endif %}
-
 			// extra
 			{%- if item.extraProperties.extraInfo != '' %}
 			(void*)"{{ item.extraProperties.extraInfo }}",
-			{%- else %}
-			NULL,
-			{%- endif %}
-
-			// sprites
-			{%- if item.components.sprites | length %}
-			(SpriteSpec**){{ sanitizedSpecName }}SpriteSpecs,
-			{%- else %}
-			NULL,
-			{%- endif %}
-
-			// use z displacement in projection
-			{{ item.sprites.useZDisplacementInProjection }},
-
-			// wireframes
-			{%- if item.components.wireframes | length %}
-			(WireframeSpec**){{ sanitizedSpecName }}WireframeSpecs,
-			{%- else %}
-			NULL,
-			{%- endif %}
-
-			// colliders
-			{%- if item.inGameType != '' and item.components.colliders | length %}
-			(ColliderSpec*){{ sanitizedSpecName }}ColliderSpecs,
 			{%- else %}
 			NULL,
 			{%- endif %}
