@@ -62,9 +62,8 @@ singleton class ComponentManager : Object
 	/// @param owner: Object to which the components attach to
 	/// @param components: List of list of components
 	/// @param componentSpec: Spec to initialize the new component
-	/// @param componentType: Type of components to add
 	/// @return Added component
-	static Component addComponent(SpatialObject owner, VirtualList components[], ComponentSpec* componentSpec, uint32 componentType);
+	static Component addComponent(SpatialObject owner, VirtualList components[], ComponentSpec* componentSpec);
 
 	/// Remove a component from the specified owner.
 	/// @param components: List of list of components
@@ -75,9 +74,8 @@ singleton class ComponentManager : Object
 	/// @param owner: Object to which the components attach to
 	/// @param components: List of list of components
 	/// @param componentSpecs: Specs to initialize the new components
-	/// @param componentType: Type of components to add
 	/// @param destroyOldComponents: If true, any previous component of the same type is destroyed
-	static void addComponents(SpatialObject owner, VirtualList components[], ComponentSpec** componentSpecs, uint32 componentType, bool destroyOldComponents);
+	static void addComponents(SpatialObject owner, VirtualList components[], ComponentSpec** componentSpecs, bool destroyOldComponents);
 
 	/// Retrieve a list with the components of the provided type belonging to the provided owner.
 	/// @param owner: Object to which the components attach to

@@ -708,7 +708,7 @@ void StageEditor::showSelectedUserObject()
 {
 	StageEditor::removePreviousSprite(this);
 
-	SpriteSpec* spriteSpec = (SpriteSpec*)_userObjects[OptionsSelector::getSelectedOption(this->userEntitySelector)].entitySpec->spriteSpecs[0];
+	SpriteSpec* spriteSpec = (SpriteSpec*)_userObjects[OptionsSelector::getSelectedOption(this->userEntitySelector)].entitySpec->componentSpecs[0];
 
 	if(spriteSpec)
 	{

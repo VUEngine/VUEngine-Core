@@ -666,7 +666,7 @@ void AnimationInspector::createSprite()
 	position.y += __I_TO_FIXED(__HALF_SCREEN_HEIGHT);
 	position.z -= 10;
 
-	SpriteSpec* spriteSpec = (SpriteSpec*)_userAnimatedEntities[OptionsSelector::getSelectedOption(this->animatedEntitySelector)].animatedEntitySpec->entitySpec.spriteSpecs[OptionsSelector::getSelectedOption(this->spriteSelector)];
+	SpriteSpec* spriteSpec = (SpriteSpec*)_userAnimatedEntities[OptionsSelector::getSelectedOption(this->animatedEntitySelector)].animatedEntitySpec->entitySpec.componentSpecs[OptionsSelector::getSelectedOption(this->spriteSelector)];
 
 	NM_ASSERT(spriteSpec, "AnimationInspector::createSprite: null spriteSpec");
 
@@ -702,7 +702,7 @@ void AnimationInspector::createSpriteSelector()
 
 	int32 i = 0;
 	
-	while(NULL != _userAnimatedEntities[OptionsSelector::getSelectedOption(this->animatedEntitySelector)].animatedEntitySpec->entitySpec.spriteSpecs[i])
+	while(NULL != _userAnimatedEntities[OptionsSelector::getSelectedOption(this->animatedEntitySelector)].animatedEntitySpec->entitySpec.componentSpecs[i])
 	{
 		Option* option = new Option;
 		option->value = NULL;

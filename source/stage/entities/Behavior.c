@@ -23,14 +23,14 @@
 static Behavior Behavior::create(SpatialObject owner, const BehaviorSpec* behaviorSpec)
 {
 	ASSERT(behaviorSpec, "Behavior::create: NULL behavior");
-	ASSERT(behaviorSpec->allocator, "Behavior::create: no behavior allocator");
+	ASSERT(behaviorSpec->componentSpec.allocator, "Behavior::create: no behavior allocator");
 
-	if(!behaviorSpec || !behaviorSpec->allocator)
+	if(NULL == behaviorSpec || !behaviorSpec->componentSpec.allocator)
 	{
 		return NULL;
 	}
 
-	return 	((Behavior (*)(SpatialObject, BehaviorSpec**)) behaviorSpec->allocator)(owner, (BehaviorSpec**)behaviorSpec);
+	return 	((Behavior (*)(SpatialObject, BehaviorSpec**)) behaviorSpec->componentSpec.allocator)(owner, (BehaviorSpec**)behaviorSpec);
 }
 //---------------------------------------------------------------------------------------------------------
 
@@ -41,7 +41,7 @@ static Behavior Behavior::create(SpatialObject owner, const BehaviorSpec* behavi
 //---------------------------------------------------------------------------------------------------------
 void Behavior::constructor(SpatialObject owner, const BehaviorSpec* behaviorSpec)
 {
-	Base::constructor(owner, (const ComponentSpec*)behaviorSpec);
+	Base::constructor(owner, (const ComponentSpec*)&behaviorSpec->componentSpec);
 
 	this->enabled = behaviorSpec->enabled;
 }

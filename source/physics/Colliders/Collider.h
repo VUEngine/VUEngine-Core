@@ -142,8 +142,8 @@ typedef struct VertexProjection
 // defines a collider
 typedef struct ColliderSpec
 {
-	/// class allocator
-	AllocatorPointer allocator;
+	/// Component spec
+	ComponentSpec componentSpec;
 
 	/// size in pixels
 	PixelSize pixelSize;

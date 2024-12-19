@@ -55,6 +55,9 @@ typedef struct ComponentSpec
 	/// Class' allocator
 	AllocatorPointer allocator;
 
+	/// Component type
+	uint16 componentType;
+
 } ComponentSpec;
 
 

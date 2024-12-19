@@ -19,6 +19,7 @@
 #include <Body.h>
 #include <Camera.h>
 #include <CollisionManager.h>
+#include <Component.h>
 #include <Container.h>
 #include <Sprite.h>
 #include <SpriteManager.h>
@@ -48,35 +49,23 @@ typedef struct EntitySpec
 	/// Class allocator
 	AllocatorPointer allocator;
 
+	/// Component specs
+	ComponentSpecs** componentSpecs;
+
 	/// Children
 	struct PositionedEntity* childrenSpecs;
-
-	/// Behaviors
-	BehaviorSpec** behaviorSpecs;
 
 	/// Extra info
 	void* extraInfo;
 
-	/// Sprites
-	SpriteSpec** spriteSpecs;
-
 	/// Use z displacement in projection
 	bool useZDisplacementInProjection;
-
-	/// Wireframees
-	WireframeSpec** wireframeSpecs;
-
-	/// Collision colliders
-	ColliderSpec* colliderSpecs;
 
 	/// If 0, width and height will be inferred from the first sprite's texture's pixelSize
 	PixelSize pixelSize;
 
 	/// Entity's in-game type
 	uint8 inGameType;
-
-	/// Physical specification
-	PhysicalProperties* physicalProperties;
 
 } EntitySpec;
 
@@ -277,7 +266,7 @@ class Entity : Container
 	/// Attach a new component to the entity and configure it with the provided spec.
 	/// @param componentSpec: Specification to be used to configure the new component
 	/// @return Added component
-	Component addComponent(ComponentSpec* componentSpec, uint32 componentType);
+	Component addComponent(ComponentSpec* componentSpec);
 
 	/// Remove a component from the entity.
 	/// @param component: Component to remove
@@ -285,9 +274,8 @@ class Entity : Container
 
 	/// Attach a new components to the entity and configure it with the provided specs.
 	/// @param componentSpecs: Specifications to be used to configure the new components
-	/// @param componentType: Type of components to add
 	/// @param destroyOldComponents: If true, any previous component of the same type is destroyed
-	void addComponents(ComponentSpec** componentSpecs, uint32 componentType, bool destroyOldComponents);
+	void addComponents(ComponentSpec** componentSpecs, bool destroyOldComponents);
 
 	/// Retrieve a list with the components of the provided type.
 	/// @param componentType: Type of components to add

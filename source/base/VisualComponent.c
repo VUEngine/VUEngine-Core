@@ -160,7 +160,7 @@ static void VisualComponent::getRightBoxFromVisualComponents(VirtualList visualC
 //---------------------------------------------------------------------------------------------------------
 void VisualComponent::constructor(SpatialObject owner, const VisualComponentSpec* visualComponentSpec)
 {
-	Base::constructor(owner, visualComponentSpec);
+	Base::constructor(owner, (const ComponentSpec*)visualComponentSpec);
 
 	this->show = __SHOW;
 	this->rendered = false;

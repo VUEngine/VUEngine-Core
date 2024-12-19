@@ -175,96 +175,86 @@ static void Entity::getRightBoxFromChildrenSpec(const PositionedEntity* position
 	}
 	else 
 	{
-		if(NULL != positionedEntity->entitySpec->spriteSpecs && NULL != positionedEntity->entitySpec->spriteSpecs[0])
+		if(NULL != positionedEntity->entitySpec->componentSpecs && NULL != positionedEntity->entitySpec->componentSpecs[0])
 		{
-			int32 i = 0;
-
-			for(; NULL != positionedEntity->entitySpec->spriteSpecs[i]; i++)
+			for(int16 i = 0; NULL != positionedEntity->entitySpec->componentSpecs[i]; i++)
 			{
-				fixed_t halfWidth = __PIXELS_TO_METERS(ENTITY_HALF_MIN_SIZE);
-				fixed_t halfHeight = __PIXELS_TO_METERS(ENTITY_HALF_MIN_SIZE);
-				fixed_t halfDepth = __PIXELS_TO_METERS(ENTITY_HALF_MIN_SIZE);
+				RightBox helperRightBox = {0, 0, 0, 0, 0, 0};
 
-				SpriteSpec* spriteSpec = (SpriteSpec*)positionedEntity->entitySpec->spriteSpecs[i];
-
-				if(NULL != spriteSpec->textureSpec)
+				switch (positionedEntity->entitySpec->componentSpecs[i]->componentTYpe)
 				{
-					halfWidth = __PIXELS_TO_METERS(spriteSpec->textureSpec->cols << 2);
-					halfHeight = __PIXELS_TO_METERS(spriteSpec->textureSpec->rows << 2);
-					halfDepth = __PIXELS_TO_METERS(ENTITY_HALF_MIN_SIZE);
-				}
-
-				if(myRightBox.x0 > -halfWidth + __PIXELS_TO_METERS(spriteSpec->displacement.x))
-				{
-					myRightBox.x0 = -halfWidth + __PIXELS_TO_METERS(spriteSpec->displacement.x);
-				}
-
-				if(myRightBox.x1 < halfWidth + __PIXELS_TO_METERS(spriteSpec->displacement.x))
-				{
-					myRightBox.x1 = halfWidth + __PIXELS_TO_METERS(spriteSpec->displacement.x);
-				}
-
-				if(myRightBox.y0 > -halfHeight + __PIXELS_TO_METERS(spriteSpec->displacement.y))
-				{
-					myRightBox.y0 = -halfHeight + __PIXELS_TO_METERS(spriteSpec->displacement.y);
-				}
-
-				if(myRightBox.y1 < halfHeight + __PIXELS_TO_METERS(spriteSpec->displacement.y))
-				{
-					myRightBox.y1 = halfHeight + __PIXELS_TO_METERS(spriteSpec->displacement.y);
-				}
-
-				if(myRightBox.z0 > -halfDepth + __PIXELS_TO_METERS(spriteSpec->displacement.z))
-				{
-					myRightBox.z0 = -halfDepth + __PIXELS_TO_METERS(spriteSpec->displacement.z);
-				}
-
-				if(myRightBox.z1 < halfDepth + __PIXELS_TO_METERS(spriteSpec->displacement.z))
-				{
-					myRightBox.z1 = halfDepth + __PIXELS_TO_METERS(spriteSpec->displacement.z);
-				}
-			}
-		}
-
-		if(NULL != positionedEntity->entitySpec->wireframeSpecs && NULL != positionedEntity->entitySpec->wireframeSpecs[0])
-		{
-			int32 i = 0;
-
-			for(; NULL != positionedEntity->entitySpec->wireframeSpecs[i]; i++)
-			{
-				if(__TYPE(Mesh) == __ALLOCATOR_TYPE(positionedEntity->entitySpec->wireframeSpecs[i]->allocator && ((MeshSpec*)positionedEntity->entitySpec->wireframeSpecs[i])->segments[0]))
-				{
-					RightBox rightBox = Mesh::getRightBoxFromSpec((MeshSpec*)positionedEntity->entitySpec->wireframeSpecs[i]);
-
-					if(myRightBox.x0 > rightBox.x0)
+					case kSpriteComponent:
 					{
-						myRightBox.x0 = rightBox.x0;
+						SpriteSpec* spriteSpec = (SpriteSpec*)positionedEntity->entitySpec->componentSpecs[i];
+
+						fixed_t halfWidth = __PIXELS_TO_METERS(ENTITY_HALF_MIN_SIZE);
+						fixed_t halfHeight = __PIXELS_TO_METERS(ENTITY_HALF_MIN_SIZE);
+						fixed_t halfDepth = __PIXELS_TO_METERS(ENTITY_HALF_MIN_SIZE);
+
+						if(NULL != spriteSpec->textureSpec)
+						{
+							halfWidth = __PIXELS_TO_METERS(spriteSpec->textureSpec->cols << 2);
+							halfHeight = __PIXELS_TO_METERS(spriteSpec->textureSpec->rows << 2);
+							halfDepth = __PIXELS_TO_METERS(ENTITY_HALF_MIN_SIZE);
+						}
+						
+						helperRightBox = (RightBox)
+						{
+							-halfWidth + __PIXELS_TO_METERS(spriteSpec->displacement.x),
+							-halfHeight + __PIXELS_TO_METERS(spriteSpec->displacement.y),
+							-halfDepth + __PIXELS_TO_METERS(spriteSpec->displacement.z),
+							halfWidth + __PIXELS_TO_METERS(spriteSpec->displacement.x),
+							halfHeight + __PIXELS_TO_METERS(spriteSpec->displacement.y),
+							halfDepth + __PIXELS_TO_METERS(spriteSpec->displacement.z),
+						};
+
+						break;
 					}
 
-					if(myRightBox.x1 < rightBox.x1)
+					case kWireframeComponent:
 					{
-						myRightBox.x1 = rightBox.x1;
+						helperRightBox = Mesh::getRightBoxFromSpec((MeshSpec*)positionedEntity->entitySpec->componentSpecs[i]);
 					}
 
-					if(myRightBox.y0 > rightBox.y0)
+					default:
 					{
-						myRightBox.y0 = rightBox.y0;
+						continue;
 					}
+				}
 
-					if(myRightBox.y1 < rightBox.y1)
-					{
-						myRightBox.y1 = rightBox.y1;
-					}
+				if(myRightBox.x0 > rightBox.x0)
+				{
+					myRightBox.x0 = rightBox.x0;
+				}
 
-					if(myRightBox.z0 > rightBox.z0)
-					{
-						myRightBox.z0 = rightBox.z0;
-					}
+				if(myRightBox.x0 > rightBox.x0)
+				{
+					myRightBox.x0 = rightBox.x0;
+				}
 
-					if(myRightBox.z1 < rightBox.z1)
-					{
-						myRightBox.z1 = rightBox.z1;
-					}
+				if(myRightBox.x1 < rightBox.x1)
+				{
+					myRightBox.x1 = rightBox.x1;
+				}
+
+				if(myRightBox.y0 > rightBox.y0)
+				{
+					myRightBox.y0 = rightBox.y0;
+				}
+
+				if(myRightBox.y1 < rightBox.y1)
+				{
+					myRightBox.y1 = rightBox.y1;
+				}
+
+				if(myRightBox.z0 > rightBox.z0)
+				{
+					myRightBox.z0 = rightBox.z0;
+				}
+
+				if(myRightBox.z1 < rightBox.z1)
+				{
+					myRightBox.z1 = rightBox.z1;
 				}
 			}
 		}
@@ -445,13 +435,7 @@ void Entity::createComponents()
 		Base::createComponents(this);
 	}
 
-	ComponentSpec** componentSpecsDirectory[kComponentTypes];
-	componentSpecsDirectory[kColliderComponent] 	= (ComponentSpec**)this->entitySpec->colliderSpecs;
-	componentSpecsDirectory[kSpriteComponent] 		= (ComponentSpec**)this->entitySpec->spriteSpecs;
-	componentSpecsDirectory[kWireframeComponent] 	= (ComponentSpec**)this->entitySpec->wireframeSpecs;
-	componentSpecsDirectory[kBehaviorComponent] 	= (ComponentSpec**)this->entitySpec->behaviorSpecs;
-
-	ComponentManager::createComponents(SpatialObject::safeCast(this), componentSpecsDirectory);
+	ComponentManager::createComponents(SpatialObject::safeCast(this), componentSpecs);
 
 	Entity::calculateSize(this);
 }
@@ -461,14 +445,14 @@ void Entity::destroyComponents()
 	ComponentManager::destroyComponents(SpatialObject::safeCast(this), this->components, kComponentTypes);
 }
 //---------------------------------------------------------------------------------------------------------
-Component Entity::addComponent(ComponentSpec* componentSpec, uint32 componentType)
+Component Entity::addComponent(ComponentSpec* componentSpec)
 {
 	if(kComponentTypes <= componentType)
 	{
 		return NULL;
 	}
 
-	return ComponentManager::addComponent(SpatialObject::safeCast(this), this->components, componentSpec, componentType);
+	return ComponentManager::addComponent(SpatialObject::safeCast(this), this->components, componentSpec);
 }
 //---------------------------------------------------------------------------------------------------------
 void Entity::removeComponent(Component component)
@@ -481,14 +465,9 @@ void Entity::removeComponent(Component component)
 	ComponentManager::removeComponent(this->components, component);
 }
 //---------------------------------------------------------------------------------------------------------
-void Entity::addComponents(ComponentSpec** componentSpecs, uint32 componentType, bool destroyOldComponents)
+void Entity::addComponents(ComponentSpec** componentSpecs, bool destroyOldComponents)
 {
-	if(kComponentTypes <= componentType)
-	{
-		return;
-	}
-
-	ComponentManager::addComponents(SpatialObject::safeCast(this), this->components, componentSpecs, componentType, destroyOldComponents);
+	ComponentManager::addComponents(SpatialObject::safeCast(this), this->components, componentSpecs, destroyOldComponents);
 }
 //---------------------------------------------------------------------------------------------------------
 VirtualList Entity::getComponents(uint32 componentType)

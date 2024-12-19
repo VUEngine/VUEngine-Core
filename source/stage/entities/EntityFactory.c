@@ -48,7 +48,7 @@ typedef struct PositionedEntityDescription
 	EventListener callback;
 	int16 internalId;
 	uint8 componentIndex;
-	bool spritesCreated;
+	bool componentsCreated;
 	bool wireframesCreated;
 	bool collidersCreated;
 	bool behaviorsCreated;
@@ -176,10 +176,7 @@ void EntityFactory::spawnEntity(const PositionedEntity* positionedEntity, Contai
 	positionedEntityDescription->internalId = internalId;
 	positionedEntityDescription->transformed = false;
 	positionedEntityDescription->graphicsSynchronized = false;
-	positionedEntityDescription->spritesCreated = false;
-	positionedEntityDescription->wireframesCreated = false;
-	positionedEntityDescription->collidersCreated = false;
-	positionedEntityDescription->behaviorsCreated = false;
+	positionedEntityDescription->componentsCreated = false;
 	positionedEntityDescription->componentIndex = 0;
 
 	VirtualList::pushBack(this->entitiesToInstantiate, positionedEntityDescription);
@@ -337,13 +334,13 @@ uint32 EntityFactory::transformEntities()
 			return __ENTITY_PENDING_PROCESSING;
 		}
 
-		if(!positionedEntityDescription->spritesCreated)
+		if(!positionedEntityDescription->componentsCreated)
 		{
 			EntitySpec* entitySpec = Entity::getSpec(positionedEntityDescription->entity);
 			
-			if(NULL != entitySpec && NULL != entitySpec->spriteSpecs && NULL != entitySpec->spriteSpecs[positionedEntityDescription->componentIndex])
+			if(NULL != entitySpec && NULL != entitySpec->componentSpecs && NULL != entitySpec->componentSpecs[positionedEntityDescription->componentIndex])
 			{
-				bool createdComponent = NULL != Entity::addComponent(positionedEntityDescription->entity, (ComponentSpec*)entitySpec->spriteSpecs[positionedEntityDescription->componentIndex], kSpriteComponent);
+				bool createdComponent = NULL != Entity::addComponent(positionedEntityDescription->entity, (ComponentSpec*)entitySpec->componentSpecs[positionedEntityDescription->componentIndex], (ComponentSpec*)entitySpec->componentSpecs[positionedEntityDescription->componentIndex]->componentType);
 				positionedEntityDescription->componentIndex++;
 
 				if(createdComponent)
@@ -352,64 +349,7 @@ uint32 EntityFactory::transformEntities()
 				}
 			}
 
-			positionedEntityDescription->spritesCreated = true;
-			positionedEntityDescription->componentIndex = 0;
-		}
-
-		if(!positionedEntityDescription->wireframesCreated)
-		{
-			EntitySpec* entitySpec = Entity::getSpec(positionedEntityDescription->entity);
-			
-			if(NULL != entitySpec && NULL != entitySpec->wireframeSpecs && NULL != entitySpec->wireframeSpecs[positionedEntityDescription->componentIndex])
-			{
-				bool createdComponent = NULL != Entity::addComponent(positionedEntityDescription->entity, (ComponentSpec*)entitySpec->wireframeSpecs[positionedEntityDescription->componentIndex], kWireframeComponent);
-				positionedEntityDescription->componentIndex++;
-
-				if(createdComponent)
-				{
-					return __ENTITY_PENDING_PROCESSING;
-				}
-			}
-
-			positionedEntityDescription->wireframesCreated = true;
-			positionedEntityDescription->componentIndex = 0;
-		}
-
-		if(!positionedEntityDescription->collidersCreated)
-		{
-			EntitySpec* entitySpec = Entity::getSpec(positionedEntityDescription->entity);
-			
-			if(NULL != entitySpec && NULL != entitySpec->colliderSpecs && NULL != entitySpec->colliderSpecs[positionedEntityDescription->componentIndex].allocator)
-			{
-				bool createdComponent = NULL != Entity::addComponent(positionedEntityDescription->entity, (ComponentSpec*)&entitySpec->colliderSpecs[positionedEntityDescription->componentIndex], kColliderComponent);
-				positionedEntityDescription->componentIndex++;
-
-				if(createdComponent)
-				{
-					return __ENTITY_PENDING_PROCESSING;
-				}
-			}
-
-			positionedEntityDescription->collidersCreated = true;
-			positionedEntityDescription->componentIndex = 0;
-		}
-
-		if(!positionedEntityDescription->behaviorsCreated)
-		{
-			EntitySpec* entitySpec = Entity::getSpec(positionedEntityDescription->entity);
-			
-			if(NULL != entitySpec && NULL != entitySpec->behaviorSpecs && NULL != entitySpec->behaviorSpecs[positionedEntityDescription->componentIndex])
-			{
-				bool createdComponent = NULL != Entity::addComponent(positionedEntityDescription->entity, (ComponentSpec*)entitySpec->behaviorSpecs[positionedEntityDescription->componentIndex], kBehaviorComponent);
-				positionedEntityDescription->componentIndex++;
-
-				if(createdComponent)
-				{
-					return __ENTITY_PENDING_PROCESSING;
-				}
-			}
-
-			positionedEntityDescription->behaviorsCreated = true;
+			positionedEntityDescription->componentsCreated = true;
 			positionedEntityDescription->componentIndex = 0;
 		}
 

@@ -26,8 +26,8 @@
 /// @memberof Behavior
 typedef struct BehaviorSpec
 {
-	/// class allocator
-	AllocatorPointer allocator;
+	/// Component spec
+	ComponentSpec componentSpec;
 
 	/// enabled
 	bool enabled;

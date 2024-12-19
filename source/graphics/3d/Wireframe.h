@@ -40,8 +40,8 @@ class VirtualList;
 /// @memberof Wireframe
 typedef struct WireframeSpec
 {
-	/// Class' allocator
-	AllocatorPointer allocator;
+	/// Component spec
+	VisualComponentSpec visualComponentSpec;
 
 	/// Displacement relative to the owner's spatial position
 	Vector3D displacement;

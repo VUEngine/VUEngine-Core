@@ -35,8 +35,7 @@ class AnimationController;
 /// @memberof Sprite
 typedef struct SpriteSpec
 {
-	/// Class' allocator
-	AllocatorPointer allocator;
+	VisualComponentSpec visualComponentSpec;
 
 	/// Spec for the texture to display
 	TextureSpec* textureSpec;

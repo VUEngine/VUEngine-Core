@@ -140,9 +140,9 @@ static void ComponentManager::destroyComponents(SpatialObject owner, VirtualList
 	}
 }
 //---------------------------------------------------------------------------------------------------------
-static Component ComponentManager::addComponent(SpatialObject owner, VirtualList components[], ComponentSpec* componentSpec, uint32 componentType)
+static Component ComponentManager::addComponent(SpatialObject owner, VirtualList components[], ComponentSpec* componentSpec)
 {
-	ComponentManager componentManager = ComponentManager::getManager(componentType);
+	ComponentManager componentManager = ComponentManager::getManager(componentSpec->componentType);
 
 	if(NULL == componentManager)
 	{
@@ -183,15 +183,8 @@ static void ComponentManager::removeComponent(VirtualList components[], Componen
 	ComponentManager::destroyComponent(componentManager, component);
 }
 //---------------------------------------------------------------------------------------------------------
-static void ComponentManager::addComponents(SpatialObject owner, VirtualList components[], ComponentSpec** componentSpecs, uint32 componentType, bool destroyOldComponents)
+static void ComponentManager::addComponents(SpatialObject owner, VirtualList components[], ComponentSpec** componentSpecs, bool destroyOldComponents)
 {
-	ComponentManager componentManager = ComponentManager::getManager(componentType);
-
-	if(NULL == componentManager)
-	{
-		return;
-	}
-
 	if(destroyOldComponents)
 	{
 		ComponentManager::destroyComponents(owner, components, componentType);
@@ -199,6 +192,13 @@ static void ComponentManager::addComponents(SpatialObject owner, VirtualList com
 
 	for(int32 i = 0; NULL != componentSpecs[i] && NULL != componentSpecs[i]->allocator; i++)
 	{
+		ComponentManager componentManager = ComponentManager::getManager(componentSpecs[i]->componentType);
+
+		if(NULL == componentManager)
+		{
+			return;
+		}
+
 		ComponentManager::createComponent(componentManager, owner, componentSpecs[i]);
 	}
 }
@@ -270,27 +270,30 @@ static uint32 ComponentManager::getComponentType(Component component)
 		return kComponentTypes;
 	}
 
-	if(__GET_CAST(Collider, component))
+	if(NULL == component->componentSpec)
 	{
-		return kColliderComponent;
-	}
-	
-	if(__GET_CAST(Sprite, component))
-	{
-		return kSpriteComponent;
-	}
-	
-	if(__GET_CAST(Wireframe, component))
-	{
-		return kWireframeComponent;
-	}
-	
-	if(__GET_CAST(Behavior, component))
-	{
-		return kBehaviorComponent;
+		if(__GET_CAST(Collider, component))
+		{
+			return kColliderComponent;
+		}
+		
+		if(__GET_CAST(Sprite, component))
+		{
+			return kSpriteComponent;
+		}
+		
+		if(__GET_CAST(Wireframe, component))
+		{
+			return kWireframeComponent;
+		}
+		
+		if(__GET_CAST(Behavior, component))
+		{
+			return kBehaviorComponent;
+		}
 	}
 
-	return kComponentTypes;
+	return component->componentType;
 }
 //---------------------------------------------------------------------------------------------------------
 static int16 ComponentManager::getSpecDisplacementForComponentType(uint32 componentType)
