@@ -104,6 +104,10 @@ abstract class Component : ListenerObject
 	/// Retrieve the collider's owner	
 	SpatialObject getOwner();
 
+	/// Retrieve the component's type
+	/// @return Component's type'
+	uint32 getType();
+
 	/// Handle a command.
 	/// @param command: Command to handle
 	/// @param args: Variable arguments list depending on the command to handle

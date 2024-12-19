@@ -18,6 +18,7 @@
 #include <BehaviorManager.h>
 #include <Collider.h>
 #include <ColliderManager.h>
+#include <Printing.h>
 #include <SpatialObject.h>
 #include <Sprite.h>
 #include <SpriteManager.h>
@@ -53,7 +54,14 @@ static Component ComponentManager::addComponent(SpatialObject owner, ComponentSp
 		return NULL;
 	}
 
-	return ComponentManager::createComponent(componentManager, owner, componentSpec);
+	Component component = ComponentManager::createComponent(componentManager, owner, componentSpec);
+
+	if(!isDeleted(component))
+	{
+		SpatialObject::addedComponent(owner, component);
+	}
+
+	return component;
 }
 //---------------------------------------------------------------------------------------------------------
 static void ComponentManager::removeComponent(SpatialObject owner, Component component)
@@ -72,6 +80,11 @@ static void ComponentManager::removeComponent(SpatialObject owner, Component com
 		return;
 	}
 
+	if(!isDeleted(component))
+	{
+		SpatialObject::removedComponent(owner, component);
+	}
+
 	ComponentManager::destroyComponent(componentManager, owner, component);
 }
 //---------------------------------------------------------------------------------------------------------
@@ -79,14 +92,7 @@ static void ComponentManager::addComponents(SpatialObject owner, ComponentSpec**
 {
 	for(int32 i = 0; NULL != componentSpecs[i] && NULL != componentSpecs[i]->allocator; i++)
 	{
-		ComponentManager componentManager = ComponentManager::getManager(componentSpecs[i]->componentType);
-
-		if(NULL == componentManager)
-		{
-			return;
-		}
-
-		ComponentManager::createComponent(componentManager, owner, componentSpecs[i]);
+		ComponentManager::addComponent(owner, componentSpecs[i]);
 	}
 }
 //---------------------------------------------------------------------------------------------------------
@@ -109,6 +115,8 @@ static void ComponentManager::removeComponents(SpatialObject owner, uint32 compo
 
 				if(owner == component->owner)
 				{
+					SpatialObject::removedComponent(owner, component);
+
 					ComponentManager::destroyComponent(componentManager, owner, component);
 				}
 			}
@@ -122,13 +130,16 @@ static void ComponentManager::removeComponents(SpatialObject owner, uint32 compo
 		{
 			return;
 		}
-
-		for(VirtualNode node = componentManager->components->head; NULL != node; node = node->next)
+		for(VirtualNode node = componentManager->components->head, nextNode = NULL; NULL != node; node = nextNode)
 		{
+			nextNode = node->next;
+	
 			Component component = Component::safeCast(node->data);
 
 			if(owner == component->owner)
 			{
+				SpatialObject::removedComponent(owner, component);
+
 				ComponentManager::destroyComponent(componentManager, owner, component);
 			}
 		}	
@@ -204,6 +215,11 @@ static bool ComponentManager::getComponentsOfClass(SpatialObject owner, ClassPoi
 	for(VirtualNode node = componentManager->components->head; NULL != node; node = node->next)
 	{
 		Component component = Component::safeCast(node->data);
+
+		if(owner != component->owner)
+		{
+			continue;
+		}
 
 		if(!classPointer || Object::getCast(component, classPointer, NULL))
 		{

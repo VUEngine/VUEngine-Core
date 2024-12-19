@@ -292,7 +292,12 @@ void Actor::addedComponent(Component component)
 
 	if(kPhysicsComponent == Component::getType(component))
 	{
-		this->body = Object::getCast(this, typeofclass(Body), NULL);
+		this->body = Body::safeCast(Object::getCast(component, typeofclass(Body), NULL));
+
+		if(!isDeleted(this->body))
+		{
+			Body::setPosition(this->body, &this->transformation.position, SpatialObject::safeCast(this));
+		}
 	}
 }
 //---------------------------------------------------------------------------------------------------------
