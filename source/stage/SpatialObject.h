@@ -74,7 +74,7 @@ class SpatialObject : ListenerObject
 
 	/// A component has been removed from this actor. 
 	/// @param component: Removed component
-	virtual void removedComponent(Component component)
+	virtual void removedComponent(Component component);
 
 	/// Retrieve the object's radius.
 	/// @return Radius

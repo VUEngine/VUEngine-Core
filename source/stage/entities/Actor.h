@@ -89,7 +89,7 @@ class Actor : AnimatedEntity
 
 	/// A component has been removed from this actor. 
 	/// @param component: Removed component
-	override void removedComponent(Component component)
+	override void removedComponent(Component component);
 
 	/// Retrieve the object's velocity vector.
 	/// @return Pointer to the direction towards which the object is moving
