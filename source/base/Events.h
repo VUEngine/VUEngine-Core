@@ -31,6 +31,7 @@ enum Events
 	kEventStageChildStreamedOut,
 	kEventColliderDeleted,
 	kEventColliderChanged,
+	kEventComponentDestroyed,
 
 	kEventGamePaused,
 	kEventGameUnpaused,

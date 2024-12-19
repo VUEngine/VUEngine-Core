@@ -59,7 +59,11 @@ void Component::constructor(SpatialObject owner, const ComponentSpec* componentS
 //---------------------------------------------------------------------------------------------------------
 void Component::destructor()
 {	
-	// must always be called at the end of the destructor
+	if(NULL != this->events)
+	{
+		Component::fireEvent(this, kEventComponentDestroyed);
+	}
+
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------
