@@ -791,7 +791,7 @@ void SpriteManager::cleanUp()
 		VirtualList sprites = this->bgmapSprites;
 		this->bgmapSprites = NULL;
 
-		VirtualList::deleteData(sprites);
+		VirtualList::clear(sprites);
 		delete sprites;
 	}
 

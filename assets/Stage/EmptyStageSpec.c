@@ -39,7 +39,7 @@ StageROMSpec EmptyStageSpec =
 
 	// level
 	{
-		// size
+		// Size
 		{
 			// x
 			__SCREEN_WIDTH,
@@ -229,7 +229,7 @@ StageROMSpec EmptyStageSpec =
 			__TYPE(UIContainer),
 		},
 
-		// children
+		// Children specs
 		(PositionedEntity*)NULL,
 	},
 
