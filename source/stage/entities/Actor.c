@@ -52,8 +52,6 @@ void Actor::destructor()
 {
 	if(!isDeleted(this->body))
 	{
-		// remove a body
-		BodyManager::destroyBody(VUEngine::getBodyManager(_vuEngine), this->body);
 		this->body = NULL;
 	}
 
@@ -73,10 +71,9 @@ bool Actor::handleMessage(Telegram telegram)
 {
 	if(!this->stateMachine || !StateMachine::handleMessage(this->stateMachine, telegram))
 	{
-		// retrieve message
 		int32 message = Telegram::getMessage(telegram);
 
-		if(this->body)
+		if(!isDeleted(this->body))
 		{
 			switch(message)
 			{
@@ -117,6 +114,7 @@ fixed_t Actor::getSpeed()
 //---------------------------------------------------------------------------------------------------------
 fixed_t Actor::getBounciness()
 {
+	/// PENDING
 	return !isDeleted(this->body) ? Body::getBounciness(this->body) : 0;
 //	BodySpec* physicalProperties = ((ActorSpec*)this->entitySpec)->animatedEntitySpec.entitySpec.physicalProperties;
 
@@ -217,7 +215,7 @@ bool Actor::collisionStarts(const CollisionInformation* collisionInformation)
 			fixed_t bounciness = Actor::isSensibleToCollidingObjectBouncinessOnCollision(this, collidingObject) ? SpatialObject::getBounciness(collidingObject) : 0;
 			fixed_t frictionCoefficient = Actor::isSensibleToCollidingObjectFrictionOnCollision(this, collidingObject) ? Actor::getSurroundingFrictionCoefficient(this) : 0;
 
-			if(Actor::isBouncy(this))
+			if(Actor::isBouncy(this) && !isDeleted(this->body))
 			{
 				Body::bounce(this->body, ListenerObject::safeCast(collisionInformation->otherCollider), collisionInformation->solutionVector.direction, frictionCoefficient, bounciness);
 
@@ -270,7 +268,7 @@ void Actor::setLocalPosition(const Vector3D* position)
 	this->transformation.position.y -= displacement.y;
 	this->transformation.position.z -= displacement.z;
 
-	if(NULL != this->body)
+	if(!isDeleted(this->body))
 	{
 		Body::setPosition(this->body, &this->transformation.position, SpatialObject::safeCast(this));
 	}
@@ -288,22 +286,9 @@ void Actor::changeEnvironment(Transformation* environmentTransform)
 	}
 }
 //---------------------------------------------------------------------------------------------------------
-void Actor::destroyComponents()
+void Actor::createComponents()
 {
-	Base::destroyComponents(this);
-
-	// destroy body to prevent any more physical interactions
-	if(!isDeleted(this->body))
-	{
-		// remove a body
-		BodyManager::destroyBody(VUEngine::getBodyManager(_vuEngine), this->body);
-		this->body = NULL;
-	}
-}
-//---------------------------------------------------------------------------------------------------------
-void Actor::ready(bool recursive)
-{
-	Base::ready(this, recursive);
+	Base::createComponents(this);
 
 	VirtualList bodies = Actor::getComponents(this, kPhysicsComponent);
 
@@ -316,6 +301,13 @@ void Actor::ready(bool recursive)
 			Body::setPosition(this->body, &this->transformation.position, SpatialObject::safeCast(this));
 		}
 	}
+}
+//---------------------------------------------------------------------------------------------------------
+void Actor::destroyComponents()
+{
+	Base::destroyComponents(this);
+
+	this->body = NULL;
 }
 //---------------------------------------------------------------------------------------------------------
 void Actor::update()
@@ -376,7 +368,7 @@ bool Actor::setVelocity(const Vector3D* velocity, bool checkIfCanMove)
 {
 	ASSERT(this->body, "Actor::applyForce: null body");
 
-	if(!this->body)
+	if(isDeleted(this->body))
 	{
 		return false;
 	}
@@ -398,7 +390,7 @@ bool Actor::applyForce(const Vector3D* force, bool checkIfCanMove)
 {
 	ASSERT(this->body, "Actor::applyForce: null body");
 
-	if(!this->body)
+	if(isDeleted(this->body))
 	{
 		return false;
 	}

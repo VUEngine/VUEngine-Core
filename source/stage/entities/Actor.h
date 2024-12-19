@@ -128,12 +128,11 @@ class Actor : AnimatedEntity
 	/// @param environmentTransform: New reference environment for the local transformation
 	override void changeEnvironment(Transformation* environmentTransform);
 
+	/// Add the components that must attach to this entity. 
+	override void createComponents();
+
 	/// Destroy the components that attach to this actor. 	
 	override void destroyComponents();
-
-	/// Make the container ready to start operating once it has been completely intialized.
-	/// @param recursive: If true, the ready call is propagated to its children, grand children, etc.
-	override void ready(bool recursive);
 
 	/// Update this instance's logic.
 	override void update();
