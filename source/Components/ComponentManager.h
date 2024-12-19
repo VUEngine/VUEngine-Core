@@ -68,6 +68,13 @@ singleton class ComponentManager : Object
 	/// @param componentType: Type of components to remove
 	static void removeComponents(SpatialObject owner, uint32 componentType);
 
+	/// Retrieve a component of the given type at the desired position.
+	/// @param owner: Object to which the components attach to
+	/// @param componentType: Type of components to add
+	/// @param componentIndex: Component's index according to their order of creation
+	/// @return Component at the provided index position
+	static Component getComponentAtIndex(SpatialObject owner, uint32 componentType, int16 componentIndex);
+
 	/// Retrieve a list with the components of the provided type belonging to the provided owner.
 	/// @param owner: Object to which the components attach to
 	/// @param componentType: Type of components to add

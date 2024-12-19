@@ -469,6 +469,11 @@ void Entity::removeComponents(uint32 componentType)
 	ComponentManager::removeComponents(SpatialObject::safeCast(this), componentType);
 }
 //---------------------------------------------------------------------------------------------------------
+Component Entity::getComponentAtIndex(uint32 componentType, int16 componentIndex)
+{
+	return ComponentManager::getComponentAtIndex(SpatialObject::safeCast(this), componentType, componentIndex);
+}
+//---------------------------------------------------------------------------------------------------------
 VirtualList Entity::getComponents(uint32 componentType)
 {
 	if(kComponentTypes <= componentType)

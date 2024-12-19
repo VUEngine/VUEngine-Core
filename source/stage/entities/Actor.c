@@ -290,16 +290,11 @@ void Actor::createComponents()
 {
 	Base::createComponents(this);
 
-	VirtualList bodies = Actor::getComponents(this, kPhysicsComponent);
+	this->body = Body::safeCast(Actor::getComponentAtIndex(this, kPhysicsComponent, 0));
 
-	if(NULL != bodies)
+	if(!isDeleted(this->body))
 	{
-		this->body = Body::safeCast(VirtualList::front(bodies));
-
-		if(!isDeleted(this->stateMachine))
-		{
-			Body::setPosition(this->body, &this->transformation.position, SpatialObject::safeCast(this));
-		}
+		Body::setPosition(this->body, &this->transformation.position, SpatialObject::safeCast(this));
 	}
 }
 //---------------------------------------------------------------------------------------------------------

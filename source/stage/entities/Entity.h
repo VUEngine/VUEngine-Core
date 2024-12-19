@@ -273,6 +273,12 @@ class Entity : Container
 	/// @param componentType: Type of components to remove
 	void removeComponents(uint32 componentType);
 
+	/// Retrieve a component of the given type at the desired position.
+	/// @param componentType: Type of components to add
+	/// @param componentIndex: Component's index according to their order of creation
+	/// @return Component at the provided index position
+	Component getComponentAtIndex(uint32 componentType, int16 componentIndex);
+
 	/// Retrieve a list with the components of the provided type.
 	/// @param componentType: Type of components to add
 	/// @return Linked list of components of the type provided

@@ -131,10 +131,40 @@ static void ComponentManager::removeComponents(SpatialObject owner, uint32 compo
 			{
 				ComponentManager::destroyComponent(componentManager, owner, component);
 			}
-		}
-		
+		}	
 	}
 }
+//---------------------------------------------------------------------------------------------------------
+static Component ComponentManager::getComponentAtIndex(SpatialObject owner, uint32 componentType, int16 componentIndex)
+{
+	if(kComponentTypes <= componentType)
+	{
+		return NULL;
+	}
+
+	ComponentManager componentManager = ComponentManager::getManager(componentType);
+
+	if(NULL == componentManager)
+	{
+		return NULL;
+	}
+
+	for(VirtualNode node = componentManager->components->head; NULL != node; node = node->next)
+	{
+		Component component = Component::safeCast(node->data);
+
+		if(owner == component->owner)
+		{
+			if(0 == componentIndex--)
+			{
+				return component;
+			}
+		}
+	}
+
+	return NULL;
+}
+
 //---------------------------------------------------------------------------------------------------------
 static VirtualList ComponentManager::getComponents(SpatialObject owner, uint32 componentType)
 {
