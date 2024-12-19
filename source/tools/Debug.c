@@ -35,7 +35,7 @@
 #include <DebugState.h>
 #include <DirectDraw.h>
 #include <Entity.h>
-#include <CollisionManager.h>
+#include <ColliderManager.h>
 #include <FrameRate.h>
 #include <GameState.h>
 #include <HardwareManager.h>
@@ -54,7 +54,7 @@
 #include <ParamTableManager.h>
 #include <Particle.h>
 #include <ParticleSystem.h>
-#include <PhysicalWorld.h>
+#include <BodyManager.h>
 #include <Printing.h>
 #include <Collider.h>
 #include <SolidParticle.h>
@@ -126,7 +126,7 @@ void Debug::show()
 //---------------------------------------------------------------------------------------------------------
 void Debug::hide()
 {
-	CollisionManager::hideColliders(GameState::getCollisionManager(VUEngine::getPreviousState(VUEngine::getInstance())));
+	ColliderManager::hideColliders(GameState::getColliderManager(VUEngine::getPreviousState(VUEngine::getInstance())));
 	Printing::clear(Printing::getInstance());
 	SpriteManager::showAllSprites(SpriteManager::getInstance(), NULL, true);
 }
@@ -310,7 +310,7 @@ void Debug::showPage(int32 increment)
 
 		Debug::setBlackBackground(this);
 
-		CollisionManager::hideColliders(GameState::getCollisionManager(VUEngine::getPreviousState(VUEngine::getInstance())));
+		ColliderManager::hideColliders(GameState::getColliderManager(VUEngine::getPreviousState(VUEngine::getInstance())));
 
 		((void (*)(Debug, int32, int32, int32))this->currentPage->data)(this, increment, 1, 2);
 	}
@@ -464,7 +464,7 @@ void Debug::memoryStatusShowFirstPage(int32 increment __attribute__ ((unused)), 
 		{&BgmapTextureManager_getObjectSize, 			"BgmapTextureManager"},
 		{&CharSetManager_getObjectSize, 				"CharSetManager"},
 		{&ClockManager_getObjectSize, 					"ClockManager"},
-		{&CollisionManager_getObjectSize, 				"CollisionManager"},
+		{&ColliderManager_getObjectSize, 				"ColliderManager"},
 		{&KeypadManager_getObjectSize, 					"KeypadManager"},
 		{&ParamTableManager_getObjectSize, 				"ParamTableManager"},
 		{&CameraEffectManager_getObjectSize, 			"CameraEff.Manager"},
@@ -529,7 +529,7 @@ void Debug::memoryStatusShowFourthPage(int32 increment __attribute__ ((unused)),
 
 	ClassSizeData classesSizeData[] =
 	{
-		{&PhysicalWorld_getObjectSize, 	"PhysicalWorld"},
+		{&BodyManager_getObjectSize, 	"BodyManager"},
 		{&Body_getObjectSize, 			"Body"},
 		{&Collider_getObjectSize, 			"Collider"},
 		{&Ball_getObjectSize, 			"Ball"},
@@ -1079,9 +1079,9 @@ void Debug::physicsPage(int32 increment __attribute__ ((unused)), int32 x __attr
 //---------------------------------------------------------------------------------------------------------
 void Debug::physicStatusShowStatistics(int32 increment __attribute__ ((unused)), int32 x, int32 y)
 {
-	PhysicalWorld::print(GameState::getPhysicalWorld(VUEngine::getPreviousState(VUEngine::getInstance())), x, y);
-	CollisionManager::print(GameState::getCollisionManager(VUEngine::getPreviousState(VUEngine::getInstance())), x, y + 6);
-	CollisionManager::hideColliders(GameState::getCollisionManager(VUEngine::getPreviousState(VUEngine::getInstance())));
+	BodyManager::print(GameState::getBodyManager(VUEngine::getPreviousState(VUEngine::getInstance())), x, y);
+	ColliderManager::print(GameState::getColliderManager(VUEngine::getPreviousState(VUEngine::getInstance())), x, y + 6);
+	ColliderManager::hideColliders(GameState::getColliderManager(VUEngine::getPreviousState(VUEngine::getInstance())));
 
 	Debug::setBlackBackground(this);
 }
@@ -1092,7 +1092,7 @@ void Debug::physicStatusShowColliders(int32 increment __attribute__ ((unused)), 
 
 	SpriteManager::showAllSprites(SpriteManager::getInstance(), NULL, true);
 	Debug::dimmGame(this);
-	CollisionManager::showColliders(GameState::getCollisionManager(VUEngine::getPreviousState(VUEngine::getInstance())));
+	ColliderManager::showColliders(GameState::getColliderManager(VUEngine::getPreviousState(VUEngine::getInstance())));
 }
 //---------------------------------------------------------------------------------------------------------
 void Debug::hardwareRegistersPage(int32 increment __attribute__ ((unused)), int32 x __attribute__ ((unused)), int32 y)

@@ -12,7 +12,7 @@
 // INCLUDES
 //=========================================================================================================
 
-#include <CollisionManager.h>
+#include <ColliderManager.h>
 #include <DebugConfig.h>
 #include <Entity.h>
 #include <Printing.h>

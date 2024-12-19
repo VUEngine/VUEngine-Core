@@ -22,11 +22,11 @@
 #include <CharSetManager.h>
 #include <Clock.h>
 #include <ClockManager.h>
-#include <CollisionManager.h>
+#include <ColliderManager.h>
 #include <DebugConfig.h>
 #include <DebugState.h>
 #include <DirectDraw.h>
-#include <CollisionManager.h>
+#include <ColliderManager.h>
 #include <FrameRate.h>
 #include <GameState.h>
 #include <HardwareManager.h>
@@ -35,7 +35,7 @@
 #include <MessageDispatcher.h>
 #include <Optics.h>
 #include <ParamTableManager.h>
-#include <PhysicalWorld.h>
+#include <BodyManager.h>
 #include <Profiler.h>
 #include <RumbleManager.h>
 #include <SoundManager.h>
@@ -281,32 +281,32 @@ Stage VUEngine::getStage()
 	return isDeleted(state) ? NULL : GameState::getStage(GameState::safeCast(state));
 }
 //---------------------------------------------------------------------------------------------------------
-PhysicalWorld VUEngine::getPhysicalWorld()
+BodyManager VUEngine::getBodyManager()
 {
 #ifdef __TOOLS
 	if(VUEngine::isInToolState(this))
 	{
 		State state = StateMachine::getPreviousState(this->stateMachine);
-		return isDeleted(state) ? NULL : GameState::getPhysicalWorld(state);
+		return isDeleted(state) ? NULL : GameState::getBodyManager(state);
 	}
 #endif
 
 	State state = StateMachine::getCurrentState(this->stateMachine);
-	return isDeleted(state) ? NULL : GameState::getPhysicalWorld(state);
+	return isDeleted(state) ? NULL : GameState::getBodyManager(state);
 }
 //---------------------------------------------------------------------------------------------------------
-CollisionManager VUEngine::getCollisionManager()
+ColliderManager VUEngine::getColliderManager()
 {
 #ifdef __TOOLS
 	if(VUEngine::isInToolState(this))
 	{
 		State state = StateMachine::getPreviousState(this->stateMachine);
-		return isDeleted(state) ? NULL : GameState::getCollisionManager(state);
+		return isDeleted(state) ? NULL : GameState::getColliderManager(state);
 	}
 #endif
 
 	State state = StateMachine::getCurrentState(this->stateMachine);
-	return isDeleted(state) ? NULL : GameState::getCollisionManager(state);
+	return isDeleted(state) ? NULL : GameState::getColliderManager(state);
 }
 //---------------------------------------------------------------------------------------------------------
 StateMachine VUEngine::getStateMachine()

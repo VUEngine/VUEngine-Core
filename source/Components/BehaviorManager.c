@@ -30,11 +30,6 @@ friend class Behavior;
 //=========================================================================================================
 
 //---------------------------------------------------------------------------------------------------------
-void BehaviorManager::reset()
-{	
-	BehaviorManager::cleanUp(this);
-}
-//---------------------------------------------------------------------------------------------------------
 Behavior BehaviorManager::createComponent(SpatialObject owner, const BehaviorSpec* behaviorSpec)
 {
 	NM_ASSERT(NULL != behaviorSpec, "BehaviorManager::createBehavior: null behaviorSpec");
@@ -66,6 +61,11 @@ void BehaviorManager::destroyComponent(Behavior behavior)
 	VirtualList::removeData(this->components, behavior);
 
 	delete behavior;
+}
+//---------------------------------------------------------------------------------------------------------
+void BehaviorManager::reset()
+{	
+	BehaviorManager::cleanUp(this);
 }
 //---------------------------------------------------------------------------------------------------------
 

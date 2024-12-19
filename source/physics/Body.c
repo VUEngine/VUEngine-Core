@@ -15,7 +15,7 @@
 #include <DebugConfig.h>
 #include <FrameRate.h>
 #include <MessageDispatcher.h>
-#include <PhysicalWorld.h>
+#include <BodyManager.h>
 #include <Printing.h>
 #include <SpatialObject.h>
 #include <VirtualList.h>
@@ -88,7 +88,7 @@ typedef struct NormalRegistry
 //---------------------------------------------------------------------------------------------------------
 static inline fixed_t Body::computeInstantaneousSpeed(fixed_t forceMagnitude, fixed_t gravity, fixed_t mass, fixed_t friction, fixed_t maximumSpeed)
 {
-	fixed_t instantaneousSpeed = __FIX7_9_EXT_TO_FIXED(Body::doComputeInstantaneousSpeed(forceMagnitude, gravity, mass, friction, PhysicalWorld::getElapsedTimeStep()));
+	fixed_t instantaneousSpeed = __FIX7_9_EXT_TO_FIXED(Body::doComputeInstantaneousSpeed(forceMagnitude, gravity, mass, friction, BodyManager::getElapsedTimeStep()));
 
 	return 0 != maximumSpeed && maximumSpeed < __ABS(instantaneousSpeed) ? maximumSpeed : instantaneousSpeed;
 }
@@ -112,16 +112,16 @@ static inline fix7_9_ext Body::doComputeInstantaneousSpeed(fixed_t forceMagnitud
 //=========================================================================================================
 
 //---------------------------------------------------------------------------------------------------------
-void Body::constructor(SpatialObject owner, const PhysicalProperties* physicalProperties, uint16 axisSubjectToGravity)
+void Body::constructor(SpatialObject owner, const BodySpec* bodySpec, uint16 axisSubjectToGravity)
 {
-	Base::constructor();
+	Base::constructor((const ComponentSpec*)&bodySpec->componentSpec);
 
 	this->deleteMe = false;
 	this->owner = owner;
 	this->normals = NULL;
-	this->mass = __BODY_MIN_MASS < physicalProperties->mass ? __BODY_MAX_MASS > physicalProperties->mass ? physicalProperties->mass : __BODY_MAX_MASS : __BODY_MIN_MASS;
+	this->mass = __BODY_MIN_MASS < bodySpec->mass ? __BODY_MAX_MASS > bodySpec->mass ? bodySpec->mass : __BODY_MAX_MASS : __BODY_MIN_MASS;
 
-	this->bounciness = physicalProperties->bounciness;
+	this->bounciness = bodySpec->bounciness;
 	this->frictionCoefficient = 0;
 	this->surroundingFrictionCoefficient = 0;
 	this->totalFrictionCoefficient = 0;
@@ -143,8 +143,8 @@ void Body::constructor(SpatialObject owner, const PhysicalProperties* physicalPr
 	this->externalForce	 		= Vector3D::zero();
 	this->friction 				= Vector3D::zero();
 	this->totalNormal			= Vector3D::zero();
-	this->maximumVelocity 		= physicalProperties->maximumVelocity;
-	this->maximumSpeed 			= physicalProperties->maximumSpeed;
+	this->maximumVelocity 		= bodySpec->maximumVelocity;
+	this->maximumSpeed 			= bodySpec->maximumSpeed;
 	this->speed 				= 0;
 	this->skipCycles 			= 0;
 	this->skipedCycles 			= 0;
@@ -160,8 +160,8 @@ void Body::constructor(SpatialObject owner, const PhysicalProperties* physicalPr
 
 	this->gravity = Body::getGravity(this);
 
-	Body::setFrictionCoefficient(this, physicalProperties->frictionCoefficient);
-	Body::computeFrictionForceMagnitude(this, PhysicalWorld::getFrictionCoefficient(VUEngine::getPhysicalWorld(VUEngine::getInstance())));
+	Body::setFrictionCoefficient(this, bodySpec->frictionCoefficient);
+	Body::computeFrictionForceMagnitude(this, BodyManager::getFrictionCoefficient(VUEngine::getBodyManager(VUEngine::getInstance())));
 }
 //---------------------------------------------------------------------------------------------------------
 void Body::destructor()
@@ -1145,7 +1145,7 @@ void Body::computeTotalNormal()
 	if(0 != this->totalNormal.x || 0 != this->totalNormal.y || 0 != this->totalNormal.z)
 	{
 		Body::computeTotalFrictionCoefficient(this);
-		Body::computeFrictionForceMagnitude(this, PhysicalWorld::getFrictionCoefficient(VUEngine::getPhysicalWorld(VUEngine::getInstance())));
+		Body::computeFrictionForceMagnitude(this, BodyManager::getFrictionCoefficient(VUEngine::getBodyManager(VUEngine::getInstance())));
 	}
 }
 //---------------------------------------------------------------------------------------------------------
@@ -1249,7 +1249,7 @@ void Body::computeFrictionForceMagnitude(fixed_t currentWorldFriction)
 //---------------------------------------------------------------------------------------------------------
 void Body::computeTotalFrictionCoefficient()
 {
-	fixed_t currentWorldFriction = PhysicalWorld::getFrictionCoefficient(VUEngine::getPhysicalWorld(VUEngine::getInstance()));
+	fixed_t currentWorldFriction = BodyManager::getFrictionCoefficient(VUEngine::getBodyManager(VUEngine::getInstance()));
 	this->totalFrictionCoefficient = this->frictionCoefficient;
 
 	this->totalFrictionCoefficient += currentWorldFriction + this->surroundingFrictionCoefficient;
@@ -1268,7 +1268,7 @@ void Body::computeTotalFrictionCoefficient()
 //---------------------------------------------------------------------------------------------------------
 Vector3D Body::getGravity()
 {
-	Vector3D gravity = PhysicalWorld::getGravity(VUEngine::getPhysicalWorld(VUEngine::getInstance()));
+	Vector3D gravity = BodyManager::getGravity(VUEngine::getBodyManager(VUEngine::getInstance()));
 	
 	return (Vector3D)
 	{
@@ -1287,7 +1287,7 @@ Vector3D Body::getLastDisplacement()
 {
 	Vector3D displacement = {0, 0, 0};
 
-	fixed_t elapsedTime = PhysicalWorld::getElapsedTimeStep();
+	fixed_t elapsedTime = BodyManager::getElapsedTimeStep();
 
 	displacement.x = __STOP_VELOCITY_THRESHOLD < __ABS(this->velocity.x) ? __FIXED_MULT(this->velocity.x, elapsedTime) : 0;
 	displacement.y = __STOP_VELOCITY_THRESHOLD < __ABS(this->velocity.y) ? __FIXED_MULT(this->velocity.y, elapsedTime) : 0;

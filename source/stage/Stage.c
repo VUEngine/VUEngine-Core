@@ -23,7 +23,7 @@
 #include <EntityFactory.h>
 #include <HardwareManager.h>
 #include <ParamTableManager.h>
-#include <PhysicalWorld.h>
+#include <BodyManager.h>
 #include <Printing.h>
 #include <SpriteManager.h>
 #include <SoundManager.h>
@@ -234,8 +234,8 @@ void Stage::resume()
 	Stage::setupSounds(this);
 
 	// set physics
-	PhysicalWorld::setFrictionCoefficient(VUEngine::getPhysicalWorld(_vuEngine), this->stageSpec->physics.frictionCoefficient);
-	PhysicalWorld::setGravity(VUEngine::getPhysicalWorld(_vuEngine), this->stageSpec->physics.gravity);
+	BodyManager::setFrictionCoefficient(VUEngine::getBodyManager(_vuEngine), this->stageSpec->physics.frictionCoefficient);
+	BodyManager::setGravity(VUEngine::getBodyManager(_vuEngine), this->stageSpec->physics.gravity);
 
 	Stage::prepareGraphics(this);
 
@@ -584,8 +584,8 @@ void Stage::configure(VirtualList positionedEntitiesToIgnore)
 	Camera::setup(Camera::getInstance(), this->stageSpec->rendering.pixelOptical, this->stageSpec->level.cameraFrustum);
 
 	// set physics
-	PhysicalWorld::setFrictionCoefficient(VUEngine::getPhysicalWorld(_vuEngine), this->stageSpec->physics.frictionCoefficient);
-	PhysicalWorld::setGravity(VUEngine::getPhysicalWorld(_vuEngine), this->stageSpec->physics.gravity);
+	BodyManager::setFrictionCoefficient(VUEngine::getBodyManager(_vuEngine), this->stageSpec->physics.frictionCoefficient);
+	BodyManager::setGravity(VUEngine::getBodyManager(_vuEngine), this->stageSpec->physics.gravity);
 
 	// preload graphics
 	Stage::prepareGraphics(this);

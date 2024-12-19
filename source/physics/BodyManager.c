@@ -18,7 +18,7 @@
 #include <VirtualList.h>
 #include <VirtualNode.h>
 
-#include "PhysicalWorld.h"
+#include "BodyManager.h"
 
 
 //=========================================================================================================
@@ -36,7 +36,7 @@ friend class VirtualList;
 //=========================================================================================================
 
 //---------------------------------------------------------------------------------------------------------
-static fixed_t PhysicalWorld::getElapsedTimeStep()
+static fixed_t BodyManager::getElapsedTimeStep()
 {
 	return __PHYSICS_TIME_ELAPSED_STEP;
 }
@@ -47,12 +47,22 @@ static fixed_t PhysicalWorld::getElapsedTimeStep()
 //=========================================================================================================
 
 //---------------------------------------------------------------------------------------------------------
-void PhysicalWorld::reset()
+Body BodyManager::createComponent(SpatialObject owner, const BodySpec* bodySpec)
+{
+	return BodyManager::createBody(this, owner, bodySpec);
+}
+//---------------------------------------------------------------------------------------------------------
+void BodyManager::destroyComponent(Body body)
+{
+	BodyManager::destroyBody(this, body);
+}
+//---------------------------------------------------------------------------------------------------------
+void BodyManager::reset()
 {
 	this->cycle = 0;
 }
 //---------------------------------------------------------------------------------------------------------
-void PhysicalWorld::update()
+void BodyManager::update()
 {
 	if(__TARGET_FPS < ++this->cycle)
 	{
@@ -82,18 +92,18 @@ void PhysicalWorld::update()
 
 	this->dirty = false;
 
-	for(VirtualNode node = this->bodies->head, nextNode = NULL; NULL != node; node = nextNode)
+	for(VirtualNode node = this->components->head, nextNode = NULL; NULL != node; node = nextNode)
 	{
 		nextNode = node->next;
 
 		Body body = Body::safeCast(node->data);
 
-		NM_ASSERT(!isDeleted(body), "PhysicalWorld::update: deleted body");
+		NM_ASSERT(!isDeleted(body), "BodyManager::update: deleted body");
 
 		if(body->deleteMe)
 		{
 			// place in the removed bodies list
-			VirtualList::removeNode(this->bodies, node);
+			VirtualList::removeNode(this->components, node);
 
 			delete body;
 			continue;
@@ -130,15 +140,15 @@ void PhysicalWorld::update()
 	}
 
 #ifdef __SHOW_PHYSICS_PROFILING
-	PhysicalWorld::print(this, 1, 1);
+	BodyManager::print(this, 1, 1);
 #endif
 }
 //---------------------------------------------------------------------------------------------------------
-Body PhysicalWorld::createBody(SpatialObject owner, const PhysicalProperties* physicalProperties, uint16 axisSubjectToGravity)
+Body BodyManager::createBody(SpatialObject owner, const BodySpec* bodySpec)
 {
 	if(this->dirty)
 	{
-		for(VirtualNode node = this->bodies->head, nextNode = NULL; NULL != node; node = nextNode)
+		for(VirtualNode node = this->components->head, nextNode = NULL; NULL != node; node = nextNode)
 		{
 			nextNode = node->next;
 
@@ -147,7 +157,7 @@ Body PhysicalWorld::createBody(SpatialObject owner, const PhysicalProperties* ph
 			if(body->deleteMe)
 			{
 				// place in the removed bodies list
-				VirtualList::removeNode(this->bodies, node);
+				VirtualList::removeNode(this->components, node);
 
 				delete body;
 			}
@@ -155,18 +165,18 @@ Body PhysicalWorld::createBody(SpatialObject owner, const PhysicalProperties* ph
 	}
 
 	// if the entity is already registered
-	Body body = new Body(owner, physicalProperties, axisSubjectToGravity);
-	VirtualList::pushFront(this->bodies, body);
-	ASSERT(Body::safeCast(VirtualList::front(this->bodies)), "PhysicalWorld::createBody: bad class body");
+	Body body = new Body(owner, bodySpec);
+	VirtualList::pushFront(this->components, body);
+	ASSERT(Body::safeCast(VirtualList::front(this->components)), "BodyManager::createBody: bad class body");
 
-	// return created collider
+	// return created body
 	return body;
 }
 //---------------------------------------------------------------------------------------------------------
-void PhysicalWorld::destroyBody(Body body)
+void BodyManager::destroyBody(Body body)
 {
-	ASSERT(!isDeleted(body), "PhysicalWorld::destroyBody: dead body");
-	ASSERT(VirtualList::find(this->bodies, body), "PhysicalWorld::destroyBody: body not registered");
+	ASSERT(!isDeleted(body), "BodyManager::destroyBody: dead body");
+	ASSERT(VirtualList::find(this->components, body), "BodyManager::destroyBody: body not registered");
 
 	if(!isDeleted(body))
 	{
@@ -175,7 +185,7 @@ void PhysicalWorld::destroyBody(Body body)
 	}
 }
 //---------------------------------------------------------------------------------------------------------
-void PhysicalWorld::setTimeScale(fixed_t timeScale)
+void BodyManager::setTimeScale(fixed_t timeScale)
 {
 	this->timeScale = timeScale;
 
@@ -208,27 +218,27 @@ void PhysicalWorld::setTimeScale(fixed_t timeScale)
 	}
 }
 //---------------------------------------------------------------------------------------------------------
-uint32 PhysicalWorld::getTimeScale()
+uint32 BodyManager::getTimeScale()
 {
 	return this->timeScale;
 }
 //---------------------------------------------------------------------------------------------------------
-void PhysicalWorld::setGravity(Vector3D gravity)
+void BodyManager::setGravity(Vector3D gravity)
 {
 	this->gravity = gravity;
 }
 //---------------------------------------------------------------------------------------------------------
-Vector3D PhysicalWorld::getGravity()
+Vector3D BodyManager::getGravity()
 {
 	return this->gravity;
 }
 //---------------------------------------------------------------------------------------------------------
-void PhysicalWorld::setFrictionCoefficient(fixed_t frictionCoefficient)
+void BodyManager::setFrictionCoefficient(fixed_t frictionCoefficient)
 {
 	this->frictionCoefficient = frictionCoefficient;
 }
 //---------------------------------------------------------------------------------------------------------
-fixed_t PhysicalWorld::getFrictionCoefficient()
+fixed_t BodyManager::getFrictionCoefficient()
 {
 	return this->frictionCoefficient;
 }
@@ -240,15 +250,15 @@ fixed_t PhysicalWorld::getFrictionCoefficient()
  * @param x
  * @param y
  */
-void PhysicalWorld::print(int32 x, int32 y)
+void BodyManager::print(int32 x, int32 y)
 {
 	Printing::resetCoordinates(Printing::getInstance());
 
 	Printing::text(Printing::getInstance(), "PHYSICS STATUS", x, y++, NULL);
 	Printing::text(Printing::getInstance(), "Registered bodies:     ", x, ++y, NULL);
-	Printing::int32(Printing::getInstance(), VirtualList::getCount(this->bodies), x + 19, y, NULL);
+	Printing::int32(Printing::getInstance(), VirtualList::getCount(this->components), x + 19, y, NULL);
 
-	for(VirtualNode node = this->bodies->head; y < 28 && NULL != node; y++, node = node->next)
+	for(VirtualNode node = this->components->head; y < 28 && NULL != node; y++, node = node->next)
 	{
 		Printing::text(Printing::getInstance(), "                         ", x, y, NULL);
 		Printing::text(Printing::getInstance(), __GET_CLASS_NAME((Body::safeCast(node->data))->owner), x, y, NULL);
@@ -264,12 +274,12 @@ void PhysicalWorld::print(int32 x, int32 y)
 //=========================================================================================================
 
 //---------------------------------------------------------------------------------------------------------
-void PhysicalWorld::constructor()
+void BodyManager::constructor()
 {
 	Base::constructor();
 
-	// create the collider list
-	this->bodies = new VirtualList();
+	// create the body list
+	this->components = new VirtualList();
 
 	this->gravity.x = 0;
 	this->gravity.y = 0;
@@ -283,35 +293,35 @@ void PhysicalWorld::constructor()
 	this->dirty = false;
 	this->cycle = 0;
 
-	PhysicalWorld::setTimeScale(this, __1I_FIXED);
+	BodyManager::setTimeScale(this, __1I_FIXED);
 }
 //---------------------------------------------------------------------------------------------------------
-void PhysicalWorld::destructor()
+void BodyManager::destructor()
 {
-	ASSERT(this->bodies, "PhysicalWorld::destructor: null bodies");
+	ASSERT(this->components, "BodyManager::destructor: null bodies");
 
-	VirtualList::deleteData(this->bodies);
-	delete this->bodies;
-	this->bodies = NULL;
+	VirtualList::deleteData(this->components);
+	delete this->components;
+	this->components = NULL;
 
 	// destroy the super object
 	// must always be called at the end of the destructor
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------
-Body PhysicalWorld::getBody(SpatialObject owner)
+Body BodyManager::getBody(SpatialObject owner)
 {
-	ASSERT(this->bodies, "PhysicalWorld::getBody: null bodies");
+	ASSERT(this->components, "BodyManager::getBody: null bodies");
 
-	VirtualNode node = this->bodies->head;
+	VirtualNode node = this->components->head;
 
 	for(; NULL != node; node = node->next)
 	{
 		// current body
 		Body body = Body::safeCast(node->data);
-		ASSERT(body, "PhysicalWorld::getBody: null body");
+		ASSERT(body, "BodyManager::getBody: null body");
 
-		// check if current collider's owner is the same as the entity calling this method
+		// check if current body's owner is the same as the entity calling this method
 		if(owner == body->owner)
 		{
 			return body;
@@ -321,11 +331,11 @@ Body PhysicalWorld::getBody(SpatialObject owner)
 	return NULL;
 }
 //---------------------------------------------------------------------------------------------------------
-bool PhysicalWorld::isSpatialObjectRegistered(SpatialObject owner)
+bool BodyManager::isSpatialObjectRegistered(SpatialObject owner)
 {
-	ASSERT(this->bodies, "PhysicalWorld::isSpatialObjectRegistered: null bodies");
+	ASSERT(this->components, "BodyManager::isSpatialObjectRegistered: null bodies");
 
-	VirtualNode node = this->bodies->head;
+	VirtualNode node = this->components->head;
 
 	for(; NULL != node; node = node->next)
 	{

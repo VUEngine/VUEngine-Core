@@ -14,8 +14,8 @@
 
 #include <Camera.h>
 #include <Clock.h>
-#include <CollisionManager.h>
-#include <PhysicalWorld.h>
+#include <ColliderManager.h>
+#include <BodyManager.h>
 #include <Printing.h>
 #include <Stage.h>
 #include <SpriteManager.h>
@@ -53,8 +53,8 @@ void GameState::constructor()
 	this->physicsClock = new Clock();
 
 	// construct the physical world and collision manager
-	this->physicalWorld = NULL;
-	this->collisionManager = NULL;
+	this->bodyManager = NULL;
+	this->colliderManager = NULL;
 
 	this->stream = true;
 	this->transform = true;
@@ -85,16 +85,16 @@ void GameState::destructor()
 	}
 
 	// must delete these after deleting the stage
-	if(!isDeleted(this->physicalWorld))
+	if(!isDeleted(this->bodyManager))
 	{
-		delete this->physicalWorld;
-		this->physicalWorld = NULL;
+		delete this->bodyManager;
+		this->bodyManager = NULL;
 	}
 
-	if(!isDeleted(this->collisionManager))
+	if(!isDeleted(this->colliderManager))
 	{
-		delete this->collisionManager;
-		this->collisionManager = NULL;
+		delete this->colliderManager;
+		this->colliderManager = NULL;
 	}
 
 	// destroy the super object
@@ -158,16 +158,16 @@ void GameState::exit(void* owner __attribute__ ((unused)))
 		this->uiContainer = NULL;
 	}
 
-	if(!isDeleted(this->physicalWorld))
+	if(!isDeleted(this->bodyManager))
 	{
-		delete this->physicalWorld;
-		this->physicalWorld = NULL;
+		delete this->bodyManager;
+		this->bodyManager = NULL;
 	}
 
-	if(!isDeleted(this->collisionManager))
+	if(!isDeleted(this->colliderManager))
 	{
-		delete this->collisionManager;
-		this->collisionManager = NULL;
+		delete this->colliderManager;
+		this->colliderManager = NULL;
 	}
 
 	this->stage = NULL;
@@ -185,9 +185,9 @@ void GameState::suspend(void* owner __attribute__ ((unused)))
 #endif
 	{
 		// Make sure collision colliders are not drawn while suspended
-		if(this->collisionManager)
+		if(this->colliderManager)
 		{
-			CollisionManager::hideColliders(this->collisionManager);
+			ColliderManager::hideColliders(this->colliderManager);
 		}
 
 		if(!isDeleted(this->stage))
@@ -298,24 +298,24 @@ Stage GameState::getStage()
 	return this->stage;
 }
 //---------------------------------------------------------------------------------------------------------
-PhysicalWorld GameState::getPhysicalWorld()
+BodyManager GameState::getBodyManager()
 {
-	if(NULL == this->physicalWorld)
+	if(NULL == this->bodyManager)
 	{
-		this->physicalWorld = new PhysicalWorld();
+		this->bodyManager = new BodyManager();
 	}
 
-	return this->physicalWorld;
+	return this->bodyManager;
 }
 //---------------------------------------------------------------------------------------------------------
-CollisionManager GameState::getCollisionManager()
+ColliderManager GameState::getColliderManager()
 {
-	if(NULL == this->collisionManager)
+	if(NULL == this->colliderManager)
 	{
-		this->collisionManager = new CollisionManager();
+		this->colliderManager = new ColliderManager();
 	}
 
-	return this->collisionManager;
+	return this->colliderManager;
 }
 //---------------------------------------------------------------------------------------------------------
 Clock GameState::getLogicsClock()
@@ -460,7 +460,7 @@ void GameState::transformUI()
 //---------------------------------------------------------------------------------------------------------
 void GameState::simulatePhysics()
 {
-	if(!this->updatePhysics || isDeleted(this->physicalWorld))
+	if(!this->updatePhysics || isDeleted(this->bodyManager))
 	{
 		return;
 	}
@@ -470,12 +470,12 @@ void GameState::simulatePhysics()
 		return;
 	}
 
-	PhysicalWorld::update(this->physicalWorld);
+	BodyManager::update(this->bodyManager);
 }
 //---------------------------------------------------------------------------------------------------------
 void GameState::processCollisions()
 {
-	if(!this->processCollisions || isDeleted(this->collisionManager))
+	if(!this->processCollisions || isDeleted(this->colliderManager))
 	{
 		return;
 	}
@@ -485,7 +485,7 @@ void GameState::processCollisions()
 		return;
 	}
 
-	CollisionManager::update(this->collisionManager);
+	ColliderManager::update(this->colliderManager);
 }
 //---------------------------------------------------------------------------------------------------------
 bool GameState::propagateMessage(int32 message)
@@ -642,9 +642,9 @@ void GameState::streamAll()
 	Stage::streamAll(this->stage);
 
 	// Force collision purging
-	if(!isDeleted(this->collisionManager))
+	if(!isDeleted(this->colliderManager))
 	{
-		CollisionManager::purgeDestroyedColliders(this->collisionManager);
+		ColliderManager::purgeDestroyedColliders(this->colliderManager);
 	}
 
 	HardwareManager::resumeInterrupts();

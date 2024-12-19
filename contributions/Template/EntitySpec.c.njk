@@ -528,7 +528,7 @@ ColliderROMSpec {{ sanitizedSpecName }}ColliderSpecs[] =
 {#- PRINT PHYSICAL PROPERTIES -#}
 {%- if item.physics.enabled %}
 
-PhysicalPropertiesROMSpec {{ sanitizedSpecName }}PhysicalPropertiesSpec =
+BodyROMSpec {{ sanitizedSpecName }}BodySpecSpec =
 {
 	// mass
 	__F_TO_FIX10_6({{ item.physics.mass }}),

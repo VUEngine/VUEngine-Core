@@ -7,8 +7,8 @@
  * that was distributed with this source code.
  */
 
-#ifndef COLLISION_MANAGER_H_
-#define COLLISION_MANAGER_H_
+#ifndef COLLIDER_MANAGER_H_
+#define COLLIDER_MANAGER_H_
 
 
 //=========================================================================================================
@@ -39,12 +39,12 @@ class Clock;
 //=========================================================================================================
 
 ///
-/// Class CollisionManager
+/// Class ColliderManager
 ///
 /// Inherits from ComponentManager
 ///
 /// Manages the colliders in the game states.
-class CollisionManager : ComponentManager
+class ColliderManager : ComponentManager
 {
 	/// @protectedsection
 

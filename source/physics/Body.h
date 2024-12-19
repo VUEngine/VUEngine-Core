@@ -15,7 +15,7 @@
 // INCLUDES
 //=========================================================================================================
 
-#include <ListenerObject.h>
+#include <Component.h>
 
 
 //=========================================================================================================
@@ -43,8 +43,11 @@ class SpatialObject;
 
 /// Struct that specifies the physical properties of bodies
 /// @memberof Body
-typedef struct PhysicalProperties
+typedef struct BodySpec
 {
+	/// Component spec
+	ComponentSpec componentSpec;
+
 	/// Mass
 	fixed_t mass;
 	
@@ -60,9 +63,9 @@ typedef struct PhysicalProperties
 	/// Maximum speed
 	fixed_t maximumSpeed;
 
-} PhysicalProperties;
+} BodySpec;
 
-typedef const PhysicalProperties PhysicalPropertiesROMSpec;
+typedef const BodySpec BodyROMSpec;
 
 /// 3D Vector struct for higher decimal precision
 /// @memberof Body
@@ -82,10 +85,10 @@ typedef struct Vector3DPlus
 ///
 /// Class Body
 ///
-/// Inherits from ListenerObject
+/// Inherits from Component
 ///
 /// Implements newtonian physics.
-class Body : ListenerObject
+class Body : Component
 {
 	/// @protectedsection
 
@@ -189,9 +192,8 @@ class Body : ListenerObject
 
 	/// Class' constructor
 	/// @param owner: SpatialObject to which the body attaches to
-	/// @param physicalProperties: Struct that specifies the physical properties of bodies
-	/// @param axisSubjectToGravity: Axis on which the body is subject to gravity
-	void constructor(SpatialObject owner, const PhysicalProperties* physicalProperties, uint16 axisSubjectToGravity);
+	/// @param bodySpec: Struct that specifies the physical properties of bodies
+	void constructor(SpatialObject owner, const BodySpec* bodySpec);
 	
 	/// Clear the body's state.
 	void reset();

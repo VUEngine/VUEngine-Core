@@ -16,7 +16,7 @@
 #include <Behavior.h>
 #include <BehaviorManager.h>
 #include <Collider.h>
-#include <CollisionManager.h>
+#include <ColliderManager.h>
 #include <Sprite.h>
 #include <SpriteManager.h>
 #include <VirtualList.h>
@@ -241,7 +241,7 @@ static ComponentManager ComponentManager::getManager(uint32 componentType)
 	{
 		case kColliderComponent:
 
-			return ComponentManager::safeCast(VUEngine::getCollisionManager(VUEngine::getInstance()));	
+			return ComponentManager::safeCast(VUEngine::getColliderManager(VUEngine::getInstance()));	
 			break;
 
 		case kSpriteComponent:
@@ -257,6 +257,11 @@ static ComponentManager ComponentManager::getManager(uint32 componentType)
 		case kBehaviorComponent:
 
 			return ComponentManager::safeCast(BehaviorManager::getInstance());
+			break;
+
+		case kPhysicsComponent:
+
+			return ComponentManager::safeCast(VUEngine::getBodyManager(VUEngine::getInstance()));	
 			break;
 	}
 
@@ -290,6 +295,11 @@ static uint32 ComponentManager::getComponentType(Component component)
 		if(__GET_CAST(Behavior, component))
 		{
 			return kBehaviorComponent;
+		}
+
+		if(__GET_CAST(Body, component))
+		{
+			return kPhysicsComponent;
 		}
 	}
 

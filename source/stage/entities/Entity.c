@@ -17,7 +17,7 @@
 #include <Behavior.h>
 #include <BehaviorManager.h>
 #include <BgmapSprite.h>
-#include <CollisionManager.h>
+#include <ColliderManager.h>
 #include <DebugConfig.h>
 #include <EntityFactory.h>
 #include <MBgmapSprite.h>
@@ -711,14 +711,14 @@ void Entity::enableCollisions()
 {
 	this->collisionsEnabled = true;
 
-	CollisionManager::propagateCommand(VUEngine::getCollisionManager(_vuEngine), cComponentCommandEnable, SpatialObject::safeCast(this));
+	ColliderManager::propagateCommand(VUEngine::getColliderManager(_vuEngine), cComponentCommandEnable, SpatialObject::safeCast(this));
 }
 //---------------------------------------------------------------------------------------------------------
 void Entity::disableCollisions()
 {
 	this->collisionsEnabled = false;
 
-	CollisionManager::propagateCommand(VUEngine::getCollisionManager(_vuEngine), cComponentCommandDisable, SpatialObject::safeCast(this));
+	ColliderManager::propagateCommand(VUEngine::getColliderManager(_vuEngine), cComponentCommandDisable, SpatialObject::safeCast(this));
 }
 //---------------------------------------------------------------------------------------------------------
 void Entity::checkCollisions(bool active)
@@ -730,17 +730,17 @@ void Entity::checkCollisions(bool active)
 		this->collisionsEnabled = this->checkingCollisions;
 	}
 
-	CollisionManager::propagateCommand(VUEngine::getCollisionManager(_vuEngine), cColliderComponentCommandCheckCollisions, SpatialObject::safeCast(this), (uint32)active);
+	ColliderManager::propagateCommand(VUEngine::getColliderManager(_vuEngine), cColliderComponentCommandCheckCollisions, SpatialObject::safeCast(this), (uint32)active);
 }
 //---------------------------------------------------------------------------------------------------------
 void Entity::registerCollisions(bool value)
 {
-	CollisionManager::propagateCommand(VUEngine::getCollisionManager(_vuEngine), cColliderComponentCommandRegisterCollisions, SpatialObject::safeCast(this), (uint32)value);
+	ColliderManager::propagateCommand(VUEngine::getColliderManager(_vuEngine), cColliderComponentCommandRegisterCollisions, SpatialObject::safeCast(this), (uint32)value);
 }
 //---------------------------------------------------------------------------------------------------------
 void Entity::setCollidersLayers(uint32 layers)
 {
-	CollisionManager::propagateCommand(VUEngine::getCollisionManager(_vuEngine), cColliderComponentCommandSetLayers, SpatialObject::safeCast(this), (uint32)layers);
+	ColliderManager::propagateCommand(VUEngine::getColliderManager(_vuEngine), cColliderComponentCommandSetLayers, SpatialObject::safeCast(this), (uint32)layers);
 }
 //---------------------------------------------------------------------------------------------------------
 uint32 Entity::getCollidersLayers()
@@ -761,7 +761,7 @@ uint32 Entity::getCollidersLayers()
 //---------------------------------------------------------------------------------------------------------
 void Entity::setCollidersLayersToIgnore(uint32 layersToIgnore)
 {
-	CollisionManager::propagateCommand(VUEngine::getCollisionManager(_vuEngine), cColliderComponentCommandSetLayersToIgnore, SpatialObject::safeCast(this), (uint32)layersToIgnore);
+	ColliderManager::propagateCommand(VUEngine::getColliderManager(_vuEngine), cColliderComponentCommandSetLayersToIgnore, SpatialObject::safeCast(this), (uint32)layersToIgnore);
 }
 //---------------------------------------------------------------------------------------------------------
 uint32 Entity::getCollidersLayersToIgnore()
@@ -782,12 +782,12 @@ uint32 Entity::getCollidersLayersToIgnore()
 //---------------------------------------------------------------------------------------------------------
 void Entity::showColliders()
 {
-	CollisionManager::propagateCommand(VUEngine::getCollisionManager(_vuEngine), cColliderComponentCommandShow, SpatialObject::safeCast(this));
+	ColliderManager::propagateCommand(VUEngine::getColliderManager(_vuEngine), cColliderComponentCommandShow, SpatialObject::safeCast(this));
 }
 //---------------------------------------------------------------------------------------------------------
 void Entity::hideColliders()
 {
-	CollisionManager::propagateCommand(VUEngine::getCollisionManager(_vuEngine), cColliderComponentCommandHide, SpatialObject::safeCast(this));
+	ColliderManager::propagateCommand(VUEngine::getColliderManager(_vuEngine), cColliderComponentCommandHide, SpatialObject::safeCast(this));
 }
 //---------------------------------------------------------------------------------------------------------
 void Entity::calculateSize()

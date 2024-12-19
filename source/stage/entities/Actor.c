@@ -14,7 +14,7 @@
 
 #include <Body.h>
 #include <Camera.h>
-#include <PhysicalWorld.h>
+#include <BodyManager.h>
 #include <Collider.h>
 #include <State.h>
 #include <StateMachine.h>
@@ -52,7 +52,7 @@ void Actor::constructor(const ActorSpec* actorSpec, int16 internalId, const char
 	// create body
 	if(actorSpec->createBody)
 	{
-		Actor::createBody(this, actorSpec->animatedEntitySpec.entitySpec.physicalProperties, actorSpec->axisSubjectToGravity);
+		Actor::createBody(this, actorSpec->animatedEntitySpec.entitySpec.physicalProperties);
 	}
 }
 //---------------------------------------------------------------------------------------------------------
@@ -61,7 +61,7 @@ void Actor::destructor()
 	if(!isDeleted(this->body))
 	{
 		// remove a body
-		PhysicalWorld::destroyBody(VUEngine::getPhysicalWorld(_vuEngine), this->body);
+		BodyManager::destroyBody(VUEngine::getBodyManager(_vuEngine), this->body);
 		this->body = NULL;
 	}
 
@@ -125,7 +125,7 @@ fixed_t Actor::getSpeed()
 //---------------------------------------------------------------------------------------------------------
 fixed_t Actor::getBounciness()
 {
-	PhysicalProperties* physicalProperties = ((ActorSpec*)this->entitySpec)->animatedEntitySpec.entitySpec.physicalProperties;
+	BodySpec* physicalProperties = ((ActorSpec*)this->entitySpec)->animatedEntitySpec.entitySpec.physicalProperties;
 
 	return !isDeleted(this->body) ? Body::getBounciness(this->body) : physicalProperties ? physicalProperties->bounciness : 0;
 }
@@ -303,7 +303,7 @@ void Actor::destroyComponents()
 	if(!isDeleted(this->body))
 	{
 		// remove a body
-		PhysicalWorld::destroyBody(VUEngine::getPhysicalWorld(_vuEngine), this->body);
+		BodyManager::destroyBody(VUEngine::getBodyManager(_vuEngine), this->body);
 		this->body = NULL;
 	}
 }
@@ -456,7 +456,7 @@ bool Actor::isSensibleToCollidingObjectFrictionOnCollision(SpatialObject collidi
 //=========================================================================================================
 
 //---------------------------------------------------------------------------------------------------------
-void Actor::createBody(const PhysicalProperties* physicalProperties, uint16 axisSubjectToGravity)
+void Actor::createBody(const BodySpec* physicalProperties, uint16 axisSubjectToGravity)
 {
 	if(!isDeleted(this->body))
 	{
@@ -466,12 +466,12 @@ void Actor::createBody(const PhysicalProperties* physicalProperties, uint16 axis
 
 	if(NULL != physicalProperties)
 	{
-		this->body = PhysicalWorld::createBody(VUEngine::getPhysicalWorld(_vuEngine), SpatialObject::safeCast(this), physicalProperties, axisSubjectToGravity);
+		this->body = BodyManager::createBody(VUEngine::getBodyManager(_vuEngine), SpatialObject::safeCast(this), physicalProperties, axisSubjectToGravity);
 	}
 	else
 	{
-		PhysicalProperties defaultActorPhysicalProperties = {__I_TO_FIXED(1), 0, 0, Vector3D::zero(), 0};
-		this->body = PhysicalWorld::createBody(VUEngine::getPhysicalWorld(_vuEngine), SpatialObject::safeCast(this), &defaultActorPhysicalProperties, axisSubjectToGravity);
+		BodySpec defaultActorBodySpec = {__I_TO_FIXED(1), 0, 0, Vector3D::zero(), 0};
+		this->body = BodyManager::createBody(VUEngine::getBodyManager(_vuEngine), SpatialObject::safeCast(this), &defaultActorBodySpec, axisSubjectToGravity);
 	}
 
 	Body::setPosition(this->body, &this->transformation.position, SpatialObject::safeCast(this));

@@ -54,9 +54,6 @@ singleton class BehaviorManager : ComponentManager
 	/// @return BehaviorManager singleton
 	static BehaviorManager getInstance();
 
-	/// Reset the manager's state
-	void reset();
-
 	/// Create a behavior with the provided spec.
 	/// @param owner: Object to which the behavior will attach to
 	/// @param behaviorSpec: Spec to use to create the behavior
@@ -66,6 +63,9 @@ singleton class BehaviorManager : ComponentManager
 	/// Destroy the provided behavior.
 	/// @param behavior: Behavior to destroy
 	override void destroyComponent(Behavior behavior);
+
+	/// Reset the manager's state
+	void reset();
 }
 
 

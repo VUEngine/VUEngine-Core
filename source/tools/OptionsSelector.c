@@ -32,7 +32,7 @@
 #include <DebugState.h>
 #include <DirectDraw.h>
 #include <Entity.h>
-#include <CollisionManager.h>
+#include <ColliderManager.h>
 #include <FrameRate.h>
 #include <GameState.h>
 #include <HardwareManager.h>
@@ -48,7 +48,7 @@
 #include <ParamTableManager.h>
 #include <Particle.h>
 #include <ParticleSystem.h>
-#include <PhysicalWorld.h>
+#include <BodyManager.h>
 #include <Printing.h>
 #include <Collider.h>
 #include <SolidParticle.h>

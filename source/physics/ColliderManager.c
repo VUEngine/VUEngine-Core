@@ -19,7 +19,7 @@
 #include <Collider.h>
 #include <VirtualList.h>
 
-#include "CollisionManager.h"
+#include "ColliderManager.h"
 
 
 //=========================================================================================================
@@ -59,19 +59,19 @@ static uint16 _checkCycles;
 //=========================================================================================================
 
 //---------------------------------------------------------------------------------------------------------
-Collider CollisionManager::createComponent(SpatialObject owner, const ColliderSpec* colliderSpec)
+Collider ColliderManager::createComponent(SpatialObject owner, const ColliderSpec* colliderSpec)
 {
-	return CollisionManager::createCollider(this, owner, colliderSpec);
+	return ColliderManager::createCollider(this, owner, colliderSpec);
 }
 //---------------------------------------------------------------------------------------------------------
-void CollisionManager::destroyComponent(Collider collider)
+void ColliderManager::destroyComponent(Collider collider)
 {
-	CollisionManager::destroyCollider(this, collider);
+	ColliderManager::destroyCollider(this, collider);
 }
 //---------------------------------------------------------------------------------------------------------
-void CollisionManager::reset()
+void ColliderManager::reset()
 {
-	ASSERT(this->components, "CollisionManager::reset: null colliders");
+	ASSERT(this->components, "ColliderManager::reset: null colliders");
 
 	VirtualList::deleteData(this->components);
 
@@ -87,7 +87,7 @@ void CollisionManager::reset()
 #endif
 }
 //---------------------------------------------------------------------------------------------------------
-void CollisionManager::purgeDestroyedColliders()
+void ColliderManager::purgeDestroyedColliders()
 {
 	for(VirtualNode auxNode = this->components->head, auxNextNode = NULL; auxNode; auxNode = auxNextNode)
 	{
@@ -105,7 +105,7 @@ void CollisionManager::purgeDestroyedColliders()
 	}	
 }
 //---------------------------------------------------------------------------------------------------------
-uint32 CollisionManager::update()
+uint32 ColliderManager::update()
 {
 	uint32 returnValue = false;
 
@@ -222,7 +222,7 @@ uint32 CollisionManager::update()
 #endif
 			if(this->dirty)
 			{
-				NM_ASSERT(false, "CollisionManager::update: added a collider as a response to a collision");
+				NM_ASSERT(false, "ColliderManager::update: added a collider as a response to a collision");
 				node = this->components->head;
 			}
 		}
@@ -232,21 +232,21 @@ uint32 CollisionManager::update()
 	_collisionChecks += _lastCycleCollisionChecks;
 	_collisions += _lastCycleCollisions;
 
-	CollisionManager::print(this, 25, 1);
+	ColliderManager::print(this, 25, 1);
 #endif
 
 	return returnValue;
 }
-Collider CollisionManager::createCollider(SpatialObject owner, const ColliderSpec* colliderSpec)
+Collider ColliderManager::createCollider(SpatialObject owner, const ColliderSpec* colliderSpec)
 {
-	NM_ASSERT(!(NULL == colliderSpec || NULL == colliderSpec->allocator), "CollisionManager::createCollider: invalid collider spec");
+	NM_ASSERT(!(NULL == colliderSpec || NULL == colliderSpec->allocator), "ColliderManager::createCollider: invalid collider spec");
 
 	if(NULL == colliderSpec || NULL == colliderSpec->allocator)
 	{
 		return NULL;
 	}
 
-	CollisionManager::purgeDestroyedColliders(this);
+	ColliderManager::purgeDestroyedColliders(this);
 
 	Collider collider = ((Collider (*)(SpatialObject, const ColliderSpec*)) colliderSpec->allocator)(owner, colliderSpec);
 
@@ -257,23 +257,23 @@ Collider CollisionManager::createCollider(SpatialObject owner, const ColliderSpe
 	return collider;
 }
 //---------------------------------------------------------------------------------------------------------
-void CollisionManager::destroyCollider(Collider collider)
+void ColliderManager::destroyCollider(Collider collider)
 {
 	if(!isDeleted(collider))
 	{
 #ifndef __ENABLE_PROFILER
-		NM_ASSERT(NULL != VirtualList::find(this->components, collider), "CollisionManager::destroyCollider: non registerd collider");
+		NM_ASSERT(NULL != VirtualList::find(this->components, collider), "ColliderManager::destroyCollider: non registerd collider");
 #endif
 		collider->deleteMe = true;
 	}
 }
 //---------------------------------------------------------------------------------------------------------
-void CollisionManager::setCheckCollidersOutOfCameraRange(bool value)
+void ColliderManager::setCheckCollidersOutOfCameraRange(bool value)
 {
 	this->checkCollidersOutOfCameraRange = value;
 }
 //---------------------------------------------------------------------------------------------------------
-void CollisionManager::showColliders()
+void ColliderManager::showColliders()
 {
 	// comparing against the other colliders
 	VirtualNode node = this->components->head;
@@ -285,7 +285,7 @@ void CollisionManager::showColliders()
 	}
 }
 //---------------------------------------------------------------------------------------------------------
-void CollisionManager::hideColliders()
+void ColliderManager::hideColliders()
 {
 	// comparing against the other colliders
 	VirtualNode node = this->components->head;
@@ -298,7 +298,7 @@ void CollisionManager::hideColliders()
 }
 //---------------------------------------------------------------------------------------------------------
 #ifndef __SHIPPING
-void CollisionManager::print(int32 x, int32 y)
+void ColliderManager::print(int32 x, int32 y)
 {
 	Printing::resetCoordinates(Printing::getInstance());
 
@@ -308,9 +308,9 @@ void CollisionManager::print(int32 x, int32 y)
 	Printing::text(Printing::getInstance(), "REGISTERED:     ", x, ++y, NULL);
 	Printing::int32(Printing::getInstance(), VirtualList::getCount(this->components), x + 12, y, NULL);
 	Printing::text(Printing::getInstance(), "ENABLED:          ", x, ++y, NULL);
-	Printing::int32(Printing::getInstance(), CollisionManager::getNumberOfEnabledColliders(this), x + 12, y, NULL);
+	Printing::int32(Printing::getInstance(), ColliderManager::getNumberOfEnabledColliders(this), x + 12, y, NULL);
 	Printing::text(Printing::getInstance(), "MOVING:          ", x, ++y, NULL);
-	Printing::int32(Printing::getInstance(), CollisionManager::getNumberOfMovingEnabledColliders(this), x + 12, y++, NULL);
+	Printing::int32(Printing::getInstance(), ColliderManager::getNumberOfMovingEnabledColliders(this), x + 12, y++, NULL);
 
 #ifdef __SHOW_PHYSICS_PROFILING
 	Printing::text(Printing::getInstance(), "STATISTICS (PER CYCLE)", x, ++y, NULL);
@@ -337,7 +337,7 @@ void CollisionManager::print(int32 x, int32 y)
 //=========================================================================================================
 
 //---------------------------------------------------------------------------------------------------------
-void CollisionManager::constructor()
+void ColliderManager::constructor()
 {
 #ifdef __SHOW_PHYSICS_PROFILING
 	_lastCycleCheckProducts = 0;
@@ -354,18 +354,18 @@ void CollisionManager::constructor()
 	this->dirty = false;
 }
 //---------------------------------------------------------------------------------------------------------
-void CollisionManager::destructor()
+void ColliderManager::destructor()
 {
-	ASSERT(this->components, "CollisionManager::destructor: null colliders");
+	ASSERT(this->components, "ColliderManager::destructor: null colliders");
 
-	CollisionManager::reset(this);
+	ColliderManager::reset(this);
 
 	// destroy the super object
 	// must always be called at the end of the destructor
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------
-int32 CollisionManager::getNumberOfEnabledColliders()
+int32 ColliderManager::getNumberOfEnabledColliders()
 {
 	int32 count = 0;
 
@@ -386,7 +386,7 @@ int32 CollisionManager::getNumberOfEnabledColliders()
 	return count;
 }
 //---------------------------------------------------------------------------------------------------------
-int32 CollisionManager::getNumberOfMovingEnabledColliders()
+int32 ColliderManager::getNumberOfMovingEnabledColliders()
 {
 	int32 count = 0;
 

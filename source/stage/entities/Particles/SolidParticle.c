@@ -14,7 +14,7 @@
 
 #include <Ball.h>
 #include <Body.h>
-#include <CollisionManager.h>
+#include <ColliderManager.h>
 #include <Collider.h>
 #include <Telegram.h>
 #include <VirtualList.h>
@@ -73,7 +73,7 @@ void SolidParticle::constructor(const SolidParticleSpec* solidParticleSpec)
 	};
 
 	// register a collider for collision detection
-	this->collider = CollisionManager::createCollider(VUEngine::getCollisionManager(VUEngine::getInstance()), SpatialObject::safeCast(this), this->colliderSpec);
+	this->collider = ColliderManager::createCollider(VUEngine::getColliderManager(VUEngine::getInstance()), SpatialObject::safeCast(this), this->colliderSpec);
 	Collider::registerCollisions(this->collider, false);
 
 	// has to set bounciness and friction myself since Particle ignores collisions
@@ -84,7 +84,7 @@ void SolidParticle::constructor(const SolidParticleSpec* solidParticleSpec)
 void SolidParticle::destructor()
 {
 	// unregister the collider for collision detection
-	CollisionManager::destroyCollider(VUEngine::getCollisionManager(VUEngine::getInstance()), this->collider);
+	ColliderManager::destroyCollider(VUEngine::getColliderManager(VUEngine::getInstance()), this->collider);
 
 	this->collider = NULL;
 

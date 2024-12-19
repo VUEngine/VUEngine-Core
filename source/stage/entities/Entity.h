@@ -18,7 +18,7 @@
 #include <Behavior.h>
 #include <Body.h>
 #include <Camera.h>
-#include <CollisionManager.h>
+#include <ColliderManager.h>
 #include <Component.h>
 #include <Container.h>
 #include <Sprite.h>

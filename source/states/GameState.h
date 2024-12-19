@@ -26,9 +26,9 @@
 //=========================================================================================================
 
 class Clock;
-class CollisionManager;
+class ColliderManager;
 class Entity;
-class PhysicalWorld;
+class BodyManager;
 class Telegram;
 class VirtualList;
 
@@ -52,10 +52,10 @@ class GameState : State
 	Stage stage;
 
 	/// A world where physical bodies exist
-	PhysicalWorld physicalWorld;
+	BodyManager bodyManager;
 
 	/// A manager for collisions and colliders
-	CollisionManager collisionManager;
+	ColliderManager colliderManager;
 	
 	/// A clock for logics
 	Clock logicsClock;
@@ -131,11 +131,11 @@ class GameState : State
 	
 	/// Retrieve the physical world.
 	/// @return Game state's physical world
-	PhysicalWorld getPhysicalWorld();
+	BodyManager getBodyManager();
 
 	/// Retrieve the collision manager.
 	/// @return Game state's collision manager
-	CollisionManager getCollisionManager();
+	ColliderManager getColliderManager();
 
 	/// Retrieve the clock that serves to control the game's logic.
 	/// @return Game state's logics clock

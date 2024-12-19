@@ -45,6 +45,7 @@ enum ComponentTypes
 	kSpriteComponent,
 	kWireframeComponent,
 	kBehaviorComponent,
+	kPhysicsComponent,
 	kComponentTypes,
 };
 

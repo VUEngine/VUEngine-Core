@@ -13,7 +13,7 @@
 //=========================================================================================================
 
 #include <CollisionTester.h>
-#include <CollisionManager.h>
+#include <ColliderManager.h>
 #include <DebugConfig.h>
 #include <Printing.h>
 #include <SpatialObject.h>

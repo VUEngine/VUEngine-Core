@@ -13,7 +13,7 @@
 //=========================================================================================================
 
 #include <Body.h>
-#include <PhysicalWorld.h>
+#include <BodyManager.h>
 #include <Sprite.h>
 #include <Utilities.h>
 #include <VUEngine.h>
@@ -32,8 +32,8 @@ void PhysicalParticle::constructor(const PhysicalParticleSpec* physicalParticleS
 
 	this->physicalParticleSpec = physicalParticleSpec;
 	fixed_t mass = this->physicalParticleSpec->minimumMass + (this->physicalParticleSpec->massDelta ? Math::random(_gameRandomSeed, this->physicalParticleSpec->massDelta) : 0);
-	PhysicalProperties physicalProperties = {mass, 0, 0, Vector3D::zero(), 0};
-	this->body = PhysicalWorld::createBody(VUEngine::getPhysicalWorld(_vuEngine), SpatialObject::safeCast(this), &physicalProperties, physicalParticleSpec->axisSubjectToGravity);
+	BodySpec physicalProperties = {mass, 0, 0, Vector3D::zero(), 0};
+	this->body = BodyManager::createBody(VUEngine::getBodyManager(_vuEngine), SpatialObject::safeCast(this), &physicalProperties, physicalParticleSpec->axisSubjectToGravity);
 }
 //---------------------------------------------------------------------------------------------------------
 void PhysicalParticle::destructor()
@@ -42,7 +42,7 @@ void PhysicalParticle::destructor()
 	if(!isDeleted(this->body))
 	{
 		// remove a body
-		PhysicalWorld::destroyBody(VUEngine::getPhysicalWorld(_vuEngine), this->body);
+		BodyManager::destroyBody(VUEngine::getBodyManager(_vuEngine), this->body);
 		this->body = NULL;
 	}
 

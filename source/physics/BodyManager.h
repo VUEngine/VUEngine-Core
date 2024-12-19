@@ -7,16 +7,16 @@
  * that was distributed with this source code.
  */
 
-#ifndef PHYSICAL_WORLD_H_
-#define PHYSICAL_WORLD_H_
+#ifndef BODY_WORLD_H_
+#define BODY_WORLD_H_
 
 
 //=========================================================================================================
 // INCLUDES
 //=========================================================================================================
 
-#include <Object.h>
 #include <Body.h>
+#include <ComponentManager.h>
 #include <SpatialObject.h>
 #include <Clock.h>
 
@@ -33,17 +33,14 @@
 //=========================================================================================================
 
 ///
-/// Class PhysicalWorld
+/// Class BodyManager
 ///
-/// Inherits from Object
+/// Inherits from ComponentManager
 ///
 /// Manages the physical bodies in the game states.
-class PhysicalWorld : Object
+class BodyManager : ComponentManager
 {
 	/// @protectedsection
-
-	/// Linked list of registered bodies
-	VirtualList	bodies;
 
 	/// Gravity in the current physical world
 	Vector3D gravity;
@@ -75,6 +72,16 @@ class PhysicalWorld : Object
 	/// Class' constructor
 	void constructor();
 
+	/// Create a body with the provided spec.
+	/// @param owner: Object to which the body will attach to
+	/// @param bodySpec: Spec to use to create the body
+	/// @return Created body
+	override Behavior createComponent(SpatialObject owner, const BodySpec* bodySpec);
+
+	/// Destroy the provided behavior.
+	/// @param body: Body to destroy
+	override void destroyComponent(Body body);
+
 	/// Reset the manager's state.
 	void reset();
 
@@ -83,10 +90,9 @@ class PhysicalWorld : Object
 
 	/// Create a body with the provided spec.
 	/// @param owner: Object to which the body will attach to
-	/// @param physicalProperties: Spec to use to create the body
-	/// @param axisSubjectToGravity: Flag of axis on which the body is subject to gravity
+	/// @param bodySpec: Spec to use to create the body
 	/// @return Created body
-	Body createBody(SpatialObject owner, const PhysicalProperties* physicalProperties, uint16 axisSubjectToGravity);
+	Body createBody(SpatialObject owner, const BodySpec* bodySpec);
 
 	/// Destroy the provided body.
 	/// @param body: Body to destroy

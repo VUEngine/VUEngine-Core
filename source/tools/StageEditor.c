@@ -17,7 +17,7 @@
 #include <BgmapTextureManager.h>
 #include <Box.h>
 #include <Camera.h>
-#include <CollisionManager.h>
+#include <ColliderManager.h>
 #include <Debug.h>
 #include <Entity.h>
 #include <GameState.h>
@@ -25,7 +25,7 @@
 #include <Mesh.h>
 #include <Optics.h>
 #include <OptionsSelector.h>
-#include <PhysicalWorld.h>
+#include <BodyManager.h>
 #include <Printing.h>
 #include <SpriteManager.h>
 #include <Collider.h>
@@ -97,7 +97,7 @@ void StageEditor::show()
 //---------------------------------------------------------------------------------------------------------
 void StageEditor::hide()
 {
-	CollisionManager::hideColliders(GameState::getCollisionManager(GameState::safeCast(VUEngine::getPreviousState(VUEngine::getInstance()))));
+	ColliderManager::hideColliders(GameState::getColliderManager(GameState::safeCast(VUEngine::getPreviousState(VUEngine::getInstance()))));
 	Printing::clear(Printing::getInstance());
 	StageEditor::removePreviousSprite(this);
 	StageEditor::releaseWireframe(this);

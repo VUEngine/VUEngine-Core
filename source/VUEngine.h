@@ -24,10 +24,10 @@
 //=========================================================================================================
 
 class Clock;
-class CollisionManager;
+class ColliderManager;
 class CommunicationManager;
 class GameState;
-class PhysicalWorld;
+class BodyManager;
 class SoundManager;
 class SpatialObject;
 class SpriteManager;
@@ -204,11 +204,11 @@ singleton class VUEngine : ListenerObject
 
 	/// Retrieve the current game state's physical world.
 	/// @return Current game state's physical world
-	PhysicalWorld getPhysicalWorld();
+	BodyManager getBodyManager();
 
 	/// Retrieve the current game state's collision manager.
 	/// @return Current game state's collision manager
-	CollisionManager getCollisionManager();
+	ColliderManager getColliderManager();
 
 	/// Retrieve the engine's state machine.
 	/// @return Engine's state machine
