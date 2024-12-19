@@ -81,7 +81,7 @@ Sprite SpriteManager::createComponent(SpatialObject owner, const SpriteSpec* spr
 //---------------------------------------------------------------------------------------------------------
 void SpriteManager::destroyComponent(SpatialObject owner, Sprite sprite) 
 {
-	if(!isDeleted(sprite))
+	if(isDeleted(sprite))
 	{
 		return;
 	}
