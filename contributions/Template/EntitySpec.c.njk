@@ -619,14 +619,8 @@ PositionedEntityROMSpec {{ sanitizedSpecName }}Children[] =
 			{ {{ item.extraProperties.pixelSize.x }}, {{ item.extraProperties.pixelSize.y }}, {{ item.extraProperties.pixelSize.z }} },
 
 			// gameworld's character's type
-			kType{{ project.items.InGameTypes.project.types[item.inGameType] | sanitizeSpecName }},
+			kType{{ project.items.InGameTypes.project.types[item.inGameType] | sanitizeSpecName }}
 
-			// physical specification
-			{%- if item.physics.enabled %} 
-			(PhysicalProperties*)&{{ sanitizedSpecName }}PhysicalPropertiesSpec 
-			{%- else %} 
-			NULL
-			{%- endif %},
 		{%- if isAnimated %}
 		},
 
