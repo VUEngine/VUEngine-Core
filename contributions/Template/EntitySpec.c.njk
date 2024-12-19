@@ -593,32 +593,32 @@ PositionedEntityROMSpec {{ sanitizedSpecName }}Children[] =
 			// Class allocator
 			__TYPE({{ entityClass }}),
 
-			// Components
+			// Component specs
 			{%- if item.components | length %}
 			(ComponentSpec**){{ sanitizedSpecName }}Components,
 			{%- else %}
 			NULL,
 			{%- endif %}
 
-			// children
+			// Children specs
 			{%- if item.components.children | length %}
 			(struct PositionedEntity*){{ sanitizedSpecName }}Children,
 			{%- else %}
 			NULL,
 			{%- endif %}
 
-			// extra
+			// Extra info
 			{%- if item.extraProperties.extraInfo != '' %}
 			(void*)"{{ item.extraProperties.extraInfo }}",
 			{%- else %}
 			NULL,
 			{%- endif %}
 
-			// size
-			// if 0, width and height will be inferred from the first sprite's texture's size
+			// Size
+			// If 0, it is computed from the visual components if any
 			{ {{ item.extraProperties.pixelSize.x }}, {{ item.extraProperties.pixelSize.y }}, {{ item.extraProperties.pixelSize.z }} },
 
-			// gameworld's character's type
+			// Entity's in-game type
 			kType{{ project.items.InGameTypes.project.types[item.inGameType] | sanitizeSpecName }}
 
 		{%- if isAnimated %}

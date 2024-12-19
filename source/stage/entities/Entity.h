@@ -51,13 +51,14 @@ typedef struct EntitySpec
 	/// Component specs
 	ComponentSpec** componentSpecs;
 
-	/// Children
+	/// Children specs
 	struct PositionedEntity* childrenSpecs;
 
 	/// Extra info
 	void* extraInfo;
 
-	/// If 0, width and height will be inferred from the first sprite's texture's pixelSize
+	// Size
+	// If 0, it is computed from the visual components if any
 	PixelSize pixelSize;
 
 	/// Entity's in-game type
