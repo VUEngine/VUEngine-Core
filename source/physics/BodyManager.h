@@ -76,7 +76,7 @@ class BodyManager : ComponentManager
 	/// @param owner: Object to which the body will attach to
 	/// @param bodySpec: Spec to use to create the body
 	/// @return Created body
-	override Behavior createComponent(SpatialObject owner, const BodySpec* bodySpec);
+	override Body createComponent(SpatialObject owner, const BodySpec* bodySpec);
 
 	/// Destroy the provided behavior.
 	/// @param body: Body to destroy
