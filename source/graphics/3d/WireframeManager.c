@@ -64,11 +64,25 @@ bool WireframeManager::isAnyVisible(SpatialObject owner)
 //---------------------------------------------------------------------------------------------------------
 Wireframe WireframeManager::createComponent(SpatialObject owner, const WireframeSpec* wireframeSpec)
 {
+	if(NULL == wireframeSpec)
+	{
+		return NULL;
+	}
+
+	Base::createComponent(this, owner, (ComponentSpec*)wireframeSpec);
+
 	return WireframeManager::createWireframe(this, owner, wireframeSpec);
 }
 //---------------------------------------------------------------------------------------------------------
-void WireframeManager::destroyComponent(Wireframe wireframe)
+void WireframeManager::destroyComponent(SpatialObject owner, Wireframe wireframe) 
 {
+	if(isDeleted(wireframe))
+	{
+		return;
+	}
+
+	Base::destroyComponent(this, owner, Component::safeCast(wireframe));
+
 	WireframeManager::destroyWireframe(this, wireframe);
 }
 //---------------------------------------------------------------------------------------------------------
@@ -98,14 +112,12 @@ void WireframeManager::disable()
 //---------------------------------------------------------------------------------------------------------
 Wireframe WireframeManager::createWireframe(SpatialObject owner, const WireframeSpec* wireframeSpec)
 {
-	NM_ASSERT(NULL != wireframeSpec && NULL != wireframeSpec->allocator, "WireframeManager::createWireframe: null wireframeSpec");
-
-	if(NULL == wireframeSpec || NULL == wireframeSpec->allocator)
+	if(NULL == wireframeSpec)
 	{
 		return NULL;
 	}
 
-	Wireframe wireframe = ((Wireframe (*)(SpatialObject, const WireframeSpec*))wireframeSpec->allocator)(owner, wireframeSpec);
+	Wireframe wireframe = ((Wireframe (*)(SpatialObject, const WireframeSpec*))((ComponentSpec*)wireframeSpec)->allocator)(owner, wireframeSpec);
 
 	if(!isDeleted(wireframe) && WireframeManager::registerWireframe(this, wireframe))
 	{

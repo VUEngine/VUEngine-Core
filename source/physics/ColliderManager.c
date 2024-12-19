@@ -61,11 +61,25 @@ static uint16 _checkCycles;
 //---------------------------------------------------------------------------------------------------------
 Collider ColliderManager::createComponent(SpatialObject owner, const ColliderSpec* colliderSpec)
 {
+	if(NULL == colliderSpec)
+	{
+		return NULL;
+	}
+
+	Base::createComponent(this, owner, (ComponentSpec*)colliderSpec);
+
 	return ColliderManager::createCollider(this, owner, colliderSpec);
 }
 //---------------------------------------------------------------------------------------------------------
-void ColliderManager::destroyComponent(Collider collider)
+void ColliderManager::destroyComponent(SpatialObject owner, Collider collider) 
 {
+	if(isDeleted(collider))
+	{
+		return NULL;
+	}
+
+	Base::destroyComponent(this, owner, Component::safeCast(collider));
+
 	ColliderManager::destroyCollider(this, collider);
 }
 //---------------------------------------------------------------------------------------------------------
@@ -239,16 +253,14 @@ uint32 ColliderManager::update()
 }
 Collider ColliderManager::createCollider(SpatialObject owner, const ColliderSpec* colliderSpec)
 {
-	NM_ASSERT(!(NULL == colliderSpec || NULL == colliderSpec->allocator), "ColliderManager::createCollider: invalid collider spec");
-
-	if(NULL == colliderSpec || NULL == colliderSpec->allocator)
+	if(NULL == colliderSpec)
 	{
 		return NULL;
 	}
 
 	ColliderManager::purgeDestroyedColliders(this);
 
-	Collider collider = ((Collider (*)(SpatialObject, const ColliderSpec*)) colliderSpec->allocator)(owner, colliderSpec);
+	Collider collider = ((Collider (*)(SpatialObject, const ColliderSpec*)) ((ComponentSpec*)colliderSpec)->allocator)(owner, colliderSpec);
 
 	this->dirty = true;
 

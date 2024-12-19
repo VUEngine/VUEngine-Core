@@ -19,7 +19,6 @@
 #include <Body.h>
 #include <Camera.h>
 #include <ColliderManager.h>
-#include <Component.h>
 #include <Container.h>
 #include <Sprite.h>
 #include <SpriteManager.h>
@@ -137,9 +136,6 @@ class Entity : Container
 
 	/// Factory to create this entity's children
 	EntityFactory entityFactory;
-
-	/// Linked list of attached components
-	VirtualList components[kComponentTypes];
 
 	/// Pointer to the spec that defines how to initialize the entity 
 	EntitySpec* entitySpec;
@@ -271,8 +267,11 @@ class Entity : Container
 
 	/// Attach a new components to the entity and configure it with the provided specs.
 	/// @param componentSpecs: Specifications to be used to configure the new components
-	/// @param destroyOldComponents: If true, any previous component of the same type is destroyed
-	void addComponents(ComponentSpec** componentSpecs, bool destroyOldComponents);
+	void addComponents(ComponentSpec** componentSpecs);
+
+	/// Remove the components of a give type from the entity.
+	/// @param componentType: Type of components to remove
+	void removeComponents(uint32 componentType);
 
 	/// Retrieve a list with the components of the provided type.
 	/// @param componentType: Type of components to add

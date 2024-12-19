@@ -340,7 +340,7 @@ uint32 EntityFactory::transformEntities()
 			
 			if(NULL != entitySpec && NULL != entitySpec->componentSpecs && NULL != entitySpec->componentSpecs[positionedEntityDescription->componentIndex])
 			{
-				bool createdComponent = NULL != Entity::addComponent(positionedEntityDescription->entity, (ComponentSpec*)entitySpec->componentSpecs[positionedEntityDescription->componentIndex], (ComponentSpec*)entitySpec->componentSpecs[positionedEntityDescription->componentIndex]->componentType);
+				bool createdComponent = NULL != Entity::addComponent(positionedEntityDescription->entity, (ComponentSpec*)entitySpec->componentSpecs[positionedEntityDescription->componentIndex]);
 				positionedEntityDescription->componentIndex++;
 
 				if(createdComponent)

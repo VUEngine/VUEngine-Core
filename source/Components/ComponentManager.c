@@ -14,9 +14,11 @@
 
 #include <Component.h>
 #include <Behavior.h>
+#include <Body.h>
 #include <BehaviorManager.h>
 #include <Collider.h>
 #include <ColliderManager.h>
+#include <SpatialObject.h>
 #include <Sprite.h>
 #include <SpriteManager.h>
 #include <VirtualList.h>
@@ -32,6 +34,7 @@
 //=========================================================================================================
 
 friend class Component;
+friend class SpatialObject;
 friend class VirtualNode;
 friend class VirtualList;
 
@@ -41,106 +44,7 @@ friend class VirtualList;
 //=========================================================================================================
 
 //---------------------------------------------------------------------------------------------------------
-static void ComponentManager::createComponents(SpatialObject owner, ComponentSpec** componentSpecsDirectory[])
-{
-	for(int16 componentType = 0; componentType < kComponentTypes; componentType++)
-	{
-		ComponentManager componentManager = ComponentManager::getManager(componentType);
-
-		if(NULL == componentManager)
-		{
-			continue;
-		}
-
-		if(0 < ComponentManager::getCount(componentManager, owner))
-		{
-			continue;
-		}
-
-		ComponentSpec** componentSpecs = componentSpecsDirectory[componentType];
-		int16 displacement = ComponentManager::getSpecDisplacementForComponentType(componentType);
-
-		if(NULL != componentSpecs)
-		{
-			if(sizeof(ComponentSpec*) != displacement)
-			{
-				ComponentSpec* componentSpec = &((ComponentSpec*)componentSpecs)[0];
-
-				for(; NULL != componentSpec && NULL != componentSpec->allocator; componentSpec += displacement)
-				{
-					ComponentManager::createComponent(componentManager, owner, componentSpec);
-				}
-			}
-			else
-			{
-				for(int16 i = 0; NULL != componentSpecs[i] && NULL != componentSpecs[i]->allocator; i++)
-				{
-					ComponentManager::createComponent(componentManager, owner, componentSpecs[i]);
-				}
-			}
-		}
-	}
-}
-//---------------------------------------------------------------------------------------------------------
-static void ComponentManager::destroyComponents(SpatialObject owner, VirtualList components[], uint32 componentType)
-{
-	if(kComponentTypes <= componentType)
-	{
-		for(int16 i = 0; i < kComponentTypes; i++)
-		{
-			ComponentManager componentManager = ComponentManager::getManager(i);
-
-			if(NULL == componentManager)
-			{
-				continue;
-			}
-
-			if(!isDeleted(components[i]))
-			{
-				delete components[i];
-				components[i] = NULL;
-			}
-
-			for(VirtualNode node = componentManager->components->head; NULL != node; node = node->next)
-			{
-				Component component = Component::safeCast(node->data);
-
-				if(owner == component->owner)
-				{
-					ComponentManager::destroyComponent(componentManager, component);
-				}
-			}
-		}
-	}
-	else
-	{
-		ComponentManager componentManager = ComponentManager::getManager(componentType);
-
-		if(NULL == componentManager)
-		{
-			return;
-		}
-
-		if(!isDeleted(components[componentType]))
-		{
-			delete components[componentType];
-			components[componentType] = NULL;
-		}
-
-		for(VirtualNode node = componentManager->components->head; NULL != node; node = node->next)
-		{
-			Component component = Component::safeCast(node->data);
-
-			if(owner == component->owner)
-			{
-				ComponentManager::destroyComponent(componentManager, component);
-			}
-		}
-		
-	}
-}
-//---------------------------------------------------------------------------------------------------------
-static Component ComponentManager::addComponent(SpatialObject owner, VirtualList components[], ComponentSpec* componentSpec)
+static Component ComponentManager::addComponent(SpatialObject owner, ComponentSpec* componentSpec)
 {
 	ComponentManager componentManager = ComponentManager::getManager(componentSpec->componentType);
 
@@ -149,16 +53,10 @@ static Component ComponentManager::addComponent(SpatialObject owner, VirtualList
 		return NULL;
 	}
 
-	if(!isDeleted(components[componentType]))
-	{
-		delete components[componentType];
-		components[componentType] = NULL;
-	}
-
 	return ComponentManager::createComponent(componentManager, owner, componentSpec);
 }
 //---------------------------------------------------------------------------------------------------------
-static void ComponentManager::removeComponent(VirtualList components[], Component component)
+static void ComponentManager::removeComponent(SpatialObject owner, Component component)
 {
 	uint32 componentType = ComponentManager::getComponentType(component);
 
@@ -174,22 +72,11 @@ static void ComponentManager::removeComponent(VirtualList components[], Componen
 		return;
 	}
 
-	if(!isDeleted(components[componentType]))
-	{
-		delete components[componentType];
-		components[componentType] = NULL;
-	}
-
-	ComponentManager::destroyComponent(componentManager, component);
+	ComponentManager::destroyComponent(componentManager, owner, component);
 }
 //---------------------------------------------------------------------------------------------------------
-static void ComponentManager::addComponents(SpatialObject owner, VirtualList components[], ComponentSpec** componentSpecs, bool destroyOldComponents)
+static void ComponentManager::addComponents(SpatialObject owner, ComponentSpec** componentSpecs)
 {
-	if(destroyOldComponents)
-	{
-		ComponentManager::destroyComponents(owner, components, componentType);
-	}
-
 	for(int32 i = 0; NULL != componentSpecs[i] && NULL != componentSpecs[i]->allocator; i++)
 	{
 		ComponentManager componentManager = ComponentManager::getManager(componentSpecs[i]->componentType);
@@ -203,7 +90,53 @@ static void ComponentManager::addComponents(SpatialObject owner, VirtualList com
 	}
 }
 //---------------------------------------------------------------------------------------------------------
-static VirtualList ComponentManager::getComponents(SpatialObject owner, VirtualList components[], uint32 componentType)
+static void ComponentManager::removeComponents(SpatialObject owner, uint32 componentType)
+{
+	if(kComponentTypes <= componentType)
+	{
+		for(int16 i = 0; i < kComponentTypes; i++)
+		{
+			ComponentManager componentManager = ComponentManager::getManager(i);
+
+			if(NULL == componentManager)
+			{
+				continue;
+			}
+
+			for(VirtualNode node = componentManager->components->head; NULL != node; node = node->next)
+			{
+				Component component = Component::safeCast(node->data);
+
+				if(owner == component->owner)
+				{
+					ComponentManager::destroyComponent(componentManager, owner, component);
+				}
+			}
+		}
+	}
+	else
+	{
+		ComponentManager componentManager = ComponentManager::getManager(componentType);
+
+		if(NULL == componentManager)
+		{
+			return;
+		}
+
+		for(VirtualNode node = componentManager->components->head; NULL != node; node = node->next)
+		{
+			Component component = Component::safeCast(node->data);
+
+			if(owner == component->owner)
+			{
+				ComponentManager::destroyComponent(componentManager, owner, component);
+			}
+		}
+		
+	}
+}
+//---------------------------------------------------------------------------------------------------------
+static VirtualList ComponentManager::getComponents(SpatialObject owner, uint32 componentType)
 {
 	ComponentManager componentManager = ComponentManager::getManager(componentType);
 
@@ -212,16 +145,48 @@ static VirtualList ComponentManager::getComponents(SpatialObject owner, VirtualL
 		return NULL;
 	}
 
-	if(NULL == components[componentType])
+	if(NULL == owner->components[componentType])
 	{
-		components[componentType] = new VirtualList();
+		owner->components[componentType] = new VirtualList();
 	}
 	else
 	{
-		VirtualList::clear(components[componentType]);
+		VirtualList::clear(owner->components[componentType]);
 	}
 
-	return ComponentManager::doGetComponents(componentManager, owner, components[componentType]);
+	return ComponentManager::doGetComponents(componentManager, owner, owner->components[componentType]);
+}
+//---------------------------------------------------------------------------------------------------------
+static bool ComponentManager::getComponentsOfClass(SpatialObject owner, ClassPointer classPointer, VirtualList components, uint32 componentType)
+{
+	if(kComponentTypes <= componentType)
+	{
+		return false;
+	}
+
+	ComponentManager componentManager = ComponentManager::getManager(componentType);
+
+	if(NULL == componentManager)
+	{
+		return false;
+	}
+
+	for(VirtualNode node = componentManager->components->head; NULL != node; node = node->next)
+	{
+		Component component = Component::safeCast(node->data);
+
+		if(!classPointer || Object::getCast(component, classPointer, NULL))
+		{
+			VirtualList::pushBack(components, component);
+		}
+	}
+
+	if(NULL != components->head)
+	{
+		return true;
+	}
+
+	return false;
 }
 //---------------------------------------------------------------------------------------------------------
 
@@ -303,7 +268,7 @@ static uint32 ComponentManager::getComponentType(Component component)
 		}
 	}
 
-	return component->componentType;
+	return component->componentSpec->componentType;
 }
 //---------------------------------------------------------------------------------------------------------
 static int16 ComponentManager::getSpecDisplacementForComponentType(uint32 componentType)
@@ -370,6 +335,41 @@ uint16 ComponentManager::getCount(SpatialObject owner)
 	}
 
 	return count;
+}
+//---------------------------------------------------------------------------------------------------------
+Component ComponentManager::createComponent(SpatialObject owner, const ComponentSpec* componentSpec)
+{
+	if(kComponentTypes <= componentSpec->componentType)
+	{
+		return NULL;
+	}
+
+	if(!isDeleted(owner->components[ componentSpec->componentType]))
+	{
+		delete owner->components[ componentSpec->componentType];
+		owner->components[ componentSpec->componentType] = NULL;
+	}
+
+	return NULL;
+}
+//---------------------------------------------------------------------------------------------------------
+void ComponentManager::destroyComponent(SpatialObject owner, Component component) 
+{
+	if(isDeleted(component))
+	{
+		return;
+	}
+
+	if(NULL == component->componentSpec || kComponentTypes <= component->componentSpec->componentType)
+	{
+		return;
+	}
+
+	if(!isDeleted(owner->components[ component->componentSpec->componentType]))
+	{
+		delete owner->components[ component->componentSpec->componentType];
+		owner->components[ component->componentSpec->componentType] = NULL;
+	}
 }
 //---------------------------------------------------------------------------------------------------------
 VirtualList ComponentManager::doGetComponents(SpatialObject owner, VirtualList components)

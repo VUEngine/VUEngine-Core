@@ -35,6 +35,12 @@ void SpatialObject::constructor()
 
 	// set scale
 	this->transformation.scale = Scale::unit();
+
+	// Initialize component lists
+	for(int16 i = 0; i < kComponentTypes; i++)
+	{
+		this->components[i] = NULL;
+	}
 }
 //---------------------------------------------------------------------------------------------------------
 void SpatialObject::destructor()

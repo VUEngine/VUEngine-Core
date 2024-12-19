@@ -79,8 +79,9 @@ class BodyManager : ComponentManager
 	override Body createComponent(SpatialObject owner, const BodySpec* bodySpec);
 
 	/// Destroy the provided behavior.
+	/// @param owner: Object to which the sprite will attach to
 	/// @param body: Body to destroy
-	override void destroyComponent(Body body);
+	override void destroyComponent(SpatialObject owner, Body body);
 
 	/// Reset the manager's state.
 	void reset();

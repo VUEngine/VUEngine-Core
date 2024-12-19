@@ -47,42 +47,41 @@ singleton class ComponentManager : Object
 
 	/// @publicsection
 
-	/// Create the components for the specified owner.
-	/// @param owner: Object to which the components attach to
-	/// @param componentSpecsDirectory: Array for the the component specs from
-	static void createComponents(SpatialObject owner, ComponentSpec** componentSpecsDirectory[]);
-
-	/// Destroy the components for the specified owner.
-	/// @param owner: Object to which the components attach to
-	/// @param components: List of list of components
-	/// @param componentType: Type of components to destroy
-	static void destroyComponents(SpatialObject owner, VirtualList components[], uint32 componentType);
-
 	/// Add a component to the specified owner.
 	/// @param owner: Object to which the components attach to
-	/// @param components: List of list of components
 	/// @param componentSpec: Spec to initialize the new component
 	/// @return Added component
-	static Component addComponent(SpatialObject owner, VirtualList components[], ComponentSpec* componentSpec);
+	static Component addComponent(SpatialObject owner, ComponentSpec* componentSpec);
 
 	/// Remove a component from the specified owner.
-	/// @param components: List of list of components
-	/// @param component: Component to remove
-	static void removeComponent(VirtualList components[], Component component);
-
-	/// Add a components to the specified owner.
 	/// @param owner: Object to which the components attach to
-	/// @param components: List of list of components
+	/// @param component: Component to remove
+	static void removeComponent(SpatialObject owner, Component component);
+
+	/// Add components to the specified owner.
+	/// @param owner: Object to which the components attach to
 	/// @param componentSpecs: Specs to initialize the new components
-	/// @param destroyOldComponents: If true, any previous component of the same type is destroyed
-	static void addComponents(SpatialObject owner, VirtualList components[], ComponentSpec** componentSpecs, bool destroyOldComponents);
+	static void addComponents(SpatialObject owner, ComponentSpec** componentSpecs);
+
+	/// Remove components from the specified owner.
+	/// @param owner: Object to which the components attach to
+	/// @param componentType: Type of components to remove
+	static void removeComponents(SpatialObject owner, uint32 componentType);
 
 	/// Retrieve a list with the components of the provided type belonging to the provided owner.
 	/// @param owner: Object to which the components attach to
-	/// @param components: List of list of components
 	/// @param componentType: Type of components to add
 	/// @return Linked list of components of the type provided that attach to the provided owner
-	static VirtualList getComponents(SpatialObject owner, VirtualList components[], uint32 componentType);
+	static VirtualList getComponents(SpatialObject owner, uint32 componentType);
+
+	/// Retrieve the linked list of components that are instances of the provided class.
+	/// @param owner: Object to which the components attach to
+	/// @param classPointer: Pointer to the class to use as search criteria. Usage: typeofclass(ClassName)
+	/// @param components: Linked list to be filled with the behaviors that meed the search criteria 
+	/// (it is externally allocated and must be externally deleted)
+	/// @param componentType: Type of components to retrieve
+	/// @return True if one or more behaviors met the search criteria; false otherwise
+	static bool getComponentsOfClass(SpatialObject owner, ClassPointer classPointer, VirtualList components, uint32 componentType);
 
 	/// Class' constructor
 	void constructor();
@@ -98,21 +97,21 @@ singleton class ComponentManager : Object
 	/// @return Number of components belonging to the provided owner
 	uint16 getCount(SpatialObject owner);
 
-	/// Retrieve a list with the components of the provided type belonging to the provided owner.
-	/// @param owner: Object to which the components attach to
-	/// @param components: List of list of components
-	/// @return Linked list of components of the type provided that attach to the provided owner
-	VirtualList doGetComponents(SpatialObject owner, VirtualList components);
-
 	/// Create a component with the provided spec.
 	/// @param owner: Object to which the sprite will attach to
 	/// @param componentSpec: Spec to use to initialize the component
 	/// @return Created component
-	virtual Component createComponent(SpatialObject owner, const ComponentSpec* componentSpec) = 0;
+	virtual Component createComponent(SpatialObject owner, const ComponentSpec* componentSpec);
 
 	/// Destroy the provided component.
-	/// @param component: Sprite to destroy
-	virtual void destroyComponent(Component component) = 0;
+	/// @param owner: Object to which the sprite will attach to
+	/// @param component: Comoponent to destroy
+	virtual void destroyComponent(SpatialObject owner, Component component) ;
+
+	/// Retrieve a list with the components of the provided type belonging to the provided owner.
+	/// @param owner: Object to which the components attach to
+	/// @return Linked list of components of the type provided that attach to the provided owner
+	VirtualList doGetComponents(SpatialObject owner, VirtualList components);
 
 	/// Check if at least of the components that attach to the provided owner is visible.
 	/// @param owner: Object to which the components attach to

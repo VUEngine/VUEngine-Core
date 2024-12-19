@@ -181,7 +181,7 @@ static void Entity::getRightBoxFromChildrenSpec(const PositionedEntity* position
 			{
 				RightBox helperRightBox = {0, 0, 0, 0, 0, 0};
 
-				switch (positionedEntity->entitySpec->componentSpecs[i]->componentTYpe)
+				switch (positionedEntity->entitySpec->componentSpecs[i]->componentType)
 				{
 					case kSpriteComponent:
 					{
@@ -222,39 +222,39 @@ static void Entity::getRightBoxFromChildrenSpec(const PositionedEntity* position
 					}
 				}
 
-				if(myRightBox.x0 > rightBox.x0)
+				if(myRightBox.x0 > helperRightBox.x0)
 				{
-					myRightBox.x0 = rightBox.x0;
+					myRightBox.x0 = helperRightBox.x0;
 				}
 
-				if(myRightBox.x0 > rightBox.x0)
+				if(myRightBox.x0 > helperRightBox.x0)
 				{
-					myRightBox.x0 = rightBox.x0;
+					myRightBox.x0 = helperRightBox.x0;
 				}
 
-				if(myRightBox.x1 < rightBox.x1)
+				if(myRightBox.x1 < helperRightBox.x1)
 				{
-					myRightBox.x1 = rightBox.x1;
+					myRightBox.x1 = helperRightBox.x1;
 				}
 
-				if(myRightBox.y0 > rightBox.y0)
+				if(myRightBox.y0 > helperRightBox.y0)
 				{
-					myRightBox.y0 = rightBox.y0;
+					myRightBox.y0 = helperRightBox.y0;
 				}
 
-				if(myRightBox.y1 < rightBox.y1)
+				if(myRightBox.y1 < helperRightBox.y1)
 				{
-					myRightBox.y1 = rightBox.y1;
+					myRightBox.y1 = helperRightBox.y1;
 				}
 
-				if(myRightBox.z0 > rightBox.z0)
+				if(myRightBox.z0 > helperRightBox.z0)
 				{
-					myRightBox.z0 = rightBox.z0;
+					myRightBox.z0 = helperRightBox.z0;
 				}
 
-				if(myRightBox.z1 < rightBox.z1)
+				if(myRightBox.z1 < helperRightBox.z1)
 				{
-					myRightBox.z1 = rightBox.z1;
+					myRightBox.z1 = helperRightBox.z1;
 				}
 			}
 		}
@@ -357,11 +357,6 @@ void Entity::constructor(EntitySpec* entitySpec, int16 internalId, const char* c
 	this->size = Size::getFromPixelSize(entitySpec->pixelSize);
 	this->collisionsEnabled = true;
 	this->checkingCollisions = true;
-
-	for(int16 i = 0; i < kComponentTypes; i++)
-	{
-		this->components[i] = NULL;
-	}
 }
 //---------------------------------------------------------------------------------------------------------
 void Entity::destructor()
@@ -410,12 +405,16 @@ fixed_t Entity::getRadius()
 //---------------------------------------------------------------------------------------------------------
 fixed_t Entity::getBounciness()
 {
-	return this->entitySpec->physicalProperties ? this->entitySpec->physicalProperties->bounciness : 0;
+	return 0;
+	// PENDING
+	//return this->entitySpec->physicalProperties ? this->entitySpec->physicalProperties->bounciness : 0;
 }
 //---------------------------------------------------------------------------------------------------------
 fixed_t Entity::getFrictionCoefficient()
 {
-	return this->entitySpec->physicalProperties ? this->entitySpec->physicalProperties->frictionCoefficient : 0;
+	return 0;
+	// PENDING
+//	return this->entitySpec->physicalProperties ? this->entitySpec->physicalProperties->frictionCoefficient : 0;
 }
 //---------------------------------------------------------------------------------------------------------
 bool Entity::isSubjectToGravity(Vector3D gravity __attribute__ ((unused)))
@@ -435,24 +434,19 @@ void Entity::createComponents()
 		Base::createComponents(this);
 	}
 
-	ComponentManager::createComponents(SpatialObject::safeCast(this), componentSpecs);
+	ComponentManager::addComponents(SpatialObject::safeCast(this), this->entitySpec->componentSpecs);
 
 	Entity::calculateSize(this);
 }
 //---------------------------------------------------------------------------------------------------------
 void Entity::destroyComponents()
 {
-	ComponentManager::destroyComponents(SpatialObject::safeCast(this), this->components, kComponentTypes);
+	ComponentManager::removeComponents(SpatialObject::safeCast(this), kComponentTypes);
 }
 //---------------------------------------------------------------------------------------------------------
 Component Entity::addComponent(ComponentSpec* componentSpec)
 {
-	if(kComponentTypes <= componentType)
-	{
-		return NULL;
-	}
-
-	return ComponentManager::addComponent(SpatialObject::safeCast(this), this->components, componentSpec);
+	return ComponentManager::addComponent(SpatialObject::safeCast(this), componentSpec);
 }
 //---------------------------------------------------------------------------------------------------------
 void Entity::removeComponent(Component component)
@@ -462,12 +456,17 @@ void Entity::removeComponent(Component component)
 		return;
 	}
 
-	ComponentManager::removeComponent(this->components, component);
+	ComponentManager::removeComponent(SpatialObject::safeCast(this), component);
 }
 //---------------------------------------------------------------------------------------------------------
-void Entity::addComponents(ComponentSpec** componentSpecs, bool destroyOldComponents)
+void Entity::addComponents(ComponentSpec** componentSpecs)
 {
-	ComponentManager::addComponents(SpatialObject::safeCast(this), this->components, componentSpecs, destroyOldComponents);
+	ComponentManager::addComponents(SpatialObject::safeCast(this), componentSpecs);
+}
+//---------------------------------------------------------------------------------------------------------
+void Entity::removeComponents(uint32 componentType)
+{
+	ComponentManager::removeComponents(SpatialObject::safeCast(this), componentType);
 }
 //---------------------------------------------------------------------------------------------------------
 VirtualList Entity::getComponents(uint32 componentType)
@@ -478,37 +477,12 @@ VirtualList Entity::getComponents(uint32 componentType)
 	}
 
 	return NULL != this->components[componentType] ? this->components[componentType] :
-	ComponentManager::getComponents(SpatialObject::safeCast(this), this->components, componentType);
+	ComponentManager::getComponents(SpatialObject::safeCast(this), componentType);
 }
 //---------------------------------------------------------------------------------------------------------
 bool Entity::getComponentsOfClass(ClassPointer classPointer, VirtualList components, uint32 componentType)
 {
-	if(kComponentTypes <= componentType)
-	{
-		return false;
-	}
-
-	ComponentManager::getComponents(SpatialObject::safeCast(this), this->components, componentType);
-
-	if(!isDeleted(this->components[componentType]) && !isDeleted(components))
-	{
-		for(VirtualNode node = this->components[kBehaviorComponent]->head; NULL != node; node = node->next)
-		{
-			Component component = Component::safeCast(node->data);
-
-			if(!classPointer || Object::getCast(component, classPointer, NULL))
-			{
-				VirtualList::pushBack(components, component);
-			}
-		}
-
-		if(NULL != components->head)
-		{
-			return true;
-		}
-	}
-
-	return false;
+	return ComponentManager::getComponentsOfClass(SpatialObject::safeCast(this), classPointer, components, componentType);
 }
 //---------------------------------------------------------------------------------------------------------
 void Entity::show()
@@ -531,7 +505,8 @@ void Entity::suspend()
 {
 	Base::suspend(this);
 
-	VisualComponent::destroyComponents(SpatialObject::safeCast(this), this->components);
+	ComponentManager::removeComponents(SpatialObject::safeCast(this), kSpriteComponent);
+	ComponentManager::removeComponents(SpatialObject::safeCast(this), kWireframeComponent);
 }
 //---------------------------------------------------------------------------------------------------------
 void Entity::resume()

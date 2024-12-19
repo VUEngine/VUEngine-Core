@@ -129,8 +129,9 @@ singleton class SpriteManager : ComponentManager
 	override Sprite createComponent(SpatialObject owner, const SpriteSpec* spriteSpec);
 
 	/// Destroy the provided sprite.
+	/// @param owner: Object to which the sprite will attach to
 	/// @param sprite: Sprite to destroy
-	override void destroyComponent(Sprite sprite);
+	override void destroyComponent(SpatialObject owner, Sprite sprite);
 
 	/// Reset the manager's state
 	void reset();

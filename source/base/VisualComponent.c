@@ -38,17 +38,6 @@ friend class VirtualNode;
 //=========================================================================================================
 
 //---------------------------------------------------------------------------------------------------------
-static void VisualComponent::destroyComponents(SpatialObject owner, VirtualList components[])
-{
-	if(NULL == owner)
-	{
-		return;
-	}
-
-	ComponentManager::destroyComponents(owner, components, kSpriteComponent);
-	ComponentManager::destroyComponents(owner, components, kWireframeComponent);
-}
-//---------------------------------------------------------------------------------------------------------
 static bool VisualComponent::calculateRightBox(SpatialObject owner, RightBox* rightBox)
 {
 	bool modified = false;

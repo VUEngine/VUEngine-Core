@@ -78,8 +78,9 @@ singleton class WireframeManager : ComponentManager
 	override Wireframe createComponent(SpatialObject owner, const WireframeSpec* wireframeSpec);
 
 	/// Destroy the provided wireframe.
+	/// @param owner: Object to which the sprite will attach to
 	/// @param wireframe: Wireframe to destroy
-	override void destroyComponent(Wireframe wireframe);
+	override void destroyComponent(SpatialObject owner, Wireframe wireframe);
 
 	/// Reset the manager's state.
 	void reset();

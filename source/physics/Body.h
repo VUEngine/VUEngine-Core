@@ -63,6 +63,9 @@ typedef struct BodySpec
 	/// Maximum speed
 	fixed_t maximumSpeed;
 
+	/// Axises on which the body is subject to gravity
+	uint16 axisSubjectToGravity;
+
 } BodySpec;
 
 typedef const BodySpec BodyROMSpec;
@@ -91,9 +94,6 @@ typedef struct Vector3DPlus
 class Body : Component
 {
 	/// @protectedsection
-
-	/// Object to which this body attaches to
-	SpatialObject owner;
 
 	/// Spatial position
 	Vector3D position;

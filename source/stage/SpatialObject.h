@@ -15,8 +15,16 @@
 // INCLUDES
 //=========================================================================================================
 
+#include <Component.h>
 #include <ListenerObject.h>
 #include <Collider.h>
+
+
+//=========================================================================================================
+// FORWARD DECLARATIONS
+//=========================================================================================================
+
+class VirtualList;
 
 
 //=========================================================================================================
@@ -36,6 +44,9 @@ class SpatialObject : ListenerObject
 	/// 3D transformation
 	Transformation transformation;
 	
+	/// Linked list of attached components
+	VirtualList components[kComponentTypes];
+
 	/// @publicsection
 
 	/// Class' constructor

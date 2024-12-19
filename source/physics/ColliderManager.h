@@ -66,8 +66,9 @@ class ColliderManager : ComponentManager
 	override Collider createComponent(SpatialObject owner, const ColliderSpec* colliderSpec);
 
 	/// Destroy the provided collider.
+	/// @param owner: Object to which the sprite will attach to
 	/// @param collider: Collider to destroy
-	override void destroyComponent(Collider collider);
+	override void destroyComponent(SpatialObject owner, Collider collider);
 
 	/// Reset the manager's state.
 	void reset();

@@ -59,11 +59,6 @@ abstract class VisualComponent : Component
 
 	/// @publicsection
 
-	/// Destroy the visual components for the specified owner.
-	/// @param owner: Object to which the visual components attach to
-	/// @param components: List of list of visual components
-	static void destroyComponents(SpatialObject owner, VirtualList components[]);
-
 	/// Compute the rightbox for the owner in base of its visual components.
 	/// @param owner: SpatialObject that the components attaches to
 	/// @param rightBox: Rightbox to configure

@@ -112,9 +112,9 @@ static inline fix7_9_ext Body::doComputeInstantaneousSpeed(fixed_t forceMagnitud
 //=========================================================================================================
 
 //---------------------------------------------------------------------------------------------------------
-void Body::constructor(SpatialObject owner, const BodySpec* bodySpec, uint16 axisSubjectToGravity)
+void Body::constructor(SpatialObject owner, const BodySpec* bodySpec)
 {
-	Base::constructor((const ComponentSpec*)&bodySpec->componentSpec);
+	Base::constructor(owner, (const ComponentSpec*)&bodySpec->componentSpec);
 
 	this->deleteMe = false;
 	this->owner = owner;
@@ -129,7 +129,7 @@ void Body::constructor(SpatialObject owner, const BodySpec* bodySpec, uint16 axi
 
 	this->awake = false;
 	this->sendMessages = true;
-	this->axisSubjectToGravity = axisSubjectToGravity;
+	this->axisSubjectToGravity = bodySpec->axisSubjectToGravity;
 
 	// clear movement type
 	this->movementType.x = __NO_MOVEMENT;

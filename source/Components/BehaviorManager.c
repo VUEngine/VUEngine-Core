@@ -32,31 +32,28 @@ friend class Behavior;
 //---------------------------------------------------------------------------------------------------------
 Behavior BehaviorManager::createComponent(SpatialObject owner, const BehaviorSpec* behaviorSpec)
 {
-	NM_ASSERT(NULL != behaviorSpec, "BehaviorManager::createBehavior: null behaviorSpec");
-	NM_ASSERT(NULL != behaviorSpec->allocator, "BehaviorManager::createBehavior: no behavior allocator");
-
-	if(NULL == behaviorSpec || NULL == behaviorSpec->allocator)
+	if(NULL == behaviorSpec)
 	{
 		return NULL;
 	}
 
-	Behavior behavior = ((Behavior (*)(SpatialObject, const BehaviorSpec*)) behaviorSpec->allocator)(owner, (BehaviorSpec*)behaviorSpec);
-	ASSERT(!isDeleted(behavior), "BehaviorManager::createBehavior: failed creating behavior");
+	Base::createComponent(this, owner, (ComponentSpec*)behaviorSpec);
+
+	Behavior behavior = ((Behavior (*)(SpatialObject, const ComponentSpec*)) ((ComponentSpec*)behaviorSpec)->allocator)(owner, (BehaviorSpec*)behaviorSpec);
 
 	VirtualList::pushBack(this->components, behavior);
 
 	return behavior;
 }
 //---------------------------------------------------------------------------------------------------------
-void BehaviorManager::destroyComponent(Behavior behavior)
+void BehaviorManager::destroyComponent(SpatialObject owner, Behavior behavior) 
 {
-	NM_ASSERT(!isDeleted(behavior), "BehaviorManager::destroyBehavior: trying to dispose dead behavior");
-	NM_ASSERT(__GET_CAST(Behavior, behavior), "BehaviorManager::destroyBehavior: trying to dispose a non behavior");
-
 	if(isDeleted(behavior))
 	{
 		return;
 	}
+
+	Base::destroyComponent(this, owner, Component::safeCast(behavior));
 
 	VirtualList::removeData(this->components, behavior);
 

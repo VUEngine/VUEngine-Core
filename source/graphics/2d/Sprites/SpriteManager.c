@@ -69,11 +69,24 @@ int32 _writtenObjectTiles = 0;
 //---------------------------------------------------------------------------------------------------------
 Sprite SpriteManager::createComponent(SpatialObject owner, const SpriteSpec* spriteSpec)
 {
+	if(NULL == spriteSpec)
+	{
+		return NULL;
+	}
+
+	Base::createComponent(this, owner, (ComponentSpec*)spriteSpec);
+
 	return SpriteManager::createSprite(this, owner, spriteSpec);
 }
 //---------------------------------------------------------------------------------------------------------
-void SpriteManager::destroyComponent(Sprite sprite)
+void SpriteManager::destroyComponent(SpatialObject owner, Sprite sprite) 
 {
+	if(!isDeleted(sprite))
+	{
+		return;
+	}
+
+	Base::destroyComponent(this, owner, Component::safeCast(sprite));
 	SpriteManager::destroySprite(this, sprite);
 }
 //---------------------------------------------------------------------------------------------------------
@@ -142,14 +155,13 @@ void SpriteManager::setAnimationsClock(Clock clock)
 Sprite SpriteManager::createSprite(SpatialObject owner, const SpriteSpec* spriteSpec)
 {
 	NM_ASSERT(NULL != spriteSpec, "SpriteManager::createSprite: null spriteSpec");
-	NM_ASSERT(NULL != spriteSpec->allocator, "SpriteManager::createSprite: no sprite allocator");
 
-	if(NULL == spriteSpec || NULL == spriteSpec->allocator)
+	if(NULL == spriteSpec)
 	{
 		return NULL;
 	}
 
-	Sprite sprite = ((Sprite (*)(SpatialObject, const SpriteSpec*)) spriteSpec->allocator)(owner, (SpriteSpec*)spriteSpec);
+	Sprite sprite = ((Sprite (*)(SpatialObject, const SpriteSpec*)) ((ComponentSpec*)spriteSpec)->allocator)(owner, spriteSpec);
 	ASSERT(!isDeleted(sprite), "SpriteManager::createSprite: failed creating sprite");
 
 	VirtualList::pushBack(this->components, sprite);

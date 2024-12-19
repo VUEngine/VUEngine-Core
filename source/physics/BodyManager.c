@@ -49,11 +49,25 @@ static fixed_t BodyManager::getElapsedTimeStep()
 //---------------------------------------------------------------------------------------------------------
 Body BodyManager::createComponent(SpatialObject owner, const BodySpec* bodySpec)
 {
+	if(NULL == bodySpec)
+	{
+		return NULL;
+	}
+
+	Base::createComponent(this, owner, (ComponentSpec*)bodySpec);
+
 	return BodyManager::createBody(this, owner, bodySpec);
 }
 //---------------------------------------------------------------------------------------------------------
-void BodyManager::destroyComponent(Body body)
+void BodyManager::destroyComponent(SpatialObject owner, Body body) 
 {
+	if(isDeleted(body))
+	{
+		return NULL;
+	}
+
+	Base::destroyComponent(this, owner, Component::safeCast(body));
+
 	BodyManager::destroyBody(this, body);
 }
 //---------------------------------------------------------------------------------------------------------

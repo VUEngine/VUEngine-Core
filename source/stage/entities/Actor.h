@@ -40,9 +40,6 @@ typedef struct ActorSpec
 	/// Flag to attach a physical body
 	bool createBody;
 
-	/// Axises subject to gravity
-	uint16 axisSubjectToGravity;
-
 	/// Axises around which to rotate the entity when syncronizing with body
 	uint16 axisForSynchronizationWithBody;
 
@@ -133,6 +130,10 @@ class Actor : AnimatedEntity
 
 	/// Destroy the components that attach to this actor. 	
 	override void destroyComponents();
+
+	/// Make the container ready to start operating once it has been completely intialized.
+	/// @param recursive: If true, the ready call is propagated to its children, grand children, etc.
+	override void ready(bool recursive);
 
 	/// Update this instance's logic.
 	override void update();

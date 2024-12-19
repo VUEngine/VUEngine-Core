@@ -46,14 +46,6 @@ void Actor::constructor(const ActorSpec* actorSpec, int16 internalId, const char
 
 	// construct the game state machine
 	this->stateMachine = NULL;
-
-	this->body = NULL;
-
-	// create body
-	if(actorSpec->createBody)
-	{
-		Actor::createBody(this, actorSpec->animatedEntitySpec.entitySpec.physicalProperties);
-	}
 }
 //---------------------------------------------------------------------------------------------------------
 void Actor::destructor()
@@ -125,9 +117,10 @@ fixed_t Actor::getSpeed()
 //---------------------------------------------------------------------------------------------------------
 fixed_t Actor::getBounciness()
 {
-	BodySpec* physicalProperties = ((ActorSpec*)this->entitySpec)->animatedEntitySpec.entitySpec.physicalProperties;
+	return !isDeleted(this->body) ? Body::getBounciness(this->body) : 0;
+//	BodySpec* physicalProperties = ((ActorSpec*)this->entitySpec)->animatedEntitySpec.entitySpec.physicalProperties;
 
-	return !isDeleted(this->body) ? Body::getBounciness(this->body) : physicalProperties ? physicalProperties->bounciness : 0;
+//	return !isDeleted(this->body) ? Body::getBounciness(this->body) : physicalProperties ? physicalProperties->bounciness : 0;
 }
 //---------------------------------------------------------------------------------------------------------
 void Actor::setPosition(const Vector3D* position)
@@ -308,6 +301,23 @@ void Actor::destroyComponents()
 	}
 }
 //---------------------------------------------------------------------------------------------------------
+void Actor::ready(bool recursive)
+{
+	Base::ready(this, recursive);
+
+	VirtualList bodies = Actor::getComponents(this, kPhysicsComponent);
+
+	if(NULL != bodies)
+	{
+		this->body = Body::safeCast(VirtualList::front(bodies));
+
+		if(!isDeleted(this->stateMachine))
+		{
+			Body::setPosition(this->body, &this->transformation.position, SpatialObject::safeCast(this));
+		}
+	}
+}
+//---------------------------------------------------------------------------------------------------------
 void Actor::update()
 {
 	// call base
@@ -455,27 +465,6 @@ bool Actor::isSensibleToCollidingObjectFrictionOnCollision(SpatialObject collidi
 // CLASS' PRIVATE METHODS
 //=========================================================================================================
 
-//---------------------------------------------------------------------------------------------------------
-void Actor::createBody(const BodySpec* physicalProperties, uint16 axisSubjectToGravity)
-{
-	if(!isDeleted(this->body))
-	{
-		NM_ASSERT(false, "Actor::createBody: body already created");
-		return;
-	}
-
-	if(NULL != physicalProperties)
-	{
-		this->body = BodyManager::createBody(VUEngine::getBodyManager(_vuEngine), SpatialObject::safeCast(this), physicalProperties, axisSubjectToGravity);
-	}
-	else
-	{
-		BodySpec defaultActorBodySpec = {__I_TO_FIXED(1), 0, 0, Vector3D::zero(), 0};
-		this->body = BodyManager::createBody(VUEngine::getBodyManager(_vuEngine), SpatialObject::safeCast(this), &defaultActorBodySpec, axisSubjectToGravity);
-	}
-
-	Body::setPosition(this->body, &this->transformation.position, SpatialObject::safeCast(this));
-}
 //---------------------------------------------------------------------------------------------------------
 Rotation Actor::getRotationFromDirection(const Vector3D* direction, uint8 axis)
 {
