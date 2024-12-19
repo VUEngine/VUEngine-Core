@@ -83,6 +83,14 @@ class Actor : AnimatedEntity
 	/// @return True if the Telegram was processed
 	override bool handleMessage(Telegram telegram);
 
+	/// A new component has been added to this actor. 
+	/// @param component: Added component
+	override void addedComponent(Component component);
+
+	/// A component has been removed from this actor. 
+	/// @param component: Removed component
+	override void removedComponent(Component component)
+
 	/// Retrieve the object's velocity vector.
 	/// @return Pointer to the direction towards which the object is moving
 	override const Vector3D* getVelocity();
@@ -127,12 +135,6 @@ class Actor : AnimatedEntity
 	/// Update the local transformation in function of the provided environment transform.
 	/// @param environmentTransform: New reference environment for the local transformation
 	override void changeEnvironment(Transformation* environmentTransform);
-
-	/// Add the components that must attach to this entity. 
-	override void createComponents();
-
-	/// Destroy the components that attach to this actor. 	
-	override void destroyComponents();
 
 	/// Update this instance's logic.
 	override void update();

@@ -286,23 +286,24 @@ void Actor::changeEnvironment(Transformation* environmentTransform)
 	}
 }
 //---------------------------------------------------------------------------------------------------------
-void Actor::createComponents()
+void Actor::addedComponent(Component component)
 {
-	Base::createComponents(this);
+	Base::addedComponent(this, component);
 
-	this->body = Body::safeCast(Actor::getComponentAtIndex(this, kPhysicsComponent, 0));
-
-	if(!isDeleted(this->body))
+	if(kPhysicsComponent == Component::getType(component))
 	{
-		Body::setPosition(this->body, &this->transformation.position, SpatialObject::safeCast(this));
+		this->body = Object::getCast(this, typeofclass(Body), NULL);
 	}
 }
 //---------------------------------------------------------------------------------------------------------
-void Actor::destroyComponents()
+void Actor::removedComponent(Component component)
 {
-	Base::destroyComponents(this);
+	Base::removedComponent(this, component);
 
-	this->body = NULL;
+	if(Body::safeCast(component) == this->body)
+	{
+		this->body = NULL;
+	}
 }
 //---------------------------------------------------------------------------------------------------------
 void Actor::update()

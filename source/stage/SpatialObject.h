@@ -68,6 +68,14 @@ class SpatialObject : ListenerObject
 	/// @return Pointer to the object's 3D
 	const Scale* getScale();
 
+	/// A new component has been added to this actor. 
+	/// @param component: Added component
+	virtual void addedComponent(Component component);
+
+	/// A component has been removed from this actor. 
+	/// @param component: Removed component
+	virtual void removedComponent(Component component)
+
 	/// Retrieve the object's radius.
 	/// @return Radius
 	virtual fixed_t getRadius();

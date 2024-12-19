@@ -70,6 +70,12 @@ const Scale* SpatialObject::getScale()
 	return &this->transformation.scale;
 }
 //---------------------------------------------------------------------------------------------------------
+void SpatialObject::addedComponent(Component component __attribute__((unused)))
+{}
+//---------------------------------------------------------------------------------------------------------
+void SpatialObject::removedComponent(Component component __attribute__((unused)))
+{}
+//---------------------------------------------------------------------------------------------------------
 fixed_t SpatialObject::getRadius()
 {
 	return 0;
