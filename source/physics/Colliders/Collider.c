@@ -70,9 +70,6 @@ void Collider::constructor(SpatialObject owner, const ColliderSpec* colliderSpec
 //---------------------------------------------------------------------------------------------------------
 void Collider::destructor()
 {
-	// unset owner now
-	this->owner = NULL;
-
 	Collider::hide(this);
 
 	if(NULL != this->events)

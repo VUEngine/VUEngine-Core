@@ -87,6 +87,7 @@ void SpriteManager::destroyComponent(SpatialObject owner, Sprite sprite)
 	}
 
 	Base::destroyComponent(this, owner, Component::safeCast(sprite));
+	
 	SpriteManager::destroySprite(this, sprite);
 }
 //---------------------------------------------------------------------------------------------------------

@@ -430,18 +430,11 @@ uint32 Entity::getInGameType()
 //---------------------------------------------------------------------------------------------------------
 void Entity::createComponents()
 {
-#ifndef __RELEASE
 	if(0 < ComponentManager::getComponentsCount(SpatialObject::safeCast(this), kComponentTypes))
 	{
-		Printing::setDebugMode(Printing::getInstance());
-		Printing::clear(Printing::getInstance());
-
-		Printing::text(Printing::getInstance(), "Rogue entity: ", 1, 26, NULL);
-		Printing::hex(Printing::getInstance(), (uint32)Entity::getSpec(this), 1, 27, 8, NULL);
-
-		Error::triggerException("Entity::createComponents:: already crated components", NULL);		
+		// Components are added by the EntityFactory too.
+		return;
 	}
-#endif
 
 	ComponentManager::addComponents(SpatialObject::safeCast(this), this->entitySpec->componentSpecs, kComponentTypes);
 

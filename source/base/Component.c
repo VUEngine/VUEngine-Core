@@ -49,6 +49,7 @@ void Component::constructor(SpatialObject owner, const ComponentSpec* componentS
 
 	if(isDeleted(this->owner))
 	{
+		this->owner = NULL;
 		this->transformation = &_dummyTransformation;
 	}
 	else
@@ -59,6 +60,8 @@ void Component::constructor(SpatialObject owner, const ComponentSpec* componentS
 //---------------------------------------------------------------------------------------------------------
 void Component::destructor()
 {	
+	this->owner = NULL;
+
 	if(NULL != this->events)
 	{
 		Component::fireEvent(this, kEventComponentDestroyed);
