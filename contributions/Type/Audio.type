@@ -17,6 +17,10 @@
 							"type": "integer",
 							"default": 0
 						},
+						"type": {
+							"type": "string",
+							"default": "wave"
+						},
 						"instrument": {
 							"type": "integer",
 							"default": 0
@@ -41,35 +45,26 @@
 										"type": "string",
 										"default": "4/4"
 									},
-									"notes": {
-										"type": "array",
-										"items": {
-											"type": "integer"
-										}
-									},
-									"volumeL": {
-										"type": "array",
-										"items": {
-											"type": "integer"
-										}
-									},
-									"volumeR": {
-										"type": "array",
-										"items": {
-											"type": "integer"
-										}
-									},
-									"effects": {
-										"type": "array",
-										"items": {
-											"type": "string",
-											"default": ""
+									"events": {
+										"type": "object",
+										"properties": {},
+										"additionalProperties": {
+											"type": "object",
+											"properties": {},
+											"additionalProperties": {
+												"type": "integer",
+												"default": 0
+											}
 										}
 									}
 								},
 								"additionalProperties": false
 							},
 							"minItems": 1
+						},
+						"allowSkip": {
+							"type": "boolean",
+							"default": false
 						},
 						"muted": {
 							"type": "boolean",
@@ -85,6 +80,7 @@
 				"default": [
 					{
 						"id": 0,
+						"type": "wave",
 						"instrument": 0,
 						"sequence": [
 							0
@@ -93,52 +89,60 @@
 							{
 								"name": "",
 								"size": 32,
-								"notes": [],
-								"volumeL": [],
-								"volumeR": [],
-								"effects": []
+								"events": {}
 							}
 						],
+						"allowSkip": false,
 						"muted": false,
 						"solo": false
 					},
 					{
 						"id": 1,
+						"type": "wave",
 						"instrument": 0,
 						"sequence": [],
 						"patterns": [],
+						"allowSkip": false,
 						"muted": false,
 						"solo": false
 					},
 					{
 						"id": 2,
+						"type": "wave",
 						"instrument": 0,
 						"sequence": [],
 						"patterns": [],
+						"allowSkip": false,
 						"muted": false,
 						"solo": false
 					},
 					{
 						"id": 3,
+						"type": "wave",
 						"instrument": 0,
 						"sequence": [],
 						"patterns": [],
+						"allowSkip": false,
 						"muted": false,
 						"solo": false
 					},
 					{
 						"id": 4,
+						"type": "sweep",
 						"instrument": 0,
 						"sequence": [],
 						"patterns": [],
+						"allowSkip": false,
 						"muted": false,
 						"solo": false
 					},
 					{
 						"id": 5,
+						"type": "noise",
 						"instrument": 0,
 						"sequence": [],
 						"patterns": [],
+						"allowSkip": false,
 						"muted": false,
 						"solo": false
 					}
@@ -160,10 +164,8 @@
 							"default": "wave"
 						},
 						"waveform": {
-							"type": "integer",
-							"default": 0,
-							"maximum": 0,
-							"minimum": 4
+							"type": "string",
+							"default": "6QP1zxkpXVn9SMlC"
 						},
 						"volume": {
 							"type": "object",
@@ -275,7 +277,7 @@
 							"minItems": 32,
 							"maxItems": 32
 						},
-						"tapLocation": {
+						"tap": {
 							"type": "integer",
 							"minimum": 0,
 							"maximum": 7
@@ -289,22 +291,6 @@
 					}
 				],
 				"minItems": 1
-			},
-			"waveforms": {
-				"type": "array",
-				"items": {
-					"type": "array",
-					"items": {
-						"type": "integer",
-						"default": 1,
-						"maximum": 64,
-						"minimum": 1
-					},
-					"maxItems": 32,
-					"minItems": 32
-				},
-				"maxItems": 5,
-				"minItems": 5
 			},
 			"speed": {
 				"type": "integer",
@@ -333,5 +319,8 @@
 		"type": "MusicEditor",
 		"scope": "#"
 	},
-	"icon": "codicon codicon-piano"
+	"icon": "codicon codicon-piano",
+	"templates": [
+		"SoundSpec"
+	]
 }
