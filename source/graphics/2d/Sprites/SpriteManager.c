@@ -788,28 +788,22 @@ void SpriteManager::cleanUp()
 
 	if(!isDeleted(this->bgmapSprites))
 	{
-		VirtualList sprites = this->bgmapSprites;
-		this->bgmapSprites = NULL;
-
-		VirtualList::clear(sprites);
-		delete sprites;
+		delete this->bgmapSprites;
 	}
 
 	if(!isDeleted(this->objectSpriteContainers))
 	{
-		VirtualList objectSpriteContainers = this->objectSpriteContainers;
-		this->objectSpriteContainers = NULL;
-
-		delete objectSpriteContainers;
+		delete this->objectSpriteContainers;
 	}
 
 	if(!isDeleted(this->specialSprites))
 	{
-		VirtualList specialSprites = this->specialSprites;
-		this->specialSprites = NULL;
-
-		delete specialSprites;
+		delete this->specialSprites;
 	}
+
+	this->bgmapSprites = NULL;
+	this->objectSpriteContainers = NULL;
+	this->specialSprites = NULL;
 }
 //---------------------------------------------------------------------------------------------------------
 bool SpriteManager::doRegisterSprite(Sprite sprite)
