@@ -36,15 +36,25 @@ void SpatialObject::constructor()
 	// set scale
 	this->transformation.scale = Scale::unit();
 
-	// Initialize component lists
-	for(int16 i = 0; i < kComponentTypes; i++)
-	{
-		this->components[i] = NULL;
-	}
+	this->components = NULL;
 }
 //---------------------------------------------------------------------------------------------------------
 void SpatialObject::destructor()
 {
+	if(!isDeleted(this->components))
+	{
+		for(int16 i = 0; i < kComponentTypes; i++)
+		{
+			if(!isDeleted(this->components[i]))
+			{
+				delete this->components[i];
+			}
+		}
+
+		delete this->components;
+		this->components = NULL;
+	}
+
 	// destroy the super SpatialObject
 	// must always be called at the end of the destructor
 	Base::destructor();

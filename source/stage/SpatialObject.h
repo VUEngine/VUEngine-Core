@@ -45,7 +45,7 @@ class SpatialObject : ListenerObject
 	Transformation transformation;
 	
 	/// Linked list of attached components
-	VirtualList components[kComponentTypes];
+	VirtualList* components;
 
 	/// @publicsection
 

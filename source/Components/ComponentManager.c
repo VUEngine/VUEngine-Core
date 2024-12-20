@@ -186,6 +186,16 @@ static VirtualList ComponentManager::getComponents(SpatialObject owner, uint32 c
 		return NULL;
 	}
 
+	if(NULL == owner->components)
+	{
+		owner->components = (VirtualList*)((uint32)MemoryPool::allocate(sizeof(VirtualList) * kComponentTypes + __DYNAMIC_STRUCT_PAD) + __DYNAMIC_STRUCT_PAD);
+
+		for(int16 i = 0; i < kComponentTypes; i++)
+		{
+			owner->components[i] = NULL;
+		}
+	}
+
 	if(NULL == owner->components[componentType])
 	{
 		owner->components[componentType] = new VirtualList();
