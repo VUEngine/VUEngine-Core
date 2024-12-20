@@ -495,7 +495,7 @@ VirtualList Entity::getComponents(uint32 componentType)
 		return NULL;
 	}
 
-	return NULL != this->components[componentType] ? this->components[componentType] :
+	return NULL != this->components && NULL != this->components[componentType] ? this->components[componentType] :
 	ComponentManager::getComponents(SpatialObject::safeCast(this), componentType);
 }
 //---------------------------------------------------------------------------------------------------------

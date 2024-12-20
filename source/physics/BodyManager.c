@@ -314,10 +314,13 @@ void BodyManager::destructor()
 {
 	ASSERT(this->components, "BodyManager::destructor: null bodies");
 
-	VirtualList::deleteData(this->components);
-	delete this->components;
-	this->components = NULL;
-
+	if(!isDeleted(this->components))
+	{
+		VirtualList::deleteData(this->components);
+		delete this->components;
+		this->components = NULL;
+	}
+	
 	// destroy the super object
 	// must always be called at the end of the destructor
 	Base::destructor();
