@@ -39,6 +39,12 @@ friend class SpatialObject;
 friend class VirtualNode;
 friend class VirtualList;
 
+//=========================================================================================================
+// CLASS' MACROS
+//=========================================================================================================
+
+#define __MAXIMUM_NUMBER_OF_COMPONENTS		10
+
 
 //=========================================================================================================
 // CLASS' STATIC METHODS
@@ -93,6 +99,17 @@ static void ComponentManager::addComponents(SpatialObject owner, ComponentSpec**
 	for(int32 i = 0; NULL != componentSpecs[i] && NULL != componentSpecs[i]->allocator; i++)
 	{
 		ComponentManager::addComponent(owner, componentSpecs[i]);
+		
+#ifndef __RELEASE
+		if(__MAXIMUM_NUMBER_OF_COMPONENTS < i)
+		{
+			Printing::setDebugMode(Printing::getInstance());
+			Printing::clear(Printing::getInstance());
+			Printing::text(Printing::getInstance(), "Component specs array: ", 1, 26, NULL);
+			Printing::hex(Printing::getInstance(), (uint32)componentSpecs, 1, 27, 8, NULL);
+			Error::triggerException("ComponentManager::addComponents: Non terminated component specs array", NULL);	
+		}
+#endif
 	}
 }
 //---------------------------------------------------------------------------------------------------------
