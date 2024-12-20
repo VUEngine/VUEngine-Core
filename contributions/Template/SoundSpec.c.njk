@@ -116,7 +116,7 @@ const int8 {{ sanitizedSpecName }}ModulationData{{ loop.index0 }}[] =
 		{%- set event = pattern.events[tick] -%}
 		{%- set eventList = [] -%}
 		{#- Ensure events for sweep/mod and noise channels are played the respective channels #}
-		{{- macros.append(eventList, 'kSoundTrackEventSweep', channel.type == 'sweepMod') -}}
+		{{- macros.append(eventList, 'kSoundTrackEventSweepMod', channel.type == 'sweepMod') -}}
 		{{- macros.append(eventList, 'kSoundTrackEventNoise', channel.type == 'noise') -}}
 		{{- macros.append(eventList, 'kSoundTrackEventStart', isFirstEvent) -}}
 
