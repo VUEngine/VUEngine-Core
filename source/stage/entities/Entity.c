@@ -490,7 +490,7 @@ Component Entity::getComponentAtIndex(uint32 componentType, int16 componentIndex
 //---------------------------------------------------------------------------------------------------------
 VirtualList Entity::getComponents(uint32 componentType)
 {
-	ComponentManager::getComponents(SpatialObject::safeCast(this), componentType);
+	return ComponentManager::getComponents(SpatialObject::safeCast(this), componentType);
 }
 //---------------------------------------------------------------------------------------------------------
 bool Entity::getComponentsOfClass(ClassPointer classPointer, VirtualList components, uint32 componentType)
