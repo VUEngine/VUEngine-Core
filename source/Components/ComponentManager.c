@@ -202,13 +202,6 @@ static Component ComponentManager::getComponentAtIndex(SpatialObject owner, uint
 //---------------------------------------------------------------------------------------------------------
 static VirtualList ComponentManager::getComponents(SpatialObject owner, uint32 componentType)
 {
-	ComponentManager componentManager = ComponentManager::getManager(componentType);
-
-	if(NULL == componentManager)
-	{
-		return NULL;
-	}
-
 	if(NULL == owner->components)
 	{
 		owner->components = (VirtualList*)((uint32)MemoryPool::allocate(sizeof(VirtualList) * kComponentTypes + __DYNAMIC_STRUCT_PAD) + __DYNAMIC_STRUCT_PAD);
@@ -225,7 +218,14 @@ static VirtualList ComponentManager::getComponents(SpatialObject owner, uint32 c
 	}
 	else
 	{
-		VirtualList::clear(owner->components[componentType]);
+		return owner->components[componentType];
+	}
+
+	ComponentManager componentManager = ComponentManager::getManager(componentType);
+
+	if(NULL == componentManager)
+	{
+		return NULL;
 	}
 
 	return ComponentManager::doGetComponents(componentManager, owner, owner->components[componentType]);
@@ -401,24 +401,13 @@ static uint32 ComponentManager::getComponentType(Component component)
 	return component->componentSpec->componentType;
 }
 //---------------------------------------------------------------------------------------------------------
-static int16 ComponentManager::getSpecDisplacementForComponentType(uint32 componentType)
+static void ComponentManager::cleanOwnerComponentLists(SpatialObject owner, uint32 componentType)
 {
-	switch (componentType)
+	if(NULL != owner->components && NULL != owner->components[componentType])
 	{
-		case kColliderComponent:
-
-			return sizeof(ColliderSpec) >> 2;
-			break;
-
-		case kSpriteComponent:
-		case kWireframeComponent:
-		case kBehaviorComponent:
-
-			return sizeof(ComponentSpec*);
-			break;
+		delete owner->components[componentType];
+		owner->components[componentType] = NULL;
 	}
-
-	return 1;
 }
 //---------------------------------------------------------------------------------------------------------
 
@@ -474,11 +463,7 @@ Component ComponentManager::createComponent(SpatialObject owner, const Component
 		return NULL;
 	}
 
-	if(NULL != owner->components && !isDeleted(owner->components[componentSpec->componentType]))
-	{
-		delete owner->components[componentSpec->componentType];
-		owner->components[componentSpec->componentType] = NULL;
-	}
+	ComponentManager::cleanOwnerComponentLists(owner, componentSpec->componentType);
 
 	return NULL;
 }
@@ -495,11 +480,7 @@ void ComponentManager::destroyComponent(SpatialObject owner, Component component
 		return;
 	}
 
-	if(NULL != owner->components && !isDeleted(owner->components[ component->componentSpec->componentType]))
-	{
-		delete owner->components[ component->componentSpec->componentType];
-		owner->components[ component->componentSpec->componentType] = NULL;
-	}
+	ComponentManager::cleanOwnerComponentLists(owner, component->componentSpec->componentType);
 }
 //---------------------------------------------------------------------------------------------------------
 VirtualList ComponentManager::doGetComponents(SpatialObject owner, VirtualList components)

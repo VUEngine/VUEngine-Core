@@ -490,12 +490,6 @@ Component Entity::getComponentAtIndex(uint32 componentType, int16 componentIndex
 //---------------------------------------------------------------------------------------------------------
 VirtualList Entity::getComponents(uint32 componentType)
 {
-	if(kComponentTypes <= componentType)
-	{
-		return NULL;
-	}
-
-	return NULL != this->components && NULL != this->components[componentType] ? this->components[componentType] :
 	ComponentManager::getComponents(SpatialObject::safeCast(this), componentType);
 }
 //---------------------------------------------------------------------------------------------------------
