@@ -794,6 +794,7 @@ void SpriteManager::cleanUp()
 
 	if(!isDeleted(this->objectSpriteContainers))
 	{
+		VirtualList::deleteData(this->objectSpriteContainers);
 		delete this->objectSpriteContainers;
 	}
 
