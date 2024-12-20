@@ -864,25 +864,28 @@ bool Entity::isInCameraRange(int16 padding, bool recursive)
 
 	bool inCameraRange = Entity::isInsideFrustrum(position3D, rightBox);
 
-	if(!inCameraRange && recursive && NULL != this->children)
+	if(!inCameraRange)
 	{
 		if(VisualComponent::isAnyVisible(SpatialObject::safeCast(this)))
 		{
 			return true;
 		}
 
-		for(VirtualNode childNode = this->children->head; childNode; childNode = childNode->next)
+		if(NULL != this->children && recursive)
 		{
-			Entity child = Entity::safeCast(VirtualNode::getData(childNode));
-
-			if(child->hidden)
+			for(VirtualNode childNode = this->children->head; childNode; childNode = childNode->next)
 			{
-				continue;
-			}
+				Entity child = Entity::safeCast(VirtualNode::getData(childNode));
 
-			if(Entity::isInCameraRange(child, padding, true))
-			{
-				return true;
+				if(child->hidden)
+				{
+					continue;
+				}
+
+				if(Entity::isInCameraRange(child, padding, true))
+				{
+					return true;
+				}
 			}
 		}
 	}
