@@ -214,6 +214,7 @@ static void Entity::getRightBoxFromChildrenSpec(const PositionedEntity* position
 					case kWireframeComponent:
 					{
 						helperRightBox = Mesh::getRightBoxFromSpec((MeshSpec*)positionedEntity->entitySpec->componentSpecs[i]);
+						break;
 					}
 
 					default:
