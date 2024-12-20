@@ -13,6 +13,7 @@
 //=========================================================================================================
 
 #include <DebugConfig.h>
+#include <Printing.h>
 #include <SpatialObject.h>
 #include <SpriteManager.h>
 #include <VirtualList.h>
@@ -20,9 +21,6 @@
 
 #include "VisualComponent.h"
 
-#include <Printing.h>
-#include <Entity.h>
-friend class Entity;
 
 
 //=========================================================================================================
