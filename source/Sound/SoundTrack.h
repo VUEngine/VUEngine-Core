@@ -186,7 +186,9 @@ enum SoundEvents
 	kSoundTrackEventSxEV1		 	=			1 << (6),
 	kSoundTrackEventSxRAM		 	=			1 << (7),
 	kSoundTrackEventSxSWP		 	=			1 << (8),
-	kSoundTrackEventSxTAP		 	=			1 << (9)
+	kSoundTrackEventSxMOD		 	=			1 << (9),
+	kSoundTrackEventSweepMod		=			1 << (10),
+	kSoundTrackEventNoise		 	=			1 << (11)
 };
 
 /// A sound keyframe
@@ -239,6 +241,9 @@ typedef struct SoundTrackSpec
 	/// SxSWP values
 	uint8* SxSWP;
 
+	/// SxMOD pointers
+	int8** SxMOD;
+
 } SoundTrackSpec;
 
 /// A SoundTrack spec that is stored in ROM
@@ -289,6 +294,9 @@ class SoundTrack : Object
 
 	/// SxSWP cursor
 	uint32 cursorSxSWP;
+
+	/// SxMOD cursor
+	uint32 cursorSxMOD;
 
 	/// Total number of ticks
 	uint32 ticks;

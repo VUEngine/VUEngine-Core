@@ -95,6 +95,7 @@ void SoundTrack::rewind()
 		this->cursorSxEV1 = 0;
 		this->cursorSxRAM = 0;
 		this->cursorSxSWP = 0;
+		this->cursorSxMOD = 0;
 
 		this->finished = false;
 	}
@@ -197,6 +198,7 @@ void SoundTrack::reset()
 	this->cursorSxEV1 = 0;
 	this->cursorSxRAM = 0;
 	this->cursorSxSWP = 0;
+	this->cursorSxMOD = 0;
 
 	this->finished = false;
 	this->elapsedTicks = 0;
@@ -291,12 +293,13 @@ bool SoundTrack::updateNative(fix7_9_ext tickStep, fix7_9_ext targetTimerResolut
 		this->cursorSxSWP++;
 	}
 
-	bool noise = false;
-
-	if(0 != (kSoundTrackEventSxTAP & soundTrackKeyframe.events))
+	if(0 != (kSoundTrackEventSxMOD & soundTrackKeyframe.events))
 	{
-		noise = true;
+		this->cursorSxMOD++;
 	}
+
+	bool sweepMod = 0 != (kSoundTrackEventSweepMod & soundTrackKeyframe.events);
+	bool noise = 0 != (kSoundTrackEventNoise & soundTrackKeyframe.events);
 
 	uint8 volume = this->soundTrackSpec->SxLRV[this->cursorSxLRV];
 	
@@ -358,6 +361,8 @@ bool SoundTrack::updateNative(fix7_9_ext tickStep, fix7_9_ext targetTimerResolut
 		this->soundTrackSpec->SxEV1[this->cursorSxEV1],
 		this->soundTrackSpec->SxRAM[this->cursorSxRAM],
 		this->soundTrackSpec->SxSWP[this->cursorSxSWP],
+		this->soundTrackSpec->SxMOD[this->cursorSxMOD],
+		sweepMod,
 		noise,
 		this->soundTrackSpec->skippable
 	};

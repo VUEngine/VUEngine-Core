@@ -59,6 +59,11 @@ const uint8 {{ sanitizedSpecName }}SoundTrack1SxSWP[] =
 	0x00,
 };
 
+const int8* const {{ sanitizedSpecName }}SoundTrack1SxMOD[] =
+{
+	NULL,
+};
+
 const SoundTrackKeyframe {{ sanitizedSpecName }}SoundTrack1Keyframes[] =
 {
 	{0, kSoundTrackEventStart},
@@ -97,8 +102,11 @@ SoundTrackROMSpec {{ sanitizedSpecName }}SoundTrack =
 	/// SxRAM pointers
 	(int8**){{ sanitizedSpecName }}SoundTrack1SxRAM,
 
-	/// S5SWP values
-	(uint8*){{ sanitizedSpecName }}SoundTrack1SxSWP
+	/// SxSWP values
+	(uint8*){{ sanitizedSpecName }}SoundTrack1SxSWP,
+
+	/// SxMOD pointers
+	(int8**){{ sanitizedSpecName }}SoundTrack1SxMOD,
 };
 
 SoundTrackROMSpec* const {{ sanitizedSpecName }}SoundTracks[] =

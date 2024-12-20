@@ -135,11 +135,17 @@ typedef struct VSUSoundSourceConfiguration
 	/// SxEV1 values
 	int16 SxEV1;
 
-	/// SxRAM pointers
+	/// SxRAM pointer
 	const int8* SxRAM;
 
 	/// SxSWP values
 	int16 SxSWP;	
+
+	/// SxMOD pointer
+	const int8* SxMOD;
+
+	/// Sweep/Mod?
+	bool sweepMod;
 
 	/// Noise?
 	bool noise;

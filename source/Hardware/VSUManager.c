@@ -55,7 +55,7 @@ static int16 VSUManager::getSoundSourceType(const VSUSoundSourceConfiguration* v
 {
 	uint32 soundSourceType = kSoundSourceNormal;
 
-	if(0 != vsuSoundSourceConfiguration->SxSWP)
+	if(0 != vsuSoundSourceConfiguration->sweepMod)
 	{
 		soundSourceType = kSoundSourceModulation;
 	}
