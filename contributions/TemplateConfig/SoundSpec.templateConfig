@@ -1,0 +1,8 @@
+{
+	"targets": [{
+		"path": "Converted/${_filename}SoundSpec.c",
+		"root": "file"
+	}],
+	"template": "contributions/Template/SoundSpec.c.njk",
+	"itemSpecific": "Audio"
+}
