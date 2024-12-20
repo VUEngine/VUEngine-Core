@@ -862,35 +862,35 @@ bool Entity::isInCameraRange(int16 padding, bool recursive)
 		(this->size.z >> 1) + paddingHelper + centerDisplacement.z
 	};
 
-	bool inCameraRange = Entity::isInsideFrustrum(position3D, rightBox);
-
-	if(!inCameraRange)
+	if(Entity::isInsideFrustrum(position3D, rightBox))
 	{
-		if(VisualComponent::isAnyVisible(SpatialObject::safeCast(this)))
-		{
-			return true;
-		}
+		return true;
+	}
 
-		if(NULL != this->children && recursive)
+	if(VisualComponent::isAnyVisible(SpatialObject::safeCast(this)))
+	{
+		return true;
+	}
+
+	if(NULL != this->children && recursive)
+	{
+		for(VirtualNode childNode = this->children->head; childNode; childNode = childNode->next)
 		{
-			for(VirtualNode childNode = this->children->head; childNode; childNode = childNode->next)
+			Entity child = Entity::safeCast(VirtualNode::getData(childNode));
+
+			if(child->hidden)
 			{
-				Entity child = Entity::safeCast(VirtualNode::getData(childNode));
+				continue;
+			}
 
-				if(child->hidden)
-				{
-					continue;
-				}
-
-				if(Entity::isInCameraRange(child, padding, true))
-				{
-					return true;
-				}
+			if(Entity::isInCameraRange(child, padding, true))
+			{
+				return true;
 			}
 		}
 	}
 
-	return inCameraRange;
+	return false;
 }
 //---------------------------------------------------------------------------------------------------------
 void Entity::setSpec(void* entitySpec)
