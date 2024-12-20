@@ -702,34 +702,10 @@ void Container::changeEnvironment(Transformation* environmentTransformation)
 }
 //---------------------------------------------------------------------------------------------------------
 void Container::createComponents()
-{
-	if(isDeleted(this->children))
-	{
-		return;
-	}
-
-	for(VirtualNode node = this->children->head; NULL != node; node = node->next)
-	{
-		Container child = Container::safeCast(node->data);
-
-		Container::createComponents(child);
-	}
-}
+{}
 //---------------------------------------------------------------------------------------------------------
 void Container::destroyComponents()
-{
-	if(NULL == this->children)
-	{
-		return;
-	}
-
-	for(VirtualNode node = this->children->head; NULL != node; node = node->next)
-	{
-		Container child = Container::safeCast(node->data);
-
-		Container::destroyComponents(child);
-	}
-}
+{}
 //---------------------------------------------------------------------------------------------------------
 void Container::ready(bool recursive)
 {

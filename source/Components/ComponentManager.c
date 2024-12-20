@@ -262,6 +262,57 @@ static bool ComponentManager::getComponentsOfClass(SpatialObject owner, ClassPoi
 	return false;
 }
 //---------------------------------------------------------------------------------------------------------
+static uint16 ComponentManager::getComponentsCount(SpatialObject owner, uint32 componentType)
+{
+	uint16 count = 0;
+
+	if(kComponentTypes <= componentType)
+	{
+		for(int16 i = 0; i < kComponentTypes; i++)
+		{
+			ComponentManager componentManager = ComponentManager::getManager(i);
+
+			if(NULL == componentManager)
+			{
+				continue;
+			}
+
+			for(VirtualNode node = componentManager->components->head; NULL != node; node = node->next)
+			{
+				Component component = Component::safeCast(node->data);
+
+				if(owner == component->owner)
+				{
+					count++;
+				}
+			}
+		}
+	}
+	else
+	{
+		ComponentManager componentManager = ComponentManager::getManager(componentType);
+
+		if(NULL == componentManager)
+		{
+			return 0;
+		}
+
+		for(VirtualNode node = componentManager->components->head, nextNode = NULL; NULL != node; node = nextNode)
+		{
+			nextNode = node->next;
+	
+			Component component = Component::safeCast(node->data);
+
+			if(owner == component->owner)
+			{
+				count++;
+			}
+		}	
+	}
+
+	return count;
+}
+//---------------------------------------------------------------------------------------------------------
 
 //=========================================================================================================
 // CLASS' PRIVATE STATIC METHODS

@@ -214,11 +214,12 @@ bool ObjectSpriteContainer::registerSprite(ObjectSprite objectSprite)
 {
 	for(VirtualNode node = this->objectSprites->head; NULL != node; node = node->next)
 	{
-		NM_ASSERT(!isDeleted(node->data), "SpriteManager::doRegisterSprite: NULL node's data");
+		NM_ASSERT(!isDeleted(node->data), "ObjectSpriteContainer::registerSprite: NULL node's data");
 
 		ObjectSprite otherSprite = ObjectSprite::safeCast(node->data);
 
-		NM_ASSERT(otherSprite != objectSprite, "SpriteManager::doRegisterSprite: sprite already registered");
+		NM_ASSERT(otherSprite != objectSprite, "ObjectSpriteContainer::registerSprite: sprite already registered");
+		NM_ASSERT(otherSprite->owner != objectSprite->owner, "ObjectSpriteContainer::registerSprite: sprite already registered");
 
 		if(otherSprite == objectSprite)
 		{

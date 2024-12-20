@@ -48,14 +48,14 @@ class Container : SpatialObject
 {
 	/// @protectedsection
 
-	/// 3D local transformation
-	Transformation localTransformation;
+	/// Container of which this one is a child
+	Container parent;
 
 	/// Linked list of child containers
 	VirtualList children;
 
-	/// Container of which this one is a child
-	Container parent;
+	/// 3D local transformation
+	Transformation localTransformation;
 
 	/// Container's name
 	char* name;

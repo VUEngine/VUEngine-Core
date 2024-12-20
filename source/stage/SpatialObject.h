@@ -41,11 +41,11 @@ class SpatialObject : ListenerObject
 {
 	/// @protectedsection
 	
-	/// 3D transformation
-	Transformation transformation;
-	
 	/// Linked list of attached components
 	VirtualList* components;
+	
+	/// 3D transformation
+	Transformation transformation;
 
 	/// @publicsection
 

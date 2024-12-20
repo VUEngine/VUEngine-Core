@@ -435,6 +435,10 @@ void Entity::createComponents()
 		Base::createComponents(this);
 	}
 
+#ifndef __RELEASE
+	NM_ASSERT(0 == ComponentManager::getComponentsCount(SpatialObject::safeCast(this), kComponentTypes), "Entity::createComponents: already created components");
+#endif
+
 	ComponentManager::addComponents(SpatialObject::safeCast(this), this->entitySpec->componentSpecs);
 
 	Entity::calculateSize(this);
@@ -491,6 +495,11 @@ bool Entity::getComponentsOfClass(ClassPointer classPointer, VirtualList compone
 	return ComponentManager::getComponentsOfClass(SpatialObject::safeCast(this), classPointer, components, componentType);
 }
 //---------------------------------------------------------------------------------------------------------
+uint16 Entity::getComponentsCount(uint32 componentType)
+{
+	return ComponentManager::getComponentsCount(SpatialObject::safeCast(this), componentType);
+}
+//---------------------------------------------------------------------------------------------------------
 void Entity::show()
 {
 	Base::show(this);
@@ -511,8 +520,11 @@ void Entity::suspend()
 {
 	Base::suspend(this);
 
-	ComponentManager::removeComponents(SpatialObject::safeCast(this), kSpriteComponent);
-	ComponentManager::removeComponents(SpatialObject::safeCast(this), kWireframeComponent);
+	/// PENDING: only recreate visual components
+	Entity::destroyComponents(this);
+
+//	ComponentManager::removeComponents(SpatialObject::safeCast(this), kSpriteComponent);
+//	ComponentManager::removeComponents(SpatialObject::safeCast(this), kWireframeComponent);
 }
 //---------------------------------------------------------------------------------------------------------
 void Entity::resume()
@@ -522,6 +534,7 @@ void Entity::resume()
 	// initialize sprites
 	if(NULL != this->entitySpec)
 	{
+		/// PENDING: only recreate visual components
 		Entity::createComponents(this);
 	}
 
@@ -839,11 +852,6 @@ fixed_t Entity::getDepth()
 //---------------------------------------------------------------------------------------------------------
 bool Entity::isInCameraRange(int16 padding, bool recursive)
 {
-	if(VisualComponent::isAnyVisible(SpatialObject::safeCast(this)))
-	{
-		return true;
-	}
-
 	Vector3D position3D = this->transformation.position;
 	Vector3D centerDisplacement = Vector3D::zero();
 
@@ -871,6 +879,11 @@ bool Entity::isInCameraRange(int16 padding, bool recursive)
 
 	if(!inCameraRange && recursive && NULL != this->children)
 	{
+		if(VisualComponent::isAnyVisible(SpatialObject::safeCast(this)))
+		{
+			return true;
+		}
+
 		for(VirtualNode childNode = this->children->head; childNode; childNode = childNode->next)
 		{
 			Entity child = Entity::safeCast(VirtualNode::getData(childNode));

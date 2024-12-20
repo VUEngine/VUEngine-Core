@@ -90,6 +90,12 @@ singleton class ComponentManager : Object
 	/// @return True if one or more behaviors met the search criteria; false otherwise
 	static bool getComponentsOfClass(SpatialObject owner, ClassPointer classPointer, VirtualList components, uint32 componentType);
 
+	/// Retrieve the number of components belonging to the provided owner.
+	/// @param owner: Object to which the components attach to
+	/// @param componentType: Type of components to count
+	/// @return Number of components belonging to the provided owner
+	static uint16 getComponentsCount(SpatialObject owner, uint32 componentType);
+
 	/// Class' constructor
 	void constructor();
 

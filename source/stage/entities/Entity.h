@@ -293,6 +293,11 @@ class Entity : Container
 	/// @return True if one or more behaviors met the search criteria; false otherwise
 	bool getComponentsOfClass(ClassPointer classPointer, VirtualList components, uint32 componentType);
 	
+	/// Retrieve the number of components belonging to the entity.
+	/// @param componentType: Type of components to count
+	/// @return Number of components belonging to the entity
+	uint16 getComponentsCount(uint32 componentType);
+
 	/// Enable collision detection on the entity's colliders.
 	void enableCollisions();
 
