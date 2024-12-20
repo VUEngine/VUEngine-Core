@@ -129,8 +129,10 @@ static void ComponentManager::removeComponents(SpatialObject owner, uint32 compo
 				continue;
 			}
 
-			for(VirtualNode node = componentManager->components->head; NULL != node; node = node->next)
+			for(VirtualNode node = componentManager->components->head, nextNode = NULL; NULL != node; node = nextNode)
 			{
+				nextNode = node->next;
+		
 				Component component = Component::safeCast(node->data);
 
 				if(owner == component->owner)
@@ -139,7 +141,7 @@ static void ComponentManager::removeComponents(SpatialObject owner, uint32 compo
 
 					ComponentManager::destroyComponent(componentManager, owner, component);
 				}
-			}
+			}	
 		}
 	}
 	else
@@ -150,6 +152,7 @@ static void ComponentManager::removeComponents(SpatialObject owner, uint32 compo
 		{
 			return;
 		}
+
 		for(VirtualNode node = componentManager->components->head, nextNode = NULL; NULL != node; node = nextNode)
 		{
 			nextNode = node->next;
