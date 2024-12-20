@@ -17,7 +17,6 @@
 #include <AnimationCoordinator.h>
 #include <AnimationCoordinatorFactory.h>
 #include <DebugConfig.h>
-#include <Sprite.h>
 
 #include "AnimationController.h"
 

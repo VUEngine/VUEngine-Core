@@ -21,13 +21,6 @@
 
 
 //=========================================================================================================
-// FORWARD DECLARATIONS
-//=========================================================================================================
-
-class AnimationController;
-
-
-//=========================================================================================================
 // CLASS' DATA
 //=========================================================================================================
 
@@ -52,34 +45,6 @@ typedef struct SpriteSpec
 /// A Sprite spec that is stored in ROM
 /// @memberof Sprite
 typedef const SpriteSpec SpriteROMSpec;
-
-/// A function which defines the frames to play
-/// @memberof Sprite
-typedef struct AnimationFunction
-{
-	/// Number of frames of this animation function
-	uint16 numberOfFrames;
-
-	/// Frames to play in animation
-	uint16 frames[__MAX_FRAMES_PER_ANIMATION_FUNCTION];
-
-	/// Number of cycles a frame of animation is displayed
-	uint8 delay;
-
-	/// Whether to play it in loop or not
-	bool loop;
-
-	/// Callback on function completion
-	EventListener onAnimationComplete;
-
-	/// Animation's name
-	char name[__MAX_ANIMATION_FUNCTION_NAME_LENGTH];
-
-} AnimationFunction;
-
-/// An AnimationFunction that is stored in ROM
-/// @memberof	Sprite
-typedef const AnimationFunction AnimationFunctionROMSpec;
 
 
 //=========================================================================================================
@@ -123,15 +88,9 @@ abstract class Sprite : VisualComponent
 	
 	/// Cache of the texture's half height
 	int16 halfHeight;
-	
-	/// Animation controller
-	AnimationController animationController;
-	
+		
 	/// Texture to display
 	Texture texture;
-	
-	/// Flag to allow/prohibit the update of the animation
-	bool updateAnimationFrame;
 	
 	/// Flag to invalidate the spatial properties caches (position, rotation, scale)
 	bool transformed;
@@ -146,6 +105,13 @@ abstract class Sprite : VisualComponent
 	/// Retrieve the sprite's bounding box.
 	/// @return Bounding box of the mesh
 	override RightBox getRightBox();
+
+	/// Create an animation controller for this sprite.
+	override void createAnimationController();
+
+	/// Force the change of frame according to each child class' implementation.
+	/// @param actualFrame: The frame of the playing animation to skip to
+	override void forceChangeOfFrame(int16 actualFrame);
 
 	/// Render the sprite by configuring the DRAM assigned to it by means of the provided index.
 	/// @param index: Determines the region of DRAM that this sprite is allowed to configure
@@ -232,71 +198,6 @@ abstract class Sprite : VisualComponent
 	/// Check if the sprite displays a texture in HBIAS mode.
 	/// @return True if the sprite displays a texture in HBIAS mode; false otherwise
 	bool isHBias();
-	
-	/// Create an animation controller for this sprite.
-	void createAnimationController();
-
-	/// Retrieve the sprite's animation controller.
-	/// @return sprite's animation controller
-	AnimationController getAnimationController();
-
-	/// Play the animation with the provided name from the provided array of animation functions.
-	/// @param animationFunctions: Array of animation functions to look for the animation function to replay
-	/// @param animationName: Name of the animation to play
-	/// @param scope: Object that will be notified of playback events
-	/// @return True if the animation started playing; false otherwise
-	bool play(const AnimationFunction* animationFunctions[], const char* animationName, ListenerObject scope);
-
-	/// Replay the last playing animation, if any, from the provided array of animation functions.
-	/// @param animationFunctions: Array of animation functions to look for the animation function to replay
-	/// @return True if the animation started playing again; false otherwise
-	bool replay(const AnimationFunction* animationFunctions[]);
-
-	/// Pause or unpause the currently playing animation if any.
-	/// @param pause: Flag that signals if the animation must be paused or unpaused
-	void pause(bool pause);
-
-	/// Stop any playing animation if any.
-	void stop();
-
-	/// Check if an animation is playing.
-	/// @return True if an animation is playing; false otherwise
-	bool isPlaying();
-
-	/// Check if the animation whose name is provided is playing.
-	/// @param animationName: Name of the animation to check
-	/// @return True if an animation is playing; false otherwise
-	bool isPlayingAnimation(char* animationName);
-
-	/// Skip the currently playing animation to the next frame.
-	void nextFrame();
-
-	/// Rewind the currently playing animation to the previous frame.
-	void previousFrame();
-
-	/// Skip the currently playing animation to the provided frame.
-	/// @param actualFrame: The frame of the playing animation to skip to
-	/// @return True if the actual frame was changed; false otherwise
-	void setActualFrame(int16 actualFrame);
-
-	/// Retrieve the actual frame of the playing animation if any.
-	/// @return Actual frame of the playing animation if any
-	int16 getActualFrame();
-
-	/// Set the duration in game cycles for each frame of animation.
-	/// @param frameDuration: Duration in game cycles for each frame of animation
-	void setFrameDuration(uint8 frameDuration);
-
-	/// Retrieve the duration in game cycles for each frame of animation.
-	uint8 getFrameDuration();
-
-	/// Set the decrement to frameDuration in each game cycle for each frame of animation.
-	/// @param frameDurationDecrement: Decrement to frameDuration in each game cycle for each frame of animation
-	void setFrameDurationDecrement(uint8 frameDurationDecrement);
-
-	/// Retrieve the animation function's name currently playing if any
-	/// @return Animation function's name currently playing if any
-	const char* getPlayingAnimationName();
 
 	/// Set the position cache.
 	/// @param position: Position cache to save 

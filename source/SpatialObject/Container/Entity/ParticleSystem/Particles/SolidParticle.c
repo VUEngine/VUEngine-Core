@@ -179,8 +179,7 @@ bool SolidParticle::collisionStarts(const CollisionInformation* collisionInforma
 
 		if(NULL != this->solidParticleSpec->onCollisionAnimation)
 		{
-			
-			Sprite::play(this->sprite, ((ParticleSpec*)this->solidParticleSpec)->animationFunctions, this->solidParticleSpec->onCollisionAnimation, ListenerObject::safeCast(this));
+			VisualComponent::play(this->visualComponent, ((ParticleSpec*)this->solidParticleSpec)->animationFunctions, this->solidParticleSpec->onCollisionAnimation, ListenerObject::safeCast(this));
 		}
 	}
 

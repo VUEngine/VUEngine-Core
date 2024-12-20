@@ -60,9 +60,7 @@ void Sprite::constructor(SpatialObject owner, const SpriteSpec* spriteSpec)
 	this->texture = NULL;
 	this->halfWidth = 0;
 	this->halfHeight = 0;
-	this->animationController = NULL;
 	this->transparency = __TRANSPARENCY_NONE;
-	this->updateAnimationFrame = false;
 	this->checkIfWithinScreenSpace = true;
 	this->position = (PixelVector){0, 0, 0, 0};
 	this->rotation = Rotation::zero();
@@ -84,14 +82,6 @@ void Sprite::constructor(SpatialObject owner, const SpriteSpec* spriteSpec)
 //---------------------------------------------------------------------------------------------------------
 void Sprite::destructor()
 {
-	ASSERT(this, "Sprite::destructor: null cast");
-
-	if(!isDeleted(this->animationController))
-	{
-		delete this->animationController;
-		this->animationController = NULL;
-	}
-
 	// destroy the super object
 	// must always be called at the end of the destructor
 	Base::destructor();
@@ -118,6 +108,40 @@ RightBox Sprite::getRightBox()
 		__PIXELS_TO_METERS(this->halfHeight + this->displacement.y),
 		__PIXELS_TO_METERS(SPRITE_HALF_DEPTH),
 	};
+}
+//---------------------------------------------------------------------------------------------------------
+void Sprite::createAnimationController()
+{
+    this->animationController = new AnimationController();
+
+	if(isDeleted(this->animationController))
+	{
+		this->animationController = NULL;
+		return;
+	}
+	
+	if(!isDeleted(this->texture) && Texture::isSingleFrame(this->texture) && Texture::isShared(this->texture))
+	{
+		AnimationController::setAnimationCoordinator
+		(
+			this->animationController,
+			AnimationCoordinatorFactory::getCoordinator
+			(
+				AnimationCoordinatorFactory::getInstance(),
+				this->animationController, 
+				ListenerObject::safeCast(this->owner), 
+				Texture::getSpec(this->texture)->charSetSpec
+			)
+		);
+	}
+}
+//---------------------------------------------------------------------------------------------------------
+void Sprite::forceChangeOfFrame(int16 actualFrame)
+{
+	if(!isDeleted(this->texture))
+	{
+		Texture::setFrame(this->texture, actualFrame);
+	}
 }
 //---------------------------------------------------------------------------------------------------------
 int16 Sprite::render(int16 index, bool updateAnimation)
@@ -355,180 +379,6 @@ bool Sprite::isAffine()
 bool Sprite::isHBias()
 {
 	return __WORLD_HBIAS == (this->head & __WORLD_HBIAS);
-}
-//---------------------------------------------------------------------------------------------------------
-void Sprite::createAnimationController()
-{
-    this->animationController = new AnimationController();
-
-	if(isDeleted(this->animationController))
-	{
-		this->animationController = NULL;
-		return;
-	}
-	
-	if(!isDeleted(this->texture) && Texture::isSingleFrame(this->texture) && Texture::isShared(this->texture))
-	{
-		AnimationController::setAnimationCoordinator
-		(
-			this->animationController,
-			AnimationCoordinatorFactory::getCoordinator
-			(
-				AnimationCoordinatorFactory::getInstance(),
-				this->animationController, 
-				ListenerObject::safeCast(this->owner), 
-				Texture::getSpec(this->texture)->charSetSpec
-			)
-		);
-	}
-}
-//---------------------------------------------------------------------------------------------------------
-AnimationController Sprite::getAnimationController()
-{
-	return this->animationController;
-}
-//---------------------------------------------------------------------------------------------------------
-bool Sprite::play(const AnimationFunction* animationFunctions[], const char* animationName, ListenerObject scope)
-{
-	ASSERT(NULL != animationFunctions, "Sprite::play: null animationFunctions");
-	ASSERT(NULL != animationName, "Sprite::play: null animationName");
-
-	bool playBackStarted = false;
-
-	if(!isDeleted(this->animationController))
-	{
-		playBackStarted = AnimationController::play(this->animationController, animationFunctions, animationName, scope);
-		this->rendered = this->rendered && !this->updateAnimationFrame;
-	}
-
-	return playBackStarted;
-}
-//---------------------------------------------------------------------------------------------------------
-bool Sprite::replay(const AnimationFunction* animationFunctions[])
-{
-	if(!isDeleted(this->animationController))
-	{
-		AnimationController::replay(this->animationController, animationFunctions);
-		this->rendered = this->rendered && !this->updateAnimationFrame;
-
-		return this->updateAnimationFrame;
-	}
-
-	return false;
-}
-//---------------------------------------------------------------------------------------------------------
-void Sprite::pause(bool pause)
-{
-	if(!isDeleted(this->animationController))
-	{
-		// first animate the frame
-		AnimationController::pause(this->animationController, pause);
-	}
-}
-//---------------------------------------------------------------------------------------------------------
-void Sprite::stop()
-{
-	if(!isDeleted(this->animationController))
-	{
-		AnimationController::stop(this->animationController);
-	}
-}
-//---------------------------------------------------------------------------------------------------------
-bool Sprite::isPlaying()
-{
-	if(!isDeleted(this->animationController))
-	{
-		// first animate the frame
-		return AnimationController::isPlaying(this->animationController);
-	}
-
-	return false;
-}
-//---------------------------------------------------------------------------------------------------------
-bool Sprite::isPlayingAnimation(char* animationName)
-{
-	if(!isDeleted(this->animationController))
-	{
-		return AnimationController::isPlayingFunction(this->animationController, animationName);
-	}
-
-	return false;
-}
-//---------------------------------------------------------------------------------------------------------
-void Sprite::nextFrame()
-{
-	if(!isDeleted(this->animationController))
-	{
-		AnimationController::nextFrame(this->animationController);
-		this->updateAnimationFrame = true;
-	}
-}
-//---------------------------------------------------------------------------------------------------------
-void Sprite::previousFrame()
-{
-	if(!isDeleted(this->animationController))
-	{
-		AnimationController::previousFrame(this->animationController);
-		this->updateAnimationFrame = true;
-	}
-}
-//---------------------------------------------------------------------------------------------------------
-void Sprite::setActualFrame(int16 actualFrame)
-{
-	if(!isDeleted(this->animationController))
-	{
-		this->updateAnimationFrame = this->updateAnimationFrame || AnimationController::setActualFrame(this->animationController, actualFrame);
-	}
-	else if(!isDeleted(this->texture))
-	{
-		Texture::setFrame(this->texture, actualFrame);
-	}
-}
-//---------------------------------------------------------------------------------------------------------
-int16 Sprite::getActualFrame()
-{
-	if(!isDeleted(this->animationController))
-	{
-		return AnimationController::getActualFrame(this->animationController);
-	}
-
-	return -1;
-}
-//---------------------------------------------------------------------------------------------------------
-void Sprite::setFrameDuration(uint8 frameDuration)
-{
-	if(!isDeleted(this->animationController))
-	{
-		AnimationController::setFrameDuration(this->animationController, frameDuration);
-	}
-}
-//---------------------------------------------------------------------------------------------------------
-uint8 Sprite::getFrameDuration()
-{
-	if(!isDeleted(this->animationController))
-	{
-		return AnimationController::getFrameDuration(this->animationController);
-	}
-
-	return -1;
-}
-//---------------------------------------------------------------------------------------------------------
-void Sprite::setFrameDurationDecrement(uint8 frameDurationDecrement)
-{
-	if(!isDeleted(this->animationController))
-	{
-		AnimationController::setFrameDurationDecrement(this->animationController, frameDurationDecrement);
-	}
-}
-//---------------------------------------------------------------------------------------------------------
-const char* Sprite::getPlayingAnimationName()
-{
-	if(!isDeleted(this->animationController))
-	{
-		return AnimationController::getPlayingAnimationName(this->animationController);
-	}
-
-	return "None";
 }
 //---------------------------------------------------------------------------------------------------------
 void Sprite::setPosition(const PixelVector* position)

@@ -246,7 +246,7 @@ void ParticleSystem::resume()
 	{
 		Particle particle = Particle::safeCast(node->data);
 
-		Particle::resume(particle, ParticleSystem::getSpriteSpec(this), ParticleSystem::getWireframeSpec(this), ((ParticleSystemSpec*)this->entitySpec)->particleSpec->animationFunctions, ((ParticleSystemSpec*)this->entitySpec)->particleSpec->initialAnimation);
+		Particle::resume(particle, ParticleSystem::getVisualComponentSpec(this), ((ParticleSystemSpec*)this->entitySpec)->particleSpec->animationFunctions, ((ParticleSystemSpec*)this->entitySpec)->particleSpec->initialAnimation);
 	}
 
 	this->nextSpawnTime = ParticleSystem::computeNextSpawnTime(this);
@@ -408,10 +408,7 @@ void ParticleSystem::configure()
 	this->maximumNumberOfAliveParticles = ((ParticleSystemSpec*)this->entitySpec)->maximumNumberOfAliveParticles;
 
 	// Calculate the number of sprite specs
-	for(this->numberOfSpriteSpecs = 0; 0 <= this->numberOfSpriteSpecs && NULL != ((ParticleSystemSpec*)this->entitySpec)->spriteSpecs && NULL != ((ParticleSystemSpec*)this->entitySpec)->spriteSpecs[this->numberOfSpriteSpecs]; this->numberOfSpriteSpecs++);
-	
-	// Calculate the number of wireframe specs
-	for(this->numberOfWireframeSpecs = 0; 0 <= this->numberOfWireframeSpecs && NULL != ((ParticleSystemSpec*)this->entitySpec)->wireframeSpecs && NULL != ((ParticleSystemSpec*)this->entitySpec)->wireframeSpecs[this->numberOfWireframeSpecs]; this->numberOfWireframeSpecs++);
+	for(this->numberOfVisualComponentSpecs = 0; 0 <= this->numberOfVisualComponentSpecs && NULL != ((ParticleSystemSpec*)this->entitySpec)->visualComponentSpecs && NULL != ((ParticleSystemSpec*)this->entitySpec)->visualComponentSpecs[this->numberOfVisualComponentSpecs]; this->numberOfVisualComponentSpecs++);
 }
 //---------------------------------------------------------------------------------------------------------
 Particle ParticleSystem::spawnParticle()
@@ -428,7 +425,7 @@ Particle ParticleSystem::spawnParticle()
 		force = ParticleSystem::getParticleSpawnForce(this);
 	}
 
-	Particle::setup(particle, ParticleSystem::getSpriteSpec(this), ParticleSystem::getWireframeSpec(this), lifeSpan, &position, &force, ((ParticleSystemSpec*)this->entitySpec)->movementType, ((ParticleSystemSpec*)this->entitySpec)->particleSpec->animationFunctions, ((ParticleSystemSpec*)this->entitySpec)->particleSpec->initialAnimation);
+	Particle::setup(particle, ParticleSystem::getVisualComponentSpec(this), lifeSpan, &position, &force, ((ParticleSystemSpec*)this->entitySpec)->movementType, ((ParticleSystemSpec*)this->entitySpec)->particleSpec->animationFunctions, ((ParticleSystemSpec*)this->entitySpec)->particleSpec->initialAnimation);
 
 	if(ParticleSystem::overrides(this, particleSpawned))
 	{
@@ -452,11 +449,11 @@ bool ParticleSystem::recycleParticle()
 			if(this->applyForceToParticles)
 			{
 				Vector3D force = ParticleSystem::getParticleSpawnForce(this);
-				Particle::setup(particle, ParticleSystem::getSpriteSpec(this), ParticleSystem::getWireframeSpec(this), lifeSpan, &position, &force, ((ParticleSystemSpec*)this->entitySpec)->movementType, ((ParticleSystemSpec*)this->entitySpec)->particleSpec->animationFunctions, ((ParticleSystemSpec*)this->entitySpec)->particleSpec->initialAnimation);
+				Particle::setup(particle, ParticleSystem::getVisualComponentSpec(this), lifeSpan, &position, &force, ((ParticleSystemSpec*)this->entitySpec)->movementType, ((ParticleSystemSpec*)this->entitySpec)->particleSpec->animationFunctions, ((ParticleSystemSpec*)this->entitySpec)->particleSpec->initialAnimation);
 			}
 			else
 			{
-				Particle::setup(particle, ParticleSystem::getSpriteSpec(this), ParticleSystem::getWireframeSpec(this), lifeSpan, &position, NULL, ((ParticleSystemSpec*)this->entitySpec)->movementType, ((ParticleSystemSpec*)this->entitySpec)->particleSpec->animationFunctions, ((ParticleSystemSpec*)this->entitySpec)->particleSpec->initialAnimation);
+				Particle::setup(particle, ParticleSystem::getVisualComponentSpec(this), lifeSpan, &position, NULL, ((ParticleSystemSpec*)this->entitySpec)->movementType, ((ParticleSystemSpec*)this->entitySpec)->particleSpec->animationFunctions, ((ParticleSystemSpec*)this->entitySpec)->particleSpec->initialAnimation);
 			}
 
 			if(ParticleSystem::overrides(this, particleRecycled))
@@ -540,38 +537,21 @@ bool ParticleSystem::appliesForceToParticles()
 	return false;
 } 
 //---------------------------------------------------------------------------------------------------------
-const SpriteSpec* ParticleSystem::getSpriteSpec()
+const VisualComponentSpec* ParticleSystem::getVisualComponentSpec()
 {
-	if(0 == this->numberOfSpriteSpecs)
+	if(0 == this->numberOfVisualComponentSpecs)
 	{
 		return NULL;
 	}
 
 	int32 specIndex = 0;
 
-	if(1 < this->numberOfSpriteSpecs)
+	if(1 < this->numberOfVisualComponentSpecs)
 	{
-		specIndex = Math::random(_gameRandomSeed, this->numberOfSpriteSpecs);
+		specIndex = Math::random(_gameRandomSeed, this->numberOfVisualComponentSpecs);
 	}
 
-	return (const SpriteSpec*)((ParticleSystemSpec*)this->entitySpec)->spriteSpecs[specIndex];
-}
-//---------------------------------------------------------------------------------------------------------
-const WireframeSpec* ParticleSystem::getWireframeSpec()
-{
-	if(0 == this->numberOfWireframeSpecs)
-	{
-		return NULL;
-	}
-
-	int32 specIndex = 0;
-
-	if(1 < this->numberOfWireframeSpecs)
-	{
-		specIndex = Math::random(_gameRandomSeed, this->numberOfWireframeSpecs);
-	}
-
-	return (const WireframeSpec*)((ParticleSystemSpec*)this->entitySpec)->wireframeSpecs[specIndex];
+	return (const VisualComponentSpec*)((ParticleSystemSpec*)this->entitySpec)->visualComponentSpecs[specIndex];
 }
 //---------------------------------------------------------------------------------------------------------
 int32 ParticleSystem::computeNextSpawnTime()

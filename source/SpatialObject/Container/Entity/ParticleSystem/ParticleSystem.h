@@ -44,11 +44,8 @@ typedef struct ParticleSystemSpec
 	/// Maximum number of particles to spawn in each cycle
 	uint8 maximumNumberOfParticlesToSpawnPerCycle;
 
-	/// Array of sprites to select randomly
-	const SpriteSpec** spriteSpecs;
-
-	/// Array of wireframes to select randomly
-	const WireframeSpec** wireframeSpecs;
+	/// Array of visual coponent specs to select randomly
+	const VisualComponentSpec** visualComponentSpecs;
 
 	/// Auto start
 	bool autoStart;
@@ -108,8 +105,8 @@ class ParticleSystem : Entity
 	/// Time when the next particle has to be spawned
 	int32 nextSpawnTime;
 
-	/// Number of available sprite specs for particles
-	int8 numberOfSpriteSpecs;
+	/// Number of available visual component specs for particles
+	int8 numberOfVisualComponentSpecs;
 
 	/// Number of available wireframes specs for particles
 	int8 numberOfWireframeSpecs;

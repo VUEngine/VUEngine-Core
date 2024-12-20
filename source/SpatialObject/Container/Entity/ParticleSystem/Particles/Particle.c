@@ -38,8 +38,7 @@ void Particle::constructor(const ParticleSpec* particleSpec __attribute__((unuse
 	Base::constructor();
 
 	this->lifeSpan = 0;
-	this->sprite = NULL;
-	this->wireframe = NULL;
+	this->visualComponent = NULL;
 	this->expired = false;
 }
 //---------------------------------------------------------------------------------------------------------
@@ -57,7 +56,7 @@ bool Particle::isSubjectToGravity(Vector3D gravity __attribute__ ((unused)))
 	return false;
 }
 //---------------------------------------------------------------------------------------------------------
-void Particle::setup(const SpriteSpec* spriteSpec, const WireframeSpec* wireframeSpec, int16 lifeSpan, const Vector3D* position, const Vector3D* force, uint32 movementType, const AnimationFunction** animationFunctions, const char* animationName)
+void Particle::setup(const VisualComponentSpec* visualComponentSpec, int16 lifeSpan, const Vector3D* position, const Vector3D* force, uint32 movementType, const AnimationFunction** animationFunctions, const char* animationName)
 {
 	if(Particle::overrides(this, reset))
 	{
@@ -83,8 +82,7 @@ void Particle::setup(const SpriteSpec* spriteSpec, const WireframeSpec* wirefram
 		this->transformation.position = *position;
 	}
 
-	Particle::addSprite(this, spriteSpec);
-	Particle::addWireframe(this, wireframeSpec);
+	Particle::addVisualComponent(this, visualComponentSpec);
 	Particle::changeAnimation(this, animationFunctions, animationName);
 	Particle::setLifeSpan(this, lifeSpan);
 
@@ -99,10 +97,9 @@ void Particle::setup(const SpriteSpec* spriteSpec, const WireframeSpec* wirefram
 	Particle::show(this);
 }
 //---------------------------------------------------------------------------------------------------------
-void Particle::resume(const SpriteSpec* spriteSpec, const WireframeSpec* wireframeSpec, const AnimationFunction** animationFunctions, const char* animationName)
+void Particle::resume(const VisualComponentSpec* visualComponentSpec, const AnimationFunction** animationFunctions, const char* animationName)
 {
-	Particle::addSprite(this, spriteSpec);
-	Particle::addWireframe(this, wireframeSpec);
+	Particle::addVisualComponent(this, visualComponentSpec);
 	Particle::changeAnimation(this, animationFunctions, animationName);
 }
 //---------------------------------------------------------------------------------------------------------
@@ -120,40 +117,25 @@ void Particle::expire()
 //---------------------------------------------------------------------------------------------------------
 void Particle::show()
 {
-	if(!isDeleted(this->sprite))
+	if(!isDeleted(this->visualComponent))
 	{
-		Sprite::show(this->sprite);
-	}
-
-	if(!isDeleted(this->wireframe))
-	{
-		Wireframe::show(this->wireframe);
+		VisualComponent::show(this->visualComponent);
 	}
 }
 //---------------------------------------------------------------------------------------------------------
 void Particle::hide()
 {
-	if(!isDeleted(this->sprite))
+	if(!isDeleted(this->visualComponent))
 	{
-		Sprite::hide(this->sprite);
-	}
-
-	if(!isDeleted(this->wireframe))
-	{
-		Wireframe::hide(this->wireframe);
+		VisualComponent::hide(this->visualComponent);
 	}
 }
 //---------------------------------------------------------------------------------------------------------
 void Particle::setTransparency(uint8 transparency)
 {
-	if(!isDeleted(this->sprite))
+	if(!isDeleted(this->visualComponent))
 	{
-		Sprite::setTransparency(this->sprite, transparency);
-	}
-
-	if(!isDeleted(this->wireframe))
-	{
-		Wireframe::setTransparency(this->wireframe, transparency);
+		VisualComponent::setTransparency(this->visualComponent, transparency);
 	}
 }
 //---------------------------------------------------------------------------------------------------------
@@ -164,23 +146,8 @@ bool Particle::isVisible()
 	int16 halfWidth = __PARTICLE_VISIBILITY_PADDING;
 	int16 halfHeight = __PARTICLE_VISIBILITY_PADDING;
 
-	if(!isDeleted(this->sprite))
-	{
-		pixelVector = Sprite::getDisplacedPosition(this->sprite);
-
-		Texture texture = Sprite::getTexture(this->sprite);
-
-		if(!isDeleted(texture))
-		{
-			halfWidth = Texture::getCols(texture) << 2;
-			halfHeight = Texture::getRows(texture) << 2;
-		}
-	}
-	else
-	{
-		Vector3D relativeGlobalPosition = Vector3D::rotate(Vector3D::getRelativeToCamera(this->transformation.position), *_cameraInvertedRotation);
-		pixelVector = PixelVector::projectVector3D(relativeGlobalPosition, Optics::calculateParallax(relativeGlobalPosition.z));
-	}
+	Vector3D relativeGlobalPosition = Vector3D::rotate(Vector3D::getRelativeToCamera(this->transformation.position), *_cameraInvertedRotation);
+	pixelVector = PixelVector::projectVector3D(relativeGlobalPosition, Optics::calculateParallax(relativeGlobalPosition.z));
 
 	// check x visibility
 	if(pixelVector.x + halfWidth < _cameraFrustum->x0 || pixelVector.x - halfWidth > _cameraFrustum->x1)
@@ -241,51 +208,32 @@ void Particle::configureMass()
 //=========================================================================================================
 
 //---------------------------------------------------------------------------------------------------------
-void Particle::addSprite(const SpriteSpec* spriteSpec)
+void Particle::addVisualComponent(const VisualComponentSpec* visualComponentSpec)
 {
-	if(NULL != spriteSpec && NULL == this->sprite)
+	if(NULL != visualComponentSpec && NULL == this->visualComponent)
 	{
 		// call the appropriate allocator to support inheritance
-		this->sprite = SpriteManager::createSprite(SpriteManager::getInstance(), SpatialObject::safeCast(this), (SpriteSpec*)spriteSpec);
-
-		ASSERT(this->sprite, "Particle::addSprite: sprite not created");
-	}
-}
-//---------------------------------------------------------------------------------------------------------
-void Particle::addWireframe(const WireframeSpec* wireframeSpec)
-{
-	if(NULL != wireframeSpec && NULL == this->wireframe)
-	{
-		this->wireframe = WireframeManager::createWireframe(WireframeManager::getInstance(), SpatialObject::safeCast(this), wireframeSpec);
-
-		NM_ASSERT(this->wireframe, "Particle::addWireframe: wireframe not created");
+		this->visualComponent = VisualComponent::safeCast(ComponentManager::addComponent(SpatialObject::safeCast(this), (ComponentSpec*)visualComponentSpec));
 	}
 }
 //---------------------------------------------------------------------------------------------------------
 void Particle::destroyGraphics()
 {
-	if(!isDeleted(this->sprite))
+	if(!isDeleted(this->visualComponent))
 	{
-		SpriteManager::destroySprite(SpriteManager::getInstance(), this->sprite);
+		ComponentManager::removeComponent(SpatialObject::safeCast(this), Component::safeCast(this->visualComponent));
 	}
 
-	this->sprite = NULL;
-
-	if(!isDeleted(this->wireframe))
-	{
-		WireframeManager::destroyWireframe(WireframeManager::getInstance(), this->wireframe);
-	}
-
-	this->wireframe = NULL;
+	this->visualComponent = NULL;
 }
 //---------------------------------------------------------------------------------------------------------
 void Particle::changeAnimation(const AnimationFunction** animationFunctions, const char* animationName)
 {
-	if(!isDeleted(this->sprite) && NULL != animationName)
+	if(!isDeleted(this->visualComponent) && NULL != animationName)
 	{
-		if(!Sprite::replay(this->sprite, animationFunctions))
+		if(!VisualComponent::replay(this->visualComponent, animationFunctions))
 		{
-			Sprite::play(this->sprite, animationFunctions, (char*)animationName, ListenerObject::safeCast(this));
+			VisualComponent::play(this->visualComponent, animationFunctions, (char*)animationName, ListenerObject::safeCast(this));
 		}
 	}
 }

@@ -12,6 +12,8 @@
 // INCLUDES
 //=========================================================================================================
 
+#include <AnimationController.h>
+#include <ComponentManager.h>
 #include <DebugConfig.h>
 #include <Printing.h>
 #include <SpatialObject.h>
@@ -151,10 +153,18 @@ void VisualComponent::constructor(SpatialObject owner, const VisualComponentSpec
 
 	this->show = __SHOW;
 	this->rendered = false;
+	this->animationController = NULL;
+	this->updateAnimationFrame = false;
 }
 //---------------------------------------------------------------------------------------------------------
 void VisualComponent::destructor()
 {	
+	if(!isDeleted(this->animationController))
+	{
+		delete this->animationController;
+		this->animationController = NULL;
+	}
+
 	// must always be called at the end of the destructor
 	Base::destructor();
 }
@@ -183,6 +193,160 @@ void VisualComponent::handleCommand(int32 command, va_list args)
 			Base::handleCommand(this, command, args);
 			break;
 	}
+}
+//---------------------------------------------------------------------------------------------------------
+AnimationController VisualComponent::getAnimationController()
+{
+	return this->animationController;
+}
+//---------------------------------------------------------------------------------------------------------
+void VisualComponent::createAnimationController()
+{}
+//---------------------------------------------------------------------------------------------------------
+void VisualComponent::forceChangeOfFrame(int16 actualFrame __attribute__((unused)))
+{}
+//---------------------------------------------------------------------------------------------------------
+bool VisualComponent::play(const AnimationFunction* animationFunctions[], const char* animationName, ListenerObject scope)
+{
+	ASSERT(NULL != animationFunctions, "VisualComponent::play: null animationFunctions");
+	ASSERT(NULL != animationName, "VisualComponent::play: null animationName");
+
+	bool playBackStarted = false;
+
+	if(!isDeleted(this->animationController))
+	{
+		playBackStarted = AnimationController::play(this->animationController, animationFunctions, animationName, scope);
+		this->rendered = this->rendered && !this->updateAnimationFrame;
+	}
+
+	return playBackStarted;
+}
+//---------------------------------------------------------------------------------------------------------
+bool VisualComponent::replay(const AnimationFunction* animationFunctions[])
+{
+	if(!isDeleted(this->animationController))
+	{
+		AnimationController::replay(this->animationController, animationFunctions);
+		this->rendered = this->rendered && !this->updateAnimationFrame;
+
+		return this->updateAnimationFrame;
+	}
+
+	return false;
+}
+//---------------------------------------------------------------------------------------------------------
+void VisualComponent::pause(bool pause)
+{
+	if(!isDeleted(this->animationController))
+	{
+		// first animate the frame
+		AnimationController::pause(this->animationController, pause);
+	}
+}
+//---------------------------------------------------------------------------------------------------------
+void VisualComponent::stop()
+{
+	if(!isDeleted(this->animationController))
+	{
+		AnimationController::stop(this->animationController);
+	}
+}
+//---------------------------------------------------------------------------------------------------------
+bool VisualComponent::isPlaying()
+{
+	if(!isDeleted(this->animationController))
+	{
+		// first animate the frame
+		return AnimationController::isPlaying(this->animationController);
+	}
+
+	return false;
+}
+//---------------------------------------------------------------------------------------------------------
+bool VisualComponent::isPlayingAnimation(char* animationName)
+{
+	if(!isDeleted(this->animationController))
+	{
+		return AnimationController::isPlayingFunction(this->animationController, animationName);
+	}
+
+	return false;
+}
+//---------------------------------------------------------------------------------------------------------
+void VisualComponent::nextFrame()
+{
+	if(!isDeleted(this->animationController))
+	{
+		AnimationController::nextFrame(this->animationController);
+		this->updateAnimationFrame = true;
+	}
+}
+//---------------------------------------------------------------------------------------------------------
+void VisualComponent::previousFrame()
+{
+	if(!isDeleted(this->animationController))
+	{
+		AnimationController::previousFrame(this->animationController);
+		this->updateAnimationFrame = true;
+	}
+}
+//---------------------------------------------------------------------------------------------------------
+void VisualComponent::setActualFrame(int16 actualFrame)
+{
+	if(!isDeleted(this->animationController))
+	{
+		this->updateAnimationFrame = this->updateAnimationFrame || AnimationController::setActualFrame(this->animationController, actualFrame);
+	}
+	else
+	{
+		VisualComponent::forceChangeOfFrame(this, actualFrame);
+	}
+}
+//---------------------------------------------------------------------------------------------------------
+int16 VisualComponent::getActualFrame()
+{
+	if(!isDeleted(this->animationController))
+	{
+		return AnimationController::getActualFrame(this->animationController);
+	}
+
+	return -1;
+}
+//---------------------------------------------------------------------------------------------------------
+void VisualComponent::setFrameDuration(uint8 frameDuration)
+{
+	if(!isDeleted(this->animationController))
+	{
+		AnimationController::setFrameDuration(this->animationController, frameDuration);
+	}
+}
+//---------------------------------------------------------------------------------------------------------
+uint8 VisualComponent::getFrameDuration()
+{
+	if(!isDeleted(this->animationController))
+	{
+		return AnimationController::getFrameDuration(this->animationController);
+	}
+
+	return -1;
+}
+//---------------------------------------------------------------------------------------------------------
+void VisualComponent::setFrameDurationDecrement(uint8 frameDurationDecrement)
+{
+	if(!isDeleted(this->animationController))
+	{
+		AnimationController::setFrameDurationDecrement(this->animationController, frameDurationDecrement);
+	}
+}
+//---------------------------------------------------------------------------------------------------------
+const char* VisualComponent::getPlayingAnimationName()
+{
+	if(!isDeleted(this->animationController))
+	{
+		return AnimationController::getPlayingAnimationName(this->animationController);
+	}
+
+	return "None";
 }
 //---------------------------------------------------------------------------------------------------------
 void VisualComponent::show()
