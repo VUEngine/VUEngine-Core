@@ -394,8 +394,14 @@ void Printing::addSprite()
 	{
 		{
 			{
-				// sprite's type
-				__TYPE(PrintingSprite),
+				// Component
+				{
+					// Allocator
+					__TYPE(PrintingSprite),
+
+					// Component type
+					kSpriteComponent
+				},
 
 				// texture spec
 				NULL,

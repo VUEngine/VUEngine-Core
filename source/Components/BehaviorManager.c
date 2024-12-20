@@ -39,7 +39,7 @@ Behavior BehaviorManager::createComponent(SpatialObject owner, const BehaviorSpe
 
 	Base::createComponent(this, owner, (ComponentSpec*)behaviorSpec);
 
-	Behavior behavior = ((Behavior (*)(SpatialObject, const ComponentSpec*)) ((ComponentSpec*)behaviorSpec)->allocator)(owner, (BehaviorSpec*)behaviorSpec);
+	Behavior behavior = ((Behavior (*)(SpatialObject, const BehaviorSpec*)) ((ComponentSpec*)behaviorSpec)->allocator)(owner, behaviorSpec);
 
 	VirtualList::pushBack(this->components, behavior);
 

@@ -63,7 +63,7 @@ void BodyManager::destroyComponent(SpatialObject owner, Body body)
 {
 	if(isDeleted(body))
 	{
-		return NULL;
+		return;
 	}
 
 	Base::destroyComponent(this, owner, Component::safeCast(body));

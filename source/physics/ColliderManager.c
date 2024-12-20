@@ -75,7 +75,7 @@ void ColliderManager::destroyComponent(SpatialObject owner, Collider collider)
 {
 	if(isDeleted(collider))
 	{
-		return NULL;
+		return;
 	}
 
 	Base::destroyComponent(this, owner, Component::safeCast(collider));

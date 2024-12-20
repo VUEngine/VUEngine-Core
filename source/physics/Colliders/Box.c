@@ -144,7 +144,14 @@ void Box::configureWireframe()
 	MeshSpec meshSpec =
 	{
 		{
-			__TYPE(Mesh),
+			// Component
+			{
+				// Allocator
+				__TYPE(Mesh),
+
+				// Component type
+				kWireframeComponent
+			},
 
 			/// displacement
 			{0, 0, 0},

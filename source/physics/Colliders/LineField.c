@@ -114,9 +114,16 @@ void LineField::configureWireframe()
 	*this->meshSpec = (MeshSpec)
 	{
 		{
-			__TYPE(Mesh),
+			// Component
+			{
+				// Allocator
+				__TYPE(Mesh),
 
-			/// displacement
+				// Component type
+				kWireframeComponent
+			},
+
+			// displacement
 			{0, 0, 0},
 
 			/// color
