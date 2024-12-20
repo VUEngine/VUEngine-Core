@@ -417,6 +417,25 @@ static void ComponentManager::cleanOwnerComponentLists(SpatialObject owner, uint
 //=========================================================================================================
 
 //---------------------------------------------------------------------------------------------------------
+void ComponentManager::constructor()
+{
+	Base::constructor();
+
+	this->components = new VirtualList();
+}
+//---------------------------------------------------------------------------------------------------------
+void ComponentManager::destructor()
+{
+	if(!isDeleted(this->components))
+	{
+		VirtualList::deleteData(this->components);
+		delete this->components;
+		this->components = NULL;
+	}
+
+	Base::destructor();
+}
+//---------------------------------------------------------------------------------------------------------
 void ComponentManager::propagateCommand(int32 command, SpatialObject owner, ...)
 {
 	for(VirtualNode node = this->components->head; NULL != node; node = node->next)
@@ -501,31 +520,5 @@ VirtualList ComponentManager::doGetComponents(SpatialObject owner, VirtualList c
 bool ComponentManager::isAnyVisible(SpatialObject owner __attribute((unused)))
 {
 	return false;
-}
-//---------------------------------------------------------------------------------------------------------
-
-
-//=========================================================================================================
-// CLASS' PRIVATE METHODS
-//=========================================================================================================
-
-//---------------------------------------------------------------------------------------------------------
-void ComponentManager::constructor()
-{
-	Base::constructor();
-
-	this->components = new VirtualList();
-}
-//---------------------------------------------------------------------------------------------------------
-void ComponentManager::destructor()
-{
-	if(!isDeleted(this->components))
-	{
-		VirtualList::deleteData(this->components);
-		delete this->components;
-		this->components = NULL;
-	}
-
-	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------
