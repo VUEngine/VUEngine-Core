@@ -430,11 +430,6 @@ uint32 Entity::getInGameType()
 //---------------------------------------------------------------------------------------------------------
 void Entity::createComponents()
 {
-	if(!isDeleted(this->children))
-	{
-		Base::createComponents(this);
-	}
-
 #ifndef __RELEASE
 	if(0 < ComponentManager::getComponentsCount(SpatialObject::safeCast(this), kComponentTypes))
 	{
