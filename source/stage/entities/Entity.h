@@ -268,7 +268,8 @@ class Entity : Container
 
 	/// Attach a new components to the entity and configure it with the provided specs.
 	/// @param componentSpecs: Specifications to be used to configure the new components
-	void addComponents(ComponentSpec** componentSpecs);
+	/// @param componentType: Type of components to add
+	void addComponents(ComponentSpec** componentSpecs, uint32 componentType);
 
 	/// Remove the components of a give type from the entity.
 	/// @param componentType: Type of components to remove

@@ -94,11 +94,14 @@ static void ComponentManager::removeComponent(SpatialObject owner, Component com
 	ComponentManager::destroyComponent(componentManager, owner, component);
 }
 //---------------------------------------------------------------------------------------------------------
-static void ComponentManager::addComponents(SpatialObject owner, ComponentSpec** componentSpecs)
+static void ComponentManager::addComponents(SpatialObject owner, ComponentSpec** componentSpecs, uint32 componentType)
 {
 	for(int32 i = 0; NULL != componentSpecs[i] && NULL != componentSpecs[i]->allocator; i++)
 	{
-		ComponentManager::addComponent(owner, componentSpecs[i]);
+		if(kComponentTypes <= componentType || componentSpecs[i]->componentType == componentType)
+		{
+			ComponentManager::addComponent(owner, componentSpecs[i]);
+		}
 		
 #ifndef __RELEASE
 		if(__MAXIMUM_NUMBER_OF_COMPONENTS < i)
@@ -468,10 +471,10 @@ Component ComponentManager::createComponent(SpatialObject owner, const Component
 		return NULL;
 	}
 
-	if(!isDeleted(owner->components[ componentSpec->componentType]))
+	if(NULL != owner->components && !isDeleted(owner->components[componentSpec->componentType]))
 	{
-		delete owner->components[ componentSpec->componentType];
-		owner->components[ componentSpec->componentType] = NULL;
+		delete owner->components[componentSpec->componentType];
+		owner->components[componentSpec->componentType] = NULL;
 	}
 
 	return NULL;
@@ -489,7 +492,7 @@ void ComponentManager::destroyComponent(SpatialObject owner, Component component
 		return;
 	}
 
-	if(!isDeleted(owner->components[ component->componentSpec->componentType]))
+	if(NULL != owner->components && !isDeleted(owner->components[ component->componentSpec->componentType]))
 	{
 		delete owner->components[ component->componentSpec->componentType];
 		owner->components[ component->componentSpec->componentType] = NULL;

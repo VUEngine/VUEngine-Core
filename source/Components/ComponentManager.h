@@ -61,7 +61,8 @@ singleton class ComponentManager : Object
 	/// Add components to the specified owner.
 	/// @param owner: Object to which the components attach to
 	/// @param componentSpecs: Specs to initialize the new components
-	static void addComponents(SpatialObject owner, ComponentSpec** componentSpecs);
+	/// @param componentType: Type of components to add
+	static void addComponents(SpatialObject owner, ComponentSpec** componentSpecs, uint32 componentType);
 
 	/// Remove components from the specified owner.
 	/// @param owner: Object to which the components attach to

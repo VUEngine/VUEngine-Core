@@ -436,10 +436,19 @@ void Entity::createComponents()
 	}
 
 #ifndef __RELEASE
-	NM_ASSERT(0 == ComponentManager::getComponentsCount(SpatialObject::safeCast(this), kComponentTypes), "Entity::createComponents: already created components");
+	if(0 < ComponentManager::getComponentsCount(SpatialObject::safeCast(this), kComponentTypes))
+	{
+		Printing::setDebugMode(Printing::getInstance());
+		Printing::clear(Printing::getInstance());
+
+		Printing::text(Printing::getInstance(), "Rogue entity: ", 1, 26, NULL);
+		Printing::hex(Printing::getInstance(), (uint32)Entity::getSpec(this), 1, 27, 8, NULL);
+
+		Error::triggerException("Entity::createComponents:: already crated components", NULL);		
+	}
 #endif
 
-	ComponentManager::addComponents(SpatialObject::safeCast(this), this->entitySpec->componentSpecs);
+	ComponentManager::addComponents(SpatialObject::safeCast(this), this->entitySpec->componentSpecs, kComponentTypes);
 
 	Entity::calculateSize(this);
 }
@@ -464,9 +473,9 @@ void Entity::removeComponent(Component component)
 	ComponentManager::removeComponent(SpatialObject::safeCast(this), component);
 }
 //---------------------------------------------------------------------------------------------------------
-void Entity::addComponents(ComponentSpec** componentSpecs)
+void Entity::addComponents(ComponentSpec** componentSpecs, uint32 componentType)
 {
-	ComponentManager::addComponents(SpatialObject::safeCast(this), componentSpecs);
+	ComponentManager::addComponents(SpatialObject::safeCast(this), componentSpecs, componentType);
 }
 //---------------------------------------------------------------------------------------------------------
 void Entity::removeComponents(uint32 componentType)
@@ -520,22 +529,18 @@ void Entity::suspend()
 {
 	Base::suspend(this);
 
-	/// PENDING: only recreate visual components
-	Entity::destroyComponents(this);
-
-//	ComponentManager::removeComponents(SpatialObject::safeCast(this), kSpriteComponent);
-//	ComponentManager::removeComponents(SpatialObject::safeCast(this), kWireframeComponent);
+	ComponentManager::removeComponents(SpatialObject::safeCast(this), kSpriteComponent);
+	ComponentManager::removeComponents(SpatialObject::safeCast(this), kWireframeComponent);
 }
 //---------------------------------------------------------------------------------------------------------
 void Entity::resume()
 {
 	Base::resume(this);
 
-	// initialize sprites
 	if(NULL != this->entitySpec)
 	{
-		/// PENDING: only recreate visual components
-		Entity::createComponents(this);
+		ComponentManager::addComponents(SpatialObject::safeCast(this), this->entitySpec->componentSpecs, kSpriteComponent);
+		ComponentManager::addComponents(SpatialObject::safeCast(this), this->entitySpec->componentSpecs, kWireframeComponent);
 	}
 
 	if(this->hidden)
