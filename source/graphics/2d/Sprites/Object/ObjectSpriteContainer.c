@@ -219,7 +219,6 @@ bool ObjectSpriteContainer::registerSprite(ObjectSprite objectSprite)
 		ObjectSprite otherSprite = ObjectSprite::safeCast(node->data);
 
 		NM_ASSERT(otherSprite != objectSprite, "ObjectSpriteContainer::registerSprite: sprite already registered");
-		NM_ASSERT(otherSprite->owner != objectSprite->owner, "ObjectSpriteContainer::registerSprite: sprite already registered");
 
 		if(otherSprite == objectSprite)
 		{
