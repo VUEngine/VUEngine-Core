@@ -37,8 +37,6 @@ void UIContainer::constructor(PositionedEntity* childrenPositionedEntities)
 
 	Base::constructor(NULL);
 
-	this->inheritEnvironment = __INHERIT_POSITION;
-
 	for(int16 i = 0; NULL != childrenPositionedEntities && NULL != childrenPositionedEntities[i].entitySpec; i++)
 	{
 		UIContainer::spawnChildEntity(this, &childrenPositionedEntities[i]);

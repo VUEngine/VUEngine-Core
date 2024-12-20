@@ -48,10 +48,6 @@ class Container : SpatialObject
 {
 	/// @protectedsection
 
-	/// Flags that determine whether to inherit position, rotation 
-	/// and scale from environment (parents)
-	uint8 inheritEnvironment;
-
 	/// 3D local transformation
 	Transformation localTransformation;
 
@@ -161,11 +157,6 @@ class Container : SpatialObject
 	/// Invalidate the transformation to force it to be recomputed in the next
 	/// game cycle.
 	void invalidateTransformation();
-
-	/// Set the flags that determine which of the transformation's components must
-	/// inherit those from this container's parent's
-	/// @param inheritEnvironment: Transformation inheritance flags
-	void setInheritEnvironment(uint8 inheritEnvironment);
 
 	/// Apply the transformations to this container's children.
 	/// @param invalidateTransformationFlag: Flag that determines which transfomation's components 

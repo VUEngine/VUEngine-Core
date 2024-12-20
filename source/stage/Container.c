@@ -55,7 +55,6 @@ void Container::constructor(const char* const name)
 	this->deleteMe = false;
 	this->ready = false;
 	this->dontStreamOut = false;
-	this->inheritEnvironment = __INHERIT_TRANSFORMATION;
 	this->hidden = false;
 
 	this->name = NULL;
@@ -474,11 +473,6 @@ void Container::invalidateTransformation()
 			Container::invalidateTransformation(node->data);
 		}
 	}
-}
-//---------------------------------------------------------------------------------------------------------
-void Container::setInheritEnvironment(uint8 inheritEnvironment)
-{
-	this->inheritEnvironment = inheritEnvironment;
 }
 //---------------------------------------------------------------------------------------------------------
 void Container::transformChildren(uint8 invalidateTransformationFlag)
@@ -970,8 +964,8 @@ void Container::doTransform(const Transformation* environmentTransformation, uin
 {
 	ASSERT(environmentTransformation, "Container::transform: null environmentTransformation");
 
-	uint8 invalidateTransformationFlagHelper = (invalidateTransformationFlag | this->transformation.invalid) & this->inheritEnvironment;
-
+	uint8 invalidateTransformationFlagHelper = (invalidateTransformationFlag | this->transformation.invalid);
+	
 	if(0 != (__INVALIDATE_SCALE & invalidateTransformationFlagHelper))
 	{
 		Container::applyEnvironmentToScale(this, environmentTransformation);
