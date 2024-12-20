@@ -370,8 +370,11 @@ void ColliderManager::destructor()
 {
 	ASSERT(this->components, "ColliderManager::destructor: null colliders");
 
-	ColliderManager::reset(this);
-
+	if(!isDeleted(this->components))
+	{
+		VirtualList::deleteData(this->components);
+	}
+	
 	// destroy the super object
 	// must always be called at the end of the destructor
 	Base::destructor();

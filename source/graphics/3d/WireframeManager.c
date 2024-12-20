@@ -355,7 +355,6 @@ void WireframeManager::constructor()
 {
 	Base::constructor();
 
-	this->components = new VirtualList();
 	this->stopDrawing = false;
 	this->evenFrame = __TRANSPARENCY_EVEN;
 	this->disabled = false;
@@ -372,8 +371,6 @@ void WireframeManager::destructor()
 	if(!isDeleted(this->components))
 	{
 		VirtualList::deleteData(this->components);
-		delete this->components;
-		this->components = NULL;
 	}
 
 	VIPManager::removeEventListener(VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)WireframeManager::onVIPManagerGAMESTARTDuringXPEND, kEventVIPManagerGAMESTARTDuringXPEND);

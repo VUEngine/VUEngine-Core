@@ -292,9 +292,6 @@ void BodyManager::constructor()
 {
 	Base::constructor();
 
-	// create the body list
-	this->components = new VirtualList();
-
 	this->gravity.x = 0;
 	this->gravity.y = 0;
 	this->gravity.z = 0;
@@ -317,8 +314,6 @@ void BodyManager::destructor()
 	if(!isDeleted(this->components))
 	{
 		VirtualList::deleteData(this->components);
-		delete this->components;
-		this->components = NULL;
 	}
 	
 	// destroy the super object
