@@ -390,7 +390,7 @@ void Printing::setPrintingBgmapSegment(int8 printingBgmapSegment)
 //---------------------------------------------------------------------------------------------------------
 void Printing::addSprite()
 {
-	PrintingSpriteSpec DefaultPrintingSprite =
+	PrintingSpriteSpec DefaultPrintingSpriteSpec =
 	{
 		{
 			{
@@ -431,7 +431,7 @@ void Printing::addSprite()
 	};
 
 	this->printingBgmapSegment = BgmapTextureManager::getPrintingBgmapSegment(BgmapTextureManager::getInstance());
-	this->activePrintingSprite = PrintingSprite::safeCast(SpriteManager::createSprite(SpriteManager::getInstance(), NULL, (SpriteSpec*)&DefaultPrintingSprite));
+	this->activePrintingSprite = PrintingSprite::safeCast(SpriteManager::createSprite(SpriteManager::getInstance(), NULL, (SpriteSpec*)&DefaultPrintingSpriteSpec));
 
 	PrintingSprite::setPrintingBgmapSegment(this->activePrintingSprite, this->printingBgmapSegment);
 

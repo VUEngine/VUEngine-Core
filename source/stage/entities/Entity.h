@@ -61,7 +61,7 @@ typedef struct EntitySpec
 	// If 0, it is computed from the visual components if any
 	PixelSize pixelSize;
 
-	/// Entity's in-game type
+	// Entity's in-game type
 	uint8 inGameType;
 
 } EntitySpec;
