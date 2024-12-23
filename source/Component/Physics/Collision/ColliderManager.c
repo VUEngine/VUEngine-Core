@@ -107,7 +107,6 @@ void ColliderManager::purgeDestroyedColliders()
 	{
 		auxNextNode = auxNode->next;
 
-		// load the current collider to check against
 		Collider collider = Collider::safeCast(auxNode->data);
 
 		if(collider->deleteMe)
@@ -136,7 +135,6 @@ uint32 ColliderManager::update()
 	{
 		auxNextNode = auxNode->next;
 
-		// load the current collider to check against
 		Collider collider = Collider::safeCast(auxNode->data);
 
 #ifndef __RELEASE
@@ -154,10 +152,8 @@ uint32 ColliderManager::update()
 			collider->invalidPosition = true;
 	}
 
-	// check the colliders
 	for(VirtualNode auxNode = this->components->head; NULL != auxNode; auxNode = auxNode->next)
 	{
-		// load the current collider to check against
 		Collider collider = Collider::safeCast(auxNode->data);
 
 	#ifdef __DRAW_SHAPES
@@ -287,11 +283,7 @@ void ColliderManager::setCheckCollidersOutOfCameraRange(bool value)
 //---------------------------------------------------------------------------------------------------------
 void ColliderManager::showColliders()
 {
-	// comparing against the other colliders
-	VirtualNode node = this->components->head;
-
-	// check the colliders
-	for(; NULL != node; node = node->next)
+	for(VirtualNode node = this->components->head; NULL != node; node = node->next)
 	{
 		Collider::show(node->data);
 	}
@@ -299,11 +291,7 @@ void ColliderManager::showColliders()
 //---------------------------------------------------------------------------------------------------------
 void ColliderManager::hideColliders()
 {
-	// comparing against the other colliders
-	VirtualNode node = this->components->head;
-
-	// check the colliders
-	for(; NULL != node; node = node->next)
+	for(VirtualNode node = this->components->head; NULL != node; node = node->next)
 	{
 		Collider::hide(node->data);
 	}
@@ -384,11 +372,7 @@ int32 ColliderManager::getNumberOfEnabledColliders()
 {
 	int32 count = 0;
 
-	// comparing against the other colliders
-	VirtualNode node = this->components->head;
-
-	// check the colliders
-	for(; NULL != node; node = node->next)
+	for(VirtualNode node = this->components->head; NULL != node; node = node->next)
 	{
 		Collider collider = Collider::safeCast(node->data);
 
@@ -405,11 +389,7 @@ int32 ColliderManager::getNumberOfMovingEnabledColliders()
 {
 	int32 count = 0;
 
-	// comparing against the other colliders
-	VirtualNode node = this->components->head;
-
-	// check the colliders
-	for(; NULL != node; node = node->next)
+	for(VirtualNode node = this->components->head; NULL != node; node = node->next)
 	{
 		Collider collider = Collider::safeCast(node->data);
 
