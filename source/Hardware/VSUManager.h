@@ -10,26 +10,24 @@
 #ifndef VSU_MANAGER_H_
 #define VSU_MANAGER_H_
 
-
 //=========================================================================================================
 // INCLUDES
 //=========================================================================================================
 
 #include <Object.h>
 
-
 //=========================================================================================================
 // CLASS' MACROS
 //=========================================================================================================
 
-#define __DEFAULT_PCM_HZ					8000
-#define __TOTAL_SOUND_SOURCES				6
-#define __TOTAL_MODULATION_CHANNELS			1
-#define __TOTAL_NOISE_CHANNELS				1
-#define __TOTAL_NORMAL_CHANNELS				(__TOTAL_SOUND_SOURCES - __TOTAL_MODULATION_CHANNELS - __TOTAL_NOISE_CHANNELS)
-#define __TOTAL_POTENTIAL_NORMAL_CHANNELS	(__TOTAL_NORMAL_CHANNELS + __TOTAL_MODULATION_CHANNELS)
-#define __TOTAL_WAVEFORMS					__TOTAL_POTENTIAL_NORMAL_CHANNELS
-
+#define __DEFAULT_PCM_HZ			8000
+#define __TOTAL_SOUND_SOURCES		6
+#define __TOTAL_MODULATION_CHANNELS 1
+#define __TOTAL_NOISE_CHANNELS		1
+#define __TOTAL_NORMAL_CHANNELS                                                                            \
+	(__TOTAL_SOUND_SOURCES - __TOTAL_MODULATION_CHANNELS - __TOTAL_NOISE_CHANNELS)
+#define __TOTAL_POTENTIAL_NORMAL_CHANNELS (__TOTAL_NORMAL_CHANNELS + __TOTAL_MODULATION_CHANNELS)
+#define __TOTAL_WAVEFORMS				  __TOTAL_POTENTIAL_NORMAL_CHANNELS
 
 //=========================================================================================================
 // CLASS' DATA
@@ -37,7 +35,7 @@
 
 /// Sound source types
 /// @memberof VSUManager
-enum VSUSoundSouceTypes
+enum VSUSoundSourceTypes
 {
 	kSoundSourceNormal = 0,
 	kSoundSourceModulation,
@@ -76,28 +74,24 @@ typedef struct Waveform
 /// Sound source mapping
 /// @memberof VSUManager
 typedef struct VSUSoundSource
-{
-	// This table is for the most part untested, but looks to be accurate
-	//				 	|		D7	   ||		D6	   ||		D5	   ||		D4	   ||		D3	   ||		D2	   ||		D1	   ||		D0	   |
-	uint8 SxINT; //		[----Enable----][--XXXXXXXXXX--][-Interval/??--][--------------------------------Interval Data---------------------------------]
+{  //             //    |   D7   ||   D6   ||   D5   ||   D4   ||   D3   ||   D2   ||   D1   ||   D0   |
+	uint8 SxINT;  //    [ Enable ][- XXXX -][Interval][---------------- Interval Data -----------------]
 	uint8 spacer1[3];
-	uint8 SxLRV; //		[---------------------------L Level----------------------------][---------------------------R Level----------------------------]
+	uint8 SxLRV;  //    [-------------- L Volume --------------][-------------- R Volume --------------]
 	uint8 spacer2[3];
-	uint8 SxFQL; //		[------------------------------------------------------Frequency Low Byte------------------------------------------------------]
+	uint8 SxFQL;  //    [----------------------------- Frequency Low Byte -----------------------------]
 	uint8 spacer3[3];
-	uint8 SxFQH; //		[--XXXXXXXXXX--][--XXXXXXXXXX--][--XXXXXXXXXX--][--XXXXXXXXXX--][--XXXXXXXXXX--][--------------Frequency High Byte-------------]
+	uint8 SxFQH;  //    [--------------------- XXXX ---------------------][---- Frequency High Byte ---]
 	uint8 spacer4[3];
-	uint8 SxEV0; //		[---------------------Initial Envelope Value-------------------][------U/D-----][-----------------Envelope Step----------------]
+	uint8 SxEV0;  //    [------- Initial Envelope Value -------][- Dir. -][------ Envelope Step -------]
 	uint8 spacer5[3];
-			 //Ch. 1-4 	[--XXXXXXXXXX--][--XXXXXXXXXX--][--XXXXXXXXXX--][--XXXXXXXXXX--][--XXXXXXXXXX--][--XXXXXXXXXX--][------R/S-----][----On/Off----]
-			 //Ch. 5	[--XXXXXXXXXX--][------E/D-----][----?/Short---][--Mod./Sweep--][--XXXXXXXXXX--][--XXXXXXXXXX--][------R/S-----][----On/Off----]
-	uint8 SxEV1; //Ch. 6	[--XXXXXXXXXX--][----------------------E/D---------------------][--XXXXXXXXXX--][--XXXXXXXXXX--][------R/S-----][----On/Off----]
+	uint8 SxEV1;  //    [-------------------------- XXXX --------------------------][ Repeat ][ Enable ]
+	//    S5EV1   //    [- XXXX -][ Enable ][ Repeat ][Function][------ XXXX ------][ Repeat ][ Enable ]
+	//    S6EV1   //    [- XXXX -][------------ Tap -----------][------ XXXX ------][ Repeat ][ Enable ]
 	uint8 spacer6[3];
-	//Ch. 1-5 only (I believe address is only 3 bits, but may be 4, needs testing)
-	uint8 SxRAM; //		[--XXXXXXXXXX--][--XXXXXXXXXX--][--XXXXXXXXXX--][--XXXXXXXXXX--][--XXXXXXXXXX--][--------------Waveform RAM Address------------]
+	uint8 SxRAM;  //    [--------------------- XXXX ---------------------][--- Waveform Base Address --]
 	uint8 spacer7[3];
-	//Ch. 5 only
-	uint8 SxSWP; //		[------CLK-----][-------------Sweep/Modulation Time------------][------U/D-----][----------------Number of Shifts--------------]
+	uint8 SxSWP;  //    [- Clock ][--------- Interval ---------][- Dir. -][---- Sweep shift amount ----]
 	uint8 spacer8[35];
 } VSUSoundSource;
 
@@ -107,7 +101,7 @@ typedef struct VSUSoundSourceConfiguration
 {
 	/// Requester object
 	Object requester;
-	
+
 	/// VSU sound source to configure
 	VSUSoundSource* vsuSoundSource;
 
@@ -139,7 +133,7 @@ typedef struct VSUSoundSourceConfiguration
 	const int8* SxRAM;
 
 	/// SxSWP values
-	int16 SxSWP;	
+	int16 SxSWP;
 
 	/// SxMOD pointer
 	const int8* SxMOD;
@@ -152,9 +146,8 @@ typedef struct VSUSoundSourceConfiguration
 
 	/// Skip if no sound source available?
 	bool skippable;
-	
-} VSUSoundSourceConfiguration;
 
+} VSUSoundSourceConfiguration;
 
 //=========================================================================================================
 // CLASS' DECLARATION
@@ -188,13 +181,13 @@ singleton class VSUManager : Object
 	/// Playback mode
 	uint32 playbackMode;
 
-	/// If false and if there are no sound sources availables at the time of request, 
+	/// If false and if there are no sound sources availables at the time of request,
 	/// the petition is ignored
 	bool allowQueueingSoundRequests;
-	
+
 	/// Flag to skip sound source releasing if not necessary
 	bool haveUsedSoundSources;
-	
+
 	/// Flag to skip pending sound source dispatching if not necessary
 	bool haveQueuedRequests;
 
@@ -243,6 +236,5 @@ singleton class VSUManager : Object
 	/// Print waveforms.
 	void printWaveFormStatus(int32 x, int32 y);
 }
-
 
 #endif
