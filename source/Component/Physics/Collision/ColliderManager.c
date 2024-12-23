@@ -247,6 +247,7 @@ uint32 ColliderManager::update()
 
 	return returnValue;
 }
+//---------------------------------------------------------------------------------------------------------
 Collider ColliderManager::createCollider(SpatialObject owner, const ColliderSpec* colliderSpec)
 {
 	if(NULL == colliderSpec)
