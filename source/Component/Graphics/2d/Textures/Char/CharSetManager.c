@@ -216,12 +216,9 @@ void CharSetManager::destructor()
 //---------------------------------------------------------------------------------------------------------
 CharSet CharSetManager::findCharSet(CharSetSpec* charSetSpec)
 {
-	// try to find a charset with the same char spec
-	VirtualNode node = this->charSets->head;
-
 	CACHE_RESET;
 
-	for(; NULL != node; node = node->next)
+	for(VirtualNode node = this->charSets->head; NULL != node; node = node->next)
 	{
 		CharSet charSet = CharSet::safeCast(node->data);
 
@@ -273,12 +270,6 @@ CharSet CharSetManager::allocateCharSet(CharSetSpec* charSetSpec)
 #ifndef __SHIPPING
 	Printing::setDebugMode(Printing::getInstance());
 	Printing::clear(Printing::getInstance());
-	CharSetManager::print(this, 1, 10);
-	Printing::text(Printing::getInstance(), "CharSet ", 1, 19, NULL);
-	Printing::text(Printing::getInstance(), "    Address: ", 1, 21, NULL);
-	Printing::hex(Printing::getInstance(), (WORD)charSetSpec, 14, 21, 8, NULL);
-	Printing::text(Printing::getInstance(), "    Size: ", 1, 22, NULL);
-	Printing::int32(Printing::getInstance(), charSetSpec->numberOfChars, 14, 22, NULL);
 
 	// if there isn't enough memory thrown an exception
 	NM_ASSERT(false, "CharSetManager::allocateCharSet: CHAR mem depleted");
@@ -291,9 +282,7 @@ void CharSetManager::writeCharSets()
 {
 	CharSetManager::defragment(this, false);
 
-	VirtualNode node = this->charSets->head;
-
-	for(; NULL != node; node = node->next)
+	for(VirtualNode node = this->charSets->head; NULL != node; node = node->next)
 	{
 		CharSet::write(node->data);
 	}
