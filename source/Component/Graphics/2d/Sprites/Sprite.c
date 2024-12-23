@@ -188,6 +188,11 @@ int16 Sprite::render(int16 index, bool updateAnimation)
 		return this->index;
 	}
 
+	if(__NO_RENDER_INDEX == index)
+	{
+		return __NO_RENDER_INDEX;
+	}
+
 	NM_ASSERT(!isDeleted(this->texture->charSet), "Sprite::render: null char set");
 
 	// If the client code makes these checks before calling this method,
