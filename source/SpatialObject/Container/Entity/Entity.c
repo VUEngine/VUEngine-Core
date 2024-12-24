@@ -885,6 +885,10 @@ bool Entity::alwaysStreamIn()
 //---------------------------------------------------------------------------------------------------------
 void Entity::show()
 {
+	this->hidden = false;
+
+	Entity::invalidateTransformation(this);
+
 	VisualComponent::propagateCommand(cVisualComponentCommandShow, SpatialObject::safeCast(this));
 
 	if(!isDeleted(this->children))
@@ -895,6 +899,8 @@ void Entity::show()
 //---------------------------------------------------------------------------------------------------------
 void Entity::hide()
 {
+	this->hidden = true;
+	
 	VisualComponent::propagateCommand(cVisualComponentCommandHide, SpatialObject::safeCast(this));
 
 	if(!isDeleted(this->children))
