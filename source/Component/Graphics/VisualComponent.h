@@ -62,7 +62,7 @@ typedef struct AnimationFunction
 } AnimationFunction;
 
 /// An AnimationFunction that is stored in ROM
-/// @memberof	Sprite
+/// @memberof VisualComponent
 typedef const AnimationFunction AnimationFunctionROMSpec;
 
 //=========================================================================================================
