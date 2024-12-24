@@ -80,7 +80,7 @@ static void VSUManager::printVSUSoundSourceConfiguration(const VSUSoundSourceCon
 	PRINT_HEX_EXT(vsuSoundSourceConfiguration->SxEV1, x + 7, y, 2);
 
 	PRINT_TEXT("SXRAM:         ", x, ++y);
-	PRINT_HEX_EXT(0x000FFFFF & (uint16)vsuSoundSourceConfiguration->SxRAM, x + 7, y, 2);
+	PRINT_HEX_EXT(0x0000FFFF & (uint32)vsuSoundSourceConfiguration->SxRAM, x + 7, y, 2);
 
 	PRINT_TEXT("SXSWP:         ", x, ++y);
 	PRINT_HEX_EXT(vsuSoundSourceConfiguration->SxSWP, x + 7, y, 2);
