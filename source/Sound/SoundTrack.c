@@ -298,9 +298,6 @@ bool SoundTrack::updateNative(fix7_9_ext tickStep, fix7_9_ext targetTimerResolut
 		this->cursorSxMOD++;
 	}
 
-	bool sweepMod = 0 != (kSoundTrackEventSweepMod & soundTrackKeyframe.events);
-	bool noise = 0 != (kSoundTrackEventNoise & soundTrackKeyframe.events);
-
 	uint8 volume = this->soundTrackSpec->SxLRV[this->cursorSxLRV];
 	
 	int16 leftVolume = volume >> 4;
@@ -349,21 +346,39 @@ bool SoundTrack::updateNative(fix7_9_ext tickStep, fix7_9_ext targetTimerResolut
 
 	VSUSoundSourceConfiguration vsuChannelConfiguration = 
 	{
+		// Requester object
 		Object::safeCast(this),
+		// VSU sound source to configure
 		NULL,
+		// VSU waveform to use
+		NULL,
+		// Time when the configuration elapses
 		__FIX7_9_EXT_DIV(__I_TO_FIX7_9_EXT(soundTrackKeyframe.tick), targetTimerResolutionFactor),
-		kSoundSourceNormal,
+		// Sound source type
+		0 != (kSoundTrackEventSweepMod & soundTrackKeyframe.events) ? 
+			kSoundSourceModulation:
+			0 != (kSoundTrackEventNoise & soundTrackKeyframe.events) ?
+				kSoundSourceNoise:
+				kSoundSourceNormal,
+		// SxINT values
 		this->soundTrackSpec->SxINT[this->cursorSxINT],
+		// SxLRV values
 		(leftVolume << 4) | rightVolume,
+		// SxFQL values
 		note & 0xFF,
+		// SxFQH values
 		note >> 8,
+		// SxEV0 values
 		this->soundTrackSpec->SxEV0[this->cursorSxEV0],
+		// SxEV1 values
 		this->soundTrackSpec->SxEV1[this->cursorSxEV1],
+		// SxRAM pointer
 		this->soundTrackSpec->SxRAM[this->cursorSxRAM],
+		// SxSWP values
 		this->soundTrackSpec->SxSWP[this->cursorSxSWP],
+		// SxMOD pointer
 		this->soundTrackSpec->SxMOD[this->cursorSxMOD],
-		sweepMod,
-		noise,
+		// Skip if no sound source available?
 		this->soundTrackSpec->skippable
 	};
 

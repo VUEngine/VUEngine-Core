@@ -20,14 +20,14 @@
 // CLASS' MACROS
 //=========================================================================================================
 
-#define __DEFAULT_PCM_HZ			8000
-#define __TOTAL_SOUND_SOURCES		6
-#define __TOTAL_MODULATION_CHANNELS 1
-#define __TOTAL_NOISE_CHANNELS		1
+#define __DEFAULT_PCM_HZ					8000
+#define __TOTAL_WAVEFORMS				  	5
+#define __TOTAL_SOUND_SOURCES				6
+#define __TOTAL_MODULATION_CHANNELS 		1
+#define __TOTAL_NOISE_CHANNELS				1
 #define __TOTAL_NORMAL_CHANNELS                                                                            \
 	(__TOTAL_SOUND_SOURCES - __TOTAL_MODULATION_CHANNELS - __TOTAL_NOISE_CHANNELS)
 #define __TOTAL_POTENTIAL_NORMAL_CHANNELS (__TOTAL_NORMAL_CHANNELS + __TOTAL_MODULATION_CHANNELS)
-#define __TOTAL_WAVEFORMS				  __TOTAL_POTENTIAL_NORMAL_CHANNELS
 
 //=========================================================================================================
 // CLASS' DATA
@@ -37,9 +37,9 @@
 /// @memberof VSUManager
 enum VSUSoundSourceTypes
 {
-	kSoundSourceNormal = 0,
-	kSoundSourceModulation,
-	kSoundSourceNoise
+	kSoundSourceNormal 					= (1 << 0),
+	kSoundSourceModulation 				= (1 << 1),
+	kSoundSourceNoise					= (1 << 2),
 };
 
 /// Playback types
@@ -105,6 +105,9 @@ typedef struct VSUSoundSourceConfiguration
 	/// VSU sound source to configure
 	VSUSoundSource* vsuSoundSource;
 
+	/// VSU waveform to use
+	const Waveform* waveform;
+
 	/// Time when the configuration elapses
 	fix7_9_ext timeout;
 
@@ -137,12 +140,6 @@ typedef struct VSUSoundSourceConfiguration
 
 	/// SxMOD pointer
 	const int8* SxMOD;
-
-	/// Sweep/Mod?
-	bool sweepMod;
-
-	/// Noise?
-	bool noise;
 
 	/// Skip if no sound source available?
 	bool skippable;
