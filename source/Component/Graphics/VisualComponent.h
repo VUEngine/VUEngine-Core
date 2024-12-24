@@ -10,13 +10,11 @@
 #ifndef VISUAL_COMPONENT_H_
 #define VISUAL_COMPONENT_H_
 
-
 //=========================================================================================================
 // INCLUDES
 //=========================================================================================================
 
 #include <Component.h>
-
 
 //=========================================================================================================
 // FORWARD DECLARATIONS
@@ -24,15 +22,14 @@
 
 class AnimationController;
 
-
 //=========================================================================================================
 // CLASS' DATA
 //=========================================================================================================
 
 typedef ComponentSpec VisualComponentSpec;
 
-/// VisualeComponent commands
-enum VisualeComponentCommands
+/// VisualComponent commands
+enum VisualComponentCommands
 {
 	cVisualComponentCommandShow = cComponentCommandLast + 1,
 	cVisualComponentCommandHide,
@@ -41,7 +38,7 @@ enum VisualeComponentCommands
 };
 
 /// A function which defines the frames to play
-/// @memberof VisualeComponent
+/// @memberof VisualComponent
 typedef struct AnimationFunction
 {
 	/// Number of frames of this animation function
@@ -78,7 +75,7 @@ typedef const AnimationFunction AnimationFunctionROMSpec;
 /// Inherits from Object
 ///
 /// Implements an element of linked lists.
-abstract class VisualComponent : Component 
+abstract class VisualComponent : Component
 {
 	/// @protectedsection
 
@@ -96,7 +93,7 @@ abstract class VisualComponent : Component
 
 	/// Flag to allow/prohibit the update of the animation
 	bool updateAnimationFrame;
-	
+
 	/// @publicsection
 
 	/// Propagate a command to the components.
@@ -137,7 +134,8 @@ abstract class VisualComponent : Component
 	uint8 getTransparent();
 
 	/// Set the transparency mode
-	/// @param transparency: Transparecy effect (__TRANSPARENCY_NONE, __TRANSPARENCY_EVEN or __TRANSPARENCY_ODD)
+	/// @param transparency: Transparecy effect (__TRANSPARENCY_NONE, __TRANSPARENCY_EVEN or
+	/// __TRANSPARENCY_ODD)
 	void setTransparency(uint8 transparency);
 
 	/// Play the animation with the provided name from the provided array of animation functions.
@@ -145,7 +143,9 @@ abstract class VisualComponent : Component
 	/// @param animationName: Name of the animation to play
 	/// @param scope: Object that will be notified of playback events
 	/// @return True if the animation started playing; false otherwise
-	bool play(const AnimationFunction* animationFunctions[], const char* animationName, ListenerObject scope);
+	bool play(
+		const AnimationFunction* animationFunctions[], const char* animationName, ListenerObject scope
+	);
 
 	/// Replay the last playing animation, if any, from the provided array of animation functions.
 	/// @param animationFunctions: Array of animation functions to look for the animation function to replay
@@ -191,7 +191,8 @@ abstract class VisualComponent : Component
 	uint8 getFrameDuration();
 
 	/// Set the decrement to frameDuration in each game cycle for each frame of animation.
-	/// @param frameDurationDecrement: Decrement to frameDuration in each game cycle for each frame of animation
+	/// @param frameDurationDecrement: Decrement to frameDuration in each game cycle for each frame of
+	/// animation
 	void setFrameDurationDecrement(uint8 frameDurationDecrement);
 
 	/// Retrieve the animation function's name currently playing if any
@@ -213,6 +214,5 @@ abstract class VisualComponent : Component
 	/// @return Bounding box of the mesh
 	virtual RightBox getRightBox();
 }
-
 
 #endif
