@@ -59,6 +59,9 @@ class Container : SpatialObject
 
 	/// Container's name
 	char* name;
+	
+	/// Entity's internal id, set by the engine
+	int16 internalId;
 
 	/// If true, the parent will delete this container when appropriate
 	bool deleteMe;
@@ -78,8 +81,9 @@ class Container : SpatialObject
 	/// @publicsection
 
 	/// Class' constructor
+	/// @param internalId: ID to keep track internally of the new instance
 	/// @param name: Name to assign to the new instance
-	void constructor(const char* const name);
+	void constructor(int16 internalId, const char* const name);
 
 	/// Set the container's position.
 	/// @param position: 3D vector defining the object's new position
@@ -96,6 +100,10 @@ class Container : SpatialObject
 	/// Delete this container when appropriate.
 	/// Containers must not be deleted nor created directly by the client code
 	void deleteMyself();
+
+	/// Retrieve the entity's internal id used by the engine to keep track of it.
+	/// @return Entity's internal id
+	int16 getInternalId();
 
 	/// Set the container's name.
 	/// @param name: Name to assign to the instance
@@ -132,6 +140,11 @@ class Container : SpatialObject
 	/// (it is externally allocated and must be externally deleted)
 	/// @return True if one or more children met the search criteria; false otherwise
 	bool getChildren(ClassPointer classPointer, VirtualList children);
+	
+	/// Retrieve a child of this entity whose internal ID equals the provided one.
+	/// @param id: Internal ID to look for
+	/// @return Child entity whose ID matches the provided one
+	Container getChildById(int16 id);
 
 	/// Find a child with the provided name.
 	/// @param childName: Name to look for

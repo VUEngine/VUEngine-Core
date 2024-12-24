@@ -131,9 +131,6 @@ class Entity : Container
 	/// Signals if collisions are against other entity's colliders are allowed
 	bool checkingCollisions;
 	
-	/// Entity's internal id, set by the engine
-	int16 internalId;
-	
 	/// Size of the entity in function of its components and its children's, grand children's,
 	/// etc. components
 	Size size;
@@ -223,10 +220,6 @@ class Entity : Container
 	/// @return Specification that determines how the entity was configured
 	EntitySpec* getSpec();
 
-	/// Retrieve the entity's internal id used by the engine to keep track of it.
-	/// @return Entity's internal id
-	int16 getInternalId();
-
 	/// Retrieve the entity's entity factory
 	/// @return Entity's entity facotyr
 	EntityFactory getEntityFactory();
@@ -250,11 +243,6 @@ class Entity : Container
 	/// Spawn children and configure them over time with the provided entity specs.
 	/// @param childrenSpecs: Array of entity specs to use to initialize the new children
 	void addChildEntitiesDeferred(const PositionedEntity* childrenSpecs);
-	
-	/// Retrieve a child of this entity whose internal ID equals the provided one.
-	/// @param id: Internal ID to look for
-	/// @return Child entity whose ID matches the provided one
-	Entity getChildById(int16 id);
 
 	/// Attach a new component to the entity and configure it with the provided spec.
 	/// @param componentSpec: Specification to be used to configure the new component

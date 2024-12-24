@@ -347,9 +347,8 @@ static Entity Entity::instantiate(const PositionedEntity* const positionedEntity
 //---------------------------------------------------------------------------------------------------------
 void Entity::constructor(EntitySpec* entitySpec, int16 internalId, const char* const name)
 {
-	Base::constructor(name);
+	Base::constructor(internalId, name);
 
-	this->internalId = internalId;
 	this->entitySpec = entitySpec;
 
 	this->centerDisplacement = NULL;
@@ -547,11 +546,6 @@ EntitySpec* Entity::getSpec()
 	return this->entitySpec;
 }
 //---------------------------------------------------------------------------------------------------------
-int16 Entity::getInternalId()
-{
-	return this->internalId;
-}
-//---------------------------------------------------------------------------------------------------------
 EntityFactory Entity::getEntityFactory()
 {
 	return this->entityFactory;
@@ -668,25 +662,6 @@ void Entity::addChildEntitiesDeferred(const PositionedEntity* childrenSpecs)
 	{
 		EntityFactory::spawnEntity(this->entityFactory, &childrenSpecs[i], Container::safeCast(this), NULL, this->internalId + Entity::getChildrenCount(this));
 	}
-}
-//---------------------------------------------------------------------------------------------------------
-Entity Entity::getChildById(int16 id)
-{
-	if(this->children)
-	{
-		// look through all children
-		for(VirtualNode node = this->children->head; NULL != node ; node = node->next)
-		{
-			Entity child = Entity::safeCast(node->data);
-
-			if(child->internalId == id)
-			{
-				return !isDeleted(child) && !child->deleteMe ? child : NULL;
-			}
-		}
-	}
-
-	return NULL;
 }
 //---------------------------------------------------------------------------------------------------------
 void Entity::enableCollisions()

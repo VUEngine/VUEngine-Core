@@ -33,10 +33,12 @@ friend class VirtualList;
 //=========================================================================================================
 
 //---------------------------------------------------------------------------------------------------------
-void Container::constructor(const char* const name)
+void Container::constructor(int16 internalId, const char* const name)
 {
 	// construct base object
 	Base::constructor();
+
+	this->internalId = internalId;
 
 	// By default, save on calls to main methods.
 	this->update = Container::overrides(this, update);
@@ -201,6 +203,11 @@ void Container::setName(const char* const name)
 
 	strncpy(this->name, name, __MAX_CONTAINER_NAME_LENGTH);
 	this->name[__MAX_CONTAINER_NAME_LENGTH] = '\0';
+}
+//---------------------------------------------------------------------------------------------------------
+int16 Container::getInternalId()
+{
+	return this->internalId;
 }
 //---------------------------------------------------------------------------------------------------------
 const char* Container::getName()
@@ -379,6 +386,24 @@ bool Container::getChildren(ClassPointer classPointer, VirtualList children)
 	}
 
 	return 0 < VirtualList::getCount(children);
+}
+//---------------------------------------------------------------------------------------------------------
+Container Container::getChildById(int16 id)
+{
+	if(this->children)
+	{
+		for(VirtualNode node = this->children->head; NULL != node ; node = node->next)
+		{
+			Container child = Container::safeCast(node->data);
+
+			if(child->internalId == id)
+			{
+				return !isDeleted(child) && !child->deleteMe ? child : NULL;
+			}
+		}
+	}
+
+	return NULL;
 }
 //---------------------------------------------------------------------------------------------------------
 Container Container::getChildByName(const char* childName, bool recursive)

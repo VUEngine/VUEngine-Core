@@ -35,7 +35,7 @@ void UIContainer::constructor(PositionedEntity* childrenPositionedEntities)
 {
 	_camera = Camera::getInstance();
 
-	Base::constructor(NULL);
+	Base::constructor(0, NULL);
 
 	for(int16 i = 0; NULL != childrenPositionedEntities && NULL != childrenPositionedEntities[i].entitySpec; i++)
 	{
