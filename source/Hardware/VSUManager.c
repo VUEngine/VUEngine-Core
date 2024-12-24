@@ -403,7 +403,7 @@ void VSUManager::constructor()
 	Base::constructor();
 
 	this->queuedVSUSoundSourceConfigurations = new VirtualList();
-	this->allowQueueingSoundRequests = false;
+	this->allowQueueingSoundRequests = true;
 	this->targetPCMUpdates = 0;
 	this->playbackMode = kPlaybackNative;
 	this->haveUsedSoundSources = false;
@@ -435,6 +435,7 @@ void VSUManager::configureSoundSource(int16 vsuSoundSourceIndex, const VSUSoundS
 
 	this->vsuSoundSourceConfigurations[i].requester = vsuSoundSourceConfiguration->requester;
 	this->vsuSoundSourceConfigurations[i].timeout = this->ticks + vsuSoundSourceConfiguration->timeout;
+	this->vsuSoundSourceConfigurations[i].SxINT = vsuSoundSourceConfiguration->SxINT;
 	this->vsuSoundSourceConfigurations[i].SxLRV = vsuSoundSourceConfiguration->SxLRV;
 	this->vsuSoundSourceConfigurations[i].SxFQL = vsuSoundSourceConfiguration->SxFQL;
 	this->vsuSoundSourceConfigurations[i].SxFQH = vsuSoundSourceConfiguration->SxFQH;
@@ -442,7 +443,7 @@ void VSUManager::configureSoundSource(int16 vsuSoundSourceIndex, const VSUSoundS
 	this->vsuSoundSourceConfigurations[i].SxEV1 = vsuSoundSourceConfiguration->SxEV1;
 	this->vsuSoundSourceConfigurations[i].SxRAM = vsuSoundSourceConfiguration->SxRAM;
 	this->vsuSoundSourceConfigurations[i].SxSWP = vsuSoundSourceConfiguration->SxSWP;
-	this->vsuSoundSourceConfigurations[i].SxINT = vsuSoundSourceConfiguration->SxINT;
+	this->vsuSoundSourceConfigurations[i].skippable = vsuSoundSourceConfiguration->skippable;
 
 	vsuSoundSource->SxLRV = vsuSoundSourceConfiguration->SxLRV;
 	vsuSoundSource->SxFQL = vsuSoundSourceConfiguration->SxFQL;
@@ -495,6 +496,8 @@ int16 VSUManager::findAvailableSoundSource(Object requester, uint32 soundSourceT
 
 	if(force)
 	{
+		int16 soonestFreeSoundSource = -1;
+
 		// Now try to find a sound source whose timeout has just expired
 		for(int16 i = 0; i < __TOTAL_SOUND_SOURCES; i++)
 		{
@@ -503,8 +506,18 @@ int16 VSUManager::findAvailableSoundSource(Object requester, uint32 soundSourceT
 				continue;
 			}
 
-			return i;
+			if(!this->vsuSoundSourceConfigurations[i].skippable)
+			{
+				continue;
+			}
+
+			if(0 > soonestFreeSoundSource || this->vsuSoundSourceConfigurations[i].timeout < this->vsuSoundSourceConfigurations[soonestFreeSoundSource].timeout)
+			{
+				soonestFreeSoundSource = i;
+			}
 		}
+
+		return soonestFreeSoundSource;
 	}
 
 	return -1;
