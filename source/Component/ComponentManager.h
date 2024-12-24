@@ -100,9 +100,9 @@ singleton class ComponentManager : Object
 	/// Class' constructor
 	void constructor();
 
-	/// Propagate a command to the sprites.
-	/// @param command: Command to propagate to all the sprites
-	/// @param owner: Owner of the sprites to command (all if NULL)
+	/// Propagate a command to the components.
+	/// @param command: Command to propagate to all the components
+	/// @param owner: Owner of the components to command (all if NULL)
 	/// @param ...: Variable arguments list depending on the command
 	void propagateCommand(int32 command, SpatialObject owner, ...);
 
@@ -112,13 +112,13 @@ singleton class ComponentManager : Object
 	uint16 getCount(SpatialObject owner);
 
 	/// Create a component with the provided spec.
-	/// @param owner: Object to which the sprite will attach to
+	/// @param owner: Object to which the component will attach to
 	/// @param componentSpec: Spec to use to initialize the component
 	/// @return Created component
 	virtual Component createComponent(SpatialObject owner, const ComponentSpec* componentSpec);
 
 	/// Destroy the provided component.
-	/// @param owner: Object to which the sprite will attach to
+	/// @param owner: Object to which the component will attach to
 	/// @param component: Comoponent to destroy
 	virtual void destroyComponent(SpatialObject owner, Component component) ;
 

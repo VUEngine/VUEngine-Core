@@ -27,18 +27,11 @@ enum MessagesTypes
 {
 	kMessageNone = 0,
 
-	// general purpose messages
+	// General purpose messages
 	kMessageHighFps,
 	kMessageEntityRemoved,
 
-	// physics messages
-	kMessageBodyStopped,
-	kMessageBodyBounced,
-	kMessageBodyStartedMoving,
-	kMessageColliderShow,
-	kMessageColliderHide,
-
-	// keypad massages
+	// Keypad massages
 	kMessageKeyPressed,
 	kMessageKeyReleased,
 	kMessageKeyHold,
@@ -49,6 +42,18 @@ enum MessagesTypes
 
 	// Framerate
 	kMessageRestoreFPS,
+
+	// Physics messages
+	kMessageBodyStopped,
+	kMessageBodyBounced,
+	kMessageBodyStartedMoving,
+	kMessageColliderShow,
+	kMessageColliderHide,
+
+	// Entity messages
+	kMessageShow,
+	kMessageHide,
+	kMessageSetTransparency,
 
 	// don't place messages below this
 	kMessageLastEngine

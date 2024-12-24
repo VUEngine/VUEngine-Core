@@ -355,6 +355,7 @@ void Entity::constructor(EntitySpec* entitySpec, int16 internalId, const char* c
 	this->centerDisplacement = NULL;
 	this->entityFactory = NULL;
 
+	this->hidden = false;
 	this->size = Size::getFromPixelSize(entitySpec->pixelSize);
 	this->collisionsEnabled = true;
 	this->checkingCollisions = true;
@@ -491,22 +492,6 @@ uint16 Entity::getComponentsCount(uint32 componentType)
 	return ComponentManager::getComponentsCount(SpatialObject::safeCast(this), componentType);
 }
 //---------------------------------------------------------------------------------------------------------
-void Entity::show()
-{
-	Base::show(this);
-
-	SpriteManager::propagateCommand(SpriteManager::getInstance(), cVisualComponentCommandShow, SpatialObject::safeCast(this));
-	WireframeManager::propagateCommand(WireframeManager::getInstance(), cVisualComponentCommandShow, SpatialObject::safeCast(this));
-}
-//---------------------------------------------------------------------------------------------------------
-void Entity::hide()
-{
-	Base::hide(this);
-
-	SpriteManager::propagateCommand(SpriteManager::getInstance(), cVisualComponentCommandHide, SpatialObject::safeCast(this));
-	WireframeManager::propagateCommand(WireframeManager::getInstance(), cVisualComponentCommandHide, SpatialObject::safeCast(this));
-}
-//---------------------------------------------------------------------------------------------------------
 void Entity::suspend()
 {
 	Base::suspend(this);
@@ -533,12 +518,28 @@ void Entity::resume()
 	}
 }
 //---------------------------------------------------------------------------------------------------------
-void Entity::setTransparency(uint8 transparency)
+void Entity::handleCommand(int32 command, va_list args)
 {
-	Base::setTransparency(this, transparency);
+	switch (command)
+	{
+		case kMessageShow:
+		{
+			Entity::show(this);			
+			break;
+		}
 
-	SpriteManager::propagateCommand(SpriteManager::getInstance(), cVisualComponentCommandSetTransparency, SpatialObject::safeCast(this), (uint32)transparency);
-	WireframeManager::propagateCommand(WireframeManager::getInstance(), cVisualComponentCommandSetTransparency, SpatialObject::safeCast(this), (uint32)transparency);
+		case kMessageHide:
+		{
+			Entity::hide(this);			
+			break;
+		}
+
+		case kMessageSetTransparency:
+		{
+			Entity::setTransparency(this, (uint8)va_arg(args, uint32));			
+			break;
+		}
+	}
 }
 //---------------------------------------------------------------------------------------------------------
 EntitySpec* Entity::getSpec()
@@ -905,6 +906,36 @@ void Entity::setExtraInfo(void* extraInfo __attribute__ ((unused)))
 bool Entity::alwaysStreamIn()
 {
 	return true;
+}
+//---------------------------------------------------------------------------------------------------------
+void Entity::show()
+{
+	VisualComponent::propagateCommand(cVisualComponentCommandShow, SpatialObject::safeCast(this));
+
+	if(!isDeleted(this->children))
+	{
+		Entity::propagateCommand(this, kMessageShow);
+	}
+}
+//---------------------------------------------------------------------------------------------------------
+void Entity::hide()
+{
+	VisualComponent::propagateCommand(cVisualComponentCommandHide, SpatialObject::safeCast(this));
+
+	if(!isDeleted(this->children))
+	{
+		Entity::propagateCommand(this, kMessageHide);
+	}
+}
+//---------------------------------------------------------------------------------------------------------
+void Entity::setTransparency(uint8 transparency)
+{
+	VisualComponent::propagateCommand(cVisualComponentCommandSetTransparency, SpatialObject::safeCast(this), (uint32)transparency);
+
+	if(!isDeleted(this->children))
+	{
+		Entity::propagateCommand(this, kMessageSetTransparency, transparency);
+	}
 }
 //---------------------------------------------------------------------------------------------------------
 

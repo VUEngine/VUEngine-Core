@@ -63,9 +63,6 @@ class Container : SpatialObject
 	/// If true, the parent will delete this container when appropriate
 	bool deleteMe;
 
-	/// Flag to mark the container (and its children) as non visible
-	bool hidden;
-
 	/// Flag to allow/prohibit calls to the update method
 	bool update;
 
@@ -163,8 +160,15 @@ class Container : SpatialObject
 	/// must be recomputed
 	void transformChildren(uint8 invalidateTransformationFlag);
 
+	/// Propagate a command to the container's children.
+	/// @param command: Method that handles the message
+	/// @param ...: Variable arguments list depending on the command
+	/// @return The result that the provided message handler returns
+	void propagateCommand(uint32 command, ...);
+
 	/// Propagate an integer message through the whole parenting hierarchy (children, grand children, etc.).
 	/// @param propagatedMessageHandler: Method that handles the message
+	/// @param ...: Variable arguments list depending on the message
 	/// @return The result that the provided message handler returns
 	bool propagateMessage(bool (*propagatedMessageHandler)(void*, va_list), ...);
 
@@ -174,6 +178,7 @@ class Container : SpatialObject
 
 	/// Propagate a string through the whole parenting hierarchy (children, grand children, etc.).
 	/// @param propagatedMessageHandler: Method that handles the string
+	/// @param ...: Variable arguments list depending on the string
 	/// @return The result that the provided string handler returns
 	bool propagateString(bool (*propagatedMessageHandler)(void*, va_list), ...);
 
@@ -231,12 +236,6 @@ class Container : SpatialObject
 	/// @param recursive: If true, the ready call is propagated to its children, grand children, etc.
 	virtual void ready(bool recursive);
 
-	/// Make this instance visible.
-	virtual void show();
-
-	/// Make this instance invisible.
-	virtual void hide();
-
 	/// Compute the container's global transformation.
 	/// @param environmentTransform: Reference environment for the local transformation
 	/// @param invalidateTransformationFlag: Flag that determines which transfomation's components 
@@ -252,9 +251,10 @@ class Container : SpatialObject
 	/// Prepare to resume this instance's logic.
 	virtual void resume();
 
-	/// Set this instance's transparency effects.
-	/// @param transparency: Transparecy effect (__TRANSPARENCY_NONE, __TRANSPARENCY_EVEN or __TRANSPARENCY_ODD)
-	virtual void setTransparency(uint8 transparency);
+	/// Default command handler.
+	/// @param command: Propagated command
+	/// @param args: Variable arguments list depending on the command to handle
+	virtual void handleCommand(int32 command, va_list args);
 
 	/// Default interger message handler for propagateMessage
 	/// @param message: Propagated integer message

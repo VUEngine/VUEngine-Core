@@ -38,6 +38,17 @@ friend class VirtualNode;
 //=========================================================================================================
 
 //---------------------------------------------------------------------------------------------------------
+static void VisualComponent::propagateCommand(int32 command, SpatialObject owner, ...)
+{
+	va_list args;
+	va_start(args, owner);
+	int32 value = va_arg(args, int32);
+	va_end(args);
+
+	SpriteManager::propagateCommand(SpriteManager::getInstance(), command, owner, value);
+	WireframeManager::propagateCommand(WireframeManager::getInstance(), command, owner, value);
+}
+//---------------------------------------------------------------------------------------------------------
 static bool VisualComponent::calculateRightBox(SpatialObject owner, RightBox* rightBox)
 {
 	bool modified = false;

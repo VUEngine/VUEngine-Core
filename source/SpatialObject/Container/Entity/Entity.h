@@ -122,6 +122,9 @@ class Entity : Container
 {
 	/// @protectedsection
 
+	/// Flag to mark the container (and its children) as non visible
+	bool hidden;
+
 	/// Signals if collisions against this entity's colliders are allowed
 	bool collisionsEnabled;
 
@@ -204,21 +207,17 @@ class Entity : Container
 	/// Destroy the components that attach to this entity. 	
 	override void destroyComponents();
 
-	/// Make this instance visible.
-	override void show();
-
-	/// Make this instance invisible.
-	override void hide();
-
 	/// Prepare to suspend this instance's logic.
 	override void suspend();
 
 	/// Prepare to resume this instance's logic.
 	override void resume();
 
-	/// Set this instance's transparency effects.
-	/// @param transparency: Transparecy effect (__TRANSPARENCY_NONE, __TRANSPARENCY_EVEN or __TRANSPARENCY_ODD)
-	override void setTransparency(uint8 transparency);
+	/// Default command handler.
+	/// @param command: Propagated command
+	/// @param valud: A command related value
+	/// @return True if the propagation must stop; false if the propagation must reach other containers
+	override void handleCommand(int32 command, va_list args);
 
 	/// Retrieve the entity's spec.
 	/// @return Specification that determines how the entity was configured
@@ -372,6 +371,16 @@ class Entity : Container
 	/// Check if the entity must be streamed in after being streamed out or destroyed.
 	/// @return True if the streaming must spawn this entity back when deleted
 	virtual bool alwaysStreamIn();
+
+	/// Make this instance visible.
+	virtual void show();
+
+	/// Make this instance invisible.
+	virtual void hide();
+
+	/// Set this instance's transparency effects.
+	/// @param transparency: Transparecy effect (__TRANSPARENCY_NONE, __TRANSPARENCY_EVEN or __TRANSPARENCY_ODD)
+	virtual void setTransparency(uint8 transparency);
 }
 
 //=========================================================================================================

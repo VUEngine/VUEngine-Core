@@ -55,7 +55,6 @@ void Container::constructor(const char* const name)
 	this->deleteMe = false;
 	this->ready = false;
 	this->dontStreamOut = false;
-	this->hidden = false;
 
 	this->name = NULL;
 	Container::setName(this, name);
@@ -170,7 +169,6 @@ void Container::deleteMyself()
 
 	if(!isDeleted(this->parent))
 	{
-		Container::hide(this);
 		Container::removeChild(this->parent, this, true);
 	}
 	else if(!this->deleteMe)
@@ -488,18 +486,6 @@ void Container::transformChildren(uint8 invalidateTransformationFlag)
 
 		child->transformation.invalid |= this->transformation.invalid;
 
-		// Do not enable this check to optimize things
-		// It messes up child entities when you need to 
-		// hide and then show them
-		// Besides, the transformation should be valid
-		// all the time
-		/*
-		if(child->hidden)
-		{
-			continue;
-		}
-		*/
-
 		if(child->deleteMe)
 		{
 			continue;
@@ -521,6 +507,29 @@ void Container::transformChildren(uint8 invalidateTransformationFlag)
 		{
 			/// Force non virtual call
 			Container::doTransform(child, &this->transformation, invalidateTransformationFlag);
+		}
+	}
+}
+//---------------------------------------------------------------------------------------------------------
+void Container::propagateCommand(uint32 command, ...)
+{
+	if(NULL != this->children)
+	{
+		for(VirtualNode node = this->children->head; NULL != node; node = node->next)
+		{
+			Container child = Container::safeCast(node->data);
+
+			if(child->deleteMe)
+			{
+				continue;
+			}
+
+			va_list args;
+			va_start(args, command);
+
+			Container::handleCommand(child, command, args);
+			
+			va_end(args);
 		}
 	}
 }
@@ -718,45 +727,6 @@ void Container::ready(bool recursive)
 	{
 		Container::ready(childNode->data, recursive);
 	}
-
-	if(this->hidden)
-	{
-		Container::hide(this);
-	}
-}
-//---------------------------------------------------------------------------------------------------------
-void Container::show()
-{
-	this->hidden = false;
-
-	Container::invalidateTransformation(this);
-
-	if(NULL == this->children)
-	{
-		return;
-	}
-
-	for(VirtualNode node = this->children->head; NULL != node; node = node->next)
-	{
-		Container child = Container::safeCast(node->data);
-
-		Container::show(child);
-	}
-}
-//---------------------------------------------------------------------------------------------------------
-void Container::hide()
-{
-	this->hidden = true;
-
-	if(NULL == this->children)
-	{
-		return;
-	}
-
-	for(VirtualNode node = this->children->head; NULL != node; node = node->next)
-	{
-		Container::hide(node->data);
-	}
 }
 //---------------------------------------------------------------------------------------------------------
 void Container::transform(const Transformation* environmentTransformation, uint8 invalidateTransformationFlag)
@@ -803,20 +773,8 @@ void Container::resume()
 	}
 }
 //---------------------------------------------------------------------------------------------------------
-void Container::setTransparency(uint8 transparency)
-{
-	if(NULL == this->children)
-	{
-		return;
-	}
-
-	for(VirtualNode node = this->children->head; NULL != node; node = node->next)
-	{
-		Container child = Container::safeCast(node->data);
-
-		Container::setTransparency(child, transparency);
-	}
-}
+void Container::handleCommand(int32 command __attribute__ ((unused)), va_list args  __attribute__ ((unused)))
+{}
 //---------------------------------------------------------------------------------------------------------
 bool Container::handlePropagatedMessage(int32 message __attribute__ ((unused)))
 {
