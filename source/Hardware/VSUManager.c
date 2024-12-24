@@ -406,7 +406,6 @@ void VSUManager::constructor()
 	this->allowQueueingSoundRequests = false;
 	this->targetPCMUpdates = 0;
 	this->playbackMode = kPlaybackNative;
-	this->allowQueueingSoundRequests = true;
 	this->haveUsedSoundSources = false;
 	this->haveQueuedRequests = false;
 
