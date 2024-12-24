@@ -1002,6 +1002,9 @@ void VUEngine::run(GameState currentGameState)
 
 	while(NULL != currentGameState)
 	{
+#ifdef __SHOW_VSU_MANAGER_STATUS
+		VSUManager::print(VSUManager::getInstance(), 1, 1);
+#endif
 		this->gameFrameStarted = false;
 		this->currentGameCycleEnded = false;
 
