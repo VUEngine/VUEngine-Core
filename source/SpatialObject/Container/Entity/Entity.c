@@ -406,16 +406,26 @@ fixed_t Entity::getRadius()
 //---------------------------------------------------------------------------------------------------------
 fixed_t Entity::getBounciness()
 {
-	return 0;
-	// PENDING
-	//return this->entitySpec->physicalProperties ? this->entitySpec->physicalProperties->bounciness : 0;
+	Body body = Body::safeCast(ComponentManager::getComponentAtIndex(SpatialObject::safeCast(this), kPhysicsComponent, 0));
+
+	if(isDeleted(body))
+	{
+		return 0;
+	}
+
+	return Body::getBounciness(body);
 }
 //---------------------------------------------------------------------------------------------------------
 fixed_t Entity::getFrictionCoefficient()
 {
-	return 0;
-	// PENDING
-//	return this->entitySpec->physicalProperties ? this->entitySpec->physicalProperties->frictionCoefficient : 0;
+	Body body = Body::safeCast(ComponentManager::getComponentAtIndex(SpatialObject::safeCast(this), kPhysicsComponent, 0));
+
+	if(isDeleted(body))
+	{
+		return 0;
+	}
+
+	return Body::getFrictionCoefficient(body);
 }
 //---------------------------------------------------------------------------------------------------------
 bool Entity::isSubjectToGravity(Vector3D gravity __attribute__ ((unused)))
