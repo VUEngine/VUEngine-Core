@@ -35,9 +35,6 @@ typedef struct ActorSpec
 	/// AnimatedEntity spec
 	AnimatedEntitySpec animatedEntitySpec;
 
-	/// Flag to attach a physical body
-	bool createBody;
-
 	/// Axises around which to rotate the entity when syncronizing with body
 	uint16 axisForSynchronizationWithBody;
 
