@@ -57,25 +57,25 @@ void SolidParticle::constructor(const SolidParticleSpec* solidParticleSpec)
 			kColliderComponent
 		},
 
-		// displacement
+		// Displacement
 		{__METERS_TO_PIXELS(solidParticleSpec->radius), __METERS_TO_PIXELS(solidParticleSpec->radius), __METERS_TO_PIXELS(solidParticleSpec->radius)},
 
-		// displacement (x, y, z, p)
+		// Displacement (x, y, z, p)
 		{0, 0, 0, 0},
 
-		// rotation (x, y, z)
+		// Rotation (x, y, z)
 		{0, 0, 0},
 
-		// scale (x, y, z)
+		// Scale (x, y, z)
 		{1, 1, 1},
 
 		// check for collisions against other colliders
 		true,
 
-		/// layers in which I live
+		/// Layers in which I live
 		this->solidParticleSpec->layers,
 
-		/// layers to ignore when checking for collisions
+		/// Layers to ignore when checking for collisions
 		this->solidParticleSpec->layersToIgnore,
 	};
 

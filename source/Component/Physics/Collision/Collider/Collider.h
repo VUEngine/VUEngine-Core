@@ -144,7 +144,7 @@ typedef struct ColliderSpec
 	/// size in pixels
 	PixelSize pixelSize;
 
-	/// displacement modifier
+	/// Displacement modifier
 	PixelVector displacement;
 
 	/// rotation modifier
@@ -153,13 +153,13 @@ typedef struct ColliderSpec
 	/// scale modifier
 	Scale scale;
 
-	/// if true this collider checks for collisions against other colliders
+	/// If true this collider checks for collisions against other colliders
 	bool checkForCollisions;
 
-	/// layers in which I live
+	/// Layers in which I live
 	uint32 layers;
 
-	/// layers to ignore when checking for collisions
+	/// Layers to ignore when checking for collisions
 	uint32 layersToIgnore;
 
 } ColliderSpec;

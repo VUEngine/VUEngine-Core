@@ -155,7 +155,7 @@
 {%- if imageData.tiles is defined and (eye !== 'R' or isStereoAnimation) %}
 CharSetROMSpec {{ charsetSpecName }}CharsetSpec =
 {
-	// number of chars in function or the number of frames to load at the same time
+	// Number of CHARs in function of the number of frames to load at the same time
 	{%- if isOptimizedAnimation %}
 	{{ imageData.animation.largestFrame }},
 	{%- elseif isSpritesheetAnimation %}
@@ -164,14 +164,14 @@ CharSetROMSpec {{ charsetSpecName }}CharsetSpec =
 	{{ imageData.tiles.count }},
 	{%- endif %}
 
-	// whether it is shared or not
+	// Whether it is shared or not
 	{%- if isSpritesheetAnimation %}
 	false,
 	{%- else %}
 	true,
 	{%- endif %}
 
-	// whether the tiles are optimized or not
+	// Whether the tiles are optimized or not
 	{%- if isOptimizedAnimation %}
 	true,
 	{%- elseif isSpritesheetAnimation %}
@@ -180,10 +180,10 @@ CharSetROMSpec {{ charsetSpecName }}CharsetSpec =
 	{{ sprite.optimizeTiles }},
 	{%- endif %}
 
-	// char spec
+	// Tiles array
 	{{ tilesName }}Tiles,
 
-	// pointer to the frames offsets
+	// Frame offsets array
 	{%- if imageData.tiles.frameOffsets is defined and imageData.tiles.frameOffsets | length %}
 	{{ tilesName }}TilesFrameOffsets,
 	{%- else %}
@@ -195,20 +195,20 @@ CharSetROMSpec {{ charsetSpecName }}CharsetSpec =
 
 TextureROMSpec {{ spriteName }}TextureSpec =
 {
-	// charset spec
+	// Pointer to the char spec that the texture uses
 	(CharSetSpec*)&{{ charsetSpecName }}CharsetSpec,
 
-	// bgmap spec
+	// Pointer to the map array that defines how to use the tiles from the char set
 	{% if isStereo and not isStereoAnimation and eye === 'R' -%}
 	{{ sanitizedSpecName ~ 'Entity' ~ imageData.maps[1].name }}Map,
 	{%- else -%}
 	{{ sanitizedSpecName ~ 'Entity' ~ imageData.maps[0].name }}Map,
 	{%- endif %}
 
-	// cols (max 64)
+	// Horizontal size in tiles of the texture (max. 64)
 	{{ imageData.maps[0].width | round(0, "floor") }},
 
-	// rows (max 64)
+	// Vertical size in tiles of the texture (max. 64)
 	{% set mapHeight = imageData.maps[0].height | round(0, "floor") -%}
 	{%- if spriteClass == 'FrameBlendBgmapSprite' -%}
 		{%- set mapHeight = mapHeight / 2 | round(0, "floor") -%}
@@ -221,7 +221,7 @@ TextureROMSpec {{ spriteName }}TextureSpec =
 	// padding for affine/hbias transformations
 	{{ '{' ~ sprite.texture.padding.x ~ ', ' ~ sprite.texture.padding.y ~ '}' }},
 
-	// number of frames
+	// Number of frames that the texture supports
 	{%- if isAnimated and item.animations.multiframe %}
 	{{ item.animations.totalFrames }},
 	{%- elseif spriteClass == 'FrameBlendBgmapSprite' %}
@@ -230,16 +230,16 @@ TextureROMSpec {{ spriteName }}TextureSpec =
 	1,
 	{%- endif %}
 
-	// palette number (0-3)
+	// Palette index to use by the graphical data (0 - 3)
 	{{ sprite.texture.palette | default(0) }},
 
-	// recyclable
+	// Flag to recyble the texture with a different map
 	{{ sprite.texture.recycleable | default(false) }},
 
-	// vertical flip
+	// Flag to vertically flip the image
 	{{ sprite.texture.flip.x | default(false) }},
 
-	// horizontal flip
+	// Flag to horizontally flip the image
 	{{ sprite.texture.flip.y | default(false) }},
 };
 
@@ -264,24 +264,29 @@ TextureROMSpec* const {{ spriteName }}TextureSpecs[] =
 	{
 	{%- endif %}
 	{
-		// sprite's type
-		__TYPE({{ spriteAllocatorClass }}),
+		{
+			// Allocator
+			__TYPE({{ spriteAllocatorClass }}),
 
-		// texture spec
+			// Component type
+			kSpriteComponent
+		},
+
+		// Spec for the texture to display
 		{%- if spriteAllocatorClass == 'MBgmapAnimatedSprite' or spriteAllocatorClass == 'MBgmapSprite' %}
 		NULL,
 		{%- else %}
 		(TextureSpec*)&{{ spriteName }}TextureSpec,
 		{%- endif %}
 
-		// transparency (__TRANSPARENCY_NONE, __TRANSPARENCY_EVEN or __TRANSPARENCY_ODD)
+		// Transparency mode (__TRANSPARENCY_NONE, __TRANSPARENCY_EVEN or __TRANSPARENCY_ODD)
 		__TRANSPARENCY_{{ sprite.transparency | upper }},
 
-		// displacement
+		// Displacement added to the sprite's position
 		{{ '{' ~ sprite.displacement.x ~ ', ' ~ sprite.displacement.y ~ ', ' ~ sprite.displacement.z ~ ', ' ~ sprite.displacement.parallax ~ '}' }},
 	},
 
-	// bgmap mode (__WORLD_BGMAP, __WORLD_AFFINE, __WORLD_OBJECT or __WORLD_HBIAS)
+	// The display mode (__WORLD_BGMAP, __WORLD_AFFINE, __WORLD_OBJECT or __WORLD_HBIAS)
 	// make sure to use the proper corresponding sprite type throughout the spec (BgmapSprite or ObjectSprite)
 	{%- if item.sprites.type == 'Object' %}
 	__WORLD_OBJECT,
@@ -290,11 +295,11 @@ TextureROMSpec* const {{ spriteName }}TextureSpecs[] =
 	{% endif %}
 
 	{%- if item.sprites.type != 'Object' %}
-	// pointer to affine/hbias manipulation function
+	// Pointer to affine/hbias manipulation function
 	{% if sprite.manipulationFunction %}(ParamTableEffectMethod){{ sprite.manipulationFunction }}{% else %}NULL{% endif %},
 	{%- endif %}
 
-	// display mode (__WORLD_ON, __WORLD_LON or __WORLD_RON)
+	// Flag to indicate in which display to show the texture (__WORLD_ON, __WORLD_LON or __WORLD_RON)
 	{% if isStereo -%}
 	__WORLD_{{ eye }}ON,
 	{%- else -%}
@@ -310,22 +315,22 @@ TextureROMSpec* const {{ spriteName }}TextureSpecs[] =
 	{%- if spriteAllocatorClass == 'MBgmapAnimatedSprite' or spriteAllocatorClass == 'MBgmapSprite' %}
 	},
 
-	// texture to use with the sprite
+	// Texture to use with the sprite
 	(TextureSpec**){{ spriteName }}TextureSpecs,
 
 	// SCX/SCY value
 	__WORLD_{{ sprite.texture.repeat.mode | default('1x1') }},
 
-	// flag to loop the x axis
+	// Flag to loop the x axis
 	{{ sprite.texture.repeat.x | default(false) }},
 
-	// flag to loop the y axis
+	// Flag to loop the y axis
 	{{ sprite.texture.repeat.y | default(false) }},
 
-	// Bounds the sprite's size to provide culling; if 0, the value is inferred from the texture
+	// Bounds the sprite's width to provide culling; if 0, the value is inferred from the texture
 	{{ sprite.texture.repeat.size.x | default(0) }},
 
-	// Bounds the sprite's size to provide culling; if 0, the value is inferred from the texture
+	// Bounds the sprite's height to provide culling; if 0, the value is inferred from the texture
 	{{ sprite.texture.repeat.size.y | default(0) }},
 	{%- endif %}
 };
@@ -348,26 +353,26 @@ TextureROMSpec* const {{ spriteName }}TextureSpecs[] =
 {%- endif -%}
 AnimationFunctionROMSpec {{ sanitizedSpecName }}Animation{{ loop.index }}AnimationSpec =
 {
-	// number of frames of this animation function
+	// Number of frames that the texture supports of this animation function
 	{{ animation.frames | length }},
 
-	// frames to play in animation
+	// Frames to play in animation
 	{
 		{% for frame in animation.frames -%}
 			{{ frame }}, {% if loop.index % 10 == 0 and not loop.last %}{{ "\n		" }}{% endif %}
 		{%- endfor %}
 	},
 
-	// number of cycles a frame of animation is displayed
+	// Number of cycles a frame of animation is displayed
 	{{ animation.cycles }},
 
-	// whether to play it in loop or not
+	// Whether to play it in loop or not
 	{{ animation.loop }},
 
-	// method to call on function completion
+	// Callback on animation completion
 	{% if animation.callback %}(EventListener){{ animation.callback }}{% else %}NULL{% endif %},
 
-	// function's name
+	// Animation's name
 	"{{ animationName }}",
 };
 
@@ -414,13 +419,13 @@ const PixelVector {{ wireframeName }}WireframeSegments[][2]=
 		// class allocator
 		__TYPE({{ wireframe.type }}),
 
-		// displacement
+		// Displacement
 		{{ '{' ~ wireframe.displacement.x ~ ', ' ~ wireframe.displacement.y ~ ', ' ~ wireframe.displacement.z ~ '}' }},
 		
 		// color
 		{{ ['__COLOR_BLACK', '__COLOR_DARK_RED', '__COLOR_MEDIUM_RED', '__COLOR_BRIGHT_RED'][wireframe.color] }},
 
-		// transparency
+		// Transparency mode (__TRANSPARENCY_NONE, __TRANSPARENCY_EVEN or __TRANSPARENCY_ODD)
 		__TRANSPARENCY_{{ wireframe.transparency | upper }},
 
 		// interlaced
@@ -455,26 +460,33 @@ const PixelVector {{ wireframeName }}WireframeSegments[][2]=
 {%- set colliderName = sanitizedSpecName ~ 'Collider' ~ loop.index -%}
 {%- set colliderNames = (colliderNames.push(colliderName), colliderNames) -%}
 
-ColliderROMSpec {{ colliderName }}ColliderSpec = {
-	// collider
-	__TYPE({{ collider.type }}),
+ColliderROMSpec {{ colliderName }}ColliderSpec = 
+{
+	// Collider
+	{
+		// Allocator
+		__TYPE({{ collider.type }}),
 
-	// size (x, y, z)
+		// Component type
+		kColliderComponent
+	},
+
+	// Size (x, y, z)
 	{{ '{' ~ collider.pixelSize.x ~ ', ' ~ collider.pixelSize.y ~ ', ' ~ collider.pixelSize.z ~ '}' }},
 
-	// displacement (x, y, z, p)
+	// Displacement (x, y, z, p)
 	{{ '{' ~ collider.displacement.x ~ ', ' ~ collider.displacement.y ~ ', ' ~ collider.displacement.z ~ ', ' ~ collider.displacement.parallax ~ '}' }},
 
-	// rotation (x, y, z)
+	// Rotation (x, y, z)
 	{__F_TO_FIX7_9({{ collider.rotation.x }}), __F_TO_FIX7_9({{ collider.rotation.y }}), __F_TO_FIX7_9({{ collider.rotation.z }})},
 
-	// scale (x, y, z)
+	// Scale (x, y, z)
 	{__F_TO_FIX7_9({{ collider.scale.x }}), __F_TO_FIX7_9({{ collider.scale.y }}), __F_TO_FIX7_9({{ collider.scale.z }})},
 
-	// if true this collider checks for collisions against other colliders
+	// If true this collider checks for collisions against other colliders
 	{{ collider.checkForCollisions }},
 
-	// layers in which I live
+	// Layers in which I live
 	{%- if collider.layers | length > 0 %}
 	kLayer
 		{%- for layerId in collider.layers %}
@@ -487,7 +499,7 @@ ColliderROMSpec {{ colliderName }}ColliderSpec = {
 	kLayerNone,
 	{%- endif %}
 
-	// layers to ignore when checking for collisions
+	// Layers to ignore when checking for collisions
 	{%- if collider.layersToCheck | length > 0 %}
 	kLayerAll & ~(kLayer
 		{%- for layerId in collider.layersToCheck %}
@@ -605,10 +617,10 @@ ComponentSpec* const {{ sanitizedSpecName }}ComponentSpecs[] =
 		{%- if isAnimated %}
 		},
 
-		// pointer to the animation spec for the character
+		// Pointer to animation functions array
 		(const AnimationFunction**)&{{ sanitizedSpecName }}AnimationSpecs,
 
-		// initial animation
+		// Animation to play automatically
 		"{%- if item.components.animations[item.animations.default].name != '' -%}
 			{{ item.components.animations[item.animations.default].name | sanitizeSpecName }}
 		{%- else -%} 
@@ -619,17 +631,7 @@ ComponentSpec* const {{ sanitizedSpecName }}ComponentSpecs[] =
 	{%- if item.physics.enabled %}
 	},
 
-	// true to create a body
-	{{ item.physics.enabled }},
-
-	// axis subject to gravity
-	{%- if item.physics.gravityAxes is defined and item.physics.gravityAxes is iterable and item.physics.gravityAxes | length %}
-	__{{ item.physics.gravityAxes.join(', __') }}
-	{%- else %} 
-	__NO_AXIS,
-	{%- endif %}
-
-	// axis around which to rotate the entity when syncronizing with body
+	// Axises around which to rotate the entity when syncronizing with bodyate the entity when syncronizing with body
 	{%- if item.physics.rotationAxes is defined and item.physics.rotationAxes is iterable and item.physics.rotationAxes | length %}
 	__{{ item.physics.rotationAxes.join(' | __') }}
 	{%- else %} 

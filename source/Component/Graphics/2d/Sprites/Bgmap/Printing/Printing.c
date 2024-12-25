@@ -403,13 +403,13 @@ void Printing::addSprite()
 					kSpriteComponent
 				},
 
-				// texture spec
+				// Spec for the texture to display
 				NULL,
 
-				// transparency (__TRANSPARENCY_NONE, __TRANSPARENCY_EVEN or __TRANSPARENCY_ODD)
+				// Transparency mode (__TRANSPARENCY_NONE, __TRANSPARENCY_EVEN or __TRANSPARENCY_ODD)
 				__TRANSPARENCY_NONE,
 
-				// displacement
+				// Displacement
 				{
 					0, // x
 					0, // y
@@ -418,14 +418,14 @@ void Printing::addSprite()
 				},
 			},
 
-			// bgmap mode (__WORLD_BGMAP, __WORLD_AFFINE, __WORLD_OBJECT or __WORLD_HBIAS)
+			// The display mode (__WORLD_BGMAP, __WORLD_AFFINE, __WORLD_OBJECT or __WORLD_HBIAS)
 			// make sure to use the proper corresponding sprite type throughout the spec (BgmapSprite or ObjectSprite)
 			__WORLD_BGMAP,
 
-			// pointer to affine/hbias manipulation function
+			// Pointer to affine/hbias manipulation function
 			NULL,
 
-			// display mode (__WORLD_ON, __WORLD_LON or __WORLD_RON)
+			// Flag to indicate in which display to show the texture (__WORLD_ON, __WORLD_LON or __WORLD_RON)
 			__WORLD_ON,
 		}
 	};

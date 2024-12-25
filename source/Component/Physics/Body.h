@@ -44,6 +44,9 @@ typedef struct BodySpec
 	/// Component spec
 	ComponentSpec componentSpec;
 
+	/// Flag to create or not a body
+	bool createBody;
+
 	/// Mass
 	fixed_t mass;
 

@@ -129,7 +129,7 @@ typedef struct FontSize
 /// @memberof Printing
 typedef struct FontSpec
 {
-	/// Font charset spec pointer
+	/// Pointer to the char spec that the font uses
 	CharSetSpec* charSetSpec;
 
 	/// Offset at which character number the font starts

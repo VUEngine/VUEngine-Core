@@ -153,13 +153,13 @@ void Box::configureWireframe()
 				kWireframeComponent
 			},
 
-			/// displacement
+			/// Displacement
 			{0, 0, 0},
 
 			/// color
 			__COLOR_BRIGHT_RED,
 
-			/// transparency
+			/// Transparency mode (__TRANSPARENCY_NONE, __TRANSPARENCY_EVEN or __TRANSPARENCY_ODD)
 			__TRANSPARENCY_NONE,
 		
 			/// interlaced
