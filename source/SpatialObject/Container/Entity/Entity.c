@@ -437,18 +437,22 @@ void Entity::createComponents()
 	}
 
 	ComponentManager::addComponents(SpatialObject::safeCast(this), this->entitySpec->componentSpecs, kComponentTypes);
-
-	Entity::calculateSize(this);
 }
 //---------------------------------------------------------------------------------------------------------
 void Entity::destroyComponents()
 {
 	ComponentManager::removeComponents(SpatialObject::safeCast(this), kComponentTypes);
+
+	this->size = (Size){0, 0, 0};
 }
 //---------------------------------------------------------------------------------------------------------
 Component Entity::addComponent(ComponentSpec* componentSpec)
 {
-	return ComponentManager::addComponent(SpatialObject::safeCast(this), componentSpec);
+	Component component = ComponentManager::addComponent(SpatialObject::safeCast(this), componentSpec);
+
+	Entity::calculateSize(this);
+
+	return component;
 }
 //---------------------------------------------------------------------------------------------------------
 void Entity::removeComponent(Component component)
@@ -459,16 +463,22 @@ void Entity::removeComponent(Component component)
 	}
 
 	ComponentManager::removeComponent(SpatialObject::safeCast(this), component);
+
+	Entity::calculateSize(this);
 }
 //---------------------------------------------------------------------------------------------------------
 void Entity::addComponents(ComponentSpec** componentSpecs, uint32 componentType)
 {
 	ComponentManager::addComponents(SpatialObject::safeCast(this), componentSpecs, componentType);
+
+	Entity::calculateSize(this);
 }
 //---------------------------------------------------------------------------------------------------------
 void Entity::removeComponents(uint32 componentType)
 {
 	ComponentManager::removeComponents(SpatialObject::safeCast(this), componentType);
+
+	Entity::calculateSize(this);
 }
 //---------------------------------------------------------------------------------------------------------
 Component Entity::getComponentAtIndex(uint32 componentType, int16 componentIndex)
@@ -495,8 +505,8 @@ void Entity::suspend()
 {
 	Base::suspend(this);
 
-	ComponentManager::removeComponents(SpatialObject::safeCast(this), kSpriteComponent);
-	ComponentManager::removeComponents(SpatialObject::safeCast(this), kWireframeComponent);
+	Entity::removeComponents(this, kSpriteComponent);
+	Entity::removeComponents(this, kWireframeComponent);
 }
 //---------------------------------------------------------------------------------------------------------
 void Entity::resume()
@@ -505,8 +515,8 @@ void Entity::resume()
 
 	if(NULL != this->entitySpec)
 	{
-		ComponentManager::addComponents(SpatialObject::safeCast(this), this->entitySpec->componentSpecs, kSpriteComponent);
-		ComponentManager::addComponents(SpatialObject::safeCast(this), this->entitySpec->componentSpecs, kWireframeComponent);
+		Entity::addComponents(this, this->entitySpec->componentSpecs, kSpriteComponent);
+		Entity::addComponents(this, this->entitySpec->componentSpecs, kWireframeComponent);
 	}
 
 	if(this->hidden)
