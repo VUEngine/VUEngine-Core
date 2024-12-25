@@ -26,9 +26,11 @@ class AnimationController;
 // CLASS' DATA
 //=========================================================================================================
 
+/// @memberof VisualComponent
 typedef ComponentSpec VisualComponentSpec;
 
 /// VisualComponent commands
+/// @memberof VisualComponent
 enum VisualComponentCommands
 {
 	cVisualComponentCommandShow = cComponentCommandLast + 1,

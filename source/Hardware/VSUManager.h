@@ -20,11 +20,11 @@
 // CLASS' MACROS
 //=========================================================================================================
 
-#define __DEFAULT_PCM_HZ					8000
-#define __TOTAL_WAVEFORMS				  	5
-#define __TOTAL_SOUND_SOURCES				6
-#define __TOTAL_MODULATION_CHANNELS 		1
-#define __TOTAL_NOISE_CHANNELS				1
+#define __DEFAULT_PCM_HZ			8000
+#define __TOTAL_WAVEFORMS			5
+#define __TOTAL_SOUND_SOURCES		6
+#define __TOTAL_MODULATION_CHANNELS 1
+#define __TOTAL_NOISE_CHANNELS		1
 #define __TOTAL_NORMAL_CHANNELS                                                                            \
 	(__TOTAL_SOUND_SOURCES - __TOTAL_MODULATION_CHANNELS - __TOTAL_NOISE_CHANNELS)
 #define __TOTAL_POTENTIAL_NORMAL_CHANNELS (__TOTAL_NORMAL_CHANNELS + __TOTAL_MODULATION_CHANNELS)
@@ -37,9 +37,9 @@
 /// @memberof VSUManager
 enum VSUSoundSourceTypes
 {
-	kSoundSourceNormal 					= (1 << 0),
-	kSoundSourceModulation 				= (1 << 1),
-	kSoundSourceNoise					= (1 << 2),
+	kSoundSourceNormal = (1 << 0),
+	kSoundSourceModulation = (1 << 1),
+	kSoundSourceNoise = (1 << 2),
 };
 
 /// Playback types
@@ -74,24 +74,22 @@ typedef struct Waveform
 /// Sound source mapping
 /// @memberof VSUManager
 typedef struct VSUSoundSource
-{  //             //    |   D7   ||   D6   ||   D5   ||   D4   ||   D3   ||   D2   ||   D1   ||   D0   |
-	uint8 SxINT;  //    [ Enable ][- XXXX -][Interval][---------------- Interval Data -----------------]
+{
+	uint8 SxINT;
 	uint8 spacer1[3];
-	uint8 SxLRV;  //    [-------------- L Volume --------------][-------------- R Volume --------------]
+	uint8 SxLRV;
 	uint8 spacer2[3];
-	uint8 SxFQL;  //    [----------------------------- Frequency Low Byte -----------------------------]
+	uint8 SxFQL;
 	uint8 spacer3[3];
-	uint8 SxFQH;  //    [--------------------- XXXX ---------------------][---- Frequency High Byte ---]
+	uint8 SxFQH;
 	uint8 spacer4[3];
-	uint8 SxEV0;  //    [------- Initial Envelope Value -------][- Dir. -][------ Envelope Step -------]
+	uint8 SxEV0;
 	uint8 spacer5[3];
-	uint8 SxEV1;  //    [-------------------------- XXXX --------------------------][ Repeat ][ Enable ]
-	//    S5EV1   //    [- XXXX -][ Enable ][ Repeat ][Function][------ XXXX ------][ Repeat ][ Enable ]
-	//    S6EV1   //    [- XXXX -][------------ Tap -----------][------ XXXX ------][ Repeat ][ Enable ]
+	uint8 SxEV1;
 	uint8 spacer6[3];
-	uint8 SxRAM;  //    [--------------------- XXXX ---------------------][--- Waveform Base Address --]
+	uint8 SxRAM;
 	uint8 spacer7[3];
-	uint8 SxSWP;  //    [- Clock ][--------- Interval ---------][- Dir. -][---- Sweep shift amount ----]
+	uint8 SxSWP;
 	uint8 spacer8[35];
 } VSUSoundSource;
 

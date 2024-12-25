@@ -10,13 +10,11 @@
 #ifndef VIP_MANAGER_H_
 #define VIP_MANAGER_H_
 
-
 //=========================================================================================================
 // INCLUDES
 //=========================================================================================================
 
 #include <ListenerObject.h>
-
 
 //=========================================================================================================
 // FORWARD DECLARATIONS
@@ -28,122 +26,122 @@ extern volatile uint16* _vipRegisters __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUT
 extern uint32* _currentDrawingFrameBufferSet __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE;
 extern uint32 _dramDirtyStart;
 
-
 //=========================================================================================================
 // CLASS' MACROS
 //=========================================================================================================
 
-#define	__TIMEERR						0x8000
-#define	__XPEND							0x4000
-#define	__SBHIT							0x2000
-#define	__FRAMESTART					0x0010
-#define	__GAMESTART						0x0008
-#define	__RFBEND						0x0004
-#define	__LFBEND						0x0002
-#define	__SCANERR						0x0001
+#define __TIMEERR					0x8000
+#define __XPEND						0x4000
+#define __SBHIT						0x2000
+#define __FRAMESTART				0x0010
+#define __GAMESTART					0x0008
+#define __RFBEND					0x0004
+#define __LFBEND					0x0002
+#define __SCANERR					0x0001
 
-#define	__LOCK							0x0400	// VPU SELECT __CTA
-#define	__SYNCE							0x0200	// L,R_SYNC TO VPU
-#define	__RE							0x0100	// MEMORY REFLASH CYCLE ON
-#define	__FCLK							0x0080
-#define	__SCANRDY						0x0040
-#define	__DISP							0x0002	// DISPLAY ON
-#define	__DPRST							0x0001	// RESET VPU COUNTER AND WAIT __FCLK
-#define	__DPBSY							0x003C	// In the midst of displaying
+#define __LOCK						0x0400	// VPU SELECT __CTA
+#define __SYNCE						0x0200	// L,R_SYNC TO VPU
+#define __RE						0x0100	// MEMORY REFLASH CYCLE ON
+#define __FCLK						0x0080
+#define __SCANRDY					0x0040
+#define __DISP						0x0002	// DISPLAY ON
+#define __DPRST						0x0001	// RESET VPU COUNTER AND WAIT __FCLK
+#define __DPBSY						0x003C	// In the midst of displaying
 
-#define	__SBOUT							0x8000	// In FrameBuffer drawing included
-#define	__SBCOUNT						0x1F00	// Current bloc being drawn
-#define	__OVERTIME						0x0010	// Processing
-#define	__XPBSY1						0x0008	// In the midst of FrameBuffer 1 picture editing
-#define	__XPBSY0						0x0004	// In the midst of FrameBuffer 0 picture editing
-#define	__XPBSY							(__XPBSY0 | __XPBSY1)	// In the midst of drawing
-#define	__XPEN							0x0002	// Start of drawing
-#define	__XPRST							0x0001	// Forcing idling
+#define __SBOUT						0x8000				   // In FrameBuffer drawing included
+#define __SBCOUNT					0x1F00				   // Current bloc being drawn
+#define __OVERTIME					0x0010				   // Processing
+#define __XPBSY1					0x0008				   // In the midst of FrameBuffer 1 picture editing
+#define __XPBSY0					0x0004				   // In the midst of FrameBuffer 0 picture editing
+#define __XPBSY						(__XPBSY0 | __XPBSY1)  // In the midst of drawing
+#define __XPEN						0x0002				   // Start of drawing
+#define __XPRST						0x0001				   // Forcing idling
 
 // VIP Register Mnemonics
-#define	__INTPND						0x00 // Interrupt Pending
-#define	__INTENB						0x01 // Interrupt Enable
-#define	__INTCLR						0x02 // Interrupt Clear
+#define __INTPND					0x00  // Interrupt Pending
+#define __INTENB					0x01  // Interrupt Enable
+#define __INTCLR					0x02  // Interrupt Clear
 
-#define	__DPSTTS						0x10 // Display Status
-#define	__DPCTRL						0x11 // Display Control
-#define	__BRTA							0x12 // Brightness A
-#define	__BRTB							0x13 // Brightness B
-#define	__BRTC							0x14 // Brightness C
-#define	__REST							0x15 // Brightness Idle
+#define __DPSTTS					0x10  // Display Status
+#define __DPCTRL					0x11  // Display Control
+#define __BRTA						0x12  // Brightness A
+#define __BRTB						0x13  // Brightness B
+#define __BRTC						0x14  // Brightness C
+#define __REST						0x15  // Brightness Idle
 
-#define	__FRMCYC						0x17 // Frame Repeat
-#define	__CTA							0x18 // Column Table Pointer
+#define __FRMCYC					0x17  // Frame Repeat
+#define __CTA						0x18  // Column Table Pointer
 
-#define	__XPSTTS						0x20 // Drawing Status
-#define	__XPCTRL						0x21 // Drawing Control
-#define	__VER							0x22 // VIP Version
+#define __XPSTTS					0x20  // Drawing Status
+#define __XPCTRL					0x21  // Drawing Control
+#define __VER						0x22  // VIP Version
 
-#define	__SPT0							0x24 // OBJ Group 0 Pointer
-#define	__SPT1							0x25 // OBJ Group 1 Pointer
-#define	__SPT2							0x26 // OBJ Group 2 Pointer
-#define	__SPT3							0x27 // OBJ Group 3 Pointer
+#define __SPT0						0x24  // OBJ Group 0 Pointer
+#define __SPT1						0x25  // OBJ Group 1 Pointer
+#define __SPT2						0x26  // OBJ Group 2 Pointer
+#define __SPT3						0x27  // OBJ Group 3 Pointer
 
-#define	__GPLT0							0x30 // BGMap Palette 0
-#define	__GPLT1							0x31 // BGMap Palette 1
-#define	__GPLT2							0x32 // BGMap Palette 2
-#define	__GPLT3							0x33 // BGMap Palette 3
+#define __GPLT0						0x30  // BGMap Palette 0
+#define __GPLT1						0x31  // BGMap Palette 1
+#define __GPLT2						0x32  // BGMap Palette 2
+#define __GPLT3						0x33  // BGMap Palette 3
 
-#define	__JPLT0							0x34 // OBJ Palette 0
-#define	__JPLT1							0x35 // OBJ Palette 1
-#define	__JPLT2							0x36 // OBJ Palette 2
-#define	__JPLT3							0x37 // OBJ Palette 3
+#define __JPLT0						0x34  // OBJ Palette 0
+#define __JPLT1						0x35  // OBJ Palette 1
+#define __JPLT2						0x36  // OBJ Palette 2
+#define __JPLT3						0x37  // OBJ Palette 3
 
-#define	__BACKGROUND_COLOR				0x38 // Background Color
+#define __BACKGROUND_COLOR			0x38  // Background Color
 
 // Video RAM
-#define __LEFT_FRAME_BUFFER_0			0x00000000 // Left Frame Buffer 0
-#define __LEFT_FRAME_BUFFER_1			0x00008000 // Left Frame Buffer 1
-#define __RIGHT_FRAME_BUFFER_0			0x00010000 // Right Frame Buffer 0
-#define __RIGHT_FRAME_BUFFER_1			0x00018000 // Right Frame Buffer 1
+#define __LEFT_FRAME_BUFFER_0		0x00000000	// Left Frame Buffer 0
+#define __LEFT_FRAME_BUFFER_1		0x00008000	// Left Frame Buffer 1
+#define __RIGHT_FRAME_BUFFER_0		0x00010000	// Right Frame Buffer 0
+#define __RIGHT_FRAME_BUFFER_1		0x00018000	// Right Frame Buffer 1
 
 // Display RAM
-#define __CHAR_SPACE_BASE_ADDRESS		0x00078000
-#define __BGMAP_SPACE_BASE_ADDRESS		0x00020000 // Base address of BGMap Memory
-#define __OBJECT_SPACE_BASE_ADDRESS		0x0003E000 // Base address of ListenerObject Attribute Memory
-#define __WORLD_SPACE_BASE_ADDRESS		0x0003D800 // Base address of World Attribute Memory
+#define __CHAR_SPACE_BASE_ADDRESS	0x00078000
+#define __BGMAP_SPACE_BASE_ADDRESS	0x00020000	// Base address of BGMap Memory
+#define __OBJECT_SPACE_BASE_ADDRESS 0x0003E000	// Base address of ListenerObject Attribute Memory
+#define __WORLD_SPACE_BASE_ADDRESS	0x0003D800	// Base address of World Attribute Memory
 
-#define __BGMAP_SEGMENT(b)				(__BGMAP_SPACE_BASE_ADDRESS + ((b) * 0x2000))	// Address of BGMap b (0 <= b <= 13)
+#define __BGMAP_SEGMENT(b)                                                                                 \
+	(__BGMAP_SPACE_BASE_ADDRESS + ((b) * 0x2000))  // Address of BGMap b (0 <= b <= 13)
 
-#define	__WORLD_OFF						0x0000
-#define	__WORLD_ON						0xC000
-#define	__WORLD_LON						0x8000
-#define	__WORLD_RON						0x4000
-#define	__WORLD_OBJECT					0x3000
-#define	__WORLD_AFFINE					0x2000
-#define	__WORLD_HBIAS					0x1000
-#define	__WORLD_BGMAP					0x0000
+#define __WORLD_OFF					0x0000
+#define __WORLD_ON					0xC000
+#define __WORLD_LON					0x8000
+#define __WORLD_RON					0x4000
+#define __WORLD_OBJECT				0x3000
+#define __WORLD_AFFINE				0x2000
+#define __WORLD_HBIAS				0x1000
+#define __WORLD_BGMAP				0x0000
 
-#define	__WORLD_1x1						0x0000
-#define	__WORLD_1x2						0x0100
-#define	__WORLD_1x4						0x0200
-#define	__WORLD_1x8						0x0300
-#define	__WORLD_2x1						0x0400
-#define	__WORLD_2x2						0x0500
-#define	__WORLD_2x4						0x0600
-#define	__WORLD_4x1						0x0800
-#define	__WORLD_4x2						0x0900
-#define	__WORLD_8x1						0x0C00
+#define __WORLD_1x1					0x0000
+#define __WORLD_1x2					0x0100
+#define __WORLD_1x4					0x0200
+#define __WORLD_1x8					0x0300
+#define __WORLD_2x1					0x0400
+#define __WORLD_2x2					0x0500
+#define __WORLD_2x4					0x0600
+#define __WORLD_4x1					0x0800
+#define __WORLD_4x2					0x0900
+#define __WORLD_8x1					0x0C00
 
-#define	__WORLD_OVR						0x0080
-#define	__WORLD_END						0x0040
+#define __WORLD_OVR					0x0080
+#define __WORLD_END					0x0040
 
-#define __PARAM_TABLE_END 				((uint32)&_dramDirtyStart)
+#define __PARAM_TABLE_END			((uint32) & _dramDirtyStart)
 
-#define __COLUMN_TABLE_ENTRIES			256
-#define __BRIGHTNESS_REPEAT_ENTRIES		96
-
+#define __COLUMN_TABLE_ENTRIES		256
+#define __BRIGHTNESS_REPEAT_ENTRIES 96
 
 //=========================================================================================================
 // CLASS' DATA
 //=========================================================================================================
 
 /// Represents an entry in WORLD space in DRAM
+/// @memberof VIPManager
 typedef struct WorldAttributes
 {
 	uint16 head;
@@ -162,6 +160,7 @@ typedef struct WorldAttributes
 } WorldAttributes;
 
 /// Represents an entry in OBJECT space in DRAM
+/// @memberof VIPManager
 typedef struct ObjectAttributes
 {
 	int16 jx;
@@ -172,6 +171,7 @@ typedef struct ObjectAttributes
 } ObjectAttributes;
 
 /// Column table specification
+/// @memberof VIPManager
 typedef struct ColumnTableSpec
 {
 	/// Defines whether the spec's first half should be mirrored (true)
@@ -183,9 +183,12 @@ typedef struct ColumnTableSpec
 
 } ColumnTableSpec;
 
+/// A ColumnTable spec that is stored in ROM
+/// @memberof VIPManager
 typedef const ColumnTableSpec ColumnTableROMSpec;
 
 /// Brigtness control specification
+/// @memberof VIPManager
 typedef struct BrightnessRepeatSpec
 {
 	/// Defines whether the spec's first half should be mirrored (true)
@@ -198,9 +201,11 @@ typedef struct BrightnessRepeatSpec
 } BrightnessRepeatSpec;
 
 /// A BrightnessRepeat spec that is stored in ROM
+/// @memberof VIPManager
 typedef const BrightnessRepeatSpec BrightnessRepeatROMSpec;
 
 /// Color configuration struct
+/// @memberof VIPManager
 typedef struct ColorConfig
 {
 	/// Background color
@@ -215,6 +220,7 @@ typedef struct ColorConfig
 } ColorConfig;
 
 /// Palette configuration struct
+/// @memberof VIPManager
 typedef struct PaletteConfig
 {
 	struct Bgmap
@@ -236,19 +242,19 @@ typedef struct PaletteConfig
 } PaletteConfig;
 
 /// Enums used to control VIP interrupts
+/// @memberof VIPManager
 enum MultiplexedInterrupts
 {
-	kVIPNoMultiplexedInterrupts 					= 1 << 0,
-	kVIPGameStartMultiplexedInterrupts				= 1 << 1,
-	kVIPXpendMultiplexedInterrupts					= 1 << 2,
-	kVIPOnlyVIPMultiplexedInterrupts				= kVIPGameStartMultiplexedInterrupts | kVIPXpendMultiplexedInterrupts,
-	kVIPOnlyNonVIPMultiplexedInterrupts				= 1 << 3,
-	kVIPAllMultiplexedInterrupts					= 0x7FFFFFFF,
+	kVIPNoMultiplexedInterrupts = 1 << 0,
+	kVIPGameStartMultiplexedInterrupts = 1 << 1,
+	kVIPXpendMultiplexedInterrupts = 1 << 2,
+	kVIPOnlyVIPMultiplexedInterrupts = kVIPGameStartMultiplexedInterrupts | kVIPXpendMultiplexedInterrupts,
+	kVIPOnlyNonVIPMultiplexedInterrupts = 1 << 3,
+	kVIPAllMultiplexedInterrupts = 0x7FFFFFFF,
 };
 
 /// A method pointer for processing special effects after drawing operations are completed
-typedef void (*PostProcessingEffect) (uint32 currentDrawingFrameBufferSet, SpatialObject scope);
-
+typedef void (*PostProcessingEffect)(uint32 currentDrawingFrameBufferSet, SpatialObject scope);
 
 //=========================================================================================================
 // FORWARD DECLARATIONS
@@ -259,9 +265,9 @@ extern WorldAttributes _worldAttributesCache[__TOTAL_LAYERS];
 extern ObjectAttributes _objectAttributesCache[__TOTAL_OBJECTS];
 
 // Pointers to access the DRAM space
-static WorldAttributes* const _worldAttributesBaseAddress =	(WorldAttributes*)__WORLD_SPACE_BASE_ADDRESS;
-static ObjectAttributes* const	_objectAttributesBaseAddress =	(ObjectAttributes*)__OBJECT_SPACE_BASE_ADDRESS;
-
+static WorldAttributes* const _worldAttributesBaseAddress = (WorldAttributes*)__WORLD_SPACE_BASE_ADDRESS;
+static ObjectAttributes* const _objectAttributesBaseAddress =
+	(ObjectAttributes*)__OBJECT_SPACE_BASE_ADDRESS;
 
 //=========================================================================================================
 // CLASS' DECLARATION
@@ -380,30 +386,33 @@ singleton class VIPManager : ListenerObject
 	/// Push a post processing effect at the start of the list of effects.
 	/// @param postProcessingEffect: Post-processing effect function
 	/// @param spatialObject: Post-processing effect function's scope
-	void pushFrontPostProcessingEffect(PostProcessingEffect postProcessingEffect, SpatialObject spatialObject);
-	
+	void pushFrontPostProcessingEffect(
+		PostProcessingEffect postProcessingEffect, SpatialObject spatialObject
+	);
+
 	/// Push a post processing effect at the end of the list of effects.
 	/// @param postProcessingEffect: Post-processing effect function
 	/// @param spatialObject: Post-processing effect function's scope
-	void pushBackPostProcessingEffect(PostProcessingEffect postProcessingEffect, SpatialObject spatialObject);
+	void pushBackPostProcessingEffect(
+		PostProcessingEffect postProcessingEffect, SpatialObject spatialObject
+	);
 
 	/// Remove a post-processing effect from the list of effects.
 	/// @param postProcessingEffect: Post-processing effect function
- 	/// @param spatialObject: Post-processing effect function's scope
+	/// @param spatialObject: Post-processing effect function's scope
 	void removePostProcessingEffect(PostProcessingEffect postProcessingEffect, SpatialObject spatialObject);
 
 	/// Remove all a post-processing effects.
 	void removePostProcessingEffects();
 
 	/// Retrieve the registry of the interrupts being processed.
-	/// @return The registry of the interrupts being processed 
+	/// @return The registry of the interrupts being processed
 	uint16 getCurrentInterrupt();
 
 	/// Retrieve the time in milliseconds that each game frame lasts.
-	/// @return Time in milliseconds that the game frame last according 
-	/// to the FRMCYC configuration 
+	/// @return Time in milliseconds that the game frame last according
+	/// to the FRMCYC configuration
 	uint16 getGameFrameDuration();
 }
-
 
 #endif

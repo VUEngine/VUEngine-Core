@@ -10,20 +10,18 @@
 #ifndef DEBUG_H_
 #define DEBUG_H_
 
-
 //=========================================================================================================
 // INCLUDES
 //=========================================================================================================
 
 #include <Tool.h>
 
-
 //=========================================================================================================
 // CLASS' DATA
 //=========================================================================================================
 
 /// A struct to map a class size function to a name
-/// @memberof	AnimationInspector
+/// @memberof Debug
 typedef struct ClassSizeData
 {
 	/// Class' method
@@ -33,7 +31,6 @@ typedef struct ClassSizeData
 	char* name;
 
 } ClassSizeData;
-
 
 //=========================================================================================================
 // CLASS' DECLARATION
@@ -61,13 +58,13 @@ singleton class Debug : Tool
 
 	/// Current sprite's index
 	int8 spriteIndex;
-	
+
 	/// Currently displayed BGMAP segment
 	int8 bgmapSegment;
 
 	/// Currently displayed part of BGMAP memory
 	uint8 bgmapSegmentDiplayedSection;
-	
+
 	/// Currently displayed OBJECT segment
 	int32 objectSegment;
 

@@ -10,7 +10,6 @@
 #ifndef ENTITY_H_
 #define ENTITY_H_
 
-
 //=========================================================================================================
 // INCLUDES
 //=========================================================================================================
@@ -26,7 +25,6 @@
 #include <Wireframe.h>
 #include <WireframeManager.h>
 
-
 //=========================================================================================================
 // FORWARD DECLARATIONS
 //=========================================================================================================
@@ -35,7 +33,6 @@ class Behavior;
 class Entity;
 class EntityFactory;
 class Telegram;
-
 
 //=========================================================================================================
 // CLASS' DATA
@@ -70,8 +67,8 @@ typedef struct EntitySpec
 /// @memberof Entity
 typedef const EntitySpec EntityROMSpec;
 
-
 /// Struct that specifies how to create an spatially situated entity
+/// @memberof Entity
 typedef struct PositionedEntity
 {
 	// Pointer to the entity spec in ROM
@@ -107,7 +104,6 @@ typedef struct PositionedEntity
 /// @memberof Entity
 typedef const PositionedEntity PositionedEntityROMSpec;
 
-
 //=========================================================================================================
 // CLASS' DECLARATION
 //=========================================================================================================
@@ -130,7 +126,7 @@ class Entity : Container
 
 	/// Signals if collisions are against other entity's colliders are allowed
 	bool checkingCollisions;
-	
+
 	/// Size of the entity in function of its components and its children's, grand children's,
 	/// etc. components
 	Size size;
@@ -138,11 +134,11 @@ class Entity : Container
 	/// Factory to create this entity's children
 	EntityFactory entityFactory;
 
-	/// Pointer to the spec that defines how to initialize the entity 
+	/// Pointer to the spec that defines how to initialize the entity
 	EntitySpec* entitySpec;
 
-	/// Diplacement between the entity's bounding box's center and its local position
-	/// used to speed up the visibility check of the entity withing the camera's frustum
+	/// Diplacement between the entity's bounding box's center and its local position used to speed up the
+	/// visibility check of the entity withing the camera's frustum
 	Vector3D* centerDisplacement;
 
 	/// @publicsection
@@ -161,11 +157,16 @@ class Entity : Container
 	/// @return The new, still not configured entity
 	static Entity createEntityDeferred(const PositionedEntity* const positionedEntity, int16 internalId);
 
-	/// Compute the spatially located bounding box of an entity created with the provided positioned entity struct.
+	/// Compute the spatially located bounding box of an entity created with the provided positioned entity
+	/// struct.
 	/// @param positionedEntity: Struct that defines which entity spec to use to configure the an entity
-	/// @param environmentPosition: Vector used as the origin with respect to which computed the bounding box's position
-	/// @return Spatially located bounding box of an entity that would be created with the provided positioned entity struct
-	static RightBox getRightBoxFromSpec(const PositionedEntity* positionedEntity, const Vector3D* environmentPosition);
+	/// @param environmentPosition: Vector used as the origin with respect to which computed the bounding
+	/// box's position
+	/// @return Spatially located bounding box of an entity that would be created with the provided
+	/// positioned entity struct
+	static RightBox getRightBoxFromSpec(
+		const PositionedEntity* positionedEntity, const Vector3D* environmentPosition
+	);
 
 	/// Test if the provided right box lies inside the camera's frustum.
 	/// @param vector3D: RightBox's translation vector
@@ -198,10 +199,10 @@ class Entity : Container
 	/// @return The enum that determines the type of game object
 	override uint32 getInGameType();
 
-	/// Add the components that must attach to this entity. 
+	/// Add the components that must attach to this entity.
 	override void createComponents();
 
-	/// Destroy the components that attach to this entity. 	
+	/// Destroy the components that attach to this entity.
 	override void destroyComponents();
 
 	/// Prepare to suspend this instance's logic.
@@ -239,7 +240,7 @@ class Entity : Container
 	/// Spawn children and configure them with the provided entity specs.
 	/// @param childrenSpecs: Array of entity specs to use to initialize the new children
 	void addChildEntities(const PositionedEntity* childrenSpecs);
-	
+
 	/// Spawn children and configure them over time with the provided entity specs.
 	/// @param childrenSpecs: Array of entity specs to use to initialize the new children
 	void addChildEntitiesDeferred(const PositionedEntity* childrenSpecs);
@@ -275,12 +276,12 @@ class Entity : Container
 
 	/// Retrieve the linked list of components that are instances of the provided class.
 	/// @param classPointer: Pointer to the class to use as search criteria. Usage: typeofclass(ClassName)
-	/// @param components: Linked list to be filled with the behaviors that meed the search criteria 
+	/// @param components: Linked list to be filled with the behaviors that meed the search criteria
 	/// (it is externally allocated and must be externally deleted)
 	/// @param componentType: Type of components to retrieve
 	/// @return True if one or more behaviors met the search criteria; false otherwise
 	bool getComponentsOfClass(ClassPointer classPointer, VirtualList components, uint32 componentType);
-	
+
 	/// Retrieve the number of components belonging to the entity.
 	/// @param componentType: Type of components to count
 	/// @return Number of components belonging to the entity
@@ -310,7 +311,8 @@ class Entity : Container
 	uint32 getCollidersLayers();
 
 	/// Set the layers that the entity's colliders must ignore when detecting collision.
-	/// @param layersToIgnore: Flags that determine the layers with colliders to ignore when detecting collisions
+	/// @param layersToIgnore: Flags that determine the layers with colliders to ignore when detecting
+	/// collisions
 	void setCollidersLayersToIgnore(uint32 layersToIgnore);
 
 	/// Retrieve the layers that the entity's colliders ignore when detecting collision.
@@ -326,7 +328,7 @@ class Entity : Container
 
 	/// Make the entity's colliders invisible.
 	void hideColliders();
-	
+
 	/// Configure the entity's size.
 	void calculateSize();
 
@@ -367,7 +369,7 @@ class Entity : Container
 	virtual void hide();
 
 	/// Set this instance's transparency effects.
-	/// @param transparency: Transparecy effect (__TRANSPARENCY_NONE, __TRANSPARENCY_EVEN or __TRANSPARENCY_ODD)
+	/// @param transparency: Transparecy effect (__TRANSPARENCY_NONE, __EVEN or __ODD)
 	virtual void setTransparency(uint8 transparency);
 }
 
@@ -376,24 +378,28 @@ class Entity : Container
 //=========================================================================================================
 
 //---------------------------------------------------------------------------------------------------------
-static inline bool Entity::isInsideFrustrum(Vector3D vector3D, RightBox rightBox)
+static inline bool
+Entity::isInsideFrustrum(Vector3D vector3D, RightBox rightBox)
 {
 	extern const CameraFrustum* _cameraFrustum;
 	vector3D = Vector3D::rotate(Vector3D::getRelativeToCamera(vector3D), *_cameraInvertedRotation);
-	
-	if(vector3D.x + rightBox.x0 > __PIXELS_TO_METERS(_cameraFrustum->x1) || vector3D.x + rightBox.x1 < __PIXELS_TO_METERS(_cameraFrustum->x0))
+
+	if(vector3D.x + rightBox.x0 > __PIXELS_TO_METERS(_cameraFrustum->x1) ||
+	   vector3D.x + rightBox.x1 < __PIXELS_TO_METERS(_cameraFrustum->x0))
 	{
 		return false;
 	}
 
 	// check y visibility
-	if(vector3D.y + rightBox.y0 > __PIXELS_TO_METERS(_cameraFrustum->y1) || vector3D.y + rightBox.y1 < __PIXELS_TO_METERS(_cameraFrustum->y0))
+	if(vector3D.y + rightBox.y0 > __PIXELS_TO_METERS(_cameraFrustum->y1) ||
+	   vector3D.y + rightBox.y1 < __PIXELS_TO_METERS(_cameraFrustum->y0))
 	{
 		return false;
 	}
 
 	// check z visibility
-	if(vector3D.z + rightBox.z0 > __PIXELS_TO_METERS(_cameraFrustum->z1) || vector3D.z + rightBox.z1 < __PIXELS_TO_METERS(_cameraFrustum->z0))
+	if(vector3D.z + rightBox.z0 > __PIXELS_TO_METERS(_cameraFrustum->z1) ||
+	   vector3D.z + rightBox.z1 < __PIXELS_TO_METERS(_cameraFrustum->z0))
 	{
 		return false;
 	}
@@ -401,6 +407,5 @@ static inline bool Entity::isInsideFrustrum(Vector3D vector3D, RightBox rightBox
 	return true;
 }
 //---------------------------------------------------------------------------------------------------------
-
 
 #endif

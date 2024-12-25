@@ -10,13 +10,11 @@
 #ifndef BODY_H_
 #define BODY_H_
 
-
 //=========================================================================================================
 // INCLUDES
 //=========================================================================================================
 
 #include <Component.h>
-
 
 //=========================================================================================================
 // FORWARD DECLARATIONS
@@ -24,18 +22,16 @@
 
 class SpatialObject;
 
-
 //=========================================================================================================
 // CLASS' MACROS
 //=========================================================================================================
 
-#define	__NO_MOVEMENT					0x00
-#define	__UNIFORM_MOVEMENT				0x01
-#define	__ACCELERATED_MOVEMENT			0x20
+#define __NO_MOVEMENT		   0x00
+#define __UNIFORM_MOVEMENT	   0x01
+#define __ACCELERATED_MOVEMENT 0x20
 
-#define __BODY_MIN_MASS					__F_TO_FIXED(0.01f)
-#define __BODY_MAX_MASS					__I_TO_FIXED(1)
-
+#define __BODY_MIN_MASS		   __F_TO_FIXED(0.01f)
+#define __BODY_MAX_MASS		   __I_TO_FIXED(1)
 
 //=========================================================================================================
 // CLASS' DATA
@@ -50,16 +46,16 @@ typedef struct BodySpec
 
 	/// Mass
 	fixed_t mass;
-	
+
 	/// Friction coefficient
 	fixed_t frictionCoefficient;
 
 	/// Bounciness
 	fixed_t bounciness;
-	
+
 	/// Maximum velocity
 	Vector3D maximumVelocity;
-	
+
 	/// Maximum speed
 	fixed_t maximumSpeed;
 
@@ -68,6 +64,8 @@ typedef struct BodySpec
 
 } BodySpec;
 
+/// A Body spec that is stored in ROM
+/// @memberof Body
 typedef const BodySpec BodyROMSpec;
 
 /// 3D Vector struct for higher decimal precision
@@ -79,7 +77,6 @@ typedef struct Vector3DPlus
 	fix7_9_ext z;
 
 } Vector3DPlus;
-
 
 //=========================================================================================================
 // CLASS' DECLARATION
@@ -127,16 +124,16 @@ class Body : Component
 
 	/// Friction surrounding object
 	Vector3D friction;
-	
+
 	/// Total normal forces applied to the body
 	Vector3D totalNormal;
-	
+
 	/// List of normal for the forces affecting the body
 	VirtualList normals;
 
 	/// Flags for the acceleration state of the body on each axis
 	Vector3DFlag accelerating;
-	
+
 	/// Body's bounciness factor
 	fixed_t bounciness;
 
@@ -166,7 +163,7 @@ class Body : Component
 
 	/// Number of skiped cycles
 	int8 skipedCycles;
-	
+
 	/// If not true, the body skips physical simulations
 	bool awake;
 
@@ -188,13 +185,15 @@ class Body : Component
 	/// @param friction: Friction affecting the mass that will aquire the computed speed
 	/// @param maximumSpeed: Maximum value that the computated speed can reach
 	/// @return The instantaneous speed caused by the provided physical properties
-	static fixed_t computeInstantaneousSpeed(fixed_t forceMagnitude, fixed_t gravity, fixed_t mass, fixed_t friction, fixed_t maximumSpeed);
+	static fixed_t computeInstantaneousSpeed(
+		fixed_t forceMagnitude, fixed_t gravity, fixed_t mass, fixed_t friction, fixed_t maximumSpeed
+	);
 
 	/// Class' constructor
 	/// @param owner: SpatialObject to which the body attaches to
 	/// @param bodySpec: Struct that specifies the physical properties of bodies
 	void constructor(SpatialObject owner, const BodySpec* bodySpec);
-	
+
 	/// Clear the body's state.
 	void reset();
 
@@ -216,7 +215,10 @@ class Body : Component
 	/// @param bouncingPlaneNormal: Normal of the plane on which the body has to bounce
 	/// @param frictionCoefficient: Friction coefficient of the bounce referent
 	/// @param bounciness: Bounciness coefficient of the bounce referent
-	void bounce(ListenerObject bounceReferent, Vector3D bouncingPlaneNormal, fixed_t frictionCoefficient, fixed_t bounciness);
+	void bounce(
+		ListenerObject bounceReferent, Vector3D bouncingPlaneNormal, fixed_t frictionCoefficient,
+		fixed_t bounciness
+	);
 
 	/// Stop the body's movement on the speficied axis.
 	/// @param axis: Flag indicating the axises on which the movement has to stop
@@ -230,14 +232,14 @@ class Body : Component
 	/// Retrieve the current velocity at which the body move.
 	/// @return Pointer to the body's velocity vector
 	const Vector3D* getVelocity();
-	
+
 	/// Set the direction towards which the body must move.
 	/// @param direction: Pointer to a direction vector
 	void setDirection(const Vector3D* direction);
 
 	/// Retrieve the direction towards which the body is moving.
 	const Vector3D* getDirection();
-	
+
 	/// Set the axises on which the body is subject to gravity.
 	/// @param axisSubjectToGravity: Flag containing the axises on which the body is subject to gravity
 	void setAxisSubjectToGravity(uint16 axisSubjectToGravity);
@@ -255,7 +257,8 @@ class Body : Component
 	fixed_t getBounciness();
 
 	/// Set the body's friction coefficient.
-	/// @param frictionCoefficient: Value to set as the body's friction coefficient (between 0 and __MAXIMUM_FRICTION_COEFFICIENT)
+	/// @param frictionCoefficient: Value to set as the body's friction coefficient (between 0 and
+	/// __MAXIMUM_FRICTION_COEFFICIENT)
 	void setFrictionCoefficient(fixed_t frictionCoefficient);
 
 	/// Retrieve the body's friction coefficient.
@@ -296,15 +299,16 @@ class Body : Component
 	/// Retrieve the body's maximum speed.
 	/// @return Maximum magnitude of the body's velocity
 	fixed_t getMaximumSpeed();
-	
-	/// Set the flag that enables or prevents the sending of messages to the body's owner about its state changes.
+
+	/// Set the flag that enables or prevents the sending of messages to the body's owner about its state
+	/// changes.
 	/// @param value: If true, the body sends messages to its owner when its movement state changes
 	void sendMessages(bool value);
 
 	/// Set the number of cycles to wait before updating the physics simulations on the body.
 	/// @param skipCycles: Number of cycles to skip physical simulations to slow down physics
 	void setSkipCycles(int8 skipCycles);
-	
+
 	/// Set the body's friction coefficient of the its surroundings.
 	/// @param surroundingFrictionCoefficient: Body's friction coefficient of the its surroundings
 	void setSurroundingFrictionCoefficient(fixed_t surroundingFrictionCoefficient);
@@ -316,12 +320,11 @@ class Body : Component
 	/// Retrieve the body's current movement state
 	/// @return Flag containing the body's current movement state on each axis
 	uint16 getMovementOnAllAxis();
-	
+
 	/// Print the body's properties.
 	/// @param x: Screen x coordinate where to print
 	/// @param y: Screen y coordinate where to print
 	void print(int32 x, int32 y);
 }
-
 
 #endif

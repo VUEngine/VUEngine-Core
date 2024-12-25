@@ -10,13 +10,11 @@
 #ifndef BGMAP_TEXTURE_H_
 #define BGMAP_TEXTURE_H_
 
-
 //=========================================================================================================
 // INCLUDES
 //=========================================================================================================
 
 #include <Texture.h>
-
 
 //=========================================================================================================
 // CLASS' DATA
@@ -29,7 +27,6 @@ typedef const TextureSpec BgmapTextureSpec;
 /// A BgmapTexture spec that is stored in ROM
 /// @memberof BgmapTexture
 typedef const BgmapTextureSpec BgmapTextureROMSpec;
-
 
 //=========================================================================================================
 // CLASS' DECLARATION
@@ -47,7 +44,7 @@ class BgmapTexture : Texture
 
 	/// BGMAP segment where the graphical data is allocated
 	int8 segment;
-	
+
 	/// Remaining rows to be written to graphical memory
 	int8 remainingRowsToBeWritten;
 
@@ -112,6 +109,5 @@ class BgmapTexture : Texture
 	/// @return Number of remaining rows to be written to graphical memory
 	int8 getRemainingRowsToBeWritten();
 }
-
 
 #endif
