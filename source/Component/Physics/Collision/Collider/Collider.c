@@ -150,12 +150,12 @@ void Collider::handleCommand(int32 command, va_list args)
 
 		case cColliderComponentCommandSetLayers:
 
-			Collider::setLayers(this, (bool)va_arg(args, uint32));
+			Collider::setLayers(this, (uint32)va_arg(args, uint32));
 			break;
 
 		case cColliderComponentCommandSetLayersToIgnore:
 
-			Collider::setLayersToIgnore(this, (bool)va_arg(args, uint32));
+			Collider::setLayersToIgnore(this, (uint32)va_arg(args, uint32));
 			break;
 
 		default:
