@@ -99,9 +99,6 @@ typedef struct StageSpec
 		/// Amount of entity descriptions to check for streaming in entitis
 		uint16 streamingAmplitude;
 		
-		// TODO: remove
-		uint16 particleRemovalDelayCycles;
-		
 		/// If true, entity instantiation is done over time
 		bool deferred;
 
