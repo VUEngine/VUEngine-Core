@@ -10,21 +10,19 @@
 #ifndef ANIMATION_INSPECTOR_H_
 #define ANIMATION_INSPECTOR_H_
 
-
 //=========================================================================================================
 // INCLUDES
 //=========================================================================================================
 
-#include <Tool.h>
 #include <AnimatedEntity.h>
-
+#include <Tool.h>
 
 //=========================================================================================================
 // CLASS' DATA
 //=========================================================================================================
 
 /// A struct to map an animated entity spec to a name
-/// @memberof	AnimationInspector
+/// @memberof AnimationInspector
 typedef struct UserAnimatedEntity
 {
 	/// Specification for an animated entity
@@ -34,7 +32,6 @@ typedef struct UserAnimatedEntity
 	const char* name;
 
 } UserAnimatedEntity;
-
 
 //=========================================================================================================
 // CLASS' DECLARATION
@@ -56,22 +53,22 @@ singleton class AnimationInspector : Tool
 
 	/// Currently applied animation
 	AnimationFunction animationFunction;
-	
+
 	/// Selector for the animated entities
 	OptionsSelector animatedEntitySelector;
-	
+
 	/// Selector for the animated sprite sprite selector
 	OptionsSelector spriteSelector;
-	
+
 	/// Selector for the animations to play
 	OptionsSelector animationsSelector;
-	
+
 	/// Selector for the animation's properties
 	OptionsSelector animationEditionSelector;
-	
+
 	/// Selector for the animation's frames
 	OptionsSelector frameEditionSelector;
-	
+
 	/// Inspector's state
 	int32 state;
 

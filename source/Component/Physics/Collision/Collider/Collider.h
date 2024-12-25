@@ -10,14 +10,12 @@
 #ifndef COLLIDER_H_
 #define COLLIDER_H_
 
-
 //=========================================================================================================
 // INCLUDES
 //=========================================================================================================
 
 #include <Component.h>
 #include <Wireframe.h>
-
 
 //=========================================================================================================
 // FORWARD DECLARATIONS
@@ -26,13 +24,11 @@
 class SpatialObject;
 class Collider;
 
-
 //=========================================================================================================
 // CLASS' MACROS
 //=========================================================================================================
 
-#define __COLLIDER_NORMALS	3
-
+#define __COLLIDER_NORMALS 3
 
 //=========================================================================================================
 // CLASS' DATA
@@ -98,7 +94,6 @@ typedef struct CollisionInformation
 
 } CollisionInformation;
 
-
 /// Registry to keep track of collisions
 /// @memberof Collider
 typedef struct OtherColliderRegistry
@@ -140,6 +135,7 @@ typedef struct VertexProjection
 } VertexProjection;
 
 // defines a collider
+/// @memberof Collider
 typedef struct ColliderSpec
 {
 	/// Component spec
@@ -172,7 +168,6 @@ typedef struct ColliderSpec
 /// @memberof Collider
 typedef const ColliderSpec ColliderROMSpec;
 
-
 //=========================================================================================================
 // CLASS' DECLARATION
 //=========================================================================================================
@@ -189,7 +184,7 @@ abstract class Collider : Component
 
 	/// Displaced position
 	Vector3D position;
-	
+
 	/// List of colliding colliders
 	VirtualList otherColliders;
 
@@ -198,7 +193,7 @@ abstract class Collider : Component
 
 	/// Layers to ignore when checking for collisions
 	uint32 layersToIgnore;
-	
+
 	/// Wireframe to make the collider visible (mainly for debugging purposes)
 	Wireframe wireframe;
 
@@ -210,7 +205,7 @@ abstract class Collider : Component
 
 	/// If true, it registers other colliders when a collision arises
 	bool registerCollisions;
-	
+
 	/// Flag to destroy the collider
 	bool deleteMe;
 
@@ -224,7 +219,7 @@ abstract class Collider : Component
 
 	/// Class' constructor
 	void constructor(SpatialObject owner, const ColliderSpec* colliderSpec);
-	
+
 	/// Process a Telegram.
 	/// @param telegram: Telegram to process
 	/// @return True if the Telegram was processed
@@ -270,7 +265,7 @@ abstract class Collider : Component
 	CollisionResult collides(Collider collider);
 
 	/// Resolve a collision by moving the owner to a position where the collision ceases.
-	/// @param collisionInformation: Information struct about the collision to resolve 
+	/// @param collisionInformation: Information struct about the collision to resolve
 	void resolveCollision(const CollisionInformation* collisionInformation);
 
 	/// Check if there is some collider blocking in the provided direction.

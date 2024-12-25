@@ -10,13 +10,11 @@
 #ifndef LISTENER_OBJECT_H_
 #define LISTENER_OBJECT_H_
 
-
 //=========================================================================================================
 // INCLUDES
 //=========================================================================================================
 
 #include <Object.h>
-
 
 //=========================================================================================================
 // FORWARD DECLARATIONS
@@ -26,14 +24,15 @@ class ListenerObject;
 class Telegram;
 class VirtualList;
 
-
 //=========================================================================================================
 // CLASS' DATA
 //=========================================================================================================
 
+/// @memberof ListenerObject
 typedef bool (*EventListener)(ListenerObject, ListenerObject);
 
 /// Event struct
+/// @memberof ListenerObject
 typedef struct Event
 {
 	/// The object listening for the event
@@ -49,7 +48,6 @@ typedef struct Event
 	bool remove;
 
 } Event;
-
 
 //=========================================================================================================
 // CLASS' DECLARATION
@@ -67,7 +65,7 @@ abstract class ListenerObject : Object
 
 	/// List of registered events
 	VirtualList events;
-	
+
 	/// Counter that keeps track of the number of fired events to prevent race conditions in nested firings
 	int8 eventFirings;
 
@@ -137,6 +135,5 @@ abstract class ListenerObject : Object
 	/// @return True if the telegram was processed
 	virtual bool handleMessage(Telegram telegram);
 }
-
 
 #endif

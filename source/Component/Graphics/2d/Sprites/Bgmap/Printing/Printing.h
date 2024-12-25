@@ -8,17 +8,15 @@
  */
 
 #ifndef PRINTING_H_
-#define	PRINTING_H_
-
+#define PRINTING_H_
 
 //=========================================================================================================
 // INCLUDES
 //=========================================================================================================
 
-#include <ListenerObject.h>
 #include <CharSet.h>
+#include <ListenerObject.h>
 #include <TimerManager.h>
-
 
 //=========================================================================================================
 // FORWARD DECLARATIONS
@@ -26,89 +24,101 @@
 
 class PrintingSprite;
 
-
 //=========================================================================================================
 // CLASS' MACROS
 //=========================================================================================================
 
-#define PRINT_TEXT(string, x, y)			Printing::text(Printing::getInstance(), string, x, y, NULL)
-#define PRINT_INT(number, x, y)				Printing::int32(Printing::getInstance(), number, x, y, NULL)
-#define PRINT_FLOAT(number, x, y)			Printing::float(Printing::getInstance(), number, x, y, 2, NULL)
-#define PRINT_HEX(number, x, y)				Printing::hex(Printing::getInstance(), number, x, y, 8, NULL)
-#define PRINT_HEX_EXT(number, x, y, d)		Printing::hex(Printing::getInstance(), number, x, y, d, NULL)
-#define	PRINT_TIME(x, y)					Printing::int32(Printing_getInstance(), TimerManager::getTotalElapsedMilliseconds(TimerManager::getInstance()), x, y, NULL);
-#define	PRINT_IN_GAME_TIME(x, y)			Printing::int32(Printing_getInstance(), Clock::getMilliseconds(VUEngine::getClock(VUEngine::getInstance())), x, y, NULL);
+#define PRINT_TEXT(string, x, y)	   Printing::text(Printing::getInstance(), string, x, y, NULL)
+#define PRINT_INT(number, x, y)		   Printing::int32(Printing::getInstance(), number, x, y, NULL)
+#define PRINT_FLOAT(number, x, y)	   Printing::float(Printing::getInstance(), number, x, y, 2, NULL)
+#define PRINT_HEX(number, x, y)		   Printing::hex(Printing::getInstance(), number, x, y, 8, NULL)
+#define PRINT_HEX_EXT(number, x, y, d) Printing::hex(Printing::getInstance(), number, x, y, d, NULL)
+#define PRINT_TIME(x, y)                                                                                   \
+	Printing::int32(                                                                                       \
+		Printing_getInstance(),                                                                            \
+		TimerManager::getTotalElapsedMilliseconds(TimerManager::getInstance()),                            \
+		x,                                                                                                 \
+		y,                                                                                                 \
+		NULL                                                                                               \
+	);
+#define PRINT_IN_GAME_TIME(x, y)                                                                           \
+	Printing::int32(                                                                                       \
+		Printing_getInstance(),                                                                            \
+		Clock::getMilliseconds(VUEngine::getClock(VUEngine::getInstance())),                               \
+		x,                                                                                                 \
+		y,                                                                                                 \
+		NULL                                                                                               \
+	);
 
-#define __TAB_SIZE					4
-#define __MAX_FONT_NAME_LENGTH		16
+#define __TAB_SIZE				  4
+#define __MAX_FONT_NAME_LENGTH	  16
 
-#define __PRINTING_MODE_DEFAULT		0
-#define __PRINTING_MODE_DEBUG		1
+#define __PRINTING_MODE_DEFAULT	  0
+#define __PRINTING_MODE_DEBUG	  1
 
-#define __CHAR_BATTERY				"\x01\x02"
+#define __CHAR_BATTERY			  "\x01\x02"
 
-#define __CHAR_LINE_TOP_LEFT		"\x03"
-#define __CHAR_LINE_TOP_RIGHT		"\x04"
-#define __CHAR_LINE_BOTTOM_LEFT		"\x05"
-#define __CHAR_LINE_BOTTOM_RIGHT	"\x06"
-#define __CHAR_LINE_VERTICAL		"\x07"
-#define __CHAR_LINE_HORIZONTAL		"\x08"
+#define __CHAR_LINE_TOP_LEFT	  "\x03"
+#define __CHAR_LINE_TOP_RIGHT	  "\x04"
+#define __CHAR_LINE_BOTTOM_LEFT	  "\x05"
+#define __CHAR_LINE_BOTTOM_RIGHT  "\x06"
+#define __CHAR_LINE_VERTICAL	  "\x07"
+#define __CHAR_LINE_HORIZONTAL	  "\x08"
 
-#define __CHAR_SELECTOR				"\x0B"
-#define __CHAR_SELECTOR_LEFT		"\x0C"
+#define __CHAR_SELECTOR			  "\x0B"
+#define __CHAR_SELECTOR_LEFT	  "\x0C"
 
-#define __CHAR_DARK_RED_BOX			"\x0E"
-#define __CHAR_MEDIUM_RED_BOX		"\x0F"
-#define __CHAR_BRIGHT_RED_BOX		"\x10"
+#define __CHAR_DARK_RED_BOX		  "\x0E"
+#define __CHAR_MEDIUM_RED_BOX	  "\x0F"
+#define __CHAR_BRIGHT_RED_BOX	  "\x10"
 
-#define __CHAR_CHECKBOX_UNCHECKED	"\x11"
-#define __CHAR_CHECKBOX_CHECKED		"\x12"
+#define __CHAR_CHECKBOX_UNCHECKED "\x11"
+#define __CHAR_CHECKBOX_CHECKED	  "\x12"
 
-#define __CHAR_START_BUTTON			"\x15"
-#define __CHAR_SELECT_BUTTON		"\x16"
-#define __CHAR_A_BUTTON				"\x13"
-#define __CHAR_B_BUTTON				"\x14"
-#define __CHAR_L_TRIGGER			"\x17"
-#define __CHAR_R_TRIGGER			"\x18"
-#define __CHAR_D_PAD				"\x19"
-#define __CHAR_D_PAD_UP				"\x1A"
-#define __CHAR_D_PAD_DOWN			"\x1B"
-#define __CHAR_D_PAD_LEFT			"\x1C"
-#define __CHAR_D_PAD_RIGHT			"\x1D"
-#define __CHAR_L					"\x1E"
-#define __CHAR_R					"\x1F"
+#define __CHAR_START_BUTTON		  "\x15"
+#define __CHAR_SELECT_BUTTON	  "\x16"
+#define __CHAR_A_BUTTON			  "\x13"
+#define __CHAR_B_BUTTON			  "\x14"
+#define __CHAR_L_TRIGGER		  "\x17"
+#define __CHAR_R_TRIGGER		  "\x18"
+#define __CHAR_D_PAD			  "\x19"
+#define __CHAR_D_PAD_UP			  "\x1A"
+#define __CHAR_D_PAD_DOWN		  "\x1B"
+#define __CHAR_D_PAD_LEFT		  "\x1C"
+#define __CHAR_D_PAD_RIGHT		  "\x1D"
+#define __CHAR_L				  "\x1E"
+#define __CHAR_R				  "\x1F"
 
-#define __CHAR_L_D_PAD				"\x1E\x19"
-#define __CHAR_L_D_PAD_UP			"\x1E\x1A"
-#define __CHAR_L_D_PAD_DOWN			"\x1E\x1B"
-#define __CHAR_L_D_PAD_LEFT			"\x1E\x1C"
-#define __CHAR_L_D_PAD_RIGHT		"\x1E\x1D"
-#define __CHAR_R_D_PAD				"\x1F\x19"
-#define __CHAR_R_D_PAD_UP			"\x1F\x1A"
-#define __CHAR_R_D_PAD_DOWN			"\x1F\x1B"
-#define __CHAR_R_D_PAD_LEFT			"\x1F\x1C"
-#define __CHAR_R_D_PAD_RIGHT		"\x1F\x1D"
-
+#define __CHAR_L_D_PAD			  "\x1E\x19"
+#define __CHAR_L_D_PAD_UP		  "\x1E\x1A"
+#define __CHAR_L_D_PAD_DOWN		  "\x1E\x1B"
+#define __CHAR_L_D_PAD_LEFT		  "\x1E\x1C"
+#define __CHAR_L_D_PAD_RIGHT	  "\x1E\x1D"
+#define __CHAR_R_D_PAD			  "\x1F\x19"
+#define __CHAR_R_D_PAD_UP		  "\x1F\x1A"
+#define __CHAR_R_D_PAD_DOWN		  "\x1F\x1B"
+#define __CHAR_R_D_PAD_LEFT		  "\x1F\x1C"
+#define __CHAR_R_D_PAD_RIGHT	  "\x1F\x1D"
 
 //=========================================================================================================
 // CLASS' DATA
 //=========================================================================================================
 
-/// @memberof 	Printing
+/// @memberof Printing
 enum PrintingOrientation
 {
 	kPrintingOrientationHorizontal = 0,
 	kPrintingOrientationVertical
 };
 
-/// @memberof 	Printing
+/// @memberof Printing
 enum PrintingDirection
 {
 	kPrintingDirectionLTR = 0,
 	kPrintingDirectionRTL
 };
 
-/// @memberof 	Printing
+/// @memberof Printing
 typedef struct FontSize
 {
 	uint16 x;
@@ -116,7 +126,7 @@ typedef struct FontSize
 
 } FontSize;
 
-/// @memberof 	Printing
+/// @memberof Printing
 typedef struct FontSpec
 {
 	/// Font charset spec pointer
@@ -139,10 +149,10 @@ typedef struct FontSpec
 
 } FontSpec;
 
-/// @memberof 	Printing
+/// @memberof Printing
 typedef const FontSpec FontROMSpec;
 
-/// @memberof 	Printing
+/// @memberof Printing
 typedef struct FontData
 {
 	/// Font spec
@@ -153,9 +163,9 @@ typedef struct FontData
 
 } FontData;
 
-/// @memberof 	Printing
+/// A FontData spec that is stored in ROM
+/// @memberof Printing
 typedef const FontData FontROMData;
-
 
 //=========================================================================================================
 // CLASS' DECLARATION
@@ -173,13 +183,13 @@ singleton class Printing : ListenerObject
 
 	/// Sprites used to diplay the printing area from BGMAP memory
 	VirtualList printingSprites;
-	
+
 	/// Active sprite that is manipulated by this class' interface
 	PrintingSprite activePrintingSprite;
 
 	/// A list of loaded fonts and their respective CharSets
 	VirtualList fonts;
-	
+
 	/// Cache the last used font to speed up searches
 	const char* lastUsedFont;
 
@@ -197,7 +207,7 @@ singleton class Printing : ListenerObject
 
 	/// Printing direction
 	uint8 direction;
-	
+
 	/// Printing segment (BGMAP memory)
 	int8 printingBgmapSegment;
 
@@ -206,14 +216,14 @@ singleton class Printing : ListenerObject
 	/// Method to retrieve the singleton instance
 	/// @return Printing singleton
 	static Printing getInstance();
-	
+
 	/// Set mode to debug to bypass loading fonts through CharSets
 	void setDebugMode();
 
 	/// Empties internal virtual list of registered fonts
 	void reset();
 
-	///Force printing layer to show up.
+	/// Force printing layer to show up.
 	void show();
 
 	/// Force printing layer to hide.
@@ -238,7 +248,7 @@ singleton class Printing : ListenerObject
 	/// @param x: Column to start printing at
 	/// @param y: Row to start printing at
 	/// @param font: Name of font to use for printing
-	void text(const char *string, int32 x, int32 y, const char* font);
+	void text(const char* string, int32 x, int32 y, const char* font);
 
 	/// Print an integer value.
 	/// @param value: Integer to print
@@ -273,12 +283,12 @@ singleton class Printing : ListenerObject
 	/// Resets its self automatically to horizonal.
 	/// @param value: PrintingOrientation
 	void setOrientation(uint8 value);
-	
+
 	/// Sets the direction for the following call to print.
 	/// Resets its self automatically to LTR (Left to Right).
 	/// @param value: PrintingDirection
 	void setDirection(uint8 value);
-	
+
 	/// Cache the printing bgmap segment.
 	/// @param printingBgmapSegment: Index of the bgmap segment to print to
 	void setPrintingBgmapSegment(int8 printingBgmapSegment);
@@ -289,7 +299,7 @@ singleton class Printing : ListenerObject
 	/// Set the active printing sprite.
 	/// @param  printingSpriteIndex: Index of the sprite to activate
 	bool setActiveSprite(uint16 printingSpriteIndex);
-	
+
 	/// Print active printing sprite's info.
 	/// @param x: Screen x coordinate where to print
 	/// @param y: Screen y coordinate where to print
@@ -301,7 +311,7 @@ singleton class Printing : ListenerObject
 	/// @param z: WORLD parallax value
 	/// @param parallax: WORLD parallax value
 	void setCoordinates(int16 x, int16 y, int16 z, int8 parallax);
-	
+
 	/// Set the coordinates of the WORLD used for printing.
 	/// @param x: WORLD x coordinate
 	/// @param y: WORLD y coordinate
@@ -321,7 +331,7 @@ singleton class Printing : ListenerObject
 	void setWorldSize(uint16 w, uint16 h);
 
 	/// Set sprite's transparency
-	/// @param transparency: Transparent value (__TRANSPARENCY_NONE, __TRANSPARENCY_EVEN or __TRANSPARENCY_ODD)
+	/// @param transparency: Transparent value (__TRANSPARENCY_NONE, _EVEN or _ODD)
 	void setTransparency(uint8 transparency);
 
 	/// Set palette for the printing area.
@@ -342,7 +352,7 @@ singleton class Printing : ListenerObject
 	/// Retrieve WORLD's gp.
 	/// @return: WORLD's gp
 	int16 getWorldCoordinatesP();
-	
+
 	/// Retrieve sprite's position.
 	/// @return Sprite's position
 	PixelVector getSpriteIndex();
@@ -357,6 +367,5 @@ singleton class Printing : ListenerObject
 	/// @param font: Name of font to use for size computation
 	FontSize getTextSize(const char* string, const char* font);
 }
-
 
 #endif

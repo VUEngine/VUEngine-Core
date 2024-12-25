@@ -10,19 +10,18 @@
 #ifndef TEXTURE_H_
 #define TEXTURE_H_
 
-
 //=========================================================================================================
 // INCLUDES
 //=========================================================================================================
 
-#include <ListenerObject.h>
 #include <CharSet.h>
-
+#include <ListenerObject.h>
 
 //=========================================================================================================
 // CLASS' DATA
 //=========================================================================================================
 
+/// @memberof Texture
 enum TextureStatus
 {
 	kTexturePendingWriting = 1,
@@ -73,7 +72,6 @@ typedef struct TextureSpec
 /// @memberof Texture
 typedef const TextureSpec TextureROMSpec;
 
-
 //=========================================================================================================
 // CLASS' DECLARATION
 //=========================================================================================================
@@ -88,7 +86,7 @@ abstract class Texture : ListenerObject
 {
 	/// Pointer to the implementation that updates graphical data in DRAM
 	void (*doUpdate)(Texture, int16);
-	
+
 	/// Char set that holds the pixel data used by the texture
 	CharSet charSet;
 
@@ -182,11 +180,11 @@ abstract class Texture : ListenerObject
 	uint32 getNumberOfFrames();
 
 	/// Write to DRAM the graphical data of the map that corresponds to the specified frame.
-	/// @param frame: The frame that species the block inside the map array to write to DRAM 
+	/// @param frame: The frame that species the block inside the map array to write to DRAM
 	void setFrame(uint16 frame);
 
 	/// Retrieve frame that species the block inside the map array to write to DRAM.
-	/// @return The frame that species the block inside the map array to write to DRAM 
+	/// @return The frame that species the block inside the map array to write to DRAM
 	uint16 getFrame();
 
 	/// Retrieve the texture's horizontal size in tiles.
@@ -215,21 +213,21 @@ abstract class Texture : ListenerObject
 
 	/// Add the color provided color data to a CHAR in the sprite's texture.
 	/// @param texturePoint: Coordinate in texture's space of the CHAR to replace
-	/// @param newChar: Color data array for the CHAR 
+	/// @param newChar: Color data array for the CHAR
 	void addChar(const Point* texturePoint, const uint32* newChar);
 
 	/// Replace a CHAR in the sprite's texture.
 	/// @param texturePoint: Coordinate in texture's space of the CHAR to replace
-	/// @param newChar: Color data array for the CHAR 
+	/// @param newChar: Color data array for the CHAR
 	void putChar(const Point* texturePoint, const uint32* newChar);
 
 	/// Replace a pixel in the sprite's texture.
 	/// @param texturePixel: Coordinate in texture's space of the CHAR to replace
 	/// @param charSetPixel: Coordinate in CHAR space of the CHAR to replace
-	/// @param newPixelColor: Color data array for the CHAR 
+	/// @param newPixelColor: Color data array for the CHAR
 	void putPixel(const Point* texturePixel, const Pixel* charSetPixel, BYTE newPixelColor);
-	
-	/// Prepare the texture to write its graphical data to DRAM during 
+
+	/// Prepare the texture to write its graphical data to DRAM during
 	/// the next render cycle.
 	void prepare();
 
@@ -241,6 +239,5 @@ abstract class Texture : ListenerObject
 	/// Rewrite graphical data to the allocated DRAM space.
 	virtual void rewrite();
 }
-
 
 #endif

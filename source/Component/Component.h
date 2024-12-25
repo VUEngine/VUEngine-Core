@@ -10,14 +10,13 @@
 #ifndef COMPONENT_H_
 #define COMPONENT_H_
 
-
 //=========================================================================================================
 // INCLUDES
 //=========================================================================================================
 
 #include <stdarg.h>
-#include <ListenerObject.h>
 
+#include <ListenerObject.h>
 
 //=========================================================================================================
 // FORWARD DECLARATIONS
@@ -25,12 +24,12 @@
 
 class SpatialObject;
 
-
 //=========================================================================================================
 // CLASS' DATA
 //=========================================================================================================
 
 /// Component commands
+/// @memberof Component
 enum ComponentCommands
 {
 	cComponentCommandEnable = 0,
@@ -39,6 +38,7 @@ enum ComponentCommands
 };
 
 /// Component types
+/// @memberof Component
 enum ComponentTypes
 {
 	kColliderComponent = 0,
@@ -52,7 +52,7 @@ enum ComponentTypes
 };
 
 /// A Component Spec
-/// @memberof Sprite
+/// @memberof Component
 typedef struct ComponentSpec
 {
 	/// Class' allocator
@@ -62,7 +62,6 @@ typedef struct ComponentSpec
 	uint16 componentType;
 
 } ComponentSpec;
-
 
 //=========================================================================================================
 // CLASS' DECLARATION
@@ -74,14 +73,14 @@ typedef struct ComponentSpec
 /// Inherits from ListenerObject
 ///
 /// Serves as the base class for components of entities.
-abstract class Component : ListenerObject 
+abstract class Component : ListenerObject
 {
 	/// @protectedsection
 
 	/// Object to which this component attaches to
 	SpatialObject owner;
 
-	/// Pointer to the spec that defines how to initialize the component 
+	/// Pointer to the spec that defines how to initialize the component
 	const ComponentSpec* componentSpec;
 
 	/// Pointer to the transformation that the component attaches to
@@ -101,7 +100,7 @@ abstract class Component : ListenerObject
 	/// @return Component spec pointer
 	ComponentSpec* getSpec();
 
-	/// Retrieve the collider's owner	
+	/// Retrieve the collider's owner
 	SpatialObject getOwner();
 
 	/// Retrieve the component's type

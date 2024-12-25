@@ -10,21 +10,19 @@
 #ifndef STAGE_EDITOR_H_
 #define STAGE_EDITOR_H_
 
-
 //=========================================================================================================
 // INCLUDES
 //=========================================================================================================
 
-#include <Tool.h>
 #include <Entity.h>
-
+#include <Tool.h>
 
 //=========================================================================================================
 // CLASS' DATA
 //=========================================================================================================
 
 /// A struct to map an entity spec to a name
-/// @memberof	AnimationInspector
+/// @memberof StageEditor
 typedef struct UserObject
 {
 	/// Specification for an entity
@@ -34,7 +32,6 @@ typedef struct UserObject
 	char* name;
 
 } UserObject;
-
 
 //=========================================================================================================
 // CLASS' DECLARATION
@@ -56,16 +53,16 @@ singleton class StageEditor : Tool
 
 	/// Sprite to display new entities to be added to the stage
 	Sprite userEntitySprite;
-	
+
 	// Selector of user defined entities
 	OptionsSelector userEntitySelector;
 
 	/// Editor's state
 	int32 state;
-	
+
 	// Translation step size
 	int32 translationStepSize;
-	
+
 	/// @publicsection
 
 	/// Method to retrieve the singleton instance

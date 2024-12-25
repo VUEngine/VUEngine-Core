@@ -10,15 +10,13 @@
 #ifndef SPRITE_H_
 #define SPRITE_H_
 
-
 //=========================================================================================================
 // INCLUDES
 //=========================================================================================================
 
 #include <Texture.h>
-#include <VisualComponent.h>
 #include <VIPManager.h>
-
+#include <VisualComponent.h>
 
 //=========================================================================================================
 // CLASS' DATA
@@ -28,6 +26,7 @@
 /// @memberof Sprite
 typedef struct SpriteSpec
 {
+	/// VisualComponent spec
 	VisualComponentSpec visualComponentSpec;
 
 	/// Spec for the texture to display
@@ -45,7 +44,6 @@ typedef struct SpriteSpec
 /// A Sprite spec that is stored in ROM
 /// @memberof Sprite
 typedef const SpriteSpec SpriteROMSpec;
-
 
 //=========================================================================================================
 // CLASS' DECLARATION
@@ -72,26 +70,26 @@ abstract class Sprite : VisualComponent
 
 	/// Rotation cache
 	Rotation rotation;
-	
+
 	/// Index of the block in DRAM that the sprite configures to
 	/// display its texture
 	int16 index;
-	
+
 	/// Scale cache
 	PixelScale scale;
-	
+
 	/// Head flags for DRAM entries
 	uint16 head;
-	
+
 	/// Cache of the texture's half width
 	int16 halfWidth;
-	
+
 	/// Cache of the texture's half height
 	int16 halfHeight;
-		
+
 	/// Texture to display
 	Texture texture;
-	
+
 	/// Flag to invalidate the spatial properties caches (position, rotation, scale)
 	bool transformed;
 
@@ -200,7 +198,7 @@ abstract class Sprite : VisualComponent
 	bool isHBias();
 
 	/// Set the position cache.
-	/// @param position: Position cache to save 
+	/// @param position: Position cache to save
 	void setPosition(const PixelVector* position);
 
 	/// Retrieve the position cache.
@@ -209,29 +207,29 @@ abstract class Sprite : VisualComponent
 	/// Set the position displacement.
 	/// @param displacement: Displacement added to the sprite's position
 	void setDisplacement(const PixelVector* displacement);
-	
+
 	/// Retrieve the position displacement.
 	/// @return Displacement added to the sprite's position
 	const PixelVector* getDisplacement();
-	
+
 	/// Retrieve the cached position plus the position displacement.
 	/// @return Cached position plus the position displacement
 	PixelVector getDisplacedPosition();
 
 	/// Add the color provided color data to a CHAR in the sprite's texture.
 	/// @param texturePoint: Coordinate in texture's space of the CHAR to replace
-	/// @param newChar: Color data array for the CHAR 
+	/// @param newChar: Color data array for the CHAR
 	void addChar(const Point* texturePoint, const uint32* newChar);
 
 	/// Replace a CHAR in the sprite's texture.
 	/// @param texturePoint: Coordinate in texture's space of the CHAR to replace
-	/// @param newChar: Color data array for the CHAR 
+	/// @param newChar: Color data array for the CHAR
 	void putChar(const Point* texturePoint, const uint32* newChar);
 
 	/// Replace a pixel in the sprite's texture.
 	/// @param texturePixel: Coordinate in texture's space of the CHAR to replace
 	/// @param charSetPixel: Coordinate in CHAR space of the CHAR to replace
-	/// @param newPixelColor: Color data array for the CHAR 
+	/// @param newPixelColor: Color data array for the CHAR
 	void putPixel(const Point* texturePixel, const Pixel* charSetPixel, BYTE newPixelColor);
 
 	/// Invalidate the flags that determine if the sprite requires rendering.
@@ -240,7 +238,7 @@ abstract class Sprite : VisualComponent
 	/// Register this sprite with the appropriate sprites manager.
 	virtual void registerWithManager() = 0;
 
-	/// Unegister this sprite with the appropriate sprites manager.	
+	/// Unegister this sprite with the appropriate sprites manager.
 	virtual void unregisterWithManager() = 0;
 
 	/// Check if the sprite has special effects.
@@ -259,7 +257,7 @@ abstract class Sprite : VisualComponent
 	virtual void processEffects();
 
 	/// Set the current multiframe.
-	/// @param frame: Current animation frame 
+	/// @param frame: Current animation frame
 	virtual void setMultiframe(uint16 frame);
 
 	/// Forcefully show the sprite
@@ -269,11 +267,11 @@ abstract class Sprite : VisualComponent
 	virtual void forceHide();
 
 	/// Set the rotation cache.
-	/// @param rotation: Rotation cache to save 
+	/// @param rotation: Rotation cache to save
 	virtual void setRotation(const Rotation* rotation);
 
 	/// Set the scale cache.
-	/// @param scale: Scale cache to save 
+	/// @param scale: Scale cache to save
 	virtual void setScale(const PixelScale* scale);
 
 	/// Retrieve the sprite's total number of pixels actually displayed.

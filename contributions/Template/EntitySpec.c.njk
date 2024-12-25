@@ -1,5 +1,6 @@
 {%- import 'templates/partials/macros.njk' as macros -%}
 {%- include('templates/partials/fileHeader/fileHeader.c.njk') -%}
+{{ '\n\n' }}
 
 {%- set sanitizedSpecName = itemUri | basename(false) | sanitizeSpecName -%}
 
@@ -70,21 +71,21 @@
 {%- endif -%}
 
 {#- PRINT INCLUDES -#}
-{%- if includes | length %}
+{%- if includes | length -%}
 
-{{ macros.sectionHeader('Includes') }}
+{{- macros.sectionHeader('Includes') ~ '\n\n' -}}
 
-{% for include in includes | unique | sort -%}
+{%- for include in includes | unique | sort -%}
 #include <{{ include }}.h>
 {% endfor %}
 {%- endif %}
 
 {#- PRINT IMAGE DATA AND SPRITES -#}
-{%- if item.components.sprites | length %}
+{%- if item.components.sprites | length -%}
 
-{{ macros.sectionHeader('Declarations') }}
+{{- '\n' ~ macros.sectionHeader('Declarations') ~ '\n\n' -}}
 
-{% for sprite in item.components.sprites -%}
+{%- for sprite in item.components.sprites -%}
 	{%- if not sprite._imageData | int and sprite._imageData.images | length -%}
 		{%- for imageData in sprite._imageData.images -%}
 			{#- Tiles -#}
@@ -102,11 +103,11 @@
 			{%- endif -%}
 		{%- endfor -%}
 	{%- endif -%}
-{%- endfor %}
+{%- endfor -%}
 
-{{ macros.sectionHeader('Sprites') }}
+{{- '\n' ~ macros.sectionHeader('Sprites') ~ '\n' -}}
 
-{% set spriteNames = [] -%}
+{%- set spriteNames = [] -%}
 {%- for sprite in item.components.sprites -%}
 {%- set spriteNumber = loop.index -%}
 
@@ -218,7 +219,7 @@ TextureROMSpec {{ spriteName }}TextureSpec =
 	{{ mapHeight }},
 
 	// padding for affine/hbias transformations
-	{ {{ sprite.texture.padding.x }}, {{ sprite.texture.padding.y }} },
+	{{ '{' ~ sprite.texture.padding.x ~ ', ' ~ sprite.texture.padding.y ~ '}' }},
 
 	// number of frames
 	{%- if isAnimated and item.animations.multiframe %}
@@ -277,7 +278,7 @@ TextureROMSpec* const {{ spriteName }}TextureSpecs[] =
 		__TRANSPARENCY_{{ sprite.transparency | upper }},
 
 		// displacement
-		{ {{ sprite.displacement.x }}, {{ sprite.displacement.y }}, {{ sprite.displacement.z }}, {{ sprite.displacement.parallax }} },
+		{{ '{' ~ sprite.displacement.x ~ ', ' ~ sprite.displacement.y ~ ', ' ~ sprite.displacement.z ~ ', ' ~ sprite.displacement.parallax ~ '}' }},
 	},
 
 	// bgmap mode (__WORLD_BGMAP, __WORLD_AFFINE, __WORLD_OBJECT or __WORLD_HBIAS)
@@ -332,22 +333,14 @@ TextureROMSpec* const {{ spriteName }}TextureSpecs[] =
 {% endif -%}
 {% endfor -%}
 {% endfor -%}
-
-{{ item.sprites.type }}SpriteROMSpec* const {{ sanitizedSpecName }}SpriteSpecs[] =
-{
-	{% for spriteName in spriteNames -%}
-	({{ item.sprites.type }}SpriteSpec*)&{{ spriteName }}SpriteSpec,
-	{% endfor -%}
-	NULL
-};
-{%- endif %}
+{% endif -%}
 
 {#- PRINT ANIMATIONS -#}
-{%- if isAnimated %}
+{%- if isAnimated -%}
 
-{{ macros.sectionHeader('Animations') }}
+{{- macros.sectionHeader('Animations') ~ '\n\n' -}}
 
-{% for animation in item.components.animations -%}
+{%- for animation in item.components.animations -%}
 {%- if animation.name != '' -%}
 	{%- set animationName = animation.name -%}
 {%- else -%} 
@@ -390,14 +383,13 @@ AnimationFunctionROMSpec* const {{ sanitizedSpecName }}AnimationSpecs[] =
 {% endif %}
 
 {#- PRINT WIREFRAMES -#}
-{%- if item.components.wireframes | length %}
+{%- if item.components.wireframes | length -%}
 
+{{- '\n' ~ macros.sectionHeader('Wireframes') ~ '\n' -}}
 
-{{ macros.sectionHeader('Wireframes') }}
-
-{% set wireframeNames = [] -%}
+{%- set wireframeNames = [] -%}
 {%- for wireframe in item.components.wireframes -%}
-{%- set wireframeName = sanitizedSpecName ~ loop.index -%}
+{%- set wireframeName = sanitizedSpecName ~ 'Wireframe' ~ loop.index -%}
 {%- set wireframeNames = (wireframeNames.push(wireframeName), wireframeNames) -%}
 
 {% if wireframe.type == 'Mesh' -%}
@@ -405,16 +397,13 @@ const PixelVector {{ wireframeName }}WireframeSegments[][2]=
 {
 	{%- for segment in wireframe.segments %}
 	{
-		{ {{ segment.fromVertex.x }}, {{ segment.fromVertex.y }}, {{ segment.fromVertex.z }}, {{ segment.fromVertex.parallax }} },
-		{ {{ segment.toVertex.x }}, {{ segment.toVertex.y }}, {{ segment.toVertex.z }}, {{ segment.toVertex.parallax }} },
+		{{- '{' ~ segment.fromVertex.x ~ ', ' ~ segment.fromVertex.y ~ ', ' ~ segment.fromVertex.z ~ ', ' ~ segment.fromVertex.parallax ~ '}, ' -}}
+		{{- '{' ~ segment.toVertex.x ~ ', ' ~ segment.toVertex.y ~ ', ' ~ segment.toVertex.z ~ ', ' ~ segment.toVertex.parallax ~ '}' -}}
 	},
 	{%- endfor %}
 
 	// limiter
-	{
-		{0, 0, 0, 0}, 
-		{0, 0, 0, 0}
-	},
+	{{ '{{0, 0, 0, 0}, {0, 0, 0, 0}},' }}
 };
 
 {% endif -%}
@@ -426,7 +415,7 @@ const PixelVector {{ wireframeName }}WireframeSegments[][2]=
 		__TYPE({{ wireframe.type }}),
 
 		// displacement
-		{ {{ wireframe.displacement.x }}, {{ wireframe.displacement.y }}, {{ wireframe.displacement.z }}},
+		{{ '{' ~ wireframe.displacement.x ~ ', ' ~ wireframe.displacement.y ~ ', ' ~ wireframe.displacement.z ~ '}' }},
 		
 		// color
 		{{ ['__COLOR_BLACK', '__COLOR_DARK_RED', '__COLOR_MEDIUM_RED', '__COLOR_BRIGHT_RED'][wireframe.color] }},
@@ -446,7 +435,7 @@ const PixelVector {{ wireframeName }}WireframeSegments[][2]=
 	{{ wireframe.drawCenter }},
 	{%- elseif wireframe.type == 'Mesh' -%}
 	// segments
-	(PixelVector(*)[2]){{ wireframeName }}WireframeSegments,
+	(PixelVector (*)[2]){{ wireframeName }}WireframeSegments,
 	{%- elseif wireframe.type == 'Asterisk' -%}
 	// length
 	{{ wireframe | length }},
@@ -454,76 +443,67 @@ const PixelVector {{ wireframeName }}WireframeSegments[][2]=
 };
 
 {% endfor -%}
-
-WireframeROMSpec* const {{ sanitizedSpecName }}WireframeSpecs[] =
-{
-	{% for wireframeName in wireframeNames -%}
-	(WireframeSpec*)&{{ wireframeName }}WireframeSpec,
-	{% endfor -%}
-	NULL
-};
 {% endif %}
 
 {#- PRINT COLLIDERS -#}
-{%- if item.inGameType != '' and item.components.colliders | length %}
+{%- if item.inGameType != '' and item.components.colliders | length -%}
 
+{{- macros.sectionHeader('Colliders') ~ '\n\n' -}}
 
-{{ macros.sectionHeader('Colliders') }}
+{%- set colliderNames = [] -%}
+{%- for collider in item.components.colliders -%}
+{%- set colliderName = sanitizedSpecName ~ 'Collider' ~ loop.index -%}
+{%- set colliderNames = (colliderNames.push(colliderName), colliderNames) -%}
 
-ColliderROMSpec {{ sanitizedSpecName }}ColliderSpecs[] =
-{
-	{% for collider in item.components.colliders -%}
-	{
-		// collider
-		__TYPE({{ collider.type }}),
+ColliderROMSpec {{ colliderName }}ColliderSpec = {
+	// collider
+	__TYPE({{ collider.type }}),
 
-		// size (x, y, z)
-		{ {{ collider.pixelSize.x }}, {{ collider.pixelSize.y }}, {{ collider.pixelSize.z }} },
+	// size (x, y, z)
+	{{ '{' ~ collider.pixelSize.x ~ ', ' ~ collider.pixelSize.y ~ ', ' ~ collider.pixelSize.z ~ '}' }},
 
-		// displacement (x, y, z, p)
-		{ {{ collider.displacement.x }}, {{ collider.displacement.y }}, {{ collider.displacement.z }}, {{ collider.displacement.parallax }} },
+	// displacement (x, y, z, p)
+	{{ '{' ~ collider.displacement.x ~ ', ' ~ collider.displacement.y ~ ', ' ~ collider.displacement.z ~ ', ' ~ collider.displacement.parallax ~ '}' }},
 
-		// rotation (x, y, z)
-		{ __F_TO_FIX7_9({{ collider.rotation.x }}), __F_TO_FIX7_9({{ collider.rotation.y }}), __F_TO_FIX7_9({{ collider.rotation.z }}) },
+	// rotation (x, y, z)
+	{__F_TO_FIX7_9({{ collider.rotation.x }}), __F_TO_FIX7_9({{ collider.rotation.y }}), __F_TO_FIX7_9({{ collider.rotation.z }})},
 
-		// scale (x, y, z)
-		{ __F_TO_FIX7_9({{ collider.scale.x }}), __F_TO_FIX7_9({{ collider.scale.y }}), __F_TO_FIX7_9({{ collider.scale.z }}) },
+	// scale (x, y, z)
+	{__F_TO_FIX7_9({{ collider.scale.x }}), __F_TO_FIX7_9({{ collider.scale.y }}), __F_TO_FIX7_9({{ collider.scale.z }})},
 
-		// if true this collider checks for collisions against other colliders
-		{{ collider.checkForCollisions }},
+	// if true this collider checks for collisions against other colliders
+	{{ collider.checkForCollisions }},
 
-		// layers in which I live
-		{%- if collider.layers | length > 0 %}
-		kLayer
-			{%- for layerId in collider.layers %}
-				{{- project.items.ColliderLayers.project.layers[layerId] | sanitizeSpecName -}}
-				{%- if not loop.last -%}
-					{{- " | kLayer" -}}
-				{%- endif -%}
-			{%- endfor -%},
-		{%- else %}
-		kLayerNone,
-		{%- endif %}
+	// layers in which I live
+	{%- if collider.layers | length > 0 %}
+	kLayer
+		{%- for layerId in collider.layers %}
+			{{- project.items.ColliderLayers.project.layers[layerId] | sanitizeSpecName -}}
+			{%- if not loop.last -%}
+				{{- " | kLayer" -}}
+			{%- endif -%}
+		{%- endfor -%},
+	{%- else %}
+	kLayerNone,
+	{%- endif %}
 
-		// layers to ignore when checking for collisions
-		{%- if collider.layersToCheck | length > 0 %}
-		kLayerAll & ~(kLayer
-			{%- for layerId in collider.layersToCheck %}
-				{{- project.items.ColliderLayers.project.layers[layerId] | sanitizeSpecName -}}
-				{%- if not loop.last -%}
-					{{- " | kLayer" -}}
-				{%- endif -%}
-			{%- endfor -%}),
-		{%- else %}
-		kLayerAll,
-		{%- endif %}
-	},
-	{% endfor %}
-	{NULL, {0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0}, {0, 0, 0}, false, kLayerNone, kLayerNone}
-};
-{% endif %}
+	// layers to ignore when checking for collisions
+	{%- if collider.layersToCheck | length > 0 %}
+	kLayerAll & ~(kLayer
+		{%- for layerId in collider.layersToCheck %}
+			{{- project.items.ColliderLayers.project.layers[layerId] | sanitizeSpecName -}}
+			{%- if not loop.last -%}
+				{{- " | kLayer" -}}
+			{%- endif -%}
+		{%- endfor -%}),
+	{%- else %}
+	kLayerAll,
+	{%- endif %}
+},
+{% endfor %}
+{% endif -%}
 
-{{ macros.sectionHeader('Entity') }}
+{{- macros.sectionHeader('Entity') -}}
 
 {#- PRINT PHYSICAL PROPERTIES -#}
 {%- if item.physics.enabled %}
@@ -551,18 +531,6 @@ BodyROMSpec {{ sanitizedSpecName }}BodySpecSpec =
 };
 {%- endif %}
 
-{#- PRINT BEHAVIORS -#}
-{%- if item.components.behaviors | length %}
-
-BehaviorROMSpec* const {{ sanitizedSpecName }}Behaviors[] =
-{
-	{%- for behavior in item.components.behaviors %}
-	(BehaviorROMSpec*)&{{ behavior.name }},
-	{%- endfor %}
-	NULL
-};
-{%- endif %}
-
 {#- PRINT CHILDREN -#}
 {%- if item.components.children | length %}
 
@@ -577,6 +545,23 @@ PositionedEntityROMSpec {{ sanitizedSpecName }}Children[] =
 	{NULL, {0, 0, 0}, {0, 0, 0}, {1, 1, 1},  0, NULL, NULL, NULL, false},
 };
 {%- endif %}
+
+ComponentSpec* const {{ sanitizedSpecName }}ComponentSpecs[] = 
+{
+	{% for spriteName in spriteNames -%}
+	(ComponentSpec*)&{{ spriteName }}SpriteSpec,
+	{% endfor -%}
+	{% for wireframeName in wireframeNames -%}
+	(ComponentSpec*)&{{ wireframeName }}WireframeSpec,
+	{% endfor -%}
+	{% for colliderName in colliderNames -%}
+	(ComponentSpec*)&{{ colliderName }}ColliderSpec,
+	{% endfor -%}
+	{% for behavior in item.components.behaviors -%}
+	(ComponentSpec*)&{{ behavior.name }},
+	{% endfor -%}
+	NULL
+};
 
 {# PRINT ENTITY SPEC -#}
 {{ entityClass }}ROMSpec {{ sanitizedSpecName }}EntitySpec =
@@ -594,11 +579,7 @@ PositionedEntityROMSpec {{ sanitizedSpecName }}Children[] =
 			__TYPE({{ entityClass }}),
 
 			// Component specs
-			{%- if item.components | length %}
-			(ComponentSpec**){{ sanitizedSpecName }}Components,
-			{%- else %}
-			NULL,
-			{%- endif %}
+			(ComponentSpec**){{ sanitizedSpecName }}ComponentSpecs,
 
 			// Children specs
 			{%- if item.components.children | length %}
@@ -616,7 +597,7 @@ PositionedEntityROMSpec {{ sanitizedSpecName }}Children[] =
 
 			// Size
 			// If 0, it is computed from the visual components if any
-			{ {{ item.extraProperties.pixelSize.x }}, {{ item.extraProperties.pixelSize.y }}, {{ item.extraProperties.pixelSize.z }} },
+			{{ '{' ~ item.extraProperties.pixelSize.x ~ ', ' ~ item.extraProperties.pixelSize.y ~ ', ' ~ item.extraProperties.pixelSize.z ~ '}' }},
 
 			// Entity's in-game type
 			kType{{ project.items.InGameTypes.project.types[item.inGameType] | sanitizeSpecName }}

@@ -10,28 +10,25 @@
 #ifndef OPTIONS_SELECTOR_H_
 #define OPTIONS_SELECTOR_H_
 
-
 //=========================================================================================================
 // INCLUDES
 //=========================================================================================================
 
 #include <ListenerObject.h>
 
-
 //=========================================================================================================
 // CLASS' MACROS
 //=========================================================================================================
 
-#define __OPTIONS_SELECT_MAX_COLS		__SCREEN_WIDTH >> 5
-#define __OPTIONS_SELECT_MAX_ROWS		__SCREEN_HEIGHT >> 3
-
+#define __OPTIONS_SELECT_MAX_COLS __SCREEN_WIDTH >> 5
+#define __OPTIONS_SELECT_MAX_ROWS __SCREEN_HEIGHT >> 3
 
 //=========================================================================================================
 // CLASS' DATA
 //=========================================================================================================
 
 /// An option for the options selector
-/// @memberof	OptionsSelector
+/// @memberof OptionsSelector
 typedef struct Option
 {
 	/// Option's value
@@ -49,7 +46,7 @@ typedef struct Option
 } Option;
 
 /// Types of Options
-/// @memberof	OptionsSelector
+/// @memberof OptionsSelector
 enum OptionTypes
 {
 	/// a string
@@ -65,14 +62,13 @@ enum OptionTypes
 };
 
 /// Types of text alignments
-/// @memberof	OptionsSelector
+/// @memberof OptionsSelector
 enum OptionsAlignment
 {
 	kOptionsAlignLeft = 0,
 	kOptionsAlignCenter,
 	kOptionsAlignRight
 };
-
 
 //=========================================================================================================
 // CLASS' DECLARATION
@@ -93,13 +89,13 @@ class OptionsSelector : ListenerObject
 
 	/// Current page's node
 	VirtualNode currentPage;
-	
+
 	/// Current option's node
 	VirtualNode currentOption;
-	
+
 	/// Total number of options
 	int32 totalOptions;
-	
+
 	/// Current page index
 	int32 currentPageIndex;
 
@@ -108,13 +104,13 @@ class OptionsSelector : ListenerObject
 
 	/// Screen x coordinate where to print
 	int8 x;
-	
+
 	/// Screen y coordinate where to print
 	int8 y;
 
 	/// The maximum length of all the options
 	int8 optionsLength;
-	
+
 	/// Text alignement
 	uint32 alignment;
 
@@ -123,10 +119,10 @@ class OptionsSelector : ListenerObject
 
 	/// Number of columns per page
 	uint16 cols;
-	
+
 	/// Number of rows per page
 	uint16 rows;
-	
+
 	/// Width of a column (in chars)
 	uint8 columnWidth;
 
@@ -135,7 +131,7 @@ class OptionsSelector : ListenerObject
 
 	/// Right selection mark character
 	char* rightMark;
-	
+
 	/// Font to use for printing the options
 	char* font;
 
@@ -187,6 +183,5 @@ class OptionsSelector : ListenerObject
 	/// @param spacing: Text spacing
 	void print(uint8 x, uint8 y, uint32 alignment, uint8 spacing);
 }
-
 
 #endif

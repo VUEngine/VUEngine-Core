@@ -10,13 +10,11 @@
 #ifndef ACTOR_H_
 #define ACTOR_H_
 
-
 //=========================================================================================================
 // INCLUDES
 //=========================================================================================================
 
 #include <AnimatedEntity.h>
-
 
 //=========================================================================================================
 // FORWARD DECLARATIONS
@@ -26,7 +24,6 @@ class Body;
 class State;
 class StateMachine;
 
-
 //=========================================================================================================
 // CLASS' DATA
 //=========================================================================================================
@@ -35,6 +32,7 @@ class StateMachine;
 /// @memberof Actor
 typedef struct ActorSpec
 {
+	/// AnimatedEntity spec
 	AnimatedEntitySpec animatedEntitySpec;
 
 	/// Flag to attach a physical body
@@ -48,7 +46,6 @@ typedef struct ActorSpec
 /// An Actor spec that is stored in ROM
 /// @memberof Actor
 typedef const ActorSpec ActorROMSpec;
-
 
 //=========================================================================================================
 // CLASS' DECLARATION
@@ -83,11 +80,11 @@ class Actor : AnimatedEntity
 	/// @return True if the Telegram was processed
 	override bool handleMessage(Telegram telegram);
 
-	/// A new component has been added to this actor. 
+	/// A new component has been added to this actor.
 	/// @param component: Added component
 	override void addedComponent(Component component);
 
-	/// A component has been removed from this actor. 
+	/// A component has been removed from this actor.
 	/// @param component: Removed component
 	override void removedComponent(Component component);
 
@@ -120,8 +117,9 @@ class Actor : AnimatedEntity
 	override bool isSubjectToGravity(Vector3D gravity);
 
 	/// Process a newly detected collision by one of the component colliders.
-	/// @param collisionInformation: Information struct about the collision to resolve 
-	/// @return True if the collider must keep track of the collision to detect if it persists and when it ends; false otherwise
+	/// @param collisionInformation: Information struct about the collision to resolve
+	/// @return True if the collider must keep track of the collision to detect if it persists and when it
+	/// ends; false otherwise
 	override bool collisionStarts(const CollisionInformation* collisionInformation);
 
 	/// Process when a previously detected collision by one of the component colliders stops.
@@ -188,10 +186,11 @@ class Actor : AnimatedEntity
 	/// @return True if the actor has to take into account the colliding object's bounciness when bouncing
 	virtual bool isSensibleToCollidingObjectBouncinessOnCollision(SpatialObject collidingObject);
 
-	/// Check if when the actor bounces it has to take into account the colliding object's friction coefficient.
-	/// @return True if the actor has to take into account the colliding object's friction coefficient when bouncing
+	/// Check if when the actor bounces it has to take into account the colliding object's friction
+	/// coefficient.
+	/// @return True if the actor has to take into account the colliding object's friction coefficient when
+	/// bouncing
 	virtual bool isSensibleToCollidingObjectFrictionOnCollision(SpatialObject collidingObject);
 }
-
 
 #endif
