@@ -623,7 +623,10 @@ void Sprite::position()
 	{
 		position.parallax = Optics::calculateParallax(this->transformation->position.z - _cameraPosition->z);
 
-		this->scale.x = this->scale.y = 0;
+		if(this->transformed)
+		{
+			this->scale.x = this->scale.y = 0;
+		}
 	}
 #endif
 
@@ -660,9 +663,16 @@ void Sprite::rotate()
 		this->rotation.z != this->transformation->rotation.z
 	)
 	{
-		Sprite::setRotation(this, &this->transformation->rotation);
-		this->rotation = this->transformation->rotation;
 		this->rendered = false;
+
+		if(Sprite::overrides(this, setRotation))
+		{
+			Sprite::setRotation(this, &this->transformation->rotation);
+		}
+		else
+		{
+			this->rotation = this->transformation->rotation;
+		}
 	}
 }
 //---------------------------------------------------------------------------------------------------------
