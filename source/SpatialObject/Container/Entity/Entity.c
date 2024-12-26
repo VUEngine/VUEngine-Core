@@ -446,7 +446,7 @@ void Entity::createComponents()
 		return;
 	}
 
-	ComponentManager::addComponents(SpatialObject::safeCast(this), this->entitySpec->componentSpecs, kComponentTypes);
+	Entity::addComponents(this, this->entitySpec->componentSpecs, kComponentTypes);
 }
 //---------------------------------------------------------------------------------------------------------
 void Entity::destroyComponents()
