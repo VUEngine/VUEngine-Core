@@ -347,16 +347,10 @@ void Camera::print(int32 x, int32 y, bool inPixels)
 //---------------------------------------------------------------------------------------------------------
 void Camera::constructor()
 {
-	// construct base object
 	Base::constructor();
 
-	// initialize world's camera's position
 	this->position = Vector3D::zero();
-
-	// set the default camera movement manager
 	this->cameraMovementManager = CameraMovementManager::getInstance();
-
-	// set the default camera effect manager
 	this->cameraEffectManager = CameraEffectManager::getInstance();
 
 	this->position = Vector3D::zero();
