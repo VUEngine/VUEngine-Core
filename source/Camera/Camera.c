@@ -48,7 +48,7 @@ void Camera::reset()
 	this->invertedRotation = Rotation::zero();
 	this->lastDisplacement = Vector3D::zero();
 
-	this->transformationFlags = false;
+	this->transformationFlags = __VALID_TRANSFORMATION;
 
 	Camera::resetCameraFrustum(this);
 
@@ -261,7 +261,7 @@ void Camera::focus()
 
 	if(takeTransformationFlagsDown)
 	{
-		this->transformationFlags = false;
+		this->transformationFlags = __VALID_TRANSFORMATION;
 		takeTransformationFlagsDown = false;
 	}
 
@@ -372,7 +372,7 @@ void Camera::constructor()
 	this->cameraFrustum.y1 = __SCREEN_HEIGHT;
 	this->cameraFrustum.z1 = __SCREEN_DEPTH;
 
-	this->transformationFlags = false;
+	this->transformationFlags = __VALID_TRANSFORMATION;
 
 	PixelOptical pixelOptical =
     {

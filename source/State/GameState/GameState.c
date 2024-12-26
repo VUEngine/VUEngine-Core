@@ -446,7 +446,7 @@ void GameState::transform()
 //---------------------------------------------------------------------------------------------------------
 void GameState::transformUI()
 {
-	if(!this->transform)
+	if(!this->transform && __VALID_TRANSFORMATION == Camera::getTransformationFlags(Camera::getInstance()))
 	{
 		return;
 	}
