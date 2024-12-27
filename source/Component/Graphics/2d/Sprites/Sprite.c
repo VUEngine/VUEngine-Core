@@ -148,10 +148,6 @@ inline void Sprite::transform()
 {
 	if(NULL != this->owner)
 	{
-		this->position = PixelVector::getFromVector3D(this->transformation->position, 0);
-		this->rotation = Rotation::sum(this->transformation->rotation, (Rotation){__1I_FIXED, __1I_FIXED, __1I_FIXED});
-		this->scale = (PixelScale){0, 0};
-
 		Sprite::position(this);
 		Sprite::rotate(this);
 		Sprite::scale(this);
@@ -202,8 +198,28 @@ int16 Sprite::render(int16 index, bool updateAnimation)
 		}
 
 		Sprite::position(this);
-		Sprite::rotate(this);
-		Sprite::scale(this);
+
+		if
+		(
+			this->rotation.x != this->transformation->rotation.x
+			||
+			this->rotation.y != this->transformation->rotation.y
+			||
+			this->rotation.z != this->transformation->rotation.z
+		)
+		{
+			Sprite::rotate(this);
+		}
+
+		if
+		(
+			this->scale.x != this->transformation->scale.x
+			||
+			this->scale.y != this->transformation->scale.y
+		)
+		{
+			Sprite::scale(this);
+		}
 	}
 
 	// If the client code makes these checks before calling this method,
@@ -649,53 +665,35 @@ void Sprite::position()
 //---------------------------------------------------------------------------------------------------------
 void Sprite::rotate()
 {
-	if
-	(
-		this->rotation.x != this->transformation->rotation.x
-		||
-		this->rotation.y != this->transformation->rotation.y
-		||
-		this->rotation.z != this->transformation->rotation.z
-	)
-	{
-		this->rendered = false;
+	this->rendered = false;
 
-		if(Sprite::overrides(this, setRotation))
-		{
-			Sprite::setRotation(this, &this->transformation->rotation);
-		}
-		else
-		{
-			this->rotation = this->transformation->rotation;
-		}
+	if(Sprite::overrides(this, setRotation))
+	{
+		Sprite::setRotation(this, &this->transformation->rotation);
+	}
+	else
+	{
+		this->rotation = this->transformation->rotation;
 	}
 }
 //---------------------------------------------------------------------------------------------------------
 void Sprite::scale()
 {
-	if
-	(
-		this->scale.x != this->transformation->scale.x
-		||
-		this->scale.y != this->transformation->scale.y
-	)
+	this->rendered = false;
+
+	PixelScale scale = 
 	{
-		this->rendered = false;
+		this->transformation->scale.x,
+		this->transformation->scale.y
+	};
 
-		PixelScale scale = 
-		{
-			this->transformation->scale.x,
-			this->transformation->scale.y
-		};
-
-		if(Sprite::overrides(this, setScale))
-		{
-			Sprite::setScale(this, &scale);
-		}
-		else
-		{
-			this->scale = scale;
-		}
+	if(Sprite::overrides(this, setScale))
+	{
+		Sprite::setScale(this, &scale);
+	}
+	else
+	{
+		this->scale = scale;
 	}
 }
 //---------------------------------------------------------------------------------------------------------
