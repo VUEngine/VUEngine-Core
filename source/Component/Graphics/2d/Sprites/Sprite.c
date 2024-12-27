@@ -172,9 +172,7 @@ int16 Sprite::render(int16 index, bool updateAnimation)
 		return this->index;
 	}
 
-	NM_ASSERT(!isDeleted(this->texture->charSet), "Sprite::render: null char set");
-
-	if(kTextureInvalid == this->texture->status || NULL == this->texture->charSet)
+	if(kTextureInvalid == this->texture->status || isDeleted(this->texture->charSet))
 	{
 		this->index = __NO_RENDER_INDEX;
 		return this->index;
