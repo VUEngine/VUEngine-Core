@@ -65,8 +65,6 @@ void Sprite::constructor(SpatialObject owner, const SpriteSpec* spriteSpec)
 	this->position = (PixelVector){0, 0, 0, 0};
 	this->rotation = Rotation::zero();
 	this->scale = (PixelScale){__1I_FIX7_9, __1I_FIX7_9};
-	this->transformed = false;
-	this->isDeformable = false;
 	this->displacement = PixelVector::zero();
 	this->hasTextures = true;
 
@@ -151,19 +149,8 @@ inline void Sprite::transform()
 	if(NULL != this->owner)
 	{
 		Sprite::position(this);
-
-		if(!this->transformed)
-		{
-			Sprite::setRotation(this, &this->transformation->rotation);
-			Sprite::setScale(this, &this->scale);
-
-			this->transformed = true;
-		}
-		else if(this->isDeformable)
-		{
-			Sprite::rotate(this);
-			Sprite::scale(this);
-		}
+		Sprite::setRotation(this, &this->transformation->rotation);
+		Sprite::setScale(this, &this->scale);
 	}
 }
 //---------------------------------------------------------------------------------------------------------
@@ -199,16 +186,21 @@ int16 Sprite::render(int16 index, bool updateAnimation)
 		return this->index;
 	}
 
-	if(NULL == this->transformation)
+	if(NULL != this->owner)
 	{
-		return __NO_RENDER_INDEX;
-	}
-	else if(__NON_TRANSFORMED == this->transformation->invalid)
-	{
-		return __NO_RENDER_INDEX;
-	}
+		if(NULL == this->transformation)
+		{
+			return __NO_RENDER_INDEX;
+		}
+		else if(__NON_TRANSFORMED == this->transformation->invalid)
+		{
+			return __NO_RENDER_INDEX;
+		}
 
-	Sprite::transform(this);
+		Sprite::position(this);
+		Sprite::rotate(this);
+		Sprite::scale(this);
+	}
 
 	// If the client code makes these checks before calling this method,
 	// it saves on method calls quite a bit when there are lots of
@@ -473,8 +465,8 @@ void Sprite::putPixel(const Point* texturePixel, const Pixel* charSetPixel, BYTE
 //---------------------------------------------------------------------------------------------------------
 void Sprite::invalidateRendering()
 {
-	this->transformed = false;
 	this->rendered = false;
+	Sprite::transform(this);
 }
 //---------------------------------------------------------------------------------------------------------
 bool Sprite::hasSpecialEffects()
@@ -507,12 +499,23 @@ void Sprite::forceHide()
 //---------------------------------------------------------------------------------------------------------
 void Sprite::setRotation(const Rotation* rotation __attribute__((unused)))
 {
+	if(NULL == rotation)
+	{
+		return;
+	}
+
 	this->rotation = *rotation;
 	this->rendered = false;
 }
 //---------------------------------------------------------------------------------------------------------
 void Sprite::setScale(const PixelScale* scale __attribute__((unused)))
 {
+	if(NULL == scale)
+	{
+		return;
+	}
+
+	this->scale = *scale;
 	this->rendered = false;
 }
 //---------------------------------------------------------------------------------------------------------
@@ -633,24 +636,11 @@ void Sprite::position()
 	{
 		position.parallax = Optics::calculateParallax(this->transformation->position.z - _cameraPosition->z);
 
-		if(this->isDeformable)
-		{
-			this->scale.x = this->scale.y = 0;
-		}
+		this->scale.x = this->scale.y = 0;
 	}
 #endif
 
-	if
-	(
-		this->position.x != position.x
-		||
-		this->position.y != position.y
-		||
-		this->position.z != position.z
-	)
-	{
-		Sprite::setPosition(this, &position);
-	}
+	Sprite::setPosition(this, &position);
 }
 //---------------------------------------------------------------------------------------------------------
 void Sprite::rotate()
@@ -679,42 +669,48 @@ void Sprite::rotate()
 //---------------------------------------------------------------------------------------------------------
 void Sprite::scale()
 {
-	PixelScale scale = 
-	{
-		this->transformation->scale.x,
-		this->transformation->scale.y
-	};
-
-	NM_ASSERT(0 < scale.x, "Sprite::scale: 0 scale x");
-	NM_ASSERT(0 < scale.y, "Sprite::scale: 0 scale y");
-
-	extern Rotation _previousCameraInvertedRotation;
-
-	Vector3D vector = Vector3D::rotate(Vector3D::getRelativeToCamera(this->transformation->position), _previousCameraInvertedRotation);
-
-	fix7_9 ratio = __FIXED_TO_FIX7_9(Vector3D::getScale(vector.z, true));
-
-	ratio = 0 > ratio? __1I_FIX7_9 : ratio;
-	ratio = __I_TO_FIX7_9(__MAXIMUM_SCALE) < ratio? __I_TO_FIX7_9(__MAXIMUM_SCALE) : ratio;
-
-	scale.x = __FIX7_9_MULT(scale.x, ratio);
-	scale.y = __FIX7_9_MULT(scale.y, ratio);
-
 	if
 	(
-		this->scale.x != scale.x
+		this->scale.x != this->transformation->scale.x
 		||
-		this->scale.y != scale.y
+		this->scale.y != this->transformation->scale.y
 	)
 	{
 		this->rendered = false;
 
 		if(Sprite::overrides(this, setScale))
 		{
+			PixelScale scale = 
+			{
+				this->transformation->scale.x,
+				this->transformation->scale.y
+			};
+
+			NM_ASSERT(0 < scale.x, "Sprite::scale: 0 scale x");
+			NM_ASSERT(0 < scale.y, "Sprite::scale: 0 scale y");
+
+			extern Rotation _previousCameraInvertedRotation;
+
+			Vector3D vector = Vector3D::rotate(Vector3D::getRelativeToCamera(this->transformation->position), _previousCameraInvertedRotation);
+
+			fix7_9 ratio = __FIXED_TO_FIX7_9(Vector3D::getScale(vector.z, true));
+
+			ratio = 0 > ratio? __1I_FIX7_9 : ratio;
+			ratio = __I_TO_FIX7_9(__MAXIMUM_SCALE) < ratio? __I_TO_FIX7_9(__MAXIMUM_SCALE) : ratio;
+
+			scale.x = __FIX7_9_MULT(scale.x, ratio);
+			scale.y = __FIX7_9_MULT(scale.y, ratio);
+
 			Sprite::setScale(this, &scale);
 		}
 		else
 		{
+			PixelScale scale = 
+			{
+				this->transformation->scale.x,
+				this->transformation->scale.y
+			};
+
 			this->scale = scale;
 		}
 	}

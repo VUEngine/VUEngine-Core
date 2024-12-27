@@ -93,12 +93,6 @@ abstract class Sprite : VisualComponent
 	/// Flag for special sprites
 	bool hasTextures;
 
-	/// Flag to allow scaling and rotation only once on sprites that don't need this all the time
-	bool transformed;
-
-	/// Flag to prevent rotation and scaling calls on non deformable sprites
-	bool isDeformable;
-
 	/// @publicsection
 
 	/// Class' constructor
