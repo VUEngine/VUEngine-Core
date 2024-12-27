@@ -62,7 +62,6 @@ static int16 BgmapSprite::doApplyAffineTransformations(BgmapSprite bgmapSprite)
 			__I_TO_FIX13_3(bgmapSprite->bgmapTextureSource.my),
 			__I_TO_FIXED(bgmapSprite->texture->textureSpec->cols << 2),
 			__I_TO_FIXED(bgmapSprite->texture->textureSpec->rows << 2),
-			&bgmapSprite->scale,
 			&bgmapSprite->rotation
 		);
 	}
@@ -338,6 +337,23 @@ void BgmapSprite::setScale(const PixelScale* scale)
 
 	if(0 != (__WORLD_AFFINE & this->head))
 	{
+		PixelScale scaleHelper = *scale;
+
+		NM_ASSERT(0 < scaleHelper.x, "Sprite::scale: 0 scale x");
+		NM_ASSERT(0 < scaleHelper.y, "Sprite::scale: 0 scale y");
+
+		extern Rotation _previousCameraInvertedRotation;
+
+		Vector3D vector = Vector3D::rotate(Vector3D::getRelativeToCamera(this->transformation->position), _previousCameraInvertedRotation);
+
+		fix7_9 ratio = __FIXED_TO_FIX7_9(Vector3D::getScale(vector.z, true));
+
+		ratio = 0 > ratio? __1I_FIX7_9 : ratio;
+		ratio = __I_TO_FIX7_9(__MAXIMUM_SCALE) < ratio? __I_TO_FIX7_9(__MAXIMUM_SCALE) : ratio;
+
+		scaleHelper.x = __FIX7_9_MULT(scaleHelper.x, ratio);
+		scaleHelper.y = __FIX7_9_MULT(scaleHelper.y, ratio);
+
 		this->rendered = false;
 
 		if(!isDeleted(this->texture))
@@ -347,7 +363,7 @@ void BgmapSprite::setScale(const PixelScale* scale)
 				__FIX7_9_TO_FIXED(__COS(__FIXED_TO_I(this->transformation->rotation.y))),
 				__FIXED_MULT(
 					__I_TO_FIXED((int32)this->texture->textureSpec->cols << 2),
-					__FIX7_9_TO_FIXED(scale->x)
+					__FIX7_9_TO_FIXED(scaleHelper.x)
 				)
 			))) + 1;
 
@@ -355,7 +371,7 @@ void BgmapSprite::setScale(const PixelScale* scale)
 				__FIX7_9_TO_FIXED(__COS(__FIXED_TO_I(this->transformation->rotation.x))),
 				__FIXED_MULT(
 					__I_TO_FIXED((int32)this->texture->textureSpec->rows << 2),
-					__FIX7_9_TO_FIXED(scale->y)
+					__FIX7_9_TO_FIXED(scaleHelper.y)
 				)
 			))) + 1;
 		}

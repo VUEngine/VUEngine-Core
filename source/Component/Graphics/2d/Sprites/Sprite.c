@@ -678,39 +678,18 @@ void Sprite::scale()
 	{
 		this->rendered = false;
 
+		PixelScale scale = 
+		{
+			this->transformation->scale.x,
+			this->transformation->scale.y
+		};
+
 		if(Sprite::overrides(this, setScale))
 		{
-			PixelScale scale = 
-			{
-				this->transformation->scale.x,
-				this->transformation->scale.y
-			};
-
-			NM_ASSERT(0 < scale.x, "Sprite::scale: 0 scale x");
-			NM_ASSERT(0 < scale.y, "Sprite::scale: 0 scale y");
-
-			extern Rotation _previousCameraInvertedRotation;
-
-			Vector3D vector = Vector3D::rotate(Vector3D::getRelativeToCamera(this->transformation->position), _previousCameraInvertedRotation);
-
-			fix7_9 ratio = __FIXED_TO_FIX7_9(Vector3D::getScale(vector.z, true));
-
-			ratio = 0 > ratio? __1I_FIX7_9 : ratio;
-			ratio = __I_TO_FIX7_9(__MAXIMUM_SCALE) < ratio? __I_TO_FIX7_9(__MAXIMUM_SCALE) : ratio;
-
-			scale.x = __FIX7_9_MULT(scale.x, ratio);
-			scale.y = __FIX7_9_MULT(scale.y, ratio);
-
 			Sprite::setScale(this, &scale);
 		}
 		else
 		{
-			PixelScale scale = 
-			{
-				this->transformation->scale.x,
-				this->transformation->scale.y
-			};
-
 			this->scale = scale;
 		}
 	}
