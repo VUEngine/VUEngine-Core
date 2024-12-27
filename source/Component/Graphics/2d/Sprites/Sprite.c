@@ -63,7 +63,7 @@ void Sprite::constructor(SpatialObject owner, const SpriteSpec* spriteSpec)
 	this->transparency = __TRANSPARENCY_NONE;
 	this->checkIfWithinScreenSpace = true;
 	this->position = (PixelVector){0, 0, 0, 0};
-	this->rotation = Rotation::zero();
+	this->rotation = (Rotation){0, 0, 0};
 	this->scale = (PixelScale){__1I_FIX7_9, __1I_FIX7_9};
 	this->displacement = PixelVector::zero();
 	this->hasTextures = true;
@@ -148,9 +148,13 @@ inline void Sprite::transform()
 {
 	if(NULL != this->owner)
 	{
+		this->position = PixelVector::getFromVector3D(this->transformation->position, 0);
+		this->rotation = Rotation::sum(this->transformation->rotation, (Rotation){__1I_FIXED, __1I_FIXED, __1I_FIXED});
+		this->scale = (PixelScale){0, 0};
+
 		Sprite::position(this);
-		Sprite::setRotation(this, &this->transformation->rotation);
-		Sprite::setScale(this, &this->scale);
+		Sprite::rotate(this);
+		Sprite::scale(this);
 	}
 }
 //---------------------------------------------------------------------------------------------------------
