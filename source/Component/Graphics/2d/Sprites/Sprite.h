@@ -90,8 +90,8 @@ abstract class Sprite : VisualComponent
 	/// Texture to display
 	Texture texture;
 
-	/// Flag to invalidate the spatial properties caches (position, rotation, scale)
-	bool transformed;
+	/// Flag to prevent scaling calls on non scalable sprites
+	bool isScalable;
 
 	/// @publicsection
 

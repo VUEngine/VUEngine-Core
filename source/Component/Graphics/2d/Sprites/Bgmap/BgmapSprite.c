@@ -336,7 +336,7 @@ void BgmapSprite::setScale(const PixelScale* scale)
 
 	this->scale = *scale;
 
-	if(__WORLD_AFFINE & this->head)
+	if(0 != (__WORLD_AFFINE & this->head))
 	{
 		this->rendered = false;
 
@@ -434,10 +434,10 @@ void BgmapSprite::setMode(uint16 display, uint16 mode)
 
 			case __WORLD_AFFINE:
 
-				// set map head
 				this->head = display | __WORLD_AFFINE;
 				this->param = ParamTableManager::allocate(ParamTableManager::getInstance(), this);
 				this->applyParamTableEffect = NULL != this->applyParamTableEffect ? this->applyParamTableEffect : BgmapSprite::doApplyAffineTransformations;
+				this->isScalable = true;
 				break;
 
 			case __WORLD_HBIAS:

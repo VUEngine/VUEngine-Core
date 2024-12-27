@@ -65,7 +65,7 @@ void Sprite::constructor(SpatialObject owner, const SpriteSpec* spriteSpec)
 	this->position = (PixelVector){0, 0, 0, 0};
 	this->rotation = Rotation::zero();
 	this->scale = (PixelScale){__1I_FIX7_9, __1I_FIX7_9};
-	this->transformed = false;
+	this->isScalable = false;
 	this->displacement = PixelVector::zero();
 
 	if(NULL != spriteSpec)
@@ -164,16 +164,22 @@ int16 Sprite::render(int16 index, bool updateAnimation)
 
 	if(NULL != this->owner)
 	{
-		if(NULL != this->transformation && __NON_TRANSFORMED == this->transformation->invalid)
+		if(NULL == this->transformation)
+		{
+			return __NO_RENDER_INDEX;
+		}
+		else if(__NON_TRANSFORMED == this->transformation->invalid)
 		{
 			return __NO_RENDER_INDEX;
 		}
 
 		Sprite::position(this);
 		Sprite::rotate(this);
-		Sprite::scale(this);
 
-		this->transformed = true;
+		if(this->isScalable)
+		{
+			Sprite::scale(this);
+		}
 	}
 
 	if(kTextureInvalid == this->texture->status || NULL == this->texture->charSet)
@@ -458,7 +464,6 @@ void Sprite::putPixel(const Point* texturePixel, const Pixel* charSetPixel, BYTE
 //---------------------------------------------------------------------------------------------------------
 void Sprite::invalidateRendering()
 {
-	this->transformed = false;
 	this->rendered = false;
 }
 //---------------------------------------------------------------------------------------------------------
@@ -603,11 +608,6 @@ void Sprite::print(int32 x, int32 y)
 //---------------------------------------------------------------------------------------------------------
 void Sprite::position()
 {
-	if(NULL == this->transformation)
-	{
-		return;
-	}
-
 #ifdef __SPRITE_ROTATE_IN_3D
 	PixelVector position = PixelVector::transformVector3D(this->transformation->position);
 
@@ -623,7 +623,7 @@ void Sprite::position()
 	{
 		position.parallax = Optics::calculateParallax(this->transformation->position.z - _cameraPosition->z);
 
-		if(this->transformed)
+		if(this->isScalable)
 		{
 			this->scale.x = this->scale.y = 0;
 		}
@@ -632,8 +632,6 @@ void Sprite::position()
 
 	if
 	(
-		!this->transformed 
-		||
 		this->position.x != position.x
 		||
 		this->position.y != position.y
@@ -647,15 +645,8 @@ void Sprite::position()
 //---------------------------------------------------------------------------------------------------------
 void Sprite::rotate()
 {
-	if(NULL == this->transformation)
-	{
-		return;
-	}
-
 	if
 	(
-		!this->transformed
-		||
 		this->rotation.x != this->transformation->rotation.x
 		||
 		this->rotation.y != this->transformation->rotation.y
@@ -678,43 +669,29 @@ void Sprite::rotate()
 //---------------------------------------------------------------------------------------------------------
 void Sprite::scale()
 {
-	if(NULL == this->transformation)
-	{
-		return;
-	}
-
 	PixelScale scale = 
 	{
 		this->transformation->scale.x,
 		this->transformation->scale.y
 	};
 
-	if(__WORLD_AFFINE & this->head)
-	{
-		NM_ASSERT(0 < scale.x, "Sprite::scale: 0 scale x");
-		NM_ASSERT(0 < scale.y, "Sprite::scale: 0 scale y");
+	NM_ASSERT(0 < scale.x, "Sprite::scale: 0 scale x");
+	NM_ASSERT(0 < scale.y, "Sprite::scale: 0 scale y");
 
-		extern Rotation _previousCameraInvertedRotation;
+	extern Rotation _previousCameraInvertedRotation;
 
-		Vector3D vector = Vector3D::rotate(Vector3D::getRelativeToCamera(this->transformation->position), _previousCameraInvertedRotation);
+	Vector3D vector = Vector3D::rotate(Vector3D::getRelativeToCamera(this->transformation->position), _previousCameraInvertedRotation);
 
-		fix7_9 ratio = __FIXED_TO_FIX7_9(Vector3D::getScale(vector.z, true));
+	fix7_9 ratio = __FIXED_TO_FIX7_9(Vector3D::getScale(vector.z, true));
 
-		ratio = 0 > ratio? __1I_FIX7_9 : ratio;
-		ratio = __I_TO_FIX7_9(__MAXIMUM_SCALE) < ratio? __I_TO_FIX7_9(__MAXIMUM_SCALE) : ratio;
+	ratio = 0 > ratio? __1I_FIX7_9 : ratio;
+	ratio = __I_TO_FIX7_9(__MAXIMUM_SCALE) < ratio? __I_TO_FIX7_9(__MAXIMUM_SCALE) : ratio;
 
-		scale.x = __FIX7_9_MULT(scale.x, ratio);
-		scale.y = __FIX7_9_MULT(scale.y, ratio);
-	}
+	scale.x = __FIX7_9_MULT(scale.x, ratio);
+	scale.y = __FIX7_9_MULT(scale.y, ratio);
 
 	if
 	(
-		!this->transformed
-		||
-		0 >= this->scale.x
-		||
-		0 >= this->scale.y
-		||
 		this->scale.x != scale.x
 		||
 		this->scale.y != scale.y
