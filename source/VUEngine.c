@@ -958,19 +958,6 @@ GameState VUEngine::updateLogic(GameState currentGameState)
 	return currentGameState;
 }
 //---------------------------------------------------------------------------------------------------------
-void VUEngine::updateSound()
-{
-	SoundManager::update(this->soundManager);
-
-#ifdef __REGISTER_LAST_PROCESS_NAME
-	this->processName = PROCESS_NAME_SOUND_SETUP;
-#endif
-
-#ifdef __ENABLE_PROFILER
-	Profiler::lap(Profiler::getInstance(), kProfilerLapTypeNormalProcess, PROCESS_NAME_SOUND_SETUP);
-#endif
-}
-//---------------------------------------------------------------------------------------------------------
 bool VUEngine::stream(GameState gameState)
 {
 #ifdef __REGISTER_LAST_PROCESS_NAME
@@ -1036,24 +1023,13 @@ void VUEngine::run(GameState currentGameState)
 		currentGameState = VUEngine::updateLogic(this, currentGameState);
 
 #ifdef __ENABLE_PROFILER
-		// Update sound related logic if the streaming did nothing
-		VUEngine::updateSound(this);
-
 		HardwareManager::enableInterrupts();
 
 		// Stream entities
 		VUEngine::stream(this, currentGameState);
 #else
-		// Give priority to the stream
-		if(!VUEngine::stream(this, currentGameState))
-		{
-			// Update sound related logic if the streaming did nothing
-			VUEngine::updateSound(this);
-		}
-
 #ifndef __UNLOCK_FPS
-		// While we wait for the next game start
-		while(!this->gameFrameStarted)
+		do
 		{
 			// Stream the heck out of the pending entities
 			if(!VUEngine::stream(this, currentGameState))
@@ -1061,6 +1037,8 @@ void VUEngine::run(GameState currentGameState)
 				this->currentGameCycleEnded = true;
 			}
 		}
+		// While we wait for the next game start
+		while(!this->gameFrameStarted)
 #endif
 #endif
 

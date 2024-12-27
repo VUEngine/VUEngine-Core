@@ -67,9 +67,6 @@ singleton class SoundManager : ListenerObject
 	/// Reset the manager's state.
 	void reset();
 
-	/// Update the manager.
-	void update();
-
 	/// Set the target refresh rate for PCM playback.
 	/// @param pcmTargetPlaybackRefreshRate: Target refresh rate for PCM playback
 	void setPCMTargetPlaybackRefreshRate(uint16 pcmTargetPlaybackRefreshRate);

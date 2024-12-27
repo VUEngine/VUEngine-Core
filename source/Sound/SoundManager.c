@@ -81,10 +81,6 @@ void SoundManager::reset()
 	SoundManager::unlock(this);
 }
 //---------------------------------------------------------------------------------------------------------
-void SoundManager::update()
-{
-}
-//---------------------------------------------------------------------------------------------------------
 void SoundManager::setPCMTargetPlaybackRefreshRate(uint16 pcmTargetPlaybackRefreshRate)
 {
 	if(0 == pcmTargetPlaybackRefreshRate)
