@@ -114,6 +114,7 @@ void ObjectSpriteContainer::constructor()
 {
 	Base::constructor(NULL, NULL);
 
+	this->hasTextures = false;
 	this->head = __WORLD_ON | __WORLD_OBJECT | __WORLD_OVR;
 	this->head &= ~__WORLD_END;
 	this->spt = 0;

@@ -31,6 +31,8 @@ void PrintingSprite::constructor(SpatialObject owner, const PrintingSpriteSpec* 
 {
 	Base::constructor(owner, &printingSpriteSpec->bgmapSpriteSpec);
 
+	this->hasTextures = false;
+
 	PrintingSprite::reset(this);
 }
 //---------------------------------------------------------------------------------------------------------

@@ -68,6 +68,7 @@ void Sprite::constructor(SpatialObject owner, const SpriteSpec* spriteSpec)
 	this->transformed = false;
 	this->isDeformable = false;
 	this->displacement = PixelVector::zero();
+	this->hasTextures = true;
 
 	if(NULL != spriteSpec)
 	{
@@ -145,35 +146,10 @@ void Sprite::forceChangeOfFrame(int16 actualFrame)
 	}
 }
 //---------------------------------------------------------------------------------------------------------
-int16 Sprite::render(int16 index, bool updateAnimation)
+inline void Sprite::transform()
 {
-	// If the client code makes these checks before calling this method,
-	// it saves on method calls quite a bit when there are lots of
-	// sprites. Don't uncomment.
-/*
-	if(__HIDE == this->show)
-	{
-		return __NO_RENDER_INDEX;
-	}
-*/
-
-	if(isDeleted(this->texture))
-	{
-		this->index = Sprite::doRender(this, index);
-		return this->index;
-	}
-
 	if(NULL != this->owner)
 	{
-		if(NULL == this->transformation)
-		{
-			return __NO_RENDER_INDEX;
-		}
-		else if(__NON_TRANSFORMED == this->transformation->invalid)
-		{
-			return __NO_RENDER_INDEX;
-		}
-
 		Sprite::position(this);
 
 		if(!this->transformed)
@@ -189,6 +165,27 @@ int16 Sprite::render(int16 index, bool updateAnimation)
 			Sprite::scale(this);
 		}
 	}
+}
+//---------------------------------------------------------------------------------------------------------
+int16 Sprite::render(int16 index, bool updateAnimation)
+{
+	// If the client code makes these checks before calling this method,
+	// it saves on method calls quite a bit when there are lots of
+	// sprites. Don't uncomment.
+/*
+	if(__HIDE == this->show)
+	{
+		return __NO_RENDER_INDEX;
+	}
+*/
+
+	if(!this->hasTextures)
+	{
+		this->index = Sprite::doRender(this, index);
+		return this->index;
+	}
+
+	NM_ASSERT(!isDeleted(this->texture->charSet), "Sprite::render: null char set");
 
 	if(kTextureInvalid == this->texture->status || NULL == this->texture->charSet)
 	{
@@ -202,12 +199,16 @@ int16 Sprite::render(int16 index, bool updateAnimation)
 		return this->index;
 	}
 
-	if(__NO_RENDER_INDEX == index)
+	if(NULL == this->transformation)
+	{
+		return __NO_RENDER_INDEX;
+	}
+	else if(__NON_TRANSFORMED == this->transformation->invalid)
 	{
 		return __NO_RENDER_INDEX;
 	}
 
-	NM_ASSERT(!isDeleted(this->texture->charSet), "Sprite::render: null char set");
+	Sprite::transform(this);
 
 	// If the client code makes these checks before calling this method,
 	// it saves on method calls quite a bit when there are lots of

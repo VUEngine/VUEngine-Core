@@ -90,6 +90,9 @@ abstract class Sprite : VisualComponent
 	/// Texture to display
 	Texture texture;
 
+	/// Flag for special sprites
+	bool hasTextures;
+
 	/// Flag to allow scaling and rotation only once on sprites that don't need this all the time
 	bool transformed;
 
@@ -113,6 +116,9 @@ abstract class Sprite : VisualComponent
 	/// Force the change of frame according to each child class' implementation.
 	/// @param actualFrame: The frame of the playing animation to skip to
 	override void forceChangeOfFrame(int16 actualFrame);
+
+	/// Compute the sprite's transformation.
+	void transform();
 
 	/// Render the sprite by configuring the DRAM assigned to it by means of the provided index.
 	/// @param index: Determines the region of DRAM that this sprite is allowed to configure

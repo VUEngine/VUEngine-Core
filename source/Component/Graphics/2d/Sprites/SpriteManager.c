@@ -167,7 +167,7 @@ Sprite SpriteManager::createSprite(SpatialObject owner, const SpriteSpec* sprite
 
 	VirtualList::pushBack(this->components, sprite);
 
-	Sprite::render(sprite, __NO_RENDER_INDEX, false);
+	Sprite::transform(sprite);
 	Sprite::registerWithManager(sprite);
 
 	return sprite;
