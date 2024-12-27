@@ -65,7 +65,8 @@ void Sprite::constructor(SpatialObject owner, const SpriteSpec* spriteSpec)
 	this->position = (PixelVector){0, 0, 0, 0};
 	this->rotation = Rotation::zero();
 	this->scale = (PixelScale){__1I_FIX7_9, __1I_FIX7_9};
-	this->isScalable = false;
+	this->transformed = false;
+	this->isDeformable = false;
 	this->displacement = PixelVector::zero();
 
 	if(NULL != spriteSpec)
@@ -174,10 +175,17 @@ int16 Sprite::render(int16 index, bool updateAnimation)
 		}
 
 		Sprite::position(this);
-		Sprite::rotate(this);
 
-		if(this->isScalable)
+		if(!this->transformed)
 		{
+			Sprite::setRotation(this, &this->transformation->rotation);
+			Sprite::setScale(this, &this->scale);
+
+			this->transformed = true;
+		}
+		else if(this->isDeformable)
+		{
+			Sprite::rotate(this);
 			Sprite::scale(this);
 		}
 	}
@@ -464,6 +472,7 @@ void Sprite::putPixel(const Point* texturePixel, const Pixel* charSetPixel, BYTE
 //---------------------------------------------------------------------------------------------------------
 void Sprite::invalidateRendering()
 {
+	this->transformed = false;
 	this->rendered = false;
 }
 //---------------------------------------------------------------------------------------------------------
@@ -623,7 +632,7 @@ void Sprite::position()
 	{
 		position.parallax = Optics::calculateParallax(this->transformation->position.z - _cameraPosition->z);
 
-		if(this->isScalable)
+		if(this->isDeformable)
 		{
 			this->scale.x = this->scale.y = 0;
 		}

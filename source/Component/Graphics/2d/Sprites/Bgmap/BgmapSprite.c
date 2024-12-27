@@ -437,7 +437,7 @@ void BgmapSprite::setMode(uint16 display, uint16 mode)
 				this->head = display | __WORLD_AFFINE;
 				this->param = ParamTableManager::allocate(ParamTableManager::getInstance(), this);
 				this->applyParamTableEffect = NULL != this->applyParamTableEffect ? this->applyParamTableEffect : BgmapSprite::doApplyAffineTransformations;
-				this->isScalable = true;
+				this->isDeformable = true;
 				break;
 
 			case __WORLD_HBIAS:

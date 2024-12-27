@@ -90,8 +90,11 @@ abstract class Sprite : VisualComponent
 	/// Texture to display
 	Texture texture;
 
-	/// Flag to prevent scaling calls on non scalable sprites
-	bool isScalable;
+	/// Flag to allow scaling and rotation only once on sprites that don't need this all the time
+	bool transformed;
+
+	/// Flag to prevent rotation and scaling calls on non deformable sprites
+	bool isDeformable;
 
 	/// @publicsection
 
