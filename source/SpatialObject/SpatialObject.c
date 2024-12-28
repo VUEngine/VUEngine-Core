@@ -14,6 +14,9 @@
 
 #include <string.h>
 
+#include <Body.h>
+#include <ComponentManager.h>
+
 #include "SpatialObject.h"
 
 
@@ -88,6 +91,61 @@ void SpatialObject::clearComponentLists(uint32 componentType)
 	}
 }
 //---------------------------------------------------------------------------------------------------------
+Component SpatialObject::addComponent(ComponentSpec* componentSpec)
+{
+	Component component = ComponentManager::addComponent(this, componentSpec);
+
+	SpatialObject::calculateSize(this);
+
+	return component;
+}
+//---------------------------------------------------------------------------------------------------------
+void SpatialObject::removeComponent(Component component)
+{
+	if(NULL == component)
+	{
+		return;
+	}
+
+	ComponentManager::removeComponent(this, component);
+
+	SpatialObject::calculateSize(this);
+}
+//---------------------------------------------------------------------------------------------------------
+void SpatialObject::addComponents(ComponentSpec** componentSpecs, uint32 componentType)
+{
+	ComponentManager::addComponents(this, componentSpecs, componentType);
+
+	SpatialObject::calculateSize(this);
+}
+//---------------------------------------------------------------------------------------------------------
+void SpatialObject::removeComponents(uint32 componentType)
+{
+	ComponentManager::removeComponents(this, componentType);
+
+	SpatialObject::calculateSize(this);
+}
+//---------------------------------------------------------------------------------------------------------
+Component SpatialObject::getComponentAtIndex(uint32 componentType, int16 componentIndex)
+{
+	return ComponentManager::getComponentAtIndex(this, componentType, componentIndex);
+}
+//---------------------------------------------------------------------------------------------------------
+VirtualList SpatialObject::getComponents(uint32 componentType)
+{
+	return ComponentManager::getComponents(this, componentType);
+}
+//---------------------------------------------------------------------------------------------------------
+bool SpatialObject::getComponentsOfClass(ClassPointer classPointer, VirtualList components, uint32 componentType)
+{
+	return ComponentManager::getComponentsOfClass(this, classPointer, components, componentType);
+}
+//---------------------------------------------------------------------------------------------------------
+uint16 SpatialObject::getComponentsCount(uint32 componentType)
+{
+	return ComponentManager::getComponentsCount(this, componentType);
+}
+//---------------------------------------------------------------------------------------------------------
 const Transformation* SpatialObject::getTransformation()
 {
 	return &this->transformation;
@@ -108,10 +166,29 @@ const Scale* SpatialObject::getScale()
 	return &this->transformation.scale;
 }
 //---------------------------------------------------------------------------------------------------------
+void SpatialObject::createComponents(ComponentSpec** componentSpecs)
+{
+	if(NULL == componentSpecs || 0 < ComponentManager::getComponentsCount(this, kComponentTypes))
+	{
+		// Components are added by the EntityFactory too.
+		return;
+	}
+
+	SpatialObject::addComponents(this, componentSpecs, kComponentTypes);
+}
+//---------------------------------------------------------------------------------------------------------
+void SpatialObject::destroyComponents()
+{
+	ComponentManager::removeComponents(this, kComponentTypes);
+}
+//---------------------------------------------------------------------------------------------------------
 void SpatialObject::addedComponent(Component component __attribute__((unused)))
 {}
 //---------------------------------------------------------------------------------------------------------
 void SpatialObject::removedComponent(Component component __attribute__((unused)))
+{}
+//---------------------------------------------------------------------------------------------------------
+void SpatialObject::calculateSize()
 {}
 //---------------------------------------------------------------------------------------------------------
 fixed_t SpatialObject::getRadius()
@@ -133,12 +210,27 @@ fixed_t SpatialObject::getSpeed()
 //---------------------------------------------------------------------------------------------------------
 fixed_t SpatialObject::getBounciness()
 {
-	return 0;
+	Body body = Body::safeCast(ComponentManager::getComponentAtIndex(SpatialObject::safeCast(this), kPhysicsComponent, 0));
+
+	if(isDeleted(body))
+	{
+		return 0;
+	}
+
+	return Body::getBounciness(body);
 }
+//---------------------------------------------------------------------------------------------------------
 //---------------------------------------------------------------------------------------------------------
 fixed_t SpatialObject::getFrictionCoefficient()
 {
-	return 0;
+	Body body = Body::safeCast(ComponentManager::getComponentAtIndex(SpatialObject::safeCast(this), kPhysicsComponent, 0));
+
+	if(isDeleted(body))
+	{
+		return 0;
+	}
+
+	return Body::getFrictionCoefficient(body);
 }
 //---------------------------------------------------------------------------------------------------------
 void SpatialObject::setPosition(const Vector3D* position)

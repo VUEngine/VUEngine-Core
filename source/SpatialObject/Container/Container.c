@@ -268,7 +268,7 @@ void Container::addChild(Container child)
 			Container::transform(child, &environmentTransformation, __INVALIDATE_TRANSFORMATION);
 		}
 
-		Container::createComponents(child);
+		Container::createComponents(child, NULL);
 
 		//NM_ASSERT(!child->ready, "Container::addChild: child is ready");
 
@@ -734,12 +734,6 @@ void Container::changeEnvironment(Transformation* environmentTransformation)
 	// force global position calculation on the next transformation cycle
 	Container::invalidateTransformation(this);
 }
-//---------------------------------------------------------------------------------------------------------
-void Container::createComponents()
-{}
-//---------------------------------------------------------------------------------------------------------
-void Container::destroyComponents()
-{}
 //---------------------------------------------------------------------------------------------------------
 void Container::ready(bool recursive)
 {

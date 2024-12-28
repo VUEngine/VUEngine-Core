@@ -239,12 +239,6 @@ class Container : SpatialObject
 	/// @param environmentTransform: New reference environment for the local transformation
 	virtual void changeEnvironment(Transformation* environmentTransform);
 
-	/// Create the components that must attach to this container. 	
-	virtual void createComponents();
-
-	/// Destroy the components that attach to this container. 	
-	virtual void destroyComponents();
-
 	/// Make the container ready to start operating once it has been completely intialized.
 	/// @param recursive: If true, the ready call is propagated to its children, grand children, etc.
 	virtual void ready(bool recursive);

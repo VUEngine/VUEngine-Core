@@ -375,6 +375,18 @@ void Entity::destructor()
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------
+void Entity::createComponents(ComponentSpec** componentSpecs)
+{
+	Base::createComponents(this, NULL != componentSpecs ? componentSpecs : this->entitySpec->componentSpecs);
+}
+//---------------------------------------------------------------------------------------------------------
+void Entity::destroyComponents()
+{
+	Base::destroyComponents(this);
+
+	this->size = (Size){0, 0, 0};
+}
+//---------------------------------------------------------------------------------------------------------
 fixed_t Entity::getRadius()
 {
 	fixed_t width = Entity::getWidth(this);
@@ -402,30 +414,6 @@ fixed_t Entity::getRadius()
 	}
 
 	return 0;
-}
-//---------------------------------------------------------------------------------------------------------
-fixed_t Entity::getBounciness()
-{
-	Body body = Body::safeCast(ComponentManager::getComponentAtIndex(SpatialObject::safeCast(this), kPhysicsComponent, 0));
-
-	if(isDeleted(body))
-	{
-		return 0;
-	}
-
-	return Body::getBounciness(body);
-}
-//---------------------------------------------------------------------------------------------------------
-fixed_t Entity::getFrictionCoefficient()
-{
-	Body body = Body::safeCast(ComponentManager::getComponentAtIndex(SpatialObject::safeCast(this), kPhysicsComponent, 0));
-
-	if(isDeleted(body))
-	{
-		return 0;
-	}
-
-	return Body::getFrictionCoefficient(body);
 }
 //---------------------------------------------------------------------------------------------------------
 bool Entity::isSubjectToGravity(Vector3D gravity __attribute__ ((unused)))

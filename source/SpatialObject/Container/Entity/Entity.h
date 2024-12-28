@@ -179,17 +179,20 @@ class Entity : Container
 	/// @param name: Name to assign to the new instance
 	void constructor(EntitySpec* entitySpec, int16 internalId, const char* const name);
 
+	/// Add the components that must attach to this entity.
+	/// Create the components that must attach to this container. 	
+	/// @param componentSpecs: Specifications to be used to configure the new components
+	override void createComponents(ComponentSpec** componentSpecs);
+
+	/// Destroy the components that attach to this entity.
+	override void destroyComponents();
+
+	/// Configure the entity's size.
+	override void calculateSize();
+
 	/// Retrieve the object's radius.
 	/// @return Radius
 	override fixed_t getRadius();
-
-	/// Retrieve the object's bounciness factor.
-	/// @return Object's bounciness factor
-	override fixed_t getBounciness();
-
-	/// Retrieve the object's friction coefficient.
-	/// @return Object's friction coefficient
-	override fixed_t getFrictionCoefficient();
 
 	/// Check if the object is subject to provided gravity vector.
 	/// @return True if the provided gravity vector can affect the object; false otherwise
@@ -198,12 +201,6 @@ class Entity : Container
 	/// Retrieve the enum that determines the type of game object.
 	/// @return The enum that determines the type of game object
 	override uint32 getInGameType();
-
-	/// Add the components that must attach to this entity.
-	override void createComponents();
-
-	/// Destroy the components that attach to this entity.
-	override void destroyComponents();
 
 	/// Prepare to suspend this instance's logic.
 	override void suspend();
@@ -244,48 +241,6 @@ class Entity : Container
 	/// Spawn children and configure them over time with the provided entity specs.
 	/// @param childrenSpecs: Array of entity specs to use to initialize the new children
 	void addChildEntitiesDeferred(const PositionedEntity* childrenSpecs);
-
-	/// Attach a new component to the entity and configure it with the provided spec.
-	/// @param componentSpec: Specification to be used to configure the new component
-	/// @return Added component
-	Component addComponent(ComponentSpec* componentSpec);
-
-	/// Remove a component from the entity.
-	/// @param component: Component to remove
-	void removeComponent(Component component);
-
-	/// Attach a new components to the entity and configure it with the provided specs.
-	/// @param componentSpecs: Specifications to be used to configure the new components
-	/// @param componentType: Type of components to add
-	void addComponents(ComponentSpec** componentSpecs, uint32 componentType);
-
-	/// Remove the components of a give type from the entity.
-	/// @param componentType: Type of components to remove
-	void removeComponents(uint32 componentType);
-
-	/// Retrieve a component of the given type at the desired position.
-	/// @param componentType: Type of components to add
-	/// @param componentIndex: Component's index according to their order of creation
-	/// @return Component at the provided index position
-	Component getComponentAtIndex(uint32 componentType, int16 componentIndex);
-
-	/// Retrieve a list with the components of the provided type.
-	/// @param componentType: Type of components to add
-	/// @return Linked list of components of the type provided
-	VirtualList getComponents(uint32 componentType);
-
-	/// Retrieve the linked list of components that are instances of the provided class.
-	/// @param classPointer: Pointer to the class to use as search criteria. Usage: typeofclass(ClassName)
-	/// @param components: Linked list to be filled with the behaviors that meed the search criteria
-	/// (it is externally allocated and must be externally deleted)
-	/// @param componentType: Type of components to retrieve
-	/// @return True if one or more behaviors met the search criteria; false otherwise
-	bool getComponentsOfClass(ClassPointer classPointer, VirtualList components, uint32 componentType);
-
-	/// Retrieve the number of components belonging to the entity.
-	/// @param componentType: Type of components to count
-	/// @return Number of components belonging to the entity
-	uint16 getComponentsCount(uint32 componentType);
 
 	/// Enable collision detection on the entity's colliders.
 	void enableCollisions();
@@ -328,9 +283,6 @@ class Entity : Container
 
 	/// Make the entity's colliders invisible.
 	void hideColliders();
-
-	/// Configure the entity's size.
-	void calculateSize();
 
 	/// Retrieve the entity's width.
 	/// @return Entity's width
