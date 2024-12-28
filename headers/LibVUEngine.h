@@ -15,11 +15,20 @@
 // INCLUDES
 //=========================================================================================================
 
+#include <Types.h>
 #include <Events.h>
-#include <Libgccvb.h>
 #include <Error.h>
 #include <MemoryPool.h>
 #include <HardwareManager.h>
-
+#include <Constants.h>
+#include <Math.h>
+#include <Optical.h>
+#include <Rotation.h>
+#include <Scale.h>
+#include <Size.h>
+#include <PixelVector.h>
+#include <PixelSize.h>
+#include <Vector2D.h>
+#include <Vector3D.h>
 
 #endif
