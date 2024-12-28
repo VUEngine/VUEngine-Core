@@ -1037,6 +1037,8 @@ void VUEngine::run(GameState currentGameState)
 		}
 		// While we wait for the next game start
 		while(!this->gameFrameStarted);
+#else
+		while(VUEngine::stream(this, currentGameState));
 #endif
 #endif
 

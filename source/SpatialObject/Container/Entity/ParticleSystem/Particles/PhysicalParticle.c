@@ -38,7 +38,6 @@ void PhysicalParticle::constructor(const PhysicalParticleSpec* physicalParticleS
 //---------------------------------------------------------------------------------------------------------
 void PhysicalParticle::destructor()
 {
-	// remove a body
 	if(!isDeleted(this->body))
 	{
 		// remove a body
