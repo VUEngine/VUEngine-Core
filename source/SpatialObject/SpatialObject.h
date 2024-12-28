@@ -52,6 +52,10 @@ class SpatialObject : ListenerObject
 	/// Class' constructor
 	void constructor();
 
+	/// Clear the linked lists of components.
+	/// @param componentType: Type of components whose lists must be cleard
+	void clearComponentLists(uint32 componentType);
+
 	/// Retrieve the object's transformation.
 	/// @return Pointer to the object's 3D transformation
 	const Transformation* getTransformation();

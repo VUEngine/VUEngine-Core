@@ -60,6 +60,34 @@ void SpatialObject::destructor()
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------
+void SpatialObject::clearComponentLists(uint32 componentType)
+{
+	if(NULL == this->components)
+	{
+		return;
+	}
+
+	if(kComponentTypes <= componentType)
+	{
+		for(int16 i = 0; i < kComponentTypes; i++)
+		{
+			if(NULL != this->components[i])
+			{
+				delete this->components[i];
+				this->components[i] = NULL;
+			}
+		}
+
+		delete this->components;
+		this->components = NULL;
+	}
+	else if(NULL != this->components[componentType])
+	{
+		delete this->components[componentType];
+		this->components[componentType] = NULL;
+	}
+}
+//---------------------------------------------------------------------------------------------------------
 const Transformation* SpatialObject::getTransformation()
 {
 	return &this->transformation;

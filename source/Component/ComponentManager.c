@@ -403,32 +403,14 @@ static uint32 ComponentManager::getComponentType(Component component)
 //---------------------------------------------------------------------------------------------------------
 static void ComponentManager::cleanOwnerComponentLists(SpatialObject owner, uint32 componentType)
 {
-	if(NULL == owner->components)
-	{
-		return;
-	}
-
-	if(kComponentTypes <= componentType)
-	{
-		for(int16 i = 0; i < kComponentTypes; i++)
-		{
-			if(NULL != owner->components[i])
-			{
-				delete owner->components[i];
-				owner->components[i] = NULL;
-			}
-		}
-
-		delete owner->components;
-		owner->components = NULL;
-	}
-	else if(NULL != owner->components[componentType])
+	if(NULL != owner->components && NULL != owner->components[componentType])
 	{
 		delete owner->components[componentType];
 		owner->components[componentType] = NULL;
 	}
 }
 //---------------------------------------------------------------------------------------------------------
+
 
 //=========================================================================================================
 // CLASS' PUBLIC METHODS
