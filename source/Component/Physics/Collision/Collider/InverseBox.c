@@ -36,8 +36,7 @@ void InverseBox::constructor(SpatialObject owner, const ColliderSpec* colliderSp
 //---------------------------------------------------------------------------------------------------------
  void InverseBox::destructor()
 {
-	// destroy the super object
-	// must always be called at the end of the destructor
+
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------

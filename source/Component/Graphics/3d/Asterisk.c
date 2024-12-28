@@ -35,8 +35,7 @@ void Asterisk::constructor(SpatialObject owner, const AsteriskSpec* asteriskSpec
 //---------------------------------------------------------------------------------------------------------
 void Asterisk::destructor()
 {
-	// destroy the super object
-	// must always be called at the end of the destructor
+
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------

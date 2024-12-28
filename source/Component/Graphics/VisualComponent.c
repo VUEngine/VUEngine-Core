@@ -176,7 +176,7 @@ void VisualComponent::destructor()
 		this->animationController = NULL;
 	}
 
-	// must always be called at the end of the destructor
+
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------

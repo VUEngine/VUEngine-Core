@@ -54,7 +54,7 @@ void ListenerObject::destructor()
 	MessageDispatcher::discardAllDelayedMessages(MessageDispatcher::getInstance(), ListenerObject::safeCast(this));
 	ListenerObject::removeAllEventListeners(this);
 
-	// must always be called at the end of the destructor
+
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------

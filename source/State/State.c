@@ -29,7 +29,7 @@ void State::constructor()
 void State::destructor()
 {
 	// free processor's memory
-	// must always be called at the end of the destructor
+
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------

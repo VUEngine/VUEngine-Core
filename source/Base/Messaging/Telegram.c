@@ -39,7 +39,7 @@ void Telegram::destructor()
 	this->receiver = NULL;
 
 	// free the memory
-	// must always be called at the end of the destructor
+
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------

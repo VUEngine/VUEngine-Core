@@ -27,7 +27,6 @@
 //---------------------------------------------------------------------------------------------------------
 void Sphere::constructor(SpatialObject owner, const SphereSpec* sphereSpec)
 {
-	// construct base object
 	Base::constructor(owner, &sphereSpec->wireframeSpec);
 
 	this->position = PixelVector::zero();
@@ -48,8 +47,7 @@ void Sphere::constructor(SpatialObject owner, const SphereSpec* sphereSpec)
 //---------------------------------------------------------------------------------------------------------
 void Sphere::destructor()
 {
-	// destroy the super object
-	// must always be called at the end of the destructor
+
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------

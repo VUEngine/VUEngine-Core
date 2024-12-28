@@ -155,7 +155,6 @@ static void Entity::getRightBoxFromChildrenSpec(const PositionedEntity* position
 
 	if(0 != positionedEntity->entitySpec->pixelSize.x || 0 != positionedEntity->entitySpec->pixelSize.y || 0 != positionedEntity->entitySpec->pixelSize.z)
 	{
-		// TODO: there should be a class which handles special cases
 		fixed_t halfWidth = __PIXELS_TO_METERS(positionedEntity->entitySpec->pixelSize.x) >> 1;
 		fixed_t halfHeight = __PIXELS_TO_METERS(positionedEntity->entitySpec->pixelSize.y) >> 1;
 		fixed_t halfDepth = __PIXELS_TO_METERS(positionedEntity->entitySpec->pixelSize.z) >> 1;
@@ -287,7 +286,6 @@ static void Entity::getRightBoxFromChildrenSpec(const PositionedEntity* position
 		rightBox->z1 = myRightBox.z1 + globalPosition.z;
 	}
 
-
 	if(NULL != positionedEntity->childrenSpecs)
 	{
 		for(int32 i = 0; positionedEntity->childrenSpecs[i].entitySpec; i++)
@@ -362,8 +360,6 @@ void Entity::destructor()
 		delete this->centerDisplacement;
 	}
 
-	// destroy the super Container
-	// must always be called at the end of the destructor
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------

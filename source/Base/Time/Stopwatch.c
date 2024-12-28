@@ -39,8 +39,7 @@ void Stopwatch::destructor()
 	// unregister the clock
 	StopwatchManager::unregister(StopwatchManager::getInstance(), this);
 
-	// destroy the super object
-	// must always be called at the end of the destructor
+
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------

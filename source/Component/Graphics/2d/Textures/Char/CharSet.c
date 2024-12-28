@@ -49,7 +49,7 @@ void CharSet::destructor()
 	// make sure that I'm not destroyed again
 	this->usageCount = 0;
 
-	// must always be called at the end of the destructor
+
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------

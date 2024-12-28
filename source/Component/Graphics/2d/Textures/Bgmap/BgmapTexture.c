@@ -63,8 +63,7 @@ void BgmapTexture::constructor(BgmapTextureSpec* bgmapTextureSpec, uint16 id)
 //---------------------------------------------------------------------------------------------------------
 void BgmapTexture::destructor()
 {
-	// destroy the super object
-	// must always be called at the end of the destructor
+
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------

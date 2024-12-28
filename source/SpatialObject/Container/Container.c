@@ -133,8 +133,7 @@ void Container::destructor()
 		NM_ASSERT(!isDeleted(this), "Container::destructor: deleted this during kEventContainerDeleted");
 	}
 
-	// destroy the super Container
-	// must always be called at the end of the destructor
+
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------

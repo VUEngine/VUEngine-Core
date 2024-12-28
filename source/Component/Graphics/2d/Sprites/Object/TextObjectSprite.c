@@ -52,8 +52,7 @@ void TextObjectSprite::destructor()
 {
 	this->text = NULL;
 
-	// destroy the super object
-	// must always be called at the end of the destructor
+
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------

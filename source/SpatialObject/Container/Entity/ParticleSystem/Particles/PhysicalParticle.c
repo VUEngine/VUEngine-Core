@@ -45,8 +45,7 @@ void PhysicalParticle::destructor()
 		this->body = NULL;
 	}
 
-	// destroy the super Container
-	// must always be called at the end of the destructor
+
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------

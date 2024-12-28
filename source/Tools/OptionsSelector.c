@@ -118,7 +118,7 @@ void OptionsSelector::destructor()
 	OptionsSelector::flushPages(this);
 
 	// allow a new construct
-	// must always be called at the end of the destructor
+
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------

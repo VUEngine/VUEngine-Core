@@ -120,8 +120,7 @@ void Sound::destructor()
 		this->soundTracks = NULL;
 	}
 
-	// destroy the super Container
-	// must always be called at the end of the destructor
+
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------

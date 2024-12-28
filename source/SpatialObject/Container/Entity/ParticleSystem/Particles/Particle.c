@@ -46,8 +46,7 @@ void Particle::destructor()
 {
 	Particle::destroyGraphics(this);
 
-	// destroy the super Container
-	// must always be called at the end of the destructor
+
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------

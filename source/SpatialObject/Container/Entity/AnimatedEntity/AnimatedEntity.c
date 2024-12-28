@@ -46,8 +46,7 @@ void AnimatedEntity::constructor(AnimatedEntitySpec* animatedEntitySpec, int16 i
 //---------------------------------------------------------------------------------------------------------
 void AnimatedEntity::destructor()
 {
-	// destroy the super object
-	// must always be called at the end of the destructor
+
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------

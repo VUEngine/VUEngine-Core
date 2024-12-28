@@ -72,8 +72,6 @@ void SpatialObject::destructor()
 		this->components = NULL;
 	}
 
-	// destroy the super SpatialObject
-	// must always be called at the end of the destructor
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------

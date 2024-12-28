@@ -59,8 +59,7 @@ void Ball::constructor(SpatialObject owner, const ColliderSpec* colliderSpec)
 //---------------------------------------------------------------------------------------------------------
 void Ball::destructor()
 {
-	// destroy the super object
-	// must always be called at the end of the destructor
+
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------

@@ -364,8 +364,7 @@ void ColliderManager::destructor()
 		VirtualList::deleteData(this->components);
 	}
 	
-	// destroy the super object
-	// must always be called at the end of the destructor
+
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------

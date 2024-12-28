@@ -60,7 +60,7 @@ void StateMachine::destructor()
 	this->transition = kStateMachineIdle;
 
 	// free processor memory
-	// must always be called at the end of the destructor
+
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------

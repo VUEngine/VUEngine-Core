@@ -71,8 +71,7 @@ void LineField::destructor()
 
 	this->meshSpec = NULL;
 
-	// destroy the super object
-	// must always be called at the end of the destructor
+
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------

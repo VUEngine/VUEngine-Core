@@ -32,8 +32,7 @@ void VirtualNode::constructor(const void* const data)
 //---------------------------------------------------------------------------------------------------------
 void VirtualNode::destructor()
 {
-	// destroy the super object
-	// must always be called at the end of the destructor
+
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------

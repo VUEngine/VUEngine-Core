@@ -62,8 +62,7 @@ void Actor::destructor()
 		this->stateMachine = NULL;
 	}
 
-	// destroy the super object
-	// must always be called at the end of the destructor
+
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------

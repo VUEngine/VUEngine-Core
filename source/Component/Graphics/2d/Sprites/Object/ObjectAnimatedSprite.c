@@ -35,8 +35,7 @@ void ObjectAnimatedSprite::constructor(SpatialObject owner, const ObjectAnimated
 //---------------------------------------------------------------------------------------------------------
 void ObjectAnimatedSprite::destructor()
 {
-	// destroy the super object
-	// must always be called at the end of the destructor
+
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------
