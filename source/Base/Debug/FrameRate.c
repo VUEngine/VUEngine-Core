@@ -128,6 +128,7 @@ void FrameRate::print(int32 x, int32 y)
 //---------------------------------------------------------------------------------------------------------
 void FrameRate::constructor()
 {
+	// Always explicitly call the base's constructor 
 	Base::constructor();
 
 	this->FPS = 0;
@@ -141,6 +142,7 @@ void FrameRate::constructor()
 void FrameRate::destructor()
 {
 	// allow a new construct
+	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------

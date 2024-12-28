@@ -22,6 +22,7 @@
 //---------------------------------------------------------------------------------------------------------
 void VirtualNode::constructor(const void* const data)
 {
+	// Always explicitly call the base's constructor 
 	Base::constructor();
 
 	// initialize members
@@ -32,6 +33,7 @@ void VirtualNode::constructor(const void* const data)
 //---------------------------------------------------------------------------------------------------------
 void VirtualNode::destructor()
 {
+	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------

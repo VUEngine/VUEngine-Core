@@ -514,6 +514,7 @@ void VUEngine::startProfiling()
 //---------------------------------------------------------------------------------------------------------
 void VUEngine::constructor()
 {
+	// Always explicitly call the base's constructor 
 	Base::constructor();
 
 	// make sure the memory pool is initialized now
@@ -564,6 +565,7 @@ void VUEngine::destructor()
 
 	delete this->stateMachine;
 
+	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------

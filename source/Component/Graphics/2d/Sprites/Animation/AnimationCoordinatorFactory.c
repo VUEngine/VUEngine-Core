@@ -36,6 +36,7 @@ friend class VirtualNode;
 //---------------------------------------------------------------------------------------------------------
 void AnimationCoordinatorFactory::constructor()
 {
+	// Always explicitly call the base's constructor 
 	Base::constructor();
 
 	this->animationCoordinators = new VirtualList();
@@ -50,6 +51,7 @@ void AnimationCoordinatorFactory::destructor()
 	this->animationCoordinators = NULL;
 
 	// allow a new construct
+	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------

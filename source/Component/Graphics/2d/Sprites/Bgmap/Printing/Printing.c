@@ -707,6 +707,7 @@ FontSize Printing::getTextSize(const char* string, const char* font)
 //---------------------------------------------------------------------------------------------------------
 void Printing::constructor()
 {
+	// Always explicitly call the base's constructor 
 	Base::constructor();
 
 	// initialize members
@@ -741,6 +742,7 @@ void Printing::destructor()
 	this->printingSprites = NULL;
 
 	// allow a new construct
+	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------

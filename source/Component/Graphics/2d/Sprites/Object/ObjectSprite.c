@@ -38,6 +38,7 @@ void ObjectSprite::constructor(SpatialObject owner, const ObjectSpriteSpec* obje
 {
 	NM_ASSERT(NULL != objectSpriteSpec, "ObjectSprite::constructor: NULL objectSpriteSpec");
 
+	// Always explicitly call the base's constructor 
 	Base::constructor(owner, (SpriteSpec*)objectSpriteSpec);
 
 	this->head = objectSpriteSpec->display & __OBJECT_SPRITE_CHAR_SHOW_MASK;
@@ -88,7 +89,7 @@ void ObjectSprite::destructor()
 
 	this->texture = NULL;
 
-
+	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------

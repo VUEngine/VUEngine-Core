@@ -27,6 +27,7 @@
 //---------------------------------------------------------------------------------------------------------
 void CharSet::constructor(CharSetSpec* charSetSpec, uint16 offset)
 {
+	// Always explicitly call the base's constructor 
 	Base::constructor();
 
 	// save spec
@@ -49,7 +50,7 @@ void CharSet::destructor()
 	// make sure that I'm not destroyed again
 	this->usageCount = 0;
 
-
+	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------

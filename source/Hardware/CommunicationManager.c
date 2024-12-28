@@ -481,6 +481,7 @@ bool CommunicationManager::handleMessage(Telegram telegram)
 //---------------------------------------------------------------------------------------------------------
 void CommunicationManager::constructor()
 {
+	// Always explicitly call the base's constructor 
 	Base::constructor();
 
 	this->status = 	kCommunicationsStatusNone;
@@ -493,6 +494,7 @@ void CommunicationManager::constructor()
 void CommunicationManager::destructor()
 {
 	// allow a new construct
+	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------

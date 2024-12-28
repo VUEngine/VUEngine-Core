@@ -290,6 +290,7 @@ void SoundManager::printPlaybackTime(int32 x, int32 y)
 //---------------------------------------------------------------------------------------------------------
 void SoundManager::constructor()
 {	
+	// Always explicitly call the base's constructor 
 	Base::constructor();
 
 	this->sounds = new VirtualList();
@@ -312,6 +313,7 @@ void SoundManager::destructor()
 		this->sounds = NULL;
 	}
 
+	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------

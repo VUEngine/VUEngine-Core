@@ -114,6 +114,7 @@ static inline fix7_9_ext Body::doComputeInstantaneousSpeed(fixed_t forceMagnitud
 //---------------------------------------------------------------------------------------------------------
 void Body::constructor(SpatialObject owner, const BodySpec* bodySpec)
 {
+	// Always explicitly call the base's constructor 
 	Base::constructor(owner, (const ComponentSpec*)&bodySpec->componentSpec);
 
 	this->deleteMe = false;
@@ -173,7 +174,7 @@ void Body::destructor()
 		this->normals = NULL;
 	}
 
-
+	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------

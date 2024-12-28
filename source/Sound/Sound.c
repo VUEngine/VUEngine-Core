@@ -71,6 +71,7 @@ static void Sound::setMirror(Mirror mirror)
 //---------------------------------------------------------------------------------------------------------
 void Sound::constructor(const SoundSpec* soundSpec, EventListener soundReleaseListener, ListenerObject scope)
 {
+	// Always explicitly call the base's constructor 
 	Base::constructor();
 
 	this->state = kSoundOff;
@@ -120,7 +121,7 @@ void Sound::destructor()
 		this->soundTracks = NULL;
 	}
 
-
+	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------

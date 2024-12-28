@@ -41,6 +41,7 @@ friend class VirtualList;
 //---------------------------------------------------------------------------------------------------------
 void SpatialObject::constructor()
 {
+	// Always explicitly call the base's constructor 
 	Base::constructor();
 
 	// set position
@@ -71,6 +72,7 @@ void SpatialObject::destructor()
 		this->components = NULL;
 	}
 
+	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------

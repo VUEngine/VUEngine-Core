@@ -49,6 +49,7 @@ static void LineField::project(Vector3D center, fixed_t radius, Vector3D vector,
 //---------------------------------------------------------------------------------------------------------
 void LineField::constructor(SpatialObject owner, const ColliderSpec* colliderSpec)
 {
+	// Always explicitly call the base's constructor 
 	Base::constructor(owner, colliderSpec);
 
 	this->classIndex = kColliderLineFieldIndex;
@@ -71,7 +72,7 @@ void LineField::destructor()
 
 	this->meshSpec = NULL;
 
-
+	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------

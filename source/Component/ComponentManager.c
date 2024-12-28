@@ -419,6 +419,7 @@ static void ComponentManager::cleanOwnerComponentLists(SpatialObject owner, uint
 //---------------------------------------------------------------------------------------------------------
 void ComponentManager::constructor()
 {
+	// Always explicitly call the base's constructor 
 	Base::constructor();
 
 	this->components = new VirtualList();
@@ -433,6 +434,7 @@ void ComponentManager::destructor()
 		this->components = NULL;
 	}
 
+	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------

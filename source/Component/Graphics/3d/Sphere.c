@@ -27,6 +27,7 @@
 //---------------------------------------------------------------------------------------------------------
 void Sphere::constructor(SpatialObject owner, const SphereSpec* sphereSpec)
 {
+	// Always explicitly call the base's constructor 
 	Base::constructor(owner, &sphereSpec->wireframeSpec);
 
 	this->position = PixelVector::zero();
@@ -47,6 +48,7 @@ void Sphere::constructor(SpatialObject owner, const SphereSpec* sphereSpec)
 //---------------------------------------------------------------------------------------------------------
 void Sphere::destructor()
 {
+	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------

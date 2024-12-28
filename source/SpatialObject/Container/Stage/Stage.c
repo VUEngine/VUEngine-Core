@@ -122,6 +122,7 @@ static uint32 Stage::computeDistanceToOrigin(StageEntityDescription* stageEntity
 //---------------------------------------------------------------------------------------------------------
 void Stage::constructor(StageSpec *stageSpec)
 {
+	// Always explicitly call the base's constructor 
 	Base::constructor(0, NULL);
 
 	this->entityFactory = new EntityFactory();
@@ -185,7 +186,7 @@ void Stage::destructor()
 		this->stageEntityDescriptions = NULL;
 	}
 
-
+	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------

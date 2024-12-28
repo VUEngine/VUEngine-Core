@@ -35,6 +35,7 @@ extern int32 strcmp(const char *, const char *);
 //---------------------------------------------------------------------------------------------------------
 void AnimationController::constructor()
 {
+	// Always explicitly call the base's constructor 
 	Base::constructor();
 
 	// initialize frame tracking
@@ -61,7 +62,7 @@ void AnimationController::destructor()
 		this->animationCoordinator = NULL;
 	}
 
-
+	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------

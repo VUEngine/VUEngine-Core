@@ -28,6 +28,7 @@
 //---------------------------------------------------------------------------------------------------------
 void PhysicalParticle::constructor(const PhysicalParticleSpec* physicalParticleSpec)
 {
+	// Always explicitly call the base's constructor 
 	Base::constructor(&physicalParticleSpec->particleSpec);
 
 	this->physicalParticleSpec = physicalParticleSpec;
@@ -45,7 +46,7 @@ void PhysicalParticle::destructor()
 		this->body = NULL;
 	}
 
-
+	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------

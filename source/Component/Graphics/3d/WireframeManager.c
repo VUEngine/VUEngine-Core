@@ -353,6 +353,7 @@ void WireframeManager::print(int32 x, int32 y)
 //---------------------------------------------------------------------------------------------------------
 void WireframeManager::constructor()
 {
+	// Always explicitly call the base's constructor 
 	Base::constructor();
 
 	this->stopDrawing = false;
@@ -376,6 +377,7 @@ void WireframeManager::destructor()
 	VIPManager::removeEventListener(VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)WireframeManager::onVIPManagerGAMESTARTDuringXPEND, kEventVIPManagerGAMESTARTDuringXPEND);
 
 	// allow a new construct
+	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------

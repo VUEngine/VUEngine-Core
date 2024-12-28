@@ -26,6 +26,7 @@
 //---------------------------------------------------------------------------------------------------------
 void DebugState::constructor()
 {
+	// Always explicitly call the base's constructor 
 	Base::constructor();
 
 	this->tool = Tool::safeCast(Debug::getInstance());
@@ -34,6 +35,7 @@ void DebugState::constructor()
 void DebugState::destructor()
 {
 	// destroy base
+	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------

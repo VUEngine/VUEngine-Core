@@ -68,6 +68,7 @@ void ObjectTextureManager::releaseTexture(ObjectTexture objectTexture)
 //---------------------------------------------------------------------------------------------------------
 void ObjectTextureManager::constructor()
 {
+	// Always explicitly call the base's constructor 
 	Base::constructor();
 }
 //---------------------------------------------------------------------------------------------------------
@@ -76,6 +77,7 @@ void ObjectTextureManager::destructor()
 	ObjectTextureManager::reset(this);
 
 	// allow a new construct
+	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------

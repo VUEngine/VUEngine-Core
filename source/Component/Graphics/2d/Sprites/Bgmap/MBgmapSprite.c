@@ -49,6 +49,7 @@ friend class VirtualList;
 //---------------------------------------------------------------------------------------------------------
 void MBgmapSprite::constructor(SpatialObject owner, const MBgmapSpriteSpec* mBgmapSpriteSpec)
 {
+	// Always explicitly call the base's constructor 
 	Base::constructor(owner, &mBgmapSpriteSpec->bgmapSpriteSpec);
 
 	this->checkIfWithinScreenSpace = false;
@@ -73,7 +74,7 @@ void MBgmapSprite::destructor()
 {
 	MBgmapSprite::releaseTextures(this);
 
-
+	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------

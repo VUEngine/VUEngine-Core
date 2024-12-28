@@ -51,6 +51,7 @@ void Profiler::setVTable(){}
 //---------------------------------------------------------------------------------------------------------
 void Tool::constructor()
 {
+	// Always explicitly call the base's constructor 
 	Base::constructor();
 
 	this->stage = NULL;
@@ -59,6 +60,7 @@ void Tool::constructor()
 void Tool::destructor()
 {
 	// allow a new construct
+	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------

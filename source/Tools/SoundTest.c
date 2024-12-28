@@ -252,6 +252,7 @@ void SoundTest::processUserInput(uint16 pressedKey)
 //---------------------------------------------------------------------------------------------------------
 void SoundTest::constructor()
 {
+	// Always explicitly call the base's constructor 
 	Base::constructor();
 
 	this->sound = NULL;
@@ -265,6 +266,7 @@ void SoundTest::destructor()
 	this->sound = NULL;
 
 	// allow a new construct
+	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------

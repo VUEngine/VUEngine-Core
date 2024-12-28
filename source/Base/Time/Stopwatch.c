@@ -26,6 +26,7 @@
 //---------------------------------------------------------------------------------------------------------
 void Stopwatch::constructor()
 {
+	// Always explicitly call the base's constructor 
 	Base::constructor();
 
 	Stopwatch::reset(this);
@@ -39,7 +40,7 @@ void Stopwatch::destructor()
 	// unregister the clock
 	StopwatchManager::unregister(StopwatchManager::getInstance(), this);
 
-
+	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------

@@ -534,6 +534,7 @@ void TimerManager::constructor()
 	_soundManager = SoundManager::getInstance();
 	_stopwatchManager = StopwatchManager::getInstance();
 
+	// Always explicitly call the base's constructor 
 	Base::constructor();
 
 	this->totalElapsedMilliseconds = 0;
@@ -546,6 +547,7 @@ void TimerManager::destructor()
 	_timerManager = NULL;
 
 	// allow a new construct
+	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------

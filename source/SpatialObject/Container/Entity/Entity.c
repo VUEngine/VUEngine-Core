@@ -339,6 +339,7 @@ static Entity Entity::instantiate(const PositionedEntity* const positionedEntity
 //---------------------------------------------------------------------------------------------------------
 void Entity::constructor(EntitySpec* entitySpec, int16 internalId, const char* const name)
 {
+	// Always explicitly call the base's constructor 
 	Base::constructor(internalId, name);
 
 	this->entitySpec = entitySpec;
@@ -360,6 +361,7 @@ void Entity::destructor()
 		delete this->centerDisplacement;
 	}
 
+	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------

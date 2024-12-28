@@ -404,6 +404,7 @@ void MessageDispatcher::printAllDelayedMessagesFromSender(ListenerObject sender,
 //---------------------------------------------------------------------------------------------------------
 void MessageDispatcher::constructor()
 {
+	// Always explicitly call the base's constructor 
 	Base::constructor();
 
 	this->delayedMessages = new VirtualList();
@@ -421,5 +422,6 @@ void MessageDispatcher::destructor()
 	delete this->helperTelegram;
 
 	// allow a new construct
+	// Always explicitly call the base's destructor 
 	Base::destructor();
 }

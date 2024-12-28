@@ -25,6 +25,7 @@
 //---------------------------------------------------------------------------------------------------------
 void Line::constructor(SpatialObject owner, const LineSpec* lineSpec)
 {
+	// Always explicitly call the base's constructor 
 	Base::constructor(owner, &lineSpec->wireframeSpec);
 
 	this->a = PixelVector::zero();
@@ -33,6 +34,7 @@ void Line::constructor(SpatialObject owner, const LineSpec* lineSpec)
 //---------------------------------------------------------------------------------------------------------
 void Line::destructor()
 {
+	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------

@@ -349,6 +349,7 @@ void ColliderManager::constructor()
 	_collisions = 0;
 #endif
 
+	// Always explicitly call the base's constructor 
 	Base::constructor();
 
 	this->checkCollidersOutOfCameraRange = false;
@@ -365,6 +366,7 @@ void ColliderManager::destructor()
 	}
 	
 
+	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------

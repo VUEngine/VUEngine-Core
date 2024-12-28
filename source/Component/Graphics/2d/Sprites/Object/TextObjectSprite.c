@@ -37,6 +37,7 @@ friend class Texture;
 //---------------------------------------------------------------------------------------------------------
 void TextObjectSprite::constructor(SpatialObject owner, const TextObjectSpriteSpec* textObjectSpriteSpec)
 {
+	// Always explicitly call the base's constructor 
 	Base::constructor(owner, &textObjectSpriteSpec->objectSpriteSpec);
 
 	this->font = textObjectSpriteSpec->font;
@@ -52,7 +53,7 @@ void TextObjectSprite::destructor()
 {
 	this->text = NULL;
 
-
+	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------

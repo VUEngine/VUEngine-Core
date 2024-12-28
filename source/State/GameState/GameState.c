@@ -42,6 +42,7 @@ void GameState::constructor()
 {
 	_camera = Camera::getInstance();
 
+	// Always explicitly call the base's constructor 
 	Base::constructor();
 
 	this->stage = NULL;
@@ -97,7 +98,7 @@ void GameState::destructor()
 		this->colliderManager = NULL;
 	}
 
-
+	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------

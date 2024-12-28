@@ -209,6 +209,7 @@ void Profiler::lap(uint32 lapType, const char* processName)
 //---------------------------------------------------------------------------------------------------------
 void Profiler::constructor()
 {
+	// Always explicitly call the base's constructor 
 	Base::constructor();
 
 	this->laps = new VirtualList();
@@ -226,6 +227,7 @@ void Profiler::destructor()
 	this->laps = NULL;
 
 	// allow a new construct
+	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------

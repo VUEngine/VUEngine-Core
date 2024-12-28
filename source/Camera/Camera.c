@@ -347,6 +347,7 @@ void Camera::print(int32 x, int32 y, bool inPixels)
 //---------------------------------------------------------------------------------------------------------
 void Camera::constructor()
 {
+	// Always explicitly call the base's constructor 
 	Base::constructor();
 
 	this->position = Vector3D::zero();
@@ -392,6 +393,7 @@ void Camera::constructor()
 void Camera::destructor()
 {
 	// destroy base
+	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------

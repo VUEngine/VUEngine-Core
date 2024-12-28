@@ -175,6 +175,7 @@ void Debug::processUserInput(uint16 pressedKey)
 //---------------------------------------------------------------------------------------------------------
 void Debug::constructor()
 {
+	// Always explicitly call the base's constructor 
 	Base::constructor();
 
 	this->pages = new VirtualList();
@@ -197,6 +198,7 @@ void Debug::destructor()
 	delete this->subPages;
 
 	// allow a new construct
+	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------

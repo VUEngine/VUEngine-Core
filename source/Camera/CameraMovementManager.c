@@ -34,6 +34,7 @@ friend class Camera;
 //---------------------------------------------------------------------------------------------------------
 void CameraMovementManager::constructor()
 {
+	// Always explicitly call the base's constructor 
 	Base::constructor();
 
 	CameraMovementManager::reset(this);
@@ -42,6 +43,7 @@ void CameraMovementManager::constructor()
 void CameraMovementManager::destructor()
 {
 	// destroy base
+	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------

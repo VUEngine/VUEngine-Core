@@ -39,6 +39,7 @@ friend class VirtualList;
 void ListenerObject::constructor()
 {
 #ifndef __RELEASE	
+	// Always explicitly call the base's constructor 
 	Base::constructor();
 #endif
 
@@ -54,7 +55,7 @@ void ListenerObject::destructor()
 	MessageDispatcher::discardAllDelayedMessages(MessageDispatcher::getInstance(), ListenerObject::safeCast(this));
 	ListenerObject::removeAllEventListeners(this);
 
-
+	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------

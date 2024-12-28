@@ -84,6 +84,7 @@ void SRAMManager::read(BYTE* destination, int32 memberOffset, int32 dataSize)
 //---------------------------------------------------------------------------------------------------------
 void SRAMManager::constructor()
 {
+	// Always explicitly call the base's constructor 
 	Base::constructor();
 
 	this->spaceAddress = (uint16*)&_sramBssEnd;
@@ -94,6 +95,7 @@ void SRAMManager::constructor()
 void SRAMManager::destructor()
 {
 	// allow a new construct
+	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------

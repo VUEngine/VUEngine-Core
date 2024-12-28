@@ -399,6 +399,7 @@ uint16 VIPManager::getGameFrameDuration()
 //---------------------------------------------------------------------------------------------------------
 void VIPManager::constructor()
 {
+	// Always explicitly call the base's constructor 
 	Base::constructor();
 
 	this->postProcessingEffects = new VirtualList();
@@ -428,6 +429,7 @@ void VIPManager::destructor()
 	delete this->postProcessingEffects;
 
 	// allow a new construct
+	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------

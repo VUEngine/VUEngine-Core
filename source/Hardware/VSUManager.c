@@ -296,6 +296,7 @@ void VSUManager::printWaveFormStatus(int32 x, int32 y)
 //---------------------------------------------------------------------------------------------------------
 void VSUManager::constructor()
 {
+	// Always explicitly call the base's constructor 
 	Base::constructor();
 
 	this->queuedVSUSoundSourceConfigurations = new VirtualList();
@@ -317,6 +318,7 @@ void VSUManager::destructor()
 		this->queuedVSUSoundSourceConfigurations = NULL;
 	}
 
+	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------

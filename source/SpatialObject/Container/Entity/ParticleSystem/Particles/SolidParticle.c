@@ -40,6 +40,7 @@ friend class VirtualNode;
 //---------------------------------------------------------------------------------------------------------
 void SolidParticle::constructor(const SolidParticleSpec* solidParticleSpec)
 {
+	// Always explicitly call the base's constructor 
 	Base::constructor(&solidParticleSpec->physicalParticleSpec);
 
 	this->solidParticleSpec = solidParticleSpec;
@@ -101,7 +102,7 @@ void SolidParticle::destructor()
 		this->colliderSpec = NULL;
 	}
 
-
+	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------

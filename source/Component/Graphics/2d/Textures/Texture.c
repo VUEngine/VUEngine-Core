@@ -213,6 +213,7 @@ void Texture::constructor(TextureSpec* textureSpec, uint16 id)
 		_texturesToUpdate = new VirtualList();
 	}
 
+	// Always explicitly call the base's constructor 
 	Base::constructor();
 
 	// set id
@@ -246,7 +247,7 @@ void Texture::destructor()
 
 	Texture::releaseCharSet(this);
 
-
+	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------

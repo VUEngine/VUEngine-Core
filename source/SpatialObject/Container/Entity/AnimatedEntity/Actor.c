@@ -41,6 +41,7 @@ friend class VirtualNode;
 //---------------------------------------------------------------------------------------------------------
 void Actor::constructor(const ActorSpec* actorSpec, int16 internalId, const char* const name)
 {
+	// Always explicitly call the base's constructor 
 	Base::constructor((AnimatedEntitySpec*)&actorSpec->animatedEntitySpec, internalId, name);
 
 	// construct the game state machine
@@ -61,7 +62,7 @@ void Actor::destructor()
 		this->stateMachine = NULL;
 	}
 
-
+	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------

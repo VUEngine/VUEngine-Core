@@ -22,6 +22,7 @@
 //---------------------------------------------------------------------------------------------------------
 void Telegram::constructor(void* sender, void* receiver, int32 message, void* extraInfo)
 {
+	// Always explicitly call the base's constructor 
 	Base::constructor();
 
 	// set the attributes
@@ -39,6 +40,7 @@ void Telegram::destructor()
 
 	// free the memory
 
+	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------

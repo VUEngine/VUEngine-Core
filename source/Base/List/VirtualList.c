@@ -39,6 +39,7 @@ friend class VirtualNode;
 //---------------------------------------------------------------------------------------------------------
 void VirtualList::constructor()
 {
+	// Always explicitly call the base's constructor 
 	Base::constructor();
 
 	// set members' default values
@@ -53,6 +54,7 @@ void VirtualList::destructor()
 
 	// destroy super object
 
+	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------

@@ -188,6 +188,7 @@ void KeypadManager::printUserInput(int32 x, int32 y)
 //---------------------------------------------------------------------------------------------------------
 void KeypadManager::constructor()
 {
+	// Always explicitly call the base's constructor 
 	Base::constructor();
 
 	KeypadManager::reset(this);
@@ -198,6 +199,7 @@ void KeypadManager::constructor()
 void KeypadManager::destructor()
 {
 	// allow a new construct
+	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------

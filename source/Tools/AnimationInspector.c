@@ -224,6 +224,7 @@ void AnimationInspector::processUserInput(uint16 pressedKey)
 //---------------------------------------------------------------------------------------------------------
 void AnimationInspector::constructor()
 {
+	// Always explicitly call the base's constructor 
 	Base::constructor();
 
 	this->sprite = NULL;
@@ -270,6 +271,7 @@ void AnimationInspector::destructor()
 	}
 
 	// allow a new construct
+	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------

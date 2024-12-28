@@ -160,6 +160,7 @@ static void VisualComponent::getRightBoxFromVisualComponents(VirtualList visualC
 //---------------------------------------------------------------------------------------------------------
 void VisualComponent::constructor(SpatialObject owner, const VisualComponentSpec* visualComponentSpec)
 {
+	// Always explicitly call the base's constructor 
 	Base::constructor(owner, (const ComponentSpec*)visualComponentSpec);
 
 	this->show = __SHOW;
@@ -176,7 +177,7 @@ void VisualComponent::destructor()
 		this->animationController = NULL;
 	}
 
-
+	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------

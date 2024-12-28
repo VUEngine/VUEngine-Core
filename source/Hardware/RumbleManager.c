@@ -141,6 +141,7 @@ void RumbleManager::setOverridePreviousEffect(bool overridePreviousEffect)
 //---------------------------------------------------------------------------------------------------------
 void RumbleManager::constructor()
 {	
+	// Always explicitly call the base's constructor 
 	Base::constructor();
 
 	this->communicationManager = NULL;
@@ -165,6 +166,7 @@ void RumbleManager::destructor()
 	_rumbleManager = NULL;
 
 	// allow a new construct
+	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------

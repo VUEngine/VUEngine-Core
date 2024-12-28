@@ -79,6 +79,7 @@ void ClockManager::update(uint32 elapsedMilliseconds)
 //---------------------------------------------------------------------------------------------------------
 void ClockManager::constructor()
 {
+	// Always explicitly call the base's constructor 
 	Base::constructor();
 
 	// create the clock list
@@ -99,6 +100,7 @@ void ClockManager::destructor()
 	delete this->clocks;
 
 	// allow a new construct
+	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------

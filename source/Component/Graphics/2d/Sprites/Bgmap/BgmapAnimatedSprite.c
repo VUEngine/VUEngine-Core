@@ -31,6 +31,7 @@ void BgmapAnimatedSprite::constructor(SpatialObject owner, const BgmapAnimatedSp
 {
 	NM_ASSERT(NULL != bgmapAnimatedSpriteSpec, "BgmapAnimatedSprite::constructor: NULL bgmapAnimatedSpriteSpec");
 
+	// Always explicitly call the base's constructor 
 	Base::constructor(owner, &bgmapAnimatedSpriteSpec->bgmapSpriteSpec);
 
 	ASSERT(this->texture, "BgmapAnimatedSprite::constructor: null texture");
@@ -40,6 +41,7 @@ void BgmapAnimatedSprite::constructor(SpatialObject owner, const BgmapAnimatedSp
 //---------------------------------------------------------------------------------------------------------
 void BgmapAnimatedSprite::destructor()
 {
+	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------

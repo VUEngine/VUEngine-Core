@@ -36,6 +36,7 @@ friend class VirtualList;
 //---------------------------------------------------------------------------------------------------------
 void Wireframe::constructor(SpatialObject owner, const WireframeSpec* wireframeSpec)
 {
+	// Always explicitly call the base's constructor 
 	Base::constructor(owner, (const VisualComponentSpec*)&wireframeSpec->visualComponentSpec);
 
 	if(NULL == wireframeSpec)
@@ -63,7 +64,7 @@ void Wireframe::destructor()
 {
 	Wireframe::hide(this);
 
-
+	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------

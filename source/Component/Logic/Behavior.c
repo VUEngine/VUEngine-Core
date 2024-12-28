@@ -41,6 +41,7 @@ static Behavior Behavior::create(SpatialObject owner, const BehaviorSpec* behavi
 //---------------------------------------------------------------------------------------------------------
 void Behavior::constructor(SpatialObject owner, const BehaviorSpec* behaviorSpec)
 {
+	// Always explicitly call the base's constructor 
 	Base::constructor(owner, (const ComponentSpec*)&behaviorSpec->componentSpec);
 
 	this->enabled = behaviorSpec->enabled;
@@ -48,6 +49,7 @@ void Behavior::constructor(SpatialObject owner, const BehaviorSpec* behaviorSpec
 //---------------------------------------------------------------------------------------------------------
 void Behavior::destructor()
 {
+	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------

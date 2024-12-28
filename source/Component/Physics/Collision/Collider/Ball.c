@@ -49,6 +49,7 @@ static void Ball::project(Vector3D center, fixed_t radius, Vector3D vector, fixe
 //---------------------------------------------------------------------------------------------------------
 void Ball::constructor(SpatialObject owner, const ColliderSpec* colliderSpec)
 {
+	// Always explicitly call the base's constructor 
 	Base::constructor(owner, colliderSpec);
 
 	this->classIndex = kColliderBallIndex;
@@ -59,6 +60,7 @@ void Ball::constructor(SpatialObject owner, const ColliderSpec* colliderSpec)
 //---------------------------------------------------------------------------------------------------------
 void Ball::destructor()
 {
+	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------

@@ -157,6 +157,7 @@ static RightBox Mesh::getRightBoxFromSpec(MeshSpec* meshSpec)
 //---------------------------------------------------------------------------------------------------------
 void Mesh::constructor(SpatialObject owner, const MeshSpec* meshSpec)
 {
+	// Always explicitly call the base's constructor 
 	Base::constructor(owner, &meshSpec->wireframeSpec);
 
 	this->segments = new VirtualList();
@@ -174,7 +175,7 @@ void Mesh::destructor()
 
 	Mesh::deleteLists(this);
 
-
+	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------

@@ -35,6 +35,7 @@ friend class VirtualList;
 //---------------------------------------------------------------------------------------------------------
 void Container::constructor(int16 internalId, const char* const name)
 {
+	// Always explicitly call the base's constructor 
 	Base::constructor();
 
 	this->internalId = internalId;
@@ -132,7 +133,7 @@ void Container::destructor()
 		NM_ASSERT(!isDeleted(this), "Container::destructor: deleted this during kEventContainerDeleted");
 	}
 
-
+	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------

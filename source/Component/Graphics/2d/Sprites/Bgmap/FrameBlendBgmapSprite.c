@@ -36,6 +36,7 @@ extern int32 strcmp(const char *, const char *);
 //---------------------------------------------------------------------------------------------------------
 void FrameBlendBgmapSprite::constructor(SpatialObject owner, const FrameBlendBgmapSpriteSpec* frameBlendBgmapSpriteSpec)
 {
+	// Always explicitly call the base's constructor 
 	Base::constructor(owner, &frameBlendBgmapSpriteSpec->bgmapSpriteSpec);
 
 	this->actualFrame = 0;
@@ -45,6 +46,7 @@ void FrameBlendBgmapSprite::constructor(SpatialObject owner, const FrameBlendBgm
 //---------------------------------------------------------------------------------------------------------
 void FrameBlendBgmapSprite::destructor()
 {
+	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------

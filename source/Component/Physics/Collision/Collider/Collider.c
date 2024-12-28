@@ -48,6 +48,7 @@ friend class VirtualList;
 //---------------------------------------------------------------------------------------------------------
 void Collider::constructor(SpatialObject owner, const ColliderSpec* colliderSpec)
 {
+	// Always explicitly call the base's constructor 
 	Base::constructor(owner, (const ComponentSpec*)&colliderSpec->componentSpec);
 
 	// not setup yet
@@ -100,7 +101,7 @@ void Collider::destructor()
 		this->otherColliders = NULL;
 	}
 
-
+	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------

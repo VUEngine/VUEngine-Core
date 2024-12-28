@@ -1085,6 +1085,7 @@ void DirectDraw::constructor()
 {
 	_directDraw = this;
 
+	// Always explicitly call the base's constructor 
 	Base::constructor();
 
 	this->drawnPixelsCounter = 0;
@@ -1100,6 +1101,7 @@ void DirectDraw::destructor()
 	VIPManager::removeEventListener(VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)DirectDraw::onVIPManagerGAMESTARTDuringXPEND, kEventVIPManagerGAMESTARTDuringXPEND);
 
 	// allow a new construct
+	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------

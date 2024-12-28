@@ -124,6 +124,7 @@ void Clock::constructor()
 {
 	_printing = Printing::getInstance();
 
+	// Always explicitly call the base's constructor 
 	Base::constructor();
 
 	// initialize time
@@ -144,7 +145,7 @@ void Clock::destructor()
 	// unregister the clock
 	ClockManager::unregister(ClockManager::getInstance(), this);
 
-
+	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------

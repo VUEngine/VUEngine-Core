@@ -34,6 +34,7 @@ friend class VirtualList;
 //---------------------------------------------------------------------------------------------------------
 void StateMachine::constructor(void* owner)
 {
+	// Always explicitly call the base's constructor 
 	Base::constructor();
 
 	// set pointers
@@ -60,6 +61,7 @@ void StateMachine::destructor()
 
 	// free processor memory
 
+	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------

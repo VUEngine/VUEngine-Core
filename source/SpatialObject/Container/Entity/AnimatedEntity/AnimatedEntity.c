@@ -37,6 +37,7 @@ friend class Sprite;
 //---------------------------------------------------------------------------------------------------------
 void AnimatedEntity::constructor(AnimatedEntitySpec* animatedEntitySpec, int16 internalId, const char* const name)
 {
+	// Always explicitly call the base's constructor 
 	Base::constructor(&animatedEntitySpec->entitySpec, internalId, name);
 
 	this->animationFunctions = animatedEntitySpec->animationFunctions;
@@ -45,6 +46,7 @@ void AnimatedEntity::constructor(AnimatedEntitySpec* animatedEntitySpec, int16 i
 //---------------------------------------------------------------------------------------------------------
 void AnimatedEntity::destructor()
 {
+	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------

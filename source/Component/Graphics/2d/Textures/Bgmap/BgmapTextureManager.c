@@ -335,6 +335,7 @@ void BgmapTextureManager::print(int32 x, int32 y)
 //---------------------------------------------------------------------------------------------------------
 void BgmapTextureManager::constructor()
 {
+	// Always explicitly call the base's constructor 
 	Base::constructor();
 
 	this->bgmapTextures = new VirtualList();
@@ -348,6 +349,7 @@ void BgmapTextureManager::destructor()
 	this->bgmapTextures = NULL;
 
 	// allow a new construct
+	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------

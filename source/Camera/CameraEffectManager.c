@@ -46,6 +46,7 @@ void CameraEffectManager::constructor()
 	this->fadeEffectIncrement = __CAMERA_EFFECT_FADE_INCREMENT;
 	this->startingANewEffect = false;
 	
+	// Always explicitly call the base's constructor 
 	Base::constructor();
 }
 //---------------------------------------------------------------------------------------------------------
@@ -55,6 +56,7 @@ void CameraEffectManager::destructor()
 	CameraEffectManager::stopEffect(this, kFadeTo);
 
 	// destroy base
+	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------

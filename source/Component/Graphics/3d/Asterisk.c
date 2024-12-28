@@ -25,6 +25,7 @@
 //---------------------------------------------------------------------------------------------------------
 void Asterisk::constructor(SpatialObject owner, const AsteriskSpec* asteriskSpec)
 {
+	// Always explicitly call the base's constructor 
 	Base::constructor(owner, &asteriskSpec->wireframeSpec);
 
 	this->length = __ABS(asteriskSpec->length);
@@ -34,6 +35,7 @@ void Asterisk::constructor(SpatialObject owner, const AsteriskSpec* asteriskSpec
 //---------------------------------------------------------------------------------------------------------
 void Asterisk::destructor()
 {
+	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------

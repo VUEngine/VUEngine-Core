@@ -158,6 +158,7 @@ void StageEditor::processUserInput(uint16 pressedKey)
 //---------------------------------------------------------------------------------------------------------
 void StageEditor::constructor()
 {
+	// Always explicitly call the base's constructor 
 	Base::constructor();
 
 	this->entityNode = NULL;
@@ -195,6 +196,7 @@ void StageEditor::destructor()
 	}
 
 	// allow a new construct
+	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------

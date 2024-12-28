@@ -79,6 +79,7 @@ void BgmapSprite::constructor(SpatialObject owner, const BgmapSpriteSpec* bgmapS
 {
 	NM_ASSERT(NULL != bgmapSpriteSpec, "BgmapSprite::constructor: NULL bgmapSpriteSpec");
 
+	// Always explicitly call the base's constructor 
 	Base::constructor(owner, (SpriteSpec*)&bgmapSpriteSpec->spriteSpec);
 
 	this->bgmapTextureSource.mx = 0;
@@ -106,7 +107,7 @@ void BgmapSprite::destructor()
 
 	BgmapSprite::releaseTexture(this);
 
-
+	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------

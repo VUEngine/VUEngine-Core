@@ -164,6 +164,7 @@ uint32 SoundTrack::getTotalPlaybackMilliseconds(uint16 targetTimerResolutionUS)
 //---------------------------------------------------------------------------------------------------------
 void SoundTrack::constructor(const SoundTrackSpec* soundTrackSpec)
 {
+	// Always explicitly call the base's constructor 
 	Base::constructor();
 
 	this->soundTrackSpec = soundTrackSpec;
@@ -185,6 +186,7 @@ void SoundTrack::constructor(const SoundTrackSpec* soundTrackSpec)
 //---------------------------------------------------------------------------------------------------------
 void SoundTrack::destructor()
 {
+	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------

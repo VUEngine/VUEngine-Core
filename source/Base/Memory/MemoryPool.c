@@ -449,6 +449,7 @@ void MemoryPool::printDetailedUsage(int32 x, int32 y)
 //---------------------------------------------------------------------------------------------------------
 void MemoryPool::constructor()
 {
+	// Always explicitly call the base's constructor 
 	Base::constructor();
 
 	MemoryPool::reset(this);
@@ -460,6 +461,7 @@ void MemoryPool::constructor()
  void MemoryPool::destructor()
 {
 	// allow a new construct
+	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------

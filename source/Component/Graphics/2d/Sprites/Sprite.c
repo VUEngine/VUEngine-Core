@@ -52,6 +52,7 @@ friend class AnimationController;
 //---------------------------------------------------------------------------------------------------------
 void Sprite::constructor(SpatialObject owner, const SpriteSpec* spriteSpec)
 {
+	// Always explicitly call the base's constructor 
 	Base::constructor(owner, (const VisualComponentSpec*)&spriteSpec->visualComponentSpec);
 
 	// clear values
@@ -82,6 +83,7 @@ void Sprite::constructor(SpatialObject owner, const SpriteSpec* spriteSpec)
 //---------------------------------------------------------------------------------------------------------
 void Sprite::destructor()
 {
+	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------

@@ -35,6 +35,7 @@ void UIContainer::constructor(PositionedEntity* childrenPositionedEntities)
 {
 	_camera = Camera::getInstance();
 
+	// Always explicitly call the base's constructor 
 	Base::constructor(0, NULL);
 
 	for(int16 i = 0; NULL != childrenPositionedEntities && NULL != childrenPositionedEntities[i].entitySpec; i++)
@@ -49,6 +50,7 @@ void UIContainer::destructor()
 
 	// destroy base
 
+	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------

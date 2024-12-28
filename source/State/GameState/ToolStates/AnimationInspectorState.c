@@ -27,6 +27,7 @@
 //---------------------------------------------------------------------------------------------------------
 void AnimationInspectorState::constructor()
 {
+	// Always explicitly call the base's constructor 
 	Base::constructor();
 
 	this->tool = Tool::safeCast(AnimationInspector::getInstance());
@@ -35,6 +36,7 @@ void AnimationInspectorState::constructor()
 void AnimationInspectorState::destructor()
 {
 	// destroy base
+	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------

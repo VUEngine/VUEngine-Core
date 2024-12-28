@@ -35,6 +35,7 @@
 //---------------------------------------------------------------------------------------------------------
 void Particle::constructor(const ParticleSpec* particleSpec __attribute__((unused)))
 {
+	// Always explicitly call the base's constructor 
 	Base::constructor();
 
 	this->lifeSpan = 0;
@@ -46,7 +47,7 @@ void Particle::destructor()
 {
 	Particle::destroyGraphics(this);
 
-
+	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------

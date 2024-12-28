@@ -42,6 +42,7 @@ static const Transformation _dummyTransformation =
 //---------------------------------------------------------------------------------------------------------
 void Component::constructor(SpatialObject owner, const ComponentSpec* componentSpec)
 {
+	// Always explicitly call the base's constructor 
 	Base::constructor();
 	
 	this->componentSpec = componentSpec;
@@ -67,6 +68,7 @@ void Component::destructor()
 		Component::fireEvent(this, kEventComponentDestroyed);
 	}
 
+	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------

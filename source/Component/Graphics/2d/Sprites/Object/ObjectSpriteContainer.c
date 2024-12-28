@@ -112,6 +112,7 @@ static void ObjectSpriteContainer::writeDRAM()
 //---------------------------------------------------------------------------------------------------------
 void ObjectSpriteContainer::constructor()
 {
+	// Always explicitly call the base's constructor 
 	Base::constructor(NULL, NULL);
 
 	this->hasTextures = false;
@@ -137,7 +138,7 @@ void ObjectSpriteContainer::destructor()
 		delete objectSprites;
 	}
 
-
+	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------

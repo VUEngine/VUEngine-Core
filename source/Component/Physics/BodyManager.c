@@ -290,6 +290,7 @@ void BodyManager::print(int32 x, int32 y)
 //---------------------------------------------------------------------------------------------------------
 void BodyManager::constructor()
 {
+	// Always explicitly call the base's constructor 
 	Base::constructor();
 
 	this->gravity.x = 0;
@@ -317,6 +318,7 @@ void BodyManager::destructor()
 	}
 	
 
+	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------

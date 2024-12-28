@@ -76,6 +76,7 @@ void StopwatchManager::update()
 //---------------------------------------------------------------------------------------------------------
 void StopwatchManager::constructor()
 {
+	// Always explicitly call the base's constructor 
 	Base::constructor();
 
 	// create the clock list
@@ -96,6 +97,7 @@ void StopwatchManager::destructor()
 	delete this->stopwatchs;
 
 	// allow a new construct
+	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------

@@ -92,6 +92,7 @@ friend class Printing;
 //---------------------------------------------------------------------------------------------------------
 void OptionsSelector::constructor(uint16 cols, uint16 rows, char* font, char* leftMark, char* rightMark)
 {
+	// Always explicitly call the base's constructor 
 	Base::constructor();
 
 	this->pages = NULL;
@@ -119,6 +120,7 @@ void OptionsSelector::destructor()
 
 	// allow a new construct
 
+	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------

@@ -744,6 +744,7 @@ void SpriteManager::printObjectSpriteContainersStatus(int32 x, int32 y)
 //---------------------------------------------------------------------------------------------------------
 void SpriteManager::constructor()
 {
+	// Always explicitly call the base's constructor 
 	Base::constructor();
 
 	this->totalPixelsDrawn = 0;
@@ -776,6 +777,7 @@ void SpriteManager::destructor()
 	SpriteManager::cleanUp(this);
 
 	// allow a new construct
+	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------

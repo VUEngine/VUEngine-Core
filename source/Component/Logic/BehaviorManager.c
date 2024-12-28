@@ -73,6 +73,7 @@ void BehaviorManager::reset()
 //---------------------------------------------------------------------------------------------------------
 void BehaviorManager::constructor()
 {
+	// Always explicitly call the base's constructor 
 	Base::constructor();
 }
 //---------------------------------------------------------------------------------------------------------
@@ -81,6 +82,7 @@ void BehaviorManager::destructor()
 	BehaviorManager::cleanUp(this);
 
 	// allow a new construct
+	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------

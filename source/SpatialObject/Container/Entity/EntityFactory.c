@@ -79,6 +79,7 @@ static int32 _instantiationPhasesCount = sizeof(_instantiationPhases) / sizeof(I
 //---------------------------------------------------------------------------------------------------------
 void EntityFactory::constructor()
 {
+	// Always explicitly call the base's constructor 
 	Base::constructor();
 
 	this->entitiesToInstantiate = new VirtualList();
@@ -154,7 +155,7 @@ void EntityFactory::destructor()
 	delete this->spawnedEntities;
 	this->spawnedEntities = NULL;
 
-
+	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------

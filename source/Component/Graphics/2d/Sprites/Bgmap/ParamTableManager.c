@@ -277,6 +277,7 @@ void ParamTableManager::print(int32 x, int32 y)
 //---------------------------------------------------------------------------------------------------------
 void ParamTableManager::constructor()
 {
+	// Always explicitly call the base's constructor 
 	Base::constructor();
 
 	this->bgmapSprites = new VirtualList();
@@ -293,6 +294,7 @@ void ParamTableManager::destructor()
 	this->bgmapSprites = NULL;
 
 	// allow a new construct
+	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------

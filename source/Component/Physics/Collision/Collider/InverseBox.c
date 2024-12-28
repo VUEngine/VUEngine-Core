@@ -29,6 +29,7 @@ friend class Box;
 //---------------------------------------------------------------------------------------------------------
 void InverseBox::constructor(SpatialObject owner, const ColliderSpec* colliderSpec)
 {
+	// Always explicitly call the base's constructor 
 	Base::constructor(owner, colliderSpec);
 
 	this->classIndex = kColliderInverseBoxIndex;
@@ -36,6 +37,7 @@ void InverseBox::constructor(SpatialObject owner, const ColliderSpec* colliderSp
 //---------------------------------------------------------------------------------------------------------
  void InverseBox::destructor()
 {
+	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------

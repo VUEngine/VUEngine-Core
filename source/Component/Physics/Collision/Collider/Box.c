@@ -61,6 +61,7 @@ static void Box::project(Vector3D vertexes[__BOX_VERTEXES], Vector3D vector, fix
 //---------------------------------------------------------------------------------------------------------
 void Box::constructor(SpatialObject owner, const ColliderSpec* colliderSpec)
 {
+	// Always explicitly call the base's constructor 
 	Base::constructor(owner, colliderSpec);
 
 	this->classIndex = kColliderBoxIndex;
@@ -88,7 +89,7 @@ void Box::destructor()
 		this->normals = NULL;
 	}
 
-
+	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------

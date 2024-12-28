@@ -25,6 +25,7 @@
 //---------------------------------------------------------------------------------------------------------
 void StageEditorState::constructor()
 {
+	// Always explicitly call the base's constructor 
 	Base::constructor();
 
 	this->tool = Tool::safeCast(StageEditor::getInstance());
@@ -33,6 +34,7 @@ void StageEditorState::constructor()
 void StageEditorState::destructor()
 {
 	// destroy base
+	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------

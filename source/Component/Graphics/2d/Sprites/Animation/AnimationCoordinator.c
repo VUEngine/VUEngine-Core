@@ -36,6 +36,7 @@ friend class VirtualNode;
 //---------------------------------------------------------------------------------------------------------
 void AnimationCoordinator::constructor(const CharSetSpec* charSetSpec, ListenerObject scope)
 {
+	// Always explicitly call the base's constructor 
 	Base::constructor();
 
 	this->scope = scope;
@@ -50,7 +51,7 @@ void AnimationCoordinator::destructor()
 	delete this->animationControllers;
 	this->animationControllers = NULL;
 
-
+	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------

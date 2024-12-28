@@ -25,6 +25,7 @@
 //---------------------------------------------------------------------------------------------------------
 void SoundTestState::constructor()
 {
+	// Always explicitly call the base's constructor 
 	Base::constructor();
 
 	this->tool = Tool::safeCast(SoundTest::getInstance());
@@ -33,6 +34,7 @@ void SoundTestState::constructor()
 void SoundTestState::destructor()
 {
 	// destroy base
+	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------

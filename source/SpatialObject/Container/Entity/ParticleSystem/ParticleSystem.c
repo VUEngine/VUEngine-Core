@@ -38,6 +38,7 @@ friend class VirtualList;
 void ParticleSystem::constructor(const ParticleSystemSpec* particleSystemSpec, int16 internalId, const char* const name)
 {
 	// construct base
+	// Always explicitly call the base's constructor 
 	Base::constructor((EntitySpec*)&particleSystemSpec->entitySpec, internalId, name);
 
 	this->particles = NULL;
@@ -64,7 +65,7 @@ void ParticleSystem::destructor()
 		this->particles = NULL;
 	}
 
-
+	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------

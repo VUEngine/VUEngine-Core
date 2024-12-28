@@ -29,6 +29,7 @@
 //---------------------------------------------------------------------------------------------------------
 void MBgmapAnimatedSprite::constructor(SpatialObject owner, const MBgmapAnimatedSpriteSpec* mBgmapAnimatedSpriteSpec)
 {
+	// Always explicitly call the base's constructor 
 	Base::constructor(owner, &mBgmapAnimatedSpriteSpec->mBgmapSpriteSpec);
 
 	ASSERT(this->texture, "MBgmapAnimatedSprite::constructor: null texture");
@@ -44,7 +45,7 @@ void MBgmapAnimatedSprite::destructor()
 		this->animationController = NULL;
 	}
 
-
+	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------
