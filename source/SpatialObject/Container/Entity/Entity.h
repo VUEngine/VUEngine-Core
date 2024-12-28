@@ -14,25 +14,19 @@
 // INCLUDES
 //=========================================================================================================
 
-#include <Behavior.h>
-#include <Body.h>
 #include <Camera.h>
-#include <ColliderManager.h>
 #include <Container.h>
-#include <Sprite.h>
-#include <SpriteManager.h>
 #include <Vector3D.h>
-#include <Wireframe.h>
-#include <WireframeManager.h>
+
 
 //=========================================================================================================
 // FORWARD DECLARATIONS
 //=========================================================================================================
 
-class Behavior;
 class Entity;
 class EntityFactory;
 class Telegram;
+
 
 //=========================================================================================================
 // CLASS' DATA
