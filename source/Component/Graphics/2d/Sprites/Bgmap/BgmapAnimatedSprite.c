@@ -40,7 +40,6 @@ void BgmapAnimatedSprite::constructor(SpatialObject owner, const BgmapAnimatedSp
 //---------------------------------------------------------------------------------------------------------
 void BgmapAnimatedSprite::destructor()
 {
-
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------

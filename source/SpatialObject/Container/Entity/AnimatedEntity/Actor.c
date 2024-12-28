@@ -41,7 +41,6 @@ friend class VirtualNode;
 //---------------------------------------------------------------------------------------------------------
 void Actor::constructor(const ActorSpec* actorSpec, int16 internalId, const char* const name)
 {
-	// construct base object
 	Base::constructor((AnimatedEntitySpec*)&actorSpec->animatedEntitySpec, internalId, name);
 
 	// construct the game state machine

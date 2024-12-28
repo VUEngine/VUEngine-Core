@@ -79,7 +79,6 @@ static int32 _instantiationPhasesCount = sizeof(_instantiationPhases) / sizeof(I
 //---------------------------------------------------------------------------------------------------------
 void EntityFactory::constructor()
 {
-	// construct base object
 	Base::constructor();
 
 	this->entitiesToInstantiate = new VirtualList();

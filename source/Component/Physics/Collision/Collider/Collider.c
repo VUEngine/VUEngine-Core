@@ -48,7 +48,6 @@ friend class VirtualList;
 //---------------------------------------------------------------------------------------------------------
 void Collider::constructor(SpatialObject owner, const ColliderSpec* colliderSpec)
 {
-	// construct base object
 	Base::constructor(owner, (const ComponentSpec*)&colliderSpec->componentSpec);
 
 	// not setup yet

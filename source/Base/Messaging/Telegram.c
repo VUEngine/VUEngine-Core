@@ -22,7 +22,6 @@
 //---------------------------------------------------------------------------------------------------------
 void Telegram::constructor(void* sender, void* receiver, int32 message, void* extraInfo)
 {
-	// construct base object
 	Base::constructor();
 
 	// set the attributes

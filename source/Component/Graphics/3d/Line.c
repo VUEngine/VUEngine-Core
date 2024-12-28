@@ -25,7 +25,6 @@
 //---------------------------------------------------------------------------------------------------------
 void Line::constructor(SpatialObject owner, const LineSpec* lineSpec)
 {
-	// construct base object
 	Base::constructor(owner, &lineSpec->wireframeSpec);
 
 	this->a = PixelVector::zero();
@@ -34,7 +33,6 @@ void Line::constructor(SpatialObject owner, const LineSpec* lineSpec)
 //---------------------------------------------------------------------------------------------------------
 void Line::destructor()
 {
-
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------

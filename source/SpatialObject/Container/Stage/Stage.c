@@ -122,7 +122,6 @@ static uint32 Stage::computeDistanceToOrigin(StageEntityDescription* stageEntity
 //---------------------------------------------------------------------------------------------------------
 void Stage::constructor(StageSpec *stageSpec)
 {
-	// construct base object
 	Base::constructor(0, NULL);
 
 	this->entityFactory = new EntityFactory();

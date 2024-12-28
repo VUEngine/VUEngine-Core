@@ -36,7 +36,6 @@ void InverseBox::constructor(SpatialObject owner, const ColliderSpec* colliderSp
 //---------------------------------------------------------------------------------------------------------
  void InverseBox::destructor()
 {
-
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------

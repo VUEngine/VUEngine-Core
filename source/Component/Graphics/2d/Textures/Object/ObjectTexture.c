@@ -22,13 +22,11 @@
 //---------------------------------------------------------------------------------------------------------
 void ObjectTexture::constructor(ObjectTextureSpec* objectTextureSpec, uint16 id)
 {
-	// construct base object
 	Base::constructor((TextureSpec*)objectTextureSpec, id);
 }
 //---------------------------------------------------------------------------------------------------------
 void ObjectTexture::destructor()
 {
-
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------

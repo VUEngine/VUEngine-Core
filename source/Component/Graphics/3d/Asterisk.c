@@ -25,7 +25,6 @@
 //---------------------------------------------------------------------------------------------------------
 void Asterisk::constructor(SpatialObject owner, const AsteriskSpec* asteriskSpec)
 {
-	// construct base object
 	Base::constructor(owner, &asteriskSpec->wireframeSpec);
 
 	this->length = __ABS(asteriskSpec->length);
@@ -35,7 +34,6 @@ void Asterisk::constructor(SpatialObject owner, const AsteriskSpec* asteriskSpec
 //---------------------------------------------------------------------------------------------------------
 void Asterisk::destructor()
 {
-
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------

@@ -213,7 +213,6 @@ void Texture::constructor(TextureSpec* textureSpec, uint16 id)
 		_texturesToUpdate = new VirtualList();
 	}
 
-	// construct base object
 	Base::constructor();
 
 	// set id

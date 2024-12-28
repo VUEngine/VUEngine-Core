@@ -36,7 +36,6 @@ extern int32 strcmp(const char *, const char *);
 //---------------------------------------------------------------------------------------------------------
 void FrameBlendBgmapSprite::constructor(SpatialObject owner, const FrameBlendBgmapSpriteSpec* frameBlendBgmapSpriteSpec)
 {
-	// construct base object
 	Base::constructor(owner, &frameBlendBgmapSpriteSpec->bgmapSpriteSpec);
 
 	this->actualFrame = 0;

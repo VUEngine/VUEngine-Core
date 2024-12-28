@@ -34,7 +34,6 @@ friend class VirtualList;
 //---------------------------------------------------------------------------------------------------------
 void StateMachine::constructor(void* owner)
 {
-	// construct base object
 	Base::constructor();
 
 	// set pointers

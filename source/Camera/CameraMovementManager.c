@@ -34,7 +34,6 @@ friend class Camera;
 //---------------------------------------------------------------------------------------------------------
 void CameraMovementManager::constructor()
 {
-	// construct base object
 	Base::constructor();
 
 	CameraMovementManager::reset(this);

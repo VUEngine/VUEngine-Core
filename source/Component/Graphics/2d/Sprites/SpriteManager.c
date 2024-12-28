@@ -744,7 +744,6 @@ void SpriteManager::printObjectSpriteContainersStatus(int32 x, int32 y)
 //---------------------------------------------------------------------------------------------------------
 void SpriteManager::constructor()
 {
-	// construct base object
 	Base::constructor();
 
 	this->totalPixelsDrawn = 0;

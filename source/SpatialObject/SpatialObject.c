@@ -41,7 +41,6 @@ friend class VirtualList;
 //---------------------------------------------------------------------------------------------------------
 void SpatialObject::constructor()
 {
-	// construct base object
 	Base::constructor();
 
 	// set position

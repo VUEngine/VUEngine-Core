@@ -157,7 +157,6 @@ static RightBox Mesh::getRightBoxFromSpec(MeshSpec* meshSpec)
 //---------------------------------------------------------------------------------------------------------
 void Mesh::constructor(SpatialObject owner, const MeshSpec* meshSpec)
 {
-	// construct base object
 	Base::constructor(owner, &meshSpec->wireframeSpec);
 
 	this->segments = new VirtualList();

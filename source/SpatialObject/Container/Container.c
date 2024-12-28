@@ -35,7 +35,6 @@ friend class VirtualList;
 //---------------------------------------------------------------------------------------------------------
 void Container::constructor(int16 internalId, const char* const name)
 {
-	// construct base object
 	Base::constructor();
 
 	this->internalId = internalId;

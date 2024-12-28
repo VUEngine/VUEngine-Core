@@ -46,7 +46,6 @@ void CameraEffectManager::constructor()
 	this->fadeEffectIncrement = __CAMERA_EFFECT_FADE_INCREMENT;
 	this->startingANewEffect = false;
 	
-	// construct base object
 	Base::constructor();
 }
 //---------------------------------------------------------------------------------------------------------

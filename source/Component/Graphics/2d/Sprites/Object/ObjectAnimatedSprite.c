@@ -27,7 +27,6 @@
 //---------------------------------------------------------------------------------------------------------
 void ObjectAnimatedSprite::constructor(SpatialObject owner, const ObjectAnimatedSpriteSpec* objectAnimatedSpriteSpec)
 {
-	// construct base object
 	Base::constructor(owner, &objectAnimatedSpriteSpec->objectSpriteSpec);
 
 	ObjectAnimatedSprite::createAnimationController(this);
@@ -35,7 +34,6 @@ void ObjectAnimatedSprite::constructor(SpatialObject owner, const ObjectAnimated
 //---------------------------------------------------------------------------------------------------------
 void ObjectAnimatedSprite::destructor()
 {
-
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------

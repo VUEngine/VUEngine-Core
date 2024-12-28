@@ -514,7 +514,6 @@ void VUEngine::startProfiling()
 //---------------------------------------------------------------------------------------------------------
 void VUEngine::constructor()
 {
-	// construct base object
 	Base::constructor();
 
 	// make sure the memory pool is initialized now

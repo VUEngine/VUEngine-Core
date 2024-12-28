@@ -38,7 +38,6 @@ static const uint16 _emptyTextureRow[64] = {0};
 //---------------------------------------------------------------------------------------------------------
 void BgmapTexture::constructor(BgmapTextureSpec* bgmapTextureSpec, uint16 id)
 {
-	// construct base object
 	Base::constructor((TextureSpec*)bgmapTextureSpec, id);
 
 	this->segment = -1;
@@ -63,7 +62,6 @@ void BgmapTexture::constructor(BgmapTextureSpec* bgmapTextureSpec, uint16 id)
 //---------------------------------------------------------------------------------------------------------
 void BgmapTexture::destructor()
 {
-
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------
