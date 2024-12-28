@@ -79,11 +79,8 @@ bool Actor::handleMessage(Telegram telegram)
 			{
 				case kMessageBodyStartedMoving:
 
-					if(this->collisionsEnabled)
-					{
-						Actor::checkCollisions(this, true);
-						return true;
-					}
+					Actor::checkCollisions(this, true);
+					return true;
 
 					break;
 

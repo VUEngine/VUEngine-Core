@@ -15,9 +15,23 @@
 #include <string.h>
 
 #include <Body.h>
+#include <Collider.h>
+#include <ColliderManager.h>
 #include <ComponentManager.h>
+#include <Printing.h>
+#include <VirtualList.h>
+#include <VirtualNode.h>
+#include <VUEngine.h>
 
 #include "SpatialObject.h"
+
+
+//=========================================================================================================
+// CLASS' DECLARATIONS
+//=========================================================================================================
+
+friend class VirtualNode;
+friend class VirtualList;
 
 
 //=========================================================================================================
@@ -166,11 +180,84 @@ const Scale* SpatialObject::getScale()
 	return &this->transformation.scale;
 }
 //---------------------------------------------------------------------------------------------------------
+void SpatialObject::enableCollisions()
+{
+	ColliderManager::propagateCommand(VUEngine::getColliderManager(_vuEngine), cComponentCommandEnable, SpatialObject::safeCast(this));
+}
+//---------------------------------------------------------------------------------------------------------
+void SpatialObject::disableCollisions()
+{
+	ColliderManager::propagateCommand(VUEngine::getColliderManager(_vuEngine), cComponentCommandDisable, SpatialObject::safeCast(this));
+}
+//---------------------------------------------------------------------------------------------------------
+void SpatialObject::checkCollisions(bool active)
+{
+	ColliderManager::propagateCommand(VUEngine::getColliderManager(_vuEngine), cColliderComponentCommandCheckCollisions, SpatialObject::safeCast(this), (uint32)active);
+}
+//---------------------------------------------------------------------------------------------------------
+void SpatialObject::registerCollisions(bool value)
+{
+	ColliderManager::propagateCommand(VUEngine::getColliderManager(_vuEngine), cColliderComponentCommandRegisterCollisions, SpatialObject::safeCast(this), (uint32)value);
+}
+//---------------------------------------------------------------------------------------------------------
+void SpatialObject::setCollidersLayers(uint32 layers)
+{
+	ColliderManager::propagateCommand(VUEngine::getColliderManager(_vuEngine), cColliderComponentCommandSetLayers, SpatialObject::safeCast(this), (uint32)layers);
+}
+//---------------------------------------------------------------------------------------------------------
+uint32 SpatialObject::getCollidersLayers()
+{
+	uint32 collidersLayers = 0;
+
+	VirtualList colliders = SpatialObject::getComponents(this, kColliderComponent);
+
+	for(VirtualNode node = colliders->head; NULL != node; node = node->next)
+	{
+		Collider collider = Collider::safeCast(node->data);
+
+		collidersLayers |= Collider::getLayers(collider);
+	}
+
+	return collidersLayers;
+}
+//---------------------------------------------------------------------------------------------------------
+void SpatialObject::setCollidersLayersToIgnore(uint32 layersToIgnore)
+{
+	ColliderManager::propagateCommand(VUEngine::getColliderManager(_vuEngine), cColliderComponentCommandSetLayersToIgnore, SpatialObject::safeCast(this), (uint32)layersToIgnore);
+}
+//---------------------------------------------------------------------------------------------------------
+uint32 SpatialObject::getCollidersLayersToIgnore()
+{
+	uint32 collidersLayersToIgnore = 0;
+
+	VirtualList colliders = SpatialObject::getComponents(this, kColliderComponent);
+
+	for(VirtualNode node = colliders->head; NULL != node; node = node->next)
+	{
+		Collider collider = Collider::safeCast(node->data);
+
+		collidersLayersToIgnore |= Collider::getLayersToIgnore(collider);
+	}
+
+	return collidersLayersToIgnore;
+}
+//---------------------------------------------------------------------------------------------------------
+void SpatialObject::showColliders()
+{
+	ColliderManager::propagateCommand(VUEngine::getColliderManager(_vuEngine), cColliderComponentCommandShow, SpatialObject::safeCast(this));
+}
+//---------------------------------------------------------------------------------------------------------
+void SpatialObject::hideColliders()
+{
+	ColliderManager::propagateCommand(VUEngine::getColliderManager(_vuEngine), cColliderComponentCommandHide, SpatialObject::safeCast(this));
+}
+//---------------------------------------------------------------------------------------------------------
 void SpatialObject::createComponents(ComponentSpec** componentSpecs)
 {
 	if(NULL == componentSpecs || 0 < ComponentManager::getComponentsCount(this, kComponentTypes))
 	{
-		// Components are added by the EntityFactory too.
+		// Components creation must happen only once in the spatial object's life cycle,
+		// but deferred instantiation can cause multiple calls to this method.
 		return;
 	}
 
@@ -219,7 +306,6 @@ fixed_t SpatialObject::getBounciness()
 
 	return Body::getBounciness(body);
 }
-//---------------------------------------------------------------------------------------------------------
 //---------------------------------------------------------------------------------------------------------
 fixed_t SpatialObject::getFrictionCoefficient()
 {

@@ -115,6 +115,48 @@ class SpatialObject : ListenerObject
 	/// @return Pointer to the object's 3D
 	const Scale* getScale();
 
+	/// Enable collision detection on the entity's colliders.
+	void enableCollisions();
+
+	/// Disable collision detection on the entity's colliders.
+	void disableCollisions();
+
+	/// Enable or disable collision detection against other entities' colliders.
+	/// @param activate: If true, this entity's colliders check collision against other entities'
+	void checkCollisions(bool activate);
+
+	/// Enable or disable the register of detected collisions.
+	/// @param activate: If false, this entity's colliders won't keep track of collisions, hence they
+	/// won't notify of it of persisting (::collisionPersists) collisions or when end (::collisionEnds)
+	void registerCollisions(bool activate);
+
+	/// Set the layers in which this entity's colliders must live.
+	/// @param layers: Flags that determine the layers for the entity's colliders
+	void setCollidersLayers(uint32 layers);
+
+	/// Retrieve the layers in which this entity's colliders live.
+	/// @return Flags that determine the layers where the entity's colliders live
+	uint32 getCollidersLayers();
+
+	/// Set the layers that the entity's colliders must ignore when detecting collision.
+	/// @param layersToIgnore: Flags that determine the layers with colliders to ignore when detecting
+	/// collisions
+	void setCollidersLayersToIgnore(uint32 layersToIgnore);
+
+	/// Retrieve the layers that the entity's colliders ignore when detecting collision.
+	/// @return The layers that the entity's colliders ignore when detecting collision
+	uint32 getCollidersLayersToIgnore();
+
+	/// Check if the entity has attached colliders.
+	/// @return True if the entity hast at least on collider arrached; false otherwise
+	bool hasColliders();
+
+	/// Make the entity's colliders visible.
+	void showColliders();
+
+	/// Make the entity's colliders invisible.
+	void hideColliders();
+
 	/// Create the components that must attach to this container. 	
 	/// @param componentSpecs: Specifications to be used to configure the new components
 	virtual void createComponents(ComponentSpec** componentSpecs);

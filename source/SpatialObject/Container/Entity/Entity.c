@@ -14,18 +14,12 @@
 
 #include <string.h>
 
-#include <Behavior.h>
-#include <BehaviorManager.h>
-#include <BgmapSprite.h>
-#include <ColliderManager.h>
 #include <DebugConfig.h>
 #include <EntityFactory.h>
-#include <MBgmapSprite.h>
-#include <Mesh.h>
 #include <Optics.h>
+#include <Mesh.h>
 #include <Printing.h>
-#include <Collider.h>
-#include <SpriteManager.h>
+#include <Sprite.h>
 #include <Telegram.h>
 #include <VirtualList.h>
 #include <VirtualNode.h>
@@ -356,8 +350,6 @@ void Entity::constructor(EntitySpec* entitySpec, int16 internalId, const char* c
 
 	this->hidden = false;
 	this->size = Size::getFromPixelSize(entitySpec->pixelSize);
-	this->collisionsEnabled = true;
-	this->checkingCollisions = true;
 }
 //---------------------------------------------------------------------------------------------------------
 void Entity::destructor()
@@ -597,89 +589,6 @@ void Entity::addChildEntitiesDeferred(const PositionedEntity* childrenSpecs)
 	{
 		EntityFactory::spawnEntity(this->entityFactory, &childrenSpecs[i], Container::safeCast(this), NULL, this->internalId + Entity::getChildrenCount(this));
 	}
-}
-//---------------------------------------------------------------------------------------------------------
-void Entity::enableCollisions()
-{
-	this->collisionsEnabled = true;
-
-	ColliderManager::propagateCommand(VUEngine::getColliderManager(_vuEngine), cComponentCommandEnable, SpatialObject::safeCast(this));
-}
-//---------------------------------------------------------------------------------------------------------
-void Entity::disableCollisions()
-{
-	this->collisionsEnabled = false;
-
-	ColliderManager::propagateCommand(VUEngine::getColliderManager(_vuEngine), cComponentCommandDisable, SpatialObject::safeCast(this));
-}
-//---------------------------------------------------------------------------------------------------------
-void Entity::checkCollisions(bool active)
-{
-	this->checkingCollisions = active;
-
-	if(this->checkingCollisions && !this->collisionsEnabled)
-	{
-		this->collisionsEnabled = this->checkingCollisions;
-	}
-
-	ColliderManager::propagateCommand(VUEngine::getColliderManager(_vuEngine), cColliderComponentCommandCheckCollisions, SpatialObject::safeCast(this), (uint32)active);
-}
-//---------------------------------------------------------------------------------------------------------
-void Entity::registerCollisions(bool value)
-{
-	ColliderManager::propagateCommand(VUEngine::getColliderManager(_vuEngine), cColliderComponentCommandRegisterCollisions, SpatialObject::safeCast(this), (uint32)value);
-}
-//---------------------------------------------------------------------------------------------------------
-void Entity::setCollidersLayers(uint32 layers)
-{
-	ColliderManager::propagateCommand(VUEngine::getColliderManager(_vuEngine), cColliderComponentCommandSetLayers, SpatialObject::safeCast(this), (uint32)layers);
-}
-//---------------------------------------------------------------------------------------------------------
-uint32 Entity::getCollidersLayers()
-{
-	uint32 collidersLayers = 0;
-
-	VirtualList colliders = Entity::getComponents(this, kColliderComponent);
-
-	for(VirtualNode node = colliders->head; NULL != node; node = node->next)
-	{
-		Collider collider = Collider::safeCast(node->data);
-
-		collidersLayers |= Collider::getLayers(collider);
-	}
-
-	return collidersLayers;
-}
-//---------------------------------------------------------------------------------------------------------
-void Entity::setCollidersLayersToIgnore(uint32 layersToIgnore)
-{
-	ColliderManager::propagateCommand(VUEngine::getColliderManager(_vuEngine), cColliderComponentCommandSetLayersToIgnore, SpatialObject::safeCast(this), (uint32)layersToIgnore);
-}
-//---------------------------------------------------------------------------------------------------------
-uint32 Entity::getCollidersLayersToIgnore()
-{
-	uint32 collidersLayersToIgnore = 0;
-
-	VirtualList colliders = Entity::getComponents(this, kColliderComponent);
-
-	for(VirtualNode node = colliders->head; NULL != node; node = node->next)
-	{
-		Collider collider = Collider::safeCast(node->data);
-
-		collidersLayersToIgnore |= Collider::getLayersToIgnore(collider);
-	}
-
-	return collidersLayersToIgnore;
-}
-//---------------------------------------------------------------------------------------------------------
-void Entity::showColliders()
-{
-	ColliderManager::propagateCommand(VUEngine::getColliderManager(_vuEngine), cColliderComponentCommandShow, SpatialObject::safeCast(this));
-}
-//---------------------------------------------------------------------------------------------------------
-void Entity::hideColliders()
-{
-	ColliderManager::propagateCommand(VUEngine::getColliderManager(_vuEngine), cColliderComponentCommandHide, SpatialObject::safeCast(this));
 }
 //---------------------------------------------------------------------------------------------------------
 void Entity::calculateSize()
