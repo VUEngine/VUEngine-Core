@@ -145,8 +145,9 @@ singleton class KeypadManager : ListenerObject
 	int32 isEnabled();
 
 	/// Retrieve the user input during the last game frame
+	/// @param waitForStableReading: If true, wait for reading to be stable (__S_STAT)
 	/// @return User input struct with the key presses of the last game frame
-	UserInput readUserInput();
+	UserInput readUserInput(bool waitForStableReading);
 
 	/// Enable the dummy key to force user input processing.
 	void enableDummyKey();

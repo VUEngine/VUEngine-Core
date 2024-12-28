@@ -358,6 +358,16 @@ void VUEngine::setGameFrameRate(uint16 gameFrameRate)
 	VIPManager::setFrameCycle(this->vipManager, __MAXIMUM_FPS / gameFrameRate - 1);
 }
 //---------------------------------------------------------------------------------------------------------
+void VUEngine::lockFrameRate()
+{
+	this->syncToVIP = true;
+}
+//---------------------------------------------------------------------------------------------------------
+void VUEngine::unlockFrameRate()
+{
+	this->syncToVIP = false;
+}
+//---------------------------------------------------------------------------------------------------------
 void VUEngine::enableKeypad()
 {
 	KeypadManager::enable(this->keypadManager);
@@ -481,7 +491,13 @@ void VUEngine::gameFrameStarted(uint16 gameFrameDuration)
 
 	ClockManager::update(this->clockManager, gameFrameDuration);
 
-	FrameRate::gameFrameStarted(this->frameRate, this->currentGameCycleEnded);
+#ifdef __PRINT_FRAMERATE
+	bool printFPS = true;
+#else
+	bool printFPS = !this->syncToVIP;
+#endif
+
+	FrameRate::gameFrameStarted(this->frameRate, this->currentGameCycleEnded, printFPS);
 }
 //---------------------------------------------------------------------------------------------------------
 bool VUEngine::isPaused()
@@ -533,6 +549,7 @@ void VUEngine::constructor()
 	this->currentGameCycleEnded = false;
 	this->isPaused = false;
 	this->isInToolStateTransition = false;
+	this->syncToVIP = true;
 
 	// make sure all managers are initialized now
 	this->saveDataManager = NULL;
@@ -859,7 +876,7 @@ void VUEngine::processUserInput(GameState currentGameState)
 	this->processName = PROCESS_NAME_INPUT;
 #endif
 
-	UserInput userInput = KeypadManager::readUserInput(this->keypadManager);
+	UserInput userInput = KeypadManager::readUserInput(this->keypadManager, this->syncToVIP);
 	
 #ifdef __TOOLS
 	if(VUEngine::checkIfToggleTool(this, &userInput))
@@ -1027,20 +1044,23 @@ void VUEngine::run(GameState currentGameState)
 		// Stream entities
 		VUEngine::stream(this, currentGameState);
 #else
-#ifndef __UNLOCK_FPS
-		do
+		if(!this->syncToVIP)
 		{
-			// Stream the heck out of the pending entities
-			if(!VUEngine::stream(this, currentGameState))
-			{
-				this->currentGameCycleEnded = true;
-			}
+			while(VUEngine::stream(this, currentGameState));
 		}
-		// While we wait for the next game start
-		while(!this->gameFrameStarted);
-#else
-		while(VUEngine::stream(this, currentGameState));
-#endif
+		else
+		{
+			do
+			{
+				// Stream the heck out of the pending entities
+				if(!VUEngine::stream(this, currentGameState))
+				{
+					this->currentGameCycleEnded = true;
+				}
+			}
+			// While we wait for the next game start
+			while(!this->gameFrameStarted);			
+		}
 #endif
 
 		this->currentGameCycleEnded = true;

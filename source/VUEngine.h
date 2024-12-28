@@ -135,6 +135,9 @@ singleton class VUEngine : ListenerObject
 	/// Flag raised when entering or exiting a tool state
 	bool isInToolStateTransition;
 
+	/// If false, the game loop runs unlocked
+	bool syncToVIP;
+
 	/// @publicsection
 
 	/// Method to retrieve the singleton instance
@@ -240,6 +243,12 @@ singleton class VUEngine : ListenerObject
 	/// Set the target frame rate.
 	/// @param gameFrameRate: New frame rate target
 	void setGameFrameRate(uint16 gameFrameRate);
+
+	/// Lock the frame rate.
+	void lockFrameRate();
+
+	/// Unlock the frame rate.
+	void unlockFrameRate();
 
 	/// Enable user input.
 	void enableKeypad();

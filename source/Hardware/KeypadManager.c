@@ -73,17 +73,20 @@ int32 KeypadManager::isEnabled()
 	return this->enabled;
 }
 //---------------------------------------------------------------------------------------------------------
-UserInput KeypadManager::readUserInput()
+UserInput KeypadManager::readUserInput(bool waitForStableReading)
 {
-#ifdef __UNLOCK_FPS
-	if(*_readingStatus & __S_STAT)
+	if(!waitForStableReading)
 	{
-		return (UserInput){K_NON, K_NON, K_NON, K_NON, K_NON, K_NON, K_NON, K_NON};
+		if(*_readingStatus & __S_STAT)
+		{
+			return (UserInput){K_NON, K_NON, K_NON, K_NON, K_NON, K_NON, K_NON, K_NON};
+		}
 	}
-#else
-	// wait for keypad to stabilize
-	while(*_readingStatus & __S_STAT);
-#endif
+	else
+	{
+		// wait for keypad to stabilize
+		while(*_readingStatus & __S_STAT);
+	}
 
 	// now read the keys
 	this->userInput.allKeys = (((_hardwareRegisters[__SDHR] << 8)) | _hardwareRegisters[__SDLR]);

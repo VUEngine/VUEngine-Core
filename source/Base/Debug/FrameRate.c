@@ -20,6 +20,19 @@
 
 
 //=========================================================================================================
+// CLASS' MACROS
+//=========================================================================================================
+
+#ifndef __PRINT_FRAMERATE_AT_X
+#define __PRINT_FRAMERATE_AT_X		20
+#endif
+
+#ifndef __PRINT_FRAMERATE_AT_Y
+#define __PRINT_FRAMERATE_AT_Y		0
+#endif
+
+
+//=========================================================================================================
 // CLASS' PUBLIC METHODS
 //=========================================================================================================
 
@@ -45,7 +58,7 @@ void FrameRate::update()
 	this->FPS++;
 }
 //---------------------------------------------------------------------------------------------------------
-void FrameRate::gameFrameStarted(bool gameCycleEnded)
+void FrameRate::gameFrameStarted(bool gameCycleEnded, bool printFPS)
 {
 	if(!gameCycleEnded)
 	{
@@ -67,37 +80,22 @@ void FrameRate::gameFrameStarted(bool gameCycleEnded)
 
 		if(this->targetFPS > this->FPS)
 		{
-#ifdef __PRINT_FRAMERATE_DIP
-#ifdef __PRINT_FRAMERATE_AT_X
-#ifdef __PRINT_FRAMERATE_AT_Y
-			FrameRate::print(this, __PRINT_FRAMERATE_AT_X, __PRINT_FRAMERATE_AT_Y);
-#endif
-#endif
-#endif
 			if(!isDeleted(this->events))
 			{
 				FrameRate::fireEvent(this, kEventFramerateDipped);
 			}
 		}
 
-#ifdef __UNLOCK_FPS
-#define __PRINT_FRAMERATE
-#define __PRINT_FRAMERATE_AT_X		27
-#define __PRINT_FRAMERATE_AT_Y		0
-#endif
-
-#ifdef __PRINT_FRAMERATE
-#ifdef __PRINT_FRAMERATE_AT_X
-#ifdef __PRINT_FRAMERATE_AT_Y
-#ifndef __TOOLS
-		if(!VUEngine::isInToolState(VUEngine::getInstance()))
-#endif
+		if(printFPS)
 		{
-			FrameRate::print(this, __PRINT_FRAMERATE_AT_X, __PRINT_FRAMERATE_AT_Y);
+#ifdef __TOOLS
+			if(!VUEngine::isInToolState(VUEngine::getInstance()))
+#endif
+			{
+				FrameRate::print(this, __PRINT_FRAMERATE_AT_X, __PRINT_FRAMERATE_AT_Y);
+			}
 		}
-#endif
-#endif
-#endif
+
 		this->FPS = 0;
 		this->unevenFPS = 0;
 		this->gameFrameStarts = 0;
@@ -106,18 +104,11 @@ void FrameRate::gameFrameStarted(bool gameCycleEnded)
 //---------------------------------------------------------------------------------------------------------
 void FrameRate::print(int32 x, int32 y)
 {
-#ifdef __UNLOCK_FPS
-	Printing printing = Printing::getInstance();
-	Printing::text(printing, "FPS     |AVR     ", x, y, NULL);
-	Printing::int32(printing, this->FPS, x, y, NULL);
-	Printing::int32(printing, this->totalFPS / this->seconds, x + 14, y, NULL);
-#else
 	Printing printing = Printing::getInstance();
 	Printing::text(printing, "FPS     |TORN  |AVR     ", x, y, NULL);
 	Printing::int32(printing, this->FPS, x + 4, y, NULL);
 	Printing::int32(printing, this->unevenFPS, x + 14, y, NULL);
 	Printing::int32(printing, ((float)this->totalFPS / this->seconds) + 0.5f, x + 20, y, NULL);
-#endif
 }
 //---------------------------------------------------------------------------------------------------------
 
