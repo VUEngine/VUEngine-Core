@@ -511,6 +511,11 @@ uint16 Entity::getComponentsCount(uint32 componentType)
 	return ComponentManager::getComponentsCount(SpatialObject::safeCast(this), componentType);
 }
 //---------------------------------------------------------------------------------------------------------
+void Entity::clearComponentLists(uint32 componentType)
+{
+	ComponentManager::cleanOwnerComponentLists(SpatialObject::safeCast(this), componentType);
+}
+//---------------------------------------------------------------------------------------------------------
 void Entity::suspend()
 {
 	Base::suspend(this);

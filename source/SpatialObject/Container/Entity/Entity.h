@@ -287,6 +287,10 @@ class Entity : Container
 	/// @return Number of components belonging to the entity
 	uint16 getComponentsCount(uint32 componentType);
 
+	/// Clear the linked lists of components.
+	/// @param componentType: Type of components whose lists must be cleard
+	void clearComponentLists(uint32 componentType);
+
 	/// Enable collision detection on the entity's colliders.
 	void enableCollisions();
 
