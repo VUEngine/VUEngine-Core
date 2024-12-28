@@ -932,13 +932,11 @@ void VUEngine::dispatchDelayedMessages()
 #endif
 #endif
 	{
-
 		MessageDispatcher::dispatchDelayedMessages(MessageDispatcher::getInstance());
 
 #ifdef __ENABLE_PROFILER
 		Profiler::lap(Profiler::getInstance(), kProfilerLapTypeNormalProcess, PROCESS_NAME_MESSAGES);
 #endif
-
 	}
 }
 //---------------------------------------------------------------------------------------------------------
