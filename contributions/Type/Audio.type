@@ -212,8 +212,8 @@
 									"default": false
 								},
 								"direction": {
-									"type": "boolean",
-									"default": true
+									"type": "number",
+									"default": 0
 								},
 								"initialValue": {
 									"type": "integer",
@@ -241,8 +241,8 @@
 									"default": true
 								},
 								"function": {
-									"type": "boolean",
-									"default": true
+									"type": "number",
+									"default": 1
 								},
 								"frequency": {
 									"type": "integer",
@@ -255,8 +255,8 @@
 									"maximum": 7
 								},
 								"direction": {
-									"type": "boolean",
-									"default": true
+									"type": "number",
+									"default": 0
 								},
 								"shift": {
 									"type": "integer",
