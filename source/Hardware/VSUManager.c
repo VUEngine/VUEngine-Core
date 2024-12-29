@@ -539,16 +539,17 @@ void VSUManager::setWaveform(Waveform* waveform, const int8* data)
 		// Disable interrupts to make the following as soon as possible
 		HardwareManager::suspendInterrupts();
 
-		// Must stop all soundSpec before writing the waveforms
-		VSUManager::suspendPlayingSounds(this);
+		// Must stop all sound sources before writing the waveforms
+		for(int32 i = 0; i < __TOTAL_SOUND_SOURCES; i++)
+		{
+			this->vsuSoundSourceConfigurations[i].vsuSoundSource->SxEV1 |= 0x01;
+		}
 
+		// Set the wave data
 		for(uint32 i = 0; i < 32; i++)
 		{
 			waveform->wave[(i << 2)] = (uint8)data[i];
 		}
-
-		// Resume playing sounds
-		VSUManager::resumePlayingSounds(this);
 
 		// Turn back interrupts on
 		HardwareManager::resumeInterrupts();
@@ -566,17 +567,5 @@ void VSUManager::setWaveform(Waveform* waveform, const int8* data)
 		}
 		*/
 	}
-}
-//---------------------------------------------------------------------------------------------------------
-void VSUManager::suspendPlayingSounds()
-{
-	for(int32 i = 0; i < __TOTAL_SOUND_SOURCES; i++)
-	{
-		this->vsuSoundSourceConfigurations[i].vsuSoundSource->SxEV1 |= 0x01;
-	}
-}
-//---------------------------------------------------------------------------------------------------------
-void VSUManager::resumePlayingSounds()
-{
 }
 //---------------------------------------------------------------------------------------------------------

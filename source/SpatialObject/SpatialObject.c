@@ -44,16 +44,10 @@ void SpatialObject::constructor()
 	// Always explicitly call the base's constructor 
 	Base::constructor();
 
-	// set position
-	this->transformation.position = Vector3D::zero();
-
-	// set rotation
-	this->transformation.rotation = Rotation::zero();
-
-	// set scale
-	this->transformation.scale = Scale::unit();
-
 	this->components = NULL;
+	this->transformation.position = Vector3D::zero();
+	this->transformation.rotation = Rotation::zero();
+	this->transformation.scale = Scale::unit();
 }
 //---------------------------------------------------------------------------------------------------------
 void SpatialObject::destructor()
