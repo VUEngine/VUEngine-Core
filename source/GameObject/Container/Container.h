@@ -15,7 +15,7 @@
 // INCLUDES
 //=========================================================================================================
 
-#include <SpatialObject.h>
+#include <GameObject.h>
 #include <stdarg.h>
 
 
@@ -40,10 +40,10 @@ class VirtualList;
 ///
 /// Class Container
 ///
-/// Inherits from SpatialObject
+/// Inherits from GameObject
 ///
 /// Adds parenting cababilities to spatial objects.
-class Container : SpatialObject
+class Container : GameObject
 {
 	/// @protectedsection
 

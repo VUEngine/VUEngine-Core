@@ -23,7 +23,7 @@
 #include <VirtualNode.h>
 #include <VUEngine.h>
 
-#include "SpatialObject.h"
+#include "GameObject.h"
 
 
 //=========================================================================================================
@@ -39,7 +39,7 @@ friend class VirtualList;
 //=========================================================================================================
 
 //---------------------------------------------------------------------------------------------------------
-void SpatialObject::constructor()
+void GameObject::constructor()
 {
 	// Always explicitly call the base's constructor 
 	Base::constructor();
@@ -50,7 +50,7 @@ void SpatialObject::constructor()
 	this->transformation.scale = Scale::unit();
 }
 //---------------------------------------------------------------------------------------------------------
-void SpatialObject::destructor()
+void GameObject::destructor()
 {
 	if(!isDeleted(this->components))
 	{
@@ -70,7 +70,7 @@ void SpatialObject::destructor()
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------
-void SpatialObject::clearComponentLists(uint32 componentType)
+void GameObject::clearComponentLists(uint32 componentType)
 {
 	if(NULL == this->components)
 	{
@@ -98,16 +98,16 @@ void SpatialObject::clearComponentLists(uint32 componentType)
 	}
 }
 //---------------------------------------------------------------------------------------------------------
-Component SpatialObject::addComponent(ComponentSpec* componentSpec)
+Component GameObject::addComponent(ComponentSpec* componentSpec)
 {
 	Component component = ComponentManager::addComponent(this, componentSpec);
 
-	SpatialObject::calculateSize(this);
+	GameObject::calculateSize(this);
 
 	return component;
 }
 //---------------------------------------------------------------------------------------------------------
-void SpatialObject::removeComponent(Component component)
+void GameObject::removeComponent(Component component)
 {
 	if(NULL == component)
 	{
@@ -116,93 +116,93 @@ void SpatialObject::removeComponent(Component component)
 
 	ComponentManager::removeComponent(this, component);
 
-	SpatialObject::calculateSize(this);
+	GameObject::calculateSize(this);
 }
 //---------------------------------------------------------------------------------------------------------
-void SpatialObject::addComponents(ComponentSpec** componentSpecs, uint32 componentType)
+void GameObject::addComponents(ComponentSpec** componentSpecs, uint32 componentType)
 {
 	ComponentManager::addComponents(this, componentSpecs, componentType);
 
-	SpatialObject::calculateSize(this);
+	GameObject::calculateSize(this);
 }
 //---------------------------------------------------------------------------------------------------------
-void SpatialObject::removeComponents(uint32 componentType)
+void GameObject::removeComponents(uint32 componentType)
 {
 	ComponentManager::removeComponents(this, componentType);
 
-	SpatialObject::calculateSize(this);
+	GameObject::calculateSize(this);
 }
 //---------------------------------------------------------------------------------------------------------
-Component SpatialObject::getComponentAtIndex(uint32 componentType, int16 componentIndex)
+Component GameObject::getComponentAtIndex(uint32 componentType, int16 componentIndex)
 {
 	return ComponentManager::getComponentAtIndex(this, componentType, componentIndex);
 }
 //---------------------------------------------------------------------------------------------------------
-VirtualList SpatialObject::getComponents(uint32 componentType)
+VirtualList GameObject::getComponents(uint32 componentType)
 {
 	return ComponentManager::getComponents(this, componentType);
 }
 //---------------------------------------------------------------------------------------------------------
-bool SpatialObject::getComponentsOfClass(ClassPointer classPointer, VirtualList components, uint32 componentType)
+bool GameObject::getComponentsOfClass(ClassPointer classPointer, VirtualList components, uint32 componentType)
 {
 	return ComponentManager::getComponentsOfClass(this, classPointer, components, componentType);
 }
 //---------------------------------------------------------------------------------------------------------
-uint16 SpatialObject::getComponentsCount(uint32 componentType)
+uint16 GameObject::getComponentsCount(uint32 componentType)
 {
 	return ComponentManager::getComponentsCount(this, componentType);
 }
 //---------------------------------------------------------------------------------------------------------
-const Transformation* SpatialObject::getTransformation()
+const Transformation* GameObject::getTransformation()
 {
 	return &this->transformation;
 }
 //---------------------------------------------------------------------------------------------------------
-const Vector3D* SpatialObject::getPosition()
+const Vector3D* GameObject::getPosition()
 {
 	return &this->transformation.position;
 }
 //---------------------------------------------------------------------------------------------------------
-const Rotation* SpatialObject::getRotation()
+const Rotation* GameObject::getRotation()
 {
 	return &this->transformation.rotation;
 }
 //---------------------------------------------------------------------------------------------------------
-const Scale* SpatialObject::getScale()
+const Scale* GameObject::getScale()
 {
 	return &this->transformation.scale;
 }
 //---------------------------------------------------------------------------------------------------------
-void SpatialObject::enableCollisions()
+void GameObject::enableCollisions()
 {
-	ColliderManager::propagateCommand(VUEngine::getColliderManager(_vuEngine), cComponentCommandEnable, SpatialObject::safeCast(this));
+	ColliderManager::propagateCommand(VUEngine::getColliderManager(_vuEngine), cComponentCommandEnable, GameObject::safeCast(this));
 }
 //---------------------------------------------------------------------------------------------------------
-void SpatialObject::disableCollisions()
+void GameObject::disableCollisions()
 {
-	ColliderManager::propagateCommand(VUEngine::getColliderManager(_vuEngine), cComponentCommandDisable, SpatialObject::safeCast(this));
+	ColliderManager::propagateCommand(VUEngine::getColliderManager(_vuEngine), cComponentCommandDisable, GameObject::safeCast(this));
 }
 //---------------------------------------------------------------------------------------------------------
-void SpatialObject::checkCollisions(bool active)
+void GameObject::checkCollisions(bool active)
 {
-	ColliderManager::propagateCommand(VUEngine::getColliderManager(_vuEngine), cColliderComponentCommandCheckCollisions, SpatialObject::safeCast(this), (uint32)active);
+	ColliderManager::propagateCommand(VUEngine::getColliderManager(_vuEngine), cColliderComponentCommandCheckCollisions, GameObject::safeCast(this), (uint32)active);
 }
 //---------------------------------------------------------------------------------------------------------
-void SpatialObject::registerCollisions(bool value)
+void GameObject::registerCollisions(bool value)
 {
-	ColliderManager::propagateCommand(VUEngine::getColliderManager(_vuEngine), cColliderComponentCommandRegisterCollisions, SpatialObject::safeCast(this), (uint32)value);
+	ColliderManager::propagateCommand(VUEngine::getColliderManager(_vuEngine), cColliderComponentCommandRegisterCollisions, GameObject::safeCast(this), (uint32)value);
 }
 //---------------------------------------------------------------------------------------------------------
-void SpatialObject::setCollidersLayers(uint32 layers)
+void GameObject::setCollidersLayers(uint32 layers)
 {
-	ColliderManager::propagateCommand(VUEngine::getColliderManager(_vuEngine), cColliderComponentCommandSetLayers, SpatialObject::safeCast(this), (uint32)layers);
+	ColliderManager::propagateCommand(VUEngine::getColliderManager(_vuEngine), cColliderComponentCommandSetLayers, GameObject::safeCast(this), (uint32)layers);
 }
 //---------------------------------------------------------------------------------------------------------
-uint32 SpatialObject::getCollidersLayers()
+uint32 GameObject::getCollidersLayers()
 {
 	uint32 collidersLayers = 0;
 
-	VirtualList colliders = SpatialObject::getComponents(this, kColliderComponent);
+	VirtualList colliders = GameObject::getComponents(this, kColliderComponent);
 
 	for(VirtualNode node = colliders->head; NULL != node; node = node->next)
 	{
@@ -214,16 +214,16 @@ uint32 SpatialObject::getCollidersLayers()
 	return collidersLayers;
 }
 //---------------------------------------------------------------------------------------------------------
-void SpatialObject::setCollidersLayersToIgnore(uint32 layersToIgnore)
+void GameObject::setCollidersLayersToIgnore(uint32 layersToIgnore)
 {
-	ColliderManager::propagateCommand(VUEngine::getColliderManager(_vuEngine), cColliderComponentCommandSetLayersToIgnore, SpatialObject::safeCast(this), (uint32)layersToIgnore);
+	ColliderManager::propagateCommand(VUEngine::getColliderManager(_vuEngine), cColliderComponentCommandSetLayersToIgnore, GameObject::safeCast(this), (uint32)layersToIgnore);
 }
 //---------------------------------------------------------------------------------------------------------
-uint32 SpatialObject::getCollidersLayersToIgnore()
+uint32 GameObject::getCollidersLayersToIgnore()
 {
 	uint32 collidersLayersToIgnore = 0;
 
-	VirtualList colliders = SpatialObject::getComponents(this, kColliderComponent);
+	VirtualList colliders = GameObject::getComponents(this, kColliderComponent);
 
 	for(VirtualNode node = colliders->head; NULL != node; node = node->next)
 	{
@@ -235,17 +235,17 @@ uint32 SpatialObject::getCollidersLayersToIgnore()
 	return collidersLayersToIgnore;
 }
 //---------------------------------------------------------------------------------------------------------
-void SpatialObject::showColliders()
+void GameObject::showColliders()
 {
-	ColliderManager::propagateCommand(VUEngine::getColliderManager(_vuEngine), cColliderComponentCommandShow, SpatialObject::safeCast(this));
+	ColliderManager::propagateCommand(VUEngine::getColliderManager(_vuEngine), cColliderComponentCommandShow, GameObject::safeCast(this));
 }
 //---------------------------------------------------------------------------------------------------------
-void SpatialObject::hideColliders()
+void GameObject::hideColliders()
 {
-	ColliderManager::propagateCommand(VUEngine::getColliderManager(_vuEngine), cColliderComponentCommandHide, SpatialObject::safeCast(this));
+	ColliderManager::propagateCommand(VUEngine::getColliderManager(_vuEngine), cColliderComponentCommandHide, GameObject::safeCast(this));
 }
 //---------------------------------------------------------------------------------------------------------
-void SpatialObject::createComponents(ComponentSpec** componentSpecs)
+void GameObject::createComponents(ComponentSpec** componentSpecs)
 {
 	if(NULL == componentSpecs || 0 < ComponentManager::getComponentsCount(this, kComponentTypes))
 	{
@@ -254,43 +254,43 @@ void SpatialObject::createComponents(ComponentSpec** componentSpecs)
 		return;
 	}
 
-	SpatialObject::addComponents(this, componentSpecs, kComponentTypes);
+	GameObject::addComponents(this, componentSpecs, kComponentTypes);
 }
 //---------------------------------------------------------------------------------------------------------
-void SpatialObject::destroyComponents()
+void GameObject::destroyComponents()
 {
 	ComponentManager::removeComponents(this, kComponentTypes);
 }
 //---------------------------------------------------------------------------------------------------------
-void SpatialObject::addedComponent(Component component __attribute__((unused)))
+void GameObject::addedComponent(Component component __attribute__((unused)))
 {}
 //---------------------------------------------------------------------------------------------------------
-void SpatialObject::removedComponent(Component component __attribute__((unused)))
+void GameObject::removedComponent(Component component __attribute__((unused)))
 {}
 //---------------------------------------------------------------------------------------------------------
-void SpatialObject::calculateSize()
+void GameObject::calculateSize()
 {}
 //---------------------------------------------------------------------------------------------------------
-fixed_t SpatialObject::getRadius()
+fixed_t GameObject::getRadius()
 {
 	return 0;
 }
 //---------------------------------------------------------------------------------------------------------
-const Vector3D* SpatialObject::getVelocity()
+const Vector3D* GameObject::getVelocity()
 {
 	static Vector3D dummyVelocity = {0, 0, 0};
 
 	return &dummyVelocity;
 }
 //---------------------------------------------------------------------------------------------------------
-fixed_t SpatialObject::getSpeed()
+fixed_t GameObject::getSpeed()
 {
 	return 0;
 }
 //---------------------------------------------------------------------------------------------------------
-fixed_t SpatialObject::getBounciness()
+fixed_t GameObject::getBounciness()
 {
-	Body body = Body::safeCast(ComponentManager::getComponentAtIndex(SpatialObject::safeCast(this), kPhysicsComponent, 0));
+	Body body = Body::safeCast(ComponentManager::getComponentAtIndex(GameObject::safeCast(this), kPhysicsComponent, 0));
 
 	if(isDeleted(body))
 	{
@@ -300,9 +300,9 @@ fixed_t SpatialObject::getBounciness()
 	return Body::getBounciness(body);
 }
 //---------------------------------------------------------------------------------------------------------
-fixed_t SpatialObject::getFrictionCoefficient()
+fixed_t GameObject::getFrictionCoefficient()
 {
-	Body body = Body::safeCast(ComponentManager::getComponentAtIndex(SpatialObject::safeCast(this), kPhysicsComponent, 0));
+	Body body = Body::safeCast(ComponentManager::getComponentAtIndex(GameObject::safeCast(this), kPhysicsComponent, 0));
 
 	if(isDeleted(body))
 	{
@@ -312,49 +312,49 @@ fixed_t SpatialObject::getFrictionCoefficient()
 	return Body::getFrictionCoefficient(body);
 }
 //---------------------------------------------------------------------------------------------------------
-void SpatialObject::setPosition(const Vector3D* position)
+void GameObject::setPosition(const Vector3D* position)
 {
 	this->transformation.position = *position;
 }
 //---------------------------------------------------------------------------------------------------------
-void SpatialObject::setRotation(const Rotation* rotation)
+void GameObject::setRotation(const Rotation* rotation)
 {
 	this->transformation.rotation = *rotation;
 }
 //---------------------------------------------------------------------------------------------------------
-void SpatialObject::setScale(const Scale* scale)
+void GameObject::setScale(const Scale* scale)
 {
 	this->transformation.scale = *scale;
 }
 //---------------------------------------------------------------------------------------------------------
-void SpatialObject::setDirection(const Vector3D* direction __attribute__ ((unused)))
+void GameObject::setDirection(const Vector3D* direction __attribute__ ((unused)))
 {}
 //---------------------------------------------------------------------------------------------------------
-const Vector3D* SpatialObject::getDirection()
+const Vector3D* GameObject::getDirection()
 {
 	static Vector3D dummyDirection = {0, 0, 0};
 
 	return &dummyDirection;
 }
 //---------------------------------------------------------------------------------------------------------
-bool SpatialObject::isSubjectToGravity(Vector3D gravity __attribute__ ((unused)))
+bool GameObject::isSubjectToGravity(Vector3D gravity __attribute__ ((unused)))
 {
 	return false;
 }
 //---------------------------------------------------------------------------------------------------------
-uint32 SpatialObject::getInGameType()
+uint32 GameObject::getInGameType()
 {
 	return kTypeNone;
 }
 //---------------------------------------------------------------------------------------------------------
-bool SpatialObject::collisionStarts(const CollisionInformation* collisionInformation __attribute__ ((unused)))
+bool GameObject::collisionStarts(const CollisionInformation* collisionInformation __attribute__ ((unused)))
 {
 	return false;
 }
 //---------------------------------------------------------------------------------------------------------
-void SpatialObject::collisionPersists(const CollisionInformation* collisionInformation __attribute__ ((unused)))
+void GameObject::collisionPersists(const CollisionInformation* collisionInformation __attribute__ ((unused)))
 {}
 //---------------------------------------------------------------------------------------------------------
-void SpatialObject::collisionEnds(const CollisionInformation* collisionInformation __attribute__ ((unused)))
+void GameObject::collisionEnds(const CollisionInformation* collisionInformation __attribute__ ((unused)))
 {}
 //---------------------------------------------------------------------------------------------------------

@@ -181,13 +181,13 @@ class Actor : AnimatedEntity
 
 	/// Check if when the actor bounces it has to take into account the colliding object's bounciness.
 	/// @return True if the actor has to take into account the colliding object's bounciness when bouncing
-	virtual bool isSensibleToCollidingObjectBouncinessOnCollision(SpatialObject collidingObject);
+	virtual bool isSensibleToCollidingObjectBouncinessOnCollision(GameObject collidingObject);
 
 	/// Check if when the actor bounces it has to take into account the colliding object's friction
 	/// coefficient.
 	/// @return True if the actor has to take into account the colliding object's friction coefficient when
 	/// bouncing
-	virtual bool isSensibleToCollidingObjectFrictionOnCollision(SpatialObject collidingObject);
+	virtual bool isSensibleToCollidingObjectFrictionOnCollision(GameObject collidingObject);
 }
 
 #endif

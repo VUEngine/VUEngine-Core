@@ -95,9 +95,9 @@ abstract class Wireframe : VisualComponent
 
 	/// @publicsection
 	/// Class' constructor
-	/// @param owner: SpatialObject to which the wireframe attaches to
+	/// @param owner: GameObject to which the wireframe attaches to
 	/// @param wireframeSpec: Specification that determines how to configure the wireframe
-	void constructor(SpatialObject owner, const WireframeSpec* wireframeSpec);
+	void constructor(GameObject owner, const WireframeSpec* wireframeSpec);
 
 	/// Set the displacement relative to the owner's spatial position
 	/// @param displacement: Displacement relative to the owner's spatial position

@@ -15,7 +15,7 @@
 // INCLUDES
 //=========================================================================================================
 
-#include <SpatialObject.h>
+#include <GameObject.h>
 #include <Sprite.h>
 
 
@@ -68,10 +68,10 @@ typedef const ParticleSpec ParticleROMSpec;
 ///
 /// Class Particle
 ///
-/// Inherits from SpatialObject
+/// Inherits from GameObject
 ///
 /// Implements a particle that is spawned by particle systems.
-class Particle : SpatialObject
+class Particle : GameObject
 {
 	/// @protectedsection
 

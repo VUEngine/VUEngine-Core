@@ -120,18 +120,18 @@ singleton class SpriteManager : ComponentManager
 	/// Check if at least of the sprites that attach to the provided owner is visible.
 	/// @param owner: Object to which the sprites attach to
 	/// @return True if at least of the sprites that attach to the provided owner is visible
-	override bool isAnyVisible(SpatialObject owner);
+	override bool isAnyVisible(GameObject owner);
 
 	/// Create a sprite with the provided spec.
 	/// @param owner: Object to which the sprite will attach to
 	/// @param spriteSpec: Spec to use to create the sprite
 	/// @return Created sprite
-	override Sprite createComponent(SpatialObject owner, const SpriteSpec* spriteSpec);
+	override Sprite createComponent(GameObject owner, const SpriteSpec* spriteSpec);
 
 	/// Destroy the provided sprite.
 	/// @param owner: Object to which the sprite will attach to
 	/// @param sprite: Sprite to destroy
-	override void destroyComponent(SpatialObject owner, Sprite sprite);
+	override void destroyComponent(GameObject owner, Sprite sprite);
 
 	/// Reset the manager's state
 	void reset();
@@ -144,7 +144,7 @@ singleton class SpriteManager : ComponentManager
 	/// @param owner: Object to which the sprite will attach to
 	/// @param spriteSpec: Spec to use to create the sprite
 	/// @return Created sprite
-	Sprite createSprite(SpatialObject owner, const SpriteSpec* spriteSpec);
+	Sprite createSprite(GameObject owner, const SpriteSpec* spriteSpec);
 
 	/// Destroy the provided sprite.
 	/// @param sprite: Sprite to destroy

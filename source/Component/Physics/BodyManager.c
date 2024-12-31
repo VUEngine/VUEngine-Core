@@ -47,7 +47,7 @@ static fixed_t BodyManager::getElapsedTimeStep()
 //=========================================================================================================
 
 //---------------------------------------------------------------------------------------------------------
-Body BodyManager::createComponent(SpatialObject owner, const BodySpec* bodySpec)
+Body BodyManager::createComponent(GameObject owner, const BodySpec* bodySpec)
 {
 	if(NULL == bodySpec)
 	{
@@ -59,7 +59,7 @@ Body BodyManager::createComponent(SpatialObject owner, const BodySpec* bodySpec)
 	return BodyManager::createBody(this, owner, bodySpec);
 }
 //---------------------------------------------------------------------------------------------------------
-void BodyManager::destroyComponent(SpatialObject owner, Body body) 
+void BodyManager::destroyComponent(GameObject owner, Body body) 
 {
 	if(isDeleted(body))
 	{
@@ -128,7 +128,7 @@ void BodyManager::update()
 			continue;
 		}
 
-		if(__NO_AXIS != body->axisSubjectToGravity && SpatialObject::isSubjectToGravity(body->owner, this->gravity))
+		if(__NO_AXIS != body->axisSubjectToGravity && GameObject::isSubjectToGravity(body->owner, this->gravity))
 		{
 			// check if necessary to apply gravity
 			uint16 movingState = Body::getMovementOnAllAxis(body);
@@ -158,7 +158,7 @@ void BodyManager::update()
 #endif
 }
 //---------------------------------------------------------------------------------------------------------
-Body BodyManager::createBody(SpatialObject owner, const BodySpec* bodySpec)
+Body BodyManager::createBody(GameObject owner, const BodySpec* bodySpec)
 {
 	if(this->dirty)
 	{
@@ -322,7 +322,7 @@ void BodyManager::destructor()
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------
-Body BodyManager::getBody(SpatialObject owner)
+Body BodyManager::getBody(GameObject owner)
 {
 	ASSERT(this->components, "BodyManager::getBody: null bodies");
 
@@ -344,9 +344,9 @@ Body BodyManager::getBody(SpatialObject owner)
 	return NULL;
 }
 //---------------------------------------------------------------------------------------------------------
-bool BodyManager::isSpatialObjectRegistered(SpatialObject owner)
+bool BodyManager::isGameObjectRegistered(GameObject owner)
 {
-	ASSERT(this->components, "BodyManager::isSpatialObjectRegistered: null bodies");
+	ASSERT(this->components, "BodyManager::isGameObjectRegistered: null bodies");
 
 	VirtualNode node = this->components->head;
 
@@ -356,7 +356,7 @@ bool BodyManager::isSpatialObjectRegistered(SpatialObject owner)
 		Body body = Body::safeCast(node->data);
 
 		// check if current body's owner is the same as the entity calling this method
-		if(SpatialObject::safeCast(owner) == body->owner)
+		if(GameObject::safeCast(owner) == body->owner)
 		{
 			return true;
 		}

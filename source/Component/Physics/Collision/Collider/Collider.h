@@ -21,7 +21,7 @@
 // FORWARD DECLARATIONS
 //=========================================================================================================
 
-class SpatialObject;
+class GameObject;
 class Collider;
 
 //=========================================================================================================
@@ -218,7 +218,7 @@ abstract class Collider : Component
 	/// @publicsection
 
 	/// Class' constructor
-	void constructor(SpatialObject owner, const ColliderSpec* colliderSpec);
+	void constructor(GameObject owner, const ColliderSpec* colliderSpec);
 
 	/// Process a Telegram.
 	/// @param telegram: Telegram to process

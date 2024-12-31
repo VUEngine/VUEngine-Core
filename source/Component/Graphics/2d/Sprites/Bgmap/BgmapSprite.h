@@ -96,9 +96,9 @@ class BgmapSprite : Sprite
 	/// @publicsection
 
 	/// Class' constructor
-	/// @param owner: SpatialObject to which the sprite attaches to
+	/// @param owner: GameObject to which the sprite attaches to
 	/// @param bgmapSpriteSpec: Specification that determines how to configure the sprite
-	void constructor(SpatialObject owner, const BgmapSpriteSpec* bgmapSpriteSpec);
+	void constructor(GameObject owner, const BgmapSpriteSpec* bgmapSpriteSpec);
 	
 	/// Register this sprite with the appropriate sprites manager.
 	override void registerWithManager();

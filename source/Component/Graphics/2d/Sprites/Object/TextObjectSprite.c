@@ -35,7 +35,7 @@ friend class Texture;
 //=========================================================================================================
 
 //---------------------------------------------------------------------------------------------------------
-void TextObjectSprite::constructor(SpatialObject owner, const TextObjectSpriteSpec* textObjectSpriteSpec)
+void TextObjectSprite::constructor(GameObject owner, const TextObjectSpriteSpec* textObjectSpriteSpec)
 {
 	// Always explicitly call the base's constructor 
 	Base::constructor(owner, &textObjectSpriteSpec->objectSpriteSpec);

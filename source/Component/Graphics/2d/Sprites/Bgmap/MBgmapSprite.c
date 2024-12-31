@@ -47,7 +47,7 @@ friend class VirtualList;
 //=========================================================================================================
 
 //---------------------------------------------------------------------------------------------------------
-void MBgmapSprite::constructor(SpatialObject owner, const MBgmapSpriteSpec* mBgmapSpriteSpec)
+void MBgmapSprite::constructor(GameObject owner, const MBgmapSpriteSpec* mBgmapSpriteSpec)
 {
 	// Always explicitly call the base's constructor 
 	Base::constructor(owner, &mBgmapSpriteSpec->bgmapSpriteSpec);

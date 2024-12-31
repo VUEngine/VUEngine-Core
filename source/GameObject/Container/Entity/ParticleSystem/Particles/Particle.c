@@ -73,7 +73,7 @@ void Particle::setup(const VisualComponentSpec* visualComponentSpec, int16 lifeS
 	}
 
 	// TOOD: the preprocessor does't catch properly this override check with Particle 	
-	if(SpatialObject::overrides(this, setPosition))
+	if(GameObject::overrides(this, setPosition))
 	{
 		Particle::setPosition(this, position);
 	}
@@ -213,7 +213,7 @@ void Particle::addVisualComponent(const VisualComponentSpec* visualComponentSpec
 	if(NULL != visualComponentSpec && NULL == this->visualComponent)
 	{
 		// call the appropriate allocator to support inheritance
-		this->visualComponent = VisualComponent::safeCast(ComponentManager::addComponent(SpatialObject::safeCast(this), (ComponentSpec*)visualComponentSpec));
+		this->visualComponent = VisualComponent::safeCast(ComponentManager::addComponent(GameObject::safeCast(this), (ComponentSpec*)visualComponentSpec));
 	}
 }
 //---------------------------------------------------------------------------------------------------------
@@ -221,7 +221,7 @@ void Particle::destroyGraphics()
 {
 	if(!isDeleted(this->visualComponent))
 	{
-		ComponentManager::removeComponent(SpatialObject::safeCast(this), Component::safeCast(this->visualComponent));
+		ComponentManager::removeComponent(GameObject::safeCast(this), Component::safeCast(this->visualComponent));
 	}
 
 	this->visualComponent = NULL;

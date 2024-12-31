@@ -34,7 +34,7 @@ void PhysicalParticle::constructor(const PhysicalParticleSpec* physicalParticleS
 	this->physicalParticleSpec = physicalParticleSpec;
 	fixed_t mass = this->physicalParticleSpec->minimumMass + (this->physicalParticleSpec->massDelta ? Math::random(_gameRandomSeed, this->physicalParticleSpec->massDelta) : 0);
 	BodySpec bodySpec = {{__TYPE(Body), kPhysicsComponent}, true, mass, 0, 0, Vector3D::zero(), 0, physicalParticleSpec->axisSubjectToGravity};
-	this->body = BodyManager::createBody(VUEngine::getBodyManager(_vuEngine), SpatialObject::safeCast(this), &bodySpec);
+	this->body = BodyManager::createBody(VUEngine::getBodyManager(_vuEngine), GameObject::safeCast(this), &bodySpec);
 }
 //---------------------------------------------------------------------------------------------------------
 void PhysicalParticle::destructor()
@@ -69,7 +69,7 @@ void PhysicalParticle::setPosition(const Vector3D* position)
 
 	if(Body::getPosition(this->body) != position)
 	{
-		Body::setPosition(this->body, position, SpatialObject::safeCast(this));
+		Body::setPosition(this->body, position, GameObject::safeCast(this));
 	}
 
 	Base::setPosition(this, position);

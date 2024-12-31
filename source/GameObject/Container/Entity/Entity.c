@@ -685,7 +685,7 @@ bool Entity::isInCameraRange(int16 padding, bool recursive)
 		return true;
 	}
 
-	if(VisualComponent::isAnyVisible(SpatialObject::safeCast(this)))
+	if(VisualComponent::isAnyVisible(GameObject::safeCast(this)))
 	{
 		return true;
 	}
@@ -731,7 +731,7 @@ void Entity::show()
 
 	Entity::invalidateTransformation(this);
 
-	VisualComponent::propagateCommand(cVisualComponentCommandShow, SpatialObject::safeCast(this));
+	VisualComponent::propagateCommand(cVisualComponentCommandShow, GameObject::safeCast(this));
 
 	if(!isDeleted(this->children))
 	{
@@ -743,7 +743,7 @@ void Entity::hide()
 {
 	this->hidden = true;
 	
-	VisualComponent::propagateCommand(cVisualComponentCommandHide, SpatialObject::safeCast(this));
+	VisualComponent::propagateCommand(cVisualComponentCommandHide, GameObject::safeCast(this));
 
 	if(!isDeleted(this->children))
 	{
@@ -753,7 +753,7 @@ void Entity::hide()
 //---------------------------------------------------------------------------------------------------------
 void Entity::setTransparency(uint8 transparency)
 {
-	VisualComponent::propagateCommand(cVisualComponentCommandSetTransparency, SpatialObject::safeCast(this), (uint32)transparency);
+	VisualComponent::propagateCommand(cVisualComponentCommandSetTransparency, GameObject::safeCast(this), (uint32)transparency);
 
 	if(!isDeleted(this->children))
 	{
@@ -775,7 +775,7 @@ void Entity::calculateSizeFromChildren(RightBox* rightBox, Vector3D environmentP
 
 	if(0 == this->size.x || 0 == this->size.y || 0 == this->size.z)
 	{
-		bool rightBoxComputed = VisualComponent::calculateRightBox(SpatialObject::safeCast(this), &myRightBox);
+		bool rightBoxComputed = VisualComponent::calculateRightBox(GameObject::safeCast(this), &myRightBox);
 
 		if(!rightBoxComputed)
 		{

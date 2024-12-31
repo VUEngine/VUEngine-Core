@@ -333,7 +333,7 @@ void StageEditor::highLightEntity()
 			};
 
 
-			this->wireframe = WireframeManager::createWireframe(WireframeManager::getInstance(), (WireframeSpec*)&meshSpec, SpatialObject::safeCast(entity));
+			this->wireframe = WireframeManager::createWireframe(WireframeManager::getInstance(), (WireframeSpec*)&meshSpec, GameObject::safeCast(entity));
 		}
 	}
 	else
@@ -714,7 +714,7 @@ void StageEditor::showSelectedUserObject()
 
 	if(spriteSpec)
 	{
-		this->userEntitySprite = ((Sprite (*)(SpatialObject, SpriteSpec*)) spriteSpec->allocator)(NULL, (SpriteSpec*)spriteSpec);
+		this->userEntitySprite = ((Sprite (*)(GameObject, SpriteSpec*)) spriteSpec->allocator)(NULL, (SpriteSpec*)spriteSpec);
 		ASSERT(this->userEntitySprite, "AnimationInspector::createSprite: null animatedSprite");
 		ASSERT(Sprite::getTexture(this->userEntitySprite), "AnimationInspector::createSprite: null texture");
 
@@ -816,9 +816,9 @@ void StageEditor::printEntityPosition()
 	if(this->entityNode)
 	{
 		Entity entity = Entity::safeCast(VirtualNode::getData(this->entityNode));
-		const Vector3D* globalPosition =  SpatialObject::getPosition(entity);
-		const Rotation* globalRotation =  SpatialObject::getRotation(entity);
-		const Scale* globalScale =  SpatialObject::getScale(entity);
+		const Vector3D* globalPosition =  GameObject::getPosition(entity);
+		const Rotation* globalRotation =  GameObject::getRotation(entity);
+		const Scale* globalScale =  GameObject::getScale(entity);
 		const char* entityName = Container::getName(entity);
 
 		Printing::text(Printing::getInstance(),		"ID:                             ", 			x, 		++y, 	NULL);

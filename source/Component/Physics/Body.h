@@ -20,7 +20,7 @@
 // FORWARD DECLARATIONS
 //=========================================================================================================
 
-class SpatialObject;
+class GameObject;
 
 //=========================================================================================================
 // CLASS' MACROS
@@ -193,9 +193,9 @@ class Body : Component
 	);
 
 	/// Class' constructor
-	/// @param owner: SpatialObject to which the body attaches to
+	/// @param owner: GameObject to which the body attaches to
 	/// @param bodySpec: Struct that specifies the physical properties of bodies
-	void constructor(SpatialObject owner, const BodySpec* bodySpec);
+	void constructor(GameObject owner, const BodySpec* bodySpec);
 
 	/// Clear the body's state.
 	void reset();
@@ -279,7 +279,7 @@ class Body : Component
 	/// Set the body's position.
 	/// @param position: 3D vector defining the body's new position
 	/// @param caller: Must be the body's owner; otherwise the call to this method doesn't have any effect
-	void setPosition(const Vector3D* position, SpatialObject caller);
+	void setPosition(const Vector3D* position, GameObject caller);
 
 	/// Retrieve the body's position.
 	/// @return Pointer to the body's 3D vector defining its position

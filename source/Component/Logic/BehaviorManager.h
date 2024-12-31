@@ -58,12 +58,12 @@ singleton class BehaviorManager : ComponentManager
 	/// @param owner: Object to which the behavior will attach to
 	/// @param behaviorSpec: Spec to use to create the behavior
 	/// @return Created behavior
-	override Behavior createComponent(SpatialObject owner, const BehaviorSpec* behaviorSpec);
+	override Behavior createComponent(GameObject owner, const BehaviorSpec* behaviorSpec);
 
 	/// Destroy the provided behavior.
 	/// @param owner: Object to which the sprite will attach to
 	/// @param behavior: Behavior to destroy
-	override void destroyComponent(SpatialObject owner, Behavior behavior);
+	override void destroyComponent(GameObject owner, Behavior behavior);
 
 	/// Reset the manager's state
 	void reset();

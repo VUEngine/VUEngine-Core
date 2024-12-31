@@ -46,7 +46,7 @@ class Ball : Collider
 	static void project(Vector3D center, fixed_t radius, Vector3D vector, fixed_t* min, fixed_t* max);
 
 	/// Class' constructor
-	void constructor(SpatialObject owner, const ColliderSpec* colliderSpec);
+	void constructor(GameObject owner, const ColliderSpec* colliderSpec);
 
 	/// Resize the colliders add the provided increment.
 	/// @param sizeDelta: Delta to add to the collider's size

@@ -15,7 +15,7 @@
 #include <Clock.h>
 #include <DebugConfig.h>
 #include <Printing.h>
-#include <SpatialObject.h>
+#include <GameObject.h>
 #include <Collider.h>
 #include <VirtualList.h>
 
@@ -59,7 +59,7 @@ static uint16 _checkCycles;
 //=========================================================================================================
 
 //---------------------------------------------------------------------------------------------------------
-Collider ColliderManager::createComponent(SpatialObject owner, const ColliderSpec* colliderSpec)
+Collider ColliderManager::createComponent(GameObject owner, const ColliderSpec* colliderSpec)
 {
 	if(NULL == colliderSpec)
 	{
@@ -71,7 +71,7 @@ Collider ColliderManager::createComponent(SpatialObject owner, const ColliderSpe
 	return ColliderManager::createCollider(this, owner, colliderSpec);
 }
 //---------------------------------------------------------------------------------------------------------
-void ColliderManager::destroyComponent(SpatialObject owner, Collider collider) 
+void ColliderManager::destroyComponent(GameObject owner, Collider collider) 
 {
 	if(isDeleted(collider))
 	{
@@ -248,7 +248,7 @@ uint32 ColliderManager::update()
 	return returnValue;
 }
 //---------------------------------------------------------------------------------------------------------
-Collider ColliderManager::createCollider(SpatialObject owner, const ColliderSpec* colliderSpec)
+Collider ColliderManager::createCollider(GameObject owner, const ColliderSpec* colliderSpec)
 {
 	if(NULL == colliderSpec)
 	{
@@ -257,7 +257,7 @@ Collider ColliderManager::createCollider(SpatialObject owner, const ColliderSpec
 
 	ColliderManager::purgeDestroyedColliders(this);
 
-	Collider collider = ((Collider (*)(SpatialObject, const ColliderSpec*)) ((ComponentSpec*)colliderSpec)->allocator)(owner, colliderSpec);
+	Collider collider = ((Collider (*)(GameObject, const ColliderSpec*)) ((ComponentSpec*)colliderSpec)->allocator)(owner, colliderSpec);
 
 	this->dirty = true;
 

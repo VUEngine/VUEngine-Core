@@ -50,9 +50,9 @@ class MBgmapAnimatedSprite : MBgmapSprite
 	/// @publicsection
 
 	/// Class' constructor
-	/// @param owner: SpatialObject to which the sprite attaches to
+	/// @param owner: GameObject to which the sprite attaches to
 	/// @param mBgmapAnimatedSpriteSpec: Specification that determines how to configure the sprite
-	void constructor(SpatialObject owner, const MBgmapAnimatedSpriteSpec* mBgmapAnimatedSpriteSpec);
+	void constructor(GameObject owner, const MBgmapAnimatedSpriteSpec* mBgmapAnimatedSpriteSpec);
 
 	/// Update the animation.
 	override void updateAnimation();

@@ -22,7 +22,7 @@
 // FORWARD DECLARATIONS
 //=========================================================================================================
 
-class SpatialObject;
+class GameObject;
 
 //=========================================================================================================
 // CLASS' DATA
@@ -78,7 +78,7 @@ abstract class Component : ListenerObject
 	/// @protectedsection
 
 	/// Object to which this component attaches to
-	SpatialObject owner;
+	GameObject owner;
 
 	/// Pointer to the spec that defines how to initialize the component
 	const ComponentSpec* componentSpec;
@@ -89,9 +89,9 @@ abstract class Component : ListenerObject
 	/// @publicsection
 
 	/// Class' constructor
-	/// @param owner: SpatialObject to which the component attaches to
+	/// @param owner: GameObject to which the component attaches to
 	/// @param componentSpec: Pointer to the spec that defines how to initialize the component
-	void constructor(SpatialObject owner, const ComponentSpec* componentSpec);
+	void constructor(GameObject owner, const ComponentSpec* componentSpec);
 
 	/// Class' destructor
 	void destructor();
@@ -101,7 +101,7 @@ abstract class Component : ListenerObject
 	ComponentSpec* getSpec();
 
 	/// Retrieve the collider's owner
-	SpatialObject getOwner();
+	GameObject getOwner();
 
 	/// Retrieve the component's type
 	/// @return Component's type'

@@ -123,7 +123,7 @@ void Actor::setPosition(const Vector3D* position)
 
 	if(!isDeleted(this->body) && Body::getPosition(this->body) != position)
 	{
-		Body::setPosition(this->body, &this->transformation.position, SpatialObject::safeCast(this));
+		Body::setPosition(this->body, &this->transformation.position, GameObject::safeCast(this));
 	}
 }
 //---------------------------------------------------------------------------------------------------------
@@ -206,9 +206,9 @@ bool Actor::collisionStarts(const CollisionInformation* collisionInformation)
 		{
 			Collider::resolveCollision(collisionInformation->collider, collisionInformation);
 
-			SpatialObject collidingObject = Collider::getOwner(collisionInformation->otherCollider);
+			GameObject collidingObject = Collider::getOwner(collisionInformation->otherCollider);
 
-			fixed_t bounciness = Actor::isSensibleToCollidingObjectBouncinessOnCollision(this, collidingObject) ? SpatialObject::getBounciness(collidingObject) : 0;
+			fixed_t bounciness = Actor::isSensibleToCollidingObjectBouncinessOnCollision(this, collidingObject) ? GameObject::getBounciness(collidingObject) : 0;
 			fixed_t frictionCoefficient = Actor::isSensibleToCollidingObjectFrictionOnCollision(this, collidingObject) ? Actor::getSurroundingFrictionCoefficient(this) : 0;
 
 			if(Actor::isBouncy(this) && !isDeleted(this->body))
@@ -266,7 +266,7 @@ void Actor::setLocalPosition(const Vector3D* position)
 
 	if(!isDeleted(this->body))
 	{
-		Body::setPosition(this->body, &this->transformation.position, SpatialObject::safeCast(this));
+		Body::setPosition(this->body, &this->transformation.position, GameObject::safeCast(this));
 	}
 
 	this->transformation.invalid |= (displacement.x ? __X_AXIS: 0) | (displacement.y ? __Y_AXIS: 0) | (displacement.y ? __Z_AXIS: 0);
@@ -278,7 +278,7 @@ void Actor::changeEnvironment(Transformation* environmentTransform)
 
 	if(!isDeleted(this->body))
 	{
-		Body::setPosition(this->body, &this->transformation.position, SpatialObject::safeCast(this));
+		Body::setPosition(this->body, &this->transformation.position, GameObject::safeCast(this));
 	}
 }
 //---------------------------------------------------------------------------------------------------------
@@ -292,7 +292,7 @@ void Actor::addedComponent(Component component)
 
 		if(!isDeleted(this->body))
 		{
-			Body::setPosition(this->body, &this->transformation.position, SpatialObject::safeCast(this));
+			Body::setPosition(this->body, &this->transformation.position, GameObject::safeCast(this));
 		}
 	}
 }
@@ -439,12 +439,12 @@ bool Actor::isBouncy()
 	return true;
 }
 //---------------------------------------------------------------------------------------------------------
-bool Actor::isSensibleToCollidingObjectBouncinessOnCollision(SpatialObject collidingObject __attribute__ ((unused)))
+bool Actor::isSensibleToCollidingObjectBouncinessOnCollision(GameObject collidingObject __attribute__ ((unused)))
 {
 	return  true;
 }
 //---------------------------------------------------------------------------------------------------------
-bool Actor::isSensibleToCollidingObjectFrictionOnCollision(SpatialObject collidingObject __attribute__ ((unused)))
+bool Actor::isSensibleToCollidingObjectFrictionOnCollision(GameObject collidingObject __attribute__ ((unused)))
 {
 	return  true;
 }

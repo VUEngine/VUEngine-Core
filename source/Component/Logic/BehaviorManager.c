@@ -30,7 +30,7 @@ friend class Behavior;
 //=========================================================================================================
 
 //---------------------------------------------------------------------------------------------------------
-Behavior BehaviorManager::createComponent(SpatialObject owner, const BehaviorSpec* behaviorSpec)
+Behavior BehaviorManager::createComponent(GameObject owner, const BehaviorSpec* behaviorSpec)
 {
 	if(NULL == behaviorSpec)
 	{
@@ -39,14 +39,14 @@ Behavior BehaviorManager::createComponent(SpatialObject owner, const BehaviorSpe
 
 	Base::createComponent(this, owner, (ComponentSpec*)behaviorSpec);
 
-	Behavior behavior = ((Behavior (*)(SpatialObject, const BehaviorSpec*)) ((ComponentSpec*)behaviorSpec)->allocator)(owner, behaviorSpec);
+	Behavior behavior = ((Behavior (*)(GameObject, const BehaviorSpec*)) ((ComponentSpec*)behaviorSpec)->allocator)(owner, behaviorSpec);
 
 	VirtualList::pushBack(this->components, behavior);
 
 	return behavior;
 }
 //---------------------------------------------------------------------------------------------------------
-void BehaviorManager::destroyComponent(SpatialObject owner, Behavior behavior) 
+void BehaviorManager::destroyComponent(GameObject owner, Behavior behavior) 
 {
 	if(isDeleted(behavior))
 	{

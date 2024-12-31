@@ -16,7 +16,7 @@
 #include <ColliderManager.h>
 #include <DebugConfig.h>
 #include <Printing.h>
-#include <SpatialObject.h>
+#include <GameObject.h>
 #include <Telegram.h>
 #include <VirtualList.h>
 #include <VirtualNode.h>
@@ -46,7 +46,7 @@ friend class VirtualList;
 //=========================================================================================================
 
 //---------------------------------------------------------------------------------------------------------
-void Collider::constructor(SpatialObject owner, const ColliderSpec* colliderSpec)
+void Collider::constructor(GameObject owner, const ColliderSpec* colliderSpec)
 {
 	// Always explicitly call the base's constructor 
 	Base::constructor(owner, (const ComponentSpec*)&colliderSpec->componentSpec);
@@ -331,7 +331,7 @@ void Collider::resolveCollision(const CollisionInformation* collisionInformation
 		{
 			OtherColliderRegistry* otherColliderRegistry = Collider::registerOtherCollider(this, collisionInformation->otherCollider, collisionInformation->solutionVector, true);
 			ASSERT(!isDeleted(otherColliderRegistry), "Collider::resolveCollision: dead otherColliderRegistry");
-			otherColliderRegistry->frictionCoefficient =  SpatialObject::getFrictionCoefficient(collisionInformation->otherCollider->owner);
+			otherColliderRegistry->frictionCoefficient =  GameObject::getFrictionCoefficient(collisionInformation->otherCollider->owner);
 		}
 	}
 }
@@ -478,25 +478,25 @@ void Collider::print(int32 x, int32 y)
 //---------------------------------------------------------------------------------------------------------
 void Collider::collisionStarts(Collision* collision)
 {
-	if(SpatialObject::collisionStarts(this->owner, &collision->collisionInformation))
+	if(GameObject::collisionStarts(this->owner, &collision->collisionInformation))
 	{
 		OtherColliderRegistry* otherColliderRegistry = Collider::findOtherColliderRegistry(this, collision->collisionInformation.otherCollider);
 
 		if(otherColliderRegistry)
 		{
-			otherColliderRegistry->frictionCoefficient =  SpatialObject::getFrictionCoefficient(collision->collisionInformation.otherCollider->owner);
+			otherColliderRegistry->frictionCoefficient =  GameObject::getFrictionCoefficient(collision->collisionInformation.otherCollider->owner);
 		}
 	}
 }
 //---------------------------------------------------------------------------------------------------------
 void Collider::collisionPersists(Collision* collision)
 {
-	SpatialObject::collisionPersists(this->owner, &collision->collisionInformation);
+	GameObject::collisionPersists(this->owner, &collision->collisionInformation);
 }
 //---------------------------------------------------------------------------------------------------------
 void Collider::collisionEnds(Collision* collision)
 {
-	SpatialObject::collisionEnds(this->owner, &collision->collisionInformation);
+	GameObject::collisionEnds(this->owner, &collision->collisionInformation);
 	Collider::unregisterOtherCollider(this, collision->collisionInformation.otherCollider);
 }
 //---------------------------------------------------------------------------------------------------------
@@ -523,7 +523,7 @@ bool Collider::onOtherColliderChanged(ListenerObject eventFirer)
 		collisionInformation.collider = this;
 		collisionInformation.otherCollider = otherCollider;
 
-		SpatialObject::collisionEnds(this->owner, &collisionInformation);
+		GameObject::collisionEnds(this->owner, &collisionInformation);
 	}
 
 	return true;
@@ -609,14 +609,14 @@ OtherColliderRegistry* Collider::findOtherColliderRegistry(Collider collider)
 //---------------------------------------------------------------------------------------------------------
 void Collider::displaceOwner(Vector3D displacement)
 {
-	// retrieve the colliding spatialObject's position and gap
-	Vector3D ownerPosition = * SpatialObject::getPosition(this->owner);
+	// retrieve the colliding gameObject's position and gap
+	Vector3D ownerPosition = * GameObject::getPosition(this->owner);
 
 	ownerPosition.x += displacement.x;
 	ownerPosition.y += displacement.y;
 	ownerPosition.z += displacement.z;
 
-	SpatialObject::setPosition(this->owner, &ownerPosition);
+	GameObject::setPosition(this->owner, &ownerPosition);
 }
 //---------------------------------------------------------------------------------------------------------
 int32 Collider::getNumberOfImpenetrableOtherColliders()

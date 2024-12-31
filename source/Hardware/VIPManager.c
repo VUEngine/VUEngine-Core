@@ -53,7 +53,7 @@ extern uint32 _dramDirtyStart;
 typedef struct PostProcessingEffectRegistry
 {
 	PostProcessingEffect postProcessingEffect;
-	SpatialObject spatialObject;
+	GameObject gameObject;
 	bool remove;
 
 } PostProcessingEffectRegistry;
@@ -326,9 +326,9 @@ void VIPManager::lowerBrightness()
 	_vipRegisters[__BRTC] = 0;
 }
 //---------------------------------------------------------------------------------------------------------
-void VIPManager::pushFrontPostProcessingEffect(PostProcessingEffect postProcessingEffect, SpatialObject spatialObject)
+void VIPManager::pushFrontPostProcessingEffect(PostProcessingEffect postProcessingEffect, GameObject gameObject)
 {
-	PostProcessingEffectRegistry* postProcessingEffectRegistry = VIPManager::isPostProcessingEffectRegistered(this, postProcessingEffect, spatialObject);
+	PostProcessingEffectRegistry* postProcessingEffectRegistry = VIPManager::isPostProcessingEffectRegistered(this, postProcessingEffect, gameObject);
 
 	if(!isDeleted(postProcessingEffectRegistry))
 	{
@@ -338,15 +338,15 @@ void VIPManager::pushFrontPostProcessingEffect(PostProcessingEffect postProcessi
 
 	postProcessingEffectRegistry = new PostProcessingEffectRegistry;
 	postProcessingEffectRegistry->postProcessingEffect = postProcessingEffect;
-	postProcessingEffectRegistry->spatialObject = spatialObject;
+	postProcessingEffectRegistry->gameObject = gameObject;
 	postProcessingEffectRegistry->remove = false;
 
 	VirtualList::pushFront(this->postProcessingEffects, postProcessingEffectRegistry);
 }
 //---------------------------------------------------------------------------------------------------------
-void VIPManager::pushBackPostProcessingEffect(PostProcessingEffect postProcessingEffect, SpatialObject spatialObject)
+void VIPManager::pushBackPostProcessingEffect(PostProcessingEffect postProcessingEffect, GameObject gameObject)
 {
-	PostProcessingEffectRegistry* postProcessingEffectRegistry = VIPManager::isPostProcessingEffectRegistered(this, postProcessingEffect, spatialObject);
+	PostProcessingEffectRegistry* postProcessingEffectRegistry = VIPManager::isPostProcessingEffectRegistered(this, postProcessingEffect, gameObject);
 
 	if(!isDeleted(postProcessingEffectRegistry))
 	{
@@ -356,19 +356,19 @@ void VIPManager::pushBackPostProcessingEffect(PostProcessingEffect postProcessin
 
 	postProcessingEffectRegistry = new PostProcessingEffectRegistry;
 	postProcessingEffectRegistry->postProcessingEffect = postProcessingEffect;
-	postProcessingEffectRegistry->spatialObject = spatialObject;
+	postProcessingEffectRegistry->gameObject = gameObject;
 	postProcessingEffectRegistry->remove = false;
 
 	VirtualList::pushBack(this->postProcessingEffects, postProcessingEffectRegistry);
 }
 //---------------------------------------------------------------------------------------------------------
-void VIPManager::removePostProcessingEffect(PostProcessingEffect postProcessingEffect, SpatialObject spatialObject)
+void VIPManager::removePostProcessingEffect(PostProcessingEffect postProcessingEffect, GameObject gameObject)
 {
 	for(VirtualNode node = this->postProcessingEffects->head; NULL != node; node = node->next)
 	{
 		PostProcessingEffectRegistry* postProcessingEffectRegistry = (PostProcessingEffectRegistry*)node->data;
 
-		if(postProcessingEffectRegistry->postProcessingEffect == postProcessingEffect && postProcessingEffectRegistry->spatialObject == spatialObject)
+		if(postProcessingEffectRegistry->postProcessingEffect == postProcessingEffect && postProcessingEffectRegistry->gameObject == gameObject)
 		{
 			postProcessingEffectRegistry->remove = true;
 			return;
@@ -620,7 +620,7 @@ void VIPManager::applyPostProcessingEffects()
 		}
 		else
 		{
-			postProcessingEffectRegistry->postProcessingEffect(this->currentDrawingFrameBufferSet, postProcessingEffectRegistry->spatialObject);
+			postProcessingEffectRegistry->postProcessingEffect(this->currentDrawingFrameBufferSet, postProcessingEffectRegistry->gameObject);
 		}
 	}
 }
@@ -711,7 +711,7 @@ bool VIPManager::isDrawingAllowed()
 	return 0 != (_vipRegisters[__XPSTTS] & __XPEN);
 }
 //---------------------------------------------------------------------------------------------------------
-PostProcessingEffectRegistry* VIPManager::isPostProcessingEffectRegistered(PostProcessingEffect postProcessingEffect, SpatialObject spatialObject)
+PostProcessingEffectRegistry* VIPManager::isPostProcessingEffectRegistered(PostProcessingEffect postProcessingEffect, GameObject gameObject)
 {
 	VirtualNode node = this->postProcessingEffects->head;
 
@@ -719,7 +719,7 @@ PostProcessingEffectRegistry* VIPManager::isPostProcessingEffectRegistered(PostP
 	{
 		PostProcessingEffectRegistry* postProcessingEffectRegistry = (PostProcessingEffectRegistry*)node->data;
 
-		if(postProcessingEffectRegistry->postProcessingEffect == postProcessingEffect && postProcessingEffectRegistry->spatialObject == spatialObject)
+		if(postProcessingEffectRegistry->postProcessingEffect == postProcessingEffect && postProcessingEffectRegistry->gameObject == gameObject)
 		{
 			return postProcessingEffectRegistry;
 		}

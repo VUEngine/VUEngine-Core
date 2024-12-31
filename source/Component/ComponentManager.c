@@ -19,7 +19,7 @@
 #include <Collider.h>
 #include <ColliderManager.h>
 #include <Printing.h>
-#include <SpatialObject.h>
+#include <GameObject.h>
 #include <Sprite.h>
 #include <SpriteManager.h>
 #include <VirtualList.h>
@@ -35,7 +35,7 @@
 //=========================================================================================================
 
 friend class Component;
-friend class SpatialObject;
+friend class GameObject;
 friend class VirtualNode;
 friend class VirtualList;
 
@@ -51,7 +51,7 @@ friend class VirtualList;
 //=========================================================================================================
 
 //---------------------------------------------------------------------------------------------------------
-static Component ComponentManager::addComponent(SpatialObject owner, ComponentSpec* componentSpec)
+static Component ComponentManager::addComponent(GameObject owner, ComponentSpec* componentSpec)
 {
 	ComponentManager componentManager = ComponentManager::getManager(componentSpec->componentType);
 
@@ -64,13 +64,13 @@ static Component ComponentManager::addComponent(SpatialObject owner, ComponentSp
 
 	if(!isDeleted(component))
 	{
-		SpatialObject::addedComponent(owner, component);
+		GameObject::addedComponent(owner, component);
 	}
 
 	return component;
 }
 //---------------------------------------------------------------------------------------------------------
-static void ComponentManager::removeComponent(SpatialObject owner, Component component)
+static void ComponentManager::removeComponent(GameObject owner, Component component)
 {
 	uint32 componentType = ComponentManager::getComponentType(component);
 
@@ -88,13 +88,13 @@ static void ComponentManager::removeComponent(SpatialObject owner, Component com
 
 	if(!isDeleted(component))
 	{
-		SpatialObject::removedComponent(owner, component);
+		GameObject::removedComponent(owner, component);
 	}
 
 	ComponentManager::destroyComponent(componentManager, owner, component);
 }
 //---------------------------------------------------------------------------------------------------------
-static void ComponentManager::addComponents(SpatialObject owner, ComponentSpec** componentSpecs, uint32 componentType)
+static void ComponentManager::addComponents(GameObject owner, ComponentSpec** componentSpecs, uint32 componentType)
 {
 	for(int32 i = 0; NULL != componentSpecs[i] && NULL != componentSpecs[i]->allocator; i++)
 	{
@@ -116,7 +116,7 @@ static void ComponentManager::addComponents(SpatialObject owner, ComponentSpec**
 	}
 }
 //---------------------------------------------------------------------------------------------------------
-static void ComponentManager::removeComponents(SpatialObject owner, uint32 componentType)
+static void ComponentManager::removeComponents(GameObject owner, uint32 componentType)
 {
 	if(kComponentTypes <= componentType)
 	{
@@ -137,7 +137,7 @@ static void ComponentManager::removeComponents(SpatialObject owner, uint32 compo
 
 				if(owner == component->owner)
 				{
-					SpatialObject::removedComponent(owner, component);
+					GameObject::removedComponent(owner, component);
 
 					ComponentManager::destroyComponent(componentManager, owner, component);
 				}
@@ -161,7 +161,7 @@ static void ComponentManager::removeComponents(SpatialObject owner, uint32 compo
 
 			if(owner == component->owner)
 			{
-				SpatialObject::removedComponent(owner, component);
+				GameObject::removedComponent(owner, component);
 
 				ComponentManager::destroyComponent(componentManager, owner, component);
 			}
@@ -169,7 +169,7 @@ static void ComponentManager::removeComponents(SpatialObject owner, uint32 compo
 	}
 }
 //---------------------------------------------------------------------------------------------------------
-static Component ComponentManager::getComponentAtIndex(SpatialObject owner, uint32 componentType, int16 componentIndex)
+static Component ComponentManager::getComponentAtIndex(GameObject owner, uint32 componentType, int16 componentIndex)
 {
 	if(kComponentTypes <= componentType)
 	{
@@ -200,7 +200,7 @@ static Component ComponentManager::getComponentAtIndex(SpatialObject owner, uint
 }
 
 //---------------------------------------------------------------------------------------------------------
-static VirtualList ComponentManager::getComponents(SpatialObject owner, uint32 componentType)
+static VirtualList ComponentManager::getComponents(GameObject owner, uint32 componentType)
 {
 	if(NULL == owner->components)
 	{
@@ -231,7 +231,7 @@ static VirtualList ComponentManager::getComponents(SpatialObject owner, uint32 c
 	return ComponentManager::doGetComponents(componentManager, owner, owner->components[componentType]);
 }
 //---------------------------------------------------------------------------------------------------------
-static bool ComponentManager::getComponentsOfClass(SpatialObject owner, ClassPointer classPointer, VirtualList components, uint32 componentType)
+static bool ComponentManager::getComponentsOfClass(GameObject owner, ClassPointer classPointer, VirtualList components, uint32 componentType)
 {
 	if(kComponentTypes <= componentType)
 	{
@@ -268,7 +268,7 @@ static bool ComponentManager::getComponentsOfClass(SpatialObject owner, ClassPoi
 	return false;
 }
 //---------------------------------------------------------------------------------------------------------
-static uint16 ComponentManager::getComponentsCount(SpatialObject owner, uint32 componentType)
+static uint16 ComponentManager::getComponentsCount(GameObject owner, uint32 componentType)
 {
 	uint16 count = 0;
 
@@ -401,7 +401,7 @@ static uint32 ComponentManager::getComponentType(Component component)
 	return component->componentSpec->componentType;
 }
 //---------------------------------------------------------------------------------------------------------
-static void ComponentManager::cleanOwnerComponentLists(SpatialObject owner, uint32 componentType)
+static void ComponentManager::cleanOwnerComponentLists(GameObject owner, uint32 componentType)
 {
 	if(NULL != owner->components && NULL != owner->components[componentType])
 	{
@@ -438,7 +438,7 @@ void ComponentManager::destructor()
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------
-void ComponentManager::propagateCommand(int32 command, SpatialObject owner, ...)
+void ComponentManager::propagateCommand(int32 command, GameObject owner, ...)
 {
 	for(VirtualNode node = this->components->head; NULL != node; node = node->next)
 	{
@@ -458,7 +458,7 @@ void ComponentManager::propagateCommand(int32 command, SpatialObject owner, ...)
 	}
 }
 //---------------------------------------------------------------------------------------------------------
-uint16 ComponentManager::getCount(SpatialObject owner)
+uint16 ComponentManager::getCount(GameObject owner)
 {
 	uint16 count = 0;
 
@@ -477,7 +477,7 @@ uint16 ComponentManager::getCount(SpatialObject owner)
 	return count;
 }
 //---------------------------------------------------------------------------------------------------------
-Component ComponentManager::createComponent(SpatialObject owner, const ComponentSpec* componentSpec)
+Component ComponentManager::createComponent(GameObject owner, const ComponentSpec* componentSpec)
 {
 	if(kComponentTypes <= componentSpec->componentType)
 	{
@@ -489,7 +489,7 @@ Component ComponentManager::createComponent(SpatialObject owner, const Component
 	return NULL;
 }
 //---------------------------------------------------------------------------------------------------------
-void ComponentManager::destroyComponent(SpatialObject owner, Component component) 
+void ComponentManager::destroyComponent(GameObject owner, Component component) 
 {
 	if(isDeleted(component))
 	{
@@ -504,7 +504,7 @@ void ComponentManager::destroyComponent(SpatialObject owner, Component component
 	ComponentManager::cleanOwnerComponentLists(owner, component->componentSpec->componentType);
 }
 //---------------------------------------------------------------------------------------------------------
-VirtualList ComponentManager::doGetComponents(SpatialObject owner, VirtualList components)
+VirtualList ComponentManager::doGetComponents(GameObject owner, VirtualList components)
 {
 	for(VirtualNode node = this->components->head; NULL != node; node = node->next)
 	{
@@ -519,7 +519,7 @@ VirtualList ComponentManager::doGetComponents(SpatialObject owner, VirtualList c
 	return components;
 }
 //---------------------------------------------------------------------------------------------------------
-bool ComponentManager::isAnyVisible(SpatialObject owner __attribute((unused)))
+bool ComponentManager::isAnyVisible(GameObject owner __attribute((unused)))
 {
 	return false;
 }

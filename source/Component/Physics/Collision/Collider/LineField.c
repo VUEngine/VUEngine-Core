@@ -15,7 +15,7 @@
 #include <DebugConfig.h>
 #include <Line.h>
 #include <Printing.h>
-#include <SpatialObject.h>
+#include <GameObject.h>
 
 #include "LineField.h"
 
@@ -47,7 +47,7 @@ static void LineField::project(Vector3D center, fixed_t radius, Vector3D vector,
 //=========================================================================================================
 
 //---------------------------------------------------------------------------------------------------------
-void LineField::constructor(SpatialObject owner, const ColliderSpec* colliderSpec)
+void LineField::constructor(GameObject owner, const ColliderSpec* colliderSpec)
 {
 	// Always explicitly call the base's constructor 
 	Base::constructor(owner, colliderSpec);

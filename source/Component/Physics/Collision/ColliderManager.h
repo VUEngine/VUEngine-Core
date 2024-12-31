@@ -30,7 +30,7 @@
 // CLASS' MACROS
 //=========================================================================================================
 
-class SpatialObject;
+class GameObject;
 class Clock;
 
 
@@ -63,12 +63,12 @@ class ColliderManager : ComponentManager
 	/// @param owner: Object to which the collider will attach to
 	/// @param colliderSpec: Spec to use to create the collider
 	/// @return Created collider
-	override Collider createComponent(SpatialObject owner, const ColliderSpec* colliderSpec);
+	override Collider createComponent(GameObject owner, const ColliderSpec* colliderSpec);
 
 	/// Destroy the provided collider.
 	/// @param owner: Object to which the sprite will attach to
 	/// @param collider: Collider to destroy
-	override void destroyComponent(SpatialObject owner, Collider collider);
+	override void destroyComponent(GameObject owner, Collider collider);
 
 	/// Reset the manager's state.
 	void reset();
@@ -83,7 +83,7 @@ class ColliderManager : ComponentManager
 	/// @param owner: Object to which the collider will attach to
 	/// @param colliderSpec: Spec to use to create the collider
 	/// @return Created collider
-	Collider createCollider(SpatialObject owner, const ColliderSpec* colliderSpec);
+	Collider createCollider(GameObject owner, const ColliderSpec* colliderSpec);
 
 	/// Destroy the provided collider.
 	/// @param collider: Collider to destroy

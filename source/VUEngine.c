@@ -388,19 +388,19 @@ ListenerObject VUEngine::getSaveDataManager()
 	return this->saveDataManager;
 }
 //---------------------------------------------------------------------------------------------------------
-void VUEngine::pushFrontPostProcessingEffect(PostProcessingEffect postProcessingEffect, SpatialObject spatialObject)
+void VUEngine::pushFrontPostProcessingEffect(PostProcessingEffect postProcessingEffect, GameObject gameObject)
 {
-	VIPManager::pushFrontPostProcessingEffect(this->vipManager, postProcessingEffect, spatialObject);
+	VIPManager::pushFrontPostProcessingEffect(this->vipManager, postProcessingEffect, gameObject);
 }
 //---------------------------------------------------------------------------------------------------------
-void VUEngine::pushBackPostProcessingEffect(PostProcessingEffect postProcessingEffect, SpatialObject spatialObject)
+void VUEngine::pushBackPostProcessingEffect(PostProcessingEffect postProcessingEffect, GameObject gameObject)
 {
-	VIPManager::pushBackPostProcessingEffect(this->vipManager, postProcessingEffect, spatialObject);
+	VIPManager::pushBackPostProcessingEffect(this->vipManager, postProcessingEffect, gameObject);
 }
 //---------------------------------------------------------------------------------------------------------
-void VUEngine::removePostProcessingEffect(PostProcessingEffect postProcessingEffect, SpatialObject spatialObject)
+void VUEngine::removePostProcessingEffect(PostProcessingEffect postProcessingEffect, GameObject gameObject)
 {
-	VIPManager::removePostProcessingEffect(this->vipManager, postProcessingEffect, spatialObject);
+	VIPManager::removePostProcessingEffect(this->vipManager, postProcessingEffect, gameObject);
 }
 //---------------------------------------------------------------------------------------------------------
 void VUEngine::frameStarted(uint16 gameFrameDuration)

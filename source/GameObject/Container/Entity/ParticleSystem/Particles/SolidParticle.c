@@ -81,7 +81,7 @@ void SolidParticle::constructor(const SolidParticleSpec* solidParticleSpec)
 	};
 
 	// register a collider for collision detection
-	this->collider = ColliderManager::createCollider(VUEngine::getColliderManager(VUEngine::getInstance()), SpatialObject::safeCast(this), this->colliderSpec);
+	this->collider = ColliderManager::createCollider(VUEngine::getColliderManager(VUEngine::getInstance()), GameObject::safeCast(this), this->colliderSpec);
 	Collider::registerCollisions(this->collider, false);
 
 	// has to set bounciness and friction myself since Particle ignores collisions
@@ -169,9 +169,9 @@ bool SolidParticle::collisionStarts(const CollisionInformation* collisionInforma
 		{
 			Collider::resolveCollision(collisionInformation->collider, collisionInformation);
 
-			SpatialObject owner = Collider::getOwner(collisionInformation->otherCollider);
-			fixed_t frictionCoefficient =  SpatialObject::getFrictionCoefficient(owner);
-			fixed_t bounciness =  SpatialObject::getBounciness(owner);
+			GameObject owner = Collider::getOwner(collisionInformation->otherCollider);
+			fixed_t frictionCoefficient =  GameObject::getFrictionCoefficient(owner);
+			fixed_t bounciness =  GameObject::getBounciness(owner);
 
 			Body::bounce(this->body, ListenerObject::safeCast(collisionInformation->otherCollider), collisionInformation->solutionVector.direction, frictionCoefficient, bounciness);
 			returnValue = true;

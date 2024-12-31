@@ -16,7 +16,7 @@
 #include <ComponentManager.h>
 #include <DebugConfig.h>
 #include <Printing.h>
-#include <SpatialObject.h>
+#include <GameObject.h>
 #include <SpriteManager.h>
 #include <VirtualList.h>
 #include <WireframeManager.h>
@@ -38,7 +38,7 @@ friend class VirtualNode;
 //=========================================================================================================
 
 //---------------------------------------------------------------------------------------------------------
-static void VisualComponent::propagateCommand(int32 command, SpatialObject owner, ...)
+static void VisualComponent::propagateCommand(int32 command, GameObject owner, ...)
 {
 	va_list args;
 	va_start(args, owner);
@@ -49,7 +49,7 @@ static void VisualComponent::propagateCommand(int32 command, SpatialObject owner
 	WireframeManager::propagateCommand(WireframeManager::getInstance(), command, owner, value);
 }
 //---------------------------------------------------------------------------------------------------------
-static bool VisualComponent::calculateRightBox(SpatialObject owner, RightBox* rightBox)
+static bool VisualComponent::calculateRightBox(GameObject owner, RightBox* rightBox)
 {
 	bool modified = false;
 
@@ -82,7 +82,7 @@ static bool VisualComponent::calculateRightBox(SpatialObject owner, RightBox* ri
 	return modified;
 }
 //---------------------------------------------------------------------------------------------------------
-static bool VisualComponent::isAnyVisible(SpatialObject owner)
+static bool VisualComponent::isAnyVisible(GameObject owner)
 {
 	if(SpriteManager::isAnyVisible(SpriteManager::getInstance(), owner))
 	{
@@ -158,7 +158,7 @@ static void VisualComponent::getRightBoxFromVisualComponents(VirtualList visualC
 //=========================================================================================================
 
 //---------------------------------------------------------------------------------------------------------
-void VisualComponent::constructor(SpatialObject owner, const VisualComponentSpec* visualComponentSpec)
+void VisualComponent::constructor(GameObject owner, const VisualComponentSpec* visualComponentSpec)
 {
 	// Always explicitly call the base's constructor 
 	Base::constructor(owner, (const ComponentSpec*)visualComponentSpec);

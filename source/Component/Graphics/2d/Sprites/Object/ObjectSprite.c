@@ -34,7 +34,7 @@ friend class Texture;
 //=========================================================================================================
 
 //---------------------------------------------------------------------------------------------------------
-void ObjectSprite::constructor(SpatialObject owner, const ObjectSpriteSpec* objectSpriteSpec)
+void ObjectSprite::constructor(GameObject owner, const ObjectSpriteSpec* objectSpriteSpec)
 {
 	NM_ASSERT(NULL != objectSpriteSpec, "ObjectSprite::constructor: NULL objectSpriteSpec");
 

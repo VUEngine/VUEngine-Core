@@ -69,18 +69,18 @@ singleton class WireframeManager : ComponentManager
 	/// Check if at least of the sprites that attach to the provided owner is visible.
 	/// @param owner: Object to which the sprites attach to
 	/// @return True if at least of the sprites that attach to the provided owner is visible
-	override bool isAnyVisible(SpatialObject owner);
+	override bool isAnyVisible(GameObject owner);
 
 	/// Create a wireframe with the provided spec.
 	/// @param owner: Object to which the wireframe will attach to
 	/// @param wireframeSpec: Spec to use to create the wireframe
 	/// @return Created wireframe
-	override Wireframe createComponent(SpatialObject owner, const WireframeSpec* wireframeSpec);
+	override Wireframe createComponent(GameObject owner, const WireframeSpec* wireframeSpec);
 
 	/// Destroy the provided wireframe.
 	/// @param owner: Object to which the sprite will attach to
 	/// @param wireframe: Wireframe to destroy
-	override void destroyComponent(SpatialObject owner, Wireframe wireframe);
+	override void destroyComponent(GameObject owner, Wireframe wireframe);
 
 	/// Reset the manager's state.
 	void reset();
@@ -95,7 +95,7 @@ singleton class WireframeManager : ComponentManager
 	/// @param owner: Object to which the wireframe will attach toc
 	/// @param wireframeSpec: Spec to use to create the wireframe
 	/// @return Created wireframe
-	Wireframe createWireframe(SpatialObject owner, const WireframeSpec* wireframeSpec);
+	Wireframe createWireframe(GameObject owner, const WireframeSpec* wireframeSpec);
 
 	/// Destroy the provided wireframe.
 	/// @param wireframe: Wireframe to destroy
@@ -119,11 +119,11 @@ singleton class WireframeManager : ComponentManager
 
 	/// Show all wireframes belonging to the provided owner.
 	/// @param owner: Object to which the wireframe will attach to
-	void showWireframes(SpatialObject owner);
+	void showWireframes(GameObject owner);
 
 	/// Hide all wireframes belonging to the provided owner.
 	/// @param owner: Object to which the wireframe will attach to
-	void hideWireframes(SpatialObject owner);
+	void hideWireframes(GameObject owner);
 
 	/// Show all wireframes.
 	void showAllWireframes();

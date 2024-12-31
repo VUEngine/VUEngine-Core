@@ -104,9 +104,9 @@ class ObjectSprite : Sprite
 	/// @publicsection
 
 	/// Class' constructor
-	/// @param owner: SpatialObject to which the sprite attaches to
+	/// @param owner: GameObject to which the sprite attaches to
 	/// @param objectSpriteSpec: Specification that determines how to configure the sprite
-	void constructor(SpatialObject owner, const ObjectSpriteSpec* objectSpriteSpec);
+	void constructor(GameObject owner, const ObjectSpriteSpec* objectSpriteSpec);
 
 	/// Register this sprite with the appropriate sprites manager.
 	override void registerWithManager();

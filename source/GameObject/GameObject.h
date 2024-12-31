@@ -7,8 +7,8 @@
  * that was distributed with this source code.
  */
 
-#ifndef SPATIAL_OBJECT_H_
-#define SPATIAL_OBJECT_H_
+#ifndef GAME_OBJECT_H_
+#define GAME_OBJECT_H_
 
 
 //=========================================================================================================
@@ -33,12 +33,12 @@ class VirtualList;
 //=========================================================================================================
 
 ///
-/// Class SpatialObject
+/// Class GameObject
 ///
 /// Inherits from ListenerObject
 ///
 /// Defines objects that occupy a place in 3D space.
-class SpatialObject : ListenerObject
+class GameObject : ListenerObject
 {
 	/// @protectedsection
 	

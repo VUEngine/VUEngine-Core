@@ -73,34 +73,34 @@ void AnimatedEntity::playAnimation(const char* animationName)
 {
 	this->playingAnimationName = animationName;
 
-	SpriteManager::propagateCommand(SpriteManager::getInstance(), cVisualComponentCommandPlay, SpatialObject::safeCast(this), ((AnimatedEntitySpec*)this->entitySpec)->animationFunctions, animationName, ListenerObject::safeCast(this), (EventListener)AnimatedEntity::onAnimationComplete);
+	SpriteManager::propagateCommand(SpriteManager::getInstance(), cVisualComponentCommandPlay, GameObject::safeCast(this), ((AnimatedEntitySpec*)this->entitySpec)->animationFunctions, animationName, ListenerObject::safeCast(this), (EventListener)AnimatedEntity::onAnimationComplete);
 }
 //---------------------------------------------------------------------------------------------------------
 void AnimatedEntity::pauseAnimation(bool pause)
 {
-	SpriteManager::propagateCommand(SpriteManager::getInstance(), cVisualComponentCommandPause, SpatialObject::safeCast(this), pause);
+	SpriteManager::propagateCommand(SpriteManager::getInstance(), cVisualComponentCommandPause, GameObject::safeCast(this), pause);
 }
 //---------------------------------------------------------------------------------------------------------
 void AnimatedEntity::stopAnimation()
 {
 	this->playingAnimationName = NULL;
 
-	SpriteManager::propagateCommand(SpriteManager::getInstance(), cVisualComponentCommandStop, SpatialObject::safeCast(this));
+	SpriteManager::propagateCommand(SpriteManager::getInstance(), cVisualComponentCommandStop, GameObject::safeCast(this));
 }
 //---------------------------------------------------------------------------------------------------------
 void AnimatedEntity::setActualFrame(int16 frame)
 {
-	SpriteManager::propagateCommand(SpriteManager::getInstance(), cVisualComponentCommandSetFrame, SpatialObject::safeCast(this), frame);
+	SpriteManager::propagateCommand(SpriteManager::getInstance(), cVisualComponentCommandSetFrame, GameObject::safeCast(this), frame);
 }
 //---------------------------------------------------------------------------------------------------------
 void AnimatedEntity::nextFrame()
 {
-	SpriteManager::propagateCommand(SpriteManager::getInstance(), cVisualComponentCommandNextFrame, SpatialObject::safeCast(this));
+	SpriteManager::propagateCommand(SpriteManager::getInstance(), cVisualComponentCommandNextFrame, GameObject::safeCast(this));
 }
 //---------------------------------------------------------------------------------------------------------
 void AnimatedEntity::previousFrame()
 {
-	SpriteManager::propagateCommand(SpriteManager::getInstance(), cVisualComponentCommandPreviousFrame, SpatialObject::safeCast(this));
+	SpriteManager::propagateCommand(SpriteManager::getInstance(), cVisualComponentCommandPreviousFrame, GameObject::safeCast(this));
 }
 //---------------------------------------------------------------------------------------------------------
 bool AnimatedEntity::isPlaying()

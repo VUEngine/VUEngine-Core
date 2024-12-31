@@ -20,7 +20,7 @@
 // FORWARD DECLARATIONS
 //=========================================================================================================
 
-class SpatialObject;
+class GameObject;
 
 extern volatile uint16* _vipRegisters __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE;
 extern uint32* _currentDrawingFrameBufferSet __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE;
@@ -254,7 +254,7 @@ enum MultiplexedInterrupts
 };
 
 /// A method pointer for processing special effects after drawing operations are completed
-typedef void (*PostProcessingEffect)(uint32 currentDrawingFrameBufferSet, SpatialObject scope);
+typedef void (*PostProcessingEffect)(uint32 currentDrawingFrameBufferSet, GameObject scope);
 
 //=========================================================================================================
 // FORWARD DECLARATIONS
@@ -385,22 +385,22 @@ singleton class VIPManager : ListenerObject
 
 	/// Push a post processing effect at the start of the list of effects.
 	/// @param postProcessingEffect: Post-processing effect function
-	/// @param spatialObject: Post-processing effect function's scope
+	/// @param gameObject: Post-processing effect function's scope
 	void pushFrontPostProcessingEffect(
-		PostProcessingEffect postProcessingEffect, SpatialObject spatialObject
+		PostProcessingEffect postProcessingEffect, GameObject gameObject
 	);
 
 	/// Push a post processing effect at the end of the list of effects.
 	/// @param postProcessingEffect: Post-processing effect function
-	/// @param spatialObject: Post-processing effect function's scope
+	/// @param gameObject: Post-processing effect function's scope
 	void pushBackPostProcessingEffect(
-		PostProcessingEffect postProcessingEffect, SpatialObject spatialObject
+		PostProcessingEffect postProcessingEffect, GameObject gameObject
 	);
 
 	/// Remove a post-processing effect from the list of effects.
 	/// @param postProcessingEffect: Post-processing effect function
-	/// @param spatialObject: Post-processing effect function's scope
-	void removePostProcessingEffect(PostProcessingEffect postProcessingEffect, SpatialObject spatialObject);
+	/// @param gameObject: Post-processing effect function's scope
+	void removePostProcessingEffect(PostProcessingEffect postProcessingEffect, GameObject gameObject);
 
 	/// Remove all a post-processing effects.
 	void removePostProcessingEffects();

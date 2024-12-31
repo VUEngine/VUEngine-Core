@@ -17,7 +17,7 @@
 #include <MessageDispatcher.h>
 #include <BodyManager.h>
 #include <Printing.h>
-#include <SpatialObject.h>
+#include <GameObject.h>
 #include <VirtualList.h>
 #include <VirtualNode.h>
 #include <VUEngine.h>
@@ -112,7 +112,7 @@ static inline fix7_9_ext Body::doComputeInstantaneousSpeed(fixed_t forceMagnitud
 //=========================================================================================================
 
 //---------------------------------------------------------------------------------------------------------
-void Body::constructor(SpatialObject owner, const BodySpec* bodySpec)
+void Body::constructor(GameObject owner, const BodySpec* bodySpec)
 {
 	// Always explicitly call the base's constructor 
 	Base::constructor(owner, (const ComponentSpec*)&bodySpec->componentSpec);
@@ -267,8 +267,8 @@ void Body::update(uint16 cycle, fix7_9_ext elapsedTime)
 
 	if(!isDeleted(this->owner))
 	{
-		SpatialObject::setPosition(this->owner, &this->position);
-		SpatialObject::setDirection(this->owner, &this->direction);
+		GameObject::setPosition(this->owner, &this->position);
+		GameObject::setDirection(this->owner, &this->direction);
 	}
 
 	// if stopped on any axis
@@ -416,7 +416,7 @@ void Body::bounce(ListenerObject bounceReferent, Vector3D bouncingPlaneNormal, f
 	{
 		if(!isDeleted(this->owner))
 		{
-			SpatialObject::setDirection(this->owner, &this->direction);
+			GameObject::setDirection(this->owner, &this->direction);
 		}
 	}
 }
@@ -595,7 +595,7 @@ fixed_t Body::getMass()
 	return this->mass;
 }
 //---------------------------------------------------------------------------------------------------------
-void Body::setPosition(const Vector3D* position, SpatialObject caller)
+void Body::setPosition(const Vector3D* position, GameObject caller)
 {
 	if(this->owner == caller)
 	{

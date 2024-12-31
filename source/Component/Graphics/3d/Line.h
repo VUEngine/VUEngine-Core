@@ -64,9 +64,9 @@ class Line : Wireframe
 	/// @publicsection
 
 	/// Class' constructor
-	/// @param owner: SpatialObject to which the wireframe attaches to
+	/// @param owner: GameObject to which the wireframe attaches to
 	/// @param lineSpec: Specification that determines how to configure the wireframe
-	void constructor(SpatialObject owner, const LineSpec* lineSpec);
+	void constructor(GameObject owner, const LineSpec* lineSpec);
 
 	/// Prepare the wireframe for drawing.
 	/// @param relativePosition: Position relative to the camera's

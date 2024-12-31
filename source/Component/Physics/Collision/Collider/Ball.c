@@ -47,7 +47,7 @@ static void Ball::project(Vector3D center, fixed_t radius, Vector3D vector, fixe
 //=========================================================================================================
 
 //---------------------------------------------------------------------------------------------------------
-void Ball::constructor(SpatialObject owner, const ColliderSpec* colliderSpec)
+void Ball::constructor(GameObject owner, const ColliderSpec* colliderSpec)
 {
 	// Always explicitly call the base's constructor 
 	Base::constructor(owner, colliderSpec);

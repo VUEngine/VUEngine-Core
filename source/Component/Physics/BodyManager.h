@@ -17,7 +17,7 @@
 
 #include <Body.h>
 #include <ComponentManager.h>
-#include <SpatialObject.h>
+#include <GameObject.h>
 #include <Clock.h>
 
 
@@ -76,12 +76,12 @@ class BodyManager : ComponentManager
 	/// @param owner: Object to which the body will attach to
 	/// @param bodySpec: Spec to use to create the body
 	/// @return Created body
-	override Body createComponent(SpatialObject owner, const BodySpec* bodySpec);
+	override Body createComponent(GameObject owner, const BodySpec* bodySpec);
 
 	/// Destroy the provided behavior.
 	/// @param owner: Object to which the sprite will attach to
 	/// @param body: Body to destroy
-	override void destroyComponent(SpatialObject owner, Body body);
+	override void destroyComponent(GameObject owner, Body body);
 
 	/// Reset the manager's state.
 	void reset();
@@ -93,7 +93,7 @@ class BodyManager : ComponentManager
 	/// @param owner: Object to which the body will attach to
 	/// @param bodySpec: Spec to use to create the body
 	/// @return Created body
-	Body createBody(SpatialObject owner, const BodySpec* bodySpec);
+	Body createBody(GameObject owner, const BodySpec* bodySpec);
 
 	/// Destroy the provided body.
 	/// @param body: Body to destroy
