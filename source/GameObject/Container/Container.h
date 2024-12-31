@@ -43,7 +43,7 @@ class VirtualList;
 /// Inherits from GameObject
 ///
 /// Adds parenting cababilities to spatial objects.
-class Container : GameObject
+abstract class Container : GameObject
 {
 	/// @protectedsection
 

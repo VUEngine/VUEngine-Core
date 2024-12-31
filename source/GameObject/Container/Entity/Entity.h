@@ -107,7 +107,7 @@ typedef const PositionedEntity PositionedEntityROMSpec;
 ///
 /// Inherits from Container
 ///
-/// Implements a container that can have sprites, wireframes and colliders attached to it.
+/// Implements a container that can be added to stages
 class Entity : Container
 {
 	/// @protectedsection

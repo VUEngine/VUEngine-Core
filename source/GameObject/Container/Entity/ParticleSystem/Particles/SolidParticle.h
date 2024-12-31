@@ -102,10 +102,6 @@ class SolidParticle : PhysicalParticle
 	/// @return True if the provided gravity vector can affect the particle; false otherwise
 	override bool isSubjectToGravity(Vector3D gravity);
 
-	/// Retrieve the enum that determines the type of game object.
-	/// @return The enum that determines the type of game object
-	override uint32 getInGameType();
-
 	/// Process a newly detected collision by one of the component colliders.
 	/// @param collisionInformation: Information struct about the collision to resolve 
 	override bool collisionStarts(const CollisionInformation* collisionInformation);
@@ -113,6 +109,10 @@ class SolidParticle : PhysicalParticle
 	/// Process when a previously detected collision by one of the component colliders stops.
 	/// @param collisionInformation: Information struct about the collision to resolve
 	override void collisionEnds(const CollisionInformation* collisionInformation);
+
+	/// Retrieve the enum that determines the type of game object.
+	/// @return The enum that determines the type of game object
+	override uint32 getInGameType();
 
 	/// Reset the particle's state.
 	override void reset();

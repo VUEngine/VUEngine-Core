@@ -38,7 +38,7 @@ class VirtualList;
 /// Inherits from ListenerObject
 ///
 /// Defines objects that occupy a place in 3D space.
-class GameObject : ListenerObject
+abstract class GameObject : ListenerObject
 {
 	/// @protectedsection
 	
@@ -219,10 +219,6 @@ class GameObject : ListenerObject
 	/// @return True if the provided gravity vector can affect the object; false otherwise
 	virtual bool isSubjectToGravity(Vector3D gravity);
 
-	/// Retrieve the enum that determines the type of game object.
-	/// @return The enum that determines the type of game object
-	virtual uint32 getInGameType();
-
 	/// Process a newly detected collision by one of the component colliders.
 	/// @param collisionInformation: Information struct about the collision to resolve 
 	/// @return True if the collider must keep track of the collision to detect if it persists and when it ends; false otherwise
@@ -235,6 +231,10 @@ class GameObject : ListenerObject
 	/// Process when a previously detected collision by one of the component colliders stops.
 	/// @param collisionInformation: Information struct about the collision to resolve
 	virtual void collisionEnds(const CollisionInformation* collisionInformation);
+
+	/// Retrieve the enum that determines the type of game object.
+	/// @return The enum that determines the type of game object
+	virtual uint32 getInGameType() = 0;
 }
 
 

@@ -342,11 +342,6 @@ bool GameObject::isSubjectToGravity(Vector3D gravity __attribute__ ((unused)))
 	return false;
 }
 //---------------------------------------------------------------------------------------------------------
-uint32 GameObject::getInGameType()
-{
-	return kTypeNone;
-}
-//---------------------------------------------------------------------------------------------------------
 bool GameObject::collisionStarts(const CollisionInformation* collisionInformation __attribute__ ((unused)))
 {
 	return false;
