@@ -82,8 +82,7 @@ class AnimatedEntity : Entity
 
 	/// Play the animation with the provided name.
 	/// @param animationName: Name of the animation to play
-	/// @return True if the animation started playing; false otherwise
-	bool playAnimation(const char* animationName);
+	void playAnimation(const char* animationName);
 
 	/// Pause or unpause the currently playing animation if any.
 	/// @param pause: Flag that signals if the animation must be paused or unpaused

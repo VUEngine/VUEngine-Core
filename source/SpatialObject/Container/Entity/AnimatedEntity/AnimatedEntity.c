@@ -14,20 +14,9 @@
 
 #include <string.h>
 
-#include <AnimationController.h>
-#include <Sprite.h>
-#include <VirtualList.h>
+#include <SpriteManager.h>
 
 #include "AnimatedEntity.h"
-
-
-//=========================================================================================================
-// CLASS' DECLARATIONS
-//=========================================================================================================
-
-friend class VirtualNode;
-friend class VirtualList;
-friend class Sprite;
 
 
 //=========================================================================================================
@@ -56,10 +45,7 @@ void AnimatedEntity::ready(bool recursive)
 
 	Base::ready(this, recursive);
 
-	AnimatedEntity::getComponents(this, kSpriteComponent);
-
 	AnimatedEntity::playAnimation(this, ((AnimatedEntitySpec*)this->entitySpec)->initialAnimation);
-
 }
 //---------------------------------------------------------------------------------------------------------
 void AnimatedEntity::resume()
@@ -84,195 +70,52 @@ bool AnimatedEntity::handlePropagatedString(const char* string __attribute__ ((u
 	return false;
 }
 //---------------------------------------------------------------------------------------------------------
-bool AnimatedEntity::playAnimation(const char* animationName)
+void AnimatedEntity::playAnimation(const char* animationName)
 {
-	if(NULL == animationName)
-	{
-		return false;
-	}
+	this->playingAnimationName = animationName;
 
-	VirtualList sprites = AnimatedEntity::getComponents(this, kSpriteComponent);
-
-	if(isDeleted(sprites))
-	{
-		return false;
-	}
-
-	ListenerObject scope = ListenerObject::safeCast(this);
-
-	bool result = false;
-
-	// play animation on each sprite
-	for(VirtualNode node = sprites->head; NULL != node && NULL != sprites; node = node->next)
-	{
-		NM_ASSERT(!isDeleted(Sprite::safeCast(node->data)), "AnimatedEntity::playAnimation: invalid sprite node");
-
-		if(Sprite::play(node->data, this->animationFunctions, animationName, scope))
-		{
-			result = true;
-			scope = NULL;
-		}
-	}
-
-	if(result)
-	{
-		this->playingAnimationName = animationName;
-	}
-
-	return result;
+	SpriteManager::propagateCommand(SpriteManager::getInstance(), cVisualComponentCommandPlay, SpatialObject::safeCast(this), this->animationFunctions, animationName, ListenerObject::safeCast(this));
 }
 //---------------------------------------------------------------------------------------------------------
 void AnimatedEntity::pauseAnimation(bool pause)
 {
-	VirtualList sprites = AnimatedEntity::getComponents(this, kSpriteComponent);
-
-	if(isDeleted(sprites))
-	{
-		return;
-	}
-
-	// play animation on each sprite
-	for(VirtualNode node = sprites->head; node && sprites; node = node->next)
-	{
-		Sprite::pause(node->data, pause);
-	}
+	SpriteManager::propagateCommand(SpriteManager::getInstance(), cVisualComponentCommandPause, SpatialObject::safeCast(this), pause);
 }
 //---------------------------------------------------------------------------------------------------------
 void AnimatedEntity::stopAnimation()
 {
 	this->playingAnimationName = NULL;
 
-	VirtualList sprites = AnimatedEntity::getComponents(this, kSpriteComponent);
-
-	if(isDeleted(sprites))
-	{
-		return;
-	}
-
-	// play animation on each sprite
-	for(VirtualNode node = sprites->head; node && sprites; node = node->next)
-	{
-		Sprite::stop(node->data);
-	}
-}
-//---------------------------------------------------------------------------------------------------------
-bool AnimatedEntity::isPlaying()
-{
-	VirtualList sprites = AnimatedEntity::getComponents(this, kSpriteComponent);
-
-	if(isDeleted(sprites))
-	{
-		return false;
-	}
-
-	return Sprite::isPlaying(Sprite::safeCast(VirtualNode::getData(sprites->head)));
-}
-//---------------------------------------------------------------------------------------------------------
-bool AnimatedEntity::isPlayingAnimation(char* animationName)
-{
-	VirtualList sprites = AnimatedEntity::getComponents(this, kSpriteComponent);
-
-	if(isDeleted(sprites))
-	{
-		return false;
-	}
-
-	Sprite sprite = Sprite::safeCast(VirtualNode::getData(sprites->head));
-
-	return Sprite::isPlayingAnimation(sprite, animationName);
-}
-//---------------------------------------------------------------------------------------------------------
-const char* AnimatedEntity::getPlayingAnimationName()
-{
-	VirtualList sprites = AnimatedEntity::getComponents(this, kSpriteComponent);
-
-	if(isDeleted(sprites))
-	{
-		return false;
-	}
-
-	Sprite sprite = Sprite::safeCast(VirtualNode::getData(sprites->head));
-
-	return Sprite::getPlayingAnimationName(sprite);
+	SpriteManager::propagateCommand(SpriteManager::getInstance(), cVisualComponentCommandStop, SpatialObject::safeCast(this));
 }
 //---------------------------------------------------------------------------------------------------------
 void AnimatedEntity::setActualFrame(int16 frame)
 {
-	VirtualList sprites = AnimatedEntity::getComponents(this, kSpriteComponent);
-
-	if(isDeleted(sprites))
-	{
-		return;
-	}
-
-	for(VirtualNode node = sprites->head; node ; node = node->next)
-	{
-		Sprite::setActualFrame(node->data, frame);
-	}
+	SpriteManager::propagateCommand(SpriteManager::getInstance(), cVisualComponentCommandSetFrame, SpatialObject::safeCast(this), frame);
 }
 //---------------------------------------------------------------------------------------------------------
 void AnimatedEntity::nextFrame()
 {
-	VirtualList sprites = AnimatedEntity::getComponents(this, kSpriteComponent);
-
-	if(isDeleted(sprites))
-	{
-		return;
-	}
-
-	for(VirtualNode node = sprites->head; node && sprites; node = node->next)
-	{
-		Sprite::nextFrame(node->data);
-	}
+	SpriteManager::propagateCommand(SpriteManager::getInstance(), cVisualComponentCommandNextFrame, SpatialObject::safeCast(this));
 }
 //---------------------------------------------------------------------------------------------------------
 void AnimatedEntity::previousFrame()
 {
-	VirtualList sprites = AnimatedEntity::getComponents(this, kSpriteComponent);
-
-	if(isDeleted(sprites))
-	{
-		return;
-	}
-
-	for(VirtualNode node = sprites->head; node && sprites; node = node->next)
-	{
-		Sprite::previousFrame(node->data);
-	}
+	SpriteManager::propagateCommand(SpriteManager::getInstance(), cVisualComponentCommandPreviousFrame, SpatialObject::safeCast(this));
 }
 //---------------------------------------------------------------------------------------------------------
-int16 AnimatedEntity::getActualFrame()
+bool AnimatedEntity::isPlaying()
 {
-	VirtualList sprites = AnimatedEntity::getComponents(this, kSpriteComponent);
-
-	if(isDeleted(sprites))
-	{
-		return -1;
-	}
-
-	for(VirtualNode node = sprites->head; node ; node = node->next)
-	{
-		return Sprite::getActualFrame(node->data);
-	}
-
-	return -1;
+	return NULL != this->playingAnimationName;
 }
 //---------------------------------------------------------------------------------------------------------
-int32 AnimatedEntity::getNumberOfFrames()
+bool AnimatedEntity::isPlayingAnimation(char* animationName)
 {
-	VirtualList sprites = AnimatedEntity::getComponents(this, kSpriteComponent);
-
-	if(isDeleted(sprites))
-	{
-		return -1;
-	}
-
-	for(VirtualNode node = sprites->head; node ; node = node->next)
-	{
-		AnimationController animationController = Sprite::getAnimationController(node->data);
-		return AnimationController::getNumberOfFrames(animationController);
-	}
-
-	return -1;
+	return 0 == strcmp(this->playingAnimationName, animationName);
+}
+//---------------------------------------------------------------------------------------------------------
+const char* AnimatedEntity::getPlayingAnimationName()
+{
+	return this->playingAnimationName;
 }
 //---------------------------------------------------------------------------------------------------------

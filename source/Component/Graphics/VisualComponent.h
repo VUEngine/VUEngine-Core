@@ -36,6 +36,12 @@ enum VisualComponentCommands
 	cVisualComponentCommandShow = cComponentCommandLast + 1,
 	cVisualComponentCommandHide,
 	cVisualComponentCommandSetTransparency,
+	cVisualComponentCommandPlay,
+	cVisualComponentCommandPause,
+	cVisualComponentCommandStop,
+	cVisualComponentCommandSetFrame,
+	cVisualComponentCommandNextFrame,
+	cVisualComponentCommandPreviousFrame,
 	cVisualComponentCommandLast
 };
 
