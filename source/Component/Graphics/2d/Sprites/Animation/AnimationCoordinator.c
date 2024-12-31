@@ -70,7 +70,7 @@ bool AnimationCoordinator::playAnimation(AnimationController animationController
 		if(!AnimationController::isPlaying(firstAnimationController) || strncmp(animationName, AnimationController::getPlayingAnimationFunction(firstAnimationController)->name, __MAX_ANIMATION_FUNCTION_NAME_LENGTH))
 		{
 			// first animate the frame
-			AnimationController::play(firstAnimationController, animationFunctions, animationName, this->scope);
+			AnimationController::play(firstAnimationController, animationFunctions, animationName, this->scope, NULL);
 		}
 
 		return false;

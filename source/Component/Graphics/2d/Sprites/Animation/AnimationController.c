@@ -66,7 +66,7 @@ void AnimationController::destructor()
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------
-bool AnimationController::play(const AnimationFunction* animationFunctions[], const char* animationName, ListenerObject scope)
+bool AnimationController::play(const AnimationFunction* animationFunctions[], const char* animationName, ListenerObject scope, EventListener callback)
 {
 	if(NULL == animationFunctions || NULL == animationName)
 	{
@@ -116,20 +116,23 @@ bool AnimationController::play(const AnimationFunction* animationFunctions[], co
 		return false;
 	}
 
-	// setup animation frame
-	if(!isDeleted(scope) && NULL != this->animationFunction->onAnimationComplete)
+	if(!isDeleted(scope))
 	{
-		// register event callback
-		AnimationController::addEventListener(this, scope, this->animationFunction->onAnimationComplete, kEventAnimationCompleted);
+		if(NULL != this->animationFunction->onAnimationComplete)
+		{
+			AnimationController::addEventListener(this, scope, this->animationFunction->onAnimationComplete, kEventAnimationCompleted);
+		}
+		
+		if(NULL != callback)
+		{
+			AnimationController::addEventListener(this, scope, callback, kEventAnimationCompleted);
+		}		
 	}
 
-	// reset frame to play
 	this->actualFrame = 0;
 
-	// Reset frame duration
 	AnimationController::resetFrameDuration(this);
 
-	// it's playing now
 	this->playing = true;
 
 	return true;

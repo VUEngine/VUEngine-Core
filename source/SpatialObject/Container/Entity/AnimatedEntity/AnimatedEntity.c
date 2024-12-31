@@ -29,7 +29,6 @@ void AnimatedEntity::constructor(AnimatedEntitySpec* animatedEntitySpec, int16 i
 	// Always explicitly call the base's constructor 
 	Base::constructor(&animatedEntitySpec->entitySpec, internalId, name);
 
-	this->animationFunctions = animatedEntitySpec->animationFunctions;
 	this->playingAnimationName = NULL;
 }
 //---------------------------------------------------------------------------------------------------------
@@ -74,7 +73,7 @@ void AnimatedEntity::playAnimation(const char* animationName)
 {
 	this->playingAnimationName = animationName;
 
-	SpriteManager::propagateCommand(SpriteManager::getInstance(), cVisualComponentCommandPlay, SpatialObject::safeCast(this), this->animationFunctions, animationName, ListenerObject::safeCast(this));
+	SpriteManager::propagateCommand(SpriteManager::getInstance(), cVisualComponentCommandPlay, SpatialObject::safeCast(this), ((AnimatedEntitySpec*)this->entitySpec)->animationFunctions, animationName, ListenerObject::safeCast(this), (EventListener)AnimatedEntity::onAnimationComplete);
 }
 //---------------------------------------------------------------------------------------------------------
 void AnimatedEntity::pauseAnimation(bool pause)
@@ -117,5 +116,18 @@ bool AnimatedEntity::isPlayingAnimation(char* animationName)
 const char* AnimatedEntity::getPlayingAnimationName()
 {
 	return this->playingAnimationName;
+}
+//---------------------------------------------------------------------------------------------------------
+
+//=========================================================================================================
+// CLASS' PRIVATE METHODS
+//=========================================================================================================
+
+//---------------------------------------------------------------------------------------------------------
+bool AnimatedEntity::onAnimationComplete(ListenerObject eventFirer __attribute__((unused)))
+{
+	this->playingAnimationName = NULL;
+
+	return true;
 }
 //---------------------------------------------------------------------------------------------------------

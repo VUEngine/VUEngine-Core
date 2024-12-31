@@ -202,7 +202,7 @@ void VisualComponent::handleCommand(int32 command, va_list args)
 
 		case cVisualComponentCommandPlay:
 
-			VisualComponent::play(this, (const AnimationFunction**)va_arg(args, AnimationFunction**), (const char*)va_arg(args, char*), va_arg(args, ListenerObject));
+			VisualComponent::play(this, (const AnimationFunction**)va_arg(args, AnimationFunction**), (const char*)va_arg(args, char*), va_arg(args, ListenerObject), (EventListener)va_arg(args, EventListener));
 			break;
 
 		case cVisualComponentCommandPause:
@@ -248,7 +248,7 @@ void VisualComponent::createAnimationController()
 void VisualComponent::forceChangeOfFrame(int16 actualFrame __attribute__((unused)))
 {}
 //---------------------------------------------------------------------------------------------------------
-bool VisualComponent::play(const AnimationFunction* animationFunctions[], const char* animationName, ListenerObject scope)
+bool VisualComponent::play(const AnimationFunction* animationFunctions[], const char* animationName, ListenerObject scope, EventListener callback)
 {
 	ASSERT(NULL != animationFunctions, "VisualComponent::play: null animationFunctions");
 	ASSERT(NULL != animationName, "VisualComponent::play: null animationName");
@@ -257,7 +257,7 @@ bool VisualComponent::play(const AnimationFunction* animationFunctions[], const 
 
 	if(!isDeleted(this->animationController))
 	{
-		playBackStarted = AnimationController::play(this->animationController, animationFunctions, animationName, scope);
+		playBackStarted = AnimationController::play(this->animationController, animationFunctions, animationName, scope, callback);
 		this->rendered = this->rendered && !this->updateAnimationFrame;
 	}
 

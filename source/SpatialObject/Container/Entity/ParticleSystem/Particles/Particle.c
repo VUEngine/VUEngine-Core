@@ -233,7 +233,7 @@ void Particle::changeAnimation(const AnimationFunction** animationFunctions, con
 	{
 		if(!VisualComponent::replay(this->visualComponent, animationFunctions))
 		{
-			VisualComponent::play(this->visualComponent, animationFunctions, (char*)animationName, ListenerObject::safeCast(this));
+			VisualComponent::play(this->visualComponent, animationFunctions, (char*)animationName, ListenerObject::safeCast(this), NULL);
 		}
 	}
 }

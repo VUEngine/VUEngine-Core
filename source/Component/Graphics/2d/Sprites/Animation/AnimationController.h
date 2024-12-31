@@ -70,8 +70,9 @@ class AnimationController : ListenerObject
 	/// @param animationFunctions: Array of functions where to look for the animation to play
 	/// @param animationName: Name of the animation to play
 	/// @param scope: Object that will be notified of playback events
+	/// @param callback: EventListener callback for the scope object
 	/// @return True if the animation started playing; false otherwise
-	bool play(const AnimationFunction* animationFunctions[], const char* animationName, ListenerObject scope);
+	bool play(const AnimationFunction* animationFunctions[], const char* animationName, ListenerObject scope, EventListener callback);
 
 	/// Play the animation defined by the the provided animation function.
 	/// @param animationFunction: Animation function to play
