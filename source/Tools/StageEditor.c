@@ -33,6 +33,7 @@
 #include <StateMachine.h>
 #include <VirtualList.h>
 #include <VUEngine.h>
+#include <WireframeManager.h>
 
 #include "StageEditor.h"
 
@@ -313,7 +314,13 @@ void StageEditor::highLightEntity()
 			MeshSpec meshSpec =
 			{
 				{
-					__TYPE(Mesh),
+					{
+						// Allocator
+						__TYPE(Mesh),
+
+						// Component type
+						kWireframeComponent
+					},
 
 					/// Displacement
 					{0, 0, 0},
@@ -333,7 +340,7 @@ void StageEditor::highLightEntity()
 			};
 
 
-			this->wireframe = WireframeManager::createWireframe(WireframeManager::getInstance(), (WireframeSpec*)&meshSpec, GameObject::safeCast(entity));
+			this->wireframe = WireframeManager::createWireframe(WireframeManager::getInstance(), GameObject::safeCast(entity), (WireframeSpec*)&meshSpec);
 		}
 	}
 	else
@@ -714,7 +721,7 @@ void StageEditor::showSelectedUserObject()
 
 	if(spriteSpec)
 	{
-		this->userEntitySprite = ((Sprite (*)(GameObject, SpriteSpec*)) spriteSpec->allocator)(NULL, (SpriteSpec*)spriteSpec);
+		this->userEntitySprite = SpriteManager::createSprite(SpriteManager::getInstance(), NULL, spriteSpec);
 		ASSERT(this->userEntitySprite, "AnimationInspector::createSprite: null animatedSprite");
 		ASSERT(Sprite::getTexture(this->userEntitySprite), "AnimationInspector::createSprite: null texture");
 

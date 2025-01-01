@@ -234,7 +234,7 @@ abstract class GameObject : ListenerObject
 
 	/// Retrieve the enum that determines the type of game object.
 	/// @return The enum that determines the type of game object
-	virtual uint32 getInGameType() = 0;
+	virtual uint32 getInGameType();
 }
 
 

@@ -353,3 +353,8 @@ void GameObject::collisionPersists(const CollisionInformation* collisionInformat
 void GameObject::collisionEnds(const CollisionInformation* collisionInformation __attribute__ ((unused)))
 {}
 //---------------------------------------------------------------------------------------------------------
+uint32 GameObject::getInGameType()
+{
+	return kTypeNone;
+}
+//---------------------------------------------------------------------------------------------------------
