@@ -249,7 +249,7 @@ typedef struct Pixel
 
 } Pixel;
 
-// Scaling factor
+// 3D scale
 typedef struct Scale
 {
 	fix7_9 x;
@@ -258,6 +258,7 @@ typedef struct Scale
 
 } Scale;
 
+// Pixel scale
 typedef struct PixelScale
 {
 	fix7_9 x;
@@ -301,7 +302,7 @@ typedef struct TexturePadding
 
 } TexturePadding;
 
-// a spatial description
+// A spatial description
 typedef struct Transformation
 {
 	// spatial position

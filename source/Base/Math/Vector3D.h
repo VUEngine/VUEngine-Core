@@ -210,7 +210,8 @@ static class Vector3D : Object
 
 	/// Compute the scale factor for the provided z coordinate.
 	/// @param z: Z coordinate
-	/// @param applyScalingMultiplier: Flag to determine if the optics' scaling multiplier is applied to the result
+	/// @param applyScalingMultiplier: Flag to determine if the optics' 
+	/// scaling multiplier is applied to the result
 	/// @return Computed scale
 	static inline fixed_t getScale(fixed_t z, bool applyScalingMultiplier);
 
@@ -401,14 +402,24 @@ static inline Vector3D Vector3D::perpendicularZPlane(Vector3D a, bool left)
 
 static inline Vector3D Vector3D::scale(Vector3D vector, Scale scale)
 {
-	return (Vector3D){__FIXED_EXT_MULT(vector.x, __FIX7_9_TO_FIXED(scale.x)), __FIXED_EXT_MULT(vector.y, __FIX7_9_TO_FIXED(scale.y)), __FIXED_EXT_MULT(vector.z, __FIX7_9_TO_FIXED(scale.z))};
+	return (Vector3D)
+	{
+		__FIXED_EXT_MULT(vector.x, __FIX7_9_TO_FIXED(scale.x)), 
+		__FIXED_EXT_MULT(vector.y, __FIX7_9_TO_FIXED(scale.y)), 
+		__FIXED_EXT_MULT(vector.z, __FIX7_9_TO_FIXED(scale.z))
+	};
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 static inline Vector3D Vector3D::scalarProduct(Vector3D vector, fixed_t scalar)
 {
-	return (Vector3D){__FIXED_MULT(vector.x, scalar), __FIXED_MULT(vector.y, scalar), __FIXED_MULT(vector.z, scalar)};
+	return (Vector3D)
+	{
+		__FIXED_MULT(vector.x, scalar), 
+		__FIXED_MULT(vector.y, scalar), 
+		__FIXED_MULT(vector.z, scalar)
+	};
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -420,7 +431,12 @@ static inline Vector3D Vector3D::scalarDivision(Vector3D vector, fixed_t scalar)
 		return Vector3D::zero();
 	}
 
-	return (Vector3D){__FIXED_DIV(vector.x, scalar), __FIXED_DIV(vector.y, scalar), __FIXED_DIV(vector.z, scalar)};
+	return (Vector3D)
+	{
+		__FIXED_DIV(vector.x, scalar), 
+		__FIXED_DIV(vector.y, scalar), 
+		__FIXED_DIV(vector.z, scalar)
+	};
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -491,9 +507,9 @@ static inline Vector3D Vector3D::projectOnto(Vector3D p, Vector3D a, Vector3D b)
 
 	Vector3D projection =
 	{
-		a.x + __FIXED_EXT_TO_FIXED(__FIXED_EXT_MULT(__FIXED_TO_FIXED_EXT(ab.x), __FIXED_EXT_DIV(dotApAb, dotAbAb))),
-		a.y + __FIXED_EXT_TO_FIXED(__FIXED_EXT_MULT(__FIXED_TO_FIXED_EXT(ab.y), __FIXED_EXT_DIV(dotApAb, dotAbAb))),
-		a.z + __FIXED_EXT_TO_FIXED(__FIXED_EXT_MULT(__FIXED_TO_FIXED_EXT(ab.z), __FIXED_EXT_DIV(dotApAb, dotAbAb))),
+		a.x + __FIXED_EXT_MULT(__FIXED_TO_FIXED_EXT(ab.x), __FIXED_EXT_DIV(dotApAb, dotAbAb)),
+		a.y + __FIXED_EXT_MULT(__FIXED_TO_FIXED_EXT(ab.y), __FIXED_EXT_DIV(dotApAb, dotAbAb)),
+		a.z + __FIXED_EXT_MULT(__FIXED_TO_FIXED_EXT(ab.z), __FIXED_EXT_DIV(dotApAb, dotAbAb)),
 	};
 
 	return projection;
@@ -530,9 +546,18 @@ static inline Vector3D Vector3D::projectOntoHighPrecision(Vector3D p, Vector3D a
 
 	Vector3D projection =
 	{
-		a.x + __FIX19_13_TO_FIXED(__FIX19_13_MULT(__FIXED_TO_FIX19_13(ab.x), __FIX19_13_DIV(dotApAb, dotAbAb))),
-		a.y + __FIX19_13_TO_FIXED(__FIX19_13_MULT(__FIXED_TO_FIX19_13(ab.y), __FIX19_13_DIV(dotApAb, dotAbAb))),
-		a.z + __FIX19_13_TO_FIXED(__FIX19_13_MULT(__FIXED_TO_FIX19_13(ab.z), __FIX19_13_DIV(dotApAb, dotAbAb))),
+		a.x + __FIX19_13_TO_FIXED
+				(
+				__FIX19_13_MULT(__FIXED_TO_FIX19_13(ab.x), __FIX19_13_DIV(dotApAb, dotAbAb))
+				),
+		a.y + __FIX19_13_TO_FIXED
+				(
+					__FIX19_13_MULT(__FIXED_TO_FIX19_13(ab.y), __FIX19_13_DIV(dotApAb, dotAbAb))
+				),
+		a.z + __FIX19_13_TO_FIXED
+				(
+					__FIX19_13_MULT(__FIXED_TO_FIX19_13(ab.z), __FIX19_13_DIV(dotApAb, dotAbAb))
+				),
 	};
 
 	return projection;
@@ -573,11 +598,11 @@ static inline Vector3D Vector3D::rotateXAxis(Vector3D vector, int16 degrees)
 	fix7_9_ext z = __FIXED_TO_FIX7_9_EXT(vector.z);
 
 	return (Vector3D) 
-		{
-			vector.x,
-			__FIX7_9_EXT_TO_FIXED(__FIX7_9_EXT_MULT(y , cos) - __FIX7_9_EXT_MULT(z , sin)),
-			__FIX7_9_EXT_TO_FIXED(__FIX7_9_EXT_MULT(y , sin) + __FIX7_9_EXT_MULT(z , cos))
-		};
+	{
+		vector.x,
+		__FIX7_9_EXT_TO_FIXED(__FIX7_9_EXT_MULT(y , cos) - __FIX7_9_EXT_MULT(z , sin)),
+		__FIX7_9_EXT_TO_FIXED(__FIX7_9_EXT_MULT(y , sin) + __FIX7_9_EXT_MULT(z , cos))
+	};
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -591,11 +616,11 @@ static inline Vector3D Vector3D::rotateYAxis(Vector3D vector, int16 degrees)
 	fix7_9_ext z = __FIXED_TO_FIX7_9_EXT(vector.z);
 
 	return (Vector3D) 
-		{
-			__FIX7_9_EXT_TO_FIXED(__FIX7_9_EXT_MULT(x , cos) + __FIX7_9_EXT_MULT(z , sin)),
-			vector.y,
-			__FIX7_9_EXT_TO_FIXED(-__FIX7_9_EXT_MULT(x , sin) + __FIX7_9_EXT_MULT(z , cos))
-		};
+	{
+		__FIX7_9_EXT_TO_FIXED(__FIX7_9_EXT_MULT(x , cos) + __FIX7_9_EXT_MULT(z , sin)),
+		vector.y,
+		__FIX7_9_EXT_TO_FIXED(-__FIX7_9_EXT_MULT(x , sin) + __FIX7_9_EXT_MULT(z , cos))
+	};
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -609,11 +634,11 @@ static inline Vector3D Vector3D::rotateZAxis(Vector3D vector, int16 degrees)
 	fix7_9_ext y = __FIXED_TO_FIX7_9_EXT(vector.y);
 
 	return (Vector3D) 
-		{
-			__FIX7_9_EXT_TO_FIXED(__FIX7_9_EXT_MULT(x , cos) - __FIX7_9_EXT_MULT(y , sin)),
-			__FIX7_9_EXT_TO_FIXED(__FIX7_9_EXT_MULT(x , sin) + __FIX7_9_EXT_MULT(y , cos)),
-			vector.z
-		};
+	{
+		__FIX7_9_EXT_TO_FIXED(__FIX7_9_EXT_MULT(x , cos) - __FIX7_9_EXT_MULT(y , sin)),
+		__FIX7_9_EXT_TO_FIXED(__FIX7_9_EXT_MULT(x , sin) + __FIX7_9_EXT_MULT(y , cos)),
+		vector.z
+	};
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -651,7 +676,10 @@ static inline Vector3D Vector3D::getFromScreenPixelVector(ScreenPixelVector scre
 
 static inline fixed_t Vector3D::length(Vector3D vector)
 {
-	fixed_ext_t lengthSquare = __FIXED_EXT_MULT(vector.x, vector.x) + __FIXED_EXT_MULT(vector.y, vector.y) + __FIXED_EXT_MULT(vector.z, vector.z);
+	fixed_ext_t lengthSquare = 
+		__FIXED_EXT_MULT(vector.x, vector.x) + 
+		__FIXED_EXT_MULT(vector.y, vector.y) + 
+		__FIXED_EXT_MULT(vector.z, vector.z);
 
 	return Math_squareRootFixed(lengthSquare);
 }
@@ -660,15 +688,25 @@ static inline fixed_t Vector3D::length(Vector3D vector)
 
 static inline fixed_ext_t Vector3D::squareLength(Vector3D vector)
 {
-	return __FIXED_EXT_MULT(vector.x, vector.x) + __FIXED_EXT_MULT(vector.y, vector.y) + __FIXED_EXT_MULT(vector.z, vector.z);
+	return 
+		__FIXED_EXT_MULT(vector.x, vector.x) + 
+		__FIXED_EXT_MULT(vector.y, vector.y) + 
+		__FIXED_EXT_MULT(vector.z, vector.z);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 static inline fixed_t Vector3D::lengthProduct(Vector3D vectorA, Vector3D vectorB)
 {
-	fixed_ext_t lengthSquareA = __FIXED_EXT_MULT(vectorA.x, vectorA.x) + __FIXED_EXT_MULT(vectorA.y, vectorA.y) + __FIXED_EXT_MULT(vectorA.z, vectorA.z);
-	fixed_ext_t lengthSquareB = __FIXED_EXT_MULT(vectorB.x, vectorB.x) + __FIXED_EXT_MULT(vectorB.y, vectorB.y) + __FIXED_EXT_MULT(vectorB.z, vectorB.z);
+	fixed_ext_t lengthSquareA = 
+		__FIXED_EXT_MULT(vectorA.x, vectorA.x) + 
+		__FIXED_EXT_MULT(vectorA.y, vectorA.y) + 
+		__FIXED_EXT_MULT(vectorA.z, vectorA.z);
+
+	fixed_ext_t lengthSquareB = 
+		__FIXED_EXT_MULT(vectorB.x, vectorB.x) + 
+		__FIXED_EXT_MULT(vectorB.y, vectorB.y) + 
+		__FIXED_EXT_MULT(vectorB.z, vectorB.z);
 
 	fixed_ext_t product = __FIXED_EXT_MULT(lengthSquareA, lengthSquareB);
 
@@ -679,16 +717,20 @@ static inline fixed_t Vector3D::lengthProduct(Vector3D vectorA, Vector3D vectorB
 
 static inline fixed_ext_t Vector3D::dotProduct(Vector3D vectorA, Vector3D vectorB)
 {
-	return __FIXED_EXT_MULT(vectorA.x, vectorB.x) + __FIXED_EXT_MULT(vectorA.y, vectorB.y) + __FIXED_EXT_MULT(vectorA.z, vectorB.z);
+	return 
+		__FIXED_EXT_MULT(vectorA.x, vectorB.x) + 
+		__FIXED_EXT_MULT(vectorA.y, vectorB.y) + 
+		__FIXED_EXT_MULT(vectorA.z, vectorB.z);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 static inline fix19_13 Vector3D::dotProductHighPrecision(Vector3D vectorA, Vector3D vectorB)
 {
-	return __FIX19_13_MULT(__FIXED_TO_FIX19_13(vectorA.x), __FIXED_TO_FIX19_13(vectorB.x)) +
-			__FIX19_13_MULT(__FIXED_TO_FIX19_13(vectorA.y), __FIXED_TO_FIX19_13(vectorB.y)) +
-			__FIX19_13_MULT(__FIXED_TO_FIX19_13(vectorA.z), (vectorB.z));
+	return 
+		__FIX19_13_MULT(__FIXED_TO_FIX19_13(vectorA.x), __FIXED_TO_FIX19_13(vectorB.x)) +
+		__FIX19_13_MULT(__FIXED_TO_FIX19_13(vectorA.y), __FIXED_TO_FIX19_13(vectorB.y)) +
+		__FIX19_13_MULT(__FIXED_TO_FIX19_13(vectorA.z), (vectorB.z));
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -709,7 +751,12 @@ static inline fixed_t Vector3D::getScale(fixed_t z, bool applyScalingMultiplier)
 			return __1I_FIXED;
 		}
 
-		projectedWidth = __FIXED_EXT_DIV(__FIXED_EXT_MULT(_optical->halfWidth, _optical->scalingMultiplier), z + _optical->halfWidth);
+		projectedWidth = 
+			__FIXED_EXT_DIV
+			(
+				__FIXED_EXT_MULT(_optical->halfWidth, _optical->scalingMultiplier), 
+				z + _optical->halfWidth
+			);
 	}
 	else
 	{
@@ -718,7 +765,12 @@ static inline fixed_t Vector3D::getScale(fixed_t z, bool applyScalingMultiplier)
 			return __1I_FIXED;
 		}
 
-		projectedWidth = __FIXED_EXT_DIV(__FIXED_EXT_MULT(_optical->halfWidth, _optical->projectionMultiplierHelper), z + _optical->cameraNearPlane);
+		projectedWidth = 
+			__FIXED_EXT_DIV
+			(
+				__FIXED_EXT_MULT(_optical->halfWidth, _optical->projectionMultiplierHelper), 
+				z + _optical->cameraNearPlane
+			);
 	}
 
 	return __FIXED_EXT_DIV(projectedWidth, _optical->halfWidth);
@@ -761,7 +813,9 @@ static inline bool Vector3D::isValueInRange(fixed_t number, fixed_t limitA, fixe
 
 static inline bool Vector3D::isVectorInsideLine(Vector3D vector, Vector3D a, Vector3D b)
 {
-	return (Vector3D::isValueInRange(vector.x, a.x, b.x)
+	return 
+	(
+		Vector3D::isValueInRange(vector.x, a.x, b.x)
 		&&
 		Vector3D::isValueInRange(vector.y, a.y, b.y)
 		&&
