@@ -8,9 +8,9 @@
  */
 
 
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 // INCLUDES
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <string.h>
 
@@ -20,19 +20,21 @@
 #include "Container.h"
 
 
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DECLARATIONS
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 friend class VirtualNode;
 friend class VirtualList;
 
 
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PUBLIC METHODS
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void Container::constructor(int16 internalId, const char* const name)
 {
 	// Always explicitly call the base's constructor 
@@ -61,7 +63,9 @@ void Container::constructor(int16 internalId, const char* const name)
 	this->name = NULL;
 	Container::setName(this, name);
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void Container::destructor()
 {
 #ifndef __RELEASE
@@ -136,7 +140,9 @@ void Container::destructor()
 	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void Container::setPosition(const Vector3D* position)
 {
 	Vector3D displacement = Vector3D::sub(*position, this->transformation.position);
@@ -144,7 +150,9 @@ void Container::setPosition(const Vector3D* position)
 	Container::translate(this, &displacement);
 	this->transformation.position = *position;
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void Container::setRotation(const Rotation* rotation)
 {
 	Rotation displacement = Rotation::sub(*rotation, this->transformation.rotation);
@@ -152,7 +160,9 @@ void Container::setRotation(const Rotation* rotation)
 	Container::rotate(this, &displacement);
 	this->transformation.rotation = *rotation;
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void Container::setScale(const Scale* scale)
 {
 	Scale factor = Scale::division(*scale, this->transformation.scale);
@@ -160,7 +170,9 @@ void Container::setScale(const Scale* scale)
 	Container::scale(this, &factor);
 	this->transformation.scale = *scale;
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void Container::deleteMyself()
 {
 	ASSERT(!isDeleted(this), "Container::deleteMyself: deleted this");
@@ -178,7 +190,9 @@ void Container::deleteMyself()
 		delete this;
 	}
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void Container::setName(const char* const name)
 {
 	if(NULL != this->name)
@@ -203,27 +217,37 @@ void Container::setName(const char* const name)
 	strncpy(this->name, name, __MAX_CONTAINER_NAME_LENGTH);
 	this->name[__MAX_CONTAINER_NAME_LENGTH] = '\0';
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 int16 Container::getInternalId()
 {
 	return this->internalId;
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 const char* Container::getName()
 {
 	return this->name;
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void Container::streamOut(bool streamOut)
 {
 	this->dontStreamOut = !streamOut;
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 Container Container::getParent()
 {
 	return this->parent;
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void Container::addChild(Container child)
 {
 	// check if child is valid
@@ -279,7 +303,9 @@ void Container::addChild(Container child)
 		child->ready = true;
 	}
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void Container::removeChild(Container child, bool deleteChild)
 {
 	ASSERT(this == child->parent, "Container::removeChild: not my child");
@@ -324,7 +350,9 @@ void Container::removeChild(Container child, bool deleteChild)
 	}
 #endif
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void Container::purgeChildren()
 {
 	if(NULL == this->children)
@@ -366,7 +394,9 @@ void Container::purgeChildren()
 		this->children = NULL;
 	}
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 bool Container::getChildren(ClassPointer classPointer, VirtualList children)
 {
 	if(isDeleted(this->children) || isDeleted(children))
@@ -386,7 +416,9 @@ bool Container::getChildren(ClassPointer classPointer, VirtualList children)
 
 	return 0 < VirtualList::getCount(children);
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 Container Container::getChildById(int16 id)
 {
 	if(this->children)
@@ -404,7 +436,9 @@ Container Container::getChildById(int16 id)
 
 	return NULL;
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 Container Container::getChildByName(const char* childName, bool recursive)
 {
 	Container foundChild = NULL;
@@ -423,7 +457,9 @@ Container Container::getChildByName(const char* childName, bool recursive)
 
 	return !isDeleted(foundChild) && !foundChild->deleteMe ? foundChild : NULL;
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 Container Container::getChildAtPosition(int16 position)
 {
 	if(isDeleted(this->children))
@@ -433,12 +469,16 @@ Container Container::getChildAtPosition(int16 position)
 
 	return Container::safeCast(VirtualList::getDataAtIndex(this->children, position));
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 int32 Container::getChildrenCount()
 {
 	return NULL != this->children ? VirtualList::getCount(this->children) : 0;
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void Container::updateChildren()
 {
 	// if I have children
@@ -481,7 +521,9 @@ void Container::updateChildren()
 		Container::update(child);
 	}
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void Container::invalidateTransformation()
 {
 	this->transformation.invalid = __INVALIDATE_TRANSFORMATION;
@@ -496,7 +538,9 @@ void Container::invalidateTransformation()
 		}
 	}
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void Container::transformChildren(uint8 invalidateTransformationFlag)
 {
 	if(NULL == this->children)
@@ -534,7 +578,9 @@ void Container::transformChildren(uint8 invalidateTransformationFlag)
 		}
 	}
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void Container::propagateCommand(uint32 command, ...)
 {
 	if(NULL != this->children)
@@ -557,7 +603,9 @@ void Container::propagateCommand(uint32 command, ...)
 		}
 	}
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 bool Container::propagateMessage(bool (*propagatedMessageHandler)(void*, va_list), ...)
 {
 	ASSERT(propagatedMessageHandler, "Container::propagateMessage: null propagatedMessageHandler");
@@ -569,13 +617,17 @@ bool Container::propagateMessage(bool (*propagatedMessageHandler)(void*, va_list
 
 	return result;
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 bool Container::onPropagatedMessage(va_list args)
 {
 	int32 message = va_arg(args, int32);
 	return  Container::handlePropagatedMessage(this, message);
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 bool Container::propagateString(bool (*propagatedStringHandler)(void*, va_list), ...)
 {
 	ASSERT(propagatedStringHandler, "Container::propagateMessage: null propagatedStringHandler");
@@ -587,13 +639,17 @@ bool Container::propagateString(bool (*propagatedStringHandler)(void*, va_list),
 
 	return result;
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 bool Container::onPropagatedString(va_list args)
 {
 	const char* string = va_arg(args, char*);
 	return  Container::handlePropagatedString(this, string);
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void Container::translate(const Vector3D* translation)
 {
 	Vector3D position = Vector3D::sum(this->localTransformation.position, *translation);
@@ -614,7 +670,9 @@ void Container::translate(const Vector3D* translation)
 
 	this->localTransformation.position = position;
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void Container::rotate(const Rotation* rotation)
 {
 	if(0 != rotation->x || 0 != rotation->y || 0 != rotation->z)
@@ -624,29 +682,39 @@ void Container::rotate(const Rotation* rotation)
 
 	this->localTransformation.rotation = Rotation::sum(this->localTransformation.rotation, *rotation);	
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void Container::scale(const Scale* scale)
 {
 	this->transformation.invalid |= __INVALIDATE_SCALE;
 
 	this->localTransformation.scale = Scale::product(this->localTransformation.scale, *scale);	
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 const Vector3D* Container::getLocalPosition()
 {
 	return &this->localTransformation.position;
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 const Rotation* Container::getLocalRotation()
 {
 	return &this->localTransformation.rotation;
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 const Scale* Container::getLocalScale()
 {
 	return &this->localTransformation.scale;
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void Container::setLocalPosition(const Vector3D* position)
 {
 	// force global position calculation on the next transformation cycle
@@ -674,7 +742,9 @@ void Container::setLocalPosition(const Vector3D* position)
 		this->localTransformation.position = *position;
 	}
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void Container::setLocalRotation(const Rotation* rotation)
 {
 	Rotation auxRotation = Rotation::clamp(rotation->x, rotation->y, rotation->z);
@@ -694,7 +764,9 @@ void Container::setLocalRotation(const Rotation* rotation)
 
 	this->localTransformation.rotation = auxRotation;
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void Container::setLocalScale(const Scale* scale)
 {
 	if(scale == &this->localTransformation.scale)
@@ -719,7 +791,9 @@ void Container::setLocalScale(const Scale* scale)
 		this->localTransformation.scale = *scale;
 	}
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void Container::changeEnvironment(Transformation* environmentTransformation)
 {
 	Vector3D localPosition = Vector3D::sub(this->transformation.position, environmentTransformation->position);
@@ -733,7 +807,9 @@ void Container::changeEnvironment(Transformation* environmentTransformation)
 	// force global position calculation on the next transformation cycle
 	Container::invalidateTransformation(this);
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void Container::ready(bool recursive)
 {
 	if(!recursive || NULL == this->children)
@@ -746,17 +822,23 @@ void Container::ready(bool recursive)
 		Container::ready(childNode->data, recursive);
 	}
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void Container::transform(const Transformation* environmentTransformation, uint8 invalidateTransformationFlag)
 {
 	Container::doTransform(this, environmentTransformation, invalidateTransformationFlag);
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void Container::update()
 {
 	Container::updateChildren(this);
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void Container::suspend()
 {
 	Container::purgeChildren(this);
@@ -773,7 +855,9 @@ void Container::suspend()
 		Container::suspend(child);
 	}
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void Container::resume()
 {
 	Container::invalidateTransformation(this);
@@ -790,26 +874,36 @@ void Container::resume()
 		Container::resume(child);
 	}
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void Container::handleCommand(int32 command __attribute__ ((unused)), va_list args  __attribute__ ((unused)))
 {}
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 bool Container::handlePropagatedMessage(int32 message __attribute__ ((unused)))
 {
 	return false;
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 bool Container::handlePropagatedString(const char* string __attribute__ ((unused)))
 {
 	return false;
 }
-//---------------------------------------------------------------------------------------------------------
 
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PRIVATE METHODS
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 Container Container::findChildByName(VirtualList children, const char* childName, bool recursive)
 {
 	if(this->deleteMe)
@@ -844,7 +938,9 @@ Container Container::findChildByName(VirtualList children, const char* childName
 
 	return NULL;
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 Transformation Container::getEnvironmentTransform()
 {
 	if(NULL == this->parent)
@@ -869,7 +965,9 @@ Transformation Container::getEnvironmentTransform()
 
 	return this->parent->transformation;
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void Container::concatenateTransform(Transformation* concatenatedTransformation, Transformation* localTransformation)
 {
 	ASSERT(concatenatedTransformation, "Container::concatenateTransform: null concatenatedTransformation");
@@ -884,7 +982,9 @@ void Container::concatenateTransform(Transformation* concatenatedTransformation,
 	// propagate scale
 	concatenatedTransformation->scale = Scale::product(concatenatedTransformation->scale, localTransformation->scale);
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 inline void Container::applyEnvironmentToPosition(const Transformation* environmentTransformation)
 {
 	Vector3D localPosition = this->localTransformation.position;
@@ -901,17 +1001,23 @@ inline void Container::applyEnvironmentToPosition(const Transformation* environm
 
 	this->transformation.position = Vector3D::sum(environmentTransformation->position, localPosition);
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 inline void Container::applyEnvironmentToRotation(const Transformation* environmentTransformation)
 {
 	this->transformation.rotation = Rotation::sum(environmentTransformation->rotation, this->localTransformation.rotation);
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 inline void Container::applyEnvironmentToScale(const Transformation* environmentTransformation)
 {
 	this->transformation.scale = Scale::product(environmentTransformation->scale, this->localTransformation.scale);
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void Container::doTransform(const Transformation* environmentTransformation, uint8 invalidateTransformationFlag)
 {
 	ASSERT(environmentTransformation, "Container::transform: null environmentTransformation");
@@ -938,7 +1044,9 @@ void Container::doTransform(const Transformation* environmentTransformation, uin
 	// don't update position on next transformation cycle
 	this->transformation.invalid = __VALID_TRANSFORMATION;
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 bool Container::propagateArguments(bool (*propagationHandler)(void*, va_list), va_list args)
 {
 	if(NULL == propagationHandler)
@@ -963,4 +1071,6 @@ bool Container::propagateArguments(bool (*propagationHandler)(void*, va_list), v
 	// If no child processed the message, I process it
 	return propagationHandler(this, args);
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+

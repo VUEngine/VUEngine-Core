@@ -8,9 +8,9 @@
  */
 
 
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 // INCLUDES
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <string.h>
 
@@ -37,9 +37,9 @@
 #include "Stage.h"
 
 
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DECLARATIONS
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 friend class Container;
 friend class Entity;
@@ -47,15 +47,15 @@ friend class VirtualNode;
 friend class VirtualList;
 
 
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' MACROS
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #define __STREAMING_CYCLES		5
 
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DATA
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 typedef bool (*StreamingPhase)(void*, int32);
 
@@ -66,9 +66,9 @@ typedef struct EntityLoadingListener
 } EntityLoadingListener;
 
 
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' ATTRIBUTES
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 const Transformation _neutralEnvironmentTransformation =
 {
@@ -100,11 +100,13 @@ static uint32 entityFactoryHighestTime = 0;
 static uint32 timeBeforeProcess = 0;
 #endif
 
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PRIVATE STATIC METHODS
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 static uint32 Stage::computeDistanceToOrigin(StageEntityDescription* stageEntityDescription)
 {
 	int32 x = stageEntityDescription->positionedEntity->onScreenPosition.x - __METERS_TO_PIXELS(stageEntityDescription->rightBox.x1 - stageEntityDescription->rightBox.x0) / 2;
@@ -113,13 +115,17 @@ static uint32 Stage::computeDistanceToOrigin(StageEntityDescription* stageEntity
 
 	return x * x + y * y + z * z;
 } 
-//---------------------------------------------------------------------------------------------------------
 
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PUBLIC METHODS
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void Stage::constructor(StageSpec *stageSpec)
 {
 	// Always explicitly call the base's constructor 
@@ -140,7 +146,9 @@ void Stage::constructor(StageSpec *stageSpec)
 	this->reverseStreaming = false;
 	this->cameraPosition = Vector3D::getFromPixelVector(this->stageSpec->level.cameraInitialPosition);
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void Stage::destructor()
 {
 	this->deleteMe = true;
@@ -189,7 +197,9 @@ void Stage::destructor()
 	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void Stage::suspend()
 {
 	// Save the camera position for resume reconfiguration
@@ -218,7 +228,9 @@ void Stage::suspend()
 	delete this->entityFactory;
 	this->entityFactory = NULL;
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void Stage::resume()
 {
 	// Set camera to its previous position
@@ -257,27 +269,37 @@ void Stage::resume()
 
 	Stage::loadPostProcessingEffects(this);
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 StageSpec* Stage::getSpec()
 {
 	return this->stageSpec;
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void Stage::configureTimer()
 {
 	TimerManager::configure(TimerManager::getInstance(), this->stageSpec->timer.resolution, this->stageSpec->timer.targetTimePerInterrupt, this->stageSpec->timer.targetTimePerInterrupttUnits);
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void Stage::configurePalettes()
 {
 	VIPManager::configurePalettes(VIPManager::getInstance(), &this->stageSpec->rendering.paletteConfig);
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 PaletteConfig Stage::getPaletteConfig()
 {
 	return this->stageSpec->rendering.paletteConfig;
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void Stage::registerEntities(VirtualList positionedEntitiesToIgnore)
 {
 	if(!isDeleted(this->stageEntityDescriptions))
@@ -365,12 +387,16 @@ void Stage::registerEntities(VirtualList positionedEntitiesToIgnore)
 		}
 	}
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 VirtualList Stage::getStageEntityDescriptions()
 {
 	return this->stageEntityDescriptions;
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void Stage::addEntityLoadingListener(ListenerObject scope, EventListener callback)
 {
 	if(isDeleted(scope) || NULL == callback)
@@ -389,12 +415,16 @@ void Stage::addEntityLoadingListener(ListenerObject scope, EventListener callbac
 
 	VirtualList::pushBack(this->entityLoadingListeners, entityLoadingListener);
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 Entity Stage::spawnChildEntity(const PositionedEntity* const positionedEntity, bool permanent)
 {
 	return Stage::doAddChildEntity(this, positionedEntity, permanent, this->nextEntityId++);
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void Stage::destroyChildEntity(Entity child)
 {
 	NM_ASSERT(!isDeleted(child), "Stage::removeEntity: null child");
@@ -432,7 +462,9 @@ void Stage::destroyChildEntity(Entity child)
 		VirtualList::removeNode(this->stageEntityDescriptions, node);
 	}
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void Stage::streamAll()
 {
 	Stage::transform(this, &_neutralEnvironmentTransformation, __INVALIDATE_TRANSFORMATION);
@@ -469,12 +501,16 @@ void Stage::streamAll()
 	this->streamingAmplitude = this->stageSpec->streaming.streamingAmplitude;
 	this->streamingHeadNode = NULL;
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 VirtualList Stage::getSounds()
 {
 	return this->sounds;
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void Stage::fadeSounds(uint32 playbackType)
 {
 	if(!isDeleted(this->sounds))
@@ -494,7 +530,9 @@ void Stage::fadeSounds(uint32 playbackType)
 		}
 	}
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 #ifndef __SHIPPING
 void Stage::print(int32 x, int32 y)
 {
@@ -537,7 +575,9 @@ void Stage::print(int32 x, int32 y)
 #endif
 }
 #endif
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 bool Stage::stream()
 {
 #ifdef __SHOW_STREAMING_PROFILING
@@ -566,7 +606,9 @@ bool Stage::stream()
 
 	return _streamingPhases[this->streamingPhase](this, this->stageSpec->streaming.deferred);
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void Stage::configure(VirtualList positionedEntitiesToIgnore)
 {
 	// Setup timer
@@ -608,13 +650,17 @@ void Stage::configure(VirtualList positionedEntitiesToIgnore)
 
 	Stage::loadPostProcessingEffects(this);
 }
-//---------------------------------------------------------------------------------------------------------
 
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PRIVATE METHODS
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 bool Stage::unloadOutOfRangeEntities(int32 defer __attribute__((unused)))
 {
 	if(isDeleted(this->children))
@@ -697,7 +743,9 @@ bool Stage::unloadOutOfRangeEntities(int32 defer __attribute__((unused)))
 
 	return unloadedEntities;
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 bool Stage::loadInRangeEntities(int32 defer)
 {
 #ifdef __PROFILE_STREAMING
@@ -807,7 +855,9 @@ bool Stage::loadInRangeEntities(int32 defer)
 
 	return loadedEntities;
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void Stage::loadInitialEntities()
 {
 	// need a temporary list to remove and delete entities
@@ -839,7 +889,9 @@ void Stage::loadInitialEntities()
 		}
 	}
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 Entity Stage::doAddChildEntity(const PositionedEntity* const positionedEntity, bool permanent __attribute__ ((unused)), int16 internalId)
 {
 	if(NULL != positionedEntity)
@@ -862,7 +914,9 @@ Entity Stage::doAddChildEntity(const PositionedEntity* const positionedEntity, b
 
 	return NULL;
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 bool Stage::onEntityLoaded(ListenerObject eventFirer)
 {
 	Entity entity = Entity::safeCast(eventFirer);
@@ -874,7 +928,9 @@ bool Stage::onEntityLoaded(ListenerObject eventFirer)
 
 	return false;
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void Stage::alertOfLoadedEntity(Entity entity)
 {
 	if(isDeleted(entity) || isDeleted(this->entityLoadingListeners))
@@ -896,7 +952,9 @@ void Stage::alertOfLoadedEntity(Entity entity)
 	NM_ASSERT(!isDeleted(entity), "Stage::alertOfLoadedEntity: deleted entity during kEventEntityLoaded");
 	Entity::removeEventListeners(entity, NULL, kEventEntityLoaded);
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 int32 Stage::isEntityInLoadRange(ScreenPixelVector onScreenPosition, const RightBox* rightBox)
 {
 	if(NULL == rightBox)
@@ -919,7 +977,9 @@ int32 Stage::isEntityInLoadRange(ScreenPixelVector onScreenPosition, const Right
 
 	return true;
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 bool Stage::updateEntityFactory()
 {
 #ifdef __PROFILE_STREAMING
@@ -936,7 +996,9 @@ bool Stage::updateEntityFactory()
 
 	return preparingEntities;
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void Stage::loadPostProcessingEffects()
 {
 	if(this->stageSpec->postProcessingEffects)
@@ -948,7 +1010,9 @@ void Stage::loadPostProcessingEffects()
 		}
 	}
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 StageEntityDescription* Stage::registerEntity(PositionedEntity* positionedEntity)
 {
 	ASSERT(positionedEntity, "Stage::registerEntity: null positionedEntity");
@@ -976,7 +1040,9 @@ StageEntityDescription* Stage::registerEntity(PositionedEntity* positionedEntity
 
 	return stageEntityDescription;
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void Stage::prepareGraphics()
 {
 	// Must clean DRAM
@@ -995,7 +1061,9 @@ void Stage::prepareGraphics()
 	SpriteManager::setTexturesMaximumRowsToWrite(SpriteManager::getInstance(), this->stageSpec->rendering.texturesMaximumRowsToWrite);
 	SpriteManager::setMaximumParamTableRowsToComputePerCall(SpriteManager::getInstance(), this->stageSpec->rendering.maximumAffineRowsToComputePerCall);
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void Stage::preloadAssets()
 {
 	Printing::loadFonts(Printing::getInstance(), this->stageSpec->assets.fontSpecs);
@@ -1003,7 +1071,9 @@ void Stage::preloadAssets()
 	BgmapTextureManager::loadTextures(BgmapTextureManager::getInstance(), (const TextureSpec**)this->stageSpec->assets.textureSpecs);
 	ParamTableManager::setup(ParamTableManager::getInstance(), this->stageSpec->rendering.paramTableSegments);
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void Stage::setupSounds()
 {
 	SoundManager::unlock(SoundManager::getInstance());
@@ -1039,7 +1109,9 @@ void Stage::setupSounds()
 		}
 	}
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void Stage::pauseSounds()
 {
 	if(!isDeleted(this->sounds))
@@ -1059,7 +1131,9 @@ void Stage::pauseSounds()
 		}
 	}
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void Stage::unpauseSounds()
 {
 	if(!isDeleted(this->sounds))
@@ -1079,7 +1153,9 @@ void Stage::unpauseSounds()
 		}
 	}
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 bool Stage::onSoundReleased(ListenerObject eventFirer __attribute__((unused)))
 {
 	VirtualList::removeData(this->sounds, eventFirer);
@@ -1088,7 +1164,9 @@ bool Stage::onSoundReleased(ListenerObject eventFirer __attribute__((unused)))
 
 	return false;
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 Entity Stage::findChildByInternalId(int16 internalId)
 {
 	VirtualNode node = this->children->head;
@@ -1103,7 +1181,9 @@ Entity Stage::findChildByInternalId(int16 internalId)
 
 	return NULL;
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void Stage::setFocusEntity(Entity focusEntity)
 {
 	if(!isDeleted(this->focusEntity))
@@ -1123,7 +1203,9 @@ void Stage::setFocusEntity(Entity focusEntity)
 		focusEntityPosition.z = __METERS_TO_PIXELS(focusEntityPosition.z);
 	}
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 bool Stage::onFocusEntityDeleted(ListenerObject eventFirer __attribute__ ((unused)))
 {
 	if(!isDeleted(this->focusEntity) && ListenerObject::safeCast(this->focusEntity) == eventFirer)
@@ -1138,4 +1220,6 @@ bool Stage::onFocusEntityDeleted(ListenerObject eventFirer __attribute__ ((unuse
 
 	return false;
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+

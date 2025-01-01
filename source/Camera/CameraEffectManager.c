@@ -8,9 +8,9 @@
  */
 
 
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 // INCLUDES
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <Camera.h>
 #include <DebugConfig.h>
@@ -25,18 +25,20 @@
 #include "CameraEffectManager.h"
 
 
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DECLARATIONS
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 friend class Camera;
 
 
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PUBLIC METHODS
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void CameraEffectManager::constructor()
 {
 	// init class variables
@@ -49,7 +51,9 @@ void CameraEffectManager::constructor()
 	// Always explicitly call the base's constructor 
 	Base::constructor();
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void CameraEffectManager::destructor()
 {
 	// stop any effects
@@ -59,7 +63,9 @@ void CameraEffectManager::destructor()
 	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 bool CameraEffectManager::handleMessage(Telegram telegram)
 {
 	switch(Telegram::getMessage(telegram))
@@ -70,19 +76,25 @@ bool CameraEffectManager::handleMessage(Telegram telegram)
 	}
 	return true;
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void CameraEffectManager::reset()
 {
 	this->fadeEffectIncrement = __CAMERA_EFFECT_FADE_INCREMENT;
 
 	CameraEffectManager::stopEffect(this, kFadeTo);
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void CameraEffectManager::setFadeIncrement(uint8 fadeEffectIncrement)
 {
 	this->fadeEffectIncrement = fadeEffectIncrement;
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 Brightness CameraEffectManager::getDefaultBrightness()
 {
 	// default brightness settings
@@ -107,7 +119,9 @@ Brightness CameraEffectManager::getDefaultBrightness()
 
 	return brightness;
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void CameraEffectManager::startEffect(int32 effect, va_list args)
 {
 	switch(effect)
@@ -140,7 +154,9 @@ void CameraEffectManager::startEffect(int32 effect, va_list args)
 			break;
 	}
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void CameraEffectManager::stopEffect(int32 effect)
 {
 	switch(effect)
@@ -151,13 +167,17 @@ void CameraEffectManager::stopEffect(int32 effect)
 			break;
 	}
 }
-//---------------------------------------------------------------------------------------------------------
 
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PRIVATE METHODS
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void CameraEffectManager::fxFadeStart(int32 effect, int32 delay)
 {
 	Brightness defaultBrightness = CameraEffectManager::getDefaultBrightness(this);
@@ -192,7 +212,9 @@ void CameraEffectManager::fxFadeStart(int32 effect, int32 delay)
 			break;
 	}
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void CameraEffectManager::fxFadeAsyncStart(int32 initialDelay, const Brightness* targetBrightness, int32 delayBetweenSteps, EventListener callback, ListenerObject callbackScope)
 {
 	// stop previous effect
@@ -237,7 +259,9 @@ void CameraEffectManager::fxFadeAsyncStart(int32 initialDelay, const Brightness*
 	// fire effect started event
 	CameraEffectManager::fireEvent(this, kEventEffectFadeStart);
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void CameraEffectManager::fxFadeAsyncStop()
 {
 	// remove event listener
@@ -254,7 +278,9 @@ void CameraEffectManager::fxFadeAsyncStop()
 	// fire effect stopped event
 	CameraEffectManager::fireEvent(this, kEventEffectFadeStop);
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void CameraEffectManager::fxFadeIn()
 {
 	Brightness incrementalBrightness =
@@ -280,7 +306,9 @@ void CameraEffectManager::fxFadeIn()
 		_vipRegisters[0x30 | __PRINTING_PALETTE] = 0xE4;
 #endif
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void CameraEffectManager::fxFadeOut()
 {
 	Brightness decrementalBrightness =
@@ -292,7 +320,9 @@ void CameraEffectManager::fxFadeOut()
 	
 	VIPManager::setupBrightness(VIPManager::getInstance(), &decrementalBrightness);
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void CameraEffectManager::fxFadeAsync()
 {
 	ASSERT(this, "CameraEffectManager::fxFadeAsync: invalid this");
@@ -392,23 +422,31 @@ void CameraEffectManager::fxFadeAsync()
 		MessageDispatcher::dispatchMessage(this->fxFadeDelay, ListenerObject::safeCast(this), ListenerObject::safeCast(this), kFadeTo, NULL);
 	}
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 Brightness CameraEffectManager::convertBrightnessToVipFormat(Brightness brightness)
 {
 	brightness.brightRed -= (brightness.darkRed + brightness.mediumRed);
 
 	return brightness;
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void CameraEffectManager::showCamera()
 {
 	Brightness defaultBrightness = CameraEffectManager::getDefaultBrightness(this);
 	defaultBrightness = CameraEffectManager::convertBrightnessToVipFormat(this, defaultBrightness);
 	VIPManager::setupBrightness(VIPManager::getInstance(), &defaultBrightness);
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void CameraEffectManager::hideCamera()
 {
 	VIPManager::lowerBrightness(VIPManager::getInstance());
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+

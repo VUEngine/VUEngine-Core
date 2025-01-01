@@ -11,9 +11,9 @@
 #define VECTOR_2D_H_
 
 
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 // INCLUDES
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <Object.h>
 #include <Math.h>
@@ -22,9 +22,9 @@
 #include <Camera.h>
 
 
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DECLARATION
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 ///
 /// Class Vector2D
@@ -219,16 +219,20 @@ static class Vector2D : Object
 	static void printRaw(Vector2D vector, int32 x, int32 y);
 }
 
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' STATIC METHODS
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 static inline Vector2D Vector2D::zero()
 {
 	return (Vector2D){0, 0};
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 static inline Vector2D Vector2D::unit(uint16 axis)
 {
 	return (Vector2D)
@@ -237,27 +241,37 @@ static inline Vector2D Vector2D::unit(uint16 axis)
 		__Y_AXIS & axis ? __I_TO_FIXED(1) : 0
 	};
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 static inline Vector2D Vector2D::normalize(Vector2D vector)
 {
 	return Vector2D::scalarDivision(vector, Vector2D::length(vector));
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 static inline Vector2D Vector2D::get(Vector2D from, Vector2D to)
 {
 	return (Vector2D){to.x - from.x, to.y - from.y};
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 static inline Vector2D Vector2D::sum(Vector2D a, Vector2D b)
 {
 	return (Vector2D){a.x + b.x, a.y + b.y};
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 static inline Vector2D Vector2D::sub(Vector2D a, Vector2D b)
 {
 	return (Vector2D){a.x - b.x, a.y - b.y};
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 static inline Vector2D Vector2D::intermediate(Vector2D a, Vector2D b)
 {
 	return (Vector2D)
@@ -266,7 +280,9 @@ static inline Vector2D Vector2D::intermediate(Vector2D a, Vector2D b)
 		(a.y + b.y) >> 1
 	};
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 static inline Vector2D Vector2D::perpendicular(Vector2D a, bool left)
 {
 	if(left)
@@ -284,17 +300,23 @@ static inline Vector2D Vector2D::perpendicular(Vector2D a, bool left)
 
 	return a;
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 static inline Vector2D Vector2D::scale(Vector2D vector, Scale scale)
 {
 	return (Vector2D){__FIXED_EXT_MULT(vector.x, __FIX7_9_TO_FIXED(scale.x)), __FIXED_EXT_MULT(vector.y, __FIX7_9_TO_FIXED(scale.y))};
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 static inline Vector2D Vector2D::scalarProduct(Vector2D vector, fixed_t scalar)
 {
 	return (Vector2D){__FIXED_MULT(vector.x, scalar), __FIXED_MULT(vector.y, scalar)};
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 static inline Vector2D Vector2D::scalarDivision(Vector2D vector, fixed_t scalar)
 {
 	if(0 == scalar)
@@ -304,7 +326,9 @@ static inline Vector2D Vector2D::scalarDivision(Vector2D vector, fixed_t scalar)
 
 	return (Vector2D){__FIXED_DIV(vector.x, scalar), __FIXED_DIV(vector.y, scalar)};
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 static inline Vector2D Vector2D::getRelativeToCamera(Vector2D vector)
 {
 	vector.x -= _cameraPosition->x;
@@ -312,7 +336,9 @@ static inline Vector2D Vector2D::getRelativeToCamera(Vector2D vector)
 
 	return vector;
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 static inline Vector2D Vector2D::projectOnto(Vector2D p, Vector2D a, Vector2D b)
 {
 	Vector2D ap = Vector2D::get(a, p);
@@ -343,7 +369,9 @@ static inline Vector2D Vector2D::projectOnto(Vector2D p, Vector2D a, Vector2D b)
 
 	return projection;
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 static inline Vector2D Vector2D::projectOntoHighPrecision(Vector2D p, Vector2D a, Vector2D b)
 {
 	Vector2D ap = Vector2D::get(a, p);
@@ -374,7 +402,9 @@ static inline Vector2D Vector2D::projectOntoHighPrecision(Vector2D p, Vector2D a
 
 	return projection;
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 static inline Vector2D Vector2D::rotate(Vector2D vector, int16 degrees)
 {
 	Vector2D result = vector;
@@ -396,12 +426,16 @@ static inline Vector2D Vector2D::rotate(Vector2D vector, int16 degrees)
 
 	return result;
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 static inline Vector2D Vector2D::getFromVector3D(Vector3D vector3D)
 {
 	return (Vector2D){vector3D.x, vector3D.y};
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 static inline Vector2D Vector2D::getFromPixelVector(PixelVector pixelVector)
 {
 	return (Vector2D)
@@ -410,7 +444,9 @@ static inline Vector2D Vector2D::getFromPixelVector(PixelVector pixelVector)
 		__PIXELS_TO_METERS(pixelVector.y)
 	};
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 static inline Vector2D Vector2D::getFromScreenPixelVector(ScreenPixelVector screenPixelVector)
 {
 	return (Vector2D)
@@ -419,19 +455,25 @@ static inline Vector2D Vector2D::getFromScreenPixelVector(ScreenPixelVector scre
 		__PIXELS_TO_METERS(screenPixelVector.y)
 	};
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 static inline fixed_t Vector2D::length(Vector2D vector)
 {
 	fixed_ext_t lengthSquare = __FIXED_EXT_MULT(vector.x, vector.x) + __FIXED_EXT_MULT(vector.y, vector.y);
 
 	return Math_squareRootFixed(lengthSquare);
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 static inline fixed_ext_t Vector2D::squareLength(Vector2D vector)
 {
 	return __FIXED_EXT_MULT(vector.x, vector.x) + __FIXED_EXT_MULT(vector.y, vector.y);
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 static inline fixed_t Vector2D::lengthProduct(Vector2D vectorA, Vector2D vectorB)
 {
 	fixed_ext_t lengthSquareA = __FIXED_EXT_MULT(vectorA.x, vectorA.x) + __FIXED_EXT_MULT(vectorA.y, vectorA.y);
@@ -441,18 +483,24 @@ static inline fixed_t Vector2D::lengthProduct(Vector2D vectorA, Vector2D vectorB
 
 	return Math_squareRootFixed(product);
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 static inline fixed_ext_t Vector2D::dotProduct(Vector2D vectorA, Vector2D vectorB)
 {
 	return __FIXED_EXT_MULT(vectorA.x, vectorB.x) + __FIXED_EXT_MULT(vectorA.y, vectorB.y);
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 static inline fix19_13 Vector2D::dotProductHighPrecision(Vector2D vectorA, Vector2D vectorB)
 {
 	return __FIX19_13_MULT(__FIXED_TO_FIX19_13(vectorA.x), __FIXED_TO_FIX19_13(vectorB.x)) +
 			__FIX19_13_MULT(__FIXED_TO_FIX19_13(vectorA.y), __FIXED_TO_FIX19_13(vectorB.y));
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 static inline fixed_t Vector2D::getScale(fixed_t z, bool applyScalingMultiplier)
 {
 	if(0 == _optical->halfWidth)
@@ -483,22 +531,30 @@ static inline fixed_t Vector2D::getScale(fixed_t z, bool applyScalingMultiplier)
 
 	return __FIXED_EXT_DIV(projectedWidth, _optical->halfWidth);
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 static inline bool Vector2D::isLeft(Vector2D a, Vector2D b, Vector2D p)
 {
 	return 0 < (__FIXED_EXT_MULT((b.x - a.x), (p.y - a.y)) - __FIXED_EXT_MULT((b.y - a.y), (p.x - a.x)));
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 static inline bool Vector2D::isRight(Vector2D a, Vector2D b, Vector2D p)
 {
 	return 0 > (__FIXED_EXT_MULT((b.x - a.x), (p.y - a.y)) - __FIXED_EXT_MULT((b.y - a.y), (p.x - a.x)));
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 static inline bool Vector2D::areEqual(Vector2D a, Vector2D b)
 {
 	return a.x == b.x && a.y == b.y;
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 static inline bool Vector2D::isValueInRange(fixed_t value, fixed_t limitA, fixed_t limitB)
 {
 	if(limitA < limitB)
@@ -508,7 +564,9 @@ static inline bool Vector2D::isValueInRange(fixed_t value, fixed_t limitA, fixed
 
 	return (unsigned)(value - limitB) <= (unsigned)(limitA - limitB);
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 static inline bool Vector2D::isVectorInsideLine(Vector2D vector, Vector2D lineStart, Vector2D lineEnd)
 {
 	return (Vector2D::isValueInRange(vector.x, lineStart.x, lineEnd.x)
@@ -516,7 +574,9 @@ static inline bool Vector2D::isVectorInsideLine(Vector2D vector, Vector2D lineSt
 		Vector2D::isValueInRange(vector.y, lineStart.y, lineEnd.y)
 	);
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 
 
 #endif

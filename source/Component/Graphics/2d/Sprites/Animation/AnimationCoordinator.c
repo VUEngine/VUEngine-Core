@@ -8,9 +8,9 @@
  */
 
 
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 // INCLUDES
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <string.h>
 
@@ -21,19 +21,21 @@
 #include "AnimationCoordinator.h"
 
 
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DECLARATIONS
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 friend class VirtualList;
 friend class VirtualNode;
 
 
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PUBLIC METHODS
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void AnimationCoordinator::constructor(const CharSetSpec* charSetSpec, ListenerObject scope)
 {
 	// Always explicitly call the base's constructor 
@@ -43,7 +45,9 @@ void AnimationCoordinator::constructor(const CharSetSpec* charSetSpec, ListenerO
 	this->animationControllers = new VirtualList();
 	this->charSetSpec = charSetSpec;
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void AnimationCoordinator::destructor()
 {
 	ASSERT(this->animationControllers, "AnimationCoordinator::destructor: null animationControllers");
@@ -54,7 +58,9 @@ void AnimationCoordinator::destructor()
 	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 bool AnimationCoordinator::playAnimation(AnimationController animationController, const AnimationFunction** animationFunctions, const char* animationName)
 {
 	if(!isDeleted(this->animationControllers->head))
@@ -78,7 +84,9 @@ bool AnimationCoordinator::playAnimation(AnimationController animationController
 
 	return true;
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void AnimationCoordinator::addAnimationController(AnimationController animationController)
 {
 	ASSERT(animationController, "AnimationCoordinator::addAnimationController: null animationController");
@@ -89,7 +97,9 @@ void AnimationCoordinator::addAnimationController(AnimationController animationC
 		VirtualList::pushBack(this->animationControllers, animationController);
 	}
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void AnimationCoordinator::removeAnimationController(AnimationController animationController)
 {
 	ASSERT(this->animationControllers->head, "AnimationCoordinator::removeAnimationController: null this");
@@ -116,9 +126,13 @@ void AnimationCoordinator::removeAnimationController(AnimationController animati
 		}
 	}
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 const CharSetSpec* AnimationCoordinator::getCharSetSpec()
 {
 	return this->charSetSpec;
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+

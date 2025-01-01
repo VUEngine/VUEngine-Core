@@ -10,9 +10,9 @@
 #ifndef VECTOR_3D_H_
 #define VECTOR_3D_H_
 
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 // INCLUDES
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <Camera.h>
 #include <Math.h>
@@ -21,9 +21,9 @@
 #include <Optics.h>
 
 
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DECLARATION
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 ///
 /// Class Vector3D
@@ -261,16 +261,20 @@ static class Vector3D : Object
 	static void printRaw(Vector3D vector, int32 x, int32 y);
 }
 
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' STATIC METHODS
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 static inline Vector3D Vector3D::zero()
 {
 	return (Vector3D){0, 0, 0};
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 static inline Vector3D Vector3D::unit(uint16 axis)
 {
 	return (Vector3D)
@@ -280,27 +284,37 @@ static inline Vector3D Vector3D::unit(uint16 axis)
 		__Z_AXIS & axis ? __I_TO_FIXED(1) : 0
 	};
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 static inline Vector3D Vector3D::normalize(Vector3D vector)
 {
 	return Vector3D::scalarDivision(vector, Vector3D::length(vector));
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 static inline Vector3D Vector3D::get(Vector3D from, Vector3D to)
 {
 	return (Vector3D){to.x - from.x, to.y - from.y, to.z - from.z};
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 static inline Vector3D Vector3D::sum(Vector3D a, Vector3D b)
 {
 	return (Vector3D){a.x + b.x, a.y + b.y, a.z + b.z};
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 static inline Vector3D Vector3D::sub(Vector3D a, Vector3D b)
 {
 	return (Vector3D){a.x - b.x, a.y - b.y, a.z - b.z};
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 static inline Vector3D Vector3D::absolute(Vector3D vector)
 {
 	return (Vector3D)
@@ -310,7 +324,9 @@ static inline Vector3D Vector3D::absolute(Vector3D vector)
 		__ABS(vector.z)
 	};
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 static inline Vector3D Vector3D::intermediate(Vector3D a, Vector3D b)
 {
 	return (Vector3D)
@@ -320,7 +336,9 @@ static inline Vector3D Vector3D::intermediate(Vector3D a, Vector3D b)
 		(a.z + b.z) >> 1
 	};
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 static inline Vector3D Vector3D::perpendicularXPlane(Vector3D a, bool left)
 {
 	if(left)
@@ -338,7 +356,9 @@ static inline Vector3D Vector3D::perpendicularXPlane(Vector3D a, bool left)
 
 	return a;
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 static inline Vector3D Vector3D::perpendicularYPlane(Vector3D a, bool left)
 {
 	if(left)
@@ -356,7 +376,9 @@ static inline Vector3D Vector3D::perpendicularYPlane(Vector3D a, bool left)
 
 	return a;
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 static inline Vector3D Vector3D::perpendicularZPlane(Vector3D a, bool left)
 {
 	if(left)
@@ -374,17 +396,23 @@ static inline Vector3D Vector3D::perpendicularZPlane(Vector3D a, bool left)
 
 	return a;
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 static inline Vector3D Vector3D::scale(Vector3D vector, Scale scale)
 {
 	return (Vector3D){__FIXED_EXT_MULT(vector.x, __FIX7_9_TO_FIXED(scale.x)), __FIXED_EXT_MULT(vector.y, __FIX7_9_TO_FIXED(scale.y)), __FIXED_EXT_MULT(vector.z, __FIX7_9_TO_FIXED(scale.z))};
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 static inline Vector3D Vector3D::scalarProduct(Vector3D vector, fixed_t scalar)
 {
 	return (Vector3D){__FIXED_MULT(vector.x, scalar), __FIXED_MULT(vector.y, scalar), __FIXED_MULT(vector.z, scalar)};
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 static inline Vector3D Vector3D::scalarDivision(Vector3D vector, fixed_t scalar)
 {
 	if(0 == scalar)
@@ -394,7 +422,9 @@ static inline Vector3D Vector3D::scalarDivision(Vector3D vector, fixed_t scalar)
 
 	return (Vector3D){__FIXED_DIV(vector.x, scalar), __FIXED_DIV(vector.y, scalar), __FIXED_DIV(vector.z, scalar)};
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 static inline Vector3D Vector3D::getRelativeToCamera(Vector3D vector)
 {
 	vector.x -= _cameraPosition->x;
@@ -403,7 +433,9 @@ static inline Vector3D Vector3D::getRelativeToCamera(Vector3D vector)
 
 	return vector;
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 static inline Vector3D Vector3D::getPlaneNormal(Vector3D vectorA, Vector3D vectorB, Vector3D vectorC)
 {
 	Vector3D u =
@@ -427,7 +459,9 @@ static inline Vector3D Vector3D::getPlaneNormal(Vector3D vectorA, Vector3D vecto
 		__FIXED_EXT_TO_FIXED(__FIXED_EXT_MULT(u.x, v.y) - __FIXED_EXT_MULT(u.y, v.x)),
 	};
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 static inline Vector3D Vector3D::projectOnto(Vector3D p, Vector3D a, Vector3D b)
 {
 	Vector3D ap = Vector3D::get(a, p);
@@ -464,7 +498,9 @@ static inline Vector3D Vector3D::projectOnto(Vector3D p, Vector3D a, Vector3D b)
 
 	return projection;
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 static inline Vector3D Vector3D::projectOntoHighPrecision(Vector3D p, Vector3D a, Vector3D b)
 {
 	Vector3D ap = Vector3D::get(a, p);
@@ -501,7 +537,9 @@ static inline Vector3D Vector3D::projectOntoHighPrecision(Vector3D p, Vector3D a
 
 	return projection;
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 static inline Vector3D Vector3D::rotate(Vector3D vector, Rotation rotation)
 {
 	Vector3D result = vector;
@@ -523,7 +561,9 @@ static inline Vector3D Vector3D::rotate(Vector3D vector, Rotation rotation)
 
 	return result;
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 static inline Vector3D Vector3D::rotateXAxis(Vector3D vector, int16 degrees)
 {
 	fix7_9_ext cos = __FIX7_9_TO_FIX7_9_EXT(__COS(degrees));
@@ -539,7 +579,9 @@ static inline Vector3D Vector3D::rotateXAxis(Vector3D vector, int16 degrees)
 			__FIX7_9_EXT_TO_FIXED(__FIX7_9_EXT_MULT(y , sin) + __FIX7_9_EXT_MULT(z , cos))
 		};
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 static inline Vector3D Vector3D::rotateYAxis(Vector3D vector, int16 degrees)
 {
 	fix7_9_ext cos = __FIX7_9_TO_FIX7_9_EXT(__COS(degrees));
@@ -555,7 +597,9 @@ static inline Vector3D Vector3D::rotateYAxis(Vector3D vector, int16 degrees)
 			__FIX7_9_EXT_TO_FIXED(-__FIX7_9_EXT_MULT(x , sin) + __FIX7_9_EXT_MULT(z , cos))
 		};
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 static inline Vector3D Vector3D::rotateZAxis(Vector3D vector, int16 degrees)
 {
 	fix7_9_ext cos = __FIX7_9_TO_FIX7_9_EXT(__COS(degrees));
@@ -571,12 +615,16 @@ static inline Vector3D Vector3D::rotateZAxis(Vector3D vector, int16 degrees)
 			vector.z
 		};
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 static inline Vector3D Vector3D::getFromVector2D(Vector2D vector2D, fixed_t z)
 {
 	return (Vector3D){vector2D.x, vector2D.y, z};
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 static inline Vector3D Vector3D::getFromPixelVector(PixelVector pixelVector)
 {
 	return (Vector3D)
@@ -586,7 +634,9 @@ static inline Vector3D Vector3D::getFromPixelVector(PixelVector pixelVector)
 		__PIXELS_TO_METERS(pixelVector.z)
 	};
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 static inline Vector3D Vector3D::getFromScreenPixelVector(ScreenPixelVector screenPixelVector)
 {
 	return (Vector3D)
@@ -596,19 +646,25 @@ static inline Vector3D Vector3D::getFromScreenPixelVector(ScreenPixelVector scre
 		__PIXELS_TO_METERS(screenPixelVector.z)
 	};
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 static inline fixed_t Vector3D::length(Vector3D vector)
 {
 	fixed_ext_t lengthSquare = __FIXED_EXT_MULT(vector.x, vector.x) + __FIXED_EXT_MULT(vector.y, vector.y) + __FIXED_EXT_MULT(vector.z, vector.z);
 
 	return Math_squareRootFixed(lengthSquare);
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 static inline fixed_ext_t Vector3D::squareLength(Vector3D vector)
 {
 	return __FIXED_EXT_MULT(vector.x, vector.x) + __FIXED_EXT_MULT(vector.y, vector.y) + __FIXED_EXT_MULT(vector.z, vector.z);
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 static inline fixed_t Vector3D::lengthProduct(Vector3D vectorA, Vector3D vectorB)
 {
 	fixed_ext_t lengthSquareA = __FIXED_EXT_MULT(vectorA.x, vectorA.x) + __FIXED_EXT_MULT(vectorA.y, vectorA.y) + __FIXED_EXT_MULT(vectorA.z, vectorA.z);
@@ -618,19 +674,25 @@ static inline fixed_t Vector3D::lengthProduct(Vector3D vectorA, Vector3D vectorB
 
 	return Math_squareRootFixed(product);
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 static inline fixed_ext_t Vector3D::dotProduct(Vector3D vectorA, Vector3D vectorB)
 {
 	return __FIXED_EXT_MULT(vectorA.x, vectorB.x) + __FIXED_EXT_MULT(vectorA.y, vectorB.y) + __FIXED_EXT_MULT(vectorA.z, vectorB.z);
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 static inline fix19_13 Vector3D::dotProductHighPrecision(Vector3D vectorA, Vector3D vectorB)
 {
 	return __FIX19_13_MULT(__FIXED_TO_FIX19_13(vectorA.x), __FIXED_TO_FIX19_13(vectorB.x)) +
 			__FIX19_13_MULT(__FIXED_TO_FIX19_13(vectorA.y), __FIXED_TO_FIX19_13(vectorB.y)) +
 			__FIX19_13_MULT(__FIXED_TO_FIX19_13(vectorA.z), (vectorB.z));
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 static inline fixed_t Vector3D::getScale(fixed_t z, bool applyScalingMultiplier)
 {
 	if(0 == _optical->halfWidth)
@@ -661,22 +723,30 @@ static inline fixed_t Vector3D::getScale(fixed_t z, bool applyScalingMultiplier)
 
 	return __FIXED_EXT_DIV(projectedWidth, _optical->halfWidth);
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 static inline bool Vector3D::isLeft(Vector3D a, Vector3D b, Vector3D p)
 {
 	return 0 < (__FIXED_EXT_MULT((b.x - a.x), (p.y - a.y)) - __FIXED_EXT_MULT((b.y - a.y), (p.x - a.x)));
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 static inline bool Vector3D::isRight(Vector3D a, Vector3D b, Vector3D p)
 {
 	return 0 > (__FIXED_EXT_MULT((b.x - a.x), (p.y - a.y)) - __FIXED_EXT_MULT((b.y - a.y), (p.x - a.x)));
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 static inline bool Vector3D::areEqual(Vector3D a, Vector3D b)
 {
 	return a.x == b.x && a.y == b.y && a.z == b.z;
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 static inline bool Vector3D::isValueInRange(fixed_t number, fixed_t limitA, fixed_t limitB)
 {
 	if(limitA < limitB)
@@ -686,7 +756,9 @@ static inline bool Vector3D::isValueInRange(fixed_t number, fixed_t limitA, fixe
 
 	return (unsigned)(number - limitB) <= (unsigned)(limitA - limitB);
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 static inline bool Vector3D::isVectorInsideLine(Vector3D vector, Vector3D a, Vector3D b)
 {
 	return (Vector3D::isValueInRange(vector.x, a.x, b.x)
@@ -696,7 +768,9 @@ static inline bool Vector3D::isVectorInsideLine(Vector3D vector, Vector3D a, Vec
 		Vector3D::isValueInRange(vector.z, a.z, b.z)
 	);
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 
 
 #endif

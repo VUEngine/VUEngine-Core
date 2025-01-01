@@ -8,9 +8,9 @@
  */
 
 
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 // INCLUDES
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <Component.h>
 #include <Behavior.h>
@@ -30,27 +30,29 @@
 #include "ComponentManager.h"
 
 
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DECLARATIONS
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 friend class Component;
 friend class GameObject;
 friend class VirtualNode;
 friend class VirtualList;
 
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' MACROS
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #define __MAXIMUM_NUMBER_OF_COMPONENTS		10
 
 
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' STATIC METHODS
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 static Component ComponentManager::addComponent(GameObject owner, ComponentSpec* componentSpec)
 {
 	ComponentManager componentManager = ComponentManager::getManager(componentSpec->componentType);
@@ -69,7 +71,9 @@ static Component ComponentManager::addComponent(GameObject owner, ComponentSpec*
 
 	return component;
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 static void ComponentManager::removeComponent(GameObject owner, Component component)
 {
 	uint32 componentType = ComponentManager::getComponentType(component);
@@ -93,7 +97,9 @@ static void ComponentManager::removeComponent(GameObject owner, Component compon
 
 	ComponentManager::destroyComponent(componentManager, owner, component);
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 static void ComponentManager::addComponents(GameObject owner, ComponentSpec** componentSpecs, uint32 componentType)
 {
 	for(int32 i = 0; NULL != componentSpecs[i] && NULL != componentSpecs[i]->allocator; i++)
@@ -115,7 +121,9 @@ static void ComponentManager::addComponents(GameObject owner, ComponentSpec** co
 #endif
 	}
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 static void ComponentManager::removeComponents(GameObject owner, uint32 componentType)
 {
 	if(kComponentTypes <= componentType)
@@ -168,7 +176,9 @@ static void ComponentManager::removeComponents(GameObject owner, uint32 componen
 		}	
 	}
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 static Component ComponentManager::getComponentAtIndex(GameObject owner, uint32 componentType, int16 componentIndex)
 {
 	if(kComponentTypes <= componentType)
@@ -199,7 +209,9 @@ static Component ComponentManager::getComponentAtIndex(GameObject owner, uint32 
 	return NULL;
 }
 
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 static VirtualList ComponentManager::getComponents(GameObject owner, uint32 componentType)
 {
 	if(NULL == owner->components)
@@ -230,7 +242,9 @@ static VirtualList ComponentManager::getComponents(GameObject owner, uint32 comp
 
 	return ComponentManager::doGetComponents(componentManager, owner, owner->components[componentType]);
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 static bool ComponentManager::getComponentsOfClass(GameObject owner, ClassPointer classPointer, VirtualList components, uint32 componentType)
 {
 	if(kComponentTypes <= componentType)
@@ -267,7 +281,9 @@ static bool ComponentManager::getComponentsOfClass(GameObject owner, ClassPointe
 
 	return false;
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 static uint16 ComponentManager::getComponentsCount(GameObject owner, uint32 componentType)
 {
 	uint16 count = 0;
@@ -318,13 +334,17 @@ static uint16 ComponentManager::getComponentsCount(GameObject owner, uint32 comp
 
 	return count;
 }
-//---------------------------------------------------------------------------------------------------------
 
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PRIVATE STATIC METHODS
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 static ComponentManager ComponentManager::getManager(uint32 componentType)
 {
 	if(kComponentTypes <= componentType)
@@ -362,7 +382,9 @@ static ComponentManager ComponentManager::getManager(uint32 componentType)
 
 	return NULL;
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 static uint32 ComponentManager::getComponentType(Component component)
 {
 	if(isDeleted(component))
@@ -400,7 +422,9 @@ static uint32 ComponentManager::getComponentType(Component component)
 
 	return component->componentSpec->componentType;
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 static void ComponentManager::cleanOwnerComponentLists(GameObject owner, uint32 componentType)
 {
 	if(NULL != owner->components && NULL != owner->components[componentType])
@@ -409,14 +433,18 @@ static void ComponentManager::cleanOwnerComponentLists(GameObject owner, uint32 
 		owner->components[componentType] = NULL;
 	}
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 
-//=========================================================================================================
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PUBLIC METHODS
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void ComponentManager::constructor()
 {
 	// Always explicitly call the base's constructor 
@@ -424,7 +452,9 @@ void ComponentManager::constructor()
 
 	this->components = new VirtualList();
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void ComponentManager::destructor()
 {
 	if(!isDeleted(this->components))
@@ -437,7 +467,9 @@ void ComponentManager::destructor()
 	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void ComponentManager::propagateCommand(int32 command, GameObject owner, ...)
 {
 	for(VirtualNode node = this->components->head; NULL != node; node = node->next)
@@ -457,7 +489,9 @@ void ComponentManager::propagateCommand(int32 command, GameObject owner, ...)
 		va_end(args);
 	}
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 uint16 ComponentManager::getCount(GameObject owner)
 {
 	uint16 count = 0;
@@ -476,7 +510,9 @@ uint16 ComponentManager::getCount(GameObject owner)
 
 	return count;
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 Component ComponentManager::createComponent(GameObject owner, const ComponentSpec* componentSpec)
 {
 	if(kComponentTypes <= componentSpec->componentType)
@@ -488,7 +524,9 @@ Component ComponentManager::createComponent(GameObject owner, const ComponentSpe
 
 	return NULL;
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void ComponentManager::destroyComponent(GameObject owner, Component component) 
 {
 	if(isDeleted(component))
@@ -503,7 +541,9 @@ void ComponentManager::destroyComponent(GameObject owner, Component component)
 
 	ComponentManager::cleanOwnerComponentLists(owner, component->componentSpec->componentType);
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 VirtualList ComponentManager::doGetComponents(GameObject owner, VirtualList components)
 {
 	for(VirtualNode node = this->components->head; NULL != node; node = node->next)
@@ -518,9 +558,13 @@ VirtualList ComponentManager::doGetComponents(GameObject owner, VirtualList comp
 
 	return components;
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 bool ComponentManager::isAnyVisible(GameObject owner __attribute((unused)))
 {
 	return false;
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+

@@ -8,9 +8,9 @@
  */
 
 
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 // INCLUDES
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <Body.h>
 #include <BodyManager.h>
@@ -21,22 +21,37 @@
 #include "PhysicalParticle.h"
 
 
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PUBLIC METHODS
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void PhysicalParticle::constructor(const PhysicalParticleSpec* physicalParticleSpec)
 {
 	// Always explicitly call the base's constructor 
 	Base::constructor(&physicalParticleSpec->particleSpec);
 
 	this->physicalParticleSpec = physicalParticleSpec;
-	fixed_t mass = this->physicalParticleSpec->minimumMass + (this->physicalParticleSpec->massDelta ? Math::random(_gameRandomSeed, this->physicalParticleSpec->massDelta) : 0);
-	BodySpec bodySpec = {{__TYPE(Body), kPhysicsComponent}, true, mass, 0, 0, Vector3D::zero(), 0, physicalParticleSpec->axisSubjectToGravity};
-	this->body = BodyManager::createBody(VUEngine::getBodyManager(_vuEngine), GameObject::safeCast(this), &bodySpec);
+	fixed_t mass = this->physicalParticleSpec->minimumMass + 
+		(
+			this->physicalParticleSpec->massDelta ? 
+				Math::random(_gameRandomSeed, this->physicalParticleSpec->massDelta) : 0
+		);
+	BodySpec bodySpec = 
+	{
+		{__TYPE(Body), kPhysicsComponent}, 
+		true, mass, 0, 0, Vector3D::zero(), 
+		0, physicalParticleSpec->axisSubjectToGravity
+	};
+
+	this->body = BodyManager::createBody(VUEngine::getBodyManager(_vuEngine), GameObject::safeCast(this), 
+		&bodySpec);
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void PhysicalParticle::destructor()
 {
 	if(!isDeleted(this->body))
@@ -49,7 +64,9 @@ void PhysicalParticle::destructor()
 	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 const Vector3D* PhysicalParticle::getVelocity()
 {
 	if(isDeleted(this->body))
@@ -59,7 +76,9 @@ const Vector3D* PhysicalParticle::getVelocity()
 
 	return Body::getVelocity(this->body);
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void PhysicalParticle::setPosition(const Vector3D* position)
 {
 	if(isDeleted(this->body))
@@ -74,7 +93,9 @@ void PhysicalParticle::setPosition(const Vector3D* position)
 
 	Base::setPosition(this, position);
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 bool PhysicalParticle::isSubjectToGravity(Vector3D gravity __attribute__ ((unused)))
 {
 	if(isDeleted(this->body))
@@ -84,7 +105,9 @@ bool PhysicalParticle::isSubjectToGravity(Vector3D gravity __attribute__ ((unuse
 
 	return (bool)Body::getAxisSubjectToGravity(this->body);
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void PhysicalParticle::reset()
 {
 	Base::reset(this);
@@ -94,7 +117,9 @@ void PhysicalParticle::reset()
 		Body::reset(this->body);
 	}
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 bool PhysicalParticle::update(uint32 elapsedTime, void (* behavior)(Particle particle))
 {
 	if(Base::update(this, elapsedTime, behavior))
@@ -109,7 +134,9 @@ bool PhysicalParticle::update(uint32 elapsedTime, void (* behavior)(Particle par
 
 	return false;
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void PhysicalParticle::configureMass()
 {
 	if(isDeleted(this->body))
@@ -117,9 +144,19 @@ void PhysicalParticle::configureMass()
 		return;
 	}
 
-	Body::setMass(this->body, this->physicalParticleSpec->minimumMass + (this->physicalParticleSpec->massDelta ? Math::random(_gameRandomSeed, this->physicalParticleSpec->massDelta) : 0));
+	Body::setMass
+	(
+		this->body,
+		this->physicalParticleSpec->minimumMass + 
+		(
+			this->physicalParticleSpec->massDelta ? 
+				Math::random(_gameRandomSeed, this->physicalParticleSpec->massDelta) : 0
+		)
+	);
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void PhysicalParticle::applyForce(const Vector3D* force, uint32 movementType)
 {
 	if(isDeleted(this->body))
@@ -159,4 +196,6 @@ void PhysicalParticle::applyForce(const Vector3D* force, uint32 movementType)
 		Body::applyForce(this->body, force);
 	}
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+

@@ -11,18 +11,18 @@
 #define PIXEL_VECTOR_H_
 
 
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 // INCLUDES
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <Object.h>
 #include <Camera.h>
 #include <Vector3D.h>
 
 
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DECLARATION
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 ///
 /// Class PixelVector
@@ -127,31 +127,41 @@ static class PixelVector : Object
 	static void print(PixelVector vector, int32 x, int32 y);
 }
 
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' STATIC METHODS
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 static inline PixelVector PixelVector::zero()
 {
 	return (PixelVector){0, 0, 0, 0};
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 static inline PixelVector PixelVector::get(PixelVector from, PixelVector to)
 {
 	return (PixelVector){to.x - from.x, to.y - from.y, to.z - from.z, to.parallax - from.parallax};
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 static inline PixelVector PixelVector::sum(PixelVector a, PixelVector b)
 {
 	return (PixelVector){a.x + b.x, a.y + b.y, a.z + b.z, a.parallax + b.parallax};
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 static inline PixelVector PixelVector::sub(PixelVector a, PixelVector b)
 {
 	return (PixelVector){a.x - b.x, a.y - b.y, a.z - b.z, a.parallax - b.parallax};
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 static inline PixelVector PixelVector::intermediate(PixelVector a, PixelVector b)
 {
 	return (PixelVector)
@@ -162,7 +172,9 @@ static inline PixelVector PixelVector::intermediate(PixelVector a, PixelVector b
 		(a.parallax + b.parallax) >> 1
 	};
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 static inline PixelVector PixelVector::getFromScreenPixelVector(ScreenPixelVector screenPixelVector, int16 parallax)
 {
 	return (PixelVector)
@@ -173,7 +185,9 @@ static inline PixelVector PixelVector::getFromScreenPixelVector(ScreenPixelVecto
 		parallax
 	};
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 static inline PixelVector PixelVector::getFromVector2D(Vector2D vector2D, int16 parallax)
 {
 	return (PixelVector)
@@ -184,7 +198,9 @@ static inline PixelVector PixelVector::getFromVector2D(Vector2D vector2D, int16 
 		parallax
 	};
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 static inline PixelVector PixelVector::getFromVector3D(Vector3D vector3D, int16 parallax)
 {
 	return (PixelVector)
@@ -195,7 +211,9 @@ static inline PixelVector PixelVector::getFromVector3D(Vector3D vector3D, int16 
 		parallax
 	};
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 static inline PixelVector PixelVector::getRelativeToCamera(PixelVector vector)
 {
 	PixelVector cameraPosition = PixelVector::getFromVector3D(*_cameraPosition, 0);
@@ -206,7 +224,9 @@ static inline PixelVector PixelVector::getRelativeToCamera(PixelVector vector)
 
 	return vector;
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 static inline PixelVector PixelVector::projectVector3D(Vector3D vector3D, int16 parallax)
 {
 	fixed_ext_t x = (fixed_ext_t)(vector3D.x);
@@ -266,24 +286,32 @@ static inline PixelVector PixelVector::projectVector3D(Vector3D vector3D, int16 
 
 	return projection;
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 static inline PixelVector PixelVector::transformVector3D(Vector3D vector)
 {
 	vector = Vector3D::rotate(Vector3D::sub(vector, *_cameraPosition), *_cameraInvertedRotation);
 	
 	return PixelVector::projectVector3D(vector, Optics::calculateParallax(vector.z));
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 static inline fixed_t PixelVector::length(PixelVector vector)
 {
 	return __F_TO_FIXED(Math_squareRoot(PixelVector::squareLength(vector)));
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 static inline uint32 PixelVector::squareLength(PixelVector vector)
 {
 	return ((uint32)vector.x) * ((uint32)vector.x) + ((uint32)vector.y) * ((uint32)vector.y) + ((uint32)vector.z) * ((uint32)vector.z);
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 static inline bool PixelVector::isVisible(PixelVector vector, PixelRightBox pixelRightBox, int16 padding)
 {
 	extern const CameraFrustum* _cameraFrustum;
@@ -311,7 +339,9 @@ static inline bool PixelVector::isVisible(PixelVector vector, PixelRightBox pixe
 
 	return true;
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 static inline bool PixelVector::isVector3DVisible(Vector3D vector, PixelRightBox pixelRightBox, int16 padding)
 {
 	extern const CameraFrustum* _cameraFrustum;
@@ -337,7 +367,9 @@ static inline bool PixelVector::isVector3DVisible(Vector3D vector, PixelRightBox
 
 	return true;
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 
 
 #endif

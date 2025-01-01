@@ -10,9 +10,9 @@
 #ifdef __TOOLS
 
 
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 // INCLUDES
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <Actor.h>
 #include <AnimationController.h>
@@ -81,9 +81,9 @@
 #include "Debug.h"
 
 
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DECLARATIONS
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 friend class VirtualNode;
 friend class VirtualList;
@@ -93,19 +93,21 @@ extern ClassSizeData _userClassesSizeData[];
 #endif
 
 
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' MACROS
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #define __CHARS_PER_SEGMENT_TO_SHOW			512
 #define __CHARS_PER_ROW_TO_SHOW				32
 
 
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PUBLIC METHODS
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void Debug::update()
 {
 	if(this->currentPage->data == &Debug::texturesPage && 0 <= this->bgmapSegment)
@@ -113,7 +115,9 @@ void Debug::update()
 		Debug::showBgmapSegment(this);
 	}
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void Debug::show()
 {
 	Printing::clear(Printing::getInstance());
@@ -123,14 +127,18 @@ void Debug::show()
 
 	Debug::showPage(this, 0);
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void Debug::hide()
 {
 	ColliderManager::hideColliders(GameState::getColliderManager(VUEngine::getPreviousState(VUEngine::getInstance())));
 	Printing::clear(Printing::getInstance());
 	SpriteManager::showAllSprites(SpriteManager::getInstance(), NULL, true);
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void Debug::processUserInput(uint16 pressedKey)
 {
 	if(pressedKey & K_LL)
@@ -166,13 +174,17 @@ void Debug::processUserInput(uint16 pressedKey)
 		Debug::displaceDown(this);
 	}
 }
-//---------------------------------------------------------------------------------------------------------
 
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PRIVATTE METHODS
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void Debug::constructor()
 {
 	// Always explicitly call the base's constructor 
@@ -191,7 +203,9 @@ void Debug::constructor()
 
 	Debug::setupPages(this);
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void Debug::destructor()
 {
 	delete this->pages;
@@ -201,7 +215,9 @@ void Debug::destructor()
 	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void Debug::setupPages()
 {
 	VirtualList::pushBack(this->pages, &Debug::generalStatusPage);
@@ -218,17 +234,23 @@ void Debug::setupPages()
 
 	this->currentPage = this->pages->head;
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 uint8 Debug::getCurrentPageNumber()
 {
 	return VirtualList::getNodeIndex(this->pages, this->currentPage) + 1;
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void Debug::setBlackBackground()
 {
 	SpriteManager::hideAllSprites(SpriteManager::getInstance(), NULL, false);
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void Debug::showPreviousPage()
 {
 	SpriteManager::showAllSprites(SpriteManager::getInstance(), NULL, true);
@@ -242,7 +264,9 @@ void Debug::showPreviousPage()
 
 	Debug::showPage(this, -1);
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void Debug::showNextPage()
 {
 	SpriteManager::showAllSprites(SpriteManager::getInstance(), NULL, true);
@@ -256,7 +280,9 @@ void Debug::showNextPage()
 
 	Debug::showPage(this, 1);
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void Debug::showPreviousSubPage()
 {
 	if(!this->currentSubPage)
@@ -273,7 +299,9 @@ void Debug::showPreviousSubPage()
 
 	Debug::showSubPage(this, -1);
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void Debug::showNextSubPage()
 {
 	if(!this->currentSubPage)
@@ -290,7 +318,9 @@ void Debug::showNextSubPage()
 
 	Debug::showSubPage(this, 1);
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void Debug::printHeader()
 {
 	Printing::text(Printing::getInstance(), "\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08", 0, 0, NULL);
@@ -299,7 +329,9 @@ void Debug::printHeader()
 	Printing::int32(Printing::getInstance(), Debug::getCurrentPageNumber(this), Debug::getCurrentPageNumber(this) < 10 ? 18 : 17, 0, NULL);
 	Printing::int32(Printing::getInstance(), VirtualList::getCount(this->pages), 20, 0, NULL);
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void Debug::showPage(int32 increment)
 {
 	if(this->currentPage && this->currentPage->data)
@@ -319,7 +351,9 @@ void Debug::showPage(int32 increment)
 
 	Printing::show(Printing::getInstance());
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void Debug::showSubPage(int32 increment)
 {
 	if(this->currentSubPage && VirtualNode::getData(this->currentSubPage))
@@ -334,7 +368,9 @@ void Debug::showSubPage(int32 increment)
 
 	Printing::show(Printing::getInstance());
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void Debug::displaceLeft()
 {
 	if(this->bgmapSegmentDiplayedSection % 2 == 1)
@@ -343,7 +379,9 @@ void Debug::displaceLeft()
 	}
 	Debug::showDebugBgmap(this);
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void Debug::displaceRight()
 {
 	if(this->bgmapSegmentDiplayedSection % 2 == 0)
@@ -352,7 +390,9 @@ void Debug::displaceRight()
 	}
 	Debug::showDebugBgmap(this);
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void Debug::displaceUp()
 {
 	if(this->bgmapSegmentDiplayedSection > 1)
@@ -361,7 +401,9 @@ void Debug::displaceUp()
 	}
 	Debug::showDebugBgmap(this);
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void Debug::displaceDown()
 {
 	if(this->bgmapSegmentDiplayedSection < 4)
@@ -370,13 +412,17 @@ void Debug::displaceDown()
 	}
 	Debug::showDebugBgmap(this);
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void Debug::removeSubPages()
 {
 	VirtualList::clear(this->subPages);
 	this->currentSubPage = NULL;
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void Debug::generalStatusPage(int32 increment __attribute__ ((unused)), int32 x __attribute__ ((unused)), int32 y)
 {
 	Debug::removeSubPages(this);
@@ -411,7 +457,9 @@ void Debug::generalStatusPage(int32 increment __attribute__ ((unused)), int32 x 
 	Clock::print(GameState::getPhysicsClock(VUEngine::getPreviousState(VUEngine::getInstance())), 26, y, NULL);
 	y+=3;
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void Debug::memoryStatusPage(int32 increment __attribute__ ((unused)), int32 x __attribute__ ((unused)), int32 y __attribute__ ((unused)))
 {
 	Debug::removeSubPages(this);
@@ -436,7 +484,9 @@ void Debug::memoryStatusPage(int32 increment __attribute__ ((unused)), int32 x _
 }
 
 #ifdef __DEBUG_TOOL
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void Debug::memoryStatusShowZeroPage(int32 increment __attribute__ ((unused)), int32 x, int32 y)
 {
 	MemoryPool::printDetailedUsage(MemoryPool::getInstance(), x, y);
@@ -456,7 +506,9 @@ void Debug::memoryStatusShowZeroPage(int32 increment __attribute__ ((unused)), i
 
 	Debug::printClassSizes(this, classesSizeData, sizeof(classesSizeData) / sizeof(ClassSizeData), x + 21, y, "VUEngine classes:");
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void Debug::memoryStatusShowFirstPage(int32 increment __attribute__ ((unused)), int32 x, int32 y)
 {
 	MemoryPool::printDetailedUsage(MemoryPool::getInstance(), x, y);
@@ -480,7 +532,9 @@ void Debug::memoryStatusShowFirstPage(int32 increment __attribute__ ((unused)), 
 
 	Debug::printClassSizes(this, classesSizeData, sizeof(classesSizeData) / sizeof(ClassSizeData), x + 21, y, "VUEngine classes:");
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void Debug::memoryStatusShowSecondPage(int32 increment __attribute__ ((unused)), int32 x, int32 y)
 {
 	MemoryPool::printDetailedUsage(MemoryPool::getInstance(), x, y);
@@ -499,7 +553,9 @@ void Debug::memoryStatusShowSecondPage(int32 increment __attribute__ ((unused)),
 
 	Debug::printClassSizes(this, classesSizeData, sizeof(classesSizeData) / sizeof(ClassSizeData), x + 21, y, "VUEngine classes:");
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void Debug::memoryStatusShowThirdPage(int32 increment __attribute__ ((unused)), int32 x, int32 y)
 {
 	MemoryPool::printDetailedUsage(MemoryPool::getInstance(), x, y);
@@ -524,7 +580,9 @@ void Debug::memoryStatusShowThirdPage(int32 increment __attribute__ ((unused)), 
 
 	Debug::printClassSizes(this, classesSizeData, sizeof(classesSizeData) / sizeof(ClassSizeData), x + 21, y, "VUEngine classes:");
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void Debug::memoryStatusShowFourthPage(int32 increment __attribute__ ((unused)), int32 x, int32 y)
 {
 	MemoryPool::printDetailedUsage(MemoryPool::getInstance(), x, y);
@@ -544,7 +602,9 @@ void Debug::memoryStatusShowFourthPage(int32 increment __attribute__ ((unused)),
 
 	Debug::printClassSizes(this, classesSizeData, sizeof(classesSizeData) / sizeof(ClassSizeData), x + 21, y, "VUEngine classes:");
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void Debug::memoryStatusShowFifthPage(int32 increment __attribute__ ((unused)), int32 x, int32 y)
 {
 	MemoryPool::printDetailedUsage(MemoryPool::getInstance(), x, y);
@@ -562,7 +622,9 @@ void Debug::memoryStatusShowFifthPage(int32 increment __attribute__ ((unused)), 
 
 	Debug::printClassSizes(this, classesSizeData, sizeof(classesSizeData) / sizeof(ClassSizeData), x + 21, y, "VUEngine classes:");
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void Debug::memoryStatusShowSixthPage(int32 increment __attribute__ ((unused)), int32 x, int32 y)
 {
 	MemoryPool::printDetailedUsage(MemoryPool::getInstance(), x, y);
@@ -579,7 +641,9 @@ void Debug::memoryStatusShowSixthPage(int32 increment __attribute__ ((unused)), 
 
 	Debug::printClassSizes(this, classesSizeData, sizeof(classesSizeData) / sizeof(ClassSizeData), x + 21, y, "VUEngine classes:");
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void Debug::memoryStatusShowSeventhPage(int32 increment __attribute__ ((unused)), int32 x, int32 y)
 {
 	MemoryPool::printDetailedUsage(MemoryPool::getInstance(), x, y);
@@ -596,13 +660,17 @@ void Debug::memoryStatusShowSeventhPage(int32 increment __attribute__ ((unused))
 
 	Debug::printClassSizes(this, classesSizeData, sizeof(classesSizeData) / sizeof(ClassSizeData), x + 21, y, "VUEngine classes:");
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void Debug::memoryStatusShowUserDefinedClassesSizes(int32 increment __attribute__ ((unused)), int32 x, int32 y)
 {
 	MemoryPool::printDetailedUsage(MemoryPool::getInstance(), x, y);
 	Debug::printClassSizes(this, _userClassesSizeData, 0, x + 21, y, "User defined classes:");
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void Debug::printClassSizes(ClassSizeData* classesSizeData, int32 count, int32 x, int32 y, char* message)
 {
 	int32 columnIncrement = 20;
@@ -626,7 +694,9 @@ void Debug::printClassSizes(ClassSizeData* classesSizeData, int32 count, int32 x
 	}
 }
 #endif
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void Debug::gameProfilingPage(int32 increment __attribute__ ((unused)), int32 x __attribute__ ((unused)), int32 y __attribute__ ((unused)))
 {
 	Debug::removeSubPages(this);
@@ -634,7 +704,9 @@ void Debug::gameProfilingPage(int32 increment __attribute__ ((unused)), int32 x 
 	// TODO: show profiler
 	PRINT_TEXT("TODO: Show profiler", 1, 6);
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void Debug::streamingPage(int32 increment __attribute__ ((unused)), int32 x __attribute__ ((unused)), int32 y __attribute__ ((unused)))
 {
 	Debug::removeSubPages(this);
@@ -644,12 +716,16 @@ void Debug::streamingPage(int32 increment __attribute__ ((unused)), int32 x __at
 
 	Debug::showSubPage(this, 0);
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void Debug::streamingShowStatus(int32 increment __attribute__ ((unused)), int32 x __attribute__ ((unused)), int32 y __attribute__ ((unused)))
 {
 	Stage::print(GameState::getStage(VUEngine::getPreviousState(VUEngine::getInstance())), x, y);
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void Debug::charMemoryPage(int32 increment __attribute__ ((unused)), int32 x __attribute__ ((unused)), int32 y __attribute__ ((unused)))
 {
 	Debug::removeSubPages(this);
@@ -662,7 +738,9 @@ void Debug::charMemoryPage(int32 increment __attribute__ ((unused)), int32 x __a
 
 	Debug::showSubPage(this, 0);
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void Debug::charMemoryShowStatus(int32 increment __attribute__ ((unused)), int32 x, int32 y)
 {
 	this->charSegment += increment;
@@ -698,7 +776,9 @@ void Debug::charMemoryShowStatus(int32 increment __attribute__ ((unused)), int32
 		CharSetManager::print(CharSetManager::getInstance(), x, y);
 	}
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void Debug::charMemoryShowMemory(int32 increment __attribute__ ((unused)), int32 x __attribute__ ((unused)), int32 y)
 {
 	Debug::setBlackBackground(this);
@@ -744,7 +824,9 @@ void Debug::charMemoryShowMemory(int32 increment __attribute__ ((unused)), int32
 		);
 	}
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void Debug::texturesPage(int32 increment __attribute__ ((unused)), int32 x __attribute__ ((unused)), int32 y __attribute__ ((unused)))
 {
 	Debug::removeSubPages(this);
@@ -758,7 +840,9 @@ void Debug::texturesPage(int32 increment __attribute__ ((unused)), int32 x __att
 
 	Debug::showSubPage(this, 0);
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void Debug::showDebugBgmap()
 {
 	if(this->currentPage->data != &Debug::texturesPage ||
@@ -772,7 +856,9 @@ void Debug::showDebugBgmap()
 	Debug::lightUpGame(this);
 	Debug::showBgmapSegment(this);
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void Debug::showBgmapSegment()
 {
 	uint32 printingBgmap = BgmapTextureManager::getPrintingBgmapSegment(BgmapTextureManager::getInstance());;
@@ -920,7 +1006,9 @@ void Debug::showBgmapSegment()
 		);
 	}
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void Debug::texturesShowStatus(int32 increment, int32 x, int32 y)
 {
 	this->bgmapSegment += increment;
@@ -954,7 +1042,9 @@ void Debug::texturesShowStatus(int32 increment, int32 x, int32 y)
 		ParamTableManager::print(ParamTableManager::getInstance(), x + 27, y);
 	}
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void Debug::objectsPage(int32 increment __attribute__ ((unused)), int32 x __attribute__ ((unused)), int32 y __attribute__ ((unused)))
 {
 	Debug::removeSubPages(this);
@@ -967,7 +1057,9 @@ void Debug::objectsPage(int32 increment __attribute__ ((unused)), int32 x __attr
 
 	Debug::showSubPage(this, 0);
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void Debug::objectsShowStatus(int32 increment, int32 x, int32 y)
 {
 	this->objectSegment += increment;
@@ -1019,7 +1111,9 @@ void Debug::objectsShowStatus(int32 increment, int32 x, int32 y)
 		SpriteManager::printObjectSpriteContainersStatus(SpriteManager::getInstance(), x, y);
 	}
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void Debug::spritesPage(int32 increment __attribute__ ((unused)), int32 x __attribute__ ((unused)), int32 y __attribute__ ((unused)))
 {
 	Debug::removeSubPages(this);
@@ -1032,7 +1126,9 @@ void Debug::spritesPage(int32 increment __attribute__ ((unused)), int32 x __attr
 
 	Debug::showSubPage(this, 0);
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void Debug::spritesShowStatus(int32 increment, int32 x, int32 y)
 {
 	this->spriteIndex -= increment;
@@ -1067,7 +1163,9 @@ void Debug::spritesShowStatus(int32 increment, int32 x, int32 y)
 		SpriteManager::print(SpriteManager::getInstance(), x, y, false);
 	}
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void Debug::physicsPage(int32 increment __attribute__ ((unused)), int32 x __attribute__ ((unused)), int32 y __attribute__ ((unused)))
 {
 	Debug::removeSubPages(this);
@@ -1078,7 +1176,9 @@ void Debug::physicsPage(int32 increment __attribute__ ((unused)), int32 x __attr
 
 	Debug::showSubPage(this, 0);
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void Debug::physicStatusShowStatistics(int32 increment __attribute__ ((unused)), int32 x, int32 y)
 {
 	BodyManager::print(GameState::getBodyManager(VUEngine::getPreviousState(VUEngine::getInstance())), x, y);
@@ -1087,7 +1187,9 @@ void Debug::physicStatusShowStatistics(int32 increment __attribute__ ((unused)),
 
 	Debug::setBlackBackground(this);
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void Debug::physicStatusShowColliders(int32 increment __attribute__ ((unused)), int32 x, int32 y)
 {
 	Printing::text(Printing::getInstance(), "COLLISION SHAPES", x, y++, NULL);
@@ -1096,14 +1198,18 @@ void Debug::physicStatusShowColliders(int32 increment __attribute__ ((unused)), 
 	Debug::dimmGame(this);
 	ColliderManager::showColliders(GameState::getColliderManager(VUEngine::getPreviousState(VUEngine::getInstance())));
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void Debug::hardwareRegistersPage(int32 increment __attribute__ ((unused)), int32 x __attribute__ ((unused)), int32 y)
 {
 	Debug::removeSubPages(this);
 
 	HardwareManager::print(x, y);
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void Debug::sramPage(int32 increment __attribute__ ((unused)), int32 x __attribute__ ((unused)), int32 y __attribute__ ((unused)))
 {
 	Debug::removeSubPages(this);
@@ -1116,7 +1222,9 @@ void Debug::sramPage(int32 increment __attribute__ ((unused)), int32 x __attribu
 
 	Debug::showSubPage(this, 0);
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void Debug::showSramPage(int32 increment __attribute__ ((unused)), int32 x __attribute__ ((unused)), int32 y)
 {
 	uint8 value;
@@ -1190,6 +1298,8 @@ void Debug::showSramPage(int32 increment __attribute__ ((unused)), int32 x __att
 	// mark scroll bar position
 	Printing::text(Printing::getInstance(), __CHAR_BRIGHT_RED_BOX, 46, y - 15 + (this->sramPage / (totalPages / 16)), NULL);
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 
 #endif

@@ -8,9 +8,9 @@
  */
 
 
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 // INCLUDES
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <Clock.h>
 #include <Printing.h>
@@ -22,9 +22,9 @@
 #include "MessageDispatcher.h"
 
 
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' ATTRIBUTES
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 friend class VirtualNode;
 friend class VirtualList;
@@ -33,11 +33,13 @@ friend class Telegram;
 static MessageDispatcher _messageDispatcher = NULL;
 
 
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' STATIC METHODS
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 static bool MessageDispatcher::dispatchMessage(uint32 delay, ListenerObject sender, ListenerObject receiver, int32 message, void* extraInfo)
 {
 	// make sure the receiver is valid
@@ -87,13 +89,17 @@ static bool MessageDispatcher::dispatchMessage(uint32 delay, ListenerObject send
 
 	return false;
 }
-//---------------------------------------------------------------------------------------------------------
 
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PUBLIC METHODS
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void MessageDispatcher::dispatchDelayedMessage(Clock clock, uint32 delay,
  	ListenerObject sender, ListenerObject receiver, int32 message, void* extraInfo)
 {
@@ -108,7 +114,9 @@ void MessageDispatcher::dispatchDelayedMessage(Clock clock, uint32 delay,
 	VirtualList::pushBack(this->delayedMessages, delayedMessage);
 }
 
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 bool MessageDispatcher::dispatchDelayedMessages()
 {
 	ASSERT(this->delayedMessages, "MessageDispatcher::dispatchDelayedMessages: null delayedMessages");
@@ -188,7 +196,9 @@ bool MessageDispatcher::dispatchDelayedMessages()
 
 	return messagesDispatched;
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void MessageDispatcher::processDiscardedMessages()
 {
 	for(VirtualNode node = this->delayedMessages->head, nextNode = NULL; NULL != node; node = nextNode)
@@ -219,7 +229,9 @@ void MessageDispatcher::processDiscardedMessages()
 		}
 	}
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 bool MessageDispatcher::discardDelayedMessagesWithClock(Clock clock)
 {
 	bool messagesWereDiscarded = false;
@@ -238,7 +250,9 @@ bool MessageDispatcher::discardDelayedMessagesWithClock(Clock clock)
 
 	return messagesWereDiscarded;
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 bool MessageDispatcher::discardDelayedMessagesFromSender(ListenerObject sender, int32 message)
 {
 	bool messagesWereDiscarded = false;
@@ -262,7 +276,9 @@ bool MessageDispatcher::discardDelayedMessagesFromSender(ListenerObject sender, 
 
 	return messagesWereDiscarded;
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 bool MessageDispatcher::discardDelayedMessagesForReceiver(ListenerObject receiver, int32 message)
 {
 	bool messagesWereDiscarded = false;
@@ -286,7 +302,9 @@ bool MessageDispatcher::discardDelayedMessagesForReceiver(ListenerObject receive
 
 	return messagesWereDiscarded;
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 bool MessageDispatcher::discardAllDelayedMessagesFromSender(ListenerObject sender)
 {
 	bool messagesWereDiscarded = false;
@@ -310,7 +328,9 @@ bool MessageDispatcher::discardAllDelayedMessagesFromSender(ListenerObject sende
 
 	return messagesWereDiscarded;
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 bool MessageDispatcher::discardAllDelayedMessagesForReceiver(ListenerObject receiver)
 {
 	bool messagesWereDiscarded = false;
@@ -334,7 +354,9 @@ bool MessageDispatcher::discardAllDelayedMessagesForReceiver(ListenerObject rece
 
 	return messagesWereDiscarded;
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 bool MessageDispatcher::discardAllDelayedMessages(ListenerObject listenerObject)
 {
 	bool messagesWereDiscarded = false;
@@ -358,7 +380,9 @@ bool MessageDispatcher::discardAllDelayedMessages(ListenerObject listenerObject)
 
 	return messagesWereDiscarded;
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 #ifndef __RELEASE
 void MessageDispatcher::print(int32 x, int32 y)
 {
@@ -367,7 +391,9 @@ void MessageDispatcher::print(int32 x, int32 y)
 	Printing::int32(Printing::getInstance(), VirtualList::getCount(this->delayedMessages), x + 19, y, NULL);
 }
 #endif
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 #ifndef __SHIPPING
 void MessageDispatcher::printAllDelayedMessagesFromSender(ListenerObject sender, int16 x, int16 y)
 {
@@ -395,13 +421,17 @@ void MessageDispatcher::printAllDelayedMessagesFromSender(ListenerObject sender,
 	}
 }
 #endif
-//---------------------------------------------------------------------------------------------------------
 
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PRIVATE METHODS
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void MessageDispatcher::constructor()
 {
 	// Always explicitly call the base's constructor 
@@ -413,7 +443,9 @@ void MessageDispatcher::constructor()
 
 	_messageDispatcher = this;
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void MessageDispatcher::destructor()
 {
 	_messageDispatcher = NULL;

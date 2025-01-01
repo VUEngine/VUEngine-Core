@@ -8,9 +8,9 @@
  */
 
 
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 // INCLUDES
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <BgmapTexture.h>
 #include <Mem.h>
@@ -22,9 +22,9 @@
 #include "BgmapTextureManager.h"
 
 
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 // FORWARD DECLARATIONS
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 friend class Texture;
 friend class BgmapTexture;
@@ -32,11 +32,13 @@ friend class VirtualList;
 friend class VirtualNode;
 
 	
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PUBLIC METHODS
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void BgmapTextureManager::reset()
 {
 	NM_ASSERT(__BGMAP_SPACE_BASE_ADDRESS < __PARAM_TABLE_END, "BgmapTextureManager::reset: bgmap address space is negative");
@@ -73,12 +75,16 @@ void BgmapTextureManager::reset()
 		this->offset[i][kRows] = 0;
 	}
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void BgmapTextureManager::clearBgmapSegment(int32 segment)
 {
 	Mem::clear((BYTE*)__BGMAP_SEGMENT(segment), 64 * 64 * 2);
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void BgmapTextureManager::calculateAvailableBgmapSegments()
 {
 	uint32 paramTableBase = ParamTableManager::getParamTableBase(ParamTableManager::getInstance());
@@ -94,17 +100,23 @@ void BgmapTextureManager::calculateAvailableBgmapSegments()
 
 	Printing::setPrintingBgmapSegment(Printing::getInstance(), this->printingBgmapSegment);
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 int8 BgmapTextureManager::getAvailableBgmapSegmentsForTextures()
 {
 	return this->availableBgmapSegmentsForTextures;
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 int8 BgmapTextureManager::getPrintingBgmapSegment()
 {
 	return this->printingBgmapSegment;
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void BgmapTextureManager::loadTextures(const TextureSpec** textureSpecs)
 {
 	// textures
@@ -178,7 +190,9 @@ void BgmapTextureManager::loadTextures(const TextureSpec** textureSpecs)
 		delete preloadedTextures;
 	}
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 BgmapTexture BgmapTextureManager::getTexture(BgmapTextureSpec* bgmapTextureSpec, int16 minimumSegment, bool mustLiveAtEvenSegment, uint32 scValue)
 {
 	if(NULL == bgmapTextureSpec)
@@ -243,7 +257,9 @@ BgmapTexture BgmapTextureManager::getTexture(BgmapTextureSpec* bgmapTextureSpec,
 
 	return bgmapTexture;
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void BgmapTextureManager::releaseTexture(BgmapTexture bgmapTexture)
 {
 	// if no one is using the texture anymore
@@ -252,17 +268,23 @@ void BgmapTextureManager::releaseTexture(BgmapTexture bgmapTexture)
 		BgmapTexture::decreaseUsageCount(bgmapTexture);
 	}
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 int16 BgmapTextureManager::getXOffset(int32 id)
 {
 	return this->offset[id][kXOffset];
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 int16 BgmapTextureManager::getYOffset(int32 id)
 {
 	return this->offset[id][kYOffset];
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 #ifndef __SHIPPING
 void BgmapTextureManager::print(int32 x, int32 y)
 {
@@ -326,13 +348,17 @@ void BgmapTextureManager::print(int32 x, int32 y)
 	Printing::int32(Printing::getInstance(), freeEntries, x + 7, y - 6, NULL);
 }
 #endif
-//---------------------------------------------------------------------------------------------------------
 
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PRIVATE METHODS
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void BgmapTextureManager::constructor()
 {
 	// Always explicitly call the base's constructor 
@@ -341,7 +367,9 @@ void BgmapTextureManager::constructor()
 	this->bgmapTextures = new VirtualList();
 	BgmapTextureManager::reset(this);
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void BgmapTextureManager::destructor()
 {
 	VirtualList::deleteData(this->bgmapTextures);
@@ -352,7 +380,9 @@ void BgmapTextureManager::destructor()
 	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 BgmapTexture BgmapTextureManager::findTexture(BgmapTextureSpec* bgmapTextureSpec, bool recyclableOnly)
 {
 	TextureSpec* textureSpec = (TextureSpec*)bgmapTextureSpec;
@@ -421,7 +451,9 @@ BgmapTexture BgmapTextureManager::findTexture(BgmapTextureSpec* bgmapTextureSpec
 
 	return selectedBgmapTexture;
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 BgmapTexture BgmapTextureManager::allocateTexture(BgmapTextureSpec* bgmapTextureSpec, int16 minimumSegment, bool mustLiveAtEvenSegment, uint32 scValue)
 {
 	uint16 id = VirtualList::getCount(this->bgmapTextures);
@@ -443,7 +475,9 @@ BgmapTexture BgmapTextureManager::allocateTexture(BgmapTextureSpec* bgmapTexture
 
 	return bgmapTexture;
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 int32 BgmapTextureManager::doAllocate(uint16 id, TextureSpec* textureSpec, int16 minimumSegment, bool mustLiveAtEvenSegment, uint32 scValue)
 {
 	int32 i = 0;
@@ -580,4 +614,6 @@ int32 BgmapTextureManager::doAllocate(uint16 id, TextureSpec* textureSpec, int16
 
 	return -1;
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+

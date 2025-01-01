@@ -8,9 +8,9 @@
  */
 
 
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 // INCLUDES
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #ifdef __DEBUG_TOOL
 #include <Debug.h>
@@ -27,9 +27,9 @@
 #include "CommunicationManager.h"
 
 
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DATA
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 enum CommunicationsBroadcastStates
 {
@@ -49,17 +49,17 @@ enum CommunicationsStatus
 };
 
 
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' ATTRIBUTES
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 static volatile BYTE* _communicationRegisters =			(uint8*)0x02000000;
 static CommunicationManager _communicationManager;
 
 
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' MACROS
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #define	__CCR							0x00	// Communication Control Register	(0x0200 0000)
 #define	__CCSR							0x04	// COMCNT Control Register			(0x0200 0004)
@@ -89,11 +89,13 @@ static CommunicationManager _communicationManager;
 #define __MASTER_FRMCYC_SET_MESSAGE		0x5DC289F4
 
 
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' STATIC METHODS
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 static void CommunicationManager::interruptHandler()
 {
 #ifdef __ENABLE_PROFILER
@@ -113,13 +115,17 @@ static void CommunicationManager::interruptHandler()
 
 	CommunicationManager::processInterrupt(_communicationManager);
 }
-//---------------------------------------------------------------------------------------------------------
 
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PUBLIC METHODS
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void CommunicationManager::reset()
 {
 	switch(this->status)
@@ -151,7 +157,9 @@ void CommunicationManager::reset()
 			break;
 	}
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void CommunicationManager::enableCommunications(EventListener eventLister, ListenerObject scope)
 {
 	if(this->connected || kCommunicationsStatusIdle != this->status)
@@ -195,7 +203,9 @@ void CommunicationManager::enableCommunications(EventListener eventLister, Liste
 		CommunicationManager::sendHandshake(this);
     }
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void CommunicationManager::disableCommunications()
 {
 	CommunicationManager::cancelCommunications(this);
@@ -204,7 +214,9 @@ void CommunicationManager::disableCommunications()
 
 	CommunicationManager::reset(this);	
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 bool CommunicationManager::cancelCommunications()
 {
 	CommunicationManager::endCommunications(this);
@@ -235,7 +247,9 @@ bool CommunicationManager::cancelCommunications()
 
 	return true;
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void CommunicationManager::startSyncCycle()
 {
 	if(!this->connected)
@@ -275,17 +289,23 @@ void CommunicationManager::startSyncCycle()
 		while(__MASTER_FRMCYC_SET_MESSAGE != message);
 	}
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 bool CommunicationManager::isConnected()
 {
 	return this->connected;
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 bool CommunicationManager::isMaster()
 {
 	return __COM_AS_MASTER == this->communicationMode;
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 bool CommunicationManager::broadcastData(BYTE* data, int32 numberOfBytes)
 {
 	if(CommunicationManager::isConnected(this))
@@ -328,7 +348,9 @@ bool CommunicationManager::broadcastData(BYTE* data, int32 numberOfBytes)
 
 	return true;
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void CommunicationManager::broadcastDataAsync(BYTE* data, int32 numberOfBytes, EventListener eventLister, ListenerObject scope)
 {
 	if(CommunicationManager::isConnected(this))
@@ -357,37 +379,51 @@ void CommunicationManager::broadcastDataAsync(BYTE* data, int32 numberOfBytes, E
 
 	return;
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 bool CommunicationManager::sendAndReceiveData(WORD message, BYTE* data, int32 numberOfBytes)
 {
 	return CommunicationManager::startBidirectionalDataTransmission(this, message, data, numberOfBytes);
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 bool CommunicationManager::sendAndReceiveDataAsync(WORD message, BYTE* data, int32 numberOfBytes, EventListener eventLister, ListenerObject scope)
 {
 	return CommunicationManager::startBidirectionalDataTransmissionAsync(this, message, data, numberOfBytes, eventLister, scope);
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 WORD CommunicationManager::getSentMessage()
 {
 	return *(WORD*)this->sentData;
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 WORD CommunicationManager::getReceivedMessage()
 {
 	return *(WORD*)this->receivedData;
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 const BYTE* CommunicationManager::getSentData()
 {
 	return (const BYTE*)this->sentData + __MESSAGE_SIZE;
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 const BYTE* CommunicationManager::getReceivedData()
 {
 	return (const BYTE*)this->receivedData + __MESSAGE_SIZE;
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 #ifndef __SHIPPING
 void CommunicationManager::print(int32 x, int32 y)
 {
@@ -450,7 +486,9 @@ void CommunicationManager::print(int32 x, int32 y)
 	PRINT_INT(_communicationRegisters[__CCSR] & 0x01, x + valueDisplacement, y++);
 }
 #endif
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 bool CommunicationManager::handleMessage(Telegram telegram)
 {
 	switch(Telegram::getMessage(telegram))
@@ -472,13 +510,17 @@ bool CommunicationManager::handleMessage(Telegram telegram)
 
 	return false;
 }
-//---------------------------------------------------------------------------------------------------------
 
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PRIVATE METHODS
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void CommunicationManager::constructor()
 {
 	// Always explicitly call the base's constructor 
@@ -490,24 +532,32 @@ void CommunicationManager::constructor()
 
 	_communicationManager = this;
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void CommunicationManager::destructor()
 {
 	// allow a new construct
 	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 bool CommunicationManager::isTransmitting()
 {
 	return _communicationRegisters[__CCR] & __COM_PENDING ? true : false;
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 bool CommunicationManager::managesChannel()
 {
 	return !CommunicationManager::isMaster(this);
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 bool CommunicationManager::isHandshakeIncoming()
 {
 	// Try to close the communication channel
@@ -516,22 +566,30 @@ bool CommunicationManager::isHandshakeIncoming()
 	// then there is a handshake taking place
 	return CommunicationManager::isRemoteReady(this);
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 bool CommunicationManager::isRemoteReady()
 {
 	return 0 == (_communicationRegisters[__CCSR] & 0x01) ? true : false;
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 bool CommunicationManager::isCommunicationControlInterrupt()
 {
 	return 0 == (_communicationRegisters[__CCSR] & __COM_DISABLE_INTERRUPT);
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 bool CommunicationManager::isAuxChannelOpen()
 {
 	return _communicationRegisters[__CCSR] & 0x01 ? true : false;
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 bool CommunicationManager::isFreeForTransmissions()
 {
 	return (
@@ -543,7 +601,9 @@ bool CommunicationManager::isFreeForTransmissions()
 		kCommunicationsStatusIdle == this->status
 	);
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void CommunicationManager::endCommunications()
 {
 	CommunicationManager::setReady(this, false);
@@ -551,12 +611,16 @@ void CommunicationManager::endCommunications()
 	_communicationRegisters[__CCR] = __COM_DISABLE_INTERRUPT;
 	_communicationRegisters[__CDTR] = 0;
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void CommunicationManager::waitForRemote()
 {
 	MessageDispatcher::dispatchMessage(1, ListenerObject::safeCast(this), ListenerObject::safeCast(this), kMessageCheckIfRemoteIsReady, NULL);
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 bool CommunicationManager::sendHandshake()
 {
 	if(kCommunicationsStatusIdle == this->status)
@@ -568,7 +632,9 @@ bool CommunicationManager::sendHandshake()
 
 	return false;
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void CommunicationManager::startClockSignal()
 {
 	// Make sure to disable COMCNT interrupts
@@ -598,7 +664,9 @@ void CommunicationManager::startClockSignal()
 
 	}
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void CommunicationManager::startTransmissions(uint8 payload, bool async)
 {
 	// Set transmission data
@@ -644,7 +712,9 @@ void CommunicationManager::startTransmissions(uint8 payload, bool async)
 		CommunicationManager::setReady(this, true);
 	}
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void CommunicationManager::setReady(bool ready)
 {
 	if(ready)
@@ -670,7 +740,9 @@ void CommunicationManager::setReady(bool ready)
 		_communicationRegisters[__CCSR] |= 0x02;
 	}
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 bool CommunicationManager::sendPayload(uint8 payload, bool async)
 {
 	if(kCommunicationsStatusIdle == this->status)
@@ -682,7 +754,9 @@ bool CommunicationManager::sendPayload(uint8 payload, bool async)
 
 	return false;
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 bool CommunicationManager::receivePayload(bool async)
 {
 	if(kCommunicationsStatusIdle == this->status)
@@ -694,7 +768,9 @@ bool CommunicationManager::receivePayload(bool async)
 
 	return false;
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 bool CommunicationManager::sendAndReceivePayload(uint8 payload, bool async)
 {
 	if(kCommunicationsStatusIdle == this->status)
@@ -706,7 +782,9 @@ bool CommunicationManager::sendAndReceivePayload(uint8 payload, bool async)
 
 	return false;
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 bool CommunicationManager::startDataTransmission(BYTE* data, int32 numberOfBytes, bool sendingData)
 {
 	if((sendingData && NULL == data) || 0 >= numberOfBytes || !CommunicationManager::isFreeForTransmissions(this))
@@ -761,7 +839,9 @@ bool CommunicationManager::startDataTransmission(BYTE* data, int32 numberOfBytes
 
 	return true;
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 bool CommunicationManager::sendDataAsync(BYTE* data, int32 numberOfBytes, EventListener eventLister, ListenerObject scope)
 {
 	if(NULL == data || 0 >= numberOfBytes || !CommunicationManager::isFreeForTransmissions(this))
@@ -810,17 +890,23 @@ bool CommunicationManager::sendDataAsync(BYTE* data, int32 numberOfBytes, EventL
 
 	return true;
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 bool CommunicationManager::sendData(BYTE* data, int32 numberOfBytes)
 {
 	return CommunicationManager::startDataTransmission(this, data, numberOfBytes, true);
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 bool CommunicationManager::receiveData(BYTE* data, int32 numberOfBytes)
 {
 	return CommunicationManager::startDataTransmission(this, data, numberOfBytes, false);
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 bool CommunicationManager::startBidirectionalDataTransmission(WORD message, BYTE* data, int32 numberOfBytes)
 {
 	if((NULL == data) || 0 >= numberOfBytes || !CommunicationManager::isFreeForTransmissions(this))
@@ -880,7 +966,9 @@ bool CommunicationManager::startBidirectionalDataTransmission(WORD message, BYTE
 
 	return true;
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 bool CommunicationManager::startBidirectionalDataTransmissionAsync(WORD message, BYTE* data, int32 numberOfBytes, EventListener eventLister, ListenerObject scope)
 {
 	if(NULL == data || 0 >= numberOfBytes || !CommunicationManager::isFreeForTransmissions(this))
@@ -935,7 +1023,9 @@ bool CommunicationManager::startBidirectionalDataTransmissionAsync(WORD message,
 
 	return true;
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void CommunicationManager::processInterrupt()
 {
 	int32 status = this->status;
@@ -1061,4 +1151,6 @@ void CommunicationManager::processInterrupt()
 			break;
 	}
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+

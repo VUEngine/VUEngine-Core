@@ -8,9 +8,9 @@
  */
 
 
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 // INCLUDES
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <DebugConfig.h>
 #include <MessageDispatcher.h>
@@ -23,19 +23,21 @@
 #include "ListenerObject.h"
 
 
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DECLARATIONS
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 friend class VirtualNode;
 friend class VirtualList;
 
 
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PUBLIC METHODS
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void ListenerObject::constructor()
 {
 #ifndef __RELEASE	
@@ -46,7 +48,9 @@ void ListenerObject::constructor()
 	this->events = NULL;
 	this->eventFirings = 0;
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void ListenerObject::destructor()
 {	
 	ASSERT(!isDeleted(this), "ListenerObject::destructor: already deleted this");
@@ -58,7 +62,9 @@ void ListenerObject::destructor()
 	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void ListenerObject::addEventListener(ListenerObject listener, EventListener callback, uint16 eventCode)
 {
 	if(NULL == listener || NULL == callback)
@@ -92,7 +98,9 @@ void ListenerObject::addEventListener(ListenerObject listener, EventListener cal
 
 	VirtualList::pushBack(this->events, event);
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void ListenerObject::removeEventListener(ListenerObject listener, EventListener callback, uint16 eventCode)
 {
 	if(NULL != this->events)
@@ -139,7 +147,9 @@ void ListenerObject::removeEventListener(ListenerObject listener, EventListener 
 		HardwareManager::resumeInterrupts();
 	}
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void ListenerObject::removeEventListeners(EventListener callback, uint16 eventCode)
 {
 	if(NULL != this->events)
@@ -186,7 +196,9 @@ void ListenerObject::removeEventListeners(EventListener callback, uint16 eventCo
 		HardwareManager::resumeInterrupts();
 	}
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void ListenerObject::removeEventListenerScopes(ListenerObject listener, uint16 eventCode)
 {
 	if(NULL != this->events)
@@ -232,7 +244,9 @@ void ListenerObject::removeEventListenerScopes(ListenerObject listener, uint16 e
 		HardwareManager::resumeInterrupts();
 	}
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void ListenerObject::removeAllEventListeners()
 {
 	if(NULL != this->events)
@@ -263,12 +277,16 @@ void ListenerObject::removeAllEventListeners()
 		HardwareManager::resumeInterrupts();
 	}
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 bool ListenerObject::hasActiveEventListeners()
 {
 	return !isDeleted(this->events) ? NULL != VirtualList::begin(this->events) : false;
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void ListenerObject::fireEvent(uint16 eventCode)
 {
 	if(NULL != this->events)
@@ -331,7 +349,9 @@ void ListenerObject::fireEvent(uint16 eventCode)
 		this->eventFirings--;
 	}
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void ListenerObject::sendMessageTo(ListenerObject receiver, uint32 message, uint32 delay, uint32 randomDelay)
 {
 	MessageDispatcher::dispatchMessage
@@ -343,26 +363,36 @@ void ListenerObject::sendMessageTo(ListenerObject receiver, uint32 message, uint
 		NULL
 	);
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void ListenerObject::sendMessageToSelf(uint32 message, uint32 delay, uint32 randomDelay)
 {
 	ListenerObject::sendMessageTo(this, this, message, delay, randomDelay);
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void ListenerObject::discardAllMessages()
 {
 	MessageDispatcher::discardAllDelayedMessagesFromSender(MessageDispatcher::getInstance(), ListenerObject::safeCast(this));
 	MessageDispatcher::discardAllDelayedMessagesForReceiver(MessageDispatcher::getInstance(), ListenerObject::safeCast(this));
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void ListenerObject::discardMessages(uint32 message)
 {
 	MessageDispatcher::discardDelayedMessagesFromSender(MessageDispatcher::getInstance(), ListenerObject::safeCast(this), message);
 	MessageDispatcher::discardDelayedMessagesForReceiver(MessageDispatcher::getInstance(), ListenerObject::safeCast(this), message);
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 bool ListenerObject::handleMessage(Telegram telegram __attribute__ ((unused)))
 {
 	return false;
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+

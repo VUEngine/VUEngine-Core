@@ -10,9 +10,9 @@
 #ifdef __TOOLS
 
 
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 // INCLUDES
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <string.h>
 
@@ -33,18 +33,18 @@
 #include "AnimationInspector.h"
 
 
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DECLARATIONS
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 friend class Sprite;
 
 extern UserAnimatedEntity _userAnimatedEntities[];
 
 
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DATA
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 /// @memberof AnimationInspector
 enum AnimationInspectorStates
@@ -67,14 +67,18 @@ enum AnimationProperties
 };
 
 
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PUBLIC METHODS
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void AnimationInspector::update()
 {}
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void AnimationInspector::show()
 {
 	Printing::clear(Printing::getInstance());
@@ -125,7 +129,9 @@ void AnimationInspector::show()
 	SpriteManager::writeTextures(SpriteManager::getInstance());
 	SpriteManager::deferParamTableEffects(SpriteManager::getInstance(), false);
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void AnimationInspector::hide()
 {
 	if(NULL == _userAnimatedEntities[0].animatedEntitySpec)
@@ -168,7 +174,9 @@ void AnimationInspector::hide()
 	SpriteManager::showAllSprites(SpriteManager::getInstance(), NULL, true);
 	SpriteManager::deferParamTableEffects(SpriteManager::getInstance(), true);
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void AnimationInspector::processUserInput(uint16 pressedKey)
 {
 	if(NULL == _userAnimatedEntities[0].animatedEntitySpec)
@@ -215,13 +223,17 @@ void AnimationInspector::processUserInput(uint16 pressedKey)
 			break;
 	}
 }
-//---------------------------------------------------------------------------------------------------------
 
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PRIVATE METHODS
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void AnimationInspector::constructor()
 {
 	// Always explicitly call the base's constructor 
@@ -242,7 +254,9 @@ void AnimationInspector::constructor()
 		this->animationFunction.frames[i] = 0;
 	}
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void AnimationInspector::destructor()
 {
 	if(this->animatedEntitySelector)
@@ -274,7 +288,9 @@ void AnimationInspector::destructor()
 	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void AnimationInspector::configureState()
 {
 	Printing printing = Printing::getInstance();
@@ -326,7 +342,9 @@ void AnimationInspector::configureState()
 			break;
 	}
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void AnimationInspector::selectAnimatedEntity(uint32 pressedKey)
 {
 	int32 userAnimatedEntitiesCount = 0;
@@ -348,7 +366,9 @@ void AnimationInspector::selectAnimatedEntity(uint32 pressedKey)
 		AnimationInspector::configureState(this);
 	}
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void AnimationInspector::selectSprite(uint32 pressedKey)
 {
 	int32 userAnimatedEntitiesCount = 0;
@@ -372,7 +392,9 @@ void AnimationInspector::selectSprite(uint32 pressedKey)
 		AnimationInspector::configureState(this);
 	}
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void AnimationInspector::removePreviousSprite()
 {
 	if(!isDeleted(this->sprite))
@@ -381,7 +403,9 @@ void AnimationInspector::removePreviousSprite()
 		this->sprite = NULL;
 	}
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void AnimationInspector::selectAnimation(uint32 pressedKey)
 {
 	this->animationFunctions = _userAnimatedEntities[OptionsSelector::getSelectedOption(this->animatedEntitySelector)].animatedEntitySpec->animationFunctions;
@@ -403,7 +427,9 @@ void AnimationInspector::selectAnimation(uint32 pressedKey)
 		AnimationInspector::configureState(this);
 	}
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void AnimationInspector::editAnimation(uint32 pressedKey)
 {
 	if(pressedKey & K_A)
@@ -558,7 +584,9 @@ void AnimationInspector::editAnimation(uint32 pressedKey)
 
 	AnimationInspector::printAnimationConfig(this);
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void AnimationInspector::printUserAnimatedEntities()
 {
 	Printing printing = Printing::getInstance();
@@ -566,7 +594,9 @@ void AnimationInspector::printUserAnimatedEntities()
 	Printing::text(printing, "                       ", 1, 3, NULL);
 	OptionsSelector::print(this->animatedEntitySelector, 1, 4, kOptionsAlignLeft, 0);
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void AnimationInspector::printSprites()
 {
 	Printing printing = Printing::getInstance();
@@ -574,7 +604,9 @@ void AnimationInspector::printSprites()
 	Printing::text(printing, "                       ", 1, 3, NULL);
 	OptionsSelector::print(this->spriteSelector, 1, 4, kOptionsAlignLeft, 0);
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void AnimationInspector::printAnimatedEntityAnimations()
 {
 	Printing printing = Printing::getInstance();
@@ -582,7 +614,9 @@ void AnimationInspector::printAnimatedEntityAnimations()
 	Printing::text(printing, "                       ", 1, 3, NULL);
 	OptionsSelector::print(this->animationsSelector, 1, 4, kOptionsAlignLeft, 0);
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void AnimationInspector::printAnimationConfig()
 {
 	int32 x = 1;
@@ -628,7 +662,9 @@ void AnimationInspector::printAnimationConfig()
 			break;
 	}
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void AnimationInspector::loadAnimationFunction()
 {
 	if(NULL == _userAnimatedEntities[0].animatedEntitySpec)
@@ -652,7 +688,9 @@ void AnimationInspector::loadAnimationFunction()
 	this->animationFunction.loop = animationFunction->loop;
 	this->animationFunction.onAnimationComplete = (EventListener)&AnimationInspector_onAnimationComplete;
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void AnimationInspector::createSprite()
 {
 	if(NULL == _userAnimatedEntities[0].animatedEntitySpec)
@@ -690,7 +728,9 @@ void AnimationInspector::createSprite()
 	SpriteManager::hideAllSprites(SpriteManager::getInstance(), this->sprite, false);
 	SpriteManager::prepareAll(SpriteManager::getInstance());
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void AnimationInspector::createSpriteSelector()
 {
 	if(!isDeleted(this->spriteSelector))
@@ -717,7 +757,9 @@ void AnimationInspector::createSpriteSelector()
 	OptionsSelector::setOptions(this->spriteSelector, spriteIndexes);
 	delete spriteIndexes;
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void AnimationInspector::createAnimationsSelector()
 {
 	if(NULL == _userAnimatedEntities[0].animatedEntitySpec)
@@ -755,7 +797,9 @@ void AnimationInspector::createAnimationsSelector()
 		//TODO
 	}
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void AnimationInspector::createAnimationEditionSelector()
 {
 	if(this->animationEditionSelector)
@@ -793,7 +837,9 @@ void AnimationInspector::createAnimationEditionSelector()
 
 	this->state = kEditAnimation;
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void AnimationInspector::createFrameEditionSelector()
 {
 	if(this->frameEditionSelector)
@@ -818,7 +864,9 @@ void AnimationInspector::createFrameEditionSelector()
 	OptionsSelector::setOptions(this->frameEditionSelector, framesIndexes);
 	delete framesIndexes;
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 bool AnimationInspector::onAnimationComplete(ListenerObject eventFirer __attribute__ ((unused)))
 {
 	if(!this->animationFunction.loop)
@@ -828,6 +876,8 @@ bool AnimationInspector::onAnimationComplete(ListenerObject eventFirer __attribu
 
 	return true;
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 
 #endif

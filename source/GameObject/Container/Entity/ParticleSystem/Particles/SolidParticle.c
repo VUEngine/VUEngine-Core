@@ -8,9 +8,9 @@
  */
 
 
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 // INCLUDES
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <Ball.h>
 #include <Body.h>
@@ -24,20 +24,22 @@
 #include "SolidParticle.h"
 
 
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DECLARATIONS
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 friend class Collider;
 friend class VirtualList;
 friend class VirtualNode;
 
 
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PUBLIC METHODS
-//=========================================================================================================
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void SolidParticle::constructor(const SolidParticleSpec* solidParticleSpec)
 {
 	// Always explicitly call the base's constructor 
@@ -88,7 +90,9 @@ void SolidParticle::constructor(const SolidParticleSpec* solidParticleSpec)
 	Body::setBounciness(this->body, this->solidParticleSpec->bounciness);
 	Body::setFrictionCoefficient(this->body, this->solidParticleSpec->frictionCoefficient);
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void SolidParticle::destructor()
 {
 	// unregister the collider for collision detection
@@ -105,7 +109,9 @@ void SolidParticle::destructor()
 	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 bool SolidParticle::handleMessage(Telegram telegram)
 {
 	switch(Telegram::getMessage(telegram))
@@ -127,12 +133,16 @@ bool SolidParticle::handleMessage(Telegram telegram)
 
 	return false;
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 fixed_t SolidParticle::getRadius()
 {
 	return this->solidParticleSpec->radius;
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 bool SolidParticle::isSubjectToGravity(Vector3D gravity)
 {
 	ASSERT(this->collider, "Particle::isSubjectToGravity: null collider");
@@ -148,12 +158,16 @@ bool SolidParticle::isSubjectToGravity(Vector3D gravity)
 
 	return Collider::canMoveTowards(this->collider, displacement);
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 uint32 SolidParticle::getInGameType()
 {
 	return this->solidParticleSpec->inGameType;
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 bool SolidParticle::collisionStarts(const CollisionInformation* collisionInformation)
 {
 	ASSERT(this->body, "SolidParticle::resolveCollision: null body");
@@ -185,7 +199,9 @@ bool SolidParticle::collisionStarts(const CollisionInformation* collisionInforma
 
 	return returnValue;
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void SolidParticle::collisionEnds(const CollisionInformation* collisionInformation)
 {
 	ASSERT(this->body, "SolidParticle::collisionEnds: null this");
@@ -203,10 +219,14 @@ void SolidParticle::collisionEnds(const CollisionInformation* collisionInformati
 	Body::clearNormal(this->body, ListenerObject::safeCast(collisionInformation->otherCollider));
 	Body::setSurroundingFrictionCoefficient(this->body, Collider::getCollidingFrictionCoefficient(collisionInformation->collider));
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void SolidParticle::reset()
 {
 	Base::reset(this);
 	Collider::discardCollisions(this->collider);
 }
-//---------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
