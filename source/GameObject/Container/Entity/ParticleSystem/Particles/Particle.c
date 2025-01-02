@@ -218,7 +218,6 @@ void Particle::setup(const ComponentSpec* visualComponentSpec, const ComponentSp
 
 	Particle::playAnimation(this, animationFunctions, animationName);
 
-	// TOOD: the preprocessor does't catch properly this override check with Particle 	
 	if(!isDeleted(this->body))
 	{
 		Body::setPosition(this->body, position, GameObject::safeCast(this));
