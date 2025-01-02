@@ -276,30 +276,26 @@ bool GameObject::setVelocity(const Vector3D* velocity, bool checkIfCanMove)
 
 const Vector3D* GameObject::getVelocity()
 {
-	Body body = Body::safeCast(ComponentManager::getComponentAtIndex(this, kPhysicsComponent, 0));
-
-	if(isDeleted(body))
+	if(isDeleted(this->body))
 	{
 		static Vector3D dummyVelocity = {0, 0, 0};
 
 		return &dummyVelocity;
 	}
 
-	return Body::getVelocity(body);
+	return Body::getVelocity(this->body);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 fixed_t GameObject::getSpeed()
 {
-	Body body = Body::safeCast(ComponentManager::getComponentAtIndex(this, kPhysicsComponent, 0));
-
-	if(isDeleted(body))
+	if(isDeleted(this->body))
 	{
 		return 0;
 	}
 
-	return Body::getSpeed(body);
+	return Body::getSpeed(this->body);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -313,28 +309,24 @@ fixed_t GameObject::getMaximumSpeed()
 
 fixed_t GameObject::getBounciness()
 {
-	Body body = Body::safeCast(ComponentManager::getComponentAtIndex(this, kPhysicsComponent, 0));
-
-	if(isDeleted(body))
+	if(isDeleted(this->body))
 	{
 		return 0;
 	}
 
-	return Body::getBounciness(body);
+	return Body::getBounciness(this->body);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 fixed_t GameObject::getFrictionCoefficient()
 {
-	Body body = Body::safeCast(ComponentManager::getComponentAtIndex(this, kPhysicsComponent, 0));
-
-	if(isDeleted(body))
+	if(isDeleted(this->body))
 	{
 		return 0;
 	}
 
-	return Body::getFrictionCoefficient(body);
+	return Body::getFrictionCoefficient(this->body);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -585,9 +577,7 @@ void GameObject::setDirection(const Vector3D* direction __attribute__ ((unused))
 
 const Vector3D* GameObject::getDirection()
 {
-	Body body = Body::safeCast(ComponentManager::getComponentAtIndex(this, kPhysicsComponent, 0));
-
-	if(isDeleted(body))
+	if(isDeleted(this->body))
 	{
 		static Vector3D dummyDirection = {0, 0, 0};
 
