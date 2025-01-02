@@ -685,8 +685,6 @@ bool GameObject::isSubjectToGravity(Vector3D gravity)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
 bool GameObject::collisionStarts(const CollisionInformation* collisionInformation)
 {
 	ASSERT(collisionInformation->otherCollider, "GameObject::collisionStarts: otherColliders");
