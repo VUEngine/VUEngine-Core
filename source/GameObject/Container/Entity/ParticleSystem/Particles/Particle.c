@@ -125,10 +125,9 @@ uint32 Particle::getInGameType()
 
 bool Particle::collisionStarts(const CollisionInformation* collisionInformation)
 {
-	ASSERT(this->body, "Particle::resolveCollision: null body");
-	ASSERT(collisionInformation->otherCollider, "Particle::resolveCollision: otherColliders");
+	ASSERT(NULL != collisionInformation->otherCollider, "Particle::resolveCollision: otherColliders");
 
-	ASSERT(collisionInformation->otherCollider, "Particle::collisionStarts: otherColliders");
+	ASSERT(NULL != collisionInformation->otherCollider, "Particle::collisionStarts: otherColliders");
 
 	bool returnValue = false;
 
@@ -139,7 +138,7 @@ bool Particle::collisionStarts(const CollisionInformation* collisionInformation)
 			Collider::resolveCollision(collisionInformation->collider, collisionInformation);
 
 			GameObject owner = Collider::getOwner(collisionInformation->otherCollider);
-
+	
 			fixed_t frictionCoefficient = GameObject::getFrictionCoefficient(owner);
 			fixed_t bounciness = GameObject::getBounciness(owner);
 
