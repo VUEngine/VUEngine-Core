@@ -105,6 +105,10 @@ class Particle : GameObject
 	/// @return True if the telegram was processed
 	override bool handleMessage(Telegram telegram);
 
+	/// Set the object's position.
+	/// @param position: 3D vector defining the object's new position
+	override void setPosition(const Vector3D* position);
+
 	/// Check if the particle is subject to gravity.
 	/// @param gravity: Gravity vector
 	/// @return True if gravity can affect the particle; false otherwise

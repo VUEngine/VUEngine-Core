@@ -83,6 +83,23 @@ bool Particle::handleMessage(Telegram telegram)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+void Particle::setPosition(const Vector3D* position)
+{
+	if(isDeleted(this->body))
+	{
+		return;
+	}
+
+	if(Body::getPosition(this->body) != position)
+	{
+		Body::setPosition(this->body, position, GameObject::safeCast(this));
+	}
+
+	this->transformation.position = *position;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 bool Particle::isSubjectToGravity(Vector3D gravity __attribute__ ((unused)))
 {
 	if(isDeleted(this->body))
@@ -193,7 +210,8 @@ void Particle::setup(const ComponentSpec* visualComponentSpec, const ComponentSp
 	this->expired = false;
 	this->lifeSpan = lifeSpan;
 
-	//Particle::resetComponents(this);
+	// Is this needed? It can be quite heavy.
+	// Particle::resetComponents(this);
 
 	if(NULL != visualComponentSpec)
 	{
