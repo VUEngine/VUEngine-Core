@@ -443,7 +443,7 @@ void Body::bounce(ListenerObject bounceReferent, Vector3D bouncingPlaneNormal, f
 		Body::clearNormalOnAxis(this, movementResult.axisOfAcceleratedBouncing);
 	}
 
-	if(!Body::getMovementOnAllAxis(this))
+	if(__NO_AXIS == Body::getMovementOnAllAxis(this))
 	{
 		Body::sleep(this);
 	}
