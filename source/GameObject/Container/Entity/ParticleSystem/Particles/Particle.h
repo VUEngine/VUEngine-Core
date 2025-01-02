@@ -96,11 +96,6 @@ class Particle : GameObject
 	/// @param particleSpec: Specification that determines how to configure the particle
 	void constructor(const ParticleSpec* particleSpec);
 
-	/// Check if the particle is subject to gravity.
-	/// @param gravity: Gravity vector
-	/// @return True if gravity can affect the particle; false otherwise
-	override bool isSubjectToGravity(Vector3D gravity);
-
 	/// Process a newly detected collision by one of the component colliders.
 	/// @param collisionInformation: Information struct about the collision to resolve 
 	override bool collisionStarts(const CollisionInformation* collisionInformation);

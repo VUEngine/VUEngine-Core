@@ -77,10 +77,6 @@ class Actor : AnimatedEntity
 	/// @param direction: Pointer to a direction vector
 	override void setDirection(const Vector3D* direction);
 
-	/// Check if the object is subject to provided gravity vector.
-	/// @return True if the provided gravity vector can affect the object; false otherwise
-	override bool isSubjectToGravity(Vector3D gravity);
-
 	/// Set the local position.
 	/// @param position: New local position
 	override void setLocalPosition(const Vector3D* position);

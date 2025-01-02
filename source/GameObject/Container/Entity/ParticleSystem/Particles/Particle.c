@@ -58,40 +58,6 @@ void Particle::destructor()
 	Base::destructor();
 }
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-bool Particle::isSubjectToGravity(Vector3D gravity __attribute__ ((unused)))
-{
-	if(isDeleted(this->body))
-	{
-		return false;
-	}
-
-	if(__NO_AXIS != Body::getAxisSubjectToGravity(this->body))
-	{
-		Collider collider = Collider::safeCast(Particle::getComponentAtIndex(this, kColliderComponent, 0));
-
-		if(NULL == collider)
-		{
-			return true;
-		}
-
-		fixed_t collisionCheckDistance = __I_TO_FIXED(1);
-
-		Vector3D displacement =
-		{
-			gravity.x ? 0 < gravity.x ? collisionCheckDistance : -collisionCheckDistance : 0,
-			gravity.y ? 0 < gravity.y ? collisionCheckDistance : -collisionCheckDistance : 0,
-			gravity.z ? 0 < gravity.z ? collisionCheckDistance : -collisionCheckDistance : 0
-		};
-
-		return Collider::canMoveTowards(collider, displacement);
-	}
-
-	return false;
-}
-
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 uint32 Particle::getInGameType()

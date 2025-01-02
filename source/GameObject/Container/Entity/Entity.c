@@ -431,13 +431,6 @@ fixed_t Entity::getRadius()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-bool Entity::isSubjectToGravity(Vector3D gravity __attribute__ ((unused)))
-{
-	return true;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
 uint32 Entity::getInGameType()
 {
 	return this->entitySpec->inGameType;

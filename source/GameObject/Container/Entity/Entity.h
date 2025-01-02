@@ -179,10 +179,6 @@ class Entity : Container
 	/// @return Radius
 	override fixed_t getRadius();
 
-	/// Check if the object is subject to provided gravity vector.
-	/// @return True if the provided gravity vector can affect the object; false otherwise
-	override bool isSubjectToGravity(Vector3D gravity);
-
 	/// Retrieve the enum that determines the type of game object.
 	/// @return The enum that determines the type of game object
 	override uint32 getInGameType();

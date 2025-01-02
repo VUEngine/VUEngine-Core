@@ -134,13 +134,6 @@ void Actor::setDirection(const Vector3D* direction)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-bool Actor::isSubjectToGravity(Vector3D gravity)
-{
-	return Actor::canMoveTowards(this, gravity);
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
 void Actor::setLocalPosition(const Vector3D* position)
 {
 	Vector3D displacement = this->localTransformation.position;

@@ -625,7 +625,7 @@ bool GameObject::applyForce(const Vector3D* force, bool checkIfCanMove)
 
 bool GameObject::canMoveTowards(Vector3D direction)
 {
-	fixed_t collisionCheckDistance = __I_TO_FIXED(1);
+	fixed_t collisionCheckDistance = __PIXELS_TO_METERS(4);
 
 	Vector3D displacement =
 	{
@@ -668,9 +668,19 @@ bool GameObject::isSensibleToCollidingObjectFrictionOnCollision(GameObject colli
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-bool GameObject::isSubjectToGravity(Vector3D gravity __attribute__ ((unused)))
+bool GameObject::isSubjectToGravity(Vector3D gravity)
 {
-	return false;
+	if(isDeleted(this->body))
+	{
+		return false;
+	}
+
+	if(__NO_AXIS == Body::getAxisSubjectToGravity(this->body))
+	{
+		return false;
+	}
+
+	return GameObject::canMoveTowards(this, gravity);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————
