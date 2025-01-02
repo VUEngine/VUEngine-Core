@@ -368,79 +368,86 @@ void Body::bounce(ListenerObject bounceReferent, Vector3D bouncingPlaneNormal, f
 
 	Body::addNormal(this, bounceReferent, bouncingPlaneNormal, normalMagnitude);
 
-	Vector3D velocity = this->velocity;
-
-	// Compute bouncing velocity vector
-	Vector3D u = Vector3D::scalarProduct(bouncingPlaneNormal, Vector3D::dotProduct(velocity, bouncingPlaneNormal));
-	Vector3D w = Vector3D::get(u, velocity);
-
-	bounciness += this->bounciness;
-
-	if(__I_TO_FIXED(0) > bounciness)
+	if(0 < this->bounciness)
 	{
-		bounciness = 0;
-	}
-	else if(__F_TO_FIXED(__MAXIMUM_BOUNCINESS_COEFFICIENT) < bounciness)
-	{
-		bounciness = __F_TO_FIXED(__MAXIMUM_BOUNCINESS_COEFFICIENT);
-	}
+		Vector3D velocity = this->velocity;
 
-	if(0 > frictionCoefficient)
-	{
-		frictionCoefficient = 0;
-	}
-	else if(__MAXIMUM_FRICTION_COEFFICIENT < frictionCoefficient)
-	{
-		frictionCoefficient = __MAXIMUM_FRICTION_COEFFICIENT;
-	}
+		// Compute bouncing velocity vector
+		Vector3D u = Vector3D::scalarProduct(bouncingPlaneNormal, Vector3D::dotProduct(velocity, bouncingPlaneNormal));
+		Vector3D w = Vector3D::get(u, velocity);
 
-	// Add bounciness and friction
-	// This is the physically correct computation, but causes
-	// wrong angles of bouncing
-	u = Vector3D::scalarProduct(u, bounciness);
-	w = Vector3D::scalarProduct(w, (__MAXIMUM_FRICTION_COEFFICIENT - frictionCoefficient));
+		bounciness += this->bounciness;
 
-	this->velocity = Vector3D::get(u, w);
-
-	this->internalVelocity.x = __FIXED_TO_FIX7_9_EXT(this->velocity.x);
-	this->internalVelocity.y = __FIXED_TO_FIX7_9_EXT(this->velocity.y);
-	this->internalVelocity.z = __FIXED_TO_FIX7_9_EXT(this->velocity.z);
-
-	Body::clampVelocity(this, false);
-
-	if(__NO_MOVEMENT == this->movementType.x && 0 != this->velocity.x)
-	{
-		this->movementType.x = __ACCELERATED_MOVEMENT;
-	}
-
-	if(__NO_MOVEMENT == this->movementType.y && 0 != this->velocity.y)
-	{
-		this->movementType.y = __ACCELERATED_MOVEMENT;
-	}
-
-	if(__NO_MOVEMENT == this->movementType.z && 0 != this->velocity.z)
-	{
-		this->movementType.z = __ACCELERATED_MOVEMENT;
-	}
-
-	// determine bouncing result
-	MovementResult movementResult = Body::getBouncingResult(this, velocity, bouncingPlaneNormal);
-
-	// stop over the axis where there is no bouncing
-	if(movementResult.axisStoppedMovement)
-	{
-		uint16 axisOfStopping = Body::stopMovement(this, movementResult.axisStoppedMovement);
-
-		if(!isDeleted(this->owner) && __NO_AXIS != axisOfStopping && this->sendMessages)
+		if(__I_TO_FIXED(0) > bounciness)
 		{
-			MessageDispatcher::dispatchMessage(0, ListenerObject::safeCast(this), ListenerObject::safeCast(this->owner), kMessageBodyStopped, &axisOfStopping);
+			bounciness = 0;
+		}
+		else if(__F_TO_FIXED(__MAXIMUM_BOUNCINESS_COEFFICIENT) < bounciness)
+		{
+			bounciness = __F_TO_FIXED(__MAXIMUM_BOUNCINESS_COEFFICIENT);
+		}
+
+		if(0 > frictionCoefficient)
+		{
+			frictionCoefficient = 0;
+		}
+		else if(__MAXIMUM_FRICTION_COEFFICIENT < frictionCoefficient)
+		{
+			frictionCoefficient = __MAXIMUM_FRICTION_COEFFICIENT;
+		}
+
+		// Add bounciness and friction
+		// This is the physically correct computation, but causes
+		// wrong angles of bouncing
+		u = Vector3D::scalarProduct(u, bounciness);
+		w = Vector3D::scalarProduct(w, (__MAXIMUM_FRICTION_COEFFICIENT - frictionCoefficient));
+
+		this->velocity = Vector3D::get(u, w);
+
+		this->internalVelocity.x = __FIXED_TO_FIX7_9_EXT(this->velocity.x);
+		this->internalVelocity.y = __FIXED_TO_FIX7_9_EXT(this->velocity.y);
+		this->internalVelocity.z = __FIXED_TO_FIX7_9_EXT(this->velocity.z);
+
+		if(__NO_MOVEMENT == this->movementType.x && 0 != this->velocity.x)
+		{
+			this->movementType.x = __ACCELERATED_MOVEMENT;
+		}
+
+		if(__NO_MOVEMENT == this->movementType.y && 0 != this->velocity.y)
+		{
+			this->movementType.y = __ACCELERATED_MOVEMENT;
+		}
+
+		if(__NO_MOVEMENT == this->movementType.z && 0 != this->velocity.z)
+		{
+			this->movementType.z = __ACCELERATED_MOVEMENT;
+		}
+
+		// determine bouncing result
+		MovementResult movementResult = Body::getBouncingResult(this, velocity, bouncingPlaneNormal);
+
+		Body::clampVelocity(this, false);
+
+		// stop over the axis where there is no bouncing
+		if(movementResult.axisStoppedMovement)
+		{
+			uint16 axisOfStopping = Body::stopMovement(this, movementResult.axisStoppedMovement);
+
+			if(!isDeleted(this->owner) && __NO_AXIS != axisOfStopping && this->sendMessages)
+			{
+				MessageDispatcher::dispatchMessage(0, ListenerObject::safeCast(this), ListenerObject::safeCast(this->owner), kMessageBodyStopped, &axisOfStopping);
+			}
+		}
+
+		if(0 != movementResult.axisOfAcceleratedBouncing)
+		{
+		//	Body::setSurroundingFrictionCoefficient(this, 0);
+			Body::clearNormalOnAxis(this, movementResult.axisOfAcceleratedBouncing);
 		}
 	}
-
-	if(0 != movementResult.axisOfAcceleratedBouncing)
+	else
 	{
-	//	Body::setSurroundingFrictionCoefficient(this, 0);
-		Body::clearNormalOnAxis(this, movementResult.axisOfAcceleratedBouncing);
+		Body::stopMovement(this, __ALL_AXIS);
 	}
 
 	if(__NO_AXIS == Body::getMovementOnAllAxis(this))

@@ -24,6 +24,7 @@
 // FORWARD DECLARATIONS
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+class Body;
 class Component;
 class VirtualList;
 
@@ -48,10 +49,18 @@ abstract class GameObject : ListenerObject
 	/// 3D transformation
 	Transformation transformation;
 
+	/// Body for physics simulations
+	Body body;
+
 	/// @publicsection
 
 	/// Class' constructor
 	void constructor();
+
+	/// Receive and process a Telegram.
+	/// @param telegram: Received telegram to process
+	/// @return True if the telegram was processed
+	override bool handleMessage(Telegram telegram);
 
 	/// Clear the linked lists of components.
 	/// @param componentType: Type of components whose lists must be cleard
@@ -118,6 +127,29 @@ abstract class GameObject : ListenerObject
 	/// @return Pointer to the object's 3D
 	const Scale* getScale();
 
+	/// Retrieve the actor's physical body.
+	/// @return Actor's physical body
+	Body getBody();
+
+	/// Check if the actor is moving.
+	/// @return True if the actor's body is moving; false otherwise
+	bool isMoving();
+
+	/// Stop all actor's movement.
+	void stopAllMovement();
+
+	/// Stop the actor's movement in the specified axis.
+	/// @param axis: Axis on which to stop the movement of the actor's body
+	void stopMovement(uint16 axis);
+
+	/// Set the actor's velocity vector.
+	/// @param velocity: Velocity vector to assign to the actor's body
+	/// @param checkIfCanMove: If true, the actor checks that none of its colliders will
+	/// enter a collision if it were to move in the direction of the provided velocity
+	/// @return True if the actor started to move in the direction specified by the
+	/// provided velocity vector
+	bool setVelocity(const Vector3D* velocity, bool checkIfCanMove);
+
 	/// Retrieve the object's velocity vector.
 	/// @return Pointer to the direction towards which the object is moving
 	const Vector3D* getVelocity();
@@ -125,6 +157,10 @@ abstract class GameObject : ListenerObject
 	/// Retrieve the object's current speed (velocity vector's magnitude).
 	/// @return Object's current speed (velocity vector's magnitude)
 	fixed_t getSpeed();
+
+	/// Retrieve the actor's maximum speed.
+	/// @return Maximum speed at which the actor's body is allowed to move
+	fixed_t getMaximumSpeed();
 
 	/// Retrieve the object's bounciness factor.
 	/// @return Object's bounciness factor
@@ -227,6 +263,26 @@ abstract class GameObject : ListenerObject
 	/// Retrieve the direction towards which the object is moving.
 	/// @return Pointer to the direction towards which the object is moving
 	virtual const Vector3D* getDirection();
+
+	/// Apply a force to the actor's body.
+	/// @param force: Force to be applied
+	/// @param checkIfCanMove: If true, the actor checks that none of its colliders will
+	/// @return True if the force was succesfully applied to the actor's body
+	virtual bool applyForce(const Vector3D* force, bool checkIfCanMove);
+
+	/// Check if the actor will enter a collision if it were to move in the provided direction
+	/// @param direction: Direction vector to check
+	virtual bool canMoveTowards(Vector3D direction);
+
+	/// Check if when the actor bounces it has to take into account the colliding object's bounciness.
+	/// @return True if the actor has to take into account the colliding object's bounciness when bouncing
+	virtual bool isSensibleToCollidingObjectBouncinessOnCollision(GameObject collidingObject);
+
+	/// Check if when the actor bounces it has to take into account the colliding object's friction
+	/// coefficient.
+	/// @return True if the actor has to take into account the colliding object's friction coefficient when
+	/// bouncing
+	virtual bool isSensibleToCollidingObjectFrictionOnCollision(GameObject collidingObject);
 
 	/// Check if the object is subject to provided gravity vector.
 	/// @return True if the provided gravity vector can affect the object; false otherwise

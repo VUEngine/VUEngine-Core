@@ -12,6 +12,7 @@
 // INCLUDES
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+#include <Body.h>
 #include <ParticleSystem.h>
 #include <Sprite.h>
 #include <SpriteManager.h>
@@ -57,46 +58,6 @@ void Particle::destructor()
 	Base::destructor();
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-bool Particle::handleMessage(Telegram telegram)
-{
-	switch(Telegram::getMessage(telegram))
-	{
-		case kMessageBodyStartedMoving:
-
-			Particle::checkCollisions(this, true);
-			return true;
-			break;
-
-		case kMessageBodyStopped:
-
-			if(!Body::getMovementOnAllAxis(this->body))
-			{
-				Particle::checkCollisions(this, false);
-			}
-			break;
-	}
-
-	return false;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void Particle::setPosition(const Vector3D* position)
-{
-	if(isDeleted(this->body))
-	{
-		return;
-	}
-
-	if(Body::getPosition(this->body) != position)
-	{
-		Body::setPosition(this->body, position, GameObject::safeCast(this));
-	}
-
-	this->transformation.position = *position;
-}
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————
 

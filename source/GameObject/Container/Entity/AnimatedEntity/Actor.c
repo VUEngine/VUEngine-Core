@@ -13,9 +13,10 @@
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <Body.h>
-#include <Camera.h>
 #include <BodyManager.h>
+#include <Camera.h>
 #include <Collider.h>
+#include <Printing.h>
 #include <State.h>
 #include <StateMachine.h>
 #include <Telegram.h>
@@ -54,11 +55,6 @@ void Actor::constructor(const ActorSpec* actorSpec, int16 internalId, const char
 
 void Actor::destructor()
 {
-	if(!isDeleted(this->body))
-	{
-		this->body = NULL;
-	}
-
 	// destroy state machine
 	if(!isDeleted(this->stateMachine))
 	{
@@ -76,44 +72,10 @@ bool Actor::handleMessage(Telegram telegram)
 {
 	if(!this->stateMachine || !StateMachine::handleMessage(this->stateMachine, telegram))
 	{
-		int32 message = Telegram::getMessage(telegram);
-
-		if(!isDeleted(this->body))
-		{
-			switch(message)
-			{
-				case kMessageBodyStartedMoving:
-
-					Actor::checkCollisions(this, true);
-					return true;
-
-					break;
-
-				case kMessageBodyStopped:
-
-					if(__NO_AXIS == Body::getMovementOnAllAxis(this->body))
-					{
-						Actor::checkCollisions(this, false);
-					}
-
-					break;
-			}
-		}
+		return Base::handleMessage(this, telegram);
 	}
 
 	return false;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void Actor::setPosition(const Vector3D* position)
-{
-	Base::setPosition(this, position);
-
-	if(!isDeleted(this->body) && Body::getPosition(this->body) != position)
-	{
-		Body::setPosition(this->body, &this->transformation.position, GameObject::safeCast(this));
-	}
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -172,81 +134,9 @@ void Actor::setDirection(const Vector3D* direction)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-const Vector3D* Actor::getDirection()
-{
-	return !isDeleted(this->body) ? Body::getDirection(this->body) : Base::getDirection(this);
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
 bool Actor::isSubjectToGravity(Vector3D gravity)
 {
 	return Actor::canMoveTowards(this, gravity);
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-bool Actor::collisionStarts(const CollisionInformation* collisionInformation)
-{
-	ASSERT(collisionInformation->otherCollider, "Actor::collisionStarts: otherColliders");
-
-	if(NULL == this->body)
-	{
-		return false;
-	}
-
-	bool returnValue = false;
-
-	if(collisionInformation->collider && collisionInformation->otherCollider)
-	{
-		if(collisionInformation->solutionVector.magnitude)
-		{
-			Collider::resolveCollision(collisionInformation->collider, collisionInformation);
-
-			GameObject collidingObject = Collider::getOwner(collisionInformation->otherCollider);
-
-			fixed_t bounciness = Actor::isSensibleToCollidingObjectBouncinessOnCollision(this, collidingObject) ? GameObject::getBounciness(collidingObject) : 0;
-			fixed_t frictionCoefficient = Actor::isSensibleToCollidingObjectFrictionOnCollision(this, collidingObject) ? Actor::getSurroundingFrictionCoefficient(this) : 0;
-
-			if(Actor::isBouncy(this) && !isDeleted(this->body))
-			{
-				Body::bounce(this->body, ListenerObject::safeCast(collisionInformation->otherCollider), collisionInformation->solutionVector.direction, frictionCoefficient, bounciness);
-
-				Actor::fireEvent(this, kEventActorBounced);
-				NM_ASSERT(!isDeleted(this), "Actor::collisionStarts: deleted this during kEventActorBounced");
-			}
-			else
-			{
-				uint16 axis = __NO_AXIS;
-				axis |= collisionInformation->solutionVector.direction.x ? __X_AXIS : __NO_AXIS;
-				axis |= collisionInformation->solutionVector.direction.y ? __Y_AXIS : __NO_AXIS;
-				axis |= collisionInformation->solutionVector.direction.z ? __Z_AXIS : __NO_AXIS;
-				Actor::stopMovement(this, axis);
-			}
-
-			returnValue = true;
-		}
-	}
-
-	return returnValue;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void Actor::collisionEnds(const CollisionInformation* collisionInformation)
-{
-	if(isDeleted(this->body))
-	{
-		return;
-	}
-
-	if(NULL == collisionInformation || isDeleted(collisionInformation->collider))
-	{
-		return;
-	}
-
-	Body::clearNormal(this->body, ListenerObject::safeCast(collisionInformation->otherCollider));
-	Body::setSurroundingFrictionCoefficient(this->body,  Actor::getSurroundingFrictionCoefficient(this));
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -287,35 +177,6 @@ void Actor::changeEnvironment(Transformation* environmentTransform)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void Actor::addedComponent(Component component)
-{
-	Base::addedComponent(this, component);
-
-	if(kPhysicsComponent == Component::getType(component))
-	{
-		this->body = Body::safeCast(Object::getCast(component, typeofclass(Body), NULL));
-
-		if(!isDeleted(this->body))
-		{
-			Body::setPosition(this->body, &this->transformation.position, GameObject::safeCast(this));
-		}
-	}
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void Actor::removedComponent(Component component)
-{
-	Base::removedComponent(this, component);
-
-	if(Body::safeCast(component) == this->body)
-	{
-		this->body = NULL;
-	}
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
 void Actor::update()
 {
 	// call base
@@ -342,144 +203,6 @@ void Actor::createStateMachine(State state)
 	StateMachine::swapState(this->stateMachine, state);
 
 	this->update = true;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-Body Actor::getBody()
-{
-	return this->body;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-bool Actor::isMoving()
-{
-	return isDeleted(this->body) ? false : Body::getMovementOnAllAxis(this->body);
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void Actor::stopAllMovement()
-{
-	Actor::stopMovement(this, __ALL_AXIS);
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void Actor::stopMovement(uint16 axis)
-{
-	if(!isDeleted(this->body))
-	{
-		Body::stopMovement(this->body, axis);
-	}
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-fixed_t Actor::getMaximumSpeed()
-{
-	return !isDeleted(this->body) ? Body::getMaximumSpeed(this->body) : 0;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-bool Actor::setVelocity(const Vector3D* velocity, bool checkIfCanMove)
-{
-	ASSERT(this->body, "Actor::applyForce: null body");
-
-	if(isDeleted(this->body))
-	{
-		return false;
-	}
-
-	if(checkIfCanMove)
-	{
-		if(!Actor::canMoveTowards(this, *velocity))
-		{
-			return false;
-		}
-	}
-
-	Body::setVelocity(this->body, velocity);
-
-	return true;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-bool Actor::applyForce(const Vector3D* force, bool checkIfCanMove)
-{
-	ASSERT(this->body, "Actor::applyForce: null body");
-
-	if(isDeleted(this->body))
-	{
-		return false;
-	}
-
-	if(checkIfCanMove)
-	{
-		if(!Actor::canMoveTowards(this, *force))
-		{
-			return false;
-		}
-	}
-
-	Body::applyForce(this->body, force);
-
-	return true;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-bool Actor::canMoveTowards(Vector3D direction)
-{
-	fixed_t collisionCheckDistance = __I_TO_FIXED(1);
-
-	Vector3D displacement =
-	{
-		direction.x ? 0 < direction.x ? collisionCheckDistance : -collisionCheckDistance : 0,
-		direction.y ? 0 < direction.y ? collisionCheckDistance : -collisionCheckDistance : 0,
-		direction.z ? 0 < direction.z ? collisionCheckDistance : -collisionCheckDistance : 0
-	};
-
-	bool canMove = true;
-
-	VirtualList colliders = Actor::getComponents(this, kColliderComponent);
-
-	if(NULL != colliders)
-	{
-		VirtualNode node = colliders->head;
-
-		for(; NULL != node; node = node->next)
-		{
-			Collider collider = Collider::safeCast(node->data);
-			canMove &= Collider::canMoveTowards(collider, displacement);
-		}
-	}
-
-	return canMove;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-bool Actor::isBouncy()
-{
-	return true;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-bool Actor::isSensibleToCollidingObjectBouncinessOnCollision(GameObject collidingObject __attribute__ ((unused)))
-{
-	return  true;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-bool Actor::isSensibleToCollidingObjectFrictionOnCollision(GameObject collidingObject __attribute__ ((unused)))
-{
-	return  true;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -563,29 +286,6 @@ Rotation Actor::getRotationFromDirection(const Vector3D* direction, uint8 axis)
 	}
 
 	return Rotation::clamp(rotation.x, rotation.y, rotation.z);	
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-fixed_t Actor::getSurroundingFrictionCoefficient()
-{
-	fixed_t totalFrictionCoefficient = 0;
-
-	VirtualList colliders = Actor::getComponents(this, kColliderComponent);
-
-	if(NULL != colliders)
-	{
-		VirtualNode node = colliders->head;
-
-		for(; NULL != node; node = node->next)
-		{
-			Collider collider = Collider::safeCast(node->data);
-
-			totalFrictionCoefficient += Collider::getCollidingFrictionCoefficient(collider);
-		}
-	}
-
-	return totalFrictionCoefficient;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————

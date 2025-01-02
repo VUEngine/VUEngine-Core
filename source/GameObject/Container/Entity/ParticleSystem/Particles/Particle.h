@@ -15,7 +15,6 @@
 // INCLUDES
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-#include <Body.h>
 #include <GameObject.h>
 #include <Sprite.h>
 
@@ -88,9 +87,6 @@ class Particle : GameObject
 	/// If true the particle is set to be destroyed or recycled
 	bool expired;
 
-	/// Particle's physical body
-	Body body;
-
 	/// ParticleSpec used to configure the particle
 	const ParticleSpec* particleSpec;
 
@@ -99,15 +95,6 @@ class Particle : GameObject
 	/// Class' constructor
 	/// @param particleSpec: Specification that determines how to configure the particle
 	void constructor(const ParticleSpec* particleSpec);
-
-	/// Receive and process a Telegram.
-	/// @param telegram: Received telegram to process
-	/// @return True if the telegram was processed
-	override bool handleMessage(Telegram telegram);
-
-	/// Set the object's position.
-	/// @param position: 3D vector defining the object's new position
-	override void setPosition(const Vector3D* position);
 
 	/// Check if the particle is subject to gravity.
 	/// @param gravity: Gravity vector

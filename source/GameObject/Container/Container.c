@@ -190,8 +190,9 @@ void Container::setPosition(const Vector3D* position)
 {
 	Vector3D displacement = Vector3D::sub(*position, this->transformation.position);
 
+	Base::setPosition(this, position);
+
 	Container::translate(this, &displacement);
-	this->transformation.position = *position;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -200,8 +201,9 @@ void Container::setRotation(const Rotation* rotation)
 {
 	Rotation displacement = Rotation::sub(*rotation, this->transformation.rotation);
 
+	Base::setRotation(this, rotation);
+
 	Container::rotate(this, &displacement);
-	this->transformation.rotation = *rotation;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -210,8 +212,9 @@ void Container::setScale(const Scale* scale)
 {
 	Scale factor = Scale::division(*scale, this->transformation.scale);
 
+	Base::setScale(this, &factor);
+
 	Container::scale(this, &factor);
-	this->transformation.scale = *scale;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————
