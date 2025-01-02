@@ -14,6 +14,7 @@
 
 #include <string.h>
 
+#include <Body.h>
 #include <Printing.h>
 #include <VirtualList.h>
 
@@ -60,6 +61,7 @@ void Container::constructor(int16 internalId, const char* const name)
 	this->ready = false;
 	this->dontStreamOut = false;
 	this->hidden = false;
+	this->axisForSynchronizationWithBody = true;
 
 	this->name = NULL;
 	Container::setName(this, name);
@@ -215,6 +217,116 @@ void Container::setScale(const Scale* scale)
 	Base::setScale(this, &factor);
 
 	Container::scale(this, &factor);
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void Container::setDirection(const Vector3D* direction)
+{
+	if(NULL == direction)
+	{
+		return;
+	}
+
+	if((int8)__LOCK_AXIS == this->axisForSynchronizationWithBody)
+	{
+		return;
+	}
+		
+	if(__NO_AXIS == this->axisForSynchronizationWithBody)
+	{
+		NormalizedDirection normalizedDirection = Container::getNormalizedDirection(this);
+
+		if(0 > direction->x)
+		{
+			normalizedDirection.x = __LEFT;
+		}
+		else if(0 < direction->x)
+		{
+			normalizedDirection.x = __RIGHT;
+		}
+
+		if(0 > direction->y)
+		{
+			normalizedDirection.y = __UP;
+		}
+		else if(0 < direction->y)
+		{
+			normalizedDirection.y = __DOWN;
+		}
+
+		if(0 > direction->z)
+		{
+			normalizedDirection.z = __NEAR;
+		}
+		else if(0 < direction->z)
+		{
+			normalizedDirection.z = __FAR;
+		}
+
+		Container::setNormalizedDirection(this, normalizedDirection);
+	}
+	else
+	{
+		Rotation localRotation = Container::getRotationFromDirection(this, direction, this->axisForSynchronizationWithBody);
+		Container::setLocalRotation(this, &localRotation);
+	}
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void Container::setNormalizedDirection(NormalizedDirection normalizedDirection)
+{
+	NormalizedDirection currentNormalizedDirection = Container::getNormalizedDirection(this);
+
+	// if directions XOR is 0, they are equal
+	if(
+		!(
+			(currentNormalizedDirection.x ^ normalizedDirection.x) |
+			(currentNormalizedDirection.y ^ normalizedDirection.y) |
+			(currentNormalizedDirection.z ^ normalizedDirection.z)
+		)
+	)
+	{
+		return;
+	}
+
+	Rotation rotation =
+	{
+		__UP == normalizedDirection.y ? __HALF_ROTATION_DEGREES : __DOWN == normalizedDirection.y ? 0 : this->localTransformation.rotation.x,
+		__LEFT == normalizedDirection.x ? __HALF_ROTATION_DEGREES : __RIGHT == normalizedDirection.x ? 0 : this->localTransformation.rotation.y,
+		//__NEAR == direction.z ? __HALF_ROTATION_DEGREES : __FAR == direction.z ? 0 : this->localTransformation.rotation.z,
+		this->localTransformation.rotation.z,
+	};
+
+	Container::setLocalRotation(this, &rotation);
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+NormalizedDirection Container::getNormalizedDirection()
+{
+	NormalizedDirection normalizedDirection =
+	{
+		__RIGHT, __DOWN, __FAR
+	};
+
+	if(__QUARTER_ROTATION_DEGREES < __ABS(this->transformation.rotation.y))
+	{
+		normalizedDirection.x = __LEFT;
+	}
+
+	if(__QUARTER_ROTATION_DEGREES < __ABS(this->transformation.rotation.x))
+	{
+		normalizedDirection.y = __UP;
+	}
+
+	if(__QUARTER_ROTATION_DEGREES < __ABS(this->transformation.rotation.z))
+	{
+		normalizedDirection.z = __NEAR;
+	}
+
+	return normalizedDirection;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -763,6 +875,8 @@ const Scale* Container::getLocalScale()
 
 void Container::setLocalPosition(const Vector3D* position)
 {
+	Vector3D displacement = this->localTransformation.position;
+
 	// force global position calculation on the next transformation cycle
 	if(position == &this->localTransformation.position)
 	{
@@ -786,6 +900,19 @@ void Container::setLocalPosition(const Vector3D* position)
 		}
 
 		this->localTransformation.position = *position;
+	}
+
+	if(!isDeleted(this->body))
+	{
+		displacement.x -= this->localTransformation.position.x;
+		displacement.y -= this->localTransformation.position.y;
+		displacement.z -= this->localTransformation.position.z;
+
+		this->transformation.position.x -= displacement.x;
+		this->transformation.position.y -= displacement.y;
+		this->transformation.position.z -= displacement.z;
+
+		Body::setPosition(this->body, &this->transformation.position, GameObject::safeCast(this));
 	}
 }
 
@@ -836,22 +963,6 @@ void Container::setLocalScale(const Scale* scale)
 
 		this->localTransformation.scale = *scale;
 	}
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void Container::changeEnvironment(Transformation* environmentTransformation)
-{
-	Vector3D localPosition = Vector3D::sub(this->transformation.position, environmentTransformation->position);
-	Rotation localRotation = Rotation::sub(this->transformation.rotation, environmentTransformation->rotation);
-	Scale localScale = Scale::division(this->transformation.scale, environmentTransformation->scale);
-
-	Container::setLocalPosition(this, &localPosition);
-	Container::setLocalRotation(this, &localRotation);
-	Container::setLocalScale(this, &localScale);
-
-	// force global position calculation on the next transformation cycle
-	Container::invalidateTransformation(this);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -954,6 +1065,26 @@ bool Container::handlePropagatedString(const char* string __attribute__ ((unused
 // CLASS' PRIVATE METHODS
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void Container::changeEnvironment(Transformation* environmentTransformation)
+{
+	Vector3D localPosition = Vector3D::sub(this->transformation.position, environmentTransformation->position);
+	Rotation localRotation = Rotation::sub(this->transformation.rotation, environmentTransformation->rotation);
+	Scale localScale = Scale::division(this->transformation.scale, environmentTransformation->scale);
+
+	Container::setLocalPosition(this, &localPosition);
+	Container::setLocalRotation(this, &localRotation);
+	Container::setLocalScale(this, &localScale);
+
+	// force global position calculation on the next transformation cycle
+	Container::invalidateTransformation(this);
+
+	if(!isDeleted(this->body))
+	{
+		Body::setPosition(this->body, &this->transformation.position, GameObject::safeCast(this));
+	}
+}
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
@@ -1096,6 +1227,81 @@ void Container::doTransform(const Transformation* environmentTransformation, uin
 
 	// don't update position on next transformation cycle
 	this->transformation.invalid = __VALID_TRANSFORMATION;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+Rotation Container::getRotationFromDirection(const Vector3D* direction, uint8 axis)
+{
+	Rotation rotation = this->localTransformation.rotation;
+
+	if(__X_AXIS & axis)
+	{
+		fixed_ext_t z = direction->z;
+
+		if(direction->x)
+		{
+			z = Math::squareRootFixed(__FIXED_EXT_MULT(direction->x, direction->x) + __FIXED_EXT_MULT(direction->z, direction->z));
+
+			z = 0 > direction->z ? -z : z;
+		}
+
+		rotation.x = __I_TO_FIXED(Math::getAngle(__FIXED_TO_FIX7_9(direction->y), __FIXED_TO_FIX7_9(z))) - __QUARTER_ROTATION_DEGREES;
+	}
+	
+	if(__Y_AXIS & axis)
+	{
+		fixed_ext_t x = direction->x;
+
+		if(direction->y)
+		{
+			x = Math::squareRootFixed(__FIXED_EXT_MULT(direction->y, direction->y) + __FIXED_EXT_MULT(direction->x, direction->x));
+
+			x = 0 > direction->x ? -x : x;
+		}
+
+		rotation.y = __I_TO_FIXED(Math::getAngle(__FIXED_TO_FIX7_9((direction->z)), __FIXED_TO_FIX7_9(x)));
+	}
+
+	if(__Z_AXIS & axis)
+	{
+		fixed_ext_t y = direction->y;
+
+		if(direction->z)
+		{
+			y = Math::squareRootFixed(__FIXED_EXT_MULT(direction->z, direction->z) + __FIXED_EXT_MULT(direction->y, direction->y));
+
+			y = 0 > direction->y ? -y : y;
+		}
+
+		rotation.z = __I_TO_FIXED(Math::getAngle(__FIXED_TO_FIX7_9((direction->x)), __FIXED_TO_FIX7_9(y)));
+	}
+
+	if(__X_AXIS & axis)
+	{
+		if(__QUARTER_ROTATION_DEGREES < rotation.z)
+		{
+			rotation.x = rotation.x - __HALF_ROTATION_DEGREES;
+		}
+	}
+
+	if(__Y_AXIS & axis)
+	{
+		if(__QUARTER_ROTATION_DEGREES < rotation.x)
+		{
+			rotation.y = rotation.y - __HALF_ROTATION_DEGREES;
+		}
+	}
+
+	if(__Z_AXIS & axis)
+	{
+		if(__QUARTER_ROTATION_DEGREES < rotation.y)
+		{
+			rotation.z = rotation.z - __HALF_ROTATION_DEGREES;
+		}
+	}
+
+	return Rotation::clamp(rotation.x, rotation.y, rotation.z);	
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————

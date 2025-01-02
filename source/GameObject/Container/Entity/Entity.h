@@ -203,14 +203,6 @@ class Entity : Container
 	/// @return Entity's entity facotyr
 	EntityFactory getEntityFactory();
 
-	/// Set the normalized direction towards where the entity faces.
-	/// @param normalizedDirection: New facing direction with is components normalized
-	void setNormalizedDirection(NormalizedDirection normalizedDirection);
-
-	/// Retrieve the normalized direction towards where the entity faces.
-	/// @return Entity's facing direction with is components normalized
-	NormalizedDirection getNormalizedDirection();
-
 	/// Spawn a new child and configure it with the provided positioned entity struct.
 	/// @param positionedEntity: Struct that defines which entity spec to use to configure the new child
 	Entity spawnChildEntity(const PositionedEntity* const positionedEntity);

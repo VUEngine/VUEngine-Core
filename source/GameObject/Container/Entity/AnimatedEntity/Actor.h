@@ -73,18 +73,6 @@ class Actor : AnimatedEntity
 	/// @return True if the Telegram was processed
 	override bool handleMessage(Telegram telegram);
 
-	/// Set the direction towards which the object must move.
-	/// @param direction: Pointer to a direction vector
-	override void setDirection(const Vector3D* direction);
-
-	/// Set the local position.
-	/// @param position: New local position
-	override void setLocalPosition(const Vector3D* position);
-
-	/// Update the local transformation in function of the provided environment transform.
-	/// @param environmentTransform: New reference environment for the local transformation
-	override void changeEnvironment(Transformation* environmentTransform);
-
 	/// Update this instance's logic.
 	override void update();
 

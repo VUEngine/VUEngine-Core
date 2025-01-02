@@ -80,12 +80,19 @@ abstract class Container : GameObject
 	/// Flag to mark the container (and its children) as non visible
 	bool hidden;
 
+	/// Axises around which to rotate the entity when syncronizing with body
+	int8 axisForSynchronizationWithBody;
+
 	/// @publicsection
 
 	/// Class' constructor
 	/// @param internalId: ID to keep track internally of the new instance
 	/// @param name: Name to assign to the new instance
 	void constructor(int16 internalId, const char* const name);
+
+	/// Set the direction towards which the object must move.
+	/// @param direction: Pointer to a direction vector
+	override void setDirection(const Vector3D* direction);
 
 	/// Make this instance visible.
 	override void show();
@@ -108,6 +115,14 @@ abstract class Container : GameObject
 	/// Set the container's scale.
 	/// @param scale: Scale
 	override void setScale(const Scale* scale);
+
+	/// Set the normalized direction towards where the entity faces.
+	/// @param normalizedDirection: New facing direction with is components normalized
+	void setNormalizedDirection(NormalizedDirection normalizedDirection);
+
+	/// Retrieve the normalized direction towards where the entity faces.
+	/// @return Entity's facing direction with is components normalized
+	NormalizedDirection getNormalizedDirection();
 
 	/// Delete this container when appropriate.
 	/// Containers must not be deleted nor created directly by the client code
@@ -246,10 +261,6 @@ abstract class Container : GameObject
 	/// Set the local scale.
 	/// @param scale: New local scale
 	virtual void setLocalScale(const Scale* scale);
-
-	/// Update the local transformation in function of the provided environment transform.
-	/// @param environmentTransform: New reference environment for the local transformation
-	virtual void changeEnvironment(Transformation* environmentTransform);
 
 	/// Make the container ready to start operating once it has been completely intialized.
 	/// @param recursive: If true, the ready call is propagated to its children, grand children, etc.
