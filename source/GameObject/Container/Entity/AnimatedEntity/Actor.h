@@ -85,18 +85,6 @@ class Actor : AnimatedEntity
 	/// @param component: Removed component
 	override void removedComponent(Component component);
 
-	/// Retrieve the object's velocity vector.
-	/// @return Pointer to the direction towards which the object is moving
-	override const Vector3D* getVelocity();
-
-	/// Retrieve the object's current speed (velocity vector's magnitude).
-	/// @return Object's current speed (velocity vector's magnitude)
-	override fixed_t getSpeed();
-
-	/// Retrieve the object's bounciness factor.
-	/// @return Object's bounciness factor
-	override fixed_t getBounciness();
-
 	/// Set the container's position.
 	/// @param position: 3D vector defining the object's new position
 	override void setPosition(const Vector3D* position);

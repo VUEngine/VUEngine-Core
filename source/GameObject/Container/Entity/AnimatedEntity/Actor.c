@@ -106,31 +106,6 @@ bool Actor::handleMessage(Telegram telegram)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-const Vector3D* Actor::getVelocity()
-{
-	return !isDeleted(this->body) ? Body::getVelocity(this->body) : Base::getVelocity(this);
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-fixed_t Actor::getSpeed()
-{
-	return !isDeleted(this->body) ? Body::getSpeed(this->body) : Base::getSpeed(this);
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-fixed_t Actor::getBounciness()
-{
-	/// PENDING
-	return !isDeleted(this->body) ? Body::getBounciness(this->body) : 0;
-//	BodySpec* physicalProperties = ((ActorSpec*)this->entitySpec)->animatedEntitySpec.entitySpec.physicalProperties;
-
-//	return !isDeleted(this->body) ? Body::getBounciness(this->body) : physicalProperties ? physicalProperties->bounciness : 0;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
 void Actor::setPosition(const Vector3D* position)
 {
 	Base::setPosition(this, position);

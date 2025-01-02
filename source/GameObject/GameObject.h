@@ -118,6 +118,22 @@ abstract class GameObject : ListenerObject
 	/// @return Pointer to the object's 3D
 	const Scale* getScale();
 
+	/// Retrieve the object's velocity vector.
+	/// @return Pointer to the direction towards which the object is moving
+	const Vector3D* getVelocity();
+
+	/// Retrieve the object's current speed (velocity vector's magnitude).
+	/// @return Object's current speed (velocity vector's magnitude)
+	fixed_t getSpeed();
+
+	/// Retrieve the object's bounciness factor.
+	/// @return Object's bounciness factor
+	fixed_t getBounciness();
+
+	/// Retrieve the object's friction coefficient.
+	/// @return Object's friction coefficient
+	fixed_t getFrictionCoefficient();
+
 	/// Enable collision detection on the entity's colliders.
 	void enableCollisions();
 
@@ -191,22 +207,6 @@ abstract class GameObject : ListenerObject
 	/// Retrieve the object's radius.
 	/// @return Radius
 	virtual fixed_t getRadius();
-
-	/// Retrieve the object's velocity vector.
-	/// @return Pointer to the direction towards which the object is moving
-	virtual const Vector3D* getVelocity();
-
-	/// Retrieve the object's current speed (velocity vector's magnitude).
-	/// @return Object's current speed (velocity vector's magnitude)
-	virtual fixed_t getSpeed();
-
-	/// Retrieve the object's bounciness factor.
-	/// @return Object's bounciness factor
-	virtual fixed_t getBounciness();
-
-	/// Retrieve the object's friction coefficient.
-	/// @return Object's friction coefficient
-	virtual fixed_t getFrictionCoefficient();
 
 	/// Set the object's position.
 	/// @param position: 3D vector defining the object's new position

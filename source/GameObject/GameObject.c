@@ -198,6 +198,63 @@ const Scale* GameObject::getScale()
 {
 	return &this->transformation.scale;
 }
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+const Vector3D* GameObject::getVelocity()
+{
+	Body body = Body::safeCast(ComponentManager::getComponentAtIndex(this, kPhysicsComponent, 0));
+
+	if(isDeleted(body))
+	{
+		static Vector3D dummyVelocity = {0, 0, 0};
+
+		return &dummyVelocity;
+	}
+
+	return Body::getVelocity(body);
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+fixed_t GameObject::getSpeed()
+{
+	Body body = Body::safeCast(ComponentManager::getComponentAtIndex(this, kPhysicsComponent, 0));
+
+	if(isDeleted(body))
+	{
+		return 0;
+	}
+
+	return Body::getSpeed(body);
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+fixed_t GameObject::getBounciness()
+{
+	Body body = Body::safeCast(ComponentManager::getComponentAtIndex(this, kPhysicsComponent, 0));
+
+	if(isDeleted(body))
+	{
+		return 0;
+	}
+
+	return Body::getBounciness(body);
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+fixed_t GameObject::getFrictionCoefficient()
+{
+	Body body = Body::safeCast(ComponentManager::getComponentAtIndex(this, kPhysicsComponent, 0));
+
+	if(isDeleted(body))
+	{
+		return 0;
+	}
+
+	return Body::getFrictionCoefficient(body);
+}
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
@@ -353,50 +410,6 @@ void GameObject::calculateSize()
 fixed_t GameObject::getRadius()
 {
 	return 0;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-const Vector3D* GameObject::getVelocity()
-{
-	static Vector3D dummyVelocity = {0, 0, 0};
-
-	return &dummyVelocity;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-fixed_t GameObject::getSpeed()
-{
-	return 0;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-fixed_t GameObject::getBounciness()
-{
-	Body body = Body::safeCast(ComponentManager::getComponentAtIndex(this, kPhysicsComponent, 0));
-
-	if(isDeleted(body))
-	{
-		return 0;
-	}
-
-	return Body::getBounciness(body);
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-fixed_t GameObject::getFrictionCoefficient()
-{
-	Body body = Body::safeCast(ComponentManager::getComponentAtIndex(this, kPhysicsComponent, 0));
-
-	if(isDeleted(body))
-	{
-		return 0;
-	}
-
-	return Body::getFrictionCoefficient(body);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————
