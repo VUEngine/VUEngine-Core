@@ -611,7 +611,7 @@ bool ParticleSystem::appliesForceToParticles()
 
 const ComponentSpec* ParticleSystem::getVisualComponentSpec()
 {
-	if(0 == this->numberOfVisualComponentSpecs)
+	if(0 == ((ParticleSystemSpec*)this->entitySpec)->visualComponentSpecs)
 	{
 		return NULL;
 	}
@@ -630,6 +630,11 @@ const ComponentSpec* ParticleSystem::getVisualComponentSpec()
 
 const ComponentSpec* ParticleSystem::getPhysicsComponentSpec()
 {
+	if(0 == ((ParticleSystemSpec*)this->entitySpec)->physicsComponentSpecs)
+	{
+		return NULL;
+	}
+
 	return ((ParticleSystemSpec*)this->entitySpec)->physicsComponentSpecs[0];
 }
 
@@ -637,6 +642,11 @@ const ComponentSpec* ParticleSystem::getPhysicsComponentSpec()
 
 const ComponentSpec* ParticleSystem::getColliderComponentSpec()
 {
+	if(0 == ((ParticleSystemSpec*)this->entitySpec)->colliderComponentSpecs)
+	{
+		return NULL;
+	}
+
 	return ((ParticleSystemSpec*)this->entitySpec)->colliderComponentSpecs[0];
 }
 
