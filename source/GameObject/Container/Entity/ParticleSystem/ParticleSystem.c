@@ -475,7 +475,19 @@ Particle ParticleSystem::spawnParticle()
 		force = ParticleSystem::getParticleSpawnForce(this);
 	}
 
-	Particle::setup(particle, ParticleSystem::getVisualComponentSpec(this), lifeSpan, &position, &force, ((ParticleSystemSpec*)this->entitySpec)->movementType, ((ParticleSystemSpec*)this->entitySpec)->particleSpec->animationFunctions, ((ParticleSystemSpec*)this->entitySpec)->particleSpec->initialAnimation);
+	Particle::setup
+	(
+		particle, 
+		ParticleSystem::getVisualComponentSpec(this), 
+		ParticleSystem::getPhysicsComponentSpec(this), 
+		ParticleSystem::getColliderComponentSpec(this), 
+		lifeSpan, 
+		&position, 
+		&force, 
+		((ParticleSystemSpec*)this->entitySpec)->movementType, 
+		((ParticleSystemSpec*)this->entitySpec)->particleSpec->animationFunctions, 
+		((ParticleSystemSpec*)this->entitySpec)->particleSpec->initialAnimation
+	);
 
 	if(ParticleSystem::overrides(this, particleSpawned))
 	{
@@ -501,11 +513,11 @@ bool ParticleSystem::recycleParticle()
 			if(this->applyForceToParticles)
 			{
 				Vector3D force = ParticleSystem::getParticleSpawnForce(this);
-				Particle::setup(particle, NULL, lifeSpan, &position, &force, ((ParticleSystemSpec*)this->entitySpec)->movementType, ((ParticleSystemSpec*)this->entitySpec)->particleSpec->animationFunctions, ((ParticleSystemSpec*)this->entitySpec)->particleSpec->initialAnimation);
+				Particle::setup(particle, NULL, NULL, NULL, lifeSpan, &position, &force, ((ParticleSystemSpec*)this->entitySpec)->movementType, ((ParticleSystemSpec*)this->entitySpec)->particleSpec->animationFunctions, ((ParticleSystemSpec*)this->entitySpec)->particleSpec->initialAnimation);
 			}
 			else
 			{
-				Particle::setup(particle, NULL, lifeSpan, &position, NULL, ((ParticleSystemSpec*)this->entitySpec)->movementType, ((ParticleSystemSpec*)this->entitySpec)->particleSpec->animationFunctions, ((ParticleSystemSpec*)this->entitySpec)->particleSpec->initialAnimation);
+				Particle::setup(particle, NULL, NULL, NULL, lifeSpan, &position, NULL, ((ParticleSystemSpec*)this->entitySpec)->movementType, ((ParticleSystemSpec*)this->entitySpec)->particleSpec->animationFunctions, ((ParticleSystemSpec*)this->entitySpec)->particleSpec->initialAnimation);
 			}
 
 			if(ParticleSystem::overrides(this, particleRecycled))
@@ -597,7 +609,7 @@ bool ParticleSystem::appliesForceToParticles()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-const VisualComponentSpec* ParticleSystem::getVisualComponentSpec()
+const ComponentSpec* ParticleSystem::getVisualComponentSpec()
 {
 	if(0 == this->numberOfVisualComponentSpecs)
 	{
@@ -611,7 +623,21 @@ const VisualComponentSpec* ParticleSystem::getVisualComponentSpec()
 		specIndex = Math::random(_gameRandomSeed, this->numberOfVisualComponentSpecs);
 	}
 
-	return (const VisualComponentSpec*)((ParticleSystemSpec*)this->entitySpec)->visualComponentSpecs[specIndex];
+	return ((ParticleSystemSpec*)this->entitySpec)->visualComponentSpecs[specIndex];
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+const ComponentSpec* ParticleSystem::getPhysicsComponentSpec()
+{
+	return ((ParticleSystemSpec*)this->entitySpec)->physicsComponentSpecs[0];
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+const ComponentSpec* ParticleSystem::getColliderComponentSpec()
+{
+	return ((ParticleSystemSpec*)this->entitySpec)->colliderComponentSpecs[0];
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————

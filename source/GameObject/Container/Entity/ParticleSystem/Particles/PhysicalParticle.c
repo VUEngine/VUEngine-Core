@@ -32,30 +32,14 @@ void PhysicalParticle::constructor(const PhysicalParticleSpec* physicalParticleS
 {
 	// Always explicitly call the base's constructor 
 	Base::constructor(&physicalParticleSpec->particleSpec);
-	
-	this->body = Body::safeCast(PhysicalParticle::addComponent(this, (ComponentSpec*)physicalParticleSpec->bodySpec));
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void PhysicalParticle::destructor()
 {
-	this->body = NULL;
-
 	// Always explicitly call the base's destructor 
 	Base::destructor();
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-const Vector3D* PhysicalParticle::getVelocity()
-{
-	if(isDeleted(this->body))
-	{
-		return NULL;
-	}
-
-	return Body::getVelocity(this->body);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————

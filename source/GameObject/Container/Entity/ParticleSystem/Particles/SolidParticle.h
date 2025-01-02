@@ -29,9 +29,6 @@ typedef struct SolidParticleSpec
 {
 	PhysicalParticleSpec physicalParticleSpec;
 
-	/// ColliderSpec
-	ColliderSpec* colliderSpec;
-
 	/// Particles's in-game type
 	uint32 inGameType;
 
@@ -58,9 +55,6 @@ typedef const SolidParticleSpec SolidParticleROMSpec;
 class SolidParticle : PhysicalParticle
 {
 	/// @protectedsection
-
-	/// Collider for collision detection
-	Collider collider;
 
 	/// Specification that determines how to configure the particle
 	const SolidParticleSpec* solidParticleSpec;

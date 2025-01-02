@@ -95,7 +95,7 @@ void GameObject::clearComponentLists(uint32 componentType)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-Component GameObject::addComponent(ComponentSpec* componentSpec)
+Component GameObject::addComponent(const ComponentSpec* componentSpec)
 {
 	Component component = ComponentManager::addComponent(this, componentSpec);
 

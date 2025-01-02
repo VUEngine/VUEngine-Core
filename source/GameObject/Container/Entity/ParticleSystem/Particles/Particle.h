@@ -15,6 +15,7 @@
 // INCLUDES
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+#include <Body.h>
 #include <GameObject.h>
 #include <Sprite.h>
 
@@ -81,6 +82,9 @@ class Particle : GameObject
 	/// If true the particle is set to be destroyed or recycled
 	bool expired;
 
+	/// Particle's physical body
+	Body body;
+
 	/// @publicsection
 
 	/// Class' constructor
@@ -101,7 +105,7 @@ class Particle : GameObject
 	/// @param movementType: Movement type on each axis
 	/// @param animationFunctions: Array of animations
 	/// @param animationName: Animation to play
-	void setup(const VisualComponentSpec* visualComponentSpec, int16 lifeSpan, const Vector3D* position, const Vector3D* force, uint32 movementType, const AnimationFunction** animationFunctions, const char* animationName);
+	void setup(const ComponentSpec* visualComponentSpec, const ComponentSpec* physicsComponentSpec, const ComponentSpec* colliderComponentSpec, int16 lifeSpan, const Vector3D* position, const Vector3D* force, uint32 movementType, const AnimationFunction** animationFunctions, const char* animationName);
 
 	/// Configure the particle with the provided arguments after unpausing the game.
 	/// @param visualComponentSpec: Specification for a sprite to add to the particle

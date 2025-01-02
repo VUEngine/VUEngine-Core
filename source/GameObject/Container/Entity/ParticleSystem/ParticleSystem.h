@@ -44,8 +44,14 @@ typedef struct ParticleSystemSpec
 	/// Maximum number of particles to spawn in each cycle
 	uint8 maximumNumberOfParticlesToSpawnPerCycle;
 
-	/// Array of visual coponent specs to select randomly
-	const VisualComponentSpec** visualComponentSpecs;
+	/// Array of visual component specs to select randomly
+	const ComponentSpec** visualComponentSpecs;
+
+	/// Array of physical component specs to select randomly
+	const ComponentSpec** physicsComponentSpecs;
+
+	/// Array of body component specs to select randomly
+	const ComponentSpec** colliderComponentSpecs;
 
 	/// Auto start
 	bool autoStart;

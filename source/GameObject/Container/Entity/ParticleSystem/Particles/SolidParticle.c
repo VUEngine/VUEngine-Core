@@ -46,18 +46,12 @@ void SolidParticle::constructor(const SolidParticleSpec* solidParticleSpec)
 	Base::constructor(&solidParticleSpec->physicalParticleSpec);
 
 	this->solidParticleSpec = solidParticleSpec;
-
-	this->collider = Collider::safeCast(SolidParticle::addComponent(this, (ComponentSpec*)solidParticleSpec->colliderSpec));
-
-	SolidParticle::registerCollisions(this, false);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void SolidParticle::destructor()
 {
-	this->collider = NULL;
-
 	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
@@ -90,7 +84,7 @@ bool SolidParticle::handleMessage(Telegram telegram)
 
 bool SolidParticle::isSubjectToGravity(Vector3D gravity)
 {
-	ASSERT(this->collider, "Particle::isSubjectToGravity: null collider");
+	Collider collider = Collider::safeCast(SolidParticle::getComponentAtIndex(this, kColliderComponent, 0));
 
 	fixed_t collisionCheckDistance = __I_TO_FIXED(1);
 
@@ -101,7 +95,12 @@ bool SolidParticle::isSubjectToGravity(Vector3D gravity)
 		gravity.z ? 0 < gravity.z ? collisionCheckDistance : -collisionCheckDistance : 0
 	};
 
-	return Collider::canMoveTowards(this->collider, displacement);
+	if(NULL == collider)
+	{
+		return Base::isSubjectToGravity(this, gravity);
+	}
+
+	return Collider::canMoveTowards(collider, displacement);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————

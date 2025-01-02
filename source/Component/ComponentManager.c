@@ -53,7 +53,7 @@ friend class VirtualList;
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static Component ComponentManager::addComponent(GameObject owner, ComponentSpec* componentSpec)
+static Component ComponentManager::addComponent(GameObject owner, const ComponentSpec* componentSpec)
 {
 	ComponentManager componentManager = ComponentManager::getManager(componentSpec->componentType);
 

@@ -42,13 +42,14 @@ void Particle::constructor(const ParticleSpec* particleSpec __attribute__((unuse
 
 	this->lifeSpan = 0;
 	this->expired = false;
+	this->body = NULL;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Particle::destructor()
 {
-	Particle::destroyGraphics(this);
+	this->body = NULL;
 
 	// Always explicitly call the base's destructor 
 	Base::destructor();
@@ -63,11 +64,33 @@ bool Particle::isSubjectToGravity(Vector3D gravity __attribute__ ((unused)))
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void Particle::setup(const VisualComponentSpec* visualComponentSpec, int16 lifeSpan, const Vector3D* position, const Vector3D* force, uint32 movementType, const AnimationFunction** animationFunctions, const char* animationName)
+void Particle::setup(const ComponentSpec* visualComponentSpec, const ComponentSpec* physicsComponentSpec, const ComponentSpec* colliderComponentSpec, int16 lifeSpan, const Vector3D* position, const Vector3D* force, uint32 movementType, const AnimationFunction** animationFunctions, const char* animationName)
 {
 	this->expired = false;
 
 	//Particle::resetComponents(this);
+
+	if(NULL != visualComponentSpec)
+	{
+		Particle::destroyGraphics(this);
+		Particle::addComponent(this, visualComponentSpec);
+	}
+
+	if(NULL != physicsComponentSpec)
+	{
+		Particle::removeComponents(this, kPhysicsComponent);
+		this->body = Body::safeCast(Particle::addComponent(this, physicsComponentSpec));
+	}
+
+	if(NULL != colliderComponentSpec)
+	{
+		Particle::removeComponents(this, kColliderComponent);
+		Particle::addComponent(this, colliderComponentSpec);
+		Particle::registerCollisions(this, false);
+	}
+
+	Particle::playAnimation(this, animationFunctions, animationName);
+	Particle::setLifeSpan(this, lifeSpan);
 
 	// TOOD: the preprocessor does't catch properly this override check with Particle 	
 	if(GameObject::overrides(this, setPosition))
@@ -79,14 +102,6 @@ void Particle::setup(const VisualComponentSpec* visualComponentSpec, int16 lifeS
 		this->transformation.position = *position;
 	}
 
-	if(NULL != visualComponentSpec)
-	{
-		Particle::destroyGraphics(this);
-		Particle::addComponent(this, (ComponentSpec*)visualComponentSpec);
-	}
-
-	Particle::playAnimation(this, animationFunctions, animationName);
-	Particle::setLifeSpan(this, lifeSpan);
 
 	if(NULL != force)
 	{

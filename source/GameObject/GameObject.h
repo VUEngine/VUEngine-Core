@@ -60,7 +60,7 @@ abstract class GameObject : ListenerObject
 	/// Attach a new component to the entity and configure it with the provided spec.
 	/// @param componentSpec: Specification to be used to configure the new component
 	/// @return Added component
-	Component addComponent(ComponentSpec* componentSpec);
+	Component addComponent(const ComponentSpec* componentSpec);
 
 	/// Remove a component from the entity.
 	/// @param component: Component to remove

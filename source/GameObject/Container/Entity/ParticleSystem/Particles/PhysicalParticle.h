@@ -36,9 +36,6 @@ typedef struct PhysicalParticleSpec
 {
 	ParticleSpec particleSpec;
 
-	/// BodySpec
-	BodySpec* bodySpec;
-
 } PhysicalParticleSpec;
 
 /// A PhysicalParticle spec that is stored in ROM
@@ -58,20 +55,11 @@ typedef const PhysicalParticleSpec PhysicalParticleROMSpec;
 /// Implements a particle that physically moves through a game stage.
 class PhysicalParticle : Particle
 {
-	/// @protectedsection
-
-	/// Particle's physical body
-	Body body;
-
 	/// @publicsection
 
 	/// Class' constructor
 	/// @param physicalParticleSpec: Specification that determines how to configure the particle
 	void constructor(const PhysicalParticleSpec* physicalParticleSpec);
-
-	/// Retrieve the particle's velocity vector.
-	/// @return Pointer to the direction towards which the particle is moving
-	override const Vector3D* getVelocity();
 	
 	/// Set the particle's position.
 	/// @param position: 3D vector defining the particle's new position

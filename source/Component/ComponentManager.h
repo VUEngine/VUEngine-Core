@@ -51,7 +51,7 @@ singleton class ComponentManager : Object
 	/// @param owner: Object to which the components attach to
 	/// @param componentSpec: Spec to initialize the new component
 	/// @return Added component
-	static Component addComponent(GameObject owner, ComponentSpec* componentSpec);
+	static Component addComponent(GameObject owner, const ComponentSpec* componentSpec);
 
 	/// Remove a component from the specified owner.
 	/// @param owner: Object to which the components attach to
