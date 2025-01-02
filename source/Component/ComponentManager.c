@@ -181,7 +181,7 @@ static void ComponentManager::removeComponents(GameObject owner, uint32 componen
 
 static Component ComponentManager::getComponentAtIndex(GameObject owner, uint32 componentType, int16 componentIndex)
 {
-	if(kComponentTypes <= componentType)
+	if(kComponentTypes <= componentType || 0 > componentIndex)
 	{
 		return NULL;
 	}

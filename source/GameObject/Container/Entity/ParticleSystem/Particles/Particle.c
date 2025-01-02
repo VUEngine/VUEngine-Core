@@ -140,8 +140,8 @@ bool Particle::collisionStarts(const CollisionInformation* collisionInformation)
 
 			GameObject owner = Collider::getOwner(collisionInformation->otherCollider);
 
-			fixed_t frictionCoefficient =  GameObject::getFrictionCoefficient(owner);
-			fixed_t bounciness =  GameObject::getBounciness(owner);
+			fixed_t frictionCoefficient = GameObject::getFrictionCoefficient(owner);
+			fixed_t bounciness = GameObject::getBounciness(owner);
 
 			if(!isDeleted(this->body))
 			{
@@ -183,8 +183,8 @@ void Particle::collisionEnds(const CollisionInformation* collisionInformation)
 		return;
 	}
 
-//	Body::clearNormal(this->body, ListenerObject::safeCast(collisionInformation->otherCollider));
-//	Body::setSurroundingFrictionCoefficient(this->body, Collider::getCollidingFrictionCoefficient(collisionInformation->collider));
+	Body::clearNormal(this->body, ListenerObject::safeCast(collisionInformation->otherCollider));
+	Body::setSurroundingFrictionCoefficient(this->body, Collider::getCollidingFrictionCoefficient(collisionInformation->collider));
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -203,7 +203,7 @@ void Particle::setup(const ComponentSpec* visualComponentSpec, const ComponentSp
 		Particle::addComponent(this, visualComponentSpec);
 	}
 
-	if(NULL != physicsComponentSpec)
+	if(NULL != physicsComponentSpec && NULL == this->body)
 	{
 		Particle::removeComponents(this, kPhysicsComponent);
 		this->body = Body::safeCast(Particle::addComponent(this, physicsComponentSpec));
