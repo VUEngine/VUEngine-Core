@@ -47,64 +47,16 @@ void SolidParticle::constructor(const SolidParticleSpec* solidParticleSpec)
 
 	this->solidParticleSpec = solidParticleSpec;
 
-	this->colliderSpec = new ColliderSpec;
+	this->collider = Collider::safeCast(SolidParticle::addComponent(this, (ComponentSpec*)solidParticleSpec->colliderSpec));
 
-	*this->colliderSpec = (ColliderSpec)
-	{
-		// Component
-		{
-			// Allocator
-			__TYPE(Ball),
-
-			// Component type
-			kColliderComponent
-		},
-
-		// Displacement
-		{__METERS_TO_PIXELS(solidParticleSpec->radius), __METERS_TO_PIXELS(solidParticleSpec->radius), __METERS_TO_PIXELS(solidParticleSpec->radius)},
-
-		// Displacement (x, y, z, p)
-		{0, 0, 0, 0},
-
-		// Rotation (x, y, z)
-		{0, 0, 0},
-
-		// Scale (x, y, z)
-		{1, 1, 1},
-
-		// check for collisions against other colliders
-		true,
-
-		/// Layers in which I live
-		this->solidParticleSpec->layers,
-
-		/// Layers to ignore when checking for collisions
-		this->solidParticleSpec->layersToIgnore,
-	};
-
-	// register a collider for collision detection
-	this->collider = ColliderManager::createCollider(VUEngine::getColliderManager(VUEngine::getInstance()), GameObject::safeCast(this), this->colliderSpec);
-	Collider::registerCollisions(this->collider, false);
-
-	// has to set bounciness and friction myself since Particle ignores collisions
-	Body::setBounciness(this->body, this->solidParticleSpec->bounciness);
-	Body::setFrictionCoefficient(this->body, this->solidParticleSpec->frictionCoefficient);
+	SolidParticle::registerCollisions(this, false);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void SolidParticle::destructor()
 {
-	// unregister the collider for collision detection
-	ColliderManager::destroyCollider(VUEngine::getColliderManager(VUEngine::getInstance()), this->collider);
-
 	this->collider = NULL;
-
-	if(!isDeleted(this->colliderSpec))
-	{
-		delete this->colliderSpec;
-		this->colliderSpec = NULL;
-	}
 
 	// Always explicitly call the base's destructor 
 	Base::destructor();
@@ -118,27 +70,20 @@ bool SolidParticle::handleMessage(Telegram telegram)
 	{
 		case kMessageBodyStartedMoving:
 
-			Collider::checkCollisions(this->collider, true);
+			SolidParticle::checkCollisions(this, true);
 			return true;
 			break;
 
 		case kMessageBodyStopped:
 
-			if(this->solidParticleSpec->disableCollisionOnStop && !Body::getMovementOnAllAxis(this->body))
+			if(!Body::getMovementOnAllAxis(this->body))
 			{
-				Collider::checkCollisions(this->collider, false);
+				SolidParticle::checkCollisions(this, false);
 			}
 			break;
 	}
 
 	return false;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-fixed_t SolidParticle::getRadius()
-{
-	return this->solidParticleSpec->radius;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -187,13 +132,21 @@ bool SolidParticle::collisionStarts(const CollisionInformation* collisionInforma
 			fixed_t frictionCoefficient =  GameObject::getFrictionCoefficient(owner);
 			fixed_t bounciness =  GameObject::getBounciness(owner);
 
-			Body::bounce(this->body, ListenerObject::safeCast(collisionInformation->otherCollider), collisionInformation->solutionVector.direction, frictionCoefficient, bounciness);
+			Body::bounce
+			(
+				this->body, 
+				ListenerObject::safeCast(collisionInformation->otherCollider), 
+				collisionInformation->solutionVector.direction, 
+				frictionCoefficient, 
+				bounciness
+			);
+
 			returnValue = true;
 		}
 
 		if(NULL != this->solidParticleSpec->onCollisionAnimation)
 		{
-			VisualComponent::play(this->visualComponent, ((ParticleSpec*)this->solidParticleSpec)->animationFunctions, this->solidParticleSpec->onCollisionAnimation, ListenerObject::safeCast(this), NULL);
+			SolidParticle::playAnimation(this, ((ParticleSpec*)this->solidParticleSpec)->animationFunctions, this->solidParticleSpec->onCollisionAnimation);
 		}
 	}
 
@@ -218,14 +171,6 @@ void SolidParticle::collisionEnds(const CollisionInformation* collisionInformati
 
 	Body::clearNormal(this->body, ListenerObject::safeCast(collisionInformation->otherCollider));
 	Body::setSurroundingFrictionCoefficient(this->body, Collider::getCollidingFrictionCoefficient(collisionInformation->collider));
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void SolidParticle::reset()
-{
-	Base::reset(this);
-	Collider::discardCollisions(this->collider);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————

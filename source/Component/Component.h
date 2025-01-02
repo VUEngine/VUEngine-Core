@@ -34,6 +34,7 @@ enum ComponentCommands
 {
 	cComponentCommandEnable = 0,
 	cComponentCommandDisable,
+	cComponentCommandReset,
 	cComponentCommandLast
 };
 

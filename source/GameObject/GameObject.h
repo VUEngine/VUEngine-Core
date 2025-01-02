@@ -99,6 +99,9 @@ abstract class GameObject : ListenerObject
 	/// @return Number of components belonging to the entity
 	uint16 getComponentsCount(uint32 componentType);
 
+	/// Reset components.
+	void resetComponents();
+
 	/// Retrieve the object's transformation.
 	/// @return Pointer to the object's 3D transformation
 	const Transformation* getTransformation();
@@ -171,6 +174,16 @@ abstract class GameObject : ListenerObject
 	/// A component has been removed from this actor. 
 	/// @param component: Removed component
 	virtual void removedComponent(Component component);
+
+	/// Make this instance visible.
+	virtual void show();
+
+	/// Make this instance invisible.
+	virtual void hide();
+
+	/// Set this instance's transparency effects.
+	/// @param transparency: Transparecy effect (__TRANSPARENCY_NONE, __EVEN or __ODD)
+	virtual void setTransparency(uint8 transparency);
 
 	/// Configure the entity's size.
 	virtual void calculateSize();

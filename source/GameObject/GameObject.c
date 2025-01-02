@@ -56,19 +56,8 @@ void GameObject::constructor()
 
 void GameObject::destructor()
 {
-	if(!isDeleted(this->components))
-	{
-		for(int16 i = 0; i < kComponentTypes; i++)
-		{
-			if(!isDeleted(this->components[i]))
-			{
-				delete this->components[i];
-			}
-		}
-
-		delete this->components;
-		this->components = NULL;
-	}
+	GameObject::clearComponentLists(this, kComponentTypes);
+	GameObject::destroyComponents(this);
 
 	// Always explicitly call the base's destructor 
 	Base::destructor();
@@ -177,6 +166,13 @@ uint16 GameObject::getComponentsCount(uint32 componentType)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+void GameObject::resetComponents()
+{
+	ColliderManager::propagateCommand(VUEngine::getColliderManager(_vuEngine), cComponentCommandReset, this);
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 const Transformation* GameObject::getTransformation()
 {
 	return &this->transformation;
@@ -207,35 +203,35 @@ const Scale* GameObject::getScale()
 
 void GameObject::enableCollisions()
 {
-	ColliderManager::propagateCommand(VUEngine::getColliderManager(_vuEngine), cComponentCommandEnable, GameObject::safeCast(this));
+	ColliderManager::propagateCommand(VUEngine::getColliderManager(_vuEngine), cComponentCommandEnable, this);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void GameObject::disableCollisions()
 {
-	ColliderManager::propagateCommand(VUEngine::getColliderManager(_vuEngine), cComponentCommandDisable, GameObject::safeCast(this));
+	ColliderManager::propagateCommand(VUEngine::getColliderManager(_vuEngine), cComponentCommandDisable, this);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void GameObject::checkCollisions(bool active)
 {
-	ColliderManager::propagateCommand(VUEngine::getColliderManager(_vuEngine), cColliderComponentCommandCheckCollisions, GameObject::safeCast(this), (uint32)active);
+	ColliderManager::propagateCommand(VUEngine::getColliderManager(_vuEngine), cColliderComponentCommandCheckCollisions, this, (uint32)active);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void GameObject::registerCollisions(bool value)
 {
-	ColliderManager::propagateCommand(VUEngine::getColliderManager(_vuEngine), cColliderComponentCommandRegisterCollisions, GameObject::safeCast(this), (uint32)value);
+	ColliderManager::propagateCommand(VUEngine::getColliderManager(_vuEngine), cColliderComponentCommandRegisterCollisions, this, (uint32)value);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void GameObject::setCollidersLayers(uint32 layers)
 {
-	ColliderManager::propagateCommand(VUEngine::getColliderManager(_vuEngine), cColliderComponentCommandSetLayers, GameObject::safeCast(this), (uint32)layers);
+	ColliderManager::propagateCommand(VUEngine::getColliderManager(_vuEngine), cColliderComponentCommandSetLayers, this, (uint32)layers);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -260,7 +256,7 @@ uint32 GameObject::getCollidersLayers()
 
 void GameObject::setCollidersLayersToIgnore(uint32 layersToIgnore)
 {
-	ColliderManager::propagateCommand(VUEngine::getColliderManager(_vuEngine), cColliderComponentCommandSetLayersToIgnore, GameObject::safeCast(this), (uint32)layersToIgnore);
+	ColliderManager::propagateCommand(VUEngine::getColliderManager(_vuEngine), cColliderComponentCommandSetLayersToIgnore, this, (uint32)layersToIgnore);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -285,14 +281,14 @@ uint32 GameObject::getCollidersLayersToIgnore()
 
 void GameObject::showColliders()
 {
-	ColliderManager::propagateCommand(VUEngine::getColliderManager(_vuEngine), cColliderComponentCommandShow, GameObject::safeCast(this));
+	ColliderManager::propagateCommand(VUEngine::getColliderManager(_vuEngine), cColliderComponentCommandShow, this);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void GameObject::hideColliders()
 {
-	ColliderManager::propagateCommand(VUEngine::getColliderManager(_vuEngine), cColliderComponentCommandHide, GameObject::safeCast(this));
+	ColliderManager::propagateCommand(VUEngine::getColliderManager(_vuEngine), cColliderComponentCommandHide, this);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -328,6 +324,27 @@ void GameObject::removedComponent(Component component __attribute__((unused)))
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+void GameObject::show()
+{
+	VisualComponent::propagateCommand(cVisualComponentCommandShow, this);
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void GameObject::hide()
+{
+	VisualComponent::propagateCommand(cVisualComponentCommandHide, this);
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void GameObject::setTransparency(uint8 transparency)
+{
+	VisualComponent::propagateCommand(cVisualComponentCommandSetTransparency, this, (uint32)transparency);
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void GameObject::calculateSize()
 {}
 
@@ -358,7 +375,7 @@ fixed_t GameObject::getSpeed()
 
 fixed_t GameObject::getBounciness()
 {
-	Body body = Body::safeCast(ComponentManager::getComponentAtIndex(GameObject::safeCast(this), kPhysicsComponent, 0));
+	Body body = Body::safeCast(ComponentManager::getComponentAtIndex(this, kPhysicsComponent, 0));
 
 	if(isDeleted(body))
 	{
@@ -372,7 +389,7 @@ fixed_t GameObject::getBounciness()
 
 fixed_t GameObject::getFrictionCoefficient()
 {
-	Body body = Body::safeCast(ComponentManager::getComponentAtIndex(GameObject::safeCast(this), kPhysicsComponent, 0));
+	Body body = Body::safeCast(ComponentManager::getComponentAtIndex(this, kPhysicsComponent, 0));
 
 	if(isDeleted(body))
 	{

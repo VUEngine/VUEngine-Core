@@ -363,7 +363,6 @@ void Entity::constructor(EntitySpec* entitySpec, int16 internalId, const char* c
 	this->centerDisplacement = NULL;
 	this->entityFactory = NULL;
 
-	this->hidden = false;
 	this->size = Size::getFromPixelSize(entitySpec->pixelSize);
 }
 
@@ -458,20 +457,13 @@ void Entity::suspend()
 
 void Entity::resume()
 {
-	Base::resume(this);
-
 	if(NULL != this->entitySpec)
 	{
 		Entity::addComponents(this, this->entitySpec->componentSpecs, kSpriteComponent);
 		Entity::addComponents(this, this->entitySpec->componentSpecs, kWireframeComponent);
 	}
 
-	if(this->hidden)
-	{
-		// Force syncronization even if hidden
-		this->hidden = false;
-		Entity::hide(this);
-	}
+	Base::resume(this);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -787,48 +779,6 @@ void Entity::setExtraInfo(void* extraInfo __attribute__ ((unused)))
 bool Entity::alwaysStreamIn()
 {
 	return true;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void Entity::show()
-{
-	this->hidden = false;
-
-	Entity::invalidateTransformation(this);
-
-	VisualComponent::propagateCommand(cVisualComponentCommandShow, GameObject::safeCast(this));
-
-	if(!isDeleted(this->children))
-	{
-		Entity::propagateCommand(this, kMessageShow);
-	}
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void Entity::hide()
-{
-	this->hidden = true;
-	
-	VisualComponent::propagateCommand(cVisualComponentCommandHide, GameObject::safeCast(this));
-
-	if(!isDeleted(this->children))
-	{
-		Entity::propagateCommand(this, kMessageHide);
-	}
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void Entity::setTransparency(uint8 transparency)
-{
-	VisualComponent::propagateCommand(cVisualComponentCommandSetTransparency, GameObject::safeCast(this), (uint32)transparency);
-
-	if(!isDeleted(this->children))
-	{
-		Entity::propagateCommand(this, kMessageSetTransparency, transparency);
-	}
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————

@@ -197,6 +197,11 @@ class Body : Component
 	/// @param bodySpec: Struct that specifies the physical properties of bodies
 	void constructor(GameObject owner, const BodySpec* bodySpec);
 
+	/// Handle a command.
+	/// @param command: Command to handle
+	/// @param args: Variable arguments list depending on the command to handle
+	override void handleCommand(int32 command, va_list args);
+
 	/// Clear the body's state.
 	void reset();
 

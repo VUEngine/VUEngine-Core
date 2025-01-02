@@ -59,6 +59,7 @@ void Container::constructor(int16 internalId, const char* const name)
 	this->deleteMe = false;
 	this->ready = false;
 	this->dontStreamOut = false;
+	this->hidden = false;
 
 	this->name = NULL;
 	Container::setName(this, name);
@@ -139,6 +140,48 @@ void Container::destructor()
 
 	// Always explicitly call the base's destructor 
 	Base::destructor();
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void Container::show()
+{
+	Base::show(this);
+
+	Container::invalidateTransformation(this);
+
+	if(!isDeleted(this->children))
+	{
+		Container::propagateCommand(this, kMessageShow);
+	}
+
+	this->hidden = false;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void Container::hide()
+{
+	Base::hide(this);
+	
+	if(!isDeleted(this->children))
+	{
+		Container::propagateCommand(this, kMessageHide);
+	}
+
+	this->hidden = true;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void Container::setTransparency(uint8 transparency)
+{
+	Base::setTransparency(this, transparency);
+
+	if(!isDeleted(this->children))
+	{
+		Container::propagateCommand(this, kMessageSetTransparency, transparency);
+	}
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -872,6 +915,13 @@ void Container::resume()
 		Container child = Container::safeCast(node->data);
 
 		Container::resume(child);
+	}
+
+	if(this->hidden)
+	{
+		// Force syncronization even if hidden
+		this->hidden = false;
+		Container::hide(this);
 	}
 }
 

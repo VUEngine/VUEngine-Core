@@ -77,12 +77,25 @@ abstract class Container : GameObject
 	// Flag to prevent the container from being streamed out when out of the camera's reach
 	bool dontStreamOut;
 	
+	/// Flag to mark the container (and its children) as non visible
+	bool hidden;
+
 	/// @publicsection
 
 	/// Class' constructor
 	/// @param internalId: ID to keep track internally of the new instance
 	/// @param name: Name to assign to the new instance
 	void constructor(int16 internalId, const char* const name);
+
+	/// Make this instance visible.
+	override void show();
+
+	/// Make this instance invisible.
+	override void hide();
+
+	/// Set this instance's transparency effects.
+	/// @param transparency: Transparecy effect (__TRANSPARENCY_NONE, __EVEN or __ODD)
+	override void setTransparency(uint8 transparency);
 
 	/// Set the container's position.
 	/// @param position: 3D vector defining the object's new position

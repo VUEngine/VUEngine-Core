@@ -112,9 +112,6 @@ class Entity : Container
 {
 	/// @protectedsection
 
-	/// Flag to mark the container (and its children) as non visible
-	bool hidden;
-
 	/// Size of the entity in function of its components and its children's, grand children's,
 	/// etc. components
 	Size size;
@@ -259,16 +256,6 @@ class Entity : Container
 	/// Check if the entity must be streamed in after being streamed out or destroyed.
 	/// @return True if the streaming must spawn this entity back when deleted
 	virtual bool alwaysStreamIn();
-
-	/// Make this instance visible.
-	virtual void show();
-
-	/// Make this instance invisible.
-	virtual void hide();
-
-	/// Set this instance's transparency effects.
-	/// @param transparency: Transparecy effect (__TRANSPARENCY_NONE, __EVEN or __ODD)
-	virtual void setTransparency(uint8 transparency);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————

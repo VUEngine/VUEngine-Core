@@ -32,34 +32,15 @@ void PhysicalParticle::constructor(const PhysicalParticleSpec* physicalParticleS
 {
 	// Always explicitly call the base's constructor 
 	Base::constructor(&physicalParticleSpec->particleSpec);
-
-	this->physicalParticleSpec = physicalParticleSpec;
-	fixed_t mass = this->physicalParticleSpec->minimumMass + 
-		(
-			this->physicalParticleSpec->massDelta ? 
-				Math::random(_gameRandomSeed, this->physicalParticleSpec->massDelta) : 0
-		);
-	BodySpec bodySpec = 
-	{
-		{__TYPE(Body), kPhysicsComponent}, 
-		true, mass, 0, 0, Vector3D::zero(), 
-		0, physicalParticleSpec->axisSubjectToGravity
-	};
-
-	this->body = BodyManager::createBody(VUEngine::getBodyManager(_vuEngine), GameObject::safeCast(this), 
-		&bodySpec);
+	
+	this->body = Body::safeCast(PhysicalParticle::addComponent(this, (ComponentSpec*)physicalParticleSpec->bodySpec));
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void PhysicalParticle::destructor()
 {
-	if(!isDeleted(this->body))
-	{
-		// remove a body
-		BodyManager::destroyBody(VUEngine::getBodyManager(_vuEngine), this->body);
-		this->body = NULL;
-	}
+	this->body = NULL;
 
 	// Always explicitly call the base's destructor 
 	Base::destructor();
@@ -108,18 +89,6 @@ bool PhysicalParticle::isSubjectToGravity(Vector3D gravity __attribute__ ((unuse
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void PhysicalParticle::reset()
-{
-	Base::reset(this);
-
-	if(!isDeleted(this->body))
-	{
-		Body::reset(this->body);
-	}
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
 bool PhysicalParticle::update(uint32 elapsedTime, void (* behavior)(Particle particle))
 {
 	if(Base::update(this, elapsedTime, behavior))
@@ -133,26 +102,6 @@ bool PhysicalParticle::update(uint32 elapsedTime, void (* behavior)(Particle par
 	}
 
 	return false;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void PhysicalParticle::configureMass()
-{
-	if(isDeleted(this->body))
-	{
-		return;
-	}
-
-	Body::setMass
-	(
-		this->body,
-		this->physicalParticleSpec->minimumMass + 
-		(
-			this->physicalParticleSpec->massDelta ? 
-				Math::random(_gameRandomSeed, this->physicalParticleSpec->massDelta) : 0
-		)
-	);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————

@@ -15,6 +15,7 @@
 // INCLUDES
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+#include <Body.h>
 #include <Particle.h>
 
 
@@ -35,14 +36,8 @@ typedef struct PhysicalParticleSpec
 {
 	ParticleSpec particleSpec;
 
-	/// Particle's minimum mass
-	fixed_t minimumMass;
-
-	/// Particle's mass delta
-	fixed_t massDelta;
-
-	/// Axis subject to gravity (bitwise OR of __X_AXIS, __Y_AXIS, __Z_AXIS, or false to disable)
-	uint16 axisSubjectToGravity;
+	/// BodySpec
+	BodySpec* bodySpec;
 
 } PhysicalParticleSpec;
 
@@ -65,9 +60,6 @@ class PhysicalParticle : Particle
 {
 	/// @protectedsection
 
-	/// Specification that determines how to configure the particle's physical body
-	const PhysicalParticleSpec* physicalParticleSpec;
-
 	/// Particle's physical body
 	Body body;
 
@@ -89,16 +81,10 @@ class PhysicalParticle : Particle
 	/// @return True if the provided gravity vector can affect the particle; false otherwise
 	override bool isSubjectToGravity(Vector3D gravity);
 
-	/// Reset the particle's state.
-	override void reset();
-
 	/// Update the particle's state.
 	/// @param elapsedTime: Elapsed time since the last call
 	/// @param behavior: Function pointer to control particle's behavior
 	override bool update(uint32 elapsedTime, void (* behavior)(Particle particle));
-
-	/// Configure the particle's mass.
-	override void configureMass();
 
 	/// Apply a force to the particle.
 	/// @param force: Force to be applied

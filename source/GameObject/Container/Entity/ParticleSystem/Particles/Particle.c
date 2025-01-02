@@ -41,7 +41,6 @@ void Particle::constructor(const ParticleSpec* particleSpec __attribute__((unuse
 	Base::constructor();
 
 	this->lifeSpan = 0;
-	this->visualComponent = NULL;
 	this->expired = false;
 }
 
@@ -66,19 +65,9 @@ bool Particle::isSubjectToGravity(Vector3D gravity __attribute__ ((unused)))
 
 void Particle::setup(const VisualComponentSpec* visualComponentSpec, int16 lifeSpan, const Vector3D* position, const Vector3D* force, uint32 movementType, const AnimationFunction** animationFunctions, const char* animationName)
 {
-	if(Particle::overrides(this, reset))
-	{
-		Particle::reset(this);
-	}
-	else
-	{
-		this->expired = false;
-	}
+	this->expired = false;
 
-	if(Particle::overrides(this, configureMass))
-	{
-		Particle::configureMass(this);
-	}
+	//Particle::resetComponents(this);
 
 	// TOOD: the preprocessor does't catch properly this override check with Particle 	
 	if(GameObject::overrides(this, setPosition))
@@ -90,8 +79,13 @@ void Particle::setup(const VisualComponentSpec* visualComponentSpec, int16 lifeS
 		this->transformation.position = *position;
 	}
 
-	Particle::addVisualComponent(this, visualComponentSpec);
-	Particle::changeAnimation(this, animationFunctions, animationName);
+	if(NULL != visualComponentSpec)
+	{
+		Particle::destroyGraphics(this);
+		Particle::addComponent(this, (ComponentSpec*)visualComponentSpec);
+	}
+
+	Particle::playAnimation(this, animationFunctions, animationName);
 	Particle::setLifeSpan(this, lifeSpan);
 
 	if(NULL != force)
@@ -109,8 +103,8 @@ void Particle::setup(const VisualComponentSpec* visualComponentSpec, int16 lifeS
 
 void Particle::resume(const VisualComponentSpec* visualComponentSpec, const AnimationFunction** animationFunctions, const char* animationName)
 {
-	Particle::addVisualComponent(this, visualComponentSpec);
-	Particle::changeAnimation(this, animationFunctions, animationName);
+	Particle::addComponent(this, (ComponentSpec*)visualComponentSpec);
+	Particle::playAnimation(this, animationFunctions, animationName);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -127,36 +121,6 @@ void Particle::expire()
 	this->expired = true;
 
 	Particle::hide(this);
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void Particle::show()
-{
-	if(!isDeleted(this->visualComponent))
-	{
-		VisualComponent::show(this->visualComponent);
-	}
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void Particle::hide()
-{
-	if(!isDeleted(this->visualComponent))
-	{
-		VisualComponent::hide(this->visualComponent);
-	}
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void Particle::setTransparency(uint8 transparency)
-{
-	if(!isDeleted(this->visualComponent))
-	{
-		VisualComponent::setTransparency(this->visualComponent, transparency);
-	}
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -194,9 +158,17 @@ bool Particle::isVisible()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void Particle::reset()
+void Particle::playAnimation(const AnimationFunction** animationFunctions, const char* animationName)
 {
-	this->expired = false;
+	SpriteManager::propagateCommand(
+		SpriteManager::getInstance(), 
+		cVisualComponentCommandPlay, 
+		GameObject::safeCast(this), 
+		animationFunctions, 
+		animationName, 
+		NULL, 
+		NULL
+	);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -229,11 +201,6 @@ void Particle::applyForce(const Vector3D* force __attribute__ ((unused)), uint32
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void Particle::configureMass()
-{}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PRIVATE METHODS
@@ -242,38 +209,10 @@ void Particle::configureMass()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void Particle::addVisualComponent(const VisualComponentSpec* visualComponentSpec)
-{
-	if(NULL != visualComponentSpec && NULL == this->visualComponent)
-	{
-		// call the appropriate allocator to support inheritance
-		this->visualComponent = VisualComponent::safeCast(ComponentManager::addComponent(GameObject::safeCast(this), (ComponentSpec*)visualComponentSpec));
-	}
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
 void Particle::destroyGraphics()
 {
-	if(!isDeleted(this->visualComponent))
-	{
-		ComponentManager::removeComponent(GameObject::safeCast(this), Component::safeCast(this->visualComponent));
-	}
-
-	this->visualComponent = NULL;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void Particle::changeAnimation(const AnimationFunction** animationFunctions, const char* animationName)
-{
-	if(!isDeleted(this->visualComponent) && NULL != animationName)
-	{
-		if(!VisualComponent::replay(this->visualComponent, animationFunctions))
-		{
-			VisualComponent::play(this->visualComponent, animationFunctions, (char*)animationName, ListenerObject::safeCast(this), NULL);
-		}
-	}
+	Particle::removeComponents(this, kSpriteComponent);
+	Particle::removeComponents(this, kWireframeComponent);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -286,8 +225,7 @@ void Particle::setLifeSpan(int16 lifeSpan)
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Particle::setMass(fixed_t mass __attribute__ ((unused)))
-{
-}
+{}
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————
 

@@ -78,9 +78,6 @@ class Particle : GameObject
 	/// Remaining life span in milliseconds
 	int16 lifeSpan;
 
-	/// Visual component
-	VisualComponent visualComponent;
-
 	/// If true the particle is set to be destroyed or recycled
 	bool expired;
 
@@ -119,22 +116,14 @@ class Particle : GameObject
 	/// Force the particle to expire.
 	void expire();
 
-	/// Make the particle's visual components visible.
-	void show();
-
-	/// Make the particle's visual components invisible.
-	void hide();
-
-	/// Set the transparency mode of the visual components.
-	/// @param transparency: Transparecy effect (__TRANSPARENCY_NONE, __TRANSPARENCY_EVEN or __TRANSPARENCY_ODD)
-	void setTransparency(uint8 transparency);
-
 	/// Check if the visual components are visible.
 	/// @return True if the the particle's sprite or wireframe are visible; false otherwise
 	bool isVisible();
 
-	/// Reset the particle's state.
-	virtual void reset();
+	/// Play an animation.
+	/// @param animationFunctions: Array of animations
+	/// @param animationName: Animation to play
+	void playAnimation(const AnimationFunction** animationFunctions, const char* animationName);
 
 	/// Update the particle's state.
 	/// @param elapsedTime: Elapsed time since the last call
@@ -145,9 +134,6 @@ class Particle : GameObject
 	/// @param force: Force to be applied
 	/// @param movementType: Movement type on each axis
 	virtual void applyForce(const Vector3D* force, uint32 movementType);
-
-	/// Configure the particle's mass.
-	virtual void configureMass();
 }
 
 #endif

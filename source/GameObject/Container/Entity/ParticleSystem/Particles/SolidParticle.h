@@ -29,26 +29,11 @@ typedef struct SolidParticleSpec
 {
 	PhysicalParticleSpec physicalParticleSpec;
 
-	/// Collider's radius
-	fixed_t radius;
-
-	/// Particle's friction
-	fixed_t frictionCoefficient;
-
-	/// Particle's bounciness
-	fixed_t bounciness;
+	/// ColliderSpec
+	ColliderSpec* colliderSpec;
 
 	/// Particles's in-game type
 	uint32 inGameType;
-
-	/// Layers in which the collider lives
-	uint32 layers;
-
-	/// Layers to ignore when checking for collisions
-	uint32 layersToIgnore;
-
-	/// If true, collisions detectionis disabled whenn the particle stops
-	bool disableCollisionOnStop;
 
 	/// Animation to play upon collision
 	const char* onCollisionAnimation;
@@ -77,9 +62,6 @@ class SolidParticle : PhysicalParticle
 	/// Collider for collision detection
 	Collider collider;
 
-	/// Specification for the collider
-	ColliderSpec* colliderSpec;
-
 	/// Specification that determines how to configure the particle
 	const SolidParticleSpec* solidParticleSpec;
 
@@ -93,10 +75,6 @@ class SolidParticle : PhysicalParticle
 	/// @param telegram: Received telegram to process
 	/// @return True if the telegram was processed
 	override bool handleMessage(Telegram telegram);
-
-	/// Retrieve the particle's radius.
-	/// @return Radius
-	override fixed_t getRadius();
 
 	/// Check if the particle is subject to provided gravity vector.
 	/// @return True if the provided gravity vector can affect the particle; false otherwise
@@ -113,9 +91,6 @@ class SolidParticle : PhysicalParticle
 	/// Retrieve the enum that determines the type of game object.
 	/// @return The enum that determines the type of game object
 	override uint32 getInGameType();
-
-	/// Reset the particle's state.
-	override void reset();
 }
 
 

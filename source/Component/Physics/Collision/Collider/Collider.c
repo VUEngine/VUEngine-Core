@@ -135,6 +135,11 @@ void Collider::handleCommand(int32 command, va_list args)
 {
 	switch(command)
 	{
+		case cComponentCommandReset:
+
+			Collider::discardCollisions(this);
+			break;
+			
 		case cColliderComponentCommandShow:
 
 			Collider::show(this);
