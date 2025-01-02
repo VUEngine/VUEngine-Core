@@ -51,7 +51,6 @@
 #include <BodyManager.h>
 #include <Printing.h>
 #include <Collider.h>
-#include <SolidParticle.h>
 #include <SoundManager.h>
 #include <Sphere.h>
 #include <Sprite.h>
