@@ -53,7 +53,13 @@ typedef struct ParticleSpec
 	const AnimationFunction** animationFunctions;
 
 	/// Animation to play automatically
-	char* initialAnimation;
+	const char* initialAnimation;
+
+	/// Animation to play upon collision
+	const char* onCollisionAnimation;
+
+	/// Particles's in-game type
+	uint32 inGameType;
 
 } ParticleSpec;
 
@@ -85,17 +91,37 @@ class Particle : GameObject
 	/// Particle's physical body
 	Body body;
 
+	/// ParticleSpec used to configure the particle
+	const ParticleSpec* particleSpec;
+
 	/// @publicsection
 
 	/// Class' constructor
 	/// @param particleSpec: Specification that determines how to configure the particle
 	void constructor(const ParticleSpec* particleSpec);
 
+	/// Receive and process a Telegram.
+	/// @param telegram: Received telegram to process
+	/// @return True if the telegram was processed
+	override bool handleMessage(Telegram telegram);
+
 	/// Check if the particle is subject to gravity.
 	/// @param gravity: Gravity vector
 	/// @return True if gravity can affect the particle; false otherwise
 	override bool isSubjectToGravity(Vector3D gravity);
-	
+
+	/// Process a newly detected collision by one of the component colliders.
+	/// @param collisionInformation: Information struct about the collision to resolve 
+	override bool collisionStarts(const CollisionInformation* collisionInformation);
+
+	/// Process when a previously detected collision by one of the component colliders stops.
+	/// @param collisionInformation: Information struct about the collision to resolve
+	override void collisionEnds(const CollisionInformation* collisionInformation);
+
+	/// Retrieve the enum that determines the type of game object.
+	/// @return The enum that determines the type of game object
+	override uint32 getInGameType();
+
 	/// Configure the particle with the provided arguments.
 	/// @param visualComponentSpec: Specification for a sprite to add to the particle
 	/// @param wireframeSpec: Specification for a wireframe to add to the particle
@@ -133,11 +159,6 @@ class Particle : GameObject
 	/// @param elapsedTime: Elapsed time since the last call
 	/// @param behavior: Function pointer to control particle's behavior
 	virtual bool update(uint32 elapsedTime, void (* behavior)(Particle particle));
-
-	/// Apply a force to the particle.
-	/// @param force: Force to be applied
-	/// @param movementType: Movement type on each axis
-	virtual void applyForce(const Vector3D* force, uint32 movementType);
 }
 
 #endif

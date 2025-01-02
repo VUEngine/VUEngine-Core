@@ -15,6 +15,7 @@
 #include <ParticleSystem.h>
 #include <Sprite.h>
 #include <SpriteManager.h>
+#include <Telegram.h>
 #include <Wireframe.h>
 #include <WireframeManager.h>
 
@@ -35,11 +36,12 @@
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void Particle::constructor(const ParticleSpec* particleSpec __attribute__((unused)))
+void Particle::constructor(const ParticleSpec* particleSpec)
 {
 	// Always explicitly call the base's constructor 
 	Base::constructor();
 
+	this->particleSpec = particleSpec;
 	this->lifeSpan = 0;
 	this->expired = false;
 	this->body = NULL;
@@ -57,9 +59,132 @@ void Particle::destructor()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+bool Particle::handleMessage(Telegram telegram)
+{
+	switch(Telegram::getMessage(telegram))
+	{
+		case kMessageBodyStartedMoving:
+
+			Particle::checkCollisions(this, true);
+			return true;
+			break;
+
+		case kMessageBodyStopped:
+
+			if(!Body::getMovementOnAllAxis(this->body))
+			{
+				Particle::checkCollisions(this, false);
+			}
+			break;
+	}
+
+	return false;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 bool Particle::isSubjectToGravity(Vector3D gravity __attribute__ ((unused)))
 {
+	if(isDeleted(this->body))
+	{
+		return false;
+	}
+
+	if(__NO_AXIS != Body::getAxisSubjectToGravity(this->body))
+	{
+		Collider collider = Collider::safeCast(Particle::getComponentAtIndex(this, kColliderComponent, 0));
+
+		if(NULL == collider)
+		{
+			return true;
+		}
+
+		fixed_t collisionCheckDistance = __I_TO_FIXED(1);
+
+		Vector3D displacement =
+		{
+			gravity.x ? 0 < gravity.x ? collisionCheckDistance : -collisionCheckDistance : 0,
+			gravity.y ? 0 < gravity.y ? collisionCheckDistance : -collisionCheckDistance : 0,
+			gravity.z ? 0 < gravity.z ? collisionCheckDistance : -collisionCheckDistance : 0
+		};
+
+		return Collider::canMoveTowards(collider, displacement);
+	}
+
 	return false;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+uint32 Particle::getInGameType()
+{
+	return this->particleSpec->inGameType;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+bool Particle::collisionStarts(const CollisionInformation* collisionInformation)
+{
+	ASSERT(this->body, "Particle::resolveCollision: null body");
+	ASSERT(collisionInformation->otherCollider, "Particle::resolveCollision: otherColliders");
+
+	ASSERT(collisionInformation->otherCollider, "Particle::collisionStarts: otherColliders");
+
+	bool returnValue = false;
+
+	if(collisionInformation->collider && collisionInformation->otherCollider)
+	{
+		if(collisionInformation->solutionVector.magnitude)
+		{
+			Collider::resolveCollision(collisionInformation->collider, collisionInformation);
+
+			GameObject owner = Collider::getOwner(collisionInformation->otherCollider);
+
+			fixed_t frictionCoefficient =  GameObject::getFrictionCoefficient(owner);
+			fixed_t bounciness =  GameObject::getBounciness(owner);
+
+			if(!isDeleted(this->body))
+			{
+				Body::bounce
+				(
+					this->body, 
+					ListenerObject::safeCast(collisionInformation->otherCollider), 
+					collisionInformation->solutionVector.direction, 
+					frictionCoefficient, 
+					bounciness
+				);
+			}
+
+			returnValue = true;
+		}
+
+		if(NULL != this->particleSpec->onCollisionAnimation)
+		{
+			Particle::playAnimation(this, ((ParticleSpec*)this->particleSpec)->animationFunctions, this->particleSpec->onCollisionAnimation);
+		}
+	}
+
+	return returnValue;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void Particle::collisionEnds(const CollisionInformation* collisionInformation)
+{
+	ASSERT(this->body, "Particle::collisionEnds: null this");
+
+	if(isDeleted(this->body))
+	{
+		return;
+	}
+
+	if(NULL == collisionInformation || isDeleted(collisionInformation->collider))
+	{
+		return;
+	}
+
+//	Body::clearNormal(this->body, ListenerObject::safeCast(collisionInformation->otherCollider));
+//	Body::setSurroundingFrictionCoefficient(this->body, Collider::getCollidingFrictionCoefficient(collisionInformation->collider));
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -67,12 +192,14 @@ bool Particle::isSubjectToGravity(Vector3D gravity __attribute__ ((unused)))
 void Particle::setup(const ComponentSpec* visualComponentSpec, const ComponentSpec* physicsComponentSpec, const ComponentSpec* colliderComponentSpec, int16 lifeSpan, const Vector3D* position, const Vector3D* force, uint32 movementType, const AnimationFunction** animationFunctions, const char* animationName)
 {
 	this->expired = false;
+	this->lifeSpan = lifeSpan;
 
 	//Particle::resetComponents(this);
 
 	if(NULL != visualComponentSpec)
 	{
-		Particle::destroyGraphics(this);
+		Particle::removeComponents(this, kSpriteComponent);
+		Particle::removeComponents(this, kWireframeComponent);
 		Particle::addComponent(this, visualComponentSpec);
 	}
 
@@ -90,18 +217,14 @@ void Particle::setup(const ComponentSpec* visualComponentSpec, const ComponentSp
 	}
 
 	Particle::playAnimation(this, animationFunctions, animationName);
-	Particle::setLifeSpan(this, lifeSpan);
 
 	// TOOD: the preprocessor does't catch properly this override check with Particle 	
-	if(GameObject::overrides(this, setPosition))
+	if(!isDeleted(this->body))
 	{
-		Particle::setPosition(this, position);
-	}
-	else
-	{
-		this->transformation.position = *position;
+		Body::setPosition(this->body, position, GameObject::safeCast(this));
 	}
 
+	this->transformation.position = *position;
 
 	if(NULL != force)
 	{
@@ -126,7 +249,8 @@ void Particle::resume(const VisualComponentSpec* visualComponentSpec, const Anim
 
 void Particle::suspend()
 {
-	Particle::destroyGraphics(this);
+	Particle::removeComponents(this, kSpriteComponent);
+	Particle::removeComponents(this, kWireframeComponent);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -197,6 +321,12 @@ bool Particle::update(uint32 elapsedTime, void (* behavior)(Particle particle))
 		if(0 > this->lifeSpan)
 		{
 			Particle::expire(this);
+
+			if(!isDeleted(this->body))
+			{
+				Body::stopMovement(this->body, __ALL_AXIS);
+			}
+
 			return true;
 		}
 
@@ -211,11 +341,6 @@ bool Particle::update(uint32 elapsedTime, void (* behavior)(Particle particle))
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void Particle::applyForce(const Vector3D* force __attribute__ ((unused)), uint32 movementType __attribute__ ((unused)))
-{}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PRIVATE METHODS
@@ -224,23 +349,44 @@ void Particle::applyForce(const Vector3D* force __attribute__ ((unused)), uint32
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void Particle::destroyGraphics()
+void Particle::applyForce(const Vector3D* force __attribute__ ((unused)), uint32 movementType __attribute__ ((unused)))
 {
-	Particle::removeComponents(this, kSpriteComponent);
-	Particle::removeComponents(this, kWireframeComponent);
+	if(isDeleted(this->body))
+	{
+		return;
+	}
+
+	if(__UNIFORM_MOVEMENT == movementType)
+	{
+		fixed_t mass = Body::getMass(this->body);
+
+		Vector3D acceleration =
+		{
+			force->x,
+			force->y,
+			force->z
+		};
+
+		if(mass && __1I_FIXED != mass)
+		{
+			acceleration.x = __FIXED_DIV(acceleration.x, mass);
+			acceleration.y = __FIXED_DIV(acceleration.y, mass);
+			acceleration.z = __FIXED_DIV(acceleration.z, mass);
+		}
+
+		Vector3D velocity =
+		{
+			acceleration.x,
+			acceleration.y,
+			acceleration.z
+		};
+
+		Body::setVelocity(this->body, &velocity);
+	}
+	else
+	{
+		Body::applyForce(this->body, force);
+	}
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void Particle::setLifeSpan(int16 lifeSpan)
-{
-	this->lifeSpan = lifeSpan;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void Particle::setMass(fixed_t mass __attribute__ ((unused)))
-{}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
