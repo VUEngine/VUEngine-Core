@@ -69,65 +69,15 @@ uint32 Particle::getInGameType()
 
 bool Particle::collisionStarts(const CollisionInformation* collisionInformation)
 {
-	ASSERT(NULL != collisionInformation->otherCollider, "Particle::resolveCollision: otherColliders");
-
-	ASSERT(NULL != collisionInformation->otherCollider, "Particle::collisionStarts: otherColliders");
-
-	bool returnValue = false;
-
 	if(collisionInformation->collider && collisionInformation->otherCollider)
 	{
-		if(collisionInformation->solutionVector.magnitude)
-		{
-			Collider::resolveCollision(collisionInformation->collider, collisionInformation);
-
-			GameObject owner = Collider::getOwner(collisionInformation->otherCollider);
-	
-			fixed_t frictionCoefficient = GameObject::getFrictionCoefficient(owner);
-			fixed_t bounciness = GameObject::getBounciness(owner);
-
-			if(!isDeleted(this->body))
-			{
-				Body::bounce
-				(
-					this->body, 
-					ListenerObject::safeCast(collisionInformation->otherCollider), 
-					collisionInformation->solutionVector.direction, 
-					frictionCoefficient, 
-					bounciness
-				);
-			}
-
-			returnValue = true;
-		}
-
 		if(NULL != this->particleSpec->onCollisionAnimation)
 		{
 			Particle::playAnimation(this, ((ParticleSpec*)this->particleSpec)->animationFunctions, this->particleSpec->onCollisionAnimation);
 		}
 	}
 
-	return returnValue;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void Particle::collisionEnds(const CollisionInformation* collisionInformation)
-{
-	ASSERT(this->body, "Particle::collisionEnds: null this");
-
-	if(isDeleted(this->body))
-	{
-		return;
-	}
-
-	if(NULL == collisionInformation || isDeleted(collisionInformation->collider))
-	{
-		return;
-	}
-
-	Body::clearNormal(this->body, ListenerObject::safeCast(collisionInformation->otherCollider));
-	Body::setSurroundingFrictionCoefficient(this->body, Collider::getCollidingFrictionCoefficient(collisionInformation->collider));
+	return Base::collisionStarts(this, collisionInformation);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————

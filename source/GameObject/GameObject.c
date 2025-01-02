@@ -679,10 +679,7 @@ bool GameObject::collisionStarts(const CollisionInformation* collisionInformatio
 {
 	ASSERT(collisionInformation->otherCollider, "GameObject::collisionStarts: otherColliders");
 
-	if(NULL == this->body)
-	{
-		return false;
-	}
+	ASSERT(NULL != collisionInformation->otherCollider, "Particle::collisionStarts: otherColliders");
 
 	bool returnValue = false;
 
@@ -699,15 +696,14 @@ bool GameObject::collisionStarts(const CollisionInformation* collisionInformatio
 
 			if(!isDeleted(this->body))
 			{
-				Body::bounce(this->body, ListenerObject::safeCast(collisionInformation->otherCollider), collisionInformation->solutionVector.direction, frictionCoefficient, bounciness);
-			}
-			else
-			{
-				uint16 axis = __NO_AXIS;
-				axis |= collisionInformation->solutionVector.direction.x ? __X_AXIS : __NO_AXIS;
-				axis |= collisionInformation->solutionVector.direction.y ? __Y_AXIS : __NO_AXIS;
-				axis |= collisionInformation->solutionVector.direction.z ? __Z_AXIS : __NO_AXIS;
-				GameObject::stopMovement(this, axis);
+				Body::bounce
+				(
+					this->body, 
+					ListenerObject::safeCast(collisionInformation->otherCollider), 
+					collisionInformation->solutionVector.direction, 
+					frictionCoefficient, 
+					bounciness
+				);
 			}
 
 			returnValue = true;
