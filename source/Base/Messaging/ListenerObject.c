@@ -65,9 +65,9 @@ void ListenerObject::destructor()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void ListenerObject::addEventListener(ListenerObject listener, EventListener callback, uint16 eventCode)
+void ListenerObject::addEventListener(ListenerObject listener, uint16 eventCode)
 {
-	if(NULL == listener || NULL == callback)
+	if(NULL == listener)
 	{
 		return;
 	}
@@ -82,7 +82,7 @@ void ListenerObject::addEventListener(ListenerObject listener, EventListener cal
 		{
 			Event* event = (Event*)node->data;
 
-			if(listener == event->listener && callback == event->callback && eventCode == event->code)
+			if(listener == event->listener && eventCode == event->code)
 			{
 				event->remove = false;
 				return;
@@ -92,7 +92,6 @@ void ListenerObject::addEventListener(ListenerObject listener, EventListener cal
 
 	Event* event = new Event;
 	event->listener = listener;
-	event->callback = callback;
 	event->code = eventCode;
 	event->remove = false;
 
@@ -101,7 +100,7 @@ void ListenerObject::addEventListener(ListenerObject listener, EventListener cal
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void ListenerObject::removeEventListener(ListenerObject listener, EventListener callback, uint16 eventCode)
+void ListenerObject::removeEventListener(ListenerObject listener, uint16 eventCode)
 {
 	if(NULL != this->events)
 	{
@@ -124,7 +123,7 @@ void ListenerObject::removeEventListener(ListenerObject listener, EventListener 
 
 			}
 
-			if(listener == event->listener && callback == event->callback && eventCode == event->code)
+			if(listener == event->listener && eventCode == event->code)
 			{
 				if(0 < this->eventFirings)
 				{
@@ -150,7 +149,7 @@ void ListenerObject::removeEventListener(ListenerObject listener, EventListener 
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void ListenerObject::removeEventListeners(EventListener callback, uint16 eventCode)
+void ListenerObject::removeEventListeners(uint16 eventCode)
 {
 	if(NULL != this->events)
 	{
@@ -173,7 +172,7 @@ void ListenerObject::removeEventListeners(EventListener callback, uint16 eventCo
 
 			}
 
-			if((NULL == callback || callback == event->callback) && eventCode == event->code)
+			if(eventCode == event->code)
 			{
 				if(0 < this->eventFirings)
 				{
@@ -317,7 +316,7 @@ void ListenerObject::fireEvent(uint16 eventCode)
 			}
 			else if(eventCode == event->code)
 			{
-				event->remove = !event->callback(event->listener, this);
+				event->remove = !ListenerObject::onEvent(event->listener, event->code, this);
 
 				// safe check in case that I have been deleted during the previous event
 				if(isDeleted(this))
@@ -328,7 +327,7 @@ void ListenerObject::fireEvent(uint16 eventCode)
 					Printing::text(Printing::getInstance(), "Class:    ", 1, 12, NULL);
 					Printing::text(Printing::getInstance(), __GET_CLASS_NAME(this), 13, 12, NULL);
 					Printing::text(Printing::getInstance(), "Method:    ", 1, 13, NULL);
-					Printing::hex(Printing::getInstance(), (int32)event->callback, 13, 13, 8, NULL);
+					Printing::hex(Printing::getInstance(), __VIRTUAL_CALL_ADDRESS(ListenerObject, onEvent, event->listener), 13, 13, 8, NULL);
 					Printing::text(Printing::getInstance(), "Event code: ", 1, 14, NULL);
 					Printing::int32(Printing::getInstance(), event->code, 13, 14, NULL);
 					NM_ASSERT(!isDeleted(this), "ListenerObject::fireEvent: deleted during event listening");
@@ -390,6 +389,12 @@ void ListenerObject::discardMessages(uint32 message)
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 bool ListenerObject::handleMessage(Telegram telegram __attribute__ ((unused)))
+{
+	return false;
+}
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+bool ListenerObject::onEvent(uint16 event __attribute__ ((unused)), ListenerObject eventFirer __attribute__ ((unused)))
 {
 	return false;
 }

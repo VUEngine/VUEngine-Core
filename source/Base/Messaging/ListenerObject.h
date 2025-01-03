@@ -28,18 +28,12 @@ class VirtualList;
 // CLASS' DATA
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-/// @memberof ListenerObject
-typedef bool (*EventListener)(ListenerObject, ListenerObject);
-
 /// Event struct
 /// @memberof ListenerObject
 typedef struct Event
 {
 	/// The object listening for the event
 	ListenerObject listener;
-
-	/// The callback on the listener object
-	EventListener callback;
 
 	/// The code of the event
 	uint16 code;
@@ -79,20 +73,17 @@ abstract class ListenerObject : Object
 
 	/// Register an object that will listen for events.
 	/// @param listener: ListenerObject that listen for the event
-	/// @param callback: EventListener callback for the listener object
 	/// @param eventCode: Event's code to listen for
-	void addEventListener(ListenerObject listener, EventListener callback, uint16 eventCode);
+	void addEventListener(ListenerObject listener, uint16 eventCode);
 
 	/// Remove a specific listener object from the listening to a give code with the provided callback.
 	/// @param listener: ListenerObject to remove from the list of listeners
-	/// @param callback: EventListener callback for the listener object
 	/// @param eventCode: Event's code to stop listen for
-	void removeEventListener(ListenerObject listener, EventListener callback, uint16 eventCode);
+	void removeEventListener(ListenerObject listener, uint16 eventCode);
 
 	/// Remove all listener objects for a specific callback and code from the listeners.
-	/// @param callback: EventListener callback for the listener object
 	/// @param eventCode: Event's code to stop listen for
-	void removeEventListeners(EventListener callback, uint16 eventCode);
+	void removeEventListeners(uint16 eventCode);
 
 	/// Remove a specific listener object from the listeners.
 	/// @param listener: ListenerObject to remove from the list of listeners
@@ -134,6 +125,12 @@ abstract class ListenerObject : Object
 	/// @param telegram: Received telegram to process
 	/// @return True if the telegram was processed
 	virtual bool handleMessage(Telegram telegram);
+
+	/// Receive and process an event.
+	/// @param event: Event code to process
+	/// @param eventFirer: ListerObject that fired the event 
+	/// @return True if keep the listener; false to remove it
+	virtual bool onEvent(uint16 event, ListenerObject eventFirer);
 }
 
 #endif
