@@ -77,6 +77,9 @@ fi
 
 cp -p -f $INPUT_FILE $OUTPUT_FILE
 
+# Inline multiline declarations
+sed -i.b -z 's/\n(/(/g'  $OUTPUT_FILE
+
 if [ -z "${INPUT_FILE##*assets/*}" ];
 then
 	echo "`sed -e 's#^.*assets/\(.*$\)#Compiling asset: \1#g' <<< $INPUT_FILE`"
@@ -119,9 +122,7 @@ mark="@N@"
 
 # Inline multiline declarations
 #sed -i.b 's/,[ 	]*$/,<Â·>/g' $OUTPUT_FILE
-sed -z -i.b 's/\n(/(/'  $OUTPUT_FILE
-#sed -i.b 's/\n(/(/'  $OUTPUT_FILE
-#sed -i.b 's/[	 ]*(/(/'  $OUTPUT_FILE
+#sed -i.b 's/[	 ]*(/(/g'  $OUTPUT_FILE
 
 sed -i.b 's/\([A-z][A-z0-9]*::[a-z][A-z0-9]*\)/ \1/g; s/{/{<START_BLOCK>/g; s/,[ 	]*$/,<Â·>/g' $OUTPUT_FILE 
 
