@@ -119,6 +119,9 @@ mark="@N@"
 
 # Inline multiline declarations
 #sed -i.b 's/,[ 	]*$/,<Â·>/g' $OUTPUT_FILE
+sed -z -i.b 's/\n(/(/'  $OUTPUT_FILE
+#sed -i.b 's/\n(/(/'  $OUTPUT_FILE
+#sed -i.b 's/[	 ]*(/(/'  $OUTPUT_FILE
 
 sed -i.b 's/\([A-z][A-z0-9]*::[a-z][A-z0-9]*\)/ \1/g; s/{/{<START_BLOCK>/g; s/,[ 	]*$/,<Â·>/g' $OUTPUT_FILE 
 
