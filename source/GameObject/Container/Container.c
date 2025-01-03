@@ -904,15 +904,13 @@ void Container::setLocalPosition(const Vector3D* position)
 
 	if(!isDeleted(this->body))
 	{
-		displacement.x -= this->localTransformation.position.x;
-		displacement.y -= this->localTransformation.position.y;
-		displacement.z -= this->localTransformation.position.z;
+		displacement = Vector3D::sub(displacement, this->localTransformation.position);
 
-		this->transformation.position.x -= displacement.x;
-		this->transformation.position.y -= displacement.y;
-		this->transformation.position.z -= displacement.z;
+		this->transformation.position = Vector3D::sub(this->transformation.position, displacement);
 
 		Body::setPosition(this->body, &this->transformation.position, GameObject::safeCast(this));
+
+		this->transformation.invalid |= (displacement.x ? __X_AXIS: 0) | (displacement.y ? __Y_AXIS: 0) | (displacement.y ? __Z_AXIS: 0);
 	}
 }
 
