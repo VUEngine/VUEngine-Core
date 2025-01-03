@@ -42,7 +42,11 @@ static class Affine : Object
 	/// @param halfWidth: Image's half width
 	/// @param halfHeight: Image's half height
 	/// @param rotation: Target rotation
-	static int16 transform(uint32 param, int16 paramTableRow, fixed_t targetHalfWidth, fixed_t targetHalfHeight, fix13_3 mx, fix13_3 my, fixed_t halfWidth, fixed_t halfHeight, const Rotation* rotation);
+	static int16 transform
+	(
+		uint32 param, int16 paramTableRow, fixed_t targetHalfWidth, fixed_t targetHalfHeight, fix13_3 mx, fix13_3 my, fixed_t halfWidth, 
+		fixed_t halfHeight, const Rotation* rotation
+	);
 
 	/// Rotate the affine matrix specified by param.
 	/// @param param: Displacement within param tables space
@@ -54,7 +58,11 @@ static class Affine : Object
 	/// @param halfWidth: Image's half width
 	/// @param halfHeight: Image's half height
 	/// @param rotation: Target rotation
-	static int16 rotate(uint32 param, int16 paramTableRow, fixed_t targetHalfWidth, fixed_t targetHalfHeight, fix13_3 mx, fix13_3 my, fixed_t halfWidth, fixed_t halfHeight, const Rotation* rotation)
+	static int16 rotate
+	(
+		uint32 param, int16 paramTableRow, fixed_t targetHalfWidth, fixed_t targetHalfHeight, fix13_3 mx, fix13_3 my, fixed_t halfWidth, 
+		fixed_t halfHeight, const Rotation* rotation
+	);	
 }
 
 

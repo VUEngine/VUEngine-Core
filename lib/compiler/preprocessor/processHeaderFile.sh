@@ -478,6 +478,12 @@ classDeclarationBlock=`cat $INPUT_FILE | sed ''"$line"','"$end"'!d' | grep -v -e
 #echo "$classDeclarationBlock"
 
 # Get class' methods
+
+# Remove new lines where ( is the first character
+classDeclarationBlock=`sed -e 's/[	 ]*(/(/'  <<< "$classDeclarationBlock"`
+classDeclarationBlock=`sed -e 's/\n(/(/'  <<< "$classDeclarationBlock"`
+classDeclarationBlock=`sed -e 's/[	 ]*(/(/'  <<< "$classDeclarationBlock"`
+
 methods=`grep -v -e '^[ 	\*A-z0-9]\+[ 	]*([ 	]*\*' <<< "$classDeclarationBlock" | grep -e '(.*)[ 	=0]*;[ 	]*'`
 attributes=`grep -v -e '^[ 	\*A-z0-9]\+[ 	]*([ 	]*[^\*]' <<< "$classDeclarationBlock" | grep -e ';' | sed -e 's#&\\\##' | tr -d "\r\n"`
 
