@@ -13,9 +13,9 @@
 
 #include <string.h>
 
-#include <Actor.h>
+#include <StatefulActor.h>
 #include <AnimationCoordinatorFactory.h>
-#include <AnimatedEntity.h>
+#include <Entity.h>
 #include <Ball.h>
 #include <BgmapTextureManager.h>
 #include <Body.h>

@@ -7,14 +7,14 @@
  * that was distributed with this source code.
  */
 
-#ifndef ACTOR_H_
-#define ACTOR_H_
+#ifndef STATEFUL_ACTOR_H_
+#define STATEFUL_ACTOR_H_
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // INCLUDES
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-#include <AnimatedEntity.h>
+#include <Entity.h>
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // FORWARD DECLARATIONS
@@ -27,29 +27,29 @@ class StateMachine;
 // CLASS' DATA
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-/// An Actor Spec
-/// @memberof Actor
-typedef struct ActorSpec
+/// An StatefulActor Spec
+/// @memberof StatefulActor
+typedef struct StatefulActorSpec
 {
-	/// AnimatedEntity spec
-	AnimatedEntitySpec animatedEntitySpec;
+	/// Entity spec
+	EntitySpec entitySpec;
 
-} ActorSpec;
+} StatefulActorSpec;
 
-/// An Actor spec that is stored in ROM
-/// @memberof Actor
-typedef const ActorSpec ActorROMSpec;
+/// An StatefulActor spec that is stored in ROM
+/// @memberof StatefulActor
+typedef const StatefulActorSpec StatefulActorROMSpec;
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DECLARATION
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-/// Class Actor
+/// Class StatefulActor
 ///
-/// Inherits from AnimatedEntity
+/// Inherits from Entity
 ///
 /// Implements an animated entity that can have complex behavior and physical simulations.
-class Actor : AnimatedEntity
+class StatefulActor : Entity
 {
 	/// @protectedsection
 
@@ -59,10 +59,10 @@ class Actor : AnimatedEntity
 	/// @publicsection
 
 	/// Class' constructor
-	/// @param actorSpec: Specification that determines how to configure the actor
+	/// @param statefulActorSpec: Specification that determines how to configure the statefulActor
 	/// @param internalId: ID to keep track internally of the new instance
 	/// @param name: Name to assign to the new instance
-	void constructor(const ActorSpec* actorSpec, int16 internalId, const char* const name);
+	void constructor(const StatefulActorSpec* statefulActorSpec, int16 internalId, const char* const name);
 
 	/// Process a Telegram.
 	/// @param telegram: Telegram to process

@@ -19,6 +19,7 @@
 #include <Mesh.h>
 #include <Printing.h>
 #include <Sprite.h>
+#include <SpriteManager.h>
 #include <Telegram.h>
 #include <VirtualList.h>
 #include <VirtualNode.h>
@@ -365,11 +366,10 @@ void Entity::constructor(EntitySpec* entitySpec, int16 internalId, const char* c
 	Base::constructor(internalId, name);
 
 	this->entitySpec = entitySpec;
-
+	this->size = Size::getFromPixelSize(entitySpec->pixelSize);
 	this->centerDisplacement = NULL;
 	this->entityFactory = NULL;
-
-	this->size = Size::getFromPixelSize(entitySpec->pixelSize);
+	this->playingAnimationName = NULL;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -444,6 +444,17 @@ uint32 Entity::getInGameType()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+void Entity::ready(bool recursive)
+{
+	ASSERT(this->entitySpec, "Entity::ready: null entitySpec");
+
+	Base::ready(this, recursive);
+
+	Entity::playAnimation(this, ((EntitySpec*)this->entitySpec)->initialAnimation);
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void Entity::suspend()
 {
 	Base::suspend(this);
@@ -463,6 +474,8 @@ void Entity::resume()
 	}
 
 	Base::resume(this);
+
+	Entity::playAnimation(this, this->playingAnimationName);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -489,6 +502,23 @@ void Entity::handleCommand(int32 command, va_list args)
 			break;
 		}
 	}
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+bool Entity::handlePropagatedString(const char* string __attribute__ ((unused)))
+{
+	/* TODO: play only if the string contains the correct command */
+	/*
+	if (NULL == strnstr(string, __MAX_ANIMATION_FUNCTION_NAME_LENGTH, __ANIMATION_COMMAND)) 
+	{
+		return false;
+	}
+	*/
+
+	Entity::playAnimation(this, string);
+	
+	return false;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -712,6 +742,78 @@ bool Entity::isInCameraRange(int16 padding, bool recursive)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+void Entity::playAnimation(const char* animationName)
+{
+	this->playingAnimationName = animationName;
+
+	SpriteManager::propagateCommand
+	(
+		SpriteManager::getInstance(), cVisualComponentCommandPlay, GameObject::safeCast(this), 
+		((EntitySpec*)this->entitySpec)->animationFunctions, animationName, ListenerObject::safeCast(this), 
+		(EventListener)Entity::onAnimationComplete
+	);
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void Entity::pauseAnimation(bool pause)
+{
+	SpriteManager::propagateCommand(SpriteManager::getInstance(), cVisualComponentCommandPause, GameObject::safeCast(this), pause);
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void Entity::stopAnimation()
+{
+	this->playingAnimationName = NULL;
+
+	SpriteManager::propagateCommand(SpriteManager::getInstance(), cVisualComponentCommandStop, GameObject::safeCast(this));
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void Entity::setActualFrame(int16 frame)
+{
+	SpriteManager::propagateCommand(SpriteManager::getInstance(), cVisualComponentCommandSetFrame, GameObject::safeCast(this), frame);
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void Entity::nextFrame()
+{
+	SpriteManager::propagateCommand(SpriteManager::getInstance(), cVisualComponentCommandNextFrame, GameObject::safeCast(this));
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void Entity::previousFrame()
+{
+	SpriteManager::propagateCommand(SpriteManager::getInstance(), cVisualComponentCommandPreviousFrame, GameObject::safeCast(this));
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+bool Entity::isPlaying()
+{
+	return NULL != this->playingAnimationName;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+bool Entity::isPlayingAnimation(char* animationName)
+{
+	return 0 == strcmp(this->playingAnimationName, animationName);
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+const char* Entity::getPlayingAnimationName()
+{
+	return this->playingAnimationName;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void Entity::setSpec(void* entitySpec)
 {
 	// save spec
@@ -838,6 +940,15 @@ bool Entity::onEntityLoadedDeferred(ListenerObject eventFirer __attribute__ ((un
 	}
 
 	return false;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+bool Entity::onAnimationComplete(ListenerObject eventFirer __attribute__((unused)))
+{
+	this->playingAnimationName = NULL;
+
+	return true;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

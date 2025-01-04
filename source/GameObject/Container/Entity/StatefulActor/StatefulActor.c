@@ -23,7 +23,7 @@
 #include <VirtualNode.h>
 #include <VUEngine.h>
 
-#include "Actor.h"
+#include "StatefulActor.h"
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DECLARATIONS
@@ -38,10 +38,10 @@ friend class VirtualNode;
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void Actor::constructor(const ActorSpec* actorSpec, int16 internalId, const char* const name)
+void StatefulActor::constructor(const StatefulActorSpec* statefulActorSpec, int16 internalId, const char* const name)
 {
 	// Always explicitly call the base's constructor 
-	Base::constructor((AnimatedEntitySpec*)&actorSpec->animatedEntitySpec, internalId, name);
+	Base::constructor((EntitySpec*)&statefulActorSpec->entitySpec, internalId, name);
 
 	// construct the game state machine
 	this->stateMachine = NULL;
@@ -49,7 +49,7 @@ void Actor::constructor(const ActorSpec* actorSpec, int16 internalId, const char
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void Actor::destructor()
+void StatefulActor::destructor()
 {
 	// destroy state machine
 	if(!isDeleted(this->stateMachine))
@@ -64,7 +64,7 @@ void Actor::destructor()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-bool Actor::handleMessage(Telegram telegram)
+bool StatefulActor::handleMessage(Telegram telegram)
 {
 	if(!this->stateMachine || !StateMachine::handleMessage(this->stateMachine, telegram))
 	{
@@ -76,7 +76,7 @@ bool Actor::handleMessage(Telegram telegram)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void Actor::update()
+void StatefulActor::update()
 {
 	Base::update(this);
 
@@ -88,7 +88,7 @@ void Actor::update()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void Actor::createStateMachine(State state)
+void StatefulActor::createStateMachine(State state)
 {
 	if(isDeleted(this->stateMachine))
 	{

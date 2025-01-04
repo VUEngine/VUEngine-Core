@@ -18,9 +18,9 @@
 {%- if item.extraProperties.customAllocator is defined and item.extraProperties.customAllocator != '' -%}
 	{%- set entityClass = item.extraProperties.customAllocator -%}
 {%- elseif item.physics.enabled -%} {#- TODO: or item.stateMachine enabled -#}
-	{%- set entityClass = 'Actor' -%}
+	{%- set entityClass = 'StatefulActor' -%}
 {%- elseif isAnimated -%}
-	{%- set entityClass = 'AnimatedEntity' -%}
+	{%- set entityClass = 'Entity' -%}
 {%- else %}
 	{%- set entityClass = 'Entity' -%}
 {%- endif %}
@@ -578,7 +578,7 @@ ComponentSpec* const {{ sanitizedSpecName }}ComponentSpecs[] =
 {# PRINT ENTITY SPEC -#}
 {{ entityClass }}ROMSpec {{ sanitizedSpecName }}EntitySpec =
 {
-	{%- if entityClass != 'Entity' and entityClass != 'AnimatedEntity' and entityClass != 'Actor' %}
+	{%- if entityClass != 'Entity' and entityClass != 'Entity' and entityClass != 'StatefulActor' %}
 	{
 	{%- endif %}
 	{%- if item.physics.enabled %}
@@ -638,7 +638,7 @@ ComponentSpec* const {{ sanitizedSpecName }}ComponentSpecs[] =
 	__NO_AXIS,
 	{%- endif %}
 	{%- endif %}
-	{%- if entityClass != 'Entity' and entityClass != 'AnimatedEntity' and entityClass != 'Actor' %}
+	{%- if entityClass != 'Entity' and entityClass != 'Entity' and entityClass != 'StatefulActor' %}
 	}
 	{%- endif %}
 };

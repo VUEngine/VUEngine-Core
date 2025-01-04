@@ -123,26 +123,26 @@ abstract class GameObject : ListenerObject
 	/// @return Pointer to the object's 3D
 	const Scale* getScale();
 
-	/// Retrieve the actor's physical body.
-	/// @return Actor's physical body
+	/// Retrieve the statefulActor's physical body.
+	/// @return StatefulActor's physical body
 	Body getBody();
 
-	/// Check if the actor is moving.
-	/// @return True if the actor's body is moving; false otherwise
+	/// Check if the statefulActor is moving.
+	/// @return True if the statefulActor's body is moving; false otherwise
 	bool isMoving();
 
-	/// Stop all actor's movement.
+	/// Stop all statefulActor's movement.
 	void stopAllMovement();
 
-	/// Stop the actor's movement in the specified axis.
-	/// @param axis: Axis on which to stop the movement of the actor's body
+	/// Stop the statefulActor's movement in the specified axis.
+	/// @param axis: Axis on which to stop the movement of the statefulActor's body
 	void stopMovement(uint16 axis);
 
-	/// Set the actor's velocity vector.
-	/// @param velocity: Velocity vector to assign to the actor's body
-	/// @param checkIfCanMove: If true, the actor checks that none of its colliders will
+	/// Set the statefulActor's velocity vector.
+	/// @param velocity: Velocity vector to assign to the statefulActor's body
+	/// @param checkIfCanMove: If true, the statefulActor checks that none of its colliders will
 	/// enter a collision if it were to move in the direction of the provided velocity
-	/// @return True if the actor started to move in the direction specified by the
+	/// @return True if the statefulActor started to move in the direction specified by the
 	/// provided velocity vector
 	bool setVelocity(const Vector3D* velocity, bool checkIfCanMove);
 
@@ -154,8 +154,8 @@ abstract class GameObject : ListenerObject
 	/// @return Object's current speed (velocity vector's magnitude)
 	fixed_t getSpeed();
 
-	/// Retrieve the actor's maximum speed.
-	/// @return Maximum speed at which the actor's body is allowed to move
+	/// Retrieve the statefulActor's maximum speed.
+	/// @return Maximum speed at which the statefulActor's body is allowed to move
 	fixed_t getMaximumSpeed();
 
 	/// Retrieve the object's bounciness factor.
@@ -215,11 +215,11 @@ abstract class GameObject : ListenerObject
 	/// Destroy the components that attach to this container. 	
 	virtual void destroyComponents();
 
-	/// A new component has been added to this actor. 
+	/// A new component has been added to this statefulActor. 
 	/// @param component: Added component
 	virtual void addedComponent(Component component);
 
-	/// A component has been removed from this actor. 
+	/// A component has been removed from this statefulActor. 
 	/// @param component: Removed component
 	virtual void removedComponent(Component component);
 
@@ -260,23 +260,23 @@ abstract class GameObject : ListenerObject
 	/// @return Pointer to the direction towards which the object is moving
 	virtual const Vector3D* getDirection();
 
-	/// Apply a force to the actor's body.
+	/// Apply a force to the statefulActor's body.
 	/// @param force: Force to be applied
-	/// @param checkIfCanMove: If true, the actor checks that none of its colliders will
-	/// @return True if the force was succesfully applied to the actor's body
+	/// @param checkIfCanMove: If true, the statefulActor checks that none of its colliders will
+	/// @return True if the force was succesfully applied to the statefulActor's body
 	virtual bool applyForce(const Vector3D* force, bool checkIfCanMove);
 
-	/// Check if the actor will enter a collision if it were to move in the provided direction
+	/// Check if the statefulActor will enter a collision if it were to move in the provided direction
 	/// @param direction: Direction vector to check
 	virtual bool canMoveTowards(Vector3D direction);
 
-	/// Check if when the actor bounces it has to take into account the colliding object's bounciness.
-	/// @return True if the actor has to take into account the colliding object's bounciness when bouncing
+	/// Check if when the statefulActor bounces it has to take into account the colliding object's bounciness.
+	/// @return True if the statefulActor has to take into account the colliding object's bounciness when bouncing
 	virtual bool isSensibleToCollidingObjectBouncinessOnCollision(GameObject collidingObject);
 
-	/// Check if when the actor bounces it has to take into account the colliding object's friction
+	/// Check if when the statefulActor bounces it has to take into account the colliding object's friction
 	/// coefficient.
-	/// @return True if the actor has to take into account the colliding object's friction coefficient when
+	/// @return True if the statefulActor has to take into account the colliding object's friction coefficient when
 	/// bouncing
 	virtual bool isSensibleToCollidingObjectFrictionOnCollision(GameObject collidingObject);
 

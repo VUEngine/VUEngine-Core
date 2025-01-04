@@ -13,11 +13,11 @@
 // INCLUDES
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-#include <Actor.h>
+#include <StatefulActor.h>
 #include <AnimationController.h>
 #include <AnimationCoordinator.h>
 #include <AnimationCoordinatorFactory.h>
-#include <AnimatedEntity.h>
+#include <Entity.h>
 #include <Ball.h>
 #include <BgmapAnimatedSprite.h>
 #include <BgmapTextureManager.h>
@@ -619,8 +619,8 @@ void Debug::memoryStatusShowFifthPage(int32 increment __attribute__ ((unused)), 
 
 	ClassSizeData classesSizeData[] =
 	{
-		{&Actor_getObjectSize,							"Actor"},
-		{&AnimatedEntity_getObjectSize,					"AnimatedEntity"},
+		{&StatefulActor_getObjectSize,							"StatefulActor"},
+		{&Entity_getObjectSize,					"Entity"},
 		{&Container_getObjectSize,						"Container"},
 		{&Entity_getObjectSize,							"Entity"},
 		{&EntityFactory_getObjectSize,					"EntityFactory"},

@@ -53,6 +53,12 @@ typedef struct EntitySpec
 	// Entity's in-game type
 	uint8 inGameType;
 
+	/// Array of function animations
+	const AnimationFunction** animationFunctions;
+
+	/// Animation to play automatically
+	char* initialAnimation;
+
 } EntitySpec;
 
 /// An Entity spec that is stored in ROM
@@ -123,6 +129,9 @@ class Entity : Container
 	/// visibility check of the entity withing the camera's frustum
 	Vector3D* centerDisplacement;
 
+	/// Name of the currently playing animation
+	const char* playingAnimationName;
+
 	/// @publicsection
 
 	/// Create a new entity instance and configure it with the provided arguments.
@@ -181,6 +190,10 @@ class Entity : Container
 	/// @return The enum that determines the type of game object
 	override uint32 getInGameType();
 
+	/// Make the animated entity ready to start operating once it has been completely intialized.
+	/// @param recursive: If true, the ready call is propagated to its children, grand children, etc.
+	override void ready(bool recursive);
+
 	/// Prepare to suspend this instance's logic.
 	override void suspend();
 
@@ -192,6 +205,11 @@ class Entity : Container
 	/// @param valud: A command related value
 	/// @return True if the propagation must stop; false if the propagation must reach other containers
 	override void handleCommand(int32 command, va_list args);
+
+	/// Default string handler for propagateString
+	/// @param string: Propagated string
+	/// @return True if the propagation must stop; false if the propagation must reach other containers
+	override bool handlePropagatedString(const char* string);
 
 	/// Retrieve the entity's spec.
 	/// @return Specification that determines how the entity was configured
@@ -230,6 +248,49 @@ class Entity : Container
 	/// @param recursive: If true, the check is performed on the children, grand children, etc.
 	/// @return True if the entity is within the camera's frustum
 	bool isInCameraRange(int16 padding, bool recursive);
+
+	/// Play the animation with the provided name.
+	/// @param animationName: Name of the animation to play
+	void playAnimation(const char* animationName);
+
+	/// Pause or unpause the currently playing animation if any.
+	/// @param pause: Flag that signals if the animation must be paused or unpaused
+	void pauseAnimation(bool pause);
+
+	/// Stop any playing animation if any.
+	void stopAnimation();
+
+	/// Check if an animation is playing.
+	/// @return True if an animation is playing; false otherwise
+	bool isPlaying();
+
+	/// Check if the animation whose name is provided is playing.
+	/// @param animationName: Name of the animation to check
+	/// @return True if an animation is playing; false otherwise
+	bool isPlayingAnimation(char* animationName);
+
+	/// Retrieve the animation function's name currently playing if any
+	/// @return Animation function's name currently playing if any
+	const char* getPlayingAnimationName();
+
+	/// Skip the currently playing animation to the provided frame.
+	/// @param frame: The frame of the playing animation to skip to
+	/// @return True if the actual frame was changed; false otherwise
+	void setActualFrame(int16 frame);
+
+	/// Skip the currently playing animation to the next frame.
+	void nextFrame();
+
+	/// Rewind the currently playing animation to the previous frame.
+	void previousFrame();
+
+	/// Retrieve the actual frame of the playing animation if any.
+	/// @return Actual frame of the playing animation if any
+	int16 getActualFrame();
+
+	/// Retrieve the number of frames in the currently playing animation if any.
+	/// @return The numer of frames if an animation is playing; o otherwise
+	int32 getNumberOfFrames();
 
 	/// Set the entity's spec.
 	/// @param entitySpec: Specification that determines how to configure the entity

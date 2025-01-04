@@ -14,7 +14,7 @@
 // INCLUDES
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-#include <AnimatedEntity.h>
+#include <Entity.h>
 #include <Tool.h>
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -23,15 +23,15 @@
 
 /// A struct to map an animated entity spec to a name
 /// @memberof AnimationInspector
-typedef struct UserAnimatedEntity
+typedef struct UserEntity
 {
 	/// Specification for an animated entity
-	const AnimatedEntitySpec* animatedEntitySpec;
+	const EntitySpec* entitySpec;
 
 	/// Animated entity spec's name
 	const char* name;
 
-} UserAnimatedEntity;
+} UserEntity;
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DECLARATION
@@ -54,7 +54,7 @@ singleton class AnimationInspector : Tool
 	AnimationFunction animationFunction;
 
 	/// Selector for the animated entities
-	OptionsSelector animatedEntitySelector;
+	OptionsSelector entitySelector;
 
 	/// Selector for the animated sprite sprite selector
 	OptionsSelector spriteSelector;
