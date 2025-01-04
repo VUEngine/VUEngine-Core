@@ -635,7 +635,7 @@ void Sprite::print(int32 x, int32 y)
 
 	Printing::text(Printing::getInstance(), "SPRITE ", x, y++, NULL);
 	Printing::text(Printing::getInstance(), "Class: ", x, ++y, NULL);
-	Printing::text(Printing::getInstance(), __GET_CLASS_NAME_UNSAFE(this), x + 18, y, NULL);
+	Printing::text(Printing::getInstance(), __GET_CLASS_NAME(this), x + 18, y, NULL);
 	Printing::text(Printing::getInstance(), "Mode:", x, ++y, NULL);
 
 	if(Sprite::isObject(this))

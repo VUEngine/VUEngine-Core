@@ -431,14 +431,14 @@ void Debug::generalStatusPage(int32 increment __attribute__ ((unused)), int32 x 
 
 	Printing::text(Printing::getInstance(), "GAME STATUS", 1, y++, NULL);
 	Printing::text(Printing::getInstance(), "Current State:", 1, ++y, NULL);
-	Printing::text(Printing::getInstance(), __GET_CLASS_NAME_UNSAFE(VUEngine::getPreviousState(VUEngine::getInstance())), 20, y, NULL);
+	Printing::text(Printing::getInstance(), __GET_CLASS_NAME(VUEngine::getPreviousState(VUEngine::getInstance())), 20, y, NULL);
 
 	Printing::text(Printing::getInstance(), "Save Data Manager:", 1, ++y, NULL);
 	if(VUEngine::getSaveDataManager(VUEngine::getInstance()))
 	{
 		Printing::text
 		(
-			Printing::getInstance(), __GET_CLASS_NAME_UNSAFE(VUEngine::getSaveDataManager(VUEngine::getInstance())), 20, y, NULL
+			Printing::getInstance(), __GET_CLASS_NAME(VUEngine::getSaveDataManager(VUEngine::getInstance())), 20, y, NULL
 		);
 	}
 	else

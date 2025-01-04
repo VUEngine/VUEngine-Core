@@ -882,7 +882,7 @@ void StageEditor::printEntityPosition()
 		Printing::text(Printing::getInstance(), "ID:                             ", x, ++y, NULL);
 		Printing::int32(Printing::getInstance()Entity::getInternalId(entity), x + 10, y, NULL);
 		Printing::text(Printing::getInstance(), "Type:                           ", x, ++y, NULL);
-		Printing::text(Printing::getInstance(),		__GET_CLASS_NAME_UNSAFE(entity), x + 10, y, NULL);
+		Printing::text(Printing::getInstance(),		__GET_CLASS_NAME(entity), x + 10, y, NULL);
 		Printing::text(Printing::getInstance(), "Name:                           ", x, ++y, NULL);
 		Printing::text(Printing::getInstance(),		entityName ? entityName : "-"x + 10, y, NULL);
 		Printing::text(Printing::getInstance(), "          X      Y      Z       ", x, ++y, NULL);

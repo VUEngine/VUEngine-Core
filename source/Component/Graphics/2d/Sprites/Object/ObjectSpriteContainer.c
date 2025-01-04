@@ -213,7 +213,7 @@ void ObjectSpriteContainer::print(int32 x, int32 y)
 	Printing::text(Printing::getInstance(), "Index: ", x, ++y, NULL);
 	Printing::int32(Printing::getInstance(), this->index, x + 18, y, NULL);
 	Printing::text(Printing::getInstance(), "Class: ", x, ++y, NULL);
-	Printing::text(Printing::getInstance(), __GET_CLASS_NAME_UNSAFE(this), x + 18, y, NULL);
+	Printing::text(Printing::getInstance(), __GET_CLASS_NAME(this), x + 18, y, NULL);
 	Printing::text(Printing::getInstance(), "Head:                         ", x, ++y, NULL);
 	Printing::hex(Printing::getInstance(), Sprite::getEffectiveHead(this), x + 18, y, 8, NULL);
 	Printing::text(Printing::getInstance(), "Mode:", x, ++y, NULL);

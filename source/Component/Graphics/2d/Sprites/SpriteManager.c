@@ -767,7 +767,7 @@ void SpriteManager::print(int32 x, int32 y, bool resumed)
 		char spriteClassName[__MAX_SPRITE_CLASS_NAME_SIZE];
 		Sprite sprite = Sprite::safeCast(node->data);
 
-		strncpy(spriteClassName, __GET_CLASS_NAME_UNSAFE(sprite), __MAX_SPRITE_CLASS_NAME_SIZE);
+		strncpy(spriteClassName, __GET_CLASS_NAME(sprite), __MAX_SPRITE_CLASS_NAME_SIZE);
 		spriteClassName[__MAX_SPRITE_CLASS_NAME_SIZE - 1] = 0;
 		spriteClassName[__MAX_SPRITE_CLASS_NAME_SIZE - 2] = '.';
 
