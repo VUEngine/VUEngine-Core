@@ -20,6 +20,7 @@ clean_up() {
 
 	sed -i.b -z 's/(<NEW_LINE>/\n(/g'  $OUTPUT_FILE
 	sed -i.b -z 's/<NEW_LINE>/\n/g'  $OUTPUT_FILE
+	sed -i.b -e 's/<STATIC>//g'  $OUTPUT_FILE
 
 #	rm -f $OUTPUT_FILE"-e"
 }
@@ -142,6 +143,9 @@ sed -e 's/.*/'"$mark"'&/g' $OUTPUT_FILE | tr -d "\r\n" | sed -e 's/'"$mark"'\([ 
 # Clean methods with no parameters declarations
 sed -i.b 's/\(<DECLARATION>[^<]*\)<%>\([^{]*\)@N@{/\1@N@\2<%>{/g; s/\(!DECLARATION_MIDDLE!_[^(]*\)(\([^%{]*{\)/\1(void* _this '"__attribute__((unused))"', \2/g; s/,[ 	]*)/)/g' $OUTPUT_FILE 
 
+# Mark startin blocks of static methods
+sed -i.b 's/\(<%>[^;!]*\?{\)\(<START_BLOCK><method>\)/\1<STATIC>\2/g' $OUTPUT_FILE
+
 # Put back line breaks
 sed -e 's/'"$mark"'/\'$'\n/g' $OUTPUT_FILE > $OUTPUT_FILE.tmp
 
@@ -155,7 +159,7 @@ rm -f $OUTPUT_FILE.tmp
 # Replace :: by _
 sed -i.b 's#\([A-Z][A-z0-9]*\)::\([a-z][A-z0-9]*\)#\1_\2#g' $OUTPUT_FILE 
 
-prototypes=`sed -e 's/<DECLARATION>/\'$'\n<DECLARATION>/g' $OUTPUT_FILE | sed -e 's/<%DECLARATION>/<%DECLARATION>\'$'\n/g' | grep "DECLARATION>" | sed -e 's/<[%]*DECLARATION>//g' | sed -e 's/{<START_BLOCK>.*<method>.*<%method>/;/g' |sed  -e 's/'"$mark"'//g' |sed  -e 's/<%>//g' | tr -d "\r\n" | sed -e 's/\([^A-z0-9]*\)static[ 	]/\1 /g'`
+prototypes=`sed -e 's/<DECLARATION>/\'$'\n<DECLARATION>/g' $OUTPUT_FILE | sed -e 's/<%DECLARATION>/<%DECLARATION>\'$'\n/g' | grep "DECLARATION>" | sed -e 's/<[%]*DECLARATION>//g' | sed -e 's/{<START_BLOCK>.*<method>.*<%method>/;/g' | sed -e 's/{<STATIC><START_BLOCK>.*<method>.*<%method>/;/g' |sed  -e 's/'"$mark"'//g' |sed  -e 's/<%>//g' | tr -d "\r\n" | sed -e 's/\([^A-z0-9]*\)static[ 	]/\1 /g'`
 
 # Put back line breaks
 sed -i.b 's/'"$mark"'/\'$'\n/g' $OUTPUT_FILE 

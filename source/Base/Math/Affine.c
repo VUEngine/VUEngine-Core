@@ -34,7 +34,11 @@ extern double fabs (double);
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static int16 Affine::transform(uint32 param, int16 paramTableRow, fixed_t targetHalfWidth, fixed_t targetHalfHeight, fix13_3 mx, fix13_3 my, fixed_t halfWidth, fixed_t halfHeight, const Rotation* rotation)
+static int16 Affine::transform
+(
+	uint32 param, int16 paramTableRow, fixed_t targetHalfWidth, fixed_t targetHalfHeight, fix13_3 mx, 
+	fix13_3 my, fixed_t halfWidth, fixed_t halfHeight, const Rotation* rotation
+)
 {
 	fixed_t finalScaleX = __FIXED_MULT(__FIX7_9_TO_FIXED(__COS(__FIXED_TO_I(rotation->y))), __FIXED_DIV(targetHalfWidth, halfWidth));
 	fixed_t finalScaleY = __FIXED_MULT(__FIX7_9_TO_FIXED(__COS(__FIXED_TO_I(rotation->x))), __FIXED_DIV(targetHalfHeight, halfHeight));
@@ -270,7 +274,11 @@ PRINT_INT(lastRow, 1, 16);
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static int16 Affine::rotate(uint32 param, int16 paramTableRow, fixed_t targetHalfWidth, fixed_t targetHalfHeight, fix13_3 mx, fix13_3 my, fixed_t halfWidth, fixed_t halfHeight, const Rotation* rotation)
+static int16 Affine::rotate
+(
+	uint32 param, int16 paramTableRow, fixed_t targetHalfWidth, fixed_t targetHalfHeight, fix13_3 mx, fix13_3 my, 
+	fixed_t halfWidth, fixed_t halfHeight, const Rotation* rotation
+)
 {
 	fixed_t highPrecisionPa = __FIX7_9_TO_FIXED(__COS(-__FIXED_TO_I(rotation->z)));
 	fixed_t highPrecisionPb = -__FIX7_9_TO_FIXED(__SIN(-__FIXED_TO_I(rotation->z)));
