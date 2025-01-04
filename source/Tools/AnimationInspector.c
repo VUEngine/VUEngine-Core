@@ -37,7 +37,7 @@
 
 friend class Sprite;
 
-extern UserActor _userAnimatedEntities[];
+extern UserActor _userAnimatedActors[];
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DATA
@@ -78,7 +78,7 @@ void AnimationInspector::show()
 {
 	Printing::clear(Printing::getInstance());
 
-	if(NULL == _userAnimatedEntities[0].actorSpec)
+	if(NULL == _userAnimatedActors[0].actorSpec)
 	{
 		Printing::text
 		(
@@ -91,7 +91,7 @@ void AnimationInspector::show()
 		Printing::text(Printing::getInstance(), "             ", 39, 2, NULL);
 		Printing::text(Printing::getInstance(), "             ", 39, 3, NULL);
 		Printing::text(Printing::getInstance(), "No animations found", 1, 4, NULL);
-		Printing::text(Printing::getInstance(), "Define some in _userAnimatedEntities global variable", 1, 6, NULL);
+		Printing::text(Printing::getInstance(), "Define some in _userAnimatedActors global variable", 1, 6, NULL);
 		return;
 	}
 
@@ -103,24 +103,24 @@ void AnimationInspector::show()
 
 	this->actorSelector = new OptionsSelector(2, 16, NULL, NULL, NULL);
 
-	VirtualList animatedEntitiesNames = new VirtualList();
+	VirtualList animatedActorsNames = new VirtualList();
 
 	int32 i = 0;
-	for(; _userAnimatedEntities[i].actorSpec; i++)
+	for(; _userAnimatedActors[i].actorSpec; i++)
 	{
-		ASSERT(_userAnimatedEntities[i].name, "AnimationInspector::start: push null name");
+		ASSERT(_userAnimatedActors[i].name, "AnimationInspector::start: push null name");
 
 		Option* option = new Option;
-		option->value = (char*)(_userAnimatedEntities[i].name);
+		option->value = (char*)(_userAnimatedActors[i].name);
 		option->type = kString;
-		VirtualList::pushBack(animatedEntitiesNames, option);
+		VirtualList::pushBack(animatedActorsNames, option);
 	}
 
-	ASSERT(animatedEntitiesNames, "AnimationInspector::start: null animatedEntitiesNames");
-	ASSERT(VirtualList::getCount(animatedEntitiesNames), "AnimationInspector::start: empty animatedEntitiesNames");
+	ASSERT(animatedActorsNames, "AnimationInspector::start: null animatedActorsNames");
+	ASSERT(VirtualList::getCount(animatedActorsNames), "AnimationInspector::start: empty animatedActorsNames");
 
-	OptionsSelector::setOptions(this->actorSelector, animatedEntitiesNames);
-	delete animatedEntitiesNames;
+	OptionsSelector::setOptions(this->actorSelector, animatedActorsNames);
+	delete animatedActorsNames;
 
 	this->state = kFirstState + 1;
 	AnimationInspector::configureState(this);
@@ -135,10 +135,10 @@ void AnimationInspector::show()
 
 void AnimationInspector::hide()
 {
-	if(NULL == _userAnimatedEntities[0].actorSpec)
+	if(NULL == _userAnimatedActors[0].actorSpec)
 	{
 		Printing::text(Printing::getInstance(), "No animations found", 1, 4, NULL);
-		Printing::text(Printing::getInstance(), "Define some in _userAnimatedEntities global variable", 1, 6, NULL);
+		Printing::text(Printing::getInstance(), "Define some in _userAnimatedActors global variable", 1, 6, NULL);
 		return;
 	}
 
@@ -180,7 +180,7 @@ void AnimationInspector::hide()
 
 void AnimationInspector::processUserInput(uint16 pressedKey)
 {
-	if(NULL == _userAnimatedEntities[0].actorSpec)
+	if(NULL == _userAnimatedActors[0].actorSpec)
 	{
 		return;
 	}
@@ -311,7 +311,7 @@ void AnimationInspector::configureState()
 
 			AnimationInspector::removePreviousSprite(this);
 			Printing::text(printing, "Select \x13  ", 39, 2, NULL);
-			AnimationInspector::printUserAnimatedEntities(this);
+			AnimationInspector::printUserAnimatedActors(this);
 			break;
 
 		case kSelectSprite:
@@ -351,9 +351,9 @@ void AnimationInspector::configureState()
 
 void AnimationInspector::selectActor(uint32 pressedKey)
 {
-	int32 userAnimatedEntitiesCount = 0;
+	int32 userAnimatedActorsCount = 0;
 
-	for(; NULL != _userAnimatedEntities[userAnimatedEntitiesCount].actorSpec; userAnimatedEntitiesCount++);
+	for(; NULL != _userAnimatedActors[userAnimatedActorsCount].actorSpec; userAnimatedActorsCount++);
 
 	if(pressedKey & K_LU)
 	{
@@ -375,9 +375,9 @@ void AnimationInspector::selectActor(uint32 pressedKey)
 
 void AnimationInspector::selectSprite(uint32 pressedKey)
 {
-	int32 userAnimatedEntitiesCount = 0;
+	int32 userAnimatedActorsCount = 0;
 
-	for(; NULL != _userAnimatedEntities[userAnimatedEntitiesCount].actorSpec; userAnimatedEntitiesCount++);
+	for(; NULL != _userAnimatedActors[userAnimatedActorsCount].actorSpec; userAnimatedActorsCount++);
 
 	if(pressedKey & K_LU)
 	{
@@ -413,7 +413,7 @@ void AnimationInspector::removePreviousSprite()
 void AnimationInspector::selectAnimation(uint32 pressedKey)
 {
 	this->animationFunctions = 
-		_userAnimatedEntities[OptionsSelector::getSelectedOption(this->actorSelector)].actorSpec->animationFunctions;
+		_userAnimatedActors[OptionsSelector::getSelectedOption(this->actorSelector)].actorSpec->animationFunctions;
 
 	int32 animationsCount = 0;
 	for(; this->animationFunctions[animationsCount]; animationsCount++);
@@ -597,7 +597,7 @@ void AnimationInspector::editAnimation(uint32 pressedKey)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void AnimationInspector::printUserAnimatedEntities()
+void AnimationInspector::printUserAnimatedActors()
 {
 	Printing printing = Printing::getInstance();
 	Printing::text(printing, "OBJECTS", 1, 2, NULL);
@@ -677,13 +677,13 @@ void AnimationInspector::printAnimationConfig()
 
 void AnimationInspector::loadAnimationFunction()
 {
-	if(NULL == _userAnimatedEntities[0].actorSpec)
+	if(NULL == _userAnimatedActors[0].actorSpec)
 	{
 		return;
 	}
 
 	this->animationFunctions = 
-		_userAnimatedEntities[OptionsSelector::getSelectedOption(this->actorSelector)].actorSpec->animationFunctions;
+		_userAnimatedActors[OptionsSelector::getSelectedOption(this->actorSelector)].actorSpec->animationFunctions;
 
 	const AnimationFunction* animationFunction = 
 		this->animationFunctions[OptionsSelector::getSelectedOption(this->animationsSelector)];
@@ -705,7 +705,7 @@ void AnimationInspector::loadAnimationFunction()
 
 void AnimationInspector::createSprite()
 {
-	if(NULL == _userAnimatedEntities[0].actorSpec)
+	if(NULL == _userAnimatedActors[0].actorSpec)
 	{
 		return;
 	}
@@ -719,7 +719,7 @@ void AnimationInspector::createSprite()
 	position.z -= 10;
 
 	SpriteSpec* spriteSpec = 
-		(SpriteSpec*)_userAnimatedEntities[OptionsSelector::getSelectedOption(this->actorSelector)].
+		(SpriteSpec*)_userAnimatedActors[OptionsSelector::getSelectedOption(this->actorSelector)].
 			actorSpec.componentSpecs[OptionsSelector::getSelectedOption(this->spriteSelector)];
 
 	NM_ASSERT(spriteSpec, "AnimationInspector::createSprite: null spriteSpec");
@@ -763,7 +763,7 @@ void AnimationInspector::createSpriteSelector()
 	(
 		NULL 
 		!= 
-		_userAnimatedEntities[OptionsSelector::getSelectedOption(this->actorSelector)].
+		_userAnimatedActors[OptionsSelector::getSelectedOption(this->actorSelector)].
 			actorSpec.componentSpecs[i]
 	)
 	{
@@ -783,13 +783,13 @@ void AnimationInspector::createSpriteSelector()
 
 void AnimationInspector::createAnimationsSelector()
 {
-	if(NULL == _userAnimatedEntities[0].actorSpec)
+	if(NULL == _userAnimatedActors[0].actorSpec)
 	{
 		return;
 	}
 
 	this->animationFunctions = 
-		_userAnimatedEntities[OptionsSelector::getSelectedOption(this->actorSelector)].actorSpec->animationFunctions;
+		_userAnimatedActors[OptionsSelector::getSelectedOption(this->actorSelector)].actorSpec->animationFunctions;
 
 	if(this->animationFunctions)
 	{

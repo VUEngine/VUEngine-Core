@@ -4,7 +4,7 @@
 	"schema": {
 		"title": "Stage",
 		"properties": {
-			"entities": {
+			"actors": {
 				"type": "array",
 				"items": {
 					"type": "object",

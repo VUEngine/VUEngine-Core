@@ -41,7 +41,7 @@ class VirtualList;
 /// Implements a state that the VUEngine's state machine can transition into.
 class GameState : State
 {
-	/// A container for entities that componse the UI
+	/// A container for actors that componse the UI
 	UIContainer uiContainer;
 
 	/// A container for the game entites 
@@ -114,8 +114,8 @@ class GameState : State
 
 	/// Configure the stage with the provided stage spec.
 	/// @param stageSpec: Specification that determines how to configure the stage
-	/// @param positionedEntitiesToIgnore: List of positioned actor structs to register for streaming
-	void configureStage(StageSpec* stageSpec, VirtualList positionedEntitiesToIgnore);
+	/// @param positionedActorsToIgnore: List of positioned actor structs to register for streaming
+	void configureStage(StageSpec* stageSpec, VirtualList positionedActorsToIgnore);
 
 	/// Retrieve the UI container.
 	/// @return UI Container
@@ -238,10 +238,10 @@ class GameState : State
 	/// as the state is active)
 	void changeFramerate(int16 targetFPS, int32 duration);
 
-	/// Force to completely stream in and out entities and to initialize all.
+	/// Force to completely stream in and out actors and to initialize all.
 	void streamAll();
 
-	/// Stream in or out the stage entities within or outside the camera's range.
+	/// Stream in or out the stage actors within or outside the camera's range.
 	/// @return True if at least some actor was streamed in or out
 	virtual bool stream();
 

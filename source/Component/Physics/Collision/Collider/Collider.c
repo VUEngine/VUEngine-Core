@@ -354,7 +354,7 @@ CollisionResult Collider::collides(Collider collider)
 void Collider::resolveCollision(const CollisionInformation* collisionInformation)
 {
 	ASSERT(collisionInformation->collider, "Collider::resolveCollision: null collider");
-	ASSERT(collisionInformation->otherCollider, "Collider::resolveCollision: null collidingEntities");
+	ASSERT(collisionInformation->otherCollider, "Collider::resolveCollision: null collidingActors");
 
 	if(isDeleted(this->owner))
 	{

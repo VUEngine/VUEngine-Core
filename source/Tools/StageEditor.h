@@ -41,7 +41,7 @@ typedef struct UserObject
 ///
 /// Inherits from Tool
 ///
-/// Implements a tool that permits to manipulate a stage's entities.
+/// Implements a tool that permits to manipulate a stage's actors.
 singleton class StageEditor : Tool
 {
 	/// Node of the stage's selected actor
@@ -50,10 +50,10 @@ singleton class StageEditor : Tool
 	/// Current actor's wireframe
 	Wireframe wireframe;
 
-	/// Sprite to display new entities to be added to the stage
+	/// Sprite to display new actors to be added to the stage
 	Sprite userActorSprite;
 
-	// Selector of user defined entities
+	// Selector of user defined actors
 	OptionsSelector userActorSelector;
 
 	/// Editor's state

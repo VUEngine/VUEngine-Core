@@ -281,7 +281,7 @@
 
 /* Number of total calls to the streaming method which completes a cycle
  * there are 4 parts for the streaming algorithm:
- * 1) unload entities
+ * 1) unload actors
  * 2) select the next actor to load
  * 3) create the selected actor
  * 4) initialize the loaded actor

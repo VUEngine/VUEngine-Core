@@ -172,8 +172,8 @@ abstract class GameObject : ListenerObject
 	/// Disable collision detection on the actor's colliders.
 	void disableCollisions();
 
-	/// Enable or disable collision detection against other entities' colliders.
-	/// @param activate: If true, this actor's colliders check collision against other entities'
+	/// Enable or disable collision detection against other actors' colliders.
+	/// @param activate: If true, this actor's colliders check collision against other actors'
 	void checkCollisions(bool activate);
 
 	/// Enable or disable the register of detected collisions.

@@ -72,7 +72,7 @@ typedef struct ComponentSpec
 ///
 /// Inherits from ListenerObject
 ///
-/// Serves as the base class for components of entities.
+/// Serves as the base class for components of actors.
 abstract class Component : ListenerObject
 {
 	/// @protectedsection

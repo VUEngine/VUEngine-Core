@@ -29,16 +29,16 @@ static Camera _camera = NULL;
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void UIContainer::constructor(PositionedActor* childrenPositionedEntities)
+void UIContainer::constructor(PositionedActor* childrenPositionedActors)
 {
 	_camera = Camera::getInstance();
 
 	// Always explicitly call the base's constructor 
 	Base::constructor(0, NULL);
 
-	for(int16 i = 0; NULL != childrenPositionedEntities && NULL != childrenPositionedEntities[i].actorSpec; i++)
+	for(int16 i = 0; NULL != childrenPositionedActors && NULL != childrenPositionedActors[i].actorSpec; i++)
 	{
-		UIContainer::spawnChildActor(this, &childrenPositionedEntities[i]);
+		UIContainer::spawnChildActor(this, &childrenPositionedActors[i]);
 	}
 }
 

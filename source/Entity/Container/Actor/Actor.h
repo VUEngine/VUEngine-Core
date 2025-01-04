@@ -225,11 +225,11 @@ class Actor : Container
 
 	/// Spawn children and configure them with the provided actor specs.
 	/// @param childrenSpecs: Array of actor specs to use to initialize the new children
-	void addChildEntities(const PositionedActor* childrenSpecs);
+	void addChildActors(const PositionedActor* childrenSpecs);
 
 	/// Spawn children and configure them over time with the provided actor specs.
 	/// @param childrenSpecs: Array of actor specs to use to initialize the new children
-	void addChildEntitiesDeferred(const PositionedActor* childrenSpecs);
+	void addChildActorsDeferred(const PositionedActor* childrenSpecs);
 
 	/// Retrieve the actor's width.
 	/// @return Actor's width

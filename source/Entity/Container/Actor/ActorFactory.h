@@ -39,25 +39,25 @@ class VirtualList;
 ///
 /// Inherits from Object
 ///
-/// Implements a factory that creates entities over time.
+/// Implements a factory that creates actors over time.
 class ActorFactory : Object
 {
 	/// @protectedsection
 
-	/// List of entities pending instantiation
-	VirtualList entitiesToInstantiate;
+	/// List of actors pending instantiation
+	VirtualList actorsToInstantiate;
 
-	/// List of entities pending transformation
-	VirtualList entitiesToTransform;
+	/// List of actors pending transformation
+	VirtualList actorsToTransform;
 
-	/// List of entities pending being added to their parent
-	VirtualList entitiesToAddAsChildren;
+	/// List of actors pending being added to their parent
+	VirtualList actorsToAddAsChildren;
 
-	/// List of entities that have been completely instantianted and configured
-	VirtualList spawnedEntities;
+	/// List of actors that have been completely instantianted and configured
+	VirtualList spawnedActors;
 
 	/// Index of the current phase to process for the instantiation and configuration
-	/// of entities
+	/// of actors
 	int32 instantiationPhase;
 
 	/// @publicsection
@@ -74,12 +74,12 @@ class ActorFactory : Object
 	void spawnActor(const PositionedActor* positionedActor, Container parent, EventListener callback, int16 internalId);
 
 	/// Create the next queued actor.
-	/// @return False if there are no entities pending instantiation; true otherwise
+	/// @return False if there are no actors pending instantiation; true otherwise
 	bool createNextActor();
 
-	/// Check if there are entities pending instantiation.
-	/// @return True if there are entities pending instantiation; false otherwise
-	bool hasEntitiesPending();
+	/// Check if there are actors pending instantiation.
+	/// @return True if there are actors pending instantiation; false otherwise
+	bool hasActorsPending();
 
 	/// Print the factory's state.
 	/// @param x: Screen x coordinate where to print
@@ -91,9 +91,9 @@ class ActorFactory : Object
 	/// These are not meant to be called externally. They are declared here
 	/// because of the preprocessor's limitations for forward declarations
 	/// in source files. Don't call these.
-	uint32 instantiateEntities();
-	uint32 transformEntities();
-	uint32 addChildEntities();
+	uint32 instantiateActors();
+	uint32 transformActors();
+	uint32 addChildActors();
 }
 
 #endif

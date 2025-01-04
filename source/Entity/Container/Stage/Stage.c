@@ -83,15 +83,15 @@ const Transformation _neutralEnvironmentTransformation =
 
 static const StreamingPhase _streamingPhases[] =
 {
-	&Stage::unloadOutOfRangeEntities,
-	&Stage::loadInRangeEntities
+	&Stage::unloadOutOfRangeActors,
+	&Stage::loadInRangeActors
 };
 
 #ifdef __PROFILE_STREAMING
 extern int16 _renderingProcessTimeHelper;
-static uint32 unloadOutOfRangeEntitiesHighestTime = 0;
-static uint32 loadInRangeEntitiesHighestTime = 0;
-static uint32 processRemovedEntitiesHighestTime = 0;
+static uint32 unloadOutOfRangeActorsHighestTime = 0;
+static uint32 loadInRangeActorsHighestTime = 0;
+static uint32 processRemovedActorsHighestTime = 0;
 static uint32 actorFactoryHighestTime = 0;
 static uint32 timeBeforeProcess = 0;
 #endif
@@ -207,7 +207,7 @@ void Stage::suspend()
 	// Save the camera position for resume reconfiguration
 	this->cameraPosition = Camera::getPosition(Camera::getInstance());
 
-	// stream all pending entities to avoid having manually recover
+	// stream all pending actors to avoid having manually recover
 	// the stage actor registries
 	while(ActorFactory::createNextActor(this->actorFactory));
 
@@ -306,7 +306,7 @@ PaletteConfig Stage::getPaletteConfig()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void Stage::registerEntities(VirtualList positionedEntitiesToIgnore)
+void Stage::registerActors(VirtualList positionedActorsToIgnore)
 {
 	if(!isDeleted(this->stageActorDescriptions))
 	{
@@ -315,18 +315,18 @@ void Stage::registerEntities(VirtualList positionedEntitiesToIgnore)
 
 	this->stageActorDescriptions = new VirtualList();
 
-	// register entities ordering them according to their distances to the origin
+	// register actors ordering them according to their distances to the origin
 	int32 i = 0;
 
-	for(;this->stageSpec->entities.children[i].actorSpec; i++)
+	for(;this->stageSpec->actors.children[i].actorSpec; i++)
 	{
-		if(positionedEntitiesToIgnore)
+		if(positionedActorsToIgnore)
 		{
-			VirtualNode node = positionedEntitiesToIgnore->head;
+			VirtualNode node = positionedActorsToIgnore->head;
 
 			for(; NULL != node; node = node->next)
 			{
-				if(&this->stageSpec->entities.children[i] == (PositionedActor*)node->data)
+				if(&this->stageSpec->actors.children[i] == (PositionedActor*)node->data)
 				{
 					break;
 				}
@@ -338,7 +338,7 @@ void Stage::registerEntities(VirtualList positionedEntitiesToIgnore)
 			}
 		}
 
-		StageActorDescription* stageActorDescription = Stage::registerActor(this, &this->stageSpec->entities.children[i]);
+		StageActorDescription* stageActorDescription = Stage::registerActor(this, &this->stageSpec->actors.children[i]);
 
 		Vector3D stageActorPosition = (Vector3D)
 		{
@@ -500,12 +500,12 @@ void Stage::streamAll()
 
 		VUEngine::prepareGraphics(VUEngine::getInstance());
 
-	}while(Stage::unloadOutOfRangeEntities(this, false));
+	}while(Stage::unloadOutOfRangeActors(this, false));
 
 	this->streamingHeadNode = NULL;
 	this->streamingAmplitude = (uint16)-1;
 
-	while(Stage::loadInRangeEntities(this, false));
+	while(Stage::loadInRangeActors(this, false));
 
 	while(ActorFactory::createNextActor(this->actorFactory))
 	{
@@ -562,9 +562,9 @@ void Stage::print(int32 x, int32 y)
 	int32 xDisplacement = 21;
 	y++;
 
-	Printing::text(Printing::getInstance(), "Registered entities:            ", x, ++y, NULL);
+	Printing::text(Printing::getInstance(), "Registered actors:            ", x, ++y, NULL);
 	Printing::int32(Printing::getInstance(), VirtualList::getCount(this->stageActorDescriptions), x + xDisplacement, y++, NULL);
-	Printing::text(Printing::getInstance(), "Child entities:                 ", x, y, NULL);
+	Printing::text(Printing::getInstance(), "Child actors:                 ", x, y, NULL);
 	Printing::int32(Printing::getInstance(), VirtualList::getCount(this->children), x + xDisplacement, y++, NULL);
 
 #ifdef __PROFILE_STREAMING
@@ -575,20 +575,20 @@ void Stage::print(int32 x, int32 y)
 	y++;
 
 	Printing::text(Printing::getInstance(), "Unload:           ", x, ++y, NULL);
-	Printing::int32(Printing::getInstance(), unloadOutOfRangeEntitiesHighestTime, x + xDisplacement, y, NULL);
+	Printing::int32(Printing::getInstance(), unloadOutOfRangeActorsHighestTime, x + xDisplacement, y, NULL);
 
 	Printing::text(Printing::getInstance(), "Load:             ", x, ++y, NULL);
-	Printing::int32(Printing::getInstance(), loadInRangeEntitiesHighestTime, x + xDisplacement, y, NULL);
+	Printing::int32(Printing::getInstance(), loadInRangeActorsHighestTime, x + xDisplacement, y, NULL);
 
 	Printing::text(Printing::getInstance(), "Removing:         ", x, ++y, NULL);
-	Printing::int32(Printing::getInstance(), processRemovedEntitiesHighestTime, x + xDisplacement, y, NULL);
+	Printing::int32(Printing::getInstance(), processRemovedActorsHighestTime, x + xDisplacement, y, NULL);
 
 	Printing::text(Printing::getInstance(), "Factory:          ", x, ++y, NULL);
 	Printing::int32(Printing::getInstance(), actorFactoryHighestTime, x + xDisplacement, y++, NULL);
 
-	unloadOutOfRangeEntitiesHighestTime = 0;
-	loadInRangeEntitiesHighestTime = 0;
-	processRemovedEntitiesHighestTime = 0;
+	unloadOutOfRangeActorsHighestTime = 0;
+	loadInRangeActorsHighestTime = 0;
+	processRemovedActorsHighestTime = 0;
 	actorFactoryHighestTime = 0;
 #endif
 }
@@ -627,7 +627,7 @@ bool Stage::stream()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void Stage::configure(VirtualList positionedEntitiesToIgnore)
+void Stage::configure(VirtualList positionedActorsToIgnore)
 {
 	// Setup timer
 	Stage::configureTimer(this);
@@ -649,11 +649,11 @@ void Stage::configure(VirtualList positionedEntitiesToIgnore)
 	// preload graphics
 	Stage::prepareGraphics(this);
 
-	// register all the entities in the stage's spec
-	Stage::registerEntities(this, positionedEntitiesToIgnore);
+	// register all the actors in the stage's spec
+	Stage::registerActors(this, positionedActorsToIgnore);
 
-	// load entities
-	Stage::loadInitialEntities(this);
+	// load actors
+	Stage::loadInitialActors(this);
 
 	// retrieve focus actor for streaming
 	Stage::setFocusActor(this, Camera::getFocusActor(Camera::getInstance()));
@@ -677,7 +677,7 @@ void Stage::configure(VirtualList positionedEntitiesToIgnore)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-bool Stage::unloadOutOfRangeEntities(int32 defer __attribute__((unused)))
+bool Stage::unloadOutOfRangeActors(int32 defer __attribute__((unused)))
 {
 	if(isDeleted(this->children))
 	{
@@ -689,7 +689,7 @@ bool Stage::unloadOutOfRangeEntities(int32 defer __attribute__((unused)))
 	timeBeforeProcess = TimerManager::getElapsedMilliseconds(TimerManager::getInstance());
 #endif
 
-	bool unloadedEntities = false;
+	bool unloadedActors = false;
 
 	VirtualNode node = this->children->head;
 
@@ -741,14 +741,14 @@ bool Stage::unloadOutOfRangeEntities(int32 defer __attribute__((unused)))
 			// unload it
 			Stage::destroyChildActor(this, actor);
 
-			// remove from list of entities that are to be loaded by the streaming,
+			// remove from list of actors that are to be loaded by the streaming,
 			// if the actor is not to be alwaysStreamIned
 			if(!Actor::alwaysStreamIn(actor))
 			{
 				VirtualList::removeNode(this->stageActorDescriptions, auxNode);
 			}
 
-			unloadedEntities = true;
+			unloadedActors = true;
 		}
 	}
 
@@ -756,23 +756,23 @@ bool Stage::unloadOutOfRangeEntities(int32 defer __attribute__((unused)))
 		uint32 processTime = 
 			-_renderingProcessTimeHelper + TimerManager::getElapsedMilliseconds(TimerManager::getInstance()) - timeBeforeProcess;
 		
-		unloadOutOfRangeEntitiesHighestTime = 
-			processTime > unloadOutOfRangeEntitiesHighestTime ? processTime : unloadOutOfRangeEntitiesHighestTime;
+		unloadOutOfRangeActorsHighestTime = 
+			processTime > unloadOutOfRangeActorsHighestTime ? processTime : unloadOutOfRangeActorsHighestTime;
 #endif
 
-	return unloadedEntities;
+	return unloadedActors;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-bool Stage::loadInRangeEntities(int32 defer)
+bool Stage::loadInRangeActors(int32 defer)
 {
 #ifdef __PROFILE_STREAMING
 	_renderingProcessTimeHelper = 0;
 	timeBeforeProcess = TimerManager::getElapsedMilliseconds(TimerManager::getInstance());
 #endif
 
-	bool loadedEntities = false;
+	bool loadedActors = false;
 
 	CACHE_RESET;
 
@@ -816,7 +816,7 @@ bool Stage::loadInRangeEntities(int32 defer)
 					)
 				)
 				{
-					loadedEntities = true;
+					loadedActors = true;
 
 					stageActorDescription->internalId = this->nextActorId++;
 
@@ -879,7 +879,7 @@ bool Stage::loadInRangeEntities(int32 defer)
 					)
 				)
 				{
-					loadedEntities = true;
+					loadedActors = true;
 
 					stageActorDescription->internalId = this->nextActorId++;
 
@@ -909,17 +909,17 @@ bool Stage::loadInRangeEntities(int32 defer)
 #ifdef __PROFILE_STREAMING
 	uint32 processTime = 
 		-_renderingProcessTimeHelper + TimerManager::getElapsedMilliseconds(TimerManager::getInstance()) - timeBeforeProcess;
-	loadInRangeEntitiesHighestTime = processTime > loadInRangeEntitiesHighestTime ? processTime : loadInRangeEntitiesHighestTime;
+	loadInRangeActorsHighestTime = processTime > loadInRangeActorsHighestTime ? processTime : loadInRangeActorsHighestTime;
 #endif
 
-	return loadedEntities;
+	return loadedActors;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void Stage::loadInitialEntities()
+void Stage::loadInitialActors()
 {
-	// need a temporary list to remove and delete entities
+	// need a temporary list to remove and delete actors
 	VirtualNode node = this->stageActorDescriptions->head;
 
 	for(; NULL != node; node = node->next)
@@ -942,7 +942,7 @@ void Stage::loadInitialEntities()
 				stageActorDescription->internalId = this->nextActorId++;
 				Actor actor = 
 					Stage::doAddChildActor(this, stageActorDescription->positionedActor, false, stageActorDescription->internalId);
-				ASSERT(actor, "Stage::loadInitialEntities: actor not loaded");
+				ASSERT(actor, "Stage::loadInitialActors: actor not loaded");
 
 				if(!isDeleted(actor))
 				{
@@ -1055,7 +1055,7 @@ bool Stage::updateActorFactory()
 	timeBeforeProcess = TimerManager::getElapsedMilliseconds(TimerManager::getInstance());
 #endif
 
-	bool preparingEntities = ActorFactory::createNextActor(this->actorFactory);
+	bool preparingActors = ActorFactory::createNextActor(this->actorFactory);
 
 #ifdef __PROFILE_STREAMING
 	uint32 processTime = 
@@ -1063,7 +1063,7 @@ bool Stage::updateActorFactory()
 	actorFactoryHighestTime = processTime > actorFactoryHighestTime ? processTime : actorFactoryHighestTime;
 #endif
 
-	return preparingEntities;
+	return preparingActors;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

@@ -1155,7 +1155,7 @@ bool VUEngine::stream(GameState gameState)
 	// While we wait for the next game start
 	while(!this->gameFrameStarted)
 	{
-		// Stream the heck out of the pending entities
+		// Stream the heck out of the pending actors
 		result = GameState::stream(gameState);
 	}
 
@@ -1210,7 +1210,7 @@ void VUEngine::run(GameState currentGameState)
 #ifdef __ENABLE_PROFILER
 		HardwareManager::enableInterrupts();
 
-		// Stream entities
+		// Stream actors
 		VUEngine::stream(this, currentGameState);
 #else
 		if(!this->syncToVIP)
@@ -1221,7 +1221,7 @@ void VUEngine::run(GameState currentGameState)
 		{
 			do
 			{
-				// Stream the heck out of the pending entities
+				// Stream the heck out of the pending actors
 				if(!VUEngine::stream(this, currentGameState))
 				{
 					this->currentGameCycleEnded = true;

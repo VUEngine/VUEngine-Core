@@ -165,7 +165,7 @@ int16 BgmapTexture::getYOffset()
 
 void BgmapTexture::setHorizontalFlip(bool value)
 {	
-	// TODO: this is a hack, positioned entities should have a complete transformation
+	// TODO: this is a hack, positioned actors should have a complete transformation
 	// and the flip flags should be removed from the texture spec
 	if(this->textureSpec->horizontalFlip)
 	{
@@ -184,7 +184,7 @@ void BgmapTexture::setHorizontalFlip(bool value)
 
 void BgmapTexture::setVerticalFlip(bool value)
 {
-	// TODO: this is a hack, positioned entities should have a complete transformation
+	// TODO: this is a hack, positioned actors should have a complete transformation
 	// and the flip flags should be removed from the texture spec
 	if(this->textureSpec->verticalFlip)
 	{

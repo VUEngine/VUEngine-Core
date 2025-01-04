@@ -31,8 +31,8 @@ class UIContainer : Container
 	/// @publicsection
 
 	/// Class' constructor
-	/// @param childrenPositionedEntities: Array of specs that define how to configure the container's children
-	void constructor(PositionedActor* childrenPositionedEntities);
+	/// @param childrenPositionedActors: Array of specs that define how to configure the container's children
+	void constructor(PositionedActor* childrenPositionedActors);
 
 	/// Compute the container's global transformation.
 	/// @param environmentTransform: Reference environment for the local transformation

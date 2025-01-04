@@ -84,7 +84,7 @@ StageROMSpec EmptyStageSpec =
 		// Padding to be added to camera's frustum when checking if a actor is
 		// out of the camera's range
 		16,
-		// Amount of actor descriptions to check for streaming in entities
+		// Amount of actor descriptions to check for streaming in actors
 		24,
 		// If true, actor instantiation is done over time
 		false,
@@ -219,7 +219,7 @@ StageROMSpec EmptyStageSpec =
 		(SoundSpec**)NULL,
 	},
 
-	// Entities
+	// Actors
 	{
 		// UI configuration
 		{
@@ -227,7 +227,7 @@ StageROMSpec EmptyStageSpec =
 			__TYPE(UIContainer),
 		},
 
-		// Stage's children entities
+		// Stage's children actors
 		(PositionedActor*)NULL,
 	},
 

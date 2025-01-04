@@ -53,7 +53,7 @@ singleton class AnimationInspector : Tool
 	/// Currently applied animation
 	AnimationFunction animationFunction;
 
-	/// Selector for the animated entities
+	/// Selector for the animated actors
 	OptionsSelector actorSelector;
 
 	/// Selector for the animated sprite sprite selector

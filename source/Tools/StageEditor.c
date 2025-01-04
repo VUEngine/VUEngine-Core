@@ -66,7 +66,7 @@ enum StageEditorStates
 	kFirstState = 0,
 	kMoveCamera,
 	kChangeProjection,
-	kTranslateEntities,
+	kTranslateActors,
 	kAddObjects,
 
 	kLastState
@@ -145,7 +145,7 @@ void StageEditor::processUserInput(uint16 pressedKey)
 			StageEditor::changeProjection(this, pressedKey);
 			break;
 
-		case kTranslateEntities:
+		case kTranslateActors:
 
 			StageEditor::translateActor(this, pressedKey);
 			break;
@@ -263,7 +263,7 @@ void StageEditor::configureState()
 			StageEditor::printTranslationStepSize(this, 38, 10);
 			break;
 
-		case kTranslateEntities:
+		case kTranslateActors:
 
 			if(!this->actorNode)
 			{
@@ -371,7 +371,7 @@ void StageEditor::highLightActor()
 	}
 	else
 	{
-		Printing::text(Printing::getInstance(), "No entities in stage", 1, 4, NULL);
+		Printing::text(Printing::getInstance(), "No actors in stage", 1, 4, NULL);
 	}
 }
 
@@ -386,11 +386,11 @@ void StageEditor::selectPreviousActor()
 
 	StageEditor::releaseWireframe(this);
 
-	VirtualList stageEntities = (Container::safeCast(this->stage))->children;
+	VirtualList stageActors = (Container::safeCast(this->stage))->children;
 
 	if(!this->actorNode)
 	{
-		this->actorNode = stageEntities ? stageEntities->tail : NULL;
+		this->actorNode = stageActors ? stageActors->tail : NULL;
 	}
 	else
 	{
@@ -398,7 +398,7 @@ void StageEditor::selectPreviousActor()
 
 		if(!this->actorNode)
 		{
-			this->actorNode = stageEntities ? stageEntities->tail : NULL;
+			this->actorNode = stageActors ? stageActors->tail : NULL;
 		}
 	}
 
@@ -419,11 +419,11 @@ void StageEditor::selectNextActor()
 
 	StageEditor::releaseWireframe(this);
 
-	VirtualList stageEntities = (Container::safeCast(this->stage))->children;
+	VirtualList stageActors = (Container::safeCast(this->stage))->children;
 
 	if(!this->actorNode)
 	{
-		this->actorNode = stageEntities ? stageEntities->head : NULL;
+		this->actorNode = stageActors ? stageActors->head : NULL;
 	}
 	else
 	{
@@ -431,7 +431,7 @@ void StageEditor::selectNextActor()
 
 		if(!this->actorNode)
 		{
-			this->actorNode = stageEntities ? stageEntities->head : NULL;
+			this->actorNode = stageActors ? stageActors->head : NULL;
 		}
 	}
 
@@ -838,11 +838,11 @@ void StageEditor::selectUserObject(uint32 pressedKey)
 		Stage::spawnChildActor(this->stage, &DUMMY_ENTITY, false);
 		SpriteManager::sortSprites(SpriteManager::getInstance());
 
-		VirtualList stageEntities = (Container::safeCast(this->stage))->children;
-		this->actorNode = stageEntities ? stageEntities->tail : NULL;
+		VirtualList stageActors = (Container::safeCast(this->stage))->children;
+		this->actorNode = stageActors ? stageActors->tail : NULL;
 
 		// select the added actor
-		this->state = kTranslateEntities;
+		this->state = kTranslateActors;
 		StageEditor::configureState(this);
 
 		StageEditor::removePreviousSprite(this);

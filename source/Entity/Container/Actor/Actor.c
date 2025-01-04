@@ -72,12 +72,12 @@ static Actor Actor::createActor(const PositionedActor* const positionedActor, in
 	// add children if defined
 	if(NULL != positionedActor->childrenSpecs)
 	{
-		Actor::addChildEntities(actor, positionedActor->childrenSpecs);
+		Actor::addChildActors(actor, positionedActor->childrenSpecs);
 	}
 
 	if(NULL != positionedActor->actorSpec->childrenSpecs)
 	{
-		Actor::addChildEntities(actor, positionedActor->actorSpec->childrenSpecs);
+		Actor::addChildActors(actor, positionedActor->actorSpec->childrenSpecs);
 	}
 
 	return actor;
@@ -111,12 +111,12 @@ static Actor Actor::createActorDeferred(const PositionedActor* const positionedA
 	// add children if defined
 	if(positionedActor->childrenSpecs)
 	{
-		Actor::addChildEntitiesDeferred(actor, positionedActor->childrenSpecs);
+		Actor::addChildActorsDeferred(actor, positionedActor->childrenSpecs);
 	}
 
 	if(positionedActor->actorSpec->childrenSpecs)
 	{
-		Actor::addChildEntitiesDeferred(actor, positionedActor->actorSpec->childrenSpecs);
+		Actor::addChildActorsDeferred(actor, positionedActor->actorSpec->childrenSpecs);
 	}
 
 	return actor;
@@ -558,7 +558,7 @@ Actor Actor::spawnChildActor(const PositionedActor* const positionedActor)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void Actor::addChildEntities(const PositionedActor* childrenSpecs)
+void Actor::addChildActors(const PositionedActor* childrenSpecs)
 {
 	if(NULL == childrenSpecs)
 	{
@@ -580,9 +580,9 @@ void Actor::addChildEntities(const PositionedActor* childrenSpecs)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void Actor::addChildEntitiesDeferred(const PositionedActor* childrenSpecs)
+void Actor::addChildActorsDeferred(const PositionedActor* childrenSpecs)
 {
-	ASSERT(NULL != childrenSpecs, "Actor::addChildEntitiesDeferred: null childrenSpecs");
+	ASSERT(NULL != childrenSpecs, "Actor::addChildActorsDeferred: null childrenSpecs");
 
 	if(NULL == childrenSpecs)
 	{
@@ -934,7 +934,7 @@ bool Actor::onActorLoadedDeferred(ListenerObject eventFirer __attribute__ ((unus
 		return false;
 	}
 
-	if(!ActorFactory::hasEntitiesPending(this->actorFactory))
+	if(!ActorFactory::hasActorsPending(this->actorFactory))
 	{
 		Actor::destroyActorFactory(this);
 	}

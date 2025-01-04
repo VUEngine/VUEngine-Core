@@ -268,7 +268,7 @@ bool GameState::processMessage(void* owner __attribute__ ((unused)), Telegram te
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void GameState::configureStage(StageSpec* stageSpec, VirtualList positionedEntitiesToIgnore)
+void GameState::configureStage(StageSpec* stageSpec, VirtualList positionedActorsToIgnore)
 {
 	if(NULL == stageSpec)
 	{
@@ -286,7 +286,7 @@ void GameState::configureStage(StageSpec* stageSpec, VirtualList positionedEntit
 	Camera::setFocusActor(Camera::getInstance(), NULL);
 
 	// setup the stage
-	GameState::createStage(this, stageSpec, positionedEntitiesToIgnore);
+	GameState::createStage(this, stageSpec, positionedActorsToIgnore);
 
 	// load the UI
 	GameState::configureUI(this, stageSpec);
@@ -682,7 +682,7 @@ bool GameState::isVersusMode()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void GameState::createStage(StageSpec* stageSpec, VirtualList positionedEntitiesToIgnore)
+void GameState::createStage(StageSpec* stageSpec, VirtualList positionedActorsToIgnore)
 {
 	if(!isDeleted(this->stage))
 	{
@@ -694,7 +694,7 @@ void GameState::createStage(StageSpec* stageSpec, VirtualList positionedEntities
 	
 	NM_ASSERT(!isDeleted(this->stage), "GameState::configureStage: null stage");
 
-	Stage::configure(this->stage, positionedEntitiesToIgnore);
+	Stage::configure(this->stage, positionedActorsToIgnore);
 
 	SpriteManager::setAnimationsClock(SpriteManager::getInstance(), this->animationsClock);
 }
@@ -709,10 +709,10 @@ void GameState::configureUI(StageSpec* stageSpec)
 		this->uiContainer = NULL;
 	}
 
-	if(NULL != stageSpec->entities.UI.allocator)
+	if(NULL != stageSpec->actors.UI.allocator)
 	{
 		this->uiContainer = 
-			((UIContainer (*)(PositionedActor*)) stageSpec->entities.UI.allocator)(stageSpec->entities.UI.childrenSpecs);
+			((UIContainer (*)(PositionedActor*)) stageSpec->actors.UI.allocator)(stageSpec->actors.UI.childrenSpecs);
 	}
 	else
 	{
@@ -749,7 +749,7 @@ void GameState::streamAll()
 	// Transformation everything
 	GameState::transform(this);
 
-	// Stream in and out all relevant entities
+	// Stream in and out all relevant actors
 	Stage::streamAll(this->stage);
 
 	// Force collision purging

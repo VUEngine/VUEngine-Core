@@ -59,9 +59,9 @@ typedef struct PositionedActorDescription
 
 static const InstantiationPhase _instantiationPhases[] =
 {
-	&ActorFactory::instantiateEntities,
-	&ActorFactory::transformEntities,
-	&ActorFactory::addChildEntities
+	&ActorFactory::instantiateActors,
+	&ActorFactory::transformActors,
+	&ActorFactory::addChildActors
 };
 
 static int32 _instantiationPhasesCount = sizeof(_instantiationPhases) / sizeof(InstantiationPhase);
@@ -77,10 +77,10 @@ void ActorFactory::constructor()
 	// Always explicitly call the base's constructor 
 	Base::constructor();
 
-	this->entitiesToInstantiate = new VirtualList();
-	this->entitiesToTransform = new VirtualList();
-	this->entitiesToAddAsChildren = new VirtualList();
-	this->spawnedEntities = new VirtualList();
+	this->actorsToInstantiate = new VirtualList();
+	this->actorsToTransform = new VirtualList();
+	this->actorsToAddAsChildren = new VirtualList();
+	this->spawnedActors = new VirtualList();
 
 	this->instantiationPhase = 0;
 }
@@ -89,7 +89,7 @@ void ActorFactory::constructor()
 
 void ActorFactory::destructor()
 {
-	VirtualNode node = this->entitiesToInstantiate->head;
+	VirtualNode node = this->actorsToInstantiate->head;
 
 	for(; NULL != node; node = node->next)
 	{
@@ -103,27 +103,10 @@ void ActorFactory::destructor()
 		delete positionedActorDescription;
 	}
 
-	delete this->entitiesToInstantiate;
-	this->entitiesToInstantiate = NULL;
+	delete this->actorsToInstantiate;
+	this->actorsToInstantiate = NULL;
 
-	node = this->entitiesToTransform->head;
-
-	for(; NULL != node; node = node->next)
-	{
-		PositionedActorDescription* positionedActorDescription = (PositionedActorDescription*)node->data;
-
-		if(!isDeleted(positionedActorDescription->actor))
-		{
-			Actor::deleteMyself(positionedActorDescription->actor);
-		}
-
-		delete positionedActorDescription;
-	}
-
-	delete this->entitiesToTransform;
-	this->entitiesToTransform = NULL;
-
-	node = this->entitiesToAddAsChildren->head;
+	node = this->actorsToTransform->head;
 
 	for(; NULL != node; node = node->next)
 	{
@@ -137,10 +120,27 @@ void ActorFactory::destructor()
 		delete positionedActorDescription;
 	}
 
-	delete this->entitiesToAddAsChildren;
-	this->entitiesToAddAsChildren = NULL;
+	delete this->actorsToTransform;
+	this->actorsToTransform = NULL;
 
-	node = this->spawnedEntities->head;
+	node = this->actorsToAddAsChildren->head;
+
+	for(; NULL != node; node = node->next)
+	{
+		PositionedActorDescription* positionedActorDescription = (PositionedActorDescription*)node->data;
+
+		if(!isDeleted(positionedActorDescription->actor))
+		{
+			Actor::deleteMyself(positionedActorDescription->actor);
+		}
+
+		delete positionedActorDescription;
+	}
+
+	delete this->actorsToAddAsChildren;
+	this->actorsToAddAsChildren = NULL;
+
+	node = this->spawnedActors->head;
 
 	for(; NULL != node; node = node->next)
 	{
@@ -149,8 +149,8 @@ void ActorFactory::destructor()
 		delete positionedActorDescription;
 	}
 
-	delete this->spawnedEntities;
-	this->spawnedEntities = NULL;
+	delete this->spawnedActors;
+	this->spawnedActors = NULL;
 
 	// Always explicitly call the base's destructor 
 	Base::destructor();
@@ -177,7 +177,7 @@ void ActorFactory::spawnActor(const PositionedActor* positionedActor, Container 
 	positionedActorDescription->componentsCreated = false;
 	positionedActorDescription->componentIndex = 0;
 
-	VirtualList::pushBack(this->entitiesToInstantiate, positionedActorDescription);
+	VirtualList::pushBack(this->actorsToInstantiate, positionedActorDescription);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -219,11 +219,11 @@ bool ActorFactory::createNextActor()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-bool ActorFactory::hasEntitiesPending()
+bool ActorFactory::hasActorsPending()
 {
-	return NULL != this->entitiesToInstantiate->head ||
-			NULL != this->entitiesToTransform->head ||
-			NULL != this->entitiesToAddAsChildren->head;
+	return NULL != this->actorsToInstantiate->head ||
+			NULL != this->actorsToTransform->head ||
+			NULL != this->actorsToAddAsChildren->head;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -239,19 +239,19 @@ void ActorFactory::print(int32 x, int32 y)
 	Printing::text(Printing::getInstance(), "Phase: ", x, y, NULL);
 	Printing::int32(Printing::getInstance(), this->instantiationPhase, x + xDisplacement, y++, NULL);
 
-	Printing::text(Printing::getInstance(), "Entities pending...", x, y++, NULL);
+	Printing::text(Printing::getInstance(), "Actors pending...", x, y++, NULL);
 
 	Printing::text(Printing::getInstance(), "1 Instantiation:			", x, y, NULL);
-	Printing::int32(Printing::getInstance(), VirtualList::getCount(this->entitiesToInstantiate), x + xDisplacement, y++, NULL);
+	Printing::int32(Printing::getInstance(), VirtualList::getCount(this->actorsToInstantiate), x + xDisplacement, y++, NULL);
 
 	Printing::text(Printing::getInstance(), "2 Transformation:			", x, y, NULL);
-	Printing::int32(Printing::getInstance(), VirtualList::getCount(this->entitiesToTransform), x + xDisplacement, y++, NULL);
+	Printing::int32(Printing::getInstance(), VirtualList::getCount(this->actorsToTransform), x + xDisplacement, y++, NULL);
 
 	Printing::text(Printing::getInstance(), "3 Make ready:			", x, y, NULL);
-	Printing::int32(Printing::getInstance(), VirtualList::getCount(this->entitiesToAddAsChildren), x + xDisplacement, y++, NULL);
+	Printing::int32(Printing::getInstance(), VirtualList::getCount(this->actorsToAddAsChildren), x + xDisplacement, y++, NULL);
 
 	Printing::text(Printing::getInstance(), "4 Call listeners:			", x, y, NULL);
-	Printing::int32(Printing::getInstance(), VirtualList::getCount(this->spawnedEntities), x + xDisplacement, y++, NULL);
+	Printing::int32(Printing::getInstance(), VirtualList::getCount(this->spawnedActors), x + xDisplacement, y++, NULL);
 }
 #endif
 #endif
@@ -264,16 +264,16 @@ void ActorFactory::print(int32 x, int32 y)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-uint32 ActorFactory::instantiateEntities()
+uint32 ActorFactory::instantiateActors()
 {
-	ASSERT(this, "ActorFactory::spawnEntities: null spawnEntities");
+	ASSERT(this, "ActorFactory::spawnActors: null spawnActors");
 
-	if(NULL == this->entitiesToInstantiate->head)
+	if(NULL == this->actorsToInstantiate->head)
 	{
 		return __LIST_EMPTY;
 	}
 
-	PositionedActorDescription* positionedActorDescription = (PositionedActorDescription*)this->entitiesToInstantiate->head->data;
+	PositionedActorDescription* positionedActorDescription = (PositionedActorDescription*)this->actorsToInstantiate->head->data;
 
 	if(!isDeleted(positionedActorDescription->parent))
 	{
@@ -281,10 +281,10 @@ uint32 ActorFactory::instantiateEntities()
 		{
 			ActorFactory actorFactory = Actor::getActorFactory(positionedActorDescription->actor);
 
-			if(NULL == actorFactory || __LIST_EMPTY == ActorFactory::instantiateEntities(actorFactory))
+			if(NULL == actorFactory || __LIST_EMPTY == ActorFactory::instantiateActors(actorFactory))
 			{
-				VirtualList::pushBack(this->entitiesToTransform, positionedActorDescription);
-				VirtualList::removeData(this->entitiesToInstantiate, positionedActorDescription);
+				VirtualList::pushBack(this->actorsToTransform, positionedActorDescription);
+				VirtualList::removeData(this->actorsToInstantiate, positionedActorDescription);
 
 				return __ACTOR_PROCESSED;
 			}
@@ -293,18 +293,18 @@ uint32 ActorFactory::instantiateEntities()
 		}
 		else
 		{
-			NM_ASSERT(!isDeleted(positionedActorDescription), "ActorFactory::spawnEntities: deleted positionedActorDescription");
-			NM_ASSERT(NULL != positionedActorDescription->positionedActor, "ActorFactory::spawnEntities: null positionedActor");
-			NM_ASSERT(NULL != positionedActorDescription->positionedActor->actorSpec, "ActorFactory::spawnEntities: null spec");
+			NM_ASSERT(!isDeleted(positionedActorDescription), "ActorFactory::spawnActors: deleted positionedActorDescription");
+			NM_ASSERT(NULL != positionedActorDescription->positionedActor, "ActorFactory::spawnActors: null positionedActor");
+			NM_ASSERT(NULL != positionedActorDescription->positionedActor->actorSpec, "ActorFactory::spawnActors: null spec");
 			NM_ASSERT
 			(
 				NULL != positionedActorDescription->positionedActor->actorSpec->allocator, 
-				"ActorFactory::spawnEntities: no allocator defined"
+				"ActorFactory::spawnActors: no allocator defined"
 			);
 
 			positionedActorDescription->actor = 
 				Actor::createActorDeferred(positionedActorDescription->positionedActor, positionedActorDescription->internalId);
-			NM_ASSERT(positionedActorDescription->actor, "ActorFactory::spawnEntities: actor not loaded");
+			NM_ASSERT(positionedActorDescription->actor, "ActorFactory::spawnActors: actor not loaded");
 
 			if(!isDeleted(positionedActorDescription->actor) && NULL != positionedActorDescription->callback)
 			{
@@ -318,7 +318,7 @@ uint32 ActorFactory::instantiateEntities()
 	}
 	else
 	{
-		VirtualList::removeData(this->entitiesToInstantiate, positionedActorDescription);
+		VirtualList::removeData(this->actorsToInstantiate, positionedActorDescription);
 		delete positionedActorDescription;
 	}
 
@@ -327,16 +327,16 @@ uint32 ActorFactory::instantiateEntities()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-uint32 ActorFactory::transformEntities()
+uint32 ActorFactory::transformActors()
 {
-	if(NULL == this->entitiesToTransform->head)
+	if(NULL == this->actorsToTransform->head)
 	{
 		return __LIST_EMPTY;
 	}
 
-	PositionedActorDescription* positionedActorDescription = (PositionedActorDescription*)this->entitiesToTransform->head->data;
-	ASSERT(positionedActorDescription->actor, "ActorFactory::transformEntities: null actor");
-	ASSERT(positionedActorDescription->parent, "ActorFactory::transformEntities: null parent");
+	PositionedActorDescription* positionedActorDescription = (PositionedActorDescription*)this->actorsToTransform->head->data;
+	ASSERT(positionedActorDescription->actor, "ActorFactory::transformActors: null actor");
+	ASSERT(positionedActorDescription->parent, "ActorFactory::transformActors: null parent");
 
 	if(!isDeleted(positionedActorDescription->parent))
 	{
@@ -382,10 +382,10 @@ uint32 ActorFactory::transformEntities()
 
 		ActorFactory actorFactory = Actor::getActorFactory(positionedActorDescription->actor);
 
-		if(NULL == actorFactory || __LIST_EMPTY == ActorFactory::transformEntities(actorFactory))
+		if(NULL == actorFactory || __LIST_EMPTY == ActorFactory::transformActors(actorFactory))
 		{
-			VirtualList::pushBack(this->entitiesToAddAsChildren, positionedActorDescription);
-			VirtualList::removeData(this->entitiesToTransform, positionedActorDescription);
+			VirtualList::pushBack(this->actorsToAddAsChildren, positionedActorDescription);
+			VirtualList::removeData(this->actorsToTransform, positionedActorDescription);
 
 			return __ACTOR_PROCESSED;
 		}
@@ -394,7 +394,7 @@ uint32 ActorFactory::transformEntities()
 	}
 	else
 	{
-		VirtualList::removeData(this->entitiesToTransform, positionedActorDescription);
+		VirtualList::removeData(this->actorsToTransform, positionedActorDescription);
 
 		if(!isDeleted(positionedActorDescription->actor))
 		{
@@ -409,14 +409,14 @@ uint32 ActorFactory::transformEntities()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-uint32 ActorFactory::addChildEntities()
+uint32 ActorFactory::addChildActors()
 {
-	if(NULL == this->entitiesToAddAsChildren->head)
+	if(NULL == this->actorsToAddAsChildren->head)
 	{
 		return __LIST_EMPTY;
 	}
 
-	PositionedActorDescription* positionedActorDescription = (PositionedActorDescription*)this->entitiesToAddAsChildren->head->data;
+	PositionedActorDescription* positionedActorDescription = (PositionedActorDescription*)this->actorsToAddAsChildren->head->data;
 
 	if(!isDeleted(positionedActorDescription->parent))
 	{
@@ -431,15 +431,15 @@ uint32 ActorFactory::addChildEntities()
 
 		ActorFactory actorFactory = Actor::getActorFactory(positionedActorDescription->actor);
 
-		if(NULL == actorFactory || __LIST_EMPTY == ActorFactory::addChildEntities(actorFactory))
+		if(NULL == actorFactory || __LIST_EMPTY == ActorFactory::addChildActors(actorFactory))
 		{
-			NM_ASSERT(!isDeleted(positionedActorDescription->parent), "ActorFactory::addChildEntities: deleted parent");
+			NM_ASSERT(!isDeleted(positionedActorDescription->parent), "ActorFactory::addChildActors: deleted parent");
 
 			// Must add the child to its parent before making it ready
 			Container::addChild(positionedActorDescription->parent, Container::safeCast(positionedActorDescription->actor));
 
-			VirtualList::pushBack(this->spawnedEntities, positionedActorDescription);
-			VirtualList::removeData(this->entitiesToAddAsChildren, positionedActorDescription);
+			VirtualList::pushBack(this->spawnedActors, positionedActorDescription);
+			VirtualList::removeData(this->actorsToAddAsChildren, positionedActorDescription);
 
 			return __ACTOR_PROCESSED;
 		}
@@ -448,7 +448,7 @@ uint32 ActorFactory::addChildEntities()
 	}
 	else
 	{
-		VirtualList::removeData(this->entitiesToAddAsChildren, positionedActorDescription);
+		VirtualList::removeData(this->actorsToAddAsChildren, positionedActorDescription);
 
 		// don't need to delete the created actor since the parent takes care of that at this point
 
@@ -462,12 +462,12 @@ uint32 ActorFactory::addChildEntities()
 
 uint32 ActorFactory::cleanUp()
 {
-	if(NULL == this->spawnedEntities->head)
+	if(NULL == this->spawnedActors->head)
 	{
 		return __LIST_EMPTY;
 	}
 
-	PositionedActorDescription* positionedActorDescription = (PositionedActorDescription*)this->spawnedEntities->head->data;
+	PositionedActorDescription* positionedActorDescription = (PositionedActorDescription*)this->spawnedActors->head->data;
 
 	if(!isDeleted(positionedActorDescription->parent) && !isDeleted(positionedActorDescription->actor))
 	{
@@ -478,14 +478,14 @@ uint32 ActorFactory::cleanUp()
 			Actor::removeEventListeners(positionedActorDescription->actor, NULL, kEventActorLoaded);
 		}
 
-		VirtualList::removeData(this->spawnedEntities, positionedActorDescription);
+		VirtualList::removeData(this->spawnedActors, positionedActorDescription);
 		delete positionedActorDescription;
 
 		return __ACTOR_PROCESSED;
 	}
 	else
 	{
-		VirtualList::removeData(this->spawnedEntities, positionedActorDescription);
+		VirtualList::removeData(this->spawnedActors, positionedActorDescription);
 		delete positionedActorDescription;
 	}
 

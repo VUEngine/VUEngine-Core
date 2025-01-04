@@ -158,13 +158,13 @@ typedef struct StageSpec
 
 	} assets;
 
-	/// Entities
-	struct Entities
+	/// Actors
+	struct Actors
 	{
 		/// UI configuration
 		struct 
 		{
-			// UI's children entities
+			// UI's children actors
 			PositionedActor* childrenSpecs;
 
 			/// UI's class
@@ -172,10 +172,10 @@ typedef struct StageSpec
 
 		} UI;
 
-		// Stage's children entities
+		// Stage's children actors
 		PositionedActor* children;
 
-	} entities;
+	} actors;
 
 	/// Post processing effects
 	PostProcessingEffect* postProcessingEffects;
@@ -250,7 +250,7 @@ class Stage : Container
 	/// it when resuming the stage's owner state
 	Actor focusActor;
 
-	/// Next ID to use for new entities
+	/// Next ID to use for new actors
 	int16 nextActorId;
 
 	/// Flag to determine the direction of the stream in
@@ -285,11 +285,11 @@ class Stage : Container
 	/// @return Palette configuration struct
 	PaletteConfig getPaletteConfig();
 	
-	/// Register the stage's spec entities in the streaming list
-	void registerEntities(VirtualList positionedEntitiesToIgnore);
+	/// Register the stage's spec actors in the streaming list
+	void registerActors(VirtualList positionedActorsToIgnore);
 
 	/// Retrieve the list of stage actor descriptions.
-	/// @return List of stage actor descriptions used to initialize the entities that populate the stage
+	/// @return List of stage actor descriptions used to initialize the actors that populate the stage
 	VirtualList getStageActorDescriptions();
 
 	/// Register an event listener for the event when a new actor is instantiated.
@@ -306,7 +306,7 @@ class Stage : Container
 	/// @param child: Actor to destroy
 	void destroyChildActor(Actor child);
 
-	/// Stream in or/and out all pending entities.
+	/// Stream in or/and out all pending actors.
 	void streamAll();
 
 	/// Retrieve the sounds that are playing in the stage.
@@ -322,20 +322,20 @@ class Stage : Container
 	/// @param y: Screen y coordinate where to print
 	void print(int32 x, int32 y);
 
-	/// Stream in or out entities within or outside the camera's range.
+	/// Stream in or out actors within or outside the camera's range.
 	virtual bool stream();
 
-	/// Configure the stage with the entities defined in its spec.
-	/// @param positionedEntitiesToIgnore: List of positioned actor structs to register for streaming
-	virtual void configure(VirtualList positionedEntitiesToIgnore);
+	/// Configure the stage with the actors defined in its spec.
+	/// @param positionedActorsToIgnore: List of positioned actor structs to register for streaming
+	virtual void configure(VirtualList positionedActorsToIgnore);
 
 	/// @privatesection
 
 	/// These are not meant to be called externally. They are declared here
 	/// because of the preprocessor's limitations for forward declarations
 	/// in source files. Don't call these.
-	bool unloadOutOfRangeEntities(int32 defer);
-    bool loadInRangeEntities(int32 defer);
+	bool unloadOutOfRangeActors(int32 defer);
+    bool loadInRangeActors(int32 defer);
 }
 
 #endif
