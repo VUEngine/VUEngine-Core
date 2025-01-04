@@ -88,7 +88,10 @@ typedef struct NormalRegistry
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static inline fixed_t Body::computeInstantaneousSpeed(fixed_t forceMagnitude, fixed_t gravity, fixed_t mass, fixed_t friction, fixed_t maximumSpeed)
+static inline fixed_t Body::computeInstantaneousSpeed
+(
+	fixed_t forceMagnitude, fixed_t gravity, fixed_t mass, fixed_t friction, fixed_t maximumSpeed
+)
 {
 	fixed_t instantaneousSpeed = 
 		__FIX7_9_EXT_TO_FIXED
@@ -109,7 +112,10 @@ static inline fixed_t Body::computeInstantaneousSpeed(fixed_t forceMagnitude, fi
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static inline fix7_9_ext Body::doComputeInstantaneousSpeed(fixed_t forceMagnitude, fixed_t gravity, fixed_t mass, fixed_t friction, fix7_9_ext elapsedTime)
+static inline fix7_9_ext Body::doComputeInstantaneousSpeed
+(
+	fixed_t forceMagnitude, fixed_t gravity, fixed_t mass, fixed_t friction, fix7_9_ext elapsedTime
+)
 {
 	fix7_9_ext acceleration = 
 		__FIXED_TO_FIX7_9_EXT(gravity) + __FIX7_9_EXT_DIV(__FIXED_TO_FIX7_9_EXT(forceMagnitude + friction), __FIXED_TO_FIX7_9_EXT(mass));

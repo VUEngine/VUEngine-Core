@@ -40,7 +40,10 @@ static MessageDispatcher _messageDispatcher = NULL;
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static bool MessageDispatcher::dispatchMessage(uint32 delay, ListenerObject sender, ListenerObject receiver, int32 message, void* extraInfo)
+static bool MessageDispatcher::dispatchMessage
+(
+	uint32 delay, ListenerObject sender, ListenerObject receiver, int32 message, void* extraInfo
+)
 {
 	// make sure the receiver is valid
 	ASSERT(sender, "MessageDispatcher::dispatchMessage: null sender");

@@ -53,7 +53,10 @@ VSUSoundSource* const _vsuSoundSources = (VSUSoundSource*)0x01000400;
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void VSUManager::printVSUSoundSourceConfiguration(const VSUSoundSourceConfiguration* vsuSoundSourceConfiguration, int16 x, int y)
+static void VSUManager::printVSUSoundSourceConfiguration
+(
+	const VSUSoundSourceConfiguration* vsuSoundSourceConfiguration, int16 x, int y
+)
 {
 	if(NULL == vsuSoundSourceConfiguration)
 	{

@@ -156,7 +156,10 @@ static RightBox Entity::getRightBoxFromSpec(const PositionedEntity* positionedEn
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void Entity::getRightBoxFromChildrenSpec(const PositionedEntity* positionedEntity, const Vector3D* environmentPosition, RightBox* rightBox)
+static void Entity::getRightBoxFromChildrenSpec
+(
+	const PositionedEntity* positionedEntity, const Vector3D* environmentPosition, RightBox* rightBox
+)
 {
 	ASSERT(positionedEntity, "Entity::getRightBoxFromChildrenSpec: null positionedEntity");
 	ASSERT(positionedEntity->entitySpec, "Entity::getRightBoxFromChildrenSpec: null entitySpec");

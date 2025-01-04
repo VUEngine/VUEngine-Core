@@ -265,7 +265,10 @@ void BgmapTexture::writeAllFrames(int16 maximumTextureRowsToWrite, int16 xOffset
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 // TODO: inlining this causes trouble with ANIMATED_MULTI animations
-static inline void BgmapTexture::addHWORD(HWORD* destination, const HWORD* source, uint32 numberOfHWORDS, uint32 offset, uint16 flip, int16 increment)
+static inline void BgmapTexture::addHWORD
+(
+	HWORD* destination, const HWORD* source, uint32 numberOfHWORDS, uint32 offset, uint16 flip, int16 increment
+)
 {
 #ifdef __SHOW_SPRITES_PROFILING
 	extern int32 _writtenTextureTiles;
@@ -294,7 +297,10 @@ static inline void BgmapTexture::addHWORD(HWORD* destination, const HWORD* sourc
 }
 
 // TODO: inlining this causes trouble with ANIMATED_MULTI animations
-static inline void BgmapTexture::addHWORDCompressed(HWORD* destination, const HWORD* source, uint32 numberOfHWORDS, uint32 offset, uint16 flip, int16 increment)
+static inline void BgmapTexture::addHWORDCompressed
+(
+	HWORD* destination, const HWORD* source, uint32 numberOfHWORDS, uint32 offset, uint16 flip, int16 increment
+)
 {
 	const HWORD* finalSource = source + numberOfHWORDS;
 
