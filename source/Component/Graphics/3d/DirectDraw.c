@@ -1247,4 +1247,3 @@ bool DirectDraw::onVIPManagerGAMESTARTDuringXPEND(ListenerObject eventFirer __at
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-

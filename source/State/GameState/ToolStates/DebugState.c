@@ -35,7 +35,6 @@ void DebugState::constructor()
 
 void DebugState::destructor()
 {
-	// destroy base
 	// Always explicitly call the base's destructor 
 	Base::destructor();
 }

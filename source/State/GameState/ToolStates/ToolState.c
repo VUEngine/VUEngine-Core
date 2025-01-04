@@ -37,7 +37,6 @@ void ToolState::destructor()
 {
 	this->tool = NULL;
 
-	// destroy base
 	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
@@ -103,4 +102,3 @@ bool ToolState::stream()
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-

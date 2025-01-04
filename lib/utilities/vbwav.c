@@ -161,7 +161,6 @@ int main(int argc, char *argv[])
 	}
 	fclose(fptr);
 
-	
 	float scale = (float)levelAmplitude / 0x3F;
 
 	printf("Scale: %f\n", scale);
@@ -198,7 +197,6 @@ int main(int argc, char *argv[])
 */
 //		wave[i] = (float)wave[i] * scale + 0.5f;
 	/*
-
 
 	int temp, min=65536, max=0;
 

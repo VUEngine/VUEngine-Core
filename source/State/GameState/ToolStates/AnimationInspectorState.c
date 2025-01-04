@@ -35,7 +35,6 @@ void AnimationInspectorState::constructor()
 
 void AnimationInspectorState::destructor()
 {
-	// destroy base
 	// Always explicitly call the base's destructor 
 	Base::destructor();
 }

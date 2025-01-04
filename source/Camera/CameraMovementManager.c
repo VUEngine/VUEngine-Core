@@ -42,7 +42,6 @@ void CameraMovementManager::constructor()
 
 void CameraMovementManager::destructor()
 {
-	// destroy base
 	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
@@ -150,4 +149,3 @@ bool CameraMovementManager::onFocusEntityDeleted(ListenerObject eventFirer)
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-

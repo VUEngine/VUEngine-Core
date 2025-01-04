@@ -48,7 +48,6 @@ void UIContainer::destructor()
 {
 	this->deleteMe = true;
 
-	// destroy base
 
 	// Always explicitly call the base's destructor 
 	Base::destructor();
@@ -92,4 +91,3 @@ Entity UIContainer::spawnChildEntity(const PositionedEntity* const positionedEnt
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-

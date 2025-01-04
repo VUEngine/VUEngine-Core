@@ -55,7 +55,6 @@ void CameraEffectManager::destructor()
 	// stop any effects
 	CameraEffectManager::stopEffect(this, kFadeTo);
 
-	// destroy base
 	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
@@ -449,4 +448,3 @@ void CameraEffectManager::hideCamera()
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-

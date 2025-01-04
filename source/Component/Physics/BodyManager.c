@@ -350,7 +350,6 @@ void BodyManager::destructor()
 	{
 		VirtualList::deleteData(this->components);
 	}
-	
 
 	// Always explicitly call the base's destructor 
 	Base::destructor();
@@ -404,4 +403,3 @@ bool BodyManager::isGameObjectRegistered(GameObject owner)
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-

@@ -452,7 +452,6 @@ void Camera::constructor()
 
 void Camera::destructor()
 {
-	// destroy base
 	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
@@ -580,4 +579,3 @@ static uint8 Camera::computeRotationFlags(Rotation rotation)
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-

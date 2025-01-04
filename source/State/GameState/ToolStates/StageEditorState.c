@@ -35,7 +35,6 @@ void StageEditorState::constructor()
 
 void StageEditorState::destructor()
 {
-	// destroy base
 	// Always explicitly call the base's destructor 
 	Base::destructor();
 }

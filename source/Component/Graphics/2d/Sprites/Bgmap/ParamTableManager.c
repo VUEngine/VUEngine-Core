@@ -348,4 +348,3 @@ uint32 ParamTableManager::calculateSpriteParamTableSize(BgmapSprite bgmapSprite)
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-

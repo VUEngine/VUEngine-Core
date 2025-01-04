@@ -530,4 +530,3 @@ uint32 MemoryPool::getPoolSize()
 
 	return size;
 }
-

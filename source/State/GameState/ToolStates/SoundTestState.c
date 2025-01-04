@@ -35,7 +35,6 @@ void SoundTestState::constructor()
 
 void SoundTestState::destructor()
 {
-	// destroy base
 	// Always explicitly call the base's destructor 
 	Base::destructor();
 }

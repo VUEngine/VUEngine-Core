@@ -96,4 +96,3 @@ AnimationCoordinator AnimationCoordinatorFactory::getCoordinator(AnimationContro
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-

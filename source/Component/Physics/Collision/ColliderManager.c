@@ -396,7 +396,6 @@ void ColliderManager::destructor()
 	{
 		VirtualList::deleteData(this->components);
 	}
-	
 
 	// Always explicitly call the base's destructor 
 	Base::destructor();
@@ -441,4 +440,3 @@ int32 ColliderManager::getNumberOfMovingEnabledColliders()
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
