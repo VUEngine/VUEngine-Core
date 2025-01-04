@@ -1067,6 +1067,7 @@ bool Container::handlePropagatedString(const char* string __attribute__ ((unused
 // CLASS' PRIVATE METHODS
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Container::changeEnvironment(Transformation* environmentTransformation)

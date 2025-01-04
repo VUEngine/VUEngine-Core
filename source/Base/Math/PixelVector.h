@@ -371,5 +371,4 @@ static inline bool PixelVector::isVector3DVisible(Vector3D vector, PixelRightBox
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 
-
 #endif

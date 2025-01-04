@@ -579,5 +579,4 @@ static inline bool Vector2D::isVectorInsideLine(Vector2D vector, Vector2D lineSt
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 
-
 #endif
