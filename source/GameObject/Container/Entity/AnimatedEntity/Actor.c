@@ -81,7 +81,6 @@ bool Actor::handleMessage(Telegram telegram)
 
 void Actor::update()
 {
-	// call base
 	Base::update(this);
 
 	if(!isDeleted(this->stateMachine))
