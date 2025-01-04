@@ -81,7 +81,11 @@ singleton class SoundManager : ListenerObject
 	/// @param playbackType: How to play the sound
 	/// @param soundReleaseListener: Callback method for when the sound is released
 	/// @param scope: Object on which to perform the callback
-	bool playSound(const SoundSpec* soundSpec, const Vector3D* position, uint32 playbackType, EventListener soundReleaseListener, ListenerObject scope);
+	bool playSound
+	(
+		const SoundSpec* soundSpec, const Vector3D* position, uint32 playbackType, 
+		EventListener soundReleaseListener, ListenerObject scope
+	);
 
 	/// Allocate sound defined by the provided spec.
 	/// @param soundSpec: Spec that defines the sound to play

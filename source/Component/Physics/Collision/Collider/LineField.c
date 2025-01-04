@@ -113,7 +113,10 @@ void LineField::configureWireframe()
 		// normal
 		{
 			PixelVector::getFromVector3D(Vector3D::intermediate(this->a, this->b), 0),
-			PixelVector::getFromVector3D(Vector3D::sum(Vector3D::intermediate(this->a, this->b), Vector3D::scalarProduct(this->normal, this->normalLength)), 0),
+			PixelVector::getFromVector3D
+			(
+				Vector3D::sum(Vector3D::intermediate(this->a, this->b), Vector3D::scalarProduct(this->normal, this->normalLength)), 0
+			),
 		},
 
 		// limiter
@@ -204,15 +207,34 @@ void LineField::displace(fixed_t displacement)
 
 Vector3D LineField::getCenter()
 {
-	return Vector3D::sum(Vector3D::sum(this->transformation->position, Vector3D::intermediate(this->a, this->b)), Vector3D::getFromPixelVector(((ColliderSpec*)this->componentSpec)->displacement));
+	return 
+		Vector3D::sum
+		(
+			Vector3D::sum
+			(
+				this->transformation->position, 
+				Vector3D::intermediate(this->a, this->b)), Vector3D::getFromPixelVector(((ColliderSpec*)this->componentSpec)->displacement
+			)
+		);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void LineField::getVertexes(Vector3D vertexes[__LINE_FIELD_VERTEXES])
 {
-	vertexes[0] = Vector3D::sum(this->a, Vector3D::sum(this->transformation->position, Vector3D::getFromPixelVector(((ColliderSpec*)this->componentSpec)->displacement)));
-	vertexes[1] = Vector3D::sum(this->b, Vector3D::sum(this->transformation->position, Vector3D::getFromPixelVector(((ColliderSpec*)this->componentSpec)->displacement)));
+	vertexes[0] = 
+		Vector3D::sum
+		(
+			this->a, 
+			Vector3D::sum(this->transformation->position, Vector3D::getFromPixelVector(((ColliderSpec*)this->componentSpec)->displacement))
+		);
+	
+	vertexes[1] = 
+		Vector3D::sum
+		(
+			this->b, 
+			Vector3D::sum(this->transformation->position, Vector3D::getFromPixelVector(((ColliderSpec*)this->componentSpec)->displacement))
+		);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -258,7 +280,12 @@ void LineField::computeSize()
 
 	this->normalLength = __FIXED_MULT(this->normalLength, __FIX7_9_TO_FIXED(normalScale));	
 
-	Rotation rotation = Rotation::sum(Rotation::getFromPixelRotation(((ColliderSpec*)this->componentSpec)->pixelRotation), this->transformation->rotation);	
+	Rotation rotation = 
+		Rotation::sum
+		(
+			Rotation::getFromPixelRotation(((ColliderSpec*)this->componentSpec)->pixelRotation), this->transformation->rotation
+		);	
+	
 	Size size = Size::getFromPixelSize(((ColliderSpec*)this->componentSpec)->pixelSize);
 
 	if(0 != size.x)

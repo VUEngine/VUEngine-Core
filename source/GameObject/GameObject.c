@@ -347,21 +347,30 @@ void GameObject::disableCollisions()
 
 void GameObject::checkCollisions(bool active)
 {
-	ColliderManager::propagateCommand(VUEngine::getColliderManager(_vuEngine), cColliderComponentCommandCheckCollisions, this, (uint32)active);
+	ColliderManager::propagateCommand
+	(
+		VUEngine::getColliderManager(_vuEngine), cColliderComponentCommandCheckCollisions, this, (uint32)active
+	);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void GameObject::registerCollisions(bool value)
 {
-	ColliderManager::propagateCommand(VUEngine::getColliderManager(_vuEngine), cColliderComponentCommandRegisterCollisions, this, (uint32)value);
+	ColliderManager::propagateCommand
+	(
+		VUEngine::getColliderManager(_vuEngine), cColliderComponentCommandRegisterCollisions, this, (uint32)value
+	);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void GameObject::setCollidersLayers(uint32 layers)
 {
-	ColliderManager::propagateCommand(VUEngine::getColliderManager(_vuEngine), cColliderComponentCommandSetLayers, this, (uint32)layers);
+	ColliderManager::propagateCommand
+	(
+		VUEngine::getColliderManager(_vuEngine), cColliderComponentCommandSetLayers, this, (uint32)layers
+	);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -386,7 +395,10 @@ uint32 GameObject::getCollidersLayers()
 
 void GameObject::setCollidersLayersToIgnore(uint32 layersToIgnore)
 {
-	ColliderManager::propagateCommand(VUEngine::getColliderManager(_vuEngine), cColliderComponentCommandSetLayersToIgnore, this, (uint32)layersToIgnore);
+	ColliderManager::propagateCommand
+	(
+		VUEngine::getColliderManager(_vuEngine), cColliderComponentCommandSetLayersToIgnore, this, (uint32)layersToIgnore
+	);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -691,8 +703,13 @@ bool GameObject::collisionStarts(const CollisionInformation* collisionInformatio
 
 			GameObject collidingObject = Collider::getOwner(collisionInformation->otherCollider);
 
-			fixed_t bounciness = GameObject::isSensibleToCollidingObjectBouncinessOnCollision(this, collidingObject) ? GameObject::getBounciness(collidingObject) : 0;
-			fixed_t frictionCoefficient = GameObject::isSensibleToCollidingObjectFrictionOnCollision(this, collidingObject) ? GameObject::getSurroundingFrictionCoefficient(this) : 0;
+			fixed_t bounciness = 
+				GameObject::isSensibleToCollidingObjectBouncinessOnCollision(this, collidingObject) ? 
+				GameObject::getBounciness(collidingObject) : 0;
+
+			fixed_t frictionCoefficient = 
+				GameObject::isSensibleToCollidingObjectFrictionOnCollision(this, collidingObject) ? 
+				GameObject::getSurroundingFrictionCoefficient(this) : 0;
 
 			if(!isDeleted(this->body))
 			{

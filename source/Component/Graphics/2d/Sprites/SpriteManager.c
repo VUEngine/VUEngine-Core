@@ -665,8 +665,17 @@ ObjectSpriteContainer SpriteManager::getObjectSpriteContainer(fixed_t z)
 {
 	ObjectSpriteContainer suitableObjectSpriteContainer = NULL;
 
-	NM_ASSERT(!isDeleted(this->objectSpriteContainers), "SpriteManager::getObjectSpriteContainer: no ObjectSpriteContainers created");
-	NM_ASSERT(0 < VirtualList::getCount(this->objectSpriteContainers), "SpriteManager::getObjectSpriteContainer: no ObjectSpriteContainers available");
+	NM_ASSERT
+	(
+		!isDeleted(this->objectSpriteContainers), 
+		"SpriteManager::getObjectSpriteContainer: no ObjectSpriteContainers created"
+	);
+
+	NM_ASSERT
+	(
+		0 < VirtualList::getCount(this->objectSpriteContainers), 
+		"SpriteManager::getObjectSpriteContainer: no ObjectSpriteContainers available"
+	);
 
 	if(isDeleted(this->objectSpriteContainers))
 	{
@@ -932,7 +941,11 @@ bool SpriteManager::sortProgressively(bool complete)
 	{
 		swapped = false;
 
-		for(VirtualNode node = complete ? this->bgmapSprites->head : this->sortingSpriteNode; NULL != node && NULL != node->next; node = node->next)
+		for
+		(
+			VirtualNode node = complete ? this->bgmapSprites->head : this->sortingSpriteNode; NULL != node && NULL != node->next; 
+			node = node->next
+		)
 		{
 			VirtualNode nextNode = node->next;
 
@@ -1041,7 +1054,11 @@ void SpriteManager::applySpecialEffects()
 void SpriteManager::writeWORLDAttributesToDRAM()
 {
 	CACHE_RESET;
-	Mem::copyWORD((WORD*)(_worldAttributesBaseAddress + this->freeLayer), (WORD*)(_worldAttributesCache + this->freeLayer), sizeof(WorldAttributes) * (__TOTAL_LAYERS - (this->freeLayer)) >> 2);
+	Mem::copyWORD
+	(
+		(WORD*)(_worldAttributesBaseAddress + this->freeLayer), (WORD*)(_worldAttributesCache + this->freeLayer), 
+		sizeof(WorldAttributes) * (__TOTAL_LAYERS - (this->freeLayer)) >> 2
+	);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————

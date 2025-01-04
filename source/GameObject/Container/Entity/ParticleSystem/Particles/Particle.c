@@ -73,7 +73,10 @@ bool Particle::collisionStarts(const CollisionInformation* collisionInformation)
 	{
 		if(NULL != this->particleSpec->onCollisionAnimation)
 		{
-			Particle::playAnimation(this, ((ParticleSpec*)this->particleSpec)->animationFunctions, this->particleSpec->onCollisionAnimation);
+			Particle::playAnimation
+			(
+				this, ((ParticleSpec*)this->particleSpec)->animationFunctions, this->particleSpec->onCollisionAnimation
+			);
 		}
 	}
 
@@ -82,7 +85,12 @@ bool Particle::collisionStarts(const CollisionInformation* collisionInformation)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void Particle::setup(const ComponentSpec* visualComponentSpec, const ComponentSpec* physicsComponentSpec, const ComponentSpec* colliderComponentSpec, int16 lifeSpan, const Vector3D* position, const Vector3D* force, uint32 movementType, const AnimationFunction** animationFunctions, const char* animationName)
+void Particle::setup
+(
+	const ComponentSpec* visualComponentSpec, const ComponentSpec* physicsComponentSpec, const ComponentSpec* colliderComponentSpec, 
+	int16 lifeSpan, const Vector3D* position, const Vector3D* force, uint32 movementType, const AnimationFunction** animationFunctions, 
+	const char* animationName
+)
 {
 	this->expired = false;
 	this->lifeSpan = lifeSpan;
@@ -164,7 +172,9 @@ bool Particle::isVisible()
 	int16 halfWidth = __PARTICLE_VISIBILITY_PADDING;
 	int16 halfHeight = __PARTICLE_VISIBILITY_PADDING;
 
-	Vector3D relativeGlobalPosition = Vector3D::rotate(Vector3D::getRelativeToCamera(this->transformation.position), *_cameraInvertedRotation);
+	Vector3D relativeGlobalPosition = 
+		Vector3D::rotate(Vector3D::getRelativeToCamera(this->transformation.position), *_cameraInvertedRotation);
+	
 	pixelVector = PixelVector::projectVector3D(relativeGlobalPosition, Optics::calculateParallax(relativeGlobalPosition.z));
 
 	// check x visibility

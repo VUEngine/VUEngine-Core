@@ -389,7 +389,10 @@ bool CommunicationManager::sendAndReceiveData(WORD message, BYTE* data, int32 nu
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-bool CommunicationManager::sendAndReceiveDataAsync(WORD message, BYTE* data, int32 numberOfBytes, EventListener eventLister, ListenerObject scope)
+bool CommunicationManager::sendAndReceiveDataAsync
+(
+	WORD message, BYTE* data, int32 numberOfBytes, EventListener eventLister, ListenerObject scope
+)
 {
 	return CommunicationManager::startBidirectionalDataTransmissionAsync(this, message, data, numberOfBytes, eventLister, scope);
 }
@@ -616,7 +619,10 @@ void CommunicationManager::endCommunications()
 
 void CommunicationManager::waitForRemote()
 {
-	MessageDispatcher::dispatchMessage(1, ListenerObject::safeCast(this), ListenerObject::safeCast(this), kMessageCheckIfRemoteIsReady, NULL);
+	MessageDispatcher::dispatchMessage
+	(
+		1, ListenerObject::safeCast(this), ListenerObject::safeCast(this), kMessageCheckIfRemoteIsReady, NULL
+	);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -931,12 +937,14 @@ bool CommunicationManager::startBidirectionalDataTransmission(WORD message, BYTE
 
 	if(isDeleted(this->sentData))
 	{
-		this->sentData = (BYTE*)((uint32)MemoryPool::allocate(numberOfBytes + __DYNAMIC_STRUCT_PAD + __MESSAGE_SIZE) + __DYNAMIC_STRUCT_PAD);
+		this->sentData = 
+			(BYTE*)((uint32)MemoryPool::allocate(numberOfBytes + __DYNAMIC_STRUCT_PAD + __MESSAGE_SIZE) + __DYNAMIC_STRUCT_PAD);
 	}
 
 	if(isDeleted(this->receivedData))
 	{
-		this->receivedData = (BYTE*)((uint32)MemoryPool::allocate(numberOfBytes + __DYNAMIC_STRUCT_PAD + __MESSAGE_SIZE) + __DYNAMIC_STRUCT_PAD);
+		this->receivedData = 
+			(BYTE*)((uint32)MemoryPool::allocate(numberOfBytes + __DYNAMIC_STRUCT_PAD + __MESSAGE_SIZE) + __DYNAMIC_STRUCT_PAD);
 	}
 
 	this->asyncSentByte = this->asyncReceivedByte = NULL;
@@ -969,7 +977,10 @@ bool CommunicationManager::startBidirectionalDataTransmission(WORD message, BYTE
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-bool CommunicationManager::startBidirectionalDataTransmissionAsync(WORD message, BYTE* data, int32 numberOfBytes, EventListener eventLister, ListenerObject scope)
+bool CommunicationManager::startBidirectionalDataTransmissionAsync
+(
+	WORD message, BYTE* data, int32 numberOfBytes, EventListener eventLister, ListenerObject scope
+)
 {
 	if(NULL == data || 0 >= numberOfBytes || !CommunicationManager::isFreeForTransmissions(this))
 	{
@@ -1000,12 +1011,14 @@ bool CommunicationManager::startBidirectionalDataTransmissionAsync(WORD message,
 	if(isDeleted(this->sentData))
 	{
 		// Allocate memory to hold both the message and the data
-		this->sentData = (BYTE*)((uint32)MemoryPool::allocate(numberOfBytes + __DYNAMIC_STRUCT_PAD + __MESSAGE_SIZE) + __DYNAMIC_STRUCT_PAD);
+		this->sentData = 
+			(BYTE*)((uint32)MemoryPool::allocate(numberOfBytes + __DYNAMIC_STRUCT_PAD + __MESSAGE_SIZE) + __DYNAMIC_STRUCT_PAD);
 	}
 
 	if(isDeleted(this->receivedData))
 	{
-		this->receivedData = (BYTE*)((uint32)MemoryPool::allocate(numberOfBytes + __DYNAMIC_STRUCT_PAD + __MESSAGE_SIZE) + __DYNAMIC_STRUCT_PAD);
+		this->receivedData = 
+			(BYTE*)((uint32)MemoryPool::allocate(numberOfBytes + __DYNAMIC_STRUCT_PAD + __MESSAGE_SIZE) + __DYNAMIC_STRUCT_PAD);
 	}
 
 	this->syncSentByte = this->syncReceivedByte = NULL;
@@ -1074,7 +1087,13 @@ void CommunicationManager::processInterrupt()
 				else
 				{
 					CommunicationManager::fireEvent(this, kEventCommunicationsTransmissionCompleted);
-					NM_ASSERT(!isDeleted(this), "CommunicationManager::processInterrupt: deleted this during kEventCommunicationsTransmissionCompleted");
+
+					NM_ASSERT
+					(
+						!isDeleted(this), 
+						"CommunicationManager::processInterrupt: deleted this during kEventCommunicationsTransmissionCompleted"
+					);
+
 					CommunicationManager::removeEventListeners(this, NULL, kEventCommunicationsTransmissionCompleted);
 					this->asyncReceivedByte = NULL;
 #ifdef __ENABLE_PROFILER
@@ -1103,7 +1122,13 @@ void CommunicationManager::processInterrupt()
 				else
 				{
 					CommunicationManager::fireEvent(this, kEventCommunicationsTransmissionCompleted);
-					NM_ASSERT(!isDeleted(this), "CommunicationManager::processInterrupt: deleted this during kEventCommunicationsTransmissionCompleted");
+					
+					NM_ASSERT
+					(
+						!isDeleted(this), 
+						"CommunicationManager::processInterrupt: deleted this during kEventCommunicationsTransmissionCompleted"
+					);
+
 					CommunicationManager::removeEventListeners(this, NULL, kEventCommunicationsTransmissionCompleted);
 					this->asyncSentByte = NULL;
 					this->broadcast = kCommunicationsBroadcastNone;
@@ -1137,7 +1162,13 @@ void CommunicationManager::processInterrupt()
 				else
 				{
 					CommunicationManager::fireEvent(this, kEventCommunicationsTransmissionCompleted);
-					NM_ASSERT(!isDeleted(this), "CommunicationManager::processInterrupt: deleted this during kEventCommunicationsTransmissionCompleted");
+					
+					NM_ASSERT
+					(
+						!isDeleted(this), 
+						"CommunicationManager::processInterrupt: deleted this during kEventCommunicationsTransmissionCompleted"
+					);
+
 					CommunicationManager::removeEventListeners(this, NULL, kEventCommunicationsTransmissionCompleted);
 					this->asyncSentByte = NULL;
 					this->asyncReceivedByte = NULL;

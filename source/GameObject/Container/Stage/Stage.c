@@ -109,9 +109,18 @@ static uint32 timeBeforeProcess = 0;
 
 static uint32 Stage::computeDistanceToOrigin(StageEntityDescription* stageEntityDescription)
 {
-	int32 x = stageEntityDescription->positionedEntity->onScreenPosition.x - __METERS_TO_PIXELS(stageEntityDescription->rightBox.x1 - stageEntityDescription->rightBox.x0) / 2;
-	int32 y = stageEntityDescription->positionedEntity->onScreenPosition.y - __METERS_TO_PIXELS(stageEntityDescription->rightBox.y1 - stageEntityDescription->rightBox.y0) / 2;
-	int32 z = stageEntityDescription->positionedEntity->onScreenPosition.z - __METERS_TO_PIXELS(stageEntityDescription->rightBox.z1 - stageEntityDescription->rightBox.z0) / 2;
+	
+	int32 x = 
+		stageEntityDescription->positionedEntity->onScreenPosition.x - 
+		__METERS_TO_PIXELS(stageEntityDescription->rightBox.x1 - stageEntityDescription->rightBox.x0) / 2;
+	
+	int32 y = 
+		stageEntityDescription->positionedEntity->onScreenPosition.y - 
+		__METERS_TO_PIXELS(stageEntityDescription->rightBox.y1 - stageEntityDescription->rightBox.y0) / 2;
+	
+	int32 z = 
+		stageEntityDescription->positionedEntity->onScreenPosition.z - 
+		__METERS_TO_PIXELS(stageEntityDescription->rightBox.z1 - stageEntityDescription->rightBox.z0) / 2;
 
 	return x * x + y * y + z * z;
 } 
@@ -281,7 +290,11 @@ StageSpec* Stage::getSpec()
 
 void Stage::configureTimer()
 {
-	TimerManager::configure(TimerManager::getInstance(), this->stageSpec->timer.resolution, this->stageSpec->timer.targetTimePerInterrupt, this->stageSpec->timer.targetTimePerInterrupttUnits);
+	TimerManager::configure
+	(
+		TimerManager::getInstance(), this->stageSpec->timer.resolution, this->stageSpec->timer.targetTimePerInterrupt, 
+		this->stageSpec->timer.targetTimePerInterrupttUnits
+	);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -336,9 +349,12 @@ void Stage::registerEntities(VirtualList positionedEntitiesToIgnore)
 
 		Vector3D stageEntityPosition = (Vector3D)
 		{
-			(__PIXELS_TO_METERS(stageEntityDescription->positionedEntity->onScreenPosition.x) - (stageEntityDescription->rightBox.x1 - stageEntityDescription->rightBox.x0) / 2),
-			(__PIXELS_TO_METERS(stageEntityDescription->positionedEntity->onScreenPosition.y) - (stageEntityDescription->rightBox.y1 - stageEntityDescription->rightBox.y0) / 2),
-			(__PIXELS_TO_METERS(stageEntityDescription->positionedEntity->onScreenPosition.z) - (stageEntityDescription->rightBox.z1 - stageEntityDescription->rightBox.z0) / 2)
+			(__PIXELS_TO_METERS(stageEntityDescription->positionedEntity->onScreenPosition.x) - 
+			(stageEntityDescription->rightBox.x1 - stageEntityDescription->rightBox.x0) / 2),
+			(__PIXELS_TO_METERS(stageEntityDescription->positionedEntity->onScreenPosition.y) - 
+			(stageEntityDescription->rightBox.y1 - stageEntityDescription->rightBox.y0) / 2),
+			(__PIXELS_TO_METERS(stageEntityDescription->positionedEntity->onScreenPosition.z) - 
+			(stageEntityDescription->rightBox.z1 - stageEntityDescription->rightBox.z0) / 2)
 		};
 
 		VirtualNode closestEnitryDescriptionNode = NULL;
@@ -353,9 +369,18 @@ void Stage::registerEntities(VirtualList positionedEntitiesToIgnore)
 
 			Vector3D auxStageEntityPosition = (Vector3D)
 			{
-				(__PIXELS_TO_METERS(auxStageEntityDescription->positionedEntity->onScreenPosition.x) - (auxStageEntityDescription->rightBox.x1 - auxStageEntityDescription->rightBox.x0) / 2),
-				(__PIXELS_TO_METERS(auxStageEntityDescription->positionedEntity->onScreenPosition.y) - (auxStageEntityDescription->rightBox.y1 - auxStageEntityDescription->rightBox.y0) / 2),
-				(__PIXELS_TO_METERS(auxStageEntityDescription->positionedEntity->onScreenPosition.z) - (auxStageEntityDescription->rightBox.z1 - auxStageEntityDescription->rightBox.z0) / 2)
+				(
+					__PIXELS_TO_METERS(auxStageEntityDescription->positionedEntity->onScreenPosition.x) - 
+					(auxStageEntityDescription->rightBox.x1 - auxStageEntityDescription->rightBox.x0) / 2
+				),
+				(
+					__PIXELS_TO_METERS(auxStageEntityDescription->positionedEntity->onScreenPosition.y) - 
+					(auxStageEntityDescription->rightBox.y1 - auxStageEntityDescription->rightBox.y0) / 2
+				),
+				(
+					__PIXELS_TO_METERS(auxStageEntityDescription->positionedEntity->onScreenPosition.z) - 
+					(auxStageEntityDescription->rightBox.z1 - auxStageEntityDescription->rightBox.z0) / 2
+				)
 			};
 
 			fixed_ext_t squaredDistance = Vector3D::squareLength(Vector3D::get(stageEntityPosition, auxStageEntityPosition));
@@ -737,8 +762,11 @@ bool Stage::unloadOutOfRangeEntities(int32 defer __attribute__((unused)))
 	}
 
 #ifdef __PROFILE_STREAMING
-		uint32 processTime = -_renderingProcessTimeHelper + TimerManager::getElapsedMilliseconds(TimerManager::getInstance()) - timeBeforeProcess;
-		unloadOutOfRangeEntitiesHighestTime = processTime > unloadOutOfRangeEntitiesHighestTime ? processTime : unloadOutOfRangeEntitiesHighestTime;
+		uint32 processTime = 
+			-_renderingProcessTimeHelper + TimerManager::getElapsedMilliseconds(TimerManager::getInstance()) - timeBeforeProcess;
+		
+		unloadOutOfRangeEntitiesHighestTime = 
+			processTime > unloadOutOfRangeEntitiesHighestTime ? processTime : unloadOutOfRangeEntitiesHighestTime;
 #endif
 
 	return unloadedEntities;
@@ -766,7 +794,12 @@ bool Stage::loadInRangeEntities(int32 defer)
 
 		bool negativeStreamingAmplitude = 0 > ((int16)this->streamingAmplitude);
 
-		for(uint16 counter = 0; counter < this->streamingAmplitude; this->streamingHeadNode = this->streamingHeadNode->previous, counter++)
+		for
+		(
+			uint16 counter = 0; counter < this->streamingAmplitude; 
+			this->streamingHeadNode = this->streamingHeadNode->previous, 
+			counter++
+		)
 		{
 			if(NULL == this->streamingHeadNode)
 			{
@@ -783,7 +816,14 @@ bool Stage::loadInRangeEntities(int32 defer)
 			if(0 > stageEntityDescription->internalId)
 			{
 				// if entity in load range
-				if(Stage::isEntityInLoadRange(this, stageEntityDescription->positionedEntity->onScreenPosition, stageEntityDescription->validRightBox ? &stageEntityDescription->rightBox : NULL))
+				if
+				(
+					Stage::isEntityInLoadRange
+					(
+						this, stageEntityDescription->positionedEntity->onScreenPosition, stageEntityDescription->validRightBox ? 
+						&stageEntityDescription->rightBox : NULL
+					)
+				)
 				{
 					loadedEntities = true;
 
@@ -791,11 +831,21 @@ bool Stage::loadInRangeEntities(int32 defer)
 
 					if(defer)
 					{
-						EntityFactory::spawnEntity(this->entityFactory, stageEntityDescription->positionedEntity, Container::safeCast(this), !isDeleted(this->entityLoadingListeners) ? (EventListener)Stage::onEntityLoaded : NULL, stageEntityDescription->internalId);
+						EntityFactory::spawnEntity
+						(
+							this->entityFactory, stageEntityDescription->positionedEntity, Container::safeCast(this), 
+							!isDeleted(this->entityLoadingListeners) ? 
+								(EventListener)Stage::onEntityLoaded 
+								: 
+								NULL, stageEntityDescription->internalId
+						);
 					}
 					else
 					{
-						Stage::doAddChildEntity(this, stageEntityDescription->positionedEntity, false, stageEntityDescription->internalId);
+						Stage::doAddChildEntity
+						(
+							this, stageEntityDescription->positionedEntity, false, stageEntityDescription->internalId
+						);
 						break;
 					}
 				}
@@ -828,7 +878,15 @@ bool Stage::loadInRangeEntities(int32 defer)
 			if(0 > stageEntityDescription->internalId)
 			{
 				// if entity in load range
-				if(Stage::isEntityInLoadRange(this, stageEntityDescription->positionedEntity->onScreenPosition, stageEntityDescription->validRightBox ? &stageEntityDescription->rightBox : NULL))
+				if
+				(
+					Stage::isEntityInLoadRange
+					(
+						this, stageEntityDescription->positionedEntity->onScreenPosition, 
+						stageEntityDescription->validRightBox ? 
+							&stageEntityDescription->rightBox : NULL
+					)
+				)
 				{
 					loadedEntities = true;
 
@@ -836,11 +894,20 @@ bool Stage::loadInRangeEntities(int32 defer)
 
 					if(defer)
 					{
-						EntityFactory::spawnEntity(this->entityFactory, stageEntityDescription->positionedEntity, Container::safeCast(this), !isDeleted(this->entityLoadingListeners) ? (EventListener)Stage::onEntityLoaded : NULL, stageEntityDescription->internalId);
+						EntityFactory::spawnEntity
+						(
+							this->entityFactory, stageEntityDescription->positionedEntity, Container::safeCast(this), 
+							!isDeleted(this->entityLoadingListeners) ? 
+								(EventListener)Stage::onEntityLoaded : NULL, 
+							stageEntityDescription->internalId
+						);
 					}
 					else
 					{
-						Stage::doAddChildEntity(this, stageEntityDescription->positionedEntity, false, stageEntityDescription->internalId);
+						Stage::doAddChildEntity
+						(
+							this, stageEntityDescription->positionedEntity, false, stageEntityDescription->internalId
+						);
 						break;
 					}
 				}
@@ -849,7 +916,8 @@ bool Stage::loadInRangeEntities(int32 defer)
 	}
 
 #ifdef __PROFILE_STREAMING
-	uint32 processTime = -_renderingProcessTimeHelper + TimerManager::getElapsedMilliseconds(TimerManager::getInstance()) - timeBeforeProcess;
+	uint32 processTime = 
+		-_renderingProcessTimeHelper + TimerManager::getElapsedMilliseconds(TimerManager::getInstance()) - timeBeforeProcess;
 	loadInRangeEntitiesHighestTime = processTime > loadInRangeEntitiesHighestTime ? processTime : loadInRangeEntitiesHighestTime;
 #endif
 
@@ -870,10 +938,19 @@ void Stage::loadInitialEntities()
 		if(-1 == stageEntityDescription->internalId)
 		{
 			// if entity in load range
-			if(stageEntityDescription->positionedEntity->loadRegardlessOfPosition || Stage::isEntityInLoadRange(this, stageEntityDescription->positionedEntity->onScreenPosition, &stageEntityDescription->rightBox))
+			if
+			(
+				stageEntityDescription->positionedEntity->loadRegardlessOfPosition 
+				|| 
+				Stage::isEntityInLoadRange
+				(
+					this, stageEntityDescription->positionedEntity->onScreenPosition, &stageEntityDescription->rightBox
+				)
+			)
 			{
 				stageEntityDescription->internalId = this->nextEntityId++;
-				Entity entity = Stage::doAddChildEntity(this, stageEntityDescription->positionedEntity, false, stageEntityDescription->internalId);
+				Entity entity = 
+					Stage::doAddChildEntity(this, stageEntityDescription->positionedEntity, false, stageEntityDescription->internalId);
 				ASSERT(entity, "Stage::loadInitialEntities: entity not loaded");
 
 				if(!isDeleted(entity))
@@ -990,7 +1067,8 @@ bool Stage::updateEntityFactory()
 	bool preparingEntities = EntityFactory::createNextEntity(this->entityFactory);
 
 #ifdef __PROFILE_STREAMING
-	uint32 processTime = -_renderingProcessTimeHelper + TimerManager::getElapsedMilliseconds(TimerManager::getInstance()) - timeBeforeProcess;
+	uint32 processTime = 
+		-_renderingProcessTimeHelper + TimerManager::getElapsedMilliseconds(TimerManager::getInstance()) - timeBeforeProcess;
 	entityFactoryHighestTime = processTime > entityFactoryHighestTime ? processTime : entityFactoryHighestTime;
 #endif
 
@@ -1026,7 +1104,12 @@ StageEntityDescription* Stage::registerEntity(PositionedEntity* positionedEntity
 	Vector3D environmentPosition = Vector3D::zero();
 	stageEntityDescription->rightBox = Entity::getRightBoxFromSpec(stageEntityDescription->positionedEntity, &environmentPosition);
 
-	stageEntityDescription->validRightBox = (0 != stageEntityDescription->rightBox.x1 - stageEntityDescription->rightBox.x0) || (0 != stageEntityDescription->rightBox.y1 - stageEntityDescription->rightBox.y0) || (0 != stageEntityDescription->rightBox.z1 - stageEntityDescription->rightBox.z0);
+	stageEntityDescription->validRightBox = 
+		(0 != stageEntityDescription->rightBox.x1 - stageEntityDescription->rightBox.x0) 
+		|| 
+		(0 != stageEntityDescription->rightBox.y1 - stageEntityDescription->rightBox.y0) 
+		|| 
+		(0 != stageEntityDescription->rightBox.z1 - stageEntityDescription->rightBox.z0);
 
 	fixed_t padding = __PIXELS_TO_METERS(this->stageSpec->streaming.loadPadding);
 	
@@ -1052,14 +1135,21 @@ void Stage::prepareGraphics()
 	Stage::configurePalettes(this);
 
 	// setup OBJs
-	SpriteManager::setupObjectSpriteContainers(SpriteManager::getInstance(), this->stageSpec->rendering.objectSpritesContainersSize, this->stageSpec->rendering.objectSpritesContainersZPosition);
+	SpriteManager::setupObjectSpriteContainers
+	(
+		SpriteManager::getInstance(), this->stageSpec->rendering.objectSpritesContainersSize,
+		this->stageSpec->rendering.objectSpritesContainersZPosition
+	);
 
 	// preload textures
 	Stage::preloadAssets(this);
 
 	// setup SpriteManager's configuration
 	SpriteManager::setTexturesMaximumRowsToWrite(SpriteManager::getInstance(), this->stageSpec->rendering.texturesMaximumRowsToWrite);
-	SpriteManager::setMaximumParamTableRowsToComputePerCall(SpriteManager::getInstance(), this->stageSpec->rendering.maximumAffineRowsToComputePerCall);
+	SpriteManager::setMaximumParamTableRowsToComputePerCall
+	(
+		SpriteManager::getInstance(), this->stageSpec->rendering.maximumAffineRowsToComputePerCall
+	);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -1086,11 +1176,21 @@ void Stage::setupSounds()
 
 	for(; NULL != this->stageSpec->assets.sounds[i]; i++)
 	{
-		Sound sound = SoundManager::findSound(SoundManager::getInstance(), this->stageSpec->assets.sounds[i], (EventListener)Stage::onSoundReleased, ListenerObject::safeCast(this));
+		Sound sound = 
+			SoundManager::findSound
+			(
+				SoundManager::getInstance(), this->stageSpec->assets.sounds[i], 
+				(EventListener)Stage::onSoundReleased, ListenerObject::safeCast(this)
+			);
 
 		if(isDeleted(sound))
 		{
-			sound = SoundManager::getSound(SoundManager::getInstance(), this->stageSpec->assets.sounds[i], (EventListener)Stage::onSoundReleased, ListenerObject::safeCast(this));
+			sound = 
+				SoundManager::getSound
+				(
+					SoundManager::getInstance(), this->stageSpec->assets.sounds[i], 
+					(EventListener)Stage::onSoundReleased, ListenerObject::safeCast(this)
+				);
 		}
 
 		if(!isDeleted(sound))
@@ -1188,14 +1288,20 @@ void Stage::setFocusEntity(Entity focusEntity)
 {
 	if(!isDeleted(this->focusEntity))
 	{
-		Entity::removeEventListener(this->focusEntity, ListenerObject::safeCast(this), (EventListener)Stage::onFocusEntityDeleted, kEventContainerDeleted);
+		Entity::removeEventListener
+		(
+			this->focusEntity, ListenerObject::safeCast(this), (EventListener)Stage::onFocusEntityDeleted, kEventContainerDeleted
+		);
 	}
 
 	this->focusEntity = focusEntity;
 
 	if(!isDeleted(this->focusEntity))
 	{
-		Entity::addEventListener(this->focusEntity, ListenerObject::safeCast(this), (EventListener)Stage::onFocusEntityDeleted, kEventContainerDeleted);
+		Entity::addEventListener
+		(
+			this->focusEntity, ListenerObject::safeCast(this), (EventListener)Stage::onFocusEntityDeleted, kEventContainerDeleted
+		);
 
 		Vector3D focusEntityPosition = *Container::getPosition(this->focusEntity);
 		focusEntityPosition.x = __METERS_TO_PIXELS(focusEntityPosition.x);

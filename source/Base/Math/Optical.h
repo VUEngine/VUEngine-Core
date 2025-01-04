@@ -71,8 +71,10 @@ static inline Optical Optical::getFromPixelOptical(PixelOptical pixelOptical, Ca
 
 	Optical optical;
 
-	optical.maximumXViewDistancePower = __MINIMUM_X_VIEW_DISTANCE_POWER > maximumXViewDistancePower ? __MINIMUM_X_VIEW_DISTANCE_POWER : maximumXViewDistancePower;
-	optical.maximumYViewDistancePower = __MINIMUM_Y_VIEW_DISTANCE_POWER > maximumYViewDistancePower ? __MINIMUM_Y_VIEW_DISTANCE_POWER : maximumYViewDistancePower;
+	optical.maximumXViewDistancePower = 
+		__MINIMUM_X_VIEW_DISTANCE_POWER > maximumXViewDistancePower ? __MINIMUM_X_VIEW_DISTANCE_POWER : maximumXViewDistancePower;
+	optical.maximumYViewDistancePower = 
+		__MINIMUM_Y_VIEW_DISTANCE_POWER > maximumYViewDistancePower ? __MINIMUM_Y_VIEW_DISTANCE_POWER : maximumYViewDistancePower;
 	optical.cameraNearPlane = __PIXELS_TO_METERS(pixelOptical.cameraNearPlane);
 	optical.baseDistance = __PIXELS_TO_METERS(pixelOptical.baseDistance);
 	optical.horizontalViewPointCenter = __PIXELS_TO_METERS(pixelOptical.horizontalViewPointCenter);
@@ -93,7 +95,12 @@ static inline Optical Optical::applyCameraFrustum(Optical optical, CameraFrustum
 	result.aspectRatio = __FIXED_EXT_DIV(result.halfWidth, result.halfHeight);
 	// this assumes a fov of 90 degrees (__CAMERA_FOV_DEGREES fix7_9) to speed up computations
 	// fov = 1 / tan(angle / 2)
-	result.fov = __FIXED_EXT_DIV(__I_TO_FIXED_EXT(1), __FIX7_9_TO_FIXED(__FIX7_9_DIV(__SIN(__CAMERA_FOV_DEGREES >> 1), __COS(__CAMERA_FOV_DEGREES >> 1))));
+	result.fov = 
+		__FIXED_EXT_DIV
+		(
+			__I_TO_FIXED_EXT(1), 
+			__FIX7_9_TO_FIXED(__FIX7_9_DIV(__SIN(__CAMERA_FOV_DEGREES >> 1), __COS(__CAMERA_FOV_DEGREES >> 1)))
+		);
 	result.aspectRatioXfov = __FIXED_MULT(result.aspectRatio, result.fov);
 	// farRatio1Near = // (far + near) / (far - near)
 	result.farRatio1Near = __FIXED_EXT_DIV(cameraFrustum.z1 + cameraFrustum.z0, cameraFrustum.z1 - cameraFrustum.z0);

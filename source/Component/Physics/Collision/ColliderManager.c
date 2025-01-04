@@ -184,7 +184,12 @@ uint32 ColliderManager::update()
 
 		if(collider->invalidPosition)
 		{
-			Vector3D displacement = Vector3D::rotate(Vector3D::getFromPixelVector(((ColliderSpec*)collider->componentSpec)->displacement), collider->transformation->rotation);
+			Vector3D displacement = 
+			Vector3D::rotate
+			(
+				Vector3D::getFromPixelVector(((ColliderSpec*)collider->componentSpec)->displacement), collider->transformation->rotation
+			);
+
 			collider->position = Vector3D::sum(collider->transformation->position, displacement);
 			collider->invalidPosition = false;
 		}
@@ -214,7 +219,8 @@ uint32 ColliderManager::update()
 				continue;
 			}
 
-			fixed_ext_t distanceVectorSquareLength = Vector3D::squareLength(Vector3D::get(colliderToCheck->transformation->position, colliderPosition));
+			fixed_ext_t distanceVectorSquareLength = 
+				Vector3D::squareLength(Vector3D::get(colliderToCheck->transformation->position, colliderPosition));
 
 			if(__FIXED_SQUARE(__COLLIDER_MAXIMUM_SIZE) < distanceVectorSquareLength)
 			{
@@ -227,7 +233,13 @@ uint32 ColliderManager::update()
 
 			if(colliderToCheck->invalidPosition)
 			{
-				Vector3D displacement = Vector3D::rotate(Vector3D::getFromPixelVector(((ColliderSpec*)colliderToCheck->componentSpec)->displacement), colliderToCheck->transformation->rotation);				
+				Vector3D displacement = 
+					Vector3D::rotate
+					(
+						Vector3D::getFromPixelVector(((ColliderSpec*)colliderToCheck->componentSpec)->displacement), 
+						colliderToCheck->transformation->rotation
+					);	
+				
 				colliderToCheck->position = Vector3D::sum(colliderToCheck->transformation->position, displacement);
 				colliderToCheck->invalidPosition = false;
 			}

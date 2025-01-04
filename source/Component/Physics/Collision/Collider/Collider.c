@@ -94,8 +94,17 @@ void Collider::destructor()
 
 			if(!isDeleted(otherColliderRegistry->collider))
 			{
-				Collider::removeEventListener(otherColliderRegistry->collider, ListenerObject::safeCast(this), (EventListener)Collider::onOtherColliderChanged, kEventColliderDeleted);
-				Collider::removeEventListener(otherColliderRegistry->collider, ListenerObject::safeCast(this), (EventListener)Collider::onOtherColliderChanged, kEventColliderChanged);
+				Collider::removeEventListener
+				(
+					otherColliderRegistry->collider, ListenerObject::safeCast(this), (EventListener)Collider::onOtherColliderChanged, 
+					kEventColliderDeleted
+				);
+
+				Collider::removeEventListener
+				(
+					otherColliderRegistry->collider, ListenerObject::safeCast(this), (EventListener)Collider::onOtherColliderChanged, 
+					kEventColliderChanged
+				);
 			}
 
 			delete otherColliderRegistry;
@@ -277,7 +286,8 @@ CollisionResult Collider::collides(Collider collider)
 
 			if(this->registerCollisions)
 			{
-				otherColliderRegistry = Collider::registerOtherCollider(this, collider, collision.collisionInformation.solutionVector, false);
+				otherColliderRegistry = 
+					Collider::registerOtherCollider(this, collider, collision.collisionInformation.solutionVector, false);
 			}
 		}
 	}
@@ -287,7 +297,12 @@ CollisionResult Collider::collides(Collider collider)
 	{
 		CollisionTester::testOverlaping(this, collider, &collision.collisionInformation, __STILL_COLLIDING_CHECK_SIZE_INCREMENT);
 
-		if(collision.collisionInformation.collider == this && collision.collisionInformation.solutionVector.magnitude >= __STILL_COLLIDING_CHECK_SIZE_INCREMENT)
+		if
+		(
+			collision.collisionInformation.collider == this 
+			&& 
+			collision.collisionInformation.solutionVector.magnitude >= __STILL_COLLIDING_CHECK_SIZE_INCREMENT
+		)
 		{
 			collision.result = kCollisionPersists;
 		}
@@ -362,7 +377,12 @@ void Collider::resolveCollision(const CollisionInformation* collisionInformation
 
 		if(this->registerCollisions)
 		{
-			OtherColliderRegistry* otherColliderRegistry = Collider::registerOtherCollider(this, collisionInformation->otherCollider, collisionInformation->solutionVector, true);
+			OtherColliderRegistry* otherColliderRegistry = 
+				Collider::registerOtherCollider
+				(
+					this, collisionInformation->otherCollider, collisionInformation->solutionVector, true
+				);
+
 			ASSERT(!isDeleted(otherColliderRegistry), "Collider::resolveCollision: dead otherColliderRegistry");
 			otherColliderRegistry->frictionCoefficient =  GameObject::getFrictionCoefficient(collisionInformation->otherCollider->owner);
 		}
@@ -419,8 +439,17 @@ void Collider::discardCollisions()
 
 			if(!isDeleted(otherColliderRegistry->collider))
 			{
-				Collider::removeEventListener(otherColliderRegistry->collider, ListenerObject::safeCast(this), (EventListener)Collider::onOtherColliderChanged, kEventColliderDeleted);
-				Collider::removeEventListener(otherColliderRegistry->collider, ListenerObject::safeCast(this), (EventListener)Collider::onOtherColliderChanged, kEventColliderChanged);
+				Collider::removeEventListener
+				(
+					otherColliderRegistry->collider, ListenerObject::safeCast(this), (EventListener)Collider::onOtherColliderChanged, 
+					kEventColliderDeleted
+				);
+				
+				Collider::removeEventListener
+				(
+					otherColliderRegistry->collider, ListenerObject::safeCast(this), (EventListener)Collider::onOtherColliderChanged, 
+					kEventColliderChanged
+				);
 			}
 
 			delete otherColliderRegistry;
@@ -533,11 +562,13 @@ void Collider::collisionStarts(Collision* collision)
 {
 	if(GameObject::collisionStarts(this->owner, &collision->collisionInformation))
 	{
-		OtherColliderRegistry* otherColliderRegistry = Collider::findOtherColliderRegistry(this, collision->collisionInformation.otherCollider);
+		OtherColliderRegistry* otherColliderRegistry = 
+			Collider::findOtherColliderRegistry(this, collision->collisionInformation.otherCollider);
 
 		if(otherColliderRegistry)
 		{
-			otherColliderRegistry->frictionCoefficient =  GameObject::getFrictionCoefficient(collision->collisionInformation.otherCollider->owner);
+			otherColliderRegistry->frictionCoefficient = 
+				GameObject::getFrictionCoefficient(collision->collisionInformation.otherCollider->owner);
 		}
 	}
 }
@@ -615,8 +646,15 @@ OtherColliderRegistry* Collider::registerOtherCollider(Collider otherCollider, S
 	{
 		VirtualList::pushBack(this->otherColliders, otherColliderRegistry);
 
-		Collider::addEventListener(otherCollider, ListenerObject::safeCast(this), (EventListener)Collider::onOtherColliderChanged, kEventColliderDeleted);
-		Collider::addEventListener(otherCollider, ListenerObject::safeCast(this), (EventListener)Collider::onOtherColliderChanged, kEventColliderChanged);
+		Collider::addEventListener
+		(
+			otherCollider, ListenerObject::safeCast(this), (EventListener)Collider::onOtherColliderChanged, kEventColliderDeleted
+		);
+		
+		Collider::addEventListener
+		(
+			otherCollider, ListenerObject::safeCast(this), (EventListener)Collider::onOtherColliderChanged, kEventColliderChanged
+		);
 	}
 
 	return otherColliderRegistry;
@@ -641,8 +679,15 @@ bool Collider::unregisterOtherCollider(Collider otherCollider)
 
 	if(!isDeleted(otherCollider))
 	{
-		Collider::removeEventListener(otherCollider, ListenerObject::safeCast(this), (EventListener)Collider::onOtherColliderChanged, kEventColliderDeleted);
-		Collider::removeEventListener(otherCollider, ListenerObject::safeCast(this), (EventListener)Collider::onOtherColliderChanged, kEventColliderChanged);
+		Collider::removeEventListener
+		(
+			otherCollider, ListenerObject::safeCast(this), (EventListener)Collider::onOtherColliderChanged, kEventColliderDeleted
+		);
+		
+		Collider::removeEventListener
+		(
+			otherCollider, ListenerObject::safeCast(this), (EventListener)Collider::onOtherColliderChanged, kEventColliderChanged
+		);
 	}
 
 	return true;

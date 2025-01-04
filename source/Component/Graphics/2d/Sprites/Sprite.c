@@ -712,7 +712,12 @@ void Sprite::print(int32 x, int32 y)
 			Printing::text(Printing::getInstance(), "Segment:                         ", x, ++y, NULL);
 			Printing::int32(Printing::getInstance(), BgmapTexture::getSegment(bgmapTexture), x + 18, y, NULL);
 			Printing::text(Printing::getInstance(), "Written:                         ", x, ++y, NULL);
-			Printing::text(Printing::getInstance(), Texture::isWritten(bgmapTexture) ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, x + 18, y, NULL);
+			Printing::text
+			(
+				Printing::getInstance(), 
+				Texture::isWritten(bgmapTexture) ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, x + 18, y, NULL
+			);
+
 			Printing::text(Printing::getInstance(), "Rows remaining:                  ", x, ++y, NULL);
 			Printing::int32(Printing::getInstance(), BgmapTexture::getRemainingRowsToBeWritten(bgmapTexture), x + 18, y, NULL);
 		}
@@ -823,12 +828,26 @@ void Sprite::update()
 
 bool Sprite::isWithinScreenSpace()
 {
-	if(!((unsigned)(this->position.x + this->displacement.x - (_cameraFrustum->x0 - this->halfWidth)) < (unsigned)(_cameraFrustum->x1 + this->halfWidth - (_cameraFrustum->x0 - this->halfWidth))))
+	if
+	(
+		!(
+			(unsigned)(this->position.x + this->displacement.x - (_cameraFrustum->x0 - this->halfWidth)) 
+			< 
+			(unsigned)(_cameraFrustum->x1 + this->halfWidth - (_cameraFrustum->x0 - this->halfWidth))
+		)
+	)
 	{
 		return false;
 	}
 
-	if(!((unsigned)(this->position.y + this->displacement.y - (_cameraFrustum->y0 - this->halfHeight)) < (unsigned)(_cameraFrustum->y1 + this->halfHeight - (_cameraFrustum->y0 - this->halfHeight))))
+	if
+	(
+		!(
+			(unsigned)(this->position.y + this->displacement.y - (_cameraFrustum->y0 - this->halfHeight)) 
+			< 
+			(unsigned)(_cameraFrustum->y1 + this->halfHeight - (_cameraFrustum->y0 - this->halfHeight))
+		)
+	)
 	{
 		return false;
 	}

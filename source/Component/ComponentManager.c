@@ -216,7 +216,11 @@ static VirtualList ComponentManager::getComponents(GameObject owner, uint32 comp
 {
 	if(NULL == owner->components)
 	{
-		owner->components = (VirtualList*)((uint32)MemoryPool::allocate(sizeof(VirtualList) * kComponentTypes + __DYNAMIC_STRUCT_PAD) + __DYNAMIC_STRUCT_PAD);
+		owner->components = 
+			(VirtualList*)
+			(
+				(uint32)MemoryPool::allocate(sizeof(VirtualList) * kComponentTypes + __DYNAMIC_STRUCT_PAD) + __DYNAMIC_STRUCT_PAD
+			);
 
 		for(int16 i = 0; i < kComponentTypes; i++)
 		{

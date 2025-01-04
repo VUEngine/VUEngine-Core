@@ -305,14 +305,23 @@ uint32 EntityFactory::instantiateEntities()
 			NM_ASSERT(!isDeleted(positionedEntityDescription), "EntityFactory::spawnEntities: deleted positionedEntityDescription");
 			NM_ASSERT(NULL != positionedEntityDescription->positionedEntity, "EntityFactory::spawnEntities: null positionedEntity");
 			NM_ASSERT(NULL != positionedEntityDescription->positionedEntity->entitySpec, "EntityFactory::spawnEntities: null spec");
-			NM_ASSERT(NULL != positionedEntityDescription->positionedEntity->entitySpec->allocator, "EntityFactory::spawnEntities: no allocator defined");
+			NM_ASSERT
+			(
+				NULL != positionedEntityDescription->positionedEntity->entitySpec->allocator, 
+				"EntityFactory::spawnEntities: no allocator defined"
+			);
 
-			positionedEntityDescription->entity = Entity::createEntityDeferred(positionedEntityDescription->positionedEntity, positionedEntityDescription->internalId);
+			positionedEntityDescription->entity = 
+				Entity::createEntityDeferred(positionedEntityDescription->positionedEntity, positionedEntityDescription->internalId);
 			NM_ASSERT(positionedEntityDescription->entity, "EntityFactory::spawnEntities: entity not loaded");
 
 			if(!isDeleted(positionedEntityDescription->entity) && NULL != positionedEntityDescription->callback)
 			{
-				Entity::addEventListener(positionedEntityDescription->entity, ListenerObject::safeCast(positionedEntityDescription->parent), positionedEntityDescription->callback, kEventEntityLoaded);
+				Entity::addEventListener
+				(
+					positionedEntityDescription->entity, ListenerObject::safeCast(positionedEntityDescription->parent), 
+					positionedEntityDescription->callback, kEventEntityLoaded
+				);
 			}
 		}
 	}
@@ -355,9 +364,19 @@ uint32 EntityFactory::transformEntities()
 		{
 			EntitySpec* entitySpec = Entity::getSpec(positionedEntityDescription->entity);
 			
-			if(NULL != entitySpec && NULL != entitySpec->componentSpecs && NULL != entitySpec->componentSpecs[positionedEntityDescription->componentIndex])
+			if
+			(
+				NULL != entitySpec && NULL != entitySpec->componentSpecs && 
+				NULL != entitySpec->componentSpecs[positionedEntityDescription->componentIndex]
+			)
 			{
-				bool createdComponent = NULL != Entity::addComponent(positionedEntityDescription->entity, (ComponentSpec*)entitySpec->componentSpecs[positionedEntityDescription->componentIndex]);
+				bool createdComponent = 
+					NULL != Entity::addComponent
+					(
+						positionedEntityDescription->entity, 
+						(ComponentSpec*)entitySpec->componentSpecs[positionedEntityDescription->componentIndex]
+					);
+					
 				positionedEntityDescription->componentIndex++;
 
 				if(createdComponent)

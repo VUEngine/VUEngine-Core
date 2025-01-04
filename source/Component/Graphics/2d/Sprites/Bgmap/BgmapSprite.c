@@ -434,7 +434,8 @@ void BgmapSprite::configureTexture()
 		return;
 	}
 
-	this->texture = Texture::safeCast(BgmapTextureManager::getTexture(BgmapTextureManager::getInstance(), textureSpec, 0, false, __WORLD_1x1));
+	this->texture = 
+		Texture::safeCast(BgmapTextureManager::getTexture(BgmapTextureManager::getInstance(), textureSpec, 0, false, __WORLD_1x1));
 
 	if(isDeleted(this->texture))
 	{
@@ -449,7 +450,9 @@ void BgmapSprite::configureTexture()
 
 	if(0 != this->param && !isDeleted(this->texture))
 	{
-		Texture::addEventListener(this->texture, ListenerObject::safeCast(this), (EventListener)BgmapSprite::onTextureRewritten, kEventTextureRewritten);
+		Texture::addEventListener(
+			this->texture, ListenerObject::safeCast(this), (EventListener)BgmapSprite::onTextureRewritten, kEventTextureRewritten
+		);
 	}
 }
 
@@ -481,7 +484,8 @@ void BgmapSprite::setMode(uint16 display, uint16 mode)
 
 				this->head = display | __WORLD_AFFINE;
 				this->param = ParamTableManager::allocate(ParamTableManager::getInstance(), this);
-				this->applyParamTableEffect = NULL != this->applyParamTableEffect ? this->applyParamTableEffect : BgmapSprite::doApplyAffineTransformations;
+				this->applyParamTableEffect = 
+					NULL != this->applyParamTableEffect ? this->applyParamTableEffect : BgmapSprite::doApplyAffineTransformations;
 				break;
 
 			case __WORLD_HBIAS:
@@ -601,7 +605,9 @@ void BgmapSprite::releaseTexture()
 
 		if(0 != this->param)
 		{
-			Texture::removeEventListener(this->texture, ListenerObject::safeCast(this), (EventListener)BgmapSprite::onTextureRewritten, kEventTextureRewritten);
+			Texture::removeEventListener(
+				this->texture, ListenerObject::safeCast(this), (EventListener)BgmapSprite::onTextureRewritten, kEventTextureRewritten
+			);
 		}
 		
 		BgmapTextureManager::releaseTexture(BgmapTextureManager::getInstance(), BgmapTexture::safeCast(this->texture));

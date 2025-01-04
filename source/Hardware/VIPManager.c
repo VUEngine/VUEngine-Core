@@ -368,7 +368,8 @@ void VIPManager::lowerBrightness()
 
 void VIPManager::pushFrontPostProcessingEffect(PostProcessingEffect postProcessingEffect, GameObject gameObject)
 {
-	PostProcessingEffectRegistry* postProcessingEffectRegistry = VIPManager::isPostProcessingEffectRegistered(this, postProcessingEffect, gameObject);
+	PostProcessingEffectRegistry* postProcessingEffectRegistry = 
+		VIPManager::isPostProcessingEffectRegistered(this, postProcessingEffect, gameObject);
 
 	if(!isDeleted(postProcessingEffectRegistry))
 	{
@@ -388,7 +389,8 @@ void VIPManager::pushFrontPostProcessingEffect(PostProcessingEffect postProcessi
 
 void VIPManager::pushBackPostProcessingEffect(PostProcessingEffect postProcessingEffect, GameObject gameObject)
 {
-	PostProcessingEffectRegistry* postProcessingEffectRegistry = VIPManager::isPostProcessingEffectRegistered(this, postProcessingEffect, gameObject);
+	PostProcessingEffectRegistry* postProcessingEffectRegistry = 
+		VIPManager::isPostProcessingEffectRegistered(this, postProcessingEffect, gameObject);
 
 	if(!isDeleted(postProcessingEffectRegistry))
 	{
@@ -412,7 +414,12 @@ void VIPManager::removePostProcessingEffect(PostProcessingEffect postProcessingE
 	{
 		PostProcessingEffectRegistry* postProcessingEffectRegistry = (PostProcessingEffectRegistry*)node->data;
 
-		if(postProcessingEffectRegistry->postProcessingEffect == postProcessingEffect && postProcessingEffectRegistry->gameObject == gameObject)
+		if
+		(
+			postProcessingEffectRegistry->postProcessingEffect == postProcessingEffect 
+			&& 
+			postProcessingEffectRegistry->gameObject == gameObject
+		)
 		{
 			postProcessingEffectRegistry->remove = true;
 			return;
@@ -665,7 +672,12 @@ void VIPManager::disableInterrupts()
 }
 void VIPManager::applyPostProcessingEffects()
 {
-	for(VirtualNode node = this->postProcessingEffects->tail, previousNode = NULL; !this->FRAMESTARTDuringXPEND && NULL != node; node = previousNode)
+	for
+	(
+		VirtualNode node = this->postProcessingEffects->tail, previousNode = NULL; 
+		!this->FRAMESTARTDuringXPEND && NULL != node; 
+		node = previousNode
+	)
 	{
 		previousNode = node->previous;
 
@@ -682,7 +694,10 @@ void VIPManager::applyPostProcessingEffects()
 		}
 		else
 		{
-			postProcessingEffectRegistry->postProcessingEffect(this->currentDrawingFrameBufferSet, postProcessingEffectRegistry->gameObject);
+			postProcessingEffectRegistry->postProcessingEffect
+			(
+				this->currentDrawingFrameBufferSet, postProcessingEffectRegistry->gameObject
+			);
 		}
 	}
 }
@@ -781,7 +796,10 @@ bool VIPManager::isDrawingAllowed()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-PostProcessingEffectRegistry* VIPManager::isPostProcessingEffectRegistered(PostProcessingEffect postProcessingEffect, GameObject gameObject)
+PostProcessingEffectRegistry* VIPManager::isPostProcessingEffectRegistered
+(
+	PostProcessingEffect postProcessingEffect, GameObject gameObject
+)
 {
 	VirtualNode node = this->postProcessingEffects->head;
 
@@ -789,7 +807,12 @@ PostProcessingEffectRegistry* VIPManager::isPostProcessingEffectRegistered(PostP
 	{
 		PostProcessingEffectRegistry* postProcessingEffectRegistry = (PostProcessingEffectRegistry*)node->data;
 
-		if(postProcessingEffectRegistry->postProcessingEffect == postProcessingEffect && postProcessingEffectRegistry->gameObject == gameObject)
+		if
+		(
+			postProcessingEffectRegistry->postProcessingEffect == postProcessingEffect 
+			&& 
+			postProcessingEffectRegistry->gameObject == gameObject
+		)
 		{
 			return postProcessingEffectRegistry;
 		}

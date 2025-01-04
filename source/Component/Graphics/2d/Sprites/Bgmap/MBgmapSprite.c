@@ -275,15 +275,26 @@ void MBgmapSprite::loadTexture(TextureSpec* textureSpec, bool isFirstTextureAndH
 		}
 	}
 
-	BgmapTexture bgmapTexture = BgmapTextureManager::getTexture(BgmapTextureManager::getInstance(), textureSpec, minimumSegment, isFirstTextureAndHasMultipleTextures, ((MBgmapSpriteSpec*)this->componentSpec)->scValue);
+	BgmapTexture bgmapTexture = 
+		BgmapTextureManager::getTexture
+		(
+			BgmapTextureManager::getInstance(), textureSpec, minimumSegment, isFirstTextureAndHasMultipleTextures,
+			((MBgmapSpriteSpec*)this->componentSpec)->scValue
+		);
 
 	NM_ASSERT(!isDeleted(bgmapTexture), "MBgmapSprite::loadTexture: texture not loaded");
 	NM_ASSERT(!isDeleted(this->textures), "MBgmapSprite::loadTexture: null textures list");
-	NM_ASSERT(!isFirstTextureAndHasMultipleTextures || 0 == (BgmapTexture::getSegment(bgmapTexture) % 2), "MBgmapSprite::loadTexture: first texture not loaded in even segment");
+	NM_ASSERT
+	(
+		!isFirstTextureAndHasMultipleTextures || 0 == (BgmapTexture::getSegment(bgmapTexture) % 2), 
+		"MBgmapSprite::loadTexture: first texture not loaded in even segment"
+	);
 
 	if(!isDeleted(bgmapTexture))
 	{
-		BgmapTexture::addEventListener(bgmapTexture, ListenerObject::safeCast(this), (EventListener)BgmapSprite::onTextureRewritten, kEventTextureRewritten);
+		BgmapTexture::addEventListener(
+			bgmapTexture, ListenerObject::safeCast(this), (EventListener)BgmapSprite::onTextureRewritten, kEventTextureRewritten
+		);
 
 		VirtualList::pushBack(this->textures, bgmapTexture);
 
@@ -319,7 +330,10 @@ void MBgmapSprite::releaseTextures()
 
 			if(!isDeleted(bgmapTexture))
 			{
-				BgmapTexture::removeEventListener(bgmapTexture, ListenerObject::safeCast(this), (EventListener)BgmapSprite::onTextureRewritten, kEventTextureRewritten);
+				BgmapTexture::removeEventListener(
+					bgmapTexture, ListenerObject::safeCast(this), (EventListener)BgmapSprite::onTextureRewritten, kEventTextureRewritten
+				);
+				
 				BgmapTextureManager::releaseTexture(BgmapTextureManager::getInstance(), bgmapTexture);
 			}
 		}

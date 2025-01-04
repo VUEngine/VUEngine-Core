@@ -60,7 +60,10 @@ void UIContainer::destructor()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void UIContainer::transform(const Transformation* environmentTransform __attribute__((unused)), uint8 invalidateTransformationFlag __attribute__((unused)))
+void UIContainer::transform
+(
+	const Transformation* environmentTransform __attribute__((unused)), uint8 invalidateTransformationFlag __attribute__((unused))
+)
 {
 	extern Transformation _neutralEnvironmentTransformation;
 

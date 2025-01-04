@@ -32,12 +32,16 @@ class ListenerObject;
 #define __TIMER_COUNTER_DELTA						1
 
 // Use with 20us timer (range = 0 to 1300)
-#define __TIME_US(n)								(((n) / TimerManager::getResolutionInUS(TimerManager::getInstance())) - __TIMER_COUNTER_DELTA)
-#define __TIME_INVERSE_US(n)						((n + __TIMER_COUNTER_DELTA) * TimerManager::getResolutionInUS(TimerManager::getInstance()))
+#define __TIME_US(n)								(((n) / TimerManager::getResolutionInUS(TimerManager::getInstance())) 				\
+													- __TIMER_COUNTER_DELTA)
+#define __TIME_INVERSE_US(n)						((n + __TIMER_COUNTER_DELTA) * 														\
+													TimerManager::getResolutionInUS(TimerManager::getInstance()))
 
 // Use with 100us timer (range = 0 to 6500, and 0 to 6.5)
-#define __TIME_MS(n)								((((n) * __MICROSECONDS_PER_MILLISECOND) / TimerManager::getResolutionInUS(TimerManager::getInstance())) - __TIMER_COUNTER_DELTA)
-#define __TIME_INVERSE_MS(n)						((n + __TIMER_COUNTER_DELTA) * TimerManager::getResolutionInUS(TimerManager::getInstance()) / 1000)
+#define __TIME_MS(n)								((((n) * __MICROSECONDS_PER_MILLISECOND) / 											\
+													TimerManager::getResolutionInUS(TimerManager::getInstance())) - __TIMER_COUNTER_DELTA)
+#define __TIME_INVERSE_MS(n)						((n + __TIMER_COUNTER_DELTA) * 														\
+													TimerManager::getResolutionInUS(TimerManager::getInstance()) / 1000)
 
 #define __TIMER_ENB									0x01
 #define __TIMER_ZSTAT								0x02
@@ -48,7 +52,8 @@ class ListenerObject;
 
 #define __MINIMUM_TIME_PER_INTERRUPT_US_STEP		(TimerManager::getResolutionInUS(TimerManager::getInstance()))
 #define __MINIMUM_TIME_PER_INTERRUPT_MS_STEP		1
-#define __MINIMUM_TIME_PER_INTERRUPT_US				(TimerManager::getResolutionInUS(TimerManager::getInstance()) + TimerManager::getResolutionInUS(TimerManager::getInstance()) * __TIMER_COUNTER_DELTA)
+#define __MINIMUM_TIME_PER_INTERRUPT_US				(TimerManager::getResolutionInUS(TimerManager::getInstance()) + 					\
+													TimerManager::getResolutionInUS(TimerManager::getInstance()) * __TIMER_COUNTER_DELTA)
 #define __MAXIMUM_TIME_PER_INTERRUPT_US 			(1.3f * 1000)
 #define __MINIMUM_TIME_PER_INTERRUPT_MS				1
 #define __MAXIMUM_TIME_PER_INTERRUPT_MS 			49

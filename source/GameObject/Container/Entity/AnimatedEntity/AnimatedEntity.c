@@ -85,7 +85,12 @@ void AnimatedEntity::playAnimation(const char* animationName)
 {
 	this->playingAnimationName = animationName;
 
-	SpriteManager::propagateCommand(SpriteManager::getInstance(), cVisualComponentCommandPlay, GameObject::safeCast(this), ((AnimatedEntitySpec*)this->entitySpec)->animationFunctions, animationName, ListenerObject::safeCast(this), (EventListener)AnimatedEntity::onAnimationComplete);
+	SpriteManager::propagateCommand
+	(
+		SpriteManager::getInstance(), cVisualComponentCommandPlay, GameObject::safeCast(this), 
+		((AnimatedEntitySpec*)this->entitySpec)->animationFunctions, animationName, ListenerObject::safeCast(this), 
+		(EventListener)AnimatedEntity::onAnimationComplete
+	);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————

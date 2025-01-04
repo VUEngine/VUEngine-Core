@@ -188,7 +188,11 @@ void Printing::releaseFonts()
 		{
 			if(!isDeleted(fontData->charSet))
 			{
-				CharSet::removeEventListener(fontData->charSet, ListenerObject::safeCast(this), (EventListener)Printing::onFontCharChangedOffset, kEventCharSetChangedOffset);
+				CharSet::removeEventListener
+				(
+					fontData->charSet, ListenerObject::safeCast(this), (EventListener)Printing::onFontCharChangedOffset,
+					kEventCharSetChangedOffset
+				);
 
 				while(!CharSetManager::releaseCharSet(CharSetManager::getInstance(), fontData->charSet));
 			}
@@ -209,7 +213,11 @@ void Printing::clear()
 {
 	if(!isDeleted(this->activePrintingSprite))
 	{
-		Mem::clear((BYTE*)__BGMAP_SEGMENT(BgmapTextureManager::getPrintingBgmapSegment(BgmapTextureManager::getInstance()) + 1) - __PRINTABLE_BGMAP_AREA * 2, __PRINTABLE_BGMAP_AREA * 2);
+		Mem::clear
+		(
+			(BYTE*)__BGMAP_SEGMENT(BgmapTextureManager::getPrintingBgmapSegment(BgmapTextureManager::getInstance()) + 1) - 
+			__PRINTABLE_BGMAP_AREA * 2, __PRINTABLE_BGMAP_AREA * 2
+		);
 	}
 }
 
@@ -465,7 +473,8 @@ void Printing::addSprite()
 	};
 
 	this->printingBgmapSegment = BgmapTextureManager::getPrintingBgmapSegment(BgmapTextureManager::getInstance());
-	this->activePrintingSprite = PrintingSprite::safeCast(SpriteManager::createSprite(SpriteManager::getInstance(), NULL, (SpriteSpec*)&DefaultPrintingSpriteSpec));
+	this->activePrintingSprite = 
+		PrintingSprite::safeCast(SpriteManager::createSprite(SpriteManager::getInstance(), NULL, (SpriteSpec*)&DefaultPrintingSpriteSpec));
 
 	PrintingSprite::setPrintingBgmapSegment(this->activePrintingSprite, this->printingBgmapSegment);
 
@@ -570,7 +579,16 @@ void Printing::setBgmapCoordinates(int16 mx __attribute__ ((unused)), int16 my _
 {
 	if(!isDeleted(this->activePrintingSprite))
 	{
-		PrintingSprite::setMValues(this->activePrintingSprite, mx <= 64 * 8 ? mx : 0, __PRINTING_BGMAP_Y_OFFSET + my <= 64 * 8 ? __PRINTING_BGMAP_Y_OFFSET + my : __PRINTING_BGMAP_Y_OFFSET, mp);
+		PrintingSprite::setMValues
+		(
+			this->activePrintingSprite, mx <= 64 * 8 ? 
+				mx : 
+				0, 
+				__PRINTING_BGMAP_Y_OFFSET + my <= 64 * 8 ? 
+					__PRINTING_BGMAP_Y_OFFSET + my 
+					: 
+					__PRINTING_BGMAP_Y_OFFSET, mp
+		);
 	}
 }
 #endif
@@ -590,7 +608,10 @@ void Printing::setWorldSize(uint16 w __attribute__ ((unused)), uint16 h __attrib
 {
 	if(!isDeleted(this->activePrintingSprite))
 	{
-		PrintingSprite::setSize(this->activePrintingSprite, w < __SCREEN_WIDTH ? w : __SCREEN_WIDTH, h < __SCREEN_HEIGHT ? h : __SCREEN_HEIGHT);
+		PrintingSprite::setSize
+		(
+			this->activePrintingSprite, w < __SCREEN_WIDTH ? w : __SCREEN_WIDTH, h < __SCREEN_HEIGHT ? h : __SCREEN_HEIGHT
+		);
 	}
 }
 #endif
@@ -650,7 +671,11 @@ int16 Printing::getWorldCoordinatesP()
 
 PixelVector Printing::getSpriteIndex()
 {
-	return !isDeleted(this->activePrintingSprite) ? PrintingSprite::getDisplacedPosition(this->activePrintingSprite) : (PixelVector){0, 0, 0, 0};
+	return 
+		!isDeleted(this->activePrintingSprite) ? 
+			PrintingSprite::getDisplacedPosition(this->activePrintingSprite) 
+			: 
+			(PixelVector){0, 0, 0, 0};
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -692,7 +717,11 @@ FontData* Printing::getFontByName(const char* font)
 			{
 				result->charSet = CharSetManager::getCharSet(CharSetManager::getInstance(), result->fontSpec->charSetSpec);
 
-				CharSet::addEventListener(result->charSet, ListenerObject::safeCast(this), (EventListener)Printing::onFontCharChangedOffset, kEventCharSetChangedOffset);
+				CharSet::addEventListener
+				(
+					result->charSet, ListenerObject::safeCast(this), (EventListener)Printing::onFontCharChangedOffset, 
+					kEventCharSetChangedOffset
+				);
 			}
 		}
 	}
@@ -958,17 +987,17 @@ void Printing::out(uint8 x, uint8 y, const char* string, const char* font)
 					{
 						for(charOffsetY = 0; charOffsetY < fontData->fontSpec->fontSize.y; charOffsetY++)
 						{
-							charOffset = charOffsetX + (charOffsetY * fontData->fontSpec->charactersPerLineInCharset * fontData->fontSpec->fontSize.x);
+							charOffset = 
+								charOffsetX + 
+								(charOffsetY * fontData->fontSpec->charactersPerLineInCharset * fontData->fontSpec->fontSize.x);
 
-							bgmapSpaceBaseAddress[(0x1000 * (this->printingBgmapSegment + 1) - __PRINTABLE_BGMAP_AREA) + position + charOffsetX + (charOffsetY << 6)] =
+							bgmapSpaceBaseAddress[(0x1000 * (this->printingBgmapSegment + 1) - 
+							__PRINTABLE_BGMAP_AREA) + position + charOffsetX + (charOffsetY << 6)] =
 								(
 									// offset of charset in char memory
 									offset +
-
-									// offset of character in charset
 									((uint8)(string[i] - fontData->fontSpec->offset) * fontData->fontSpec->fontSize.x) +
 
-									// additional y offset in charset
 									(((uint8)(string[i] - fontData->fontSpec->offset)
 										/ fontData->fontSpec->charactersPerLineInCharset
 										* fontData->fontSpec->charactersPerLineInCharset * fontData->fontSpec->fontSize.x)

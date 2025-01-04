@@ -193,7 +193,10 @@ void BgmapTextureManager::loadTextures(const TextureSpec** textureSpecs)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-BgmapTexture BgmapTextureManager::getTexture(BgmapTextureSpec* bgmapTextureSpec, int16 minimumSegment, bool mustLiveAtEvenSegment, uint32 scValue)
+BgmapTexture BgmapTextureManager::getTexture
+(
+	BgmapTextureSpec* bgmapTextureSpec, int16 minimumSegment, bool mustLiveAtEvenSegment, uint32 scValue
+)
 {
 	if(NULL == bgmapTextureSpec)
 	{
@@ -225,7 +228,8 @@ BgmapTexture BgmapTextureManager::getTexture(BgmapTextureSpec* bgmapTextureSpec,
 			else
 			{
 				// load a new texture
-				bgmapTexture = BgmapTextureManager::allocateTexture(this, bgmapTextureSpec, minimumSegment, mustLiveAtEvenSegment, scValue);
+				bgmapTexture = 
+					BgmapTextureManager::allocateTexture(this, bgmapTextureSpec, minimumSegment, mustLiveAtEvenSegment, scValue);
 			}
 
 			ASSERT(bgmapTexture, "BgmapTextureManager::getTexture: (animated) texture no allocated");
@@ -243,7 +247,8 @@ BgmapTexture BgmapTextureManager::getTexture(BgmapTextureSpec* bgmapTextureSpec,
 			else
 			{
 				// load it
-				bgmapTexture = BgmapTextureManager::allocateTexture(this, bgmapTextureSpec, minimumSegment, mustLiveAtEvenSegment, scValue);
+				bgmapTexture = 
+					BgmapTextureManager::allocateTexture(this, bgmapTextureSpec, minimumSegment, mustLiveAtEvenSegment, scValue);
 			}
 
 			ASSERT(!isDeleted(bgmapTexture), "BgmapTextureManager::getTexture: (shared) texture no allocated");
@@ -326,7 +331,6 @@ void BgmapTextureManager::print(int32 x, int32 y)
 			recyclableTextures++;
 			freeEntries += !BgmapTexture::getUsageCount(bgmapTexture)? 1 : 0;
 
-//				Printing::text(Printing::getInstance(), BgmapTexture::getUsageCount(bgmapTexture) ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, x + j + 1, y + i, NULL);
 			Printing::hex(Printing::getInstance(), (int32)Texture::getSpec(bgmapTexture), x + j, y + i, 8, NULL);
 			Printing::int32(Printing::getInstance(), BgmapTexture::getUsageCount(bgmapTexture), x + j + 9, y + i, NULL);
 
@@ -398,8 +402,19 @@ BgmapTexture BgmapTextureManager::findTexture(BgmapTextureSpec* bgmapTextureSpec
 
 		if(!recyclableOnly && allocatedTextureSpec == textureSpec)
 		{
-			if((NULL == allocatedBgmapTexture->charSet || allocatedTextureSpec->charSetSpec->shared == bgmapTextureSpec->charSetSpec->shared) &&
-				(allocatedTextureSpec->padding.cols == bgmapTextureSpec->padding.cols && allocatedTextureSpec->padding.rows == bgmapTextureSpec->padding.rows)
+			if
+			(
+				(
+					NULL == allocatedBgmapTexture->charSet 
+					|| 
+					allocatedTextureSpec->charSetSpec->shared == bgmapTextureSpec->charSetSpec->shared
+				) 
+				&&
+				(
+					allocatedTextureSpec->padding.cols == bgmapTextureSpec->padding.cols 
+					&& 
+					allocatedTextureSpec->padding.rows == bgmapTextureSpec->padding.rows
+				)
 			)
 			{
 				// return if found
@@ -418,7 +433,12 @@ BgmapTexture BgmapTextureManager::findTexture(BgmapTextureSpec* bgmapTextureSpec
 			uint16 cols = this->offset[id][kCols];
 			uint16 rows = this->offset[id][kRows];
 
-			if(textureSpec->cols > (cols >> 2) && textureSpec->cols <= cols && (textureSpec->rows > (rows >> 2)) && textureSpec->rows <= rows)
+			if
+			(
+				textureSpec->cols > (cols >> 2) && textureSpec->cols <= cols 
+				&& 
+				(textureSpec->rows > (rows >> 2)) && textureSpec->rows <= rows
+			)
 			{
 				if(textureSpec->cols == cols && textureSpec->rows == rows)
 				{
@@ -454,12 +474,16 @@ BgmapTexture BgmapTextureManager::findTexture(BgmapTextureSpec* bgmapTextureSpec
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-BgmapTexture BgmapTextureManager::allocateTexture(BgmapTextureSpec* bgmapTextureSpec, int16 minimumSegment, bool mustLiveAtEvenSegment, uint32 scValue)
+BgmapTexture BgmapTextureManager::allocateTexture
+(
+	BgmapTextureSpec* bgmapTextureSpec, int16 minimumSegment, bool mustLiveAtEvenSegment, uint32 scValue
+)
 {
 	uint16 id = VirtualList::getCount(this->bgmapTextures);
 
 	//if not, then allocate
-	int32 segment = BgmapTextureManager::doAllocate(this, id, (TextureSpec*)bgmapTextureSpec, minimumSegment, mustLiveAtEvenSegment, scValue);
+	int32 segment = 
+		BgmapTextureManager::doAllocate(this, id, (TextureSpec*)bgmapTextureSpec, minimumSegment, mustLiveAtEvenSegment, scValue);
 
 	if(0 > segment)
 	{
@@ -478,7 +502,10 @@ BgmapTexture BgmapTextureManager::allocateTexture(BgmapTextureSpec* bgmapTexture
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-int32 BgmapTextureManager::doAllocate(uint16 id, TextureSpec* textureSpec, int16 minimumSegment, bool mustLiveAtEvenSegment, uint32 scValue)
+int32 BgmapTextureManager::doAllocate
+(
+	uint16 id, TextureSpec* textureSpec, int16 minimumSegment, bool mustLiveAtEvenSegment, uint32 scValue
+)
 {
 	int32 i = 0;
 	int32 j = 0;
@@ -565,7 +592,11 @@ int32 BgmapTextureManager::doAllocate(uint16 id, TextureSpec* textureSpec, int16
 							this->offset[id][kCols] = cols;
 							this->offset[id][kRows] = rows;
 
-							NM_ASSERT(!mustLiveAtEvenSegment || 0 == (i % 2), "BgmapTextureManager::doAllocate: cannot honor request for even bgmap");
+							NM_ASSERT
+							(
+								!mustLiveAtEvenSegment || 0 == (i % 2), 
+								"BgmapTextureManager::doAllocate: cannot honor request for even bgmap"
+							);
 
 							// increment the x offset
 							this->xOffset[i][j] += cols + colsPad;

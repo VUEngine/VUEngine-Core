@@ -73,7 +73,16 @@ bool AnimationCoordinator::playAnimation(AnimationController animationController
 		}
 
 		// only if not playing already
-		if(!AnimationController::isPlaying(firstAnimationController) || strncmp(animationName, AnimationController::getPlayingAnimationFunction(firstAnimationController)->name, __MAX_ANIMATION_FUNCTION_NAME_LENGTH))
+		if
+		(
+			!AnimationController::isPlaying(firstAnimationController) 
+			|| 
+			strncmp
+			(
+				animationName, 
+				AnimationController::getPlayingAnimationFunction(firstAnimationController)->name, __MAX_ANIMATION_FUNCTION_NAME_LENGTH
+			)
+		)
 		{
 			// first animate the frame
 			AnimationController::play(firstAnimationController, animationFunctions, animationName, this->scope, NULL);
@@ -90,7 +99,11 @@ bool AnimationCoordinator::playAnimation(AnimationController animationController
 void AnimationCoordinator::addAnimationController(AnimationController animationController)
 {
 	ASSERT(animationController, "AnimationCoordinator::addAnimationController: null animationController");
-	ASSERT(!VirtualList::find(this->animationControllers, animationController), "AnimationCoordinator::addAnimationController: animationController already registered");
+	ASSERT
+	(
+		!VirtualList::find(this->animationControllers, animationController), 
+		"AnimationCoordinator::addAnimationController: animationController already registered"
+	);
 
 	if(!VirtualList::find(this->animationControllers, animationController))
 	{
@@ -115,7 +128,10 @@ void AnimationCoordinator::removeAnimationController(AnimationController animati
 		{
 			if(AnimationController::isPlaying(animationController))
 			{
-				AnimationController::playAnimationFunction(firstAnimationController, AnimationController::getPlayingAnimationFunction(animationController), this->scope);
+				AnimationController::playAnimationFunction
+				(
+					firstAnimationController, AnimationController::getPlayingAnimationFunction(animationController), this->scope
+				);
 				int16 currentFrame = AnimationController::getActualFrame(animationController);
 				uint8 frameDuration = AnimationController::getFrameDuration(animationController);
 				AnimationController::setActualFrame(firstAnimationController, currentFrame);

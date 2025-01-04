@@ -220,7 +220,11 @@ void VisualComponent::handleCommand(int32 command, va_list args)
 
 		case cVisualComponentCommandPlay:
 
-			VisualComponent::play(this, (const AnimationFunction**)va_arg(args, AnimationFunction**), (const char*)va_arg(args, char*), va_arg(args, ListenerObject), (EventListener)va_arg(args, EventListener));
+			VisualComponent::play
+			(
+				this, (const AnimationFunction**)va_arg(args, AnimationFunction**), (const char*)va_arg(args, char*), 
+				va_arg(args, ListenerObject), (EventListener)va_arg(args, EventListener)
+			);
 			break;
 
 		case cVisualComponentCommandPause:
@@ -274,7 +278,10 @@ void VisualComponent::forceChangeOfFrame(int16 actualFrame __attribute__((unused
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-bool VisualComponent::play(const AnimationFunction* animationFunctions[], const char* animationName, ListenerObject scope, EventListener callback)
+bool VisualComponent::play
+(
+	const AnimationFunction* animationFunctions[], const char* animationName, ListenerObject scope, EventListener callback
+)
 {
 	ASSERT(NULL != animationFunctions, "VisualComponent::play: null animationFunctions");
 	ASSERT(NULL != animationName, "VisualComponent::play: null animationName");
@@ -379,7 +386,8 @@ void VisualComponent::setActualFrame(int16 actualFrame)
 {
 	if(!isDeleted(this->animationController))
 	{
-		this->updateAnimationFrame = this->updateAnimationFrame || AnimationController::setActualFrame(this->animationController, actualFrame);
+		this->updateAnimationFrame = 
+			this->updateAnimationFrame || AnimationController::setActualFrame(this->animationController, actualFrame);
 	}
 	else
 	{

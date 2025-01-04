@@ -45,7 +45,10 @@ static class CollisionTester : Object
 	/// @param otherCollider: Collider against which to test the overlaping
 	/// @param collisionInformation: Struct holding the information with the results of the test
 	/// @param sizeDelta: Delta to add to the collider's size
-	static void testOverlaping(Collider requesterCollider, Collider otherCollider, CollisionInformation* collisionInformation, fixed_t sizeDelta);
+	static void testOverlaping
+	(
+		Collider requesterCollider, Collider otherCollider, CollisionInformation* collisionInformation, fixed_t sizeDelta
+	);
 }
 
 

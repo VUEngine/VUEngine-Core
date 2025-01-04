@@ -294,7 +294,11 @@ void Box::projectOntoItself()
 	// Initialize vertex projections
 	for(; normalIndex < __COLLIDER_NORMALS; normalIndex++)
 	{
-		Box::project(vertexes, this->normals->vectors[normalIndex], &this->vertexProjections[normalIndex].min, &this->vertexProjections[normalIndex].max);
+		Box::project
+		(
+			vertexes, this->normals->vectors[normalIndex], &this->vertexProjections[normalIndex].min, 
+			&this->vertexProjections[normalIndex].max
+		);
 	}
 }
 

@@ -246,8 +246,12 @@ void Mesh::render(Vector3D relativePosition)
 {
 	NM_ASSERT(NULL != this->transformation, "Mesh::render: NULL transformation");
 
-	bool scale = (__1I_FIX7_9 != this->transformation->scale.x) + (__1I_FIX7_9 != this->transformation->scale.y) + (__1I_FIX7_9 != this->transformation->scale.z);
-	bool rotate = (0 != this->transformation->rotation.x) + (0 != this->transformation->rotation.y) + (0 != this->transformation->rotation.z);
+	bool scale = 
+		(__1I_FIX7_9 != this->transformation->scale.x) + (__1I_FIX7_9 != this->transformation->scale.y) + 
+		(__1I_FIX7_9 != this->transformation->scale.z);
+	
+	bool rotate = 
+		(0 != this->transformation->rotation.x) + (0 != this->transformation->rotation.y) + (0 != this->transformation->rotation.z);
 
 	if(!scale && !rotate)
 	{
@@ -273,7 +277,12 @@ void Mesh::render(Vector3D relativePosition)
 		{
 			Vertex* vertex = (Vertex*)node->data;
 
-			Vector3D vector = Vector3D::rotate(Vector3D::sum(relativePosition, Vector3D::rotate(Vector3D::scale(vertex->vector, scale), rotation)), _previousCameraInvertedRotation);
+			Vector3D vector = 
+				Vector3D::rotate
+				(
+					Vector3D::sum(relativePosition, Vector3D::rotate(Vector3D::scale(vertex->vector, scale), rotation)), 
+					_previousCameraInvertedRotation
+				);
 
 			vertex->pixelVector = PixelVector::projectVector3D(vector, Optics::calculateParallax(vector.z));
 		}
@@ -288,7 +297,11 @@ void Mesh::render(Vector3D relativePosition)
 		{
 			Vertex* vertex = (Vertex*)node->data;
 
-			Vector3D vector = Vector3D::rotate(Vector3D::sum(relativePosition, Vector3D::rotate(vertex->vector, rotation)), _previousCameraInvertedRotation);
+			Vector3D vector = 
+				Vector3D::rotate
+				(
+					Vector3D::sum(relativePosition, Vector3D::rotate(vertex->vector, rotation)), _previousCameraInvertedRotation
+				);
 
 			vertex->pixelVector = PixelVector::projectVector3D(vector, Optics::calculateParallax(vector.z));
 		}
@@ -303,7 +316,11 @@ void Mesh::render(Vector3D relativePosition)
 		{
 			Vertex* vertex = (Vertex*)node->data;
 
-			Vector3D vector = Vector3D::rotate(Vector3D::sum(relativePosition, Vector3D::scale(vertex->vector, scale)), _previousCameraInvertedRotation);
+			Vector3D vector = 
+				Vector3D::rotate
+				(
+					Vector3D::sum(relativePosition, Vector3D::scale(vertex->vector, scale)), _previousCameraInvertedRotation
+				);
 
 			vertex->pixelVector = PixelVector::projectVector3D(vector, Optics::calculateParallax(vector.z));
 		}
@@ -323,7 +340,12 @@ bool Mesh::draw()
 		MeshSegment* meshSegment = (MeshSegment*)node->data;
 
 		// draw the line in both buffers
-		drawn |= DirectDraw::drawLine(meshSegment->fromVertex->pixelVector, meshSegment->toVertex->pixelVector, this->color, this->bufferIndex, this->interlaced);
+		drawn |= 
+			DirectDraw::drawLine
+			(
+				meshSegment->fromVertex->pixelVector, meshSegment->toVertex->pixelVector, this->color, 
+				this->bufferIndex, this->interlaced
+			);
 	}
 
 	this->bufferIndex = !this->bufferIndex;
@@ -423,7 +445,13 @@ bool Mesh::drawInterlaced()
 		MeshSegment* meshSegment = (MeshSegment*)node->data;
 
 		// draw the line in both buffers
-		drawn |= DirectDraw::drawLine(meshSegment->fromVertex->pixelVector, meshSegment->toVertex->pixelVector, this->color, this->bufferIndex, true) || this->drawn;
+		drawn |= 
+			DirectDraw::drawLine
+			(
+				meshSegment->fromVertex->pixelVector, meshSegment->toVertex->pixelVector, this->color, this->bufferIndex, true
+			) 
+			|| 
+			this->drawn;
 	}
 
 	this->bufferIndex = !this->bufferIndex;

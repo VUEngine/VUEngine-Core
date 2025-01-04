@@ -511,7 +511,17 @@ void Sound::update(uint32 elapsedMicroseconds, uint32 targetPCMUpdates)
 #ifndef __LEGACY_COORDINATE_PROJECTION
 		Vector3D relativePosition = Vector3D::rotate(Vector3D::getRelativeToCamera(*this->position), *_cameraInvertedRotation);
 #else
-		Vector3D relativePosition = Vector3D::rotate(Vector3D::sub(Vector3D::getRelativeToCamera(*this->position), (Vector3D){__HALF_SCREEN_WIDTH_METERS, __HALF_SCREEN_HEIGHT_METERS, 0}), *_cameraInvertedRotation);
+		Vector3D relativePosition = 
+			Vector3D::rotate
+			(
+				Vector3D::sub
+				(
+					Vector3D::getRelativeToCamera
+					(
+						*this->position), (Vector3D){__HALF_SCREEN_WIDTH_METERS, __HALF_SCREEN_HEIGHT_METERS, 0}
+					), 
+					*_cameraInvertedRotation
+			);
 #endif
 		if(_mirror.x)
 		{
@@ -534,8 +544,13 @@ void Sound::update(uint32 elapsedMicroseconds, uint32 targetPCMUpdates)
 		fixed_ext_t squaredDistanceToLeftEar = Vector3D::squareLength(Vector3D::get(leftEar, relativePosition));
 		fixed_ext_t squaredDistanceToRightEar = Vector3D::squareLength(Vector3D::get(rightEar, relativePosition));
 
-		leftVolumeFactor  = __1I_FIXED - __FIXED_EXT_DIV(squaredDistanceToLeftEar, __FIXED_SQUARE(__PIXELS_TO_METERS(__SOUND_STEREO_ATTENUATION_DISTANCE)));
-		rightVolumeFactor = __1I_FIXED - __FIXED_EXT_DIV(squaredDistanceToRightEar, __FIXED_SQUARE(__PIXELS_TO_METERS(__SOUND_STEREO_ATTENUATION_DISTANCE)));
+		leftVolumeFactor  = 
+			__1I_FIXED - 
+			__FIXED_EXT_DIV(squaredDistanceToLeftEar, __FIXED_SQUARE(__PIXELS_TO_METERS(__SOUND_STEREO_ATTENUATION_DISTANCE)));
+		
+		rightVolumeFactor = 
+			__1I_FIXED - 
+			__FIXED_EXT_DIV(squaredDistanceToRightEar, __FIXED_SQUARE(__PIXELS_TO_METERS(__SOUND_STEREO_ATTENUATION_DISTANCE)));
 
 		if(leftVolumeFactor > rightVolumeFactor)
 		{
@@ -613,7 +628,10 @@ void Sound::print(int32 x, int32 y)
 	PRINT_INT(VirtualList::getCount(this->soundTracks), trackInfoXOffset + trackInfoValuesXOffset, y);
 
 	PRINT_TEXT("Loop", trackInfoXOffset, ++y);
-	PRINT_TEXT(this->soundSpec->loop ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, trackInfoXOffset + trackInfoValuesXOffset, y++);
+	PRINT_TEXT
+	(
+		this->soundSpec->loop ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, trackInfoXOffset + trackInfoValuesXOffset, y++
+	);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -664,10 +682,14 @@ void Sound::printPlaybackProgress(int32 x, int32 y)
 
 	char boxesArray[33] = 
 	{
-		__CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX,
-		__CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX,
-		__CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX,
-		__CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, '\0'
+		__CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, 
+		__CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX,
+		__CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, 
+		__CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX,
+		__CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, 
+		__CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX,
+		__CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, 
+		__CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, '\0'
 	};
 
 	for(uint16 i = 0; i < position && 32 >= i; i++)
@@ -744,7 +766,8 @@ void Sound::configureTracks()
 	this->mainSoundTrack = longestSoundTrack;
 
 #ifdef __SOUND_TEST
-	this->totalPlaybackMilliseconds = SoundTrack::getTotalPlaybackMilliseconds(this->mainSoundTrack, this->soundSpec->targetTimerResolutionUS);
+	this->totalPlaybackMilliseconds = 
+		SoundTrack::getTotalPlaybackMilliseconds(this->mainSoundTrack, this->soundSpec->targetTimerResolutionUS);
 #endif
 
 }
@@ -781,7 +804,9 @@ void Sound::completedPlayback()
 __attribute__((noinline)) 
 void Sound::updateVolumeReduction()
 {
-	uint32 elapsedMilliseconds = this->soundSpec->targetTimerResolutionUS * (this->mainSoundTrack->elapsedTicks - this->previouslyElapsedTicks) / __MICROSECONDS_PER_MILLISECOND;
+	uint32 elapsedMilliseconds = 
+		this->soundSpec->targetTimerResolutionUS * (this->mainSoundTrack->elapsedTicks 
+		- this->previouslyElapsedTicks) / __MICROSECONDS_PER_MILLISECOND;
 
 	if(VUEngine::getGameFrameDuration(_vuEngine) <= elapsedMilliseconds)
 	{

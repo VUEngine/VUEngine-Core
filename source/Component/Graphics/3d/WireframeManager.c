@@ -131,7 +131,8 @@ Wireframe WireframeManager::createWireframe(GameObject owner, const WireframeSpe
 		return NULL;
 	}
 
-	Wireframe wireframe = ((Wireframe (*)(GameObject, const WireframeSpec*))((ComponentSpec*)wireframeSpec)->allocator)(owner, wireframeSpec);
+	Wireframe wireframe = 
+		((Wireframe (*)(GameObject, const WireframeSpec*))((ComponentSpec*)wireframeSpec)->allocator)(owner, wireframeSpec);
 
 	if(!isDeleted(wireframe) && WireframeManager::registerWireframe(this, wireframe))
 	{
@@ -222,7 +223,11 @@ void WireframeManager::render()
 
 		wireframe->rendered = false;
 
-		if((__HIDE == wireframe->show) || (wireframe->transparency & this->evenFrame) || __NON_TRANSFORMED == wireframe->transformation->invalid)
+		if
+		(
+			__HIDE == wireframe->show || (wireframe->transparency & this->evenFrame) || 
+			__NON_TRANSFORMED == wireframe->transformation->invalid
+		)
 		{
 #ifdef __WIREFRAME_MANAGER_SORT_FOR_DRAWING
 			wireframe->squaredDistanceToCamera = __WIREFRAME_MAXIMUM_SQUARE_DISTANCE_TO_CAMERA;
@@ -402,7 +407,11 @@ void WireframeManager::constructor()
 	this->renderedWireframes = 0;
 	this->drawnWireframes = 00;
 
-	VIPManager::addEventListener(VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)WireframeManager::onVIPManagerGAMESTARTDuringXPEND, kEventVIPManagerGAMESTARTDuringXPEND);
+	VIPManager::addEventListener
+	(
+		VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)WireframeManager::onVIPManagerGAMESTARTDuringXPEND, 
+		kEventVIPManagerGAMESTARTDuringXPEND
+	);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -416,7 +425,11 @@ void WireframeManager::destructor()
 		VirtualList::deleteData(this->components);
 	}
 
-	VIPManager::removeEventListener(VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)WireframeManager::onVIPManagerGAMESTARTDuringXPEND, kEventVIPManagerGAMESTARTDuringXPEND);
+	VIPManager::removeEventListener
+	(
+		VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)WireframeManager::onVIPManagerGAMESTARTDuringXPEND, 
+		kEventVIPManagerGAMESTARTDuringXPEND
+	);
 
 	// allow a new construct
 	// Always explicitly call the base's destructor 

@@ -212,11 +212,18 @@ void RumbleManager::execute()
 	{
 		if(this->overridePreviousEffect)
 		{
-			CommunicationManager::broadcastDataAsync(this->communicationManager, (BYTE*)this->rumbleCommands, this->rumbleCommandIndex, NULL, NULL);
+			CommunicationManager::broadcastDataAsync
+			(
+				this->communicationManager, (BYTE*)this->rumbleCommands, this->rumbleCommandIndex, NULL, NULL
+			);
 		}
 		else
 		{
-			CommunicationManager::broadcastDataAsync(this->communicationManager, (BYTE*)this->rumbleCommands, this->rumbleCommandIndex, (EventListener)RumbleManager::onBroadcastDataDone, ListenerObject::safeCast(this));
+			CommunicationManager::broadcastDataAsync
+			(
+				this->communicationManager, (BYTE*)this->rumbleCommands, this->rumbleCommandIndex, 
+				(EventListener)RumbleManager::onBroadcastDataDone, ListenerObject::safeCast(this)
+			);
 		}
 	}
 	else

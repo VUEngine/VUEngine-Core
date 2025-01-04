@@ -293,8 +293,14 @@ void Container::setNormalizedDirection(NormalizedDirection normalizedDirection)
 
 	Rotation rotation =
 	{
-		__UP == normalizedDirection.y ? __HALF_ROTATION_DEGREES : __DOWN == normalizedDirection.y ? 0 : this->localTransformation.rotation.x,
-		__LEFT == normalizedDirection.x ? __HALF_ROTATION_DEGREES : __RIGHT == normalizedDirection.x ? 0 : this->localTransformation.rotation.y,
+		__UP == normalizedDirection.y ? 
+			__HALF_ROTATION_DEGREES 
+			: 
+			__DOWN == normalizedDirection.y ? 0 : this->localTransformation.rotation.x,
+		__LEFT == normalizedDirection.x ? 
+			__HALF_ROTATION_DEGREES 
+			: 
+			__RIGHT == normalizedDirection.x ? 0 : this->localTransformation.rotation.y,
 		//__NEAR == direction.z ? __HALF_ROTATION_DEGREES : __FAR == direction.z ? 0 : this->localTransformation.rotation.z,
 		this->localTransformation.rotation.z,
 	};

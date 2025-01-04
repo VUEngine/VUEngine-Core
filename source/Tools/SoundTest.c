@@ -367,7 +367,12 @@ void SoundTest::loadSound()
 	TimerManager::setTargetTimePerInterruptUnits(TimerManager::getInstance(), kUS);
 	TimerManager::setTargetTimePerInterrupt(TimerManager::getInstance(), _userSounds[this->soundIndex]->targetTimerResolutionUS);
 
-	this->sound = SoundManager::getSound(SoundManager::getInstance(), (SoundSpec*)_userSounds[this->soundIndex], (EventListener)SoundTest::onSoundReleased, ListenerObject::safeCast(this));
+	this->sound = 
+		SoundManager::getSound
+		(
+			SoundManager::getInstance(), (SoundSpec*)_userSounds[this->soundIndex], (EventListener)SoundTest::onSoundReleased, 
+			ListenerObject::safeCast(this)
+		);
 
 	NM_ASSERT(!isDeleted(this->sound), "SoundTest::loadSound: no sound");
 
@@ -443,7 +448,11 @@ void SoundTest::printGUI(bool clearScreen)
 		Printing::clear(printing);
 	}
 
-	Printing::text(printing, "\x08 SOUND TEST \x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08", 0, 0, NULL);
+	Printing::text
+	(
+		printing, "\x08 SOUND TEST \x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08"
+		"\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08", 0, 0, NULL
+	);
 
 	if(NULL == _userSounds[this->soundIndex])
 	{

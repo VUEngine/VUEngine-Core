@@ -101,7 +101,11 @@ bool BgmapTexture::write(int16 maximumTextureRowsToWrite)
 	}
 	else
 	{
-		BgmapTexture::writeFrame(this, maximumTextureRowsToWrite, kTexturePendingWriting < status && kTextureFrameChanged >= status, this->xOffset, this->yOffset, charSetOffset, 0);
+		BgmapTexture::writeFrame
+		(
+			this, maximumTextureRowsToWrite, kTexturePendingWriting < status && kTextureFrameChanged >= status, 
+			this->xOffset, this->yOffset, charSetOffset, 0
+		);
 	}
 
 	if(kTexturePendingRewriting == status)
@@ -235,7 +239,10 @@ void BgmapTexture::writeAllFrames(int16 maximumTextureRowsToWrite, int16 xOffset
 	{
 		this->remainingRowsToBeWritten = this->textureSpec->rows;
 
-		BgmapTexture::writeFrame(this, maximumTextureRowsToWrite, true, currentXOffset, currentYOffset, charSetOffset, isCharSetOptimized ? frame : 0);
+		BgmapTexture::writeFrame
+		(
+			this, maximumTextureRowsToWrite, true, currentXOffset, currentYOffset, charSetOffset, isCharSetOptimized ? frame : 0
+		);
 
 		charSetOffset += charSetOffsetDelta;
 
@@ -312,7 +319,10 @@ static inline void BgmapTexture::addHWORDCompressed(HWORD* destination, const HW
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void BgmapTexture::writeFrame(int16 maximumTextureRowsToWrite, bool forceFullRewrite, int16 xOffset, int16 yOffset, uint16 charSetOffset, uint16 frame)
+void BgmapTexture::writeFrame
+(
+	int16 maximumTextureRowsToWrite, bool forceFullRewrite, int16 xOffset, int16 yOffset, uint16 charSetOffset, uint16 frame
+)
 {
 	if((0 > xOffset) || (0 > yOffset))
 	{

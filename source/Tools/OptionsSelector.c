@@ -420,31 +420,51 @@ void OptionsSelector::print(uint8 x, uint8 y, uint32 alignment, uint8 spacing)
 					case kString:
 
 						optionsLength = alignment == kOptionsAlignLeft ? 0 : strnlen((char*)option->value, this->columnWidth);
-						Printing::text(printing, (char*)option->value, x + fontData->fontSpec->fontSize.x - optionsLength / optionsLengthDivisor, y, this->font);
+						Printing::text
+						(
+							printing, (char*)option->value, x + fontData->fontSpec->fontSize.x - optionsLength / optionsLengthDivisor,
+							y, this->font
+						);
 						break;
 
 					case kFloat:
 
 						optionsLength = alignment == kOptionsAlignLeft ? 0 : Math::getDigitsCount(*((int32*)option->value)) - 3;
-						Printing::float(printing, *((float*)option->value), x + fontData->fontSpec->fontSize.x - optionsLength / optionsLengthDivisor, y, 2, this->font);
+						Printing::float
+						(
+							printing, *((float*)option->value), x + fontData->fontSpec->fontSize.x - optionsLength / optionsLengthDivisor, 
+							y, 2, this->font
+						);
 						break;
 
 					case kInt:
 
 						optionsLength = alignment == kOptionsAlignLeft ? 0 : Math::getDigitsCount(*((int32*)option->value));
-						Printing::int32(printing, *((int32*)option->value), x + fontData->fontSpec->fontSize.x - optionsLength / optionsLengthDivisor, y, this->font);
+						Printing::int32
+						(
+							printing, *((int32*)option->value), x + fontData->fontSpec->fontSize.x - optionsLength / optionsLengthDivisor, 
+							y, this->font
+						);
 						break;
 
 					case kShortInt:
 
 						optionsLength = alignment == kOptionsAlignLeft ? 0 : Math::getDigitsCount(*((int32*)option->value));
-						Printing::int32(printing, *((int16*)option->value), x + fontData->fontSpec->fontSize.x - optionsLength / optionsLengthDivisor, y, this->font);
+						Printing::int32
+						(
+							printing, *((int16*)option->value), x + fontData->fontSpec->fontSize.x - optionsLength / optionsLengthDivisor, 
+							y, this->font
+						);
 						break;
 
 					case kChar:
 
 						optionsLength = alignment == kOptionsAlignLeft ? 0 : Math::getDigitsCount(*((int32*)option->value));
-						Printing::int32(printing, *((int8*)option->value), x + fontData->fontSpec->fontSize.x - optionsLength / optionsLengthDivisor, y, this->font);
+						Printing::int32
+						(
+							printing, *((int8*)option->value), x + fontData->fontSpec->fontSize.x - optionsLength / optionsLengthDivisor, 
+							y, this->font
+						);
 						break;				
 				}
 			}
@@ -515,7 +535,9 @@ void OptionsSelector::printSelectorMark(char* mark, int8 optionsLength)
 		ASSERT(this->currentPage, "printSelectorMark: current page");
 		ASSERT(VirtualNode::getData(this->currentPage), "printSelectorMark: null current data");
 
-		int32 indexOption = this->currentOptionIndex - this->currentPageIndex * VirtualList::getCount(VirtualList::safeCast(VirtualList::front(this->pages)));
+		int32 indexOption = 
+			this->currentOptionIndex - 
+			this->currentPageIndex * VirtualList::getCount(VirtualList::safeCast(VirtualList::front(this->pages)));
 		int32 optionColumn = (int32)(indexOption / this->rows);
 		int32 optionRow = indexOption - optionColumn * this->rows;
 		optionColumn = this->columnWidth * optionColumn;

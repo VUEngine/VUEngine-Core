@@ -90,7 +90,11 @@ typedef struct NormalRegistry
 
 static inline fixed_t Body::computeInstantaneousSpeed(fixed_t forceMagnitude, fixed_t gravity, fixed_t mass, fixed_t friction, fixed_t maximumSpeed)
 {
-	fixed_t instantaneousSpeed = __FIX7_9_EXT_TO_FIXED(Body::doComputeInstantaneousSpeed(forceMagnitude, gravity, mass, friction, BodyManager::getElapsedTimeStep()));
+	fixed_t instantaneousSpeed = 
+		__FIX7_9_EXT_TO_FIXED
+		(
+			Body::doComputeInstantaneousSpeed(forceMagnitude, gravity, mass, friction, BodyManager::getElapsedTimeStep())
+		);
 
 	return 0 != maximumSpeed && maximumSpeed < __ABS(instantaneousSpeed) ? maximumSpeed : instantaneousSpeed;
 }
@@ -107,7 +111,8 @@ static inline fixed_t Body::computeInstantaneousSpeed(fixed_t forceMagnitude, fi
 
 static inline fix7_9_ext Body::doComputeInstantaneousSpeed(fixed_t forceMagnitude, fixed_t gravity, fixed_t mass, fixed_t friction, fix7_9_ext elapsedTime)
 {
-	fix7_9_ext acceleration = __FIXED_TO_FIX7_9_EXT(gravity) + __FIX7_9_EXT_DIV(__FIXED_TO_FIX7_9_EXT(forceMagnitude + friction), __FIXED_TO_FIX7_9_EXT(mass));
+	fix7_9_ext acceleration = 
+		__FIXED_TO_FIX7_9_EXT(gravity) + __FIX7_9_EXT_DIV(__FIXED_TO_FIX7_9_EXT(forceMagnitude + friction), __FIXED_TO_FIX7_9_EXT(mass));
 
 	return __FIX7_9_EXT_MULT(acceleration, elapsedTime);
 }
@@ -130,7 +135,8 @@ void Body::constructor(GameObject owner, const BodySpec* bodySpec)
 	this->deleteMe = false;
 	this->owner = owner;
 	this->normals = NULL;
-	this->mass = __BODY_MIN_MASS < bodySpec->mass ? __BODY_MAX_MASS > bodySpec->mass ? bodySpec->mass : __BODY_MAX_MASS : __BODY_MIN_MASS;
+	this->mass = 
+		__BODY_MIN_MASS < bodySpec->mass ? __BODY_MAX_MASS > bodySpec->mass ? bodySpec->mass : __BODY_MAX_MASS : __BODY_MIN_MASS;
 
 	this->bounciness = bodySpec->bounciness;
 	this->frictionCoefficient = 0;
@@ -309,7 +315,11 @@ void Body::update(uint16 cycle, fix7_9_ext elapsedTime)
 
 		if(!isDeleted(this->owner) && 0 != movementResult.axisStoppedMovement && this->sendMessages)
 		{
-			MessageDispatcher::dispatchMessage(0, ListenerObject::safeCast(this), ListenerObject::safeCast(this->owner), kMessageBodyStopped, &movementResult.axisStoppedMovement);
+			MessageDispatcher::dispatchMessage
+			(
+				0, ListenerObject::safeCast(this), ListenerObject::safeCast(this->owner), kMessageBodyStopped, 
+				&movementResult.axisStoppedMovement
+			);
 		}
 	}
 
@@ -363,7 +373,15 @@ void Body::bounce(ListenerObject bounceReferent, Vector3D bouncingPlaneNormal, f
 {
 	Body::setSurroundingFrictionCoefficient(this, frictionCoefficient);
 
-	fixed_t cosAngle = __I_TO_FIXED(bouncingPlaneNormal.x | bouncingPlaneNormal.y | bouncingPlaneNormal.z) && (this->gravity.x | this->gravity.y | this->gravity.z) ? __ABS(__FIXED_EXT_DIV(Vector3D::dotProduct(this->gravity, bouncingPlaneNormal), Vector3D::lengthProduct(this->gravity, bouncingPlaneNormal))) : __1I_FIXED;
+	fixed_t cosAngle = 
+		__I_TO_FIXED(bouncingPlaneNormal.x | bouncingPlaneNormal.y | bouncingPlaneNormal.z) 
+		&& 
+		(this->gravity.x | this->gravity.y | this->gravity.z) ? 
+			__ABS(__FIXED_EXT_DIV(Vector3D::dotProduct(this->gravity, bouncingPlaneNormal), 
+			Vector3D::lengthProduct(this->gravity, bouncingPlaneNormal))) 
+			: 
+			__1I_FIXED;
+
 	fixed_t normalMagnitude = __FIXED_EXT_MULT(Vector3D::length(Body::getWeight(this)), cosAngle);
 
 	Body::addNormal(this, bounceReferent, bouncingPlaneNormal, normalMagnitude);
@@ -435,7 +453,10 @@ void Body::bounce(ListenerObject bounceReferent, Vector3D bouncingPlaneNormal, f
 
 			if(!isDeleted(this->owner) && __NO_AXIS != axisOfStopping && this->sendMessages)
 			{
-				MessageDispatcher::dispatchMessage(0, ListenerObject::safeCast(this), ListenerObject::safeCast(this->owner), kMessageBodyStopped, &axisOfStopping);
+				MessageDispatcher::dispatchMessage
+				(
+					0, ListenerObject::safeCast(this), ListenerObject::safeCast(this->owner), kMessageBodyStopped, &axisOfStopping
+				);
 			}
 		}
 
@@ -795,9 +816,54 @@ void Body::print(int32 x, int32 y)
 
 	Printing::text(Printing::getInstance(), "Mov. type", x, y, NULL);
 	Printing::text(Printing::getInstance(), "                                ", xDisplacement + x, y, NULL);
-	Printing::text(Printing::getInstance(), __UNIFORM_MOVEMENT == this->movementType.x ? "Uniform" : __UNIFORM_MOVEMENT == this->movementType.x ? "Uniform" : __ACCELERATED_MOVEMENT == this->movementType.x ? "Accel" : "None", xDisplacement + x, y, NULL);
-	Printing::text(Printing::getInstance(), __UNIFORM_MOVEMENT == this->movementType.y ? "Uniform" : __UNIFORM_MOVEMENT == this->movementType.y ? "Uniform" : __ACCELERATED_MOVEMENT == this->movementType.y ? "Accel" : "None", xDisplacement + x + 8, y, NULL);
-	Printing::text(Printing::getInstance(), __UNIFORM_MOVEMENT == this->movementType.y ? "Uniform" : __UNIFORM_MOVEMENT == this->movementType.y ? "Uniform" : __ACCELERATED_MOVEMENT == this->movementType.z ? "Accel" : "None", xDisplacement + x + 8 * 2, y++, NULL);
+
+	Printing::text
+	(
+		Printing::getInstance(), 
+		__UNIFORM_MOVEMENT == this->movementType.x ? 
+		"Uniform" 
+		: 
+		__UNIFORM_MOVEMENT == this->movementType.x ? 
+			"Uniform" 
+			: 
+			__ACCELERATED_MOVEMENT == this->movementType.x ? 
+				"Accel" 
+				: 
+				"None", 
+		xDisplacement + x, y, NULL
+	);
+
+	Printing::text
+	(
+		Printing::getInstance(), 
+		__UNIFORM_MOVEMENT == this->movementType.y ? 
+		"Uniform" 
+		: 
+		__UNIFORM_MOVEMENT == this->movementType.y ? 
+			"Uniform" 
+			: 
+			__ACCELERATED_MOVEMENT == this->movementType.y ? 
+				"Accel" 
+				: 
+				"None", 
+		xDisplacement + x, y, NULL
+	);
+
+	Printing::text
+	(
+		Printing::getInstance(), 
+		__UNIFORM_MOVEMENT == this->movementType.z ? 
+		"Uniform" 
+		: 
+		__UNIFORM_MOVEMENT == this->movementType.z ? 
+			"Uniform" 
+			: 
+			__ACCELERATED_MOVEMENT == this->movementType.z ? 
+				"Accel" 
+				: 
+				"None", 
+		xDisplacement + x, y, NULL
+	);
 
 	Printing::text(Printing::getInstance(), "Position", x, y, NULL);
 	Printing::text(Printing::getInstance(), "                               ", xDisplacement + x, y, NULL);
@@ -924,9 +990,23 @@ MovementResult Body::getMovementResult(Vector3D previousVelocity)
 		this->velocity.z ^ previousVelocity.z,
 	};
 
-	if(!this->movesIndependentlyOnEachAxis && 0 != (__ACCELERATED_MOVEMENT & (this->movementType.x | this->movementType.y | this->movementType.z)))
+	if
+	(
+		!this->movesIndependentlyOnEachAxis 
+		&& 
+		0 != (__ACCELERATED_MOVEMENT & (this->movementType.x | this->movementType.y | this->movementType.z))
+	)
 	{
-		if(this->speed < __STOP_VELOCITY_THRESHOLD && 0 == (this->externalForce.x | this->externalForce.y | this->externalForce.z | this->gravity.x | this->gravity.y | this->gravity.z))
+		if
+		(
+			this->speed < __STOP_VELOCITY_THRESHOLD 
+			&& 
+			0 == 
+			(
+				this->externalForce.x | this->externalForce.y | this->externalForce.z | 
+				this->gravity.x | this->gravity.y | this->gravity.z
+			)
+		)
 		{
 			movementResult.axisStoppedMovement = __ALL_AXIS;
 		}
@@ -938,7 +1018,14 @@ MovementResult Body::getMovementResult(Vector3D previousVelocity)
 	// and if the velocity minimum threshold is not reached
 	if(0 != previousVelocity.x && 0 == this->externalForce.x && 0 == this->gravity.x && __ACCELERATED_MOVEMENT == this->movementType.x)
 	{
-		if(__STOP_VELOCITY_THRESHOLD > __ABS(this->velocity.x) || (0 == this->externalForce.x && 0 == this->accelerating.x) || (0 > movementChange.x))
+		if
+		(
+			__STOP_VELOCITY_THRESHOLD > __ABS(this->velocity.x) 
+			|| 
+			(0 == this->externalForce.x && 0 == this->accelerating.x) 
+			|| 
+			(0 > movementChange.x)
+		)
 		{
 			movementResult.axisStoppedMovement |= __X_AXIS;
 		}
@@ -946,7 +1033,14 @@ MovementResult Body::getMovementResult(Vector3D previousVelocity)
 
 	if(0 != previousVelocity.y && 0 == this->externalForce.y && 0 == this->gravity.y && __ACCELERATED_MOVEMENT == this->movementType.y)
 	{
-		if(__STOP_VELOCITY_THRESHOLD > __ABS(this->velocity.y) || (0 == this->externalForce.y && 0 == this->accelerating.y) || (0 > movementChange.y))
+		if
+		(
+			__STOP_VELOCITY_THRESHOLD > __ABS(this->velocity.y) 
+			|| 
+			(0 == this->externalForce.y && 0 == this->accelerating.y) 
+			||
+			(0 > movementChange.y)
+		)
 		{
 			movementResult.axisStoppedMovement |= __Y_AXIS;
 		}
@@ -954,7 +1048,14 @@ MovementResult Body::getMovementResult(Vector3D previousVelocity)
 
 	if(0 != previousVelocity.z && 0 == this->externalForce.z && 0 == this->gravity.z && __ACCELERATED_MOVEMENT == this->movementType.z)
 	{
-		if(__STOP_VELOCITY_THRESHOLD > __ABS(this->velocity.z) || (0 == this->externalForce.z && 0 == this->accelerating.z) || (0 > movementChange.z))
+		if
+		(
+			__STOP_VELOCITY_THRESHOLD > __ABS(this->velocity.z) 
+			|| 
+			(0 == this->externalForce.z && 0 == this->accelerating.z) 
+			|| 
+			(0 > movementChange.z)
+		)
 		{
 			movementResult.axisStoppedMovement |= __Z_AXIS;
 		}
@@ -1111,7 +1212,11 @@ MovementResult Body::updateMovement(uint16 cycle, fix7_9_ext elapsedTime)
 
 	if(__ACCELERATED_MOVEMENT == this->movementType.x)
 	{
-		fix7_9_ext instantaneousSpeed = Body::doComputeInstantaneousSpeed(this->externalForce.x + this->totalNormal.x, this->gravity.x, this->mass, this->friction.x, elapsedTime);
+		fix7_9_ext instantaneousSpeed = 
+			Body::doComputeInstantaneousSpeed
+			(
+				this->externalForce.x + this->totalNormal.x, this->gravity.x, this->mass, this->friction.x, elapsedTime
+			);
 
 		this->accelerating.x = 0 != instantaneousSpeed;
 		this->internalVelocity.x += instantaneousSpeed;
@@ -1120,7 +1225,11 @@ MovementResult Body::updateMovement(uint16 cycle, fix7_9_ext elapsedTime)
 
 	if(__ACCELERATED_MOVEMENT == this->movementType.y)
 	{
-		fix7_9_ext instantaneousSpeed = Body::doComputeInstantaneousSpeed(this->externalForce.y + this->totalNormal.y, this->gravity.y, this->mass, this->friction.y, elapsedTime);
+		fix7_9_ext instantaneousSpeed = 
+			Body::doComputeInstantaneousSpeed
+			(
+				this->externalForce.y + this->totalNormal.y, this->gravity.y, this->mass, this->friction.y, elapsedTime
+			);
 
 		this->accelerating.y = 0 != instantaneousSpeed;
 		this->internalVelocity.y += instantaneousSpeed;
@@ -1129,7 +1238,11 @@ MovementResult Body::updateMovement(uint16 cycle, fix7_9_ext elapsedTime)
 
 	if(__ACCELERATED_MOVEMENT == this->movementType.z)
 	{
-		fix7_9_ext instantaneousSpeed = Body::doComputeInstantaneousSpeed(this->externalForce.z + this->totalNormal.z, this->gravity.z, this->mass, this->friction.z, elapsedTime);
+		fix7_9_ext instantaneousSpeed = 
+			Body::doComputeInstantaneousSpeed
+			(
+				this->externalForce.z + this->totalNormal.z, this->gravity.z, this->mass, this->friction.z, elapsedTime
+			);
 
 		this->accelerating.z = 0 != instantaneousSpeed;
 		this->internalVelocity.z += instantaneousSpeed;
@@ -1219,7 +1332,10 @@ void Body::awake(uint16 axisOfAwakening)
 
 		if(!isDeleted(this->owner) && dispatchMessage)
 		{
-			MessageDispatcher::dispatchMessage(0, ListenerObject::safeCast(this), ListenerObject::safeCast(this->owner), kMessageBodyStartedMoving, &axisOfAwakening);
+			MessageDispatcher::dispatchMessage
+			(
+				0, ListenerObject::safeCast(this), ListenerObject::safeCast(this->owner), kMessageBodyStartedMoving, &axisOfAwakening
+			);
 		}
 	}
 }

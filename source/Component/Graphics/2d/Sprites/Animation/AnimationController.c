@@ -90,7 +90,10 @@ bool AnimationController::play(const AnimationFunction* animationFunctions[], co
 		}
 	}
 
-	bool functionNameFound = NULL != this->animationFunction ? 0 == strncmp((const char *)animationName, (const char *)this->animationFunction->name, __MAX_ANIMATION_FUNCTION_NAME_LENGTH) : false;
+	bool functionNameFound = 
+		NULL != this->animationFunction ? 
+		0 == strncmp((const char *)animationName, 
+		(const char *)this->animationFunction->name, __MAX_ANIMATION_FUNCTION_NAME_LENGTH) : false;
 
 	if(!functionNameFound)
 	{
@@ -287,7 +290,8 @@ bool AnimationController::updateAnimation()
 
 		uint16 actualFrameIndex = this->animationFunction->frames[this->actualFrame];
 
-		bool frameValueChanged = this->actualFrameIndex != actualFrameIndex || actualFrameIndex != this->animationFunction->frames[actualFrame];
+		bool frameValueChanged = 
+			this->actualFrameIndex != actualFrameIndex || actualFrameIndex != this->animationFunction->frames[actualFrame];
 		this->actualFrameIndex = actualFrameIndex;
 		
 		return frameValueChanged;

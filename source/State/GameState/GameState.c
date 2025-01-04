@@ -263,7 +263,11 @@ bool GameState::processMessage(void* owner __attribute__ ((unused)), Telegram te
 {
 	return false;
 	// Not sure if necessary, but this can cause problems if no unified messages list is used and can cause unintended performance issues	
-//	return Stage::propagateMessage(this->stage, Container::onPropagatedMessage, Telegram::getMessage(telegram)) || UIContainer::propagateMessage(this->uiContainer, Container::onPropagatedMessage, Telegram::getMessage(telegram));
+	// return Stage::propagateMessage
+	// (
+	//	this->stage, Container::onPropagatedMessage, Telegram::getMessage(telegram)) || UIContainer::propagateMessage(this->uiContainer, 
+	//	Container::onPropagatedMessage, Telegram::getMessage(telegram)
+	// );
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -568,14 +572,24 @@ void GameState::processCollisions()
 
 bool GameState::propagateMessage(int32 message)
 {	
-	return Stage::propagateMessage(this->stage, Container::onPropagatedMessage, message) || UIContainer::propagateMessage(this->uiContainer, Container::onPropagatedMessage, message);
+	return 
+		Stage::propagateMessage
+		(
+			this->stage, Container::onPropagatedMessage, message) || UIContainer::propagateMessage(this->uiContainer, 
+			Container::onPropagatedMessage, message
+		);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 bool GameState::propagateString(const char* string)
 {
-	return Stage::propagateString(this->stage, Container::onPropagatedString, string) || Container::propagateString(this->uiContainer, Container::onPropagatedString, string);
+	return 
+		Stage::propagateString
+		(
+			this->stage, Container::onPropagatedString, string) || Container::propagateString(this->uiContainer, 
+			Container::onPropagatedString, string
+		);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -703,7 +717,8 @@ void GameState::configureUI(StageSpec* stageSpec)
 
 	if(NULL != stageSpec->entities.UI.allocator)
 	{
-		this->uiContainer = ((UIContainer (*)(PositionedEntity*)) stageSpec->entities.UI.allocator)(stageSpec->entities.UI.childrenSpecs);
+		this->uiContainer = 
+			((UIContainer (*)(PositionedEntity*)) stageSpec->entities.UI.allocator)(stageSpec->entities.UI.childrenSpecs);
 	}
 	else
 	{

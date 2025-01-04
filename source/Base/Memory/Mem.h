@@ -57,21 +57,24 @@ static class Mem : Object
 	/// @param numberOfWORDS: Total number of WORDs to copy
 	static inline void copyWORD(WORD* destination, const WORD* source, uint32 numberOfWORDS);
 
-	/// Apply a bitwise OR operation to the specified number of BYTEs from the provided source addresses and place the results in the destination address onwards
+	/// Apply a bitwise OR operation to the specified number of BYTEs from the provided source addresses and place the results 
+	/// in the destination address onwards
 	/// @param destination: Starting destination address
 	/// @param source1: Starting first source address
 	/// @param source2: Starting second source address
 	/// @param numberOfBYTES: Total number of BYTEs to combine
 	static inline void combineBYTEs(BYTE* destination, const BYTE* source1, const BYTE* source2, uint32 numberOfBYTES);
 
-	/// Apply a bitwise OR operation to the specified number of HWORDs from the provided source addresses and place the results in the destination address onwards
+	/// Apply a bitwise OR operation to the specified number of HWORDs from the provided source addresses and place the results 
+	/// in the destination address onwards
 	/// @param destination: Starting destination address
 	/// @param source1: Starting first source address
 	/// @param source2: Starting second source address
 	/// @param numberOfWORDS: Total number of HWORDs to combine
 	static inline void combineHWORDs(HWORD* destination, const HWORD* source1, const HWORD* source2, uint32 numberOfWORDS);
 
-	/// Apply a bitwise OR operation to the specified number of WORDs from the provided source addresses and place the results in the destination address onwards
+	/// Apply a bitwise OR operation to the specified number of WORDs from the provided source addresses and place the results 
+	/// in the destination address onwards
 	/// @param destination: Starting destination address
 	/// @param source1: Starting first source address
 	/// @param source2: Starting second source address

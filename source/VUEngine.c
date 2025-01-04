@@ -215,9 +215,22 @@ void VUEngine::setState(GameState gameState)
 #endif
 
 	StateMachine::removeAllEventListeners(this->stateMachine);
-	StateMachine::addEventListener(this->stateMachine, ListenerObject::safeCast(this), (EventListener)VUEngine::cleaniningStatesStack, kEventStateMachineWillCleanStack);
-	StateMachine::addEventListener(this->stateMachine, ListenerObject::safeCast(this), (EventListener)VUEngine::changedState, kEventStateMachineCleanedStack);
-	StateMachine::transitionTo(this->stateMachine, NULL != gameState ? State::safeCast(gameState) : NULL, kStateMachineCleanStack);
+	StateMachine::addEventListener
+	(
+		this->stateMachine, ListenerObject::safeCast(this), (EventListener)VUEngine::cleaniningStatesStack, 
+		kEventStateMachineWillCleanStack
+	);
+
+	StateMachine::addEventListener
+	(
+		this->stateMachine, ListenerObject::safeCast(this), (EventListener)VUEngine::changedState, 
+		kEventStateMachineCleanedStack
+	);
+
+	StateMachine::transitionTo
+	(
+		this->stateMachine, NULL != gameState ? State::safeCast(gameState) : NULL, kStateMachineCleanStack
+	);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -229,8 +242,18 @@ void VUEngine::addState(GameState gameState)
 #endif
 
 	StateMachine::removeAllEventListeners(this->stateMachine);
-	StateMachine::addEventListener(this->stateMachine, ListenerObject::safeCast(this), (EventListener)VUEngine::pushingState, kEventStateMachineWillPushState);
-	StateMachine::addEventListener(this->stateMachine, ListenerObject::safeCast(this), (EventListener)VUEngine::changedState, kEventStateMachinePushedState);
+	StateMachine::addEventListener
+	(
+		this->stateMachine, ListenerObject::safeCast(this), (EventListener)VUEngine::pushingState, 
+		kEventStateMachineWillPushState
+	);
+
+	StateMachine::addEventListener
+	(
+		this->stateMachine, ListenerObject::safeCast(this), (EventListener)VUEngine::changedState, 
+		kEventStateMachinePushedState
+	);
+
 	StateMachine::transitionTo(this->stateMachine, State::safeCast(gameState), kStateMachinePushState);
 }
 
@@ -243,8 +266,18 @@ void VUEngine::changeState(GameState gameState)
 #endif
 
 	StateMachine::removeAllEventListeners(this->stateMachine);
-	StateMachine::addEventListener(this->stateMachine, ListenerObject::safeCast(this), (EventListener)VUEngine::swappingState, kEventStateMachineWillSwapState);
-	StateMachine::addEventListener(this->stateMachine, ListenerObject::safeCast(this), (EventListener)VUEngine::changedState, kEventStateMachineSwapedState);
+	StateMachine::addEventListener
+	(
+		this->stateMachine, ListenerObject::safeCast(this), (EventListener)VUEngine::swappingState, 
+		kEventStateMachineWillSwapState
+	);
+
+	StateMachine::addEventListener
+	(
+		this->stateMachine, ListenerObject::safeCast(this), (EventListener)VUEngine::changedState, 
+		kEventStateMachineSwapedState
+	);
+
 	StateMachine::transitionTo(this->stateMachine, State::safeCast(gameState), kStateMachineSwapState);
 }
 
@@ -734,8 +767,16 @@ void VUEngine::removeState(GameState gameState)
 #endif
 
 	StateMachine::removeAllEventListeners(this->stateMachine);
-	StateMachine::addEventListener(this->stateMachine, ListenerObject::safeCast(this), (EventListener)VUEngine::poppingState, kEventStateMachineWillPopState);
-	StateMachine::addEventListener(this->stateMachine, ListenerObject::safeCast(this), (EventListener)VUEngine::changedState, kEventStateMachinePoppedState);
+	StateMachine::addEventListener
+	(
+		this->stateMachine, ListenerObject::safeCast(this), (EventListener)VUEngine::poppingState, kEventStateMachineWillPopState
+	);
+
+	StateMachine::addEventListener
+	(
+		this->stateMachine, ListenerObject::safeCast(this), (EventListener)VUEngine::changedState, kEventStateMachinePoppedState
+	);
+
 	StateMachine::transitionTo(this->stateMachine, State::safeCast(gameState), kStateMachinePopState);
 }
 
@@ -818,7 +859,11 @@ bool VUEngine::swappingState(ListenerObject eventFirer)
 	if(!isDeleted(currentGameState))
 	{
 		// Discard delayed messages from the current state
-		MessageDispatcher::discardDelayedMessagesWithClock(MessageDispatcher::getInstance(), GameState::getMessagingClock(currentGameState));
+		MessageDispatcher::discardDelayedMessagesWithClock
+		(
+			MessageDispatcher::getInstance(), GameState::getMessagingClock(currentGameState)
+		);
+
 		MessageDispatcher::processDiscardedMessages(MessageDispatcher::getInstance());
 	}
 
@@ -846,7 +891,11 @@ bool VUEngine::poppingState(ListenerObject eventFirer)
 	if(!isDeleted(currentGameState))
 	{
 		// Discard delayed messages from the current state
-		MessageDispatcher::discardDelayedMessagesWithClock(MessageDispatcher::getInstance(), GameState::getMessagingClock(currentGameState));
+		MessageDispatcher::discardDelayedMessagesWithClock
+		(
+			MessageDispatcher::getInstance(), GameState::getMessagingClock(currentGameState)
+		);
+
 		MessageDispatcher::processDiscardedMessages(MessageDispatcher::getInstance());
 	}
 

@@ -65,13 +65,25 @@ static void CollisionTester::testOverlaping(Collider requesterCollider, Collider
 	static CollisionTesterMethod collisionTesterMethods[][4] =
 	{
 		// Ball against others
-		{CollisionTester::testIfBallOverlapsBall, CollisionTester::testIfBallOverlapsBox, CollisionTester::testIfBallOverlapsInverseBox, CollisionTester::testIfBallOverlapsLineField},
+		{
+			CollisionTester::testIfBallOverlapsBall, CollisionTester::testIfBallOverlapsBox, 
+			CollisionTester::testIfBallOverlapsInverseBox, CollisionTester::testIfBallOverlapsLineField
+		},
 		// Box against others
-		{CollisionTester::testIfBoxOverlapsBall, CollisionTester::testIfBoxOverlapsBox, CollisionTester::testIfBoxOverlapsInverseBox, CollisionTester::testIfBoxOverlapsLineField},
+		{
+			CollisionTester::testIfBoxOverlapsBall, CollisionTester::testIfBoxOverlapsBox, 
+			CollisionTester::testIfBoxOverlapsInverseBox, CollisionTester::testIfBoxOverlapsLineField
+		},
 		// InverseBox against others
-		{CollisionTester::testIfInverseBoxOverlapsBall, CollisionTester::testIfInverseBoxOverlapsBox, CollisionTester::testIfInverseBoxOverlapsInverseBox, CollisionTester::testIfInverseBoxOverlapsLineField},
+		{
+			CollisionTester::testIfInverseBoxOverlapsBall, CollisionTester::testIfInverseBoxOverlapsBox, 
+			CollisionTester::testIfInverseBoxOverlapsInverseBox, CollisionTester::testIfInverseBoxOverlapsLineField
+		},
 		// LineField against others
-		{CollisionTester::testIfLineFieldOverlapsBall, CollisionTester::testIfLineFieldOverlapsBox, CollisionTester::checkLineFieldIfOverlapsInverseBox, CollisionTester::testIfLineFieldOverlapsLineField},
+		{
+			CollisionTester::testIfLineFieldOverlapsBall, CollisionTester::testIfLineFieldOverlapsBox, 
+			CollisionTester::checkLineFieldIfOverlapsInverseBox, CollisionTester::testIfLineFieldOverlapsLineField
+		},
 	};
 
 	CollisionTesterMethod collisionTesterMethod = collisionTesterMethods[requesterCollider->classIndex][otherCollider->classIndex];
@@ -298,7 +310,9 @@ static void CollisionTester::getSolutionVectorBetweenBallAndLineField(Ball ball,
 		return;
 	}
 
-	fixed_t position = __FIXED_MULT((lineFieldB.x - lineFieldA.x), (ballSideToCheck.y - lineFieldA.y)) - __FIXED_MULT((lineFieldB.y - lineFieldA.y), (ballSideToCheck.x - lineFieldA.x));
+	fixed_t position = 
+		__FIXED_MULT((lineFieldB.x - lineFieldA.x), (ballSideToCheck.y - lineFieldA.y)) - 
+		__FIXED_MULT((lineFieldB.y - lineFieldA.y), (ballSideToCheck.x - lineFieldA.x));
 
 	if(0 > position)
 	{
@@ -457,16 +471,26 @@ static void CollisionTester::testIfBoxOverlapsBall(Collider colliderA, Collider 
 
 	Vector3D intervalDistance =
 	{
-		boxA->position.x < ballB->position.x ? ((ballB->position.x - ballB->radius) - (boxA->position.x + boxA->rightBox.x1)) : ((boxA->position.x + boxA->rightBox.x0) - (ballB->position.x + ballB->radius)),
-		boxA->position.y < ballB->position.y ? ((ballB->position.y - ballB->radius) - (boxA->position.y + boxA->rightBox.y1)) : ((boxA->position.y + boxA->rightBox.y0) - (ballB->position.y + ballB->radius)),
-		boxA->position.z < ballB->position.z ? ((ballB->position.z - ballB->radius) - (boxA->position.z + boxA->rightBox.z1)) : ((boxA->position.z + boxA->rightBox.z0) - (ballB->position.z + ballB->radius)),
+		boxA->position.x < ballB->position.x ? 
+			((ballB->position.x - ballB->radius) - (boxA->position.x + boxA->rightBox.x1)) 
+			: 
+			((boxA->position.x + boxA->rightBox.x0) - (ballB->position.x + ballB->radius)),
+		boxA->position.y < ballB->position.y ? 
+			((ballB->position.y - ballB->radius) - (boxA->position.y + boxA->rightBox.y1)) 
+			: 
+			((boxA->position.y + boxA->rightBox.y0) - (ballB->position.y + ballB->radius)),
+		boxA->position.z < ballB->position.z ? 
+			((ballB->position.z - ballB->radius) - (boxA->position.z + boxA->rightBox.z1)) 
+			: 
+			((boxA->position.z + boxA->rightBox.z0) - (ballB->position.z + ballB->radius)),
 	};
 
 	// test for collision
 	if(0 > intervalDistance.x && 0 > intervalDistance.y && 0 > intervalDistance.z)
 	{
 		// check if both boxes are axis aligned
-		bool isSATCheckPending = boxA->rotationVertexDisplacement.x | boxA->rotationVertexDisplacement.y | boxA->rotationVertexDisplacement.z ? true : false;
+		bool isSATCheckPending = 
+			boxA->rotationVertexDisplacement.x | boxA->rotationVertexDisplacement.y | boxA->rotationVertexDisplacement.z ? true : false;
 
 		SolutionVector solutionVector = (SolutionVector) {{0, 0, 0}, 0};
 		fixed_t minimumIntervalDistance = Math::fixedInfinity();
@@ -525,17 +549,28 @@ static void CollisionTester::testIfBoxOverlapsBox(Collider colliderA, Collider c
 
 	Vector3D intervalDistance =
 	{
-		boxA->position.x < boxB->position.x ? ((boxB->position.x + boxB->rightBox.x0) - (boxA->position.x + boxA->rightBox.x1)) : ((boxA->position.x + boxA->rightBox.x0) - (boxB->position.x + boxB->rightBox.x1)),
-		boxA->position.y < boxB->position.y ? ((boxB->position.y + boxB->rightBox.y0) - (boxA->position.y + boxA->rightBox.y1)) : ((boxA->position.y + boxA->rightBox.y0) - (boxB->position.y + boxB->rightBox.y1)),
-		boxA->position.z < boxB->position.z ? ((boxB->position.z + boxB->rightBox.z0) - (boxA->position.z + boxA->rightBox.z1)) : ((boxA->position.z + boxA->rightBox.z0) - (boxB->position.z + boxB->rightBox.z1)),
+		boxA->position.x < boxB->position.x ? 
+			((boxB->position.x + boxB->rightBox.x0) - (boxA->position.x + boxA->rightBox.x1)) 
+			: 
+			((boxA->position.x + boxA->rightBox.x0) - (boxB->position.x + boxB->rightBox.x1)),
+		boxA->position.y < boxB->position.y ? 
+			((boxB->position.y + boxB->rightBox.y0) - (boxA->position.y + boxA->rightBox.y1)) 
+			: 
+			((boxA->position.y + boxA->rightBox.y0) - (boxB->position.y + boxB->rightBox.y1)),
+		boxA->position.z < boxB->position.z ? 
+			((boxB->position.z + boxB->rightBox.z0) - (boxA->position.z + boxA->rightBox.z1)) 
+			: 
+			((boxA->position.z + boxA->rightBox.z0) - (boxB->position.z + boxB->rightBox.z1)),
 	};
 
 	// test for collision
 	if(0 > intervalDistance.x && 0 > intervalDistance.y && 0 > intervalDistance.z)
 	{
 		// check if both boxes are axis aligned
-		bool isBoxARotated = boxA->rotationVertexDisplacement.x | boxA->rotationVertexDisplacement.y | boxA->rotationVertexDisplacement.z ? true : false;
-		bool isBoxBRotated = boxB->rotationVertexDisplacement.x | boxB->rotationVertexDisplacement.y | boxB->rotationVertexDisplacement.z ? true : false;
+		bool isBoxARotated = 
+			boxA->rotationVertexDisplacement.x | boxA->rotationVertexDisplacement.y | boxA->rotationVertexDisplacement.z ? true : false;
+		bool isBoxBRotated = 
+			boxB->rotationVertexDisplacement.x | boxB->rotationVertexDisplacement.y | boxB->rotationVertexDisplacement.z ? true : false;
 		bool isSATCheckPending = isBoxARotated || isBoxBRotated;
 
 		SolutionVector solutionVector = (SolutionVector) {{0, 0, 0}, 0};
@@ -623,9 +658,18 @@ static void CollisionTester::testIfInverseBoxOverlapsBall(Collider colliderA, Co
 
 	Vector3D intervalDistance =
 	{
-		inverseBoxA->position.x > ballB->position.x ? ((ballB->position.x - ballB->radius) - (inverseBoxA->position.x + inverseBoxA->rightBox.x0)) : ((inverseBoxA->position.x + inverseBoxA->rightBox.x1) - (ballB->position.x + ballB->radius)),
-		inverseBoxA->position.y > ballB->position.y ? ((ballB->position.y - ballB->radius) - (inverseBoxA->position.y + inverseBoxA->rightBox.y0)) : ((inverseBoxA->position.y + inverseBoxA->rightBox.y1) - (ballB->position.y + ballB->radius)),
-		inverseBoxA->position.z > ballB->position.z ? ((ballB->position.z - ballB->radius) - (inverseBoxA->position.z + inverseBoxA->rightBox.z0)) : ((inverseBoxA->position.z + inverseBoxA->rightBox.z1) - (ballB->position.z + ballB->radius)),
+		inverseBoxA->position.x > ballB->position.x ? 
+			((ballB->position.x - ballB->radius) - (inverseBoxA->position.x + inverseBoxA->rightBox.x0)) 
+			: 
+			((inverseBoxA->position.x + inverseBoxA->rightBox.x1) - (ballB->position.x + ballB->radius)),
+		inverseBoxA->position.y > ballB->position.y ? 
+			((ballB->position.y - ballB->radius) - (inverseBoxA->position.y + inverseBoxA->rightBox.y0)) 
+			: 
+			((inverseBoxA->position.y + inverseBoxA->rightBox.y1) - (ballB->position.y + ballB->radius)),
+		inverseBoxA->position.z > ballB->position.z ? 
+			((ballB->position.z - ballB->radius) - (inverseBoxA->position.z + inverseBoxA->rightBox.z0)) 
+			: 
+			((inverseBoxA->position.z + inverseBoxA->rightBox.z1) - (ballB->position.z + ballB->radius)),
 	};
 
 	// test for collision

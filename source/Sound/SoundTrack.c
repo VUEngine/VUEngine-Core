@@ -125,7 +125,11 @@ void SoundTrack::rewind()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-bool SoundTrack::update(uint32 elapsedMicroseconds, uint32 targetPCMUpdates, fix7_9_ext tickStep, fix7_9_ext targetTimerResolutionFactor, fixed_t leftVolumeFactor, fixed_t rightVolumeFactor, int8 volumeReduction, uint8 volumenScalePower, uint16 frequencyDelta)
+bool SoundTrack::update
+(
+	uint32 elapsedMicroseconds, uint32 targetPCMUpdates, fix7_9_ext tickStep, fix7_9_ext targetTimerResolutionFactor, 
+	fixed_t leftVolumeFactor, fixed_t rightVolumeFactor, int8 volumeReduction, uint8 volumenScalePower, uint16 frequencyDelta
+)
 {
 	if(this->finished)
 	{
@@ -138,7 +142,12 @@ bool SoundTrack::update(uint32 elapsedMicroseconds, uint32 targetPCMUpdates, fix
 	}
 	else if(kTrackNative == this->soundTrackSpec->trackType)
 	{
-		this->finished = SoundTrack::updateNative(this, tickStep, targetTimerResolutionFactor, leftVolumeFactor, rightVolumeFactor, volumeReduction, volumenScalePower, frequencyDelta);
+		this->finished = 
+			SoundTrack::updateNative
+			(
+				this, tickStep, targetTimerResolutionFactor, leftVolumeFactor, rightVolumeFactor, volumeReduction, 
+				volumenScalePower, frequencyDelta
+			);
 	}
 
 	return this->finished;
@@ -285,7 +294,11 @@ bool SoundTrack::updatePCM(uint32 elapsedMicroseconds, uint32 targetPCMUpdates, 
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-bool SoundTrack::updateNative(fix7_9_ext tickStep, fix7_9_ext targetTimerResolutionFactor, fixed_t leftVolumeFactor, fixed_t rightVolumeFactor, int8 volumeReduction, uint8 volumenScalePower, uint16 frequencyDelta)
+bool SoundTrack::updateNative
+(
+	fix7_9_ext tickStep, fix7_9_ext targetTimerResolutionFactor, fixed_t leftVolumeFactor, fixed_t rightVolumeFactor, 
+	int8 volumeReduction, uint8 volumenScalePower, uint16 frequencyDelta
+)
 {
 	this->elapsedTicks += tickStep;
 

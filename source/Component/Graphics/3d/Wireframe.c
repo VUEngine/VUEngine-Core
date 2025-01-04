@@ -132,7 +132,12 @@ bool Wireframe::prepareForRender(Vector3D* relativePosition)
 
 		if(__FIXED_SQUARE(__PIXELS_TO_METERS(__SCREEN_WIDTH << 1)) < distanceToCamera)
 		{
-			if(__COS(cameraViewingAngle) > __FIXED_EXT_TO_FIX7_9(Vector3D::dotProduct(Vector3D::normalize(*relativePosition), _cameraDirection)))
+			if
+			(
+				__COS(cameraViewingAngle) 
+				> 
+				__FIXED_EXT_TO_FIX7_9(Vector3D::dotProduct(Vector3D::normalize(*relativePosition), _cameraDirection))
+			)
 			{
 #ifdef __WIREFRAME_MANAGER_SORT_FOR_DRAWING
 				this->squaredDistanceToCamera = __WIREFRAME_MAXIMUM_SQUARE_DISTANCE_TO_CAMERA;

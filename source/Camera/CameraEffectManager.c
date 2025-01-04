@@ -215,7 +215,10 @@ void CameraEffectManager::fxFadeStart(int32 effect, int32 delay)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void CameraEffectManager::fxFadeAsyncStart(int32 initialDelay, const Brightness* targetBrightness, int32 delayBetweenSteps, EventListener callback, ListenerObject callbackScope)
+void CameraEffectManager::fxFadeAsyncStart
+(
+	int32 initialDelay, const Brightness* targetBrightness, int32 delayBetweenSteps, EventListener callback, ListenerObject callbackScope
+)
 {
 	// stop previous effect
 	CameraEffectManager::stopEffect(this, kFadeTo);
@@ -419,7 +422,10 @@ void CameraEffectManager::fxFadeAsync()
 	}
 	else
 	{
-		MessageDispatcher::dispatchMessage(this->fxFadeDelay, ListenerObject::safeCast(this), ListenerObject::safeCast(this), kFadeTo, NULL);
+		MessageDispatcher::dispatchMessage
+		(
+			this->fxFadeDelay, ListenerObject::safeCast(this), ListenerObject::safeCast(this), kFadeTo, NULL
+		);
 	}
 }
 

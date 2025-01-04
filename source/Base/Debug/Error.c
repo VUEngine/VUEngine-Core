@@ -102,7 +102,12 @@ static void Error::triggerException(char* message __attribute__((unused)), char*
 		Printing::text(printing, "                                             ", x, y - 1, NULL);
 	}
 
-	Printing::text(printing, "\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08 EXCEPTION \x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08" , x, y++, NULL);
+	Printing::text
+	(
+		printing, "\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08 EXCEPTION "
+		"\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08" , x, y++, NULL
+	);
+
 	Printing::text(printing, "                                                " , x, y++, NULL);
 	Printing::text(printing, " Last process:                                  ", x, y, NULL);
 	Printing::text(printing, VUEngine::getProcessName(VUEngine::getInstance()), x + 15, y++, NULL);
@@ -169,7 +174,8 @@ static void Error::triggerException(char* message __attribute__((unused)), char*
 	worldPointer->gy = 0;
 	worldPointer->w = __SCREEN_WIDTH;
 	worldPointer->h = __SCREEN_HEIGHT;
-	worldPointer->head = __WORLD_ON | __WORLD_BGMAP | __WORLD_OVR | BgmapTextureManager::getPrintingBgmapSegment(BgmapTextureManager::getInstance());
+	worldPointer->head = 
+		__WORLD_ON | __WORLD_BGMAP | __WORLD_OVR | BgmapTextureManager::getPrintingBgmapSegment(BgmapTextureManager::getInstance());
 
 	_worldAttributesBaseAddress[__EXCEPTIONS_WORLD - 1].head = __WORLD_END;
 

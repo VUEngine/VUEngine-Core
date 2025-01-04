@@ -59,10 +59,16 @@ void ObjectSprite::constructor(GameObject owner, const ObjectSpriteSpec* objectS
 
 	if(NULL != objectSpriteSpec->spriteSpec.textureSpec)
 	{
-		this->texture = Texture::safeCast(ObjectTextureManager::getTexture(ObjectTextureManager::getInstance(), (ObjectTextureSpec*)objectSpriteSpec->spriteSpec.textureSpec));
+		this->texture = 
+			Texture::safeCast(
+				ObjectTextureManager::getTexture(ObjectTextureManager::getInstance(), 
+				(ObjectTextureSpec*)objectSpriteSpec->spriteSpec.textureSpec)
+			);
+
 		NM_ASSERT(this->texture, "ObjectSprite::constructor: null texture");
 
-		Texture::addEventListener(this->texture, ListenerObject::safeCast(this), (EventListener)ObjectSprite::onTextureRewritten, kEventTextureRewritten);
+		Texture::addEventListener(
+			this->texture, ListenerObject::safeCast(this), (EventListener)ObjectSprite::onTextureRewritten, kEventTextureRewritten);
 
 		this->totalObjects = objectSpriteSpec->spriteSpec.textureSpec->cols * objectSpriteSpec->spriteSpec.textureSpec->rows;
 
@@ -87,7 +93,8 @@ void ObjectSprite::destructor()
 
 	if(!isDeleted(this->texture))
 	{
-		Texture::removeEventListener(this->texture, ListenerObject::safeCast(this), (EventListener)ObjectSprite::onTextureRewritten, kEventTextureRewritten);
+		Texture::removeEventListener(
+			this->texture, ListenerObject::safeCast(this), (EventListener)ObjectSprite::onTextureRewritten, kEventTextureRewritten);
 		ObjectTextureManager::releaseTexture(ObjectTextureManager::getInstance(), ObjectTexture::safeCast(this->texture));		
 	}
 
@@ -140,12 +147,14 @@ int16 ObjectSprite::doRender(int16 index)
 	int16 y = this->position.y - this->halfHeight + this->displacement.y - this->yDisplacementDelta;
 
 	uint16 secondWordValue = this->head | (this->position.parallax + this->displacement.parallax);
-	uint16 fourthWordValue = this->fourthWordValue | (CharSet::getOffset(this->texture->charSet) + this->objectTextureSource.displacement);
+	uint16 fourthWordValue = 
+		this->fourthWordValue | (CharSet::getOffset(this->texture->charSet) + this->objectTextureSource.displacement);
 
 	int16 yDisplacement = 0;
 	int16 jDisplacement = 0;
 
-	uint16* framePointer = (uint16*)(this->texture->textureSpec->map + this->texture->mapDisplacement + this->objectTextureSource.displacement);
+	uint16* framePointer = 
+		(uint16*)(this->texture->textureSpec->map + this->texture->mapDisplacement + this->objectTextureSource.displacement);
 	uint16 result = index;
 
 	ObjectAttributes* objectPointer = NULL;
@@ -334,11 +343,14 @@ void ObjectSprite::rewrite()
 	NM_ASSERT(!isDeleted(this->texture), "ObjectSprite::rewrite: null texture");
 	NM_ASSERT(!isDeleted(this->texture->charSet), "ObjectSprite::rewrite: null char set");
 
-	uint16 fourthWordValue = (this->head & 0x3000) | (this->texture->palette << 14) | (CharSet::getOffset(this->texture->charSet) +  this->objectTextureSource.displacement);
+	uint16 fourthWordValue = 
+		(this->head & 0x3000) | (this->texture->palette << 14) | 
+		(CharSet::getOffset(this->texture->charSet) +  this->objectTextureSource.displacement);
 
 	int16 jDisplacement = 0;
 
-	uint16* framePointer = (uint16*)(this->texture->textureSpec->map + this->texture->mapDisplacement + this->objectTextureSource.displacement);
+	uint16* framePointer = 
+		(uint16*)(this->texture->textureSpec->map + this->texture->mapDisplacement + this->objectTextureSource.displacement);
 
 	ObjectAttributes* objectPointer = NULL;
 

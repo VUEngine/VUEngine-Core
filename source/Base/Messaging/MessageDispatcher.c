@@ -84,7 +84,10 @@ static bool MessageDispatcher::dispatchMessage(uint32 delay, ListenerObject send
 	}
 	else
 	{
-		MessageDispatcher::dispatchDelayedMessage(MessageDispatcher::getInstance(), VUEngine::getMessagingClock(_vuEngine), delay, sender, receiver, message, extraInfo);
+		MessageDispatcher::dispatchDelayedMessage
+		(
+			MessageDispatcher::getInstance(), VUEngine::getMessagingClock(_vuEngine), delay, sender, receiver, message, extraInfo
+		);
 	}
 
 	return false;
@@ -135,7 +138,14 @@ bool MessageDispatcher::dispatchDelayedMessages()
 
 			continue;	
 		}
-		else if(!delayedMessage->discarded && !Clock::isPaused(delayedMessage->clock) && Clock::getMilliseconds(delayedMessage->clock) > delayedMessage->timeOfArrival)
+		else if
+		(
+			!delayedMessage->discarded 
+			&& 
+			!Clock::isPaused(delayedMessage->clock) 
+			&& 
+			Clock::getMilliseconds(delayedMessage->clock) > delayedMessage->timeOfArrival
+		)
 		{
 			Telegram telegram = delayedMessage->telegram;
 

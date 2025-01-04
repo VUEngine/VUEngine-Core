@@ -25,7 +25,8 @@
 // CLASS' MACROS
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-#define __PHYSICS_TIME_ELAPSED_STEP			__FIX7_9_EXT_DIV(__1I_FIX7_9_EXT, __FIX7_9_EXT_DIV(__I_TO_FIX7_9_EXT(__TARGET_FPS), __I_TO_FIX7_9_EXT(__PHYSICS_TIME_ELAPSED_DIVISOR)))
+#define __PHYSICS_TIME_ELAPSED_STEP			__FIX7_9_EXT_DIV(__1I_FIX7_9_EXT, __FIX7_9_EXT_DIV(__I_TO_FIX7_9_EXT(__TARGET_FPS), \
+											__I_TO_FIX7_9_EXT(__PHYSICS_TIME_ELAPSED_DIVISOR)))
 
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————

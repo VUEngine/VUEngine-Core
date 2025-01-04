@@ -104,7 +104,11 @@ static void ObjectSpriteContainer::writeDRAM()
 	}
 
 	CACHE_RESET;
-	Mem::copyWORD((WORD*)(_objectAttributesBaseAddress), (WORD*)(_objectAttributesCache + _objectIndex), sizeof(ObjectAttributes) * (__TOTAL_OBJECTS - _objectIndex) >> 2);
+	Mem::copyWORD
+	(
+		(WORD*)(_objectAttributesBaseAddress), (WORD*)(_objectAttributesCache + _objectIndex), 
+		sizeof(ObjectAttributes) * (__TOTAL_OBJECTS - _objectIndex) >> 2
+	);
 
 #ifdef __SHOW_SPRITES_PROFILING
 	extern int32 _writtenObjectTiles;
@@ -303,7 +307,11 @@ bool ObjectSpriteContainer::sortProgressively(bool complete)
 	{
 		swapped = false;
 
-		for(VirtualNode node = complete ? this->objectSprites->head : this->sortingSpriteNode; NULL != node && NULL != node->next; node = node->next)
+		for
+		(
+			VirtualNode node = complete ? this->objectSprites->head : this->sortingSpriteNode; 
+			NULL != node && NULL != node->next; node = node->next
+		)
 		{
 			VirtualNode nextNode = node->next;
 
@@ -373,7 +381,14 @@ void ObjectSpriteContainer::renderSprites(bool evenFrame, bool updateAnimations)
 
 			// Do not change the order of this condition, objectSprite->totalObjects may be modified during rendering
 			// but calling ObjectSprite::getTotalObjects is too costly
-			if(ObjectSprite::render(objectSprite, _objectIndex - (objectSprite->totalObjects - 1), updateAnimations) == _objectIndex - (objectSprite->totalObjects - 1))
+			if
+			(
+				ObjectSprite::render
+				(
+					objectSprite, _objectIndex - (objectSprite->totalObjects - 1), 
+					updateAnimations) == _objectIndex - (objectSprite->totalObjects - 1
+				)
+			)
 			{
 				_objectIndex -= objectSprite->totalObjects;
 			}

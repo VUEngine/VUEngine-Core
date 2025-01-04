@@ -104,7 +104,11 @@ void StageEditor::show()
 
 void StageEditor::hide()
 {
-	ColliderManager::hideColliders(GameState::getColliderManager(GameState::safeCast(VUEngine::getPreviousState(VUEngine::getInstance()))));
+	ColliderManager::hideColliders
+	(
+		GameState::getColliderManager(GameState::safeCast(VUEngine::getPreviousState(VUEngine::getInstance())))
+	);
+
 	Printing::clear(Printing::getInstance());
 	StageEditor::removePreviousSprite(this);
 	StageEditor::releaseWireframe(this);
@@ -219,7 +223,12 @@ void StageEditor::destructor()
 
 void StageEditor::printHeader()
 {
-	Printing::text(Printing::getInstance(), "\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08", 0, 0, NULL);
+	Printing::text
+	(
+		Printing::getInstance(), "\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08"
+		"\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08", 0, 0, NULL
+	);
+
 	Printing::text(Printing::getInstance(), " LEVEL EDITOR ", 1, 0, NULL);
 	Printing::text(Printing::getInstance(), "  /  ", 16, 0, NULL);
 	Printing::int32(Printing::getInstance(), this->state, 17, 0, NULL);
@@ -362,7 +371,11 @@ void StageEditor::highLightEntity()
 			};
 
 
-			this->wireframe = WireframeManager::createWireframe(WireframeManager::getInstance(), GameObject::safeCast(entity), (WireframeSpec*)&meshSpec);
+			this->wireframe = 
+				WireframeManager::createWireframe
+				(
+					WireframeManager::getInstance(), GameObject::safeCast(entity), (WireframeSpec*)&meshSpec
+				);
 		}
 	}
 	else
@@ -755,7 +768,8 @@ void StageEditor::showSelectedUserObject()
 {
 	StageEditor::removePreviousSprite(this);
 
-	SpriteSpec* spriteSpec = (SpriteSpec*)_userObjects[OptionsSelector::getSelectedOption(this->userEntitySelector)].entitySpec->componentSpecs[0];
+	SpriteSpec* spriteSpec = 
+		(SpriteSpec*)_userObjects[OptionsSelector::getSelectedOption(this->userEntitySelector)].entitySpec->componentSpecs[0];
 
 	if(spriteSpec)
 	{
@@ -816,7 +830,11 @@ void StageEditor::selectUserObject(uint32 pressedKey)
 		PositionedEntity DUMMY_ENTITY =
 		{
 			(EntitySpec*)_userObjects[OptionsSelector::getSelectedOption(this->userEntitySelector)].entitySpec,
-			{__METERS_TO_PIXELS(cameraPosition.x) + __HALF_SCREEN_WIDTH, __METERS_TO_PIXELS(cameraPosition.y) + __HALF_SCREEN_HEIGHT, __METERS_TO_PIXELS(cameraPosition.z)},
+			{
+				__METERS_TO_PIXELS(cameraPosition.x) + __HALF_SCREEN_WIDTH, 
+				__METERS_TO_PIXELS(cameraPosition.y) + __HALF_SCREEN_HEIGHT, 
+				__METERS_TO_PIXELS(cameraPosition.z)
+			},
 			{0, 0, 0},
 			{1, 1, 1},
 			0,
@@ -870,31 +888,31 @@ void StageEditor::printEntityPosition()
 		const Scale* globalScale =  GameObject::getScale(entity);
 		const char* entityName = Container::getName(entity);
 
-		Printing::text(Printing::getInstance(),		"ID:                             ", 			x, 		++y, 	NULL);
-		Printing::int32(Printing::getInstance(), 		Entity::getInternalId(entity), 					x + 10, y, 		NULL);
-		Printing::text(Printing::getInstance(),		"Type:                           ", 			x, 		++y, 	NULL);
-		Printing::text(Printing::getInstance(),		__GET_CLASS_NAME_UNSAFE(entity), 				x + 10, y, 		NULL);
-		Printing::text(Printing::getInstance(),		"Name:                           ", 			x, 		++y, 	NULL);
-		Printing::text(Printing::getInstance(),		entityName ? entityName : "-", 					x + 10, y, 		NULL);
-		Printing::text(Printing::getInstance(),		"          X      Y      Z       ", 			x, 		++y, 	NULL);
-		Printing::text(Printing::getInstance(),		"Position:                       ", 			x, 		++y, 	NULL);
-		Printing::int32(Printing::getInstance(), 		__METERS_TO_PIXELS(globalPosition->x), 			x + 10, y, 		NULL);
-		Printing::int32(Printing::getInstance(), 		__METERS_TO_PIXELS(globalPosition->y), 			x + 17, y, 		NULL);
-		Printing::int32(Printing::getInstance(), 		__METERS_TO_PIXELS(globalPosition->z), 			x + 24, y, 		NULL);
-		Printing::text(Printing::getInstance(),		"Rotation:                       ", 			x, 		++y, 	NULL);
-		Printing::float(Printing::getInstance(), 		__FIXED_TO_F(globalRotation->x), 								x + 10, y, 		2, NULL);
-		Printing::float(Printing::getInstance(), 		__FIXED_TO_F(globalRotation->y), 								x + 17, y, 		2, NULL);
-		Printing::float(Printing::getInstance(), 		__FIXED_TO_F(globalRotation->z), 								x + 24, y, 		2, NULL);
-		Printing::text(Printing::getInstance(),		"Scale:                          ", 			x, 		++y, 	NULL);
-		Printing::float(Printing::getInstance(), 	__FIX7_9_TO_F(globalScale->x), 					x + 10, y, 		2, NULL);
-		Printing::float(Printing::getInstance(), 	__FIX7_9_TO_F(globalScale->y), 					x + 17, y, 		2, NULL);
-		Printing::float(Printing::getInstance(), 	__FIX7_9_TO_F(globalScale->z), 					x + 24, y, 		2, NULL);
-		Printing::text(Printing::getInstance(),		"Size:                           ", 			x, 		++y, 	NULL);
-		Printing::int32(Printing::getInstance(), 		__METERS_TO_PIXELS(Entity::getWidth(entity)), 	x + 10, y, 		NULL);
-		Printing::int32(Printing::getInstance(), 		__METERS_TO_PIXELS(Entity::getHeight(entity)), 	x + 17, y, 		NULL);
-		Printing::int32(Printing::getInstance(), 		__METERS_TO_PIXELS(Entity::getDepth(entity)), 	x + 24, y++, 	NULL);
-		Printing::text(Printing::getInstance(),		"Children:                       ", 			x, 		++y, 	NULL);
-		Printing::int32(Printing::getInstance(), 		Container::getChildrenCount(entity), 				x + 10, y, 		NULL);
+		Printing::text(Printing::getInstance(), "ID:                             ", x, ++y, NULL);
+		Printing::int32(Printing::getInstance()Entity::getInternalId(entity), x + 10, y, NULL);
+		Printing::text(Printing::getInstance(), "Type:                           ", x, ++y, NULL);
+		Printing::text(Printing::getInstance(),		__GET_CLASS_NAME_UNSAFE(entity), x + 10, y, NULL);
+		Printing::text(Printing::getInstance(), "Name:                           ", x, ++y, NULL);
+		Printing::text(Printing::getInstance(),		entityName ? entityName : "-"x + 10, y, NULL);
+		Printing::text(Printing::getInstance(), "          X      Y      Z       ", x, ++y, NULL);
+		Printing::text(Printing::getInstance(), "Position:                       ", x, ++y, NULL);
+		Printing::int32(Printing::getInstance()__METERS_TO_PIXELS(globalPosition->x), x + 10, y, NULL);
+		Printing::int32(Printing::getInstance()__METERS_TO_PIXELS(globalPosition->y), x + 17, y, NULL);
+		Printing::int32(Printing::getInstance()__METERS_TO_PIXELS(globalPosition->z), x + 24, y, NULL);
+		Printing::text(Printing::getInstance(), "Rotation:                       ", x, ++y, NULL);
+		Printing::float(Printing::getInstance()__FIXED_TO_F(globalRotation->x), x + 10, y, 2, NULL);
+		Printing::float(Printing::getInstance()__FIXED_TO_F(globalRotation->y), x + 17, y, 2, NULL);
+		Printing::float(Printing::getInstance()__FIXED_TO_F(globalRotation->z), x + 24, y, 2, NULL);
+		Printing::text(Printing::getInstance(), "Scale:                          ", x, ++y, NULL);
+		Printing::float(Printing::getInstance(), 	__FIX7_9_TO_F(globalScale->x)x + 10, y2, NULL);
+		Printing::float(Printing::getInstance(), 	__FIX7_9_TO_F(globalScale->y)x + 17, y2, NULL);
+		Printing::float(Printing::getInstance(), 	__FIX7_9_TO_F(globalScale->z)x + 24, y2, NULL);
+		Printing::text(Printing::getInstance(), "Size:                           ", x, ++y, NULL);
+		Printing::int32(Printing::getInstance()__METERS_TO_PIXELS(Entity::getWidth(entity)), x + 10, y, NULL);
+		Printing::int32(Printing::getInstance()__METERS_TO_PIXELS(Entity::getHeight(entity)), x + 17, y, NULL);
+		Printing::int32(Printing::getInstance()__METERS_TO_PIXELS(Entity::getDepth(entity)), x + 24, y++, NULL);
+		Printing::text(Printing::getInstance(), "Children:                       ", x, ++y, NULL);
+		Printing::int32(Printing::getInstance()Container::getChildrenCount(entity), x + 10, y, NULL);
 	}
 }
 

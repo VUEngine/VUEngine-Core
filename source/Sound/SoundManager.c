@@ -122,7 +122,10 @@ bool SoundManager::isPlayingSound(const SoundSpec* soundSpec)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-bool SoundManager::playSound(const SoundSpec* soundSpec, const Vector3D* position, uint32 playbackType, EventListener soundReleaseListener, ListenerObject scope)
+bool SoundManager::playSound
+(
+	const SoundSpec* soundSpec, const Vector3D* position, uint32 playbackType, EventListener soundReleaseListener, ListenerObject scope
+)
 {
 	if(this->lock || NULL == soundSpec)
 	{

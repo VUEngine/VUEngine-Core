@@ -113,7 +113,12 @@ class Particle : GameObject
 	/// @param movementType: Movement type on each axis
 	/// @param animationFunctions: Array of animations
 	/// @param animationName: Animation to play
-	void setup(const ComponentSpec* visualComponentSpec, const ComponentSpec* physicsComponentSpec, const ComponentSpec* colliderComponentSpec, int16 lifeSpan, const Vector3D* position, const Vector3D* force, uint32 movementType, const AnimationFunction** animationFunctions, const char* animationName);
+	void setup
+	(
+		const ComponentSpec* visualComponentSpec, const ComponentSpec* physicsComponentSpec, const ComponentSpec* colliderComponentSpec, 
+		int16 lifeSpan, const Vector3D* position, const Vector3D* force, uint32 movementType, const AnimationFunction** animationFunctions, 
+		const char* animationName
+	);
 
 	/// Configure the particle with the provided arguments after unpausing the game.
 	/// @param visualComponentSpec: Specification for a sprite to add to the particle

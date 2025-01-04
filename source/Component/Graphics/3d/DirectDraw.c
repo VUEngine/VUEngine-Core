@@ -85,7 +85,12 @@ static inline bool DirectDraw::shrinkLineToScreenSpace(fixed_ext_t* x0, fixed_ex
 
 	if(0 == dx)
 	{
-		if(((unsigned)(_frustumFixedPoint.x1 - _frustumFixedPoint.x0) < (unsigned)(x - parallax)) && ((unsigned)(_frustumFixedPoint.x1 - _frustumFixedPoint.x0) < (unsigned)(x + parallax)))
+		if
+		(
+			((unsigned)(_frustumFixedPoint.x1 - _frustumFixedPoint.x0) < (unsigned)(x - parallax)) 
+			&& 
+			((unsigned)(_frustumFixedPoint.x1 - _frustumFixedPoint.x0) < (unsigned)(x + parallax))
+		)
 		{
 			return false;
 		}
@@ -339,11 +344,24 @@ static bool DirectDraw::drawLine(PixelVector fromPoint, PixelVector toPoint, int
 		return false;
 	}
 
-	if(_frustumWidth + __DIRECT_DRAW_LINE_SHRINKING_PADDING < xFromDeltaLeft || _frustumWidth + __DIRECT_DRAW_LINE_SHRINKING_PADDING < xFromDeltaRight || _frustumHeight + __DIRECT_DRAW_LINE_SHRINKING_PADDING < yFromDelta)
+	if
+	(
+		_frustumWidth + __DIRECT_DRAW_LINE_SHRINKING_PADDING < xFromDeltaLeft 
+		|| 
+		_frustumWidth + __DIRECT_DRAW_LINE_SHRINKING_PADDING < xFromDeltaRight 
+		|| 
+		_frustumHeight + __DIRECT_DRAW_LINE_SHRINKING_PADDING < yFromDelta
+	)
 	{
 		totalPixelRounding = 0;
 
-		if(!DirectDraw::shrinkLineToScreenSpace(&fromPointX, &fromPointY, &fromPointParallax, dx, dy, dParallax, toPointX, toPointY, toPointParallax))
+		if
+		(
+			!DirectDraw::shrinkLineToScreenSpace
+			(
+				&fromPointX, &fromPointY, &fromPointParallax, dx, dy, dParallax, toPointX, toPointY, toPointParallax
+			)
+		)
 		{
 			return false;
 		}
@@ -352,11 +370,24 @@ static bool DirectDraw::drawLine(PixelVector fromPoint, PixelVector toPoint, int
 		yFromOutside = (unsigned)_frustumFixedPoint.y1 - _frustumFixedPoint.y0 < (unsigned)(fromPointY - _frustumFixedPoint.y0);
 	}
 
-	if(_frustumWidth + __DIRECT_DRAW_LINE_SHRINKING_PADDING < xToDeltaLeft || _frustumWidth + __DIRECT_DRAW_LINE_SHRINKING_PADDING < xToDeltaRight || _frustumHeight + __DIRECT_DRAW_LINE_SHRINKING_PADDING < yToDelta)
+	if
+	(
+		_frustumWidth + __DIRECT_DRAW_LINE_SHRINKING_PADDING < xToDeltaLeft 
+		|| 
+		_frustumWidth + __DIRECT_DRAW_LINE_SHRINKING_PADDING < xToDeltaRight 
+		|| 
+		_frustumHeight + __DIRECT_DRAW_LINE_SHRINKING_PADDING < yToDelta
+	)
 	{
 		totalPixelRounding = 0;
 
-		if(!DirectDraw::shrinkLineToScreenSpace(&toPointX, &toPointY, &toPointParallax, dx, dy, dParallax, fromPointX, fromPointY, fromPointParallax))
+		if
+		(
+			!DirectDraw::shrinkLineToScreenSpace
+			(
+				&toPointX, &toPointY, &toPointParallax, dx, dy, dParallax, fromPointX, fromPointY, fromPointParallax
+			)
+		)
 		{
 			return false;
 		}
@@ -432,12 +463,18 @@ static bool DirectDraw::drawLine(PixelVector fromPoint, PixelVector toPoint, int
 
 			for(; 1 < totalPixels; totalPixels -=2)
 			{
-				DirectDraw::drawColorPixelInterlaced((BYTE*)leftBuffer, __FIXED_EXT_TO_I(fromPointX), __FIXED_EXT_TO_I(fromPointY), __FIXED_EXT_TO_I(parallaxStart), color);
+				DirectDraw::drawColorPixelInterlaced
+				(
+					(BYTE*)leftBuffer, __FIXED_EXT_TO_I(fromPointX), __FIXED_EXT_TO_I(fromPointY), __FIXED_EXT_TO_I(parallaxStart), color
+				);
 
 				fromPointX += xStep;
 				fromPointY += yStep;
 
-				DirectDraw::drawColorPixelInterlaced((BYTE*)rightBuffer, __FIXED_EXT_TO_I(fromPointX), __FIXED_EXT_TO_I(fromPointY), -__FIXED_EXT_TO_I(parallaxStart), color);
+				DirectDraw::drawColorPixelInterlaced
+				(
+					(BYTE*)rightBuffer, __FIXED_EXT_TO_I(fromPointX), __FIXED_EXT_TO_I(fromPointY), -__FIXED_EXT_TO_I(parallaxStart), color
+				);
 
 				fromPointX += xStep;
 				fromPointY += yStep;
@@ -448,12 +485,18 @@ static bool DirectDraw::drawLine(PixelVector fromPoint, PixelVector toPoint, int
 		{
 			for(; 1 < totalPixels; totalPixels -=2)
 			{
-				DirectDraw::drawColorPixelInterlaced((BYTE*)leftBuffer, __FIXED_EXT_TO_I(fromPointX), __FIXED_EXT_TO_I(fromPointY), __FIXED_EXT_TO_I(parallaxStart), color);
+				DirectDraw::drawColorPixelInterlaced
+				(
+					(BYTE*)leftBuffer, __FIXED_EXT_TO_I(fromPointX), __FIXED_EXT_TO_I(fromPointY), __FIXED_EXT_TO_I(parallaxStart), color
+				);
 
 				fromPointX += xStep;
 				fromPointY += yStep;
 
-				DirectDraw::drawColorPixelInterlaced((BYTE*)rightBuffer, __FIXED_EXT_TO_I(fromPointX), __FIXED_EXT_TO_I(fromPointY), -__FIXED_EXT_TO_I(parallaxStart), color);
+				DirectDraw::drawColorPixelInterlaced
+				(
+					(BYTE*)rightBuffer, __FIXED_EXT_TO_I(fromPointX), __FIXED_EXT_TO_I(fromPointY), -__FIXED_EXT_TO_I(parallaxStart), color
+				);
 
 				fromPointX += xStep;
 				fromPointY += yStep;
@@ -468,7 +511,11 @@ static bool DirectDraw::drawLine(PixelVector fromPoint, PixelVector toPoint, int
 
 		for(; 0 < totalPixels; totalPixels -=1)
 		{
-			DirectDraw::drawColorPixel((BYTE*)leftBuffer, (BYTE*)rightBuffer, __FIXED_EXT_TO_I(fromPointX), __FIXED_EXT_TO_I(fromPointY), __FIXED_EXT_TO_I(parallaxStart), color);
+			DirectDraw::drawColorPixel
+			(
+				(BYTE*)leftBuffer, (BYTE*)rightBuffer, __FIXED_EXT_TO_I(fromPointX), __FIXED_EXT_TO_I(fromPointY), 
+				__FIXED_EXT_TO_I(parallaxStart), color
+			);
 
 			fromPointX += xStep;
 			fromPointY += yStep;
@@ -589,14 +636,45 @@ static bool DirectDraw::drawCircle(PixelVector center, int16 radius, int32 color
 
 	    while (x >= y)
 		{
-			DirectDraw::drawColorPixel((BYTE*)leftBuffer, (BYTE*)rightBuffer, center.x + x + radius, center.y + y + radius, center.parallax, color);
-			DirectDraw::drawColorPixel((BYTE*)leftBuffer, (BYTE*)rightBuffer, center.x + y + radius, center.y + x + radius, center.parallax, color);
-			DirectDraw::drawColorPixel((BYTE*)leftBuffer, (BYTE*)rightBuffer, center.x - x + radius, center.y + y + radius, center.parallax, color);
-			DirectDraw::drawColorPixel((BYTE*)leftBuffer, (BYTE*)rightBuffer, center.x - y + radius, center.y + x + radius, center.parallax, color);
-			DirectDraw::drawColorPixel((BYTE*)leftBuffer, (BYTE*)rightBuffer, center.x - x + radius, center.y - y + radius, center.parallax, color);
-			DirectDraw::drawColorPixel((BYTE*)leftBuffer, (BYTE*)rightBuffer, center.x - y + radius, center.y - x + radius, center.parallax, color);
-			DirectDraw::drawColorPixel((BYTE*)leftBuffer, (BYTE*)rightBuffer, center.x + x + radius, center.y - y + radius, center.parallax, color);
-			DirectDraw::drawColorPixel((BYTE*)leftBuffer, (BYTE*)rightBuffer, center.x + y + radius, center.y - x + radius, center.parallax, color);
+			DirectDraw::drawColorPixel
+			(
+				(BYTE*)leftBuffer, (BYTE*)rightBuffer, center.x + x + radius, center.y + y + radius, center.parallax, color
+			);
+			
+			DirectDraw::drawColorPixel
+			(
+				(BYTE*)leftBuffer, (BYTE*)rightBuffer, center.x + y + radius, center.y + x + radius, center.parallax, color
+			);
+			
+			DirectDraw::drawColorPixel
+			(
+				(BYTE*)leftBuffer, (BYTE*)rightBuffer, center.x - x + radius, center.y + y + radius, center.parallax, color
+			);
+
+			DirectDraw::drawColorPixel
+			(
+				(BYTE*)leftBuffer, (BYTE*)rightBuffer, center.x - y + radius, center.y + x + radius, center.parallax, color
+			);
+			
+			DirectDraw::drawColorPixel
+			(
+				(BYTE*)leftBuffer, (BYTE*)rightBuffer, center.x - x + radius, center.y - y + radius, center.parallax, color
+			);
+
+			DirectDraw::drawColorPixel
+			(
+				(BYTE*)leftBuffer, (BYTE*)rightBuffer, center.x - y + radius, center.y - x + radius, center.parallax, color
+			);
+			
+			DirectDraw::drawColorPixel
+			(
+				(BYTE*)leftBuffer, (BYTE*)rightBuffer, center.x + x + radius, center.y - y + radius, center.parallax, color
+			);
+			
+			DirectDraw::drawColorPixel
+			(
+				(BYTE*)leftBuffer, (BYTE*)rightBuffer, center.x + y + radius, center.y - x + radius, center.parallax, color
+			);
 
 			y++;
 
@@ -660,7 +738,11 @@ static bool DirectDraw::drawX(PixelVector center, int16 length, int32 color, uin
 		for(; lengthHelper <= length; lengthHelper++, x++, y++)
 		{
 			DirectDraw::drawColorPixel((BYTE*)leftBuffer, (BYTE*)rightBuffer, x, y, center.parallax, color);
-			DirectDraw::drawColorPixel((BYTE*)leftBuffer, (BYTE*)rightBuffer, (center.x + halfLength) - lengthHelper, y, center.parallax, color);
+			
+			DirectDraw::drawColorPixel
+			(
+				(BYTE*)leftBuffer, (BYTE*)rightBuffer, (center.x + halfLength) - lengthHelper, y, center.parallax, color
+			);
 		}
 	}
 
@@ -748,7 +830,11 @@ static bool DirectDraw::drawSolidCircle(PixelVector center, int16 radius, int32 
 	{
 		int16 y = Math::squareRoot(radiusSquare - x * x);
 
-		DirectDraw::drawLine((PixelVector){center.x + x, center.y - y, center.z, center.parallax}, (PixelVector){center.x + x, center.y + y, center.z, center.parallax}, color, bufferIndex, interlaced);
+		DirectDraw::drawLine
+		(
+			(PixelVector){center.x + x, center.y - y, center.z, center.parallax}, 
+			(PixelVector){center.x + x, center.y + y, center.z, center.parallax}, color, bufferIndex, interlaced
+		);
 	}
 
 	return true;
@@ -1137,14 +1223,22 @@ void DirectDraw::constructor()
 
 	DirectDraw::reset(this);
 
-	VIPManager::addEventListener(VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)DirectDraw::onVIPManagerGAMESTARTDuringXPEND, kEventVIPManagerGAMESTARTDuringXPEND);
+	VIPManager::addEventListener
+	(
+		VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)DirectDraw::onVIPManagerGAMESTARTDuringXPEND, 
+		kEventVIPManagerGAMESTARTDuringXPEND
+	);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void DirectDraw::destructor()
 {
-	VIPManager::removeEventListener(VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)DirectDraw::onVIPManagerGAMESTARTDuringXPEND, kEventVIPManagerGAMESTARTDuringXPEND);
+	VIPManager::removeEventListener
+	(
+		VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)DirectDraw::onVIPManagerGAMESTARTDuringXPEND, 
+		kEventVIPManagerGAMESTARTDuringXPEND
+	);
 
 	// allow a new construct
 	// Always explicitly call the base's destructor 

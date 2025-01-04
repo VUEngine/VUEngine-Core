@@ -107,7 +107,8 @@ static uint32 Texture::getTotalRows(TextureSpec* textureSpec)
 	if(!Texture::isSpecSingleFrame(textureSpec))
 	{
 		int16 allocableFrames = 64 / textureSpec->cols;
-		int16 neededRows = __FIXED_TO_I(__FIXED_DIV(__I_TO_FIXED(textureSpec->numberOfFrames), __I_TO_FIXED(allocableFrames)) + __05F_FIXED) - 1;
+		int16 neededRows = 
+			__FIXED_TO_I(__FIXED_DIV(__I_TO_FIXED(textureSpec->numberOfFrames), __I_TO_FIXED(allocableFrames)) + __05F_FIXED) - 1;
 
 		// return the total number of chars
 		return textureSpec->rows + textureSpec->rows * (0 < neededRows ? neededRows : 0);
@@ -463,7 +464,11 @@ bool Texture::isMultiframe()
 
 void Texture::addChar(const Point* textureChar, const uint32* newChar)
 {
-	if(NULL != this->charSet && NULL != textureChar && ((unsigned)textureChar->x) < this->textureSpec->cols && ((unsigned)textureChar->y) < this->textureSpec->rows)
+	if
+	(
+		NULL != this->charSet && NULL != textureChar && ((unsigned)textureChar->x) < this->textureSpec->cols && 
+		((unsigned)textureChar->y) < this->textureSpec->rows
+	)
 	{
 		uint32 displacement = this->textureSpec->cols * textureChar->y + textureChar->x;
 		uint32 charToReplace = this->textureSpec->map[displacement] & 0x7FF;
@@ -476,7 +481,11 @@ void Texture::addChar(const Point* textureChar, const uint32* newChar)
 
 void Texture::putChar(const Point* textureChar, const uint32* newChar)
 {
-	if(NULL != this->charSet && NULL != textureChar && ((unsigned)textureChar->x) < this->textureSpec->cols && ((unsigned)textureChar->y) < this->textureSpec->rows)
+	if
+	(
+		NULL != this->charSet && NULL != textureChar && ((unsigned)textureChar->x) < this->textureSpec->cols && 
+		((unsigned)textureChar->y) < this->textureSpec->rows
+	)
 	{
 		uint32 displacement = this->textureSpec->cols * textureChar->y + textureChar->x;
 		uint32 charToReplace = this->textureSpec->map[displacement] & 0x7FF;
@@ -489,7 +498,11 @@ void Texture::putChar(const Point* textureChar, const uint32* newChar)
 
 void Texture::putPixel(const Point* texturePixel, const Pixel* charSetPixel, BYTE newPixelColor)
 {
-	if(this->charSet && texturePixel && ((unsigned)texturePixel->x) < this->textureSpec->cols && ((unsigned)texturePixel->y) < this->textureSpec->rows)
+	if
+	(
+		this->charSet && texturePixel && ((unsigned)texturePixel->x) < this->textureSpec->cols && 
+		((unsigned)texturePixel->y) < this->textureSpec->rows
+	)
 	{
 		uint32 displacement = this->textureSpec->cols * texturePixel->y + texturePixel->x;
 		uint32 charToReplace = this->textureSpec->map[displacement] & 0x7FF;
@@ -586,8 +599,15 @@ void Texture::loadCharSet()
 
 	Texture::setupUpdateFunction(this);
 
-	CharSet::addEventListener(this->charSet, ListenerObject::safeCast(this), (EventListener)Texture::onCharSetChangedOffset, kEventCharSetChangedOffset);
-	CharSet::addEventListener(this->charSet, ListenerObject::safeCast(this), (EventListener)Texture::onCharSetDeleted, kEventCharSetDeleted);
+	CharSet::addEventListener
+	(
+		this->charSet, ListenerObject::safeCast(this), (EventListener)Texture::onCharSetChangedOffset, kEventCharSetChangedOffset
+	);
+	
+	CharSet::addEventListener
+	(
+		this->charSet, ListenerObject::safeCast(this), (EventListener)Texture::onCharSetDeleted, kEventCharSetDeleted
+	);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -604,8 +624,15 @@ void Texture::releaseCharSet()
 
 	if(!isDeleted(this->charSet))
 	{
-		CharSet::removeEventListener(this->charSet, ListenerObject::safeCast(this), (EventListener)Texture::onCharSetChangedOffset, kEventCharSetChangedOffset);
-		CharSet::removeEventListener(this->charSet, ListenerObject::safeCast(this), (EventListener)Texture::onCharSetDeleted, kEventCharSetDeleted);
+		CharSet::removeEventListener
+		(
+			this->charSet, ListenerObject::safeCast(this), (EventListener)Texture::onCharSetChangedOffset, kEventCharSetChangedOffset
+		);
+		
+		CharSet::removeEventListener
+		(
+			this->charSet, ListenerObject::safeCast(this), (EventListener)Texture::onCharSetDeleted, kEventCharSetDeleted
+		);
 
 		CharSetManager::releaseCharSet(CharSetManager::getInstance(), this->charSet);
 
@@ -677,7 +704,10 @@ bool Texture::update(int16 maximumTextureRowsToWrite)
 void Texture::setMapDisplacement(uint32 mapDisplacement)
 {
 	bool statusChanged = kTextureMapDisplacementChanged != this->status;
-	this->status = this->mapDisplacement != mapDisplacement && this->status > kTextureMapDisplacementChanged ? kTextureMapDisplacementChanged : this->status;
+	this->status = 
+		this->mapDisplacement != mapDisplacement 
+		&& 
+		this->status > kTextureMapDisplacementChanged ? kTextureMapDisplacementChanged : this->status;
 
 	bool valueChanged = this->mapDisplacement != mapDisplacement;
 	this->mapDisplacement = mapDisplacement;

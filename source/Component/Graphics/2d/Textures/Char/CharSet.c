@@ -186,7 +186,10 @@ void CharSet::putPixel(const uint32 charToReplace, const Pixel* charSetPixel, BY
 		auxChar[displacement] &= (~(0x03 << pixelToReplaceDisplacement) | ((uint16)newPixelColor << pixelToReplaceDisplacement));
 //		auxChar[displacement] |= (uint16)newPixelColor << pixelToReplaceDisplacement;
 
-		Mem::copyBYTE((uint8*)__CHAR_SPACE_BASE_ADDRESS + (((uint32)this->offset) << 4) + (charToReplace << 4), auxChar, (int32)(sizeof(BYTE) << 4));
+		Mem::copyBYTE
+		(
+			(uint8*)__CHAR_SPACE_BASE_ADDRESS + (((uint32)this->offset) << 4) + (charToReplace << 4), auxChar, (int32)(sizeof(BYTE) << 4)
+		);
 	}
 }
 
@@ -265,7 +268,8 @@ void CharSet::write()
 				"st.w	r11, -4[%0]		\n\t"      \
 				"bne   loop%=			\n\t"
 				: // No Output
-				: "r" ((uint32*)(__CHAR_SPACE_BASE_ADDRESS + (((uint32)this->offset) << 4))), "r" (&this->charSetSpec->tiles[1] + this->tilesDisplacement), "r" (__UINT32S_PER_CHARS(tilesToWrite) >> 2)
+				: "r" ((uint32*)(__CHAR_SPACE_BASE_ADDRESS + (((uint32)this->offset) << 4))), 
+					"r" (&this->charSetSpec->tiles[1] + this->tilesDisplacement), "r" (__UINT32S_PER_CHARS(tilesToWrite) >> 2)
 				: "r11", "r12", "r13" // regs used
 			);
 #endif

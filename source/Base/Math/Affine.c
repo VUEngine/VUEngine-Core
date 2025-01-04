@@ -31,13 +31,10 @@ extern double fabs (double);
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 
+
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static int16 Affine::transform
-(
-	uint32 param, int16 paramTableRow, fixed_t targetHalfWidth, fixed_t targetHalfHeight, fix13_3 mx, fix13_3 my, fixed_t halfWidth, 
-	fixed_t halfHeight, const Rotation* rotation
-)
+static int16 Affine::transform(uint32 param, int16 paramTableRow, fixed_t targetHalfWidth, fixed_t targetHalfHeight, fix13_3 mx, fix13_3 my, fixed_t halfWidth, fixed_t halfHeight, const Rotation* rotation)
 {
 	fixed_t finalScaleX = __FIXED_MULT(__FIX7_9_TO_FIXED(__COS(__FIXED_TO_I(rotation->y))), __FIXED_DIV(targetHalfWidth, halfWidth));
 	fixed_t finalScaleY = __FIXED_MULT(__FIX7_9_TO_FIXED(__COS(__FIXED_TO_I(rotation->x))), __FIXED_DIV(targetHalfHeight, halfHeight));
@@ -105,7 +102,13 @@ static int16 Affine::transform
 		fix19_13 topEdgeSizeZ = __FIX19_13_MULT(__FIXED_TO_FIX19_13(halfHeight), __FIX7_9_TO_FIX19_13(__SIN(__FIXED_TO_I(rotation->x))));
 		fix19_13 bottomEdgeSizeZ = -topEdgeSizeZ;
 
-		fix19_13 scaleXDifference = __FIX19_13_MULT(__I_TO_FIX19_13(1), __FIXED_TO_FIX19_13(__FIXED_DIV(__PIXELS_TO_METERS(__FIX19_13_TO_I(topEdgeSizeZ)), _optical->scalingFactor)));
+		fix19_13 scaleXDifference = 
+			__FIX19_13_MULT
+			(
+				__I_TO_FIX19_13(1), 
+				__FIXED_TO_FIX19_13(__FIXED_DIV(__PIXELS_TO_METERS(__FIX19_13_TO_I(topEdgeSizeZ)), _optical->scalingFactor))
+			);
+
 		fix19_13 scaleYDifference = __FIX7_9_TO_FIX19_13(__SIN(__FIXED_TO_I(rotation->x)));
 
 		fix19_13 scaleXFactor = __FIXED_TO_FIX19_13(finalScaleX);
@@ -252,7 +255,9 @@ PRINT_INT(lastRow, 1, 16);
 	if(i <= lastRow)
 	{
 		return i;
+
 	}
+
 
 	affine[i].pb_y = 0;
 	affine[i].parallax = 0;

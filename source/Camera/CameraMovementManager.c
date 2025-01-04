@@ -70,7 +70,12 @@ void CameraMovementManager::setFocusEntity(Entity focusEntity)
 
 	if(!isDeleted(this->focusEntity))
 	{
-		Entity::addEventListener(this->focusEntity, ListenerObject::safeCast(this), (EventListener)CameraMovementManager::onFocusEntityDeleted,  kEventContainerDeleted);
+		Entity::addEventListener
+		(
+			this->focusEntity, ListenerObject::safeCast(this), (EventListener)CameraMovementManager::onFocusEntityDeleted, 
+			kEventContainerDeleted
+		);
+		
 		this->focusEntityPosition = Entity::getPosition(this->focusEntity);
 		this->focusEntityRotation = Entity::getRotation(this->focusEntity);
 	}

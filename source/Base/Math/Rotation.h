@@ -137,7 +137,8 @@ static inline Rotation Rotation::zero()
 
 static inline Rotation Rotation::invert(Rotation rotation)
 {
-	return Rotation::clamp(__FULL_ROTATION_DEGREES - rotation.x, __FULL_ROTATION_DEGREES - rotation.y, __FULL_ROTATION_DEGREES - rotation.z);
+	return 
+		Rotation::clamp(__FULL_ROTATION_DEGREES - rotation.x, __FULL_ROTATION_DEGREES - rotation.y, __FULL_ROTATION_DEGREES - rotation.z);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -212,7 +213,8 @@ static inline Rotation Rotation::intermediate(Rotation a, Rotation b)
 
 static inline Rotation Rotation::scalarProduct(Rotation rotation, int16 scalar)
 {
-	return Rotation::clamp(__FIXED_EXT_MULT(rotation.x, scalar), __FIXED_EXT_MULT(rotation.y, scalar), __FIXED_EXT_MULT(rotation.z, scalar));
+	return 
+		Rotation::clamp(__FIXED_EXT_MULT(rotation.x, scalar), __FIXED_EXT_MULT(rotation.y, scalar), __FIXED_EXT_MULT(rotation.z, scalar));
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -221,7 +223,8 @@ static inline Rotation Rotation::scalarDivision(Rotation rotation, int16 scalar)
 {
 	if(0 != scalar)
 	{
-		return Rotation::clamp(__FIXED_EXT_DIV(rotation.x, scalar), __FIXED_EXT_DIV(rotation.y, scalar), __FIXED_EXT_DIV(rotation.z, scalar));
+		return 
+			Rotation::clamp(__FIXED_EXT_DIV(rotation.x, scalar), __FIXED_EXT_DIV(rotation.y, scalar), __FIXED_EXT_DIV(rotation.z, scalar));
 	}
 
 	return Rotation::zero();
@@ -245,7 +248,11 @@ static inline Rotation Rotation::getFromPixelRotation(PixelRotation pixelRotatio
 
 static inline Rotation Rotation::getFromScreenPixelRotation(ScreenPixelRotation screenPixelRotation)
 {
-	return Rotation::clamp(__I_TO_FIXED_EXT(screenPixelRotation.x), __I_TO_FIXED_EXT(screenPixelRotation.y), __I_TO_FIXED_EXT(screenPixelRotation.z));
+	return 
+		Rotation::clamp
+		(
+			__I_TO_FIXED_EXT(screenPixelRotation.x), __I_TO_FIXED_EXT(screenPixelRotation.y), __I_TO_FIXED_EXT(screenPixelRotation.z)
+		);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————

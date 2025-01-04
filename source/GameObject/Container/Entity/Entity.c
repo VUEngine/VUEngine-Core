@@ -163,7 +163,14 @@ static void Entity::getRightBoxFromChildrenSpec(const PositionedEntity* position
 
 	RightBox myRightBox = {0, 0, 0, 0, 0, 0};
 
-	if(0 != positionedEntity->entitySpec->pixelSize.x || 0 != positionedEntity->entitySpec->pixelSize.y || 0 != positionedEntity->entitySpec->pixelSize.z)
+	if
+	(
+		0 != positionedEntity->entitySpec->pixelSize.x 
+		|| 
+		0 != positionedEntity->entitySpec->pixelSize.y 
+		|| 
+		0 != positionedEntity->entitySpec->pixelSize.z
+	)
 	{
 		fixed_t halfWidth = __PIXELS_TO_METERS(positionedEntity->entitySpec->pixelSize.x) >> 1;
 		fixed_t halfHeight = __PIXELS_TO_METERS(positionedEntity->entitySpec->pixelSize.y) >> 1;
@@ -327,7 +334,11 @@ static Entity Entity::instantiate(const PositionedEntity* const positionedEntity
 	}
 
 	// Call the appropriate allocator to support inheritance
-	Entity entity = ((Entity (*)(EntitySpec*, int16, const char* const)) positionedEntity->entitySpec->allocator)((EntitySpec*)positionedEntity->entitySpec, internalId, name);
+	Entity entity = 
+		((Entity (*)(EntitySpec*, int16, const char* const)) positionedEntity->entitySpec->allocator)
+		(
+			(EntitySpec*)positionedEntity->entitySpec, internalId, name
+		);
 
 	// process extra info
 	if(NULL != positionedEntity->extraInfo)
@@ -562,7 +573,10 @@ void Entity::addChildEntitiesDeferred(const PositionedEntity* childrenSpecs)
 
 	for(int32 i = 0; NULL != childrenSpecs[i].entitySpec; i++)
 	{
-		EntityFactory::spawnEntity(this->entityFactory, &childrenSpecs[i], Container::safeCast(this), NULL, this->internalId + Entity::getChildrenCount(this));
+		EntityFactory::spawnEntity
+		(
+			this->entityFactory, &childrenSpecs[i], Container::safeCast(this), NULL, this->internalId + Entity::getChildrenCount(this)
+		);
 	}
 }
 

@@ -100,7 +100,11 @@ static void VSUManager::printVSUSoundSourceConfiguration(const VSUSoundSourceCon
 
 void VSUManager::applySoundSourceConfiguration(const VSUSoundSourceConfiguration* vsuSoundSourceConfiguration)
 {
-	int16 vsuSoundSourceIndex = VSUManager::findAvailableSoundSource(this, vsuSoundSourceConfiguration->requester, vsuSoundSourceConfiguration->type, !vsuSoundSourceConfiguration->skippable);
+	int16 vsuSoundSourceIndex = 
+		VSUManager::findAvailableSoundSource
+		(
+			this, vsuSoundSourceConfiguration->requester, vsuSoundSourceConfiguration->type, !vsuSoundSourceConfiguration->skippable
+		);
 
 	if(0 > vsuSoundSourceIndex)
 	{
@@ -184,7 +188,12 @@ void VSUManager::reset()
 		this->vsuSoundSourceConfigurations[i].type = kSoundSourceModulation | kSoundSourceNormal;
 	}
 
-	for(int16 i = __TOTAL_NORMAL_CHANNELS + __TOTAL_MODULATION_CHANNELS; i < __TOTAL_NORMAL_CHANNELS + __TOTAL_MODULATION_CHANNELS + __TOTAL_NOISE_CHANNELS; i++)
+	for
+	(
+		int16 i = __TOTAL_NORMAL_CHANNELS + __TOTAL_MODULATION_CHANNELS; 
+		i < __TOTAL_NORMAL_CHANNELS + __TOTAL_MODULATION_CHANNELS + __TOTAL_NOISE_CHANNELS; 
+		i++
+	)
 	{
 		this->vsuSoundSourceConfigurations[i].type = kSoundSourceNoise;
 	}
@@ -356,7 +365,10 @@ void VSUManager::destructor()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void VSUManager::configureSoundSource(int16 vsuSoundSourceIndex, const VSUSoundSourceConfiguration* vsuSoundSourceConfiguration, Waveform* waveform)
+void VSUManager::configureSoundSource
+(
+	int16 vsuSoundSourceIndex, const VSUSoundSourceConfiguration* vsuSoundSourceConfiguration, Waveform* waveform
+)
 {
 	int16 i = vsuSoundSourceIndex;
 	VSUSoundSource* vsuSoundSource = this->vsuSoundSourceConfigurations[i].vsuSoundSource;
@@ -443,7 +455,12 @@ int16 VSUManager::findAvailableSoundSource(Object requester, uint32 soundSourceT
 				continue;
 			}
 
-			if(0 > soonestFreeSoundSource || this->vsuSoundSourceConfigurations[i].timeout < this->vsuSoundSourceConfigurations[soonestFreeSoundSource].timeout)
+			if
+			(
+				0 > soonestFreeSoundSource 
+				|| 
+				this->vsuSoundSourceConfigurations[i].timeout < this->vsuSoundSourceConfigurations[soonestFreeSoundSource].timeout
+			)
 			{
 				soonestFreeSoundSource = i;
 			}
@@ -506,7 +523,12 @@ void VSUManager::dispatchQueuedSoundSourceConfigurations()
 
 		VSUSoundSourceConfiguration* queuedVSUSoundSourceConfiguration = (VSUSoundSourceConfiguration*)node->data;
 
-		int16 vsuSoundSourceIndex = VSUManager::findAvailableSoundSource(this, queuedVSUSoundSourceConfiguration->requester, queuedVSUSoundSourceConfiguration->type, !queuedVSUSoundSourceConfiguration->skippable);
+		int16 vsuSoundSourceIndex = 
+			VSUManager::findAvailableSoundSource
+			(
+				this, queuedVSUSoundSourceConfiguration->requester, queuedVSUSoundSourceConfiguration->type, 
+				!queuedVSUSoundSourceConfiguration->skippable
+			);
 
 		if(0 <= vsuSoundSourceIndex)
 		{
