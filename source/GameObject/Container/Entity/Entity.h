@@ -146,7 +146,8 @@ class Entity : Container
 	/// box's position
 	/// @return Spatially located bounding box of an entity that would be created with the provided
 	/// positioned entity struct
-	static RightBox getRightBoxFromSpec(
+	static RightBox getRightBoxFromSpec
+	(
 		const PositionedEntity* positionedEntity, const Vector3D* environmentPosition
 	);
 
