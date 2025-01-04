@@ -14,12 +14,10 @@
 #ifndef CONFIG_H_
 #define CONFIG_H_
 
-
 {{ macros.sectionHeader('Includes') }}
 
 #include "PluginsConfig.h"
 #include "RomInfo.h"
-
 
 {% if config.game | length -%}
 {{ macros.sectionHeader('Game specific macros') }}
@@ -47,17 +45,14 @@
 #define __GAME_ENTRY_POINT											game
 #endif
 
-
 {{ macros.sectionHeader('Fixed point data type') }}
 
 #define __FIXED_POINT_TYPE 											{% if config.math.fixedPointPrecision %}{{config.math.fixedPointPrecision}}{% else %}6{% endif %}
-
 
 {{ macros.sectionHeader('Communications') }}
 
 // Enable communications at the start of the game
 {% if config.communications.enable %}#define{% else %}#undef{% endif %} __ENABLE_COMMUNICATIONS
-
 
 {{ macros.sectionHeader('Debugging / Profiling') }}
 
@@ -89,7 +84,6 @@
 // stack headroom
 #define __STACK_HEADROOM											{{ config.debug.stackHeadroom }}
 
-
 {{ macros.sectionHeader('Debugging tools') }}
 
 // If tools already defined, enable all
@@ -114,7 +108,6 @@
 
 #endif
 
-
 {{ macros.sectionHeader('Wireframes') }}
 
 // Sort the wireframes based on their distance to the camera to cull off those that are far off if necessary.
@@ -138,7 +131,6 @@
 
 // Optimize the drawing of vertical lines
 {% if config.wireframes.verticalLineOptimization %}#define{% else %}#undef{% endif %} __DIRECT_DRAW_OPTIMIZED_VERTICAL_LINES
-
 
 {{ macros.sectionHeader('Optics / Projection') }}
 
@@ -175,7 +167,6 @@
 // affects the strength of the scaling
 #define __SCALING_MODIFIER_FACTOR									{{ config.optics.scalingModifierFactor }}{% if not '.' in '' ~ config.optics.scalingModifierFactor %}.0{% endif %}f
 
-
 {{ macros.sectionHeader('Frame rate control') }}
 
 // timer resolution
@@ -197,7 +188,6 @@
 // define to dispatch the delayed messages every other game frame cycle
 {% if config.frameRate.runDelayedMessagesAtHalfFrameRate %}#define{% else %}#undef{% endif %} __RUN_DELAYED_MESSAGES_DISPATCHING_AT_HALF_FRAME_RATE
 
-
 {{ macros.sectionHeader('Animation') }}
 
 // maximum length of an animation function's name
@@ -205,7 +195,6 @@
 
 // maximum number of frames per animation function
 #define __MAX_FRAMES_PER_ANIMATION_FUNCTION							{{ config.animation.maxFramesPerAnimationFunction }}
-
 
 {{ macros.sectionHeader('Memory pool') }}
 
@@ -233,19 +222,16 @@
 // percentage (0-100) above which the memory pool's status shows the pool usage
 #define __MEMORY_POOL_WARNING_THRESHOLD								{{ config.memoryPools.warningThreshold }}
 
-
 {{ macros.sectionHeader('SRAM') }}
 
 // amount of available sram space, in bytes
 // • the vb allows up to 16 mb, but all known carts support only 8 kb of sram
 #define __TOTAL_SAVE_RAM 											{{ config.sram.totalSram }}
 
-
 {{ macros.sectionHeader('Char management') }}
 
 // total number of available chars in char memory
 #define __CHAR_MEMORY_TOTAL_CHARS 									{{ config.chars.totalChars }}
-
 
 {{ macros.sectionHeader('Sprite management') }}
 
@@ -260,7 +246,6 @@
 
 // Account for VIP's design to draw 8 pixel when BGMAP WORLD's height is less than 8
 {% if config.sprite.hackBgmapSpriteHeight %}#define{% else %}#undef{% endif %} __HACK_BGMAP_SPRITE_HEIGHT
-
 
 {{ macros.sectionHeader('Texture management') }}
 
@@ -285,7 +270,6 @@
 #define __PRINTING_BGMAP_PARALLAX_OFFSET							{{ config.texture.printing.offset.parallax }}
 #define __PRINTABLE_BGMAP_AREA				 						{{ config.texture.printing.printableArea }}
 
-
 {{ macros.sectionHeader('Param table') }}
 
 // maximum possible scale: affects param table allocation space
@@ -293,7 +277,6 @@
 
 // maximum number of rows to write on each call to affine calculation functions
 #define __MAXIMUM_AFFINE_ROWS_PER_CALL								{{ config.affine.maxRowsPerCall }}
-
 
 {{ macros.sectionHeader('Physics') }}
 
@@ -323,7 +306,6 @@
 // maximum size of colliders allows to avoid checks against far away colliders
 #define __COLLIDER_MAXIMUM_SIZE										__PIXELS_TO_METERS({% if config.physics.collidersMaximumSize %}{{ config.physics.collidersMaximumSize }}{% else %}256{% endif %})
 
-
 {{ macros.sectionHeader('Sound') }}
 
 #define __EAR_DISPLACEMENT											{% if config.sound.earDisplacement %}{{ config.sound.earDisplacement }}{% else %}384{% endif %}
@@ -331,7 +313,6 @@
 // affects the amount of attenuation caused by the distance between the x coordinate and each ear's
 // position defined by __EAR_DISPLACEMENT
 #define __SOUND_STEREO_ATTENUATION_DISTANCE							{% if config.sound.stereoAttenuationDistance %}{{ config.sound.stereoAttenuationDistance }}{% else %}1024{% endif %}
-
 
 {{ macros.sectionHeader('Brightness') }}
 
@@ -363,17 +344,14 @@
 #define __OBJECT_PALETTE_2											0x{{ config.palettes.objectPalette2 | binToHex }} // {{ config.palettes.objectPalette2 }}
 #define __OBJECT_PALETTE_3											0x{{ config.palettes.objectPalette3 | binToHex }} // {{ config.palettes.objectPalette3 }}
 
-
 {{ macros.sectionHeader('Random number generation') }}
 
 {% if config.random.addUserInputAndTimeToRandomSeed %}#define{% else %}#undef{% endif %} __ADD_USER_INPUT_AND_TIME_TO_RANDOM_SEED
-
 
 {{ macros.sectionHeader('Exceptions') }}
 
 // camera coordinates for the output of exceptions
 #define __EXCEPTION_COLUMN											{{ config.exceptions.position.x }}
 #define __EXCEPTION_LINE											{{ config.exceptions.position.y }}
-
 
 #endif

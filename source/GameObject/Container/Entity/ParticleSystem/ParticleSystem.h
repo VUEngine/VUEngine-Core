@@ -10,14 +10,12 @@
 #ifndef PARTICLE_SYSTEM_H_
 #define PARTICLE_SYSTEM_H_
 
-
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // INCLUDES
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <Entity.h>
 #include <Particle.h>
-
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DATA
@@ -79,7 +77,6 @@ typedef struct ParticleSystemSpec
 /// A ParticleSystem spec that is stored in ROM
 /// @memberof ParticleSystem
 typedef const ParticleSystemSpec ParticleSystemROMSpec;
-
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DECLARATION
@@ -220,6 +217,5 @@ class ParticleSystem : Entity
 	/// @param particle: The recycled particle 
 	virtual void particleRecycled(Particle particle);
 }
-
 
 #endif

@@ -10,7 +10,6 @@
 #ifndef OOP_H_
 #define OOP_H_
 
-
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // OOP MACROS
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -58,7 +57,6 @@
 																												\
 			/* check if properly created */																		\
 			ASSERT(this, __MAKE_STRING(ClassName) "::new: not allocated");										\
-
 
 // end class's allocator
 #define __CLASS_NEW_END(ClassName, ...)																			\
@@ -147,7 +145,6 @@
 	}
 #endif
 
-
 // construct the base object
 #define __CONSTRUCT_BASE(BaseClass, ...)																		\
 																												\
@@ -204,7 +201,6 @@
 																												\
 		/* test if object has not been deleted */																\
 		(object && (__MEMORY_FREE_BLOCK_FLAG != *(uint32*)((uint32)object - __DYNAMIC_STRUCT_PAD)))				\
-
 
 #define isDeleted(object)					(!__IS_OBJECT_ALIVE(object))
 
@@ -353,8 +349,6 @@ typedef void* (*(*ClassPointer)(void*))(void*);
 		/* declare restoreMethods name method */																\
 		void ClassName ## _restoreMethods()																		\
 
-
-
 // to being able to friend a class
 #define __CLASS_FRIEND_DEFINITION(ClassName)																	\
 		typedef struct ClassName ## _str																		\
@@ -364,7 +358,6 @@ typedef void* (*(*ClassPointer)(void*))(void*);
 																												\
 			/* end spec */																						\
 		} ClassName ## _str 																					\
-
 
 // define method only when compiling with debugging tools
 #ifndef __RELEASE
@@ -452,7 +445,6 @@ typedef void* (*(*ClassPointer)(void*))(void*);
 #define __TYPE(ClassName)								(AllocatorPointer)&ClassName ## _new
 #define __ALLOCATOR_TYPE(allocatorPointer)				(AllocatorPointer)allocatorPointer
 
-
 #define __SINGLETON_NOT_CONSTRUCTED			0
 #define __SINGLETON_BEING_CONSTRUCTED		1
 #define __SINGLETON_CONSTRUCTED				2
@@ -530,7 +522,6 @@ typedef void* (*(*ClassPointer)(void*))(void*);
 		/* allow new constructs */																				\
 		_singletonConstructed = __SINGLETON_NOT_CONSTRUCTED;													\
 
-
 // defines a dynamic singleton (unique instance of a class)
 #define __SINGLETON_DYNAMIC(ClassName)																			\
 																												\
@@ -575,6 +566,5 @@ typedef void* (*(*ClassPointer)(void*))(void*);
 																												\
 		/* dummy redeclaration to avoid warning when compiling with -pedantic */								\
 		void ClassName ## dummyMethodSingletonNew()
-
 
 #endif

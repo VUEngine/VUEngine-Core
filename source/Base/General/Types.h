@@ -10,7 +10,6 @@
 #ifndef TYPES_H_
 #define TYPES_H_
 
-
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // DATA TYPES DECLARATIONs
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -43,7 +42,6 @@ enum { false, true };
 #define fix10_6_ext										int32
 #define fix19_13										int32
 #define fix17_15										int32
-
 
 #define fixed_t											fix10_6
 #define fixed_ext_t										fix10_6_ext
@@ -96,7 +94,6 @@ typedef struct PixelSize
 
 } PixelSize;
 
-
 // 3D Spatial position
 typedef struct Vector3D
 {
@@ -132,7 +129,6 @@ typedef struct ScreenPixelVector
 	int16 z;
 
 } ScreenPixelVector;
-
 
 // General purpose flags for each axis
 typedef struct Vector3DFlag
@@ -294,7 +290,6 @@ typedef struct ObjectTextureSource
 
 } ObjectTextureSource;
 
-
 typedef struct TexturePadding
 {
 	uint8 cols;
@@ -347,7 +342,6 @@ typedef struct PixelRightBox
 
 } PixelRightBox;
 
-
 /// Camera frustum
 typedef struct CameraFrustum
 {
@@ -373,6 +367,5 @@ typedef struct Mirror
 	bool z;
 
 } Mirror;
-
 
 #endif

@@ -10,13 +10,11 @@
 #ifndef CAMERA_H_
 #define CAMERA_H_
 
-
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // INCLUDES
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <ListenerObject.h>
-
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // FORWARD DECLARATIONS
@@ -33,13 +31,11 @@ extern const Rotation* _cameraRotation __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBU
 extern const Rotation* _cameraInvertedRotation __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE;
 extern const Optical* _optical __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE;
 
-
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' MACROS
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #define __CAMERA_VIEWING_ANGLE									(56)
-
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DECLARATION
@@ -220,6 +216,5 @@ singleton class Camera : ListenerObject
 	/// @param inPixels: If true, the spatial data is printed in pixel units; in meter, otherwise
 	void print(int32 x, int32 y, bool inPixels);
 }
-
 
 #endif

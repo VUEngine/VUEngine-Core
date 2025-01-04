@@ -5,11 +5,9 @@
 #ifndef WAVEFORMS_H_
 #define WAVEFORMS_H_
 
-
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // INCLUDES
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
 
 extern const int8 GlockenWaveForm[];
 extern const int8 LinearWaveForm[];
@@ -25,6 +23,5 @@ extern const int8 TriangleWaveForm[];
 extern const int8 TrumpetWaveForm[];
 extern const int8 ViolinWaveForm[];
 extern const int8 PCMWaveForm[];
-
 
 #endif

@@ -10,13 +10,11 @@
 #ifndef CONSTANTS_H_
 #define CONSTANTS_H_
 
-
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // INCLUDES
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <Globals.h>
-
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // DATA
@@ -69,7 +67,6 @@ enum DefaulCollisionLayers
 	kLayerNone = 0,
 };
 
-
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // MACROS
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -77,7 +74,6 @@ enum DefaulCollisionLayers
 // Memory manipulation
 #define __MEMORY_USED_BLOCK_FLAG				((uint16)0xFFFF)
 #define __MEMORY_FREE_BLOCK_FLAG				0x00000000
-
 
 // Graphics
 #define __TRANSPARENCY_NONE						0
@@ -90,7 +86,6 @@ enum DefaulCollisionLayers
 #define	__COLOR_DARK_RED						0x01
 #define	__COLOR_MEDIUM_RED						0x02
 #define	__COLOR_BRIGHT_RED						0x03
-
 
 // Camera half width in pixels
 #define __HALF_SCREEN_WIDTH						(__SCREEN_WIDTH >> 1)
@@ -169,7 +164,6 @@ enum DefaulCollisionLayers
 #define __INHERIT_ROTATION						__INVALIDATE_ROTATION
 #define __INHERIT_SCALE							__INVALIDATE_SCALE
 
-
 #define __MAXIMUM_FPS							50
 
 #define __MILLISECONDS_PER_SECOND				1000
@@ -195,13 +189,11 @@ enum DefaulCollisionLayers
 #define __SHOW_NEXT_FRAME						1
 #define __SHOW									2
 
-
 #define __STRINGIFY(a)							__MAKE_STRING(a)
 
 // Optimizations
 #define __LIKELY(expression)					(__builtin_expect(!!(expression), 1))
 #define __UNLIKELY(expression)					(__builtin_expect(!!(expression), 0))
-
 
 #ifndef __RELEASE
 #define __REGISTER_LAST_PROCESS_NAME

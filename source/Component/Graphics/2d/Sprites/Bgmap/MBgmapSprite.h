@@ -10,13 +10,11 @@
 #ifndef M_BGMAP_SPRITE_H_
 #define M_BGMAP_SPRITE_H_
 
-
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // INCLUDES
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <BgmapSprite.h>
-
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DATA
@@ -51,7 +49,6 @@ typedef struct MBgmapSpriteSpec
 /// A MBgmapSprite spec that is stored in ROM
 /// @memberof MBgmapSprite
 typedef const MBgmapSpriteSpec MBgmapSpriteROMSpec;
-
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DECLARATION
@@ -88,6 +85,5 @@ class MBgmapSprite : BgmapSprite
 	/// @return The index that determines the region of DRAM that this sprite manages
 	override int16 doRender(int16 index);
 }
-
 
 #endif

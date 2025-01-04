@@ -10,13 +10,11 @@
 #ifndef M_BGMAP_ANIMATED_SPRITE_H_
 #define M_BGMAP_ANIMATED_SPRITE_H_
 
-
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // INCLUDES
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <MBgmapSprite.h>
-
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DATA
@@ -33,7 +31,6 @@ typedef struct MBgmapAnimatedSpriteSpec
 /// A MBgmapAnimatedSprite spec that is stored in ROM
 /// @memberof MBgmapAnimatedSprite
 typedef const MBgmapAnimatedSpriteSpec MBgmapAnimatedSpriteROMSpec;
-
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DECLARATION
@@ -61,6 +58,5 @@ class MBgmapAnimatedSprite : MBgmapSprite
 	/// @param frame: Current animation frame 
 	override void setMultiframe(uint16 frame);
 }
-
 
 #endif

@@ -10,13 +10,11 @@
 #ifndef ASTERISK_H_
 #define ASTERISK_H_
 
-
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // INCLUDES
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <Wireframe.h>
-
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DATA
@@ -37,7 +35,6 @@ typedef struct AsteriskSpec
 /// A Asterisk spec that is stored in ROM
 /// @memberof Asterisk
 typedef const AsteriskSpec AsteriskROMSpec;
-
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DECLARATION
@@ -77,6 +74,5 @@ class Asterisk : Wireframe
 	/// @return True if at least one pixel is drawn; false otherwise
 	override bool draw();
 }
-
 
 #endif

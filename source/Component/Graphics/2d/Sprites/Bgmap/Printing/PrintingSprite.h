@@ -10,13 +10,11 @@
 #ifndef PRINTING_SPRITE_H_
 #define PRINTING_SPRITE_H_
 
-
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // INCLUDES
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <BgmapSprite.h>
-
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DATA
@@ -34,7 +32,6 @@ typedef struct PrintingSpriteSpec
 /// A PrintingSprite spec that is stored in ROM
 /// @memberof PrintingSprite
 typedef const PrintingSpriteSpec PrintingSpriteROMSpec;
-
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DECLARATION
@@ -83,6 +80,5 @@ class PrintingSprite : BgmapSprite
 	/// @param height: Height of the WORLD to by used to display the text
 	void setSize(uint16 width, uint16 height);
 }
-
 
 #endif

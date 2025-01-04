@@ -10,14 +10,12 @@
 #ifndef VUENGINE_H_
 #define VUENGINE_H_
 
-
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // INCLUDES
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <ListenerObject.h>
 #include <VIPManager.h>
-
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // FORWARD DECLARATIONS
@@ -39,7 +37,6 @@ class VUEngine;
 class WireframeManager;
 
 extern VUEngine _vuEngine __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE;
-
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' MACROS
@@ -65,7 +62,6 @@ extern VUEngine _vuEngine __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE;
 #define PROCESS_NAME_VRAM_WRITE				"VRAM WRITE"
 #define PROCESS_NAME_SOUND_PLAY				"SOUND PLAY"
 #define PROCESS_NAME_COMMUNICATIONS			"COMMS"
-
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DECLARATION
@@ -302,6 +298,5 @@ singleton class VUEngine : ListenerObject
 	void startProfiling();
 
 }
-
 
 #endif

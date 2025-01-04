@@ -10,13 +10,11 @@
 #ifndef BEHAVIOR_H_
 #define BEHAVIOR_H_
 
-
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // INCLUDES
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <Component.h>
-
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DATA
@@ -37,7 +35,6 @@ typedef struct BehaviorSpec
 /// A Behavior spec that is stored in ROM
 /// @memberof Behavior
 typedef const BehaviorSpec BehaviorROMSpec;
-
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DECLARATION
@@ -73,6 +70,5 @@ abstract class Behavior : Component
 	/// @return True if the behavior's operations are enabled; false otherwise
 	bool isEnabled();
 }
-
 
 #endif

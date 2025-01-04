@@ -10,14 +10,12 @@
 #ifndef ANIMATED_ENTITY_H_
 #define ANIMATED_ENTITY_H_
 
-
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // INCLUDES
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <Entity.h>
 #include <Sprite.h>
-
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DATA
@@ -41,7 +39,6 @@ typedef struct AnimatedEntitySpec
 /// A AnimatedEntity spec that is stored in ROM
 /// @memberof AnimatedEntity
 typedef const AnimatedEntitySpec AnimatedEntityROMSpec;
-
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DECLARATION
@@ -120,6 +117,5 @@ class AnimatedEntity : Entity
 	/// @return The numer of frames if an animation is playing; o otherwise
 	int32 getNumberOfFrames();
 }
-
 
 #endif

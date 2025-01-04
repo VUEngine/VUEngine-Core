@@ -10,13 +10,11 @@
 #ifndef OBJECT_SPRITE_H_
 #define OBJECT_SPRITE_H_
 
-
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // INCLUDES
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <Sprite.h>
-
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' MACROS
@@ -27,7 +25,6 @@
 
 #define __OBJECT_SPRITE_FLIP_X_DISPLACEMENT		8
 #define __OBJECT_SPRITE_FLIP_Y_DISPLACEMENT		8
-
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DATA
@@ -51,7 +48,6 @@ typedef struct ObjectSpriteSpec
 /// A ObjectSprite spec that is stored in ROM
 /// @memberof ObjectSprite
 typedef const ObjectSpriteSpec ObjectSpriteROMSpec;
-
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DECLARATION
@@ -134,6 +130,5 @@ class ObjectSprite : Sprite
 	/// @return Number of OBJECTs that the sprite uses
 	int16 getTotalObjects();
 }
-
 
 #endif

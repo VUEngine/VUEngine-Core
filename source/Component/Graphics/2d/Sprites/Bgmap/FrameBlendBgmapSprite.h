@@ -10,13 +10,11 @@
 #ifndef FRAME_BLEND_BGMAP_SPRITE_H_
 #define FRAME_BLEND_BGMAP_SPRITE_H_
 
-
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // INCLUDES
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <BgmapSprite.h>
-
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DATA
@@ -34,7 +32,6 @@ typedef struct FrameBlendBgmapSpriteSpec
 /// A FrameBlendBgmapSprite spec that is stored in ROM.
 /// @memberof FrameBlendBgmapSprite
 typedef const FrameBlendBgmapSpriteSpec FrameBlendBgmapSpriteROMSpec;
-
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DECLARATION
@@ -63,6 +60,5 @@ class FrameBlendBgmapSprite : BgmapSprite
 	/// @return The index that determines the region of DRAM that this sprite manages
 	override int16 doRender(int16 index);
 }
-
 
 #endif

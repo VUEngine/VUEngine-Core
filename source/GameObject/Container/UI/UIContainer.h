@@ -10,14 +10,12 @@
 #ifndef UI_CONTAINER_H_
 #define UI_CONTAINER_H_
 
-
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // INCLUDES
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <Container.h>
 #include <Entity.h>
-
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DECLARATION
@@ -47,6 +45,5 @@ class UIContainer : Container
 	/// @param positionedEntity: Struct that defines which entity spec to use to configure the new child
 	Entity spawnChildEntity(const PositionedEntity* const positionedEntity);
 }
-
 
 #endif

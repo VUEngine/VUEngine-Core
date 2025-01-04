@@ -10,13 +10,11 @@
 #ifndef TEXT_OBJECT_SPRITE_H_
 #define TEXT_OBJECT_SPRITE_H_
 
-
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // INCLUDES
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <ObjectSprite.h>
-
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DATA
@@ -43,7 +41,6 @@ typedef struct TextObjectSpriteSpec
 /// A TextObjectSprite spec that is stored in ROM
 /// @memberof TextObjectSprite
 typedef const TextObjectSpriteSpec TextObjectSpriteROMSpec;
-
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DECLARATION
@@ -83,6 +80,5 @@ class TextObjectSprite : ObjectSprite
 	/// @return The index that determines the region of DRAM that this sprite manages
 	override int16 doRender(int16 index);
 }
-
 
 #endif

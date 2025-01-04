@@ -10,14 +10,12 @@
 #ifndef ANIMATION_COORDINATOR_FACTORY_H_
 #define ANIMATION_COORDINATOR_FACTORY_H_
 
-
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // INCLUDES
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <Object.h>
 #include <CharSet.h>
-
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // FORWARD DECLARATIONS
@@ -26,7 +24,6 @@
 class AnimationController;
 class AnimationCoordinator;
 class ListenerObject;
-
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DECLARATION
@@ -61,6 +58,5 @@ singleton class AnimationCoordinatorFactory : Object
 	/// @return ClockManager singleton
 	AnimationCoordinator getCoordinator(AnimationController animationController, ListenerObject scope, const CharSetSpec* charSetSpec);
 }
-
 
 #endif

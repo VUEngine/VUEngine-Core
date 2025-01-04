@@ -10,13 +10,11 @@
 #ifndef OBJECT_ANIMATED_SPRITE_H_
 #define OBJECT_ANIMATED_SPRITE_H_
 
-
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // INCLUDES
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <ObjectSprite.h>
-
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DATA
@@ -34,7 +32,6 @@ typedef struct ObjectAnimatedSpriteSpec
 /// A ObjectAnimatedSpriteSpec spec that is stored in ROM
 /// @memberof ObjectAnimatedSprite
 typedef const ObjectAnimatedSpriteSpec ObjectAnimatedSpriteROMSpec;
-
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DECLARATION
@@ -58,6 +55,5 @@ class ObjectAnimatedSprite : ObjectSprite
 	/// Update the animation.
 	override void updateAnimation();
 }
-
 
 #endif

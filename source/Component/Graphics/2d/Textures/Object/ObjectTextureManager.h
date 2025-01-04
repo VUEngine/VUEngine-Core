@@ -10,14 +10,12 @@
 #ifndef OBJECT_TEXTURE_MANAGER_H_
 #define OBJECT_TEXTURE_MANAGER_H_
 
-
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // INCLUDES
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <Object.h>
 #include <ObjectTexture.h>
-
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DECLARATION
@@ -49,6 +47,5 @@ singleton class ObjectTextureManager : Object
 	/// @param objectTexture: Texture to release
 	void releaseTexture(ObjectTexture objectTexture);
 }
-
 
 #endif

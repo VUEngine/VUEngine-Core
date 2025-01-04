@@ -12,7 +12,6 @@
 
 // avoid declaration warnings
 
-
 // define / undefine as you see fit
 //#define __PRINT_FRAMERATE
 //#define __PRINT_FRAME_TIMES
@@ -48,7 +47,6 @@
 //#define __PROFILE_DIRECT_DRAWING
 //#define __DIRECT_DRAW_INTERLACED
 //#define __PROFILE_WIREFRAMES
-
 
 // do not delete the following macros!
 
