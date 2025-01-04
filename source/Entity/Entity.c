@@ -652,14 +652,14 @@ bool Entity::canMoveTowards(Vector3D direction)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-bool Entity::isSensibleToCollidingObjectBouncinessOnCollision(Entity collidingObject __attribute__ ((unused)))
+bool Entity::isSensibleToCollidingObjectBouncinessOnCollision(Entity collidingEntity __attribute__ ((unused)))
 {
 	return  true;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-bool Entity::isSensibleToCollidingObjectFrictionOnCollision(Entity collidingObject __attribute__ ((unused)))
+bool Entity::isSensibleToCollidingObjectFrictionOnCollision(Entity collidingEntity __attribute__ ((unused)))
 {
 	return  true;
 }
@@ -697,14 +697,14 @@ bool Entity::collisionStarts(const CollisionInformation* collisionInformation)
 		{
 			Collider::resolveCollision(collisionInformation->collider, collisionInformation);
 
-			Entity collidingObject = Collider::getOwner(collisionInformation->otherCollider);
+			Entity collidingEntity = Collider::getOwner(collisionInformation->otherCollider);
 
 			fixed_t bounciness = 
-				Entity::isSensibleToCollidingObjectBouncinessOnCollision(this, collidingObject) ? 
-				Entity::getBounciness(collidingObject) : 0;
+				Entity::isSensibleToCollidingObjectBouncinessOnCollision(this, collidingEntity) ? 
+				Entity::getBounciness(collidingEntity) : 0;
 
 			fixed_t frictionCoefficient = 
-				Entity::isSensibleToCollidingObjectFrictionOnCollision(this, collidingObject) ? 
+				Entity::isSensibleToCollidingObjectFrictionOnCollision(this, collidingEntity) ? 
 				Entity::getSurroundingFrictionCoefficient(this) : 0;
 
 			if(!isDeleted(this->body))

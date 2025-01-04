@@ -272,13 +272,13 @@ abstract class Entity : ListenerObject
 
 	/// Check if when the statefulActor bounces it has to take into account the colliding object's bounciness.
 	/// @return True if the statefulActor has to take into account the colliding object's bounciness when bouncing
-	virtual bool isSensibleToCollidingObjectBouncinessOnCollision(Entity collidingObject);
+	virtual bool isSensibleToCollidingObjectBouncinessOnCollision(Entity collidingEntity);
 
 	/// Check if when the statefulActor bounces it has to take into account the colliding object's friction
 	/// coefficient.
 	/// @return True if the statefulActor has to take into account the colliding object's friction coefficient when
 	/// bouncing
-	virtual bool isSensibleToCollidingObjectFrictionOnCollision(Entity collidingObject);
+	virtual bool isSensibleToCollidingObjectFrictionOnCollision(Entity collidingEntity);
 
 	/// Check if the object is subject to provided gravity vector.
 	/// @return True if the provided gravity vector can affect the object; false otherwise
