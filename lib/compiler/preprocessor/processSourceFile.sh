@@ -18,6 +18,9 @@ clean_up() {
 	# Replace override checks
 	sed -i.b 's/\([A-Z][A-z0-9]*\)_overrides[ 	]*(/__OVERRIDES_METHOD(\1, /g' $OUTPUT_FILE 
 
+	sed -i.b -z 's/(<NEW_LINE>/\n(/g'  $OUTPUT_FILE
+	sed -i.b -z 's/<NEW_LINE>/\n/g'  $OUTPUT_FILE
+
 #	rm -f $OUTPUT_FILE"-e"
 }
 
@@ -78,7 +81,8 @@ fi
 cp -p -f $INPUT_FILE $OUTPUT_FILE
 
 # Inline multiline declarations
-sed -i.b -z 's/\n(/(/g'  $OUTPUT_FILE
+sed -i.b 's/^[	]\+(/(/g'  $OUTPUT_FILE
+sed -i.b -z 's/\n(/(<NEW_LINE>/g'  $OUTPUT_FILE
 
 if [ -z "${INPUT_FILE##*assets/*}" ];
 then
@@ -135,15 +139,7 @@ echo >> $OUTPUT_FILE
 # Find method declarations
 sed -e 's/.*/'"$mark"'&/g' $OUTPUT_FILE | tr -d "\r\n" | sed -e 's/'"$mark"'\([ 	]*[A-z0-9_ 	]*[A-z0-9_\*][A-z0-9_\*]*[ 	][ 	]*'"$className"'\)[ 	]*::\([ 	]*[a-z][A-z0-9]*[ 	]*\)\(([^{}]*{[ 	]*<START_BLOCK>\)/'"$mark"'<DECLARATION>\1!DECLARATION_MIDDLE!_\2\3<method>\2<%method><%DECLARATION>/g' > $OUTPUT_FILE.tmp  && mv -f $OUTPUT_FILE.tmp $OUTPUT_FILE
 
-# Add static qualifier to static methods block start
-#sed -i.b 's/\(<DECLARATION>[^<]*\)<%>\([^{]*\)@N@{/\1@N@\2<%>{/g' $OUTPUT_FILE
-
-# Inject _this parameter
-#sed -i.b 's/\(!DECLARATION_MIDDLE!_[^(]*\)(\([^%{]*{\)/\1(void* _this '"__attribute__ ((unused))"', \2/g' $OUTPUT_FILE
-
 # Clean methods with no parameters declarations
-#sed -i.b 's/,[ 	]*)/)/g' $OUTPUT_FILE
-
 sed -i.b 's/\(<DECLARATION>[^<]*\)<%>\([^{]*\)@N@{/\1@N@\2<%>{/g; s/\(!DECLARATION_MIDDLE!_[^(]*\)(\([^%{]*{\)/\1(void* _this '"__attribute__((unused))"', \2/g; s/,[ 	]*)/)/g' $OUTPUT_FILE 
 
 # Put back line breaks
@@ -169,8 +165,6 @@ tail -n +2 $OUTPUT_FILE > $OUTPUT_FILE.tmp
 mv $OUTPUT_FILE.tmp $OUTPUT_FILE
 
 # Inject this pointer
-#sed -i.b 's/<%>[ 	]*{[ 	]*<START_BLOCK>/{/g' $OUTPUT_FILE
-#sed -i.b 's/{[ 	]*<START_BLOCK>\(.*\)<%DECLARATION>/{'"$className"' this '"__attribute__((unused))"' = __SAFE_CAST('"$className"' , _this);\1/g' $OUTPUT_FILE
 sed -i.b 's/<%>[ 	]*{[ 	]*<START_BLOCK>/{/g; s/{[ 	]*<START_BLOCK>\(.*\)<method>\(.*\)<%method><%DECLARATION>/{__CHECK_STACK_STATUS NM_ASSERT(!isDeleted(_this), "'"$className"'::\2: null this"); '"$className"' this '"__attribute__((unused))"' = __SAFE_CAST('"$className"' , _this); ASSERT(!isDeleted(this), "'"$className"'::\2: this failed the cast");\1/g' $OUTPUT_FILE
 
 firstMethodDeclarationLine=`grep -m1 -n -e "^<DECLARATION>" $OUTPUT_FILE | cut -d ":" -f1`
@@ -250,8 +244,6 @@ if [ ! -z "${INPUT_FILE##*source/*}" ];
 then
 	echo " error (7): $INPUT_FILE must be inside source folder"
 fi
-
-# INJECTION OF ClassName _this into method declarations
 
 if [ ! -d $WORKING_FOLDER ];
 then
@@ -358,10 +350,6 @@ then
 fi
 
 # clean up
-#sed -i.b 's/<%>//g' $OUTPUT_FILE
-#sed -i.b 's/<[%]*DECLARATION>[ 	]*static[ 	][ 	]*/ /g' $OUTPUT_FILE
-#sed -i.b 's/<[%]*DECLARATION>//g' $OUTPUT_FILE
-#sed -i.b 's/<START_BLOCK>//g' $OUTPUT_FILE
 sed -i.b 's/<%>//g; s/<[%]*DECLARATION>[ 	]*static[ 	][ 	]*/ /g; s/<[%]*DECLARATION>//g; s/<START_BLOCK>//g; s/<method>.*<%method>//g' $OUTPUT_FILE 
 
 classModifiers=`grep -m1 -e "^$className:" $CLASSES_HIERARCHY_FILE | sed -e 's/^.*::\(.*\)/\1/g'`
