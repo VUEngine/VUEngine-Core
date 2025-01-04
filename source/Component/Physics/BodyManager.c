@@ -47,7 +47,7 @@ static fixed_t BodyManager::getElapsedTimeStep()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-Body BodyManager::createComponent(GameObject owner, const BodySpec* bodySpec)
+Body BodyManager::createComponent(Entity owner, const BodySpec* bodySpec)
 {
 	if(NULL == bodySpec)
 	{
@@ -61,7 +61,7 @@ Body BodyManager::createComponent(GameObject owner, const BodySpec* bodySpec)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void BodyManager::destroyComponent(GameObject owner, Body body) 
+void BodyManager::destroyComponent(Entity owner, Body body) 
 {
 	if(isDeleted(body))
 	{
@@ -134,7 +134,7 @@ void BodyManager::update()
 			continue;
 		}
 
-		if(__NO_AXIS != body->axisSubjectToGravity && GameObject::isSubjectToGravity(body->owner, this->gravity))
+		if(__NO_AXIS != body->axisSubjectToGravity && Entity::isSubjectToGravity(body->owner, this->gravity))
 		{
 			// check if necessary to apply gravity
 			uint16 movingState = Body::getMovementOnAllAxis(body);
@@ -172,7 +172,7 @@ void BodyManager::update()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-Body BodyManager::createBody(GameObject owner, const BodySpec* bodySpec)
+Body BodyManager::createBody(Entity owner, const BodySpec* bodySpec)
 {
 	if(this->dirty)
 	{
@@ -357,7 +357,7 @@ void BodyManager::destructor()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-Body BodyManager::getBody(GameObject owner)
+Body BodyManager::getBody(Entity owner)
 {
 	ASSERT(this->components, "BodyManager::getBody: null bodies");
 
@@ -381,9 +381,9 @@ Body BodyManager::getBody(GameObject owner)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-bool BodyManager::isGameObjectRegistered(GameObject owner)
+bool BodyManager::isEntityRegistered(Entity owner)
 {
-	ASSERT(this->components, "BodyManager::isGameObjectRegistered: null bodies");
+	ASSERT(this->components, "BodyManager::isEntityRegistered: null bodies");
 
 	VirtualNode node = this->components->head;
 
@@ -393,7 +393,7 @@ bool BodyManager::isGameObjectRegistered(GameObject owner)
 		Body body = Body::safeCast(node->data);
 
 		// check if current body's owner is the same as the actor calling this method
-		if(GameObject::safeCast(owner) == body->owner)
+		if(Entity::safeCast(owner) == body->owner)
 		{
 			return true;
 		}

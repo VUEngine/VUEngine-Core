@@ -95,9 +95,9 @@ abstract class Sprite : VisualComponent
 	/// @publicsection
 
 	/// Class' constructor
-	/// @param owner: GameObject to which the sprite attaches to
+	/// @param owner: Entity to which the sprite attaches to
 	/// @param spriteSpec: Specification that determines how to configure the sprite
-	void constructor(GameObject owner, const SpriteSpec* spriteSpec);
+	void constructor(Entity owner, const SpriteSpec* spriteSpec);
 
 	/// Retrieve the sprite's bounding box.
 	/// @return Bounding box of the mesh

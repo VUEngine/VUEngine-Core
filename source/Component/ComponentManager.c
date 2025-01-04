@@ -18,7 +18,7 @@
 #include <Collider.h>
 #include <ColliderManager.h>
 #include <Printing.h>
-#include <GameObject.h>
+#include <Entity.h>
 #include <Sprite.h>
 #include <SpriteManager.h>
 #include <VirtualList.h>
@@ -33,7 +33,7 @@
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 friend class Component;
-friend class GameObject;
+friend class Entity;
 friend class VirtualNode;
 friend class VirtualList;
 
@@ -49,7 +49,7 @@ friend class VirtualList;
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static Component ComponentManager::addComponent(GameObject owner, const ComponentSpec* componentSpec)
+static Component ComponentManager::addComponent(Entity owner, const ComponentSpec* componentSpec)
 {
 	ComponentManager componentManager = ComponentManager::getManager(componentSpec->componentType);
 
@@ -62,7 +62,7 @@ static Component ComponentManager::addComponent(GameObject owner, const Componen
 
 	if(!isDeleted(component))
 	{
-		GameObject::addedComponent(owner, component);
+		Entity::addedComponent(owner, component);
 	}
 
 	return component;
@@ -70,7 +70,7 @@ static Component ComponentManager::addComponent(GameObject owner, const Componen
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void ComponentManager::removeComponent(GameObject owner, Component component)
+static void ComponentManager::removeComponent(Entity owner, Component component)
 {
 	uint32 componentType = ComponentManager::getComponentType(component);
 
@@ -88,7 +88,7 @@ static void ComponentManager::removeComponent(GameObject owner, Component compon
 
 	if(!isDeleted(component))
 	{
-		GameObject::removedComponent(owner, component);
+		Entity::removedComponent(owner, component);
 	}
 
 	ComponentManager::destroyComponent(componentManager, owner, component);
@@ -96,7 +96,7 @@ static void ComponentManager::removeComponent(GameObject owner, Component compon
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void ComponentManager::addComponents(GameObject owner, ComponentSpec** componentSpecs, uint32 componentType)
+static void ComponentManager::addComponents(Entity owner, ComponentSpec** componentSpecs, uint32 componentType)
 {
 	for(int32 i = 0; NULL != componentSpecs[i] && NULL != componentSpecs[i]->allocator; i++)
 	{
@@ -120,7 +120,7 @@ static void ComponentManager::addComponents(GameObject owner, ComponentSpec** co
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void ComponentManager::removeComponents(GameObject owner, uint32 componentType)
+static void ComponentManager::removeComponents(Entity owner, uint32 componentType)
 {
 	if(kComponentTypes <= componentType)
 	{
@@ -141,7 +141,7 @@ static void ComponentManager::removeComponents(GameObject owner, uint32 componen
 
 				if(owner == component->owner)
 				{
-					GameObject::removedComponent(owner, component);
+					Entity::removedComponent(owner, component);
 
 					ComponentManager::destroyComponent(componentManager, owner, component);
 				}
@@ -165,7 +165,7 @@ static void ComponentManager::removeComponents(GameObject owner, uint32 componen
 
 			if(owner == component->owner)
 			{
-				GameObject::removedComponent(owner, component);
+				Entity::removedComponent(owner, component);
 
 				ComponentManager::destroyComponent(componentManager, owner, component);
 			}
@@ -175,7 +175,7 @@ static void ComponentManager::removeComponents(GameObject owner, uint32 componen
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static Component ComponentManager::getComponentAtIndex(GameObject owner, uint32 componentType, int16 componentIndex)
+static Component ComponentManager::getComponentAtIndex(Entity owner, uint32 componentType, int16 componentIndex)
 {
 	if(kComponentTypes <= componentType || 0 > componentIndex)
 	{
@@ -207,7 +207,7 @@ static Component ComponentManager::getComponentAtIndex(GameObject owner, uint32 
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static VirtualList ComponentManager::getComponents(GameObject owner, uint32 componentType)
+static VirtualList ComponentManager::getComponents(Entity owner, uint32 componentType)
 {
 	if(NULL == owner->components)
 	{
@@ -244,7 +244,7 @@ static VirtualList ComponentManager::getComponents(GameObject owner, uint32 comp
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static bool ComponentManager::getComponentsOfClass(GameObject owner, ClassPointer classPointer, VirtualList components, uint32 componentType)
+static bool ComponentManager::getComponentsOfClass(Entity owner, ClassPointer classPointer, VirtualList components, uint32 componentType)
 {
 	if(kComponentTypes <= componentType)
 	{
@@ -283,7 +283,7 @@ static bool ComponentManager::getComponentsOfClass(GameObject owner, ClassPointe
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static uint16 ComponentManager::getComponentsCount(GameObject owner, uint32 componentType)
+static uint16 ComponentManager::getComponentsCount(Entity owner, uint32 componentType)
 {
 	uint16 count = 0;
 
@@ -422,7 +422,7 @@ static uint32 ComponentManager::getComponentType(Component component)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void ComponentManager::cleanOwnerComponentLists(GameObject owner, uint32 componentType)
+static void ComponentManager::cleanOwnerComponentLists(Entity owner, uint32 componentType)
 {
 	if(NULL != owner->components && NULL != owner->components[componentType])
 	{
@@ -464,7 +464,7 @@ void ComponentManager::destructor()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void ComponentManager::propagateCommand(int32 command, GameObject owner, ...)
+void ComponentManager::propagateCommand(int32 command, Entity owner, ...)
 {
 	for(VirtualNode node = this->components->head; NULL != node; node = node->next)
 	{
@@ -486,7 +486,7 @@ void ComponentManager::propagateCommand(int32 command, GameObject owner, ...)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-uint16 ComponentManager::getCount(GameObject owner)
+uint16 ComponentManager::getCount(Entity owner)
 {
 	uint16 count = 0;
 
@@ -507,7 +507,7 @@ uint16 ComponentManager::getCount(GameObject owner)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-Component ComponentManager::createComponent(GameObject owner, const ComponentSpec* componentSpec)
+Component ComponentManager::createComponent(Entity owner, const ComponentSpec* componentSpec)
 {
 	if(kComponentTypes <= componentSpec->componentType)
 	{
@@ -521,7 +521,7 @@ Component ComponentManager::createComponent(GameObject owner, const ComponentSpe
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void ComponentManager::destroyComponent(GameObject owner, Component component) 
+void ComponentManager::destroyComponent(Entity owner, Component component) 
 {
 	if(isDeleted(component))
 	{
@@ -538,7 +538,7 @@ void ComponentManager::destroyComponent(GameObject owner, Component component)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-VirtualList ComponentManager::doGetComponents(GameObject owner, VirtualList components)
+VirtualList ComponentManager::doGetComponents(Entity owner, VirtualList components)
 {
 	for(VirtualNode node = this->components->head; NULL != node; node = node->next)
 	{
@@ -555,7 +555,7 @@ VirtualList ComponentManager::doGetComponents(GameObject owner, VirtualList comp
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-bool ComponentManager::isAnyVisible(GameObject owner __attribute((unused)))
+bool ComponentManager::isAnyVisible(Entity owner __attribute((unused)))
 {
 	return false;
 }

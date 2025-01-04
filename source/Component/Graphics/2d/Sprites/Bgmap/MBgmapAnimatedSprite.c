@@ -25,7 +25,7 @@
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void MBgmapAnimatedSprite::constructor(GameObject owner, const MBgmapAnimatedSpriteSpec* mBgmapAnimatedSpriteSpec)
+void MBgmapAnimatedSprite::constructor(Entity owner, const MBgmapAnimatedSpriteSpec* mBgmapAnimatedSpriteSpec)
 {
 	// Always explicitly call the base's constructor 
 	Base::constructor(owner, &mBgmapAnimatedSpriteSpec->mBgmapSpriteSpec);

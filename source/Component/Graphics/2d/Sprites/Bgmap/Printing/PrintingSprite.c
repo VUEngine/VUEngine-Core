@@ -26,7 +26,7 @@
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void PrintingSprite::constructor(GameObject owner, const PrintingSpriteSpec* printingSpriteSpec)
+void PrintingSprite::constructor(Entity owner, const PrintingSpriteSpec* printingSpriteSpec)
 {
 	// Always explicitly call the base's constructor 
 	Base::constructor(owner, &printingSpriteSpec->bgmapSpriteSpec);

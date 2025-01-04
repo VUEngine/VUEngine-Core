@@ -23,7 +23,7 @@
 #include <VirtualNode.h>
 #include <VUEngine.h>
 
-#include "GameObject.h"
+#include "Entity.h"
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DECLARATIONS
@@ -38,7 +38,7 @@ friend class VirtualList;
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void GameObject::constructor()
+void Entity::constructor()
 {
 	// Always explicitly call the base's constructor 
 	Base::constructor();
@@ -52,12 +52,12 @@ void GameObject::constructor()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void GameObject::destructor()
+void Entity::destructor()
 {
 	this->body = NULL;
 
-	GameObject::clearComponentLists(this, kComponentTypes);
-	GameObject::destroyComponents(this);
+	Entity::clearComponentLists(this, kComponentTypes);
+	Entity::destroyComponents(this);
 
 	// Always explicitly call the base's destructor 
 	Base::destructor();
@@ -65,13 +65,13 @@ void GameObject::destructor()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-bool GameObject::handleMessage(Telegram telegram)
+bool Entity::handleMessage(Telegram telegram)
 {
 	switch(Telegram::getMessage(telegram))
 	{
 		case kMessageBodyStartedMoving:
 
-			GameObject::checkCollisions(this, true);
+			Entity::checkCollisions(this, true);
 			return true;
 			break;
 
@@ -79,7 +79,7 @@ bool GameObject::handleMessage(Telegram telegram)
 
 			if(NULL == this->body || __NO_AXIS == Body::getMovementOnAllAxis(this->body))
 			{
-				GameObject::checkCollisions(this, false);
+				Entity::checkCollisions(this, false);
 			}
 			break;
 	}
@@ -89,7 +89,7 @@ bool GameObject::handleMessage(Telegram telegram)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void GameObject::clearComponentLists(uint32 componentType)
+void Entity::clearComponentLists(uint32 componentType)
 {
 	if(NULL == this->components)
 	{
@@ -119,14 +119,14 @@ void GameObject::clearComponentLists(uint32 componentType)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-Component GameObject::addComponent(const ComponentSpec* componentSpec)
+Component Entity::addComponent(const ComponentSpec* componentSpec)
 {
 	return ComponentManager::addComponent(this, componentSpec);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void GameObject::removeComponent(Component component)
+void Entity::removeComponent(Component component)
 {
 	if(NULL == component)
 	{
@@ -138,105 +138,105 @@ void GameObject::removeComponent(Component component)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void GameObject::addComponents(ComponentSpec** componentSpecs, uint32 componentType)
+void Entity::addComponents(ComponentSpec** componentSpecs, uint32 componentType)
 {
 	ComponentManager::addComponents(this, componentSpecs, componentType);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void GameObject::removeComponents(uint32 componentType)
+void Entity::removeComponents(uint32 componentType)
 {
 	ComponentManager::removeComponents(this, componentType);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-Component GameObject::getComponentAtIndex(uint32 componentType, int16 componentIndex)
+Component Entity::getComponentAtIndex(uint32 componentType, int16 componentIndex)
 {
 	return ComponentManager::getComponentAtIndex(this, componentType, componentIndex);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-VirtualList GameObject::getComponents(uint32 componentType)
+VirtualList Entity::getComponents(uint32 componentType)
 {
 	return ComponentManager::getComponents(this, componentType);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-bool GameObject::getComponentsOfClass(ClassPointer classPointer, VirtualList components, uint32 componentType)
+bool Entity::getComponentsOfClass(ClassPointer classPointer, VirtualList components, uint32 componentType)
 {
 	return ComponentManager::getComponentsOfClass(this, classPointer, components, componentType);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-uint16 GameObject::getComponentsCount(uint32 componentType)
+uint16 Entity::getComponentsCount(uint32 componentType)
 {
 	return ComponentManager::getComponentsCount(this, componentType);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void GameObject::resetComponents()
+void Entity::resetComponents()
 {
 	ColliderManager::propagateCommand(VUEngine::getColliderManager(_vuEngine), cComponentCommandReset, this);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-const Transformation* GameObject::getTransformation()
+const Transformation* Entity::getTransformation()
 {
 	return &this->transformation;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-const Vector3D* GameObject::getPosition()
+const Vector3D* Entity::getPosition()
 {
 	return &this->transformation.position;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-const Rotation* GameObject::getRotation()
+const Rotation* Entity::getRotation()
 {
 	return &this->transformation.rotation;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-const Scale* GameObject::getScale()
+const Scale* Entity::getScale()
 {
 	return &this->transformation.scale;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-Body GameObject::getBody()
+Body Entity::getBody()
 {
 	return this->body;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-bool GameObject::isMoving()
+bool Entity::isMoving()
 {
 	return isDeleted(this->body) ? false : Body::getMovementOnAllAxis(this->body);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void GameObject::stopAllMovement()
+void Entity::stopAllMovement()
 {
-	GameObject::stopMovement(this, __ALL_AXIS);
+	Entity::stopMovement(this, __ALL_AXIS);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void GameObject::stopMovement(uint16 axis)
+void Entity::stopMovement(uint16 axis)
 {
 	if(!isDeleted(this->body))
 	{
@@ -246,9 +246,9 @@ void GameObject::stopMovement(uint16 axis)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-bool GameObject::setVelocity(const Vector3D* velocity, bool checkIfCanMove)
+bool Entity::setVelocity(const Vector3D* velocity, bool checkIfCanMove)
 {
-	ASSERT(this->body, "GameObject::applyForce: null body");
+	ASSERT(this->body, "Entity::applyForce: null body");
 
 	if(isDeleted(this->body))
 	{
@@ -257,7 +257,7 @@ bool GameObject::setVelocity(const Vector3D* velocity, bool checkIfCanMove)
 
 	if(checkIfCanMove)
 	{
-		if(!GameObject::canMoveTowards(this, *velocity))
+		if(!Entity::canMoveTowards(this, *velocity))
 		{
 			return false;
 		}
@@ -270,7 +270,7 @@ bool GameObject::setVelocity(const Vector3D* velocity, bool checkIfCanMove)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-const Vector3D* GameObject::getVelocity()
+const Vector3D* Entity::getVelocity()
 {
 	if(isDeleted(this->body))
 	{
@@ -284,7 +284,7 @@ const Vector3D* GameObject::getVelocity()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-fixed_t GameObject::getSpeed()
+fixed_t Entity::getSpeed()
 {
 	if(isDeleted(this->body))
 	{
@@ -296,14 +296,14 @@ fixed_t GameObject::getSpeed()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-fixed_t GameObject::getMaximumSpeed()
+fixed_t Entity::getMaximumSpeed()
 {
 	return !isDeleted(this->body) ? Body::getMaximumSpeed(this->body) : 0;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-fixed_t GameObject::getBounciness()
+fixed_t Entity::getBounciness()
 {
 	if(isDeleted(this->body))
 	{
@@ -315,7 +315,7 @@ fixed_t GameObject::getBounciness()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-fixed_t GameObject::getFrictionCoefficient()
+fixed_t Entity::getFrictionCoefficient()
 {
 	if(isDeleted(this->body))
 	{
@@ -327,21 +327,21 @@ fixed_t GameObject::getFrictionCoefficient()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void GameObject::enableCollisions()
+void Entity::enableCollisions()
 {
 	ColliderManager::propagateCommand(VUEngine::getColliderManager(_vuEngine), cComponentCommandEnable, this);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void GameObject::disableCollisions()
+void Entity::disableCollisions()
 {
 	ColliderManager::propagateCommand(VUEngine::getColliderManager(_vuEngine), cComponentCommandDisable, this);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void GameObject::checkCollisions(bool active)
+void Entity::checkCollisions(bool active)
 {
 	ColliderManager::propagateCommand
 	(
@@ -351,7 +351,7 @@ void GameObject::checkCollisions(bool active)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void GameObject::registerCollisions(bool value)
+void Entity::registerCollisions(bool value)
 {
 	ColliderManager::propagateCommand
 	(
@@ -361,7 +361,7 @@ void GameObject::registerCollisions(bool value)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void GameObject::setCollidersLayers(uint32 layers)
+void Entity::setCollidersLayers(uint32 layers)
 {
 	ColliderManager::propagateCommand
 	(
@@ -371,11 +371,11 @@ void GameObject::setCollidersLayers(uint32 layers)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-uint32 GameObject::getCollidersLayers()
+uint32 Entity::getCollidersLayers()
 {
 	uint32 collidersLayers = 0;
 
-	VirtualList colliders = GameObject::getComponents(this, kColliderComponent);
+	VirtualList colliders = Entity::getComponents(this, kColliderComponent);
 
 	for(VirtualNode node = colliders->head; NULL != node; node = node->next)
 	{
@@ -389,7 +389,7 @@ uint32 GameObject::getCollidersLayers()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void GameObject::setCollidersLayersToIgnore(uint32 layersToIgnore)
+void Entity::setCollidersLayersToIgnore(uint32 layersToIgnore)
 {
 	ColliderManager::propagateCommand
 	(
@@ -399,11 +399,11 @@ void GameObject::setCollidersLayersToIgnore(uint32 layersToIgnore)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-uint32 GameObject::getCollidersLayersToIgnore()
+uint32 Entity::getCollidersLayersToIgnore()
 {
 	uint32 collidersLayersToIgnore = 0;
 
-	VirtualList colliders = GameObject::getComponents(this, kColliderComponent);
+	VirtualList colliders = Entity::getComponents(this, kColliderComponent);
 
 	for(VirtualNode node = colliders->head; NULL != node; node = node->next)
 	{
@@ -417,21 +417,21 @@ uint32 GameObject::getCollidersLayersToIgnore()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void GameObject::showColliders()
+void Entity::showColliders()
 {
 	ColliderManager::propagateCommand(VUEngine::getColliderManager(_vuEngine), cColliderComponentCommandShow, this);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void GameObject::hideColliders()
+void Entity::hideColliders()
 {
 	ColliderManager::propagateCommand(VUEngine::getColliderManager(_vuEngine), cColliderComponentCommandHide, this);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void GameObject::createComponents(ComponentSpec** componentSpecs)
+void Entity::createComponents(ComponentSpec** componentSpecs)
 {
 	if(NULL == componentSpecs || 0 < ComponentManager::getComponentsCount(this, kComponentTypes))
 	{
@@ -440,28 +440,28 @@ void GameObject::createComponents(ComponentSpec** componentSpecs)
 		return;
 	}
 
-	GameObject::addComponents(this, componentSpecs, kComponentTypes);
+	Entity::addComponents(this, componentSpecs, kComponentTypes);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void GameObject::destroyComponents()
+void Entity::destroyComponents()
 {
 	ComponentManager::removeComponents(this, kComponentTypes);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void GameObject::addedComponent(Component component)
+void Entity::addedComponent(Component component)
 {
 	switch(Component::getType(component))
 	{
 		case kSpriteComponent:
 		case kWireframeComponent:
 		{
-			if(GameObject::overrides(this, calculateSize))
+			if(Entity::overrides(this, calculateSize))
 			{
-				GameObject::calculateSize(this);
+				Entity::calculateSize(this);
 			}
 
 			break;
@@ -469,7 +469,7 @@ void GameObject::addedComponent(Component component)
 
 		case kPhysicsComponent:
 		{
-			NM_ASSERT(NULL == this->body, "GameObject::addedComponent: adding multiple bodies");
+			NM_ASSERT(NULL == this->body, "Entity::addedComponent: adding multiple bodies");
 
 			if(NULL != this->body)
 			{
@@ -480,7 +480,7 @@ void GameObject::addedComponent(Component component)
 
 			if(!isDeleted(this->body))
 			{
-				Body::setPosition(this->body, &this->transformation.position, GameObject::safeCast(this));
+				Body::setPosition(this->body, &this->transformation.position, Entity::safeCast(this));
 			}
 
 			break;
@@ -490,16 +490,16 @@ void GameObject::addedComponent(Component component)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void GameObject::removedComponent(Component component __attribute__((unused)))
+void Entity::removedComponent(Component component __attribute__((unused)))
 {
 	switch(Component::getType(component))
 	{
 		case kSpriteComponent:
 		case kWireframeComponent:
 		{
-			if(GameObject::overrides(this, calculateSize))
+			if(Entity::overrides(this, calculateSize))
 			{
-				GameObject::calculateSize(this);
+				Entity::calculateSize(this);
 			}
 
 			break;
@@ -519,71 +519,71 @@ void GameObject::removedComponent(Component component __attribute__((unused)))
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void GameObject::show()
+void Entity::show()
 {
 	VisualComponent::propagateCommand(cVisualComponentCommandShow, this);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void GameObject::hide()
+void Entity::hide()
 {
 	VisualComponent::propagateCommand(cVisualComponentCommandHide, this);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void GameObject::setTransparency(uint8 transparency)
+void Entity::setTransparency(uint8 transparency)
 {
 	VisualComponent::propagateCommand(cVisualComponentCommandSetTransparency, this, (uint32)transparency);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void GameObject::calculateSize()
+void Entity::calculateSize()
 {}
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-fixed_t GameObject::getRadius()
+fixed_t Entity::getRadius()
 {
 	return 0;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void GameObject::setPosition(const Vector3D* position)
+void Entity::setPosition(const Vector3D* position)
 {
 	this->transformation.position = *position;
 
 	if(!isDeleted(this->body) && Body::getPosition(this->body) != position)
 	{
-		Body::setPosition(this->body, &this->transformation.position, GameObject::safeCast(this));
+		Body::setPosition(this->body, &this->transformation.position, Entity::safeCast(this));
 	}
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void GameObject::setRotation(const Rotation* rotation)
+void Entity::setRotation(const Rotation* rotation)
 {
 	this->transformation.rotation = *rotation;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void GameObject::setScale(const Scale* scale)
+void Entity::setScale(const Scale* scale)
 {
 	this->transformation.scale = *scale;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void GameObject::setDirection(const Vector3D* direction __attribute__ ((unused)))
+void Entity::setDirection(const Vector3D* direction __attribute__ ((unused)))
 {}
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-const Vector3D* GameObject::getDirection()
+const Vector3D* Entity::getDirection()
 {
 	if(isDeleted(this->body))
 	{
@@ -597,9 +597,9 @@ const Vector3D* GameObject::getDirection()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-bool GameObject::applyForce(const Vector3D* force, bool checkIfCanMove)
+bool Entity::applyForce(const Vector3D* force, bool checkIfCanMove)
 {
-	NM_ASSERT(NULL != this->body, "GameObject::applyForce: null body");
+	NM_ASSERT(NULL != this->body, "Entity::applyForce: null body");
 
 	if(isDeleted(this->body))
 	{
@@ -608,7 +608,7 @@ bool GameObject::applyForce(const Vector3D* force, bool checkIfCanMove)
 
 	if(checkIfCanMove)
 	{
-		if(!GameObject::canMoveTowards(this, *force))
+		if(!Entity::canMoveTowards(this, *force))
 		{
 			return false;
 		}
@@ -621,7 +621,7 @@ bool GameObject::applyForce(const Vector3D* force, bool checkIfCanMove)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-bool GameObject::canMoveTowards(Vector3D direction)
+bool Entity::canMoveTowards(Vector3D direction)
 {
 	fixed_t collisionCheckDistance = __PIXELS_TO_METERS(4);
 
@@ -634,7 +634,7 @@ bool GameObject::canMoveTowards(Vector3D direction)
 
 	bool canMove = true;
 
-	VirtualList colliders = GameObject::getComponents(this, kColliderComponent);
+	VirtualList colliders = Entity::getComponents(this, kColliderComponent);
 
 	if(NULL != colliders)
 	{
@@ -652,21 +652,21 @@ bool GameObject::canMoveTowards(Vector3D direction)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-bool GameObject::isSensibleToCollidingObjectBouncinessOnCollision(GameObject collidingObject __attribute__ ((unused)))
+bool Entity::isSensibleToCollidingObjectBouncinessOnCollision(Entity collidingObject __attribute__ ((unused)))
 {
 	return  true;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-bool GameObject::isSensibleToCollidingObjectFrictionOnCollision(GameObject collidingObject __attribute__ ((unused)))
+bool Entity::isSensibleToCollidingObjectFrictionOnCollision(Entity collidingObject __attribute__ ((unused)))
 {
 	return  true;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-bool GameObject::isSubjectToGravity(Vector3D gravity)
+bool Entity::isSubjectToGravity(Vector3D gravity)
 {
 	if(isDeleted(this->body))
 	{
@@ -678,14 +678,14 @@ bool GameObject::isSubjectToGravity(Vector3D gravity)
 		return false;
 	}
 
-	return GameObject::canMoveTowards(this, gravity);
+	return Entity::canMoveTowards(this, gravity);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-bool GameObject::collisionStarts(const CollisionInformation* collisionInformation)
+bool Entity::collisionStarts(const CollisionInformation* collisionInformation)
 {
-	ASSERT(collisionInformation->otherCollider, "GameObject::collisionStarts: otherColliders");
+	ASSERT(collisionInformation->otherCollider, "Entity::collisionStarts: otherColliders");
 
 	ASSERT(NULL != collisionInformation->otherCollider, "Particle::collisionStarts: otherColliders");
 
@@ -697,15 +697,15 @@ bool GameObject::collisionStarts(const CollisionInformation* collisionInformatio
 		{
 			Collider::resolveCollision(collisionInformation->collider, collisionInformation);
 
-			GameObject collidingObject = Collider::getOwner(collisionInformation->otherCollider);
+			Entity collidingObject = Collider::getOwner(collisionInformation->otherCollider);
 
 			fixed_t bounciness = 
-				GameObject::isSensibleToCollidingObjectBouncinessOnCollision(this, collidingObject) ? 
-				GameObject::getBounciness(collidingObject) : 0;
+				Entity::isSensibleToCollidingObjectBouncinessOnCollision(this, collidingObject) ? 
+				Entity::getBounciness(collidingObject) : 0;
 
 			fixed_t frictionCoefficient = 
-				GameObject::isSensibleToCollidingObjectFrictionOnCollision(this, collidingObject) ? 
-				GameObject::getSurroundingFrictionCoefficient(this) : 0;
+				Entity::isSensibleToCollidingObjectFrictionOnCollision(this, collidingObject) ? 
+				Entity::getSurroundingFrictionCoefficient(this) : 0;
 
 			if(!isDeleted(this->body))
 			{
@@ -728,12 +728,12 @@ bool GameObject::collisionStarts(const CollisionInformation* collisionInformatio
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void GameObject::collisionPersists(const CollisionInformation* collisionInformation __attribute__ ((unused)))
+void Entity::collisionPersists(const CollisionInformation* collisionInformation __attribute__ ((unused)))
 {}
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void GameObject::collisionEnds(const CollisionInformation* collisionInformation)
+void Entity::collisionEnds(const CollisionInformation* collisionInformation)
 {
 	if(isDeleted(this->body))
 	{
@@ -746,23 +746,23 @@ void GameObject::collisionEnds(const CollisionInformation* collisionInformation)
 	}
 
 	Body::clearNormal(this->body, ListenerObject::safeCast(collisionInformation->otherCollider));
-	Body::setSurroundingFrictionCoefficient(this->body,  GameObject::getSurroundingFrictionCoefficient(this));
+	Body::setSurroundingFrictionCoefficient(this->body,  Entity::getSurroundingFrictionCoefficient(this));
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-uint32 GameObject::getInGameType()
+uint32 Entity::getInGameType()
 {
 	return kTypeNone;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-fixed_t GameObject::getSurroundingFrictionCoefficient()
+fixed_t Entity::getSurroundingFrictionCoefficient()
 {
 	fixed_t totalFrictionCoefficient = 0;
 
-	VirtualList colliders = GameObject::getComponents(this, kColliderComponent);
+	VirtualList colliders = Entity::getComponents(this, kColliderComponent);
 
 	if(NULL != colliders)
 	{

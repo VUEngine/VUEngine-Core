@@ -155,7 +155,7 @@ static RightBox Mesh::getRightBoxFromSpec(MeshSpec* meshSpec)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void Mesh::constructor(GameObject owner, const MeshSpec* meshSpec)
+void Mesh::constructor(Entity owner, const MeshSpec* meshSpec)
 {
 	// Always explicitly call the base's constructor 
 	Base::constructor(owner, &meshSpec->wireframeSpec);

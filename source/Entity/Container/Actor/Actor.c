@@ -714,7 +714,7 @@ bool Actor::isInCameraRange(int16 padding, bool recursive)
 		return true;
 	}
 
-	if(VisualComponent::isAnyVisible(GameObject::safeCast(this)))
+	if(VisualComponent::isAnyVisible(Entity::safeCast(this)))
 	{
 		return true;
 	}
@@ -748,7 +748,7 @@ void Actor::playAnimation(const char* animationName)
 
 	SpriteManager::propagateCommand
 	(
-		SpriteManager::getInstance(), cVisualComponentCommandPlay, GameObject::safeCast(this), 
+		SpriteManager::getInstance(), cVisualComponentCommandPlay, Entity::safeCast(this), 
 		((ActorSpec*)this->actorSpec)->animationFunctions, animationName, ListenerObject::safeCast(this), 
 		(EventListener)Actor::onAnimationComplete
 	);
@@ -758,7 +758,7 @@ void Actor::playAnimation(const char* animationName)
 
 void Actor::pauseAnimation(bool pause)
 {
-	SpriteManager::propagateCommand(SpriteManager::getInstance(), cVisualComponentCommandPause, GameObject::safeCast(this), pause);
+	SpriteManager::propagateCommand(SpriteManager::getInstance(), cVisualComponentCommandPause, Entity::safeCast(this), pause);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -767,28 +767,28 @@ void Actor::stopAnimation()
 {
 	this->playingAnimationName = NULL;
 
-	SpriteManager::propagateCommand(SpriteManager::getInstance(), cVisualComponentCommandStop, GameObject::safeCast(this));
+	SpriteManager::propagateCommand(SpriteManager::getInstance(), cVisualComponentCommandStop, Entity::safeCast(this));
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Actor::setActualFrame(int16 frame)
 {
-	SpriteManager::propagateCommand(SpriteManager::getInstance(), cVisualComponentCommandSetFrame, GameObject::safeCast(this), frame);
+	SpriteManager::propagateCommand(SpriteManager::getInstance(), cVisualComponentCommandSetFrame, Entity::safeCast(this), frame);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Actor::nextFrame()
 {
-	SpriteManager::propagateCommand(SpriteManager::getInstance(), cVisualComponentCommandNextFrame, GameObject::safeCast(this));
+	SpriteManager::propagateCommand(SpriteManager::getInstance(), cVisualComponentCommandNextFrame, Entity::safeCast(this));
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Actor::previousFrame()
 {
-	SpriteManager::propagateCommand(SpriteManager::getInstance(), cVisualComponentCommandPreviousFrame, GameObject::safeCast(this));
+	SpriteManager::propagateCommand(SpriteManager::getInstance(), cVisualComponentCommandPreviousFrame, Entity::safeCast(this));
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -848,7 +848,7 @@ void Actor::calculateSizeFromChildren(RightBox* rightBox, Vector3D environmentPo
 
 	if(0 == this->size.x || 0 == this->size.y || 0 == this->size.z)
 	{
-		bool rightBoxComputed = VisualComponent::calculateRightBox(GameObject::safeCast(this), &myRightBox);
+		bool rightBoxComputed = VisualComponent::calculateRightBox(Entity::safeCast(this), &myRightBox);
 
 		if(!rightBoxComputed)
 		{

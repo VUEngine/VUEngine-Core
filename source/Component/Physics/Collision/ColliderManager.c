@@ -14,7 +14,7 @@
 #include <Clock.h>
 #include <DebugConfig.h>
 #include <Printing.h>
-#include <GameObject.h>
+#include <Entity.h>
 #include <Collider.h>
 #include <VirtualList.h>
 
@@ -55,7 +55,7 @@ static uint16 _checkCycles;
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-Collider ColliderManager::createComponent(GameObject owner, const ColliderSpec* colliderSpec)
+Collider ColliderManager::createComponent(Entity owner, const ColliderSpec* colliderSpec)
 {
 	if(NULL == colliderSpec)
 	{
@@ -69,7 +69,7 @@ Collider ColliderManager::createComponent(GameObject owner, const ColliderSpec* 
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void ColliderManager::destroyComponent(GameObject owner, Collider collider) 
+void ColliderManager::destroyComponent(Entity owner, Collider collider) 
 {
 	if(isDeleted(collider))
 	{
@@ -266,7 +266,7 @@ uint32 ColliderManager::update()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-Collider ColliderManager::createCollider(GameObject owner, const ColliderSpec* colliderSpec)
+Collider ColliderManager::createCollider(Entity owner, const ColliderSpec* colliderSpec)
 {
 	if(NULL == colliderSpec)
 	{
@@ -275,7 +275,7 @@ Collider ColliderManager::createCollider(GameObject owner, const ColliderSpec* c
 
 	ColliderManager::purgeDestroyedColliders(this);
 
-	Collider collider = ((Collider (*)(GameObject, const ColliderSpec*)) ((ComponentSpec*)colliderSpec)->allocator)(owner, colliderSpec);
+	Collider collider = ((Collider (*)(Entity, const ColliderSpec*)) ((ComponentSpec*)colliderSpec)->allocator)(owner, colliderSpec);
 
 	this->dirty = true;
 

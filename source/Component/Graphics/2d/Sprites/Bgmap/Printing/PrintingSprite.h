@@ -48,7 +48,7 @@ class PrintingSprite : BgmapSprite
 	int8 printingBgmapSegment;
 	
 	/// @publicsection
-	void constructor(GameObject owner, const PrintingSpriteSpec* printingSpriteSpec);
+	void constructor(Entity owner, const PrintingSpriteSpec* printingSpriteSpec);
 	
 	/// Render the sprite by configuring the DRAM assigned to it by means of the provided index.
 	/// @param index: Determines the region of DRAM that this sprite is allowed to configure

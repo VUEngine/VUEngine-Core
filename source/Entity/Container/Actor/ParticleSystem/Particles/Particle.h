@@ -14,7 +14,7 @@
 // INCLUDES
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-#include <GameObject.h>
+#include <Entity.h>
 #include <Sprite.h>
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -69,10 +69,10 @@ typedef const ParticleSpec ParticleROMSpec;
 
 /// Class Particle
 ///
-/// Inherits from GameObject
+/// Inherits from Entity
 ///
 /// Implements a particle that is spawned by particle systems.
-class Particle : GameObject
+class Particle : Entity
 {
 	/// @protectedsection
 

@@ -15,7 +15,7 @@
 #include <ComponentManager.h>
 #include <DebugConfig.h>
 #include <Printing.h>
-#include <GameObject.h>
+#include <Entity.h>
 #include <SpriteManager.h>
 #include <VirtualList.h>
 #include <WireframeManager.h>
@@ -35,7 +35,7 @@ friend class VirtualNode;
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void VisualComponent::propagateCommand(int32 command, GameObject owner, ...)
+static void VisualComponent::propagateCommand(int32 command, Entity owner, ...)
 {
 	va_list args;
 	va_start(args, owner);
@@ -48,7 +48,7 @@ static void VisualComponent::propagateCommand(int32 command, GameObject owner, .
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static bool VisualComponent::calculateRightBox(GameObject owner, RightBox* rightBox)
+static bool VisualComponent::calculateRightBox(Entity owner, RightBox* rightBox)
 {
 	bool modified = false;
 
@@ -83,7 +83,7 @@ static bool VisualComponent::calculateRightBox(GameObject owner, RightBox* right
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static bool VisualComponent::isAnyVisible(GameObject owner)
+static bool VisualComponent::isAnyVisible(Entity owner)
 {
 	if(SpriteManager::isAnyVisible(SpriteManager::getInstance(), owner))
 	{
@@ -163,7 +163,7 @@ static void VisualComponent::getRightBoxFromVisualComponents(VirtualList visualC
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void VisualComponent::constructor(GameObject owner, const VisualComponentSpec* visualComponentSpec)
+void VisualComponent::constructor(Entity owner, const VisualComponentSpec* visualComponentSpec)
 {
 	// Always explicitly call the base's constructor 
 	Base::constructor(owner, (const ComponentSpec*)visualComponentSpec);

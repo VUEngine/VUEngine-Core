@@ -7,8 +7,8 @@
  * that was distributed with this source code.
  */
 
-#ifndef GAME_OBJECT_H_
-#define GAME_OBJECT_H_
+#ifndef ENTITY_H_
+#define ENTITY_H_
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // INCLUDES
@@ -30,12 +30,12 @@ class VirtualList;
 // CLASS' DECLARATION
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-/// Class GameObject
+/// Class Entity
 ///
 /// Inherits from ListenerObject
 ///
 /// Defines objects that occupy a place in 3D space.
-abstract class GameObject : ListenerObject
+abstract class Entity : ListenerObject
 {
 	/// @protectedsection
 	
@@ -272,13 +272,13 @@ abstract class GameObject : ListenerObject
 
 	/// Check if when the statefulActor bounces it has to take into account the colliding object's bounciness.
 	/// @return True if the statefulActor has to take into account the colliding object's bounciness when bouncing
-	virtual bool isSensibleToCollidingObjectBouncinessOnCollision(GameObject collidingObject);
+	virtual bool isSensibleToCollidingObjectBouncinessOnCollision(Entity collidingObject);
 
 	/// Check if when the statefulActor bounces it has to take into account the colliding object's friction
 	/// coefficient.
 	/// @return True if the statefulActor has to take into account the colliding object's friction coefficient when
 	/// bouncing
-	virtual bool isSensibleToCollidingObjectFrictionOnCollision(GameObject collidingObject);
+	virtual bool isSensibleToCollidingObjectFrictionOnCollision(Entity collidingObject);
 
 	/// Check if the object is subject to provided gravity vector.
 	/// @return True if the provided gravity vector can affect the object; false otherwise

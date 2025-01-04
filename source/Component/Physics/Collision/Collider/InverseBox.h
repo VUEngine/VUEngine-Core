@@ -30,7 +30,7 @@ class InverseBox : Box
 	/// @publicsection
 
 	/// Class' constructor
-	void constructor(GameObject owner, const ColliderSpec* colliderSpec);
+	void constructor(Entity owner, const ColliderSpec* colliderSpec);
 }
 
 #endif

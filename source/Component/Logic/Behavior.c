@@ -19,7 +19,7 @@
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static Behavior Behavior::create(GameObject owner, const BehaviorSpec* behaviorSpec)
+static Behavior Behavior::create(Entity owner, const BehaviorSpec* behaviorSpec)
 {
 	ASSERT(behaviorSpec, "Behavior::create: NULL behavior");
 	ASSERT(behaviorSpec->componentSpec.allocator, "Behavior::create: no behavior allocator");
@@ -29,7 +29,7 @@ static Behavior Behavior::create(GameObject owner, const BehaviorSpec* behaviorS
 		return NULL;
 	}
 
-	return 	((Behavior (*)(GameObject, BehaviorSpec**)) behaviorSpec->componentSpec.allocator)(owner, (BehaviorSpec**)behaviorSpec);
+	return 	((Behavior (*)(Entity, BehaviorSpec**)) behaviorSpec->componentSpec.allocator)(owner, (BehaviorSpec**)behaviorSpec);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -40,7 +40,7 @@ static Behavior Behavior::create(GameObject owner, const BehaviorSpec* behaviorS
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void Behavior::constructor(GameObject owner, const BehaviorSpec* behaviorSpec)
+void Behavior::constructor(Entity owner, const BehaviorSpec* behaviorSpec)
 {
 	// Always explicitly call the base's constructor 
 	Base::constructor(owner, (const ComponentSpec*)&behaviorSpec->componentSpec);

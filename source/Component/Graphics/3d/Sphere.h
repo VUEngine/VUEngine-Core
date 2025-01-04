@@ -67,9 +67,9 @@ class Sphere : Wireframe
 	/// @publicsection
 
 	/// Class' constructor
-	/// @param owner: GameObject to which the wireframe attaches to
+	/// @param owner: Entity to which the wireframe attaches to
 	/// @param sphereSpec: Specification that determines how to configure the wireframe
-	void constructor(GameObject owner, const SphereSpec* sphereSpec);
+	void constructor(Entity owner, const SphereSpec* sphereSpec);
 	
 	/// Prepare the wireframe for drawing.
 	/// @param relativePosition: Position relative to the camera's

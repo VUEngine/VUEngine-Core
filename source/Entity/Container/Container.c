@@ -916,7 +916,7 @@ void Container::setLocalPosition(const Vector3D* position)
 
 	if(!isDeleted(this->body))
 	{
-		Body::setPosition(this->body, &this->transformation.position, GameObject::safeCast(this));
+		Body::setPosition(this->body, &this->transformation.position, Entity::safeCast(this));
 	}
 }
 
@@ -1085,7 +1085,7 @@ void Container::changeEnvironment(Transformation* environmentTransformation)
 
 	if(!isDeleted(this->body))
 	{
-		Body::setPosition(this->body, &this->transformation.position, GameObject::safeCast(this));
+		Body::setPosition(this->body, &this->transformation.position, Entity::safeCast(this));
 	}
 }
 

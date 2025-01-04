@@ -15,7 +15,7 @@
 #include <ColliderManager.h>
 #include <DebugConfig.h>
 #include <Printing.h>
-#include <GameObject.h>
+#include <Entity.h>
 #include <Telegram.h>
 #include <VirtualList.h>
 #include <VirtualNode.h>
@@ -43,7 +43,7 @@ friend class VirtualList;
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void Collider::constructor(GameObject owner, const ColliderSpec* colliderSpec)
+void Collider::constructor(Entity owner, const ColliderSpec* colliderSpec)
 {
 	// Always explicitly call the base's constructor 
 	Base::constructor(owner, (const ComponentSpec*)&colliderSpec->componentSpec);
@@ -379,7 +379,7 @@ void Collider::resolveCollision(const CollisionInformation* collisionInformation
 				);
 
 			ASSERT(!isDeleted(otherColliderRegistry), "Collider::resolveCollision: dead otherColliderRegistry");
-			otherColliderRegistry->frictionCoefficient =  GameObject::getFrictionCoefficient(collisionInformation->otherCollider->owner);
+			otherColliderRegistry->frictionCoefficient =  Entity::getFrictionCoefficient(collisionInformation->otherCollider->owner);
 		}
 	}
 }
@@ -553,7 +553,7 @@ void Collider::print(int32 x, int32 y)
 
 void Collider::collisionStarts(Collision* collision)
 {
-	if(GameObject::collisionStarts(this->owner, &collision->collisionInformation))
+	if(Entity::collisionStarts(this->owner, &collision->collisionInformation))
 	{
 		OtherColliderRegistry* otherColliderRegistry = 
 			Collider::findOtherColliderRegistry(this, collision->collisionInformation.otherCollider);
@@ -561,7 +561,7 @@ void Collider::collisionStarts(Collision* collision)
 		if(otherColliderRegistry)
 		{
 			otherColliderRegistry->frictionCoefficient = 
-				GameObject::getFrictionCoefficient(collision->collisionInformation.otherCollider->owner);
+				Entity::getFrictionCoefficient(collision->collisionInformation.otherCollider->owner);
 		}
 	}
 }
@@ -570,14 +570,14 @@ void Collider::collisionStarts(Collision* collision)
 
 void Collider::collisionPersists(Collision* collision)
 {
-	GameObject::collisionPersists(this->owner, &collision->collisionInformation);
+	Entity::collisionPersists(this->owner, &collision->collisionInformation);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Collider::collisionEnds(Collision* collision)
 {
-	GameObject::collisionEnds(this->owner, &collision->collisionInformation);
+	Entity::collisionEnds(this->owner, &collision->collisionInformation);
 	Collider::unregisterOtherCollider(this, collision->collisionInformation.otherCollider);
 }
 
@@ -606,7 +606,7 @@ bool Collider::onOtherColliderChanged(ListenerObject eventFirer)
 		collisionInformation.collider = this;
 		collisionInformation.otherCollider = otherCollider;
 
-		GameObject::collisionEnds(this->owner, &collisionInformation);
+		Entity::collisionEnds(this->owner, &collisionInformation);
 	}
 
 	return true;
@@ -714,14 +714,14 @@ OtherColliderRegistry* Collider::findOtherColliderRegistry(Collider collider)
 
 void Collider::displaceOwner(Vector3D displacement)
 {
-	// retrieve the colliding gameObject's position and gap
-	Vector3D ownerPosition = * GameObject::getPosition(this->owner);
+	// retrieve the colliding entity's position and gap
+	Vector3D ownerPosition = * Entity::getPosition(this->owner);
 
 	ownerPosition.x += displacement.x;
 	ownerPosition.y += displacement.y;
 	ownerPosition.z += displacement.z;
 
-	GameObject::setPosition(this->owner, &ownerPosition);
+	Entity::setPosition(this->owner, &ownerPosition);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

@@ -47,9 +47,9 @@ class ObjectAnimatedSprite : ObjectSprite
 	/// @publicsection
 
 	/// Class' constructor
-	/// @param owner: GameObject to which the sprite attaches to
+	/// @param owner: Entity to which the sprite attaches to
 	/// @param objectAnimatedSpriteSpec: Specification that determines how to configure the sprite
-	void constructor(GameObject owner, const ObjectAnimatedSpriteSpec* objectAnimatedSpriteSpec);
+	void constructor(Entity owner, const ObjectAnimatedSpriteSpec* objectAnimatedSpriteSpec);
 
 	/// Update the animation.
 	override void updateAnimation();

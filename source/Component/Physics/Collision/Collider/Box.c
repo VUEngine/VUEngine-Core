@@ -60,7 +60,7 @@ static void Box::project(Vector3D vertexes[__BOX_VERTEXES], Vector3D vector, fix
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void Box::constructor(GameObject owner, const ColliderSpec* colliderSpec)
+void Box::constructor(Entity owner, const ColliderSpec* colliderSpec)
 {
 	// Always explicitly call the base's constructor 
 	Base::constructor(owner, colliderSpec);

@@ -12,7 +12,7 @@
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <DebugConfig.h>
-#include <GameObject.h>
+#include <Entity.h>
 
 #include "Component.h"
 
@@ -38,7 +38,7 @@ static const Transformation _dummyTransformation =
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void Component::constructor(GameObject owner, const ComponentSpec* componentSpec)
+void Component::constructor(Entity owner, const ComponentSpec* componentSpec)
 {
 	// Always explicitly call the base's constructor 
 	Base::constructor();
@@ -53,7 +53,7 @@ void Component::constructor(GameObject owner, const ComponentSpec* componentSpec
 	}
 	else
 	{
-		this->transformation = GameObject::getTransformation(this->owner);
+		this->transformation = Entity::getTransformation(this->owner);
 	}
 }
 
@@ -81,7 +81,7 @@ ComponentSpec* Component::getSpec()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-GameObject Component::getOwner()
+Entity Component::getOwner()
 {
 	return this->owner;
 }

@@ -61,9 +61,9 @@ class Asterisk : Wireframe
 	/// @publicsection
 
 	/// Class' constructor
-	/// @param owner: GameObject to which the wireframe attaches to
+	/// @param owner: Entity to which the wireframe attaches to
 	/// @param asteriskSpec: Specification that determines how to configure the wireframe
-	void constructor(GameObject owner, const AsteriskSpec* asteriskSpec);
+	void constructor(Entity owner, const AsteriskSpec* asteriskSpec);
 
 	/// Prepare the wireframe for drawing.
 	/// @param relativePosition: Position relative to the camera's

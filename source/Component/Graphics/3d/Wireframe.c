@@ -32,7 +32,7 @@ friend class VirtualList;
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void Wireframe::constructor(GameObject owner, const WireframeSpec* wireframeSpec)
+void Wireframe::constructor(Entity owner, const WireframeSpec* wireframeSpec)
 {
 	// Always explicitly call the base's constructor 
 	Base::constructor(owner, (const VisualComponentSpec*)&wireframeSpec->visualComponentSpec);

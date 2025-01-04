@@ -28,7 +28,7 @@ friend class Behavior;
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-Behavior BehaviorManager::createComponent(GameObject owner, const BehaviorSpec* behaviorSpec)
+Behavior BehaviorManager::createComponent(Entity owner, const BehaviorSpec* behaviorSpec)
 {
 	if(NULL == behaviorSpec)
 	{
@@ -37,7 +37,7 @@ Behavior BehaviorManager::createComponent(GameObject owner, const BehaviorSpec* 
 
 	Base::createComponent(this, owner, (ComponentSpec*)behaviorSpec);
 
-	Behavior behavior = ((Behavior (*)(GameObject, const BehaviorSpec*)) ((ComponentSpec*)behaviorSpec)->allocator)(owner, behaviorSpec);
+	Behavior behavior = ((Behavior (*)(Entity, const BehaviorSpec*)) ((ComponentSpec*)behaviorSpec)->allocator)(owner, behaviorSpec);
 
 	VirtualList::pushBack(this->components, behavior);
 
@@ -46,7 +46,7 @@ Behavior BehaviorManager::createComponent(GameObject owner, const BehaviorSpec* 
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void BehaviorManager::destroyComponent(GameObject owner, Behavior behavior) 
+void BehaviorManager::destroyComponent(Entity owner, Behavior behavior) 
 {
 	if(isDeleted(behavior))
 	{

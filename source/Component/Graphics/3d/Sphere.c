@@ -24,7 +24,7 @@
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void Sphere::constructor(GameObject owner, const SphereSpec* sphereSpec)
+void Sphere::constructor(Entity owner, const SphereSpec* sphereSpec)
 {
 	// Always explicitly call the base's constructor 
 	Base::constructor(owner, &sphereSpec->wireframeSpec);

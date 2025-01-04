@@ -14,7 +14,7 @@
 // INCLUDES
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-#include <GameObject.h>
+#include <Entity.h>
 #include <stdarg.h>
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -35,10 +35,10 @@ class VirtualList;
 
 /// Class Container
 ///
-/// Inherits from GameObject
+/// Inherits from Entity
 ///
 /// Adds parenting cababilities to spatial objects.
-abstract class Container : GameObject
+abstract class Container : Entity
 {
 	/// @protectedsection
 

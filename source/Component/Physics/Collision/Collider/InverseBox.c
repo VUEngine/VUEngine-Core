@@ -25,7 +25,7 @@ friend class Box;
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void InverseBox::constructor(GameObject owner, const ColliderSpec* colliderSpec)
+void InverseBox::constructor(Entity owner, const ColliderSpec* colliderSpec)
 {
 	// Always explicitly call the base's constructor 
 	Base::constructor(owner, colliderSpec);

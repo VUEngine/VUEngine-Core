@@ -65,18 +65,18 @@ singleton class WireframeManager : ComponentManager
 	/// Check if at least of the sprites that attach to the provided owner is visible.
 	/// @param owner: Object to which the sprites attach to
 	/// @return True if at least of the sprites that attach to the provided owner is visible
-	override bool isAnyVisible(GameObject owner);
+	override bool isAnyVisible(Entity owner);
 
 	/// Create a wireframe with the provided spec.
 	/// @param owner: Object to which the wireframe will attach to
 	/// @param wireframeSpec: Spec to use to create the wireframe
 	/// @return Created wireframe
-	override Wireframe createComponent(GameObject owner, const WireframeSpec* wireframeSpec);
+	override Wireframe createComponent(Entity owner, const WireframeSpec* wireframeSpec);
 
 	/// Destroy the provided wireframe.
 	/// @param owner: Object to which the sprite will attach to
 	/// @param wireframe: Wireframe to destroy
-	override void destroyComponent(GameObject owner, Wireframe wireframe);
+	override void destroyComponent(Entity owner, Wireframe wireframe);
 
 	/// Reset the manager's state.
 	void reset();
@@ -91,7 +91,7 @@ singleton class WireframeManager : ComponentManager
 	/// @param owner: Object to which the wireframe will attach toc
 	/// @param wireframeSpec: Spec to use to create the wireframe
 	/// @return Created wireframe
-	Wireframe createWireframe(GameObject owner, const WireframeSpec* wireframeSpec);
+	Wireframe createWireframe(Entity owner, const WireframeSpec* wireframeSpec);
 
 	/// Destroy the provided wireframe.
 	/// @param wireframe: Wireframe to destroy
@@ -115,11 +115,11 @@ singleton class WireframeManager : ComponentManager
 
 	/// Show all wireframes belonging to the provided owner.
 	/// @param owner: Object to which the wireframe will attach to
-	void showWireframes(GameObject owner);
+	void showWireframes(Entity owner);
 
 	/// Hide all wireframes belonging to the provided owner.
 	/// @param owner: Object to which the wireframe will attach to
-	void hideWireframes(GameObject owner);
+	void hideWireframes(Entity owner);
 
 	/// Show all wireframes.
 	void showAllWireframes();

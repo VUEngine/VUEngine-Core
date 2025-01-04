@@ -32,7 +32,7 @@ extern int32 strcmp(const char *, const char *);
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void FrameBlendBgmapSprite::constructor(GameObject owner, const FrameBlendBgmapSpriteSpec* frameBlendBgmapSpriteSpec)
+void FrameBlendBgmapSprite::constructor(Entity owner, const FrameBlendBgmapSpriteSpec* frameBlendBgmapSpriteSpec)
 {
 	// Always explicitly call the base's constructor 
 	Base::constructor(owner, &frameBlendBgmapSpriteSpec->bgmapSpriteSpec);

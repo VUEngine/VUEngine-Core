@@ -14,7 +14,7 @@
 #include <DebugConfig.h>
 #include <Line.h>
 #include <Printing.h>
-#include <GameObject.h>
+#include <Entity.h>
 
 #include "LineField.h"
 
@@ -48,7 +48,7 @@ static void LineField::project(Vector3D center, fixed_t radius, Vector3D vector,
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void LineField::constructor(GameObject owner, const ColliderSpec* colliderSpec)
+void LineField::constructor(Entity owner, const ColliderSpec* colliderSpec)
 {
 	// Always explicitly call the base's constructor 
 	Base::constructor(owner, colliderSpec);

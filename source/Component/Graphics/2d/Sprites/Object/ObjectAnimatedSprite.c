@@ -24,7 +24,7 @@
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void ObjectAnimatedSprite::constructor(GameObject owner, const ObjectAnimatedSpriteSpec* objectAnimatedSpriteSpec)
+void ObjectAnimatedSprite::constructor(Entity owner, const ObjectAnimatedSpriteSpec* objectAnimatedSpriteSpec)
 {
 	// Always explicitly call the base's constructor 
 	Base::constructor(owner, &objectAnimatedSpriteSpec->objectSpriteSpec);

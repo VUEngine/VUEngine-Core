@@ -50,9 +50,9 @@ class FrameBlendBgmapSprite : BgmapSprite
 	/// @publicsection
 
 	/// Class' constructor
-	/// @param owner: GameObject to which the sprite attaches to
+	/// @param owner: Entity to which the sprite attaches to
 	/// @param frameBlendBgmapSpriteSpec: Specification that determines how to configure the sprite
-	void constructor(GameObject owner, const FrameBlendBgmapSpriteSpec* frameBlendBgmapSpriteSpec);
+	void constructor(Entity owner, const FrameBlendBgmapSpriteSpec* frameBlendBgmapSpriteSpec);
 
 	/// Render the sprite by configuring the DRAM assigned to it by means of the provided index.
 	/// @param index: Determines the region of DRAM that this sprite is allowed to configure

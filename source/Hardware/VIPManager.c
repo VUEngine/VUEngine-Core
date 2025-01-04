@@ -50,7 +50,7 @@ extern uint32 _dramDirtyStart;
 typedef struct PostProcessingEffectRegistry
 {
 	PostProcessingEffect postProcessingEffect;
-	GameObject gameObject;
+	Entity entity;
 	bool remove;
 
 } PostProcessingEffectRegistry;
@@ -358,10 +358,10 @@ void VIPManager::lowerBrightness()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void VIPManager::pushFrontPostProcessingEffect(PostProcessingEffect postProcessingEffect, GameObject gameObject)
+void VIPManager::pushFrontPostProcessingEffect(PostProcessingEffect postProcessingEffect, Entity entity)
 {
 	PostProcessingEffectRegistry* postProcessingEffectRegistry = 
-		VIPManager::isPostProcessingEffectRegistered(this, postProcessingEffect, gameObject);
+		VIPManager::isPostProcessingEffectRegistered(this, postProcessingEffect, entity);
 
 	if(!isDeleted(postProcessingEffectRegistry))
 	{
@@ -371,7 +371,7 @@ void VIPManager::pushFrontPostProcessingEffect(PostProcessingEffect postProcessi
 
 	postProcessingEffectRegistry = new PostProcessingEffectRegistry;
 	postProcessingEffectRegistry->postProcessingEffect = postProcessingEffect;
-	postProcessingEffectRegistry->gameObject = gameObject;
+	postProcessingEffectRegistry->entity = entity;
 	postProcessingEffectRegistry->remove = false;
 
 	VirtualList::pushFront(this->postProcessingEffects, postProcessingEffectRegistry);
@@ -379,10 +379,10 @@ void VIPManager::pushFrontPostProcessingEffect(PostProcessingEffect postProcessi
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void VIPManager::pushBackPostProcessingEffect(PostProcessingEffect postProcessingEffect, GameObject gameObject)
+void VIPManager::pushBackPostProcessingEffect(PostProcessingEffect postProcessingEffect, Entity entity)
 {
 	PostProcessingEffectRegistry* postProcessingEffectRegistry = 
-		VIPManager::isPostProcessingEffectRegistered(this, postProcessingEffect, gameObject);
+		VIPManager::isPostProcessingEffectRegistered(this, postProcessingEffect, entity);
 
 	if(!isDeleted(postProcessingEffectRegistry))
 	{
@@ -392,7 +392,7 @@ void VIPManager::pushBackPostProcessingEffect(PostProcessingEffect postProcessin
 
 	postProcessingEffectRegistry = new PostProcessingEffectRegistry;
 	postProcessingEffectRegistry->postProcessingEffect = postProcessingEffect;
-	postProcessingEffectRegistry->gameObject = gameObject;
+	postProcessingEffectRegistry->entity = entity;
 	postProcessingEffectRegistry->remove = false;
 
 	VirtualList::pushBack(this->postProcessingEffects, postProcessingEffectRegistry);
@@ -400,7 +400,7 @@ void VIPManager::pushBackPostProcessingEffect(PostProcessingEffect postProcessin
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void VIPManager::removePostProcessingEffect(PostProcessingEffect postProcessingEffect, GameObject gameObject)
+void VIPManager::removePostProcessingEffect(PostProcessingEffect postProcessingEffect, Entity entity)
 {
 	for(VirtualNode node = this->postProcessingEffects->head; NULL != node; node = node->next)
 	{
@@ -410,7 +410,7 @@ void VIPManager::removePostProcessingEffect(PostProcessingEffect postProcessingE
 		(
 			postProcessingEffectRegistry->postProcessingEffect == postProcessingEffect 
 			&& 
-			postProcessingEffectRegistry->gameObject == gameObject
+			postProcessingEffectRegistry->entity == entity
 		)
 		{
 			postProcessingEffectRegistry->remove = true;
@@ -686,7 +686,7 @@ void VIPManager::applyPostProcessingEffects()
 		{
 			postProcessingEffectRegistry->postProcessingEffect
 			(
-				this->currentDrawingFrameBufferSet, postProcessingEffectRegistry->gameObject
+				this->currentDrawingFrameBufferSet, postProcessingEffectRegistry->entity
 			);
 		}
 	}
@@ -788,7 +788,7 @@ bool VIPManager::isDrawingAllowed()
 
 PostProcessingEffectRegistry* VIPManager::isPostProcessingEffectRegistered
 (
-	PostProcessingEffect postProcessingEffect, GameObject gameObject
+	PostProcessingEffect postProcessingEffect, Entity entity
 )
 {
 	VirtualNode node = this->postProcessingEffects->head;
@@ -801,7 +801,7 @@ PostProcessingEffectRegistry* VIPManager::isPostProcessingEffectRegistered
 		(
 			postProcessingEffectRegistry->postProcessingEffect == postProcessingEffect 
 			&& 
-			postProcessingEffectRegistry->gameObject == gameObject
+			postProcessingEffectRegistry->entity == entity
 		)
 		{
 			return postProcessingEffectRegistry;

@@ -55,9 +55,9 @@ abstract class Behavior : Component
 	/// @publicsection
 
 	/// Class' constructor
-	/// @param owner: GameObject to which the behavior attaches to
+	/// @param owner: Entity to which the behavior attaches to
 	/// @param behaviorSpec: Specification that determines how to configure the behavior
-	void constructor(GameObject owner, const BehaviorSpec* behaviorSpec);
+	void constructor(Entity owner, const BehaviorSpec* behaviorSpec);
 
 	/// Enable the behavior's operations.
 	void enable();

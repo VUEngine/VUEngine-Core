@@ -107,23 +107,23 @@ abstract class VisualComponent : Component
 	/// @param command: Command to propagate to all the components
 	/// @param owner: Owner of the components to command (all if NULL)
 	/// @param ...: Variable arguments list depending on the command
-	static void propagateCommand(int32 command, GameObject owner, ...);
+	static void propagateCommand(int32 command, Entity owner, ...);
 
 	/// Compute the rightbox for the owner in base of its visual components.
-	/// @param owner: GameObject that the components attaches to
+	/// @param owner: Entity that the components attaches to
 	/// @param rightBox: Rightbox to configure
 	/// @return True if the owner has visual components; false otherwise
-	static bool calculateRightBox(GameObject owner, RightBox* rightBox);
+	static bool calculateRightBox(Entity owner, RightBox* rightBox);
 
 	/// Check if at least of the visual components that attach to the provided owner is visible.
 	/// @param owner: Object to which the visual components attach to
 	/// @return True if at least of the visual components that attach to the provided owner is visible
-	static bool isAnyVisible(GameObject owner);
+	static bool isAnyVisible(Entity owner);
 
 	/// Class' constructor
-	/// @param owner: GameObject that this component attaches to
+	/// @param owner: Entity that this component attaches to
 	/// @param visualComponentSpec: Pointer to the spec that defines how to initialize the visual component
-	void constructor(GameObject owner, const VisualComponentSpec* visualComponentSpec);
+	void constructor(Entity owner, const VisualComponentSpec* visualComponentSpec);
 
 	/// Handle a command.
 	/// @param command: Command to handle

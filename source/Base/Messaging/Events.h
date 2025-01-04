@@ -23,7 +23,7 @@ enum Events
 	kEventFramerateReady,
 	kEventFramerateDipped,
 
-	kEventGameObjectDeleted,
+	kEventEntityDeleted,
 	kEventContainerDeleted,
 	kEventContainerAllChildrenDeleted,
 	kEventActorLoaded,

@@ -118,7 +118,7 @@ void Particle::setup
 
 	if(!isDeleted(this->body))
 	{
-		Body::setPosition(this->body, position, GameObject::safeCast(this));
+		Body::setPosition(this->body, position, Entity::safeCast(this));
 	}
 
 	this->transformation.position = *position;
@@ -201,7 +201,7 @@ void Particle::playAnimation(const AnimationFunction** animationFunctions, const
 	SpriteManager::propagateCommand(
 		SpriteManager::getInstance(), 
 		cVisualComponentCommandPlay, 
-		GameObject::safeCast(this), 
+		Entity::safeCast(this), 
 		animationFunctions, 
 		animationName, 
 		NULL, 

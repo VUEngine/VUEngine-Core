@@ -47,7 +47,7 @@ friend class AnimationController;
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void Sprite::constructor(GameObject owner, const SpriteSpec* spriteSpec)
+void Sprite::constructor(Entity owner, const SpriteSpec* spriteSpec)
 {
 	// Always explicitly call the base's constructor 
 	Base::constructor(owner, (const VisualComponentSpec*)&spriteSpec->visualComponentSpec);

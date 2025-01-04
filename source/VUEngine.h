@@ -27,7 +27,7 @@ class CommunicationManager;
 class GameState;
 class BodyManager;
 class SoundManager;
-class GameObject;
+class Entity;
 class SpriteManager;
 class StateMachine;
 class Stage;
@@ -261,18 +261,18 @@ singleton class VUEngine : ListenerObject
 
 	/// Push a post processing effect at the start of the list of effects.
 	/// @param postProcessingEffect: Post-processing effect function
-	/// @param gameObject: Post-processing effect function's scope
-	void pushFrontPostProcessingEffect(PostProcessingEffect postProcessingEffect, GameObject gameObject);
+	/// @param entity: Post-processing effect function's scope
+	void pushFrontPostProcessingEffect(PostProcessingEffect postProcessingEffect, Entity entity);
 	
 	/// Push a post processing effect at the end of the list of effects.
 	/// @param postProcessingEffect: Post-processing effect function
-	/// @param gameObject: Post-processing effect function's scope
-	void pushBackPostProcessingEffect(PostProcessingEffect postProcessingEffect, GameObject gameObject);
+	/// @param entity: Post-processing effect function's scope
+	void pushBackPostProcessingEffect(PostProcessingEffect postProcessingEffect, Entity entity);
 
 	/// Remove a post-processing effect from the list of effects.
 	/// @param postProcessingEffect: Post-processing effect function
- 	/// @param gameObject: Post-processing effect function's scope
-	void removePostProcessingEffect(PostProcessingEffect postProcessingEffect, GameObject gameObject);
+ 	/// @param entity: Post-processing effect function's scope
+	void removePostProcessingEffect(PostProcessingEffect postProcessingEffect, Entity entity);
 
 	/// Called when the VIP reaches FRAMESTART.
 	/// @param gameFrameDuration: Time in milliseconds that each game frame lasts.

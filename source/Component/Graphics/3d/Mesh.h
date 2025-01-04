@@ -86,9 +86,9 @@ class Mesh : Wireframe
 	/// @publicsection
 
 	/// Class' constructor
-	/// @param owner: GameObject to which the wireframe attaches to
+	/// @param owner: Entity to which the wireframe attaches to
 	/// @param meshSpec: Specification that determines how to configure the wireframe
-	void constructor(GameObject owner, const MeshSpec* meshSpec);
+	void constructor(Entity owner, const MeshSpec* meshSpec);
 
 	/// Retrieve the mesh's bounding box.
 	/// @return Bounding box of the mesh

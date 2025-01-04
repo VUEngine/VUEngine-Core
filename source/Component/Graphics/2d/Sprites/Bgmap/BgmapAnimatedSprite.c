@@ -26,7 +26,7 @@
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void BgmapAnimatedSprite::constructor(GameObject owner, const BgmapAnimatedSpriteSpec* bgmapAnimatedSpriteSpec)
+void BgmapAnimatedSprite::constructor(Entity owner, const BgmapAnimatedSpriteSpec* bgmapAnimatedSpriteSpec)
 {
 	NM_ASSERT(NULL != bgmapAnimatedSpriteSpec, "BgmapAnimatedSprite::constructor: NULL bgmapAnimatedSpriteSpec");
 

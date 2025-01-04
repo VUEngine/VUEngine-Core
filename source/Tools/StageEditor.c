@@ -365,7 +365,7 @@ void StageEditor::highLightActor()
 			this->wireframe = 
 				WireframeManager::createWireframe
 				(
-					WireframeManager::getInstance(), GameObject::safeCast(actor), (WireframeSpec*)&meshSpec
+					WireframeManager::getInstance(), Entity::safeCast(actor), (WireframeSpec*)&meshSpec
 				);
 		}
 	}
@@ -874,9 +874,9 @@ void StageEditor::printActorPosition()
 	if(this->actorNode)
 	{
 		Actor actor = Actor::safeCast(VirtualNode::getData(this->actorNode));
-		const Vector3D* globalPosition =  GameObject::getPosition(actor);
-		const Rotation* globalRotation =  GameObject::getRotation(actor);
-		const Scale* globalScale =  GameObject::getScale(actor);
+		const Vector3D* globalPosition =  Entity::getPosition(actor);
+		const Rotation* globalRotation =  Entity::getRotation(actor);
+		const Scale* globalScale =  Entity::getScale(actor);
 		const char* actorName = Container::getName(actor);
 
 		Printing::text(Printing::getInstance(), "ID:                             ", x, ++y, NULL);

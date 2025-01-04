@@ -642,7 +642,7 @@ void Debug::memoryStatusShowSixthPage(int32 increment __attribute__ ((unused)), 
 		{&Particle_getObjectSize,						"Particle"},
 		{&ParticleSystem_getObjectSize,					"ParticleSystem"},
 		{&SolidParticle_getObjectSize,					"SolidParticle"},
-		{&GameObject_getObjectSize,					"GameObject"},
+		{&Entity_getObjectSize,					"Entity"},
 		{&Stage_getObjectSize,							"Stage"},
 		{&UIContainer_getObjectSize,					"UIContainer"},
 	};

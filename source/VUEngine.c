@@ -485,23 +485,23 @@ ListenerObject VUEngine::getSaveDataManager()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void VUEngine::pushFrontPostProcessingEffect(PostProcessingEffect postProcessingEffect, GameObject gameObject)
+void VUEngine::pushFrontPostProcessingEffect(PostProcessingEffect postProcessingEffect, Entity entity)
 {
-	VIPManager::pushFrontPostProcessingEffect(this->vipManager, postProcessingEffect, gameObject);
+	VIPManager::pushFrontPostProcessingEffect(this->vipManager, postProcessingEffect, entity);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void VUEngine::pushBackPostProcessingEffect(PostProcessingEffect postProcessingEffect, GameObject gameObject)
+void VUEngine::pushBackPostProcessingEffect(PostProcessingEffect postProcessingEffect, Entity entity)
 {
-	VIPManager::pushBackPostProcessingEffect(this->vipManager, postProcessingEffect, gameObject);
+	VIPManager::pushBackPostProcessingEffect(this->vipManager, postProcessingEffect, entity);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void VUEngine::removePostProcessingEffect(PostProcessingEffect postProcessingEffect, GameObject gameObject)
+void VUEngine::removePostProcessingEffect(PostProcessingEffect postProcessingEffect, Entity entity)
 {
-	VIPManager::removePostProcessingEffect(this->vipManager, postProcessingEffect, gameObject);
+	VIPManager::removePostProcessingEffect(this->vipManager, postProcessingEffect, entity);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

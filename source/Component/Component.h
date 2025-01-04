@@ -22,7 +22,7 @@
 // FORWARD DECLARATIONS
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-class GameObject;
+class Entity;
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DATA
@@ -78,7 +78,7 @@ abstract class Component : ListenerObject
 	/// @protectedsection
 
 	/// Object to which this component attaches to
-	GameObject owner;
+	Entity owner;
 
 	/// Pointer to the spec that defines how to initialize the component
 	const ComponentSpec* componentSpec;
@@ -89,9 +89,9 @@ abstract class Component : ListenerObject
 	/// @publicsection
 
 	/// Class' constructor
-	/// @param owner: GameObject to which the component attaches to
+	/// @param owner: Entity to which the component attaches to
 	/// @param componentSpec: Pointer to the spec that defines how to initialize the component
-	void constructor(GameObject owner, const ComponentSpec* componentSpec);
+	void constructor(Entity owner, const ComponentSpec* componentSpec);
 
 	/// Class' destructor
 	void destructor();
@@ -101,7 +101,7 @@ abstract class Component : ListenerObject
 	ComponentSpec* getSpec();
 
 	/// Retrieve the collider's owner
-	GameObject getOwner();
+	Entity getOwner();
 
 	/// Retrieve the component's type
 	/// @return Component's type'

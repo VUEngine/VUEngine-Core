@@ -20,7 +20,7 @@
 // FORWARD DECLARATIONS
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-class GameObject;
+class Entity;
 
 extern volatile uint16* _vipRegisters __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE;
 extern uint32* _currentDrawingFrameBufferSet __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE;
@@ -254,7 +254,7 @@ enum MultiplexedInterrupts
 };
 
 /// A method pointer for processing special effects after drawing operations are completed
-typedef void (*PostProcessingEffect)(uint32 currentDrawingFrameBufferSet, GameObject scope);
+typedef void (*PostProcessingEffect)(uint32 currentDrawingFrameBufferSet, Entity scope);
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // FORWARD DECLARATIONS
@@ -384,22 +384,22 @@ singleton class VIPManager : ListenerObject
 
 	/// Push a post processing effect at the start of the list of effects.
 	/// @param postProcessingEffect: Post-processing effect function
-	/// @param gameObject: Post-processing effect function's scope
+	/// @param entity: Post-processing effect function's scope
 	void pushFrontPostProcessingEffect(
-		PostProcessingEffect postProcessingEffect, GameObject gameObject
+		PostProcessingEffect postProcessingEffect, Entity entity
 	);
 
 	/// Push a post processing effect at the end of the list of effects.
 	/// @param postProcessingEffect: Post-processing effect function
-	/// @param gameObject: Post-processing effect function's scope
+	/// @param entity: Post-processing effect function's scope
 	void pushBackPostProcessingEffect(
-		PostProcessingEffect postProcessingEffect, GameObject gameObject
+		PostProcessingEffect postProcessingEffect, Entity entity
 	);
 
 	/// Remove a post-processing effect from the list of effects.
 	/// @param postProcessingEffect: Post-processing effect function
-	/// @param gameObject: Post-processing effect function's scope
-	void removePostProcessingEffect(PostProcessingEffect postProcessingEffect, GameObject gameObject);
+	/// @param entity: Post-processing effect function's scope
+	void removePostProcessingEffect(PostProcessingEffect postProcessingEffect, Entity entity);
 
 	/// Remove all a post-processing effects.
 	void removePostProcessingEffects();

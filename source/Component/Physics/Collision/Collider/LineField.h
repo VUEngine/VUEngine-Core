@@ -54,7 +54,7 @@ class LineField : Collider
 	/// @publicsection
 
 	/// Class' constructor
-	void constructor(GameObject owner, const ColliderSpec* colliderSpec);
+	void constructor(Entity owner, const ColliderSpec* colliderSpec);
 
 	/// Retrieve the normal to the collider.
 	/// @return Normal to the collider

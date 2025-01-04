@@ -22,7 +22,7 @@
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void Asterisk::constructor(GameObject owner, const AsteriskSpec* asteriskSpec)
+void Asterisk::constructor(Entity owner, const AsteriskSpec* asteriskSpec)
 {
 	// Always explicitly call the base's constructor 
 	Base::constructor(owner, &asteriskSpec->wireframeSpec);

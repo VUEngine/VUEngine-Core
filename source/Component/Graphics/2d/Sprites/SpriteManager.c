@@ -63,7 +63,7 @@ int32 _writtenObjectTiles = 0;
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-Sprite SpriteManager::createComponent(GameObject owner, const SpriteSpec* spriteSpec)
+Sprite SpriteManager::createComponent(Entity owner, const SpriteSpec* spriteSpec)
 {
 	if(NULL == spriteSpec)
 	{
@@ -77,7 +77,7 @@ Sprite SpriteManager::createComponent(GameObject owner, const SpriteSpec* sprite
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void SpriteManager::destroyComponent(GameObject owner, Sprite sprite) 
+void SpriteManager::destroyComponent(Entity owner, Sprite sprite) 
 {
 	if(isDeleted(sprite))
 	{
@@ -91,7 +91,7 @@ void SpriteManager::destroyComponent(GameObject owner, Sprite sprite)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-bool SpriteManager::isAnyVisible(GameObject owner)
+bool SpriteManager::isAnyVisible(Entity owner)
 {
 	for(VirtualNode node = this->components->head; NULL != node; node = node->next)
 	{
@@ -159,7 +159,7 @@ void SpriteManager::setAnimationsClock(Clock clock)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-Sprite SpriteManager::createSprite(GameObject owner, const SpriteSpec* spriteSpec)
+Sprite SpriteManager::createSprite(Entity owner, const SpriteSpec* spriteSpec)
 {
 	NM_ASSERT(NULL != spriteSpec, "SpriteManager::createSprite: null spriteSpec");
 
@@ -168,7 +168,7 @@ Sprite SpriteManager::createSprite(GameObject owner, const SpriteSpec* spriteSpe
 		return NULL;
 	}
 
-	Sprite sprite = ((Sprite (*)(GameObject, const SpriteSpec*)) ((ComponentSpec*)spriteSpec)->allocator)(owner, spriteSpec);
+	Sprite sprite = ((Sprite (*)(Entity, const SpriteSpec*)) ((ComponentSpec*)spriteSpec)->allocator)(owner, spriteSpec);
 	ASSERT(!isDeleted(sprite), "SpriteManager::createSprite: failed creating sprite");
 
 	VirtualList::pushBack(this->components, sprite);

@@ -20,7 +20,7 @@
 // FORWARD DECLARATIONS
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-class GameObject;
+class Entity;
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' MACROS
@@ -198,9 +198,9 @@ class Body : Component
 	);
 
 	/// Class' constructor
-	/// @param owner: GameObject to which the body attaches to
+	/// @param owner: Entity to which the body attaches to
 	/// @param bodySpec: Struct that specifies the physical properties of bodies
-	void constructor(GameObject owner, const BodySpec* bodySpec);
+	void constructor(Entity owner, const BodySpec* bodySpec);
 
 	/// Handle a command.
 	/// @param command: Command to handle
@@ -298,7 +298,7 @@ class Body : Component
 	/// Set the body's position.
 	/// @param position: 3D vector defining the body's new position
 	/// @param caller: Must be the body's owner; otherwise the call to this method doesn't have any effect
-	void setPosition(const Vector3D* position, GameObject caller);
+	void setPosition(const Vector3D* position, Entity caller);
 
 	/// Retrieve the body's position.
 	/// @return Pointer to the body's 3D vector defining its position

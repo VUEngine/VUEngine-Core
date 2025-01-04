@@ -44,7 +44,7 @@ Rotation _previousCameraInvertedRotationBuffer __INITIALIZED_GLOBAL_DATA_SECTION
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-bool WireframeManager::isAnyVisible(GameObject owner)
+bool WireframeManager::isAnyVisible(Entity owner)
 {
 	for(VirtualNode node = this->components->head; NULL != node; node = node->next)
 	{
@@ -61,7 +61,7 @@ bool WireframeManager::isAnyVisible(GameObject owner)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-Wireframe WireframeManager::createComponent(GameObject owner, const WireframeSpec* wireframeSpec)
+Wireframe WireframeManager::createComponent(Entity owner, const WireframeSpec* wireframeSpec)
 {
 	if(NULL == wireframeSpec)
 	{
@@ -75,7 +75,7 @@ Wireframe WireframeManager::createComponent(GameObject owner, const WireframeSpe
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void WireframeManager::destroyComponent(GameObject owner, Wireframe wireframe) 
+void WireframeManager::destroyComponent(Entity owner, Wireframe wireframe) 
 {
 	if(isDeleted(wireframe))
 	{
@@ -119,7 +119,7 @@ void WireframeManager::disable()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-Wireframe WireframeManager::createWireframe(GameObject owner, const WireframeSpec* wireframeSpec)
+Wireframe WireframeManager::createWireframe(Entity owner, const WireframeSpec* wireframeSpec)
 {
 	if(NULL == wireframeSpec)
 	{
@@ -127,7 +127,7 @@ Wireframe WireframeManager::createWireframe(GameObject owner, const WireframeSpe
 	}
 
 	Wireframe wireframe = 
-		((Wireframe (*)(GameObject, const WireframeSpec*))((ComponentSpec*)wireframeSpec)->allocator)(owner, wireframeSpec);
+		((Wireframe (*)(Entity, const WireframeSpec*))((ComponentSpec*)wireframeSpec)->allocator)(owner, wireframeSpec);
 
 	if(!isDeleted(wireframe) && WireframeManager::registerWireframe(this, wireframe))
 	{
@@ -306,7 +306,7 @@ void WireframeManager::draw()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void WireframeManager::showWireframes(GameObject owner)
+void WireframeManager::showWireframes(Entity owner)
 {
 	for(VirtualNode node = this->components->head; NULL != node; node = node->next)
 	{
@@ -321,7 +321,7 @@ void WireframeManager::showWireframes(GameObject owner)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void WireframeManager::hideWireframes(GameObject owner)
+void WireframeManager::hideWireframes(Entity owner)
 {
 	for(VirtualNode node = this->components->head; NULL != node; node = node->next)
 	{
