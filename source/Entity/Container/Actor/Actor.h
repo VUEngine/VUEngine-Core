@@ -7,8 +7,8 @@
  * that was distributed with this source code.
  */
 
-#ifndef ENTITY_H_
-#define ENTITY_H_
+#ifndef ACTOR_H_
+#define ACTOR_H_
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // INCLUDES
@@ -22,17 +22,17 @@
 // FORWARD DECLARATIONS
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-class Entity;
-class EntityFactory;
+class Actor;
+class ActorFactory;
 class Telegram;
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DATA
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-/// An Entity Spec
-/// @memberof Entity
-typedef struct EntitySpec
+/// An Actor Spec
+/// @memberof Actor
+typedef struct ActorSpec
 {
 	/// Class allocator
 	AllocatorPointer allocator;
@@ -41,7 +41,7 @@ typedef struct EntitySpec
 	ComponentSpec** componentSpecs;
 
 	/// Children specs
-	struct PositionedEntity* childrenSpecs;
+	struct PositionedActor* childrenSpecs;
 
 	/// Extra info
 	void* extraInfo;
@@ -50,7 +50,7 @@ typedef struct EntitySpec
 	// If 0, it is computed from the visual components if any
 	PixelSize pixelSize;
 
-	// Entity's in-game type
+	// Actor's in-game type
 	uint8 inGameType;
 
 	/// Array of function animations
@@ -59,18 +59,18 @@ typedef struct EntitySpec
 	/// Animation to play automatically
 	char* initialAnimation;
 
-} EntitySpec;
+} ActorSpec;
 
-/// An Entity spec that is stored in ROM
-/// @memberof Entity
-typedef const EntitySpec EntityROMSpec;
+/// An Actor spec that is stored in ROM
+/// @memberof Actor
+typedef const ActorSpec ActorROMSpec;
 
-/// Struct that specifies how to create an spatially situated entity
-/// @memberof Entity
-typedef struct PositionedEntity
+/// Struct that specifies how to create an spatially situated actor
+/// @memberof Actor
+typedef struct PositionedActor
 {
-	// Pointer to the entity spec in ROM
-	EntitySpec* entitySpec;
+	// Pointer to the actor spec in ROM
+	ActorSpec* actorSpec;
 
 	// Position in the screen coordinates
 	ScreenPixelVector onScreenPosition;
@@ -81,14 +81,14 @@ typedef struct PositionedEntity
 	// Scale in screen coordinates
 	ScreenPixelScale onScreenScale;
 
-	// Entity's id
+	// Actor's id
 	int16 id;
 
 	// Name
 	char* name;
 
 	/// Children
-	struct PositionedEntity* childrenSpecs;
+	struct PositionedActor* childrenSpecs;
 
 	/// Extra info
 	void* extraInfo;
@@ -96,37 +96,37 @@ typedef struct PositionedEntity
 	/// Force load even if out of the camera's frustum
 	bool loadRegardlessOfPosition;
 
-} PositionedEntity;
+} PositionedActor;
 
-/// A PositionedEntity spec that is stored in ROM
-/// @memberof Entity
-typedef const PositionedEntity PositionedEntityROMSpec;
+/// A PositionedActor spec that is stored in ROM
+/// @memberof Actor
+typedef const PositionedActor PositionedActorROMSpec;
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DECLARATION
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-/// Class Entity
+/// Class Actor
 ///
 /// Inherits from Container
 ///
 /// Implements a container that can be added to stages
-class Entity : Container
+class Actor : Container
 {
 	/// @protectedsection
 
-	/// Size of the entity in function of its components and its children's, grand children's,
+	/// Size of the actor in function of its components and its children's, grand children's,
 	/// etc. components
 	Size size;
 
-	/// Factory to create this entity's children
-	EntityFactory entityFactory;
+	/// Factory to create this actor's children
+	ActorFactory actorFactory;
 
-	/// Pointer to the spec that defines how to initialize the entity
-	EntitySpec* entitySpec;
+	/// Pointer to the spec that defines how to initialize the actor
+	ActorSpec* actorSpec;
 
-	/// Diplacement between the entity's bounding box's center and its local position used to speed up the
-	/// visibility check of the entity withing the camera's frustum
+	/// Diplacement between the actor's bounding box's center and its local position used to speed up the
+	/// visibility check of the actor withing the camera's frustum
 	Vector3D* centerDisplacement;
 
 	/// Name of the currently playing animation
@@ -134,30 +134,30 @@ class Entity : Container
 
 	/// @publicsection
 
-	/// Create a new entity instance and configure it with the provided arguments.
-	/// @param positionedEntity: Struct that defines which entity spec to use to configure the new entity
+	/// Create a new actor instance and configure it with the provided arguments.
+	/// @param positionedActor: Struct that defines which actor spec to use to configure the new actor
 	/// and the spatial information about where and how to positione it
 	/// @param internalId: ID to keep track internally of the new instance
-	/// @return The new entity
-	static Entity createEntity(const PositionedEntity* const positionedEntity, int16 internalId);
+	/// @return The new actor
+	static Actor createActor(const PositionedActor* const positionedActor, int16 internalId);
 
-	/// Create a new entity instance and configure it over time with the provided arguments.
-	/// @param positionedEntity: Struct that defines which entity spec to use to configure the new entity
+	/// Create a new actor instance and configure it over time with the provided arguments.
+	/// @param positionedActor: Struct that defines which actor spec to use to configure the new actor
 	/// and the spatial information about where and how to positione it
 	/// @param internalId: ID to keep track internally of the new instance
-	/// @return The new, still not configured entity
-	static Entity createEntityDeferred(const PositionedEntity* const positionedEntity, int16 internalId);
+	/// @return The new, still not configured actor
+	static Actor createActorDeferred(const PositionedActor* const positionedActor, int16 internalId);
 
-	/// Compute the spatially located bounding box of an entity created with the provided positioned entity
+	/// Compute the spatially located bounding box of an actor created with the provided positioned actor
 	/// struct.
-	/// @param positionedEntity: Struct that defines which entity spec to use to configure the an entity
+	/// @param positionedActor: Struct that defines which actor spec to use to configure the an actor
 	/// @param environmentPosition: Vector used as the origin with respect to which computed the bounding
 	/// box's position
-	/// @return Spatially located bounding box of an entity that would be created with the provided
-	/// positioned entity struct
+	/// @return Spatially located bounding box of an actor that would be created with the provided
+	/// positioned actor struct
 	static RightBox getRightBoxFromSpec
 	(
-		const PositionedEntity* positionedEntity, const Vector3D* environmentPosition
+		const PositionedActor* positionedActor, const Vector3D* environmentPosition
 	);
 
 	/// Test if the provided right box lies inside the camera's frustum.
@@ -166,20 +166,20 @@ class Entity : Container
 	static inline bool isInsideFrustrum(Vector3D vector3D, RightBox rightBox);
 
 	/// Class' constructor
-	/// @param entitySpec: Specification that determines how to configure the entity
+	/// @param actorSpec: Specification that determines how to configure the actor
 	/// @param internalId: ID to keep track internally of the new instance
 	/// @param name: Name to assign to the new instance
-	void constructor(EntitySpec* entitySpec, int16 internalId, const char* const name);
+	void constructor(ActorSpec* actorSpec, int16 internalId, const char* const name);
 
-	/// Add the components that must attach to this entity.
+	/// Add the components that must attach to this actor.
 	/// Create the components that must attach to this container. 	
 	/// @param componentSpecs: Specifications to be used to configure the new components
 	override void createComponents(ComponentSpec** componentSpecs);
 
-	/// Destroy the components that attach to this entity.
+	/// Destroy the components that attach to this actor.
 	override void destroyComponents();
 
-	/// Configure the entity's size.
+	/// Configure the actor's size.
 	override void calculateSize();
 
 	/// Retrieve the object's radius.
@@ -190,7 +190,7 @@ class Entity : Container
 	/// @return The enum that determines the type of game object
 	override uint32 getInGameType();
 
-	/// Make the animated entity ready to start operating once it has been completely intialized.
+	/// Make the animated actor ready to start operating once it has been completely intialized.
 	/// @param recursive: If true, the ready call is propagated to its children, grand children, etc.
 	override void ready(bool recursive);
 
@@ -211,42 +211,42 @@ class Entity : Container
 	/// @return True if the propagation must stop; false if the propagation must reach other containers
 	override bool handlePropagatedString(const char* string);
 
-	/// Retrieve the entity's spec.
-	/// @return Specification that determines how the entity was configured
-	EntitySpec* getSpec();
+	/// Retrieve the actor's spec.
+	/// @return Specification that determines how the actor was configured
+	ActorSpec* getSpec();
 
-	/// Retrieve the entity's entity factory
-	/// @return Entity's entity facotyr
-	EntityFactory getEntityFactory();
+	/// Retrieve the actor's actor factory
+	/// @return Actor's actor facotyr
+	ActorFactory getActorFactory();
 
-	/// Spawn a new child and configure it with the provided positioned entity struct.
-	/// @param positionedEntity: Struct that defines which entity spec to use to configure the new child
-	Entity spawnChildEntity(const PositionedEntity* const positionedEntity);
+	/// Spawn a new child and configure it with the provided positioned actor struct.
+	/// @param positionedActor: Struct that defines which actor spec to use to configure the new child
+	Actor spawnChildActor(const PositionedActor* const positionedActor);
 
-	/// Spawn children and configure them with the provided entity specs.
-	/// @param childrenSpecs: Array of entity specs to use to initialize the new children
-	void addChildEntities(const PositionedEntity* childrenSpecs);
+	/// Spawn children and configure them with the provided actor specs.
+	/// @param childrenSpecs: Array of actor specs to use to initialize the new children
+	void addChildEntities(const PositionedActor* childrenSpecs);
 
-	/// Spawn children and configure them over time with the provided entity specs.
-	/// @param childrenSpecs: Array of entity specs to use to initialize the new children
-	void addChildEntitiesDeferred(const PositionedEntity* childrenSpecs);
+	/// Spawn children and configure them over time with the provided actor specs.
+	/// @param childrenSpecs: Array of actor specs to use to initialize the new children
+	void addChildEntitiesDeferred(const PositionedActor* childrenSpecs);
 
-	/// Retrieve the entity's width.
-	/// @return Entity's width
+	/// Retrieve the actor's width.
+	/// @return Actor's width
 	fixed_t getWidth();
 
-	/// Retrieve the entity's height.
-	/// @return Entity's height
+	/// Retrieve the actor's height.
+	/// @return Actor's height
 	fixed_t getHeight();
 
-	/// Retrieve the entity's depth.
-	/// @return Entity's depth
+	/// Retrieve the actor's depth.
+	/// @return Actor's depth
 	fixed_t getDepth();
 
-	/// Check if the entity is withing the camera's frustum.
+	/// Check if the actor is withing the camera's frustum.
 	/// @param padding: Padding to be added to camera's frustum
 	/// @param recursive: If true, the check is performed on the children, grand children, etc.
-	/// @return True if the entity is within the camera's frustum
+	/// @return True if the actor is within the camera's frustum
 	bool isInCameraRange(int16 padding, bool recursive);
 
 	/// Play the animation with the provided name.
@@ -292,16 +292,16 @@ class Entity : Container
 	/// @return The numer of frames if an animation is playing; o otherwise
 	int32 getNumberOfFrames();
 
-	/// Set the entity's spec.
-	/// @param entitySpec: Specification that determines how to configure the entity
-	virtual void setSpec(void* entitySpec);
+	/// Set the actor's spec.
+	/// @param actorSpec: Specification that determines how to configure the actor
+	virtual void setSpec(void* actorSpec);
 
-	/// Set any extra info provided by the PositionedEntity struct used to instantiate this entity.
-	/// @param extraInfo: Pointer to the extra information that the entity might need
+	/// Set any extra info provided by the PositionedActor struct used to instantiate this actor.
+	/// @param extraInfo: Pointer to the extra information that the actor might need
 	virtual void setExtraInfo(void* extraInfo);
 
-	/// Check if the entity must be streamed in after being streamed out or destroyed.
-	/// @return True if the streaming must spawn this entity back when deleted
+	/// Check if the actor must be streamed in after being streamed out or destroyed.
+	/// @return True if the streaming must spawn this actor back when deleted
 	virtual bool alwaysStreamIn();
 }
 
@@ -312,7 +312,7 @@ class Entity : Container
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 static inline bool
-Entity::isInsideFrustrum(Vector3D vector3D, RightBox rightBox)
+Actor::isInsideFrustrum(Vector3D vector3D, RightBox rightBox)
 {
 	extern const CameraFrustum* _cameraFrustum;
 	vector3D = Vector3D::rotate(Vector3D::getRelativeToCamera(vector3D), *_cameraInvertedRotation);

@@ -41,7 +41,7 @@ friend class VirtualNode;
 void StatefulActor::constructor(const StatefulActorSpec* statefulActorSpec, int16 internalId, const char* const name)
 {
 	// Always explicitly call the base's constructor 
-	Base::constructor((EntitySpec*)&statefulActorSpec->entitySpec, internalId, name);
+	Base::constructor((ActorSpec*)&statefulActorSpec->actorSpec, internalId, name);
 
 	// construct the game state machine
 	this->stateMachine = NULL;

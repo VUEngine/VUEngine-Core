@@ -192,7 +192,7 @@ Body BodyManager::createBody(GameObject owner, const BodySpec* bodySpec)
 		}
 	}
 
-	// if the entity is already registered
+	// if the actor is already registered
 	Body body = new Body(owner, bodySpec);
 	VirtualList::pushFront(this->components, body);
 	ASSERT(Body::safeCast(VirtualList::front(this->components)), "BodyManager::createBody: bad class body");
@@ -369,7 +369,7 @@ Body BodyManager::getBody(GameObject owner)
 		Body body = Body::safeCast(node->data);
 		ASSERT(body, "BodyManager::getBody: null body");
 
-		// check if current body's owner is the same as the entity calling this method
+		// check if current body's owner is the same as the actor calling this method
 		if(owner == body->owner)
 		{
 			return body;
@@ -392,7 +392,7 @@ bool BodyManager::isGameObjectRegistered(GameObject owner)
 		// current body
 		Body body = Body::safeCast(node->data);
 
-		// check if current body's owner is the same as the entity calling this method
+		// check if current body's owner is the same as the actor calling this method
 		if(GameObject::safeCast(owner) == body->owner)
 		{
 			return true;

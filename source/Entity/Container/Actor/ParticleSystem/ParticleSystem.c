@@ -37,7 +37,7 @@ void ParticleSystem::constructor(const ParticleSystemSpec* particleSystemSpec, i
 {
 	// construct base
 	// Always explicitly call the base's constructor 
-	Base::constructor((EntitySpec*)&particleSystemSpec->entitySpec, internalId, name);
+	Base::constructor((ActorSpec*)&particleSystemSpec->actorSpec, internalId, name);
 
 	this->particles = NULL;
 	this->aliveParticlesCount = 0;
@@ -154,7 +154,7 @@ void ParticleSystem::update()
 		return;
 	}
 
-	void (* behavior)(Particle particle) = ((ParticleSystemSpec*)this->entitySpec)->particleSpec->behavior;
+	void (* behavior)(Particle particle) = ((ParticleSystemSpec*)this->actorSpec)->particleSpec->behavior;
 
 	for(; NULL != node; node = node->next)
 	{
@@ -205,7 +205,7 @@ void ParticleSystem::update()
 
 			++this->totalSpawnedParticles;
 
-			if(!((ParticleSystemSpec*)this->entitySpec)->recycleParticles)
+			if(!((ParticleSystemSpec*)this->actorSpec)->recycleParticles)
 			{
 				VirtualList::pushBack(this->particles, ParticleSystem::spawnParticle(this));
 				this->aliveParticlesCount++;
@@ -227,9 +227,9 @@ void ParticleSystem::update()
 		}
 		while
 		(
-			++spawnedParticles < ((ParticleSystemSpec*)this->entitySpec)->maximumNumberOfParticlesToSpawnPerCycle 
+			++spawnedParticles < ((ParticleSystemSpec*)this->actorSpec)->maximumNumberOfParticlesToSpawnPerCycle 
 			&& 
-			0 == ((ParticleSystemSpec*)this->entitySpec)->minimumSpawnDelay 
+			0 == ((ParticleSystemSpec*)this->actorSpec)->minimumSpawnDelay 
 			&& 
 			this->aliveParticlesCount < this->maximumNumberOfAliveParticles
 		);
@@ -271,8 +271,8 @@ void ParticleSystem::resume()
 		Particle::resume
 		(
 			particle, ParticleSystem::getVisualComponentSpec(this), 
-			((ParticleSystemSpec*)this->entitySpec)->particleSpec->animationFunctions, 
-			((ParticleSystemSpec*)this->entitySpec)->particleSpec->initialAnimation
+			((ParticleSystemSpec*)this->actorSpec)->particleSpec->animationFunctions, 
+			((ParticleSystemSpec*)this->actorSpec)->particleSpec->initialAnimation
 		);
 	}
 
@@ -426,9 +426,9 @@ void ParticleSystem::particleRecycled(Particle particle __attribute__ ((unused))
 
 void ParticleSystem::setup()
 {
-	NM_ASSERT(this->entitySpec, "ParticleSystem::setup: NULL spec");
+	NM_ASSERT(this->actorSpec, "ParticleSystem::setup: NULL spec");
 
-	if(NULL == this->entitySpec)
+	if(NULL == this->actorSpec)
 	{
 		return;
 	}
@@ -443,12 +443,12 @@ void ParticleSystem::setup()
 	this->aliveParticlesCount = 0;
 	this->totalSpawnedParticles = 0;
 	this->loop = true;
-	this->paused = !((ParticleSystemSpec*)this->entitySpec)->autoStart;
+	this->paused = !((ParticleSystemSpec*)this->actorSpec)->autoStart;
 	this->maximumNumberOfAliveParticles = 0;
 
 	ParticleSystem::configure(this);
 
-	this->update = ((ParticleSystemSpec*)this->entitySpec)->autoStart;
+	this->update = ((ParticleSystemSpec*)this->actorSpec)->autoStart;
 	this->applyForceToParticles = ParticleSystem::appliesForceToParticles(this);
 }
 
@@ -457,33 +457,33 @@ void ParticleSystem::setup()
 void ParticleSystem::configure()
 {
 	this->size.x += 
-		__ABS(((ParticleSystemSpec*)this->entitySpec)->maximumRelativeSpawnPosition.x - 
-		((ParticleSystemSpec*)this->entitySpec)->minimumRelativeSpawnPosition.x);
+		__ABS(((ParticleSystemSpec*)this->actorSpec)->maximumRelativeSpawnPosition.x - 
+		((ParticleSystemSpec*)this->actorSpec)->minimumRelativeSpawnPosition.x);
 	this->size.y += 
-		__ABS(((ParticleSystemSpec*)this->entitySpec)->maximumRelativeSpawnPosition.y - 
-		((ParticleSystemSpec*)this->entitySpec)->minimumRelativeSpawnPosition.y);
+		__ABS(((ParticleSystemSpec*)this->actorSpec)->maximumRelativeSpawnPosition.y - 
+		((ParticleSystemSpec*)this->actorSpec)->minimumRelativeSpawnPosition.y);
 	this->size.z += 
-		__ABS(((ParticleSystemSpec*)this->entitySpec)->maximumRelativeSpawnPosition.z - 
-		((ParticleSystemSpec*)this->entitySpec)->minimumRelativeSpawnPosition.z);
+		__ABS(((ParticleSystemSpec*)this->actorSpec)->maximumRelativeSpawnPosition.z - 
+		((ParticleSystemSpec*)this->actorSpec)->minimumRelativeSpawnPosition.z);
 
 	this->spawnPositionDisplacement = 
 		Vector3D::absolute
 		(
 			Vector3D::sub
 			(
-				((ParticleSystemSpec*)this->entitySpec)->maximumRelativeSpawnPosition, 
-				((ParticleSystemSpec*)this->entitySpec)->minimumRelativeSpawnPosition
+				((ParticleSystemSpec*)this->actorSpec)->maximumRelativeSpawnPosition, 
+				((ParticleSystemSpec*)this->actorSpec)->minimumRelativeSpawnPosition
 			)
 		);
 
 	this->spawnForceDelta = 
 		Vector3D::absolute
 		(
-			Vector3D::sub(((ParticleSystemSpec*)this->entitySpec)->maximumForce, ((ParticleSystemSpec*)this->entitySpec)->minimumForce)
+			Vector3D::sub(((ParticleSystemSpec*)this->actorSpec)->maximumForce, ((ParticleSystemSpec*)this->actorSpec)->minimumForce)
 		);
 
 	this->nextSpawnTime = 0;
-	this->maximumNumberOfAliveParticles = ((ParticleSystemSpec*)this->entitySpec)->maximumNumberOfAliveParticles;
+	this->maximumNumberOfAliveParticles = ((ParticleSystemSpec*)this->actorSpec)->maximumNumberOfAliveParticles;
 
 	// Calculate the number of sprite specs
 	for
@@ -491,9 +491,9 @@ void ParticleSystem::configure()
 		this->numberOfVisualComponentSpecs = 0; 
 		0 <= this->numberOfVisualComponentSpecs 
 		&& 
-		NULL != ((ParticleSystemSpec*)this->entitySpec)->visualComponentSpecs 
+		NULL != ((ParticleSystemSpec*)this->actorSpec)->visualComponentSpecs 
 		&& 
-		NULL != ((ParticleSystemSpec*)this->entitySpec)->visualComponentSpecs[this->numberOfVisualComponentSpecs]; 
+		NULL != ((ParticleSystemSpec*)this->actorSpec)->visualComponentSpecs[this->numberOfVisualComponentSpecs]; 
 		this->numberOfVisualComponentSpecs++
 	);
 }
@@ -506,15 +506,15 @@ Particle ParticleSystem::spawnParticle()
 	Particle particle = 
 		((Particle (*)
 		(
-			const ParticleSpec*)) ((ParticleSystemSpec*)this->entitySpec)->particleSpec->allocator)
-			(((ParticleSystemSpec*)this->entitySpec)->particleSpec
+			const ParticleSpec*)) ((ParticleSystemSpec*)this->actorSpec)->particleSpec->allocator)
+			(((ParticleSystemSpec*)this->actorSpec)->particleSpec
 		);
 
 	int16 lifeSpan = 
-		((ParticleSystemSpec*)this->entitySpec)->particleSpec->minimumLifeSpan + 
+		((ParticleSystemSpec*)this->actorSpec)->particleSpec->minimumLifeSpan + 
 		Math::random
 		(
-			_gameRandomSeed, ((ParticleSystemSpec*)this->entitySpec)->particleSpec->lifeSpanDelta
+			_gameRandomSeed, ((ParticleSystemSpec*)this->actorSpec)->particleSpec->lifeSpanDelta
 		);
 	
 	Vector3D position = ParticleSystem::getParticleSpawnPosition(this);
@@ -534,9 +534,9 @@ Particle ParticleSystem::spawnParticle()
 		lifeSpan, 
 		&position, 
 		&force, 
-		((ParticleSystemSpec*)this->entitySpec)->movementType, 
-		((ParticleSystemSpec*)this->entitySpec)->particleSpec->animationFunctions, 
-		((ParticleSystemSpec*)this->entitySpec)->particleSpec->initialAnimation
+		((ParticleSystemSpec*)this->actorSpec)->movementType, 
+		((ParticleSystemSpec*)this->actorSpec)->particleSpec->animationFunctions, 
+		((ParticleSystemSpec*)this->actorSpec)->particleSpec->initialAnimation
 	);
 
 	if(ParticleSystem::overrides(this, particleSpawned))
@@ -559,9 +559,9 @@ bool ParticleSystem::recycleParticle()
 		{
 			Vector3D position = ParticleSystem::getParticleSpawnPosition(this);
 			int16 lifeSpan = 
-			((ParticleSystemSpec*)this->entitySpec)->particleSpec->minimumLifeSpan + 
-			(0 != ((ParticleSystemSpec*)this->entitySpec)->particleSpec->lifeSpanDelta ? 
-				Math::random(_gameRandomSeed, ((ParticleSystemSpec*)this->entitySpec)->particleSpec->lifeSpanDelta) 
+			((ParticleSystemSpec*)this->actorSpec)->particleSpec->minimumLifeSpan + 
+			(0 != ((ParticleSystemSpec*)this->actorSpec)->particleSpec->lifeSpanDelta ? 
+				Math::random(_gameRandomSeed, ((ParticleSystemSpec*)this->actorSpec)->particleSpec->lifeSpanDelta) 
 				: 
 				0
 			);
@@ -571,18 +571,18 @@ bool ParticleSystem::recycleParticle()
 				Vector3D force = ParticleSystem::getParticleSpawnForce(this);
 				Particle::setup
 				(
-					particle, NULL, NULL, NULL, lifeSpan, &position, &force, ((ParticleSystemSpec*)this->entitySpec)->movementType, 
-					((ParticleSystemSpec*)this->entitySpec)->particleSpec->animationFunctions, 
-					((ParticleSystemSpec*)this->entitySpec)->particleSpec->initialAnimation
+					particle, NULL, NULL, NULL, lifeSpan, &position, &force, ((ParticleSystemSpec*)this->actorSpec)->movementType, 
+					((ParticleSystemSpec*)this->actorSpec)->particleSpec->animationFunctions, 
+					((ParticleSystemSpec*)this->actorSpec)->particleSpec->initialAnimation
 				);
 			}
 			else
 			{
 				Particle::setup
 				(
-					particle, NULL, NULL, NULL, lifeSpan, &position, NULL, ((ParticleSystemSpec*)this->entitySpec)->movementType, 
-					((ParticleSystemSpec*)this->entitySpec)->particleSpec->animationFunctions, 
-					((ParticleSystemSpec*)this->entitySpec)->particleSpec->initialAnimation
+					particle, NULL, NULL, NULL, lifeSpan, &position, NULL, ((ParticleSystemSpec*)this->actorSpec)->movementType, 
+					((ParticleSystemSpec*)this->actorSpec)->particleSpec->animationFunctions, 
+					((ParticleSystemSpec*)this->actorSpec)->particleSpec->initialAnimation
 				);
 			}
 
@@ -607,21 +607,21 @@ Vector3D ParticleSystem::getParticleSpawnPosition()
 	if(0 != this->spawnPositionDisplacement.x)
 	{
 		position.x += 
-		((ParticleSystemSpec*)this->entitySpec)->minimumRelativeSpawnPosition.x + 
+		((ParticleSystemSpec*)this->actorSpec)->minimumRelativeSpawnPosition.x + 
 		Math::random(Math::randomSeed(), this->spawnPositionDisplacement.x);
 	}
 
 	if(0 != this->spawnPositionDisplacement.y)
 	{
 		position.y += 
-			((ParticleSystemSpec*)this->entitySpec)->minimumRelativeSpawnPosition.y + 
+			((ParticleSystemSpec*)this->actorSpec)->minimumRelativeSpawnPosition.y + 
 			Math::random(Math::randomSeed(), this->spawnPositionDisplacement.y);
 	}
 
 	if(0 != this->spawnPositionDisplacement.z)
 	{
 		position.z += 
-			((ParticleSystemSpec*)this->entitySpec)->minimumRelativeSpawnPosition.z + 
+			((ParticleSystemSpec*)this->actorSpec)->minimumRelativeSpawnPosition.z + 
 			Math::random(Math::randomSeed(), this->spawnPositionDisplacement.z);
 	}
 
@@ -632,7 +632,7 @@ Vector3D ParticleSystem::getParticleSpawnPosition()
 
 Vector3D ParticleSystem::getParticleSpawnForce()
 {
-	Vector3D force = ((ParticleSystemSpec*)this->entitySpec)->minimumForce;
+	Vector3D force = ((ParticleSystemSpec*)this->actorSpec)->minimumForce;
 
 	if(0 != this->spawnForceDelta.x)
 	{
@@ -658,9 +658,9 @@ bool ParticleSystem::appliesForceToParticles()
 {
 	if
 	(
-		0 != ((ParticleSystemSpec*)this->entitySpec)->minimumForce.x ||
-		0 != ((ParticleSystemSpec*)this->entitySpec)->minimumForce.y ||
-		0 != ((ParticleSystemSpec*)this->entitySpec)->minimumForce.z
+		0 != ((ParticleSystemSpec*)this->actorSpec)->minimumForce.x ||
+		0 != ((ParticleSystemSpec*)this->actorSpec)->minimumForce.y ||
+		0 != ((ParticleSystemSpec*)this->actorSpec)->minimumForce.z
 	)
 	{
 		return true;
@@ -668,9 +668,9 @@ bool ParticleSystem::appliesForceToParticles()
 
 	if
 	(
-		0 != ((ParticleSystemSpec*)this->entitySpec)->maximumForce.x ||
-		0 != ((ParticleSystemSpec*)this->entitySpec)->maximumForce.y ||
-		0 != ((ParticleSystemSpec*)this->entitySpec)->maximumForce.z
+		0 != ((ParticleSystemSpec*)this->actorSpec)->maximumForce.x ||
+		0 != ((ParticleSystemSpec*)this->actorSpec)->maximumForce.y ||
+		0 != ((ParticleSystemSpec*)this->actorSpec)->maximumForce.z
 	)
 	{
 		return true;
@@ -683,7 +683,7 @@ bool ParticleSystem::appliesForceToParticles()
 
 const ComponentSpec* ParticleSystem::getVisualComponentSpec()
 {
-	if(0 == ((ParticleSystemSpec*)this->entitySpec)->visualComponentSpecs)
+	if(0 == ((ParticleSystemSpec*)this->actorSpec)->visualComponentSpecs)
 	{
 		return NULL;
 	}
@@ -695,40 +695,40 @@ const ComponentSpec* ParticleSystem::getVisualComponentSpec()
 		specIndex = Math::random(_gameRandomSeed, this->numberOfVisualComponentSpecs);
 	}
 
-	return ((ParticleSystemSpec*)this->entitySpec)->visualComponentSpecs[specIndex];
+	return ((ParticleSystemSpec*)this->actorSpec)->visualComponentSpecs[specIndex];
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 const ComponentSpec* ParticleSystem::getPhysicsComponentSpec()
 {
-	if(0 == ((ParticleSystemSpec*)this->entitySpec)->physicsComponentSpecs)
+	if(0 == ((ParticleSystemSpec*)this->actorSpec)->physicsComponentSpecs)
 	{
 		return NULL;
 	}
 
-	return ((ParticleSystemSpec*)this->entitySpec)->physicsComponentSpecs[0];
+	return ((ParticleSystemSpec*)this->actorSpec)->physicsComponentSpecs[0];
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 const ComponentSpec* ParticleSystem::getColliderComponentSpec()
 {
-	if(0 == ((ParticleSystemSpec*)this->entitySpec)->colliderComponentSpecs)
+	if(0 == ((ParticleSystemSpec*)this->actorSpec)->colliderComponentSpecs)
 	{
 		return NULL;
 	}
 
-	return ((ParticleSystemSpec*)this->entitySpec)->colliderComponentSpecs[0];
+	return ((ParticleSystemSpec*)this->actorSpec)->colliderComponentSpecs[0];
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 int32 ParticleSystem::computeNextSpawnTime()
 {
-	return ((ParticleSystemSpec*)this->entitySpec)->minimumSpawnDelay +
-			(((ParticleSystemSpec*)this->entitySpec)->spawnDelayDelta ? 
-				Math::random(_gameRandomSeed, ((ParticleSystemSpec*)this->entitySpec)->spawnDelayDelta) 
+	return ((ParticleSystemSpec*)this->actorSpec)->minimumSpawnDelay +
+			(((ParticleSystemSpec*)this->actorSpec)->spawnDelayDelta ? 
+				Math::random(_gameRandomSeed, ((ParticleSystemSpec*)this->actorSpec)->spawnDelayDelta) 
 				: 
 				0
 			);
@@ -738,7 +738,7 @@ int32 ParticleSystem::computeNextSpawnTime()
 
 void ParticleSystem::processExpiredParticles()
 {
-	if(!((ParticleSystemSpec*)this->entitySpec)->recycleParticles)
+	if(!((ParticleSystemSpec*)this->actorSpec)->recycleParticles)
 	{
 		if(!isDeleted(this->particles))
 		{

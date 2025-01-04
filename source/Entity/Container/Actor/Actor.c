@@ -14,7 +14,7 @@
 #include <string.h>
 
 #include <DebugConfig.h>
-#include <EntityFactory.h>
+#include <ActorFactory.h>
 #include <Optics.h>
 #include <Mesh.h>
 #include <Printing.h>
@@ -25,7 +25,7 @@
 #include <VirtualNode.h>
 #include <VUEngine.h>
 
-#include "Entity.h"
+#include "Actor.h"
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DECLARATIONS
@@ -47,90 +47,90 @@ friend class VirtualList;
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static Entity Entity::createEntity(const PositionedEntity* const positionedEntity, int16 internalId)
+static Actor Actor::createActor(const PositionedActor* const positionedActor, int16 internalId)
 {
-	NM_ASSERT(NULL != positionedEntity, "Entity::createEntity: null positionedEntity");
-	NM_ASSERT(NULL != positionedEntity->entitySpec, "Entity::createEntity: null spec");
-	NM_ASSERT(NULL != positionedEntity->entitySpec->allocator, "Entity::createEntity: no allocator defined");
+	NM_ASSERT(NULL != positionedActor, "Actor::createActor: null positionedActor");
+	NM_ASSERT(NULL != positionedActor->actorSpec, "Actor::createActor: null spec");
+	NM_ASSERT(NULL != positionedActor->actorSpec->allocator, "Actor::createActor: no allocator defined");
 
-	if(NULL == positionedEntity)
+	if(NULL == positionedActor)
 	{
 		return NULL;
 	}
 
-	Entity entity = Entity::instantiate(positionedEntity, internalId, positionedEntity->name);
-	ASSERT(entity, "Entity::loadFromSpec: entity not loaded");
+	Actor actor = Actor::instantiate(positionedActor, internalId, positionedActor->name);
+	ASSERT(actor, "Actor::loadFromSpec: actor not loaded");
 
-	Vector3D position = Vector3D::getFromScreenPixelVector(positionedEntity->onScreenPosition);
-	Rotation rotation = Rotation::getFromScreenPixelRotation(positionedEntity->onScreenRotation);
-	Scale scale = Scale::getFromScreenPixelScale(positionedEntity->onScreenScale);
+	Vector3D position = Vector3D::getFromScreenPixelVector(positionedActor->onScreenPosition);
+	Rotation rotation = Rotation::getFromScreenPixelRotation(positionedActor->onScreenRotation);
+	Scale scale = Scale::getFromScreenPixelScale(positionedActor->onScreenScale);
 
-	Entity::setLocalPosition(entity, &position);
-	Entity::setLocalRotation(entity, &rotation);
-	Entity::setLocalScale(entity, &scale);
+	Actor::setLocalPosition(actor, &position);
+	Actor::setLocalRotation(actor, &rotation);
+	Actor::setLocalScale(actor, &scale);
 
 	// add children if defined
-	if(NULL != positionedEntity->childrenSpecs)
+	if(NULL != positionedActor->childrenSpecs)
 	{
-		Entity::addChildEntities(entity, positionedEntity->childrenSpecs);
+		Actor::addChildEntities(actor, positionedActor->childrenSpecs);
 	}
 
-	if(NULL != positionedEntity->entitySpec->childrenSpecs)
+	if(NULL != positionedActor->actorSpec->childrenSpecs)
 	{
-		Entity::addChildEntities(entity, positionedEntity->entitySpec->childrenSpecs);
+		Actor::addChildEntities(actor, positionedActor->actorSpec->childrenSpecs);
 	}
 
-	return entity;
+	return actor;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static Entity Entity::createEntityDeferred(const PositionedEntity* const positionedEntity, int16 internalId)
+static Actor Actor::createActorDeferred(const PositionedActor* const positionedActor, int16 internalId)
 {
-	NM_ASSERT(NULL != positionedEntity, "Entity::createEntityDeferred: null positionedEntity");
-	NM_ASSERT(NULL != positionedEntity->entitySpec, "Entity::createEntityDeferred: null spec");
-	NM_ASSERT(NULL != positionedEntity->entitySpec->allocator, "Entity::createEntityDeferred: no allocator defined");
+	NM_ASSERT(NULL != positionedActor, "Actor::createActorDeferred: null positionedActor");
+	NM_ASSERT(NULL != positionedActor->actorSpec, "Actor::createActorDeferred: null spec");
+	NM_ASSERT(NULL != positionedActor->actorSpec->allocator, "Actor::createActorDeferred: no allocator defined");
 
-	if(!positionedEntity)
+	if(!positionedActor)
 	{
 		return NULL;
 	}
 
-	Entity entity = Entity::instantiate(positionedEntity, internalId, positionedEntity->name);
+	Actor actor = Actor::instantiate(positionedActor, internalId, positionedActor->name);
 
-	NM_ASSERT(!isDeleted(entity), "Entity::createEntityDeferred: entity not loaded");
+	NM_ASSERT(!isDeleted(actor), "Actor::createActorDeferred: actor not loaded");
 
-	Vector3D position = Vector3D::getFromScreenPixelVector(positionedEntity->onScreenPosition);
-	Rotation rotation = Rotation::getFromScreenPixelRotation(positionedEntity->onScreenRotation);
-	Scale scale = Scale::getFromScreenPixelScale(positionedEntity->onScreenScale);
+	Vector3D position = Vector3D::getFromScreenPixelVector(positionedActor->onScreenPosition);
+	Rotation rotation = Rotation::getFromScreenPixelRotation(positionedActor->onScreenRotation);
+	Scale scale = Scale::getFromScreenPixelScale(positionedActor->onScreenScale);
 
-	Entity::setLocalPosition(entity, &position);
-	Entity::setLocalRotation(entity, &rotation);
-	Entity::setLocalScale(entity, &scale);
+	Actor::setLocalPosition(actor, &position);
+	Actor::setLocalRotation(actor, &rotation);
+	Actor::setLocalScale(actor, &scale);
 
 	// add children if defined
-	if(positionedEntity->childrenSpecs)
+	if(positionedActor->childrenSpecs)
 	{
-		Entity::addChildEntitiesDeferred(entity, positionedEntity->childrenSpecs);
+		Actor::addChildEntitiesDeferred(actor, positionedActor->childrenSpecs);
 	}
 
-	if(positionedEntity->entitySpec->childrenSpecs)
+	if(positionedActor->actorSpec->childrenSpecs)
 	{
-		Entity::addChildEntitiesDeferred(entity, positionedEntity->entitySpec->childrenSpecs);
+		Actor::addChildEntitiesDeferred(actor, positionedActor->actorSpec->childrenSpecs);
 	}
 
-	return entity;
+	return actor;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static RightBox Entity::getRightBoxFromSpec(const PositionedEntity* positionedEntity, const Vector3D* environmentPosition)
+static RightBox Actor::getRightBoxFromSpec(const PositionedActor* positionedActor, const Vector3D* environmentPosition)
 {
 	RightBox rightBox = {0, 0, 0, 0, 0, 0};
 
-	Entity::getRightBoxFromChildrenSpec(positionedEntity, environmentPosition, &rightBox);
+	Actor::getRightBoxFromChildrenSpec(positionedActor, environmentPosition, &rightBox);
 
-	Vector3D globalPosition = Vector3D::getFromScreenPixelVector(positionedEntity->onScreenPosition);
+	Vector3D globalPosition = Vector3D::getFromScreenPixelVector(positionedActor->onScreenPosition);
 
 	rightBox.x0 -= globalPosition.x;
 	rightBox.x1 -= globalPosition.x;
@@ -150,28 +150,28 @@ static RightBox Entity::getRightBoxFromSpec(const PositionedEntity* positionedEn
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void Entity::getRightBoxFromChildrenSpec
+static void Actor::getRightBoxFromChildrenSpec
 (
-	const PositionedEntity* positionedEntity, const Vector3D* environmentPosition, RightBox* rightBox
+	const PositionedActor* positionedActor, const Vector3D* environmentPosition, RightBox* rightBox
 )
 {
-	ASSERT(positionedEntity, "Entity::getRightBoxFromChildrenSpec: null positionedEntity");
-	ASSERT(positionedEntity->entitySpec, "Entity::getRightBoxFromChildrenSpec: null entitySpec");
+	ASSERT(positionedActor, "Actor::getRightBoxFromChildrenSpec: null positionedActor");
+	ASSERT(positionedActor->actorSpec, "Actor::getRightBoxFromChildrenSpec: null actorSpec");
 
 	RightBox myRightBox = {0, 0, 0, 0, 0, 0};
 
 	if
 	(
-		0 != positionedEntity->entitySpec->pixelSize.x 
+		0 != positionedActor->actorSpec->pixelSize.x 
 		|| 
-		0 != positionedEntity->entitySpec->pixelSize.y 
+		0 != positionedActor->actorSpec->pixelSize.y 
 		|| 
-		0 != positionedEntity->entitySpec->pixelSize.z
+		0 != positionedActor->actorSpec->pixelSize.z
 	)
 	{
-		fixed_t halfWidth = __PIXELS_TO_METERS(positionedEntity->entitySpec->pixelSize.x) >> 1;
-		fixed_t halfHeight = __PIXELS_TO_METERS(positionedEntity->entitySpec->pixelSize.y) >> 1;
-		fixed_t halfDepth = __PIXELS_TO_METERS(positionedEntity->entitySpec->pixelSize.z) >> 1;
+		fixed_t halfWidth = __PIXELS_TO_METERS(positionedActor->actorSpec->pixelSize.x) >> 1;
+		fixed_t halfHeight = __PIXELS_TO_METERS(positionedActor->actorSpec->pixelSize.y) >> 1;
+		fixed_t halfDepth = __PIXELS_TO_METERS(positionedActor->actorSpec->pixelSize.z) >> 1;
 
 		myRightBox.x0 = -halfWidth;
 		myRightBox.x1 = halfWidth;
@@ -182,17 +182,17 @@ static void Entity::getRightBoxFromChildrenSpec
 	}
 	else 
 	{
-		if(NULL != positionedEntity->entitySpec->componentSpecs && NULL != positionedEntity->entitySpec->componentSpecs[0])
+		if(NULL != positionedActor->actorSpec->componentSpecs && NULL != positionedActor->actorSpec->componentSpecs[0])
 		{
-			for(int16 i = 0; NULL != positionedEntity->entitySpec->componentSpecs[i]; i++)
+			for(int16 i = 0; NULL != positionedActor->actorSpec->componentSpecs[i]; i++)
 			{
 				RightBox helperRightBox = {0, 0, 0, 0, 0, 0};
 
-				switch (positionedEntity->entitySpec->componentSpecs[i]->componentType)
+				switch (positionedActor->actorSpec->componentSpecs[i]->componentType)
 				{
 					case kSpriteComponent:
 					{
-						SpriteSpec* spriteSpec = (SpriteSpec*)positionedEntity->entitySpec->componentSpecs[i];
+						SpriteSpec* spriteSpec = (SpriteSpec*)positionedActor->actorSpec->componentSpecs[i];
 
 						fixed_t halfWidth = __PIXELS_TO_METERS(ENTITY_HALF_MIN_SIZE);
 						fixed_t halfHeight = __PIXELS_TO_METERS(ENTITY_HALF_MIN_SIZE);
@@ -220,7 +220,7 @@ static void Entity::getRightBoxFromChildrenSpec
 
 					case kWireframeComponent:
 					{
-						helperRightBox = Mesh::getRightBoxFromSpec((MeshSpec*)positionedEntity->entitySpec->componentSpecs[i]);
+						helperRightBox = Mesh::getRightBoxFromSpec((MeshSpec*)positionedActor->actorSpec->componentSpecs[i]);
 						break;
 					}
 
@@ -269,7 +269,7 @@ static void Entity::getRightBoxFromChildrenSpec
 	}	
 
 	Vector3D globalPosition = 
-		Vector3D::sum(*environmentPosition, Vector3D::getFromScreenPixelVector(positionedEntity->onScreenPosition));
+		Vector3D::sum(*environmentPosition, Vector3D::getFromScreenPixelVector(positionedActor->onScreenPosition));
 
 	if((0 == rightBox->x0) || (globalPosition.x + myRightBox.x0 < rightBox->x0))
 	{
@@ -301,55 +301,55 @@ static void Entity::getRightBoxFromChildrenSpec
 		rightBox->z1 = myRightBox.z1 + globalPosition.z;
 	}
 
-	if(NULL != positionedEntity->childrenSpecs)
+	if(NULL != positionedActor->childrenSpecs)
 	{
-		for(int32 i = 0; positionedEntity->childrenSpecs[i].entitySpec; i++)
+		for(int32 i = 0; positionedActor->childrenSpecs[i].actorSpec; i++)
 		{
-			Entity::getRightBoxFromChildrenSpec(&positionedEntity->childrenSpecs[i], &globalPosition, rightBox);
+			Actor::getRightBoxFromChildrenSpec(&positionedActor->childrenSpecs[i], &globalPosition, rightBox);
 		}
 	}
 
-	if(NULL != positionedEntity->entitySpec->childrenSpecs)
+	if(NULL != positionedActor->actorSpec->childrenSpecs)
 	{
-		for(int32 i = 0; positionedEntity->entitySpec->childrenSpecs[i].entitySpec; i++)
+		for(int32 i = 0; positionedActor->actorSpec->childrenSpecs[i].actorSpec; i++)
 		{
-			Entity::getRightBoxFromChildrenSpec(&positionedEntity->entitySpec->childrenSpecs[i], &globalPosition, rightBox);
+			Actor::getRightBoxFromChildrenSpec(&positionedActor->actorSpec->childrenSpecs[i], &globalPosition, rightBox);
 		}
 	}
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static Entity Entity::instantiate(const PositionedEntity* const positionedEntity, int16 internalId, const char* const name)
+static Actor Actor::instantiate(const PositionedActor* const positionedActor, int16 internalId, const char* const name)
 {
-	NM_ASSERT(NULL != positionedEntity, "Entity::instantiate: null positionedEntity");
-	NM_ASSERT(NULL != positionedEntity->entitySpec, "Entity::instantiate: null spec");
-	NM_ASSERT(NULL != positionedEntity->entitySpec->allocator, "Entity::instantiate: no allocator defined");
+	NM_ASSERT(NULL != positionedActor, "Actor::instantiate: null positionedActor");
+	NM_ASSERT(NULL != positionedActor->actorSpec, "Actor::instantiate: null spec");
+	NM_ASSERT(NULL != positionedActor->actorSpec->allocator, "Actor::instantiate: no allocator defined");
 
-	if(NULL == positionedEntity || NULL == positionedEntity->entitySpec || NULL == positionedEntity->entitySpec->allocator)
+	if(NULL == positionedActor || NULL == positionedActor->actorSpec || NULL == positionedActor->actorSpec->allocator)
 	{
 		return NULL;
 	}
 
 	// Call the appropriate allocator to support inheritance
-	Entity entity = 
-		((Entity (*)(EntitySpec*, int16, const char* const)) positionedEntity->entitySpec->allocator)
+	Actor actor = 
+		((Actor (*)(ActorSpec*, int16, const char* const)) positionedActor->actorSpec->allocator)
 		(
-			(EntitySpec*)positionedEntity->entitySpec, internalId, name
+			(ActorSpec*)positionedActor->actorSpec, internalId, name
 		);
 
 	// process extra info
-	if(NULL != positionedEntity->extraInfo)
+	if(NULL != positionedActor->extraInfo)
 	{
-		Entity::setExtraInfo(entity, positionedEntity->extraInfo);
+		Actor::setExtraInfo(actor, positionedActor->extraInfo);
 	}
 
-	if(NULL != positionedEntity->entitySpec->extraInfo)
+	if(NULL != positionedActor->actorSpec->extraInfo)
 	{
-		Entity::setExtraInfo(entity, positionedEntity->entitySpec->extraInfo);
+		Actor::setExtraInfo(actor, positionedActor->actorSpec->extraInfo);
 	}
 
-	return entity;
+	return actor;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -360,24 +360,24 @@ static Entity Entity::instantiate(const PositionedEntity* const positionedEntity
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void Entity::constructor(EntitySpec* entitySpec, int16 internalId, const char* const name)
+void Actor::constructor(ActorSpec* actorSpec, int16 internalId, const char* const name)
 {
 	// Always explicitly call the base's constructor 
 	Base::constructor(internalId, name);
 
-	this->entitySpec = entitySpec;
-	this->size = Size::getFromPixelSize(entitySpec->pixelSize);
+	this->actorSpec = actorSpec;
+	this->size = Size::getFromPixelSize(actorSpec->pixelSize);
 	this->centerDisplacement = NULL;
-	this->entityFactory = NULL;
+	this->actorFactory = NULL;
 	this->playingAnimationName = NULL;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void Entity::destructor()
+void Actor::destructor()
 {
-	Entity::destroyComponents(this);
-	Entity::destroyEntityFactory(this);
+	Actor::destroyComponents(this);
+	Actor::destroyActorFactory(this);
 
 	if(NULL != this->centerDisplacement)
 	{
@@ -390,14 +390,14 @@ void Entity::destructor()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void Entity::createComponents(ComponentSpec** componentSpecs)
+void Actor::createComponents(ComponentSpec** componentSpecs)
 {
-	Base::createComponents(this, NULL != componentSpecs ? componentSpecs : this->entitySpec->componentSpecs);
+	Base::createComponents(this, NULL != componentSpecs ? componentSpecs : this->actorSpec->componentSpecs);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void Entity::destroyComponents()
+void Actor::destroyComponents()
 {
 	Base::destroyComponents(this);
 
@@ -406,11 +406,11 @@ void Entity::destroyComponents()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-fixed_t Entity::getRadius()
+fixed_t Actor::getRadius()
 {
-	fixed_t width = Entity::getWidth(this);
-	fixed_t height = Entity::getHeight(this);
-	fixed_t depth = Entity::getDepth(this);
+	fixed_t width = Actor::getWidth(this);
+	fixed_t height = Actor::getHeight(this);
+	fixed_t depth = Actor::getDepth(this);
 
 	if(width > height)
 	{
@@ -437,68 +437,68 @@ fixed_t Entity::getRadius()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-uint32 Entity::getInGameType()
+uint32 Actor::getInGameType()
 {
-	return this->entitySpec->inGameType;
+	return this->actorSpec->inGameType;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void Entity::ready(bool recursive)
+void Actor::ready(bool recursive)
 {
-	ASSERT(this->entitySpec, "Entity::ready: null entitySpec");
+	ASSERT(this->actorSpec, "Actor::ready: null actorSpec");
 
 	Base::ready(this, recursive);
 
-	Entity::playAnimation(this, ((EntitySpec*)this->entitySpec)->initialAnimation);
+	Actor::playAnimation(this, ((ActorSpec*)this->actorSpec)->initialAnimation);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void Entity::suspend()
+void Actor::suspend()
 {
 	Base::suspend(this);
 
-	Entity::removeComponents(this, kSpriteComponent);
-	Entity::removeComponents(this, kWireframeComponent);
+	Actor::removeComponents(this, kSpriteComponent);
+	Actor::removeComponents(this, kWireframeComponent);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void Entity::resume()
+void Actor::resume()
 {
-	if(NULL != this->entitySpec)
+	if(NULL != this->actorSpec)
 	{
-		Entity::addComponents(this, this->entitySpec->componentSpecs, kSpriteComponent);
-		Entity::addComponents(this, this->entitySpec->componentSpecs, kWireframeComponent);
+		Actor::addComponents(this, this->actorSpec->componentSpecs, kSpriteComponent);
+		Actor::addComponents(this, this->actorSpec->componentSpecs, kWireframeComponent);
 	}
 
 	Base::resume(this);
 
-	Entity::playAnimation(this, this->playingAnimationName);
+	Actor::playAnimation(this, this->playingAnimationName);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void Entity::handleCommand(int32 command, va_list args)
+void Actor::handleCommand(int32 command, va_list args)
 {
 	switch (command)
 	{
 		case kMessageShow:
 		{
-			Entity::show(this);			
+			Actor::show(this);			
 			break;
 		}
 
 		case kMessageHide:
 		{
-			Entity::hide(this);			
+			Actor::hide(this);			
 			break;
 		}
 
 		case kMessageSetTransparency:
 		{
-			Entity::setTransparency(this, (uint8)va_arg(args, uint32));			
+			Actor::setTransparency(this, (uint8)va_arg(args, uint32));			
 			break;
 		}
 	}
@@ -506,7 +506,7 @@ void Entity::handleCommand(int32 command, va_list args)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-bool Entity::handlePropagatedString(const char* string __attribute__ ((unused)))
+bool Actor::handlePropagatedString(const char* string __attribute__ ((unused)))
 {
 	/* TODO: play only if the string contains the correct command */
 	/*
@@ -516,41 +516,41 @@ bool Entity::handlePropagatedString(const char* string __attribute__ ((unused)))
 	}
 	*/
 
-	Entity::playAnimation(this, string);
+	Actor::playAnimation(this, string);
 	
 	return false;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-EntitySpec* Entity::getSpec()
+ActorSpec* Actor::getSpec()
 {
-	return this->entitySpec;
+	return this->actorSpec;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-EntityFactory Entity::getEntityFactory()
+ActorFactory Actor::getActorFactory()
 {
-	return this->entityFactory;
+	return this->actorFactory;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-Entity Entity::spawnChildEntity(const PositionedEntity* const positionedEntity)
+Actor Actor::spawnChildActor(const PositionedActor* const positionedActor)
 {
-	if(NULL != positionedEntity)
+	if(NULL != positionedActor)
 	{
-		Entity entity = Entity::createEntity(positionedEntity, this->internalId + Entity::getChildrenCount(this));
-		NM_ASSERT(!isDeleted(entity), "Stage::doAddChildEntity: entity not loaded");
+		Actor actor = Actor::createActor(positionedActor, this->internalId + Actor::getChildrenCount(this));
+		NM_ASSERT(!isDeleted(actor), "Stage::doAddChildActor: actor not loaded");
 
-		if(!isDeleted(entity))
+		if(!isDeleted(actor))
 		{
-			// create the entity and add it to the world
-			Entity::addChild(this, Container::safeCast(entity));
+			// create the actor and add it to the world
+			Actor::addChild(this, Container::safeCast(actor));
 		}
 
-		return entity;
+		return actor;
 	}
 
 	return NULL;
@@ -558,7 +558,7 @@ Entity Entity::spawnChildEntity(const PositionedEntity* const positionedEntity)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void Entity::addChildEntities(const PositionedEntity* childrenSpecs)
+void Actor::addChildEntities(const PositionedActor* childrenSpecs)
 {
 	if(NULL == childrenSpecs)
 	{
@@ -567,54 +567,54 @@ void Entity::addChildEntities(const PositionedEntity* childrenSpecs)
 
 	int16 internalId = this->internalId + (!isDeleted(this->children) ? VirtualList::getCount(this->children) : 1);
 
-	for(int32 i = 0; NULL != childrenSpecs[i].entitySpec; i++)
+	for(int32 i = 0; NULL != childrenSpecs[i].actorSpec; i++)
 	{
-		Entity entity = Entity::createEntity(&childrenSpecs[i], internalId++);
+		Actor actor = Actor::createActor(&childrenSpecs[i], internalId++);
 
-		if(!isDeleted(entity))
+		if(!isDeleted(actor))
 		{
-			Entity::addChild(this, Container::safeCast(entity));
+			Actor::addChild(this, Container::safeCast(actor));
 		}
 	}
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void Entity::addChildEntitiesDeferred(const PositionedEntity* childrenSpecs)
+void Actor::addChildEntitiesDeferred(const PositionedActor* childrenSpecs)
 {
-	ASSERT(NULL != childrenSpecs, "Entity::addChildEntitiesDeferred: null childrenSpecs");
+	ASSERT(NULL != childrenSpecs, "Actor::addChildEntitiesDeferred: null childrenSpecs");
 
 	if(NULL == childrenSpecs)
 	{
 		return;
 	}
 
-	if(isDeleted(this->entityFactory))
+	if(isDeleted(this->actorFactory))
 	{
-		this->entityFactory = new EntityFactory();
+		this->actorFactory = new ActorFactory();
 
-		Entity::addEventListener
+		Actor::addEventListener
 		(
-			this, ListenerObject::safeCast(this), (EventListener)Entity::onEntityLoadedDeferred, kEventEntityLoaded
+			this, ListenerObject::safeCast(this), (EventListener)Actor::onActorLoadedDeferred, kEventActorLoaded
 		);
 	}
 
-	for(int32 i = 0; NULL != childrenSpecs[i].entitySpec; i++)
+	for(int32 i = 0; NULL != childrenSpecs[i].actorSpec; i++)
 	{
-		EntityFactory::spawnEntity
+		ActorFactory::spawnActor
 		(
-			this->entityFactory, &childrenSpecs[i], Container::safeCast(this), NULL, this->internalId + Entity::getChildrenCount(this)
+			this->actorFactory, &childrenSpecs[i], Container::safeCast(this), NULL, this->internalId + Actor::getChildrenCount(this)
 		);
 	}
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void Entity::calculateSize()
+void Actor::calculateSize()
 {
 	RightBox rightBox = {0, 0, 0, 0, 0, 0};
 
-	Entity::calculateSizeFromChildren(this, &rightBox, Vector3D::zero());
+	Actor::calculateSizeFromChildren(this, &rightBox, Vector3D::zero());
 
 	Vector3D centerDisplacement =
 	{
@@ -638,19 +638,19 @@ void Entity::calculateSize()
 	this->size.y = rightBox.y1 - rightBox.y0;
 	this->size.z = rightBox.z1 - rightBox.z0;
 
-	NM_ASSERT(0 < this->size.x, "Entity::calculateSize: 0 x size");
-	NM_ASSERT(0 < this->size.y, "Entity::calculateSize: 0 y size");
-	NM_ASSERT(0 < this->size.z, "Entity::calculateSize: 0 z size");
+	NM_ASSERT(0 < this->size.x, "Actor::calculateSize: 0 x size");
+	NM_ASSERT(0 < this->size.y, "Actor::calculateSize: 0 y size");
+	NM_ASSERT(0 < this->size.z, "Actor::calculateSize: 0 z size");
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-fixed_t Entity::getWidth()
+fixed_t Actor::getWidth()
 {
 	if(0 == this->size.x)
 	{
-		NM_ASSERT(false, "Entity::getWidth: 0 x size");
-		Entity::calculateSize(this);
+		NM_ASSERT(false, "Actor::getWidth: 0 x size");
+		Actor::calculateSize(this);
 	}
 
 	return this->size.x;
@@ -658,12 +658,12 @@ fixed_t Entity::getWidth()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-fixed_t Entity::getHeight()
+fixed_t Actor::getHeight()
 {
 	if(0 == this->size.y)
 	{
-		NM_ASSERT(false, "Entity::getHeight: 0 y size");
-		Entity::calculateSize(this);
+		NM_ASSERT(false, "Actor::getHeight: 0 y size");
+		Actor::calculateSize(this);
 	}
 
 	return this->size.y;
@@ -671,12 +671,12 @@ fixed_t Entity::getHeight()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-fixed_t Entity::getDepth()
+fixed_t Actor::getDepth()
 {
 	if(0 == this->size.z)
 	{
-		NM_ASSERT(false, "Entity::getDepth: 0 z size");
-		Entity::calculateSize(this);
+		NM_ASSERT(false, "Actor::getDepth: 0 z size");
+		Actor::calculateSize(this);
 	}
 
 	return this->size.z;
@@ -684,7 +684,7 @@ fixed_t Entity::getDepth()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-bool Entity::isInCameraRange(int16 padding, bool recursive)
+bool Actor::isInCameraRange(int16 padding, bool recursive)
 {
 	Vector3D position3D = this->transformation.position;
 	Vector3D centerDisplacement = Vector3D::zero();
@@ -709,7 +709,7 @@ bool Entity::isInCameraRange(int16 padding, bool recursive)
 		(this->size.z >> 1) + paddingHelper + centerDisplacement.z
 	};
 
-	if(Entity::isInsideFrustrum(position3D, rightBox))
+	if(Actor::isInsideFrustrum(position3D, rightBox))
 	{
 		return true;
 	}
@@ -723,14 +723,14 @@ bool Entity::isInCameraRange(int16 padding, bool recursive)
 	{
 		for(VirtualNode childNode = this->children->head; childNode; childNode = childNode->next)
 		{
-			Entity child = Entity::safeCast(VirtualNode::getData(childNode));
+			Actor child = Actor::safeCast(VirtualNode::getData(childNode));
 
 			if(child->hidden)
 			{
 				continue;
 			}
 
-			if(Entity::isInCameraRange(child, padding, true))
+			if(Actor::isInCameraRange(child, padding, true))
 			{
 				return true;
 			}
@@ -742,28 +742,28 @@ bool Entity::isInCameraRange(int16 padding, bool recursive)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void Entity::playAnimation(const char* animationName)
+void Actor::playAnimation(const char* animationName)
 {
 	this->playingAnimationName = animationName;
 
 	SpriteManager::propagateCommand
 	(
 		SpriteManager::getInstance(), cVisualComponentCommandPlay, GameObject::safeCast(this), 
-		((EntitySpec*)this->entitySpec)->animationFunctions, animationName, ListenerObject::safeCast(this), 
-		(EventListener)Entity::onAnimationComplete
+		((ActorSpec*)this->actorSpec)->animationFunctions, animationName, ListenerObject::safeCast(this), 
+		(EventListener)Actor::onAnimationComplete
 	);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void Entity::pauseAnimation(bool pause)
+void Actor::pauseAnimation(bool pause)
 {
 	SpriteManager::propagateCommand(SpriteManager::getInstance(), cVisualComponentCommandPause, GameObject::safeCast(this), pause);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void Entity::stopAnimation()
+void Actor::stopAnimation()
 {
 	this->playingAnimationName = NULL;
 
@@ -772,62 +772,62 @@ void Entity::stopAnimation()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void Entity::setActualFrame(int16 frame)
+void Actor::setActualFrame(int16 frame)
 {
 	SpriteManager::propagateCommand(SpriteManager::getInstance(), cVisualComponentCommandSetFrame, GameObject::safeCast(this), frame);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void Entity::nextFrame()
+void Actor::nextFrame()
 {
 	SpriteManager::propagateCommand(SpriteManager::getInstance(), cVisualComponentCommandNextFrame, GameObject::safeCast(this));
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void Entity::previousFrame()
+void Actor::previousFrame()
 {
 	SpriteManager::propagateCommand(SpriteManager::getInstance(), cVisualComponentCommandPreviousFrame, GameObject::safeCast(this));
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-bool Entity::isPlaying()
+bool Actor::isPlaying()
 {
 	return NULL != this->playingAnimationName;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-bool Entity::isPlayingAnimation(char* animationName)
+bool Actor::isPlayingAnimation(char* animationName)
 {
 	return 0 == strcmp(this->playingAnimationName, animationName);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-const char* Entity::getPlayingAnimationName()
+const char* Actor::getPlayingAnimationName()
 {
 	return this->playingAnimationName;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void Entity::setSpec(void* entitySpec)
+void Actor::setSpec(void* actorSpec)
 {
 	// save spec
-	this->entitySpec = entitySpec;
+	this->actorSpec = actorSpec;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void Entity::setExtraInfo(void* extraInfo __attribute__ ((unused)))
+void Actor::setExtraInfo(void* extraInfo __attribute__ ((unused)))
 {}
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-bool Entity::alwaysStreamIn()
+bool Actor::alwaysStreamIn()
 {
 	return true;
 }
@@ -840,7 +840,7 @@ bool Entity::alwaysStreamIn()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void Entity::calculateSizeFromChildren(RightBox* rightBox, Vector3D environmentPosition)
+void Actor::calculateSizeFromChildren(RightBox* rightBox, Vector3D environmentPosition)
 {
 	Vector3D globalPosition = Vector3D::sum(environmentPosition, this->localTransformation.position);
 
@@ -904,39 +904,39 @@ void Entity::calculateSizeFromChildren(RightBox* rightBox, Vector3D environmentP
 	{
 		for(VirtualNode childNode = this->children->head; childNode; childNode = childNode->next)
 		{
-			Entity::calculateSizeFromChildren(childNode->data, rightBox, globalPosition);
+			Actor::calculateSizeFromChildren(childNode->data, rightBox, globalPosition);
 		}
 	}
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void Entity::destroyEntityFactory()
+void Actor::destroyActorFactory()
 {
-	if(!isDeleted(this->entityFactory))
+	if(!isDeleted(this->actorFactory))
 	{
-		delete this->entityFactory;
-		this->entityFactory = NULL;
+		delete this->actorFactory;
+		this->actorFactory = NULL;
 	}
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-bool Entity::onEntityLoadedDeferred(ListenerObject eventFirer __attribute__ ((unused)))
+bool Actor::onActorLoadedDeferred(ListenerObject eventFirer __attribute__ ((unused)))
 {
 	if(ListenerObject::safeCast(this) != eventFirer)
 	{
 		return false;
 	} 
 
-	if(isDeleted(this->entityFactory))
+	if(isDeleted(this->actorFactory))
 	{
 		return false;
 	}
 
-	if(!EntityFactory::hasEntitiesPending(this->entityFactory))
+	if(!ActorFactory::hasEntitiesPending(this->actorFactory))
 	{
-		Entity::destroyEntityFactory(this);
+		Actor::destroyActorFactory(this);
 	}
 
 	return false;
@@ -944,7 +944,7 @@ bool Entity::onEntityLoadedDeferred(ListenerObject eventFirer __attribute__ ((un
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-bool Entity::onAnimationComplete(ListenerObject eventFirer __attribute__((unused)))
+bool Actor::onAnimationComplete(ListenerObject eventFirer __attribute__((unused)))
 {
 	this->playingAnimationName = NULL;
 

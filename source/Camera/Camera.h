@@ -20,7 +20,7 @@
 // FORWARD DECLARATIONS
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-class Entity;
+class Actor;
 class CameraMovementManager;
 class CameraEffectManager;
 
@@ -121,26 +121,26 @@ singleton class Camera : ListenerObject
 	/// @return Stage's size
 	Size getStageSize();
 
-	/// Register the entity that the camera must follow.
-	/// @param focusEntity: Entity to follow
-	void setFocusEntity(Entity focusEntity);
+	/// Register the actor that the camera must follow.
+	/// @param focusActor: Actor to follow
+	void setFocusActor(Actor focusActor);
 
-	/// Retrieve the entity that the camera is following.
-	/// @return focusEntity: Entity being followed
-	Entity getFocusEntity();
+	/// Retrieve the actor that the camera is following.
+	/// @return focusActor: Actor being followed
+	Actor getFocusActor();
 
-	/// Stop following any entity.
-	void unsetFocusEntity();
+	/// Stop following any actor.
+	void unsetFocusActor();
 
 	/// Register a displacement to be added to the camera's position 
-	/// relative to the focus entity's position.
-	/// @param focusEntityPositionDisplacement: Displacement vector
-	void setFocusEntityPositionDisplacement(Vector3D focusEntityPositionDisplacement);
+	/// relative to the focus actor's position.
+	/// @param focusActorPositionDisplacement: Displacement vector
+	void setFocusActorPositionDisplacement(Vector3D focusActorPositionDisplacement);
 
 	/// Retrieve the displacement that is added to the camera's position 
-	/// relative to the focus entity's position.
+	/// relative to the focus actor's position.
 	/// @return Displacement vector
-	Vector3D getFocusEntityPositionDisplacement();
+	Vector3D getFocusActorPositionDisplacement();
 	
 	/// Set a constant displacement to be added to the camera's position.
 	/// @param displacement: Displacement vector
@@ -197,7 +197,7 @@ singleton class Camera : ListenerObject
 	/// @return Transformation flags
 	uint8 getTransformationFlags();
 
-	/// Focus the camera on the focus entity if any.
+	/// Focus the camera on the focus actor if any.
 	void focus();
 
 	/// Start a camera effect.

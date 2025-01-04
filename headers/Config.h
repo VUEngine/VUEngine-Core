@@ -282,13 +282,13 @@
 /* Number of total calls to the streaming method which completes a cycle
  * there are 4 parts for the streaming algorithm:
  * 1) unload entities
- * 2) select the next entity to load
- * 3) create the selected entity
- * 4) initialize the loaded entity
+ * 2) select the next actor to load
+ * 3) create the selected actor
+ * 4) initialize the loaded actor
  */
 #define __STREAM_CYCLE_DURATION					24
 
-/* Pad to determine if an entity must be loaded/unloaded
+/* Pad to determine if an actor must be loaded/unloaded
  * load pad must always be lower than unload pad!
  * too close values will put the streaming under heavy usage!
  */

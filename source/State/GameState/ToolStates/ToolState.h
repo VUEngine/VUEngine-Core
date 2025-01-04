@@ -60,7 +60,7 @@ abstract class ToolState : GameState
 	override void processUserInput(const UserInput*  userInput);
 
 	/// Stream in or out the stage entities within or outside the camera's range.
-	/// @return True if at least some entity was streamed in or out
+	/// @return True if at least some actor was streamed in or out
 	override bool stream();
 
 	/// Check if the provided user input unlocks the tool managed by this state.

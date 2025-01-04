@@ -14,24 +14,24 @@
 // INCLUDES
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-#include <Entity.h>
+#include <Actor.h>
 #include <Tool.h>
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DATA
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-/// A struct to map an animated entity spec to a name
+/// A struct to map an animated actor spec to a name
 /// @memberof AnimationInspector
-typedef struct UserEntity
+typedef struct UserActor
 {
-	/// Specification for an animated entity
-	const EntitySpec* entitySpec;
+	/// Specification for an animated actor
+	const ActorSpec* actorSpec;
 
-	/// Animated entity spec's name
+	/// Animated actor spec's name
 	const char* name;
 
-} UserEntity;
+} UserActor;
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DECLARATION
@@ -54,7 +54,7 @@ singleton class AnimationInspector : Tool
 	AnimationFunction animationFunction;
 
 	/// Selector for the animated entities
-	OptionsSelector entitySelector;
+	OptionsSelector actorSelector;
 
 	/// Selector for the animated sprite sprite selector
 	OptionsSelector spriteSelector;

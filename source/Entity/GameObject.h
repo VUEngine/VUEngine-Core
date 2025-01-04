@@ -62,21 +62,21 @@ abstract class GameObject : ListenerObject
 	/// @param componentType: Type of components whose lists must be cleard
 	void clearComponentLists(uint32 componentType);
 
-	/// Attach a new component to the entity and configure it with the provided spec.
+	/// Attach a new component to the actor and configure it with the provided spec.
 	/// @param componentSpec: Specification to be used to configure the new component
 	/// @return Added component
 	Component addComponent(const ComponentSpec* componentSpec);
 
-	/// Remove a component from the entity.
+	/// Remove a component from the actor.
 	/// @param component: Component to remove
 	void removeComponent(Component component);
 
-	/// Attach a new components to the entity and configure it with the provided specs.
+	/// Attach a new components to the actor and configure it with the provided specs.
 	/// @param componentSpecs: Specifications to be used to configure the new components
 	/// @param componentType: Type of components to add
 	void addComponents(ComponentSpec** componentSpecs, uint32 componentType);
 
-	/// Remove the components of a give type from the entity.
+	/// Remove the components of a give type from the actor.
 	/// @param componentType: Type of components to remove
 	void removeComponents(uint32 componentType);
 
@@ -99,9 +99,9 @@ abstract class GameObject : ListenerObject
 	/// @return True if one or more behaviors met the search criteria; false otherwise
 	bool getComponentsOfClass(ClassPointer classPointer, VirtualList components, uint32 componentType);
 
-	/// Retrieve the number of components belonging to the entity.
+	/// Retrieve the number of components belonging to the actor.
 	/// @param componentType: Type of components to count
-	/// @return Number of components belonging to the entity
+	/// @return Number of components belonging to the actor
 	uint16 getComponentsCount(uint32 componentType);
 
 	/// Reset components.
@@ -166,46 +166,46 @@ abstract class GameObject : ListenerObject
 	/// @return Object's friction coefficient
 	fixed_t getFrictionCoefficient();
 
-	/// Enable collision detection on the entity's colliders.
+	/// Enable collision detection on the actor's colliders.
 	void enableCollisions();
 
-	/// Disable collision detection on the entity's colliders.
+	/// Disable collision detection on the actor's colliders.
 	void disableCollisions();
 
 	/// Enable or disable collision detection against other entities' colliders.
-	/// @param activate: If true, this entity's colliders check collision against other entities'
+	/// @param activate: If true, this actor's colliders check collision against other entities'
 	void checkCollisions(bool activate);
 
 	/// Enable or disable the register of detected collisions.
-	/// @param activate: If false, this entity's colliders won't keep track of collisions, hence they
+	/// @param activate: If false, this actor's colliders won't keep track of collisions, hence they
 	/// won't notify of it of persisting (::collisionPersists) collisions or when end (::collisionEnds)
 	void registerCollisions(bool activate);
 
-	/// Set the layers in which this entity's colliders must live.
-	/// @param layers: Flags that determine the layers for the entity's colliders
+	/// Set the layers in which this actor's colliders must live.
+	/// @param layers: Flags that determine the layers for the actor's colliders
 	void setCollidersLayers(uint32 layers);
 
-	/// Retrieve the layers in which this entity's colliders live.
-	/// @return Flags that determine the layers where the entity's colliders live
+	/// Retrieve the layers in which this actor's colliders live.
+	/// @return Flags that determine the layers where the actor's colliders live
 	uint32 getCollidersLayers();
 
-	/// Set the layers that the entity's colliders must ignore when detecting collision.
+	/// Set the layers that the actor's colliders must ignore when detecting collision.
 	/// @param layersToIgnore: Flags that determine the layers with colliders to ignore when detecting
 	/// collisions
 	void setCollidersLayersToIgnore(uint32 layersToIgnore);
 
-	/// Retrieve the layers that the entity's colliders ignore when detecting collision.
-	/// @return The layers that the entity's colliders ignore when detecting collision
+	/// Retrieve the layers that the actor's colliders ignore when detecting collision.
+	/// @return The layers that the actor's colliders ignore when detecting collision
 	uint32 getCollidersLayersToIgnore();
 
-	/// Check if the entity has attached colliders.
-	/// @return True if the entity hast at least on collider arrached; false otherwise
+	/// Check if the actor has attached colliders.
+	/// @return True if the actor hast at least on collider arrached; false otherwise
 	bool hasColliders();
 
-	/// Make the entity's colliders visible.
+	/// Make the actor's colliders visible.
 	void showColliders();
 
-	/// Make the entity's colliders invisible.
+	/// Make the actor's colliders invisible.
 	void hideColliders();
 
 	/// Create the components that must attach to this container. 	
@@ -233,7 +233,7 @@ abstract class GameObject : ListenerObject
 	/// @param transparency: Transparecy effect (__TRANSPARENCY_NONE, __EVEN or __ODD)
 	virtual void setTransparency(uint8 transparency);
 
-	/// Configure the entity's size.
+	/// Configure the actor's size.
 	virtual void calculateSize();
 
 	/// Retrieve the object's radius.

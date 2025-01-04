@@ -15,7 +15,7 @@
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <Container.h>
-#include <Entity.h>
+#include <Actor.h>
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DECLARATION
@@ -32,7 +32,7 @@ class UIContainer : Container
 
 	/// Class' constructor
 	/// @param childrenPositionedEntities: Array of specs that define how to configure the container's children
-	void constructor(PositionedEntity* childrenPositionedEntities);
+	void constructor(PositionedActor* childrenPositionedEntities);
 
 	/// Compute the container's global transformation.
 	/// @param environmentTransform: Reference environment for the local transformation
@@ -40,9 +40,9 @@ class UIContainer : Container
 	/// must be recomputed
 	override void transform(const Transformation* environmentTransform, uint8 invalidateTransformationFlag);
 
-	/// Spawn a new child and configure it with the provided positioned entity struct.
-	/// @param positionedEntity: Struct that defines which entity spec to use to configure the new child
-	Entity spawnChildEntity(const PositionedEntity* const positionedEntity);
+	/// Spawn a new child and configure it with the provided positioned actor struct.
+	/// @param positionedActor: Struct that defines which actor spec to use to configure the new child
+	Actor spawnChildActor(const PositionedActor* const positionedActor);
 }
 
 #endif

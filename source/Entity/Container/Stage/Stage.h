@@ -16,8 +16,8 @@
 
 #include <Container.h>
 #include <CharSet.h>
-#include <Entity.h>
-#include <EntityFactory.h>
+#include <Actor.h>
+#include <ActorFactory.h>
 #include <Printing.h>
 #include <SoundManager.h>
 #include <SpriteManager.h>
@@ -85,18 +85,18 @@ typedef struct StageSpec
 	/// Streaming
 	struct Streaming
 	{
-		/// Padding to be added to camera's frustum when checking if a entity spec
-		/// describes an entity that is within the camera's range
+		/// Padding to be added to camera's frustum when checking if a actor spec
+		/// describes an actor that is within the camera's range
 		uint16 loadPadding;
 
-		/// Padding to be added to camera's frustum when checking if a entity is 
+		/// Padding to be added to camera's frustum when checking if a actor is 
 		/// out of the camera's range
 		uint16 unloadPadding;
 
-		/// Amount of entity descriptions to check for streaming in entitis
+		/// Amount of actor descriptions to check for streaming in entitis
 		uint16 streamingAmplitude;
 		
-		/// If true, entity instantiation is done over time
+		/// If true, actor instantiation is done over time
 		bool deferred;
 
 	} streaming;
@@ -165,7 +165,7 @@ typedef struct StageSpec
 		struct 
 		{
 			// UI's children entities
-			PositionedEntity* childrenSpecs;
+			PositionedActor* childrenSpecs;
 
 			/// UI's class
 			AllocatorPointer allocator;
@@ -173,7 +173,7 @@ typedef struct StageSpec
 		} UI;
 
 		// Stage's children entities
-		PositionedEntity* children;
+		PositionedActor* children;
 
 	} entities;
 
@@ -189,24 +189,24 @@ typedef const StageSpec StageROMSpec;
 /// A struct that holds precomputed information about the configuration of
 /// then entites that will populate the stage
 /// @memberof Stage
-typedef struct StageEntityDescription
+typedef struct StageActorDescription
 {
-	/// Bounding box of the entity to 
+	/// Bounding box of the actor to 
 	RightBox rightBox;
 	
-	/// Struct that defines which entity spec to use to configure the new entity
-	PositionedEntity* positionedEntity;
+	/// Struct that defines which actor spec to use to configure the new actor
+	PositionedActor* positionedActor;
 
-	/// Pointer to the extra information that the entity might need
+	/// Pointer to the extra information that the actor might need
 	void* extraInfo;
 
-	/// ID to keep track internally of the entity
+	/// ID to keep track internally of the actor
 	int16 internalId;
 
 	/// If false, the bounding box's volume is zero
 	bool validRightBox;
 
-} StageEntityDescription;
+} StageActorDescription;
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DECLARATION
@@ -224,12 +224,12 @@ class Stage : Container
 	/// Pointer to the spec that defines how to initialize the stage 
 	StageSpec* stageSpec;
 
-	/// Factory to create this entity's children
-	EntityFactory entityFactory;
+	/// Factory to create this actor's children
+	ActorFactory actorFactory;
 
 	/// List of structs that holds precomputed information about the configuration of
 	/// then entites that will populate the stage
-	VirtualList stageEntityDescriptions;
+	VirtualList stageActorDescriptions;
 
 	/// Pivot node for streaming
 	VirtualNode streamingHeadNode;
@@ -237,21 +237,21 @@ class Stage : Container
 	// List of sounds loaded from the stage spec
 	VirtualList sounds;
 
-	/// List of listeners for entity loading
-	VirtualList entityLoadingListeners;
+	/// List of listeners for actor loading
+	VirtualList actorLoadingListeners;
 
 	/// Index for streaming method to execute in the current game cycle
 	int32 streamingPhase;
 
-	/// Amount of entity descriptions to check for streaming in entitis
+	/// Amount of actor descriptions to check for streaming in entitis
 	uint16 streamingAmplitude;
 
-	/// Must keep track of the camera's focus entity in order to restore
+	/// Must keep track of the camera's focus actor in order to restore
 	/// it when resuming the stage's owner state
-	Entity focusEntity;
+	Actor focusActor;
 
 	/// Next ID to use for new entities
-	int16 nextEntityId;
+	int16 nextActorId;
 
 	/// Flag to determine the direction of the stream in
 	bool reverseStreaming;
@@ -288,23 +288,23 @@ class Stage : Container
 	/// Register the stage's spec entities in the streaming list
 	void registerEntities(VirtualList positionedEntitiesToIgnore);
 
-	/// Retrieve the list of stage entity descriptions.
-	/// @return List of stage entity descriptions used to initialize the entities that populate the stage
-	VirtualList getStageEntityDescriptions();
+	/// Retrieve the list of stage actor descriptions.
+	/// @return List of stage actor descriptions used to initialize the entities that populate the stage
+	VirtualList getStageActorDescriptions();
 
-	/// Register an event listener for the event when a new entity is instantiated.
+	/// Register an event listener for the event when a new actor is instantiated.
 	/// @param scope: Object that will be notified of event
-	/// @param callback: Callback to inform the parent when the new entity is loaded
-	void addEntityLoadingListener(ListenerObject scope, EventListener callback);
+	/// @param callback: Callback to inform the parent when the new actor is loaded
+	void addActorLoadingListener(ListenerObject scope, EventListener callback);
 
-	/// Spawn a new child and configure it with the provided positioned entity struct.
-	/// @param positionedEntity: Struct that defines which entity spec to use to configure the new child
-	/// @param permanent: If true, the entity is not subject to the streaming
-	Entity spawnChildEntity(const PositionedEntity* const positionedEntity, bool permanent);
+	/// Spawn a new child and configure it with the provided positioned actor struct.
+	/// @param positionedActor: Struct that defines which actor spec to use to configure the new child
+	/// @param permanent: If true, the actor is not subject to the streaming
+	Actor spawnChildActor(const PositionedActor* const positionedActor, bool permanent);
 
 	/// Destroy a stage's child.
-	/// @param child: Entity to destroy
-	void destroyChildEntity(Entity child);
+	/// @param child: Actor to destroy
+	void destroyChildActor(Actor child);
 
 	/// Stream in or/and out all pending entities.
 	void streamAll();
@@ -326,7 +326,7 @@ class Stage : Container
 	virtual bool stream();
 
 	/// Configure the stage with the entities defined in its spec.
-	/// @param positionedEntitiesToIgnore: List of positioned entity structs to register for streaming
+	/// @param positionedEntitiesToIgnore: List of positioned actor structs to register for streaming
 	virtual void configure(VirtualList positionedEntitiesToIgnore);
 
 	/// @privatesection

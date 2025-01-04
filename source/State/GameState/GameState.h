@@ -25,7 +25,7 @@
 
 class Clock;
 class ColliderManager;
-class Entity;
+class Actor;
 class BodyManager;
 class Telegram;
 class VirtualList;
@@ -114,7 +114,7 @@ class GameState : State
 
 	/// Configure the stage with the provided stage spec.
 	/// @param stageSpec: Specification that determines how to configure the stage
-	/// @param positionedEntitiesToIgnore: List of positioned entity structs to register for streaming
+	/// @param positionedEntitiesToIgnore: List of positioned actor structs to register for streaming
 	void configureStage(StageSpec* stageSpec, VirtualList positionedEntitiesToIgnore);
 
 	/// Retrieve the UI container.
@@ -211,25 +211,25 @@ class GameState : State
 
 	/// Propagate an integer message through the whole parenting hierarchy of the stage (children, grand children, etc.).
 	/// @param message: The message to propagate
-	/// @return True if some entity processed the message
+	/// @return True if some actor processed the message
 	bool propagateMessage(int32 message);
 
 	/// Propagate a string through the whole parenting hierarchy of the stage (children, grand children, etc.).
 	/// @param string: The string to propagate
-	/// @return True if some entity processed the string
+	/// @return True if some actor processed the string
 	bool propagateString(const char* string);
 
 	/// Find a stage's child (grand child, etc.) by its name.
-	/// @param entityName: Name to look for
-	Entity getEntityByName(const char* entityName);
+	/// @param actorName: Name to look for
+	Actor getActorByName(const char* actorName);
 
 	/// Show a stage's child (grand child, etc.) with the provided name.
-	/// @param entityName: Name to look for
-	void showEntityWithName(const char* entityName);
+	/// @param actorName: Name to look for
+	void showActorWithName(const char* actorName);
 
 	/// Hide a stage's child (grand child, etc.) with the provided name.
-	/// @param entityName: Name to look for
-	void hideEntityWithName(const char* entityName);
+	/// @param actorName: Name to look for
+	void hideActorWithName(const char* actorName);
 
 	/// Change the target frame rate.
 	/// @param targetFPS: New target frame rate
@@ -242,7 +242,7 @@ class GameState : State
 	void streamAll();
 
 	/// Stream in or out the stage entities within or outside the camera's range.
-	/// @return True if at least some entity was streamed in or out
+	/// @return True if at least some actor was streamed in or out
 	virtual bool stream();
 
 	/// Process the provided user input.

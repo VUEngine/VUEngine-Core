@@ -29,16 +29,16 @@ static Camera _camera = NULL;
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void UIContainer::constructor(PositionedEntity* childrenPositionedEntities)
+void UIContainer::constructor(PositionedActor* childrenPositionedEntities)
 {
 	_camera = Camera::getInstance();
 
 	// Always explicitly call the base's constructor 
 	Base::constructor(0, NULL);
 
-	for(int16 i = 0; NULL != childrenPositionedEntities && NULL != childrenPositionedEntities[i].entitySpec; i++)
+	for(int16 i = 0; NULL != childrenPositionedEntities && NULL != childrenPositionedEntities[i].actorSpec; i++)
 	{
-		UIContainer::spawnChildEntity(this, &childrenPositionedEntities[i]);
+		UIContainer::spawnChildActor(this, &childrenPositionedEntities[i]);
 	}
 }
 
@@ -71,20 +71,20 @@ void UIContainer::transform
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-Entity UIContainer::spawnChildEntity(const PositionedEntity* const positionedEntity)
+Actor UIContainer::spawnChildActor(const PositionedActor* const positionedActor)
 {
-	if(NULL != positionedEntity)
+	if(NULL != positionedActor)
 	{
-		Entity entity = Entity::createEntity(positionedEntity, !isDeleted(this->children) ? VirtualList::getCount(this->children) : 0);
-		ASSERT(entity, "UIContainer::doAddChildEntity: entity not loaded");
+		Actor actor = Actor::createActor(positionedActor, !isDeleted(this->children) ? VirtualList::getCount(this->children) : 0);
+		ASSERT(actor, "UIContainer::doAddChildActor: actor not loaded");
 
-		if(!isDeleted(entity))
+		if(!isDeleted(actor))
 		{
-			// create the entity and add it to the world
-			UIContainer::addChild(this, Container::safeCast(entity));
+			// create the actor and add it to the world
+			UIContainer::addChild(this, Container::safeCast(actor));
 		}
 
-		return entity;
+		return actor;
 	}
 
 	return NULL;

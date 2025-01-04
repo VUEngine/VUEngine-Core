@@ -27,7 +27,7 @@ enum MessagesTypes
 
 	// General purpose messages
 	kMessageHighFps,
-	kMessageEntityRemoved,
+	kMessageActorRemoved,
 
 	// Keypad massages
 	kMessageKeyPressed,
@@ -48,7 +48,7 @@ enum MessagesTypes
 	kMessageColliderShow,
 	kMessageColliderHide,
 
-	// Entity messages
+	// Actor messages
 	kMessageShow,
 	kMessageHide,
 	kMessageSetTransparency,

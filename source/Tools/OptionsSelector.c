@@ -15,7 +15,7 @@
 
 #include <StatefulActor.h>
 #include <AnimationCoordinatorFactory.h>
-#include <Entity.h>
+#include <Actor.h>
 #include <Ball.h>
 #include <BgmapTextureManager.h>
 #include <Body.h>
@@ -30,7 +30,7 @@
 #include <Container.h>
 #include <DebugState.h>
 #include <DirectDraw.h>
-#include <Entity.h>
+#include <Actor.h>
 #include <ColliderManager.h>
 #include <FrameRate.h>
 #include <GameState.h>

@@ -17,7 +17,7 @@
 #include <AnimationController.h>
 #include <AnimationCoordinator.h>
 #include <AnimationCoordinatorFactory.h>
-#include <Entity.h>
+#include <Actor.h>
 #include <Ball.h>
 #include <BgmapAnimatedSprite.h>
 #include <BgmapTextureManager.h>
@@ -33,7 +33,7 @@
 #include <Container.h>
 #include <DebugState.h>
 #include <DirectDraw.h>
-#include <Entity.h>
+#include <Actor.h>
 #include <ColliderManager.h>
 #include <FrameRate.h>
 #include <GameState.h>
@@ -620,10 +620,10 @@ void Debug::memoryStatusShowFifthPage(int32 increment __attribute__ ((unused)), 
 	ClassSizeData classesSizeData[] =
 	{
 		{&StatefulActor_getObjectSize,							"StatefulActor"},
-		{&Entity_getObjectSize,					"Entity"},
+		{&Actor_getObjectSize,					"Actor"},
 		{&Container_getObjectSize,						"Container"},
-		{&Entity_getObjectSize,							"Entity"},
-		{&EntityFactory_getObjectSize,					"EntityFactory"},
+		{&Actor_getObjectSize,							"Actor"},
+		{&ActorFactory_getObjectSize,					"ActorFactory"},
 		{&GameState_getObjectSize,						"GameState"},
 		{&GameState_getObjectSize,						"Stage"},
 	};

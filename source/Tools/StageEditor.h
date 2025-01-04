@@ -14,21 +14,21 @@
 // INCLUDES
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-#include <Entity.h>
+#include <Actor.h>
 #include <Tool.h>
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DATA
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-/// A struct to map an entity spec to a name
+/// A struct to map an actor spec to a name
 /// @memberof StageEditor
 typedef struct UserObject
 {
-	/// Specification for an entity
-	EntitySpec* entitySpec;
+	/// Specification for an actor
+	ActorSpec* actorSpec;
 
-	/// Entity spec's name
+	/// Actor spec's name
 	char* name;
 
 } UserObject;
@@ -44,17 +44,17 @@ typedef struct UserObject
 /// Implements a tool that permits to manipulate a stage's entities.
 singleton class StageEditor : Tool
 {
-	/// Node of the stage's selected entity
-	VirtualNode entityNode;
+	/// Node of the stage's selected actor
+	VirtualNode actorNode;
 
-	/// Current entity's wireframe
+	/// Current actor's wireframe
 	Wireframe wireframe;
 
 	/// Sprite to display new entities to be added to the stage
-	Sprite userEntitySprite;
+	Sprite userActorSprite;
 
 	// Selector of user defined entities
-	OptionsSelector userEntitySelector;
+	OptionsSelector userActorSelector;
 
 	/// Editor's state
 	int32 state;

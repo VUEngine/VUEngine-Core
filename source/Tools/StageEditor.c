@@ -18,7 +18,7 @@
 #include <Camera.h>
 #include <ColliderManager.h>
 #include <Debug.h>
-#include <Entity.h>
+#include <Actor.h>
 #include <GameState.h>
 #include <KeypadManager.h>
 #include <Mesh.h>
@@ -86,7 +86,7 @@ void StageEditor::update()
 void StageEditor::show()
 {
 	this->state = kFirstState + 1;
-	this->userEntitySprite = NULL;
+	this->userActorSprite = NULL;
 
 	StageEditor::releaseWireframe(this);
 	StageEditor::configureState(this);
@@ -106,7 +106,7 @@ void StageEditor::hide()
 	Printing::clear(Printing::getInstance());
 	StageEditor::removePreviousSprite(this);
 	StageEditor::releaseWireframe(this);
-	this->entityNode = NULL;
+	this->actorNode = NULL;
 
 	Tool::lightUpGame(this);
 }
@@ -147,7 +147,7 @@ void StageEditor::processUserInput(uint16 pressedKey)
 
 		case kTranslateEntities:
 
-			StageEditor::translateEntity(this, pressedKey);
+			StageEditor::translateActor(this, pressedKey);
 			break;
 
 		case kAddObjects:
@@ -170,16 +170,16 @@ void StageEditor::constructor()
 	// Always explicitly call the base's constructor 
 	Base::constructor();
 
-	this->entityNode = NULL;
-	this->userEntitySprite = NULL;
+	this->actorNode = NULL;
+	this->userActorSprite = NULL;
 	this->state = kFirstState + 1;
 	this->wireframe = NULL;
-	this->userEntitySelector = new OptionsSelector(2, 12, NULL, NULL, NULL);
+	this->userActorSelector = new OptionsSelector(2, 12, NULL, NULL, NULL);
 
 	VirtualList userObjects = new VirtualList();
 
 	int32 i = 0;
-	for(;  _userObjects[i].entitySpec; i++)
+	for(;  _userObjects[i].actorSpec; i++)
 	{
 		Option* option = new Option;
 		option->value = _userObjects[i].name;
@@ -189,7 +189,7 @@ void StageEditor::constructor()
 
 	if(VirtualList::getCount(userObjects))
 	{
-		OptionsSelector::setOptions(this->userEntitySelector, userObjects);
+		OptionsSelector::setOptions(this->userActorSelector, userObjects);
 	}
 
 	delete userObjects;
@@ -201,9 +201,9 @@ void StageEditor::constructor()
 
 void StageEditor::destructor()
 {
-	if(this->userEntitySelector)
+	if(this->userActorSelector)
 	{
-		delete this->userEntitySelector;
+		delete this->userActorSelector;
 	}
 
 	// allow a new construct
@@ -239,7 +239,7 @@ void StageEditor::configureState()
 	{
 		case kAddObjects:
 
-			if(OptionsSelector::getNumberOfOptions(this->userEntitySelector))
+			if(OptionsSelector::getNumberOfOptions(this->userActorSelector))
 			{
 				StageEditor::releaseWireframe(this);
 				StageEditor::printUserObjects(this);
@@ -265,16 +265,16 @@ void StageEditor::configureState()
 
 		case kTranslateEntities:
 
-			if(!this->entityNode)
+			if(!this->actorNode)
 			{
-				StageEditor::selectNextEntity(this);
+				StageEditor::selectNextActor(this);
 			}
 			else
 			{
-				StageEditor::highLightEntity(this);
+				StageEditor::highLightActor(this);
 			}
 
-			StageEditor::printEntityPosition(this);
+			StageEditor::printActorPosition(this);
 			StageEditor::printTranslationStepSize(this, 38, 8);
 			break;
 	}
@@ -294,19 +294,19 @@ void StageEditor::releaseWireframe()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void StageEditor::highLightEntity()
+void StageEditor::highLightActor()
 {
-	if(NULL != this->entityNode)
+	if(NULL != this->actorNode)
 	{
-		StageEditor::printEntityPosition(this);
+		StageEditor::printActorPosition(this);
 
-		Entity entity = Entity::safeCast(VirtualNode::getData(this->entityNode));
+		Actor actor = Actor::safeCast(VirtualNode::getData(this->actorNode));
 
-		if(!isDeleted(entity))
+		if(!isDeleted(actor))
 		{
-			int16 width = __METERS_TO_PIXELS(Entity::getWidth(entity)) << 2;
-			int16 height = __METERS_TO_PIXELS(Entity::getHeight(entity)) << 2;
-			fixed_t parallax = Optics::calculateParallax(Entity::getPosition(entity)->z);
+			int16 width = __METERS_TO_PIXELS(Actor::getWidth(actor)) << 2;
+			int16 height = __METERS_TO_PIXELS(Actor::getHeight(actor)) << 2;
+			fixed_t parallax = Optics::calculateParallax(Actor::getPosition(actor)->z);
 
 			const PixelVector MeshesSegments[][2]=
 			{
@@ -365,7 +365,7 @@ void StageEditor::highLightEntity()
 			this->wireframe = 
 				WireframeManager::createWireframe
 				(
-					WireframeManager::getInstance(), GameObject::safeCast(entity), (WireframeSpec*)&meshSpec
+					WireframeManager::getInstance(), GameObject::safeCast(actor), (WireframeSpec*)&meshSpec
 				);
 		}
 	}
@@ -377,7 +377,7 @@ void StageEditor::highLightEntity()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void StageEditor::selectPreviousEntity()
+void StageEditor::selectPreviousActor()
 {
 	if(isDeleted(this->stage))
 	{
@@ -388,29 +388,29 @@ void StageEditor::selectPreviousEntity()
 
 	VirtualList stageEntities = (Container::safeCast(this->stage))->children;
 
-	if(!this->entityNode)
+	if(!this->actorNode)
 	{
-		this->entityNode = stageEntities ? stageEntities->tail : NULL;
+		this->actorNode = stageEntities ? stageEntities->tail : NULL;
 	}
 	else
 	{
-		this->entityNode = VirtualNode::getPrevious(this->entityNode);
+		this->actorNode = VirtualNode::getPrevious(this->actorNode);
 
-		if(!this->entityNode)
+		if(!this->actorNode)
 		{
-			this->entityNode = stageEntities ? stageEntities->tail : NULL;
+			this->actorNode = stageEntities ? stageEntities->tail : NULL;
 		}
 	}
 
-	if(this->entityNode)
+	if(this->actorNode)
 	{
-		StageEditor::highLightEntity(this);
+		StageEditor::highLightActor(this);
 	}
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void StageEditor::selectNextEntity()
+void StageEditor::selectNextActor()
 {
 	if(isDeleted(this->stage))
 	{
@@ -421,23 +421,23 @@ void StageEditor::selectNextEntity()
 
 	VirtualList stageEntities = (Container::safeCast(this->stage))->children;
 
-	if(!this->entityNode)
+	if(!this->actorNode)
 	{
-		this->entityNode = stageEntities ? stageEntities->head : NULL;
+		this->actorNode = stageEntities ? stageEntities->head : NULL;
 	}
 	else
 	{
-		this->entityNode = this->entityNode->next;
+		this->actorNode = this->actorNode->next;
 
-		if(!this->entityNode)
+		if(!this->actorNode)
 		{
-			this->entityNode = stageEntities ? stageEntities->head : NULL;
+			this->actorNode = stageEntities ? stageEntities->head : NULL;
 		}
 	}
 
-	if(this->entityNode)
+	if(this->actorNode)
 	{
-		StageEditor::highLightEntity(this);
+		StageEditor::highLightActor(this);
 	}
 }
 
@@ -614,7 +614,7 @@ void StageEditor::changeProjection(uint32 pressedKey)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void StageEditor::translateEntity(uint32 pressedKey)
+void StageEditor::translateActor(uint32 pressedKey)
 {
 	if(pressedKey & K_LL)
 	{
@@ -625,7 +625,7 @@ void StageEditor::translateEntity(uint32 pressedKey)
 			0
 		};
 
-		StageEditor::applyTranslationToEntity(this, translation);
+		StageEditor::applyTranslationToActor(this, translation);
 	}
 	else if(pressedKey & K_LR)
 	{
@@ -636,7 +636,7 @@ void StageEditor::translateEntity(uint32 pressedKey)
 			0
 		};
 
-		StageEditor::applyTranslationToEntity(this, translation);
+		StageEditor::applyTranslationToActor(this, translation);
 	}
 	else if(pressedKey & K_LU)
 	{
@@ -647,7 +647,7 @@ void StageEditor::translateEntity(uint32 pressedKey)
 			0
 		};
 
-		StageEditor::applyTranslationToEntity(this, translation);
+		StageEditor::applyTranslationToActor(this, translation);
 	}
 	else if(pressedKey & K_LD)
 	{
@@ -658,7 +658,7 @@ void StageEditor::translateEntity(uint32 pressedKey)
 			0
 		};
 
-		StageEditor::applyTranslationToEntity(this, translation);
+		StageEditor::applyTranslationToActor(this, translation);
 	}
 	else if(pressedKey & K_RR)
 	{
@@ -687,7 +687,7 @@ void StageEditor::translateEntity(uint32 pressedKey)
 			__PIXELS_TO_METERS(this->translationStepSize),
 		};
 
-		StageEditor::applyTranslationToEntity(this, translation);
+		StageEditor::applyTranslationToActor(this, translation);
 	}
 	else if(pressedKey & K_RD)
 	{
@@ -698,30 +698,30 @@ void StageEditor::translateEntity(uint32 pressedKey)
 			__PIXELS_TO_METERS(-this->translationStepSize),
 		};
 
-		StageEditor::applyTranslationToEntity(this, translation);
+		StageEditor::applyTranslationToActor(this, translation);
 	}
 	else if(pressedKey & K_LT)
 	{
-		StageEditor::selectPreviousEntity(this);
+		StageEditor::selectPreviousActor(this);
 	}
 	else if(pressedKey & K_RT)
 	{
-		StageEditor::selectNextEntity(this);
+		StageEditor::selectNextActor(this);
 	}
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void StageEditor::applyTranslationToEntity(Vector3D translation)
+void StageEditor::applyTranslationToActor(Vector3D translation)
 {
 	if(isDeleted(this->stage))
 	{
 		return;
 	}
 
-	if(this->entityNode)
+	if(this->actorNode)
 	{
-		Container container = Container::safeCast(this->entityNode->data);
+		Container container = Container::safeCast(this->actorNode->data);
 		Vector3D localPosition = *Container::getLocalPosition(container);
 
 		localPosition.x += translation.x;
@@ -732,7 +732,7 @@ void StageEditor::applyTranslationToEntity(Vector3D translation)
 
 		Stage::transform(this->stage, &_neutralEnvironmentTransformation, Camera::getTransformationFlags(Camera::getInstance()));
 
-		StageEditor::printEntityPosition(this);
+		StageEditor::printActorPosition(this);
 
 		SpriteManager::sortSprites(SpriteManager::getInstance());
 
@@ -744,10 +744,10 @@ void StageEditor::applyTranslationToEntity(Vector3D translation)
 
 void StageEditor::removePreviousSprite()
 {
-	if(this->userEntitySprite)
+	if(this->userActorSprite)
 	{
-		delete this->userEntitySprite;
-		this->userEntitySprite = NULL;
+		delete this->userActorSprite;
+		this->userActorSprite = NULL;
 	}
 
 	SpriteManager::sortSprites(SpriteManager::getInstance());
@@ -760,26 +760,26 @@ void StageEditor::showSelectedUserObject()
 	StageEditor::removePreviousSprite(this);
 
 	SpriteSpec* spriteSpec = 
-		(SpriteSpec*)_userObjects[OptionsSelector::getSelectedOption(this->userEntitySelector)].entitySpec->componentSpecs[0];
+		(SpriteSpec*)_userObjects[OptionsSelector::getSelectedOption(this->userActorSelector)].actorSpec->componentSpecs[0];
 
 	if(spriteSpec)
 	{
-		this->userEntitySprite = SpriteManager::createSprite(SpriteManager::getInstance(), NULL, spriteSpec);
-		ASSERT(this->userEntitySprite, "AnimationInspector::createSprite: null animatedSprite");
-		ASSERT(Sprite::getTexture(this->userEntitySprite), "AnimationInspector::createSprite: null texture");
+		this->userActorSprite = SpriteManager::createSprite(SpriteManager::getInstance(), NULL, spriteSpec);
+		ASSERT(this->userActorSprite, "AnimationInspector::createSprite: null animatedSprite");
+		ASSERT(Sprite::getTexture(this->userActorSprite), "AnimationInspector::createSprite: null texture");
 
-		PixelVector spritePosition = Sprite::getDisplacedPosition(this->userEntitySprite);
-		spritePosition.x = __I_TO_FIXED((__HALF_SCREEN_WIDTH) - (Texture::getCols(Sprite::getTexture(this->userEntitySprite)) << 2));
-		spritePosition.y = __I_TO_FIXED((__HALF_SCREEN_HEIGHT) - (Texture::getRows(Sprite::getTexture(this->userEntitySprite)) << 2));
+		PixelVector spritePosition = Sprite::getDisplacedPosition(this->userActorSprite);
+		spritePosition.x = __I_TO_FIXED((__HALF_SCREEN_WIDTH) - (Texture::getCols(Sprite::getTexture(this->userActorSprite)) << 2));
+		spritePosition.y = __I_TO_FIXED((__HALF_SCREEN_HEIGHT) - (Texture::getRows(Sprite::getTexture(this->userActorSprite)) << 2));
 		spritePosition.parallax = Optics::calculateParallax(spritePosition.z);
 
 		Rotation spriteRotation = {0, 0, 0};
 		PixelScale spriteScale = {1, 1};
-		Sprite::setPosition(this->userEntitySprite, &spritePosition);
-		Sprite::setRotation(this->userEntitySprite, &spriteRotation);
-		Sprite::setScale(this->userEntitySprite, &spriteScale);
+		Sprite::setPosition(this->userActorSprite, &spritePosition);
+		Sprite::setRotation(this->userActorSprite, &spriteRotation);
+		Sprite::setScale(this->userActorSprite, &spriteScale);
 
-		this->userEntitySprite->updateAnimationFrame = true;
+		this->userActorSprite->updateAnimationFrame = true;
 		SpriteManager::writeTextures(SpriteManager::getInstance());
 		SpriteManager::sortSprites(SpriteManager::getInstance());
 		SpriteManager::deferParamTableEffects(SpriteManager::getInstance(), false);
@@ -799,12 +799,12 @@ void StageEditor::selectUserObject(uint32 pressedKey)
 
 	if(pressedKey & K_LU)
 	{
-		OptionsSelector::selectPrevious(this->userEntitySelector);
+		OptionsSelector::selectPrevious(this->userActorSelector);
 		StageEditor::showSelectedUserObject(this);
 	}
 	else if(pressedKey & K_LD)
 	{
-		OptionsSelector::selectNext(this->userEntitySelector);
+		OptionsSelector::selectNext(this->userActorSelector);
 		StageEditor::showSelectedUserObject(this);
 	}
 	else if(pressedKey & K_A)
@@ -818,9 +818,9 @@ void StageEditor::selectUserObject(uint32 pressedKey)
 
 		Vector3D cameraPosition = Camera::getPosition(Camera::getInstance());
 
-		PositionedEntity DUMMY_ENTITY =
+		PositionedActor DUMMY_ENTITY =
 		{
-			(EntitySpec*)_userObjects[OptionsSelector::getSelectedOption(this->userEntitySelector)].entitySpec,
+			(ActorSpec*)_userObjects[OptionsSelector::getSelectedOption(this->userActorSelector)].actorSpec,
 			{
 				__METERS_TO_PIXELS(cameraPosition.x) + __HALF_SCREEN_WIDTH, 
 				__METERS_TO_PIXELS(cameraPosition.y) + __HALF_SCREEN_HEIGHT, 
@@ -835,13 +835,13 @@ void StageEditor::selectUserObject(uint32 pressedKey)
 			false
 		};
 
-		Stage::spawnChildEntity(this->stage, &DUMMY_ENTITY, false);
+		Stage::spawnChildActor(this->stage, &DUMMY_ENTITY, false);
 		SpriteManager::sortSprites(SpriteManager::getInstance());
 
 		VirtualList stageEntities = (Container::safeCast(this->stage))->children;
-		this->entityNode = stageEntities ? stageEntities->tail : NULL;
+		this->actorNode = stageEntities ? stageEntities->tail : NULL;
 
-		// select the added entity
+		// select the added actor
 		this->state = kTranslateEntities;
 		StageEditor::configureState(this);
 
@@ -856,7 +856,7 @@ void StageEditor::selectUserObject(uint32 pressedKey)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void StageEditor::printEntityPosition()
+void StageEditor::printActorPosition()
 {
 	int32 x = 1;
 	int32 y = 2;
@@ -871,20 +871,20 @@ void StageEditor::printEntityPosition()
 	Printing::text(Printing::getInstance(), "Move\x1E\x1A\x1B\x1C\x1D", controlsXPos, controlsYPos++, NULL);
 	Printing::text(Printing::getInstance(), "      \x1F\x1A\x1B", controlsXPos, controlsYPos++, NULL);
 
-	if(this->entityNode)
+	if(this->actorNode)
 	{
-		Entity entity = Entity::safeCast(VirtualNode::getData(this->entityNode));
-		const Vector3D* globalPosition =  GameObject::getPosition(entity);
-		const Rotation* globalRotation =  GameObject::getRotation(entity);
-		const Scale* globalScale =  GameObject::getScale(entity);
-		const char* entityName = Container::getName(entity);
+		Actor actor = Actor::safeCast(VirtualNode::getData(this->actorNode));
+		const Vector3D* globalPosition =  GameObject::getPosition(actor);
+		const Rotation* globalRotation =  GameObject::getRotation(actor);
+		const Scale* globalScale =  GameObject::getScale(actor);
+		const char* actorName = Container::getName(actor);
 
 		Printing::text(Printing::getInstance(), "ID:                             ", x, ++y, NULL);
-		Printing::int32(Printing::getInstance()Entity::getInternalId(entity), x + 10, y, NULL);
+		Printing::int32(Printing::getInstance()Actor::getInternalId(actor), x + 10, y, NULL);
 		Printing::text(Printing::getInstance(), "Type:                           ", x, ++y, NULL);
-		Printing::text(Printing::getInstance(),		__GET_CLASS_NAME(entity), x + 10, y, NULL);
+		Printing::text(Printing::getInstance(),		__GET_CLASS_NAME(actor), x + 10, y, NULL);
 		Printing::text(Printing::getInstance(), "Name:                           ", x, ++y, NULL);
-		Printing::text(Printing::getInstance(),		entityName ? entityName : "-"x + 10, y, NULL);
+		Printing::text(Printing::getInstance(),		actorName ? actorName : "-"x + 10, y, NULL);
 		Printing::text(Printing::getInstance(), "          X      Y      Z       ", x, ++y, NULL);
 		Printing::text(Printing::getInstance(), "Position:                       ", x, ++y, NULL);
 		Printing::int32(Printing::getInstance()__METERS_TO_PIXELS(globalPosition->x), x + 10, y, NULL);
@@ -899,11 +899,11 @@ void StageEditor::printEntityPosition()
 		Printing::float(Printing::getInstance(), 	__FIX7_9_TO_F(globalScale->y)x + 17, y2, NULL);
 		Printing::float(Printing::getInstance(), 	__FIX7_9_TO_F(globalScale->z)x + 24, y2, NULL);
 		Printing::text(Printing::getInstance(), "Size:                           ", x, ++y, NULL);
-		Printing::int32(Printing::getInstance()__METERS_TO_PIXELS(Entity::getWidth(entity)), x + 10, y, NULL);
-		Printing::int32(Printing::getInstance()__METERS_TO_PIXELS(Entity::getHeight(entity)), x + 17, y, NULL);
-		Printing::int32(Printing::getInstance()__METERS_TO_PIXELS(Entity::getDepth(entity)), x + 24, y++, NULL);
+		Printing::int32(Printing::getInstance()__METERS_TO_PIXELS(Actor::getWidth(actor)), x + 10, y, NULL);
+		Printing::int32(Printing::getInstance()__METERS_TO_PIXELS(Actor::getHeight(actor)), x + 17, y, NULL);
+		Printing::int32(Printing::getInstance()__METERS_TO_PIXELS(Actor::getDepth(actor)), x + 24, y++, NULL);
 		Printing::text(Printing::getInstance(), "Children:                       ", x, ++y, NULL);
-		Printing::int32(Printing::getInstance()Container::getChildrenCount(entity), x + 10, y, NULL);
+		Printing::int32(Printing::getInstance()Container::getChildrenCount(actor), x + 10, y, NULL);
 	}
 }
 
@@ -973,7 +973,7 @@ void StageEditor::printUserObjects()
 	controlsYPos++;
 	Printing::text(Printing::getInstance(), "Accept  \x13", controlsXPos, controlsYPos++, NULL);
 
-	OptionsSelector::print(this->userEntitySelector, 1, 4, kOptionsAlignLeft, 0);
+	OptionsSelector::print(this->userActorSelector, 1, 4, kOptionsAlignLeft, 0);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

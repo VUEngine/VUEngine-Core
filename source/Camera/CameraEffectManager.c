@@ -13,7 +13,7 @@
 
 #include <Camera.h>
 #include <DebugConfig.h>
-#include <Entity.h>
+#include <Actor.h>
 #include <GameState.h>
 #include <MessageDispatcher.h>
 #include <Telegram.h>

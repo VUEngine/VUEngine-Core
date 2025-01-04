@@ -14,7 +14,7 @@
 // INCLUDES
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-#include <Entity.h>
+#include <Actor.h>
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // FORWARD DECLARATIONS
@@ -31,8 +31,8 @@ class StateMachine;
 /// @memberof StatefulActor
 typedef struct StatefulActorSpec
 {
-	/// Entity spec
-	EntitySpec entitySpec;
+	/// Actor spec
+	ActorSpec actorSpec;
 
 } StatefulActorSpec;
 
@@ -46,10 +46,10 @@ typedef const StatefulActorSpec StatefulActorROMSpec;
 
 /// Class StatefulActor
 ///
-/// Inherits from Entity
+/// Inherits from Actor
 ///
-/// Implements an animated entity that can have complex behavior and physical simulations.
-class StatefulActor : Entity
+/// Implements an animated actor that can have complex behavior and physical simulations.
+class StatefulActor : Actor
 {
 	/// @protectedsection
 

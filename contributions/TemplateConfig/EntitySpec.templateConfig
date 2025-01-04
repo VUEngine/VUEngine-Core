@@ -1,8 +1,8 @@
 {
 	"targets": [{
-		"path": "Converted/${_filename}EntitySpec.c",
+		"path": "Converted/${_filename}ActorSpec.c",
 		"root": "file"
 	}],
-	"template": "contributions/Template/EntitySpec.c.njk",
-	"itemSpecific": "Entity"
+	"template": "contributions/Template/ActorSpec.c.njk",
+	"itemSpecific": "Actor"
 }

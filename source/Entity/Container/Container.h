@@ -54,7 +54,7 @@ abstract class Container : GameObject
 	/// Container's name
 	char* name;
 	
-	/// Entity's internal id, set by the engine
+	/// Actor's internal id, set by the engine
 	int16 internalId;
 
 	/// If true, the parent will delete this container when appropriate
@@ -75,7 +75,7 @@ abstract class Container : GameObject
 	/// Flag to mark the container (and its children) as non visible
 	bool hidden;
 
-	/// Axises around which to rotate the entity when syncronizing with body
+	/// Axises around which to rotate the actor when syncronizing with body
 	int8 axisForSynchronizationWithBody;
 
 	/// @publicsection
@@ -111,20 +111,20 @@ abstract class Container : GameObject
 	/// @param scale: Scale
 	override void setScale(const Scale* scale);
 
-	/// Set the normalized direction towards where the entity faces.
+	/// Set the normalized direction towards where the actor faces.
 	/// @param normalizedDirection: New facing direction with is components normalized
 	void setNormalizedDirection(NormalizedDirection normalizedDirection);
 
-	/// Retrieve the normalized direction towards where the entity faces.
-	/// @return Entity's facing direction with is components normalized
+	/// Retrieve the normalized direction towards where the actor faces.
+	/// @return Actor's facing direction with is components normalized
 	NormalizedDirection getNormalizedDirection();
 
 	/// Delete this container when appropriate.
 	/// Containers must not be deleted nor created directly by the client code
 	void deleteMyself();
 
-	/// Retrieve the entity's internal id used by the engine to keep track of it.
-	/// @return Entity's internal id
+	/// Retrieve the actor's internal id used by the engine to keep track of it.
+	/// @return Actor's internal id
 	int16 getInternalId();
 
 	/// Set the container's name.
@@ -163,9 +163,9 @@ abstract class Container : GameObject
 	/// @return True if one or more children met the search criteria; false otherwise
 	bool getChildren(ClassPointer classPointer, VirtualList children);
 	
-	/// Retrieve a child of this entity whose internal ID equals the provided one.
+	/// Retrieve a child of this actor whose internal ID equals the provided one.
 	/// @param id: Internal ID to look for
-	/// @return Child entity whose ID matches the provided one
+	/// @return Child actor whose ID matches the provided one
 	Container getChildById(int16 id);
 
 	/// Find a child with the provided name.

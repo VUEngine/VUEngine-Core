@@ -282,8 +282,8 @@ void GameState::configureStage(StageSpec* stageSpec, VirtualList positionedEntit
 
 	HardwareManager::suspendInterrupts();
 
-	// make sure no entity is set as focus for the camera
-	Camera::setFocusEntity(Camera::getInstance(), NULL);
+	// make sure no actor is set as focus for the camera
+	Camera::setFocusActor(Camera::getInstance(), NULL);
 
 	// setup the stage
 	GameState::createStage(this, stageSpec, positionedEntitiesToIgnore);
@@ -590,47 +590,47 @@ bool GameState::propagateString(const char* string)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-Entity GameState::getEntityByName(const char* entityName)
+Actor GameState::getActorByName(const char* actorName)
 {
 	if(isDeleted(this->stage))
 	{
 		return NULL;
 	}
 	
-	return Entity::safeCast(Stage::getChildByName(this->stage, entityName, false));
+	return Actor::safeCast(Stage::getChildByName(this->stage, actorName, false));
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void GameState::showEntityWithName(const char* entityName)
+void GameState::showActorWithName(const char* actorName)
 {
 	if(isDeleted(this->stage))
 	{
 		return;
 	}
 	
-	Entity entity = Entity::safeCast(Stage::getChildByName(this->stage, entityName, false));
+	Actor actor = Actor::safeCast(Stage::getChildByName(this->stage, actorName, false));
 
-	if(!isDeleted(entity))
+	if(!isDeleted(actor))
 	{
-		Entity::show(entity);
+		Actor::show(actor);
 	}
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void GameState::hideEntityWithName(const char* entityName)
+void GameState::hideActorWithName(const char* actorName)
 {
 	if(isDeleted(this->stage))
 	{
 		return;
 	}
 	
-	Entity entity = Entity::safeCast(Stage::getChildByName(this->stage, entityName, false));
+	Actor actor = Actor::safeCast(Stage::getChildByName(this->stage, actorName, false));
 
-	if(!isDeleted(entity))
+	if(!isDeleted(actor))
 	{
-		Entity::hide(entity);
+		Actor::hide(actor);
 	}
 }
 
@@ -712,7 +712,7 @@ void GameState::configureUI(StageSpec* stageSpec)
 	if(NULL != stageSpec->entities.UI.allocator)
 	{
 		this->uiContainer = 
-			((UIContainer (*)(PositionedEntity*)) stageSpec->entities.UI.allocator)(stageSpec->entities.UI.childrenSpecs);
+			((UIContainer (*)(PositionedActor*)) stageSpec->entities.UI.allocator)(stageSpec->entities.UI.childrenSpecs);
 	}
 	else
 	{
@@ -737,7 +737,7 @@ void GameState::streamAll()
 {
 	HardwareManager::suspendInterrupts();
 
-	// Make sure that the focus entity is transformed before focusing the camera
+	// Make sure that the focus actor is transformed before focusing the camera
 	GameState::transform(this);
 
 	// Move the camera to its initial position

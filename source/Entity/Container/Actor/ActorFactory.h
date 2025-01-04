@@ -7,15 +7,15 @@
  * that was distributed with this source code.
  */
 
-#ifndef ENTITY_FACTORY_H_
-#define ENTITY_FACTORY_H_
+#ifndef ACTOR_FACTORY_H_
+#define ACTOR_FACTORY_H_
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // INCLUDES
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <Object.h>
-#include <Entity.h>
+#include <Actor.h>
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // FORWARD DECLARATIONS
@@ -35,12 +35,12 @@ class VirtualList;
 // CLASS' DECLARATION
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-/// Class EntityFactory
+/// Class ActorFactory
 ///
 /// Inherits from Object
 ///
 /// Implements a factory that creates entities over time.
-class EntityFactory : Object
+class ActorFactory : Object
 {
 	/// @protectedsection
 
@@ -65,17 +65,17 @@ class EntityFactory : Object
 	/// Class' constructor
 	void constructor();
 
-	/// Create a new entity instance and configure it with the provided arguments.
-	/// @param positionedEntity: Struct that defines which entity spec to use to configure the new entity
+	/// Create a new actor instance and configure it with the provided arguments.
+	/// @param positionedActor: Struct that defines which actor spec to use to configure the new actor
 	/// and the spatial information about where and how to positione it
-	/// @param parent: The parent of the new entity instance
-	/// @param callback: Callback to inform the parent when the new entity is ready
+	/// @param parent: The parent of the new actor instance
+	/// @param callback: Callback to inform the parent when the new actor is ready
 	/// @param internalId: ID to keep track internally of the new instance
-	void spawnEntity(const PositionedEntity* positionedEntity, Container parent, EventListener callback, int16 internalId);
+	void spawnActor(const PositionedActor* positionedActor, Container parent, EventListener callback, int16 internalId);
 
-	/// Create the next queued entity.
+	/// Create the next queued actor.
 	/// @return False if there are no entities pending instantiation; true otherwise
-	bool createNextEntity();
+	bool createNextActor();
 
 	/// Check if there are entities pending instantiation.
 	/// @return True if there are entities pending instantiation; false otherwise

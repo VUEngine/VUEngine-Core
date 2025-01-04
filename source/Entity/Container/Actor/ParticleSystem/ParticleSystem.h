@@ -14,7 +14,7 @@
 // INCLUDES
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-#include <Entity.h>
+#include <Actor.h>
 #include <Particle.h>
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -25,7 +25,7 @@
 /// @memberof ParticleSystem
 typedef struct ParticleSystemSpec
 {
-	EntitySpec entitySpec;
+	ActorSpec actorSpec;
 
 	/// Reuse expired particles?
 	uint8 recycleParticles;
@@ -84,10 +84,10 @@ typedef const ParticleSystemSpec ParticleSystemROMSpec;
 
 /// Class ParticleSystem
 ///
-/// Inherits from Entity
+/// Inherits from Actor
 ///
-/// Implements an entity that generates particles.
-class ParticleSystem : Entity
+/// Implements an actor that generates particles.
+class ParticleSystem : Actor
 {
 	/// @protectedsection
 

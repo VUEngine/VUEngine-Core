@@ -18,8 +18,8 @@
 #include <Camera.h>
 #include <CharSetManager.h>
 #include <DebugConfig.h>
-#include <Entity.h>
-#include <EntityFactory.h>
+#include <Actor.h>
+#include <ActorFactory.h>
 #include <HardwareManager.h>
 #include <ParamTableManager.h>
 #include <BodyManager.h>
@@ -40,7 +40,7 @@
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 friend class Container;
-friend class Entity;
+friend class Actor;
 friend class VirtualNode;
 friend class VirtualList;
 
@@ -56,11 +56,11 @@ friend class VirtualList;
 
 typedef bool (*StreamingPhase)(void*, int32);
 
-typedef struct EntityLoadingListener
+typedef struct ActorLoadingListener
 {
 	ListenerObject scope;
 	EventListener callback;
-} EntityLoadingListener;
+} ActorLoadingListener;
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' ATTRIBUTES
@@ -92,7 +92,7 @@ extern int16 _renderingProcessTimeHelper;
 static uint32 unloadOutOfRangeEntitiesHighestTime = 0;
 static uint32 loadInRangeEntitiesHighestTime = 0;
 static uint32 processRemovedEntitiesHighestTime = 0;
-static uint32 entityFactoryHighestTime = 0;
+static uint32 actorFactoryHighestTime = 0;
 static uint32 timeBeforeProcess = 0;
 #endif
 
@@ -102,20 +102,20 @@ static uint32 timeBeforeProcess = 0;
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static uint32 Stage::computeDistanceToOrigin(StageEntityDescription* stageEntityDescription)
+static uint32 Stage::computeDistanceToOrigin(StageActorDescription* stageActorDescription)
 {
 	
 	int32 x = 
-		stageEntityDescription->positionedEntity->onScreenPosition.x - 
-		__METERS_TO_PIXELS(stageEntityDescription->rightBox.x1 - stageEntityDescription->rightBox.x0) / 2;
+		stageActorDescription->positionedActor->onScreenPosition.x - 
+		__METERS_TO_PIXELS(stageActorDescription->rightBox.x1 - stageActorDescription->rightBox.x0) / 2;
 	
 	int32 y = 
-		stageEntityDescription->positionedEntity->onScreenPosition.y - 
-		__METERS_TO_PIXELS(stageEntityDescription->rightBox.y1 - stageEntityDescription->rightBox.y0) / 2;
+		stageActorDescription->positionedActor->onScreenPosition.y - 
+		__METERS_TO_PIXELS(stageActorDescription->rightBox.y1 - stageActorDescription->rightBox.y0) / 2;
 	
 	int32 z = 
-		stageEntityDescription->positionedEntity->onScreenPosition.z - 
-		__METERS_TO_PIXELS(stageEntityDescription->rightBox.z1 - stageEntityDescription->rightBox.z0) / 2;
+		stageActorDescription->positionedActor->onScreenPosition.z - 
+		__METERS_TO_PIXELS(stageActorDescription->rightBox.z1 - stageActorDescription->rightBox.z0) / 2;
 
 	return x * x + y * y + z * z;
 } 
@@ -133,15 +133,15 @@ void Stage::constructor(StageSpec *stageSpec)
 	// Always explicitly call the base's constructor 
 	Base::constructor(0, NULL);
 
-	this->entityFactory = new EntityFactory();
+	this->actorFactory = new ActorFactory();
 	this->children = new VirtualList();
-	this->entityLoadingListeners = NULL;
+	this->actorLoadingListeners = NULL;
 
 	this->stageSpec = stageSpec;
-	this->stageEntityDescriptions = NULL;
-	this->focusEntity = NULL;
+	this->stageActorDescriptions = NULL;
+	this->focusActor = NULL;
 	this->streamingHeadNode = NULL;
-	this->nextEntityId = 0;
+	this->nextActorId = 0;
 	this->streamingPhase = 0;
 	this->sounds = NULL;
 	this->streamingAmplitude = this->stageSpec->streaming.streamingAmplitude;
@@ -155,13 +155,13 @@ void Stage::destructor()
 {
 	this->deleteMe = true;
 	
-	Stage::setFocusEntity(this, NULL);
+	Stage::setFocusActor(this, NULL);
 
-	if(!isDeleted(this->entityLoadingListeners))
+	if(!isDeleted(this->actorLoadingListeners))
 	{
-		VirtualList::deleteData(this->entityLoadingListeners);
-		delete this->entityLoadingListeners;
-		this->entityLoadingListeners = NULL;
+		VirtualList::deleteData(this->actorLoadingListeners);
+		delete this->actorLoadingListeners;
+		this->actorLoadingListeners = NULL;
 	}
 
 	if(!isDeleted(this->sounds))
@@ -183,17 +183,17 @@ void Stage::destructor()
 		this->sounds = NULL;
 	}
 
-	if(!isDeleted(this->entityFactory))
+	if(!isDeleted(this->actorFactory))
 	{
-		delete this->entityFactory;
-		this->entityFactory = NULL;
+		delete this->actorFactory;
+		this->actorFactory = NULL;
 	}
 
-	if(!isDeleted(this->stageEntityDescriptions))
+	if(!isDeleted(this->stageActorDescriptions))
 	{
-		VirtualList::deleteData(this->stageEntityDescriptions);
-		delete this->stageEntityDescriptions;
-		this->stageEntityDescriptions = NULL;
+		VirtualList::deleteData(this->stageActorDescriptions);
+		delete this->stageActorDescriptions;
+		this->stageActorDescriptions = NULL;
 	}
 
 	// Always explicitly call the base's destructor 
@@ -208,27 +208,27 @@ void Stage::suspend()
 	this->cameraPosition = Camera::getPosition(Camera::getInstance());
 
 	// stream all pending entities to avoid having manually recover
-	// the stage entity registries
-	while(EntityFactory::createNextEntity(this->entityFactory));
+	// the stage actor registries
+	while(ActorFactory::createNextActor(this->actorFactory));
 
 	Base::suspend(this);
 
 	// relinquish camera focus priority
-	if(!isDeleted(this->focusEntity))
+	if(!isDeleted(this->focusActor))
 	{
-		if(this->focusEntity == Camera::getFocusEntity(Camera::getInstance()))
+		if(this->focusActor == Camera::getFocusActor(Camera::getInstance()))
 		{
-			// relinquish focus entity
-			Camera::setFocusEntity(Camera::getInstance(), NULL);
+			// relinquish focus actor
+			Camera::setFocusActor(Camera::getInstance(), NULL);
 		}
 	}
 	else
 	{
-		Stage::setFocusEntity(this, Camera::getFocusEntity(Camera::getInstance()));
+		Stage::setFocusActor(this, Camera::getFocusActor(Camera::getInstance()));
 	}
 
-	delete this->entityFactory;
-	this->entityFactory = NULL;
+	delete this->actorFactory;
+	this->actorFactory = NULL;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -252,10 +252,10 @@ void Stage::resume()
 
 	Stage::prepareGraphics(this);
 
-	if(!isDeleted(this->focusEntity))
+	if(!isDeleted(this->focusActor))
 	{
-		// recover focus entity
-		Camera::setFocusEntity(Camera::getInstance(), Entity::safeCast(this->focusEntity));
+		// recover focus actor
+		Camera::setFocusActor(Camera::getInstance(), Actor::safeCast(this->focusActor));
 	}
 
 	Base::resume(this);
@@ -267,7 +267,7 @@ void Stage::resume()
 	VIPManager::setBackgroundColor(VIPManager::getInstance(), this->stageSpec->rendering.colorConfig.backgroundColor);
 	// TODO: properly handle brightness and brightness repeat on resume
 
-	this->entityFactory = new EntityFactory();
+	this->actorFactory = new ActorFactory();
 
 	Stage::loadPostProcessingEffects(this);
 }
@@ -308,17 +308,17 @@ PaletteConfig Stage::getPaletteConfig()
 
 void Stage::registerEntities(VirtualList positionedEntitiesToIgnore)
 {
-	if(!isDeleted(this->stageEntityDescriptions))
+	if(!isDeleted(this->stageActorDescriptions))
 	{
 		return;
 	}
 
-	this->stageEntityDescriptions = new VirtualList();
+	this->stageActorDescriptions = new VirtualList();
 
 	// register entities ordering them according to their distances to the origin
 	int32 i = 0;
 
-	for(;this->stageSpec->entities.children[i].entitySpec; i++)
+	for(;this->stageSpec->entities.children[i].actorSpec; i++)
 	{
 		if(positionedEntitiesToIgnore)
 		{
@@ -326,7 +326,7 @@ void Stage::registerEntities(VirtualList positionedEntitiesToIgnore)
 
 			for(; NULL != node; node = node->next)
 			{
-				if(&this->stageSpec->entities.children[i] == (PositionedEntity*)node->data)
+				if(&this->stageSpec->entities.children[i] == (PositionedActor*)node->data)
 				{
 					break;
 				}
@@ -338,45 +338,45 @@ void Stage::registerEntities(VirtualList positionedEntitiesToIgnore)
 			}
 		}
 
-		StageEntityDescription* stageEntityDescription = Stage::registerEntity(this, &this->stageSpec->entities.children[i]);
+		StageActorDescription* stageActorDescription = Stage::registerActor(this, &this->stageSpec->entities.children[i]);
 
-		Vector3D stageEntityPosition = (Vector3D)
+		Vector3D stageActorPosition = (Vector3D)
 		{
-			(__PIXELS_TO_METERS(stageEntityDescription->positionedEntity->onScreenPosition.x) - 
-			(stageEntityDescription->rightBox.x1 - stageEntityDescription->rightBox.x0) / 2),
-			(__PIXELS_TO_METERS(stageEntityDescription->positionedEntity->onScreenPosition.y) - 
-			(stageEntityDescription->rightBox.y1 - stageEntityDescription->rightBox.y0) / 2),
-			(__PIXELS_TO_METERS(stageEntityDescription->positionedEntity->onScreenPosition.z) - 
-			(stageEntityDescription->rightBox.z1 - stageEntityDescription->rightBox.z0) / 2)
+			(__PIXELS_TO_METERS(stageActorDescription->positionedActor->onScreenPosition.x) - 
+			(stageActorDescription->rightBox.x1 - stageActorDescription->rightBox.x0) / 2),
+			(__PIXELS_TO_METERS(stageActorDescription->positionedActor->onScreenPosition.y) - 
+			(stageActorDescription->rightBox.y1 - stageActorDescription->rightBox.y0) / 2),
+			(__PIXELS_TO_METERS(stageActorDescription->positionedActor->onScreenPosition.z) - 
+			(stageActorDescription->rightBox.z1 - stageActorDescription->rightBox.z0) / 2)
 		};
 
 		VirtualNode closestEnitryDescriptionNode = NULL;
-		VirtualNode auxNode = this->stageEntityDescriptions->head;
-		StageEntityDescription* auxStageEntityDescription = (StageEntityDescription*)auxNode->data;
+		VirtualNode auxNode = this->stageActorDescriptions->head;
+		StageActorDescription* auxStageActorDescription = (StageActorDescription*)auxNode->data;
 
 		fixed_ext_t closestDistance = 0;
 
 		for(; auxNode; auxNode = auxNode->next)
 		{
-			auxStageEntityDescription = (StageEntityDescription*)auxNode->data;
+			auxStageActorDescription = (StageActorDescription*)auxNode->data;
 
-			Vector3D auxStageEntityPosition = (Vector3D)
+			Vector3D auxStageActorPosition = (Vector3D)
 			{
 				(
-					__PIXELS_TO_METERS(auxStageEntityDescription->positionedEntity->onScreenPosition.x) - 
-					(auxStageEntityDescription->rightBox.x1 - auxStageEntityDescription->rightBox.x0) / 2
+					__PIXELS_TO_METERS(auxStageActorDescription->positionedActor->onScreenPosition.x) - 
+					(auxStageActorDescription->rightBox.x1 - auxStageActorDescription->rightBox.x0) / 2
 				),
 				(
-					__PIXELS_TO_METERS(auxStageEntityDescription->positionedEntity->onScreenPosition.y) - 
-					(auxStageEntityDescription->rightBox.y1 - auxStageEntityDescription->rightBox.y0) / 2
+					__PIXELS_TO_METERS(auxStageActorDescription->positionedActor->onScreenPosition.y) - 
+					(auxStageActorDescription->rightBox.y1 - auxStageActorDescription->rightBox.y0) / 2
 				),
 				(
-					__PIXELS_TO_METERS(auxStageEntityDescription->positionedEntity->onScreenPosition.z) - 
-					(auxStageEntityDescription->rightBox.z1 - auxStageEntityDescription->rightBox.z0) / 2
+					__PIXELS_TO_METERS(auxStageActorDescription->positionedActor->onScreenPosition.z) - 
+					(auxStageActorDescription->rightBox.z1 - auxStageActorDescription->rightBox.z0) / 2
 				)
 			};
 
-			fixed_ext_t squaredDistance = Vector3D::squareLength(Vector3D::get(stageEntityPosition, auxStageEntityPosition));
+			fixed_ext_t squaredDistance = Vector3D::squareLength(Vector3D::get(stageActorPosition, auxStageActorPosition));
 
 			if(NULL == closestEnitryDescriptionNode || closestDistance > squaredDistance)
 			{
@@ -387,20 +387,20 @@ void Stage::registerEntities(VirtualList positionedEntitiesToIgnore)
 
 		if(NULL == auxNode)
 		{
-			VirtualList::pushBack(this->stageEntityDescriptions, stageEntityDescription);
+			VirtualList::pushBack(this->stageActorDescriptions, stageActorDescription);
 		}
 		else
 		{
-			uint32 stageEntityDistanceToOrigin = Stage::computeDistanceToOrigin(stageEntityDescription);
-			uint32 auxStageEntityDistanceToOrigin = Stage::computeDistanceToOrigin(auxStageEntityDescription);
+			uint32 stageActorDistanceToOrigin = Stage::computeDistanceToOrigin(stageActorDescription);
+			uint32 auxStageActorDistanceToOrigin = Stage::computeDistanceToOrigin(auxStageActorDescription);
 
-			if(stageEntityDistanceToOrigin > auxStageEntityDistanceToOrigin)
+			if(stageActorDistanceToOrigin > auxStageActorDistanceToOrigin)
 			{
-				VirtualList::insertAfter(this->stageEntityDescriptions, auxNode, stageEntityDescription);
+				VirtualList::insertAfter(this->stageActorDescriptions, auxNode, stageActorDescription);
 			}
 			else
 			{
-				VirtualList::insertBefore(this->stageEntityDescriptions, auxNode, stageEntityDescription);
+				VirtualList::insertBefore(this->stageActorDescriptions, auxNode, stageActorDescription);
 			}
 		}
 	}
@@ -408,63 +408,63 @@ void Stage::registerEntities(VirtualList positionedEntitiesToIgnore)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-VirtualList Stage::getStageEntityDescriptions()
+VirtualList Stage::getStageActorDescriptions()
 {
-	return this->stageEntityDescriptions;
+	return this->stageActorDescriptions;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void Stage::addEntityLoadingListener(ListenerObject scope, EventListener callback)
+void Stage::addActorLoadingListener(ListenerObject scope, EventListener callback)
 {
 	if(isDeleted(scope) || NULL == callback)
 	{
 		return;
 	}
 
-	if(isDeleted(this->entityLoadingListeners))
+	if(isDeleted(this->actorLoadingListeners))
 	{
-		this->entityLoadingListeners = new VirtualList();
+		this->actorLoadingListeners = new VirtualList();
 	}
 
-	EntityLoadingListener* entityLoadingListener = new EntityLoadingListener;
-	entityLoadingListener->scope = scope;
-	entityLoadingListener->callback = callback;
+	ActorLoadingListener* actorLoadingListener = new ActorLoadingListener;
+	actorLoadingListener->scope = scope;
+	actorLoadingListener->callback = callback;
 
-	VirtualList::pushBack(this->entityLoadingListeners, entityLoadingListener);
+	VirtualList::pushBack(this->actorLoadingListeners, actorLoadingListener);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-Entity Stage::spawnChildEntity(const PositionedEntity* const positionedEntity, bool permanent)
+Actor Stage::spawnChildActor(const PositionedActor* const positionedActor, bool permanent)
 {
-	return Stage::doAddChildEntity(this, positionedEntity, permanent, this->nextEntityId++);
+	return Stage::doAddChildActor(this, positionedActor, permanent, this->nextActorId++);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void Stage::destroyChildEntity(Entity child)
+void Stage::destroyChildActor(Actor child)
 {
-	NM_ASSERT(!isDeleted(child), "Stage::removeEntity: null child");
+	NM_ASSERT(!isDeleted(child), "Stage::removeActor: null child");
 
 	if(isDeleted(child))
 	{
 		return;
 	}
 
-	int16 internalId = Entity::getInternalId(child);
+	int16 internalId = Actor::getInternalId(child);
 
 	Stage::removeChild(this, Container::safeCast(child), true);
 
-	VirtualNode node = this->stageEntityDescriptions->head;
+	VirtualNode node = this->stageActorDescriptions->head;
 
 	for(; NULL != node; node = node->next)
 	{
-		StageEntityDescription* stageEntityDescription = (StageEntityDescription*)node->data;
+		StageActorDescription* stageActorDescription = (StageActorDescription*)node->data;
 
-		if(stageEntityDescription->internalId == internalId)
+		if(stageActorDescription->internalId == internalId)
 		{
-			stageEntityDescription->internalId = -1;
+			stageActorDescription->internalId = -1;
 			break;
 		}
 	}
@@ -477,7 +477,7 @@ void Stage::destroyChildEntity(Entity child)
 		}
 
 		delete node->data;
-		VirtualList::removeNode(this->stageEntityDescriptions, node);
+		VirtualList::removeNode(this->stageActorDescriptions, node);
 	}
 }
 
@@ -489,8 +489,8 @@ void Stage::streamAll()
 
 	this->streamingHeadNode = NULL;
 
-	// Make sure that the entity factory doesn't have any pending operations
-	while(EntityFactory::createNextEntity(this->entityFactory));
+	// Make sure that the actor factory doesn't have any pending operations
+	while(ActorFactory::createNextActor(this->actorFactory));
 
 	do
 	{
@@ -507,7 +507,7 @@ void Stage::streamAll()
 
 	while(Stage::loadInRangeEntities(this, false));
 
-	while(EntityFactory::createNextEntity(this->entityFactory))
+	while(ActorFactory::createNextActor(this->actorFactory))
 	{
 		Stage::transform(this, &_neutralEnvironmentTransformation, __INVALIDATE_TRANSFORMATION);
 
@@ -563,7 +563,7 @@ void Stage::print(int32 x, int32 y)
 	y++;
 
 	Printing::text(Printing::getInstance(), "Registered entities:            ", x, ++y, NULL);
-	Printing::int32(Printing::getInstance(), VirtualList::getCount(this->stageEntityDescriptions), x + xDisplacement, y++, NULL);
+	Printing::int32(Printing::getInstance(), VirtualList::getCount(this->stageActorDescriptions), x + xDisplacement, y++, NULL);
 	Printing::text(Printing::getInstance(), "Child entities:                 ", x, y, NULL);
 	Printing::int32(Printing::getInstance(), VirtualList::getCount(this->children), x + xDisplacement, y++, NULL);
 
@@ -584,12 +584,12 @@ void Stage::print(int32 x, int32 y)
 	Printing::int32(Printing::getInstance(), processRemovedEntitiesHighestTime, x + xDisplacement, y, NULL);
 
 	Printing::text(Printing::getInstance(), "Factory:          ", x, ++y, NULL);
-	Printing::int32(Printing::getInstance(), entityFactoryHighestTime, x + xDisplacement, y++, NULL);
+	Printing::int32(Printing::getInstance(), actorFactoryHighestTime, x + xDisplacement, y++, NULL);
 
 	unloadOutOfRangeEntitiesHighestTime = 0;
 	loadInRangeEntitiesHighestTime = 0;
 	processRemovedEntitiesHighestTime = 0;
-	entityFactoryHighestTime = 0;
+	actorFactoryHighestTime = 0;
 #endif
 }
 #endif
@@ -601,16 +601,16 @@ bool Stage::stream()
 #ifdef __SHOW_STREAMING_PROFILING
 	if(!VUEngine::isInToolState(_vuEngine))
 	{
-		EntityFactory::print(this->entityFactory, 25, 3);
+		ActorFactory::print(this->actorFactory, 25, 3);
 	}
 #endif
 
-	if(NULL == this->stageEntityDescriptions->head)
+	if(NULL == this->stageActorDescriptions->head)
 	{
 		return false;
 	}
 
-	if(Stage::updateEntityFactory(this))
+	if(Stage::updateActorFactory(this))
 	{
 		return true;
 	}
@@ -655,8 +655,8 @@ void Stage::configure(VirtualList positionedEntitiesToIgnore)
 	// load entities
 	Stage::loadInitialEntities(this);
 
-	// retrieve focus entity for streaming
-	Stage::setFocusEntity(this, Camera::getFocusEntity(Camera::getInstance()));
+	// retrieve focus actor for streaming
+	Stage::setFocusActor(this, Camera::getFocusActor(Camera::getInstance()));
 
 	// setup colors and brightness
 	VIPManager::setBackgroundColor(VIPManager::getInstance(), this->stageSpec->rendering.colorConfig.backgroundColor);
@@ -698,54 +698,54 @@ bool Stage::unloadOutOfRangeEntities(int32 defer __attribute__((unused)))
 	// check which entites must be unloaded
 	for(; NULL != node; node = node->next)
 	{
-		// get next entity
-		Entity entity = Entity::safeCast(node->data);
+		// get next actor
+		Actor actor = Actor::safeCast(node->data);
 
-		if(entity->dontStreamOut)
+		if(actor->dontStreamOut)
 		{
 			continue;
 		}
 
-		// if the entity isn't visible inside the view field, unload it
-		if(!entity->deleteMe && entity->parent == Container::safeCast(this))
+		// if the actor isn't visible inside the view field, unload it
+		if(!actor->deleteMe && actor->parent == Container::safeCast(this))
 		{
-			if(Entity::isInCameraRange(entity, this->stageSpec->streaming.loadPadding + this->stageSpec->streaming.unloadPadding, true))
+			if(Actor::isInCameraRange(actor, this->stageSpec->streaming.loadPadding + this->stageSpec->streaming.unloadPadding, true))
 			{
 				continue;
 			}
 
-			VirtualNode auxNode = this->stageEntityDescriptions->head;
-			StageEntityDescription* stageEntityDescription = NULL;
+			VirtualNode auxNode = this->stageActorDescriptions->head;
+			StageActorDescription* stageActorDescription = NULL;
 
 			for(; auxNode; auxNode = auxNode->next)
 			{
-				StageEntityDescription* auxStageEntityDescription = (StageEntityDescription*)auxNode->data;
+				StageActorDescription* auxStageActorDescription = (StageActorDescription*)auxNode->data;
 
-				if(auxStageEntityDescription->internalId == entity->internalId)
+				if(auxStageActorDescription->internalId == actor->internalId)
 				{
-					stageEntityDescription = auxStageEntityDescription;
+					stageActorDescription = auxStageActorDescription;
 					break;
 				}
 			}
 
-			if(NULL != stageEntityDescription)
+			if(NULL != stageActorDescription)
 			{
-				if(stageEntityDescription->positionedEntity->loadRegardlessOfPosition)
+				if(stageActorDescription->positionedActor->loadRegardlessOfPosition)
 				{
 					continue;
 				}
 
-				stageEntityDescription->internalId = -1;
+				stageActorDescription->internalId = -1;
 			}
 
 			// unload it
-			Stage::destroyChildEntity(this, entity);
+			Stage::destroyChildActor(this, actor);
 
 			// remove from list of entities that are to be loaded by the streaming,
-			// if the entity is not to be alwaysStreamIned
-			if(!Entity::alwaysStreamIn(entity))
+			// if the actor is not to be alwaysStreamIned
+			if(!Actor::alwaysStreamIn(actor))
 			{
-				VirtualList::removeNode(this->stageEntityDescriptions, auxNode);
+				VirtualList::removeNode(this->stageActorDescriptions, auxNode);
 			}
 
 			unloadedEntities = true;
@@ -780,7 +780,7 @@ bool Stage::loadInRangeEntities(int32 defer)
 	{
 		if(NULL == this->streamingHeadNode)
 		{
-			this->streamingHeadNode = this->stageEntityDescriptions->tail;
+			this->streamingHeadNode = this->stageActorDescriptions->tail;
 		}
 
 		bool negativeStreamingAmplitude = 0 > ((int16)this->streamingAmplitude);
@@ -794,7 +794,7 @@ bool Stage::loadInRangeEntities(int32 defer)
 		{
 			if(NULL == this->streamingHeadNode)
 			{
-				this->streamingHeadNode = this->stageEntityDescriptions->tail;
+				this->streamingHeadNode = this->stageActorDescriptions->tail;
 
 				if(negativeStreamingAmplitude)
 				{
@@ -802,40 +802,40 @@ bool Stage::loadInRangeEntities(int32 defer)
 				}
 			}
 
-			StageEntityDescription* stageEntityDescription = (StageEntityDescription*)this->streamingHeadNode->data;
+			StageActorDescription* stageActorDescription = (StageActorDescription*)this->streamingHeadNode->data;
 
-			if(0 > stageEntityDescription->internalId)
+			if(0 > stageActorDescription->internalId)
 			{
-				// if entity in load range
+				// if actor in load range
 				if
 				(
-					Stage::isEntityInLoadRange
+					Stage::isActorInLoadRange
 					(
-						this, stageEntityDescription->positionedEntity->onScreenPosition, stageEntityDescription->validRightBox ? 
-						&stageEntityDescription->rightBox : NULL
+						this, stageActorDescription->positionedActor->onScreenPosition, stageActorDescription->validRightBox ? 
+						&stageActorDescription->rightBox : NULL
 					)
 				)
 				{
 					loadedEntities = true;
 
-					stageEntityDescription->internalId = this->nextEntityId++;
+					stageActorDescription->internalId = this->nextActorId++;
 
 					if(defer)
 					{
-						EntityFactory::spawnEntity
+						ActorFactory::spawnActor
 						(
-							this->entityFactory, stageEntityDescription->positionedEntity, Container::safeCast(this), 
-							!isDeleted(this->entityLoadingListeners) ? 
-								(EventListener)Stage::onEntityLoaded 
+							this->actorFactory, stageActorDescription->positionedActor, Container::safeCast(this), 
+							!isDeleted(this->actorLoadingListeners) ? 
+								(EventListener)Stage::onActorLoaded 
 								: 
-								NULL, stageEntityDescription->internalId
+								NULL, stageActorDescription->internalId
 						);
 					}
 					else
 					{
-						Stage::doAddChildEntity
+						Stage::doAddChildActor
 						(
-							this, stageEntityDescription->positionedEntity, false, stageEntityDescription->internalId
+							this, stageActorDescription->positionedActor, false, stageActorDescription->internalId
 						);
 						break;
 					}
@@ -847,7 +847,7 @@ bool Stage::loadInRangeEntities(int32 defer)
 	{
 		if(NULL == this->streamingHeadNode)
 		{
-			this->streamingHeadNode = this->stageEntityDescriptions->head;
+			this->streamingHeadNode = this->stageActorDescriptions->head;
 		}
 
 		bool negativeStreamingAmplitude = 0 > ((int16)this->streamingAmplitude);
@@ -856,7 +856,7 @@ bool Stage::loadInRangeEntities(int32 defer)
 		{
 			if(NULL == this->streamingHeadNode)
 			{
-				this->streamingHeadNode = this->stageEntityDescriptions->head;
+				this->streamingHeadNode = this->stageActorDescriptions->head;
 
 				if(negativeStreamingAmplitude)
 				{
@@ -864,40 +864,40 @@ bool Stage::loadInRangeEntities(int32 defer)
 				}
 			}
 
-			StageEntityDescription* stageEntityDescription = (StageEntityDescription*)this->streamingHeadNode->data;
+			StageActorDescription* stageActorDescription = (StageActorDescription*)this->streamingHeadNode->data;
 
-			if(0 > stageEntityDescription->internalId)
+			if(0 > stageActorDescription->internalId)
 			{
-				// if entity in load range
+				// if actor in load range
 				if
 				(
-					Stage::isEntityInLoadRange
+					Stage::isActorInLoadRange
 					(
-						this, stageEntityDescription->positionedEntity->onScreenPosition, 
-						stageEntityDescription->validRightBox ? 
-							&stageEntityDescription->rightBox : NULL
+						this, stageActorDescription->positionedActor->onScreenPosition, 
+						stageActorDescription->validRightBox ? 
+							&stageActorDescription->rightBox : NULL
 					)
 				)
 				{
 					loadedEntities = true;
 
-					stageEntityDescription->internalId = this->nextEntityId++;
+					stageActorDescription->internalId = this->nextActorId++;
 
 					if(defer)
 					{
-						EntityFactory::spawnEntity
+						ActorFactory::spawnActor
 						(
-							this->entityFactory, stageEntityDescription->positionedEntity, Container::safeCast(this), 
-							!isDeleted(this->entityLoadingListeners) ? 
-								(EventListener)Stage::onEntityLoaded : NULL, 
-							stageEntityDescription->internalId
+							this->actorFactory, stageActorDescription->positionedActor, Container::safeCast(this), 
+							!isDeleted(this->actorLoadingListeners) ? 
+								(EventListener)Stage::onActorLoaded : NULL, 
+							stageActorDescription->internalId
 						);
 					}
 					else
 					{
-						Stage::doAddChildEntity
+						Stage::doAddChildActor
 						(
-							this, stageEntityDescription->positionedEntity, false, stageEntityDescription->internalId
+							this, stageActorDescription->positionedActor, false, stageActorDescription->internalId
 						);
 						break;
 					}
@@ -920,38 +920,38 @@ bool Stage::loadInRangeEntities(int32 defer)
 void Stage::loadInitialEntities()
 {
 	// need a temporary list to remove and delete entities
-	VirtualNode node = this->stageEntityDescriptions->head;
+	VirtualNode node = this->stageActorDescriptions->head;
 
 	for(; NULL != node; node = node->next)
 	{
-		StageEntityDescription* stageEntityDescription = (StageEntityDescription*)node->data;
+		StageActorDescription* stageActorDescription = (StageActorDescription*)node->data;
 
-		if(-1 == stageEntityDescription->internalId)
+		if(-1 == stageActorDescription->internalId)
 		{
-			// if entity in load range
+			// if actor in load range
 			if
 			(
-				stageEntityDescription->positionedEntity->loadRegardlessOfPosition 
+				stageActorDescription->positionedActor->loadRegardlessOfPosition 
 				|| 
-				Stage::isEntityInLoadRange
+				Stage::isActorInLoadRange
 				(
-					this, stageEntityDescription->positionedEntity->onScreenPosition, &stageEntityDescription->rightBox
+					this, stageActorDescription->positionedActor->onScreenPosition, &stageActorDescription->rightBox
 				)
 			)
 			{
-				stageEntityDescription->internalId = this->nextEntityId++;
-				Entity entity = 
-					Stage::doAddChildEntity(this, stageEntityDescription->positionedEntity, false, stageEntityDescription->internalId);
-				ASSERT(entity, "Stage::loadInitialEntities: entity not loaded");
+				stageActorDescription->internalId = this->nextActorId++;
+				Actor actor = 
+					Stage::doAddChildActor(this, stageActorDescription->positionedActor, false, stageActorDescription->internalId);
+				ASSERT(actor, "Stage::loadInitialEntities: actor not loaded");
 
-				if(!isDeleted(entity))
+				if(!isDeleted(actor))
 				{
-					if(!stageEntityDescription->positionedEntity->loadRegardlessOfPosition)
+					if(!stageActorDescription->positionedActor->loadRegardlessOfPosition)
 					{
 						this->streamingHeadNode = node;
 					}
 
-					stageEntityDescription->internalId = Entity::getInternalId(entity);
+					stageActorDescription->internalId = Actor::getInternalId(actor);
 				}
 			}
 		}
@@ -960,24 +960,24 @@ void Stage::loadInitialEntities()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-Entity Stage::doAddChildEntity(const PositionedEntity* const positionedEntity, bool permanent __attribute__ ((unused)), int16 internalId)
+Actor Stage::doAddChildActor(const PositionedActor* const positionedActor, bool permanent __attribute__ ((unused)), int16 internalId)
 {
-	if(NULL != positionedEntity)
+	if(NULL != positionedActor)
 	{
-		Entity entity = Entity::createEntity(positionedEntity, internalId);
-		ASSERT(entity, "Stage::doAddChildEntity: entity not loaded");
+		Actor actor = Actor::createActor(positionedActor, internalId);
+		ASSERT(actor, "Stage::doAddChildActor: actor not loaded");
 
-		if(!isDeleted(entity))
+		if(!isDeleted(actor))
 		{
-			// create the entity and add it to the world
-			Stage::addChild(this, Container::safeCast(entity));
+			// create the actor and add it to the world
+			Stage::addChild(this, Container::safeCast(actor));
 
-			entity->dontStreamOut = entity->dontStreamOut || permanent;
+			actor->dontStreamOut = actor->dontStreamOut || permanent;
 			
-			Stage::alertOfLoadedEntity(this, entity);
+			Stage::alertOfLoadedActor(this, actor);
 		}
 
-		return entity;
+		return actor;
 	}
 
 	return NULL;
@@ -985,13 +985,13 @@ Entity Stage::doAddChildEntity(const PositionedEntity* const positionedEntity, b
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-bool Stage::onEntityLoaded(ListenerObject eventFirer)
+bool Stage::onActorLoaded(ListenerObject eventFirer)
 {
-	Entity entity = Entity::safeCast(eventFirer);
+	Actor actor = Actor::safeCast(eventFirer);
 
-	if(!isDeleted(entity) && !isDeleted(this->entityLoadingListeners))
+	if(!isDeleted(actor) && !isDeleted(this->actorLoadingListeners))
 	{
-		Stage::alertOfLoadedEntity(this, entity);
+		Stage::alertOfLoadedActor(this, actor);
 	}
 
 	return false;
@@ -999,31 +999,31 @@ bool Stage::onEntityLoaded(ListenerObject eventFirer)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void Stage::alertOfLoadedEntity(Entity entity)
+void Stage::alertOfLoadedActor(Actor actor)
 {
-	if(isDeleted(entity) || isDeleted(this->entityLoadingListeners))
+	if(isDeleted(actor) || isDeleted(this->actorLoadingListeners))
 	{
 		return;
 	}
 
-	for(VirtualNode node = this->entityLoadingListeners->head; NULL != node; node = node->next)
+	for(VirtualNode node = this->actorLoadingListeners->head; NULL != node; node = node->next)
 	{
-		EntityLoadingListener* entityLoadingListener = (EntityLoadingListener*)node->data;
+		ActorLoadingListener* actorLoadingListener = (ActorLoadingListener*)node->data;
 
-		if(!isDeleted(entityLoadingListener->scope))
+		if(!isDeleted(actorLoadingListener->scope))
 		{
-			Entity::addEventListener(entity, entityLoadingListener->scope, entityLoadingListener->callback, kEventEntityLoaded);
+			Actor::addEventListener(actor, actorLoadingListener->scope, actorLoadingListener->callback, kEventActorLoaded);
 		}
 	}
 
-	Entity::fireEvent(entity, kEventEntityLoaded);
-	NM_ASSERT(!isDeleted(entity), "Stage::alertOfLoadedEntity: deleted entity during kEventEntityLoaded");
-	Entity::removeEventListeners(entity, NULL, kEventEntityLoaded);
+	Actor::fireEvent(actor, kEventActorLoaded);
+	NM_ASSERT(!isDeleted(actor), "Stage::alertOfLoadedActor: deleted actor during kEventActorLoaded");
+	Actor::removeEventListeners(actor, NULL, kEventActorLoaded);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-int32 Stage::isEntityInLoadRange(ScreenPixelVector onScreenPosition, const RightBox* rightBox)
+int32 Stage::isActorInLoadRange(ScreenPixelVector onScreenPosition, const RightBox* rightBox)
 {
 	if(NULL == rightBox)
 	{
@@ -1036,11 +1036,11 @@ int32 Stage::isEntityInLoadRange(ScreenPixelVector onScreenPosition, const Right
 			-padding, padding
 		};
 
-		return Entity::isInsideFrustrum(Vector3D::getFromScreenPixelVector(onScreenPosition), helperRightBox);
+		return Actor::isInsideFrustrum(Vector3D::getFromScreenPixelVector(onScreenPosition), helperRightBox);
 	}
 	else
 	{
-		return Entity::isInsideFrustrum(Vector3D::getFromScreenPixelVector(onScreenPosition), *rightBox);
+		return Actor::isInsideFrustrum(Vector3D::getFromScreenPixelVector(onScreenPosition), *rightBox);
 	}
 
 	return true;
@@ -1048,19 +1048,19 @@ int32 Stage::isEntityInLoadRange(ScreenPixelVector onScreenPosition, const Right
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-bool Stage::updateEntityFactory()
+bool Stage::updateActorFactory()
 {
 #ifdef __PROFILE_STREAMING
 	_renderingProcessTimeHelper = 0;
 	timeBeforeProcess = TimerManager::getElapsedMilliseconds(TimerManager::getInstance());
 #endif
 
-	bool preparingEntities = EntityFactory::createNextEntity(this->entityFactory);
+	bool preparingEntities = ActorFactory::createNextActor(this->actorFactory);
 
 #ifdef __PROFILE_STREAMING
 	uint32 processTime = 
 		-_renderingProcessTimeHelper + TimerManager::getElapsedMilliseconds(TimerManager::getInstance()) - timeBeforeProcess;
-	entityFactoryHighestTime = processTime > entityFactoryHighestTime ? processTime : entityFactoryHighestTime;
+	actorFactoryHighestTime = processTime > actorFactoryHighestTime ? processTime : actorFactoryHighestTime;
 #endif
 
 	return preparingEntities;
@@ -1082,37 +1082,37 @@ void Stage::loadPostProcessingEffects()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-StageEntityDescription* Stage::registerEntity(PositionedEntity* positionedEntity)
+StageActorDescription* Stage::registerActor(PositionedActor* positionedActor)
 {
-	ASSERT(positionedEntity, "Stage::registerEntity: null positionedEntity");
+	ASSERT(positionedActor, "Stage::registerActor: null positionedActor");
 
-	StageEntityDescription* stageEntityDescription = new StageEntityDescription;
+	StageActorDescription* stageActorDescription = new StageActorDescription;
 
-	stageEntityDescription->extraInfo = NULL;
-	stageEntityDescription->internalId = -1;
-	stageEntityDescription->positionedEntity = positionedEntity;
+	stageActorDescription->extraInfo = NULL;
+	stageActorDescription->internalId = -1;
+	stageActorDescription->positionedActor = positionedActor;
 
 	Vector3D environmentPosition = Vector3D::zero();
-	stageEntityDescription->rightBox = Entity::getRightBoxFromSpec(stageEntityDescription->positionedEntity, &environmentPosition);
+	stageActorDescription->rightBox = Actor::getRightBoxFromSpec(stageActorDescription->positionedActor, &environmentPosition);
 
-	stageEntityDescription->validRightBox = 
-		(0 != stageEntityDescription->rightBox.x1 - stageEntityDescription->rightBox.x0) 
+	stageActorDescription->validRightBox = 
+		(0 != stageActorDescription->rightBox.x1 - stageActorDescription->rightBox.x0) 
 		|| 
-		(0 != stageEntityDescription->rightBox.y1 - stageEntityDescription->rightBox.y0) 
+		(0 != stageActorDescription->rightBox.y1 - stageActorDescription->rightBox.y0) 
 		|| 
-		(0 != stageEntityDescription->rightBox.z1 - stageEntityDescription->rightBox.z0);
+		(0 != stageActorDescription->rightBox.z1 - stageActorDescription->rightBox.z0);
 
 	fixed_t padding = __PIXELS_TO_METERS(this->stageSpec->streaming.loadPadding);
 	
 	// Bake the padding in the bounding box to save on performance
-	stageEntityDescription->rightBox.x0 -= padding;
-	stageEntityDescription->rightBox.x1 += padding;
-	stageEntityDescription->rightBox.y0 -= padding;
-	stageEntityDescription->rightBox.y1 += padding;
-	stageEntityDescription->rightBox.z0 -= padding;
-	stageEntityDescription->rightBox.z1 += padding;
+	stageActorDescription->rightBox.x0 -= padding;
+	stageActorDescription->rightBox.x1 += padding;
+	stageActorDescription->rightBox.y0 -= padding;
+	stageActorDescription->rightBox.y1 += padding;
+	stageActorDescription->rightBox.z0 -= padding;
+	stageActorDescription->rightBox.z1 += padding;
 
-	return stageEntityDescription;
+	return stageActorDescription;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -1258,15 +1258,15 @@ bool Stage::onSoundReleased(ListenerObject eventFirer __attribute__((unused)))
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-Entity Stage::findChildByInternalId(int16 internalId)
+Actor Stage::findChildByInternalId(int16 internalId)
 {
 	VirtualNode node = this->children->head;
 
 	for(; NULL != node; node = node->next)
 	{
-		if(Entity::getInternalId(Entity::safeCast(node->data)) == internalId)
+		if(Actor::getInternalId(Actor::safeCast(node->data)) == internalId)
 		{
-			return Entity::safeCast(node->data);
+			return Actor::safeCast(node->data);
 		}
 	}
 
@@ -1275,45 +1275,45 @@ Entity Stage::findChildByInternalId(int16 internalId)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void Stage::setFocusEntity(Entity focusEntity)
+void Stage::setFocusActor(Actor focusActor)
 {
-	if(!isDeleted(this->focusEntity))
+	if(!isDeleted(this->focusActor))
 	{
-		Entity::removeEventListener
+		Actor::removeEventListener
 		(
-			this->focusEntity, ListenerObject::safeCast(this), (EventListener)Stage::onFocusEntityDeleted, kEventContainerDeleted
+			this->focusActor, ListenerObject::safeCast(this), (EventListener)Stage::onFocusActorDeleted, kEventContainerDeleted
 		);
 	}
 
-	this->focusEntity = focusEntity;
+	this->focusActor = focusActor;
 
-	if(!isDeleted(this->focusEntity))
+	if(!isDeleted(this->focusActor))
 	{
-		Entity::addEventListener
+		Actor::addEventListener
 		(
-			this->focusEntity, ListenerObject::safeCast(this), (EventListener)Stage::onFocusEntityDeleted, kEventContainerDeleted
+			this->focusActor, ListenerObject::safeCast(this), (EventListener)Stage::onFocusActorDeleted, kEventContainerDeleted
 		);
 
-		Vector3D focusEntityPosition = *Container::getPosition(this->focusEntity);
-		focusEntityPosition.x = __METERS_TO_PIXELS(focusEntityPosition.x);
-		focusEntityPosition.y = __METERS_TO_PIXELS(focusEntityPosition.y);
-		focusEntityPosition.z = __METERS_TO_PIXELS(focusEntityPosition.z);
+		Vector3D focusActorPosition = *Container::getPosition(this->focusActor);
+		focusActorPosition.x = __METERS_TO_PIXELS(focusActorPosition.x);
+		focusActorPosition.y = __METERS_TO_PIXELS(focusActorPosition.y);
+		focusActorPosition.z = __METERS_TO_PIXELS(focusActorPosition.z);
 	}
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-bool Stage::onFocusEntityDeleted(ListenerObject eventFirer __attribute__ ((unused)))
+bool Stage::onFocusActorDeleted(ListenerObject eventFirer __attribute__ ((unused)))
 {
-	if(!isDeleted(this->focusEntity) && ListenerObject::safeCast(this->focusEntity) == eventFirer)
+	if(!isDeleted(this->focusActor) && ListenerObject::safeCast(this->focusActor) == eventFirer)
 	{
-		if(this->focusEntity == Camera::getFocusEntity(Camera::getInstance()))
+		if(this->focusActor == Camera::getFocusActor(Camera::getInstance()))
 		{
-			Camera::setFocusEntity(Camera::getInstance(), NULL);
+			Camera::setFocusActor(Camera::getInstance(), NULL);
 		}
 	}
 
-	this->focusEntity = NULL;
+	this->focusActor = NULL;
 
 	return false;
 }

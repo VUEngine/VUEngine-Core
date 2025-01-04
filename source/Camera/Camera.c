@@ -15,7 +15,7 @@
 #include <CameraMovementManager.h>
 #include <DebugConfig.h>
 #include <DirectDraw.h>
-#include <Entity.h>
+#include <Actor.h>
 #include <Optics.h>
 #include <Printing.h>
 #include <VUEngine.h>
@@ -132,11 +132,11 @@ void Camera::setStageSize(Size size)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void Camera::setFocusEntity(Entity focusEntity)
+void Camera::setFocusActor(Actor focusActor)
 {
 	if(!isDeleted(this->cameraMovementManager))
 	{
-		CameraMovementManager::setFocusEntity(this->cameraMovementManager, focusEntity);
+		CameraMovementManager::setFocusActor(this->cameraMovementManager, focusActor);
 
 		Camera::focus(this);
 	}
@@ -146,11 +146,11 @@ void Camera::setFocusEntity(Entity focusEntity)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-Entity Camera::getFocusEntity()
+Actor Camera::getFocusActor()
 {
 	if(!isDeleted(this->cameraMovementManager))
 	{
-		return CameraMovementManager::getFocusEntity(this->cameraMovementManager);
+		return CameraMovementManager::getFocusActor(this->cameraMovementManager);
 	}
 
 	return NULL;
@@ -158,31 +158,31 @@ Entity Camera::getFocusEntity()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void Camera::unsetFocusEntity()
+void Camera::unsetFocusActor()
 {
 	if(!isDeleted(this->cameraMovementManager))
 	{
-		CameraMovementManager::setFocusEntity(this->cameraMovementManager, NULL);
+		CameraMovementManager::setFocusActor(this->cameraMovementManager, NULL);
 	}
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void Camera::setFocusEntityPositionDisplacement(Vector3D focusEntityPositionDisplacement)
+void Camera::setFocusActorPositionDisplacement(Vector3D focusActorPositionDisplacement)
 {
 	if(!isDeleted(this->cameraMovementManager))
 	{
-		CameraMovementManager::setFocusEntityPositionDisplacement(this->cameraMovementManager, &focusEntityPositionDisplacement);
+		CameraMovementManager::setFocusActorPositionDisplacement(this->cameraMovementManager, &focusActorPositionDisplacement);
 	}
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-Vector3D Camera::getFocusEntityPositionDisplacement()
+Vector3D Camera::getFocusActorPositionDisplacement()
 {
 	if(!isDeleted(this->cameraMovementManager))
 	{
-		return *CameraMovementManager::getFocusEntityPositionDisplacement(this->cameraMovementManager);
+		return *CameraMovementManager::getFocusActorPositionDisplacement(this->cameraMovementManager);
 	}
 
 	return Vector3D::zero();
@@ -322,7 +322,7 @@ void Camera::focus()
 
 	ASSERT(this->cameraMovementManager, "Camera::focus: null cameraMovementManager");
 
-	if(NULL == CameraMovementManager::getFocusEntity(this->cameraMovementManager))
+	if(NULL == CameraMovementManager::getFocusActor(this->cameraMovementManager))
 	{
 		return;
 	}
