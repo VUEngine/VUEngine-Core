@@ -27,9 +27,9 @@ class VirtualList;
 // CLASS' MACROS
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-#define __ENTITY_PENDING_PROCESSING		0x00
+#define __ACTOR_PENDING_PROCESSING		0x00
 #define __LIST_EMPTY					0x01
-#define __ENTITY_PROCESSED				0x02
+#define __ACTOR_PROCESSED				0x02
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DECLARATION

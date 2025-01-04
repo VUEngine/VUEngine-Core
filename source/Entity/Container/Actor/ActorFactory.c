@@ -212,7 +212,7 @@ bool ActorFactory::createNextActor()
 		result = _instantiationPhases[this->instantiationPhase](this);
 	}
 
-	this->instantiationPhase += __ENTITY_PENDING_PROCESSING != result ? 1 : 0;
+	this->instantiationPhase += __ACTOR_PENDING_PROCESSING != result ? 1 : 0;
 
 	return __LIST_EMPTY != result;
 }
@@ -286,10 +286,10 @@ uint32 ActorFactory::instantiateEntities()
 				VirtualList::pushBack(this->entitiesToTransform, positionedActorDescription);
 				VirtualList::removeData(this->entitiesToInstantiate, positionedActorDescription);
 
-				return __ENTITY_PROCESSED;
+				return __ACTOR_PROCESSED;
 			}
 
-			return __ENTITY_PENDING_PROCESSING;
+			return __ACTOR_PENDING_PROCESSING;
 		}
 		else
 		{
@@ -322,7 +322,7 @@ uint32 ActorFactory::instantiateEntities()
 		delete positionedActorDescription;
 	}
 
-	return __ENTITY_PROCESSED;
+	return __ACTOR_PROCESSED;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -348,7 +348,7 @@ uint32 ActorFactory::transformEntities()
 
 			positionedActorDescription->transformed = true;
 
-			return __ENTITY_PENDING_PROCESSING;
+			return __ACTOR_PENDING_PROCESSING;
 		}
 
 		if(!positionedActorDescription->componentsCreated)
@@ -372,7 +372,7 @@ uint32 ActorFactory::transformEntities()
 
 				if(createdComponent)
 				{
-					return __ENTITY_PENDING_PROCESSING;
+					return __ACTOR_PENDING_PROCESSING;
 				}
 			}
 
@@ -387,10 +387,10 @@ uint32 ActorFactory::transformEntities()
 			VirtualList::pushBack(this->entitiesToAddAsChildren, positionedActorDescription);
 			VirtualList::removeData(this->entitiesToTransform, positionedActorDescription);
 
-			return __ENTITY_PROCESSED;
+			return __ACTOR_PROCESSED;
 		}
 
-		return __ENTITY_PENDING_PROCESSING;
+		return __ACTOR_PENDING_PROCESSING;
 	}
 	else
 	{
@@ -404,7 +404,7 @@ uint32 ActorFactory::transformEntities()
 		delete positionedActorDescription;
 	}
 
-	return __ENTITY_PROCESSED;
+	return __ACTOR_PROCESSED;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -426,7 +426,7 @@ uint32 ActorFactory::addChildEntities()
 			Actor::invalidateTransformation(positionedActorDescription->actor);
 			positionedActorDescription->graphicsSynchronized = true;
 
-			return __ENTITY_PENDING_PROCESSING;
+			return __ACTOR_PENDING_PROCESSING;
 		}
 
 		ActorFactory actorFactory = Actor::getActorFactory(positionedActorDescription->actor);
@@ -441,10 +441,10 @@ uint32 ActorFactory::addChildEntities()
 			VirtualList::pushBack(this->spawnedEntities, positionedActorDescription);
 			VirtualList::removeData(this->entitiesToAddAsChildren, positionedActorDescription);
 
-			return __ENTITY_PROCESSED;
+			return __ACTOR_PROCESSED;
 		}
 
-		return __ENTITY_PENDING_PROCESSING;
+		return __ACTOR_PENDING_PROCESSING;
 	}
 	else
 	{
@@ -455,7 +455,7 @@ uint32 ActorFactory::addChildEntities()
 		delete positionedActorDescription;
 	}
 
-	return __ENTITY_PROCESSED;
+	return __ACTOR_PROCESSED;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -481,7 +481,7 @@ uint32 ActorFactory::cleanUp()
 		VirtualList::removeData(this->spawnedEntities, positionedActorDescription);
 		delete positionedActorDescription;
 
-		return __ENTITY_PROCESSED;
+		return __ACTOR_PROCESSED;
 	}
 	else
 	{
@@ -489,7 +489,7 @@ uint32 ActorFactory::cleanUp()
 		delete positionedActorDescription;
 	}
 
-	return __ENTITY_PROCESSED;
+	return __ACTOR_PROCESSED;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

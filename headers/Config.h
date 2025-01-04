@@ -292,8 +292,8 @@
  * load pad must always be lower than unload pad!
  * too close values will put the streaming under heavy usage!
  */
-#define __ENTITY_LOAD_PAD 						256
-#define __ENTITY_UNLOAD_PAD 					(__ENTITY_LOAD_PAD + 56)
+#define __ACTOR_LOAD_PAD 						256
+#define __ACTOR_UNLOAD_PAD 					(__ACTOR_LOAD_PAD + 56)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
