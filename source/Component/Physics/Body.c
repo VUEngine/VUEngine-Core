@@ -143,6 +143,7 @@ void Body::constructor(GameObject owner, const BodySpec* bodySpec)
 	this->awake = false;
 	this->sendMessages = true;
 	this->axisSubjectToGravity = bodySpec->axisSubjectToGravity;
+	this->axisForSynchronizationWithBody = bodySpec->axisForSynchronizationWithBody;
 
 	// clear movement type
 	this->movementType.x = __NO_MOVEMENT;
@@ -617,6 +618,20 @@ void Body::setAxisSubjectToGravity(uint16 axisSubjectToGravity)
 uint16 Body::getAxisSubjectToGravity()
 {
 	return this->axisSubjectToGravity;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void Body::setAxisForSynchronizationWithBody(uint16 axisForSynchronizationWithBody)
+{
+	this->axisForSynchronizationWithBody = axisForSynchronizationWithBody;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+uint16 Body::getAxisForSynchronizationWithBody()
+{
+	return this->axisForSynchronizationWithBody;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

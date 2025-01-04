@@ -45,9 +45,6 @@ void Actor::constructor(const ActorSpec* actorSpec, int16 internalId, const char
 
 	// construct the game state machine
 	this->stateMachine = NULL;
-
-	// This should be moved to the EntitySpec at minimum. 
-	this->axisForSynchronizationWithBody = actorSpec->axisForSynchronizationWithBody;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

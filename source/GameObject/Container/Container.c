@@ -57,7 +57,7 @@ void Container::constructor(int16 internalId, const char* const name)
 	this->ready = false;
 	this->dontStreamOut = false;
 	this->hidden = false;
-	this->axisForSynchronizationWithBody = true;
+	this->axisForSynchronizationWithBody = __ALL_AXIS;
 
 	this->name = NULL;
 	Container::setName(this, name);
@@ -224,12 +224,19 @@ void Container::setDirection(const Vector3D* direction)
 		return;
 	}
 
-	if((int8)__LOCK_AXIS == this->axisForSynchronizationWithBody)
+	int8 axisForSynchronizationWithBody = this->axisForSynchronizationWithBody;
+
+	if(NULL != this->body)
+	{
+		axisForSynchronizationWithBody = Body::getAxisForSynchronizationWithBody(this->body);
+	}
+
+	if((int8)__LOCK_AXIS == axisForSynchronizationWithBody)
 	{
 		return;
 	}
 		
-	if(__NO_AXIS == this->axisForSynchronizationWithBody)
+	if(__NO_AXIS == axisForSynchronizationWithBody)
 	{
 		NormalizedDirection normalizedDirection = Container::getNormalizedDirection(this);
 
@@ -264,7 +271,7 @@ void Container::setDirection(const Vector3D* direction)
 	}
 	else
 	{
-		Rotation localRotation = Container::getRotationFromDirection(this, direction, this->axisForSynchronizationWithBody);
+		Rotation localRotation = Container::getRotationFromDirection(this, direction, axisForSynchronizationWithBody);
 		Container::setLocalRotation(this, &localRotation);
 	}
 }

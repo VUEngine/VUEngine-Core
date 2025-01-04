@@ -65,6 +65,9 @@ typedef struct BodySpec
 	/// Axises on which the body is subject to gravity
 	uint16 axisSubjectToGravity;
 
+	/// Axises around which to rotate the owner when syncronizing with body
+	uint16 axisForSynchronizationWithBody;
+
 } BodySpec;
 
 /// A Body spec that is stored in ROM
@@ -160,6 +163,9 @@ class Body : Component
 	/// Axises on which the body is subject to gravity
 	uint16 axisSubjectToGravity;
 
+	/// Axises around which to rotate the owner when syncronizing with body
+	uint16 axisForSynchronizationWithBody;
+
 	/// Number of cycles to skip physical simulations to slow down physics
 	int8 skipCycles;
 
@@ -254,6 +260,15 @@ class Body : Component
 	/// Retrieve the axises on which the body is subject to gravity.
 	/// @return Flag containing the axises on which the body is subject to gravity
 	uint16 getAxisSubjectToGravity();
+
+	/// Set the axises around which the owner's rotation must be synchronized.
+	/// @param axisForSynchronizationWithBody: Flag containing the axises around which the owner must be subject 
+	/// to rotation synchronization
+	void setAxisForSynchronizationWithBody(uint16 axisForSynchronizationWithBody);
+
+	/// Retrieve the axises around which the owner's rotation must be synchronized.
+	/// @return Flag containing the axises around which the owner is subject to rotation synchronization
+	uint16 getAxisForSynchronizationWithBody();
 
 	/// Set the body's bounciness factor.
 	/// @param bounciness: Value to set as the body's bounciness factor (between 0 and 1)

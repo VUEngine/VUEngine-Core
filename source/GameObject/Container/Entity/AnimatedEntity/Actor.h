@@ -34,9 +34,6 @@ typedef struct ActorSpec
 	/// AnimatedEntity spec
 	AnimatedEntitySpec animatedEntitySpec;
 
-	/// Axises around which to rotate the entity when syncronizing with body
-	uint16 axisForSynchronizationWithBody;
-
 } ActorSpec;
 
 /// An Actor spec that is stored in ROM
