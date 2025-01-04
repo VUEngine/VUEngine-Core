@@ -26,7 +26,6 @@ class ObjectSprite;
 // CLASS' DECLARATION
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-///
 /// Class ObjectSpriteContainer
 ///
 /// Inherits from Sprite

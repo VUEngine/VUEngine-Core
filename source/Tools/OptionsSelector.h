@@ -74,7 +74,6 @@ enum OptionsAlignment
 // CLASS' DECLARATION
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-///
 /// Class Sprite
 ///
 /// Inherits from VisualComponent

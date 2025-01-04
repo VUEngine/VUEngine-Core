@@ -28,7 +28,6 @@ class AnimationController;
 // CLASS' DECLARATION
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-///
 /// Class AnimationCoordinator
 ///
 /// Inherits from ListenerObject

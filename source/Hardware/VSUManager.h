@@ -148,7 +148,6 @@ typedef struct VSUSoundSourceConfiguration
 // CLASS' DECLARATION
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-///
 /// Class VSUManager
 ///
 /// Inherits from Object

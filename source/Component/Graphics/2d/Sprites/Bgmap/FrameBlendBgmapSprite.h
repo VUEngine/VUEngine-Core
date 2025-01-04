@@ -37,7 +37,6 @@ typedef const FrameBlendBgmapSpriteSpec FrameBlendBgmapSpriteROMSpec;
 // CLASS' DECLARATION
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-///
 /// Class FrameBlendBgmapSprite
 ///
 /// Inherits from BgmapSprite

@@ -26,7 +26,6 @@ class VirtualNode;
 // CLASS' DECLARATION
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-///
 /// Class VirtualCircularList
 ///
 /// Inherits from Object

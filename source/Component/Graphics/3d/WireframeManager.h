@@ -33,7 +33,6 @@ extern Rotation _previousCameraInvertedRotationBuffer __INITIALIZED_GLOBAL_DATA_
 // CLASS' DECLARATION
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-///
 /// Class WireframeManager
 ///
 /// Inherits from ComponentManager

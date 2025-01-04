@@ -37,7 +37,6 @@ typedef struct UserAnimatedEntity
 // CLASS' DECLARATION
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-///
 /// Class AnimationInspector
 ///
 /// Inherits from Tool

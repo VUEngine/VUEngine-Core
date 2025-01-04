@@ -43,7 +43,6 @@ typedef const BgmapAnimatedSpriteSpec BgmapAnimatedSpriteROMSpec;
 // CLASS' DECLARATION
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-///
 /// Class BgmapAnimatedSprite
 ///
 /// Inherits from BgmapSprite

@@ -41,7 +41,6 @@ enum ProfilerLapTypes
 // CLASS' DECLARATION
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-///
 /// Class SoundTest
 ///
 /// Inherits from ListenerObject

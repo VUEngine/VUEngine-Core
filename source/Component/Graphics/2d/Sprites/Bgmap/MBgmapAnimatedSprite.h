@@ -36,7 +36,6 @@ typedef const MBgmapAnimatedSpriteSpec MBgmapAnimatedSpriteROMSpec;
 // CLASS' DECLARATION
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-///
 /// Class FrameBlendBgmapSprite
 ///
 /// Inherits from BgmapSprite

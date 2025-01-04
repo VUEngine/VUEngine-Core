@@ -47,7 +47,6 @@ typedef const ActorSpec ActorROMSpec;
 // CLASS' DECLARATION
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-///
 /// Class Actor
 ///
 /// Inherits from AnimatedEntity

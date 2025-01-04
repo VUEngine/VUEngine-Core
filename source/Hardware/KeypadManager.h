@@ -96,7 +96,6 @@ typedef struct UserInput
 // CLASS' DECLARATION
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-///
 /// Class KeypadManager
 ///
 /// Inherits from ListenerObject

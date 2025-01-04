@@ -32,7 +32,6 @@ enum ClockPrintPrecision
 // CLASS' DECLARATION
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-///
 /// Class Clock
 ///
 /// Inherits from ListenerObject

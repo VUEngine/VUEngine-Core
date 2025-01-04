@@ -27,7 +27,6 @@ class Entity;
 // CLASS' DECLARATION
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-///
 /// Class CameraMovementManager
 ///
 /// Inherits from ListenerObject

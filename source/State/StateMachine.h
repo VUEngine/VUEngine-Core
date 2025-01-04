@@ -41,7 +41,6 @@ enum StateOperations
 // CLASS'S DECLARATION
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-///
 /// Class StateMachine
 ///
 /// Inherits from ListenerObject

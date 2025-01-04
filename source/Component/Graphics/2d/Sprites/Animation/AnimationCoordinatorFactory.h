@@ -29,7 +29,6 @@ class ListenerObject;
 // CLASS' DECLARATION
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-///
 /// Class AnimationCoordinator
 ///
 /// Inherits from ListenerObject

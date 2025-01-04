@@ -212,7 +212,6 @@ typedef struct StageEntityDescription
 // CLASS' DECLARATION
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-///
 /// Class Stage
 ///
 /// Inherits from Container

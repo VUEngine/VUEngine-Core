@@ -73,7 +73,6 @@ typedef const SoundSpec SoundROMSpec;
 // CLASS' DECLARATION
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-///
 /// Class Sound
 ///
 /// Inherits from ListenerObject

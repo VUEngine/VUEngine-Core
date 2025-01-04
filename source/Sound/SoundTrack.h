@@ -249,7 +249,6 @@ typedef const SoundTrackSpec SoundTrackROMSpec;
 // CLASS' DECLARATION
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-///
 /// Class SoundTrack
 ///
 /// Inherits from Object

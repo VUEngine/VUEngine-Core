@@ -46,7 +46,6 @@ typedef const TextObjectSpriteSpec TextObjectSpriteROMSpec;
 // CLASS' DECLARATION
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-///
 /// Class TextObjectSprite
 ///
 /// Inherits from Sprite

@@ -40,7 +40,6 @@ typedef const BehaviorSpec BehaviorROMSpec;
 // CLASS' DECLARATION
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-///
 /// Class Behavior
 ///
 /// Inherits from Component

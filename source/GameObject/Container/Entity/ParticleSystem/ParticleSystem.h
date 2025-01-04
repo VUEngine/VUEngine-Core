@@ -82,7 +82,6 @@ typedef const ParticleSystemSpec ParticleSystemROMSpec;
 // CLASS' DECLARATION
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-///
 /// Class ParticleSystem
 ///
 /// Inherits from Entity

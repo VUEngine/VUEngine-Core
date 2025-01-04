@@ -43,7 +43,6 @@ typedef const LineSpec LineROMSpec;
 // CLASS' DECLARATION
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-///
 /// Class Line
 ///
 /// Inherits from Wireframe

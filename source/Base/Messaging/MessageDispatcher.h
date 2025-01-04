@@ -49,7 +49,6 @@ typedef struct DelayedMessage
 // CLASS' DECLARATION
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-///
 /// Class MessageDispatcher
 ///
 /// Inherits from Object

@@ -273,7 +273,6 @@ static ObjectAttributes* const _objectAttributesBaseAddress =
 // CLASS' DECLARATION
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-///
 /// Class VIPManager
 ///
 /// Inherits from ListenerObject

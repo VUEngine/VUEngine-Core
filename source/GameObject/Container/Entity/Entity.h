@@ -100,7 +100,6 @@ typedef const PositionedEntity PositionedEntityROMSpec;
 // CLASS' DECLARATION
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-///
 /// Class Entity
 ///
 /// Inherits from Container

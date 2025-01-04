@@ -40,7 +40,6 @@ typedef const AsteriskSpec AsteriskROMSpec;
 // CLASS' DECLARATION
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-///
 /// Class Asterisk
 ///
 /// Inherits from Wireframe

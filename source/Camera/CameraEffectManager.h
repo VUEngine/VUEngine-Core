@@ -43,7 +43,6 @@ enum CameraFX
 // CLASS' DECLARATION
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-///
 /// Class CameraEffectManager
 ///
 /// Inherits from ListenerObject

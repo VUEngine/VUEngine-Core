@@ -40,7 +40,6 @@ class VirtualList;
 // CLASS' DECLARATION
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-///
 /// Class SpriteManager
 ///
 /// Inherits from ComponentManager

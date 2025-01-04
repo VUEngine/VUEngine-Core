@@ -68,7 +68,6 @@ typedef struct ComponentSpec
 // CLASS' DECLARATION
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-///
 /// Class Component
 ///
 /// Inherits from ListenerObject

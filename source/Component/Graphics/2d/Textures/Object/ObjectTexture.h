@@ -38,7 +38,6 @@ typedef const ObjectTextureSpec ObjectTextureROMSpec;
 // CLASS' DECLARATION
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-///
 /// Class BgmapTexture
 ///
 /// Inherits from Texture

@@ -34,7 +34,6 @@ class Clock;
 // CLASS' DECLARATION
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-///
 /// Class ColliderManager
 ///
 /// Inherits from ComponentManager

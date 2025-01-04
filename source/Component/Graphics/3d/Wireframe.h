@@ -62,7 +62,6 @@ typedef const WireframeSpec WireframeROMSpec;
 // CLASS' DECLARATION
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-///
 /// Class Wireframe
 ///
 /// Inherits from VisualComponent

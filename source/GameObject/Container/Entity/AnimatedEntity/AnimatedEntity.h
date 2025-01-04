@@ -44,7 +44,6 @@ typedef const AnimatedEntitySpec AnimatedEntityROMSpec;
 // CLASS' DECLARATION
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-///
 /// Class AnimatedEntity
 ///
 /// Inherits from Entity

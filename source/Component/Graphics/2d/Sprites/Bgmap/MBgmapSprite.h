@@ -54,7 +54,6 @@ typedef const MBgmapSpriteSpec MBgmapSpriteROMSpec;
 // CLASS' DECLARATION
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-///
 /// Class MBgmapSprite
 ///
 /// Inherits from MBgmapSprite

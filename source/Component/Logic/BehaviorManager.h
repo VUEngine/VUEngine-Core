@@ -34,7 +34,6 @@ class VirtualList;
 // CLASS' DECLARATION
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-///
 /// Class BehaviorManager
 ///
 /// Inherits from ComponentManager

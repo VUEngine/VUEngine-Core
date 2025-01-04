@@ -37,7 +37,6 @@ typedef const PrintingSpriteSpec PrintingSpriteROMSpec;
 // CLASS' DECLARATION
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-///
 /// Class BgmapTexture
 ///
 /// Inherits from Texture

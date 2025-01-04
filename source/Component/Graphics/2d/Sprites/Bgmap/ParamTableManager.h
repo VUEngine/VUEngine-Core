@@ -95,7 +95,6 @@ typedef struct ParamTableFreeData
 // CLASS' DECLARATION
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-///
 /// Class ParamTableManager
 ///
 /// Inherits from Object

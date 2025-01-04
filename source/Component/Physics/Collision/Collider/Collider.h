@@ -172,7 +172,6 @@ typedef const ColliderSpec ColliderROMSpec;
 // CLASS' DECLARATION
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-///
 /// Class Collider
 ///
 /// Inherits from Component

@@ -32,7 +32,6 @@ typedef const BgmapTextureSpec BgmapTextureROMSpec;
 // CLASS' DECLARATION
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-///
 /// Class BgmapTexture
 ///
 /// Inherits from Texture

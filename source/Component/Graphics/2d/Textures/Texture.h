@@ -76,7 +76,6 @@ typedef const TextureSpec TextureROMSpec;
 // CLASS' DECLARATION
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-///
 /// Class CharSet
 ///
 /// Inherits from ListenerObject

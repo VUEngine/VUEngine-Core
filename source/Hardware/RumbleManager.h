@@ -106,7 +106,6 @@ typedef const RumbleEffectSpec RumbleEffectROMSpec;
 // CLASS' DECLARATION
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-///
 /// Class RumbleManager
 ///
 /// Inherits from Object

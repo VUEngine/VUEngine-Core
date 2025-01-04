@@ -26,7 +26,6 @@ class Telegram;
 // CLASS' DECLARATION
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-///
 /// Class CommunicationManager
 ///
 /// Inherits from ListenerObject

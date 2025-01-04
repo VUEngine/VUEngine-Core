@@ -40,7 +40,6 @@ enum OffsetIndex
 // CLASS' DECLARATION
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-///
 /// Class BgmapTextureManager
 ///
 /// Inherits from Texture

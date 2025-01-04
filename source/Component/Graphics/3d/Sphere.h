@@ -43,7 +43,6 @@ typedef const SphereSpec SphereROMSpec;
 // CLASS' DECLARATION
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-///
 /// Class Sphere
 ///
 /// Inherits from Wireframe

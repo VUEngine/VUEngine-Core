@@ -67,7 +67,6 @@ typedef const ParticleSpec ParticleROMSpec;
 // CLASS' DECLARATION
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-///
 /// Class Particle
 ///
 /// Inherits from GameObject

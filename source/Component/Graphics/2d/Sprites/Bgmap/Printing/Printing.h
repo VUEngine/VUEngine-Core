@@ -171,7 +171,6 @@ typedef const FontData FontROMData;
 // CLASS' DECLARATION
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-///
 /// Class Printing
 ///
 /// Inherits from ListenerObject

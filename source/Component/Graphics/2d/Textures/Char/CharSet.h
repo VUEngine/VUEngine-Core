@@ -65,7 +65,6 @@ typedef const CharSetSpec CharSetROMSpec;
 // CLASS' DECLARATION
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-///
 /// Class CharSet
 ///
 /// Inherits from ListenerObject

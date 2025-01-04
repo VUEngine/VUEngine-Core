@@ -77,7 +77,6 @@ typedef const AnimationFunction AnimationFunctionROMSpec;
 // CLASS' DECLARATION
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-///
 /// Class VirtualNode
 ///
 /// Inherits from Object

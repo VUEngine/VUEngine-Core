@@ -49,7 +49,6 @@ typedef const SpriteSpec SpriteROMSpec;
 // CLASS' DECLARATION
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-///
 /// Class Sprite
 ///
 /// Inherits from VisualComponent

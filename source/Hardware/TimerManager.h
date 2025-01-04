@@ -69,7 +69,6 @@ enum TimerResolutionScales
 // CLASS' DECLARATION
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-///
 /// Class TimerManager
 ///
 /// Inherits from Object
