@@ -17,13 +17,24 @@
 /// This file contains the core of the OOP support
 
 /// Convert a literal into a string.
+/// @param a: Literal to stringify
 #define __MAKE_STRING(a) #a
 
 /// Concatenate two strings
+/// @param str_1: String to concatenate at the start
+/// @param str_2: String to concatenate at the end
+/// @return Concatenated string: str_1str_2
 #define __MAKE_CONCAT(str_1,str_2) str_1 ## str_2
+
+/// Concatenate two strings
+/// @param str_1: String to concatenate at the start
+/// @param str_2: String to concatenate at the end
+/// @return Concatenated string: str_1str_2
 #define __CUSTOM_CONCAT(str_1,str_2) __MAKE_CONCAT(str_1,str_2)
 
 /// Remove class name printing in shipping releases.
+/// @param value: Class' name string
+/// @return Stringified value
 #ifdef __SHIPPING
 #define __OBFUSCATE_NAME(value)			("ClassName")
 #else
@@ -41,6 +52,9 @@
 #define __OBJECT_MEMORY_FOOT_PRINT		(uint16)(__MEMORY_USED_BLOCK_FLAG + sizeof(uint16) * 8)
 
 /// Define the provided class' new method
+/// @param ClassName: Name of the class to define
+/// @param ...: Class' new allocator's parameters
+/// @return Method definitions of the provided class
 #define __CLASS_NEW_DEFINITION(ClassName, ...)																							\
 																																		\
 		/* define the method */																											\
@@ -63,6 +77,9 @@
 			ASSERT(this, __MAKE_STRING(ClassName) "::new: not allocated");																\
 
 /// End class's new method's definition
+/// @param ClassName: Name of the class to define
+/// @param ...: Class' new allocator's arguments
+/// @return Method definitions of the provided class
 #define __CLASS_NEW_END(ClassName, ...)																									\
 																																		\
 			/* set the vtable pointer */																								\
@@ -85,19 +102,27 @@
 #define	__DYNAMIC_STRUCT_PAD	sizeof(uint32)
 
 /// Our version of C++' new for object allocation
+/// @param ClassName: Name of the class to instantiate
+/// @param ...: Class' constructor arguments
+/// @return Call to ClassName::new 
 #define __NEW(ClassName, ...)																											\
 																																		\
 		/* call class's new implementation */																							\
 		ClassName ## _new(__VA_ARGS__)																									\
 
 /// Our version of C++' new for dynamic struct allocation
-#define __NEW_BASIC(ClassName)																											\
+/// @param StructName: Name of the struct to define
+/// @param ...: Class' new allocator's parameters
+/// @return Call to allocation request to the MemoryPool 
+#define __NEW_BASIC(StructName)																											\
 																																		\
 		/* allocate data */																												\
-		(ClassName*)((uint32)MemoryPool_allocate(																						\
-			sizeof(ClassName) + __DYNAMIC_STRUCT_PAD) + __DYNAMIC_STRUCT_PAD);															\
+		(StructName*)((uint32)MemoryPool_allocate(																						\
+			sizeof(StructName) + __DYNAMIC_STRUCT_PAD) + __DYNAMIC_STRUCT_PAD);															\
 
 /// Our version of C++' delete (calls virtual destructor)
+/// @param objectToDelete: Object to delete
+/// @return Call to ClassName::destructor or deallocation request to MemoryPool 
 #ifndef __BYPASS_MEMORY_MANAGER_WHEN_DELETING
 #define __DELETE(objectToDelete)																										\
 	{																																	\
@@ -151,26 +176,41 @@
 #endif
 
 /// Call the base class' constructor.
+/// @param BaseClass: Name of base class whose constructor must be called
+/// @param ...: Base class' constructor's parameters
+/// @return Call to the base class' constructor
 #define __CONSTRUCT_BASE(BaseClass, ...)																								\
 																																		\
 		BaseClass ## _constructor((BaseClass)__VA_ARGS__);																				\
 
 /// Call the base class' destructor.
+/// @return Call to the class' destructor
 #define __DESTROY_BASE																													\
 																																		\
 		_baseDestructor(__SAFE_CAST(Object, this));																						\
 
 /// Retrieve the virtual method's address of a method according to the provided object.
+/// @param ClassName: Class' name
+/// @param MethodName: Method whose address is to be retrieved
+/// @param object: Object on which to call the method
+/// @return Address of the virtual method
 #define __VIRTUAL_CALL_ADDRESS(ClassName, MethodName, object)																			\
 																																		\
 		/* call derived implementation */																								\
 		(((struct ClassName ## _vTable*)((*((void**)object))))->MethodName)																\
 
 /// Helper macros to work around the extra comma in variadic macros
+/// @param object: Object to rewrite
+/// @param ...: Arguments to throw away
+/// @return Sanitized arguments for a virtual method call
 #define __VIRTUAL_CALL_FIRST_HELPER(object, ...) object
 #define __VIRTUAL_CALL_OBJECT(...) __VIRTUAL_CALL_FIRST_HELPER(__VA_ARGS__, throwaway)
 
-/// Call a virtual method .
+/// Call a virtual method.
+/// @param ClassName: Class name
+/// @param MethodName: Method to call
+/// @param ...: Arguments to pass to the method
+/// @return Call to virtual method
 #define __VIRTUAL_CALL(ClassName, MethodName, ...)																						\
 																																		\
 		((((struct ClassName ## _vTable*)((*((void**)__VIRTUAL_CALL_OBJECT(__VA_ARGS__)))))->MethodName))								\
@@ -178,7 +218,11 @@
 			(ClassName)__VA_ARGS__																										\
 		)
 
-/// Call the method's base implementation
+/// Call the method's base implementation.
+/// @param BaseClassName: Base class' name
+/// @param MethodName: Method to call
+/// @param ...: Arguments to pass to the method
+/// @return Call to the method's base implementation
 #define __CALL_BASE_METHOD(BaseClassName, MethodName, ...)																				\
 																																		\
 		BaseClassName ## _vTable.MethodName																								\
@@ -187,6 +231,9 @@
 		)
 
 /// Cast an object to the provided class. It decays to an usafe C cast in non debug build modes.
+/// @param ClassName: Class to cast to
+/// @param object: Object to cast
+/// @return Cast result: NULL or valid pointer
 #ifdef __DEBUG
 #define __SAFE_CAST(ClassName, object)																									\
 																																		\
@@ -197,39 +244,64 @@
 
 /// Check if an object is an instance of a class that overrides the provided method.
 /// This is used to bypass late dispatching when performance is at premium.
+/// @param ClassName: Class name
+/// @param object: Oject to check if overrides the method
+/// @param MethodName: Method to check if overrode
+/// @return True if the object's class overrides the provided method; false otherwise
 #define __OVERRIDES_METHOD(ClassName, object, MethodName) 																				\
 																																		\
 		(void (*)())&ClassName ## _ ## MethodName != 																					\
 			(void (*)())__VIRTUAL_CALL_ADDRESS(ClassName, MethodName, object)
 
 /// Check if an object is not destroyed.
+/// @param object: Oject to check
+/// @return True if the object is not NULL nor destroyed; false otherwise
 #define __IS_OBJECT_ALIVE(object)																										\
 																																		\
 		(object && (__MEMORY_FREE_BLOCK_FLAG != *(uint32*)((uint32)object - __DYNAMIC_STRUCT_PAD)))										\
 
 /// Check if an object is not destroyed.
+/// @param object: Oject to check
+/// @return True if the object is not NULL nor destroyed; false otherwise
 #define isDeleted(object)					(!__IS_OBJECT_ALIVE(object))
 
 /// Retrieve the class pointer of the class that he provided object is an instance of. 
+/// @param ClassName: Class name to retrieve its type
+/// @return Pointer to the class' identifying function pointer
 #define typeofclass(ClassName)		((ClassPointer)&ClassName ## _getBaseClass)
 
 /// Try to cast an object to the  provided class.
+/// @param ClassName: Class to cast to
+/// @param object: Oject to cast
+/// @return Cast result: NULL or valid pointer
 #define __GET_CAST(ClassName, object)																									\
 																																		\
 		(ClassName)Object_getCast((Object)object,																						\
 			(ClassPointer)&ClassName ## _getBaseClass, NULL)																			\
 
 /// Check if an object is an instance of the provided class by comparing virtual table pointers.
+/// @param ClassName: Class to check
+/// @param object: Oject to check
+/// @return True if the object is an instance of the provided class
 #define __IS_INSTANCE_OF(ClassName, object)																								\
 																																		\
 		(void*)&ClassName ## _vTable == (void*)*((void**)object)																		\
 
 /// Declare a method as virtual.
+/// @param ClassName: Class that owns the method
+/// @param ReturnType: Method's return type
+/// @param MethodName: Method to declare as virtual
+/// @param ...: Method's parameters
+/// @return Virtual method declaration
 #define __VIRTUAL_DEC(ClassName, ReturnType, MethodName, ...)																			\
 																																		\
 		ReturnType (*MethodName)(__VA_ARGS__)																							\
 
 /// Override a virtual method
+/// @param ClassVTable: Class' virtual table's pointer
+/// @param ClassName: Class that owns the method
+/// @param MethodName: Method to override
+/// @return Virtual method override
 #define __VIRTUAL_SET(ClassVTable, ClassName, MethodName)																				\
 		{																																\
 			/* Use a temporary pointer to avoid illegal cast between pointers to data and functions */									\
@@ -238,6 +310,9 @@
 		}
 
 /// Mutate a class' method.
+/// @param ClassName: Class that owns the method
+/// @param MethodName: Method to mutate
+/// @param NewMethod: Method's new implementation
 #define __CLASS_MUTATE_METHOD(ClassName, MethodName, NewMethod)																			\
 		{																																\
 			/* Use a temporary pointer to avoid illegal cast between pointers to data and functions */									\
@@ -246,6 +321,8 @@
 		}
 
 /// Check a class's vtable's integrity.
+/// @param ClassName: Class whose virtual table is to being checked
+/// @return Implementation for the class' virtual table's check
 #define __CHECK_VTABLE_DEFINITION(ClassName)																							\
 																																		\
 		void __attribute__ ((noinline)) ClassName ## _checkVTable()																		\
@@ -269,6 +346,9 @@
 #endif
 
 /// Configure a class's vtable
+/// @param ClassName: Class whose virtual table is to being configured
+/// @param BaseClassName: Base class' from which the class inherits
+/// @return Implementation of the class' virtual table's configuration method
 #define __SET_VTABLE_DEFINITION(ClassName, BaseClassName)																				\
 																																		\
 		/* define the static method */																									\
@@ -301,6 +381,8 @@
 		}																																\
 
 /// Declare a class's vtable.
+/// @param ClassName: Class whose virtual table is to being declared
+/// @return Class' virtual table's declaration
 #define __VTABLE(ClassName)																												\
 																																		\
 		/* declare the vtable struct */																									\
@@ -323,6 +405,8 @@
 		extern struct ClassName ## _vTable ClassName ## _vTable																			\
 
 /// Forward declare a class.
+/// @param ClassName: Class being forward declared
+/// @return Class' forward declaration
 #define __FORWARD_CLASS(ClassName)																										\
 		/* declare a pointer */																											\
 		typedef struct ClassName ## _str* ClassName																						\
@@ -331,6 +415,8 @@
 typedef void* (*(*ClassPointer)(void*))(void*);
 
 /// Declare a class.
+/// @param ClassName: Class being declared
+/// @return Class' declaration
 #define __CLASS(ClassName)																												\
 																																		\
 		/* declare vtable */																											\
@@ -355,6 +441,8 @@ typedef void* (*(*ClassPointer)(void*))(void*);
 		void ClassName ## _restoreMethods()																								\
 
 /// Copy a class' declaration to make its member accessible to a compilation unit.
+/// @param ClassName: Class being friended
+/// @return Class' struct declaration
 #define __CLASS_FRIEND_DEFINITION(ClassName)																							\
 		typedef struct ClassName ## _str																								\
 		{																																\
@@ -365,6 +453,8 @@ typedef void* (*(*ClassPointer)(void*))(void*);
 		} ClassName ## _str 																											\
 
 /// Retrieve the memory footprint of a give class' instances.
+/// @param ClassName: Class whose instances' size is to be retrieved
+/// @return Implementation of the class' method to retrive the size of its instances
 #ifndef __RELEASE
 #define __GET_INSTANCE_SIZE_DEFINITION(ClassName)																						\
 																																		\
@@ -377,6 +467,9 @@ typedef void* (*(*ClassPointer)(void*))(void*);
 #endif
 
 /// Define the fundamental methods of a class.
+/// @param ClassName: Class whose methods are defined
+/// @param BaseClassName: Base class' from which the class inherits
+/// @return Class' fundamental method's definition
 #define __CLASS_DEFINITION(ClassName, BaseClassName)																					\
 																																		\
 		typedef struct ClassName ## _str																								\
@@ -437,14 +530,20 @@ typedef void* (*(*ClassPointer)(void*))(void*);
 		__CHECK_VTABLE_DEFINITION(ClassName)																							\
 
 /// Retrieve the name of the class of an object.
+/// @param object: Object from which to retrieve its class' name
+/// @return Call to the method to retrieve the object's class' name
 #define __GET_CLASS_NAME(object)																										\
 																																		\
 		__VIRTUAL_CALL(Object, getClassName, (Object)object)
 
 /// Replace a class name by the pointer of its instances allocator.
+/// @param ClassName: Class from which to retrieve its allocator's address
+/// @return Address of the class' allocator
 #define __TYPE(ClassName)								(AllocatorPointer)&ClassName ## _new
 
 /// Cast the provided pointer to AllocatorPointer.
+/// @param allocatorPointer: Pointer to be casted
+/// @return Casted pointer
 #define __ALLOCATOR_TYPE(allocatorPointer)				(AllocatorPointer)allocatorPointer
 
 /// Singletons' construction state flags
@@ -453,6 +552,8 @@ typedef void* (*(*ClassPointer)(void*))(void*);
 #define __SINGLETON_CONSTRUCTED				2
 
 /// Defines a singleton class' fundamental methods.
+/// @param ClassName: Singleton class' name to define
+/// @return Implementation of a singleton class' fundamental methods
 #define __SINGLETON(ClassName)																											\
 																																		\
 		/* declare the static instance */																								\
@@ -517,6 +618,8 @@ typedef void* (*(*ClassPointer)(void*))(void*);
 		void ClassName ## dummyMethodSingleton()
 
 /// Call's the singleton's base class' destructor and allows a new instantiation.
+/// @return Code to call the singleton class' base's destructor and to pull down the flag that prevents
+/// a new instance being created
 #define __SINGLETON_DESTROY																												\
 																																		\
 		/* destroy super object */																										\
@@ -526,6 +629,8 @@ typedef void* (*(*ClassPointer)(void*))(void*);
 		_singletonConstructed = __SINGLETON_NOT_CONSTRUCTED;																			\
 
 /// Defines a dynamically allocated singleton class' fundamental methods.
+/// @param ClassName: Singleton class' name to define
+/// @return Implementation of a singleton class' fundamental methods
 #define __SINGLETON_DYNAMIC(ClassName)																									\
 																																		\
 		/* declare the static pointer to instance */																					\
