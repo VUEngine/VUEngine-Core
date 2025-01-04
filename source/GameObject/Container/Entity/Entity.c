@@ -267,7 +267,8 @@ static void Entity::getRightBoxFromChildrenSpec
 		}
 	}	
 
-	Vector3D globalPosition = Vector3D::sum(*environmentPosition, Vector3D::getFromScreenPixelVector(positionedEntity->onScreenPosition));
+	Vector3D globalPosition = 
+		Vector3D::sum(*environmentPosition, Vector3D::getFromScreenPixelVector(positionedEntity->onScreenPosition));
 
 	if((0 == rightBox->x0) || (globalPosition.x + myRightBox.x0 < rightBox->x0))
 	{
@@ -562,7 +563,10 @@ void Entity::addChildEntitiesDeferred(const PositionedEntity* childrenSpecs)
 	{
 		this->entityFactory = new EntityFactory();
 
-		Entity::addEventListener(this, ListenerObject::safeCast(this), (EventListener)Entity::onEntityLoadedDeferred, kEventEntityLoaded);
+		Entity::addEventListener
+		(
+			this, ListenerObject::safeCast(this), (EventListener)Entity::onEntityLoadedDeferred, kEventEntityLoaded
+		);
 	}
 
 	for(int32 i = 0; NULL != childrenSpecs[i].entitySpec; i++)
