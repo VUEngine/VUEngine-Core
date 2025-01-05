@@ -307,6 +307,15 @@ uint8 Camera::getTransformationFlags()
 
 void Camera::focus()
 {
+	ASSERT(this->cameraMovementManager, "Camera::focus: null cameraMovementManager");
+
+	if(NULL == CameraMovementManager::getFocusActor(this->cameraMovementManager))
+	{
+		return;
+	}
+
+	// This was added in commit that reads: 3982a037c69de5ac95626e5d6067edbf744cb68a
+	// "Camera transformation flags have to be taken down after one frame to account for the async rendering."
 	static bool takeTransformationFlagsDown = false;
 
 	if(takeTransformationFlagsDown)
@@ -318,13 +327,6 @@ void Camera::focus()
 	if(this->transformationFlags)
 	{
 		takeTransformationFlagsDown = true;
-	}
-
-	ASSERT(this->cameraMovementManager, "Camera::focus: null cameraMovementManager");
-
-	if(NULL == CameraMovementManager::getFocusActor(this->cameraMovementManager))
-	{
-		return;
 	}
 
 	this->lastDisplacement = this->position;

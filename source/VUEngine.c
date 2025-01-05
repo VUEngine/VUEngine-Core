@@ -584,7 +584,6 @@ void VUEngine::gameFrameStarted(uint16 gameFrameDuration)
 {
 	this->gameFrameStarted = true;
 
-	// Focus the camera once collisions are resolved
 	VUEngine::focusCamera(this);
 
 	GameState gameState = VUEngine::getCurrentState(this);
