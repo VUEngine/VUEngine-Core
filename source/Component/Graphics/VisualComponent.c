@@ -274,6 +274,11 @@ bool VisualComponent::play
 	const AnimationFunction* animationFunctions[], const char* animationName, ListenerObject scope, EventListener callback
 )
 {
+	if(NULL == animationFunctions || NULL == animationName)
+	{
+		return false;
+	}
+
 	ASSERT(NULL != animationFunctions, "VisualComponent::play: null animationFunctions");
 	ASSERT(NULL != animationName, "VisualComponent::play: null animationName");
 

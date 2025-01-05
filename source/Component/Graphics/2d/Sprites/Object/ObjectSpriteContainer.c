@@ -376,11 +376,9 @@ void ObjectSpriteContainer::renderSprites(bool evenFrame, bool updateAnimations)
 			// but calling ObjectSprite::getTotalObjects is too costly
 			if
 			(
-				ObjectSprite::render
-				(
-					objectSprite, _objectIndex - (objectSprite->totalObjects - 1), 
-					updateAnimations) == _objectIndex - (objectSprite->totalObjects - 1
-				)
+				ObjectSprite::render(objectSprite, _objectIndex - (objectSprite->totalObjects - 1), updateAnimations) 
+				== 
+				_objectIndex - (objectSprite->totalObjects - 1)
 			)
 			{
 				_objectIndex -= objectSprite->totalObjects;

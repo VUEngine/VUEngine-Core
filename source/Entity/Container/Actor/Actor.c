@@ -746,6 +746,11 @@ void Actor::playAnimation(const char* animationName)
 {
 	this->playingAnimationName = animationName;
 
+	if(NULL == animationName)
+	{
+		return;
+	}
+
 	SpriteManager::propagateCommand
 	(
 		SpriteManager::getInstance(), cVisualComponentCommandPlay, Entity::safeCast(this), 
