@@ -293,7 +293,7 @@ static uint16 ComponentManager::getComponentsCount(Entity owner, uint32 componen
 		{
 			ComponentManager componentManager = ComponentManager::getManager(i);
 
-			if(NULL == componentManager)
+			if(NULL == componentManager || NULL == componentManager->components)
 			{
 				continue;
 			}
