@@ -720,7 +720,7 @@ void AnimationInspector::createSprite()
 
 	SpriteSpec* spriteSpec = 
 		(SpriteSpec*)_userAnimatedActors[OptionsSelector::getSelectedOption(this->actorSelector)].
-			actorSpec.componentSpecs[OptionsSelector::getSelectedOption(this->spriteSelector)];
+			actorSpec->componentSpecs[OptionsSelector::getSelectedOption(this->spriteSelector)];
 
 	NM_ASSERT(spriteSpec, "AnimationInspector::createSprite: null spriteSpec");
 
@@ -764,7 +764,7 @@ void AnimationInspector::createSpriteSelector()
 		NULL 
 		!= 
 		_userAnimatedActors[OptionsSelector::getSelectedOption(this->actorSelector)].
-			actorSpec.componentSpecs[i]
+			actorSpec->componentSpecs[i]
 	)
 	{
 		Option* option = new Option;

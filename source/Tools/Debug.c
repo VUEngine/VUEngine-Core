@@ -56,7 +56,6 @@
 #include <BodyManager.h>
 #include <Printing.h>
 #include <Collider.h>
-#include <SolidParticle.h>
 #include <SoundManager.h>
 #include <Sphere.h>
 #include <Sprite.h>
@@ -501,15 +500,15 @@ void Debug::memoryStatusShowZeroPage(int32 increment __attribute__ ((unused)), i
 
 	ClassSizeData classesSizeData[] =
 	{
-		{&VUEngine_getObjectSize, 				"VUEngine"},
-		{&DirectDraw_getObjectSize, 			"DirectDraw"},
-		{&Error_getObjectSize, 					"Error"},
-		{&FrameRate_getObjectSize, 				"FrameRate"},
-		//{&I18n_getObjectSize, 				"I18n"},
-		{&MemoryPool_getObjectSize, 			"MemoryPool"},
-		{&MessageDispatcher_getObjectSize, 		"MessageDispatcher"},
-		{&Printing_getObjectSize, 				"Printing"},
-		{&Camera_getObjectSize, 				"Camera"},
+		{&VUEngine_getObjectSize, 						"VUEngine"},
+		{&DirectDraw_getObjectSize, 					"DirectDraw"},
+		{&Error_getObjectSize, 							"Error"},
+		{&FrameRate_getObjectSize, 						"FrameRate"},
+		//{&I18n_getObjectSize, 						"I18n"},
+		{&MemoryPool_getObjectSize, 					"MemoryPool"},
+		{&MessageDispatcher_getObjectSize, 				"MessageDispatcher"},
+		{&Printing_getObjectSize, 						"Printing"},
+		{&Camera_getObjectSize, 						"Camera"},
 	};
 
 	Debug::printClassSizes(this, classesSizeData, sizeof(classesSizeData) / sizeof(ClassSizeData), x + 21, y, "VUEngine classes:");
@@ -549,14 +548,14 @@ void Debug::memoryStatusShowSecondPage(int32 increment __attribute__ ((unused)),
 
 	ClassSizeData classesSizeData[] =
 	{
-		{&Clock_getObjectSize, 			"Clock"},
-		{&Object_getObjectSize, 		"ListenerObject"},
-		{&State_getObjectSize, 			"State"},
-		{&StateMachine_getObjectSize, 	"StateMachine"},
-		{&Telegram_getObjectSize, 		"Telegram"},
-		{&VirtualList_getObjectSize, 	"VirtualList"},
-		{&VirtualNode_getObjectSize, 	"VirtualNode"},
-		{&Sound_getObjectSize, 	"Sound"},
+		{&Clock_getObjectSize, 							"Clock"},
+		{&Object_getObjectSize, 						"ListenerObject"},
+		{&State_getObjectSize, 							"State"},
+		{&StateMachine_getObjectSize,				 	"StateMachine"},
+		{&Telegram_getObjectSize, 						"Telegram"},
+		{&VirtualList_getObjectSize, 					"VirtualList"},
+		{&VirtualNode_getObjectSize, 					"VirtualNode"},
+		{&Sound_getObjectSize, 							"Sound"},
 	};
 
 	Debug::printClassSizes(this, classesSizeData, sizeof(classesSizeData) / sizeof(ClassSizeData), x + 21, y, "VUEngine classes:");
@@ -597,15 +596,15 @@ void Debug::memoryStatusShowFourthPage(int32 increment __attribute__ ((unused)),
 
 	ClassSizeData classesSizeData[] =
 	{
-		{&BodyManager_getObjectSize, 	"BodyManager"},
-		{&Body_getObjectSize, 			"Body"},
-		{&Collider_getObjectSize, 			"Collider"},
-		{&Ball_getObjectSize, 			"Ball"},
-		{&Box_getObjectSize,			"Box"},
-		{&InverseBox_getObjectSize,		"InverseBox"},
-		{&LineField_getObjectSize,		"LineField"},
-		{&Wireframe_getObjectSize, 		"Wireframe"},
-		{&Sphere_getObjectSize, 		"Sphere"},
+		{&BodyManager_getObjectSize, 					"BodyManager"},
+		{&Body_getObjectSize, 							"Body"},
+		{&Collider_getObjectSize, 						"Collider"},
+		{&Ball_getObjectSize, 							"Ball"},
+		{&Box_getObjectSize,							"Box"},
+		{&InverseBox_getObjectSize,						"InverseBox"},
+		{&LineField_getObjectSize,						"LineField"},
+		{&Wireframe_getObjectSize, 						"Wireframe"},
+		{&Sphere_getObjectSize, 						"Sphere"},
 	};
 
 	Debug::printClassSizes(this, classesSizeData, sizeof(classesSizeData) / sizeof(ClassSizeData), x + 21, y, "VUEngine classes:");
@@ -619,8 +618,8 @@ void Debug::memoryStatusShowFifthPage(int32 increment __attribute__ ((unused)), 
 
 	ClassSizeData classesSizeData[] =
 	{
-		{&StatefulActor_getObjectSize,							"StatefulActor"},
-		{&Actor_getObjectSize,					"Actor"},
+		{&StatefulActor_getObjectSize,					"StatefulActor"},
+		{&Actor_getObjectSize,							"Actor"},
 		{&Container_getObjectSize,						"Container"},
 		{&Actor_getObjectSize,							"Actor"},
 		{&ActorFactory_getObjectSize,					"ActorFactory"},
@@ -641,8 +640,7 @@ void Debug::memoryStatusShowSixthPage(int32 increment __attribute__ ((unused)), 
 	{
 		{&Particle_getObjectSize,						"Particle"},
 		{&ParticleSystem_getObjectSize,					"ParticleSystem"},
-		{&SolidParticle_getObjectSize,					"SolidParticle"},
-		{&Entity_getObjectSize,					"Entity"},
+		{&Entity_getObjectSize,							"Entity"},
 		{&Stage_getObjectSize,							"Stage"},
 		{&UIContainer_getObjectSize,					"UIContainer"},
 	};
@@ -658,12 +656,12 @@ void Debug::memoryStatusShowSeventhPage(int32 increment __attribute__ ((unused))
 
 	ClassSizeData classesSizeData[] =
 	{
-		{&DebugState::getObjectSize,			"DebugState"},
-		{&GameState::getObjectSize,			"GameState"},
-		{&StageEditorState::getObjectSize,	"StageEditorState"},
-		{&Debug::getObjectSize,				"Debug"},
-		{&OptionsSelector::getObjectSize,	"OptionsSelector"},
-		{&StageEditor::getObjectSize,		"StageEditor"},
+		{&DebugState::getObjectSize,					"DebugState"},
+		{&GameState::getObjectSize,						"GameState"},
+		{&StageEditorState::getObjectSize,				"StageEditorState"},
+		{&Debug::getObjectSize,							"Debug"},
+		{&OptionsSelector::getObjectSize,				"OptionsSelector"},
+		{&StageEditor::getObjectSize,					"StageEditor"},
 	};
 
 	Debug::printClassSizes(this, classesSizeData, sizeof(classesSizeData) / sizeof(ClassSizeData), x + 21, y, "VUEngine classes:");

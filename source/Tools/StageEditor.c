@@ -880,30 +880,30 @@ void StageEditor::printActorPosition()
 		const char* actorName = Container::getName(actor);
 
 		Printing::text(Printing::getInstance(), "ID:                             ", x, ++y, NULL);
-		Printing::int32(Printing::getInstance()Actor::getInternalId(actor), x + 10, y, NULL);
+		Printing::int32(Printing::getInstance(), Actor::getInternalId(actor), x + 10, y, NULL);
 		Printing::text(Printing::getInstance(), "Type:                           ", x, ++y, NULL);
-		Printing::text(Printing::getInstance(),		__GET_CLASS_NAME(actor), x + 10, y, NULL);
+		Printing::text(Printing::getInstance(),	__GET_CLASS_NAME(actor), x + 10, y, NULL);
 		Printing::text(Printing::getInstance(), "Name:                           ", x, ++y, NULL);
-		Printing::text(Printing::getInstance(),		actorName ? actorName : "-"x + 10, y, NULL);
+		Printing::text(Printing::getInstance(),	actorName ? actorName : "-", x + 10, y, NULL);
 		Printing::text(Printing::getInstance(), "          X      Y      Z       ", x, ++y, NULL);
 		Printing::text(Printing::getInstance(), "Position:                       ", x, ++y, NULL);
-		Printing::int32(Printing::getInstance()__METERS_TO_PIXELS(globalPosition->x), x + 10, y, NULL);
-		Printing::int32(Printing::getInstance()__METERS_TO_PIXELS(globalPosition->y), x + 17, y, NULL);
-		Printing::int32(Printing::getInstance()__METERS_TO_PIXELS(globalPosition->z), x + 24, y, NULL);
+		Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(globalPosition->x), x + 10, y, NULL);
+		Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(globalPosition->y), x + 17, y, NULL);
+		Printing::int32(Printing::getInstance() ,__METERS_TO_PIXELS(globalPosition->z), x + 24, y, NULL);
 		Printing::text(Printing::getInstance(), "Rotation:                       ", x, ++y, NULL);
-		Printing::float(Printing::getInstance()__FIXED_TO_F(globalRotation->x), x + 10, y, 2, NULL);
-		Printing::float(Printing::getInstance()__FIXED_TO_F(globalRotation->y), x + 17, y, 2, NULL);
-		Printing::float(Printing::getInstance()__FIXED_TO_F(globalRotation->z), x + 24, y, 2, NULL);
+		Printing::float(Printing::getInstance(), __FIXED_TO_F(globalRotation->x), x + 10, y, 2, NULL);
+		Printing::float(Printing::getInstance(), __FIXED_TO_F(globalRotation->y), x + 17, y, 2, NULL);
+		Printing::float(Printing::getInstance(), __FIXED_TO_F(globalRotation->z), x + 24, y, 2, NULL);
 		Printing::text(Printing::getInstance(), "Scale:                          ", x, ++y, NULL);
-		Printing::float(Printing::getInstance(), 	__FIX7_9_TO_F(globalScale->x)x + 10, y2, NULL);
-		Printing::float(Printing::getInstance(), 	__FIX7_9_TO_F(globalScale->y)x + 17, y2, NULL);
-		Printing::float(Printing::getInstance(), 	__FIX7_9_TO_F(globalScale->z)x + 24, y2, NULL);
+		Printing::float(Printing::getInstance(), __FIX7_9_TO_F(globalScale->x), x + 10, y, 2, NULL);
+		Printing::float(Printing::getInstance(), __FIX7_9_TO_F(globalScale->y), x + 17, y, 2, NULL);
+		Printing::float(Printing::getInstance(), __FIX7_9_TO_F(globalScale->z), x + 24, y, 2, NULL);
 		Printing::text(Printing::getInstance(), "Size:                           ", x, ++y, NULL);
-		Printing::int32(Printing::getInstance()__METERS_TO_PIXELS(Actor::getWidth(actor)), x + 10, y, NULL);
-		Printing::int32(Printing::getInstance()__METERS_TO_PIXELS(Actor::getHeight(actor)), x + 17, y, NULL);
-		Printing::int32(Printing::getInstance()__METERS_TO_PIXELS(Actor::getDepth(actor)), x + 24, y++, NULL);
+		Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(Actor::getWidth(actor)), x + 10, y, NULL);
+		Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(Actor::getHeight(actor)), x + 17, y, NULL);
+		Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(Actor::getDepth(actor)), x + 24, y++, NULL);
 		Printing::text(Printing::getInstance(), "Children:                       ", x, ++y, NULL);
-		Printing::int32(Printing::getInstance()Container::getChildrenCount(actor), x + 10, y, NULL);
+		Printing::int32(Printing::getInstance(), Container::getChildrenCount(actor), x + 10, y, NULL);
 	}
 }
 
