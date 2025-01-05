@@ -152,8 +152,9 @@ singleton class VUEngine : ListenerObject
 	void resetClock();
 
 	/// Start the game with the provided game state.
-	/// @param state: Game state the engine must enter when starting
-	void start(GameState state);
+	/// @param gameState: Game state the engine must enter when starting
+	/// @return Return code (0)
+	int32 start(GameState gameState);
 
 	/// Pause the game by pushing the provided game state into the engine's state machine's stack.
 	/// @param pauseState: Pause game state

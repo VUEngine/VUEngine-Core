@@ -151,7 +151,7 @@ void VUEngine::resetClock()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void VUEngine::start(GameState currentGameState)
+int32 VUEngine::start(GameState currentGameState)
 {
 	ASSERT(currentGameState, "VUEngine::start: currentGameState is NULL");
 
@@ -166,6 +166,8 @@ void VUEngine::start(GameState currentGameState)
 	{
 		ASSERT(false, "VUEngine::start: already started");
 	}
+
+	return 0;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
