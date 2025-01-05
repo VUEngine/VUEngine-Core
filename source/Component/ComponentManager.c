@@ -139,7 +139,7 @@ static void ComponentManager::removeComponents(Entity owner, uint32 componentTyp
 		
 				Component component = Component::safeCast(node->data);
 
-				if(owner == component->owner)
+				if(!component->deleteMe && owner == component->owner)
 				{
 					Entity::removedComponent(owner, component);
 
@@ -163,7 +163,7 @@ static void ComponentManager::removeComponents(Entity owner, uint32 componentTyp
 	
 			Component component = Component::safeCast(node->data);
 
-			if(owner == component->owner)
+			if(!component->deleteMe && owner == component->owner)
 			{
 				Entity::removedComponent(owner, component);
 
@@ -193,7 +193,7 @@ static Component ComponentManager::getComponentAtIndex(Entity owner, uint32 comp
 	{
 		Component component = Component::safeCast(node->data);
 
-		if(owner == component->owner)
+		if(!component->deleteMe && owner == component->owner)
 		{
 			if(0 == componentIndex--)
 			{
@@ -262,7 +262,7 @@ static bool ComponentManager::getComponentsOfClass(Entity owner, ClassPointer cl
 	{
 		Component component = Component::safeCast(node->data);
 
-		if(owner != component->owner)
+		if(owner != component->owner || component->deleteMe)
 		{
 			continue;
 		}
@@ -302,7 +302,7 @@ static uint16 ComponentManager::getComponentsCount(Entity owner, uint32 componen
 			{
 				Component component = Component::safeCast(node->data);
 
-				if(owner == component->owner)
+				if(owner == component->owner && !component->deleteMe)
 				{
 					count++;
 				}
@@ -324,7 +324,7 @@ static uint16 ComponentManager::getComponentsCount(Entity owner, uint32 componen
 	
 			Component component = Component::safeCast(node->data);
 
-			if(owner == component->owner)
+			if(owner == component->owner && !component->deleteMe)
 			{
 				count++;
 			}

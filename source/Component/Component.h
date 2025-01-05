@@ -86,6 +86,9 @@ abstract class Component : ListenerObject
 	/// Pointer to the transformation that the component attaches to
 	const Transformation* transformation;
 
+	/// Flag to mark the component as pending deletion
+	bool deleteMe;
+
 	/// @publicsection
 
 	/// Class' constructor

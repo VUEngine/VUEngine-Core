@@ -205,9 +205,6 @@ abstract class Collider : Component
 	/// If true, it registers other colliders when a collision arises
 	bool registerCollisions;
 
-	/// Flag to destroy the collider
-	bool deleteMe;
-
 	/// Class index to avoid using __GET_CAST when checking for collisions
 	uint8 classIndex;
 

@@ -45,6 +45,7 @@ void Component::constructor(Entity owner, const ComponentSpec* componentSpec)
 	
 	this->componentSpec = componentSpec;
 	this->owner = owner;
+	this->deleteMe = false;
 
 	if(isDeleted(this->owner))
 	{

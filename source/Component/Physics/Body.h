@@ -178,9 +178,6 @@ class Body : Component
 	/// If true, the body informs its owner of its change in movement state
 	bool sendMessages;
 
-	/// Flag to destroy the body
-	bool deleteMe;
-
 	/// If true, the movement of the body is independent on each axis
 	bool movesIndependentlyOnEachAxis;
 

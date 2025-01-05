@@ -128,7 +128,6 @@ void Body::constructor(Entity owner, const BodySpec* bodySpec)
 	// Always explicitly call the base's constructor 
 	Base::constructor(owner, (const ComponentSpec*)&bodySpec->componentSpec);
 
-	this->deleteMe = false;
 	this->owner = owner;
 	this->normals = NULL;
 	this->mass = 
