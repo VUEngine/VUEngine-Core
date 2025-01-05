@@ -48,13 +48,13 @@ void Collider::constructor(Entity owner, const ColliderSpec* colliderSpec)
 	// Always explicitly call the base's constructor 
 	Base::constructor(owner, (const ComponentSpec*)&colliderSpec->componentSpec);
 
-	// not setup yet
+	// Not setup yet
 	this->deleteMe = false;
 	this->enabled = true;
 
 	this->wireframe = NULL;
 
-	// set flag
+	// Set flag
 	this->checkForCollisions = false;
 	this->layers = colliderSpec->layers;
 	this->layersToIgnore = colliderSpec->layersToIgnore;
@@ -268,15 +268,15 @@ CollisionResult Collider::collides(Collider collider)
 
 	OtherColliderRegistry* otherColliderRegistry = Collider::findOtherColliderRegistry(this, collider);
 
-	// test if new collision
+	// Test if new collision
 	if(NULL == otherColliderRegistry)
 	{
-		// check for new overlap
+		// Check for new overlap
 		CollisionTester::testOverlaping(this, collider, &collision.collisionInformation, 0);
 
 		if(NULL != collision.collisionInformation.collider && 0 != collision.collisionInformation.solutionVector.magnitude)
 		{
-			// new collision
+			// New collision
 			collision.result = kCollisionStarts;
 
 			if(this->registerCollisions)
@@ -287,7 +287,7 @@ CollisionResult Collider::collides(Collider collider)
 		}
 	}
 	// Impenetrable registered colliding colliders require another test
-	// to determine if I'm not colliding against them anymore
+	// To determine if I'm not colliding against them anymore
 	else if(otherColliderRegistry->isImpenetrable && otherColliderRegistry->solutionVector.magnitude)
 	{
 		CollisionTester::testOverlaping(this, collider, &collision.collisionInformation, __STILL_COLLIDING_CHECK_SIZE_INCREMENT);
@@ -310,7 +310,7 @@ CollisionResult Collider::collides(Collider collider)
 	}
 	else
 	{
-		// otherwise make a normal collision test
+		// Otherwise make a normal collision test
 		CollisionTester::testOverlaping(this, collider, &collision.collisionInformation, 0);
 
 		if(collision.collisionInformation.collider == this && 0 != collision.collisionInformation.solutionVector.magnitude)
@@ -367,7 +367,7 @@ void Collider::resolveCollision(const CollisionInformation* collisionInformation
 	{
 		Collider::displaceOwner(this, Vector3D::scalarProduct(solutionVector.direction, solutionVector.magnitude));
 
-		// need to invalidate solution vectors for other colliding colliders
+		// Need to invalidate solution vectors for other colliding colliders
 		//Collider::checkPreviousCollisions(this, collisionInformation->otherCollider);
 
 		if(this->registerCollisions)
@@ -405,7 +405,7 @@ bool Collider::canMoveTowards(Vector3D displacement)
 
 		if(otherColliderRegistry->isImpenetrable)
 		{
-			// check if solution is valid
+			// Check if solution is valid
 			if(otherColliderRegistry->solutionVector.magnitude)
 			{
 				fixed_t cosAngle = Vector3D::dotProduct(otherColliderRegistry->solutionVector.direction, normalizedDisplacement);
@@ -414,7 +414,7 @@ bool Collider::canMoveTowards(Vector3D displacement)
 		}
 	}
 
-	// not colliding anymore
+	// Not colliding anymore
 	return canMove;
 }
 
@@ -714,7 +714,7 @@ OtherColliderRegistry* Collider::findOtherColliderRegistry(Collider collider)
 
 void Collider::displaceOwner(Vector3D displacement)
 {
-	// retrieve the colliding entity's position and gap
+	// Retrieve the colliding entity's position and gap
 	Vector3D ownerPosition = * Entity::getPosition(this->owner);
 
 	ownerPosition.x += displacement.x;

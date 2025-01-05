@@ -176,8 +176,8 @@ static inline bool DirectDraw::shrinkLineToScreenSpace(fixed_ext_t* x0, fixed_ex
 	if(shrinkOnXAxis)
 	{
 		// This will compute the y coordinate at which the line for the relevant display (left or right)
-		// intersects the screen's left or right border and uses the result to compute the x coordinate 
-		// of the actual line
+		// Intersects the screen's left or right border and uses the result to compute the x coordinate 
+		// Of the actual line
 		xHelper += parallaxHelper0;
 
 		fixed_ext_t dxHelper = (x1 + parallaxHelper1) - xHelper;
@@ -212,10 +212,10 @@ static inline bool DirectDraw::shrinkLineToScreenSpace(fixed_ext_t* x0, fixed_ex
 
 	// (x0 - x1) / dx = (y0 - y1) / dy = (parallax0 - parallax1) / dParallax
 	// (x0 - x1) / dx = (y0 - y1) / dy
-	// x0 = (y0 - y1) * (dx / dy) * xySlope / xySlope + x1
-	// x0 = (y0 - y1) * (dx / dy) * (dy / dx) / (dy / dx) + x1
-	// x0 = (y0 - y1) / (dy / dx) + x1
-	// x0 = (y0 - y1) / xySlope + x1
+	// X0 = (y0 - y1) * (dx / dy) * xySlope / xySlope + x1
+	// X0 = (y0 - y1) * (dx / dy) * (dy / dx) / (dy / dx) + x1
+	// X0 = (y0 - y1) / (dy / dx) + x1
+	// X0 = (y0 - y1) / xySlope + x1
 	if(_frustumFixedPoint.y0 > y)
 	{
 		y = _frustumFixedPoint.y0;
@@ -923,15 +923,15 @@ static bool DirectDraw::drawSolidRhumbus(PixelVector center, int16 radius, int32
 /// @param color		The color to draw (__COLOR_BRIGHT_RED, __COLOR_MEDIUM_RED or __COLOR_DARK_RED)
 static void DirectDraw::drawPixel(uint32 buffer, uint16 x, uint16 y, int32 color)
 {
-	// a pointer to the buffer
+	// A pointer to the buffer
 	//int32* pointer = (int32*)buffer;
 	BYTE* pointer = (BYTE*)buffer;
 
-	// calculate pixel position
-	// each column has 16 words, so 16 * 4 bytes = 64, each byte represents 4 pixels
+	// Calculate pixel position
+	// Each column has 16 words, so 16 * 4 bytes = 64, each byte represents 4 pixels
 	pointer += ((x << 6) + (y >> 2));
 
-	// draw the pixel
+	// Draw the pixel
 	*pointer |= (color << ((y & 3) << 1));
 }
 
@@ -949,8 +949,8 @@ static void DirectDraw::drawColorPixel(BYTE* leftBuffer, BYTE* rightBuffer, int1
 #ifdef __DIRECT_DRAW_OPTIMIZED_VERTICAL_LINES
 	uint16 pixel = color << ((y & 0x7) << 1);
 
-	// calculate pixel position
-	// each column has 16 words, so 16 * 4 bytes = 64, each byte represents 4 pixels
+	// Calculate pixel position
+	// Each column has 16 words, so 16 * 4 bytes = 64, each byte represents 4 pixels
 	uint16 displacement = ((x - parallax) << 5) + (y >> 3);	
 
 	static uint16 cachedDisplacement = __FRAME_BUFFERS_SIZE;
@@ -981,8 +981,8 @@ static void DirectDraw::drawColorPixel(BYTE* leftBuffer, BYTE* rightBuffer, int1
 #else
 	uint8 pixel = color << ((y & 0x3) << 1);
 
-	// calculate pixel position
-	// each column has 16 words, so 16 * 4 bytes = 64, each byte represents 4 pixels
+	// Calculate pixel position
+	// Each column has 16 words, so 16 * 4 bytes = 64, each byte represents 4 pixels
 	uint16 displacement = ((x - parallax) << 6) + (y >> 2);	
 
 	if(__FRAME_BUFFERS_SIZE > displacement)
@@ -1003,8 +1003,8 @@ static void DirectDraw::drawColorPixel(BYTE* leftBuffer, BYTE* rightBuffer, int1
 
 static void DirectDraw::drawColorPixelInterlaced(BYTE* buffer, int16 x, int16 y, int16 parallax, int32 color)
 {
-	// calculate pixel position
-	// each column has 16 words, so 16 * 4 bytes = 64, each byte represents 4 pixels
+	// Calculate pixel position
+	// Each column has 16 words, so 16 * 4 bytes = 64, each byte represents 4 pixels
 	uint16 displacement = ((x - parallax) << 6) + (y >> 2);
 
 	if(__FRAME_BUFFERS_SIZE <= displacement)
@@ -1012,8 +1012,8 @@ static void DirectDraw::drawColorPixelInterlaced(BYTE* buffer, int16 x, int16 y,
 		return;
 	}
 
-	// calculate pixel position
-	// each column has 16 words, so 16 * 4 bytes = 64, each byte represents 4 pixels
+	// Calculate pixel position
+	// Each column has 16 words, so 16 * 4 bytes = 64, each byte represents 4 pixels
 	buffer[displacement] |= color << ((y & 3) << 1);
 }
 
@@ -1031,8 +1031,8 @@ static void DirectDraw::drawBlackPixel(BYTE* leftBuffer, BYTE* rightBuffer, int1
 	uint16 yHelper = y >> 2;
 	uint8 pixel = ~(3 << ((y & 3) << 1));
 
-	// calculate pixel position
-	// each column has 16 words, so 16 * 4 bytes = 64, each byte represents 4 pixels
+	// Calculate pixel position
+	// Each column has 16 words, so 16 * 4 bytes = 64, each byte represents 4 pixels
 	int32 displacement = (((x - parallax) << 6) + yHelper);
 
 	if((unsigned)__FRAME_BUFFERS_SIZE <= (unsigned)displacement)
@@ -1227,7 +1227,7 @@ void DirectDraw::destructor()
 		kEventVIPManagerGAMESTARTDuringXPEND
 	);
 
-	// allow a new construct
+	// Allow a new construct
 	// Always explicitly call the base's destructor 
 	Base::destructor();
 }

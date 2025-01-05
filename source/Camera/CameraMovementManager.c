@@ -119,7 +119,7 @@ Vector3D CameraMovementManager::focus(Camera camera)
 
 	NormalizedDirection normalizedDirection = Actor::getNormalizedDirection(this->focusActor);
 
-	// calculate the target position
+	// Calculate the target position
 	Vector3D cameraNewPosition =
 	{
 		this->focusActorPosition->x + normalizedDirection.x * this->focusActorPositionDisplacement.x - __HALF_SCREEN_WIDTH_METERS,

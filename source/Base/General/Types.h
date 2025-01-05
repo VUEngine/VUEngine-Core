@@ -151,13 +151,13 @@ typedef struct MovementType
 // 3D Spatial rotation (subject to gimbal lock)
 typedef struct Rotation
 {
-	// rotation around x axis
+	// Rotation around x axis
 	fixed_t x;
 
-	// rotation around y axis
+	// Rotation around y axis
 	fixed_t y;
 
-	// rotation around z axis
+	// Rotation around z axis
 	fixed_t z;
 
 } Rotation;
@@ -300,16 +300,16 @@ typedef struct TexturePadding
 // A spatial description
 typedef struct Transformation
 {
-	// spatial position
+	// Spatial position
 	Vector3D position;
 
-	// spatial rotation
+	// Spatial rotation
 	Rotation rotation;
 
-	// spatial scale
+	// Spatial scale
 	Scale scale;
 
-	// validity flag
+	// Validity flag
 	uint8 invalid;
 
 } Transformation;

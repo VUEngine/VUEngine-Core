@@ -73,7 +73,7 @@ bool BgmapTexture::write(int16 maximumTextureRowsToWrite)
 {
 	if(isDeleted(this->charSet))
 	{
-		// make sure to force full writing if no char set
+		// Make sure to force full writing if no char set
 		this->remainingRowsToBeWritten = this->textureSpec->rows;
 	}
 	
@@ -166,7 +166,7 @@ int16 BgmapTexture::getYOffset()
 void BgmapTexture::setHorizontalFlip(bool value)
 {	
 	// TODO: this is a hack, positioned actors should have a complete transformation
-	// and the flip flags should be removed from the texture spec
+	// And the flip flags should be removed from the texture spec
 	if(this->textureSpec->horizontalFlip)
 	{
 		value = !value;
@@ -185,7 +185,7 @@ void BgmapTexture::setHorizontalFlip(bool value)
 void BgmapTexture::setVerticalFlip(bool value)
 {
 	// TODO: this is a hack, positioned actors should have a complete transformation
-	// and the flip flags should be removed from the texture spec
+	// And the flip flags should be removed from the texture spec
 	if(this->textureSpec->verticalFlip)
 	{
 		value = !value;

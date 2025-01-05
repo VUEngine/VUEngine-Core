@@ -16,10 +16,10 @@
 
 enum Events
 {
-	// do not remove me
+	// Do not remove me
 	kEventEngineFirst = 0,
 
-	// add events here
+	// Add events here
 	kEventFramerateReady,
 	kEventFramerateDipped,
 
@@ -82,7 +82,7 @@ enum Events
 
 	kEventVUEngineNextSecondStarted,
 
-	// do not remove me
+	// Do not remove me
 	kEventEngineLast
 };
 

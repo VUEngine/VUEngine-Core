@@ -173,19 +173,19 @@ bool Particle::isVisible()
 	
 	pixelVector = PixelVector::projectVector3D(relativeGlobalPosition, Optics::calculateParallax(relativeGlobalPosition.z));
 
-	// check x visibility
+	// Check x visibility
 	if(pixelVector.x + halfWidth < _cameraFrustum->x0 || pixelVector.x - halfWidth > _cameraFrustum->x1)
 	{
 		return false;
 	}
 
-	// check y visibility
+	// Check y visibility
 	if(pixelVector.y + halfHeight < _cameraFrustum->y0 || pixelVector.y - halfHeight > _cameraFrustum->y1)
 	{
 		return false;
 	}
 
-	// check z visibility
+	// Check z visibility
 	if(pixelVector.z > __SCREEN_DEPTH || pixelVector.z < -(__SCREEN_DEPTH >> 1))
 	{
 		return false;

@@ -35,7 +35,7 @@ friend class VirtualList;
 
 void ParticleSystem::constructor(const ParticleSystemSpec* particleSystemSpec, int16 internalId, const char* const name)
 {
-	// construct base
+	// Construct base
 	// Always explicitly call the base's constructor 
 	Base::constructor((ActorSpec*)&particleSystemSpec->actorSpec, internalId, name);
 
@@ -189,7 +189,7 @@ void ParticleSystem::update()
 		return;
 	}
 
-	// check if it is time to spawn new particles
+	// Check if it is time to spawn new particles
 	this->nextSpawnTime -= this->elapsedTime;
 
 	if(0 > this->nextSpawnTime && this->aliveParticlesCount < this->maximumNumberOfAliveParticles)
@@ -502,7 +502,7 @@ void ParticleSystem::configure()
 
 Particle ParticleSystem::spawnParticle()
 {
-	// call the appropriate allocator to support inheritance
+	// Call the appropriate allocator to support inheritance
 	Particle particle = 
 		((Particle (*)
 		(

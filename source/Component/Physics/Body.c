@@ -144,7 +144,7 @@ void Body::constructor(Entity owner, const BodySpec* bodySpec)
 	this->axisSubjectToGravity = bodySpec->axisSubjectToGravity;
 	this->axisForSynchronizationWithBody = bodySpec->axisForSynchronizationWithBody;
 
-	// clear movement type
+	// Clear movement type
 	this->movementType.x = __NO_MOVEMENT;
 	this->movementType.y = __NO_MOVEMENT;
 	this->movementType.z = __NO_MOVEMENT;
@@ -241,8 +241,8 @@ void Body::clearNormal(ListenerObject referent)
 		{
 			NormalRegistry* normalRegistry = (NormalRegistry*)node->data;
 
-			// search if registry exists for the referent
-			// it is Ok if it doesn't exist
+			// Search if registry exists for the referent
+			// It is Ok if it doesn't exist
 			if(normalRegistry->referent == referent)
 			{
 				ASSERT(!isDeleted(normalRegistry), "Body::clearNormal: dead normal registry");
@@ -304,7 +304,7 @@ void Body::update(uint16 cycle, fix7_9_ext elapsedTime)
 		Entity::setDirection(this->owner, &this->direction);
 	}
 
-	// if stopped on any axis
+	// If stopped on any axis
 	if(0 != movementResult.axisStoppedMovement)
 	{
 		Body::stopMovement(this, movementResult.axisStoppedMovement);
@@ -319,7 +319,7 @@ void Body::update(uint16 cycle, fix7_9_ext elapsedTime)
 		}
 	}
 
-	// clear any force so the next update does not get influenced
+	// Clear any force so the next update does not get influenced
 	Body::clearExternalForce(this);
 }
 
@@ -412,7 +412,7 @@ void Body::bounce(ListenerObject bounceReferent, Vector3D bouncingPlaneNormal, f
 
 		// Add bounciness and friction
 		// This is the physically correct computation, but causes
-		// wrong angles of bouncing
+		// Wrong angles of bouncing
 		u = Vector3D::scalarProduct(u, bounciness);
 		w = Vector3D::scalarProduct(w, (__MAXIMUM_FRICTION_COEFFICIENT - frictionCoefficient));
 
@@ -437,12 +437,12 @@ void Body::bounce(ListenerObject bounceReferent, Vector3D bouncingPlaneNormal, f
 			this->movementType.z = __ACCELERATED_MOVEMENT;
 		}
 
-		// determine bouncing result
+		// Determine bouncing result
 		MovementResult movementResult = Body::getBouncingResult(this, velocity, bouncingPlaneNormal);
 
 		Body::clampVelocity(this, false);
 
-		// stop over the axis where there is no bouncing
+		// Stop over the axis where there is no bouncing
 		if(movementResult.axisStoppedMovement)
 		{
 			uint16 axisOfStopping = Body::stopMovement(this, movementResult.axisStoppedMovement);
@@ -489,7 +489,7 @@ uint16 Body::stopMovement(uint16 axis)
 
 	if(axis & __X_AXIS)
 	{
-		// not moving anymore
+		// Not moving anymore
 		this->velocity.x = 0;
 		this->internalVelocity.x = 0;
 		this->accelerating.x = false;
@@ -499,7 +499,7 @@ uint16 Body::stopMovement(uint16 axis)
 
 	if(axis & __Y_AXIS)
 	{
-		// not moving anymore
+		// Not moving anymore
 		this->velocity.y = 0;
 		this->internalVelocity.y = 0;
 		this->accelerating.y = false;
@@ -509,7 +509,7 @@ uint16 Body::stopMovement(uint16 axis)
 
 	if(axis & __Z_AXIS)
 	{
-		// not moving anymore
+		// Not moving anymore
 		this->velocity.z = 0;
 		this->internalVelocity.z = 0;
 		this->accelerating.z = false;
@@ -989,8 +989,8 @@ MovementResult Body::getMovementResult(Vector3D previousVelocity)
 {
 	MovementResult movementResult = {__NO_AXIS, __NO_AXIS};
 
-	// xor values, if result != 0, there is movement
-	// xor values, if result >= 0, there is no change in direction
+	// Xor values, if result != 0, there is movement
+	// Xor values, if result >= 0, there is no change in direction
 	Vector3D movementChange =
 	{
 		this->velocity.x ^ previousVelocity.x,
@@ -1022,8 +1022,8 @@ MovementResult Body::getMovementResult(Vector3D previousVelocity)
 		return movementResult;
 	}
 
-	// stop if no external force or opposing normal force is present
-	// and if the velocity minimum threshold is not reached
+	// Stop if no external force or opposing normal force is present
+	// And if the velocity minimum threshold is not reached
 	if(0 != previousVelocity.x && 0 == this->externalForce.x && 0 == this->gravity.x && __ACCELERATED_MOVEMENT == this->movementType.x)
 	{
 		if
@@ -1078,8 +1078,8 @@ MovementResult Body::getBouncingResult(Vector3D previousVelocity, Vector3D bounc
 {
 	MovementResult movementResult = {__NO_AXIS, __NO_AXIS};
 
-	// xor values, if result != 0, there is movement
-	// xor values, if result >= 0, there is no change in direction
+	// Xor values, if result != 0, there is movement
+	// Xor values, if result >= 0, there is no change in direction
 	Vector3D movementChange =
 	{
 		this->velocity.x ^ previousVelocity.x,
@@ -1087,8 +1087,8 @@ MovementResult Body::getBouncingResult(Vector3D previousVelocity, Vector3D bounc
 		this->velocity.z ^ previousVelocity.z,
 	};
 
-	// stop if minimum velocity threshold is not reached
-	// and if there is possible movement in the other components
+	// Stop if minimum velocity threshold is not reached
+	// And if there is possible movement in the other components
 	if(__STOP_BOUNCING_VELOCITY_THRESHOLD > __ABS(this->velocity.x) && !__FIXED_INT_PART(bouncingPlaneNormal.y | bouncingPlaneNormal.z))
 	{
 		movementResult.axisStoppedMovement |= __X_AXIS;
@@ -1104,7 +1104,7 @@ MovementResult Body::getBouncingResult(Vector3D previousVelocity, Vector3D bounc
 		movementResult.axisStoppedMovement |= __Z_AXIS;
 	}
 
-	// bounce accelerated if movement changed direction and the previous movement was not uniform
+	// Bounce accelerated if movement changed direction and the previous movement was not uniform
 	if(__UNIFORM_MOVEMENT != this->movementType.x && 0 != movementChange.x)
 	{
 		movementResult.axisOfAcceleratedBouncing |= __X_AXIS;
@@ -1120,7 +1120,7 @@ MovementResult Body::getBouncingResult(Vector3D previousVelocity, Vector3D bounc
 		movementResult.axisOfAcceleratedBouncing |= __Z_AXIS;
 	}
 
-	// don't bounce if movement stopped on that axis
+	// Don't bounce if movement stopped on that axis
 	movementResult.axisOfAcceleratedBouncing &= ~movementResult.axisStoppedMovement;
 
 	return movementResult;
@@ -1487,7 +1487,7 @@ void Body::computeFrictionForceMagnitude(fixed_t currentWorldFriction)
 		}
 	}
 
-	// yeah, * 4 (<< 2) is a magical number, but it works well enough with the range of mass and friction coefficient
+	// Yeah, * 4 (<< 2) is a magical number, but it works well enough with the range of mass and friction coefficient
 	this->frictionForceMagnitude = __FIXED_MULT(this->frictionForceMagnitude, __I_TO_FIXED(1 << __FRICTION_FORCE_FACTOR_POWER));
 }
 

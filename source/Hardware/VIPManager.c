@@ -82,7 +82,7 @@ static void VIPManager::interruptHandler()
 {
 	_vipManager->currrentInterrupt = _vipRegisters[__INTPND];
 
-	// disable interrupts
+	// Disable interrupts
 	VIPManager::disableInterrupts(_vipManager);
 
 #ifndef __DEBUG
@@ -104,7 +104,7 @@ static void VIPManager::interruptHandler()
 	}
 #endif
 
-	// handle the interrupt
+	// Handle the interrupt
 	VIPManager::processInterrupt(_vipManager, _vipManager->currrentInterrupt);
 
 #ifndef __DEBUG
@@ -272,13 +272,13 @@ void VIPManager::setupColumnTable(ColumnTableSpec* columnTableSpec)
 {
 	int32 i, value;
 
-	// use the default column table as fallback
+	// Use the default column table as fallback
 	if(columnTableSpec == NULL)
 	{
 		columnTableSpec = (ColumnTableSpec*)&DefaultColumnTableSpec;
 	}
 
-	// write column table
+	// Write column table
 	for(i = 0; i < 256; i++)
 	{
 		value = (columnTableSpec->mirror && (i > (__COLUMN_TABLE_ENTRIES / 2 - 1)))
@@ -304,18 +304,18 @@ void VIPManager::setupBrightness(Brightness* brightness)
 
 void VIPManager::setupBrightnessRepeat(BrightnessRepeatSpec* brightnessRepeatSpec)
 {
-	// use the default repeat values as fallback
+	// Use the default repeat values as fallback
 	if(brightnessRepeatSpec == NULL)
 	{
 		brightnessRepeatSpec = (BrightnessRepeatSpec*)&DefaultBrightnessRepeatSpec;
 	}
-	// column table offsets
+	// Column table offsets
 	int16 leftCta = _vipRegisters[__CTA] & 0xFF;
 	int16 rightCta = _vipRegisters[__CTA] >> 8;
 
 	CACHE_RESET;
 
-	// write repeat values to column table
+	// Write repeat values to column table
 	for(int16 i = 0; i < 96; i++)
 	{
 		int16 value = (brightnessRepeatSpec->mirror && (i > (__BRIGHTNESS_REPEAT_ENTRIES / 2 - 1)))
@@ -481,7 +481,7 @@ void VIPManager::destructor()
 
 	delete this->postProcessingEffects;
 
-	// allow a new construct
+	// Allow a new construct
 	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
@@ -695,7 +695,7 @@ void VIPManager::clearDRAM()
 {	
 	uint8* bgmapStartAddress = (uint8*)__BGMAP_SPACE_BASE_ADDRESS;
 
-	// clear every bgmap segment
+	// Clear every bgmap segment
 	for(bgmapStartAddress = 0; bgmapStartAddress < (uint8*)__PARAM_TABLE_END; bgmapStartAddress++)
 	{
 		*bgmapStartAddress = 0;
@@ -751,12 +751,12 @@ void VIPManager::useInternalColumnTable(bool useInternal)
 	// TODO: why does this not work?
 	if(useInternal)
 	{
-		// set lock bit
+		// Set lock bit
 		_vipRegisters[__DPCTRL] |= __LOCK;
 	}
 	else
 	{
-		// unset lock bit
+		// Unset lock bit
 		_vipRegisters[__DPCTRL] &= ~__LOCK;
 	}
 }

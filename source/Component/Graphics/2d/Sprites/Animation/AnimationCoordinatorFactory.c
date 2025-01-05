@@ -50,7 +50,7 @@ void AnimationCoordinatorFactory::destructor()
 	delete this->animationCoordinators;
 	this->animationCoordinators = NULL;
 
-	// allow a new construct
+	// Allow a new construct
 	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
@@ -70,7 +70,7 @@ AnimationCoordinator AnimationCoordinatorFactory::getCoordinator(AnimationContro
 
 	if(NULL != charSetSpec && charSetSpec->shared)
 	{
-		// try to find an already created coordinator
+		// Try to find an already created coordinator
 		for(VirtualNode node = this->animationCoordinators->head; NULL != node; node = node->next)
 		{
 			AnimationCoordinator animationCoordinator = AnimationCoordinator::safeCast(node->data);
@@ -84,7 +84,7 @@ AnimationCoordinator AnimationCoordinatorFactory::getCoordinator(AnimationContro
 
 		AnimationCoordinator animationCoordinator = new AnimationCoordinator(charSetSpec, scope);
 
-		// create a new coordinator
+		// Create a new coordinator
 		AnimationCoordinator::addAnimationController(animationCoordinator, animationController);
 
 		VirtualList::pushBack(this->animationCoordinators, animationCoordinator);

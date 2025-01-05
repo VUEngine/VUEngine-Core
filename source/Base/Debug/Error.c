@@ -66,20 +66,20 @@ static void Error::triggerException(char* message __attribute__((unused)), char*
 	int32 x = 0 <= __EXCEPTION_COLUMN && __EXCEPTION_COLUMN <= 24 ? __EXCEPTION_COLUMN : 0;
 	int32 y = 0 <= __EXCEPTION_LINE && __EXCEPTION_LINE <= 28 ? __EXCEPTION_LINE : 0;
 
-	// disable vip interrupts
+	// Disable vip interrupts
 	_vipRegisters[__INTENB]= 0;
 	_vipRegisters[__INTCLR] = _vipRegisters[__INTPND];
 
-	// disable timer
+	// Disable timer
 	_hardwareRegisters[__TCR] &= ~(__TIMER_ENB | __TIMER_INT);
 
-	// turn on the display
+	// Turn on the display
 	_vipRegisters[__REST] = 0;
 	_vipRegisters[__DPCTRL] = _vipRegisters[__DPSTTS] | (__SYNCE | __RE | __DISP);
 	_vipRegisters[__FRMCYC] = 0;
 	_vipRegisters[__XPCTRL] = _vipRegisters[__XPSTTS] | __XPEN;
 
-	// make sure the brightness is ok
+	// Make sure the brightness is ok
 	_vipRegisters[__BRTA] = 32;
 	_vipRegisters[__BRTB] = 64;
 	_vipRegisters[__BRTC] = 32;
@@ -88,7 +88,7 @@ static void Error::triggerException(char* message __attribute__((unused)), char*
 
 	Printing printing = Printing::getInstance();
 
-	// make sure there are fonts to show the exception
+	// Make sure there are fonts to show the exception
 	Printing::setDebugMode(printing);
 
 	//print error message to screen
@@ -158,7 +158,7 @@ static void Error::triggerException(char* message __attribute__((unused)), char*
 	// Prevent VIP's interrupts
 	HardwareManager::disableInterrupts();
 
-	// error display message
+	// Error display message
 	WorldAttributes* worldPointer = &_worldAttributesBaseAddress[__EXCEPTIONS_WORLD];
 
 	worldPointer->mx = __PRINTING_BGMAP_X_OFFSET;
@@ -174,7 +174,7 @@ static void Error::triggerException(char* message __attribute__((unused)), char*
 
 	_worldAttributesBaseAddress[__EXCEPTIONS_WORLD - 1].head = __WORLD_END;
 
-	// dimm game
+	// Dimm game
 	_vipRegisters[__GPLT0] = 0xE4;
 	_vipRegisters[__GPLT1] = __DIMM_VALUE_2;
 	_vipRegisters[__GPLT2] = __DIMM_VALUE_1;
@@ -184,7 +184,7 @@ static void Error::triggerException(char* message __attribute__((unused)), char*
 	_vipRegisters[__JPLT2] = __DIMM_VALUE_1;
 	_vipRegisters[__JPLT3] = __DIMM_VALUE_1;
 
-	// trap the game here
+	// Trap the game here
 	while(true);
 #endif
 }

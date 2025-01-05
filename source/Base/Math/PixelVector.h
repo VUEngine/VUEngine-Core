@@ -264,7 +264,7 @@ static inline PixelVector PixelVector::projectVector3D(Vector3D vector3D, int16 
 		// Fast and produces the expected result
 		// x = x * aspect ratio * fov
 
-		// to reduce from 4 products and 2 divisions to 3 products, 1 division and 3 bit shifts
+		// To reduce from 4 products and 2 divisions to 3 products, 1 division and 3 bit shifts
 		fixed_ext_t factor = __FIXED_EXT_DIV(_optical->projectionMultiplierHelper, z + _optical->cameraNearPlane);
 
 		x = (__FIXED_EXT_MULT(x, factor)) + _optical->horizontalViewPointCenter;	
@@ -321,13 +321,13 @@ static inline bool PixelVector::isVisible(PixelVector vector, PixelRightBox pixe
 		return false;
 	}
 
-	// check y visibility
+	// Check y visibility
 	if(vector.y + pixelRightBox.y0 > _cameraFrustum->y1 + padding || vector.y + pixelRightBox.y1 < _cameraFrustum->y0 - padding)
 	{
 		return false;
 	}
 
-	// check z visibility
+	// Check z visibility
 	if(vector.z + pixelRightBox.z0 > _cameraFrustum->z1 + padding || vector.z + pixelRightBox.z1 < _cameraFrustum->z0 - padding)
 	{
 		return false;
@@ -349,13 +349,13 @@ static inline bool PixelVector::isVector3DVisible(Vector3D vector, PixelRightBox
 		return false;
 	}
 
-	// check y visibility
+	// Check y visibility
 	if(pixelVector.y + pixelRightBox.y0 > _cameraFrustum->y1 + padding || pixelVector.y + pixelRightBox.y1 < _cameraFrustum->y0 - padding)
 	{
 		return false;
 	}
 
-	// check z visibility
+	// Check z visibility
 	if(pixelVector.z + pixelRightBox.z0 > _cameraFrustum->z1 + padding || pixelVector.z + pixelRightBox.z1 < _cameraFrustum->z0 - padding)
 	{
 		return false;

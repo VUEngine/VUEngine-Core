@@ -52,7 +52,7 @@ void Sprite::constructor(Entity owner, const SpriteSpec* spriteSpec)
 	// Always explicitly call the base's constructor 
 	Base::constructor(owner, (const VisualComponentSpec*)&spriteSpec->visualComponentSpec);
 
-	// clear values
+	// Clear values
 	this->index = __NO_RENDER_INDEX;
 	this->head = 0;
 	this->texture = NULL;
@@ -166,8 +166,8 @@ inline void Sprite::transform()
 int16 Sprite::render(int16 index, bool updateAnimation)
 {
 	// If the client code makes these checks before calling this method,
-	// it saves on method calls quite a bit when there are lots of
-	// sprites. Don't uncomment.
+	// It saves on method calls quite a bit when there are lots of
+	// Sprites. Don't uncomment.
 /*
 	if(__HIDE == this->show)
 	{
@@ -230,8 +230,8 @@ int16 Sprite::render(int16 index, bool updateAnimation)
 	}
 
 	// If the client code makes these checks before calling this method,
-	// it saves on method calls quite a bit when there are lots of
-	// sprites. Don't uncomment.
+	// It saves on method calls quite a bit when there are lots of
+	// Sprites. Don't uncomment.
 /*
 	if
 	(

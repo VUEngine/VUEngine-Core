@@ -70,12 +70,12 @@ CharSet CharSetManager::getCharSet(CharSetSpec* charSetSpec)
 
 	if(!charSetSpec->shared)
 	{
-		// ask for allocation
+		// Ask for allocation
 		charSet = CharSetManager::allocateCharSet(this, charSetSpec);
 	}
 	else
 	{
-		// first try to find an already created charset
+		// First try to find an already created charset
 		charSet = CharSetManager::findCharSet(this, charSetSpec);
 
 		if(NULL == charSet)
@@ -228,7 +228,7 @@ void CharSetManager::destructor()
 	delete this->charSets;
 	this->charSets = NULL;
 
-	// allow a new construct
+	// Allow a new construct
 	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
@@ -296,7 +296,7 @@ CharSet CharSetManager::allocateCharSet(CharSetSpec* charSetSpec)
 	Printing::setDebugMode(Printing::getInstance());
 	Printing::clear(Printing::getInstance());
 
-	// if there isn't enough memory thrown an exception
+	// If there isn't enough memory thrown an exception
 	NM_ASSERT(false, "CharSetManager::allocateCharSet: CHAR mem depleted");
 #endif
 

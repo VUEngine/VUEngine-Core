@@ -30,7 +30,7 @@ void Stopwatch::constructor()
 
 	Stopwatch::reset(this);
 
-	// register clock
+	// Register clock
 	StopwatchManager::register(StopwatchManager::getInstance(), this);
 }
 
@@ -38,7 +38,7 @@ void Stopwatch::constructor()
 
 void Stopwatch::destructor()
 {
-	// unregister the clock
+	// Unregister the clock
 	StopwatchManager::unregister(StopwatchManager::getInstance(), this);
 
 	// Always explicitly call the base's destructor 

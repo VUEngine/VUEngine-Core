@@ -314,7 +314,7 @@ void VisualComponent::pause(bool pause)
 {
 	if(!isDeleted(this->animationController))
 	{
-		// first animate the frame
+		// First animate the frame
 		AnimationController::pause(this->animationController, pause);
 	}
 }
@@ -335,7 +335,7 @@ bool VisualComponent::isPlaying()
 {
 	if(!isDeleted(this->animationController))
 	{
-		// first animate the frame
+		// First animate the frame
 		return AnimationController::isPlaying(this->animationController);
 	}
 

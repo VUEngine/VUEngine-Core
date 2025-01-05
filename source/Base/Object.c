@@ -130,7 +130,7 @@ static Object Object::getCast(void* object, ClassPointer targetClassGetClassMeth
 			return object;
 		}
 
-		// make my own virtual call, otherwise the macro will cause an infinite recursive call because of the
+		// Make my own virtual call, otherwise the macro will cause an infinite recursive call because of the
 		// ObjectClass::getCast check
 		baseClassGetClassMethod = (ClassPointer)__VIRTUAL_CALL_ADDRESS(Object, getBaseClass, object)(object);
 	}
@@ -193,7 +193,7 @@ void Object::constructor()
 
 void Object::destructor()
 {
-	// free the memory
+	// Free the memory
 #ifndef __BYPASS_MEMORY_MANAGER_WHEN_DELETING
 	MemoryPool::free((void*)((uint32)this - __DYNAMIC_STRUCT_PAD));
 #else

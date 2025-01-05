@@ -49,10 +49,10 @@ typedef struct Lap
 
 static BrightnessRepeatSpec profileBrightnessRepeatSpec =
 {
-	// mirror spec?
+	// Mirror spec?
 	false,
 
-	// brightness repeat values
+	// Brightness repeat values
 	{
 		16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16,
 		16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16,
@@ -235,7 +235,7 @@ void Profiler::destructor()
 	delete this->laps;
 	this->laps = NULL;
 
-	// allow a new construct
+	// Allow a new construct
 	// Always explicitly call the base's destructor 
 	Base::destructor();
 }

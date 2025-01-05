@@ -24,7 +24,7 @@ void VirtualNode::constructor(const void* const data)
 	// Always explicitly call the base's constructor 
 	Base::constructor();
 
-	// initialize members
+	// Initialize members
 	this->next = NULL;
 	this->previous = NULL;
 	this->data = (void*)data;

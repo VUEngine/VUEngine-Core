@@ -181,10 +181,10 @@ static int32 HardwareManager::getInterruptLevel()
 
 static void HardwareManager::initialize()
 {
-	// set ROM waiting to 1 cycle
+	// Set ROM waiting to 1 cycle
 	_hardwareRegisters[__WCR] |= 0x0001;
 
-	// check memory map before anything else
+	// Check memory map before anything else
 	HardwareManager::checkMemoryMap();
 
 	//setup timer interrupts
@@ -202,7 +202,7 @@ static void HardwareManager::print(int32 x, int32 y)
 	int32 auxY = y;
 	int32 xDisplacement = 5;
 
-	// print registries' status to know the call source
+	// Print registries' status to know the call source
 	Printing::text(Printing::getInstance(), "PSW:" , x, ++auxY, NULL);
 	Printing::hex(Printing::getInstance(), HardwareManager::getPSW(), x + xDisplacement, auxY, 4, NULL);
 	Printing::text(Printing::getInstance(), "SP:" , x, ++auxY, NULL);

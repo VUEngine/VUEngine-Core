@@ -122,7 +122,7 @@ void BodyManager::update()
 
 		if(body->deleteMe)
 		{
-			// place in the removed bodies list
+			// Place in the removed bodies list
 			VirtualList::removeNode(this->components, node);
 
 			delete body;
@@ -136,7 +136,7 @@ void BodyManager::update()
 
 		if(__NO_AXIS != body->axisSubjectToGravity && Entity::isSubjectToGravity(body->owner, this->gravity))
 		{
-			// check if necessary to apply gravity
+			// Check if necessary to apply gravity
 			uint16 movingState = Body::getMovementOnAllAxis(body);
 
 			uint16 gravitySensibleAxis = 
@@ -184,7 +184,7 @@ Body BodyManager::createBody(Entity owner, const BodySpec* bodySpec)
 
 			if(body->deleteMe)
 			{
-				// place in the removed bodies list
+				// Place in the removed bodies list
 				VirtualList::removeNode(this->components, node);
 
 				delete body;
@@ -192,12 +192,12 @@ Body BodyManager::createBody(Entity owner, const BodySpec* bodySpec)
 		}
 	}
 
-	// if the actor is already registered
+	// If the actor is already registered
 	Body body = new Body(owner, bodySpec);
 	VirtualList::pushFront(this->components, body);
 	ASSERT(Body::safeCast(VirtualList::front(this->components)), "BodyManager::createBody: bad class body");
 
-	// return created body
+	// Return created body
 	return body;
 }
 
@@ -365,11 +365,11 @@ Body BodyManager::getBody(Entity owner)
 
 	for(; NULL != node; node = node->next)
 	{
-		// current body
+		// Current body
 		Body body = Body::safeCast(node->data);
 		ASSERT(body, "BodyManager::getBody: null body");
 
-		// check if current body's owner is the same as the actor calling this method
+		// Check if current body's owner is the same as the actor calling this method
 		if(owner == body->owner)
 		{
 			return body;
@@ -389,10 +389,10 @@ bool BodyManager::isEntityRegistered(Entity owner)
 
 	for(; NULL != node; node = node->next)
 	{
-		// current body
+		// Current body
 		Body body = Body::safeCast(node->data);
 
-		// check if current body's owner is the same as the actor calling this method
+		// Check if current body's owner is the same as the actor calling this method
 		if(Entity::safeCast(owner) == body->owner)
 		{
 			return true;

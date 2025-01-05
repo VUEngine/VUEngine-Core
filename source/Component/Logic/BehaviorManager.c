@@ -87,7 +87,7 @@ void BehaviorManager::destructor()
 {
 	BehaviorManager::cleanUp(this);
 
-	// allow a new construct
+	// Allow a new construct
 	// Always explicitly call the base's destructor 
 	Base::destructor();
 }

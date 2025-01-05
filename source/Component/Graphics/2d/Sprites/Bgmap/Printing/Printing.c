@@ -45,7 +45,7 @@ extern FontROMSpec DefaultFontSpec;
 
 FontROMData VUENGINE_DEBUG_FONT_DATA =
 {
-	// font spec
+	// Font spec
 	(FontSpec*)&DefaultFontSpec,
 
 	// CharSet
@@ -117,10 +117,10 @@ void Printing::hide()
 void Printing::loadFonts(FontSpec** fontSpecs)
 {
 	// Since fonts' charsets will be released, there is no reason to keep
-	// anything in the printing area
+	// Anything in the printing area
 	Printing::clear(this);
 
-	// empty list of registered fonts
+	// Empty list of registered fonts
 	Printing::releaseFonts(this);
 
 	// Prevent VIP's interrupt from calling render during this process
@@ -129,22 +129,22 @@ void Printing::loadFonts(FontSpec** fontSpecs)
 	// Make sure all sprites are ready
 	SpriteManager::prepareAll(SpriteManager::getInstance());
 
-	// iterate over all defined fonts and add to internal list
+	// Iterate over all defined fonts and add to internal list
 	uint32 i = 0, j = 0;
 	for(i = 0; _fonts[i]; i++)
 	{
-		// instance and initialize a new fontdata instance
+		// Instance and initialize a new fontdata instance
 		FontData* fontData = new FontData;
 		fontData->fontSpec = _fonts[i];
 		fontData->charSet = NULL;
 
-		// preload charset for font if in list of fonts to preload
+		// Preload charset for font if in list of fonts to preload
 		if(fontSpecs)
 		{
-			// find defined font in list of fonts to preload
+			// Find defined font in list of fonts to preload
 			for(j = 0; fontSpecs[j]; j++)
 			{
-				// preload charset and save charset reference, if font was found
+				// Preload charset and save charset reference, if font was found
 				if(_fonts[i]->charSetSpec == fontSpecs[j]->charSetSpec)
 				{
 					fontData->charSet = CharSetManager::getCharSet(CharSetManager::getInstance(), fontSpecs[j]->charSetSpec);
@@ -154,7 +154,7 @@ void Printing::loadFonts(FontSpec** fontSpecs)
 			}
 		}
 
-		// add fontdata to internal list
+		// Add fontdata to internal list
 		VirtualList::pushBack(this->fonts, fontData);
 	}
 
@@ -455,7 +455,7 @@ void Printing::addSprite()
 			},
 
 			// The display mode (__WORLD_BGMAP, __WORLD_AFFINE, __WORLD_OBJECT or __WORLD_HBIAS)
-			// make sure to use the proper corresponding sprite type throughout the spec (BgmapSprite or ObjectSprite)
+			// Make sure to use the proper corresponding sprite type throughout the spec (BgmapSprite or ObjectSprite)
 			__WORLD_BGMAP,
 
 			// Pointer to affine/hbias manipulation function
@@ -684,14 +684,14 @@ FontData* Printing::getFontByName(const char* font)
 	}
 	else if(NULL != this->fonts)
 	{
-		// set first defined font as default
+		// Set first defined font as default
 		result = VirtualList::front(this->fonts);
 
 		if(NULL != result)
 		{
 			if(NULL != font)
 			{
-				// iterate over registered fonts to find spec of font to use
+				// Iterate over registered fonts to find spec of font to use
 				VirtualNode node = VirtualList::begin(this->fonts);
 				
 				for(; NULL != node; node = VirtualNode::getNext(node))
@@ -706,7 +706,7 @@ FontData* Printing::getFontByName(const char* font)
 				}
 			}
 
-			// if font's charset has not been preloaded, load it now
+			// If font's charset has not been preloaded, load it now
 			if(NULL == result->charSet)
 			{
 				result->charSet = CharSetManager::getCharSet(CharSetManager::getInstance(), result->fontSpec->charSetSpec);
@@ -734,7 +734,7 @@ FontSize Printing::getTextSize(const char* string, const char* font)
 
 	if(NULL == fontData)
 	{
-		// just to make sure that no client code does a 0 division with these results
+		// Just to make sure that no client code does a 0 division with these results
 		fontSize = (FontSize){8, 8};
 		return fontSize;
 	}
@@ -745,18 +745,18 @@ FontSize Printing::getTextSize(const char* string, const char* font)
 	{
 		switch(string[i])
 		{
-			// line feed
+			// Line feed
 			case 13:
 
 				break;
 
-			// tab
+			// Tab
 			case 9:
 
 				currentLineLength += (currentLineLength / __TAB_SIZE + 1) * __TAB_SIZE * fontData->fontSpec->fontSize.x;
 				break;
 
-			// carriage return
+			// Carriage return
 			case 10:
 
 				fontSize.y += fontData->fontSpec->fontSize.y;
@@ -799,7 +799,7 @@ void Printing::constructor()
 	// Always explicitly call the base's constructor 
 	Base::constructor();
 
-	// initialize members
+	// Initialize members
 	this->fonts = new VirtualList();
 	this->printingSprites = new VirtualList();
 	this->mode = __PRINTING_MODE_DEFAULT;
@@ -832,7 +832,7 @@ void Printing::destructor()
 
 	this->printingSprites = NULL;
 
-	// allow a new construct
+	// Allow a new construct
 	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
@@ -932,10 +932,10 @@ void Printing::out(uint8 x, uint8 y, const char* string, const char* font)
 	uint16* const bgmapSpaceBaseAddress = (uint16*)__BGMAP_SPACE_BASE_ADDRESS;
 	uint32 offset = __PRINTING_MODE_DEBUG == this->mode ? VUENGINE_DEBUG_FONT_CHARSET_OFFSET : CharSet::getOffset(fontData->charSet);
 
-	// print text
+	// Print text
 	while('\0' != string[i] && x < (__SCREEN_WIDTH_IN_CHARS))
 	{
-		// do not allow printing outside of the visible area, since that would corrupt the param table
+		// Do not allow printing outside of the visible area, since that would corrupt the param table
 		if(y > 27/* || y < 0*/)
 		{
 			break;
@@ -945,12 +945,12 @@ void Printing::out(uint8 x, uint8 y, const char* string, const char* font)
 
 		switch(string[i])
 		{
-			// line feed
+			// Line feed
 			case 13:
 
 				break;
 
-			// tab
+			// Tab
 			case 9:
 
 				if(kPrintingOrientationHorizontal == this->orientation)
@@ -963,7 +963,7 @@ void Printing::out(uint8 x, uint8 y, const char* string, const char* font)
 				}
 				break;
 
-			// carriage return
+			// Carriage return
 			case 10:
 
 				temp = fontData->fontSpec->fontSize.y;
@@ -986,7 +986,7 @@ void Printing::out(uint8 x, uint8 y, const char* string, const char* font)
 							bgmapSpaceBaseAddress[(0x1000 * (this->printingBgmapSegment + 1) - 
 							__PRINTABLE_BGMAP_AREA) + position + charOffsetX + (charOffsetY << 6)] =
 								(
-									// offset of charset in char memory
+									// Offset of charset in char memory
 									offset +
 									((uint8)(string[i] - fontData->fontSpec->offset) * fontData->fontSpec->fontSize.x) +
 
@@ -995,7 +995,7 @@ void Printing::out(uint8 x, uint8 y, const char* string, const char* font)
 										* fontData->fontSpec->charactersPerLineInCharset * fontData->fontSpec->fontSize.x)
 											* (fontData->fontSpec->fontSize.y - 1)) +
 
-									// respective char of character
+									// Respective char of character
 									charOffset
 								)
 								| (this->palette << 14);
@@ -1020,7 +1020,7 @@ void Printing::out(uint8 x, uint8 y, const char* string, const char* font)
 
 				if(x >= 48/* || x < 0*/)
 				{
-					// wrap around when outside of the visible area
+					// Wrap around when outside of the visible area
 					temp = fontData->fontSpec->fontSize.y;
 					y = (this->direction == kPrintingDirectionLTR)
 						? y + temp

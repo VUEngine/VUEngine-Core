@@ -203,7 +203,7 @@ void Debug::destructor()
 	delete this->pages;
 	delete this->subPages;
 
-	// allow a new construct
+	// Allow a new construct
 	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
@@ -802,7 +802,7 @@ void Debug::charMemoryShowMemory(int32 increment __attribute__ ((unused)), int32
 	int32 i = 0;
 	int32 yOffset = y + 3;
 
-	// print box
+	// Print box
 	Printing::text
 	(
 		Printing::getInstance(), "\x03\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08"
@@ -831,7 +831,7 @@ void Debug::charMemoryShowMemory(int32 increment __attribute__ ((unused)), int32
 	uint32 printingBgmap = BgmapTextureManager::getPrintingBgmapSegment(BgmapTextureManager::getInstance());;
 	uint16* const bgmapSpaceBaseAddress = (uint16*)__BGMAP_SPACE_BASE_ADDRESS;
 
-	// put the map into memory calculating the number of char for each reference
+	// Put the map into memory calculating the number of char for each reference
 	for(i = 0; i <  __CHARS_PER_SEGMENT_TO_SHOW / __CHARS_PER_ROW_TO_SHOW; i++)
 	{
 		Mem::addOffsetToHWORD
@@ -891,7 +891,7 @@ void Debug::showBgmapSegment()
 	uint8 i = 0;
 	uint8 yOffset = 4;
 
-	// print box
+	// Print box
 	switch(this->bgmapSegmentDiplayedSection)
 	{
 		case 0:
@@ -1292,16 +1292,16 @@ void Debug::showSramPage(int32 increment __attribute__ ((unused)), int32 x __att
 		this->sramPage = 0;
 	}
 
-	// get sram base address
+	// Get sram base address
 	uint16* startAddress = (uint16*)&_sramBssEnd;
 
-	// print status header
+	// Print status header
 	Printing::text(Printing::getInstance(), "SRAM STATUS", 1, y++, NULL);
 	Printing::text(Printing::getInstance(), "Total (kb):", 1, ++y, NULL);
 	Printing::int32(Printing::getInstance(), __TOTAL_SAVE_RAM >> 10, 13, y, NULL);
 	y+=2;
 
-	// print inspector header
+	// Print inspector header
 	Printing::text(Printing::getInstance(), "SRAM INSPECTOR", 1, ++y, NULL);
 	Printing::text(Printing::getInstance(), "Page     /", 33, y, NULL);
 	Printing::int32(Printing::getInstance(), totalPages, 43, y, NULL);
@@ -1313,39 +1313,39 @@ void Debug::showSramPage(int32 increment __attribute__ ((unused)), int32 x __att
 		"\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08", 1, ++y, NULL
 	);
 
-	// print values
+	// Print values
 	for(i = 0; i < 16; i++)
 	{
-		// print address
+		// Print address
 		Printing::text(Printing::getInstance(), "0x00000000: ", 1, ++y, NULL);
 		Printing::hex(Printing::getInstance(), (int32)startAddress + (this->sramPage << 7) + (i << 3), 3, y, 8, NULL);
 
-		// values
+		// Values
 		for(j = 0; j < 8; j++)
 		{
-			// read byte from sram
+			// Read byte from sram
 			value = startAddress[(this->sramPage << 7) + (i << 3) + j];
 
-			// print byte
+			// Print byte
 			Printing::hex(Printing::getInstance(), value, 13 + (j*3), y, 2, NULL);
 
-			// add current character to line word
-			// if outside of extended ascii range, print whitespace
+			// Add current character to line word
+			// If outside of extended ascii range, print whitespace
 			word[j] = (value >= 32) ? (char)value : (char)32;
 			//word[j] = value ? (char)value : (char)32;
 		}
 
-		// add termination character to string
+		// Add termination character to string
 		word[8] = (char)0;
 
-		// print word
+		// Print word
 		Printing::text(Printing::getInstance(), word, 37, y, NULL);
 
-		// print scroll bar
+		// Print scroll bar
 		Printing::text(Printing::getInstance(), __CHAR_MEDIUM_RED_BOX, 46, y, NULL);
 	}
 
-	// mark scroll bar position
+	// Mark scroll bar position
 	Printing::text(Printing::getInstance(), __CHAR_BRIGHT_RED_BOX, 46, y - 15 + (this->sramPage / (totalPages / 16)), NULL);
 }
 

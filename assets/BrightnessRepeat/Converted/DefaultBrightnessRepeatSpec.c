@@ -14,10 +14,10 @@
 
 BrightnessRepeatROMSpec DefaultBrightnessRepeatSpec =
 {
-	// mirror spec?
+	// Mirror spec?
 	true,
 
-	// brightness repeat values
+	// Brightness repeat values
 	{
          0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, 
 		 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, 

@@ -26,7 +26,7 @@
 
 static void LineField::project(Vector3D center, fixed_t radius, Vector3D vector, fixed_t* min, fixed_t* max)
 {
-	// project this onto the current normal
+	// Project this onto the current normal
 	fixed_t dotProduct = Vector3D::dotProduct(vector, center);
 
 	*min = dotProduct - radius;
@@ -99,13 +99,13 @@ void LineField::configureWireframe()
 
 	const PixelVector MeshesSegments[][2]=
 	{
-		// line
+		// Line
 		{
 			PixelVector::getFromVector3D(this->a, 0),
 			PixelVector::getFromVector3D(this->b, 0),
 		},
 
-		// normal
+		// Normal
 		{
 			PixelVector::getFromVector3D(Vector3D::intermediate(this->a, this->b), 0),
 			PixelVector::getFromVector3D
@@ -114,7 +114,7 @@ void LineField::configureWireframe()
 			),
 		},
 
-		// limiter
+		// Limiter
 		{
 			{0, 0, 0, 0}, 
 			{0, 0, 0, 0}
@@ -150,7 +150,7 @@ void LineField::configureWireframe()
 		(PixelVector(*)[2])MeshesSegments
 	};
 
-	// create a wireframe
+	// Create a wireframe
 	this->wireframe = Wireframe::safeCast(new Mesh(this->owner, this->meshSpec));
 
 	if(!isDeleted(this->wireframe))

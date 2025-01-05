@@ -126,7 +126,7 @@ void AnimationInspector::show()
 	AnimationInspector::configureState(this);
 	SpriteManager::hideAllSprites(SpriteManager::getInstance(), NULL, false);
 	
-	// make sure all textures are written right now
+	// Make sure all textures are written right now
 	SpriteManager::writeTextures(SpriteManager::getInstance());
 	SpriteManager::deferParamTableEffects(SpriteManager::getInstance(), false);
 }
@@ -170,7 +170,7 @@ void AnimationInspector::hide()
 		this->frameEditionSelector = NULL;
 	}
 
-	// make sure all textures are written right now
+	// Make sure all textures are written right now
 	SpriteManager::writeTextures(SpriteManager::getInstance());
 	SpriteManager::showAllSprites(SpriteManager::getInstance(), NULL, true);
 	SpriteManager::deferParamTableEffects(SpriteManager::getInstance(), true);
@@ -283,7 +283,7 @@ void AnimationInspector::destructor()
 		delete this->frameEditionSelector;
 	}
 
-	// allow a new construct
+	// Allow a new construct
 	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
@@ -365,7 +365,7 @@ void AnimationInspector::selectActor(uint32 pressedKey)
 	}
 	else if(pressedKey & K_A)
 	{
-		// select the added actor
+		// Select the added actor
 		this->state = kSelectSprite;
 		AnimationInspector::configureState(this);
 	}
@@ -391,7 +391,7 @@ void AnimationInspector::selectSprite(uint32 pressedKey)
 	}
 	else if(pressedKey & K_A)
 	{
-		// select the added actor
+		// Select the added actor
 		this->state = kSelectAnimation;
 		AnimationInspector::configureState(this);
 	}

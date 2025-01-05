@@ -323,14 +323,14 @@ Actor::isInsideFrustrum(Vector3D vector3D, RightBox rightBox)
 		return false;
 	}
 
-	// check y visibility
+	// Check y visibility
 	if(vector3D.y + rightBox.y0 > __PIXELS_TO_METERS(_cameraFrustum->y1) ||
 	   vector3D.y + rightBox.y1 < __PIXELS_TO_METERS(_cameraFrustum->y0))
 	{
 		return false;
 	}
 
-	// check z visibility
+	// Check z visibility
 	if(vector3D.z + rightBox.z0 > __PIXELS_TO_METERS(_cameraFrustum->z1) ||
 	   vector3D.z + rightBox.z1 < __PIXELS_TO_METERS(_cameraFrustum->z0))
 	{

@@ -53,7 +53,7 @@ enum MessagesTypes
 	kMessageHide,
 	kMessageSetTransparency,
 
-	// don't place messages below this
+	// Don't place messages below this
 	kMessageLastEngine
 };
 

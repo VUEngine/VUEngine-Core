@@ -69,7 +69,7 @@ static Actor Actor::createActor(const PositionedActor* const positionedActor, in
 	Actor::setLocalRotation(actor, &rotation);
 	Actor::setLocalScale(actor, &scale);
 
-	// add children if defined
+	// Add children if defined
 	if(NULL != positionedActor->childrenSpecs)
 	{
 		Actor::addChildActors(actor, positionedActor->childrenSpecs);
@@ -108,7 +108,7 @@ static Actor Actor::createActorDeferred(const PositionedActor* const positionedA
 	Actor::setLocalRotation(actor, &rotation);
 	Actor::setLocalScale(actor, &scale);
 
-	// add children if defined
+	// Add children if defined
 	if(positionedActor->childrenSpecs)
 	{
 		Actor::addChildActorsDeferred(actor, positionedActor->childrenSpecs);
@@ -338,7 +338,7 @@ static Actor Actor::instantiate(const PositionedActor* const positionedActor, in
 			(ActorSpec*)positionedActor->actorSpec, internalId, name
 		);
 
-	// process extra info
+	// Process extra info
 	if(NULL != positionedActor->extraInfo)
 	{
 		Actor::setExtraInfo(actor, positionedActor->extraInfo);
@@ -546,7 +546,7 @@ Actor Actor::spawnChildActor(const PositionedActor* const positionedActor)
 
 		if(!isDeleted(actor))
 		{
-			// create the actor and add it to the world
+			// Create the actor and add it to the world
 			Actor::addChild(this, Container::safeCast(actor));
 		}
 
@@ -699,7 +699,7 @@ bool Actor::isInCameraRange(int16 padding, bool recursive)
 	RightBox rightBox	=
 	{
 		// The center of displacement has to be added to the bounding box and not to the 
-		// position because this has to be rotated
+		// Position because this has to be rotated
 		-(this->size.x >> 1) - paddingHelper + centerDisplacement.x,
 		-(this->size.y >> 1) - paddingHelper + centerDisplacement.y,
 		-(this->size.z >> 1) - paddingHelper + centerDisplacement.z,
@@ -821,7 +821,7 @@ const char* Actor::getPlayingAnimationName()
 
 void Actor::setSpec(void* actorSpec)
 {
-	// save spec
+	// Save spec
 	this->actorSpec = actorSpec;
 }
 

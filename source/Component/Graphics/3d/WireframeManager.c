@@ -277,7 +277,7 @@ void WireframeManager::draw()
 	this->drawnWireframes = 0;
 #endif
 
-	// check the colliders
+	// Check the colliders
 	for(VirtualNode node = this->components->head; !this->stopDrawing && NULL != node; node = node->next)
 	{
 		Wireframe wireframe = Wireframe::safeCast(node->data);
@@ -424,7 +424,7 @@ void WireframeManager::destructor()
 		kEventVIPManagerGAMESTARTDuringXPEND
 	);
 
-	// allow a new construct
+	// Allow a new construct
 	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
@@ -456,10 +456,10 @@ bool WireframeManager::sortProgressively()
 
 		Wireframe nextWireframe = Wireframe::safeCast(nextNode->data);
 
-		// check if z positions are swapped
+		// Check if z positions are swapped
 		if(nextWireframe->squaredDistanceToCamera < wireframe->squaredDistanceToCamera)
 		{
-			// swap nodes' data
+			// Swap nodes' data
 			node->data = nextWireframe;
 			nextNode->data = wireframe;
 

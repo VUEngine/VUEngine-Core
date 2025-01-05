@@ -133,16 +133,16 @@ void Clock::constructor()
 	// Always explicitly call the base's constructor 
 	Base::constructor();
 
-	// initialize time
+	// Initialize time
 	this->milliseconds = 0;
 
-	// initialize state
+	// Initialize state
 	this->paused = true;
 
 	this->previousSecond = 0;
 	this->previousMinute = 0;
 
-	// register clock
+	// Register clock
 	ClockManager::register(ClockManager::getInstance(), this);
 }
 
@@ -150,7 +150,7 @@ void Clock::constructor()
 
 void Clock::destructor()
 {
-	// unregister the clock
+	// Unregister the clock
 	ClockManager::unregister(ClockManager::getInstance(), this);
 
 	// Always explicitly call the base's destructor 
@@ -193,7 +193,7 @@ void Clock::reset()
 
 void Clock::update(uint32 elapsedMilliseconds)
 {
-	// increase count
+	// Increase count
 	if(this->paused)
 	{
 		return;

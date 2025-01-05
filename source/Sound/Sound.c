@@ -154,7 +154,7 @@ void Sound::play(const Vector3D* position, uint32 playbackType)
 
 			break;
 
-			// intentional fall through
+			// Intentional fall through
 		case kSoundPlaybackNormal:
 			
 			Sound::setVolumeReduction(this, 0);

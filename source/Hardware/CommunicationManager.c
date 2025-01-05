@@ -179,16 +179,16 @@ void CommunicationManager::enableCommunications(EventListener eventLister, Liste
     if(CommunicationManager::isHandshakeIncoming(this))
     {
 		// There is another system attached already managing
-		// the channel
+		// The channel
 		this->communicationMode = __COM_AS_MASTER;
 
-		// send dummy payload to verify communication
+		// Send dummy payload to verify communication
 		CommunicationManager::sendHandshake(this);
 	}
 	else
 	{
 		// I'm alone since a previously turned on
-		// system would had already closed the channel
+		// System would had already closed the channel
 		this->communicationMode = __COM_AS_REMOTE;
 
 		// Wait for incoming clock
@@ -530,7 +530,7 @@ void CommunicationManager::constructor()
 
 void CommunicationManager::destructor()
 {
-	// allow a new construct
+	// Allow a new construct
 	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
@@ -556,7 +556,7 @@ bool CommunicationManager::isHandshakeIncoming()
 	// Try to close the communication channel
 	CommunicationManager::setReady(this, false);
 	// If channel was unsuccessfully closed,
-	// then there is a handshake taking place
+	// Then there is a handshake taking place
 	return CommunicationManager::isRemoteReady(this);
 }
 

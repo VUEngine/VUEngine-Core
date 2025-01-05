@@ -27,13 +27,13 @@ static void Box::project(Vector3D vertexes[__BOX_VERTEXES], Vector3D vector, fix
 {
 	int32 vertexIndex = 0;
 
-	// project this onto the current normal
+	// Project this onto the current normal
 	fixed_t dotProduct = Vector3D::dotProduct(vector, vertexes[vertexIndex]);
 
 	fixed_t finalMin = dotProduct;
 	fixed_t finalMax = dotProduct;
 
-	// project this onto the current normal
+	// Project this onto the current normal
 	for(; vertexIndex < __BOX_VERTEXES; vertexIndex++)
 	{
 		dotProduct = Vector3D::dotProduct(vector, vertexes[vertexIndex]);
@@ -100,7 +100,7 @@ void Box::destructor()
 
 void Box::resize(fixed_t sizeDelta __attribute__((unused)))
 {
-	// add displacement
+	// Add displacement
 	this->rightBox.x0 -= sizeDelta;
 	this->rightBox.x1 += sizeDelta;
 
@@ -141,7 +141,7 @@ void Box::configureWireframe()
 			PixelVector::getFromVector3D((Vector3D){this->rightBox.x1, this->rightBox.y1, 0}, Optics::calculateParallax(this->rightBox.z0)),
 		},
 		
-		// limiter
+		// Limiter
 		{
 			{0, 0, 0, 0}, 
 			{0, 0, 0, 0}
@@ -173,11 +173,11 @@ void Box::configureWireframe()
 			false
 		},
 
-		// segments
+		// Segments
 		(PixelVector(*)[2])MeshesSegments
 	};
 
-	// create a wireframe
+	// Create a wireframe
 	this->wireframe = Wireframe::safeCast(new Mesh(this->owner, &meshSpec));
 
 	Mesh::setDisplacement(this->wireframe, Vector3D::getFromPixelVector(((ColliderSpec*)this->componentSpec)->displacement));
@@ -313,25 +313,25 @@ void Box::computeRightBox()
 
 	Size surroundingBoxSize = Size::getFromPixelSize(((ColliderSpec*)this->componentSpec)->pixelSize);
 
-	// angle | theta | psi
+	// Angle | theta | psi
 	if(0 != this->transformation->rotation.z || 0 != this->transformation->rotation.y || 0 != this->transformation->rotation.x)
 	{
 		fixed_t width = surroundingBoxSize.x >> 1;
 		fixed_t height = surroundingBoxSize.y >> 1;
 		fixed_t depth = surroundingBoxSize.z >> 1;
 
-		// allow only one this->transformation->rotation
+		// Allow only one this->transformation->rotation
 		if(0 != this->transformation->rotation.z && 256 != this->transformation->rotation.z)
 		{
-			// clamp value around 256 degrees (180) to avoid conditionals later when calculating rotationVertexDisplacement
+			// Clamp value around 256 degrees (180) to avoid conditionals later when calculating rotationVertexDisplacement
 			int16 angle = this->transformation->rotation.z - ((this->transformation->rotation.z / 256) << 8);
 			angle = angle < 0 ? 256 + angle : angle;
 
-			// calculate position of box's right-bottom corner
+			// Calculate position of box's right-bottom corner
 			fixed_t sinAngle = __FIX7_9_TO_FIXED(__SIN(angle));
 			fixed_t cosAngle = __FIX7_9_TO_FIXED(__COS(angle));
 
-			// use vectors (x1, y0, z1) and (x1, y1, z1)
+			// Use vectors (x1, y0, z1) and (x1, y1, z1)
 			Vector3D topRight =
 			{
 				__FIXED_MULT(width, cosAngle) - __FIXED_MULT(-height, sinAngle),
@@ -363,7 +363,7 @@ void Box::computeRightBox()
 			surroundingBoxSize.x = (bottomRightHelper.x > topRightHelper.x ? bottomRightHelper.x : topRightHelper.x) << 1;
 			surroundingBoxSize.y = (bottomRightHelper.y > topRightHelper.y ? bottomRightHelper.y : topRightHelper.y) << 1;
 
-			// find the displacement over each axis for the rotated box
+			// Find the displacement over each axis for the rotated box
 			this->rotationVertexDisplacement.x = bottomRightHelper.x < topRightHelper.x ? bottomRight.x : topRight.x;
 			this->rotationVertexDisplacement.y = bottomRightHelper.y < topRightHelper.y ? bottomRight.y : topRight.y;
 			this->rotationVertexDisplacement.y = angle >= 128 ? -this->rotationVertexDisplacement.y : this->rotationVertexDisplacement.y;
@@ -379,15 +379,15 @@ void Box::computeRightBox()
 		}
 		else if(0 != this->transformation->rotation.y && 256 != this->transformation->rotation.y)
 		{
-			// clamp value around 256 degrees (180) to avoid conditionals later when calculating rotationVertexDisplacement
+			// Clamp value around 256 degrees (180) to avoid conditionals later when calculating rotationVertexDisplacement
 			int16 angle = this->transformation->rotation.y - ((this->transformation->rotation.y / 256) << 8);
 			angle = angle < 0 ? 256 + angle : angle;
 
-			// calculate position of box's right-bottom corner
+			// Calculate position of box's right-bottom corner
 			fixed_t sinAngle = __FIX7_9_TO_FIXED(__SIN(angle));
 			fixed_t cosAngle = __FIX7_9_TO_FIXED(__COS(0));
 
-			// use vectors (x0, y1, z0) and (x1, y1, z0)
+			// Use vectors (x0, y1, z0) and (x1, y1, z0)
 			Vector3D bottomLeft =
 			{
 				__FIXED_MULT(-width, cosAngle) + __FIXED_MULT(-depth, sinAngle),
@@ -419,7 +419,7 @@ void Box::computeRightBox()
 			surroundingBoxSize.x = (bottomLeftHelper.x > bottomRightHelper.x ? bottomLeftHelper.x : bottomRightHelper.x) << 1;
 			surroundingBoxSize.z = (bottomLeftHelper.z > bottomRightHelper.z ? bottomLeftHelper.z : bottomRightHelper.z) << 1;
 
-			// find the displacement over each axis for the rotated box
+			// Find the displacement over each axis for the rotated box
 			this->rotationVertexDisplacement.x = bottomLeftHelper.x < bottomRightHelper.x ? bottomLeft.x : bottomRight.x;
 			this->rotationVertexDisplacement.x = angle >= 128 ? -this->rotationVertexDisplacement.x : this->rotationVertexDisplacement.x;
 			this->rotationVertexDisplacement.z = bottomLeftHelper.z < bottomRightHelper.z ? bottomLeft.z : bottomRight.z;
@@ -435,15 +435,15 @@ void Box::computeRightBox()
 		}
 		else if(0 != this->transformation->rotation.x && 256 != this->transformation->rotation.x)
 		{
-			// clamp value around 256 degrees (180) to avoid conditionals later when calculating rotationVertexDisplacement
+			// Clamp value around 256 degrees (180) to avoid conditionals later when calculating rotationVertexDisplacement
 			int16 angle = this->transformation->rotation.x - ((this->transformation->rotation.x / 256) << 8);
 			angle = angle < 0 ? 256 + angle : angle;
 
-			// calculate position of box's right-bottom corner
+			// Calculate position of box's right-bottom corner
 			fixed_t sinAngle = __FIX7_9_TO_FIXED(__SIN(angle));
 			fixed_t cosAngle = __FIX7_9_TO_FIXED(__COS(angle));
 
-			// use vectors (x1, y1, z0) and (x1, y1, z1)
+			// Use vectors (x1, y1, z0) and (x1, y1, z1)
 			Vector3D bottomNear =
 			{
 				width,
@@ -475,7 +475,7 @@ void Box::computeRightBox()
 			surroundingBoxSize.y = (bottomFarHelper.y > bottomNearHelper.y ? bottomFarHelper.y : bottomNearHelper.y) << 1;
 			surroundingBoxSize.z = (bottomFarHelper.z > bottomNearHelper.z ? bottomFarHelper.z : bottomNearHelper.z) << 1;
 
-			// find the displacement over each axis for the rotated box
+			// Find the displacement over each axis for the rotated box
 			this->rotationVertexDisplacement.y = bottomFarHelper.y < bottomNearHelper.y ? bottomFar.y : bottomNear.y;
 			this->rotationVertexDisplacement.z = bottomFarHelper.z < bottomNearHelper.z ? bottomFar.z : bottomNear.z;
 			this->rotationVertexDisplacement.z = angle >= 128 ? -this->rotationVertexDisplacement.z : this->rotationVertexDisplacement.z;
@@ -493,7 +493,7 @@ void Box::computeRightBox()
 
 	Vector3D displacement = Vector3D::getFromPixelVector(((ColliderSpec*)this->componentSpec)->displacement);
 
-	// box's center if placed on P(0, 0, 0)
+	// Box's center if placed on P(0, 0, 0)
 	this->rightBox.x1 = surroundingBoxSize.x >> 1;
 	this->rightBox.y1 = surroundingBoxSize.y >> 1;
 	this->rightBox.z1 = surroundingBoxSize.z >> 1;
@@ -521,7 +521,7 @@ void Box::computeRightBox()
 void Box::computeNormals(Vector3D vertexes[__BOX_VERTEXES])
 {
 /*
-	// generic way
+	// Generic way
 	normals[0] = Vector3D::getPlaneNormal(vertexes[6], vertexes[4], vertexes[0]);
 	normals[1] = Vector3D::getPlaneNormal(vertexes[0], vertexes[4], vertexes[5]);
 	normals[2] = Vector3D::getPlaneNormal(vertexes[0], vertexes[1], vertexes[3]);
@@ -532,7 +532,7 @@ void Box::computeNormals(Vector3D vertexes[__BOX_VERTEXES])
 		this->normals = new Normals;
 	}
 
-	// fast way given that the cubes are regular
+	// Fast way given that the cubes are regular
 	this->normals->vectors[0] = (Vector3D)
 	{
 		vertexes[1].x - vertexes[0].x,

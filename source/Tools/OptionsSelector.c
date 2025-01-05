@@ -117,7 +117,7 @@ void OptionsSelector::destructor()
 {
 	OptionsSelector::flushPages(this);
 
-	// allow a new construct
+	// Allow a new construct
 
 	// Always explicitly call the base's destructor 
 	Base::destructor();
@@ -129,7 +129,7 @@ void OptionsSelector::setColumnWidth(uint8 width)
 {
 	FontData* fontData = Printing::getFontByName(Printing::getInstance(), this->font);
 
-	// add space for selection mark, consider font width
+	// Add space for selection mark, consider font width
 	width = ((width + 1) * fontData->fontSpec->fontSize.x);
 
 	if((0 < width) && (width <= (__SCREEN_WIDTH_IN_CHARS)))
@@ -199,12 +199,12 @@ bool OptionsSelector::setSelectedOption(int32 optionIndex)
 {
 	bool changed = false;
 
-	// check if desired option index is within bounds
+	// Check if desired option index is within bounds
 	if(optionIndex >= 0 && optionIndex <= this->totalOptions)
 	{
 		if(optionIndex < this->currentOptionIndex)
 		{
-			// if desired option index is smaller than the current one, select previous until desired option is set
+			// If desired option index is smaller than the current one, select previous until desired option is set
 			while(this->currentOptionIndex != optionIndex)
 			{
 				OptionsSelector::selectNext(this);
@@ -213,7 +213,7 @@ bool OptionsSelector::setSelectedOption(int32 optionIndex)
 		}
 		else if(optionIndex > this->currentOptionIndex)
 		{
-			// if desired option index is larger than the current one, select next until desired option is set
+			// If desired option index is larger than the current one, select next until desired option is set
 			while(this->currentOptionIndex != optionIndex)
 			{
 				OptionsSelector::selectPrevious(this);
@@ -231,25 +231,25 @@ void OptionsSelector::selectNext()
 {
 	if(this->currentOption)
 	{
-		// remove previous selection mark
+		// Remove previous selection mark
 		OptionsSelector::printSelectorMark(this, " ", -this->optionsLength);
 		OptionsSelector::printSelectorMark(this, " ", this->optionsLength);
 
-		// get next option
+		// Get next option
 		this->currentOption = this->currentOption->next;
 		this->currentOptionIndex++;
 
-		// if there's no next option on the current page
+		// If there's no next option on the current page
 		if(!this->currentOption)
 		{
-			// if there's more than 1 page, go to next page
+			// If there's more than 1 page, go to next page
 			if(VirtualList::getCount(this->pages) > 1)
 			{
-				// select next page
+				// Select next page
 				this->currentPage = this->currentPage->next;
 				this->currentPageIndex++;
 
-				// if next page does not exist
+				// If next page does not exist
 				if(!this->currentPage)
 				{
 					this->currentPage = this->pages->head;
@@ -257,22 +257,22 @@ void OptionsSelector::selectNext()
 					this->currentOptionIndex = 0;
 				}
 
-				// get new option
+				// Get new option
 				this->currentOption = (VirtualList::safeCast(VirtualNode::getData(this->currentPage)))->head;
 				ASSERT(this->currentOption, "selectNext: null current option");
 
-				// render new page
+				// Render new page
 				OptionsSelector::print(this, this->x, this->y, this->alignment, this->spacing - 1);
 			}
 			else
 			{
-				// wrap around and select first option
+				// Wrap around and select first option
 				this->currentOption = (VirtualList::safeCast(VirtualNode::getData(this->currentPage)))->head;
 				this->currentOptionIndex = 0;
 			}
 		}
 
-		// print new selection mark
+		// Print new selection mark
 		OptionsSelector::printSelectorMark(this, this->leftMark, -this->optionsLength);
 		OptionsSelector::printSelectorMark(this, this->rightMark, this->optionsLength);
 	}
@@ -284,25 +284,25 @@ void OptionsSelector::selectPrevious()
 {
 	if(this->currentOption)
 	{
-		// remove previous selection mark
+		// Remove previous selection mark
 		OptionsSelector::printSelectorMark(this, " ", -this->optionsLength);
 		OptionsSelector::printSelectorMark(this, " ", this->optionsLength);
 
-		// get previous option
+		// Get previous option
 		this->currentOption = VirtualNode::getPrevious(this->currentOption);
 		this->currentOptionIndex--;
 
-		// if there's no previous option on the current page
+		// If there's no previous option on the current page
 		if(!this->currentOption)
 		{
-			// if there's more than 1 page
+			// If there's more than 1 page
 			if(VirtualList::getCount(this->pages) > 1)
 			{
-				// select previous page
+				// Select previous page
 				this->currentPage = VirtualNode::getPrevious(this->currentPage);
 				this->currentPageIndex--;
 
-				// if previous page does not exist, go to last page
+				// If previous page does not exist, go to last page
 				if(!this->currentPage)
 				{
 					this->currentPage = this->pages->tail;
@@ -310,22 +310,22 @@ void OptionsSelector::selectPrevious()
 					this->currentOptionIndex = this->totalOptions - 1;
 				}
 
-				// get new option
+				// Get new option
 				this->currentOption = (VirtualList::safeCast(VirtualNode::getData(this->currentPage)))->tail;
 				ASSERT(this->currentOption, "selectPrevious: current option data");
 
-				// render new page
+				// Render new page
 				OptionsSelector::print(this, this->x, this->y, this->alignment, this->spacing - 1);
 			}
 			else
 			{
-				// wrap around and select last option
+				// Wrap around and select last option
 				this->currentOption = (VirtualList::safeCast(VirtualNode::getData(this->currentPage)))->tail;
 				this->currentOptionIndex = this->totalOptions - 1;
 			}
 		}
 
-		// print new selection mark
+		// Print new selection mark
 		OptionsSelector::printSelectorMark(this, this->leftMark, -this->optionsLength);
 		OptionsSelector::printSelectorMark(this, this->rightMark, this->optionsLength);
 	}

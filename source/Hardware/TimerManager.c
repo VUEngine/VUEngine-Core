@@ -66,10 +66,10 @@ static void TimerManager::interruptHandler()
 		_timerManager->totalElapsedMilliseconds += elapsedMilliseconds;
 	}
 
-	// update sounds
+	// Update sounds
 	SoundManager::playSounds(_timerManager->elapsedMicrosecondsPerInterrupt);
 
-	// update Stopwatchs: no use is being done of them so this is commented out for now since it affects PCM playback
+	// Update Stopwatchs: no use is being done of them so this is commented out for now since it affects PCM playback
 	//StopwatchManager::update(_stopwatchManager);
 
 // enable
@@ -438,8 +438,8 @@ uint32 TimerManager::getTotalElapsedMilliseconds()
 
 void TimerManager::wait(uint32 milliseconds)
 {
-	// declare as volatile to prevent the compiler to optimize currentMilliseconds away
-	// making the last assignment invalid
+	// Declare as volatile to prevent the compiler to optimize currentMilliseconds away
+	// Making the last assignment invalid
 	volatile uint32 currentMilliseconds = this->totalElapsedMilliseconds;
 	uint32 waitStartTime = this->totalElapsedMilliseconds;
 	volatile uint32 *totalElapsedMilliseconds = (uint32*)&this->totalElapsedMilliseconds;
@@ -458,8 +458,8 @@ void TimerManager::repeatMethodCall(uint32 callTimes, uint32 duration, ListenerO
 {
 	if(!isDeleted(object) && method)
 	{
-		// declare as volatile to prevent the compiler to optimize currentMilliseconds away
-		// making the last assignment invalid
+		// Declare as volatile to prevent the compiler to optimize currentMilliseconds away
+		// Making the last assignment invalid
 		volatile uint32 currentMilliseconds = this->elapsedMilliseconds;
 
 		uint32 i = 0;
@@ -600,7 +600,7 @@ void TimerManager::destructor()
 {
 	_timerManager = NULL;
 
-	// allow a new construct
+	// Allow a new construct
 	// Always explicitly call the base's destructor 
 	Base::destructor();
 }

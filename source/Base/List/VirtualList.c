@@ -39,7 +39,7 @@ void VirtualList::constructor()
 	// Always explicitly call the base's constructor 
 	Base::constructor();
 
-	// set members' default values
+	// Set members' default values
 	this->head = NULL;
 	this->tail = NULL;
 }
@@ -48,10 +48,10 @@ void VirtualList::constructor()
 
 void VirtualList::destructor()
 {
-	// make sure we remove all nodes
+	// Make sure we remove all nodes
 	VirtualList::clear(this);
 
-	// destroy super object
+	// Destroy super object
 
 	// Always explicitly call the base's destructor 
 	Base::destructor();
@@ -106,34 +106,34 @@ VirtualNode VirtualList::getNode(int32 item)
 
 	VirtualNode node = this->head;
 
-	// if not null head
+	// If not null head
 	if(NULL != node)
 	{
-		// if item hasn't reached list's size
+		// If item hasn't reached list's size
 		if(item < listSize)
 		{
-			// increase counter while node hasn't reached list's end
-			// and counter hasn't reached the item requested
+			// Increase counter while node hasn't reached list's end
+			// And counter hasn't reached the item requested
 			while(NULL != node && counter < item)
 			{
-				// increase counter
+				// Increase counter
 				counter++;
 
-				// load next node
+				// Load next node
 				node = node->next;
 
-				// if item reached
+				// If item reached
 				if(counter == item)
 				{
-					// return node's data
+					// Return node's data
 					return node;
 				}
 			}
 
-			// if item reached
+			// If item reached
 			if(counter == item)
 			{
-				// return node's data
+				// Return node's data
 				return node;
 			}
 
@@ -181,7 +181,7 @@ void* VirtualList::getDataAtIndex(int32 position)
 		return NULL;
 	}
 
-	// locate node
+	// Locate node
 	for(; NULL != node && counter < position; node = node->next, counter++);
 
 	if(NULL != node)
@@ -202,12 +202,12 @@ int32 VirtualList::getCount()
 
 	while(NULL != node)
 	{
-		// load next node
+		// Load next node
 		node = node->next;
 
 		++counter;
 
-		// increment counter
+		// Increment counter
 		ASSERT(counter < LIST_MAX_SIZE, "VirtualList::getCount: endless list getting size");
 	}
 
@@ -224,20 +224,20 @@ VirtualNode VirtualList::pushFront(const void* const data)
 
 	HardwareManager::suspendInterrupts();
 
-	// set the tail
+	// Set the tail
 	if(NULL == this->tail)
 	{
 		this->tail = this->head = newNode;
 	}
 	else
 	{
-		// link new node to the head
+		// Link new node to the head
 		newNode->next = this->head;
 
-		// link the head to the new node
+		// Link the head to the new node
 		this->head->previous = newNode;
 		
-		// move the head
+		// Move the head
 		this->head = newNode;
 	}
 
@@ -256,20 +256,20 @@ VirtualNode VirtualList::pushBack(const void* const data)
 
 	HardwareManager::suspendInterrupts();
 
-	// set the tail
+	// Set the tail
 	if(NULL == this->head)
 	{
 		this->head = this->tail = newNode;
 	}
 	else
 	{
-		// link new node to the tail
+		// Link new node to the tail
 		newNode->previous = this->tail;
 
-		// link the tail to the new node
+		// Link the tail to the new node
 		this->tail->next = newNode;
 
-		// move the tail
+		// Move the tail
 		this->tail = newNode;
 	}
 
@@ -377,7 +377,7 @@ void* VirtualList::popFront()
 {
 	HardwareManager::suspendInterrupts();
 
-	// if head isn't null
+	// If head isn't null
 	if(NULL != this->head)
 	{
 		VirtualNode node = this->head;
@@ -390,12 +390,12 @@ void* VirtualList::popFront()
 		}
 		else
 		{
-			// set head
+			// Set head
 			this->head = NULL;
 			this->tail = NULL;
 		}
 
-		// free dynamic memory
+		// Free dynamic memory
 		delete node;
 
 		HardwareManager::resumeInterrupts();
@@ -414,7 +414,7 @@ void* VirtualList::popBack()
 {
 	HardwareManager::suspendInterrupts();
 
-	// if tail isn't null
+	// If tail isn't null
 	if(NULL != this->tail)
 	{
 		VirtualNode node = this->tail;
@@ -427,12 +427,12 @@ void* VirtualList::popBack()
 		}
 		else
 		{
-			// set tail
+			// Set tail
 			this->tail = NULL;
 			this->head = NULL;
 		}
 
-		// free dynamic memory
+		// Free dynamic memory
 		delete node;
 
 		HardwareManager::resumeInterrupts();
@@ -451,7 +451,7 @@ bool VirtualList::removeNode(VirtualNode node)
 {
 #ifndef __ENABLE_PROFILER
 #ifndef __RELEASE
-	// if node isn't null
+	// If node isn't null
 	if(VirtualList::checkThatNodeIsPresent(this, node))
 	{
 		return VirtualList::doRemoveNode(this, node);
@@ -521,9 +521,9 @@ void VirtualList::copy(VirtualList sourceList)
 
 	while(NULL != node)
 	{
-		// add next node
+		// Add next node
 		VirtualList::pushBack(this, node->data);
-		// move to next node
+		// Move to next node
 		node = node->next;
 
 		ASSERT(++counter < LIST_MAX_SIZE, "VirtualList::copy: endless list copying");
@@ -602,36 +602,36 @@ bool VirtualList::doRemoveNode(VirtualNode node)
 
 	HardwareManager::suspendInterrupts();
 
-	// if the node is the head of the list
+	// If the node is the head of the list
 	if(node == this->head)
 	{
 		if(NULL != node->next)
 		{
-			// move head to next element
+			// Move head to next element
 			this->head = node->next;
 
-			// move head's previous pointer
+			// Move head's previous pointer
 			this->head->previous = NULL;
 		}
 		else
 		{
-			// set head
+			// Set head
 			this->head = this->tail = NULL;
 		}
 	}
 	else
 	{
-		// if node is the last in the list
+		// If node is the last in the list
 		if(node == this->tail)
 		{
 			this->tail->previous->next = NULL;
 
-			// set the tail
+			// Set the tail
 			this->tail = this->tail->previous;
 		}
 		else
 		{
-			// join the previous and next nodes
+			// Join the previous and next nodes
 			node->previous->next = node->next;
 
 			node->next->previous = node->previous;
@@ -640,7 +640,7 @@ bool VirtualList::doRemoveNode(VirtualNode node)
 
 	HardwareManager::resumeInterrupts();
 
-	// free dynamic memory
+	// Free dynamic memory
 	delete node;
 
 	return true;

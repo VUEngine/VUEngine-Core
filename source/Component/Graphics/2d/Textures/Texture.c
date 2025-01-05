@@ -105,7 +105,7 @@ static uint32 Texture::getTotalRows(TextureSpec* textureSpec)
 		int16 neededRows = 
 			__FIXED_TO_I(__FIXED_DIV(__I_TO_FIXED(textureSpec->numberOfFrames), __I_TO_FIXED(allocableFrames)) + __05F_FIXED) - 1;
 
-		// return the total number of chars
+		// Return the total number of chars
 		return textureSpec->rows + textureSpec->rows * (0 < neededRows ? neededRows : 0);
 	}
 
@@ -234,7 +234,7 @@ void Texture::constructor(TextureSpec* textureSpec, uint16 id)
 	// Always explicitly call the base's constructor 
 	Base::constructor();
 
-	// set id
+	// Set id
 	this->id = id;
 
 	this->doUpdate = NULL;
@@ -242,10 +242,10 @@ void Texture::constructor(TextureSpec* textureSpec, uint16 id)
 	this->mapDisplacement = 0;
 	this->usageCount = 1;
 
-	// save the bgmap spec's address
+	// Save the bgmap spec's address
 	this->textureSpec = textureSpec;
 	this->charSet = NULL;
-	// set the palette
+	// Set the palette
 	this->palette = textureSpec->palette;
 	this->status = kTextureInvalid;
 	this->frame = 0;
@@ -262,7 +262,7 @@ void Texture::destructor()
 		VirtualList::removeData(_texturesToUpdate, this);
 	}
 
-	// make sure that I'm not destroyed again
+	// Make sure that I'm not destroyed again
 	this->usageCount = 0;
 
 	Texture::releaseCharSet(this);
@@ -554,7 +554,7 @@ void Texture::rewrite()
 	if(!this->update || (statusChanged && kTexturePendingRewriting == this->status))
 	{
 		// Prepare the texture right away just in case the call initiates
-		// at a defragmentation process
+		// At a defragmentation process
 		Texture::prepare(this);
 	}
 }

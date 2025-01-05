@@ -206,7 +206,7 @@ void StageEditor::destructor()
 		delete this->userActorSelector;
 	}
 
-	// allow a new construct
+	// Allow a new construct
 	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
@@ -327,7 +327,7 @@ void StageEditor::highLightActor()
 					PixelVector::getFromVector3D((Vector3D){width / 2, height / 2, 0}, parallax),
 				},
 
-				// limiter
+				// Limiter
 				{
 					{0, 0, 0, 0}, 
 					{0, 0, 0, 0}
@@ -358,7 +358,7 @@ void StageEditor::highLightActor()
 					false
 				},
 
-				// segments
+				// Segments
 				(PixelVector(*)[2])MeshesSegments
 			};
 
@@ -841,7 +841,7 @@ void StageEditor::selectUserObject(uint32 pressedKey)
 		VirtualList stageActors = (Container::safeCast(this->stage))->children;
 		this->actorNode = stageActors ? stageActors->tail : NULL;
 
-		// select the added actor
+		// Select the added actor
 		this->state = kTranslateActors;
 		StageEditor::configureState(this);
 

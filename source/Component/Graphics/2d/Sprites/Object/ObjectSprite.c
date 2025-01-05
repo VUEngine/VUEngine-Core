@@ -181,8 +181,8 @@ int16 ObjectSprite::doRender(int16 index)
 
 			int16 outputX = x + xDisplacement;
 
-			// add 8 to the calculation to avoid char's cut off when scrolling hide the object if outside
-			// screen's bounds
+			// Add 8 to the calculation to avoid char's cut off when scrolling hide the object if outside
+			// Screen's bounds
 			if((unsigned)(outputX - _cameraFrustum->x0 + 4) > (unsigned)(_cameraFrustum->x1 - _cameraFrustum->x0 + 4))
 			{
 				objectPointer->head = __OBJECT_SPRITE_CHAR_HIDE_MASK;

@@ -92,17 +92,17 @@ UserInput KeypadManager::readUserInput(bool waitForStableReading)
 	}
 	else
 	{
-		// wait for keypad to stabilize
+		// Wait for keypad to stabilize
 		while(*_readingStatus & __S_STAT);
 	}
 
-	// now read the keys
+	// Now read the keys
 	this->userInput.allKeys = (((_hardwareRegisters[__SDHR] << 8)) | _hardwareRegisters[__SDLR]);
 
-	// enable next reading cycle
+	// Enable next reading cycle
 	_hardwareRegisters[__SCR] = (__S_INTDIS | __S_HW);
 
-	// store keys
+	// Store keys
 	if(0 == this->userInput.powerFlag)
 	{
 		if(K_PWR == (this->userInput.allKeys & K_PWR))
@@ -223,7 +223,7 @@ void KeypadManager::constructor()
 
 void KeypadManager::destructor()
 {
-	// allow a new construct
+	// Allow a new construct
 	// Always explicitly call the base's destructor 
 	Base::destructor();
 }

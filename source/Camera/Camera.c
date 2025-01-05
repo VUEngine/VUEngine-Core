@@ -440,7 +440,7 @@ void Camera::constructor()
 
 	Camera::setup(this, pixelOptical, this->cameraFrustum);
 
-	// set global pointer to improve access to critical values
+	// Set global pointer to improve access to critical values
 	_optical = &this->optical;
 	_cameraPosition = &this->position;
 	_cameraFrustum = &this->cameraFrustum;

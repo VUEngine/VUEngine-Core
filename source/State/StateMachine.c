@@ -35,7 +35,7 @@ void StateMachine::constructor(void* owner)
 	// Always explicitly call the base's constructor 
 	Base::constructor();
 
-	// set pointers
+	// Set pointers
 	this->owner = owner;
 	this->currentState = NULL;
 	this->previousState = NULL;
@@ -49,7 +49,7 @@ void StateMachine::destructor()
 {
 	NM_ASSERT(!isDeleted(this->stateStack), "StateMachine::destructor: null stateStack");
 
-	// deallocate the list
+	// Deallocate the list
 	delete this->stateStack;
 
 	this->owner = NULL;
@@ -59,7 +59,7 @@ void StateMachine::destructor()
 
 	this->transition = kStateMachineIdle;
 
-	// free processor memory
+	// Free processor memory
 
 	// Always explicitly call the base's destructor 
 	Base::destructor();
@@ -108,16 +108,16 @@ void StateMachine::swapState(State newState)
 
 	NM_ASSERT(!isDeleted(newState), "StateMachine::swapState: null newState");
 
-	// update the stack
-	// remove current state
+	// Update the stack
+	// Remove current state
 	VirtualList::popFront(this->stateStack);
 
-	// finalize current state
+	// Finalize current state
 	if(NULL != this->currentState)
 	{
 		this->previousState = this->currentState;
 
-		// call the exit method from current state
+		// Call the exit method from current state
 		State::exit(this->currentState, this->owner);
 	}
 
@@ -126,10 +126,10 @@ void StateMachine::swapState(State newState)
 	this->currentState = newState;
 	this->previousState = NULL;
 
-	// push new state in the top of the stack
+	// Push new state in the top of the stack
 	VirtualList::pushFront(this->stateStack, (BYTE*)this->currentState);
 
-	// call enter method from new state
+	// Call enter method from new state
 	State::enter(this->currentState, this->owner);
 }
 
@@ -142,22 +142,22 @@ void StateMachine::pushState(State newState)
 		return;
 	}
 
-	// finalize current state
+	// Finalize current state
 	if(NULL != this->currentState)
 	{
-		// call the pause method from current state
+		// Call the pause method from current state
 		State::suspend(this->currentState, this->owner);
 	}
 
-	// set new state
+	// Set new state
 	this->currentState = newState;
 
 	NM_ASSERT(!isDeleted(this->currentState), "StateMachine::pushState: null currentState");
 
-	// push new state in the top of the stack
+	// Push new state in the top of the stack
 	VirtualList::pushFront(this->stateStack, (BYTE*)this->currentState);
 
-	// call enter method from new state
+	// Call enter method from new state
 	State::enter(this->currentState, this->owner);
 }
 
@@ -165,27 +165,27 @@ void StateMachine::pushState(State newState)
 
 void StateMachine::popState()
 {
-	// return in case the stack is empty
+	// Return in case the stack is empty
 	if(StateMachine::getStackSize(this) == 0)
 	{
 		return;
 	}
 
-	// finalize current state
+	// Finalize current state
 	if(NULL != this->currentState)
 	{
-		// call the exit method from current state
+		// Call the exit method from current state
 		State::exit(this->currentState, this->owner);
 	}
 
-	// update the stack
-	// remove the state in the top of the stack
+	// Update the stack
+	// Remove the state in the top of the stack
 	VirtualList::popFront(this->stateStack);
 
-	// update current state
+	// Update current state
 	this->currentState = VirtualList::front(this->stateStack);
 
-	// call resume method from new state
+	// Call resume method from new state
 	if(NULL != this->currentState)
 	{
 		State::resume(this->currentState, this->owner);
@@ -283,26 +283,26 @@ int32 StateMachine::getStackSize()
 
 uint32 StateMachine::popStateWithoutResume()
 {
-	// return in case the stack is empty
+	// Return in case the stack is empty
 	if(StateMachine::getStackSize(this) == 0)
 	{
 		return 0;
 	}
 
-	// finalize current state
+	// Finalize current state
 	if(NULL != this->currentState)
 	{
-		// call the exit method from current state
+		// Call the exit method from current state
 		State::exit(this->currentState, this->owner);
 	}
 
-	// remove the state in the top of the stack
+	// Remove the state in the top of the stack
 	VirtualList::popFront(this->stateStack);
 
-	// update current state
+	// Update current state
 	this->currentState = VirtualList::front(this->stateStack);
 
-	// return the resulting stack size
+	// Return the resulting stack size
 	return StateMachine::getStackSize(this);
 }
 

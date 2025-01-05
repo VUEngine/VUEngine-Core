@@ -83,7 +83,7 @@ void Ball::configureWireframe()
 		return;
 	}
 
-	// create a wireframe
+	// Create a wireframe
 	this->wireframe = Wireframe::safeCast(new Sphere(this->owner, NULL));
 
 	if(!isDeleted(this->wireframe))

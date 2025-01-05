@@ -450,7 +450,7 @@ uint32 ActorFactory::addChildActors()
 	{
 		VirtualList::removeData(this->actorsToAddAsChildren, positionedActorDescription);
 
-		// don't need to delete the created actor since the parent takes care of that at this point
+		// Don't need to delete the created actor since the parent takes care of that at this point
 
 		delete positionedActorDescription;
 	}

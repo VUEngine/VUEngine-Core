@@ -55,7 +55,7 @@ CharSetROMSpec DebugFontCharSet =
 	// Whether the tiles are optimized or not
 	false,
 
-	// char data
+	// Char data
 	(uint32*)DebugFontTiles,
 
 	// Frame offsets array

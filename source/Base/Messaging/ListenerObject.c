@@ -297,14 +297,14 @@ void ListenerObject::fireEvent(uint16 eventCode)
 
 			Event* event = (Event*)node->data;
 
-			// safety check in case that the there is a stacking up of firings within firings
+			// Safety check in case that the there is a stacking up of firings within firings
 			if(isDeleted(event) || isDeleted(event->listener) || event->remove)
 			{
 				if(1 == this->eventFirings)
 				{
 					VirtualList::removeNode(this->events, node);
 
-					// safety check in case that the there is a stacking up of firings within firings
+					// Safety check in case that the there is a stacking up of firings within firings
 					if(!isDeleted(event))
 					{
 						delete event;
@@ -315,7 +315,7 @@ void ListenerObject::fireEvent(uint16 eventCode)
 			{
 				event->remove = !event->callback(event->listener, this);
 
-				// safe check in case that I have been deleted during the previous event
+				// Safe check in case that I have been deleted during the previous event
 				if(isDeleted(this))
 				{
 #ifndef __RELEASE

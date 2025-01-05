@@ -109,7 +109,7 @@ int16 MBgmapSprite::doRender(int16 index)
 
 	WorldAttributes* worldPointer = &_worldAttributesCache[index];
 
-	// get coordinates
+	// Get coordinates
 	int16 gx = position.x - this->halfWidth;
 	int16 gy = position.y - this->halfHeight;
 	int16 gp = position.parallax;
@@ -135,7 +135,7 @@ int16 MBgmapSprite::doRender(int16 index)
 	int16 w = 0;
 	int16 h = 0;
 
-	// set the world size
+	// Set the world size
 	if(!((MBgmapSpriteSpec*)this->componentSpec)->xLoop)
 	{
     	w = (this->halfWidth << 1) - mxDisplacement;
@@ -300,13 +300,13 @@ void MBgmapSprite::loadTexture(TextureSpec* textureSpec, bool isFirstTextureAndH
 
 void MBgmapSprite::releaseTextures()
 {
-	// free the texture
+	// Free the texture
 	if(!isDeleted(this->texture))
 	{
-		// if affine or bgmap
+		// If affine or bgmap
 		if(((__WORLD_AFFINE | __WORLD_HBIAS) & this->head) && this->param)
 		{
-			// free param table space
+			// Free param table space
 			ParamTableManager::free(ParamTableManager::getInstance(), BgmapSprite::safeCast(this));
 		}
 	}
@@ -347,7 +347,7 @@ void MBgmapSprite::calculateSize()
 
 	for(; NULL != node; node = node->next)
 	{
-		// free the texture
+		// Free the texture
 		int32 textureCols = (Texture::safeCast(node->data))->textureSpec->cols;
 		int32 textureRows = (Texture::safeCast(node->data))->textureSpec->rows;
 

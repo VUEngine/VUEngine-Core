@@ -80,7 +80,7 @@ Actor UIContainer::spawnChildActor(const PositionedActor* const positionedActor)
 
 		if(!isDeleted(actor))
 		{
-			// create the actor and add it to the world
+			// Create the actor and add it to the world
 			UIContainer::addChild(this, Container::safeCast(actor));
 		}
 

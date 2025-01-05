@@ -43,7 +43,7 @@ void StatefulActor::constructor(const StatefulActorSpec* statefulActorSpec, int1
 	// Always explicitly call the base's constructor 
 	Base::constructor((ActorSpec*)&statefulActorSpec->actorSpec, internalId, name);
 
-	// construct the game state machine
+	// Construct the game state machine
 	this->stateMachine = NULL;
 }
 
@@ -51,7 +51,7 @@ void StatefulActor::constructor(const StatefulActorSpec* statefulActorSpec, int1
 
 void StatefulActor::destructor()
 {
-	// destroy state machine
+	// Destroy state machine
 	if(!isDeleted(this->stateMachine))
 	{
 		delete this->stateMachine;

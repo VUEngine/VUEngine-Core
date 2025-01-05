@@ -36,7 +36,7 @@ void ClockManager::reset()
 
 	VirtualNode node = this->clocks->head;
 
-	// update all registered clocks
+	// Update all registered clocks
 	for(; node ; node = node->next)
 	{
 		Clock::reset(node->data);
@@ -68,7 +68,7 @@ void ClockManager::update(uint32 elapsedMilliseconds)
 
 	VirtualNode node = this->clocks->head;
 
-	// update all registered clocks
+	// Update all registered clocks
 	for(; node ; node = node->next)
 	{
 		Clock::update(node->data, elapsedMilliseconds);
@@ -88,7 +88,7 @@ void ClockManager::constructor()
 	// Always explicitly call the base's constructor 
 	Base::constructor();
 
-	// create the clock list
+	// Create the clock list
 	this->clocks = new VirtualList();
 }
 
@@ -98,16 +98,16 @@ void ClockManager::destructor()
 {
 	VirtualNode node = this->clocks->head;
 
-	// destroy all registered clocks
+	// Destroy all registered clocks
 	for(; node ; node = node->next)
 	{
 		Clock::destructor(node->data);
 	}
 
-	// clear my list
+	// Clear my list
 	delete this->clocks;
 
-	// allow a new construct
+	// Allow a new construct
 	// Always explicitly call the base's destructor 
 	Base::destructor();
 }

@@ -57,7 +57,7 @@ static int16 Affine::transform
 	fixedAffineMatrix.pa = __FIXED_TO_FIX7_9(highPrecisionPa);
 	fixedAffineMatrix.pc = __FIXED_TO_FIX7_9(highPrecisionPc);
 
-	// bgX + bgWidth - pa * dispX - pb * dispY
+	// BgX + bgWidth - pa * dispX - pb * dispY
 	fixedAffineMatrix.dx =
 		mx
 		+
@@ -72,7 +72,7 @@ static int16 Affine::transform
 			)
 		);
 
-	// bgY + bgHeight - pc * dispX - pd * dispY
+	// BgY + bgHeight - pc * dispX - pd * dispY
 	fixedAffineMatrix.dy =
 		my
 		+
@@ -197,7 +197,7 @@ PRINT_INT(lastRow, 1, 16);
 			fixedAffineMatrix.pa = __FIX19_13_TO_FIX7_9(highPrecisionPa);
 			fixedAffineMatrix.pc = __FIX19_13_TO_FIX7_9(highPrecisionPc);
 
-			// bgX + bgWidth - pa * dispX - pb * dispY
+			// BgX + bgWidth - pa * dispX - pb * dispY
 			fixedAffineMatrix.dx =
 				mx
 				+
@@ -212,7 +212,7 @@ PRINT_INT(lastRow, 1, 16);
 					)
 				);
 
-			// bgY + bgHeight - pc * dispX - pd * dispY
+			// BgY + bgHeight - pc * dispX - pd * dispY
 			fixedAffineMatrix.dy =
 				my
 				+
@@ -282,7 +282,7 @@ static int16 Affine::rotate
 	fixedAffineMatrix.pa = __FIXED_TO_FIX7_9(highPrecisionPa);
 	fixedAffineMatrix.pc = __FIXED_TO_FIX7_9(highPrecisionPc);
 
-	// bgX + bgWidth - pa * dispX - pb * dispY
+	// BgX + bgWidth - pa * dispX - pb * dispY
 	fixedAffineMatrix.dx =
 		mx
 		+
@@ -297,7 +297,7 @@ static int16 Affine::rotate
 			)
 		);
 
-	// bgY + bgHeight - pc * dispX - pd * dispY
+	// BgY + bgHeight - pc * dispX - pd * dispY
 	fixedAffineMatrix.dy =
 		my
 		+

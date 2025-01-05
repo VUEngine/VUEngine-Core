@@ -22,13 +22,13 @@
 
 static const Transformation _dummyTransformation = 
 {
-	// position
+	// Position
 	{0, 0, 0},
-	// rotation
+	// Rotation
 	{0, 0, 0},
-	// scale
+	// Scale
 	{__1I_FIX7_9, __1I_FIX7_9, __1I_FIX7_9},
-	// invalidity
+	// Invalidity
 	__NON_TRANSFORMED
 };
 

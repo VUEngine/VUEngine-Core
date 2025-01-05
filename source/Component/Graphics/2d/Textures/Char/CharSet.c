@@ -29,11 +29,11 @@ void CharSet::constructor(CharSetSpec* charSetSpec, uint16 offset)
 	// Always explicitly call the base's constructor 
 	Base::constructor();
 
-	// save spec
+	// Save spec
 	this->charSetSpec = charSetSpec;
 	this->tilesDisplacement = 0;
 
-	// set the offset
+	// Set the offset
 	this->offset = offset;
 	this->usageCount = 1;
 	this->written = false;
@@ -48,7 +48,7 @@ void CharSet::destructor()
 	CharSet::fireEvent(this, kEventCharSetDeleted);
 	NM_ASSERT(!isDeleted(this), "CharSet::destructor: deleted this during kEventCharSetDeleted");
 
-	// make sure that I'm not destroyed again
+	// Make sure that I'm not destroyed again
 	this->usageCount = 0;
 
 	// Always explicitly call the base's destructor 

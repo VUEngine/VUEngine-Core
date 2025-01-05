@@ -35,7 +35,7 @@ void StopwatchManager::reset()
 {
 	VirtualNode node = this->stopwatchs->head;
 
-	// update all registered stopwatchs
+	// Update all registered stopwatchs
 	for(; node ; node = node->next)
 	{
 		Stopwatch::reset(node->data);
@@ -65,7 +65,7 @@ void StopwatchManager::update()
 {
 	VirtualNode node = this->stopwatchs->head;
 
-	// update all registered stopwatchs
+	// Update all registered stopwatchs
 	for(; node ; node = node->next)
 	{
 		Stopwatch::update(node->data);
@@ -85,7 +85,7 @@ void StopwatchManager::constructor()
 	// Always explicitly call the base's constructor 
 	Base::constructor();
 
-	// create the clock list
+	// Create the clock list
 	this->stopwatchs = new VirtualList();
 }
 
@@ -95,16 +95,16 @@ void StopwatchManager::destructor()
 {
 	VirtualNode node = this->stopwatchs->head;
 
-	// destroy all registered stopwatchs
+	// Destroy all registered stopwatchs
 	for(; node ; node = node->next)
 	{
 		Stopwatch::destructor(node->data);
 	}
 
-	// clear my list
+	// Clear my list
 	delete this->stopwatchs;
 
-	// allow a new construct
+	// Allow a new construct
 	// Always explicitly call the base's destructor 
 	Base::destructor();
 }

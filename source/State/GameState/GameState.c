@@ -51,7 +51,7 @@ void GameState::constructor()
 	this->animationsClock = new Clock();
 	this->physicsClock = new Clock();
 
-	// construct the physical world and collision manager
+	// Construct the physical world and collision manager
 	this->bodyManager = NULL;
 	this->colliderManager = NULL;
 
@@ -70,10 +70,10 @@ void GameState::destructor()
 	delete this->animationsClock;
 	delete this->physicsClock;
 
-	// destroy the stage
+	// Destroy the stage
 	if(!isDeleted(this->stage))
 	{
-		// destroy the stage
+		// Destroy the stage
 		delete this->stage;
 
 		this->stage = NULL;
@@ -85,7 +85,7 @@ void GameState::destructor()
 		this->uiContainer = NULL;
 	}
 
-	// must delete these after deleting the stage
+	// Must delete these after deleting the stage
 	if(!isDeleted(this->bodyManager))
 	{
 		delete this->bodyManager;
@@ -180,7 +180,7 @@ void GameState::exit(void* owner __attribute__ ((unused)))
 
 	this->stage = NULL;
 
-	// stop my clocks
+	// Stop my clocks
 	GameState::stopClocks(this);
 }
 
@@ -247,7 +247,7 @@ void GameState::resume(void* owner __attribute__ ((unused)))
 		GameState::streamAll(this);
 	}
 
-	// unpause clock
+	// Unpause clock
 	Clock::pause(this->messagingClock, false);
 
 	HardwareManager::resumeInterrupts();
@@ -259,7 +259,7 @@ bool GameState::processMessage(void* owner __attribute__ ((unused)), Telegram te
 {
 	return false;
 	// Not sure if necessary, but this can cause problems if no unified messages list is used and can cause unintended performance issues	
-	// return Stage::propagateMessage
+	// Return Stage::propagateMessage
 	// (
 	//	this->stage, Container::onPropagatedMessage, Telegram::getMessage(telegram)) || UIContainer::propagateMessage(this->uiContainer, 
 	//	Container::onPropagatedMessage, Telegram::getMessage(telegram)
@@ -282,19 +282,19 @@ void GameState::configureStage(StageSpec* stageSpec, VirtualList positionedActor
 
 	HardwareManager::suspendInterrupts();
 
-	// make sure no actor is set as focus for the camera
+	// Make sure no actor is set as focus for the camera
 	Camera::setFocusActor(Camera::getInstance(), NULL);
 
-	// setup the stage
+	// Setup the stage
 	GameState::createStage(this, stageSpec, positionedActorsToIgnore);
 
-	// load the UI
+	// Load the UI
 	GameState::configureUI(this, stageSpec);
 
-	// move the camera to its previous position
+	// Move the camera to its previous position
 	Camera::focus(Camera::getInstance());
 
-	// transformation everything
+	// Transformation everything
 	GameState::transform(this);
 
 	// Transform everything definitively
@@ -721,12 +721,12 @@ void GameState::configureUI(StageSpec* stageSpec)
 
 	NM_ASSERT(!isDeleted(this->uiContainer), "GameState::configureUI: null UIContainer");
 
-	// setup ui if allocated and constructed
+	// Setup ui if allocated and constructed
 	if(!isDeleted(this->uiContainer))
 	{
 		extern Transformation _neutralEnvironmentTransformation;
 	
-		// apply transformations
+		// Apply transformations
 		UIContainer::transform(this->uiContainer, &_neutralEnvironmentTransformation, Camera::getTransformationFlags(_camera));
 	}
 }
@@ -743,7 +743,7 @@ void GameState::streamAll()
 	// Move the camera to its initial position
 	Camera::focus(Camera::getInstance());
 
-	// invalidate transformations
+	// Invalidate transformations
 	Stage::invalidateTransformation(this->stage);
 
 	// Transformation everything

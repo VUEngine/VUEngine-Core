@@ -122,7 +122,7 @@ void SpriteManager::reset()
 	ObjectSpriteContainer::reset();
 
 	int32 i = 0;
-	// clean OBJ memory
+	// Clean OBJ memory
 	for(; i < __TOTAL_OBJECTS; i++)
 	{
 		_vipRegisters[__SPT3 - i] = 0;
@@ -384,8 +384,8 @@ void SpriteManager::prepareAll()
 	SpriteManager::renderAndDraw(this);
 
 	// Sort all sprites' layers again
-	// don't remove me, some custom sprites depend on others
-	// to have been setup up before
+	// Don't remove me, some custom sprites depend on others
+	// To have been setup up before
 	SpriteManager::sortSprites(this);
 
 	// Render and draw sprites as soon as possible again
@@ -412,7 +412,7 @@ void SpriteManager::render()
 
 	ParamTableManager::defragment(this->paramTableManager, true);
 
-	// switch between even and odd frame
+	// Switch between even and odd frame
 	this->evenFrame = __TRANSPARENCY_EVEN == this->evenFrame ? __TRANSPARENCY_ODD : __TRANSPARENCY_EVEN;
 
 	this->freeLayer = __TOTAL_LAYERS - 1;
@@ -431,7 +431,7 @@ void SpriteManager::render()
 		Sprite sprite = Sprite::safeCast(node->data);
 
 		// Saves on method calls quite a bit when there are lots of
-		// sprites. Don't remove.
+		// Sprites. Don't remove.
 		if(__HIDE == sprite->show || (sprite->transparency & this->evenFrame))
 		{
 			sprite->index = __NO_RENDER_INDEX;
@@ -848,7 +848,7 @@ void SpriteManager::destructor()
 {
 	SpriteManager::cleanUp(this);
 
-	// allow a new construct
+	// Allow a new construct
 	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
@@ -950,10 +950,10 @@ bool SpriteManager::sortProgressively(bool complete)
 
 			Sprite nextSprite = Sprite::safeCast(nextNode->data);
 
-			// check if z positions are swapped
+			// Check if z positions are swapped
 			if(nextSprite->position.z + nextSprite->displacement.z < sprite->position.z + sprite->displacement.z)
 			{
-				// swap nodes' data
+				// Swap nodes' data
 				node->data = nextSprite;
 				nextNode->data = sprite;
 

@@ -115,11 +115,11 @@ void VUEngine::reset(bool resetSounds)
 
 	// Disable timer
 
-	// disable rendering
+	// Disable rendering
 	VIPManager::lowerBrightness(this->vipManager);
 	VIPManager::removePostProcessingEffects(this->vipManager);
 
-	// reset managers
+	// Reset managers
 	WireframeManager::reset(this->wireframeManager);
 
 	if(resetSounds)
@@ -133,7 +133,7 @@ void VUEngine::reset(bool resetSounds)
 	StopwatchManager::reset(StopwatchManager::getInstance());
 	FrameRate::reset(this->frameRate);
 
-	// the order of reset for the graphics managers must not be changed!
+	// The order of reset for the graphics managers must not be changed!
 	VIPManager::reset(this->vipManager);
 	SpriteManager::reset(this->spriteManager);
 	DirectDraw::reset(DirectDraw::getInstance());
@@ -584,7 +584,7 @@ void VUEngine::gameFrameStarted(uint16 gameFrameDuration)
 {
 	this->gameFrameStarted = true;
 
-	// focus the camera once collisions are resolved
+	// Focus the camera once collisions are resolved
 	VUEngine::focusCamera(this);
 
 	GameState gameState = VUEngine::getCurrentState(this);
@@ -648,16 +648,16 @@ void VUEngine::constructor()
 	// Always explicitly call the base's constructor 
 	Base::constructor();
 
-	// make sure the memory pool is initialized now
+	// Make sure the memory pool is initialized now
 	MemoryPool::getInstance();
 
-	// force construction now
+	// Force construction now
 	this->clockManager = ClockManager::getInstance();
 
-	// construct the general clock
+	// Construct the general clock
 	this->clock = new Clock();
 
-	// construct the game's state machine
+	// Construct the game's state machine
 	this->stateMachine = new StateMachine(this);
 
 	this->gameFrameStarted = false;
@@ -666,7 +666,7 @@ void VUEngine::constructor()
 	this->isInToolStateTransition = false;
 	this->syncToVIP = true;
 
-	// make sure all managers are initialized now
+	// Make sure all managers are initialized now
 	this->saveDataManager = NULL;
 	this->camera = NULL;
 	this->keypadManager = NULL;
@@ -683,10 +683,10 @@ void VUEngine::constructor()
 	SoundTestState::getInstance();
 #endif
 
-	// to make debugging easier
+	// To make debugging easier
 	this->processName = PROCESS_NAME_START_UP;
 
-	// setup engine parameters
+	// Setup engine parameters
 	VUEngine::initialize(this);
 }
 
@@ -694,7 +694,7 @@ void VUEngine::constructor()
 
 void VUEngine::destructor()
 {
-	// destroy the clocks
+	// Destroy the clocks
 	Clock::destructor(this->clock);
 
 	delete this->stateMachine;
@@ -707,7 +707,7 @@ void VUEngine::destructor()
 
 void VUEngine::initialize()
 {
-	// make sure all managers are initialized now
+	// Make sure all managers are initialized now
 	this->camera = Camera::getInstance();
 	this->keypadManager = KeypadManager::getInstance();
 	this->vipManager = VIPManager::getInstance();
@@ -725,7 +725,7 @@ void VUEngine::initialize()
 	// Initialize hardware registries
 	HardwareManager::initialize();
 
-	// make sure timer interrupts are enable
+	// Make sure timer interrupts are enable
 	TimerManager::configure(this->timerManager, __TIMER_100US, 10, kMS);
 
 	// Reset sounds
@@ -734,7 +734,7 @@ void VUEngine::initialize()
 	// Reset Rumble Pak
 	RumbleManager::reset(RumbleManager::getInstance());
 
-	// start the game's general clock
+	// Start the game's general clock
 	Clock::start(this->clock);
 
 	// Enable interrupts
@@ -790,7 +790,7 @@ bool VUEngine::cleaniningStatesStack(ListenerObject eventFirer)
 	VIPManager::stopDrawing(this->vipManager);
 
 	// Clean the game's stack
-	// pop states until the stack is empty
+	// Pop states until the stack is empty
 	VirtualList stateMachineStack = StateMachine::getStateStack(this->stateMachine);
 
 	// Cancel all messages
@@ -975,7 +975,7 @@ bool VUEngine::checkIfToggleTool(const UserInput* userInput)
 
 	for(; engineToolStates[i]; i++)
 	{
-		// check code to access special feature
+		// Check code to access special feature
 		if(ToolState::isKeyCombination(engineToolStates[i], userInput))
 		{
 			VUEngine::toggleTool(this, engineToolStates[i]);
@@ -989,7 +989,7 @@ bool VUEngine::checkIfToggleTool(const UserInput* userInput)
 
 	for(; _userToolStates[i]; i++)
 	{
-		// check code to access special feature
+		// Check code to access special feature
 		if(ToolState::isKeyCombination(_userToolStates[i], userInput))
 		{
 			VUEngine::toggleTool(this, _userToolStates[i]);
@@ -1058,7 +1058,7 @@ void VUEngine::simulatePhysics(GameState gameState)
 	this->processName = PROCESS_NAME_PHYSICS;
 #endif
 
-	// simulate physics
+	// Simulate physics
 	GameState::simulatePhysics(gameState);
 
 #ifdef __ENABLE_PROFILER
@@ -1074,7 +1074,7 @@ void VUEngine::processTransformations(GameState gameState)
 	this->processName = PROCESS_NAME_TRANSFORMS;
 #endif
 
-	// apply world transformations
+	// Apply world transformations
 	GameState::transform(gameState);
 
 #ifdef __ENABLE_PROFILER
@@ -1086,12 +1086,12 @@ void VUEngine::processTransformations(GameState gameState)
 
 void VUEngine::processCollisions(GameState gameState)
 {
-	// process the collisions after the transformations have taken place
+	// Process the collisions after the transformations have taken place
 #ifdef __REGISTER_LAST_PROCESS_NAME
 	this->processName = PROCESS_NAME_COLLISIONS;
 #endif
 
-	// process collisions
+	// Process collisions
 	GameState::processCollisions(gameState);
 
 #ifdef __ENABLE_PROFILER
@@ -1129,7 +1129,7 @@ GameState VUEngine::updateLogic(GameState currentGameState)
 	this->processName = PROCESS_NAME_LOGIC;
 #endif
 
-	// update the game's logic
+	// Update the game's logic
 	currentGameState = GameState::safeCast(StateMachine::update(this->stateMachine));
 
 #ifdef __ENABLE_PROFILER
@@ -1190,19 +1190,19 @@ void VUEngine::run(GameState currentGameState)
 		// Generate random seed
 		_gameRandomSeed = Math::randomSeed();
 
-		// process user's input
+		// Process user's input
 		VUEngine::processUserInput(this, currentGameState);
 
-		// simulate physics
+		// Simulate physics
 		VUEngine::simulatePhysics(this, currentGameState);
 
-		// apply transformations
+		// Apply transformations
 		VUEngine::processTransformations(this, currentGameState);
 
-		// process collisions
+		// Process collisions
 		VUEngine::processCollisions(this, currentGameState);
 
-		// dispatch delayed messages
+		// Dispatch delayed messages
 		VUEngine::dispatchDelayedMessages(this);
 
 		currentGameState = VUEngine::updateLogic(this, currentGameState);
@@ -1248,7 +1248,7 @@ void VUEngine::focusCamera()
 	if(!VUEngine::isInToolState(this))
 	{
 #endif
-		// position the camera
+		// Position the camera
 		Camera::focus(this->camera);
 #ifdef __TOOLS
 	}

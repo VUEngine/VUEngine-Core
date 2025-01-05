@@ -333,7 +333,7 @@ bool Mesh::draw()
 	{
 		MeshSegment* meshSegment = (MeshSegment*)node->data;
 
-		// draw the line in both buffers
+		// Draw the line in both buffers
 		drawn |= 
 			DirectDraw::drawLine
 			(
@@ -360,7 +360,7 @@ void Mesh::addSegments(PixelVector (*segments)[2], Vector3D displacement)
 	uint16 i = 0;
 
 	// Prevent rendering when modifying the mesh because if segments are added after the initial render
-	// there can be graphical glitches if XPEND kicks in in the mist of adding new vertexes
+	// There can be graphical glitches if XPEND kicks in in the mist of adding new vertexes
 	this->rendered = false;
 
 	do
@@ -438,7 +438,7 @@ bool Mesh::drawInterlaced()
 	{
 		MeshSegment* meshSegment = (MeshSegment*)node->data;
 
-		// draw the line in both buffers
+		// Draw the line in both buffers
 		drawn |= 
 			DirectDraw::drawLine
 			(

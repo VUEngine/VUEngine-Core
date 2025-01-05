@@ -41,7 +41,7 @@ static bool MessageDispatcher::dispatchMessage
 	uint32 delay, ListenerObject sender, ListenerObject receiver, int32 message, void* extraInfo
 )
 {
-	// make sure the receiver is valid
+	// Make sure the receiver is valid
 	ASSERT(sender, "MessageDispatcher::dispatchMessage: null sender");
 
 	if(isDeleted(receiver))
@@ -51,7 +51,7 @@ static bool MessageDispatcher::dispatchMessage
 
 	if(0 >= delay)
 	{
-		// create the telegram
+		// Create the telegram
 		bool result = false;
 
 		// Only create a new telegram if the persistent one is in use
@@ -59,7 +59,7 @@ static bool MessageDispatcher::dispatchMessage
 		{
 			Telegram telegram = new Telegram(sender, receiver, message, extraInfo);
 
-			// send the telegram to the recipient
+			// Send the telegram to the recipient
 			result = ListenerObject::handleMessage(receiver, telegram);
 
 			delete telegram;
@@ -73,7 +73,7 @@ static bool MessageDispatcher::dispatchMessage
 
 			_messageDispatcher->helperTelegramIsInUse = true;
 
-			// send the telegram to the recipient
+			// Send the telegram to the recipient
 			result = ListenerObject::handleMessage(receiver, _messageDispatcher->helperTelegram);
 
 			_messageDispatcher->helperTelegramIsInUse = false;
@@ -103,7 +103,7 @@ static bool MessageDispatcher::dispatchMessage
 void MessageDispatcher::dispatchDelayedMessage(Clock clock, uint32 delay,
  	ListenerObject sender, ListenerObject receiver, int32 message, void* extraInfo)
 {
-	// create the telegram
+	// Create the telegram
 	DelayedMessage* delayedMessage = new DelayedMessage;
 
 	delayedMessage->telegram = new Telegram(sender, receiver, message, extraInfo);
@@ -150,7 +150,7 @@ bool MessageDispatcher::dispatchDelayedMessages()
 				void* sender = Telegram::getSender(telegram);
 				void* receiver = Telegram::getReceiver(telegram);
 
-				// check if sender and receiver are still alive
+				// Check if sender and receiver are still alive
 				if(!isDeleted(sender) && !isDeleted(receiver))
 				{
 					messagesDispatched |= true;
@@ -457,7 +457,7 @@ void MessageDispatcher::destructor()
 	delete this->delayedMessages;
 	delete this->helperTelegram;
 
-	// allow a new construct
+	// Allow a new construct
 	// Always explicitly call the base's destructor 
 	Base::destructor();
 }

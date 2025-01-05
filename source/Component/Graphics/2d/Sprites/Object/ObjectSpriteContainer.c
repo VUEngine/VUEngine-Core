@@ -80,7 +80,7 @@ static void ObjectSpriteContainer::prepareForRendering()
 
 static void ObjectSpriteContainer::finishRendering()
 {
-	// clear OBJ memory
+	// Clear OBJ memory
 	for(int32 i = _objectIndex; _previousObjectIndex <= i; i--)
 	{
 		_objectAttributesCache[i].head = __OBJECT_SPRITE_CHAR_HIDE_MASK;
@@ -276,7 +276,7 @@ void ObjectSpriteContainer::unregisterSprite(ObjectSprite objectSprite)
 
 	this->sortingSpriteNode = NULL;
 
-	// remove the objectSprite to prevent rendering afterwards
+	// Remove the objectSprite to prevent rendering afterwards
 	VirtualList::removeData(this->objectSprites, objectSprite);
 }
 
@@ -318,10 +318,10 @@ bool ObjectSpriteContainer::sortProgressively(bool complete)
 
 			Sprite nextSprite = Sprite::safeCast(nextNode->data);
 
-			// check if z positions are swapped
+			// Check if z positions are swapped
 			if(nextSprite->position.z + nextSprite->displacement.z > sprite->position.z + sprite->displacement.z)
 			{
-				// swap nodes' data
+				// Swap nodes' data
 				node->data = nextSprite;
 				nextNode->data = sprite;
 
@@ -364,7 +364,7 @@ void ObjectSpriteContainer::renderSprites(bool evenFrame, bool updateAnimations)
 			ObjectSprite objectSprite = ObjectSprite::safeCast(node->data);
 
 			// Saves on method calls quite a bit when there are lots of
-			// sprites. Don't remove.
+			// Sprites. Don't remove.
 			if(__HIDE == objectSprite->show || (objectSprite->transparency & evenFrame) || (0 > _objectIndex - objectSprite->totalObjects))
 			{
 				NM_ASSERT(0 < _objectIndex - objectSprite->totalObjects, "ObjectSpriteContainer::renderSprites: OBJECTS depleted");
@@ -373,7 +373,7 @@ void ObjectSpriteContainer::renderSprites(bool evenFrame, bool updateAnimations)
 			}
 
 			// Do not change the order of this condition, objectSprite->totalObjects may be modified during rendering
-			// but calling ObjectSprite::getTotalObjects is too costly
+			// But calling ObjectSprite::getTotalObjects is too costly
 			if
 			(
 				ObjectSprite::render(objectSprite, _objectIndex - (objectSprite->totalObjects - 1), updateAnimations) 
@@ -398,7 +398,7 @@ void ObjectSpriteContainer::renderSprites(bool evenFrame, bool updateAnimations)
 		_worldAttributesCache[this->index].head = this->head;
 
 		// Make sure that the rest of spt segments only run up to the last
-		// used object index
+		// Used object index
 		for(int32 i = _spt--; i--;)
 		{
 			_vipRegistersCache[i] = _objectIndex;

@@ -68,7 +68,7 @@ bool AnimationCoordinator::playAnimation(AnimationController animationController
 			return true;
 		}
 
-		// only if not playing already
+		// Only if not playing already
 		if
 		(
 			!AnimationController::isPlaying(firstAnimationController) 
@@ -80,7 +80,7 @@ bool AnimationCoordinator::playAnimation(AnimationController animationController
 			)
 		)
 		{
-			// first animate the frame
+			// First animate the frame
 			AnimationController::play(firstAnimationController, animationFunctions, animationName, this->scope, NULL);
 		}
 

@@ -45,15 +45,15 @@ static int16 BgmapSprite::doApplyAffineTransformations(BgmapSprite bgmapSprite)
 		return Affine::transform(
 			bgmapSprite->param,
 			bgmapSprite->paramTableRow,
-			// geometrically accurate, but kills the CPU
+			// Geometrically accurate, but kills the CPU
 			// (0 > bgmapSprite->position.x? bgmapSprite->position.x : 0) + bgmapSprite->halfWidth,
 			// (0 > bgmapSprite->position.y? bgmapSprite->position.y : 0) + bgmapSprite->halfHeight,
-			// don't do translations
+			// Don't do translations
 			// Provide a little bit of performance gain by only calculation transformation equations
-			// for the visible rows, but causes that some sprites not be rendered completely when the
-			// camera moves vertically
-			// int32 lastRow = height + worldPointer->gy >= _cameraFrustum->y1 ? _cameraFrustum->y1 - worldPointer->gy + myDisplacement: height;
-			// this->paramTableRow = this->paramTableRow ? this->paramTableRow : myDisplacement;
+			// For the visible rows, but causes that some sprites not be rendered completely when the
+			// Camera moves vertically
+			// Int32 lastRow = height + worldPointer->gy >= _cameraFrustum->y1 ? _cameraFrustum->y1 - worldPointer->gy + myDisplacement: height;
+			// This->paramTableRow = this->paramTableRow ? this->paramTableRow : myDisplacement;
 			__I_TO_FIXED(bgmapSprite->halfWidth),
 			__I_TO_FIXED(bgmapSprite->halfHeight),
 			__I_TO_FIX13_3(bgmapSprite->bgmapTextureSource.mx),
@@ -138,14 +138,14 @@ bool BgmapSprite::hasSpecialEffects()
 
 void BgmapSprite::processEffects()
 {
-	// set the world size according to the zoom
+	// Set the world size according to the zoom
 	if(0 < this->param && (uint8)__NO_RENDER_INDEX != this->index)
 	{
 		if(0 != ((__WORLD_AFFINE | __WORLD_HBIAS) & this->head) && NULL != this->applyParamTableEffect)
 		{
 			if(0 <= this->paramTableRow)
 			{
-				// apply affine transformation
+				// Apply affine transformation
 				this->paramTableRow = this->applyParamTableEffect(this);
 
 				if(0 > this->paramTableRow)
@@ -172,23 +172,23 @@ int16 BgmapSprite::doRender(int16 index)
 
 	WorldAttributes* worldPointer = &_worldAttributesCache[index];
 
-	// get coordinates
+	// Get coordinates
 	int16 gx = this->position.x + this->displacement.x - this->halfWidth;
 	int16 gy = this->position.y + this->displacement.y - this->halfHeight;
 	int16 gp = this->position.parallax + this->displacement.parallax;
 
 	int16 auxGp = __ABS(gp);
 
-	// get sprite's size
+	// Get sprite's size
 	int16 w = this->halfWidth << 1;
 	int16 h = this->halfHeight << 1;
 
-	// set the head
+	// Set the head
 	int32 mx = this->bgmapTextureSource.mx;
 	int32 my = this->bgmapTextureSource.my;
 	int32 mp = this->bgmapTextureSource.mp;
 
-	// cap coordinates to camera space
+	// Cap coordinates to camera space
 	if(_cameraFrustum->x0 - auxGp > gx)
 	{
 		if(0 == this->param)
@@ -309,7 +309,7 @@ void BgmapSprite::setRotation(const Rotation* rotation)
 	{
 		this->paramTableRow = -1 == this->paramTableRow ? 0 : this->paramTableRow;
 
-		// scale the texture in the next render cycle
+		// Scale the texture in the next render cycle
 		BgmapSprite::invalidateParamTable(this);
 	}
 	else if(!isDeleted(this->texture))
@@ -458,7 +458,7 @@ void BgmapSprite::setMode(uint16 display, uint16 mode)
 
 	if(((__WORLD_AFFINE | __WORLD_HBIAS) & this->head) && 0 != this->param)
 	{
-		// free param table space
+		// Free param table space
 		ParamTableManager::free(ParamTableManager::getInstance(), this);
 
 		this->param = 0;
@@ -470,7 +470,7 @@ void BgmapSprite::setMode(uint16 display, uint16 mode)
 		{
 			case __WORLD_BGMAP:
 
-				// set map head
+				// Set map head
 				this->head = display | __WORLD_BGMAP;
 				break;
 
@@ -484,7 +484,7 @@ void BgmapSprite::setMode(uint16 display, uint16 mode)
 
 			case __WORLD_HBIAS:
 
-				// set map head
+				// Set map head
 				this->head = display | __WORLD_HBIAS;
 
 				if(NULL != this->applyParamTableEffect)
@@ -505,7 +505,7 @@ void BgmapSprite::setParam(uint32 param)
 {
 	this->param = param;
 
-	// set flag to rewrite texture's param table
+	// Set flag to rewrite texture's param table
 	BgmapSprite::invalidateParamTable(this);
 }
 
@@ -585,13 +585,13 @@ void BgmapSprite::removeFromCache()
 
 void BgmapSprite::releaseTexture()
 {
-	// free the texture
+	// Free the texture
 	if(!isDeleted(this->texture))
 	{
-		// if affine or bgmap
+		// If affine or bgmap
 		if(((__WORLD_AFFINE | __WORLD_HBIAS) & this->head) && 0 != this->param)
 		{
-			// free param table space
+			// Free param table space
 			ParamTableManager::free(ParamTableManager::getInstance(), this);
 		}
 

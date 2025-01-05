@@ -47,7 +47,7 @@ void Container::constructor(int16 internalId, const char* const name)
 	this->localTransformation.rotation = Rotation::zero();
 	this->localTransformation.scale = Scale::unit();
 
-	// force global position calculation on the next transformation cycle
+	// Force global position calculation on the next transformation cycle
 	this->transformation.invalid = __NON_TRANSFORMED;
 	this->localTransformation.invalid = __VALID_TRANSFORMATION;
 
@@ -81,7 +81,7 @@ void Container::destructor()
 	}
 #endif
 	
-	// if I have children
+	// If I have children
 	if(NULL != this->children)
 	{
 		for(VirtualNode node = this->children->head; NULL != node; node = node->next)
@@ -110,21 +110,21 @@ void Container::destructor()
 			delete child;
 		}
 
-		// delete children list
+		// Delete children list
 		delete this->children;
 		this->children = NULL;
 
 	}
 
-	// first remove from parent
+	// First remove from parent
 	if(this->parent)
 	{
 		ASSERT(this != this->parent, "Container::destructor: I'm my own father");
-		// don't allow my parent to try to delete me again
+		// Don't allow my parent to try to delete me again
 		Container::removeChild(this->parent, this, false);
 	}
 
-	// delete name
+	// Delete name
 	if(!isDeleted(this->name))
 	{
 		delete this->name;
@@ -282,7 +282,7 @@ void Container::setNormalizedDirection(NormalizedDirection normalizedDirection)
 {
 	NormalizedDirection currentNormalizedDirection = Container::getNormalizedDirection(this);
 
-	// if directions XOR is 0, they are equal
+	// If directions XOR is 0, they are equal
 	if(
 		!(
 			(currentNormalizedDirection.x ^ normalizedDirection.x) |
@@ -417,21 +417,21 @@ Container Container::getParent()
 
 void Container::addChild(Container child)
 {
-	// check if child is valid
+	// Check if child is valid
 	if(isDeleted(child))
 	{
 		NM_ASSERT(false, "Container::addChild: adding null child");
 		return;
 	}
 
-	// if don't have any child yet
+	// If don't have any child yet
 	if(NULL == this->children)
 	{
-		// create children list
+		// Create children list
 		this->children = new VirtualList();
 	}
 
-	// first remove from previous parent
+	// First remove from previous parent
 	if(this != child->parent)
 	{
 		Transformation environmentTransformation = Container::getEnvironmentTransform(this);
@@ -443,10 +443,10 @@ void Container::addChild(Container child)
 			Container::changeEnvironment(child, &environmentTransformation);
 		}
 
-		// set new parent
+		// Set new parent
 		child->parent = this;
 
-		// add to the children list
+		// Add to the children list
 		VirtualList::pushBack(this->children, (void*)child);
 
 		this->update = this->update || Container::overrides(child, update);
@@ -611,10 +611,10 @@ Container Container::getChildByName(const char* childName, bool recursive)
 
 	if(!this->deleteMe && childName && this->children)
 	{
-		// search through direct children
+		// Search through direct children
 		foundChild = Container::findChildByName(this, this->children, childName, false);
 
-		// if no direct child could be found, do a recursive search, if applicable
+		// If no direct child could be found, do a recursive search, if applicable
 		if(!foundChild && recursive)
 		{
 			foundChild = Container::findChildByName(this, this->children, childName, true);
@@ -647,7 +647,7 @@ int32 Container::getChildrenCount()
 
 void Container::updateChildren()
 {
-	// if I have children
+	// If I have children
 	if(NULL == this->children)
 	{
 		return;
@@ -696,10 +696,10 @@ void Container::invalidateTransformation()
 
 	if(!isDeleted(this->children))
 	{
-		// update each child
+		// Update each child
 		for(VirtualNode node = this->children->head; NULL != node; node = node->next)
 		{
-			// make sure child recalculates its global position
+			// Make sure child recalculates its global position
 			Container::invalidateTransformation(node->data);
 		}
 	}
@@ -885,7 +885,7 @@ void Container::setLocalPosition(const Vector3D* position)
 {
 	Vector3D displacement = this->localTransformation.position;
 
-	// force global position calculation on the next transformation cycle
+	// Force global position calculation on the next transformation cycle
 	if(position == &this->localTransformation.position)
 	{
 		this->transformation.invalid |= __INVALIDATE_POSITION;
@@ -1080,7 +1080,7 @@ void Container::changeEnvironment(Transformation* environmentTransformation)
 	Container::setLocalRotation(this, &localRotation);
 	Container::setLocalScale(this, &localScale);
 
-	// force global position calculation on the next transformation cycle
+	// Force global position calculation on the next transformation cycle
 	Container::invalidateTransformation(this);
 
 	if(!isDeleted(this->body))
@@ -1098,7 +1098,7 @@ Container Container::findChildByName(VirtualList children, const char* childName
 		return NULL;
 	}
 
-	// look through all children
+	// Look through all children
 	for(VirtualNode node = children->head; NULL != node; node = node->next)
 	{
 		Container child = Container::safeCast(node->data);
@@ -1134,16 +1134,16 @@ Transformation Container::getEnvironmentTransform()
 	{
 		Transformation environmentTransformation =
 		{
-			// spatial position
+			// Spatial position
 			{0, 0, 0},
 		
-			// spatial rotation
+			// Spatial rotation
 			{0, 0, 0},
 		
-			// spatial scale
+			// Spatial scale
 			{__1I_FIX7_9, __1I_FIX7_9, __1I_FIX7_9},
 
-			// invalidity
+			// Invalidity
 			__VALID_TRANSFORMATION
 		};
 
@@ -1160,13 +1160,13 @@ void Container::concatenateTransform(Transformation* concatenatedTransformation,
 	ASSERT(concatenatedTransformation, "Container::concatenateTransform: null concatenatedTransformation");
 	ASSERT(localTransformation, "Container::concatenateTransform: null localTransformation");
 
-	// tranlate position
+	// Tranlate position
 	concatenatedTransformation->position = Vector3D::sum(concatenatedTransformation->position, localTransformation->position);
 
-	// propagate rotation
+	// Propagate rotation
 	concatenatedTransformation->rotation = Rotation::sum(concatenatedTransformation->rotation, localTransformation->rotation);
 
-	// propagate scale
+	// Propagate scale
 	concatenatedTransformation->scale = Scale::product(concatenatedTransformation->scale, localTransformation->scale);
 }
 
@@ -1228,7 +1228,7 @@ void Container::doTransform(const Transformation* environmentTransformation, uin
 
 	Container::transformChildren(this, invalidateTransformationFlagHelper);
 
-	// don't update position on next transformation cycle
+	// Don't update position on next transformation cycle
 	this->transformation.invalid = __VALID_TRANSFORMATION;
 }
 

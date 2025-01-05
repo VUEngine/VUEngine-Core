@@ -68,16 +68,16 @@ typedef struct ActorLoadingListener
 
 const Transformation _neutralEnvironmentTransformation =
 {
-	// spatial position
+	// Spatial position
 	{0, 0, 0},
  
-	// spatial rotation
+	// Spatial rotation
 	{0, 0, 0},
  
-	// spatial scale
+	// Spatial scale
 	{__1I_FIX7_9, __1I_FIX7_9, __1I_FIX7_9},
 
-	// invalidty flag
+	// Invalidty flag
 	__VALID_TRANSFORMATION
 };
 
@@ -167,7 +167,7 @@ void Stage::destructor()
 	if(!isDeleted(this->sounds))
 	{
 		// Do not need to release sound wrappers here,
-		// they are taken care by the SoundManager when
+		// They are taken care by the SoundManager when
 		// I called SoundManager::stopAllSounds
 		for(VirtualNode node = this->sounds->head; NULL != node; node = node->next)
 		{
@@ -207,18 +207,18 @@ void Stage::suspend()
 	// Save the camera position for resume reconfiguration
 	this->cameraPosition = Camera::getPosition(Camera::getInstance());
 
-	// stream all pending actors to avoid having manually recover
-	// the stage actor registries
+	// Stream all pending actors to avoid having manually recover
+	// The stage actor registries
 	while(ActorFactory::createNextActor(this->actorFactory));
 
 	Base::suspend(this);
 
-	// relinquish camera focus priority
+	// Relinquish camera focus priority
 	if(!isDeleted(this->focusActor))
 	{
 		if(this->focusActor == Camera::getFocusActor(Camera::getInstance()))
 		{
-			// relinquish focus actor
+			// Relinquish focus actor
 			Camera::setFocusActor(Camera::getInstance(), NULL);
 		}
 	}
@@ -243,10 +243,10 @@ void Stage::resume()
 	// Setup timer
 	Stage::configureTimer(this);
 
-	// load background sounds
+	// Load background sounds
 	Stage::setupSounds(this);
 
-	// set physics
+	// Set physics
 	BodyManager::setFrictionCoefficient(VUEngine::getBodyManager(_vuEngine), this->stageSpec->physics.frictionCoefficient);
 	BodyManager::setGravity(VUEngine::getBodyManager(_vuEngine), this->stageSpec->physics.gravity);
 
@@ -254,16 +254,16 @@ void Stage::resume()
 
 	if(!isDeleted(this->focusActor))
 	{
-		// recover focus actor
+		// Recover focus actor
 		Camera::setFocusActor(Camera::getInstance(), Actor::safeCast(this->focusActor));
 	}
 
 	Base::resume(this);
 
-	// apply transformations
+	// Apply transformations
 	Stage::transform(this, &_neutralEnvironmentTransformation, __INVALIDATE_TRANSFORMATION);
 
-	// setup colors and brightness
+	// Setup colors and brightness
 	VIPManager::setBackgroundColor(VIPManager::getInstance(), this->stageSpec->rendering.colorConfig.backgroundColor);
 	// TODO: properly handle brightness and brightness repeat on resume
 
@@ -315,7 +315,7 @@ void Stage::registerActors(VirtualList positionedActorsToIgnore)
 
 	this->stageActorDescriptions = new VirtualList();
 
-	// register actors ordering them according to their distances to the origin
+	// Register actors ordering them according to their distances to the origin
 	int32 i = 0;
 
 	for(;this->stageSpec->actors.children[i].actorSpec; i++)
@@ -534,7 +534,7 @@ void Stage::fadeSounds(uint32 playbackType)
 	if(!isDeleted(this->sounds))
 	{
 		// Do not need to release sound wrappers here,
-		// they are taken care by the SoundManager when
+		// They are taken care by the SoundManager when
 		// I called SoundManager::stopAllSounds
 		for(VirtualNode node = this->sounds->head; NULL != node; node = node->next)
 		{
@@ -632,38 +632,38 @@ void Stage::configure(VirtualList positionedActorsToIgnore)
 	// Setup timer
 	Stage::configureTimer(this);
 
-	// load background music
+	// Load background music
 	Stage::setupSounds(this);
 
 	Camera::reset(Camera::getInstance());
 	Camera::setStageSize(Camera::getInstance(), Size::getFromPixelSize(this->stageSpec->level.pixelSize));
 	Camera::setPosition(Camera::getInstance(), this->cameraPosition, true);
 
-	// set optical values
+	// Set optical values
 	Camera::setup(Camera::getInstance(), this->stageSpec->rendering.pixelOptical, this->stageSpec->level.cameraFrustum);
 
-	// set physics
+	// Set physics
 	BodyManager::setFrictionCoefficient(VUEngine::getBodyManager(_vuEngine), this->stageSpec->physics.frictionCoefficient);
 	BodyManager::setGravity(VUEngine::getBodyManager(_vuEngine), this->stageSpec->physics.gravity);
 
-	// preload graphics
+	// Preload graphics
 	Stage::prepareGraphics(this);
 
-	// register all the actors in the stage's spec
+	// Register all the actors in the stage's spec
 	Stage::registerActors(this, positionedActorsToIgnore);
 
-	// load actors
+	// Load actors
 	Stage::loadInitialActors(this);
 
-	// retrieve focus actor for streaming
+	// Retrieve focus actor for streaming
 	Stage::setFocusActor(this, Camera::getFocusActor(Camera::getInstance()));
 
-	// setup colors and brightness
+	// Setup colors and brightness
 	VIPManager::setBackgroundColor(VIPManager::getInstance(), this->stageSpec->rendering.colorConfig.backgroundColor);
 	VIPManager::setupBrightness(VIPManager::getInstance(), &this->stageSpec->rendering.colorConfig.brightness);
 	VIPManager::setupBrightnessRepeat(VIPManager::getInstance(), this->stageSpec->rendering.colorConfig.brightnessRepeat);
 
-	// apply transformations
+	// Apply transformations
 	Stage::transform(this, &_neutralEnvironmentTransformation, __INVALIDATE_TRANSFORMATION);
 
 	Stage::loadPostProcessingEffects(this);
@@ -695,10 +695,10 @@ bool Stage::unloadOutOfRangeActors(int32 defer __attribute__((unused)))
 
 	CACHE_RESET;
 
-	// check which entites must be unloaded
+	// Check which entites must be unloaded
 	for(; NULL != node; node = node->next)
 	{
-		// get next actor
+		// Get next actor
 		Actor actor = Actor::safeCast(node->data);
 
 		if(actor->dontStreamOut)
@@ -706,7 +706,7 @@ bool Stage::unloadOutOfRangeActors(int32 defer __attribute__((unused)))
 			continue;
 		}
 
-		// if the actor isn't visible inside the view field, unload it
+		// If the actor isn't visible inside the view field, unload it
 		if(!actor->deleteMe && actor->parent == Container::safeCast(this))
 		{
 			if(Actor::isInCameraRange(actor, this->stageSpec->streaming.loadPadding + this->stageSpec->streaming.unloadPadding, true))
@@ -738,11 +738,11 @@ bool Stage::unloadOutOfRangeActors(int32 defer __attribute__((unused)))
 				stageActorDescription->internalId = -1;
 			}
 
-			// unload it
+			// Unload it
 			Stage::destroyChildActor(this, actor);
 
-			// remove from list of actors that are to be loaded by the streaming,
-			// if the actor is not to be alwaysStreamIned
+			// Remove from list of actors that are to be loaded by the streaming,
+			// If the actor is not to be alwaysStreamIned
 			if(!Actor::alwaysStreamIn(actor))
 			{
 				VirtualList::removeNode(this->stageActorDescriptions, auxNode);
@@ -806,7 +806,7 @@ bool Stage::loadInRangeActors(int32 defer)
 
 			if(0 > stageActorDescription->internalId)
 			{
-				// if actor in load range
+				// If actor in load range
 				if
 				(
 					Stage::isActorInLoadRange
@@ -868,7 +868,7 @@ bool Stage::loadInRangeActors(int32 defer)
 
 			if(0 > stageActorDescription->internalId)
 			{
-				// if actor in load range
+				// If actor in load range
 				if
 				(
 					Stage::isActorInLoadRange
@@ -919,7 +919,7 @@ bool Stage::loadInRangeActors(int32 defer)
 
 void Stage::loadInitialActors()
 {
-	// need a temporary list to remove and delete actors
+	// Need a temporary list to remove and delete actors
 	VirtualNode node = this->stageActorDescriptions->head;
 
 	for(; NULL != node; node = node->next)
@@ -928,7 +928,7 @@ void Stage::loadInitialActors()
 
 		if(-1 == stageActorDescription->internalId)
 		{
-			// if actor in load range
+			// If actor in load range
 			if
 			(
 				stageActorDescription->positionedActor->loadRegardlessOfPosition 
@@ -969,7 +969,7 @@ Actor Stage::doAddChildActor(const PositionedActor* const positionedActor, bool 
 
 		if(!isDeleted(actor))
 		{
-			// create the actor and add it to the world
+			// Create the actor and add it to the world
 			Stage::addChild(this, Container::safeCast(actor));
 
 			actor->dontStreamOut = actor->dontStreamOut || permanent;
@@ -1122,20 +1122,20 @@ void Stage::prepareGraphics()
 	// Must clean DRAM
 	SpriteManager::reset(SpriteManager::getInstance());
 
-	// set palettes
+	// Set palettes
 	Stage::configurePalettes(this);
 
-	// setup OBJs
+	// Setup OBJs
 	SpriteManager::setupObjectSpriteContainers
 	(
 		SpriteManager::getInstance(), this->stageSpec->rendering.objectSpritesContainersSize,
 		this->stageSpec->rendering.objectSpritesContainersZPosition
 	);
 
-	// preload textures
+	// Preload textures
 	Stage::preloadAssets(this);
 
-	// setup SpriteManager's configuration
+	// Setup SpriteManager's configuration
 	SpriteManager::setTexturesMaximumRowsToWrite(SpriteManager::getInstance(), this->stageSpec->rendering.texturesMaximumRowsToWrite);
 	SpriteManager::setMaximumParamTableRowsToComputePerCall
 	(
@@ -1162,7 +1162,7 @@ void Stage::setupSounds()
 
 	int32 i = 0;
 
-	// stop all sounds
+	// Stop all sounds
 	SoundManager::stopAllSounds(SoundManager::getInstance(), true, this->stageSpec->assets.sounds);
 
 	for(; NULL != this->stageSpec->assets.sounds[i]; i++)
@@ -1208,7 +1208,7 @@ void Stage::pauseSounds()
 	if(!isDeleted(this->sounds))
 	{
 		// Do not need to release sound wrappers here,
-		// they are taken care by the SoundManager when
+		// They are taken care by the SoundManager when
 		// I called SoundManager::stopAllSounds
 		for(VirtualNode node = this->sounds->head; NULL != node; node = node->next)
 		{
@@ -1230,7 +1230,7 @@ void Stage::unpauseSounds()
 	if(!isDeleted(this->sounds))
 	{
 		// Do not need to release sound wrappers here,
-		// they are taken care by the SoundManager when
+		// They are taken care by the SoundManager when
 		// I called SoundManager::stopAllSounds
 		for(VirtualNode node = this->sounds->head; NULL != node; node = node->next)
 		{

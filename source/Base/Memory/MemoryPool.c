@@ -233,7 +233,7 @@ static BYTE* MemoryPool::allocate(int32 numberOfBytes)
 			}
 		}
 		while(true);
-		// keep looking for a free block on a bigger pool
+		// Keep looking for a free block on a bigger pool
 
 		if(NULL != poolLocation)
 		{
@@ -261,7 +261,7 @@ static BYTE* MemoryPool::allocate(int32 numberOfBytes)
 	Error::triggerException("MemoryPool::allocate: pool exhausted", NULL);		
 #endif
 
-	// return designed address
+	// Return designed address
 	return NULL;
 }
 
@@ -288,13 +288,13 @@ static void MemoryPool::free(BYTE* object)
 		return;
 	}
 
-	// look for the registry in which the object is
+	// Look for the registry in which the object is
 	NM_ASSERT(pool <= __MEMORY_POOLS , "MemoryPool::free: deleting something not allocated");
 
 	this->poolLastFreeBlock[pool] = object;
 
 #ifdef __DEBUG
-	// get the total objects in the pool
+	// Get the total objects in the pool
 	uint32 numberOfBlocks = this->poolSizes[pool][ePoolSize] / this->poolSizes[pool][eBlockSize];
 
 	HardwareManager::suspendInterrupts();
@@ -302,22 +302,22 @@ static void MemoryPool::free(BYTE* object)
 	// Look for the pool in which it is allocated
 	for(uint32 i = 0, displacement = 0; i < numberOfBlocks; i++, displacement += this->poolSizes[pool][eBlockSize])
 	{
-		// if the object has been found
+		// If the object has been found
 		if(object == &this->poolLocation[pool][displacement])
 		{
-			// free the block
+			// Free the block
 			*(uint32*)((uint32)object) = __MEMORY_FREE_BLOCK_FLAG;
 			HardwareManager::resumeInterrupts();
 			return;
 		}
 	}
 
-	// thrown exception
+	// Thrown exception
 	ASSERT(false, "MemoryPool::free: deleting something not allocated");
 
 #endif
 
-	// set address as free
+	// Set address as free
 	*(uint32*)((uint32)object) = __MEMORY_FREE_BLOCK_FLAG;
 }
 
@@ -466,7 +466,7 @@ void MemoryPool::constructor()
 
  void MemoryPool::destructor()
 {
-	// allow a new construct
+	// Allow a new construct
 	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
@@ -478,10 +478,10 @@ void MemoryPool::reset()
 	uint32 pool = 0;
 	uint32 i;
 
-	// initialize pool's sizes and pointers
+	// Initialize pool's sizes and pointers
 	__SET_MEMORY_POOL_ARRAYS
 
-	// clear all memory pool entries
+	// Clear all memory pool entries
 	for(pool = 0; pool < __MEMORY_POOLS; pool++)
 	{
 		for(i = 0; i < this->poolSizes[pool][ePoolSize]; i++)
@@ -497,7 +497,7 @@ void MemoryPool::cleanUp()
 {
 	uint32 pool = 0;
 
-	// clear all memory pool entries
+	// Clear all memory pool entries
 	for(pool = 0; pool < __MEMORY_POOLS; pool++)
 	{
 		uint32 i = 0;
@@ -522,7 +522,7 @@ uint32 MemoryPool::getPoolSize()
 	uint32 size = 0;
 	uint32 pool = 0;
 
-	// clear all allocable objects usage
+	// Clear all allocable objects usage
 	for(pool = 0; pool < __MEMORY_POOLS; pool++)
 	{
 		size += this->poolSizes[pool][ePoolSize];

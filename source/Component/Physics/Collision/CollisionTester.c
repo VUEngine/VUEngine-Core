@@ -110,13 +110,13 @@ static void CollisionTester::testOverlaping(Collider requesterCollider, Collider
 
 static void CollisionTester::getSolutionVectorBetweenBoxAndBox(Box boxA, Box boxB, SolutionVector* solutionVector)
 {
-	// get the vertexes of each box
+	// Get the vertexes of each box
 	Vector3D boxAVertexes[__BOX_VERTEXES];
 	Vector3D boxBVertexes[__BOX_VERTEXES];
 	Box::getVertexes(boxA, boxAVertexes);
 	Box::getVertexes(boxB, boxBVertexes);
 
-	// if the normals have not been computed yet do so now
+	// If the normals have not been computed yet do so now
 	if(!boxA->normals)
 	{
 		Box::projectOntoItself(boxA);
@@ -139,12 +139,12 @@ static void CollisionTester::getSolutionVectorBetweenBoxAndBox(Box boxA, Box box
 
 	int32 boxIndex = 0;
 
-	// has to project all points on all the normals of both boxes
+	// Has to project all points on all the normals of both boxes
 	for(; boxIndex < 2; boxIndex++)
 	{
 		int32 normalIndex = 0;
 
-		// test all 3 normals of each box
+		// Test all 3 normals of each box
 		for(; normalIndex < __COLLIDER_NORMALS; normalIndex++)
 		{
 			Vector3D currentNormal = normals[boxIndex][normalIndex];
@@ -229,7 +229,7 @@ static void CollisionTester::getSolutionVectorBetweenBallAndBall(Ball ballA, Bal
 	{
 		fixed_t distanceVectorLength = Math::squareRootFixed(distanceVectorSquareLength);
 
-		// add padding to prevent rounding problems
+		// Add padding to prevent rounding problems
 		solutionVector->magnitude = radiusesLength - distanceVectorLength;
 		solutionVector->magnitude += 0 == solutionVector->magnitude ? __PIXELS_TO_METERS(1) : 0;
 		solutionVector->direction = Vector3D::scalarDivision(distanceVector, distanceVectorLength);
@@ -270,7 +270,7 @@ static void CollisionTester::getSolutionVectorBetweenBallAndLineField(Ball ball,
 {
 	// TODO: this misses some cases when the ball's radius is bigger than the line field's length
 	// A first check should compare them and use the bigger's collider axis as the line onto which
-	// project the other collider's points
+	// Project the other collider's points
 
 	Vector3D ballSideToCheck = Vector3D::sum(ball->position, Vector3D::scalarProduct(lineField->normal, ball->radius));
 
@@ -319,7 +319,7 @@ static void CollisionTester::getSolutionVectorBetweenBallAndLineField(Ball ball,
 
 			// Check both sides of the ball
 			// This is a rough approximation since it identifies a collision even if the ball and the line field
-			// are not really overlapping
+			// Are not really overlapping
 			for(bool left = true; !collision && left; left = false)
 			{
 				Vector3D projectionPlusRadio = Vector3D::sum(projection, Vector3D::perpendicularZPlane(ballRadiusVector, left));
@@ -345,7 +345,7 @@ static void CollisionTester::getSolutionVectorBetweenBallAndLineField(Ball ball,
 
 static void CollisionTester::getSolutionVectorBetweenBoxAndBall(Box boxA, Ball ballB, SolutionVector* solutionVector)
 {
-	// if the normals have not been computed yet do so now
+	// If the normals have not been computed yet do so now
 	if(NULL == boxA->normals)
 	{
 		Box::projectOntoItself(boxA);
@@ -357,10 +357,10 @@ static void CollisionTester::getSolutionVectorBetweenBoxAndBall(Box boxA, Ball b
 
 	fixed_t minimumIntervalDistance = Math::fixedInfinity();
 
-	// has to project all points on all the normals of the tilted box
+	// Has to project all points on all the normals of the tilted box
 	int32 normalIndex = 0;
 
-	// test all 3 normals of each box
+	// Test all 3 normals of each box
 	for(; normalIndex < __COLLIDER_NORMALS; normalIndex++)
 	{
 		Vector3D currentNormal = normals[normalIndex];
@@ -478,19 +478,19 @@ static void CollisionTester::testIfBoxOverlapsBall(Collider colliderA, Collider 
 			((boxA->position.z + boxA->rightBox.z0) - (ballB->position.z + ballB->radius)),
 	};
 
-	// test for collision
+	// Test for collision
 	if(0 > intervalDistance.x && 0 > intervalDistance.y && 0 > intervalDistance.z)
 	{
-		// check if both boxes are axis aligned
+		// Check if both boxes are axis aligned
 		bool isSATCheckPending = 
 			boxA->rotationVertexDisplacement.x | boxA->rotationVertexDisplacement.y | boxA->rotationVertexDisplacement.z ? true : false;
 
 		SolutionVector solutionVector = (SolutionVector) {{0, 0, 0}, 0};
 		fixed_t minimumIntervalDistance = Math::fixedInfinity();
 
-		// if axis aligned, then SAT check is not needed
-		// and we can calculate the minimum displacement vector
-		// to resolve the collision right now
+		// If axis aligned, then SAT check is not needed
+		// And we can calculate the minimum displacement vector
+		// To resolve the collision right now
 		if(isSATCheckPending)
 		{
 			CollisionTester::getSolutionVectorBetweenBoxAndBall(boxA, ballB, &solutionVector);
@@ -556,10 +556,10 @@ static void CollisionTester::testIfBoxOverlapsBox(Collider colliderA, Collider c
 			((boxA->position.z + boxA->rightBox.z0) - (boxB->position.z + boxB->rightBox.z1)),
 	};
 
-	// test for collision
+	// Test for collision
 	if(0 > intervalDistance.x && 0 > intervalDistance.y && 0 > intervalDistance.z)
 	{
-		// check if both boxes are axis aligned
+		// Check if both boxes are axis aligned
 		bool isBoxARotated = 
 			boxA->rotationVertexDisplacement.x | boxA->rotationVertexDisplacement.y | boxA->rotationVertexDisplacement.z ? true : false;
 		bool isBoxBRotated = 
@@ -569,9 +569,9 @@ static void CollisionTester::testIfBoxOverlapsBox(Collider colliderA, Collider c
 		SolutionVector solutionVector = (SolutionVector) {{0, 0, 0}, 0};
 		fixed_t minimumIntervalDistance = Math::fixedInfinity();
 
-		// if axis aligned, then SAT check is not needed
-		// and we can calculate the minimum displacement vector
-		// to resolve the collision right now
+		// If axis aligned, then SAT check is not needed
+		// And we can calculate the minimum displacement vector
+		// To resolve the collision right now
 		if(isSATCheckPending)
 		{
 			CollisionTester::getSolutionVectorBetweenBoxAndBox(boxA, boxB, &solutionVector);
@@ -622,7 +622,7 @@ static void CollisionTester::testIfBoxOverlapsInverseBox(Collider colliderA, Col
 	Box boxA = Box::safeCast(colliderA); 
 	InverseBox inverseBoxB = InverseBox::safeCast(colliderB);
 
-	// test for collision
+	// Test for collision
 	if
 	(
 		(boxA->rightBox.x0 < inverseBoxB->rightBox.x0) | (boxA->rightBox.x1 > inverseBoxB->rightBox.x1) |
@@ -665,17 +665,17 @@ static void CollisionTester::testIfInverseBoxOverlapsBall(Collider colliderA, Co
 			((inverseBoxA->position.z + inverseBoxA->rightBox.z1) - (ballB->position.z + ballB->radius)),
 	};
 
-	// test for collision
+	// Test for collision
 	if(0 > intervalDistance.x || 0 > intervalDistance.y || 0 > intervalDistance.z)
 	{
-		// check if both boxes are axis aligned
+		// Check if both boxes are axis aligned
 		SolutionVector solutionVector = (SolutionVector) {{0, 0, 0}, 0};
 		fixed_t minimumIntervalDistance = Math::fixedInfinity();
 
-		// no SAT when checking inverse boxes
-		// if axis aligned, then SAT check is not needed
-		// and we can calculate the minimum displacement vector
-		// to resolve the collision right now
+		// No SAT when checking inverse boxes
+		// If axis aligned, then SAT check is not needed
+		// And we can calculate the minimum displacement vector
+		// To resolve the collision right now
 		Vector3D distanceVector = Vector3D::get(inverseBoxA->position, ballB->position);
 
 		Vector3D normals[__COLLIDER_NORMALS] =

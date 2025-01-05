@@ -39,7 +39,7 @@ void ParamTableManager::reset()
 
 	this->paramTableBase = __PARAM_TABLE_END;
 
-	// set the size of the param table
+	// Set the size of the param table
 	this->size = __PARAM_TABLE_END - this->paramTableBase;
 
 	NM_ASSERT(__PARAM_TABLE_END >= this->paramTableBase, "ParamTableManager::reset: param table size is negative");
@@ -65,8 +65,8 @@ void ParamTableManager::setup(int32 availableBgmapSegmentsForParamTable)
 		this->paramTableBase = __PARAM_TABLE_END - __BGMAP_SEGMENT_SIZE * availableBgmapSegmentsForParamTable;
 	}
 
-	// find the next address that is a multiple of 8192
-	// taking into account the printable area
+	// Find the next address that is a multiple of 8192
+	// Taking into account the printable area
 	for(; 0 != (this->paramTableBase % __BGMAP_SEGMENT_SIZE) && this->paramTableBase > __BGMAP_SPACE_BASE_ADDRESS; this->paramTableBase--);
 
 	NM_ASSERT(this->paramTableBase <= __PARAM_TABLE_END, "ParamTableManager::setup: param table size is negative");
@@ -178,10 +178,10 @@ void ParamTableManager::free(BgmapSprite bgmapSprite)
 			this->previouslyMovedBgmapSprite = NULL;
 		}
 
-		// accounted for
+		// Accounted for
 		if(this->paramTableFreeData.param && this->paramTableFreeData.param <= BgmapSprite::getParam(bgmapSprite))
 		{
-			// but increase the space recovered
+			// But increase the space recovered
 			this->paramTableFreeData.recoveredSize += ParamTableManager::calculateSpriteParamTableSize(this, bgmapSprite);
 
 			return;
@@ -208,12 +208,12 @@ void ParamTableManager::defragment(bool deferred)
 
 				uint32 spriteParam = BgmapSprite::getParam(sprite);
 
-				// retrieve param
+				// Retrieve param
 				if(spriteParam > this->paramTableFreeData.param)
 				{
 					int32 size = ParamTableManager::calculateSpriteParamTableSize(this, sprite);
 
-					// check that the sprite won't override itself
+					// Check that the sprite won't override itself
 					if(this->paramTableFreeData.param + size > spriteParam)
 					{
 						break;
@@ -227,7 +227,7 @@ void ParamTableManager::defragment(bool deferred)
 					//move back paramSize bytes
 					BgmapSprite::setParam(sprite, this->paramTableFreeData.param);
 
-					// set the new param to move on the next cycle
+					// Set the new param to move on the next cycle
 					this->paramTableFreeData.param += size;
 
 					this->previouslyMovedBgmapSprite = sprite;
@@ -306,7 +306,7 @@ void ParamTableManager::destructor()
 	delete this->bgmapSprites;
 	this->bgmapSprites = NULL;
 
-	// allow a new construct
+	// Allow a new construct
 	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
@@ -328,9 +328,9 @@ uint32 ParamTableManager::calculateSpriteParamTableSize(BgmapSprite bgmapSprite)
 			textureRows = 64;
 		}
 
-		// calculate necessary space to allocate
-		// size = sprite's rows * 8 pixels each one * 16 bytes needed by each row = sprite's rows * 2 ^ 7
-		// add one row as padding to make sure not ovewriting take place
+		// Calculate necessary space to allocate
+		// Size = sprite's rows * 8 pixels each one * 16 bytes needed by each row = sprite's rows * 2 ^ 7
+		// Add one row as padding to make sure not ovewriting take place
 		size = (textureRows << 7) * __MAXIMUM_SCALE;
 	}
 	else if(__WORLD_HBIAS & spriteHead)
@@ -340,7 +340,7 @@ uint32 ParamTableManager::calculateSpriteParamTableSize(BgmapSprite bgmapSprite)
 			textureRows = 28;
 		}
 
-		// size = sprite's rows * 8 pixels each one * 4 bytes needed by each row = sprite's rows * 2 ^ 5
+		// Size = sprite's rows * 8 pixels each one * 4 bytes needed by each row = sprite's rows * 2 ^ 5
 		size = textureRows << 5;
 	}
 

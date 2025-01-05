@@ -39,7 +39,7 @@ void VirtualCircularList::constructor()
 	// Always explicitly call the base's constructor 
 	Base::constructor();
 
-	// set members' default values
+	// Set members' default values
 	this->head = NULL;
 	this->tail = NULL;
 }
@@ -48,10 +48,10 @@ void VirtualCircularList::constructor()
 
 void VirtualCircularList::destructor()
 {
-	// make sure we remove all nodes
+	// Make sure we remove all nodes
 	VirtualCircularList::clear(this);
 
-	// destroy super object
+	// Destroy super object
 
 	// Always explicitly call the base's destructor 
 	Base::destructor();
@@ -118,34 +118,34 @@ VirtualNode VirtualCircularList::getNode(int32 item)
 
 	VirtualNode node = this->head;
 
-	// if not null head
+	// If not null head
 	if(node)
 	{
-		// if item hasn't reached list's size
+		// If item hasn't reached list's size
 		if(item < listSize)
 		{
-			// increase counter while node hasn't reached list's end
-			// and counter hasn't reached the item requested
+			// Increase counter while node hasn't reached list's end
+			// And counter hasn't reached the item requested
 			while(node && counter < item)
 			{
-				// increase counter
+				// Increase counter
 				counter++;
 
-				// load next node
+				// Load next node
 				node = node->next;
 
-				// if item reached
+				// If item reached
 				if(counter == item)
 				{
-					// return node's data
+					// Return node's data
 					return node;
 				}
 			}
 
-			// if item reached
+			// If item reached
 			if(counter == item)
 			{
-				// return node's data
+				// Return node's data
 				return node;
 			}
 
@@ -215,18 +215,18 @@ int32 VirtualCircularList::getCount()
 
 	if(this->head)
 	{
-		// point to the head
+		// Point to the head
 		VirtualNode node = this->head;
 
-		// while node doesn't reach the head again
+		// While node doesn't reach the head again
 		do
 		{
 			counter++;
 
-			// increment counter
+			// Increment counter
 			ASSERT(counter < LIST_MAX_SIZE, "VirtualCircularList::getCount: endless list getting size");
 
-			// move the node to the head
+			// Move the node to the head
 			node = node->next;
 		}
 		while(node != this->head);
@@ -241,20 +241,20 @@ VirtualNode VirtualCircularList::pushFront(const void* const data)
 {
 	VirtualNode newNode = new VirtualNode(data);
 
-	// set previous if list isn't empty
+	// Set previous if list isn't empty
 	if(this->head)
 	{
 		this->head->previous = newNode;
 	}
 
-	// assign the node to the head of the list
+	// Assign the node to the head of the list
 	newNode->next = this->head;
 	newNode->previous = this->tail;
 
-	// move the head
+	// Move the head
 	this->head = newNode;
 
-	// set the tail
+	// Set the tail
 	if(this->tail)
 	{
 		this->tail->next = this->head;
@@ -274,20 +274,20 @@ VirtualNode VirtualCircularList::pushBack(const void* const data)
 {
 	VirtualNode newNode = new VirtualNode(data);
 
-	// set previous if list isn't empty
+	// Set previous if list isn't empty
 	if(this->tail)
 	{
 		this->tail->next = newNode;
 	}
 
-	// assign the node to the head of the list
+	// Assign the node to the head of the list
 	newNode->next = this->head;
 	newNode->previous = this->tail;
 
-	// move the tail
+	// Move the tail
 	this->tail = newNode;
 
-	// set the tail
+	// Set the tail
 	if(this->head)
 	{
 		this->head->previous = this->tail;
@@ -327,7 +327,7 @@ VirtualNode VirtualCircularList::insertAfter(VirtualNode node, const void* const
 			return false;
 		}
 
-		// set previous if list isn't empty
+		// Set previous if list isn't empty
 		newNode->next = node->next;
 
 		if(node->next)
@@ -356,18 +356,18 @@ void* VirtualCircularList::popFront()
 		{
 			this->head = this->head->next;
 
-			// move head's previous pointer
+			// Move head's previous pointer
 			this->head->previous = this->tail;
 			this->tail->next = this->head;
 		}
 		else
 		{
-			// set head
+			// Set head
 			this->head = NULL;
 			this->tail = NULL;
 		}
 
-		// free dynamic memory
+		// Free dynamic memory
 		delete node;
 
 		return data;
@@ -389,18 +389,18 @@ void* VirtualCircularList::popBack()
 		{
 			this->tail = this->tail->previous;
 
-			// move head's previous pointer
+			// Move head's previous pointer
 			this->tail->next = this->head;
 			this->head->previous = this->tail;
 		}
 		else
 		{
-			// set head
+			// Set head
 			this->head = NULL;
 			this->tail = NULL;
 		}
 
-		// free dynamic memory
+		// Free dynamic memory
 		delete node;
 
 		return data;
@@ -413,10 +413,10 @@ void* VirtualCircularList::popBack()
 
 bool VirtualCircularList::removeNode(VirtualNode node)
 {
-	// if node isn't null
+	// If node isn't null
 	if(VirtualCircularList::checkThatNodeIsPresent(this, node))
 	{
-		// if the node is the head of the list
+		// If the node is the head of the list
 		if(this->head == this->tail)
 		{
 			if(node == this->head)
@@ -441,7 +441,7 @@ bool VirtualCircularList::removeNode(VirtualNode node)
 			else
 			{
 				// Make sure that node belongs to this list
-				// join the previous and next nodes
+				// Join the previous and next nodes
 				node->previous->next = node->next;
 				node->next->previous = node->previous;
 			}
@@ -525,16 +525,16 @@ void VirtualCircularList::clear()
 {
 	if(this->head)
 	{
-		// point to the head
+		// Point to the head
 		VirtualNode node = this->head;
 
-		// while node doesn't reach the head again
+		// While node doesn't reach the head again
 		do
 		{
-			// call destructor
+			// Call destructor
 			delete node;
 
-			// move the node to the head
+			// Move the node to the head
 			node = node->next;
 		}
 		while(node != this->head);
@@ -552,10 +552,10 @@ void VirtualCircularList::deleteData()
 	{
 		HardwareManager::suspendInterrupts();
 
-		// point to the head
+		// Point to the head
 		VirtualNode node = this->head;
 
-		// while node doesn't reach the head again
+		// While node doesn't reach the head again
 		do
 		{
 			delete node->data;
@@ -599,10 +599,10 @@ bool VirtualCircularList::checkThatNodeIsPresent(VirtualNode node)
 
 	if(this->head)
 	{
-		// point to the head
+		// Point to the head
 		VirtualNode auxNode = this->head;
 
-		// while node doesn't reach the head again
+		// While node doesn't reach the head again
 		do
 		{
 			if(auxNode == node)
@@ -610,7 +610,7 @@ bool VirtualCircularList::checkThatNodeIsPresent(VirtualNode node)
 				return true;
 			}
 
-			// move the node to the head
+			// Move the node to the head
 			auxNode = auxNode->next;
 		}
 		while(auxNode != this->head);
