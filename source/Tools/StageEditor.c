@@ -811,8 +811,8 @@ void StageEditor::selectUserObject(uint32 pressedKey)
 	{
 		if(1 >= SpriteManager::getFreeLayer())
 		{
-			Printing::text(5, 5, NULL);
-			Printing::text(5, 6, NULL);
+			Printing::text("No more WORLDs", 48 - 15, 5, NULL);
+			Printing::text("available     ", 48 - 15, 6, NULL);
 			return;
 		}
 
@@ -882,14 +882,14 @@ void StageEditor::printActorPosition()
 		Printing::text("ID:                             ", x, ++y, NULL);
 		Printing::int32(Actor::getInternalId(actor), x + 10, y, NULL);
 		Printing::text("Type:                           ", x, ++y, NULL);
-		Printing::text(Printing::getInstance(),	__GET_CLASS_NAME(actor), x + 10, y, NULL);
+		Printing::text(	__GET_CLASS_NAME(actor), x + 10, y, NULL);
 		Printing::text("Name:                           ", x, ++y, NULL);
-		Printing::text(Printing::getInstance(),	actorName ? actorName : "-", x + 10, y, NULL);
+		Printing::text(	actorName ? actorName : "-", x + 10, y, NULL);
 		Printing::text("          X      Y      Z       ", x, ++y, NULL);
 		Printing::text("Position:                       ", x, ++y, NULL);
 		Printing::int32(__METERS_TO_PIXELS(globalPosition->x), x + 10, y, NULL);
 		Printing::int32(__METERS_TO_PIXELS(globalPosition->y), x + 17, y, NULL);
-		Printing::int32(Printing::getInstance() ,__METERS_TO_PIXELS(globalPosition->z), x + 24, y, NULL);
+		Printing::int32(__METERS_TO_PIXELS(globalPosition->z), x + 24, y, NULL);
 		Printing::text("Rotation:                       ", x, ++y, NULL);
 		Printing::float(__FIXED_TO_F(globalRotation->x), x + 10, y, 2, NULL);
 		Printing::float(__FIXED_TO_F(globalRotation->y), x + 17, y, 2, NULL);
@@ -938,25 +938,25 @@ void StageEditor::printProjectionValues()
 	uint8 controlsXPos = 38;
 	uint8 controlsYPos = 2;
 
-	Printing::text(XPos, controlsYPos++, NULL);
+	Printing::text("Mode    \x16", controlsXPos, controlsYPos++, NULL);
 	controlsYPos++;
-	Printing::text(ntrolsXPos, controlsYPos++, NULL);
-	Printing::text(ntrolsXPos, controlsYPos++, NULL);
-	Printing::text(ntrolsXPos, controlsYPos++, NULL);
-	Printing::text(olsXPos, controlsYPos++, NULL);
-	Printing::text(olsXPos, controlsYPos++, NULL);
+	Printing::text("HVPC  \x1E\x1C\x1D", controlsXPos, controlsYPos++, NULL);
+	Printing::text("VVPC  \x1E\x1A\x1B", controlsXPos, controlsYPos++, NULL);
+	Printing::text("DETC  \x1F\x1A\x1B", controlsXPos, controlsYPos++, NULL);
+	Printing::text("MVD    \x13\x14", controlsXPos, controlsYPos++, NULL);
+	Printing::text("BD     \x17\x18", controlsXPos, controlsYPos++, NULL);
 
-	Printing::text(y++, NULL);
-	Printing::text(:        ", x, ++y, NULL);
-	Printing::int32(cal->horizontalViewPointCenter), x + 25, y, NULL);
-	Printing::text(:        ", x, ++y, NULL);
-	Printing::int32(cal->verticalViewPointCenter), x + 25, y, NULL);
-	Printing::text(:        ", x, ++y, NULL);
-	Printing::int32(stancePower, x + 25, y, NULL);
-	Printing::text(:        ", x, ++y, NULL);
-	Printing::int32(stancePower, x + 25, y, NULL);
-	Printing::text(         ", x, ++y, NULL);
-	Printing::int32(cal->baseDistance), x + 25, y, NULL);
+	Printing::text("PROJECTION VALUES", x, y++, NULL);
+	Printing::text("Horz. view point center:        ", x, ++y, NULL);
+	Printing::int32(__METERS_TO_PIXELS(_optical->horizontalViewPointCenter), x + 25, y, NULL);
+	Printing::text("Vert. view point center:        ", x, ++y, NULL);
+	Printing::int32(__METERS_TO_PIXELS(_optical->verticalViewPointCenter), x + 25, y, NULL);
+	Printing::text("Maximum X View Distance:        ", x, ++y, NULL);
+	Printing::int32(_optical->maximumXViewDistancePower, x + 25, y, NULL);
+	Printing::text("Maximum Y View Distance:        ", x, ++y, NULL);
+	Printing::int32(_optical->maximumYViewDistancePower, x + 25, y, NULL);
+	Printing::text("Base Distance:                  ", x, ++y, NULL);
+	Printing::int32(__METERS_TO_PIXELS(_optical->baseDistance), x + 25, y, NULL);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -966,12 +966,12 @@ void StageEditor::printUserObjects()
 	uint8 controlsXPos = 38;
 	uint8 controlsYPos = 2;
 
-	Printing::text(L);
-	Printing::text(", 1, 3, NULL);
+	Printing::text("ADD OBJECTS", 1, 2, NULL);
+	Printing::text("                       ", 1, 3, NULL);
 
-	Printing::text(XPos, controlsYPos++, NULL);
+	Printing::text("Mode    \x16", controlsXPos, controlsYPos++, NULL);
 	controlsYPos++;
-	Printing::text(XPos, controlsYPos++, NULL);
+	Printing::text("Accept  \x13", controlsXPos, controlsYPos++, NULL);
 
 	OptionsSelector::print(this->userActorSelector, 1, 4, kOptionsAlignLeft, 0);
 }
@@ -980,9 +980,9 @@ void StageEditor::printUserObjects()
 
 void StageEditor::printTranslationStepSize(uint8 x, uint8 y)
 {
-	Printing::text( y, NULL);
-	Printing::text(
-	Printing::int32(e, x + 1, y, NULL);
+	Printing::text("Step  \x1F\x1C\x1D", x, y, NULL);
+	Printing::text("+     ", x, ++y, NULL);
+	Printing::int32(this->translationStepSize, x + 1, y, NULL);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

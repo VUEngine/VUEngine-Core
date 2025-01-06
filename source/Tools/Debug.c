@@ -114,10 +114,10 @@ void Debug::update()
 
 void Debug::show()
 {
-	Printing::clear(Printing::getInstance());
+	Printing::clear();
 	Printing::setCoordinates(0, 0, -64, -2);
 	SpriteManager::showAllSprites(NULL, true);
-	SpriteManager::computeTotalPixelsDrawn(SpriteManager::getInstance());
+	SpriteManager::computeTotalPixelsDrawn();
 
 	Debug::showPage(this, 0);
 }
@@ -127,7 +127,7 @@ void Debug::show()
 void Debug::hide()
 {
 	ColliderManager::hideColliders(GameState::getColliderManager(VUEngine::getPreviousState(VUEngine::getInstance())));
-	Printing::clear(Printing::getInstance());
+	Printing::clear();
 	SpriteManager::showAllSprites(NULL, true);
 }
 
@@ -337,7 +337,7 @@ void Debug::showPage(int32 increment)
 {
 	if(this->currentPage && this->currentPage->data)
 	{
-		Printing::clear(Printing::getInstance());
+		Printing::clear();
 		SpriteManager::showAllSprites(NULL, true);
 
 		Debug::printHeader(this);
@@ -350,7 +350,7 @@ void Debug::showPage(int32 increment)
 		((void (*)(Debug, int32, int32, int32))this->currentPage->data)(this, increment, 1, 2);
 	}
 
-	Printing::show(Printing::getInstance());
+	Printing::show();
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -359,7 +359,7 @@ void Debug::showSubPage(int32 increment)
 {
 	if(this->currentSubPage && VirtualNode::getData(this->currentSubPage))
 	{
-		Printing::clear(Printing::getInstance());
+		Printing::clear();
 
 		Debug::printHeader(this);
 		Printing::text(" \x1E\x1A\x1B\x1C\x1D ", 40, 0, NULL);
@@ -367,7 +367,7 @@ void Debug::showSubPage(int32 increment)
 		((void (*)(Debug, int32, int32, int32))VirtualNode::getData(this->currentSubPage))(this, increment, 1, 2);
 	}
 
-	Printing::show(Printing::getInstance());
+	Printing::show();
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -496,13 +496,12 @@ void Debug::memoryStatusPage
 
 void Debug::memoryStatusShowZeroPage(int32 increment __attribute__ ((unused)), int32 x, int32 y)
 {
-	MemoryPool::printDetailedUsage(MemoryPool::getInstance(), x, y);
+	MemoryPool::printDetailedUsage(x, y);
 
 	ClassSizeData classesSizeData[] =
 	{
 		{&VUEngine_getObjectSize, 						"VUEngine"},
 		{&DirectDraw_getObjectSize, 					"DirectDraw"},
-		{&Error_getObjectSize, 							"Error"},
 		{&FrameRate_getObjectSize, 						"FrameRate"},
 		//{&I18n_getObjectSize, 						"I18n"},
 		{&MemoryPool_getObjectSize, 					"MemoryPool"},
@@ -518,7 +517,7 @@ void Debug::memoryStatusShowZeroPage(int32 increment __attribute__ ((unused)), i
 
 void Debug::memoryStatusShowFirstPage(int32 increment __attribute__ ((unused)), int32 x, int32 y)
 {
-	MemoryPool::printDetailedUsage(MemoryPool::getInstance(), x, y);
+	MemoryPool::printDetailedUsage(x, y);
 
 	ClassSizeData classesSizeData[] =
 	{
@@ -544,7 +543,7 @@ void Debug::memoryStatusShowFirstPage(int32 increment __attribute__ ((unused)), 
 
 void Debug::memoryStatusShowSecondPage(int32 increment __attribute__ ((unused)), int32 x, int32 y)
 {
-	MemoryPool::printDetailedUsage(MemoryPool::getInstance(), x, y);
+	MemoryPool::printDetailedUsage(x, y);
 
 	ClassSizeData classesSizeData[] =
 	{
@@ -565,7 +564,7 @@ void Debug::memoryStatusShowSecondPage(int32 increment __attribute__ ((unused)),
 
 void Debug::memoryStatusShowThirdPage(int32 increment __attribute__ ((unused)), int32 x, int32 y)
 {
-	MemoryPool::printDetailedUsage(MemoryPool::getInstance(), x, y);
+	MemoryPool::printDetailedUsage(x, y);
 
 	ClassSizeData classesSizeData[] =
 	{
@@ -592,7 +591,7 @@ void Debug::memoryStatusShowThirdPage(int32 increment __attribute__ ((unused)), 
 
 void Debug::memoryStatusShowFourthPage(int32 increment __attribute__ ((unused)), int32 x, int32 y)
 {
-	MemoryPool::printDetailedUsage(MemoryPool::getInstance(), x, y);
+	MemoryPool::printDetailedUsage(x, y);
 
 	ClassSizeData classesSizeData[] =
 	{
@@ -614,7 +613,7 @@ void Debug::memoryStatusShowFourthPage(int32 increment __attribute__ ((unused)),
 
 void Debug::memoryStatusShowFifthPage(int32 increment __attribute__ ((unused)), int32 x, int32 y)
 {
-	MemoryPool::printDetailedUsage(MemoryPool::getInstance(), x, y);
+	MemoryPool::printDetailedUsage(x, y);
 
 	ClassSizeData classesSizeData[] =
 	{
@@ -634,7 +633,7 @@ void Debug::memoryStatusShowFifthPage(int32 increment __attribute__ ((unused)), 
 
 void Debug::memoryStatusShowSixthPage(int32 increment __attribute__ ((unused)), int32 x, int32 y)
 {
-	MemoryPool::printDetailedUsage(MemoryPool::getInstance(), x, y);
+	MemoryPool::printDetailedUsage(x, y);
 
 	ClassSizeData classesSizeData[] =
 	{
@@ -652,7 +651,7 @@ void Debug::memoryStatusShowSixthPage(int32 increment __attribute__ ((unused)), 
 
 void Debug::memoryStatusShowSeventhPage(int32 increment __attribute__ ((unused)), int32 x, int32 y)
 {
-	MemoryPool::printDetailedUsage(MemoryPool::getInstance(), x, y);
+	MemoryPool::printDetailedUsage(x, y);
 
 	ClassSizeData classesSizeData[] =
 	{
@@ -671,7 +670,7 @@ void Debug::memoryStatusShowSeventhPage(int32 increment __attribute__ ((unused))
 
 void Debug::memoryStatusShowUserDefinedClassesSizes(int32 increment __attribute__ ((unused)), int32 x, int32 y)
 {
-	MemoryPool::printDetailedUsage(MemoryPool::getInstance(), x, y);
+	MemoryPool::printDetailedUsage(x, y);
 	Debug::printClassSizes(this, _userClassesSizeData, 0, x + 21, y, "User defined classes:");
 }
 
@@ -828,7 +827,7 @@ void Debug::charMemoryShowMemory(int32 increment __attribute__ ((unused)), int32
 		24,	25,	26,	27,	28,	29,	30,	31
 	};
 
-	uint32 printingBgmap = BgmapTextureManager::getPrintingBgmapSegment();;
+	uint32 printingBgmap = BgmapTextureManager::getPrintingBgmapSegment(BgmapTextureManager::getInstance());;
 	uint16* const bgmapSpaceBaseAddress = (uint16*)__BGMAP_SPACE_BASE_ADDRESS;
 
 	// Put the map into memory calculating the number of char for each reference
@@ -880,7 +879,7 @@ void Debug::showDebugBgmap()
 
 void Debug::showBgmapSegment()
 {
-	uint32 printingBgmap = BgmapTextureManager::getPrintingBgmapSegment();;
+	uint32 printingBgmap = BgmapTextureManager::getPrintingBgmapSegment(BgmapTextureManager::getInstance());;
 	int32 topBorder = 0;
 	int32 bottomBorder = 0;
 	int32 leftBorder = 0;
@@ -1060,16 +1059,16 @@ void Debug::texturesShowStatus(int32 increment, int32 x, int32 y)
 
 	if(-1 > this->bgmapSegment)
 	{
-		this->bgmapSegment = BgmapTextureManager::getAvailableBgmapSegmentsForTextures() - 1;
+		this->bgmapSegment = BgmapTextureManager::getAvailableBgmapSegmentsForTextures(BgmapTextureManager::getInstance()) - 1;
 	}
 
 	if(-1 == this->bgmapSegment)
 	{
 		Debug::setBlackBackground(this);
 		BgmapTextureManager::print(x, y);
-		ParamTableManager::print(ParamTableManager::getInstance(), x + 27, y);
+		ParamTableManager::print(x + 27, y);
 	}
-	else if(BgmapTextureManager::getAvailableBgmapSegmentsForTextures() > this->bgmapSegment)
+	else if(BgmapTextureManager::getAvailableBgmapSegmentsForTextures(BgmapTextureManager::getInstance()) > this->bgmapSegment)
 	{
 		Printing::text(" \x1E\x1A\x1B\x1C\x1D\x1F\x1A\x1B\x1C\x1D ", 35, 0, NULL);
 		Printing::text("BGMAP TEXTURES INSPECTOR           Segment: ", x, y, NULL);
@@ -1084,7 +1083,7 @@ void Debug::texturesShowStatus(int32 increment, int32 x, int32 y)
 		this->bgmapSegment = -1;
 		Debug::setBlackBackground(this);
 		BgmapTextureManager::print(x, y);
-		ParamTableManager::print(ParamTableManager::getInstance(), x + 27, y);
+		ParamTableManager::print(x + 27, y);
 	}
 }
 
@@ -1181,7 +1180,7 @@ void Debug::spritesShowStatus(int32 increment, int32 x, int32 y)
 
 	Debug::dimmGame(this);
 
-	int32 numberOfSprites = SpriteManager::getNumberOfSprites(SpriteManager::getInstance());
+	int32 numberOfSprites = SpriteManager::getNumberOfSprites();
 
 	if(this->spriteIndex > numberOfSprites)
 	{
@@ -1197,7 +1196,7 @@ void Debug::spritesShowStatus(int32 increment, int32 x, int32 y)
 	{
 		Sprite sprite = SpriteManager::getSpriteAtIndex(this->spriteIndex);
 		SpriteManager::hideAllSprites(sprite, false);
-		SpriteManager::renderAndDraw(SpriteManager::getInstance());
+		SpriteManager::renderAndDraw();
 		Printing::text("SPRITES INSPECTOR", x, y++, NULL);
 		Sprite::print(sprite, x, ++y);
 	}

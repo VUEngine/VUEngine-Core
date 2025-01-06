@@ -87,11 +87,11 @@ void AnimationInspector::show()
 			"\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08", 0, 0, NULL
 		);
 
-		Printing::text( 1, 0, NULL);
-		Printing::text(NULL);
-		Printing::text(NULL);
-		Printing::text(, 4, NULL);
-		Printing::text(matedActors global variable", 1, 6, NULL);
+		Printing::text(" ANIMATION INSPECTOR ", 1, 0, NULL);
+		Printing::text("             ", 39, 2, NULL);
+		Printing::text("             ", 39, 3, NULL);
+		Printing::text("No animations found", 1, 4, NULL);
+		Printing::text("Define some in _userAnimatedActors global variable", 1, 6, NULL);
 		return;
 	}
 
@@ -137,8 +137,8 @@ void AnimationInspector::hide()
 {
 	if(NULL == _userAnimatedActors[0].actorSpec)
 	{
-		Printing::text(, 4, NULL);
-		Printing::text(matedActors global variable", 1, 6, NULL);
+		Printing::text("No animations found", 1, 4, NULL);
+		Printing::text("Define some in _userAnimatedActors global variable", 1, 6, NULL);
 		return;
 	}
 
@@ -597,7 +597,6 @@ void AnimationInspector::editAnimation(uint32 pressedKey)
 
 void AnimationInspector::printUserAnimatedActors()
 {
-	
 	Printing::text("OBJECTS", 1, 2, NULL);
 	Printing::text("                       ", 1, 3, NULL);
 	OptionsSelector::print(this->actorSelector, 1, 4, kOptionsAlignLeft, 0);
@@ -607,7 +606,6 @@ void AnimationInspector::printUserAnimatedActors()
 
 void AnimationInspector::printSprites()
 {
-	
 	Printing::text("SPRITES", 1, 2, NULL);
 	Printing::text("                       ", 1, 3, NULL);
 	OptionsSelector::print(this->spriteSelector, 1, 4, kOptionsAlignLeft, 0);
@@ -617,7 +615,6 @@ void AnimationInspector::printSprites()
 
 void AnimationInspector::printActorAnimations()
 {
-	
 	Printing::text("AVAILABLE ANIMATIONS", 1, 2, NULL);
 	Printing::text("                       ", 1, 3, NULL);
 	OptionsSelector::print(this->animationsSelector, 1, 4, kOptionsAlignLeft, 0);
@@ -629,7 +626,6 @@ void AnimationInspector::printAnimationConfig()
 {
 	int32 x = 1;
 	int32 y = 2;
-	
 
 	Printing::text("Animation: ", x, y, NULL);
 	Printing::text(this->animationFunction.name, x + 11, y++, NULL);
@@ -891,7 +887,7 @@ bool AnimationInspector::onAnimationComplete(ListenerObject eventFirer __attribu
 {
 	if(!this->animationFunction.loop)
 	{
-		Printing::text( NULL);
+		Printing::text("Play     \x13 ", 37, 3, NULL);
 	}
 
 	return true;
