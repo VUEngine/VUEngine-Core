@@ -40,11 +40,6 @@ singleton class SRAMManager : Object
 	/// SRAM start address
 	uint16* spaceAddress;
 
-	/// @publicsection
-	/// Method to retrieve the singleton instance
-	/// @return SRAMManager singleton
-	static SRAMManager getInstance();
-
 	/// Reset the manager's state.
 	static void reset();
 

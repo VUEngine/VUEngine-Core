@@ -68,7 +68,6 @@ singleton class MessageDispatcher : Object
 	bool helperTelegramIsInUse;
 
 	/// @publicsection
-	static MessageDispatcher getInstance();
 
 	/// Dispatch a message
 	/// @param delay: Milliseconds to wait before dispatching the message

@@ -80,10 +80,6 @@ singleton class Camera : ListenerObject
 	uint8 transformationFlags;
 
 	/// @publicsection
-
-	/// Method to retrieve the singleton instance
-	/// @return Camera singleton
-	static Camera getInstance();
 	
 	/// Reset the camera's state.
 	static void reset();

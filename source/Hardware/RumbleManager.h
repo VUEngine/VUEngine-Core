@@ -131,10 +131,6 @@ singleton class RumbleManager : Object
 
 	/// @publicsection
 
-	/// Method to retrieve the singleton instance
-	/// @return RumbleManager singleton
-	static RumbleManager getInstance();
-
 	/// Start a rumble effect configured with the provided spec.
 	/// @param rumbleEffectSpec: Specification of the rumble effect to play
 	static void startEffect(const RumbleEffectSpec* rumbleEffectSpec);

@@ -72,10 +72,6 @@ singleton class CommunicationManager : ListenerObject
 	volatile uint8 communicationMode;
 
 	/// @publicsection
-	
-	/// Method to retrieve the singleton instance
-	/// @return CommunicationManager singleton
-	static CommunicationManager getInstance();
 
 	/// Interrupt handler for COM interrupts
 	static void interruptHandler();

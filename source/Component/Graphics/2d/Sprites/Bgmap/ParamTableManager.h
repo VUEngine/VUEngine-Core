@@ -125,10 +125,6 @@ singleton class ParamTableManager : Object
 
 	/// @publicsection
 
-	/// Method to retrieve the singleton instance
-	/// @return AnimationCoordinatorFactory singleton
-	static ParamTableManager getInstance();
-
 	/// Reset the animation coordinator factory's state.
 	static void reset();
 

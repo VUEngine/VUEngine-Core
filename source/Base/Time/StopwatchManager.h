@@ -40,10 +40,6 @@ singleton class StopwatchManager : Object
 
 	/// @publicsection
 
-	/// Method to retrieve the singleton instance
-	/// @return FrameRate singleton
-	static StopwatchManager getInstance();
-
 	/// Reset all the registered stopwatches.
 	static void reset();
 

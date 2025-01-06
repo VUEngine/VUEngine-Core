@@ -87,7 +87,7 @@ static void BgmapTextureManager::calculateAvailableBgmapSegments()
 {
 	BgmapTextureManager bgmapTextureManager = BgmapTextureManager::getInstance();
 
-	uint32 paramTableBase = ParamTableManager::getParamTableBase(ParamTableManager::getInstance());
+	uint32 paramTableBase = ParamTableManager::getParamTableBase();
 
 	bgmapTextureManager->availableBgmapSegmentsForTextures = (uint32)((paramTableBase - __BGMAP_SPACE_BASE_ADDRESS) / __BGMAP_SEGMENT_SIZE);
 

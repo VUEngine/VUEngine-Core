@@ -51,10 +51,6 @@ singleton class SoundManager : ListenerObject
 
 	/// @publicsection
 
-	/// Method to retrieve the singleton instance
-	/// @return SoundManager singleton
-	static SoundManager getInstance();
-
 	/// Play the allocated sounds.
 	/// @param elapsedMicroseconds: Elapsed time between call
 	static void playSounds(uint32 elapsedMicroseconds);

@@ -41,10 +41,6 @@ singleton class ClockManager : Object
 
 	/// @publicsection
 
-	/// Method to retrieve the singleton instance
-	/// @return ClockManager singleton
-	static ClockManager getInstance();
-
 	/// Reset all the registered clocks.
 	static void reset();
 

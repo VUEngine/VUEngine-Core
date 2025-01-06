@@ -64,9 +64,6 @@ singleton class Profiler : ListenerObject
 	bool processedCommunications;
 
 	/// @publicsection
-	/// Method to retrieve the singleton instance
-	/// @return Profiler singleton
-	static Profiler getInstance();
 
 	/// Initialize the profiler.
 	static void initialize();

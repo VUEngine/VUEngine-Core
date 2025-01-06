@@ -944,7 +944,7 @@ static void VUEngine::dispatchDelayedMessages()
 #endif
 #endif
 	{
-		MessageDispatcher::dispatchDelayedMessages(MessageDispatcher::getInstance());
+		MessageDispatcher::dispatchDelayedMessages();
 
 #ifdef __ENABLE_PROFILER
 		Profiler::lap(kProfilerLapTypeNormalProcess, PROCESS_NAME_MESSAGES);
@@ -1221,7 +1221,7 @@ bool VUEngine::cleaniningStatesStack(ListenerObject eventFirer)
 		GameState gameState = GameState::safeCast(VirtualNode::getData(node));
 
 		MessageDispatcher::discardDelayedMessagesWithClock(GameState::getMessagingClock(gameState));
-		MessageDispatcher::processDiscardedMessages(MessageDispatcher::getInstance());
+		MessageDispatcher::processDiscardedMessages();
 	}
 
 	return false;
@@ -1276,7 +1276,7 @@ bool VUEngine::swappingState(ListenerObject eventFirer)
 			GameState::getMessagingClock(currentGameState)
 		);
 
-		MessageDispatcher::processDiscardedMessages(MessageDispatcher::getInstance());
+		MessageDispatcher::processDiscardedMessages();
 	}
 
 	return false;
@@ -1308,7 +1308,7 @@ bool VUEngine::poppingState(ListenerObject eventFirer)
 			GameState::getMessagingClock(currentGameState)
 		);
 
-		MessageDispatcher::processDiscardedMessages(MessageDispatcher::getInstance());
+		MessageDispatcher::processDiscardedMessages();
 	}
 
 #ifdef __TOOLS

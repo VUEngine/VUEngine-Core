@@ -187,10 +187,6 @@ singleton class VSUManager : Object
 
 	/// @publicsection
 
-	/// Method to retrieve the singleton instance
-	/// @return VSUManager singleton
-	static VSUManager getInstance();
-
 	/// Play the allocated sounds.
 	/// @param elapsedMicroseconds: Elapsed time between call
 	static void playSounds(uint32 elapsedMicroseconds);

@@ -107,10 +107,6 @@ singleton class TimerManager : Object
 	uint8 tcrValue;
 
 	/// @publicsection
-	
-	/// Method to retrieve the singleton instance
-	/// @return TimerManager singleton
-	static TimerManager getInstance();
 
 	/// Interrupt handler for timer's interrupts
 	static void interruptHandler();

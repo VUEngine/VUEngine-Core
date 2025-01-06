@@ -43,11 +43,6 @@ singleton class DirectDraw : Object
 
 	/// @publicsection
 
-	/// @publicsection
-	/// Method to retrieve the singleton instance
-	/// @return DirectDraw singleton
-	static DirectDraw getInstance();
-
 	/// Draw a single point.
 	/// @param point: Screen coordinate where to draw the point
 	/// @param color: Color of the point to draw (only non black)
