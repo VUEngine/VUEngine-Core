@@ -340,7 +340,7 @@ void Profiler::computeLap(const char* processName, uint32 lapType, bool isHeadro
 void Profiler::print()
 {
 	Printing::resetCoordinates(_printing);
-	Printing::setWorldCoordinates(_printing, 0, 0, -64, -3);
+	Printing::setWorldCoordinates(_printing, 0, 0, -64, +3);
 	Printing::clear(_printing);
 	Printing::text(_printing, "================================================", 0, 27, "Profiler");
 

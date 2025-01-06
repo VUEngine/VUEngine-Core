@@ -146,7 +146,7 @@ void Stage::constructor(StageSpec *stageSpec)
 	this->sounds = NULL;
 	this->streamingAmplitude = this->stageSpec->streaming.streamingAmplitude;
 	this->reverseStreaming = false;
-	this->cameraPosition = Vector3D::getFromPixelVector(this->stageSpec->level.cameraInitialPosition);
+	this->cameraTransformation.position = Vector3D::getFromPixelVector(this->stageSpec->level.cameraInitialPosition);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -205,7 +205,7 @@ void Stage::destructor()
 void Stage::suspend()
 {
 	// Save the camera position for resume reconfiguration
-	this->cameraPosition = Camera::getPosition(Camera::getInstance());
+	this->cameraTransformation = Camera::getTransformation(Camera::getInstance());
 
 	// Stream all pending actors to avoid having manually recover
 	// The stage actor registries
@@ -237,7 +237,7 @@ void Stage::resume()
 {
 	// Set camera to its previous position
 	Camera::setStageSize(Camera::getInstance(), Size::getFromPixelSize(this->stageSpec->level.pixelSize));
-	Camera::setPosition(Camera::getInstance(), this->cameraPosition, true);
+	Camera::setTransformation(Camera::getInstance(), this->cameraTransformation, true);
 	Camera::setup(Camera::getInstance(), this->stageSpec->rendering.pixelOptical, this->stageSpec->level.cameraFrustum);
 
 	// Setup timer
@@ -637,7 +637,7 @@ void Stage::configure(VirtualList positionedActorsToIgnore)
 
 	Camera::reset(Camera::getInstance());
 	Camera::setStageSize(Camera::getInstance(), Size::getFromPixelSize(this->stageSpec->level.pixelSize));
-	Camera::setPosition(Camera::getInstance(), this->cameraPosition, true);
+	Camera::setTransformation(Camera::getInstance(), this->cameraTransformation, true);
 
 	// Set optical values
 	Camera::setup(Camera::getInstance(), this->stageSpec->rendering.pixelOptical, this->stageSpec->level.cameraFrustum);

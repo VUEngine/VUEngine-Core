@@ -256,8 +256,8 @@ class Stage : Container
 	/// Flag to determine the direction of the stream in
 	bool reverseStreaming;
 
-	/// Cache of the camera's position for resuming the game
-	Vector3D cameraPosition;
+	/// Cache of the camera's transformation for resuming the game
+	Transformation cameraTransformation;
 
 	/// @publicsection
 

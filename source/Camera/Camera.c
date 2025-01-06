@@ -40,9 +40,9 @@ const CameraFrustum* _cameraFrustum __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE 
 
 void Camera::reset()
 {
-	this->position = Vector3D::zero();
+	this->transformation.position = Vector3D::zero();
+	this->transformation.rotation = Rotation::zero();
 	this->displacement = Vector3D::zero();
-	this->rotation = Rotation::zero();
 	this->invertedRotation = Rotation::zero();
 	this->lastDisplacement = Vector3D::zero();
 
@@ -220,49 +220,64 @@ Optical Camera::getOptical()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+void Camera::setTransformation(Transformation transformation, bool cap)
+{
+	Camera::setPosition(this, transformation.position, cap);
+	Camera::setRotation(this, transformation.rotation);
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+Transformation Camera::getTransformation()
+{
+	return this->transformation;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void Camera::setPosition(Vector3D position, bool cap)
 {
-	Vector3D currentPosition = this->position;
-	this->position = position;
+	Vector3D currentPosition = this->transformation.position;
+	this->transformation.position = position;
 
 	if(cap)
 	{
 		Camera::capPosition(this);
 	}
 
-	this->transformationFlags |= Camera::computeTranslationFlags(Vector3D::sub(this->position, currentPosition));
+	this->transformationFlags |= Camera::computeTranslationFlags(Vector3D::sub(this->transformation.position, currentPosition));
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Camera::translate(Vector3D displacement, int32 cap)
 {
-	Vector3D currentPosition = this->position;
-	this->position = Vector3D::sum(this->position, displacement);
+	Vector3D currentPosition = this->transformation.position;
+	this->transformation.position = Vector3D::sum(this->transformation.position, displacement);
 
 	if(cap)
 	{
 		Camera::capPosition(this);
 	}
 
-	this->transformationFlags |= Camera::computeTranslationFlags(Vector3D::sub(this->position, currentPosition));
+	this->transformationFlags |= Camera::computeTranslationFlags(Vector3D::sub(this->transformation.position, currentPosition));
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 Vector3D Camera::getPosition()
 {
-	return this->position;
+	return this->transformation.position;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Camera::setRotation(Rotation rotation)
 {
-	this->transformationFlags |= Camera::computeRotationFlags(Rotation::sub(rotation, this->rotation));
+	this->transformationFlags |= Camera::computeRotationFlags(Rotation::sub(rotation, this->transformation.rotation));
 
-	this->rotation = Rotation::clamp(rotation.x, rotation.y, rotation.z);
-	this->invertedRotation = Rotation::invert(this->rotation);
+	this->transformation.rotation = Rotation::clamp(rotation.x, rotation.y, rotation.z);
+	this->invertedRotation = Rotation::invert(this->transformation.rotation);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -271,15 +286,15 @@ void Camera::rotate(Rotation rotation)
 {
 	this->transformationFlags |= Camera::computeRotationFlags(rotation);
 
-	this->rotation = Rotation::sum(this->rotation, rotation);
-	this->invertedRotation = Rotation::invert(this->rotation);
+	this->transformation.rotation = Rotation::sum(this->transformation.rotation, rotation);
+	this->invertedRotation = Rotation::invert(this->transformation.rotation);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 Rotation Camera::getRotation()
 {
-	return this->rotation;
+	return this->transformation.rotation;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -329,12 +344,12 @@ void Camera::focus()
 		takeTransformationFlagsDown = true;
 	}
 
-	this->lastDisplacement = this->position;
+	this->lastDisplacement = this->transformation.position;
 
 	Camera::setPosition(this, CameraMovementManager::focus(this->cameraMovementManager, this), true);
 
-	this->position = Vector3D::sum(this->position, this->displacement);
-	this->lastDisplacement = Vector3D::sub(this->position, this->lastDisplacement);
+	this->transformation.position = Vector3D::sum(this->transformation.position, this->displacement);
+	this->lastDisplacement = Vector3D::sub(this->transformation.position, this->lastDisplacement);
 
 #ifdef __SHOW_CAMERA_STATUS
 	Camera::print(this, 1, 1, true);
@@ -410,14 +425,14 @@ void Camera::constructor()
 	// Always explicitly call the base's constructor 
 	Base::constructor();
 
-	this->position = Vector3D::zero();
+	this->transformation.position = Vector3D::zero();
 	this->cameraMovementManager = CameraMovementManager::getInstance();
 	this->cameraEffectManager = CameraEffectManager::getInstance();
 
-	this->position = Vector3D::zero();
+	this->transformation.position = Vector3D::zero();
 	this->displacement = Vector3D::zero();
-	this->rotation = Rotation::zero();
-	this->invertedRotation = Rotation::invert(this->rotation);
+	this->transformation.rotation = Rotation::zero();
+	this->invertedRotation = Rotation::invert(this->transformation.rotation);
 	this->lastDisplacement = Vector3D::zero();
 
 	this->cameraFrustum.x0 = 0;
@@ -444,9 +459,9 @@ void Camera::constructor()
 
 	// Set global pointer to improve access to critical values
 	_optical = &this->optical;
-	_cameraPosition = &this->position;
+	_cameraPosition = &this->transformation.position;
 	_cameraFrustum = &this->cameraFrustum;
-	_cameraRotation = &this->rotation;
+	_cameraRotation = &this->transformation.rotation;
 	_cameraInvertedRotation = &this->invertedRotation;
 }
 
@@ -474,7 +489,7 @@ void Camera::resetCameraFrustum()
 
 void Camera::capPosition()
 {
-	this->position = Camera::computCappedPosition(this, this->position);
+	this->transformation.position = Camera::computCappedPosition(this, this->transformation.position);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

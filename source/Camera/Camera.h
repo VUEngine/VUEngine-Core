@@ -51,17 +51,14 @@ singleton class Camera : ListenerObject
 	/// Optical configuration values used for projections
 	Optical optical;
 
-	/// Camera's position
-	Vector3D position;
+	/// Camera's transformation
+	Transformation transformation;
 
 	/// Displacement applied to the position when it changes
 	Vector3D displacement;
 
 	/// Saves the camera's change of position in the last game cycle
 	Vector3D lastDisplacement;
-
-	/// Camera's rotation
-	Rotation rotation;
 
 	/// Camera's rotation's complement
 	Rotation invertedRotation;
@@ -157,6 +154,14 @@ singleton class Camera : ListenerObject
 	/// Retrieve the optical configuration values used for projections.
 	/// @return Optical struct with the configuration values used for projections
 	Optical getOptical();
+
+	/// Set the camera's transformation.
+	/// @param transformation: New transformation
+	void setTransformation(Transformation transformation, bool cap);
+
+	/// Retrieve the camera's transformation.
+	/// @return Camera's transformation
+	Transformation getTransformation();
 
 	/// Set the camera's position.
 	/// @param position: 3D vector
