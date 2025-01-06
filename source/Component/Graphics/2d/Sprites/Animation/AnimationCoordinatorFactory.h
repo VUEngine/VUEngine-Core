@@ -43,19 +43,15 @@ singleton class AnimationCoordinatorFactory : Object
 
 	/// @publicsection
 
-	/// Method to retrieve the singleton instance
-	/// @return AnimationCoordinatorFactory singleton
-	static AnimationCoordinatorFactory getInstance();
-
 	/// Reset the animation coordinator factory's state.
-	void reset();
+	static void reset();
 
 	/// Get an animation coordinator.
 	/// @param animationController: Animation controller to potentially coordinate
 	/// @param scope: Object that might need to listen for playback related events
 	/// @param charSetSpec: CharSetSpec shared by the animation controllers to coordinate   
 	/// @return ClockManager singleton
-	AnimationCoordinator getCoordinator(AnimationController animationController, ListenerObject scope, const CharSetSpec* charSetSpec);
+	static AnimationCoordinator getCoordinator(AnimationController animationController, ListenerObject scope, const CharSetSpec* charSetSpec);
 }
 
 #endif

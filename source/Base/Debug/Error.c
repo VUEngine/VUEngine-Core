@@ -86,42 +86,40 @@ static void Error::triggerException(char* message __attribute__((unused)), char*
 
 	VIPManager::setBackgroundColor(VIPManager::getInstance(), __COLOR_BLACK);
 
-	Printing printing = Printing::getInstance();
-
 	// Make sure there are fonts to show the exception
-	Printing::setDebugMode(printing);
+	Printing::setDebugMode();
 
 	//print error message to screen
 	if(0 < y)
 	{
-		Printing::text(printing, "                                             ", x, y - 1, NULL);
+		Printing::text("                                             ", x, y - 1, NULL);
 	}
 
 	Printing::text
 	(
-		printing, "\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08 EXCEPTION "
+		"\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08 EXCEPTION "
 		"\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08" , x, y++, NULL
 	);
 
-	Printing::text(printing, "                                                " , x, y++, NULL);
-	Printing::text(printing, " Last process:                                  ", x, y, NULL);
-	Printing::text(printing, VUEngine::getProcessName(VUEngine::getInstance()), x + 15, y++, NULL);
-	Printing::text(printing, " LP:                                  " , x, y, NULL);
-	Printing::hex(printing, lp, x + 8, y, 8, NULL);
-	Printing::text(printing, " SP: 		                         " , x, ++y, NULL);
-	Printing::hex(printing, sp, x + 8, y, 8, NULL);
+	Printing::text("                                                " , x, y++, NULL);
+	Printing::text(" Last process:                                  ", x, y, NULL);
+	Printing::text(VUEngine::getProcessName(VUEngine::getInstance()), x + 15, y++, NULL);
+	Printing::text(" LP:                                  " , x, y, NULL);
+	Printing::hex(lp, x + 8, y, 8, NULL);
+	Printing::text(" SP: 		                         " , x, ++y, NULL);
+	Printing::hex(sp, x + 8, y, 8, NULL);
 
-	Printing::text(printing, " EIPC:                                  " , x, ++y, NULL);
-	Printing::hex(printing, eipc, x + 8, y, 8, NULL);
-	Printing::text(printing, " FEPC: 		                         " , x, ++y, NULL);
-	Printing::hex(printing, fepc, x + 8, y, 8, NULL);
-	Printing::text(printing, " ECR: 		                         " , x, ++y, NULL);
-	Printing::hex(printing, ecr, x + 8, y, 8, NULL);
+	Printing::text(" EIPC:                                  " , x, ++y, NULL);
+	Printing::hex(eipc, x + 8, y, 8, NULL);
+	Printing::text(" FEPC: 		                         " , x, ++y, NULL);
+	Printing::hex(fepc, x + 8, y, 8, NULL);
+	Printing::text(" ECR: 		                         " , x, ++y, NULL);
+	Printing::hex(ecr, x + 8, y, 8, NULL);
 
 	if(message)
 	{
-		Printing::text(printing, "                                                " , x, ++y + 1, NULL);
-		Printing::text(printing, " Message:                                       " , x, ++y, NULL);
+		Printing::text("                                                " , x, ++y + 1, NULL);
+		Printing::text(" Message:                                       " , x, ++y, NULL);
 
 		int32 stringMaxLength = (__SCREEN_WIDTH_IN_CHARS) - 2;
 		int32 rowsAvailable  = (__SCREEN_HEIGHT_IN_CHARS) - y;
@@ -136,18 +134,18 @@ static void Error::triggerException(char* message __attribute__((unused)), char*
 
 			// TODO: fix me, termination character not working
 			messageLine[stringLength - 1] = (char)0;
-			Printing::text(printing, "                                                " , x, ++y, NULL);
-			Printing::text(printing, messageLine, x + 1, y, NULL);
+			Printing::text("                                                " , x, ++y, NULL);
+			Printing::text(messageLine, x + 1, y, NULL);
 		}
 
 		if(detail)
 		{
-			Printing::text(printing, detail, x + 1, ++y, NULL);
+			Printing::text(detail, x + 1, ++y, NULL);
 		}
 
 		if(y < (__SCREEN_HEIGHT_IN_CHARS) - 1)
 		{
-			Printing::text(printing, "                                             ", x, y + 3, NULL);
+			Printing::text("                                             ", x, y + 3, NULL);
 		}
 	}
 

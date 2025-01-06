@@ -233,25 +233,25 @@ bool ActorFactory::hasActorsPending()
 void ActorFactory::print(int32 x, int32 y)
 {	int32 xDisplacement = 18;
 
-	Printing::text(Printing::getInstance(), "Factory's status", x, y++, NULL);
-	Printing::text(Printing::getInstance(), "", x, y++, NULL);
+	Printing::text("Factory's status", x, y++, NULL);
+	Printing::text("", x, y++, NULL);
 
-	Printing::text(Printing::getInstance(), "Phase: ", x, y, NULL);
-	Printing::int32(Printing::getInstance(), this->instantiationPhase, x + xDisplacement, y++, NULL);
+	Printing::text("Phase: ", x, y, NULL);
+	Printing::int32(this->instantiationPhase, x + xDisplacement, y++, NULL);
 
-	Printing::text(Printing::getInstance(), "Actors pending...", x, y++, NULL);
+	Printing::text("Actors pending...", x, y++, NULL);
 
-	Printing::text(Printing::getInstance(), "1 Instantiation:			", x, y, NULL);
-	Printing::int32(Printing::getInstance(), VirtualList::getCount(this->actorsToInstantiate), x + xDisplacement, y++, NULL);
+	Printing::text("1 Instantiation:			", x, y, NULL);
+	Printing::int32(VirtualList::getCount(this->actorsToInstantiate), x + xDisplacement, y++, NULL);
 
-	Printing::text(Printing::getInstance(), "2 Transformation:			", x, y, NULL);
-	Printing::int32(Printing::getInstance(), VirtualList::getCount(this->actorsToTransform), x + xDisplacement, y++, NULL);
+	Printing::text("2 Transformation:			", x, y, NULL);
+	Printing::int32(VirtualList::getCount(this->actorsToTransform), x + xDisplacement, y++, NULL);
 
-	Printing::text(Printing::getInstance(), "3 Make ready:			", x, y, NULL);
-	Printing::int32(Printing::getInstance(), VirtualList::getCount(this->actorsToAddAsChildren), x + xDisplacement, y++, NULL);
+	Printing::text("3 Make ready:			", x, y, NULL);
+	Printing::int32(VirtualList::getCount(this->actorsToAddAsChildren), x + xDisplacement, y++, NULL);
 
-	Printing::text(Printing::getInstance(), "4 Call listeners:			", x, y, NULL);
-	Printing::int32(Printing::getInstance(), VirtualList::getCount(this->spawnedActors), x + xDisplacement, y++, NULL);
+	Printing::text("4 Call listeners:			", x, y, NULL);
+	Printing::int32(VirtualList::getCount(this->spawnedActors), x + xDisplacement, y++, NULL);
 }
 #endif
 #endif

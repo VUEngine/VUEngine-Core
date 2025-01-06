@@ -205,7 +205,7 @@ void Stage::destructor()
 void Stage::suspend()
 {
 	// Save the camera position for resume reconfiguration
-	this->cameraTransformation = Camera::getTransformation(Camera::getInstance());
+	this->cameraTransformation = Camera::getTransformation();
 
 	// Stream all pending actors to avoid having manually recover
 	// The stage actor registries
@@ -216,15 +216,15 @@ void Stage::suspend()
 	// Relinquish camera focus priority
 	if(!isDeleted(this->focusActor))
 	{
-		if(this->focusActor == Camera::getFocusActor(Camera::getInstance()))
+		if(this->focusActor == Camera::getFocusActor())
 		{
 			// Relinquish focus actor
-			Camera::setFocusActor(Camera::getInstance(), NULL);
+			Camera::setFocusActor(NULL);
 		}
 	}
 	else
 	{
-		Stage::setFocusActor(this, Camera::getFocusActor(Camera::getInstance()));
+		Stage::setFocusActor(this, Camera::getFocusActor());
 	}
 
 	delete this->actorFactory;
@@ -236,9 +236,9 @@ void Stage::suspend()
 void Stage::resume()
 {
 	// Set camera to its previous position
-	Camera::setStageSize(Camera::getInstance(), Size::getFromPixelSize(this->stageSpec->level.pixelSize));
-	Camera::setTransformation(Camera::getInstance(), this->cameraTransformation, true);
-	Camera::setup(Camera::getInstance(), this->stageSpec->rendering.pixelOptical, this->stageSpec->level.cameraFrustum);
+	Camera::setStageSize(Size::getFromPixelSize(this->stageSpec->level.pixelSize));
+	Camera::setTransformation(this->cameraTransformation, true);
+	Camera::setup(this->stageSpec->rendering.pixelOptical, this->stageSpec->level.cameraFrustum);
 
 	// Setup timer
 	Stage::configureTimer(this);
@@ -255,7 +255,7 @@ void Stage::resume()
 	if(!isDeleted(this->focusActor))
 	{
 		// Recover focus actor
-		Camera::setFocusActor(Camera::getInstance(), Actor::safeCast(this->focusActor));
+		Camera::setFocusActor(Actor::safeCast(this->focusActor));
 	}
 
 	Base::resume(this);
@@ -554,37 +554,37 @@ void Stage::fadeSounds(uint32 playbackType)
 #ifndef __SHIPPING
 void Stage::print(int32 x, int32 y)
 {
-	Printing::text(Printing::getInstance(), "STREAMING STATUS", x, y++, NULL);
+	Printing::text("STREAMING STATUS", x, y++, NULL);
 
-	Printing::text(Printing::getInstance(), "Stage's status", x, ++y, NULL);
+	Printing::text("Stage's status", x, ++y, NULL);
 
 	int32 originalY __attribute__ ((unused)) = y;
 	int32 xDisplacement = 21;
 	y++;
 
-	Printing::text(Printing::getInstance(), "Registered actors:            ", x, ++y, NULL);
-	Printing::int32(Printing::getInstance(), VirtualList::getCount(this->stageActorDescriptions), x + xDisplacement, y++, NULL);
-	Printing::text(Printing::getInstance(), "Child actors:                 ", x, y, NULL);
-	Printing::int32(Printing::getInstance(), VirtualList::getCount(this->children), x + xDisplacement, y++, NULL);
+	Printing::text("Registered actors:            ", x, ++y, NULL);
+	Printing::int32(VirtualList::getCount(this->stageActorDescriptions), x + xDisplacement, y++, NULL);
+	Printing::text("Child actors:                 ", x, y, NULL);
+	Printing::int32(VirtualList::getCount(this->children), x + xDisplacement, y++, NULL);
 
 #ifdef __PROFILE_STREAMING
 
 	xDisplacement = 10;
 
-	Printing::text(Printing::getInstance(), "Process duration (ms)", x, ++y, NULL);
+	Printing::text("Process duration (ms)", x, ++y, NULL);
 	y++;
 
-	Printing::text(Printing::getInstance(), "Unload:           ", x, ++y, NULL);
-	Printing::int32(Printing::getInstance(), unloadOutOfRangeActorsHighestTime, x + xDisplacement, y, NULL);
+	Printing::text("Unload:           ", x, ++y, NULL);
+	Printing::int32(unloadOutOfRangeActorsHighestTime, x + xDisplacement, y, NULL);
 
-	Printing::text(Printing::getInstance(), "Load:             ", x, ++y, NULL);
-	Printing::int32(Printing::getInstance(), loadInRangeActorsHighestTime, x + xDisplacement, y, NULL);
+	Printing::text("Load:             ", x, ++y, NULL);
+	Printing::int32(loadInRangeActorsHighestTime, x + xDisplacement, y, NULL);
 
-	Printing::text(Printing::getInstance(), "Removing:         ", x, ++y, NULL);
-	Printing::int32(Printing::getInstance(), processRemovedActorsHighestTime, x + xDisplacement, y, NULL);
+	Printing::text("Removing:         ", x, ++y, NULL);
+	Printing::int32(processRemovedActorsHighestTime, x + xDisplacement, y, NULL);
 
-	Printing::text(Printing::getInstance(), "Factory:          ", x, ++y, NULL);
-	Printing::int32(Printing::getInstance(), actorFactoryHighestTime, x + xDisplacement, y++, NULL);
+	Printing::text("Factory:          ", x, ++y, NULL);
+	Printing::int32(actorFactoryHighestTime, x + xDisplacement, y++, NULL);
 
 	unloadOutOfRangeActorsHighestTime = 0;
 	loadInRangeActorsHighestTime = 0;
@@ -635,12 +635,12 @@ void Stage::configure(VirtualList positionedActorsToIgnore)
 	// Load background music
 	Stage::setupSounds(this);
 
-	Camera::reset(Camera::getInstance());
-	Camera::setStageSize(Camera::getInstance(), Size::getFromPixelSize(this->stageSpec->level.pixelSize));
-	Camera::setTransformation(Camera::getInstance(), this->cameraTransformation, true);
+	Camera::reset();
+	Camera::setStageSize(Size::getFromPixelSize(this->stageSpec->level.pixelSize));
+	Camera::setTransformation(this->cameraTransformation, true);
 
 	// Set optical values
-	Camera::setup(Camera::getInstance(), this->stageSpec->rendering.pixelOptical, this->stageSpec->level.cameraFrustum);
+	Camera::setup(this->stageSpec->rendering.pixelOptical, this->stageSpec->level.cameraFrustum);
 
 	// Set physics
 	BodyManager::setFrictionCoefficient(VUEngine::getBodyManager(_vuEngine), this->stageSpec->physics.frictionCoefficient);
@@ -656,7 +656,7 @@ void Stage::configure(VirtualList positionedActorsToIgnore)
 	Stage::loadInitialActors(this);
 
 	// Retrieve focus actor for streaming
-	Stage::setFocusActor(this, Camera::getFocusActor(Camera::getInstance()));
+	Stage::setFocusActor(this, Camera::getFocusActor());
 
 	// Setup colors and brightness
 	VIPManager::setBackgroundColor(VIPManager::getInstance(), this->stageSpec->rendering.colorConfig.backgroundColor);
@@ -1120,7 +1120,7 @@ StageActorDescription* Stage::registerActor(PositionedActor* positionedActor)
 void Stage::prepareGraphics()
 {
 	// Must clean DRAM
-	SpriteManager::reset(SpriteManager::getInstance());
+	SpriteManager::reset();
 
 	// Set palettes
 	Stage::configurePalettes(this);
@@ -1128,7 +1128,7 @@ void Stage::prepareGraphics()
 	// Setup OBJs
 	SpriteManager::setupObjectSpriteContainers
 	(
-		SpriteManager::getInstance(), this->stageSpec->rendering.objectSpritesContainersSize,
+		this->stageSpec->rendering.objectSpritesContainersSize,
 		this->stageSpec->rendering.objectSpritesContainersZPosition
 	);
 
@@ -1136,10 +1136,10 @@ void Stage::prepareGraphics()
 	Stage::preloadAssets(this);
 
 	// Setup SpriteManager's configuration
-	SpriteManager::setTexturesMaximumRowsToWrite(SpriteManager::getInstance(), this->stageSpec->rendering.texturesMaximumRowsToWrite);
+	SpriteManager::setTexturesMaximumRowsToWrite(this->stageSpec->rendering.texturesMaximumRowsToWrite);
 	SpriteManager::setMaximumParamTableRowsToComputePerCall
 	(
-		SpriteManager::getInstance(), this->stageSpec->rendering.maximumAffineRowsToComputePerCall
+		this->stageSpec->rendering.maximumAffineRowsToComputePerCall
 	);
 }
 
@@ -1147,10 +1147,10 @@ void Stage::prepareGraphics()
 
 void Stage::preloadAssets()
 {
-	Printing::loadFonts(Printing::getInstance(), this->stageSpec->assets.fontSpecs);
+	Printing::loadFonts(this->stageSpec->assets.fontSpecs);
 	CharSetManager::loadCharSets(CharSetManager::getInstance(), (const CharSetSpec**)this->stageSpec->assets.charSetSpecs);
 	BgmapTextureManager::loadTextures(BgmapTextureManager::getInstance(), (const TextureSpec**)this->stageSpec->assets.textureSpecs);
-	ParamTableManager::setup(ParamTableManager::getInstance(), this->stageSpec->rendering.paramTableSegments);
+	ParamTableManager::setup(this->stageSpec->rendering.paramTableSegments);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -1307,9 +1307,9 @@ bool Stage::onFocusActorDeleted(ListenerObject eventFirer __attribute__ ((unused
 {
 	if(!isDeleted(this->focusActor) && ListenerObject::safeCast(this->focusActor) == eventFirer)
 	{
-		if(this->focusActor == Camera::getFocusActor(Camera::getInstance()))
+		if(this->focusActor == Camera::getFocusActor())
 		{
-			Camera::setFocusActor(Camera::getInstance(), NULL);
+			Camera::setFocusActor(NULL);
 		}
 	}
 

@@ -27,7 +27,57 @@ friend class VirtualList;
 friend class VirtualNode;
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-// CLASS' PUBLIC METHODS
+// CLASS' STATIC METHODS
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+static void AnimationCoordinatorFactory::reset()
+{
+	AnimationCoordinatorFactory animationCoordinatorFactory = AnimationCoordinatorFactory::getInstance();
+
+	VirtualList::deleteData(animationCoordinatorFactory->animationCoordinators);
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+static AnimationCoordinator AnimationCoordinatorFactory::getCoordinator(AnimationController animationController, ListenerObject scope, const CharSetSpec* charSetSpec)
+{
+	AnimationCoordinatorFactory animationCoordinatorFactory = AnimationCoordinatorFactory::getInstance();
+
+	NM_ASSERT(NULL != charSetSpec, "AnimationCoordinatorFactory::getCoordinator: null charSetSpec");
+
+	if(NULL != charSetSpec && charSetSpec->shared)
+	{
+		// Try to find an already created coordinator
+		for(VirtualNode node = animationCoordinatorFactory->animationCoordinators->head; NULL != node; node = node->next)
+		{
+			AnimationCoordinator animationCoordinator = AnimationCoordinator::safeCast(node->data);
+
+			if(AnimationCoordinator::getCharSetSpec(animationCoordinator) == charSetSpec)
+			{
+				AnimationCoordinator::addAnimationController(animationCoordinator, animationController);
+				return animationCoordinator;
+			}
+		}
+
+		AnimationCoordinator animationCoordinator = new AnimationCoordinator(charSetSpec, scope);
+
+		// Create a new coordinator
+		AnimationCoordinator::addAnimationController(animationCoordinator, animationController);
+
+		VirtualList::pushBack(animationCoordinatorFactory->animationCoordinators, animationCoordinator);
+
+		return animationCoordinator;
+	}
+
+	return NULL;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+// CLASS' PRIVATE METHODS
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -53,46 +103,6 @@ void AnimationCoordinatorFactory::destructor()
 	// Allow a new construct
 	// Always explicitly call the base's destructor 
 	Base::destructor();
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void AnimationCoordinatorFactory::reset()
-{
-	VirtualList::deleteData(this->animationCoordinators);
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-AnimationCoordinator AnimationCoordinatorFactory::getCoordinator(AnimationController animationController, ListenerObject scope, const CharSetSpec* charSetSpec)
-{
-	NM_ASSERT(NULL != charSetSpec, "AnimationCoordinatorFactory::getCoordinator: null charSetSpec");
-
-	if(NULL != charSetSpec && charSetSpec->shared)
-	{
-		// Try to find an already created coordinator
-		for(VirtualNode node = this->animationCoordinators->head; NULL != node; node = node->next)
-		{
-			AnimationCoordinator animationCoordinator = AnimationCoordinator::safeCast(node->data);
-
-			if(AnimationCoordinator::getCharSetSpec(animationCoordinator) == charSetSpec)
-			{
-				AnimationCoordinator::addAnimationController(animationCoordinator, animationController);
-				return animationCoordinator;
-			}
-		}
-
-		AnimationCoordinator animationCoordinator = new AnimationCoordinator(charSetSpec, scope);
-
-		// Create a new coordinator
-		AnimationCoordinator::addAnimationController(animationCoordinator, animationController);
-
-		VirtualList::pushBack(this->animationCoordinators, animationCoordinator);
-
-		return animationCoordinator;
-	}
-
-	return NULL;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

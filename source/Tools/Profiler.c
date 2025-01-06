@@ -63,8 +63,6 @@ static BrightnessRepeatSpec profileBrightnessRepeatSpec =
 	}
 };
 
-static Printing _printing = NULL;
-
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PUBLIC METHODS
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -74,7 +72,7 @@ static Printing _printing = NULL;
 void Profiler::initialize()
 {
 	Profiler::reset(this);
-	Printing::resetCoordinates(Printing::getInstance());
+	Printing::resetCoordinates();
 
 	this->initialized = true;
 
@@ -87,7 +85,7 @@ void Profiler::initialize()
 	_vipRegisters[__JPLT2] = 0x50;
 	_vipRegisters[__JPLT3] = 0x50;
 
-	_vipRegisters[0x30 | __PRINTING_PALETTE] = 0xE0;
+	_vipRegisters[0x30 | __PALETTE] = 0xE0;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -222,8 +220,6 @@ void Profiler::constructor()
 	this->laps = new VirtualList();
 
 	Profiler::reset(this);
-
-	_printing = Printing::getInstance();
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -339,10 +335,10 @@ void Profiler::computeLap(const char* processName, uint32 lapType, bool isHeadro
 
 void Profiler::print()
 {
-	Printing::resetCoordinates(_printing);
-	Printing::setWorldCoordinates(_printing, 0, 0, -64, +3);
-	Printing::clear(_printing);
-	Printing::text(_printing, "================================================", 0, 27, "Profiler");
+	Printing::resetCoordinates();
+	Printing::setWorldCoordinates(0, 0, -64, +3);
+	Printing::clear();
+	Printing::text("================================================", 0, 27, "Profiler");
 
 	for(VirtualNode node = VirtualList::begin(this->laps); NULL != node; node = VirtualNode::getNext(node))
 	{
@@ -357,53 +353,53 @@ void Profiler::printValue(Lap* lap)
 {
 	if(NULL == lap->processName)
 	{
-		Printing::text(_printing, "<", lap->column, 27, "Profiler");
+		Printing::text("<", lap->column, 27, "Profiler");
 	}
 	else
 	{
-		Printing::text(_printing, "<", lap->column, 27, "Profiler");
+		Printing::text("<", lap->column, 27, "Profiler");
 
-		Printing::setOrientation(_printing, kPrintingOrientationVertical);
-		Printing::setDirection(_printing, kPrintingDirectionRTL);
+		Printing::setOrientation(kPrintingOrientationVertical);
+		Printing::setDirection(kPrintingDirectionRTL);
 		
-		Printing::text(_printing, /*Utilities::toUppercase(*/lap->processName/*)*/, lap->column, 26, "Profiler");
-		Printing::float(_printing, lap->elapsedTime, lap->column, 13 + (10 < lap->elapsedTime ? 1 : 0), 2, "Profiler");
-		Printing::text(_printing, ":;", lap->column, 10, "Profiler"); // "ms"
+		Printing::text(/*Utilities::toUppercase(*/lap->processName/*)*/, lap->column, 26, "Profiler");
+		Printing::float(lap->elapsedTime, lap->column, 13 + (10 < lap->elapsedTime ? 1 : 0), 2, "Profiler");
+		Printing::text(":;", lap->column, 10, "Profiler"); // "ms"
 
 		uint8 indicatorRow = 7;
 
 		if(kProfilerLapTypeVIPInterruptFRAMESTARTProcess & lap->interruptFlags)
 		{
-			Printing::text(_printing, "F", lap->column, indicatorRow, "Profiler"); // "(x)"
+			Printing::text("F", lap->column, indicatorRow, "Profiler"); // "(x)"
 			indicatorRow--;
 		}
 
 		if(kProfilerLapTypeVIPInterruptGAMESTARTProcess & lap->interruptFlags)
 		{
-			Printing::text(_printing, "G", lap->column, indicatorRow, "Profiler"); // "(x)"
+			Printing::text("G", lap->column, indicatorRow, "Profiler"); // "(x)"
 			indicatorRow--;
 		}
 
 		if(kProfilerLapTypeVIPInterruptXPENDProcess & lap->interruptFlags)
 		{
-			Printing::text(_printing, "X", lap->column, indicatorRow, "Profiler"); // "(x)"
+			Printing::text("X", lap->column, indicatorRow, "Profiler"); // "(x)"
 			indicatorRow--;
 		}
 
 		if(kProfilerLapTypeTimerInterruptProcess & lap->interruptFlags)
 		{
-			Printing::text(_printing, "T", lap->column, indicatorRow, "Profiler"); // "(s)"
+			Printing::text("T", lap->column, indicatorRow, "Profiler"); // "(s)"
 			indicatorRow--;
 		}
 
 		if(kProfilerLapTypeCommunicationsInterruptProcess & lap->interruptFlags)
 		{
-			Printing::text(_printing, "C", lap->column, indicatorRow, "Profiler"); // "(c)"
+			Printing::text("C", lap->column, indicatorRow, "Profiler"); // "(c)"
 			indicatorRow--;
 		}
 
-		Printing::setOrientation(_printing, kPrintingOrientationHorizontal);
-		Printing::setDirection(_printing, kPrintingDirectionLTR);
+		Printing::setOrientation(kPrintingOrientationHorizontal);
+		Printing::setDirection(kPrintingDirectionLTR);
 	}
 }
 

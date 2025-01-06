@@ -93,8 +93,8 @@ RightBox Sprite::getRightBox()
 #ifndef __RELEASE
 	if(0 == this->halfWidth || 0 == this->halfHeight)
 	{
-		Printing::setDebugMode(Printing::getInstance());
-		Printing::clear(Printing::getInstance());
+		Printing::setDebugMode();
+		Printing::clear();
 		PRINT_HEX((uint32)this->componentSpec, 1, 27);
 		Error::triggerException("Sprite::getRightBox: 0 size sprite", NULL);
 	}
@@ -130,7 +130,6 @@ void Sprite::createAnimationController()
 			this->animationController,
 			AnimationCoordinatorFactory::getCoordinator
 			(
-				AnimationCoordinatorFactory::getInstance(),
 				this->animationController, 
 				ListenerObject::safeCast(this->owner), 
 				Texture::getSpec(this->texture)->charSetSpec
@@ -633,93 +632,93 @@ void Sprite::print(int32 x, int32 y)
 	uint8 transparency = this->transparency;
 	this->transparency = __TRANSPARENCY_NONE;
 
-	Printing::text(Printing::getInstance(), "SPRITE ", x, y++, NULL);
-	Printing::text(Printing::getInstance(), "Class: ", x, ++y, NULL);
-	Printing::text(Printing::getInstance(), __GET_CLASS_NAME(this), x + 18, y, NULL);
-	Printing::text(Printing::getInstance(), "Mode:", x, ++y, NULL);
+	Printing::text("SPRITE ", x, y++, NULL);
+	Printing::text("Class: ", x, ++y, NULL);
+	Printing::text(__GET_CLASS_NAME(this), x + 18, y, NULL);
+	Printing::text("Mode:", x, ++y, NULL);
 
 	if(Sprite::isObject(this))
 	{
-		Printing::text(Printing::getInstance(), "OBJECT   ", x + 18, y, NULL);
+		Printing::text("OBJECT   ", x + 18, y, NULL);
 	}
 	else if(Sprite::isAffine(this))
 	{
-		Printing::text(Printing::getInstance(), "AFFINE   ", x + 18, y, NULL);
+		Printing::text("AFFINE   ", x + 18, y, NULL);
 	}
 	else if(Sprite::isHBias(this))
 	{
-		Printing::text(Printing::getInstance(), "H-BIAS   ", x + 18, y, NULL);
+		Printing::text("H-BIAS   ", x + 18, y, NULL);
 	}
 	else if(Sprite::isBgmap(this))
 	{
-		Printing::text(Printing::getInstance(), "BGMAP    ", x + 18, y, NULL);
+		Printing::text("BGMAP    ", x + 18, y, NULL);
 	}
 
-	Printing::text(Printing::getInstance(), "Index: ", x, ++y, NULL);
-	Printing::int32(Printing::getInstance(), this->index, x + 18, y, NULL);
-	Printing::text(Printing::getInstance(), "Head:                         ", x, ++y, NULL);
-	Printing::hex(Printing::getInstance(), Sprite::getEffectiveHead(this), x + 18, y, 8, NULL);
-	Printing::text(Printing::getInstance(), "Transparent:                         ", x, ++y, NULL);
-	Printing::text(Printing::getInstance(), transparency > 0 ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, x + 18, y, NULL);
-	Printing::text(Printing::getInstance(), transparency == 1 ? "(Even)" : (transparency == 2) ? "(Odd)" : "", x + 20, y, NULL);
-	Printing::text(Printing::getInstance(), "Shown:                         ", x, ++y, NULL);
-	Printing::text(Printing::getInstance(), __HIDE != this->show ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, x + 18, y, NULL);
+	Printing::text("Index: ", x, ++y, NULL);
+	Printing::int32(this->index, x + 18, y, NULL);
+	Printing::text("Head:                         ", x, ++y, NULL);
+	Printing::hex(Sprite::getEffectiveHead(this), x + 18, y, 8, NULL);
+	Printing::text("Transparent:                         ", x, ++y, NULL);
+	Printing::text(transparency > 0 ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, x + 18, y, NULL);
+	Printing::text(transparency == 1 ? "(Even)" : (transparency == 2) ? "(Odd)" : "", x + 20, y, NULL);
+	Printing::text("Shown:                         ", x, ++y, NULL);
+	Printing::text(__HIDE != this->show ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, x + 18, y, NULL);
 
-	Printing::text(Printing::getInstance(), "Pos. (x,y,z,p):                      ", x, ++y, NULL);
-	Printing::int32(Printing::getInstance(), this->position.x, x + 18, y, NULL);
-	Printing::int32(Printing::getInstance(), this->position.y, x + 24, y, NULL);
-	Printing::int32(Printing::getInstance(), this->position.z, x + 30, y, NULL);
-	Printing::int32(Printing::getInstance(), this->position.parallax, x + 36, y, NULL);
-	Printing::text(Printing::getInstance(), "Displ. (x,y,z,p):                    ", x, ++y, NULL);
-	Printing::int32(Printing::getInstance(), this->displacement.x, x + 18, y, NULL);
-	Printing::int32(Printing::getInstance(), this->displacement.y, x + 24, y, NULL);
-	Printing::int32(Printing::getInstance(), this->displacement.z, x + 30, y, NULL);
-	Printing::int32(Printing::getInstance(), this->displacement.parallax, x + 36, y, NULL);
-	Printing::text(Printing::getInstance(), "FPos. (x,y,z,p):                      ", x, ++y, NULL);
-	Printing::int32(Printing::getInstance(), this->position.x + this->displacement.x, x + 18, y, NULL);
-	Printing::int32(Printing::getInstance(), this->position.y + this->displacement.y, x + 24, y, NULL);
-	Printing::int32(Printing::getInstance(), this->position.z + this->displacement.z, x + 30, y, NULL);
-	Printing::int32(Printing::getInstance(), this->position.parallax + this->displacement.parallax, x + 36, y, NULL);
-	Printing::text(Printing::getInstance(), "G (x,y,p):                           ", x, ++y, NULL);
-	Printing::int32(Printing::getInstance(), Sprite::getEffectiveX(this), x + 18, y, NULL);
-	Printing::int32(Printing::getInstance(), Sprite::getEffectiveY(this), x + 24, y, NULL);
-	Printing::int32(Printing::getInstance(), Sprite::getEffectiveP(this), x + 30, y, NULL);
-	Printing::text(Printing::getInstance(), "M (x,y,p):                           ", x, ++y, NULL);
-	Printing::int32(Printing::getInstance(), Sprite::getEffectiveMX(this), x + 18, y, NULL);
-	Printing::int32(Printing::getInstance(), Sprite::getEffectiveMY(this), x + 24, y, NULL);
-	Printing::int32(Printing::getInstance(), Sprite::getEffectiveMP(this), x + 30, y, NULL);
-	Printing::text(Printing::getInstance(), "Size (w,h):                          ", x, ++y, NULL);
-	Printing::int32(Printing::getInstance(), Sprite::getEffectiveWidth(this), x + 18, y, NULL);
-	Printing::int32(Printing::getInstance(), Sprite::getEffectiveHeight(this), x + 24, y++, NULL);
-	Printing::text(Printing::getInstance(), "Pixels:                      ", x, y, NULL);
-	Printing::int32(Printing::getInstance(), Sprite::getTotalPixels(this), x + 18, y++, NULL);
+	Printing::text("Pos. (x,y,z,p):                      ", x, ++y, NULL);
+	Printing::int32(this->position.x, x + 18, y, NULL);
+	Printing::int32(this->position.y, x + 24, y, NULL);
+	Printing::int32(this->position.z, x + 30, y, NULL);
+	Printing::int32(this->position.parallax, x + 36, y, NULL);
+	Printing::text("Displ. (x,y,z,p):                    ", x, ++y, NULL);
+	Printing::int32(this->displacement.x, x + 18, y, NULL);
+	Printing::int32(this->displacement.y, x + 24, y, NULL);
+	Printing::int32(this->displacement.z, x + 30, y, NULL);
+	Printing::int32(this->displacement.parallax, x + 36, y, NULL);
+	Printing::text("FPos. (x,y,z,p):                      ", x, ++y, NULL);
+	Printing::int32(this->position.x + this->displacement.x, x + 18, y, NULL);
+	Printing::int32(this->position.y + this->displacement.y, x + 24, y, NULL);
+	Printing::int32(this->position.z + this->displacement.z, x + 30, y, NULL);
+	Printing::int32(this->position.parallax + this->displacement.parallax, x + 36, y, NULL);
+	Printing::text("G (x,y,p):                           ", x, ++y, NULL);
+	Printing::int32(Sprite::getEffectiveX(this), x + 18, y, NULL);
+	Printing::int32(Sprite::getEffectiveY(this), x + 24, y, NULL);
+	Printing::int32(Sprite::getEffectiveP(this), x + 30, y, NULL);
+	Printing::text("M (x,y,p):                           ", x, ++y, NULL);
+	Printing::int32(Sprite::getEffectiveMX(this), x + 18, y, NULL);
+	Printing::int32(Sprite::getEffectiveMY(this), x + 24, y, NULL);
+	Printing::int32(Sprite::getEffectiveMP(this), x + 30, y, NULL);
+	Printing::text("Size (w,h):                          ", x, ++y, NULL);
+	Printing::int32(Sprite::getEffectiveWidth(this), x + 18, y, NULL);
+	Printing::int32(Sprite::getEffectiveHeight(this), x + 24, y++, NULL);
+	Printing::text("Pixels:                      ", x, y, NULL);
+	Printing::int32(Sprite::getTotalPixels(this), x + 18, y++, NULL);
 
 	if(NULL != Sprite::getTexture(this))
 	{
 		y++;
-		Printing::text(Printing::getInstance(), "TEXTURE                          ", x, ++y, NULL);
+		Printing::text("TEXTURE                          ", x, ++y, NULL);
 		y++;
-		Printing::text(Printing::getInstance(), "Spec:                      ", x, ++y, NULL);
-		Printing::hex(Printing::getInstance(), (int32)Texture::getSpec(Sprite::getTexture(this)), x + 18, y, 8, NULL);
-		Printing::text(Printing::getInstance(), "Size (w,h):                      ", x, ++y, NULL);
-		Printing::int32(Printing::getInstance(), this->halfWidth * 2, x + 18, y, NULL);
-		Printing::int32(Printing::getInstance(), this->halfHeight * 2, x + 24, y, NULL);
+		Printing::text("Spec:                      ", x, ++y, NULL);
+		Printing::hex((int32)Texture::getSpec(Sprite::getTexture(this)), x + 18, y, 8, NULL);
+		Printing::text("Size (w,h):                      ", x, ++y, NULL);
+		Printing::int32(this->halfWidth * 2, x + 18, y, NULL);
+		Printing::int32(this->halfHeight * 2, x + 24, y, NULL);
 
 		if(Sprite::getTexture(this) && __GET_CAST(BgmapTexture, Sprite::getTexture(this)))
 		{
 			BgmapTexture bgmapTexture = __GET_CAST(BgmapTexture, Sprite::getTexture(this));
 
-			Printing::text(Printing::getInstance(), "Segment:                         ", x, ++y, NULL);
-			Printing::int32(Printing::getInstance(), BgmapTexture::getSegment(bgmapTexture), x + 18, y, NULL);
-			Printing::text(Printing::getInstance(), "Written:                         ", x, ++y, NULL);
+			Printing::text("Segment:                         ", x, ++y, NULL);
+			Printing::int32(BgmapTexture::getSegment(bgmapTexture), x + 18, y, NULL);
+			Printing::text("Written:                         ", x, ++y, NULL);
 			Printing::text
 			(
-				Printing::getInstance(), 
+				
 				Texture::isWritten(bgmapTexture) ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, x + 18, y, NULL
 			);
 
-			Printing::text(Printing::getInstance(), "Rows remaining:                  ", x, ++y, NULL);
-			Printing::int32(Printing::getInstance(), BgmapTexture::getRemainingRowsToBeWritten(bgmapTexture), x + 18, y, NULL);
+			Printing::text("Rows remaining:                  ", x, ++y, NULL);
+			Printing::int32(BgmapTexture::getRemainingRowsToBeWritten(bgmapTexture), x + 18, y, NULL);
 		}
 	}
 

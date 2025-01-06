@@ -76,22 +76,22 @@ void AnimationInspector::update()
 
 void AnimationInspector::show()
 {
-	Printing::clear(Printing::getInstance());
+	Printing::clear();
 
 	if(NULL == _userAnimatedActors[0].actorSpec)
 	{
 		Printing::text
 		(
-			Printing::getInstance(), 
+			
 			"\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08"
 			"\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08", 0, 0, NULL
 		);
 
-		Printing::text(Printing::getInstance(), " ANIMATION INSPECTOR ", 1, 0, NULL);
-		Printing::text(Printing::getInstance(), "             ", 39, 2, NULL);
-		Printing::text(Printing::getInstance(), "             ", 39, 3, NULL);
-		Printing::text(Printing::getInstance(), "No animations found", 1, 4, NULL);
-		Printing::text(Printing::getInstance(), "Define some in _userAnimatedActors global variable", 1, 6, NULL);
+		Printing::text( 1, 0, NULL);
+		Printing::text(NULL);
+		Printing::text(NULL);
+		Printing::text(, 4, NULL);
+		Printing::text(matedActors global variable", 1, 6, NULL);
 		return;
 	}
 
@@ -124,11 +124,11 @@ void AnimationInspector::show()
 
 	this->state = kFirstState + 1;
 	AnimationInspector::configureState(this);
-	SpriteManager::hideAllSprites(SpriteManager::getInstance(), NULL, false);
+	SpriteManager::hideAllSprites(NULL, false);
 	
 	// Make sure all textures are written right now
-	SpriteManager::writeTextures(SpriteManager::getInstance());
-	SpriteManager::deferParamTableEffects(SpriteManager::getInstance(), false);
+	SpriteManager::writeTextures();
+	SpriteManager::deferParamTableEffects(false);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -137,12 +137,12 @@ void AnimationInspector::hide()
 {
 	if(NULL == _userAnimatedActors[0].actorSpec)
 	{
-		Printing::text(Printing::getInstance(), "No animations found", 1, 4, NULL);
-		Printing::text(Printing::getInstance(), "Define some in _userAnimatedActors global variable", 1, 6, NULL);
+		Printing::text(, 4, NULL);
+		Printing::text(matedActors global variable", 1, 6, NULL);
 		return;
 	}
 
-	Printing::clear(Printing::getInstance());
+	Printing::clear();
 
 	AnimationInspector::removePreviousSprite(this);
 
@@ -171,9 +171,9 @@ void AnimationInspector::hide()
 	}
 
 	// Make sure all textures are written right now
-	SpriteManager::writeTextures(SpriteManager::getInstance());
-	SpriteManager::showAllSprites(SpriteManager::getInstance(), NULL, true);
-	SpriteManager::deferParamTableEffects(SpriteManager::getInstance(), true);
+	SpriteManager::writeTextures();
+	SpriteManager::showAllSprites(NULL, true);
+	SpriteManager::deferParamTableEffects(true);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -292,32 +292,30 @@ void AnimationInspector::destructor()
 
 void AnimationInspector::configureState()
 {
-	Printing printing = Printing::getInstance();
-
-	Printing::clear(Printing::getInstance());
+	Printing::clear();
 	Printing::text
 	(
-		printing, "\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08"
+		"\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08"
 		"\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08", 0, 0, NULL
 	);
 
-	Printing::text(printing, " ANIMATION INSPECTOR ", 1, 0, NULL);
-	Printing::text(printing, "             ", 39, 2, NULL);
-	Printing::text(printing, "             ", 39, 3, NULL);
+	Printing::text(" ANIMATION INSPECTOR ", 1, 0, NULL);
+	Printing::text("             ", 39, 2, NULL);
+	Printing::text("             ", 39, 3, NULL);
 
 	switch(this->state)
 	{
 		case kSelectStatefulActor:
 
 			AnimationInspector::removePreviousSprite(this);
-			Printing::text(printing, "Select \x13  ", 39, 2, NULL);
+			Printing::text("Select \x13  ", 39, 2, NULL);
 			AnimationInspector::printUserAnimatedActors(this);
 			break;
 
 		case kSelectSprite:
 
-			Printing::text(printing, "Select \x13  ", 39, 2, NULL);
-			Printing::text(printing, "Back   \x14  ", 39, 3, NULL);
+			Printing::text("Select \x13  ", 39, 2, NULL);
+			Printing::text("Back   \x14  ", 39, 3, NULL);
 			AnimationInspector::createSpriteSelector(this);
 			AnimationInspector::printSprites(this);
 			AnimationInspector::createSprite(this);
@@ -326,8 +324,8 @@ void AnimationInspector::configureState()
 
 		case kSelectAnimation:
 
-			Printing::text(printing, "Select \x13  ", 39, 2, NULL);
-			Printing::text(printing, "Back   \x14  ", 39, 3, NULL);
+			Printing::text("Select \x13  ", 39, 2, NULL);
+			Printing::text("Back   \x14  ", 39, 3, NULL);
 			AnimationInspector::createAnimationsSelector(this);
 			Sprite::pause(this->sprite, true);
 			AnimationInspector::printActorAnimations(this);
@@ -403,7 +401,7 @@ void AnimationInspector::removePreviousSprite()
 {
 	if(!isDeleted(this->sprite))
 	{
-		SpriteManager::destroySprite(SpriteManager::getInstance(), this->sprite);
+		SpriteManager::destroySprite(this->sprite);
 		this->sprite = NULL;
 	}
 }
@@ -599,9 +597,9 @@ void AnimationInspector::editAnimation(uint32 pressedKey)
 
 void AnimationInspector::printUserAnimatedActors()
 {
-	Printing printing = Printing::getInstance();
-	Printing::text(printing, "OBJECTS", 1, 2, NULL);
-	Printing::text(printing, "                       ", 1, 3, NULL);
+	
+	Printing::text("OBJECTS", 1, 2, NULL);
+	Printing::text("                       ", 1, 3, NULL);
 	OptionsSelector::print(this->actorSelector, 1, 4, kOptionsAlignLeft, 0);
 }
 
@@ -609,9 +607,9 @@ void AnimationInspector::printUserAnimatedActors()
 
 void AnimationInspector::printSprites()
 {
-	Printing printing = Printing::getInstance();
-	Printing::text(printing, "SPRITES", 1, 2, NULL);
-	Printing::text(printing, "                       ", 1, 3, NULL);
+	
+	Printing::text("SPRITES", 1, 2, NULL);
+	Printing::text("                       ", 1, 3, NULL);
 	OptionsSelector::print(this->spriteSelector, 1, 4, kOptionsAlignLeft, 0);
 }
 
@@ -619,9 +617,9 @@ void AnimationInspector::printSprites()
 
 void AnimationInspector::printActorAnimations()
 {
-	Printing printing = Printing::getInstance();
-	Printing::text(printing, "AVAILABLE ANIMATIONS", 1, 2, NULL);
-	Printing::text(printing, "                       ", 1, 3, NULL);
+	
+	Printing::text("AVAILABLE ANIMATIONS", 1, 2, NULL);
+	Printing::text("                       ", 1, 3, NULL);
 	OptionsSelector::print(this->animationsSelector, 1, 4, kOptionsAlignLeft, 0);
 }
 
@@ -631,29 +629,29 @@ void AnimationInspector::printAnimationConfig()
 {
 	int32 x = 1;
 	int32 y = 2;
-	Printing printing = Printing::getInstance();
+	
 
-	Printing::text(printing, "Animation: ", x, y, NULL);
-	Printing::text(printing, this->animationFunction.name, x + 11, y++, NULL);
+	Printing::text("Animation: ", x, y, NULL);
+	Printing::text(this->animationFunction.name, x + 11, y++, NULL);
 	OptionsSelector::print(this->animationEditionSelector, x, ++y, kOptionsAlignLeft, 0);
 
-	Printing::int32(printing, this->animationFunction.numberOfFrames, x + 19, y++, NULL);
-	Printing::int32(printing, this->animationFunction.delay, x + 19, y++, NULL);
-	Printing::text(printing, this->animationFunction.loop ? "true" : "false", x + 19, y++, NULL);
+	Printing::int32(this->animationFunction.numberOfFrames, x + 19, y++, NULL);
+	Printing::int32(this->animationFunction.delay, x + 19, y++, NULL);
+	Printing::text(this->animationFunction.loop ? "true" : "false", x + 19, y++, NULL);
 
 	OptionsSelector::print(this->frameEditionSelector, x, ++y + 1, kOptionsAlignLeft, 0);
 
-	Printing::text(printing, "Back     \x14 ", 37, 2, NULL);
+	Printing::text("Back     \x14 ", 37, 2, NULL);
 	if(!Sprite::isPlaying(this->sprite))
 	{
-		Printing::text(printing, "Play     \x13 ", 37, 3, NULL);
+		Printing::text("Play     \x13 ", 37, 3, NULL);
 	}
 	else
 	{
-		Printing::text(printing, "Pause    \x13 ", 37, 3, NULL);
+		Printing::text("Pause    \x13 ", 37, 3, NULL);
 	}
-	Printing::text(printing, "Select \x1E\x1A\x1B", 37, 4, NULL);
-	Printing::text(printing, "Modify \x1E\x1C\x1D", 37, 5, NULL);
+	Printing::text("Select \x1E\x1A\x1B", 37, 4, NULL);
+	Printing::text("Modify \x1E\x1C\x1D", 37, 5, NULL);
 
 	int32 selectedProperty = OptionsSelector::getSelectedOption(this->animationEditionSelector);
 
@@ -661,14 +659,14 @@ void AnimationInspector::printAnimationConfig()
 	{
 		case kFrames:
 
-			Printing::text(printing, "Select \x1F\x1A\x1B", 37, 7, NULL);
-			Printing::text(printing, "Modify \x1F\x1C\x1D", 37, 8, NULL);
+			Printing::text("Select \x1F\x1A\x1B", 37, 7, NULL);
+			Printing::text("Modify \x1F\x1C\x1D", 37, 8, NULL);
 			break;
 
 		default:
 
-			Printing::text(printing, "                   ", 37, 7, NULL);
-			Printing::text(printing, "                   ", 37, 8, NULL);
+			Printing::text("                   ", 37, 7, NULL);
+			Printing::text("                   ", 37, 8, NULL);
 			break;
 	}
 }
@@ -724,7 +722,7 @@ void AnimationInspector::createSprite()
 
 	NM_ASSERT(spriteSpec, "AnimationInspector::createSprite: null spriteSpec");
 
-	this->sprite = Sprite::safeCast(SpriteManager::createSprite(SpriteManager::getInstance(), NULL, (SpriteSpec*)spriteSpec));
+	this->sprite = Sprite::safeCast(SpriteManager::createSprite(NULL, (SpriteSpec*)spriteSpec));
 	ASSERT(this->sprite, "AnimationInspector::createSprite: null sprite");
 	ASSERT(Sprite::getTexture(this->sprite), "AnimationInspector::createSprite: null texture");
 
@@ -739,8 +737,8 @@ void AnimationInspector::createSprite()
 
 	this->sprite->updateAnimationFrame = true;
 
-	SpriteManager::hideAllSprites(SpriteManager::getInstance(), this->sprite, false);
-	SpriteManager::prepareAll(SpriteManager::getInstance());
+	SpriteManager::hideAllSprites(this->sprite, false);
+	SpriteManager::prepareAll();
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -893,7 +891,7 @@ bool AnimationInspector::onAnimationComplete(ListenerObject eventFirer __attribu
 {
 	if(!this->animationFunction.loop)
 	{
-		Printing::text(Printing::getInstance(), "Play     \x13 ", 37, 3, NULL);
+		Printing::text( NULL);
 	}
 
 	return true;

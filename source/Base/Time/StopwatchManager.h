@@ -45,18 +45,18 @@ singleton class StopwatchManager : Object
 	static StopwatchManager getInstance();
 
 	/// Reset all the registered stopwatches.
-	void reset();
+	static void reset();
 
 	/// Register a new stopwatch
 	/// @param clock: Stopwatch to register
-	void register(Stopwatch clock);
+	static void register(Stopwatch clock);
 
 	/// Unregister stopwatch.
 	/// @param clock: Stopwatch to unregister
-	void unregister(Stopwatch clock);
+	static void unregister(Stopwatch clock);
 
 	/// Update the stopwatches.
-	void update();
+	static void update();
 }
 
 #endif

@@ -192,20 +192,20 @@ void Box::print(int32 x, int32 y)
 	
 	RightBox rightBox = this->rightBox;
 
-	Printing::text(Printing::getInstance(), "X:             " , x, y, NULL);
-	Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(rightBox.x0 + this->transformation->position.x), x + 2, y, NULL);
-	Printing::text(Printing::getInstance(), "-" , x + 6, y, NULL);
-	Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(rightBox.x1 + this->transformation->position.x), x + 8, y++, NULL);
+	Printing::text("X:             " , x, y, NULL);
+	Printing::int32(__METERS_TO_PIXELS(rightBox.x0 + this->transformation->position.x), x + 2, y, NULL);
+	Printing::text("-" , x + 6, y, NULL);
+	Printing::int32(__METERS_TO_PIXELS(rightBox.x1 + this->transformation->position.x), x + 8, y++, NULL);
 
-	Printing::text(Printing::getInstance(), "Y:             " , x, y, NULL);
-	Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(rightBox.y0 + this->transformation->position.y), x + 2, y, NULL);
-	Printing::text(Printing::getInstance(), "-" , x + 6, y, NULL);
-	Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(rightBox.y1 + this->transformation->position.y), x + 8, y++, NULL);
+	Printing::text("Y:             " , x, y, NULL);
+	Printing::int32(__METERS_TO_PIXELS(rightBox.y0 + this->transformation->position.y), x + 2, y, NULL);
+	Printing::text("-" , x + 6, y, NULL);
+	Printing::int32(__METERS_TO_PIXELS(rightBox.y1 + this->transformation->position.y), x + 8, y++, NULL);
 
-	Printing::text(Printing::getInstance(), "Z:             " , x, y, NULL);
-	Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(rightBox.z0 + this->transformation->position.z), x + 2, y, NULL);
-	Printing::text(Printing::getInstance(), "-" , x + 6, y, NULL);
-	Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(rightBox.z1 + this->transformation->position.z), x + 8, y++, NULL);
+	Printing::text("Z:             " , x, y, NULL);
+	Printing::int32(__METERS_TO_PIXELS(rightBox.z0 + this->transformation->position.z), x + 2, y, NULL);
+	Printing::text("-" , x + 6, y, NULL);
+	Printing::int32(__METERS_TO_PIXELS(rightBox.z1 + this->transformation->position.z), x + 8, y++, NULL);
 }
 #endif
 

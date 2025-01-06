@@ -60,10 +60,10 @@ void SoundTest::show()
 
 	SoundManager::reset(SoundManager::getInstance());
 
-	Printing::clear(Printing::getInstance());
-	SpriteManager::hideAllSprites(SpriteManager::getInstance(), NULL, false);
-	Printing::resetCoordinates(Printing::getInstance());
-	Printing::show(Printing::getInstance());
+	Printing::clear();
+	SpriteManager::hideAllSprites(NULL, false);
+	Printing::resetCoordinates();
+	Printing::show();
 
 	TimerManager::setResolution(TimerManager::getInstance(), __TIMER_100US);
 	TimerManager::setTargetTimePerInterruptUnits(TimerManager::getInstance(), kMS);
@@ -79,8 +79,8 @@ void SoundTest::show()
 void SoundTest::hide()
 {
 	SoundTest::releaseSound(this);
-	Printing::clear(Printing::getInstance());
-	SpriteManager::showAllSprites(SpriteManager::getInstance(), NULL, true);
+	Printing::clear();
+	SpriteManager::showAllSprites(NULL, true);
 	SoundTest::lightUpGame(this);
 }
 
@@ -350,7 +350,7 @@ void SoundTest::loadSound()
 	VUEngine::disableKeypad(VUEngine::getInstance());
 
 #ifdef __SOUND_TEST
-	Printing::clear(Printing::getInstance());
+	Printing::clear();
 	PRINT_TEXT("Loading...", 1, 4);
 #endif
 
@@ -435,36 +435,34 @@ void SoundTest::printTimer()
 
 void SoundTest::printGUI(bool clearScreen)
 {
-	Printing printing = Printing::getInstance();
-
 	if(clearScreen)
 	{
-		Printing::clear(printing);
+		Printing::clear();
 	}
 
 	Printing::text
 	(
-		printing, "\x08 SOUND TEST \x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08"
+		"\x08 SOUND TEST \x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08"
 		"\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08", 0, 0, NULL
 	);
 
 	if(NULL == _userSounds[this->soundIndex])
 	{
-		Printing::text(printing, "No sounds found", 1, 4, NULL);
-		Printing::text(printing, "Define some in _userSounds global variable", 1, 6, NULL);
+		Printing::text("No sounds found", 1, 4, NULL);
+		Printing::text("Define some in _userSounds global variable", 1, 6, NULL);
 		return;
 	}
 
-	Printing::text(printing, __CHAR_SELECTOR_LEFT, 1, 2, NULL);
+	Printing::text(__CHAR_SELECTOR_LEFT, 1, 2, NULL);
 
 	uint16 totalSounds = SoundTest::getTotalSounds(this);
 
 	int32 selectedSoundDigits = Math::getDigitsCount(this->soundIndex + 1);
 	int32 totalSoundsDigits = Math::getDigitsCount(totalSounds);
-	Printing::int32(printing, this->soundIndex + 1, 1 + 1, 2, NULL);
-	Printing::text(printing, "/" , 1 + 1 + selectedSoundDigits, 2, NULL);
-	Printing::int32(printing, SoundTest::getTotalSounds(this), 1 + 1 + selectedSoundDigits + 1, 2, NULL);
-	Printing::text(printing, __CHAR_SELECTOR, 1 + 1 + selectedSoundDigits + 1 + totalSoundsDigits, 2, NULL);
+	Printing::int32(this->soundIndex + 1, 1 + 1, 2, NULL);
+	Printing::text("/" , 1 + 1 + selectedSoundDigits, 2, NULL);
+	Printing::int32(SoundTest::getTotalSounds(this), 1 + 1 + selectedSoundDigits + 1, 2, NULL);
+	Printing::text(__CHAR_SELECTOR, 1 + 1 + selectedSoundDigits + 1 + totalSoundsDigits, 2, NULL);
 
 	if(isDeleted(this->sound))
 	{
@@ -477,17 +475,17 @@ void SoundTest::printGUI(bool clearScreen)
 	// Controls
 	if(!Sound::isPlaying(this->sound))
 	{
-		Printing::text(printing, "Play     \x13", xControls, yControls++, NULL);
+		Printing::text("Play     \x13", xControls, yControls++, NULL);
 	}
 	else
 	{
-		Printing::text(printing, "Pause    \x13", xControls, yControls++, NULL);
+		Printing::text("Pause    \x13", xControls, yControls++, NULL);
 	}
-	Printing::text(printing, "Rewind   \x14", xControls, yControls++, NULL);
+	Printing::text("Rewind   \x14", xControls, yControls++, NULL);
 	yControls++;
-	Printing::text(printing, "T.Freq. \x1F\x1A", xControls, yControls++, NULL);
-	Printing::text(printing, "T.Scale \x1F\x1B", xControls, yControls++, NULL);
-	Printing::text(printing, "T.Res. \x1F\x1C\x1D", xControls, yControls++, NULL);
+	Printing::text("T.Freq. \x1F\x1A", xControls, yControls++, NULL);
+	Printing::text("T.Scale \x1F\x1B", xControls, yControls++, NULL);
+	Printing::text("T.Res. \x1F\x1C\x1D", xControls, yControls++, NULL);
 
 	SoundTest::printTimer(this);
 	Sound::print(this->sound, 1, 4);

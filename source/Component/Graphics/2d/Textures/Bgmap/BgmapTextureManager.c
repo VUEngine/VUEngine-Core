@@ -94,7 +94,7 @@ void BgmapTextureManager::calculateAvailableBgmapSegments()
 
 	this->printingBgmapSegment = this->availableBgmapSegmentsForTextures - 1;
 
-	Printing::setPrintingBgmapSegment(Printing::getInstance(), this->printingBgmapSegment);
+	Printing::setPrintingBgmapSegment(this->printingBgmapSegment);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -289,26 +289,26 @@ int16 BgmapTextureManager::getYOffset(int32 id)
 #ifndef __SHIPPING
 void BgmapTextureManager::print(int32 x, int32 y)
 {
-	Printing::text(Printing::getInstance(), "BGMAP TEXTURES USAGE", x, y++, NULL);
-	Printing::text(Printing::getInstance(), "Segments for textures: ", x, ++y, NULL);
-	Printing::int32(Printing::getInstance(), BgmapTextureManager::getAvailableBgmapSegmentsForTextures(this), x + 23, y, NULL);
-	Printing::text(Printing::getInstance(), "Printing segment: ", x, ++y, NULL);
-	Printing::int32(Printing::getInstance(), BgmapTextureManager::getPrintingBgmapSegment(this), x + 23, y, NULL);
-	Printing::text(Printing::getInstance(), "Textures count: ", x, ++y, NULL);
-	Printing::int32(Printing::getInstance(), VirtualList::getCount(this->bgmapTextures), x + 23, y, NULL);
+	Printing::text("BGMAP TEXTURES USAGE", x, y++, NULL);
+	Printing::text("Segments for textures: ", x, ++y, NULL);
+	Printing::int32(BgmapTextureManager::getAvailableBgmapSegmentsForTextures(this), x + 23, y, NULL);
+	Printing::text("Printing segment: ", x, ++y, NULL);
+	Printing::int32(BgmapTextureManager::getPrintingBgmapSegment(this), x + 23, y, NULL);
+	Printing::text("Textures count: ", x, ++y, NULL);
+	Printing::int32(VirtualList::getCount(this->bgmapTextures), x + 23, y, NULL);
 
 	y++;
 	y++;
-	Printing::text(Printing::getInstance(), "Recyclable textures", x, y++, NULL);
+	Printing::text("Recyclable textures", x, y++, NULL);
 	y++;
-	Printing::text(Printing::getInstance(), "Total: ", x, y++, NULL);
-	Printing::text(Printing::getInstance(), "Free: ", x, y++, NULL);
+	Printing::text("Total: ", x, y++, NULL);
+	Printing::text("Free: ", x, y++, NULL);
 
 	y++;
-	Printing::text(Printing::getInstance(), "ROM", x, y++, NULL);
+	Printing::text("ROM", x, y++, NULL);
 	y++;
-	Printing::text(Printing::getInstance(), "Address   Refs", x, y++, NULL);
-	Printing::text(Printing::getInstance(), "\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08", x, y++, NULL);
+	Printing::text("Address   Refs", x, y++, NULL);
+	Printing::text("\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08", x, y++, NULL);
 
 	int32 i = 0;
 	int32 j = 0;
@@ -327,8 +327,8 @@ void BgmapTextureManager::print(int32 x, int32 y)
 			recyclableTextures++;
 			freeEntries += !BgmapTexture::getUsageCount(bgmapTexture)? 1 : 0;
 
-			Printing::hex(Printing::getInstance(), (int32)Texture::getSpec(bgmapTexture), x + j, y + i, 8, NULL);
-			Printing::int32(Printing::getInstance(), BgmapTexture::getUsageCount(bgmapTexture), x + j + 9, y + i, NULL);
+			Printing::hex((int32)Texture::getSpec(bgmapTexture), x + j, y + i, 8, NULL);
+			Printing::int32(BgmapTexture::getUsageCount(bgmapTexture), x + j + 9, y + i, NULL);
 
 			if(++i + y > __SCREEN_HEIGHT / 8)
 			{
@@ -344,8 +344,8 @@ void BgmapTextureManager::print(int32 x, int32 y)
 		}
 	}
 
-	Printing::int32(Printing::getInstance(), recyclableTextures, x + 7, y - 7, NULL);
-	Printing::int32(Printing::getInstance(), freeEntries, x + 7, y - 6, NULL);
+	Printing::int32(recyclableTextures, x + 7, y - 7, NULL);
+	Printing::int32(freeEntries, x + 7, y - 6, NULL);
 }
 #endif
 
@@ -626,12 +626,12 @@ int32 BgmapTextureManager::doAllocate
 	}
 
 #ifdef __DEBUG
-	Printing::setDebugMode(Printing::getInstance());
-	Printing::clear(Printing::getInstance());
+	Printing::setDebugMode();
+	Printing::clear();
 	BgmapTextureManager::print(this, 1, 10);
-	Printing::text(Printing::getInstance(), "Texture ", 1, 19, NULL);
-	Printing::text(Printing::getInstance(), "    Address: ", 1, 21, NULL);
-	Printing::hex(Printing::getInstance(), (WORD)textureSpec, 14, 21, 8, NULL);
+	Printing::text("Texture ", 1, 19, NULL);
+	Printing::text("    Address: ", 1, 21, NULL);
+	Printing::hex((WORD)textureSpec, 14, 21, 8, NULL);
 
 	// Throw an exception if there is no enough space to allocate the bgmap spec
 	Error::triggerException("BgmapTextureManager::doAllocate: bgmap segments depleted", NULL);		

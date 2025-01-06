@@ -370,14 +370,14 @@ bool WireframeManager::hasWireframes()
 #ifndef __SHIPPING
 void WireframeManager::print(int32 x, int32 y)
 {
-	Printing::text(Printing::getInstance(), "WIREFRAME MANAGER", x, y++, NULL);
+	Printing::text("WIREFRAME MANAGER", x, y++, NULL);
 	y++;
-	Printing::text(Printing::getInstance(), "Wireframes:   ", x, y, NULL);
-	Printing::int32(Printing::getInstance(), VirtualList::getCount(this->components), x + 12, y++, NULL);
-	Printing::text(Printing::getInstance(), "Rendered:     ", x, y, NULL);
-	Printing::int32(Printing::getInstance(), this->renderedWireframes, x + 12, y++, NULL);
-	Printing::text(Printing::getInstance(), "Drawn:        ", x, y, NULL);
-	Printing::int32(Printing::getInstance(), this->drawnWireframes, x + 12, y++, NULL);
+	Printing::text("Wireframes:   ", x, y, NULL);
+	Printing::int32(VirtualList::getCount(this->components), x + 12, y++, NULL);
+	Printing::text("Rendered:     ", x, y, NULL);
+	Printing::int32(this->renderedWireframes, x + 12, y++, NULL);
+	Printing::text("Drawn:        ", x, y, NULL);
+	Printing::int32(this->drawnWireframes, x + 12, y++, NULL);
 }
 #endif
 

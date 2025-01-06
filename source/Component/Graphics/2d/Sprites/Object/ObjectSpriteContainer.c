@@ -157,14 +157,14 @@ void ObjectSpriteContainer::destructor()
 
 void ObjectSpriteContainer::registerWithManager()
 {
-	SpriteManager::registerSprite(SpriteManager::getInstance(), Sprite::safeCast(this));
+	SpriteManager::registerSprite(Sprite::safeCast(this));
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void ObjectSpriteContainer::unregisterWithManager()
 {
-	SpriteManager::unregisterSprite(SpriteManager::getInstance(), Sprite::safeCast(this));
+	SpriteManager::unregisterSprite(Sprite::safeCast(this));
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -209,31 +209,31 @@ void ObjectSpriteContainer::forceHide()
 
 void ObjectSpriteContainer::print(int32 x, int32 y)
 {
-	Printing::text(Printing::getInstance(), "SPRITE ", x, y++, NULL);
-	Printing::text(Printing::getInstance(), "Index: ", x, ++y, NULL);
-	Printing::int32(Printing::getInstance(), this->index, x + 18, y, NULL);
-	Printing::text(Printing::getInstance(), "Class: ", x, ++y, NULL);
-	Printing::text(Printing::getInstance(), __GET_CLASS_NAME(this), x + 18, y, NULL);
-	Printing::text(Printing::getInstance(), "Head:                         ", x, ++y, NULL);
-	Printing::hex(Printing::getInstance(), Sprite::getEffectiveHead(this), x + 18, y, 8, NULL);
-	Printing::text(Printing::getInstance(), "Mode:", x, ++y, NULL);
-	Printing::text(Printing::getInstance(), "OBJECT   ", x + 18, y, NULL);
-	Printing::text(Printing::getInstance(), "Segment:                ", x, ++y, NULL);
-	Printing::int32(Printing::getInstance(), this->spt, x + 18, y++, NULL);
-	Printing::text(Printing::getInstance(), "SPT value:                ", x, y, NULL);
-	Printing::int32(Printing::getInstance(), _vipRegisters[__SPT0 + this->spt], x + 18, y, NULL);
-	Printing::text(Printing::getInstance(), "HEAD:                   ", x, ++y, NULL);
-	Printing::hex(Printing::getInstance(), _worldAttributesBaseAddress[this->index].head, x + 18, y, 4, NULL);
-	Printing::text(Printing::getInstance(), "Total OBJs:            ", x, ++y, NULL);
-	Printing::int32(Printing::getInstance(), this->firstObjectIndex - this->lastObjectIndex, x + 18, y, NULL);
-	Printing::text(Printing::getInstance(), "OBJ index range:      ", x, ++y, NULL);
-	Printing::int32(Printing::getInstance(), this->lastObjectIndex, x + 18, y, NULL);
-	Printing::text(Printing::getInstance(), "-", x  + 18 + Math::getDigitsCount(this->firstObjectIndex), y, NULL);
-	Printing::int32(Printing::getInstance(), this->firstObjectIndex, x  + 18 + Math::getDigitsCount(this->firstObjectIndex) + 1, y, NULL);
-	Printing::text(Printing::getInstance(), "Z Position: ", x, ++y, NULL);
-	Printing::int32(Printing::getInstance(), this->position.z, x + 18, y, NULL);
-	Printing::text(Printing::getInstance(), "Pixels: ", x, ++y, NULL);
-	Printing::int32(Printing::getInstance(), ObjectSpriteContainer::getTotalPixels(this), x + 18, y, NULL);
+	Printing::text("SPRITE ", x, y++, NULL);
+	Printing::text("Index: ", x, ++y, NULL);
+	Printing::int32(this->index, x + 18, y, NULL);
+	Printing::text("Class: ", x, ++y, NULL);
+	Printing::text(__GET_CLASS_NAME(this), x + 18, y, NULL);
+	Printing::text("Head:                         ", x, ++y, NULL);
+	Printing::hex(Sprite::getEffectiveHead(this), x + 18, y, 8, NULL);
+	Printing::text("Mode:", x, ++y, NULL);
+	Printing::text("OBJECT   ", x + 18, y, NULL);
+	Printing::text("Segment:                ", x, ++y, NULL);
+	Printing::int32(this->spt, x + 18, y++, NULL);
+	Printing::text("SPT value:                ", x, y, NULL);
+	Printing::int32(_vipRegisters[__SPT0 + this->spt], x + 18, y, NULL);
+	Printing::text("HEAD:                   ", x, ++y, NULL);
+	Printing::hex(_worldAttributesBaseAddress[this->index].head, x + 18, y, 4, NULL);
+	Printing::text("Total OBJs:            ", x, ++y, NULL);
+	Printing::int32(this->firstObjectIndex - this->lastObjectIndex, x + 18, y, NULL);
+	Printing::text("OBJ index range:      ", x, ++y, NULL);
+	Printing::int32(this->lastObjectIndex, x + 18, y, NULL);
+	Printing::text("-", x  + 18 + Math::getDigitsCount(this->firstObjectIndex), y, NULL);
+	Printing::int32(this->firstObjectIndex, x  + 18 + Math::getDigitsCount(this->firstObjectIndex) + 1, y, NULL);
+	Printing::text("Z Position: ", x, ++y, NULL);
+	Printing::int32(this->position.z, x + 18, y, NULL);
+	Printing::text("Pixels: ", x, ++y, NULL);
+	Printing::int32(ObjectSpriteContainer::getTotalPixels(this), x + 18, y, NULL);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

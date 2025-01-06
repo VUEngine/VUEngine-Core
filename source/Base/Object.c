@@ -57,9 +57,9 @@ static Object Object::getCast(void* object, ClassPointer targetClassGetClassMeth
 
 	if(100 < ++counter)
 	{
-		Printing::setDebugMode(Printing::getInstance());
-		Printing::text(Printing::getInstance(), "Object's address: ", 1, 15, NULL);
-		Printing::hex(Printing::getInstance(), (uint32)object, 18, 15, 8, NULL);
+		Printing::setDebugMode();
+		Printing::text("Object's address: ", 1, 15, NULL);
+		Printing::hex((uint32)object, 18, 15, 8, NULL);
 	
 		_vuengineLinkPointer = lp;
 		_vuengineStackPointer = sp;
@@ -83,9 +83,9 @@ static Object Object::getCast(void* object, ClassPointer targetClassGetClassMeth
 #ifndef __RELEASE
 	if(isDeleted(object))
 	{
-		Printing::setDebugMode(Printing::getInstance());
-		Printing::text(Printing::getInstance(), "Object's address: ", 1, 15, NULL);
-		Printing::hex(Printing::getInstance(), (uint32)object, 18, 15, 8, NULL);
+		Printing::setDebugMode();
+		Printing::text("Object's address: ", 1, 15, NULL);
+		Printing::hex((uint32)object, 18, 15, 8, NULL);
 	
 		_vuengineLinkPointer = lp;
 		_vuengineStackPointer = sp;
@@ -94,9 +94,9 @@ static Object Object::getCast(void* object, ClassPointer targetClassGetClassMeth
 
 	if(NULL == __VIRTUAL_CALL_ADDRESS(Object, getClassName, object))
 	{
-		Printing::setDebugMode(Printing::getInstance());
-		Printing::text(Printing::getInstance(), "Object's address: ", 1, 15, NULL);
-		Printing::hex(Printing::getInstance(), (uint32)object, 18, 15, 8, NULL);
+		Printing::setDebugMode();
+		Printing::text("Object's address: ", 1, 15, NULL);
+		Printing::hex((uint32)object, 18, 15, 8, NULL);
 	
 		_vuengineLinkPointer = lp;
 		_vuengineStackPointer = sp;
@@ -105,9 +105,9 @@ static Object Object::getCast(void* object, ClassPointer targetClassGetClassMeth
 
 	if(NULL == __VIRTUAL_CALL_ADDRESS(Object, getBaseClass, object))
 	{
-		Printing::setDebugMode(Printing::getInstance());
-		Printing::text(Printing::getInstance(), "Object's address: ", 1, 15, NULL);
-		Printing::hex(Printing::getInstance(), (uint32)object, 18, 15, 8, NULL);
+		Printing::setDebugMode();
+		Printing::text("Object's address: ", 1, 15, NULL);
+		Printing::hex((uint32)object, 18, 15, 8, NULL);
 	
 		_vuengineLinkPointer = lp;
 		_vuengineStackPointer = sp;

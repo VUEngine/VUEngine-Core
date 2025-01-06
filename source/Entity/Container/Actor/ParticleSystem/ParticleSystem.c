@@ -396,14 +396,14 @@ void ParticleSystem::setElapsedTime(uint32 elapsedTime)
 
 void ParticleSystem::print(int16 x, int16 y)
 {
-	Printing::text(Printing::getInstance(), "PARTICLE SYSTEM ", x, y++, NULL);
-	Printing::text(Printing::getInstance(), "Particles", x, ++y, NULL);
-	Printing::text(Printing::getInstance(), "Maximum:    ", x + 1, ++y, NULL);
-	Printing::int32(Printing::getInstance(), this->maximumNumberOfAliveParticles, x + 10, y, NULL);
-	Printing::text(Printing::getInstance(), "Spawned:    ", x + 1, ++y, NULL);
-	Printing::int32(Printing::getInstance(), VirtualList::getCount(this->particles), x + 10, y, NULL);
-	Printing::text(Printing::getInstance(), "Alive:      ", x + 1, ++y, NULL);
-	Printing::int32(Printing::getInstance(), this->aliveParticlesCount, x + 10, y, NULL);
+	Printing::text("PARTICLE SYSTEM ", x, y++, NULL);
+	Printing::text("Particles", x, ++y, NULL);
+	Printing::text("Maximum:    ", x + 1, ++y, NULL);
+	Printing::int32(this->maximumNumberOfAliveParticles, x + 10, y, NULL);
+	Printing::text("Spawned:    ", x + 1, ++y, NULL);
+	Printing::int32(VirtualList::getCount(this->particles), x + 10, y, NULL);
+	Printing::text("Alive:      ", x + 1, ++y, NULL);
+	Printing::int32(this->aliveParticlesCount, x + 10, y, NULL);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

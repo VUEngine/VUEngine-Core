@@ -131,41 +131,41 @@ singleton class KeypadManager : ListenerObject
 	static void interruptHandler();
 
 	/// Reset the manager's state.
-	void reset();
+	static void reset();
 
 	/// Enable user input.
-	void enable();
+	static void enable();
 
 	/// Disable user input.
-	void disable();
+	static void disable();
 
 	/// Check if user input is enabled.
 	/// @return True if user input is enabled
-	int32 isEnabled();
+	static int32 isEnabled();
 
 	/// Retrieve the user input during the last game frame
 	/// @param waitForStableReading: If true, wait for reading to be stable (__S_STAT)
 	/// @return User input struct with the key presses of the last game frame
-	UserInput readUserInput(bool waitForStableReading);
+	static UserInput readUserInput(bool waitForStableReading);
 
 	/// Enable the dummy key to force user input processing.
-	void enableDummyKey();
+	static void enableDummyKey();
 
 	/// Disable the dummy key to not enforce user input processing.
-	void disableDummyKey();
+	static void disableDummyKey();
 
 	/// Register the user input according to the provided flags.
 	/// @param inputToRegister: Flags to select which inputs to register and which to ignore
-	void registerInput(uint16 inputToRegister);
+	static void registerInput(uint16 inputToRegister);
 
 	/// Retrieve the accumulated sum of user inputs since the start of the program.
 	/// @return The mathematical sum of all user's presses.
-	long getAccumulatedUserInput();
+	static long getAccumulatedUserInput();
 
 	/// Print the last reads of user input.
 	/// @param x: Screen x coordinate where to print
 	/// @param y: Screen y coordinate where to print
-	void print(int32 x, int32 y);
+	static void print(int32 x, int32 y);
 }
 
 #endif

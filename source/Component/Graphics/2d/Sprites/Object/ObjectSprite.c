@@ -113,7 +113,7 @@ void ObjectSprite::registerWithManager()
 			z = __METERS_TO_PIXELS(this->transformation->position.z);
 		}
 		
-		this->objectSpriteContainer = SpriteManager::getObjectSpriteContainer(SpriteManager::getInstance(), z + this->displacement.z);
+		this->objectSpriteContainer = SpriteManager::getObjectSpriteContainer(z + this->displacement.z);
 
 		NM_ASSERT(!isDeleted(this->objectSpriteContainer), "ObjectSprite::registerWithManager: couldn't get a manager");
 		ObjectSpriteContainer::registerSprite(this->objectSpriteContainer, this);

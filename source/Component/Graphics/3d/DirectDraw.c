@@ -1181,12 +1181,12 @@ CameraFrustum DirectDraw::getFrustum()
 #ifndef __SHIPPING
 void DirectDraw::print(int16 x, int16 y)
 {
-	Printing::text(Printing::getInstance(), "DIRECT DRAW", x, y++, NULL);
+	Printing::text("DIRECT DRAW", x, y++, NULL);
 	y++;
-	Printing::text(Printing::getInstance(), "Drawn pixels:      ", x, y, NULL);
-	Printing::int32(Printing::getInstance(), this->drawnPixelsCounter, x + 14, y++, NULL);
-	Printing::text(Printing::getInstance(), "Max. pixels:       ", x, y, NULL);
-	Printing::int32(Printing::getInstance(), this->maximumPixelsToDraw, x + 14, y++, NULL);
+	Printing::text("Drawn pixels:      ", x, y, NULL);
+	Printing::int32(this->drawnPixelsCounter, x + 14, y++, NULL);
+	Printing::text("Max. pixels:       ", x, y, NULL);
+	Printing::int32(this->maximumPixelsToDraw, x + 14, y++, NULL);
 }
 #endif
 

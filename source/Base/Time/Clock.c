@@ -19,12 +19,6 @@
 #include "Clock.h"
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-// CLASS' ATTRIBUTES
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-Printing _printing __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE = NULL;
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' STATIC METHODS
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
@@ -46,7 +40,7 @@ static void Clock::printTime(uint32 milliseconds, int32 x, int32 y, const char* 
 	output[3] = secondsString[0];
 	output[4] = secondsString[1];
 
-	Printing::text(_printing, output, x, y, font);
+	Printing::text(output, x, y, font);
 
 	switch(precision)
 	{
@@ -74,7 +68,7 @@ static void Clock::printDeciseconds(uint32 milliseconds, int32 col, int32 row, c
 	uint32 deciSeconds = ((milliseconds + 50) / 100);
 	deciSeconds -= ((deciSeconds / 10) * 10);
 
-	Printing::int32(_printing, deciSeconds, col, row, font);
+	Printing::int32(deciSeconds, col, row, font);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -86,12 +80,12 @@ static void Clock::printCentiseconds(uint32 milliseconds, int32 col, int32 row, 
 
 	if(centiSeconds >= 10)
 	{
-		Printing::int32(_printing, centiSeconds, col, row, font);
+		Printing::int32(centiSeconds, col, row, font);
 	}
 	else
 	{
-		Printing::int32(_printing, 0, col, row, font);
-		Printing::int32(_printing, centiSeconds, col + 1, row, font);
+		Printing::int32(0, col, row, font);
+		Printing::int32(centiSeconds, col + 1, row, font);
 	}
 }
 
@@ -103,18 +97,18 @@ static void Clock::printMilliseconds(uint32 milliseconds, int32 col, int32 row, 
 
 	if(milliseconds >= 100)
 	{
-		Printing::int32(_printing, milliseconds, col, row, font);
+		Printing::int32(milliseconds, col, row, font);
 	}
 	else if(milliseconds >= 10)
 	{
-		Printing::int32(_printing, 0, col, row, font);
-		Printing::int32(_printing, milliseconds, col + 1, row, font);
+		Printing::int32(0, col, row, font);
+		Printing::int32(milliseconds, col + 1, row, font);
 	}
 	else
 	{
-		Printing::int32(_printing, 0, col, row, font);
-		Printing::int32(_printing, 0, col + 1, row, font);
-		Printing::int32(_printing, milliseconds, col + 2, row, font);
+		Printing::int32(0, col, row, font);
+		Printing::int32(0, col + 1, row, font);
+		Printing::int32(milliseconds, col + 2, row, font);
 	}
 }
 
@@ -128,8 +122,6 @@ static void Clock::printMilliseconds(uint32 milliseconds, int32 col, int32 row, 
 
 void Clock::constructor()
 {
-	_printing = Printing::getInstance();
-
 	// Always explicitly call the base's constructor 
 	Base::constructor();
 
@@ -143,7 +135,7 @@ void Clock::constructor()
 	this->previousMinute = 0;
 
 	// Register clock
-	ClockManager::register(ClockManager::getInstance(), this);
+	ClockManager::register(this);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -151,7 +143,7 @@ void Clock::constructor()
 void Clock::destructor()
 {
 	// Unregister the clock
-	ClockManager::unregister(ClockManager::getInstance(), this);
+	ClockManager::unregister(this);
 
 	// Always explicitly call the base's destructor 
 	Base::destructor();

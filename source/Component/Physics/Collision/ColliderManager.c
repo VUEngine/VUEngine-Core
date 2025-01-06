@@ -329,33 +329,33 @@ void ColliderManager::hideColliders()
 #ifndef __SHIPPING
 void ColliderManager::print(int32 x, int32 y)
 {
-	Printing::resetCoordinates(Printing::getInstance());
+	Printing::resetCoordinates();
 
-	Printing::text(Printing::getInstance(), "COLLISION MANAGER", x, y++, NULL);
-	Printing::text(Printing::getInstance(), "COLLIDERS", x, ++y, NULL);
+	Printing::text("COLLISION MANAGER", x, y++, NULL);
+	Printing::text("COLLIDERS", x, ++y, NULL);
 	y++;
-	Printing::text(Printing::getInstance(), "REGISTERED:     ", x, ++y, NULL);
-	Printing::int32(Printing::getInstance(), VirtualList::getCount(this->components), x + 12, y, NULL);
-	Printing::text(Printing::getInstance(), "ENABLED:          ", x, ++y, NULL);
-	Printing::int32(Printing::getInstance(), ColliderManager::getNumberOfEnabledColliders(this), x + 12, y, NULL);
-	Printing::text(Printing::getInstance(), "MOVING:          ", x, ++y, NULL);
-	Printing::int32(Printing::getInstance(), ColliderManager::getNumberOfMovingEnabledColliders(this), x + 12, y++, NULL);
+	Printing::text("REGISTERED:     ", x, ++y, NULL);
+	Printing::int32(VirtualList::getCount(this->components), x + 12, y, NULL);
+	Printing::text("ENABLED:          ", x, ++y, NULL);
+	Printing::int32(ColliderManager::getNumberOfEnabledColliders(this), x + 12, y, NULL);
+	Printing::text("MOVING:          ", x, ++y, NULL);
+	Printing::int32(ColliderManager::getNumberOfMovingEnabledColliders(this), x + 12, y++, NULL);
 
 #ifdef __SHOW_PHYSICS_PROFILING
-	Printing::text(Printing::getInstance(), "STATISTICS (PER CYCLE)", x, ++y, NULL);
+	Printing::text("STATISTICS (PER CYCLE)", x, ++y, NULL);
 	y++;
-	Printing::text(Printing::getInstance(), "AVERAGE", x, ++y, NULL);
-	Printing::text(Printing::getInstance(), "CHECKS:          ", x, ++y, NULL);
-	Printing::int32(Printing::getInstance(), _checkCycles ? _collisionChecks / _checkCycles : 0, x + 12, y, NULL);
-	Printing::text(Printing::getInstance(), "COLLISIONS:      ", x, ++y, NULL);
-	Printing::int32(Printing::getInstance(), _checkCycles ? _collisions / _checkCycles : 0, x + 12, y++, NULL);
-	Printing::text(Printing::getInstance(), "LAST CYCLE", x, ++y, NULL);
-	Printing::text(Printing::getInstance(), "PRODUCTS:          ", x, ++y, NULL);
-	Printing::int32(Printing::getInstance(), _lastCycleCheckProducts, x + 12, y, NULL);
-	Printing::text(Printing::getInstance(), "CHECKS:          ", x, ++y, NULL);
-	Printing::int32(Printing::getInstance(), _lastCycleCollisionChecks, x + 12, y, NULL);
-	Printing::text(Printing::getInstance(), "COLLISIONS:      ", x, ++y, NULL);
-	Printing::int32(Printing::getInstance(), _lastCycleCollisions, x + 12, y, NULL);
+	Printing::text("AVERAGE", x, ++y, NULL);
+	Printing::text("CHECKS:          ", x, ++y, NULL);
+	Printing::int32(_checkCycles ? _collisionChecks / _checkCycles : 0, x + 12, y, NULL);
+	Printing::text("COLLISIONS:      ", x, ++y, NULL);
+	Printing::int32(_checkCycles ? _collisions / _checkCycles : 0, x + 12, y++, NULL);
+	Printing::text("LAST CYCLE", x, ++y, NULL);
+	Printing::text("PRODUCTS:          ", x, ++y, NULL);
+	Printing::int32(_lastCycleCheckProducts, x + 12, y, NULL);
+	Printing::text("CHECKS:          ", x, ++y, NULL);
+	Printing::int32(_lastCycleCollisionChecks, x + 12, y, NULL);
+	Printing::text("COLLISIONS:      ", x, ++y, NULL);
+	Printing::int32(_lastCycleCollisions, x + 12, y, NULL);
 #endif
 }
 #endif

@@ -112,7 +112,7 @@ void Sound::destructor()
 {
 	this->soundSpec = NULL;
 
-	MessageDispatcher::discardAllDelayedMessagesFromSender(MessageDispatcher::getInstance(), ListenerObject::safeCast(this));
+	MessageDispatcher::discardAllDelayedMessagesFromSender(ListenerObject::safeCast(this));
 
 	if(!isDeleted(this->soundTracks))
 	{

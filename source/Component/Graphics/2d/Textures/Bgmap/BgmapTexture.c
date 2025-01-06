@@ -25,7 +25,6 @@
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 static BgmapTextureManager _bgmapTextureManager = NULL;
-static SpriteManager _spriteManager = NULL;
 static const uint16 _emptyTextureRow[64] = {0};
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -53,10 +52,6 @@ void BgmapTexture::constructor(BgmapTextureSpec* bgmapTextureSpec, uint16 id)
 		_bgmapTextureManager = BgmapTextureManager::getInstance();
 	}
 
-	if(NULL == _spriteManager)
-	{
-		_spriteManager = SpriteManager::getInstance();
-	}
 }	
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

@@ -82,20 +82,11 @@ singleton class VUEngine : ListenerObject
 	/// Global timer
 	Clock clock;
 
-	/// Clocks manager
-	ClockManager clockManager;
-
-	/// Keypad manager
-	KeypadManager keypadManager;
-
 	/// VIP manager
 	VIPManager vipManager;
 
 	/// Wireframe manager
 	WireframeManager wireframeManager;
-
-	/// Spritems manager
-	SpriteManager spriteManager;
 
 	/// Timer manager
 	TimerManager timerManager;
@@ -106,12 +97,6 @@ singleton class VUEngine : ListenerObject
 	/// Sound manager
 	SoundManager soundManager;
 
-	/// Frame manager
-	FrameRate frameRate;
-
-	/// Game's camera
-	Camera camera;
-	
 	/// Saved data manager
 	ListenerObject saveDataManager;
 

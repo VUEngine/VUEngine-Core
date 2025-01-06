@@ -115,8 +115,8 @@ void Debug::update()
 void Debug::show()
 {
 	Printing::clear(Printing::getInstance());
-	Printing::setCoordinates(Printing::getInstance(), 0, 0, -64, -2);
-	SpriteManager::showAllSprites(SpriteManager::getInstance(), NULL, true);
+	Printing::setCoordinates(0, 0, -64, -2);
+	SpriteManager::showAllSprites(NULL, true);
 	SpriteManager::computeTotalPixelsDrawn(SpriteManager::getInstance());
 
 	Debug::showPage(this, 0);
@@ -128,7 +128,7 @@ void Debug::hide()
 {
 	ColliderManager::hideColliders(GameState::getColliderManager(VUEngine::getPreviousState(VUEngine::getInstance())));
 	Printing::clear(Printing::getInstance());
-	SpriteManager::showAllSprites(SpriteManager::getInstance(), NULL, true);
+	SpriteManager::showAllSprites(NULL, true);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -238,14 +238,14 @@ uint8 Debug::getCurrentPageNumber()
 
 void Debug::setBlackBackground()
 {
-	SpriteManager::hideAllSprites(SpriteManager::getInstance(), NULL, false);
+	SpriteManager::hideAllSprites(NULL, false);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Debug::showPreviousPage()
 {
-	SpriteManager::showAllSprites(SpriteManager::getInstance(), NULL, true);
+	SpriteManager::showAllSprites(NULL, true);
 
 	this->currentPage = VirtualNode::getPrevious(this->currentPage);
 
@@ -261,7 +261,7 @@ void Debug::showPreviousPage()
 
 void Debug::showNextPage()
 {
-	SpriteManager::showAllSprites(SpriteManager::getInstance(), NULL, true);
+	SpriteManager::showAllSprites(NULL, true);
 
 	this->currentPage = this->currentPage->next;
 
@@ -317,18 +317,18 @@ void Debug::printHeader()
 {
 	Printing::text
 	(
-		Printing::getInstance(), "\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08"
+		"\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08"
 		"\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08", 0, 0, NULL
 	);
 
-	Printing::text(Printing::getInstance(), " DEBUG SYSTEM ", 1, 0, NULL);
-	Printing::text(Printing::getInstance(), "   /   ", 16, 0, NULL);
+	Printing::text(" DEBUG SYSTEM ", 1, 0, NULL);
+	Printing::text("   /   ", 16, 0, NULL);
 	Printing::int32
 	(
-		Printing::getInstance(), Debug::getCurrentPageNumber(this), Debug::getCurrentPageNumber(this) < 10 ? 18 : 17, 0, NULL
+		Debug::getCurrentPageNumber(this), Debug::getCurrentPageNumber(this) < 10 ? 18 : 17, 0, NULL
 	);
 	
-	Printing::int32(Printing::getInstance(), VirtualList::getCount(this->pages), 20, 0, NULL);
+	Printing::int32(VirtualList::getCount(this->pages), 20, 0, NULL);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -338,10 +338,10 @@ void Debug::showPage(int32 increment)
 	if(this->currentPage && this->currentPage->data)
 	{
 		Printing::clear(Printing::getInstance());
-		SpriteManager::showAllSprites(SpriteManager::getInstance(), NULL, true);
+		SpriteManager::showAllSprites(NULL, true);
 
 		Debug::printHeader(this);
-		Printing::text(Printing::getInstance(), " \x1E\x1C\x1D ", 42, 0, NULL);
+		Printing::text(" \x1E\x1C\x1D ", 42, 0, NULL);
 
 		Debug::setBlackBackground(this);
 
@@ -362,7 +362,7 @@ void Debug::showSubPage(int32 increment)
 		Printing::clear(Printing::getInstance());
 
 		Debug::printHeader(this);
-		Printing::text(Printing::getInstance(), " \x1E\x1A\x1B\x1C\x1D ", 40, 0, NULL);
+		Printing::text(" \x1E\x1A\x1B\x1C\x1D ", 40, 0, NULL);
 
 		((void (*)(Debug, int32, int32, int32))VirtualNode::getData(this->currentSubPage))(this, increment, 1, 2);
 	}
@@ -428,36 +428,36 @@ void Debug::generalStatusPage(int32 increment __attribute__ ((unused)), int32 x 
 {
 	Debug::removeSubPages(this);
 
-	Printing::text(Printing::getInstance(), "GAME STATUS", 1, y++, NULL);
-	Printing::text(Printing::getInstance(), "Current State:", 1, ++y, NULL);
-	Printing::text(Printing::getInstance(), __GET_CLASS_NAME(VUEngine::getPreviousState(VUEngine::getInstance())), 20, y, NULL);
+	Printing::text("GAME STATUS", 1, y++, NULL);
+	Printing::text("Current State:", 1, ++y, NULL);
+	Printing::text(__GET_CLASS_NAME(VUEngine::getPreviousState(VUEngine::getInstance())), 20, y, NULL);
 
-	Printing::text(Printing::getInstance(), "Save Data Manager:", 1, ++y, NULL);
+	Printing::text("Save Data Manager:", 1, ++y, NULL);
 	if(VUEngine::getSaveDataManager(VUEngine::getInstance()))
 	{
 		Printing::text
 		(
-			Printing::getInstance(), __GET_CLASS_NAME(VUEngine::getSaveDataManager(VUEngine::getInstance())), 20, y, NULL
+			__GET_CLASS_NAME(VUEngine::getSaveDataManager(VUEngine::getInstance())), 20, y, NULL
 		);
 	}
 	else
 	{
-		Printing::text(Printing::getInstance(), "none", 20, y, NULL);
+		Printing::text("none", 20, y, NULL);
 	}
 /*
-	Printing::text(Printing::getInstance(), "Active Language:", 1, ++y, NULL);
-	Printing::text(Printing::getInstance(), I18n::getActiveLanguageName(I18n::getInstance()), 20, y, NULL);
+	Printing::text("Active Language:", 1, ++y, NULL);
+	Printing::text(I18n::getActiveLanguageName(I18n::getInstance()), 20, y, NULL);
 */
 	y += 3;
 
-	Printing::text(Printing::getInstance(), "CLOCKS STATUS", 1, y++, NULL);
-	Printing::text(Printing::getInstance(), "General clock time: ", 1, ++y, NULL);
+	Printing::text("CLOCKS STATUS", 1, y++, NULL);
+	Printing::text("General clock time: ", 1, ++y, NULL);
 	Clock::print(VUEngine::getClock(VUEngine::getInstance()), 26, y, NULL);
-	Printing::text(Printing::getInstance(), "In game clock's time: ", 1, ++y, NULL);
+	Printing::text("In game clock's time: ", 1, ++y, NULL);
 	Clock::print(GameState::getMessagingClock(VUEngine::getPreviousState(VUEngine::getInstance())), 26, y, NULL);
-	Printing::text(Printing::getInstance(), "Animations clock's time: ", 1, ++y, NULL);
+	Printing::text("Animations clock's time: ", 1, ++y, NULL);
 	Clock::print(GameState::getLogicsClock(VUEngine::getPreviousState(VUEngine::getInstance())), 26, y, NULL);
-	Printing::text(Printing::getInstance(), "Physics clock's time: ", 1, ++y, NULL);
+	Printing::text("Physics clock's time: ", 1, ++y, NULL);
 	Clock::print(GameState::getPhysicsClock(VUEngine::getPreviousState(VUEngine::getInstance())), 26, y, NULL);
 	y+=3;
 }
@@ -681,26 +681,26 @@ void Debug::printClassSizes(ClassSizeData* classesSizeData, int32 count, int32 x
 {
 	int32 columnIncrement = 20;
 
-	Printing::text(Printing::getInstance(), "CLASSES MEMORY USAGE (B) ", x, y++, NULL);
+	Printing::text("CLASSES MEMORY USAGE (B) ", x, y++, NULL);
 
 	if(message)
 	{
-		Printing::text(Printing::getInstance(), message, x, ++y, NULL);
+		Printing::text(message, x, ++y, NULL);
 		y++;
 	}
 
-	Printing::text(Printing::getInstance(), "Name                Size", x, ++y, NULL);
+	Printing::text("Name                Size", x, ++y, NULL);
 	Printing::text
 	(
-		Printing::getInstance(), "\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08", 
+		"\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08", 
 		x, ++y, NULL
 	);
 
 	int32 i = 0;
 	for(; classesSizeData[i].classSizeFunction && (0 == count || i < count); i++)
 	{
-		Printing::text(Printing::getInstance(), classesSizeData[i].name, x, ++y, NULL);
-		Printing::int32(Printing::getInstance(), ((int32 (*)(void))classesSizeData[i].classSizeFunction)(), x + columnIncrement, y, NULL);
+		Printing::text(classesSizeData[i].name, x, ++y, NULL);
+		Printing::int32(((int32 (*)(void))classesSizeData[i].classSizeFunction)(), x + columnIncrement, y, NULL);
 	}
 }
 #endif
@@ -772,15 +772,15 @@ void Debug::charMemoryShowStatus(int32 increment __attribute__ ((unused)), int32
 	}
 	else if(charSegments > this->charSegment)
 	{
-		Printing::text(Printing::getInstance(), "CHAR MEMORY INSPECTOR", x, y++, NULL);
-		Printing::text(Printing::getInstance(), "Segment:  / ", x, ++y, NULL);
-		Printing::int32(Printing::getInstance(), this->charSegment + 1, x + 9, y, NULL);
-		Printing::int32(Printing::getInstance(), charSegments, x + 11, y, NULL);
-		Printing::text(Printing::getInstance(), "Chars:       -    ", x, ++y, NULL);
-		Printing::int32(Printing::getInstance(), this->charSegment * __CHARS_PER_SEGMENT_TO_SHOW, x + 9, y, NULL);
+		Printing::text("CHAR MEMORY INSPECTOR", x, y++, NULL);
+		Printing::text("Segment:  / ", x, ++y, NULL);
+		Printing::int32(this->charSegment + 1, x + 9, y, NULL);
+		Printing::int32(charSegments, x + 11, y, NULL);
+		Printing::text("Chars:       -    ", x, ++y, NULL);
+		Printing::int32(this->charSegment * __CHARS_PER_SEGMENT_TO_SHOW, x + 9, y, NULL);
 		Printing::int32
 		(
-			Printing::getInstance(), this->charSegment * __CHARS_PER_SEGMENT_TO_SHOW + __CHARS_PER_SEGMENT_TO_SHOW - 1, x + 14, y, NULL
+			this->charSegment * __CHARS_PER_SEGMENT_TO_SHOW + __CHARS_PER_SEGMENT_TO_SHOW - 1, x + 14, y, NULL
 		);
 
 		Debug::charMemoryShowMemory(this, increment, x, y);
@@ -805,19 +805,19 @@ void Debug::charMemoryShowMemory(int32 increment __attribute__ ((unused)), int32
 	// Print box
 	Printing::text
 	(
-		Printing::getInstance(), "\x03\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08"
+		"\x03\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08"
 		"\x08\x08\x08\x08\x08\x08\x08\x08\x04", 1, yOffset-1, NULL
 	);
 	
 	Printing::text
 	(
-		Printing::getInstance(), "\x05\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08"
+		"\x05\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08"
 		"\x08\x08\x08\x08\x08\x08\x08\x08\x06", 1, yOffset+16, NULL
 	);
 
 	for(i = 0; i < __CHARS_PER_SEGMENT_TO_SHOW / __CHARS_PER_ROW_TO_SHOW && i < __SCREEN_HEIGHT / 8; i++)
 	{
-		Printing::text(Printing::getInstance(), "\x07                                \x07", 1, yOffset+i, NULL);
+		Printing::text("\x07                                \x07", 1, yOffset+i, NULL);
 	}
 
 	const HWORD charMemoryMap[] =
@@ -898,16 +898,16 @@ void Debug::showBgmapSegment()
 		{
 			Printing::text
 			(
-				Printing::getInstance(), " \x03\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08"
+				" \x03\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08"
 				"\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08", 0, yOffset, NULL
 			);
 
-			Printing::text(Printing::getInstance(), "                                                ", 0, 26, NULL);
+			Printing::text("                                                ", 0, 26, NULL);
 
         	for(i = yOffset + 1; i < 28; i++)
         	{
-        		Printing::text(Printing::getInstance(), " \x07", 0, i, NULL);
-        		Printing::text(Printing::getInstance(), " ", 46, i, NULL);
+        		Printing::text(" \x07", 0, i, NULL);
+        		Printing::text(" ", 46, i, NULL);
         	}
 
 			topBorder = 5;
@@ -922,16 +922,16 @@ void Debug::showBgmapSegment()
 		{
 			Printing::text
 			(
-				Printing::getInstance(), "\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08"
+				"\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08"
 				"\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x04 ", 0, yOffset, NULL
 			);
 
-			Printing::text(Printing::getInstance(), "                                                ", 0, 26, NULL);
+			Printing::text("                                                ", 0, 26, NULL);
 
         	for(i = yOffset + 1; i < 28; i++)
         	{
-        		Printing::text(Printing::getInstance(), " ", 1, i, NULL);
-        		Printing::text(Printing::getInstance(), "\x07 ", 46, i, NULL);
+        		Printing::text(" ", 1, i, NULL);
+        		Printing::text("\x07 ", 46, i, NULL);
         	}
 
 			topBorder = 5;
@@ -944,13 +944,13 @@ void Debug::showBgmapSegment()
 		}
 		case 2:
 		{
-			Printing::text(Printing::getInstance(), "                                                ", 0, yOffset, NULL);
-			Printing::text(Printing::getInstance(), "                                                ", 0, 26, NULL);
+			Printing::text("                                                ", 0, yOffset, NULL);
+			Printing::text("                                                ", 0, 26, NULL);
 
         	for(i = yOffset; i < 28; i++)
         	{
-        		Printing::text(Printing::getInstance(), " \x07", 0, i, NULL);
-        		Printing::text(Printing::getInstance(), " ", 46, i, NULL);
+        		Printing::text(" \x07", 0, i, NULL);
+        		Printing::text(" ", 46, i, NULL);
         	}
 
 			topBorder = 4;
@@ -963,13 +963,13 @@ void Debug::showBgmapSegment()
 		}
 		case 3:
 		{
-			Printing::text(Printing::getInstance(), "                                                ", 0, yOffset, NULL);
-			Printing::text(Printing::getInstance(), "                                                ", 0, 26, NULL);
+			Printing::text("                                                ", 0, yOffset, NULL);
+			Printing::text("                                                ", 0, 26, NULL);
 
         	for(i = yOffset; i < 28; i++)
         	{
-        		Printing::text(Printing::getInstance(), " ", 1, i, NULL);
-        		Printing::text(Printing::getInstance(), "\x07 ", 46, i, NULL);
+        		Printing::text(" ", 1, i, NULL);
+        		Printing::text("\x07 ", 46, i, NULL);
         	}
 
 			topBorder = 4;
@@ -982,19 +982,19 @@ void Debug::showBgmapSegment()
 		}
 		case 4:
 		{
-			Printing::text(Printing::getInstance(), "                                                ", 0, yOffset, NULL);
+			Printing::text("                                                ", 0, yOffset, NULL);
 			Printing::text
 			(
-				Printing::getInstance(), " \x05\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08"
+				" \x05\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08"
 				"\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08", 0, 26, NULL
 			);
 
-			Printing::text(Printing::getInstance(), "                                                ", 0, 27, NULL);
+			Printing::text("                                                ", 0, 27, NULL);
 
         	for(i = yOffset; i < 26; i++)
         	{
-        		Printing::text(Printing::getInstance(), " \x07", 0, i, NULL);
-        		Printing::text(Printing::getInstance(), " ", 46, i, NULL);
+        		Printing::text(" \x07", 0, i, NULL);
+        		Printing::text(" ", 46, i, NULL);
         	}
 
 			topBorder = 4;
@@ -1007,19 +1007,19 @@ void Debug::showBgmapSegment()
 		}
 		case 5:
 		{
-			Printing::text(Printing::getInstance(), "                                                ", 0, yOffset, NULL);
+			Printing::text("                                                ", 0, yOffset, NULL);
 			Printing::text
 			(
-				Printing::getInstance(), "\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08"
+				"\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08"
 				"\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x06 ", 0, 26, NULL
 			);
 
-			Printing::text(Printing::getInstance(), "                                                ", 0, 27, NULL);
+			Printing::text("                                                ", 0, 27, NULL);
 
         	for(i = yOffset; i < 26; i++)
         	{
-        		Printing::text(Printing::getInstance(), " ", 1, i, NULL);
-        		Printing::text(Printing::getInstance(), "\x07 ", 46, i, NULL);
+        		Printing::text(" ", 1, i, NULL);
+        		Printing::text("\x07 ", 46, i, NULL);
         	}
 
 			topBorder = 4;
@@ -1071,9 +1071,9 @@ void Debug::texturesShowStatus(int32 increment, int32 x, int32 y)
 	}
 	else if(BgmapTextureManager::getAvailableBgmapSegmentsForTextures(BgmapTextureManager::getInstance()) > this->bgmapSegment)
 	{
-		Printing::text(Printing::getInstance(), " \x1E\x1A\x1B\x1C\x1D\x1F\x1A\x1B\x1C\x1D ", 35, 0, NULL);
-		Printing::text(Printing::getInstance(), "BGMAP TEXTURES INSPECTOR           Segment: ", x, y, NULL);
-		Printing::int32(Printing::getInstance(), this->bgmapSegment, x + 44, y, NULL);
+		Printing::text(" \x1E\x1A\x1B\x1C\x1D\x1F\x1A\x1B\x1C\x1D ", 35, 0, NULL);
+		Printing::text("BGMAP TEXTURES INSPECTOR           Segment: ", x, y, NULL);
+		Printing::int32(this->bgmapSegment, x + 44, y, NULL);
 
 		this->bgmapSegmentDiplayedSection = 0;
 
@@ -1119,18 +1119,18 @@ void Debug::objectsShowStatus(int32 increment, int32 x, int32 y)
 	if(-1 == this->objectSegment)
 	{
 		Debug::setBlackBackground(this);
-		SpriteManager::printObjectSpriteContainersStatus(SpriteManager::getInstance(), x, y);
+		SpriteManager::printObjectSpriteContainersStatus(x, y);
 	}
 	else if(__TOTAL_OBJECT_SEGMENTS > this->objectSegment)
 	{
-		Printing::text(Printing::getInstance(), "OBJECTS INSPECTOR", x, y++, NULL);
+		Printing::text("OBJECTS INSPECTOR", x, y++, NULL);
 
 		ObjectSpriteContainer objectSpriteContainer = 
-			SpriteManager::getObjectSpriteContainerBySPT(SpriteManager::getInstance(), this->objectSegment);
+			SpriteManager::getObjectSpriteContainerBySPT(this->objectSegment);
 
 		while(NULL == objectSpriteContainer && (this->objectSegment >= 0 && __TOTAL_OBJECT_SEGMENTS > this->objectSegment))
 		{
-			objectSpriteContainer = SpriteManager::getObjectSpriteContainerBySPT(SpriteManager::getInstance(), this->objectSegment);
+			objectSpriteContainer = SpriteManager::getObjectSpriteContainerBySPT(this->objectSegment);
 
 			if(!objectSpriteContainer)
 			{
@@ -1140,21 +1140,21 @@ void Debug::objectsShowStatus(int32 increment, int32 x, int32 y)
 
 		if(objectSpriteContainer)
 		{
-			SpriteManager::hideAllSprites(SpriteManager::getInstance(), Sprite::safeCast(objectSpriteContainer), false);
+			SpriteManager::hideAllSprites(Sprite::safeCast(objectSpriteContainer), false);
 			ObjectSpriteContainer::print(objectSpriteContainer, x, ++y);
 		}
 		else
 		{
 			this->objectSegment = -1;
 			Debug::setBlackBackground(this);
-			SpriteManager::printObjectSpriteContainersStatus(SpriteManager::getInstance(), x, y);
+			SpriteManager::printObjectSpriteContainersStatus(x, y);
 		}
 	}
 	else
 	{
 		this->objectSegment = -1;
 		Debug::setBlackBackground(this);
-		SpriteManager::printObjectSpriteContainersStatus(SpriteManager::getInstance(), x, y);
+		SpriteManager::printObjectSpriteContainersStatus(x, y);
 	}
 }
 
@@ -1191,14 +1191,14 @@ void Debug::spritesShowStatus(int32 increment, int32 x, int32 y)
 	if(numberOfSprites == this->spriteIndex)
 	{
 		Debug::setBlackBackground(this);
-		SpriteManager::print(SpriteManager::getInstance(), x, y, false);
+		SpriteManager::print(x, y, false);
 	}
 	else if(0 <= this->spriteIndex && this->spriteIndex < numberOfSprites)
 	{
-		Sprite sprite = SpriteManager::getSpriteAtIndex(SpriteManager::getInstance(), this->spriteIndex);
-		SpriteManager::hideAllSprites(SpriteManager::getInstance(), sprite, false);
+		Sprite sprite = SpriteManager::getSpriteAtIndex(this->spriteIndex);
+		SpriteManager::hideAllSprites(sprite, false);
 		SpriteManager::renderAndDraw(SpriteManager::getInstance());
-		Printing::text(Printing::getInstance(), "SPRITES INSPECTOR", x, y++, NULL);
+		Printing::text("SPRITES INSPECTOR", x, y++, NULL);
 		Sprite::print(sprite, x, ++y);
 	}
 	else
@@ -1206,7 +1206,7 @@ void Debug::spritesShowStatus(int32 increment, int32 x, int32 y)
 		this->spriteIndex = numberOfSprites;
 
 		Debug::setBlackBackground(this);
-		SpriteManager::print(SpriteManager::getInstance(), x, y, false);
+		SpriteManager::print(x, y, false);
 	}
 }
 
@@ -1238,9 +1238,9 @@ void Debug::physicStatusShowStatistics(int32 increment __attribute__ ((unused)),
 
 void Debug::physicStatusShowColliders(int32 increment __attribute__ ((unused)), int32 x, int32 y)
 {
-	Printing::text(Printing::getInstance(), "COLLISION SHAPES", x, y++, NULL);
+	Printing::text("COLLISION SHAPES", x, y++, NULL);
 
-	SpriteManager::showAllSprites(SpriteManager::getInstance(), NULL, true);
+	SpriteManager::showAllSprites(NULL, true);
 	Debug::dimmGame(this);
 	ColliderManager::showColliders(GameState::getColliderManager(VUEngine::getPreviousState(VUEngine::getInstance())));
 }
@@ -1296,20 +1296,20 @@ void Debug::showSramPage(int32 increment __attribute__ ((unused)), int32 x __att
 	uint16* startAddress = (uint16*)&_sramBssEnd;
 
 	// Print status header
-	Printing::text(Printing::getInstance(), "SRAM STATUS", 1, y++, NULL);
-	Printing::text(Printing::getInstance(), "Total (kb):", 1, ++y, NULL);
-	Printing::int32(Printing::getInstance(), __TOTAL_SAVE_RAM >> 10, 13, y, NULL);
+	Printing::text("SRAM STATUS", 1, y++, NULL);
+	Printing::text("Total (kb):", 1, ++y, NULL);
+	Printing::int32(__TOTAL_SAVE_RAM >> 10, 13, y, NULL);
 	y+=2;
 
 	// Print inspector header
-	Printing::text(Printing::getInstance(), "SRAM INSPECTOR", 1, ++y, NULL);
-	Printing::text(Printing::getInstance(), "Page     /", 33, y, NULL);
-	Printing::int32(Printing::getInstance(), totalPages, 43, y, NULL);
-	Printing::int32(Printing::getInstance(), this->sramPage + 1, 38, y++, NULL);
-	Printing::text(Printing::getInstance(), "Address     00 01 02 03 04 05 06 07 Word", 1, ++y, NULL);
+	Printing::text("SRAM INSPECTOR", 1, ++y, NULL);
+	Printing::text("Page     /", 33, y, NULL);
+	Printing::int32(totalPages, 43, y, NULL);
+	Printing::int32(this->sramPage + 1, 38, y++, NULL);
+	Printing::text("Address     00 01 02 03 04 05 06 07 Word", 1, ++y, NULL);
 	Printing::text
 	(
-		Printing::getInstance(), "\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08"
+		"\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08"
 		"\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08", 1, ++y, NULL
 	);
 
@@ -1317,8 +1317,8 @@ void Debug::showSramPage(int32 increment __attribute__ ((unused)), int32 x __att
 	for(i = 0; i < 16; i++)
 	{
 		// Print address
-		Printing::text(Printing::getInstance(), "0x00000000: ", 1, ++y, NULL);
-		Printing::hex(Printing::getInstance(), (int32)startAddress + (this->sramPage << 7) + (i << 3), 3, y, 8, NULL);
+		Printing::text("0x00000000: ", 1, ++y, NULL);
+		Printing::hex((int32)startAddress + (this->sramPage << 7) + (i << 3), 3, y, 8, NULL);
 
 		// Values
 		for(j = 0; j < 8; j++)
@@ -1327,7 +1327,7 @@ void Debug::showSramPage(int32 increment __attribute__ ((unused)), int32 x __att
 			value = startAddress[(this->sramPage << 7) + (i << 3) + j];
 
 			// Print byte
-			Printing::hex(Printing::getInstance(), value, 13 + (j*3), y, 2, NULL);
+			Printing::hex(value, 13 + (j*3), y, 2, NULL);
 
 			// Add current character to line word
 			// If outside of extended ascii range, print whitespace
@@ -1339,14 +1339,14 @@ void Debug::showSramPage(int32 increment __attribute__ ((unused)), int32 x __att
 		word[8] = (char)0;
 
 		// Print word
-		Printing::text(Printing::getInstance(), word, 37, y, NULL);
+		Printing::text(word, 37, y, NULL);
 
 		// Print scroll bar
-		Printing::text(Printing::getInstance(), __CHAR_MEDIUM_RED_BOX, 46, y, NULL);
+		Printing::text(__CHAR_MEDIUM_RED_BOX, 46, y, NULL);
 	}
 
 	// Mark scroll bar position
-	Printing::text(Printing::getInstance(), __CHAR_BRIGHT_RED_BOX, 46, y - 15 + (this->sramPage / (totalPages / 16)), NULL);
+	Printing::text(__CHAR_BRIGHT_RED_BOX, 46, y - 15 + (this->sramPage / (totalPages / 16)), NULL);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

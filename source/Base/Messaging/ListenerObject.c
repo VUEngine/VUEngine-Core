@@ -52,7 +52,7 @@ void ListenerObject::destructor()
 	ASSERT(!isDeleted(this), "ListenerObject::destructor: already deleted this");
 	NM_ASSERT(0 == this->eventFirings, "ListenerObject::destructor: called during event firing");
 
-	MessageDispatcher::discardAllDelayedMessages(MessageDispatcher::getInstance(), ListenerObject::safeCast(this));
+	MessageDispatcher::discardAllDelayedMessages(ListenerObject::safeCast(this));
 	ListenerObject::removeAllEventListeners(this);
 
 	// Always explicitly call the base's destructor 
@@ -319,14 +319,14 @@ void ListenerObject::fireEvent(uint16 eventCode)
 				if(isDeleted(this))
 				{
 #ifndef __RELEASE
-					Printing::setDebugMode(Printing::getInstance());
-					Printing::clear(Printing::getInstance());
-					Printing::text(Printing::getInstance(), "Class:    ", 1, 12, NULL);
-					Printing::text(Printing::getInstance(), __GET_CLASS_NAME(this), 13, 12, NULL);
-					Printing::text(Printing::getInstance(), "Method:    ", 1, 13, NULL);
-					Printing::hex(Printing::getInstance(), (int32)event->callback, 13, 13, 8, NULL);
-					Printing::text(Printing::getInstance(), "Event code: ", 1, 14, NULL);
-					Printing::int32(Printing::getInstance(), event->code, 13, 14, NULL);
+					Printing::setDebugMode();
+					Printing::clear();
+					Printing::text("Class:    ", 1, 12, NULL);
+					Printing::text(__GET_CLASS_NAME(this), 13, 12, NULL);
+					Printing::text("Method:    ", 1, 13, NULL);
+					Printing::hex((int32)event->callback, 13, 13, 8, NULL);
+					Printing::text("Event code: ", 1, 14, NULL);
+					Printing::int32(event->code, 13, 14, NULL);
 					NM_ASSERT(!isDeleted(this), "ListenerObject::fireEvent: deleted during event listening");
 #endif
 					break;
@@ -371,16 +371,16 @@ void ListenerObject::sendMessageToSelf(uint32 message, uint32 delay, uint32 rand
 
 void ListenerObject::discardAllMessages()
 {
-	MessageDispatcher::discardAllDelayedMessagesFromSender(MessageDispatcher::getInstance(), ListenerObject::safeCast(this));
-	MessageDispatcher::discardAllDelayedMessagesForReceiver(MessageDispatcher::getInstance(), ListenerObject::safeCast(this));
+	MessageDispatcher::discardAllDelayedMessagesFromSender(ListenerObject::safeCast(this));
+	MessageDispatcher::discardAllDelayedMessagesForReceiver(ListenerObject::safeCast(this));
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void ListenerObject::discardMessages(uint32 message)
 {
-	MessageDispatcher::discardDelayedMessagesFromSender(MessageDispatcher::getInstance(), ListenerObject::safeCast(this), message);
-	MessageDispatcher::discardDelayedMessagesForReceiver(MessageDispatcher::getInstance(), ListenerObject::safeCast(this), message);
+	MessageDispatcher::discardDelayedMessagesFromSender(ListenerObject::safeCast(this), message);
+	MessageDispatcher::discardDelayedMessagesForReceiver(ListenerObject::safeCast(this), message);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

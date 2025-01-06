@@ -130,33 +130,33 @@ singleton class ParamTableManager : Object
 	static ParamTableManager getInstance();
 
 	/// Reset the animation coordinator factory's state.
-	void reset();
+	static void reset();
 
 	/// Configure the param table space
 	/// @param availableBgmapSegmentsForParamTable: Number of available BGMAP segments for the param tables
-	void setup(int32 availableBgmapSegmentsForParamTable);
+	static void setup(int32 availableBgmapSegmentsForParamTable);
 
 	/// Allocate a param table for the provided sprite
 	/// @param bgmapSprite: Sprite for which a param table will be allocated
-	uint32 allocate(BgmapSprite bgmapSprite);
+	static uint32 allocate(BgmapSprite bgmapSprite);
 
 	/// Free the param table allocated for the provided sprite.
 	/// @param bgmapSprite: Sprite whose param table has to be freed
-	void free(BgmapSprite bgmapSprite);
+	static void free(BgmapSprite bgmapSprite);
 
 	/// Defragment param table space.
 	/// @param deferred: Flag to defragment param table memory over time
-	void defragment(bool deferred);
+	static void defragment(bool deferred);
 
 	/// Retrieve the param table displacement in bytes used to keep track
 	/// of the start address of param table space.
 	/// @return Displacement in bytes to keep track of the start address of param table space
-	uint32 getParamTableBase();
+	static uint32 getParamTableBase();
 
 	/// Print the information about param table space usage.
 	/// @param x: Screen x coordinate where to print
 	/// @param y: Screen y coordinate where to print
-	void print(int32 x, int32 y);
+	static void print(int32 x, int32 y);
 }
 
 #endif

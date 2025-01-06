@@ -198,8 +198,9 @@ bool Particle::isVisible()
 
 void Particle::playAnimation(const AnimationFunction** animationFunctions, const char* animationName)
 {
-	SpriteManager::propagateCommand(
-		SpriteManager::getInstance(), 
+	SpriteManager::propagateCommand
+	(
+		SpriteManager::getInstance(),
 		cVisualComponentCommandPlay, 
 		Entity::safeCast(this), 
 		animationFunctions, 

@@ -117,14 +117,14 @@ void BgmapSprite::destructor()
 
 void BgmapSprite::registerWithManager()
 {
-	SpriteManager::registerSprite(SpriteManager::getInstance(), Sprite::safeCast(this));
+	SpriteManager::registerSprite(Sprite::safeCast(this));
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void BgmapSprite::unregisterWithManager()
 {
-	SpriteManager::unregisterSprite(SpriteManager::getInstance(), Sprite::safeCast(this));
+	SpriteManager::unregisterSprite(Sprite::safeCast(this));
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -459,7 +459,7 @@ void BgmapSprite::setMode(uint16 display, uint16 mode)
 	if(((__WORLD_AFFINE | __WORLD_HBIAS) & this->head) && 0 != this->param)
 	{
 		// Free param table space
-		ParamTableManager::free(ParamTableManager::getInstance(), this);
+		ParamTableManager::free(this);
 
 		this->param = 0;
 	}
@@ -477,7 +477,7 @@ void BgmapSprite::setMode(uint16 display, uint16 mode)
 			case __WORLD_AFFINE:
 
 				this->head = display | __WORLD_AFFINE;
-				this->param = ParamTableManager::allocate(ParamTableManager::getInstance(), this);
+				this->param = ParamTableManager::allocate(this);
 				this->applyParamTableEffect = 
 					NULL != this->applyParamTableEffect ? this->applyParamTableEffect : BgmapSprite::doApplyAffineTransformations;
 				break;
@@ -489,7 +489,7 @@ void BgmapSprite::setMode(uint16 display, uint16 mode)
 
 				if(NULL != this->applyParamTableEffect)
 				{
-					this->param = ParamTableManager::allocate(ParamTableManager::getInstance(), this);
+					this->param = ParamTableManager::allocate(this);
 				}
 
 				break;
@@ -592,7 +592,7 @@ void BgmapSprite::releaseTexture()
 		if(((__WORLD_AFFINE | __WORLD_HBIAS) & this->head) && 0 != this->param)
 		{
 			// Free param table space
-			ParamTableManager::free(ParamTableManager::getInstance(), this);
+			ParamTableManager::free(this);
 		}
 
 		if(0 != this->param)

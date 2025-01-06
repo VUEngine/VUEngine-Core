@@ -29,7 +29,6 @@
 
 static TimerManager _timerManager;
 static SoundManager _soundManager;
-static StopwatchManager _stopwatchManager;
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' STATIC METHODS
@@ -70,7 +69,7 @@ static void TimerManager::interruptHandler()
 	SoundManager::playSounds(_timerManager->elapsedMicrosecondsPerInterrupt);
 
 	// Update Stopwatchs: no use is being done of them so this is commented out for now since it affects PCM playback
-	//StopwatchManager::update(_stopwatchManager);
+	//StopwatchManager::update();
 
 // enable
 #ifndef __ENABLE_PROFILER
@@ -527,24 +526,24 @@ void TimerManager::nextSecondStarted()
 
 void TimerManager::print(int32 x, int32 y)
 {
-	Printing::text(Printing::getInstance(), "TIMER CONFIG", x, y++, NULL);
+	Printing::text("TIMER CONFIG", x, y++, NULL);
 	y++;
 
 	switch(this->resolution)
 	{
 		case __TIMER_20US:
 
-			Printing::text(Printing::getInstance(), "Resolution    20 US ", x, y++, NULL);
+			Printing::text("Resolution    20 US ", x, y++, NULL);
 			break;
 
 		case __TIMER_100US:
 
-			Printing::text(Printing::getInstance(), "Resolution    100 US ", x, y++, NULL);
+			Printing::text("Resolution    100 US ", x, y++, NULL);
 			break;
 
 		default:
 
-			Printing::text(Printing::getInstance(), "Resolution    ?      ", x, y++, NULL);
+			Printing::text("Resolution    ?      ", x, y++, NULL);
 			break;
 	}
 
@@ -552,24 +551,24 @@ void TimerManager::print(int32 x, int32 y)
 	{
 		case kUS:
 
-			Printing::text(Printing::getInstance(), "US/interrupt        ", x, y, NULL);
+			Printing::text("US/interrupt        ", x, y, NULL);
 			break;
 
 		case kMS:
 
-			Printing::text(Printing::getInstance(), "MS/interrupt        ", x, y, NULL);
+			Printing::text("MS/interrupt        ", x, y, NULL);
 			break;
 
 		default:
 
-			Printing::text(Printing::getInstance(), " ?/interrupt        ", x, y, NULL);
+			Printing::text(" ?/interrupt        ", x, y, NULL);
 			break;
 	}
 
-	Printing::int32(Printing::getInstance(), this->targetTimePerInterrupt, x + 14, y++, NULL);
+	Printing::int32(this->targetTimePerInterrupt, x + 14, y++, NULL);
 
-	Printing::text(Printing::getInstance(), "Timer counter        ", x, y, NULL);
-	Printing::int32(Printing::getInstance(), TimerManager::getTimerCounter(this), x + 14, y++, NULL);
+	Printing::text("Timer counter        ", x, y, NULL);
+	Printing::int32(TimerManager::getTimerCounter(this), x + 14, y++, NULL);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -584,7 +583,6 @@ void TimerManager::constructor()
 {
 	_timerManager = this;
 	_soundManager = SoundManager::getInstance();
-	_stopwatchManager = StopwatchManager::getInstance();
 
 	// Always explicitly call the base's constructor 
 	Base::constructor();

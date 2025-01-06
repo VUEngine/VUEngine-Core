@@ -531,15 +531,15 @@ Vector3D Collider::getNormal()
 #ifndef __SHIPPING
 void Collider::print(int32 x, int32 y)
 {
-	Printing::text(Printing::getInstance(), "SHAPE ", x, y++, NULL);
-	Printing::text(Printing::getInstance(), "Owner:            ", x, y, NULL);
-	Printing::text(Printing::getInstance(), this->owner ? __GET_CLASS_NAME(this->owner) : "No owner", x + 7, y++, NULL);
-	Printing::hex(Printing::getInstance(), (int32)this->owner, x + 7, y++, 8, NULL);
+	Printing::text("SHAPE ", x, y++, NULL);
+	Printing::text("Owner:            ", x, y, NULL);
+	Printing::text(this->owner ? __GET_CLASS_NAME(this->owner) : "No owner", x + 7, y++, NULL);
+	Printing::hex((int32)this->owner, x + 7, y++, 8, NULL);
 
-	Printing::text(Printing::getInstance(), "Colliding colliders:            ", x, y, NULL);
-	Printing::int32(Printing::getInstance(), this->otherColliders ? VirtualList::getCount(this->otherColliders) : 0, x + 21, y++, NULL);
-	Printing::text(Printing::getInstance(), "Impenetrable colliders:            ", x, y, NULL);
-	Printing::int32(Printing::getInstance(), Collider::getNumberOfImpenetrableOtherColliders(this), x + 21, y++, NULL);
+	Printing::text("Colliding colliders:            ", x, y, NULL);
+	Printing::int32(this->otherColliders ? VirtualList::getCount(this->otherColliders) : 0, x + 21, y++, NULL);
+	Printing::text("Impenetrable colliders:            ", x, y, NULL);
+	Printing::int32(Collider::getNumberOfImpenetrableOtherColliders(this), x + 21, y++, NULL);
 }
 #endif
 

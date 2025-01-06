@@ -57,24 +57,24 @@ singleton class FrameRate : ListenerObject
 	static FrameRate getInstance();
 
 	/// Reset the state of the manager.
-	void reset();
+	static void reset();
 
 	/// Set the target frames per second.
 	/// @param targetFPS: Target frames per second
-	void setTarget(uint8 targetFPS);
+	static void setTarget(uint8 targetFPS);
 
 	/// Update the elapsed frames during the current second.
-	void update();
+	static void update();
 
 	/// The next game frame cycle has started.
 	/// @param gameCycleEnded: Flag that indicates if the previous game frame was completed before the current second has elapsed
 	/// @param printFPS: True to print the FPS during the previous second
-	void gameFrameStarted(bool gameCycleEnded, bool printFPS);
+	static void gameFrameStarted(bool gameCycleEnded, bool printFPS);
 
 	/// Print the frames per second statistics.
 	/// @param x: Screen x coordinate where to print
 	/// @param y: Screen y coordinate where to print
-	void print(int32 x, int32 y);
+	static void print(int32 x, int32 y);
 }
 
 #endif

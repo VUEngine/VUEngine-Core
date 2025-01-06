@@ -25,12 +25,6 @@
 #include "GameState.h"
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-// CLASS' ATTRIBUTES
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-static Camera _camera = NULL;
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PUBLIC METHODS
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
@@ -38,8 +32,6 @@ static Camera _camera = NULL;
 
 void GameState::constructor()
 {
-	_camera = Camera::getInstance();
-
 	// Always explicitly call the base's constructor 
 	Base::constructor();
 
@@ -122,10 +114,10 @@ bool GameState::handleMessage(Telegram telegram)
 void GameState::enter(void* owner __attribute__ ((unused)))
 {
 	VIPManager::removePostProcessingEffects(VIPManager::getInstance());
-	Printing::resetCoordinates(Printing::getInstance());
+	Printing::resetCoordinates();
 
 	GameState::pauseClocks(this);
-	SpriteManager::setAnimationsClock(SpriteManager::getInstance(), this->animationsClock);
+	SpriteManager::setAnimationsClock(this->animationsClock);
 
 	Clock::start(this->messagingClock);
 }
@@ -211,8 +203,8 @@ void GameState::suspend(void* owner __attribute__ ((unused)))
 		}
 
 		// Make sure that all graphical resources are released.
-		SpriteManager::reset(SpriteManager::getInstance());
-		SpriteManager::setAnimationsClock(SpriteManager::getInstance(), this->animationsClock);
+		SpriteManager::reset();
+		SpriteManager::setAnimationsClock(this->animationsClock);
 	}
 }
 
@@ -238,7 +230,7 @@ void GameState::resume(void* owner __attribute__ ((unused)))
 		UIContainer::resume(this->uiContainer);
 
 		// Move the camera to its previous position
-		Camera::focus(Camera::getInstance());
+		Camera::focus();
 
 		// Force all transformations to take place again
 		GameState::transform(this);
@@ -283,7 +275,7 @@ void GameState::configureStage(StageSpec* stageSpec, VirtualList positionedActor
 	HardwareManager::suspendInterrupts();
 
 	// Make sure no actor is set as focus for the camera
-	Camera::setFocusActor(Camera::getInstance(), NULL);
+	Camera::setFocusActor(NULL);
 
 	// Setup the stage
 	GameState::createStage(this, stageSpec, positionedActorsToIgnore);
@@ -292,7 +284,7 @@ void GameState::configureStage(StageSpec* stageSpec, VirtualList positionedActor
 	GameState::configureUI(this, stageSpec);
 
 	// Move the camera to its previous position
-	Camera::focus(Camera::getInstance());
+	Camera::focus();
 
 	// Transformation everything
 	GameState::transform(this);
@@ -511,14 +503,14 @@ void GameState::transform()
 
 	extern Transformation _neutralEnvironmentTransformation;
 
-	Stage::transform(this->stage, &_neutralEnvironmentTransformation, Camera::getTransformationFlags(_camera));
+	Stage::transform(this->stage, &_neutralEnvironmentTransformation, Camera::getTransformationFlags());
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void GameState::transformUI()
 {
-	if(!this->transform && __VALID_TRANSFORMATION == Camera::getTransformationFlags(Camera::getInstance()))
+	if(!this->transform && __VALID_TRANSFORMATION == Camera::getTransformationFlags())
 	{
 		return;
 	}
@@ -696,7 +688,7 @@ void GameState::createStage(StageSpec* stageSpec, VirtualList positionedActorsTo
 
 	Stage::configure(this->stage, positionedActorsToIgnore);
 
-	SpriteManager::setAnimationsClock(SpriteManager::getInstance(), this->animationsClock);
+	SpriteManager::setAnimationsClock(this->animationsClock);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -727,7 +719,7 @@ void GameState::configureUI(StageSpec* stageSpec)
 		extern Transformation _neutralEnvironmentTransformation;
 	
 		// Apply transformations
-		UIContainer::transform(this->uiContainer, &_neutralEnvironmentTransformation, Camera::getTransformationFlags(_camera));
+		UIContainer::transform(this->uiContainer, &_neutralEnvironmentTransformation, Camera::getTransformationFlags());
 	}
 }
 
@@ -741,7 +733,7 @@ void GameState::streamAll()
 	GameState::transform(this);
 
 	// Move the camera to its initial position
-	Camera::focus(Camera::getInstance());
+	Camera::focus();
 
 	// Invalidate transformations
 	Stage::invalidateTransformation(this->stage);

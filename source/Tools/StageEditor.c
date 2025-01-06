@@ -103,7 +103,7 @@ void StageEditor::hide()
 		GameState::getColliderManager(GameState::safeCast(VUEngine::getPreviousState(VUEngine::getInstance())))
 	);
 
-	Printing::clear(Printing::getInstance());
+	Printing::clear();
 	StageEditor::removePreviousSprite(this);
 	StageEditor::releaseWireframe(this);
 	this->actorNode = NULL;
@@ -217,21 +217,21 @@ void StageEditor::printHeader()
 {
 	Printing::text
 	(
-		Printing::getInstance(), "\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08"
+		"\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08"
 		"\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08", 0, 0, NULL
 	);
 
-	Printing::text(Printing::getInstance(), " LEVEL EDITOR ", 1, 0, NULL);
-	Printing::text(Printing::getInstance(), "  /  ", 16, 0, NULL);
-	Printing::int32(Printing::getInstance(), this->state, 17, 0, NULL);
-	Printing::int32(Printing::getInstance(), kLastState - 1, 19, 0, NULL);
+	Printing::text(" LEVEL EDITOR ", 1, 0, NULL);
+	Printing::text("  /  ", 16, 0, NULL);
+	Printing::int32(this->state, 17, 0, NULL);
+	Printing::int32(kLastState - 1, 19, 0, NULL);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void StageEditor::configureState()
 {
-	Printing::clear(Printing::getInstance());
+	Printing::clear();
 	StageEditor::printHeader(this);
 	StageEditor::removePreviousSprite(this);
 
@@ -371,7 +371,7 @@ void StageEditor::highLightActor()
 	}
 	else
 	{
-		Printing::text(Printing::getInstance(), "No actors in stage", 1, 4, NULL);
+		Printing::text("No actors in stage", 1, 4, NULL);
 	}
 }
 
@@ -605,11 +605,11 @@ void StageEditor::changeProjection(uint32 pressedKey)
 		StageEditor::printTranslationStepSize(this, 38, 10);
 	}
 
-	Camera::setOptical(Camera::getInstance(), optical);
+	Camera::setOptical(optical);
 
 	StageEditor::printProjectionValues(this);
 
-	Stage::transform(this->stage, &_neutralEnvironmentTransformation, Camera::getTransformationFlags(Camera::getInstance()));
+	Stage::transform(this->stage, &_neutralEnvironmentTransformation, Camera::getTransformationFlags());
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -730,11 +730,11 @@ void StageEditor::applyTranslationToActor(Vector3D translation)
 
 		Container::setLocalPosition(container, &localPosition);
 
-		Stage::transform(this->stage, &_neutralEnvironmentTransformation, Camera::getTransformationFlags(Camera::getInstance()));
+		Stage::transform(this->stage, &_neutralEnvironmentTransformation, Camera::getTransformationFlags());
 
 		StageEditor::printActorPosition(this);
 
-		SpriteManager::sortSprites(SpriteManager::getInstance());
+		SpriteManager::sortSprites();
 
 		StageEditor::printTranslationStepSize(this, 38, 8);
 	}
@@ -750,7 +750,7 @@ void StageEditor::removePreviousSprite()
 		this->userActorSprite = NULL;
 	}
 
-	SpriteManager::sortSprites(SpriteManager::getInstance());
+	SpriteManager::sortSprites();
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -764,7 +764,7 @@ void StageEditor::showSelectedUserObject()
 
 	if(spriteSpec)
 	{
-		this->userActorSprite = SpriteManager::createSprite(SpriteManager::getInstance(), NULL, spriteSpec);
+		this->userActorSprite = SpriteManager::createSprite(NULL, spriteSpec);
 		ASSERT(this->userActorSprite, "AnimationInspector::createSprite: null animatedSprite");
 		ASSERT(Sprite::getTexture(this->userActorSprite), "AnimationInspector::createSprite: null texture");
 
@@ -780,11 +780,11 @@ void StageEditor::showSelectedUserObject()
 		Sprite::setScale(this->userActorSprite, &spriteScale);
 
 		this->userActorSprite->updateAnimationFrame = true;
-		SpriteManager::writeTextures(SpriteManager::getInstance());
-		SpriteManager::sortSprites(SpriteManager::getInstance());
-		SpriteManager::deferParamTableEffects(SpriteManager::getInstance(), false);
-		SpriteManager::render(SpriteManager::getInstance());
-		SpriteManager::deferParamTableEffects(SpriteManager::getInstance(), true);
+		SpriteManager::writeTextures();
+		SpriteManager::sortSprites();
+		SpriteManager::deferParamTableEffects(false);
+		SpriteManager::render();
+		SpriteManager::deferParamTableEffects(true);
 	}
 }
 
@@ -809,14 +809,14 @@ void StageEditor::selectUserObject(uint32 pressedKey)
 	}
 	else if(pressedKey & K_A)
 	{
-		if(1 >= SpriteManager::getFreeLayer(SpriteManager::getInstance()))
+		if(1 >= SpriteManager::getFreeLayer())
 		{
-			Printing::text(Printing::getInstance(), "No more WORLDs", 48 - 15, 5, NULL);
-			Printing::text(Printing::getInstance(), "available     ", 48 - 15, 6, NULL);
+			Printing::text(5, 5, NULL);
+			Printing::text(5, 6, NULL);
 			return;
 		}
 
-		Vector3D cameraPosition = Camera::getPosition(Camera::getInstance());
+		Vector3D cameraPosition = Camera::getPosition();
 
 		PositionedActor DUMMY_ENTITY =
 		{
@@ -836,7 +836,7 @@ void StageEditor::selectUserObject(uint32 pressedKey)
 		};
 
 		Stage::spawnChildActor(this->stage, &DUMMY_ENTITY, false);
-		SpriteManager::sortSprites(SpriteManager::getInstance());
+		SpriteManager::sortSprites();
 
 		VirtualList stageActors = (Container::safeCast(this->stage))->children;
 		this->actorNode = stageActors ? stageActors->tail : NULL;
@@ -846,11 +846,11 @@ void StageEditor::selectUserObject(uint32 pressedKey)
 		StageEditor::configureState(this);
 
 		StageEditor::removePreviousSprite(this);
-		SpriteManager::sortSprites(SpriteManager::getInstance());
-		SpriteManager::writeTextures(SpriteManager::getInstance());
-		SpriteManager::deferParamTableEffects(SpriteManager::getInstance(), false);
-		SpriteManager::render(SpriteManager::getInstance());
-		SpriteManager::deferParamTableEffects(SpriteManager::getInstance(), true);
+		SpriteManager::sortSprites();
+		SpriteManager::writeTextures();
+		SpriteManager::deferParamTableEffects(false);
+		SpriteManager::render();
+		SpriteManager::deferParamTableEffects(true);
 	}
 }
 
@@ -863,13 +863,13 @@ void StageEditor::printActorPosition()
 	uint8 controlsXPos = 38;
 	uint8 controlsYPos = 2;
 
-	Printing::text(Printing::getInstance(), "MOVE OBJECT", x, y++, NULL);
+	Printing::text("MOVE OBJECT", x, y++, NULL);
 
-	Printing::text(Printing::getInstance(), "Mode    \x16", controlsXPos, controlsYPos++, NULL);
+	Printing::text("Mode    \x16", controlsXPos, controlsYPos++, NULL);
 	controlsYPos++;
-	Printing::text(Printing::getInstance(), "Next   \x17\x18", controlsXPos, controlsYPos++, NULL);
-	Printing::text(Printing::getInstance(), "Move\x1E\x1A\x1B\x1C\x1D", controlsXPos, controlsYPos++, NULL);
-	Printing::text(Printing::getInstance(), "      \x1F\x1A\x1B", controlsXPos, controlsYPos++, NULL);
+	Printing::text("Next   \x17\x18", controlsXPos, controlsYPos++, NULL);
+	Printing::text("Move\x1E\x1A\x1B\x1C\x1D", controlsXPos, controlsYPos++, NULL);
+	Printing::text("      \x1F\x1A\x1B", controlsXPos, controlsYPos++, NULL);
 
 	if(this->actorNode)
 	{
@@ -879,31 +879,31 @@ void StageEditor::printActorPosition()
 		const Scale* globalScale =  Entity::getScale(actor);
 		const char* actorName = Container::getName(actor);
 
-		Printing::text(Printing::getInstance(), "ID:                             ", x, ++y, NULL);
-		Printing::int32(Printing::getInstance(), Actor::getInternalId(actor), x + 10, y, NULL);
-		Printing::text(Printing::getInstance(), "Type:                           ", x, ++y, NULL);
+		Printing::text("ID:                             ", x, ++y, NULL);
+		Printing::int32(Actor::getInternalId(actor), x + 10, y, NULL);
+		Printing::text("Type:                           ", x, ++y, NULL);
 		Printing::text(Printing::getInstance(),	__GET_CLASS_NAME(actor), x + 10, y, NULL);
-		Printing::text(Printing::getInstance(), "Name:                           ", x, ++y, NULL);
+		Printing::text("Name:                           ", x, ++y, NULL);
 		Printing::text(Printing::getInstance(),	actorName ? actorName : "-", x + 10, y, NULL);
-		Printing::text(Printing::getInstance(), "          X      Y      Z       ", x, ++y, NULL);
-		Printing::text(Printing::getInstance(), "Position:                       ", x, ++y, NULL);
-		Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(globalPosition->x), x + 10, y, NULL);
-		Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(globalPosition->y), x + 17, y, NULL);
+		Printing::text("          X      Y      Z       ", x, ++y, NULL);
+		Printing::text("Position:                       ", x, ++y, NULL);
+		Printing::int32(__METERS_TO_PIXELS(globalPosition->x), x + 10, y, NULL);
+		Printing::int32(__METERS_TO_PIXELS(globalPosition->y), x + 17, y, NULL);
 		Printing::int32(Printing::getInstance() ,__METERS_TO_PIXELS(globalPosition->z), x + 24, y, NULL);
-		Printing::text(Printing::getInstance(), "Rotation:                       ", x, ++y, NULL);
-		Printing::float(Printing::getInstance(), __FIXED_TO_F(globalRotation->x), x + 10, y, 2, NULL);
-		Printing::float(Printing::getInstance(), __FIXED_TO_F(globalRotation->y), x + 17, y, 2, NULL);
-		Printing::float(Printing::getInstance(), __FIXED_TO_F(globalRotation->z), x + 24, y, 2, NULL);
-		Printing::text(Printing::getInstance(), "Scale:                          ", x, ++y, NULL);
-		Printing::float(Printing::getInstance(), __FIX7_9_TO_F(globalScale->x), x + 10, y, 2, NULL);
-		Printing::float(Printing::getInstance(), __FIX7_9_TO_F(globalScale->y), x + 17, y, 2, NULL);
-		Printing::float(Printing::getInstance(), __FIX7_9_TO_F(globalScale->z), x + 24, y, 2, NULL);
-		Printing::text(Printing::getInstance(), "Size:                           ", x, ++y, NULL);
-		Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(Actor::getWidth(actor)), x + 10, y, NULL);
-		Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(Actor::getHeight(actor)), x + 17, y, NULL);
-		Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(Actor::getDepth(actor)), x + 24, y++, NULL);
-		Printing::text(Printing::getInstance(), "Children:                       ", x, ++y, NULL);
-		Printing::int32(Printing::getInstance(), Container::getChildrenCount(actor), x + 10, y, NULL);
+		Printing::text("Rotation:                       ", x, ++y, NULL);
+		Printing::float(__FIXED_TO_F(globalRotation->x), x + 10, y, 2, NULL);
+		Printing::float(__FIXED_TO_F(globalRotation->y), x + 17, y, 2, NULL);
+		Printing::float(__FIXED_TO_F(globalRotation->z), x + 24, y, 2, NULL);
+		Printing::text("Scale:                          ", x, ++y, NULL);
+		Printing::float(__FIX7_9_TO_F(globalScale->x), x + 10, y, 2, NULL);
+		Printing::float(__FIX7_9_TO_F(globalScale->y), x + 17, y, 2, NULL);
+		Printing::float(__FIX7_9_TO_F(globalScale->z), x + 24, y, 2, NULL);
+		Printing::text("Size:                           ", x, ++y, NULL);
+		Printing::int32(__METERS_TO_PIXELS(Actor::getWidth(actor)), x + 10, y, NULL);
+		Printing::int32(__METERS_TO_PIXELS(Actor::getHeight(actor)), x + 17, y, NULL);
+		Printing::int32(__METERS_TO_PIXELS(Actor::getDepth(actor)), x + 24, y++, NULL);
+		Printing::text("Children:                       ", x, ++y, NULL);
+		Printing::int32(Container::getChildrenCount(actor), x + 10, y, NULL);
 	}
 }
 
@@ -916,8 +916,8 @@ void StageEditor::applyTranslationToCamera(Vector3D translation)
 		return;
 	}
 
-	Camera::translate(Camera::getInstance(), translation, true);
-	Stage::transform(this->stage, &_neutralEnvironmentTransformation, Camera::getTransformationFlags(Camera::getInstance()));
+	Camera::translate(translation, true);
+	Stage::transform(this->stage, &_neutralEnvironmentTransformation, Camera::getTransformationFlags());
 	StageEditor::printCameraPosition(this);
 	Stage::streamAll(this->stage);
 }
@@ -926,7 +926,7 @@ void StageEditor::applyTranslationToCamera(Vector3D translation)
 
 void StageEditor::printCameraPosition()
 {
-	Camera::print(Camera::getInstance(), 1, 2, true);
+	Camera::print(1, 2, true);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -938,25 +938,25 @@ void StageEditor::printProjectionValues()
 	uint8 controlsXPos = 38;
 	uint8 controlsYPos = 2;
 
-	Printing::text(Printing::getInstance(), "Mode    \x16", controlsXPos, controlsYPos++, NULL);
+	Printing::text(XPos, controlsYPos++, NULL);
 	controlsYPos++;
-	Printing::text(Printing::getInstance(), "HVPC  \x1E\x1C\x1D", controlsXPos, controlsYPos++, NULL);
-	Printing::text(Printing::getInstance(), "VVPC  \x1E\x1A\x1B", controlsXPos, controlsYPos++, NULL);
-	Printing::text(Printing::getInstance(), "DETC  \x1F\x1A\x1B", controlsXPos, controlsYPos++, NULL);
-	Printing::text(Printing::getInstance(), "MVD    \x13\x14", controlsXPos, controlsYPos++, NULL);
-	Printing::text(Printing::getInstance(), "BD     \x17\x18", controlsXPos, controlsYPos++, NULL);
+	Printing::text(ntrolsXPos, controlsYPos++, NULL);
+	Printing::text(ntrolsXPos, controlsYPos++, NULL);
+	Printing::text(ntrolsXPos, controlsYPos++, NULL);
+	Printing::text(olsXPos, controlsYPos++, NULL);
+	Printing::text(olsXPos, controlsYPos++, NULL);
 
-	Printing::text(Printing::getInstance(), "PROJECTION VALUES", x, y++, NULL);
-	Printing::text(Printing::getInstance(), "Horz. view point center:        ", x, ++y, NULL);
-	Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(_optical->horizontalViewPointCenter), x + 25, y, NULL);
-	Printing::text(Printing::getInstance(), "Vert. view point center:        ", x, ++y, NULL);
-	Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(_optical->verticalViewPointCenter), x + 25, y, NULL);
-	Printing::text(Printing::getInstance(), "Maximum X View Distance:        ", x, ++y, NULL);
-	Printing::int32(Printing::getInstance(), _optical->maximumXViewDistancePower, x + 25, y, NULL);
-	Printing::text(Printing::getInstance(), "Maximum Y View Distance:        ", x, ++y, NULL);
-	Printing::int32(Printing::getInstance(), _optical->maximumYViewDistancePower, x + 25, y, NULL);
-	Printing::text(Printing::getInstance(), "Base Distance:                  ", x, ++y, NULL);
-	Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(_optical->baseDistance), x + 25, y, NULL);
+	Printing::text(y++, NULL);
+	Printing::text(:        ", x, ++y, NULL);
+	Printing::int32(cal->horizontalViewPointCenter), x + 25, y, NULL);
+	Printing::text(:        ", x, ++y, NULL);
+	Printing::int32(cal->verticalViewPointCenter), x + 25, y, NULL);
+	Printing::text(:        ", x, ++y, NULL);
+	Printing::int32(stancePower, x + 25, y, NULL);
+	Printing::text(:        ", x, ++y, NULL);
+	Printing::int32(stancePower, x + 25, y, NULL);
+	Printing::text(         ", x, ++y, NULL);
+	Printing::int32(cal->baseDistance), x + 25, y, NULL);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -966,12 +966,12 @@ void StageEditor::printUserObjects()
 	uint8 controlsXPos = 38;
 	uint8 controlsYPos = 2;
 
-	Printing::text(Printing::getInstance(), "ADD OBJECTS", 1, 2, NULL);
-	Printing::text(Printing::getInstance(), "                       ", 1, 3, NULL);
+	Printing::text(L);
+	Printing::text(", 1, 3, NULL);
 
-	Printing::text(Printing::getInstance(), "Mode    \x16", controlsXPos, controlsYPos++, NULL);
+	Printing::text(XPos, controlsYPos++, NULL);
 	controlsYPos++;
-	Printing::text(Printing::getInstance(), "Accept  \x13", controlsXPos, controlsYPos++, NULL);
+	Printing::text(XPos, controlsYPos++, NULL);
 
 	OptionsSelector::print(this->userActorSelector, 1, 4, kOptionsAlignLeft, 0);
 }
@@ -980,9 +980,9 @@ void StageEditor::printUserObjects()
 
 void StageEditor::printTranslationStepSize(uint8 x, uint8 y)
 {
-	Printing::text(Printing::getInstance(), "Step  \x1F\x1C\x1D", x, y, NULL);
-	Printing::text(Printing::getInstance(), "+     ", x, ++y, NULL);
-	Printing::int32(Printing::getInstance(), this->translationStepSize, x + 1, y, NULL);
+	Printing::text( y, NULL);
+	Printing::text(
+	Printing::int32(e, x + 1, y, NULL);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

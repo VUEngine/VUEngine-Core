@@ -108,10 +108,10 @@ static void ComponentManager::addComponents(Entity owner, ComponentSpec** compon
 #ifndef __RELEASE
 		if(__MAXIMUM_NUMBER_OF_COMPONENTS < i)
 		{
-			Printing::setDebugMode(Printing::getInstance());
-			Printing::clear(Printing::getInstance());
-			Printing::text(Printing::getInstance(), "Component specs array: ", 1, 26, NULL);
-			Printing::hex(Printing::getInstance(), (uint32)componentSpecs, 1, 27, 8, NULL);
+			Printing::setDebugMode();
+			Printing::clear();
+			Printing::text("Component specs array: ", 1, 26, NULL);
+			Printing::hex((uint32)componentSpecs, 1, 27, 8, NULL);
 			Error::triggerException("ComponentManager::addComponents: Non terminated component specs array", NULL);	
 		}
 #endif

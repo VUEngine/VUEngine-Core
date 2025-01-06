@@ -68,7 +68,6 @@ uint32* _currentDrawingFrameBufferSet __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUT
 static VIPManager _vipManager = NULL;
 static DirectDraw _directDraw = NULL;
 static WireframeManager _wireframeManager = NULL;
-static SpriteManager _spriteManager = NULL;
 static uint16* const _columnTableBaseAddressLeft =	(uint16*)0x0003DC00; // base address of Column Table (Left Eye)
 static uint16* const _columnTableBaseAddressRight =	(uint16*)0x0003DE00; // base address of Column Table (Right Eye)
 
@@ -466,7 +465,6 @@ void VIPManager::constructor()
 	VIPManager::setFrameCycle(this, __FRAME_CYCLE);
 
 	_vipManager = this;
-	_spriteManager = SpriteManager::getInstance();
 	_directDraw = DirectDraw::getInstance();
 	_wireframeManager = WireframeManager::getInstance();
 
@@ -550,7 +548,7 @@ void VIPManager::processInterrupt(uint16 interrupt)
 
 				// Process game's logic
 				VUEngine::gameFrameStarted(_vuEngine, this->gameFrameDuration);
-				SpriteManager::render(_spriteManager);
+				SpriteManager::render();
 				WireframeManager::render(_wireframeManager);
 
 				this->processingGAMESTART = false;
@@ -599,7 +597,7 @@ void VIPManager::processInterrupt(uint16 interrupt)
 					}
 				}
 
-				SpriteManager::writeDRAM(_spriteManager);
+				SpriteManager::writeDRAM();
 				DirectDraw::preparteToDraw(_directDraw);
 				WireframeManager::draw(_wireframeManager);
 				VIPManager::applyPostProcessingEffects(_vipManager);
@@ -835,7 +833,7 @@ int16 VIPManager::getCurrentBlockBeingDrawn()
 #ifndef __SHIPPING
 void VIPManager::print(int32 x, int32 y)
 {
-	Printing::text(Printing::getInstance(), "VIP Status", x, y++, NULL);
+	Printing::text("VIP Status", x, y++, NULL);
 }
 #endif
 

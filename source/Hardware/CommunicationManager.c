@@ -235,7 +235,7 @@ bool CommunicationManager::cancelCommunications()
 	CommunicationManager::removeEventListeners(this, NULL, kEventCommunicationsConnected);
 	CommunicationManager::removeEventListeners(this, NULL, kEventCommunicationsTransmissionCompleted);
 
-	MessageDispatcher::discardAllDelayedMessagesForReceiver(MessageDispatcher::getInstance(), ListenerObject::safeCast(this));
+	MessageDispatcher::discardAllDelayedMessagesForReceiver(ListenerObject::safeCast(this));
 
 	return true;
 }

@@ -81,7 +81,7 @@ int16 TextObjectSprite::doRender(int16 index)
 	// TODO: the halfHeight should be calculted based on the font's height
 	int32 y = this->position.y - this->halfHeight * yDirection + this->displacement.y - (__UP == yDirection ? __OBJECT_SPRITE_FLIP_Y_DISPLACEMENT : 0);
 
-	//FontData* fontData = Printing::getFontByName(Printing::getInstance(), this->font);
+	//FontData* fontData = Printing::getFontByName(this->font);
 
 	int32 i = 0;
 	uint16 secondWordValue = (this->head & __OBJECT_SPRITE_CHAR_SHOW_MASK) | ((this->position.parallax + this->displacement.parallax) & ~__OBJECT_SPRITE_CHAR_SHOW_MASK);
@@ -151,7 +151,7 @@ void TextObjectSprite::out(uint16 index)
 	uint32 i = 0;
 	uint32 charOffset = 0, charOffsetX = 0, charOffsetY = 0;
 
-	FontData* fontData = Printing::getFontByName(Printing::getInstance(), this->font);
+	FontData* fontData = Printing::getFontByName(this->font);
 
 	if(!fontData)
 	{

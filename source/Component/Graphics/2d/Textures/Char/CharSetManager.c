@@ -191,14 +191,14 @@ int32 CharSetManager::getTotalCharSets()
 #ifndef __SHIPPING
 void CharSetManager::print(int32 x, int32 y)
 {
-	Printing::text(Printing::getInstance(), "CHAR MEMORY USAGE", x, y++, NULL);
+	Printing::text("CHAR MEMORY USAGE", x, y++, NULL);
 
-	Printing::text(Printing::getInstance(), "Total CharSets:        ", x, ++y, NULL);
-	Printing::int32(Printing::getInstance(), VirtualList::getCount(this->charSets), x + 18, y, NULL);
-	Printing::text(Printing::getInstance(), "Total used chars:      ", x, ++y, NULL);
-	Printing::int32(Printing::getInstance(), CharSetManager::getTotalUsedChars(this), x + 18, y, NULL);
-	Printing::text(Printing::getInstance(), "Total free chars:      ", x, ++y, NULL);
-	Printing::int32(Printing::getInstance(), CharSetManager::getTotalFreeChars(this), x + 18, y, NULL);
+	Printing::text("Total CharSets:        ", x, ++y, NULL);
+	Printing::int32(VirtualList::getCount(this->charSets), x + 18, y, NULL);
+	Printing::text("Total used chars:      ", x, ++y, NULL);
+	Printing::int32(CharSetManager::getTotalUsedChars(this), x + 18, y, NULL);
+	Printing::text("Total free chars:      ", x, ++y, NULL);
+	Printing::int32(CharSetManager::getTotalFreeChars(this), x + 18, y, NULL);
 }
 #endif
 
@@ -293,8 +293,8 @@ CharSet CharSetManager::allocateCharSet(CharSetSpec* charSetSpec)
 #endif
 
 #ifndef __SHIPPING
-	Printing::setDebugMode(Printing::getInstance());
-	Printing::clear(Printing::getInstance());
+	Printing::setDebugMode();
+	Printing::clear();
 
 	// If there isn't enough memory thrown an exception
 	NM_ASSERT(false, "CharSetManager::allocateCharSet: CHAR mem depleted");

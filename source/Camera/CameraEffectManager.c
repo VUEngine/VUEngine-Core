@@ -264,7 +264,7 @@ void CameraEffectManager::fxFadeAsyncStop()
 	CameraEffectManager::removeEventListeners(this, NULL, kEventEffectFadeComplete);
 
 	// Discard pending delayed messages to stop effect
-	MessageDispatcher::discardDelayedMessagesForReceiver(MessageDispatcher::getInstance(), ListenerObject::safeCast(this), kFadeTo);
+	MessageDispatcher::discardDelayedMessagesForReceiver(ListenerObject::safeCast(this), kFadeTo);
 
 	// Reset effect variables
 	this->fxFadeTargetBrightness = (Brightness){0, 0, 0};

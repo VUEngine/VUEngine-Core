@@ -25,10 +25,10 @@
 	BYTE pool ## BlockSize ## B[BlockSize * Elements]; 													\
 
 #define __SET_MEMORY_POOL_ARRAY(BlockSize)																\
-	this->poolLocation[pool] = &this->pool ## BlockSize ## B[0];										\
-	this->poolSizes[pool][ePoolSize] = sizeof(this->pool ## BlockSize ## B);							\
-	this->poolSizes[pool][eBlockSize] = BlockSize;														\
-	this->poolLastFreeBlock[pool] = &this->poolLocation[pool][0];										\
+	memoryPool->poolLocation[pool] = &memoryPool->pool ## BlockSize ## B[0];							\
+	memoryPool->poolSizes[pool][ePoolSize] = sizeof(memoryPool->pool ## BlockSize ## B);				\
+	memoryPool->poolSizes[pool][eBlockSize] = BlockSize;												\
+	memoryPool->poolLastFreeBlock[pool] = &memoryPool->poolLocation[pool][0];							\
 	pool++;																								\
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -85,12 +85,12 @@ singleton class MemoryPool : Object
 	/// Print a resume of the memory usage.
 	/// @param x: Screen x coordinate where to print
 	/// @param y: Screen y coordinate where to print
-	void printResumedUsage(int32 x, int32 y);
+	static void printResumedUsage(int32 x, int32 y);
 
 	/// Print all the details of the memory usage.
 	/// @param x: Screen x coordinate where to print
 	/// @param y: Screen y coordinate where to print
-	void printDetailedUsage(int32 x, int32 y);
+	static void printDetailedUsage(int32 x, int32 y);
 }
 
 #endif

@@ -127,7 +127,7 @@ void OptionsSelector::destructor()
 
 void OptionsSelector::setColumnWidth(uint8 width)
 {
-	FontData* fontData = Printing::getFontByName(Printing::getInstance(), this->font);
+	FontData* fontData = Printing::getFontByName(this->font);
 
 	// Add space for selection mark, consider font width
 	width = ((width + 1) * fontData->fontSpec->fontSize.x);
@@ -349,13 +349,11 @@ int32 OptionsSelector::getNumberOfOptions()
 
 void OptionsSelector::print(uint8 x, uint8 y, uint32 alignment, uint8 spacing)
 {
-	Printing printing = Printing::getInstance();
-
 	spacing++;
 
 	if(this->currentPage && 0 < VirtualList::getCount(VirtualList::safeCast(VirtualNode::getData(this->currentPage))))
 	{
-		FontData* fontData = Printing::getFontByName(printing, this->font);
+		FontData* fontData = Printing::getFontByName(this->font);
 
 		this->x = (x < (__SCREEN_WIDTH_IN_CHARS)) ? x : 0;
 		this->y = (y < (__SCREEN_HEIGHT_IN_CHARS)) ? y : 0;
@@ -384,7 +382,7 @@ void OptionsSelector::print(uint8 x, uint8 y, uint32 alignment, uint8 spacing)
 		{
 			for(int32 j = 0; (this->columnWidth * this->cols) > j && x + j < __SCREEN_WIDTH_IN_CHARS; j++)
 			{
-				Printing::text(printing, " ", x + j + jStart, y + i * spacing, this->font);
+				Printing::text(" ", x + j + jStart, y + i * spacing, this->font);
 			}
 		}
 
@@ -407,7 +405,7 @@ void OptionsSelector::print(uint8 x, uint8 y, uint32 alignment, uint8 spacing)
 
 			if(NULL == option->value)
 			{
-				Printing::int32(printing, counter, x + fontData->fontSpec->fontSize.x, y, this->font);
+				Printing::int32(counter, x + fontData->fontSpec->fontSize.x, y, this->font);
 			}
 			else
 			{
@@ -418,7 +416,7 @@ void OptionsSelector::print(uint8 x, uint8 y, uint32 alignment, uint8 spacing)
 						optionsLength = alignment == kOptionsAlignLeft ? 0 : strnlen((char*)option->value, this->columnWidth);
 						Printing::text
 						(
-							printing, (char*)option->value, x + fontData->fontSpec->fontSize.x - optionsLength / optionsLengthDivisor,
+							(char*)option->value, x + fontData->fontSpec->fontSize.x - optionsLength / optionsLengthDivisor,
 							y, this->font
 						);
 						break;
@@ -428,7 +426,7 @@ void OptionsSelector::print(uint8 x, uint8 y, uint32 alignment, uint8 spacing)
 						optionsLength = alignment == kOptionsAlignLeft ? 0 : Math::getDigitsCount(*((int32*)option->value)) - 3;
 						Printing::float
 						(
-							printing, *((float*)option->value), x + fontData->fontSpec->fontSize.x - optionsLength / optionsLengthDivisor, 
+							*((float*)option->value), x + fontData->fontSpec->fontSize.x - optionsLength / optionsLengthDivisor, 
 							y, 2, this->font
 						);
 						break;
@@ -438,7 +436,7 @@ void OptionsSelector::print(uint8 x, uint8 y, uint32 alignment, uint8 spacing)
 						optionsLength = alignment == kOptionsAlignLeft ? 0 : Math::getDigitsCount(*((int32*)option->value));
 						Printing::int32
 						(
-							printing, *((int32*)option->value), x + fontData->fontSpec->fontSize.x - optionsLength / optionsLengthDivisor, 
+							*((int32*)option->value), x + fontData->fontSpec->fontSize.x - optionsLength / optionsLengthDivisor, 
 							y, this->font
 						);
 						break;
@@ -448,7 +446,7 @@ void OptionsSelector::print(uint8 x, uint8 y, uint32 alignment, uint8 spacing)
 						optionsLength = alignment == kOptionsAlignLeft ? 0 : Math::getDigitsCount(*((int32*)option->value));
 						Printing::int32
 						(
-							printing, *((int16*)option->value), x + fontData->fontSpec->fontSize.x - optionsLength / optionsLengthDivisor, 
+							*((int16*)option->value), x + fontData->fontSpec->fontSize.x - optionsLength / optionsLengthDivisor, 
 							y, this->font
 						);
 						break;
@@ -458,7 +456,7 @@ void OptionsSelector::print(uint8 x, uint8 y, uint32 alignment, uint8 spacing)
 						optionsLength = alignment == kOptionsAlignLeft ? 0 : Math::getDigitsCount(*((int32*)option->value));
 						Printing::int32
 						(
-							printing, *((int8*)option->value), x + fontData->fontSpec->fontSize.x - optionsLength / optionsLengthDivisor, 
+							*((int8*)option->value), x + fontData->fontSpec->fontSize.x - optionsLength / optionsLengthDivisor, 
 							y, this->font
 						);
 						break;				
@@ -524,7 +522,7 @@ void OptionsSelector::printSelectorMark(char* mark, int8 optionsLength)
 {
 	if(this->currentPage && NULL != mark)
 	{
-		FontData* fontData = Printing::getFontByName(Printing::getInstance(), this->font);
+		FontData* fontData = Printing::getFontByName(this->font);
 
 		ASSERT(this->currentPage, "printSelectorMark: current page");
 		ASSERT(VirtualNode::getData(this->currentPage), "printSelectorMark: null current data");
@@ -553,8 +551,8 @@ void OptionsSelector::printSelectorMark(char* mark, int8 optionsLength)
 				break;
 		}
 
-		Printing::text(
-			Printing::getInstance(),
+		Printing::text
+		(
 			mark,
 			this->x + optionColumn + optionsLength,
 			this->y + (optionRow * this->spacing * fontData->fontSpec->fontSize.y),

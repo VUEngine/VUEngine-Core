@@ -31,9 +31,11 @@ friend class VirtualNode;
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void StopwatchManager::reset()
+static void StopwatchManager::reset()
 {
-	VirtualNode node = this->stopwatchs->head;
+	StopwatchManager stopwatchManager = StopwatchManager::getInstance();
+
+	VirtualNode node = stopwatchManager->stopwatchs->head;
 
 	// Update all registered stopwatchs
 	for(; node ; node = node->next)
@@ -44,26 +46,32 @@ void StopwatchManager::reset()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void StopwatchManager::register(Stopwatch clock)
+static void StopwatchManager::register(Stopwatch clock)
 {
-	if(!VirtualList::find(this->stopwatchs, clock))
+	StopwatchManager stopwatchManager = StopwatchManager::getInstance();
+
+	if(!VirtualList::find(stopwatchManager->stopwatchs, clock))
 	{
-		VirtualList::pushFront(this->stopwatchs, clock);
+		VirtualList::pushFront(stopwatchManager->stopwatchs, clock);
 	}
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void StopwatchManager::unregister(Stopwatch clock)
+static void StopwatchManager::unregister(Stopwatch clock)
 {
-	VirtualList::removeData(this->stopwatchs, clock);
+	StopwatchManager stopwatchManager = StopwatchManager::getInstance();
+
+	VirtualList::removeData(stopwatchManager->stopwatchs, clock);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void StopwatchManager::update()
+static void StopwatchManager::update()
 {
-	VirtualNode node = this->stopwatchs->head;
+	StopwatchManager stopwatchManager = StopwatchManager::getInstance();
+
+	VirtualNode node = stopwatchManager->stopwatchs->head;
 
 	// Update all registered stopwatchs
 	for(; node ; node = node->next)
