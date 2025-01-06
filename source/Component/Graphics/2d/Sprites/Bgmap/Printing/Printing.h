@@ -36,7 +36,7 @@ class PrintingSprite;
 #define PRINT_TIME(x, y)																					\
 	Printing::int32																							\
 	(																										\
-		TimerManager::getTotalElapsedMilliseconds(),								\
+		TimerManager::getTotalElapsedMilliseconds(),														\
 		x,																									\
 		y,																									\
 		NULL																								\
@@ -44,7 +44,7 @@ class PrintingSprite;
 #define PRINT_IN_GAME_TIME(x, y)																			\
 	Printing::int32																							\
 	(																										\
-		Clock::getMilliseconds(VUEngine::getClock(VUEngine::getInstance())),								\
+		Clock::getMilliseconds(VUEngine::getClock()),														\
 		x,																									\
 		y,																									\
 		NULL																								\

@@ -103,7 +103,7 @@ static void Profiler::reset()
 	profiler->currentProfilingProcess = 0;
 	profiler->printedProcessesNames = false;
 	profiler->timerCounter = TimerManager::getTimerCounter();
-	profiler->timePerGameFrameInMS = VUEngine::getGameFrameDuration(VUEngine::getInstance());
+	profiler->timePerGameFrameInMS = VUEngine::getGameFrameDuration();
 	profiler->timeProportion = TimerManager::getTargetTimePerInterruptInMS() / (float)profiler->timerCounter;
 	profiler->skipFrames = 1;
 	profiler->lastCycleTotalTime = 0;
@@ -180,7 +180,7 @@ static void Profiler::end()
 
 		Profiler::print();
 		profiler->skipFrames = __ENABLE_PROFILER_SKIP_FRAMES;
-		profiler->timePerGameFrameInMS = VUEngine::getGameFrameDuration(VUEngine::getInstance());
+		profiler->timePerGameFrameInMS = VUEngine::getGameFrameDuration();
 	}
 
 	profiler->started = false;

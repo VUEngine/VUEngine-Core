@@ -798,7 +798,7 @@ void Sound::updateVolumeReduction()
 		this->soundSpec->targetTimerResolutionUS * (this->mainSoundTrack->elapsedTicks 
 		- this->previouslyElapsedTicks) / __MICROSECONDS_PER_MILLISECOND;
 
-	if(VUEngine::getGameFrameDuration(_vuEngine) <= elapsedMilliseconds)
+	if(VUEngine::getGameFrameDuration() <= elapsedMilliseconds)
 	{
 		switch(this->playbackType)
 		{

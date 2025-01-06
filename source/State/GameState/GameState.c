@@ -102,7 +102,7 @@ bool GameState::handleMessage(Telegram telegram)
 	{
 		case kMessageRestoreFPS:
 
-			VUEngine::setGameFrameRate(VUEngine::getInstance(), __TARGET_FPS);
+			VUEngine::setGameFrameRate(__TARGET_FPS);
 			break;
 	}
 
@@ -183,7 +183,7 @@ void GameState::suspend(void* owner __attribute__ ((unused)))
 	Clock::pause(this->messagingClock, true);
 
 #ifdef __TOOLS
-	if(!VUEngine::isInToolStateTransition(VUEngine::getInstance()))
+	if(!VUEngine::isInToolStateTransition())
 #endif
 	{
 		// Make sure collision colliders are not drawn while suspended
@@ -217,11 +217,11 @@ void GameState::resume(void* owner __attribute__ ((unused)))
 	HardwareManager::suspendInterrupts();
 
 #ifdef __TOOLS
-	if(!VUEngine::isInToolStateTransition(VUEngine::getInstance()))
+	if(!VUEngine::isInToolStateTransition())
 #endif
 	{
 		// Reset the engine state
-		VUEngine::reset(VUEngine::getInstance(), NULL == Stage::getSpec(this->stage)->assets.sounds);
+		VUEngine::reset(NULL == Stage::getSpec(this->stage)->assets.sounds);
 
 		// Resume the stage
 		Stage::resume(this->stage);
@@ -270,7 +270,7 @@ void GameState::configureStage(StageSpec* stageSpec, VirtualList positionedActor
 	}
 
 	// Reset the engine state
-	VUEngine::reset(VUEngine::getInstance(), NULL == stageSpec->assets.sounds);
+	VUEngine::reset(NULL == stageSpec->assets.sounds);
 
 	HardwareManager::suspendInterrupts();
 
@@ -293,7 +293,7 @@ void GameState::configureStage(StageSpec* stageSpec, VirtualList positionedActor
 	GameState::transform(this);
 
 	// Make sure all graphics are ready
-	VUEngine::prepareGraphics(VUEngine::getInstance());
+	VUEngine::prepareGraphics();
 
 	HardwareManager::resumeInterrupts();
 
@@ -632,7 +632,7 @@ void GameState::changeFramerate(int16 targetFPS, int32 duration)
 {
 	GameState::discardMessages(this, kMessageRestoreFPS);
 	
-	VUEngine::setGameFrameRate(VUEngine::getInstance(), targetFPS);
+	VUEngine::setGameFrameRate(targetFPS);
 
 	if(0 < duration)
 	{

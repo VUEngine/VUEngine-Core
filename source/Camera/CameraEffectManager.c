@@ -100,10 +100,10 @@ Brightness CameraEffectManager::getDefaultBrightness()
 		__BRIGHTNESS_BRIGHT_RED,
 	};
 
-	if(!isDeleted(VUEngine::getCurrentState(VUEngine::getInstance())))
+	if(!isDeleted(VUEngine::getCurrentState()))
 	{
 		// If exists, get brightness settings from stage spec
-		Stage stage = GameState::getStage(VUEngine::getCurrentState(VUEngine::getInstance()));
+		Stage stage = GameState::getStage(VUEngine::getCurrentState());
 		
 		if(!isDeleted(stage))
 		{

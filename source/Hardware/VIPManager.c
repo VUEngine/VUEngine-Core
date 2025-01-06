@@ -495,11 +495,11 @@ static void VIPManager::processInterrupt(uint16 interrupt)
 
 #ifdef __SHOW_PROCESS_NAME_DURING_FRAMESTART
 				PRINT_TEXT("F START:            ", 0, 27);
-				PRINT_TEXT(VUEngine::getProcessName(_vuEngine), 9, 27);
+				PRINT_TEXT(VUEngine::getProcessName(), 9, 27);
 #endif
 
 				vipManager->FRAMESTARTDuringXPEND = vipManager->processingXPEND;
-				VUEngine::frameStarted(_vuEngine, __MILLISECONDS_PER_SECOND / __MAXIMUM_FPS);
+				VUEngine::frameStarted(__MILLISECONDS_PER_SECOND / __MAXIMUM_FPS);
 				break;
 
 			case __GAMESTART:
@@ -510,7 +510,7 @@ static void VIPManager::processInterrupt(uint16 interrupt)
 
 #ifdef __SHOW_PROCESS_NAME_DURING_GAMESTART
 				PRINT_TEXT("G START:           ", 0, 26);
-				PRINT_TEXT(VUEngine::getProcessName(_vuEngine), 9, 26);
+				PRINT_TEXT(VUEngine::getProcessName(), 9, 26);
 #endif
 
 				vipManager->processingGAMESTART = true;
@@ -535,7 +535,7 @@ static void VIPManager::processInterrupt(uint16 interrupt)
 				}
 
 				// Process game's logic
-				VUEngine::gameFrameStarted(_vuEngine, vipManager->gameFrameDuration);
+				VUEngine::gameFrameStarted(vipManager->gameFrameDuration);
 				SpriteManager::render();
 				WireframeManager::render();
 
@@ -558,7 +558,7 @@ static void VIPManager::processInterrupt(uint16 interrupt)
 
 #ifdef __SHOW_PROCESS_NAME_DURING_XPEND
 				PRINT_TEXT("XPEND:            ", 0, 27);
-				PRINT_TEXT(VUEngine::getProcessName(_vuEngine), 9, 27);
+				PRINT_TEXT(VUEngine::getProcessName(), 9, 27);
 #endif
 
 				vipManager->processingXPEND = true;

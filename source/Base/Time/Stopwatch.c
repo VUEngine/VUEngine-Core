@@ -79,7 +79,7 @@ float Stopwatch::lap()
 	{
 		if(currentTimerCounter > this->previousTimerCounter)
 		{
-			timerCounter = VUEngine::getGameFrameDuration(VUEngine::getInstance()) / this->timeProportion;
+			timerCounter = VUEngine::getGameFrameDuration() / this->timeProportion;
 		}
 		else
 		{

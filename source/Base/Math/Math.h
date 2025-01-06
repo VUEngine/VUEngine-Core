@@ -524,10 +524,9 @@ static inline int32 Math::random(uint32 seed, int32 range)
 {
 #ifdef __ADD_USER_INPUT_AND_TIME_TO_RANDOM_SEED
 	seed += 
-		Clock::getMilliseconds
-		(
-			VUEngine::getClock(VUEngine::getInstance())) + KeypadManager::getAccumulatedUserInput(KeypadManager::getInstance()
-		);
+		Clock::getMilliseconds(VUEngine::getClock(VUEngine::getInstance())) 
+		+
+		KeypadManager::getAccumulatedUserInput(KeypadManager::getInstance());
 #endif
 
 	return 0 != range ? __ABS((int32)(seed % range)) : 0;

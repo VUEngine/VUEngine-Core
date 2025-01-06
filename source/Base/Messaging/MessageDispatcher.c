@@ -85,7 +85,7 @@ static bool MessageDispatcher::dispatchMessage
 	{
 		MessageDispatcher::dispatchDelayedMessage
 		(
-			VUEngine::getMessagingClock(_vuEngine), delay, sender, receiver, message, extraInfo
+			VUEngine::getMessagingClock(), delay, sender, receiver, message, extraInfo
 		);
 	}
 
@@ -105,7 +105,7 @@ static void MessageDispatcher::dispatchDelayedMessage
 	DelayedMessage* delayedMessage = new DelayedMessage;
 
 	delayedMessage->telegram = new Telegram(sender, receiver, message, extraInfo);
-	delayedMessage->clock = clock ? clock : VUEngine::getMessagingClock(_vuEngine);
+	delayedMessage->clock = clock ? clock : VUEngine::getMessagingClock();
 	delayedMessage->timeOfArrival = Clock::getMilliseconds(delayedMessage->clock) + delay;
 	delayedMessage->discarded = false;
 

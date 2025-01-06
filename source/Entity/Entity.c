@@ -182,7 +182,7 @@ uint16 Entity::getComponentsCount(uint32 componentType)
 
 void Entity::resetComponents()
 {
-	ColliderManager::propagateCommand(VUEngine::getColliderManager(_vuEngine), cComponentCommandReset, this);
+	ColliderManager::propagateCommand(VUEngine::getColliderManager(), cComponentCommandReset, this);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -329,14 +329,14 @@ fixed_t Entity::getFrictionCoefficient()
 
 void Entity::enableCollisions()
 {
-	ColliderManager::propagateCommand(VUEngine::getColliderManager(_vuEngine), cComponentCommandEnable, this);
+	ColliderManager::propagateCommand(VUEngine::getColliderManager(), cComponentCommandEnable, this);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Entity::disableCollisions()
 {
-	ColliderManager::propagateCommand(VUEngine::getColliderManager(_vuEngine), cComponentCommandDisable, this);
+	ColliderManager::propagateCommand(VUEngine::getColliderManager(), cComponentCommandDisable, this);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -345,7 +345,7 @@ void Entity::checkCollisions(bool active)
 {
 	ColliderManager::propagateCommand
 	(
-		VUEngine::getColliderManager(_vuEngine), cColliderComponentCommandCheckCollisions, this, (uint32)active
+		VUEngine::getColliderManager(), cColliderComponentCommandCheckCollisions, this, (uint32)active
 	);
 }
 
@@ -355,7 +355,7 @@ void Entity::registerCollisions(bool value)
 {
 	ColliderManager::propagateCommand
 	(
-		VUEngine::getColliderManager(_vuEngine), cColliderComponentCommandRegisterCollisions, this, (uint32)value
+		VUEngine::getColliderManager(), cColliderComponentCommandRegisterCollisions, this, (uint32)value
 	);
 }
 
@@ -365,7 +365,7 @@ void Entity::setCollidersLayers(uint32 layers)
 {
 	ColliderManager::propagateCommand
 	(
-		VUEngine::getColliderManager(_vuEngine), cColliderComponentCommandSetLayers, this, (uint32)layers
+		VUEngine::getColliderManager(), cColliderComponentCommandSetLayers, this, (uint32)layers
 	);
 }
 
@@ -393,7 +393,7 @@ void Entity::setCollidersLayersToIgnore(uint32 layersToIgnore)
 {
 	ColliderManager::propagateCommand
 	(
-		VUEngine::getColliderManager(_vuEngine), cColliderComponentCommandSetLayersToIgnore, this, (uint32)layersToIgnore
+		VUEngine::getColliderManager(), cColliderComponentCommandSetLayersToIgnore, this, (uint32)layersToIgnore
 	);
 }
 
@@ -419,14 +419,14 @@ uint32 Entity::getCollidersLayersToIgnore()
 
 void Entity::showColliders()
 {
-	ColliderManager::propagateCommand(VUEngine::getColliderManager(_vuEngine), cColliderComponentCommandShow, this);
+	ColliderManager::propagateCommand(VUEngine::getColliderManager(), cColliderComponentCommandShow, this);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Entity::hideColliders()
 {
-	ColliderManager::propagateCommand(VUEngine::getColliderManager(_vuEngine), cColliderComponentCommandHide, this);
+	ColliderManager::propagateCommand(VUEngine::getColliderManager(), cColliderComponentCommandHide, this);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

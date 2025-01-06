@@ -353,7 +353,7 @@ static ComponentManager ComponentManager::getManager(uint32 componentType)
 	{
 		case kColliderComponent:
 
-			return ComponentManager::safeCast(VUEngine::getColliderManager(VUEngine::getInstance()));	
+			return ComponentManager::safeCast(VUEngine::getColliderManager());	
 			break;
 
 		case kSpriteComponent:
@@ -373,7 +373,7 @@ static ComponentManager ComponentManager::getManager(uint32 componentType)
 
 		case kPhysicsComponent:
 
-			return ComponentManager::safeCast(VUEngine::getBodyManager(VUEngine::getInstance()));	
+			return ComponentManager::safeCast(VUEngine::getBodyManager());	
 			break;
 	}
 

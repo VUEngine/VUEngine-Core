@@ -492,7 +492,7 @@ static void SpriteManager::render()
 	SpriteManager::stopRendering();
 
 #ifdef __SHOW_SPRITES_PROFILING
-	if(!VUEngine::isInToolState(VUEngine::getInstance()))
+	if(!VUEngine::isInToolState())
 	{
 		SpriteManager::computeTotalPixelsDrawn();
 	}
@@ -551,7 +551,7 @@ static void SpriteManager::writeDRAM()
 	SpriteManager::writeWORLDAttributesToDRAM();
 
 #ifdef __SHOW_SPRITES_PROFILING
-	if(!VUEngine::isInToolState(VUEngine::getInstance()))
+	if(!VUEngine::isInToolState())
 	{
 		static int32 counter = __TARGET_FPS / 5;
 

@@ -172,7 +172,7 @@ static void CommunicationManager::enableCommunications(EventListener eventLister
 #endif
 
 	// Wait a little bit for channel to stabilize
-	VUEngine::wait(VUEngine::getInstance(), wait);
+	VUEngine::wait(wait);
 
 	// If handshake is taking place
     if(CommunicationManager::isHandshakeIncoming(communicationManager))

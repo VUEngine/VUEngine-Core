@@ -126,7 +126,7 @@ void Debug::show()
 
 void Debug::hide()
 {
-	ColliderManager::hideColliders(GameState::getColliderManager(VUEngine::getPreviousState(VUEngine::getInstance())));
+	ColliderManager::hideColliders(GameState::getColliderManager(VUEngine::getPreviousState()));
 	Printing::clear();
 	SpriteManager::showAllSprites(NULL, true);
 }
@@ -345,7 +345,7 @@ void Debug::showPage(int32 increment)
 
 		Debug::setBlackBackground(this);
 
-		ColliderManager::hideColliders(GameState::getColliderManager(VUEngine::getPreviousState(VUEngine::getInstance())));
+		ColliderManager::hideColliders(GameState::getColliderManager(VUEngine::getPreviousState()));
 
 		((void (*)(Debug, int32, int32, int32))this->currentPage->data)(this, increment, 1, 2);
 	}
@@ -430,14 +430,14 @@ void Debug::generalStatusPage(int32 increment __attribute__ ((unused)), int32 x 
 
 	Printing::text("GAME STATUS", 1, y++, NULL);
 	Printing::text("Current State:", 1, ++y, NULL);
-	Printing::text(__GET_CLASS_NAME(VUEngine::getPreviousState(VUEngine::getInstance())), 20, y, NULL);
+	Printing::text(__GET_CLASS_NAME(VUEngine::getPreviousState()), 20, y, NULL);
 
 	Printing::text("Save Data Manager:", 1, ++y, NULL);
-	if(VUEngine::getSaveDataManager(VUEngine::getInstance()))
+	if(VUEngine::getSaveDataManager())
 	{
 		Printing::text
 		(
-			__GET_CLASS_NAME(VUEngine::getSaveDataManager(VUEngine::getInstance())), 20, y, NULL
+			__GET_CLASS_NAME(VUEngine::getSaveDataManager()), 20, y, NULL
 		);
 	}
 	else
@@ -452,13 +452,13 @@ void Debug::generalStatusPage(int32 increment __attribute__ ((unused)), int32 x 
 
 	Printing::text("CLOCKS STATUS", 1, y++, NULL);
 	Printing::text("General clock time: ", 1, ++y, NULL);
-	Clock::print(VUEngine::getClock(VUEngine::getInstance()), 26, y, NULL);
+	Clock::print(VUEngine::getClock(), 26, y, NULL);
 	Printing::text("In game clock's time: ", 1, ++y, NULL);
-	Clock::print(GameState::getMessagingClock(VUEngine::getPreviousState(VUEngine::getInstance())), 26, y, NULL);
+	Clock::print(GameState::getMessagingClock(VUEngine::getPreviousState()), 26, y, NULL);
 	Printing::text("Animations clock's time: ", 1, ++y, NULL);
-	Clock::print(GameState::getLogicsClock(VUEngine::getPreviousState(VUEngine::getInstance())), 26, y, NULL);
+	Clock::print(GameState::getLogicsClock(VUEngine::getPreviousState()), 26, y, NULL);
 	Printing::text("Physics clock's time: ", 1, ++y, NULL);
-	Clock::print(GameState::getPhysicsClock(VUEngine::getPreviousState(VUEngine::getInstance())), 26, y, NULL);
+	Clock::print(GameState::getPhysicsClock(VUEngine::getPreviousState()), 26, y, NULL);
 	y+=3;
 }
 
@@ -733,7 +733,7 @@ void Debug::streamingShowStatus
 	int32 increment __attribute__ ((unused)), int32 x __attribute__ ((unused)), int32 y __attribute__ ((unused))
 )
 {
-	Stage::print(GameState::getStage(VUEngine::getPreviousState(VUEngine::getInstance())), x, y);
+	Stage::print(GameState::getStage(VUEngine::getPreviousState()), x, y);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -1226,9 +1226,9 @@ void Debug::physicsPage(int32 increment __attribute__ ((unused)), int32 x __attr
 
 void Debug::physicStatusShowStatistics(int32 increment __attribute__ ((unused)), int32 x, int32 y)
 {
-	BodyManager::print(GameState::getBodyManager(VUEngine::getPreviousState(VUEngine::getInstance())), x, y);
-	ColliderManager::print(GameState::getColliderManager(VUEngine::getPreviousState(VUEngine::getInstance())), x, y + 6);
-	ColliderManager::hideColliders(GameState::getColliderManager(VUEngine::getPreviousState(VUEngine::getInstance())));
+	BodyManager::print(GameState::getBodyManager(VUEngine::getPreviousState()), x, y);
+	ColliderManager::print(GameState::getColliderManager(VUEngine::getPreviousState()), x, y + 6);
+	ColliderManager::hideColliders(GameState::getColliderManager(VUEngine::getPreviousState()));
 
 	Debug::setBlackBackground(this);
 }
@@ -1241,7 +1241,7 @@ void Debug::physicStatusShowColliders(int32 increment __attribute__ ((unused)), 
 
 	SpriteManager::showAllSprites(NULL, true);
 	Debug::dimmGame(this);
-	ColliderManager::showColliders(GameState::getColliderManager(VUEngine::getPreviousState(VUEngine::getInstance())));
+	ColliderManager::showColliders(GameState::getColliderManager(VUEngine::getPreviousState()));
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

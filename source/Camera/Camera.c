@@ -419,7 +419,7 @@ static void Camera::startEffect(int32 effect, ...)
 	Camera camera = Camera::getInstance();
 	
 #ifdef __TOOLS
-	if(VUEngine::isInToolStateTransition(VUEngine::getInstance()))
+	if(VUEngine::isInToolStateTransition())
 	{
 		return;
 	}
@@ -438,7 +438,7 @@ static void Camera::stopEffect(int32 effect)
 	Camera camera = Camera::getInstance();
 	
 #ifdef __TOOLS
-	if(VUEngine::isInToolStateTransition(VUEngine::getInstance()))
+	if(VUEngine::isInToolStateTransition())
 	{
 		return;
 	}

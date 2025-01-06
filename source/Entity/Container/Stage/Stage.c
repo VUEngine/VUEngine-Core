@@ -247,8 +247,8 @@ void Stage::resume()
 	Stage::setupSounds(this);
 
 	// Set physics
-	BodyManager::setFrictionCoefficient(VUEngine::getBodyManager(_vuEngine), this->stageSpec->physics.frictionCoefficient);
-	BodyManager::setGravity(VUEngine::getBodyManager(_vuEngine), this->stageSpec->physics.gravity);
+	BodyManager::setFrictionCoefficient(VUEngine::getBodyManager(), this->stageSpec->physics.frictionCoefficient);
+	BodyManager::setGravity(VUEngine::getBodyManager(), this->stageSpec->physics.gravity);
 
 	Stage::prepareGraphics(this);
 
@@ -498,7 +498,7 @@ void Stage::streamAll()
 
 		Stage::purgeChildren(this);
 
-		VUEngine::prepareGraphics(VUEngine::getInstance());
+		VUEngine::prepareGraphics();
 
 	}while(Stage::unloadOutOfRangeActors(this, false));
 
@@ -511,10 +511,10 @@ void Stage::streamAll()
 	{
 		Stage::transform(this, &_neutralEnvironmentTransformation, __INVALIDATE_TRANSFORMATION);
 
-		VUEngine::prepareGraphics(VUEngine::getInstance());
+		VUEngine::prepareGraphics();
 	}
 
-	VUEngine::prepareGraphics(VUEngine::getInstance());
+	VUEngine::prepareGraphics();
 
 	this->streamingAmplitude = this->stageSpec->streaming.streamingAmplitude;
 	this->streamingHeadNode = NULL;
@@ -599,7 +599,7 @@ void Stage::print(int32 x, int32 y)
 bool Stage::stream()
 {
 #ifdef __SHOW_STREAMING_PROFILING
-	if(!VUEngine::isInToolState(_vuEngine))
+	if(!VUEngine::isInToolState())
 	{
 		ActorFactory::print(this->actorFactory, 25, 3);
 	}
@@ -643,8 +643,8 @@ void Stage::configure(VirtualList positionedActorsToIgnore)
 	Camera::setup(this->stageSpec->rendering.pixelOptical, this->stageSpec->level.cameraFrustum);
 
 	// Set physics
-	BodyManager::setFrictionCoefficient(VUEngine::getBodyManager(_vuEngine), this->stageSpec->physics.frictionCoefficient);
-	BodyManager::setGravity(VUEngine::getBodyManager(_vuEngine), this->stageSpec->physics.gravity);
+	BodyManager::setFrictionCoefficient(VUEngine::getBodyManager(), this->stageSpec->physics.frictionCoefficient);
+	BodyManager::setGravity(VUEngine::getBodyManager(), this->stageSpec->physics.gravity);
 
 	// Preload graphics
 	Stage::prepareGraphics(this);
@@ -1075,7 +1075,7 @@ void Stage::loadPostProcessingEffects()
 		int32 i = 0;
 		for(; this->stageSpec->postProcessingEffects[i]; i++)
 		{
-			VUEngine::pushFrontPostProcessingEffect(_vuEngine, this->stageSpec->postProcessingEffects[i], NULL);
+			VUEngine::pushFrontPostProcessingEffect(this->stageSpec->postProcessingEffects[i], NULL);
 		}
 	}
 }
