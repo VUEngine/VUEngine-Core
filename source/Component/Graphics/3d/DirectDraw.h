@@ -111,23 +111,23 @@ singleton class DirectDraw : Object
 	static bool drawSolidRhumbus(PixelVector center, int16 radius, int32 color, uint8 bufferIndex, bool interlaced);
 
 	/// Reset the manager's state
-	void reset();
+	static void reset();
 
 	/// Prepare the manager to start drawing to the frame buffers.
-	void preparteToDraw();
+	static void preparteToDraw();
 	
 	/// Configure the frustum where drawing is allowed.
 	/// @param frustum: 3D boundary when drawing is allowed
-	void setFrustum(CameraFrustum frustum);
+	static void setFrustum(CameraFrustum frustum);
 
 	/// Retrieve the frustum where drawing is allowed.
 	/// @return 3D boundary when drawing is allowed
-	CameraFrustum getFrustum();
+	static CameraFrustum getFrustum();
 	
 	/// Print the manager's current status.
 	/// @param x: Screen x coordinate where to print
 	/// @param y: Screen y coordinate where to print
-	void print(int16 x, int16 y);
+	static void print(int16 x, int16 y);
 }
 
 #endif

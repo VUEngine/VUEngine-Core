@@ -56,10 +56,7 @@ void ObjectSprite::constructor(Entity owner, const ObjectSpriteSpec* objectSprit
 	if(NULL != objectSpriteSpec->spriteSpec.textureSpec)
 	{
 		this->texture = 
-			Texture::safeCast(
-				ObjectTextureManager::getTexture(ObjectTextureManager::getInstance(), 
-				(ObjectTextureSpec*)objectSpriteSpec->spriteSpec.textureSpec)
-			);
+			Texture::safeCast(ObjectTextureManager::getTexture((ObjectTextureSpec*)objectSpriteSpec->spriteSpec.textureSpec));
 
 		NM_ASSERT(this->texture, "ObjectSprite::constructor: null texture");
 
@@ -89,9 +86,12 @@ void ObjectSprite::destructor()
 
 	if(!isDeleted(this->texture))
 	{
-		Texture::removeEventListener(
-			this->texture, ListenerObject::safeCast(this), (EventListener)ObjectSprite::onTextureRewritten, kEventTextureRewritten);
-		ObjectTextureManager::releaseTexture(ObjectTextureManager::getInstance(), ObjectTexture::safeCast(this->texture));		
+		Texture::removeEventListener
+		(
+			this->texture, ListenerObject::safeCast(this), (EventListener)ObjectSprite::onTextureRewritten, kEventTextureRewritten
+		);
+		
+		ObjectTextureManager::releaseTexture(ObjectTexture::safeCast(this->texture));		
 	}
 
 	this->texture = NULL;

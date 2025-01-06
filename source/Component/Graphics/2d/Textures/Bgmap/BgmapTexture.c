@@ -24,7 +24,6 @@
 // CLASS' ATTRIBUTES
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static BgmapTextureManager _bgmapTextureManager = NULL;
 static const uint16 _emptyTextureRow[64] = {0};
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -46,12 +45,6 @@ void BgmapTexture::constructor(BgmapTextureSpec* bgmapTextureSpec, uint16 id)
 
 	this->xOffset = 0;
 	this->yOffset = 0;
-
-	if(NULL == _bgmapTextureManager)
-	{
-		_bgmapTextureManager = BgmapTextureManager::getInstance();
-	}
-
 }	
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

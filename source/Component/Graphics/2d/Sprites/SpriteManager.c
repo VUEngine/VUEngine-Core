@@ -116,8 +116,8 @@ static void SpriteManager::reset()
 
 	Texture::reset();
 	Printing::reset();
-	CharSetManager::reset(spriteManager->charSetManager);
-	BgmapTextureManager::reset(spriteManager->bgmapTextureManager);
+	CharSetManager::reset();
+	BgmapTextureManager::reset();
 	ParamTableManager::reset();
 	
 	SpriteManager::cleanUp();
@@ -538,7 +538,7 @@ static void SpriteManager::writeDRAM()
 	// Update all graphical data
 
 	// Update CHAR memory
-	CharSetManager::defragment(spriteManager->charSetManager, true);
+	CharSetManager::defragment(true);
 
 	// Update DRAM memory
 	Texture::updateTextures(spriteManager->texturesMaximumRowsToWrite, spriteManager->deferTextureUpdating);
@@ -572,18 +572,11 @@ static void SpriteManager::writeTextures()
 {
 	SpriteManager spriteManager = SpriteManager::getInstance();
 
-	NM_ASSERT(!isDeleted(spriteManager->charSetManager), "SpriteManager::writeTextures: invalid charset manager");
-
-	if(isDeleted(spriteManager->charSetManager))
-	{
-		return;
-	}
-
-	CharSetManager::writeCharSets(spriteManager->charSetManager);
+	CharSetManager::writeCharSets();
 
 	Texture::updateTextures(-1, false);
 
-	CharSetManager::writeCharSets(spriteManager->charSetManager);
+	CharSetManager::writeCharSets();
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -1110,8 +1103,6 @@ void SpriteManager::constructor()
 	this->evenFrame = __TRANSPARENCY_EVEN;
 
 	this->animationsClock = NULL;
-	this->charSetManager = CharSetManager::getInstance();
-	this->bgmapTextureManager = BgmapTextureManager::getInstance();
 	this->objectTextureManager = ObjectTextureManager::getInstance();
 
 	this->sortingSpriteNode = NULL;

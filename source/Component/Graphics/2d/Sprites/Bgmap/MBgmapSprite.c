@@ -53,7 +53,7 @@ void MBgmapSprite::constructor(Entity owner, const MBgmapSpriteSpec* mBgmapSprit
 
 	if(!isDeleted(this->texture))
 	{
-		BgmapTextureManager::releaseTexture(BgmapTextureManager::getInstance(), BgmapTexture::safeCast(this->texture));
+		BgmapTextureManager::releaseTexture(BgmapTexture::safeCast(this->texture));
 		this->texture = NULL;
 	}
 
@@ -271,7 +271,7 @@ void MBgmapSprite::loadTexture(TextureSpec* textureSpec, bool isFirstTextureAndH
 	BgmapTexture bgmapTexture = 
 		BgmapTextureManager::getTexture
 		(
-			BgmapTextureManager::getInstance(), textureSpec, minimumSegment, isFirstTextureAndHasMultipleTextures,
+			textureSpec, minimumSegment, isFirstTextureAndHasMultipleTextures,
 			((MBgmapSpriteSpec*)this->componentSpec)->scValue
 		);
 
@@ -327,7 +327,7 @@ void MBgmapSprite::releaseTextures()
 					bgmapTexture, ListenerObject::safeCast(this), (EventListener)BgmapSprite::onTextureRewritten, kEventTextureRewritten
 				);
 				
-				BgmapTextureManager::releaseTexture(BgmapTextureManager::getInstance(), bgmapTexture);
+				BgmapTextureManager::releaseTexture(bgmapTexture);
 			}
 		}
 

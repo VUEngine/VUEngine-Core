@@ -1148,8 +1148,8 @@ void Stage::prepareGraphics()
 void Stage::preloadAssets()
 {
 	Printing::loadFonts(this->stageSpec->assets.fontSpecs);
-	CharSetManager::loadCharSets(CharSetManager::getInstance(), (const CharSetSpec**)this->stageSpec->assets.charSetSpecs);
-	BgmapTextureManager::loadTextures(BgmapTextureManager::getInstance(), (const TextureSpec**)this->stageSpec->assets.textureSpecs);
+	CharSetManager::loadCharSets((const CharSetSpec**)this->stageSpec->assets.charSetSpecs);
+	BgmapTextureManager::loadTextures((const TextureSpec**)this->stageSpec->assets.textureSpecs);
 	ParamTableManager::setup(this->stageSpec->rendering.paramTableSegments);
 }
 

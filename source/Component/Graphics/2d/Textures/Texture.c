@@ -579,7 +579,7 @@ void Texture::loadCharSet()
 		return;
 	}
 
-	this->charSet = CharSetManager::getCharSet(CharSetManager::getInstance(), this->textureSpec->charSetSpec);
+	this->charSet = CharSetManager::getCharSet(this->textureSpec->charSetSpec);
 
 	if(isDeleted(this->charSet))
 	{
@@ -625,7 +625,7 @@ void Texture::releaseCharSet()
 			this->charSet, ListenerObject::safeCast(this), (EventListener)Texture::onCharSetDeleted, kEventCharSetDeleted
 		);
 
-		CharSetManager::releaseCharSet(CharSetManager::getInstance(), this->charSet);
+		CharSetManager::releaseCharSet(this->charSet);
 
 		this->charSet = NULL;
 	}

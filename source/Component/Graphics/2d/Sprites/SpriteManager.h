@@ -52,12 +52,6 @@ singleton class SpriteManager : ComponentManager
 	/// Clock for the animations
 	Clock animationsClock;
 
-	/// Cache charset manager
-	CharSetManager charSetManager;
-
-	/// Cache BGMAP texture manager
-	BgmapTextureManager bgmapTextureManager;
-
 	/// Cache OBJECT texture manager
 	ObjectTextureManager objectTextureManager;
 

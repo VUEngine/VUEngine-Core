@@ -429,7 +429,7 @@ void BgmapSprite::configureTexture()
 	}
 
 	this->texture = 
-		Texture::safeCast(BgmapTextureManager::getTexture(BgmapTextureManager::getInstance(), textureSpec, 0, false, __WORLD_1x1));
+		Texture::safeCast(BgmapTextureManager::getTexture(textureSpec, 0, false, __WORLD_1x1));
 
 	if(isDeleted(this->texture))
 	{
@@ -602,7 +602,7 @@ void BgmapSprite::releaseTexture()
 			);
 		}
 		
-		BgmapTextureManager::releaseTexture(BgmapTextureManager::getInstance(), BgmapTexture::safeCast(this->texture));
+		BgmapTextureManager::releaseTexture(BgmapTexture::safeCast(this->texture));
 	}
 
 	this->texture = NULL;

@@ -44,50 +44,46 @@ singleton class CharSetManager : Object
 
 	/// @publicsection
 
-	/// Method to retrieve the singleton instance
-	/// @return CharSetManager singleton
-	static CharSetManager getInstance();
-
 	/// Empties internal virtual list of registered fonts
-	void reset();
+	static void reset();
 
 	/// Load char sets in function of the provided array of specs.
 	/// @param charSetSpecs: Array of char set specs in function of which to load char sets 
-	void loadCharSets(const CharSetSpec** charSetSpecs);
+	static void loadCharSets(const CharSetSpec** charSetSpecs);
 
 	/// Retrieve a char set initialized with the provided spec.
 	/// @param charSetSpec: Spec to use to initilize the desired char set
 	/// @return Char set initialized with the provided spec
-	CharSet getCharSet(CharSetSpec* charSetSpec);
+	static CharSet getCharSet(CharSetSpec* charSetSpec);
 
 	/// Release a char set.
 	/// @param charSet: Char set to release
 	/// @return True if the char set is successfully deleted; false otherwise
-	bool releaseCharSet(CharSet charSet);
+	static bool releaseCharSet(CharSet charSet);
 
 	/// Write graphical data to VRAM.
-	void writeCharSets();
+	static void writeCharSets();
 
 	/// Defragment CHAR space.
 	/// @return True if memory was defragmented; false otherwise
-	void defragment(bool deferred);
+	static void defragment(bool deferred);
 
 	/// Return the total number of used CHARs in CHAR space.
 	/// @return Total number of used CHARs in CHAR space
-	int32 getTotalUsedChars();
+	static int32 getTotalUsedChars();
 
 	/// Return the total number of free CHARs in CHAR space.
 	/// @return Total number of free CHARs in CHAR space
-	int32 getTotalFreeChars();
+	static int32 getTotalFreeChars();
 
 	/// Return the total number of char sets.
 	/// @return Total number of char sets
-	int32 getTotalCharSets();
+	static int32 getTotalCharSets();
 	
 	/// Print the manager's status.
 	/// @param x: Screen x coordinate where to print
 	/// @param y: Screen y coordinate where to print
-	void print(int32 x, int32 y);
+	static void print(int32 x, int32 y);
 }
 
 #endif

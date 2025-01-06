@@ -77,7 +77,7 @@ static void ParamTableManager::setup(int32 availableBgmapSegmentsForParamTable)
 
 	paramTableManager->size = __PARAM_TABLE_END - paramTableManager->paramTableBase;
 
-	BgmapTextureManager::calculateAvailableBgmapSegments(BgmapTextureManager::getInstance());
+	BgmapTextureManager::calculateAvailableBgmapSegments();
 
 	// Clean param tables memory
 	for(uint8* data = (uint8*)paramTableManager->paramTableBase; data < (uint8*)__PARAM_TABLE_END; data++)

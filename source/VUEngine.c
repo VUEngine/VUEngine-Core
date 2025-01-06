@@ -120,7 +120,7 @@ void VUEngine::reset(bool resetSounds)
 	VIPManager::removePostProcessingEffects(this->vipManager);
 
 	// Reset managers
-	WireframeManager::reset(this->wireframeManager);
+	WireframeManager::reset();
 
 	if(resetSounds)
 	{
@@ -136,7 +136,7 @@ void VUEngine::reset(bool resetSounds)
 	// The order of reset for the graphics managers must not be changed!
 	VIPManager::reset(this->vipManager);
 	SpriteManager::reset();
-	DirectDraw::reset(DirectDraw::getInstance());
+	DirectDraw::reset();
 	AnimationCoordinatorFactory::reset();
 
 	HardwareManager::enableInterrupts();
@@ -544,11 +544,11 @@ void VUEngine::frameStarted(uint16 gameFrameDuration)
 #endif
 
 #ifdef __SHOW_CHAR_MEMORY_STATUS
-		CharSetManager::print(CharSetManager::getInstance(), 1, 5);
+		CharSetManager::print(1, 5);
 #endif
 
 #ifdef __SHOW_BGMAP_MEMORY_STATUS
-		BgmapTextureManager::print(BgmapTextureManager::getInstance(), 1, 5);
+		BgmapTextureManager::print(1, 5);
 		ParamTableManager::print(1 + 27, 5);
 #endif
 
@@ -707,10 +707,9 @@ void VUEngine::initialize()
 	this->timerManager = TimerManager::getInstance();
 	this->communicationManager = CommunicationManager::getInstance();
 	this->soundManager = SoundManager::getInstance();
-	this->wireframeManager = WireframeManager::getInstance();
 
 	SpriteManager::reset();
-	DirectDraw::reset(DirectDraw::getInstance());
+	DirectDraw::reset();
 	SRAMManager::reset(SRAMManager::getInstance());
 
 	// Initialize hardware registries

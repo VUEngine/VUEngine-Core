@@ -79,62 +79,62 @@ singleton class WireframeManager : ComponentManager
 	override void destroyComponent(Entity owner, Wireframe wireframe);
 
 	/// Reset the manager's state.
-	void reset();
+	static void reset();
 
 	/// Enable wireframe rendering and drawing.
-	void enable();
+	static void enable();
 
 	/// Disable wireframe rendering and drawing.
-	void disable();
+	static void disable();
 
 	/// Create a wireframe with the provided spec.
 	/// @param owner: Object to which the wireframe will attach toc
 	/// @param wireframeSpec: Spec to use to create the wireframe
 	/// @return Created wireframe
-	Wireframe createWireframe(Entity owner, const WireframeSpec* wireframeSpec);
+	static Wireframe createWireframe(Entity owner, const WireframeSpec* wireframeSpec);
 
 	/// Destroy the provided wireframe.
 	/// @param wireframe: Wireframe to destroy
-	void destroyWireframe(Wireframe wireframe);
+	static void destroyWireframe(Wireframe wireframe);
 
 	/// Register a wireframe to be managed
 	/// @param wireframe: Wireframe to be managed
 	/// @return True if the wireframe was successfully registered; false otherwise
-	bool registerWireframe(Wireframe wireframe);
+	static bool registerWireframe(Wireframe wireframe);
 
 	/// Unregister a wireframe to be managed
 	/// @param wireframe: Wireframe to no longer manage
 	/// @return True if the wireframe was successfully unregistered; false otherwise
-	bool unregisterWireframe(Wireframe wireframe);
+	static bool unregisterWireframe(Wireframe wireframe);
 
 	/// Prepare wireframe's graphical data for drawing
-	void render();
+	static void render();
 
 	/// Draw wireframes to the frame buffers
-	void draw();
+	static void draw();
 
 	/// Show all wireframes belonging to the provided owner.
 	/// @param owner: Object to which the wireframe will attach to
-	void showWireframes(Entity owner);
+	static void showWireframes(Entity owner);
 
 	/// Hide all wireframes belonging to the provided owner.
 	/// @param owner: Object to which the wireframe will attach to
-	void hideWireframes(Entity owner);
+	static void hideWireframes(Entity owner);
 
 	/// Show all wireframes.
-	void showAllWireframes();
+	static void showAllWireframes();
 	
 	/// Hide all wireframes.
-	void hideAllWireframes();
+	static void hideAllWireframes();
 
 	/// Check if there are any registered wireframes.
 	/// @return True if there are any registered wireframes; false otherwise
-	bool hasWireframes();	
+	static bool hasWireframes();	
 
 	/// Print the manager's state.
 	/// @param x: Screen x coordinate where to print
 	/// @param y: Screen y coordinate where to print
-	void print(int32 x, int32 y);
+	static void print(int32 x, int32 y);
 }
 
 #endif

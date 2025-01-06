@@ -157,7 +157,7 @@ static void Printing::loadFonts(FontSpec** fontSpecs)
 				// Preload charset and save charset reference, if font was found
 				if(_fonts[i]->charSetSpec == fontSpecs[j]->charSetSpec)
 				{
-					fontData->charSet = CharSetManager::getCharSet(CharSetManager::getInstance(), fontSpecs[j]->charSetSpec);
+					fontData->charSet = CharSetManager::getCharSet(fontSpecs[j]->charSetSpec);
 
 					CharSet::addEventListener(fontData->charSet, ListenerObject::safeCast(printing), (EventListener)Printing::onFontCharChangedOffset, kEventCharSetChangedOffset);
 				}
@@ -200,7 +200,7 @@ static void Printing::releaseFonts()
 					kEventCharSetChangedOffset
 				);
 
-				while(!CharSetManager::releaseCharSet(CharSetManager::getInstance(), fontData->charSet));
+				while(!CharSetManager::releaseCharSet(fontData->charSet));
 			}
 
 			delete fontData;
@@ -223,7 +223,7 @@ static void Printing::clear()
 	{
 		Mem::clear
 		(
-			(BYTE*)__BGMAP_SEGMENT(BgmapTextureManager::getPrintingBgmapSegment(BgmapTextureManager::getInstance()) + 1) - 
+			(BYTE*)__BGMAP_SEGMENT(BgmapTextureManager::getPrintingBgmapSegment() + 1) - 
 			__PRINTABLE_BGMAP_AREA * 2, __PRINTABLE_BGMAP_AREA * 2
 		);
 	}
@@ -488,7 +488,7 @@ static void Printing::addSprite()
 		}
 	};
 
-	printing->printingBgmapSegment = BgmapTextureManager::getPrintingBgmapSegment(BgmapTextureManager::getInstance());
+	printing->printingBgmapSegment = BgmapTextureManager::getPrintingBgmapSegment();
 	printing->activePrintingSprite = 
 		PrintingSprite::safeCast(SpriteManager::createSprite(NULL, (SpriteSpec*)&DefaultPrintingSpriteSpec));
 
@@ -763,7 +763,7 @@ static FontData* Printing::getFontByName(const char* font)
 			// If font's charset has not been preloaded, load it now
 			if(NULL == result->charSet)
 			{
-				result->charSet = CharSetManager::getCharSet(CharSetManager::getInstance(), result->fontSpec->charSetSpec);
+				result->charSet = CharSetManager::getCharSet(result->fontSpec->charSetSpec);
 
 				CharSet::addEventListener
 				(
@@ -954,7 +954,7 @@ static void Printing::out(uint8 x, uint8 y, const char* string, const char* font
 
 	if(-1 == printing->printingBgmapSegment)
 	{
-		printing->printingBgmapSegment = BgmapTextureManager::getPrintingBgmapSegment(BgmapTextureManager::getInstance());
+		printing->printingBgmapSegment = BgmapTextureManager::getPrintingBgmapSegment();
 
 		if(-1 == printing->printingBgmapSegment)
 		{

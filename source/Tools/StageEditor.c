@@ -286,7 +286,7 @@ void StageEditor::releaseWireframe()
 {
 	if(!isDeleted(this->wireframe))
 	{
-		WireframeManager::destroyWireframe(WireframeManager::getInstance(), this->wireframe);
+		WireframeManager::destroyWireframe(this->wireframe);
 
 		this->wireframe = NULL;
 	}
@@ -365,7 +365,7 @@ void StageEditor::highLightActor()
 			this->wireframe = 
 				WireframeManager::createWireframe
 				(
-					WireframeManager::getInstance(), Entity::safeCast(actor), (WireframeSpec*)&meshSpec
+					Entity::safeCast(actor), (WireframeSpec*)&meshSpec
 				);
 		}
 	}

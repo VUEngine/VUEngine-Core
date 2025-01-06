@@ -73,7 +73,7 @@ static void Camera::setup(PixelOptical pixelOptical, CameraFrustum cameraFrustum
 	camera->optical = Optical::getFromPixelOptical(pixelOptical, camera->cameraFrustum);
 	camera->transformationFlags |= __INVALIDATE_TRANSFORMATION;
 
-	DirectDraw::setFrustum(DirectDraw::getInstance(), camera->cameraFrustum);
+	DirectDraw::setFrustum(camera->cameraFrustum);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

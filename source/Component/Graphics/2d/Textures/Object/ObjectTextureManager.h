@@ -30,21 +30,17 @@ singleton class ObjectTextureManager : Object
 {
 	/// @publicsection
 
-	/// Method to retrieve the singleton instance
-	/// @return ObjectTextureManager singleton
-	static ObjectTextureManager getInstance();
-
 	/// Reset the manager's state.
-	void reset();
+	static void reset();
 
 	/// Retrieve a texture initialized with the provided spec.
 	/// @param objectTextureSpec: Spec to use to initilize the desired texture
 	/// @return Texture initialized with the provided spec
-	ObjectTexture getTexture(ObjectTextureSpec* objectTextureSpec);
+	static ObjectTexture getTexture(ObjectTextureSpec* objectTextureSpec);
 
 	/// Release a texture.
 	/// @param objectTexture: Texture to release
-	void releaseTexture(ObjectTexture objectTexture);
+	static void releaseTexture(ObjectTexture objectTexture);
 }
 
 #endif
