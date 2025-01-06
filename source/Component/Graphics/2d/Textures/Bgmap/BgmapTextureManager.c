@@ -78,8 +78,6 @@ static void BgmapTextureManager::reset()
 
 static void BgmapTextureManager::clearBgmapSegment(int32 segment)
 {
-	BgmapTextureManager bgmapTextureManager = BgmapTextureManager::getInstance();
-
 	Mem::clear((BYTE*)__BGMAP_SEGMENT(segment), 64 * 64 * 2);
 }
 
@@ -125,8 +123,6 @@ static int8 BgmapTextureManager::getPrintingBgmapSegment()
 
 static void BgmapTextureManager::loadTextures(const TextureSpec** textureSpecs)
 {
-	BgmapTextureManager bgmapTextureManager = BgmapTextureManager::getInstance();
-
 	// Textures
 	if(NULL != textureSpecs)
 	{
@@ -206,8 +202,6 @@ static BgmapTexture BgmapTextureManager::getTexture
 	BgmapTextureSpec* bgmapTextureSpec, int16 minimumSegment, bool mustLiveAtEvenSegment, uint32 scValue
 )
 {
-	BgmapTextureManager bgmapTextureManager = BgmapTextureManager::getInstance();
-
 	if(NULL == bgmapTextureSpec)
 	{
 		NM_ASSERT(false, "BgmapTextureManager::getTexture: NULL spec provided");
@@ -277,8 +271,6 @@ static BgmapTexture BgmapTextureManager::getTexture
 
 static void BgmapTextureManager::releaseTexture(BgmapTexture bgmapTexture)
 {
-	BgmapTextureManager bgmapTextureManager = BgmapTextureManager::getInstance();
-
 	// If no one is using the texture anymore
 	if(!isDeleted(bgmapTexture))
 	{
