@@ -197,38 +197,38 @@ singleton class VSUManager : Object
 
 	/// Apply a sound source configuration to a VSU sound source with the provided data.
 	/// @param vsuSoundSourceConfiguration: VSU sound source configuration
-	void applySoundSourceConfiguration(const VSUSoundSourceConfiguration* vsuSoundSourceConfiguration);
+	static void applySoundSourceConfiguration(const VSUSoundSourceConfiguration* vsuSoundSourceConfiguration);
 
 	/// Apply a sound source configuration to a VSU sound source with the provided data for PCM playback.
 	/// @param sample: PCM sample data
-	void applyPCMSampleToSoundSource(int8 sample);
+	static void applyPCMSampleToSoundSource(int8 sample);
 
 	/// Reset the manager's state.
-	void reset();
+	static void reset();
 
 	/// Set the playback mode (stops any playing sound).
 	/// @param playbackMode: kPlaybackNative or kPlaybackPCM
-	void setMode(uint32 playbackMode);
+	static void setMode(uint32 playbackMode);
 
 	/// Update the manager.
-	void update();
+	static void update();
 
 	/// Stop all sound sources.
-	void stopAllSounds();
+	static void stopAllSounds();
 
 	/// Enable queueing petitions to play sounds.
-	void enableQueue();
+	static void enableQueue();
 
 	/// Disable queueing petitions to play sounds (if there are no
 	/// sound sources availables at the time of request, the petition
 	/// is ignored).
-	void disableQueue();
+	static void disableQueue();
 
 	/// Print the manager's status.
-	void print(int32 x, int32 y);
+	static void print(int32 x, int32 y);
 
 	/// Print waveforms.
-	void printWaveFormStatus(int32 x, int32 y);
+	static void printWaveFormStatus(int32 x, int32 y);
 }
 
 #endif

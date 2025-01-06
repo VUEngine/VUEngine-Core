@@ -505,7 +505,7 @@ static void VIPManager::processInterrupt(uint16 interrupt)
 			case __GAMESTART:
 
 #ifdef __ENABLE_PROFILER
-				Profiler::lap(Profiler::getInstance(), kProfilerLapTypeStartInterrupt, NULL);
+				Profiler::lap(kProfilerLapTypeStartInterrupt, NULL);
 #endif
 
 #ifdef __SHOW_PROCESS_NAME_DURING_GAMESTART
@@ -542,7 +542,7 @@ static void VIPManager::processInterrupt(uint16 interrupt)
 				vipManager->processingGAMESTART = false;
 
 #ifdef __ENABLE_PROFILER
-				Profiler::lap(Profiler::getInstance(), kProfilerLapTypeVIPInterruptGAMESTARTProcess, PROCESS_NAME_RENDER);
+				Profiler::lap(kProfilerLapTypeVIPInterruptGAMESTARTProcess, PROCESS_NAME_RENDER);
 #endif
 
 #ifdef __SHOW_VIP_STATUS
@@ -553,7 +553,7 @@ static void VIPManager::processInterrupt(uint16 interrupt)
 			case __XPEND:
 
 #ifdef __ENABLE_PROFILER
-				Profiler::lap(Profiler::getInstance(), kProfilerLapTypeStartInterrupt, NULL);
+				Profiler::lap(kProfilerLapTypeStartInterrupt, NULL);
 #endif
 
 #ifdef __SHOW_PROCESS_NAME_DURING_XPEND
@@ -593,7 +593,7 @@ static void VIPManager::processInterrupt(uint16 interrupt)
 				vipManager->processingXPEND = false;
 
 #ifdef __ENABLE_PROFILER
-				Profiler::lap(Profiler::getInstance(), kProfilerLapTypeVIPInterruptXPENDProcess, PROCESS_NAME_VRAM_WRITE);
+				Profiler::lap(kProfilerLapTypeVIPInterruptXPENDProcess, PROCESS_NAME_VRAM_WRITE);
 #endif
 
 				if(!vipManager->processingGAMESTART)

@@ -94,7 +94,7 @@ static void CommunicationManager::interruptHandler()
 	CommunicationManager communicationManager = CommunicationManager::getInstance();
 
 #ifdef __ENABLE_PROFILER
-	Profiler::lap(Profiler::getInstance(), kProfilerLapTypeStartInterrupt, NULL);
+	Profiler::lap(kProfilerLapTypeStartInterrupt, NULL);
 #endif
 
 	if(kCommunicationsBroadcastNone == communicationManager->broadcast && CommunicationManager::isMaster(communicationManager))
@@ -1126,7 +1126,7 @@ static void CommunicationManager::processInterrupt()
 					CommunicationManager::removeEventListeners(communicationManager, NULL, kEventCommunicationsTransmissionCompleted);
 					communicationManager->asyncReceivedByte = NULL;
 #ifdef __ENABLE_PROFILER
-					Profiler::lap(Profiler::getInstance(), kProfilerLapTypeCommunicationsInterruptProcess, PROCESS_NAME_COMMUNICATIONS);
+					Profiler::lap(kProfilerLapTypeCommunicationsInterruptProcess, PROCESS_NAME_COMMUNICATIONS);
 #endif
 				}
 			}
@@ -1162,7 +1162,7 @@ static void CommunicationManager::processInterrupt()
 					communicationManager->asyncSentByte = NULL;
 					communicationManager->broadcast = kCommunicationsBroadcastNone;
 #ifdef __ENABLE_PROFILER
-					Profiler::lap(Profiler::getInstance(), kProfilerLapTypeCommunicationsInterruptProcess, PROCESS_NAME_COMMUNICATIONS);
+					Profiler::lap(kProfilerLapTypeCommunicationsInterruptProcess, PROCESS_NAME_COMMUNICATIONS);
 #endif
 				}
 			}
@@ -1203,7 +1203,7 @@ static void CommunicationManager::processInterrupt()
 					communicationManager->asyncReceivedByte = NULL;
 
 #ifdef __ENABLE_PROFILER
-					Profiler::lap(Profiler::getInstance(), kProfilerLapTypeCommunicationsInterruptProcess, PROCESS_NAME_COMMUNICATIONS);
+					Profiler::lap(kProfilerLapTypeCommunicationsInterruptProcess, PROCESS_NAME_COMMUNICATIONS);
 #endif
 				}
 			}

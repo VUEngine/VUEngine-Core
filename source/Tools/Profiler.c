@@ -4,7 +4,7 @@
  * © Jorge Eremiev <jorgech3@gmail.com> and Christian Radke <c.radke@posteo.de>
  *
  * For the full copyright and license information, please view the LICENSE file
- * that was distributed with this source code.
+ * that was distributed with profiler source code.
  */
 
 #ifdef __ENABLE_PROFILER
@@ -64,17 +64,19 @@ static BrightnessRepeatSpec profileBrightnessRepeatSpec =
 };
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-// CLASS' PUBLIC METHODS
+// CLASS' STATIC METHODS
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void Profiler::initialize()
+static void Profiler::initialize()
 {
-	Profiler::reset(this);
+	Profiler profiler = Profiler::getInstance();
+
+	Profiler::reset();
 	Printing::resetCoordinates();
 
-	this->initialized = true;
+	profiler->initialized = true;
 
 	_vipRegisters[__GPLT0] = 0x50;
 	_vipRegisters[__GPLT1] = 0x50;
@@ -85,29 +87,30 @@ void Profiler::initialize()
 	_vipRegisters[__JPLT2] = 0x50;
 	_vipRegisters[__JPLT3] = 0x50;
 
-	_vipRegisters[0x30 | __PALETTE] = 0xE0;
+	_vipRegisters[0x30 | __PRINTING_PALETTE] = 0xE0;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void Profiler::reset()
+static void Profiler::reset()
 {
-	VirtualList::deleteData(this->laps);
+	Profiler profiler = Profiler::getInstance();
+
+	VirtualList::deleteData(profiler->laps);
 	
-	this->started = false;
-	this->timerManager = ;
-	this->initialized = false;
-	this->currentProfilingProcess = 0;
-	this->printedProcessesNames = false;
-	this->timerCounter = TimerManager::getTimerCounter(this->timerManager);
-	this->timePerGameFrameInMS = VUEngine::getGameFrameDuration(VUEngine::getInstance());
-	this->timeProportion = TimerManager::getTargetTimePerInterruptInMS(this->timerManager) / (float)this->timerCounter;
-	this->skipFrames = 1;
-	this->lastCycleTotalTime = 0;
-	this->totalTime = 0;
-	this->lastLapIndex = 0;
-	this->previousTimerCounter = 0;
-	this->cycles = 0;
+	profiler->started = false;
+	profiler->initialized = false;
+	profiler->currentProfilingProcess = 0;
+	profiler->printedProcessesNames = false;
+	profiler->timerCounter = TimerManager::getTimerCounter();
+	profiler->timePerGameFrameInMS = VUEngine::getGameFrameDuration(VUEngine::getInstance());
+	profiler->timeProportion = TimerManager::getTargetTimePerInterruptInMS() / (float)profiler->timerCounter;
+	profiler->skipFrames = 1;
+	profiler->lastCycleTotalTime = 0;
+	profiler->totalTime = 0;
+	profiler->lastLapIndex = 0;
+	profiler->previousTimerCounter = 0;
+	profiler->cycles = 0;
 
 	for(int32 i = 0; i < 96; i++)
 	{
@@ -119,50 +122,54 @@ void Profiler::reset()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void Profiler::start()
+static void Profiler::start()
 {
-	if(!this->initialized)
+	Profiler profiler = Profiler::getInstance();
+
+	if(!profiler->initialized)
 	{
 		return;
 	}
 
-	Profiler::end(this);
+	Profiler::end();
 
-	if(0 < --this->skipFrames)
+	if(0 < --profiler->skipFrames)
 	{
 		return;
 	}
 
-	if(this->started)
+	if(profiler->started)
 	{
 		return;
 	}
 
-	VirtualList::deleteData(this->laps);
+	VirtualList::deleteData(profiler->laps);
 
-	this->started = true;
-	this->skipFrames = __ENABLE_PROFILER_SKIP_FRAMES;
-	this->printedProcessesNames = true;
-	this->currentProfilingProcess = 0;
-	this->lastCycleTotalTime = 0;
-	this->lastLapIndex = 0;
-	this->interruptFlags = 0;
+	profiler->started = true;
+	profiler->skipFrames = __ENABLE_PROFILER_SKIP_FRAMES;
+	profiler->printedProcessesNames = true;
+	profiler->currentProfilingProcess = 0;
+	profiler->lastCycleTotalTime = 0;
+	profiler->lastLapIndex = 0;
+	profiler->interruptFlags = 0;
 
-	TimerManager::disable(this->timerManager);
-	TimerManager::resetTimerCounter(this->timerManager);
-	TimerManager::enable(this->timerManager);
-	Profiler::wait(this, 1000);
+	TimerManager::disable();
+	TimerManager::resetTimerCounter();
+	TimerManager::enable();
+	Profiler::wait(1000);
 
-	this->previousTimerCounter = TimerManager::getCurrentTimerCounter(this->timerManager);
+	profiler->previousTimerCounter = TimerManager::getCurrentTimerCounter();
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void Profiler::end()
+static void Profiler::end()
 {
-	if(this->started)
+	Profiler profiler = Profiler::getInstance();
+
+	if(profiler->started)
 	{
-		Profiler::computeLap(this, "HEADROOM", kProfilerLapTypeNormalProcess, true);
+		Profiler::computeLap("HEADROOM", kProfilerLapTypeNormalProcess, true);
 
 		VIPManager::setupBrightnessRepeat((BrightnessRepeatSpec*)&profileBrightnessRepeatSpec);
 
@@ -171,19 +178,21 @@ void Profiler::end()
 			profileBrightnessRepeatSpec.brightnessRepeat[i] = 16;
 		}
 
-		Profiler::print(this);
-		this->skipFrames = __ENABLE_PROFILER_SKIP_FRAMES;
-		this->timePerGameFrameInMS = VUEngine::getGameFrameDuration(VUEngine::getInstance());
+		Profiler::print();
+		profiler->skipFrames = __ENABLE_PROFILER_SKIP_FRAMES;
+		profiler->timePerGameFrameInMS = VUEngine::getGameFrameDuration(VUEngine::getInstance());
 	}
 
-	this->started = false;
+	profiler->started = false;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void Profiler::lap(uint32 lapType, const char* processName)
+static void Profiler::lap(uint32 lapType, const char* processName)
 {
-	if(!this->started)
+	Profiler profiler = Profiler::getInstance();
+
+	if(!profiler->started)
 	{
 		return;
 	}
@@ -192,55 +201,29 @@ void Profiler::lap(uint32 lapType, const char* processName)
 	{
 		if(kProfilerLapTypeStartInterrupt == lapType)
 		{
-			this->previousTimerCounter = TimerManager::getCurrentTimerCounter(this->timerManager);
+			profiler->previousTimerCounter = TimerManager::getCurrentTimerCounter();
 			return;
 		}
 		else
 		{
-			this->interruptFlags |= lapType;
+			profiler->interruptFlags |= lapType;
 		}
 	}
 
-	Profiler::computeLap(this, processName, lapType, false);
+	Profiler::computeLap(processName, lapType, false);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-// CLASS' PRIVATE METHODS
+// CLASS' PRIVATE STATIC METHODS
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void Profiler::constructor()
+static void Profiler::wait(int16 delay)
 {
-	// Always explicitly call the base's constructor 
-	Base::constructor();
-
-	this->laps = new VirtualList();
-
-	Profiler::reset(this);
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void Profiler::destructor()
-{
-	VirtualList::deleteData(this->laps);
-
-	delete this->laps;
-	this->laps = NULL;
-
-	// Allow a new construct
-	// Always explicitly call the base's destructor 
-	Base::destructor();
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void Profiler::wait(int16 delay)
-{
-	// Needed to give the timer enough time to reset its registers before this method is called again
+	// Needed to give the timer enough time to reset its registers before profiler method is called again
 	volatile int16 dummy = delay;
 
 	while(0 < --dummy);
@@ -248,8 +231,10 @@ void Profiler::wait(int16 delay)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void Profiler::registerLap(const char* processName, float elapsedTime, uint32 lapType, uint8 column)
+static void Profiler::registerLap(const char* processName, float elapsedTime, uint32 lapType, uint8 column)
 {
+	Profiler profiler = Profiler::getInstance();
+
 	Lap* lap = new Lap;
 
 	NM_ASSERT(0 <= elapsedTime, "Profiler::registerLap: negative elapsed time")
@@ -258,28 +243,30 @@ void Profiler::registerLap(const char* processName, float elapsedTime, uint32 la
 	lap->elapsedTime = elapsedTime;
 	lap->lapType = lapType;
 	lap->column = column;
-	lap->interruptFlags = this->interruptFlags;
-	this->interruptFlags = 0;
+	lap->interruptFlags = profiler->interruptFlags;
+	profiler->interruptFlags = 0;
 
-	VirtualList::pushBack(this->laps, lap);
+	VirtualList::pushBack(profiler->laps, lap);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void Profiler::computeLap(const char* processName, uint32 lapType, bool isHeadroom)
+static void Profiler::computeLap(const char* processName, uint32 lapType, bool isHeadroom)
 {
+	Profiler profiler = Profiler::getInstance();
+
 	HardwareManager::suspendInterrupts();
 
-	TimerManager::disable(this->timerManager);
+	TimerManager::disable();
 
-	uint16 currentTimerCounter = TimerManager::getCurrentTimerCounter(this->timerManager);
+	uint16 currentTimerCounter = TimerManager::getCurrentTimerCounter();
 
-	if(this->previousTimerCounter < currentTimerCounter)
+	if(profiler->previousTimerCounter < currentTimerCounter)
 	{
-		this->previousTimerCounter += this->timerCounter;
+		profiler->previousTimerCounter += profiler->timerCounter;
 	}
 
-	float elapsedTime = this->timePerGameFrameInMS - this->lastCycleTotalTime;
+	float elapsedTime = profiler->timePerGameFrameInMS - profiler->lastCycleTotalTime;
 
 	if(0 > elapsedTime)
 	{
@@ -288,13 +275,13 @@ void Profiler::computeLap(const char* processName, uint32 lapType, bool isHeadro
 
 	if(!isHeadroom)
 	{
-		elapsedTime = (this->previousTimerCounter - currentTimerCounter) * this->timeProportion;
-		this->lastCycleTotalTime += elapsedTime;
+		elapsedTime = (profiler->previousTimerCounter - currentTimerCounter) * profiler->timeProportion;
+		profiler->lastCycleTotalTime += elapsedTime;
 	}
 
 	uint8 value = 0;
 
-	if(this->currentProfilingProcess % 2)
+	if(profiler->currentProfilingProcess % 2)
 	{
 		value = 6;
 	}
@@ -305,51 +292,53 @@ void Profiler::computeLap(const char* processName, uint32 lapType, bool isHeadro
 
 	int32 entries = 4;
 
-	for(int32 i = this->lastLapIndex; i < this->lastLapIndex + entries && i; i++)
+	for(int32 i = profiler->lastLapIndex; i < profiler->lastLapIndex + entries && i; i++)
 	{
 		profileBrightnessRepeatSpec.brightnessRepeat[i] = value;
 	}
 
-	uint8 printingColumn = this->lastLapIndex >> 1;
+	uint8 printingColumn = profiler->lastLapIndex >> 1;
 
-	Profiler::registerLap(this, processName, elapsedTime, lapType, printingColumn + 1);
+	Profiler::registerLap(processName, elapsedTime, lapType, printingColumn + 1);
 
-	this->lastLapIndex += entries;
-	this->currentProfilingProcess++;
-	this->previousTimerCounter = currentTimerCounter;
+	profiler->lastLapIndex += entries;
+	profiler->currentProfilingProcess++;
+	profiler->previousTimerCounter = currentTimerCounter;
 
 	if(isHeadroom)
 	{
-		Profiler::registerLap(this, "TOTAL", this->lastCycleTotalTime, lapType, 46);
-		this->cycles++;
-		this->totalTime += this->lastCycleTotalTime;
-		Profiler::registerLap(this, "AVERAGE", this->totalTime / this->cycles, lapType, 47);		
+		Profiler::registerLap("TOTAL", profiler->lastCycleTotalTime, lapType, 46);
+		profiler->cycles++;
+		profiler->totalTime += profiler->lastCycleTotalTime;
+		Profiler::registerLap("AVERAGE", profiler->totalTime / profiler->cycles, lapType, 47);		
 	}
 
-	TimerManager::enable(this->timerManager);
+	TimerManager::enable();
 
 	HardwareManager::resumeInterrupts();
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void Profiler::print()
+static void Profiler::print()
 {
+	Profiler profiler = Profiler::getInstance();
+
 	Printing::resetCoordinates();
 	Printing::setWorldCoordinates(0, 0, -64, +3);
 	Printing::clear();
 	Printing::text("================================================", 0, 27, "Profiler");
 
-	for(VirtualNode node = VirtualList::begin(this->laps); NULL != node; node = VirtualNode::getNext(node))
+	for(VirtualNode node = VirtualList::begin(profiler->laps); NULL != node; node = VirtualNode::getNext(node))
 	{
 		Lap* lap = (Lap*)VirtualNode::getData(node);
-		Profiler::printValue(this, lap); 
+		Profiler::printValue(lap); 
 	}
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void Profiler::printValue(Lap* lap)
+static void Profiler::printValue(Lap* lap)
 {
 	if(NULL == lap->processName)
 	{
@@ -401,6 +390,38 @@ void Profiler::printValue(Lap* lap)
 		Printing::setOrientation(kPrintingOrientationHorizontal);
 		Printing::setDirection(kPrintingDirectionLTR);
 	}
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+// CLASS' PRIVATE METHODS
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void Profiler::constructor()
+{
+	// Always explicitly call the base's constructor 
+	Base::constructor();
+
+	this->laps = new VirtualList();
+
+	Profiler::reset();
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void Profiler::destructor()
+{
+	VirtualList::deleteData(this->laps);
+
+	delete this->laps;
+	this->laps = NULL;
+
+	// Allow a new construct
+	// Always explicitly call the base's destructor 
+	Base::destructor();
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

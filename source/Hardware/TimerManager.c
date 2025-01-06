@@ -40,7 +40,7 @@ static void TimerManager::interruptHandler()
 #else
 	TimerManager::disableInterrupt();
 
-	Profiler::lap(Profiler::getInstance(), kProfilerLapTypeStartInterrupt, NULL);
+	Profiler::lap(kProfilerLapTypeStartInterrupt, NULL);
 #endif
 
 	timerManager->interruptsPerSecond++;
@@ -71,7 +71,7 @@ static void TimerManager::interruptHandler()
 	TimerManager::enable();
 #else
 	TimerManager::enableInterrupt();
-	Profiler::lap(Profiler::getInstance(), kProfilerLapTypeTimerInterruptProcess, PROCESS_NAME_SOUND_PLAY);
+	Profiler::lap(kProfilerLapTypeTimerInterruptProcess, PROCESS_NAME_SOUND_PLAY);
 #endif
 }
 

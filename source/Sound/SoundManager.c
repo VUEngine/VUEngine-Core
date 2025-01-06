@@ -286,7 +286,7 @@ static void SoundManager::stopAllSounds(bool release, SoundSpec** excludedSounds
 
 	if(NULL == excludedSounds)
 	{
-		VSUManager::stopAllSounds(VSUManager::getInstance());
+		VSUManager::stopAllSounds();
 	}
 }
 
@@ -432,8 +432,6 @@ void SoundManager::constructor()
 
 	this->lock = false;
 	this->targetPCMUpdates = 0;
-
-	_vsuManager = VSUManager::getInstance();
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

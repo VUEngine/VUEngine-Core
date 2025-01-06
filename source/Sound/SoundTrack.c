@@ -28,7 +28,6 @@
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 static uint16 _pcmTargetPlaybackRefreshRate = 4000;
-static VSUManager _vsuManager = NULL;
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' STATIC METHODS
@@ -58,7 +57,7 @@ void SoundTrack::start(bool wasPaused)
 
 	if(kTrackPCM == this->soundTrackSpec->trackType)
 	{
-		VSUManager::setMode(_vsuManager, kPlaybackPCM);
+		VSUManager::setMode(kPlaybackPCM);
 	}
 }
 
@@ -68,7 +67,7 @@ void SoundTrack::stop()
 {
 	if(kTrackPCM == this->soundTrackSpec->trackType)
 	{
-		VSUManager::setMode(_vsuManager, kPlaybackNative);
+		VSUManager::setMode(kPlaybackNative);
 	}
 }
 
@@ -209,8 +208,6 @@ void SoundTrack::constructor(const SoundTrackSpec* soundTrackSpec)
 	{
 		this->ticks = this->samples = this->soundTrackSpec->samples;
 	}
-
-	_vsuManager = VSUManager::getInstance();
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -275,7 +272,7 @@ bool SoundTrack::updatePCM(uint32 elapsedMicroseconds, uint32 targetPCMUpdates, 
 
 	this->cursor = this->elapsedTicks / targetPCMUpdates;
 
-	VSUManager::applyPCMSampleToSoundSource(_vsuManager, this->soundTrackSpec->SxLRV[this->cursor] - volumeReduction);
+	VSUManager::applyPCMSampleToSoundSource(this->soundTrackSpec->SxLRV[this->cursor] - volumeReduction);
 
 	CACHE_DISABLE;
 
@@ -427,7 +424,7 @@ bool SoundTrack::updateNative
 		this->soundTrackSpec->skippable
 	};
 
-	VSUManager::applySoundSourceConfiguration(_vsuManager, &vsuChannelConfiguration);
+	VSUManager::applySoundSourceConfiguration(&vsuChannelConfiguration);
 
 	return ++this->cursor >= this->samples;
 }

@@ -61,7 +61,7 @@ singleton class BehaviorManager : ComponentManager
 	override void destroyComponent(Entity owner, Behavior behavior);
 
 	/// Reset the manager's state
-	void reset();
+	static void reset();
 }
 
 #endif

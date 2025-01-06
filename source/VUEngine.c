@@ -108,7 +108,7 @@ bool VUEngine::handleMessage(Telegram telegram)
 void VUEngine::reset(bool resetSounds)
 {
 #ifdef __ENABLE_PROFILER
-	Profiler::reset(Profiler::getInstance());
+	Profiler::reset();
 #endif
 
 	HardwareManager::disableInterrupts();
@@ -632,7 +632,7 @@ void VUEngine::prepareGraphics()
 #ifdef __ENABLE_PROFILER
 void VUEngine::startProfiling()
 {
-	Profiler::initialize(Profiler::getInstance());
+	Profiler::initialize();
 }
 #endif
 
@@ -1002,7 +1002,7 @@ void VUEngine::processUserInput(GameState currentGameState)
 	if(!KeypadManager::isEnabled())
 	{
 #ifdef __ENABLE_PROFILER
-		Profiler::lap(Profiler::getInstance(), kProfilerLapTypeNormalProcess, PROCESS_NAME_INPUT);
+		Profiler::lap(kProfilerLapTypeNormalProcess, PROCESS_NAME_INPUT);
 #endif
 		return;
 	}
@@ -1026,7 +1026,7 @@ void VUEngine::processUserInput(GameState currentGameState)
 	}
 
 #ifdef __ENABLE_PROFILER
-	Profiler::lap(Profiler::getInstance(), kProfilerLapTypeNormalProcess, PROCESS_NAME_INPUT);
+	Profiler::lap(kProfilerLapTypeNormalProcess, PROCESS_NAME_INPUT);
 #endif
 }
 
@@ -1042,7 +1042,7 @@ void VUEngine::simulatePhysics(GameState gameState)
 	GameState::simulatePhysics(gameState);
 
 #ifdef __ENABLE_PROFILER
-	Profiler::lap(Profiler::getInstance(), kProfilerLapTypeNormalProcess, PROCESS_NAME_PHYSICS);
+	Profiler::lap(kProfilerLapTypeNormalProcess, PROCESS_NAME_PHYSICS);
 #endif
 }
 
@@ -1058,7 +1058,7 @@ void VUEngine::processTransformations(GameState gameState)
 	GameState::transform(gameState);
 
 #ifdef __ENABLE_PROFILER
-	Profiler::lap(Profiler::getInstance(), kProfilerLapTypeNormalProcess, PROCESS_NAME_TRANSFORMS);
+	Profiler::lap(kProfilerLapTypeNormalProcess, PROCESS_NAME_TRANSFORMS);
 #endif
 }
 
@@ -1075,7 +1075,7 @@ void VUEngine::processCollisions(GameState gameState)
 	GameState::processCollisions(gameState);
 
 #ifdef __ENABLE_PROFILER
-	Profiler::lap(Profiler::getInstance(), kProfilerLapTypeNormalProcess, PROCESS_NAME_COLLISIONS);
+	Profiler::lap(kProfilerLapTypeNormalProcess, PROCESS_NAME_COLLISIONS);
 #endif
 }
 
@@ -1096,7 +1096,7 @@ void VUEngine::dispatchDelayedMessages()
 		MessageDispatcher::dispatchDelayedMessages(MessageDispatcher::getInstance());
 
 #ifdef __ENABLE_PROFILER
-		Profiler::lap(Profiler::getInstance(), kProfilerLapTypeNormalProcess, PROCESS_NAME_MESSAGES);
+		Profiler::lap(kProfilerLapTypeNormalProcess, PROCESS_NAME_MESSAGES);
 #endif
 	}
 }
@@ -1113,7 +1113,7 @@ GameState VUEngine::updateLogic(GameState currentGameState)
 	currentGameState = GameState::safeCast(StateMachine::update(this->stateMachine));
 
 #ifdef __ENABLE_PROFILER
-	Profiler::lap(Profiler::getInstance(), kProfilerLapTypeNormalProcess, PROCESS_NAME_LOGIC);
+	Profiler::lap(kProfilerLapTypeNormalProcess, PROCESS_NAME_LOGIC);
 #endif
 
 	return currentGameState;
@@ -1139,7 +1139,7 @@ bool VUEngine::stream(GameState gameState)
 		result = GameState::stream(gameState);
 	}
 
-	Profiler::lap(Profiler::getInstance(), kProfilerLapTypeNormalProcess, PROCESS_NAME_STREAMING);
+	Profiler::lap(kProfilerLapTypeNormalProcess, PROCESS_NAME_STREAMING);
 #endif
 
 	return result;
@@ -1155,7 +1155,7 @@ void VUEngine::run(GameState currentGameState)
 	while(NULL != currentGameState)
 	{
 #ifdef __SHOW_VSU_MANAGER_STATUS
-		VSUManager::print(VSUManager::getInstance(), 1, 1);
+		VSUManager::print(1, 1);
 #endif
 		this->gameFrameStarted = false;
 		this->currentGameCycleEnded = false;
@@ -1164,7 +1164,7 @@ void VUEngine::run(GameState currentGameState)
 
 #ifdef __ENABLE_PROFILER
 		HardwareManager::disableInterrupts();
-		Profiler::start(Profiler::getInstance());
+		Profiler::start();
 #endif
 
 		// Generate random seed
@@ -1235,7 +1235,7 @@ void VUEngine::focusCamera()
 #endif
 
 #ifdef __ENABLE_PROFILER
-	Profiler::lap(Profiler::getInstance(), kProfilerLapTypeNormalProcess, PROCESS_NAME_CAMERA);
+	Profiler::lap(kProfilerLapTypeNormalProcess, PROCESS_NAME_CAMERA);
 #endif
 }
 
