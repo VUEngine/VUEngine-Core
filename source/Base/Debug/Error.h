@@ -25,13 +25,9 @@
 /// Inherits from Object
 ///
 /// Catches assertions and hardware exceptions.
-singleton class Error : Object
+static class Error : Object
 {
 	/// @publicsection
-
-	/// Method to retrieve the singleton instance
-	/// @return Error singleton
-	static Error getInstance();
 
 	/// Locks the program in a screen with the details of what caused the exception.
 	/// @param message: Pointer to a brief description of the exception
