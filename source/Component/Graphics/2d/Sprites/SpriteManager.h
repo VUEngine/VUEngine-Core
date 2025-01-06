@@ -52,9 +52,6 @@ singleton class SpriteManager : ComponentManager
 	/// Clock for the animations
 	Clock animationsClock;
 
-	/// Cache OBJECT texture manager
-	ObjectTextureManager objectTextureManager;
-
 	/// List of all created sprites
 	VirtualList sprites;
 

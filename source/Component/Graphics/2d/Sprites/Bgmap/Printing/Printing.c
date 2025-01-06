@@ -850,8 +850,6 @@ static FontSize Printing::getTextSize(const char* string, const char* font)
 
 void Printing::constructor()
 {
-	Printing printing = Printing::getInstance();
-
 	// Always explicitly call the base's constructor 
 	Base::constructor();
 

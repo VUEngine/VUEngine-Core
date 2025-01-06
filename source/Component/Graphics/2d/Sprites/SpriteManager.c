@@ -515,8 +515,6 @@ static void SpriteManager::forceRendering()
 
 static void SpriteManager::renderAndDraw()
 {
-	SpriteManager spriteManager = SpriteManager::getInstance();
-
 	SpriteManager::render();
 
 	// Write render data
@@ -570,8 +568,6 @@ static void SpriteManager::writeDRAM()
 
 static void SpriteManager::writeTextures()
 {
-	SpriteManager spriteManager = SpriteManager::getInstance();
-
 	CharSetManager::writeCharSets();
 
 	Texture::updateTextures(-1, false);
@@ -1092,19 +1088,14 @@ void SpriteManager::constructor()
 
 	this->totalPixelsDrawn = 0;
 	this->deferTextureUpdating = false;
-
 	this->bgmapSprites = NULL;
 	this->objectSpriteContainers = NULL;
 	this->specialSprites = NULL;
-
 	this->texturesMaximumRowsToWrite = -1;
 	this->maximumParamTableRowsToComputePerCall = -1;
 	this->deferParamTableEffects = false;
 	this->evenFrame = __TRANSPARENCY_EVEN;
-
 	this->animationsClock = NULL;
-	this->objectTextureManager = ObjectTextureManager::getInstance();
-
 	this->sortingSpriteNode = NULL;
 	this->completeSort = true;
 }
