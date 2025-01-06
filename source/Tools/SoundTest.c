@@ -58,7 +58,7 @@ void SoundTest::show()
 {
 	this->soundIndex = 0;
 
-	SoundManager::reset(SoundManager::getInstance());
+	SoundManager::reset();
 
 	Printing::clear();
 	SpriteManager::hideAllSprites(NULL, false);
@@ -364,7 +364,7 @@ void SoundTest::loadSound()
 	this->sound = 
 		SoundManager::getSound
 		(
-			SoundManager::getInstance(), (SoundSpec*)_userSounds[this->soundIndex], (EventListener)SoundTest::onSoundReleased, 
+			(SoundSpec*)_userSounds[this->soundIndex], (EventListener)SoundTest::onSoundReleased, 
 			ListenerObject::safeCast(this)
 		);
 

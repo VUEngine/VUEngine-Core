@@ -23,18 +23,14 @@
 
 class Clock;
 class ColliderManager;
-class CommunicationManager;
 class GameState;
 class BodyManager;
-class SoundManager;
 class Entity;
-class SpriteManager;
 class StateMachine;
 class Stage;
 class ToolState;
 class UIContainer;
 class VUEngine;
-class WireframeManager;
 
 extern VUEngine _vuEngine __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE;
 
@@ -85,17 +81,8 @@ singleton class VUEngine : ListenerObject
 	/// VIP manager
 	VIPManager vipManager;
 
-	/// Wireframe manager
-	WireframeManager wireframeManager;
-
 	/// Timer manager
 	TimerManager timerManager;
-
-	/// Communication manager
-	CommunicationManager communicationManager;
-
-	/// Sound manager
-	SoundManager soundManager;
 
 	/// Saved data manager
 	ListenerObject saveDataManager;

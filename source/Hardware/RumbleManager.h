@@ -19,12 +19,6 @@
 #include <Object.h>
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-// FORWARD DECLARATIONS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-class CommunicationManager;
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' MACROS
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
@@ -115,9 +109,6 @@ singleton class RumbleManager : Object
 {
 	/// @protectedsection
 
-	/// Used to broadcast the rumble commands over the EXT port
-	CommunicationManager communicationManager;
-
 	/// Queue of commands to broadcast
 	uint8 rumbleCommands[__RUMBLE_TOTAL_COMMANDS];
 
@@ -154,17 +145,17 @@ singleton class RumbleManager : Object
 	static void stopEffect(const RumbleEffectSpec* rumbleEffectSpec);
 
 	/// Reset the manager's state.
-	void reset();
+	static void reset();
 
 	/// Set the async flag.
 	/// @param async: If true, rumble commands are broadcasted asynchronously
-	void setAsync(bool async);
+	static void setAsync(bool async);
 
 	/// Set the flag to broadcast new effects regardless of if there is a previous queue effect pending
 	/// broadcasted
 	/// @param overridePreviousEffect: If true, new effects are broadcasted regardless of if there is a
 	/// queued effect pending broadcasting
-	void setOverridePreviousEffect(bool overridePreviousEffect);
+	static void setOverridePreviousEffect(bool overridePreviousEffect);
 }
 
 #endif

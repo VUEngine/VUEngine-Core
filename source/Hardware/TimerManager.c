@@ -28,7 +28,6 @@
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 static TimerManager _timerManager;
-static SoundManager _soundManager;
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' STATIC METHODS
@@ -582,7 +581,6 @@ void TimerManager::print(int32 x, int32 y)
 void TimerManager::constructor()
 {
 	_timerManager = this;
-	_soundManager = SoundManager::getInstance();
 
 	// Always explicitly call the base's constructor 
 	Base::constructor();

@@ -124,12 +124,12 @@ void VUEngine::reset(bool resetSounds)
 
 	if(resetSounds)
 	{
-		SoundManager::reset(this->soundManager);
+		SoundManager::reset();
 	}
 
 	TimerManager::reset(this->timerManager);
 	KeypadManager::reset();
-	CommunicationManager::reset(this->communicationManager);
+	CommunicationManager::reset();
 	StopwatchManager::reset();
 	FrameRate::reset();
 
@@ -575,7 +575,7 @@ void VUEngine::frameStarted(uint16 gameFrameDuration)
 #ifdef __TOOLS
 	if(VUEngine::isInSoundTest(this))
 	{
-		SoundManager::printPlaybackTime(this->soundManager, 1, 6);
+		SoundManager::printPlaybackTime(1, 6);
 	}
 #endif
 }
@@ -668,8 +668,6 @@ void VUEngine::constructor()
 	this->saveDataManager = NULL;
 	this->vipManager = NULL;
 	this->timerManager = NULL;
-	this->communicationManager = NULL;
-	this->soundManager = NULL;
 
 #ifdef __TOOLS
 	DebugState::getInstance();
@@ -705,12 +703,10 @@ void VUEngine::initialize()
 	// Make sure all managers are initialized now
 	this->vipManager = VIPManager::getInstance();
 	this->timerManager = TimerManager::getInstance();
-	this->communicationManager = CommunicationManager::getInstance();
-	this->soundManager = SoundManager::getInstance();
 
 	SpriteManager::reset();
 	DirectDraw::reset();
-	SRAMManager::reset(SRAMManager::getInstance());
+	SRAMManager::reset();
 
 	// Initialize hardware registries
 	HardwareManager::initialize();
@@ -719,10 +715,10 @@ void VUEngine::initialize()
 	TimerManager::configure(this->timerManager, __TIMER_100US, 10, kMS);
 
 	// Reset sounds
-	SoundManager::reset(this->soundManager);
+	SoundManager::reset();
 
 	// Reset Rumble Pak
-	RumbleManager::reset(RumbleManager::getInstance());
+	RumbleManager::reset();
 
 	// Start the game's general clock
 	Clock::start(this->clock);
@@ -732,7 +728,7 @@ void VUEngine::initialize()
 
 	// Enable communications
 #ifdef __ENABLE_COMMUNICATIONS
-	CommunicationManager::enableCommunications(this->communicationManager, NULL, NULL);
+	CommunicationManager::enableCommunications(NULL, NULL);
 #else
 #ifdef __RELEASE
 	VUEngine::wait(VUEngine::getInstance(), 4000);
@@ -908,7 +904,7 @@ bool VUEngine::changedState(ListenerObject eventFirer)
 
 	if(GameState::isVersusMode(currentGameState))
 	{
-		CommunicationManager::startSyncCycle(this->communicationManager);
+		CommunicationManager::startSyncCycle();
 	}
 
 	// Make sure everything is properly rendered

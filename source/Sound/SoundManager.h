@@ -60,15 +60,15 @@ singleton class SoundManager : ListenerObject
 	static void playSounds(uint32 elapsedMicroseconds);
 
 	/// Reset the manager's state.
-	void reset();
+	static void reset();
 
 	/// Set the target refresh rate for PCM playback.
 	/// @param pcmTargetPlaybackRefreshRate: Target refresh rate for PCM playback
-	void setPCMTargetPlaybackRefreshRate(uint16 pcmTargetPlaybackRefreshRate);
+	static void setPCMTargetPlaybackRefreshRate(uint16 pcmTargetPlaybackRefreshRate);
 
 	///  Check if a sound with the provided spec is playing.
 	/// @param soundSpec: Sound spec to check for
-	bool isPlayingSound(const SoundSpec* soundSpec);
+	static bool isPlayingSound(const SoundSpec* soundSpec);
 
 	/// Play a sound defined by the provided spec.
 	/// @param soundSpec: Spec that defines the sound to play
@@ -76,7 +76,7 @@ singleton class SoundManager : ListenerObject
 	/// @param playbackType: How to play the sound
 	/// @param soundReleaseListener: Callback method for when the sound is released
 	/// @param scope: Object on which to perform the callback
-	bool playSound
+	static bool playSound
 	(
 		const SoundSpec* soundSpec, const Vector3D* position, uint32 playbackType, 
 		EventListener soundReleaseListener, ListenerObject scope
@@ -86,39 +86,39 @@ singleton class SoundManager : ListenerObject
 	/// @param soundSpec: Spec that defines the sound to play
 	/// @param soundReleaseListener: Callback method for when the sound is released
 	/// @param scope: Object on which to perform the callback
-	Sound getSound(const SoundSpec* soundSpec, EventListener soundReleaseListener, ListenerObject scope);
+	static Sound getSound(const SoundSpec* soundSpec, EventListener soundReleaseListener, ListenerObject scope);
 
 	/// Retrieve a previously allocated sound defined by the provided spec.
 	/// @param soundSpec: Spec that defines the sound to play
 	/// @param soundReleaseListener: Callback method for when the sound is released
 	/// @param scope: Object on which to perform the callback
-	Sound findSound(const SoundSpec* soundSpec, EventListener soundReleaseListener, ListenerObject scope);
+	static Sound findSound(const SoundSpec* soundSpec, EventListener soundReleaseListener, ListenerObject scope);
 
 	/// Mute all playing sounds
-	void muteAllSounds();
+	static void muteAllSounds();
 
 	/// Unmute all playing sounds
-	void unmuteAllSounds();
+	static void unmuteAllSounds();
 
 	/// Rewind all playing sounds
-	void rewindAllSounds();
+	static void rewindAllSounds();
 
 	/// Stop all playing sounds.
 	/// @param release: If true, sounds are not only stopped but released
 	/// @param excludedSounds: Array of sound specs to not stop
-	void stopAllSounds(bool release, SoundSpec** excludedSounds);
+	static void stopAllSounds(bool release, SoundSpec** excludedSounds);
 
 	/// Refuse petitions to play or allocate sounds are processed.
-	void lock();
+	static void lock();
 
 	/// Allow petitions to play or allocate sounds are processed.
-	void unlock();
+	static void unlock();
 
 	/// Print the manager's status.
-	void print(int32 x, int32 y);
+	static void print(int32 x, int32 y);
 
 	/// Print playback time of the playing sounds.
-	void printPlaybackTime(int32 x, int32 y);
+	static void printPlaybackTime(int32 x, int32 y);
 }
 
 #endif

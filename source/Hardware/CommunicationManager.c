@@ -4,7 +4,7 @@
  * © Jorge Eremiev <jorgech3@gmail.com> and Christian Radke <c.radke@posteo.de>
  *
  * For the full copyright and license information, please view the LICENSE file
- * that was distributed with this source code.
+ * that was distributed with communicationManager source code.
  */
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -51,7 +51,6 @@ enum CommunicationsStatus
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 static volatile BYTE* _communicationRegisters =			(uint8*)0x02000000;
-static CommunicationManager _communicationManager;
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' MACROS
@@ -92,51 +91,49 @@ static CommunicationManager _communicationManager;
 
 static void CommunicationManager::interruptHandler()
 {
+	CommunicationManager communicationManager = CommunicationManager::getInstance();
+
 #ifdef __ENABLE_PROFILER
 	Profiler::lap(Profiler::getInstance(), kProfilerLapTypeStartInterrupt, NULL);
 #endif
 
-	if(kCommunicationsBroadcastNone == _communicationManager->broadcast && CommunicationManager::isMaster(_communicationManager))
+	if(kCommunicationsBroadcastNone == communicationManager->broadcast && CommunicationManager::isMaster(communicationManager))
 	{
-		_communicationManager->communicationMode = __COM_AS_REMOTE;
+		communicationManager->communicationMode = __COM_AS_REMOTE;
 	}
 	else
 	{
-		_communicationManager->communicationMode = __COM_AS_MASTER;
+		communicationManager->communicationMode = __COM_AS_MASTER;
 	}
 
-	CommunicationManager::endCommunications(_communicationManager);
+	CommunicationManager::endCommunications(communicationManager);
 
-	CommunicationManager::processInterrupt(_communicationManager);
+	CommunicationManager::processInterrupt(communicationManager);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-// CLASS' PUBLIC METHODS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void CommunicationManager::reset()
+static void CommunicationManager::reset()
 {
-	switch(this->status)
+	CommunicationManager communicationManager = CommunicationManager::getInstance();
+
+	switch(communicationManager->status)
 	{
 		case kCommunicationsStatusNone:
 
-			this->connected = false;
-			this->communicationMode = __COM_AS_REMOTE;
-			this->status = kCommunicationsStatusIdle;
-			this->broadcast = kCommunicationsBroadcastNone;
-			this->sentData = NULL;
-			this->syncSentByte = NULL;
-			this->asyncSentByte = NULL;
-			this->receivedData = NULL;
-			this->syncReceivedByte = NULL;
-			this->asyncReceivedByte = NULL;
-			this->numberOfBytesPreviouslySent = 0;
+			communicationManager->connected = false;
+			communicationManager->communicationMode = __COM_AS_REMOTE;
+			communicationManager->status = kCommunicationsStatusIdle;
+			communicationManager->broadcast = kCommunicationsBroadcastNone;
+			communicationManager->sentData = NULL;
+			communicationManager->syncSentByte = NULL;
+			communicationManager->asyncSentByte = NULL;
+			communicationManager->receivedData = NULL;
+			communicationManager->syncReceivedByte = NULL;
+			communicationManager->asyncReceivedByte = NULL;
+			communicationManager->numberOfBytesPreviouslySent = 0;
 
-			CommunicationManager::endCommunications(this);
+			CommunicationManager::endCommunications(communicationManager);
 			break;
 
 		case kCommunicationsStatusSendingHandshake:
@@ -145,25 +142,27 @@ void CommunicationManager::reset()
 
 		default:
 
-			CommunicationManager::cancelCommunications(this);
+			CommunicationManager::cancelCommunications(communicationManager);
 			break;
 	}
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void CommunicationManager::enableCommunications(EventListener eventLister, ListenerObject scope)
+static void CommunicationManager::enableCommunications(EventListener eventLister, ListenerObject scope)
 {
-	if(this->connected || kCommunicationsStatusIdle != this->status)
+	CommunicationManager communicationManager = CommunicationManager::getInstance();
+
+	if(communicationManager->connected || kCommunicationsStatusIdle != communicationManager->status)
 	{
 		return;
 	}
 
-	CommunicationManager::endCommunications(this);
+	CommunicationManager::endCommunications(communicationManager);
 
 	if(eventLister && !isDeleted(scope))
 	{
-		CommunicationManager::addEventListener(this, scope, eventLister, kEventCommunicationsConnected);
+		CommunicationManager::addEventListener(communicationManager, scope, eventLister, kEventCommunicationsConnected);
 	}
 
 #ifdef __RELEASE
@@ -176,75 +175,81 @@ void CommunicationManager::enableCommunications(EventListener eventLister, Liste
 	VUEngine::wait(VUEngine::getInstance(), wait);
 
 	// If handshake is taking place
-    if(CommunicationManager::isHandshakeIncoming(this))
+    if(CommunicationManager::isHandshakeIncoming(communicationManager))
     {
 		// There is another system attached already managing
 		// The channel
-		this->communicationMode = __COM_AS_MASTER;
+		communicationManager->communicationMode = __COM_AS_MASTER;
 
 		// Send dummy payload to verify communication
-		CommunicationManager::sendHandshake(this);
+		CommunicationManager::sendHandshake(communicationManager);
 	}
 	else
 	{
 		// I'm alone since a previously turned on
 		// System would had already closed the channel
-		this->communicationMode = __COM_AS_REMOTE;
+		communicationManager->communicationMode = __COM_AS_REMOTE;
 
 		// Wait for incoming clock
-		CommunicationManager::sendHandshake(this);
+		CommunicationManager::sendHandshake(communicationManager);
     }
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void CommunicationManager::disableCommunications()
+static void CommunicationManager::disableCommunications()
 {
-	CommunicationManager::cancelCommunications(this);
+	CommunicationManager communicationManager = CommunicationManager::getInstance();
 
-	this->status = kCommunicationsStatusNone;
+	CommunicationManager::cancelCommunications(communicationManager);
 
-	CommunicationManager::reset(this);	
+	communicationManager->status = kCommunicationsStatusNone;
+
+	CommunicationManager::reset(communicationManager);	
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-bool CommunicationManager::cancelCommunications()
+static bool CommunicationManager::cancelCommunications()
 {
-	CommunicationManager::endCommunications(this);
+	CommunicationManager communicationManager = CommunicationManager::getInstance();
 
-	if(NULL != this->sentData)
+	CommunicationManager::endCommunications(communicationManager);
+
+	if(NULL != communicationManager->sentData)
 	{
-		delete this->sentData;
+		delete communicationManager->sentData;
 	}
 
-	if(NULL != this->receivedData)
+	if(NULL != communicationManager->receivedData)
 	{
-		delete this->receivedData;
+		delete communicationManager->receivedData;
 	}
 
-	this->sentData = NULL;
-	this->syncSentByte = NULL;
-	this->asyncSentByte = NULL;
-	this->receivedData = NULL;
-	this->syncReceivedByte = NULL;
-	this->asyncReceivedByte = NULL;
-	this->status = kCommunicationsStatusIdle;
-	this->broadcast = kCommunicationsBroadcastNone;
+	communicationManager->sentData = NULL;
+	communicationManager->syncSentByte = NULL;
+	communicationManager->asyncSentByte = NULL;
+	communicationManager->receivedData = NULL;
+	communicationManager->syncReceivedByte = NULL;
+	communicationManager->asyncReceivedByte = NULL;
+	communicationManager->status = kCommunicationsStatusIdle;
+	communicationManager->broadcast = kCommunicationsBroadcastNone;
 
-	CommunicationManager::removeEventListeners(this, NULL, kEventCommunicationsConnected);
-	CommunicationManager::removeEventListeners(this, NULL, kEventCommunicationsTransmissionCompleted);
+	CommunicationManager::removeEventListeners(communicationManager, NULL, kEventCommunicationsConnected);
+	CommunicationManager::removeEventListeners(communicationManager, NULL, kEventCommunicationsTransmissionCompleted);
 
-	MessageDispatcher::discardAllDelayedMessagesForReceiver(ListenerObject::safeCast(this));
+	MessageDispatcher::discardAllDelayedMessagesForReceiver(ListenerObject::safeCast(communicationManager));
 
 	return true;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void CommunicationManager::startSyncCycle()
+static void CommunicationManager::startSyncCycle()
 {
-	if(!this->connected)
+	CommunicationManager communicationManager = CommunicationManager::getInstance();
+
+	if(!communicationManager->connected)
 	{
 		return;
 	}
@@ -254,29 +259,29 @@ void CommunicationManager::startSyncCycle()
 	_vipRegisters[__FRMCYC] = 0;
 	_vipRegisters[__DPCTRL] = _vipRegisters[__DPSTTS] | (__SYNCE | __RE);
 
-	CommunicationManager::cancelCommunications(this);
+	CommunicationManager::cancelCommunications(communicationManager);
 
-	if(CommunicationManager::isMaster(this))
+	if(CommunicationManager::isMaster(communicationManager))
 	{
 		uint32 message = 0;
 		do
 		{
-			CommunicationManager::receiveData(this, (BYTE*)&message, sizeof(message));
+			CommunicationManager::receiveData((BYTE*)&message, sizeof(message));
 		}
 		while(__REMOTE_READY_MESSAGE != message);
 
 		message = __MASTER_FRMCYC_SET_MESSAGE;
 		while(!(_vipRegisters[__DPSTTS] & __FCLK));
-		CommunicationManager::sendData(this, (BYTE*)&message, sizeof(message));
+		CommunicationManager::sendData((BYTE*)&message, sizeof(message));
 	}
 	else
 	{
 		uint32 message = __REMOTE_READY_MESSAGE;
-		CommunicationManager::sendData(this, (BYTE*)&message, sizeof(message));
+		CommunicationManager::sendData((BYTE*)&message, sizeof(message));
 
 		do
 		{
-			CommunicationManager::receiveData(this, (BYTE*)&message, sizeof(message));
+			CommunicationManager::receiveData((BYTE*)&message, sizeof(message));
 		}
 		while(__MASTER_FRMCYC_SET_MESSAGE != message);
 	}
@@ -284,51 +289,57 @@ void CommunicationManager::startSyncCycle()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-bool CommunicationManager::isConnected()
+static bool CommunicationManager::isConnected()
 {
-	return this->connected;
+	CommunicationManager communicationManager = CommunicationManager::getInstance();
+
+	return communicationManager->connected;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-bool CommunicationManager::isMaster()
+static bool CommunicationManager::isMaster()
 {
-	return __COM_AS_MASTER == this->communicationMode;
+	CommunicationManager communicationManager = CommunicationManager::getInstance();
+
+	return __COM_AS_MASTER == communicationManager->communicationMode;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-bool CommunicationManager::broadcastData(BYTE* data, int32 numberOfBytes)
+static bool CommunicationManager::broadcastData(BYTE* data, int32 numberOfBytes)
 {
-	if(CommunicationManager::isConnected(this))
+	CommunicationManager communicationManager = CommunicationManager::getInstance();
+
+	if(CommunicationManager::isConnected(communicationManager))
 	{
 		return false;
 	}
 
-	switch (this->status)
+	switch (communicationManager->status)
 	{
 		case kCommunicationsStatusSendingHandshake:
 
-			CommunicationManager::cancelCommunications(this);
+			CommunicationManager::cancelCommunications(communicationManager);
 			break;
 	}
 
-	if(kCommunicationsStatusIdle != this->status)
+	if(kCommunicationsStatusIdle != communicationManager->status)
 	{
 		return false;
 	}
 
 	// Always start comms as master when broadcasting
-	this->communicationMode = __COM_AS_MASTER;
+	communicationManager->communicationMode = __COM_AS_MASTER;
 
-	this->broadcast = kCommunicationsBroadcastSync;
+	communicationManager->broadcast = kCommunicationsBroadcastSync;
 
 	while(0 < numberOfBytes)
 	{
-		CommunicationManager::sendPayload(this, *data, false);
+		CommunicationManager::sendPayload(*data, false);
 
-		while(CommunicationManager::isTransmitting(this));
-		this->status = kCommunicationsStatusIdle;
+		while(CommunicationManager::isTransmitting(communicationManager));
+		communicationManager->status = kCommunicationsStatusIdle;
 
 		data++;
 
@@ -336,100 +347,112 @@ bool CommunicationManager::broadcastData(BYTE* data, int32 numberOfBytes)
 	}
 
     
-	this->broadcast = kCommunicationsBroadcastNone;
+	communicationManager->broadcast = kCommunicationsBroadcastNone;
 
 	return true;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void CommunicationManager::broadcastDataAsync(BYTE* data, int32 numberOfBytes, EventListener eventLister, ListenerObject scope)
+static void CommunicationManager::broadcastDataAsync(BYTE* data, int32 numberOfBytes, EventListener eventLister, ListenerObject scope)
 {
-	if(CommunicationManager::isConnected(this))
+	CommunicationManager communicationManager = CommunicationManager::getInstance();
+
+	if(CommunicationManager::isConnected(communicationManager))
 	{
 		return;
 	}
 
-	switch (this->status)
+	switch (communicationManager->status)
 	{
 		case kCommunicationsStatusSendingHandshake:
 
-			CommunicationManager::cancelCommunications(this);
+			CommunicationManager::cancelCommunications(communicationManager);
 			break;
 	}
 
-	if(kCommunicationsStatusIdle != this->status)
+	if(kCommunicationsStatusIdle != communicationManager->status)
 	{
 		return;
 	}
 
 	// Always start comms as master when broadcasting
-	this->communicationMode = __COM_AS_MASTER;
+	communicationManager->communicationMode = __COM_AS_MASTER;
 
-	this->broadcast = kCommunicationsBroadcastAsync;
-	CommunicationManager::sendDataAsync(this, data, numberOfBytes, eventLister, scope);
+	communicationManager->broadcast = kCommunicationsBroadcastAsync;
+	CommunicationManager::sendDataAsync(data, numberOfBytes, eventLister, scope);
 
 	return;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-bool CommunicationManager::sendAndReceiveData(WORD message, BYTE* data, int32 numberOfBytes)
+static bool CommunicationManager::sendAndReceiveData(WORD message, BYTE* data, int32 numberOfBytes)
 {
-	return CommunicationManager::startBidirectionalDataTransmission(this, message, data, numberOfBytes);
+	return CommunicationManager::startBidirectionalDataTransmission(message, data, numberOfBytes);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-bool CommunicationManager::sendAndReceiveDataAsync
+static bool CommunicationManager::sendAndReceiveDataAsync
 (
 	WORD message, BYTE* data, int32 numberOfBytes, EventListener eventLister, ListenerObject scope
 )
 {
-	return CommunicationManager::startBidirectionalDataTransmissionAsync(this, message, data, numberOfBytes, eventLister, scope);
+	return CommunicationManager::startBidirectionalDataTransmissionAsync(message, data, numberOfBytes, eventLister, scope);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-WORD CommunicationManager::getSentMessage()
+static WORD CommunicationManager::getSentMessage()
 {
-	return *(WORD*)this->sentData;
+	CommunicationManager communicationManager = CommunicationManager::getInstance();
+
+	return *(WORD*)communicationManager->sentData;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-WORD CommunicationManager::getReceivedMessage()
+static WORD CommunicationManager::getReceivedMessage()
 {
-	return *(WORD*)this->receivedData;
+	CommunicationManager communicationManager = CommunicationManager::getInstance();
+
+	return *(WORD*)communicationManager->receivedData;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 const BYTE* CommunicationManager::getSentData()
 {
-	return (const BYTE*)this->sentData + __MESSAGE_SIZE;
+	CommunicationManager communicationManager = CommunicationManager::getInstance();
+
+	return (const BYTE*)communicationManager->sentData + __MESSAGE_SIZE;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 const BYTE* CommunicationManager::getReceivedData()
 {
-	return (const BYTE*)this->receivedData + __MESSAGE_SIZE;
+	CommunicationManager communicationManager = CommunicationManager::getInstance();
+
+	return (const BYTE*)communicationManager->receivedData + __MESSAGE_SIZE;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #ifndef __SHIPPING
-void CommunicationManager::print(int32 x, int32 y)
+static void CommunicationManager::print(int32 x, int32 y)
 {
-	PRINT_TEXT(CommunicationManager::isConnected(this) ? "Connected   " : "Disconnected", x, y);
+	CommunicationManager communicationManager = CommunicationManager::getInstance();
+
+	PRINT_TEXT(CommunicationManager::isConnected(communicationManager) ? "Connected   " : "Disconnected", x, y);
 
 	char* helper = "";
 	int32 valueDisplacement = 20;
 
 	PRINT_TIME(x + valueDisplacement, y++);
 
-	switch(this->status)
+	switch(communicationManager->status)
 	{
 		case kCommunicationsStatusIdle:
 			helper = "Idle             ";
@@ -453,15 +476,15 @@ void CommunicationManager::print(int32 x, int32 y)
 	}
 
 	PRINT_TEXT("Status:", x, y);
-	PRINT_INT(this->status, x + valueDisplacement * 2, y);
+	PRINT_INT(communicationManager->status, x + valueDisplacement * 2, y);
 	PRINT_TEXT(helper, x + valueDisplacement, y++);
 
 	PRINT_TEXT("Mode: ", x, y);
-	PRINT_TEXT(__COM_AS_REMOTE == this->communicationMode ? "Remote" : "Master ", x + valueDisplacement, y++);
+	PRINT_TEXT(__COM_AS_REMOTE == communicationManager->communicationMode ? "Remote" : "Master ", x + valueDisplacement, y++);
 
 	PRINT_TEXT("Channel: ", x, y);
-	PRINT_TEXT(CommunicationManager::isAuxChannelOpen(this) ? "Aux Open    " : "Aux Closed ", x + valueDisplacement, y++);
-	PRINT_TEXT(CommunicationManager::isRemoteReady(this) ? "Comms Open    " : "Comms Closed ", x + valueDisplacement, y++);
+	PRINT_TEXT(CommunicationManager::isAuxChannelOpen(communicationManager) ? "Aux Open    " : "Aux Closed ", x + valueDisplacement, y++);
+	PRINT_TEXT(CommunicationManager::isRemoteReady(communicationManager) ? "Comms Open    " : "Comms Closed ", x + valueDisplacement, y++);
 
 	PRINT_TEXT("Transmission: ", x, y);
 	PRINT_TEXT(_communicationRegisters[__CCR] & __COM_PENDING ? "Pending" : "Done  ", x + valueDisplacement, y++);
@@ -484,19 +507,27 @@ void CommunicationManager::print(int32 x, int32 y)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+// CLASS' PUBLIC METHODS
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 bool CommunicationManager::handleMessage(Telegram telegram)
 {
+	CommunicationManager communicationManager = CommunicationManager::getInstance();
+
 	switch(Telegram::getMessage(telegram))
 	{
 		case kMessageCheckIfRemoteIsReady:
 
-			if(CommunicationManager::isRemoteReady(this))
+			if(CommunicationManager::isRemoteReady(communicationManager))
 			{
-				CommunicationManager::startClockSignal(this);
+				CommunicationManager::startClockSignal(communicationManager);
 			}
 			else
 			{
-				CommunicationManager::waitForRemote(this);
+				CommunicationManager::waitForRemote(communicationManager);
 			}
 
 			return true;
@@ -509,97 +540,80 @@ bool CommunicationManager::handleMessage(Telegram telegram)
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-// CLASS' PRIVATE METHODS
+// CLASS' PRIVATE STATIC METHODS
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void CommunicationManager::constructor()
-{
-	// Always explicitly call the base's constructor 
-	Base::constructor();
-
-	this->status = 	kCommunicationsStatusNone;
-
-	CommunicationManager::reset(this);
-
-	_communicationManager = this;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void CommunicationManager::destructor()
-{
-	// Allow a new construct
-	// Always explicitly call the base's destructor 
-	Base::destructor();
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-bool CommunicationManager::isTransmitting()
+static bool CommunicationManager::isTransmitting()
 {
 	return _communicationRegisters[__CCR] & __COM_PENDING ? true : false;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-bool CommunicationManager::managesChannel()
+static bool CommunicationManager::managesChannel()
 {
-	return !CommunicationManager::isMaster(this);
+	CommunicationManager communicationManager = CommunicationManager::getInstance();
+
+	return !CommunicationManager::isMaster(communicationManager);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-bool CommunicationManager::isHandshakeIncoming()
+static bool CommunicationManager::isHandshakeIncoming()
 {
+	CommunicationManager communicationManager = CommunicationManager::getInstance();
+
 	// Try to close the communication channel
-	CommunicationManager::setReady(this, false);
+	CommunicationManager::setReady(false);
 	// If channel was unsuccessfully closed,
 	// Then there is a handshake taking place
-	return CommunicationManager::isRemoteReady(this);
+	return CommunicationManager::isRemoteReady(communicationManager);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-bool CommunicationManager::isRemoteReady()
+static bool CommunicationManager::isRemoteReady()
 {
 	return 0 == (_communicationRegisters[__CCSR] & 0x01) ? true : false;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-bool CommunicationManager::isCommunicationControlInterrupt()
+static bool CommunicationManager::isCommunicationControlInterrupt()
 {
 	return 0 == (_communicationRegisters[__CCSR] & __COM_DISABLE_INTERRUPT);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-bool CommunicationManager::isAuxChannelOpen()
+static bool CommunicationManager::isAuxChannelOpen()
 {
 	return _communicationRegisters[__CCSR] & 0x01 ? true : false;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-bool CommunicationManager::isFreeForTransmissions()
+static bool CommunicationManager::isFreeForTransmissions()
 {
+	CommunicationManager communicationManager = CommunicationManager::getInstance();
+
 	return (
-		(this->connected || this->broadcast) &&
-		NULL == this->syncSentByte &&
-		NULL == this->syncReceivedByte &&
-		NULL == this->asyncSentByte &&
-		NULL == this->asyncReceivedByte &&
-		kCommunicationsStatusIdle == this->status
+		(communicationManager->connected || communicationManager->broadcast) &&
+		NULL == communicationManager->syncSentByte &&
+		NULL == communicationManager->syncReceivedByte &&
+		NULL == communicationManager->asyncSentByte &&
+		NULL == communicationManager->asyncReceivedByte &&
+		kCommunicationsStatusIdle == communicationManager->status
 	);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void CommunicationManager::endCommunications()
+static void CommunicationManager::endCommunications()
 {
-	CommunicationManager::setReady(this, false);
+	CommunicationManager::setReady(false);
 
 	_communicationRegisters[__CCR] = __COM_DISABLE_INTERRUPT;
 	_communicationRegisters[__CDTR] = 0;
@@ -607,22 +621,26 @@ void CommunicationManager::endCommunications()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void CommunicationManager::waitForRemote()
+static void CommunicationManager::waitForRemote()
 {
+	CommunicationManager communicationManager = CommunicationManager::getInstance();
+
 	MessageDispatcher::dispatchMessage
 	(
-		1, ListenerObject::safeCast(this), ListenerObject::safeCast(this), kMessageCheckIfRemoteIsReady, NULL
+		1, ListenerObject::safeCast(communicationManager), ListenerObject::safeCast(communicationManager), kMessageCheckIfRemoteIsReady, NULL
 	);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-bool CommunicationManager::sendHandshake()
+static bool CommunicationManager::sendHandshake()
 {
-	if(kCommunicationsStatusIdle == this->status)
+	CommunicationManager communicationManager = CommunicationManager::getInstance();
+
+	if(kCommunicationsStatusIdle == communicationManager->status)
 	{
-		this->status = kCommunicationsStatusSendingHandshake;
-		CommunicationManager::startTransmissions(this, __COM_HANDSHAKE, false);
+		communicationManager->status = kCommunicationsStatusSendingHandshake;
+		CommunicationManager::startTransmissions(__COM_HANDSHAKE, false);
 		return true;
 	}
 
@@ -631,30 +649,32 @@ bool CommunicationManager::sendHandshake()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void CommunicationManager::startClockSignal()
+static void CommunicationManager::startClockSignal()
 {
+	CommunicationManager communicationManager = CommunicationManager::getInstance();
+
 	// Make sure to disable COMCNT interrupts
 	// _communicationRegisters[__CCSR] |= __COM_DISABLE_INTERRUPT;
 
-	switch(this->broadcast)
+	switch(communicationManager->broadcast)
 	{
 		case kCommunicationsBroadcastSync:
 
-			_communicationRegisters[__CCR] = __COM_DISABLE_INTERRUPT | this->communicationMode | __COM_START;
+			_communicationRegisters[__CCR] = __COM_DISABLE_INTERRUPT | communicationManager->communicationMode | __COM_START;
 
-			this->numberOfBytesPendingTransmission = 0;
-			this->status = kCommunicationsStatusIdle;
+			communicationManager->numberOfBytesPendingTransmission = 0;
+			communicationManager->status = kCommunicationsStatusIdle;
 			break;
 
 		case kCommunicationsBroadcastAsync:
 
-			_communicationRegisters[__CCR] = this->communicationMode | __COM_START;
+			_communicationRegisters[__CCR] = communicationManager->communicationMode | __COM_START;
 			break;
 
 		default:
 
 			// Start communications
-			_communicationRegisters[__CCR] = this->communicationMode | __COM_START;
+			_communicationRegisters[__CCR] = communicationManager->communicationMode | __COM_START;
 
 			break;
 
@@ -663,61 +683,65 @@ void CommunicationManager::startClockSignal()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void CommunicationManager::startTransmissions(uint8 payload, bool async)
+static void CommunicationManager::startTransmissions(uint8 payload, bool async)
 {
+	CommunicationManager communicationManager = CommunicationManager::getInstance();
+
 	// Set transmission data
 	_communicationRegisters[__CDTR] = payload;
 
 	HardwareManager::enableInterrupts();
 
 	// Master must wait for slave to open the channel
-	if(CommunicationManager::isMaster(this))
+	if(CommunicationManager::isMaster(communicationManager))
 	{
-		CommunicationManager::setReady(this, true);
+		CommunicationManager::setReady(true);
 
-		if(kCommunicationsBroadcastNone != this->broadcast)
+		if(kCommunicationsBroadcastNone != communicationManager->broadcast)
 		{
-			CommunicationManager::startClockSignal(this);
+			CommunicationManager::startClockSignal(communicationManager);
 			return;
 		}
 
 		if(async)
 		{
-			if(CommunicationManager::isRemoteReady(this))
+			if(CommunicationManager::isRemoteReady(communicationManager))
 			{
-				CommunicationManager::startClockSignal(this);
+				CommunicationManager::startClockSignal(communicationManager);
 			}
 			else
 			{
-				CommunicationManager::waitForRemote(this);
+				CommunicationManager::waitForRemote(communicationManager);
 			}
 		}
 		else
 		{
-			while(!CommunicationManager::isRemoteReady(this));
+			while(!CommunicationManager::isRemoteReady(communicationManager));
 
-			CommunicationManager::startClockSignal(this);
+			CommunicationManager::startClockSignal(communicationManager);
 		}
 	}
 	else
 	{
 		// Set Start flag
-		CommunicationManager::startClockSignal(this);
+		CommunicationManager::startClockSignal(communicationManager);
 
 		// Open communications channel
-		CommunicationManager::setReady(this, true);
+		CommunicationManager::setReady(true);
 	}
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void CommunicationManager::setReady(bool ready)
+static void CommunicationManager::setReady(bool ready)
 {
+	CommunicationManager communicationManager = CommunicationManager::getInstance();
+
 	if(ready)
 	{
-		if(CommunicationManager::isMaster(this))
+		if(CommunicationManager::isMaster(communicationManager))
 		{
-			if(this->broadcast)
+			if(communicationManager->broadcast)
 			{
 				_communicationRegisters[__CCSR] &= (~0x02);
 			}
@@ -739,12 +763,14 @@ void CommunicationManager::setReady(bool ready)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-bool CommunicationManager::sendPayload(uint8 payload, bool async)
+static bool CommunicationManager::sendPayload(uint8 payload, bool async)
 {
-	if(kCommunicationsStatusIdle == this->status)
+	CommunicationManager communicationManager = CommunicationManager::getInstance();
+
+	if(kCommunicationsStatusIdle == communicationManager->status)
 	{
-		this->status = kCommunicationsStatusSendingPayload;
-		CommunicationManager::startTransmissions(this, payload, async);
+		communicationManager->status = kCommunicationsStatusSendingPayload;
+		CommunicationManager::startTransmissions(payload, async);
 		return true;
 	}
 
@@ -753,12 +779,14 @@ bool CommunicationManager::sendPayload(uint8 payload, bool async)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-bool CommunicationManager::receivePayload(bool async)
+static bool CommunicationManager::receivePayload(bool async)
 {
-	if(kCommunicationsStatusIdle == this->status)
+	CommunicationManager communicationManager = CommunicationManager::getInstance();
+
+	if(kCommunicationsStatusIdle == communicationManager->status)
 	{
-		this->status = kCommunicationsStatusWaitingPayload;
-		CommunicationManager::startTransmissions(this, __COM_CHECKSUM, async);
+		communicationManager->status = kCommunicationsStatusWaitingPayload;
+		CommunicationManager::startTransmissions(__COM_CHECKSUM, async);
 		return true;
 	}
 
@@ -767,12 +795,14 @@ bool CommunicationManager::receivePayload(bool async)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-bool CommunicationManager::sendAndReceivePayload(uint8 payload, bool async)
+static bool CommunicationManager::sendAndReceivePayload(uint8 payload, bool async)
 {
-	if(kCommunicationsStatusIdle == this->status)
+	CommunicationManager communicationManager = CommunicationManager::getInstance();
+
+	if(kCommunicationsStatusIdle == communicationManager->status)
 	{
-		this->status = kCommunicationsStatusSendingAndReceivingPayload;
-		CommunicationManager::startTransmissions(this, payload, async);
+		communicationManager->status = kCommunicationsStatusSendingAndReceivingPayload;
+		CommunicationManager::startTransmissions(payload, async);
 		return true;
 	}
 
@@ -781,257 +811,267 @@ bool CommunicationManager::sendAndReceivePayload(uint8 payload, bool async)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-bool CommunicationManager::startDataTransmission(BYTE* data, int32 numberOfBytes, bool sendingData)
+static bool CommunicationManager::startDataTransmission(BYTE* data, int32 numberOfBytes, bool sendingData)
 {
-	if((sendingData && NULL == data) || 0 >= numberOfBytes || !CommunicationManager::isFreeForTransmissions(this))
+	CommunicationManager communicationManager = CommunicationManager::getInstance();
+
+	if((sendingData && NULL == data) || 0 >= numberOfBytes || !CommunicationManager::isFreeForTransmissions(communicationManager))
 	{
 		return false;
 	}
 
-	if(NULL != this->sentData)
+	if(NULL != communicationManager->sentData)
 	{
-		delete this->sentData;
+		delete communicationManager->sentData;
 	}
 
-	if(NULL != this->receivedData)
+	if(NULL != communicationManager->receivedData)
 	{
-		delete this->receivedData;
+		delete communicationManager->receivedData;
 	}
 
-	this->sentData = NULL;
-	this->receivedData = NULL;
-	this->syncSentByte = NULL;
-	this->syncReceivedByte = NULL;
-	this->asyncSentByte = NULL;
-	this->asyncReceivedByte = NULL;
+	communicationManager->sentData = NULL;
+	communicationManager->receivedData = NULL;
+	communicationManager->syncSentByte = NULL;
+	communicationManager->syncReceivedByte = NULL;
+	communicationManager->asyncSentByte = NULL;
+	communicationManager->asyncReceivedByte = NULL;
 
 	if(sendingData)
 	{
-		this->syncSentByte = data;
+		communicationManager->syncSentByte = data;
 	}
 	else
 	{
-		this->syncReceivedByte = data;
+		communicationManager->syncReceivedByte = data;
 	}
 
-	this->numberOfBytesPendingTransmission = numberOfBytes;
+	communicationManager->numberOfBytesPendingTransmission = numberOfBytes;
 
-	while(0 < this->numberOfBytesPendingTransmission)
+	while(0 < communicationManager->numberOfBytesPendingTransmission)
 	{
 		if(sendingData)
 		{
-			CommunicationManager::sendPayload(this, *this->syncSentByte, false);
+			CommunicationManager::sendPayload(*communicationManager->syncSentByte, false);
 		}
 		else
 		{
-			CommunicationManager::receivePayload(this, false);
+			CommunicationManager::receivePayload(false);
 		}
 
-		while(kCommunicationsStatusIdle != this->status);
+		while(kCommunicationsStatusIdle != communicationManager->status);
 	}
 
-	this->status = kCommunicationsStatusIdle;
-	this->syncSentByte = this->syncReceivedByte = NULL;
+	communicationManager->status = kCommunicationsStatusIdle;
+	communicationManager->syncSentByte = communicationManager->syncReceivedByte = NULL;
 
 	return true;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-bool CommunicationManager::sendDataAsync(BYTE* data, int32 numberOfBytes, EventListener eventLister, ListenerObject scope)
+static bool CommunicationManager::sendDataAsync(BYTE* data, int32 numberOfBytes, EventListener eventLister, ListenerObject scope)
 {
-	if(NULL == data || 0 >= numberOfBytes || !CommunicationManager::isFreeForTransmissions(this))
+	CommunicationManager communicationManager = CommunicationManager::getInstance();
+
+	if(NULL == data || 0 >= numberOfBytes || !CommunicationManager::isFreeForTransmissions(communicationManager))
 	{
 		return false;
 	}
 
 	if(eventLister && !isDeleted(scope))
 	{
-		CommunicationManager::removeEventListeners(this, NULL, kEventCommunicationsTransmissionCompleted);
-		CommunicationManager::addEventListener(this, scope, eventLister, kEventCommunicationsTransmissionCompleted);
+		CommunicationManager::removeEventListeners(communicationManager, NULL, kEventCommunicationsTransmissionCompleted);
+		CommunicationManager::addEventListener(communicationManager, scope, eventLister, kEventCommunicationsTransmissionCompleted);
 	}
 
-	if(this->numberOfBytesPreviouslySent < numberOfBytes)
+	if(communicationManager->numberOfBytesPreviouslySent < numberOfBytes)
 	{
-		if(!isDeleted(this->sentData))
+		if(!isDeleted(communicationManager->sentData))
 		{
-			delete this->sentData;
-			this->sentData = NULL;
+			delete communicationManager->sentData;
+			communicationManager->sentData = NULL;
 		}
 	}
 
-	if(isDeleted(this->sentData))
+	if(isDeleted(communicationManager->sentData))
 	{
 		// Allocate memory to hold both the message and the data
-		this->sentData = (BYTE*)((uint32)MemoryPool::allocate(numberOfBytes + __DYNAMIC_STRUCT_PAD) + __DYNAMIC_STRUCT_PAD);
+		communicationManager->sentData = (BYTE*)((uint32)MemoryPool::allocate(numberOfBytes + __DYNAMIC_STRUCT_PAD) + __DYNAMIC_STRUCT_PAD);
 	}
 
-	if(!isDeleted(this->receivedData))
+	if(!isDeleted(communicationManager->receivedData))
 	{
-		delete this->receivedData;
-		this->receivedData = NULL;
+		delete communicationManager->receivedData;
+		communicationManager->receivedData = NULL;
 	}
 
-	this->syncSentByte = this->syncReceivedByte = NULL;
-	this->asyncSentByte = this->sentData;
-	this->asyncReceivedByte = this->receivedData;
-	this->numberOfBytesPreviouslySent = numberOfBytes;
-	this->numberOfBytesPendingTransmission = numberOfBytes;
+	communicationManager->syncSentByte = communicationManager->syncReceivedByte = NULL;
+	communicationManager->asyncSentByte = communicationManager->sentData;
+	communicationManager->asyncReceivedByte = communicationManager->receivedData;
+	communicationManager->numberOfBytesPreviouslySent = numberOfBytes;
+	communicationManager->numberOfBytesPendingTransmission = numberOfBytes;
 
 	// Copy the data
-	Mem::copyBYTE((BYTE*)this->sentData, data, numberOfBytes);
+	Mem::copyBYTE((BYTE*)communicationManager->sentData, data, numberOfBytes);
 
-	CommunicationManager::sendPayload(this, *this->asyncSentByte, true);
+	CommunicationManager::sendPayload(*communicationManager->asyncSentByte, true);
 
 	return true;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-bool CommunicationManager::sendData(BYTE* data, int32 numberOfBytes)
+static bool CommunicationManager::sendData(BYTE* data, int32 numberOfBytes)
 {
-	return CommunicationManager::startDataTransmission(this, data, numberOfBytes, true);
+	return CommunicationManager::startDataTransmission(data, numberOfBytes, true);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-bool CommunicationManager::receiveData(BYTE* data, int32 numberOfBytes)
+static bool CommunicationManager::receiveData(BYTE* data, int32 numberOfBytes)
 {
-	return CommunicationManager::startDataTransmission(this, data, numberOfBytes, false);
+	return CommunicationManager::startDataTransmission(data, numberOfBytes, false);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-bool CommunicationManager::startBidirectionalDataTransmission(WORD message, BYTE* data, int32 numberOfBytes)
+static bool CommunicationManager::startBidirectionalDataTransmission(WORD message, BYTE* data, int32 numberOfBytes)
 {
-	if((NULL == data) || 0 >= numberOfBytes || !CommunicationManager::isFreeForTransmissions(this))
+	CommunicationManager communicationManager = CommunicationManager::getInstance();
+
+	if((NULL == data) || 0 >= numberOfBytes || !CommunicationManager::isFreeForTransmissions(communicationManager))
 	{
 		return false;
 	}
 
-	if(this->numberOfBytesPreviouslySent < numberOfBytes)
+	if(communicationManager->numberOfBytesPreviouslySent < numberOfBytes)
 	{
-		if(!isDeleted(this->sentData))
+		if(!isDeleted(communicationManager->sentData))
 		{
-			delete this->sentData;
-			this->sentData = NULL;
+			delete communicationManager->sentData;
+			communicationManager->sentData = NULL;
 		}
 
-		if(!isDeleted(this->receivedData))
+		if(!isDeleted(communicationManager->receivedData))
 		{
-			delete this->receivedData;
-			this->receivedData = NULL;
+			delete communicationManager->receivedData;
+			communicationManager->receivedData = NULL;
 		}
 	}
 
-	if(isDeleted(this->sentData))
+	if(isDeleted(communicationManager->sentData))
 	{
-		this->sentData = 
+		communicationManager->sentData = 
 			(BYTE*)((uint32)MemoryPool::allocate(numberOfBytes + __DYNAMIC_STRUCT_PAD + __MESSAGE_SIZE) + __DYNAMIC_STRUCT_PAD);
 	}
 
-	if(isDeleted(this->receivedData))
+	if(isDeleted(communicationManager->receivedData))
 	{
-		this->receivedData = 
+		communicationManager->receivedData = 
 			(BYTE*)((uint32)MemoryPool::allocate(numberOfBytes + __DYNAMIC_STRUCT_PAD + __MESSAGE_SIZE) + __DYNAMIC_STRUCT_PAD);
 	}
 
-	this->asyncSentByte = this->asyncReceivedByte = NULL;
-	this->syncSentByte = this->sentData;
-	this->syncReceivedByte = this->receivedData;
-	this->numberOfBytesPreviouslySent = numberOfBytes;	
-	this->numberOfBytesPendingTransmission = numberOfBytes + __MESSAGE_SIZE;
+	communicationManager->asyncSentByte = communicationManager->asyncReceivedByte = NULL;
+	communicationManager->syncSentByte = communicationManager->sentData;
+	communicationManager->syncReceivedByte = communicationManager->receivedData;
+	communicationManager->numberOfBytesPreviouslySent = numberOfBytes;	
+	communicationManager->numberOfBytesPendingTransmission = numberOfBytes + __MESSAGE_SIZE;
 
 	// Save the message
-	*(WORD*)this->sentData = message;
+	*(WORD*)communicationManager->sentData = message;
 
 	// Copy the data
-	Mem::copyBYTE((BYTE*)this->sentData + __MESSAGE_SIZE, data, numberOfBytes);
+	Mem::copyBYTE((BYTE*)communicationManager->sentData + __MESSAGE_SIZE, data, numberOfBytes);
 
-	while(0 < this->numberOfBytesPendingTransmission)
+	while(0 < communicationManager->numberOfBytesPendingTransmission)
 	{
-		CommunicationManager::sendAndReceivePayload(this, *this->syncSentByte, false);
+		CommunicationManager::sendAndReceivePayload(*communicationManager->syncSentByte, false);
 
-		while(kCommunicationsStatusIdle != this->status)
+		while(kCommunicationsStatusIdle != communicationManager->status)
 		{
 			HardwareManager::halt();
 		}
 	}
 
-	this->status = kCommunicationsStatusIdle;
-	this->syncSentByte = this->syncReceivedByte = NULL;
+	communicationManager->status = kCommunicationsStatusIdle;
+	communicationManager->syncSentByte = communicationManager->syncReceivedByte = NULL;
 
 	return true;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-bool CommunicationManager::startBidirectionalDataTransmissionAsync
+static bool CommunicationManager::startBidirectionalDataTransmissionAsync
 (
 	WORD message, BYTE* data, int32 numberOfBytes, EventListener eventLister, ListenerObject scope
 )
 {
-	if(NULL == data || 0 >= numberOfBytes || !CommunicationManager::isFreeForTransmissions(this))
+	CommunicationManager communicationManager = CommunicationManager::getInstance();
+
+	if(NULL == data || 0 >= numberOfBytes || !CommunicationManager::isFreeForTransmissions(communicationManager))
 	{
 		return false;
 	}
 
 	if(NULL != eventLister && !isDeleted(scope))
 	{
-		CommunicationManager::removeEventListeners(this, NULL, kEventCommunicationsTransmissionCompleted);
-		CommunicationManager::addEventListener(this, scope, eventLister, kEventCommunicationsTransmissionCompleted);
+		CommunicationManager::removeEventListeners(communicationManager, NULL, kEventCommunicationsTransmissionCompleted);
+		CommunicationManager::addEventListener(communicationManager, scope, eventLister, kEventCommunicationsTransmissionCompleted);
 	}
 
-	if(this->numberOfBytesPreviouslySent < numberOfBytes)
+	if(communicationManager->numberOfBytesPreviouslySent < numberOfBytes)
 	{
-		if(!isDeleted(this->sentData))
+		if(!isDeleted(communicationManager->sentData))
 		{
-			delete this->sentData;
-			this->sentData = NULL;
+			delete communicationManager->sentData;
+			communicationManager->sentData = NULL;
 		}
 
-		if(!isDeleted(this->receivedData))
+		if(!isDeleted(communicationManager->receivedData))
 		{
-			delete this->receivedData;
-			this->receivedData = NULL;
+			delete communicationManager->receivedData;
+			communicationManager->receivedData = NULL;
 		}
 	}
 
-	if(isDeleted(this->sentData))
+	if(isDeleted(communicationManager->sentData))
 	{
 		// Allocate memory to hold both the message and the data
-		this->sentData = 
+		communicationManager->sentData = 
 			(BYTE*)((uint32)MemoryPool::allocate(numberOfBytes + __DYNAMIC_STRUCT_PAD + __MESSAGE_SIZE) + __DYNAMIC_STRUCT_PAD);
 	}
 
-	if(isDeleted(this->receivedData))
+	if(isDeleted(communicationManager->receivedData))
 	{
-		this->receivedData = 
+		communicationManager->receivedData = 
 			(BYTE*)((uint32)MemoryPool::allocate(numberOfBytes + __DYNAMIC_STRUCT_PAD + __MESSAGE_SIZE) + __DYNAMIC_STRUCT_PAD);
 	}
 
-	this->syncSentByte = this->syncReceivedByte = NULL;
-	this->asyncSentByte = this->sentData;
-	this->asyncReceivedByte = this->receivedData;
-	this->numberOfBytesPreviouslySent = numberOfBytes;	
-	this->numberOfBytesPendingTransmission = numberOfBytes + __MESSAGE_SIZE;
+	communicationManager->syncSentByte = communicationManager->syncReceivedByte = NULL;
+	communicationManager->asyncSentByte = communicationManager->sentData;
+	communicationManager->asyncReceivedByte = communicationManager->receivedData;
+	communicationManager->numberOfBytesPreviouslySent = numberOfBytes;	
+	communicationManager->numberOfBytesPendingTransmission = numberOfBytes + __MESSAGE_SIZE;
 
 	// Save the message
-	*(WORD*)this->sentData = message;
+	*(WORD*)communicationManager->sentData = message;
 
 	// Copy the data
-	Mem::copyBYTE((BYTE*)this->sentData + __MESSAGE_SIZE, data, numberOfBytes);
-	CommunicationManager::sendAndReceivePayload(this, *this->asyncSentByte, true);
+	Mem::copyBYTE((BYTE*)communicationManager->sentData + __MESSAGE_SIZE, data, numberOfBytes);
+	CommunicationManager::sendAndReceivePayload(*communicationManager->asyncSentByte, true);
 
 	return true;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void CommunicationManager::processInterrupt()
+static void CommunicationManager::processInterrupt()
 {
-	int32 status = this->status;
-	this->status = kCommunicationsStatusIdle;
+	CommunicationManager communicationManager = CommunicationManager::getInstance();
+
+	int32 status = communicationManager->status;
+	communicationManager->status = kCommunicationsStatusIdle;
 
 	switch(status)
 	{
@@ -1039,18 +1079,18 @@ void CommunicationManager::processInterrupt()
 
 			if(__COM_HANDSHAKE != _communicationRegisters[__CDRR])
 			{
-				CommunicationManager::sendHandshake(this);
+				CommunicationManager::sendHandshake(communicationManager);
 				break;
 			}
 
-			this->connected = true;
-			CommunicationManager::fireEvent(this, kEventCommunicationsConnected);
-			NM_ASSERT(!isDeleted(this), "CommunicationManager::processInterrupt: deleted this during kEventCommunicationsConnected");
-			CommunicationManager::removeEventListeners(this, NULL, kEventCommunicationsConnected);
+			communicationManager->connected = true;
+			CommunicationManager::fireEvent(communicationManager, kEventCommunicationsConnected);
+			NM_ASSERT(!isDeleted(communicationManager), "CommunicationManager::processInterrupt: deleted communicationManager during kEventCommunicationsConnected");
+			CommunicationManager::removeEventListeners(communicationManager, NULL, kEventCommunicationsConnected);
 
 		default:
 
-			this->connected = !this->broadcast;
+			communicationManager->connected = !communicationManager->broadcast;
 			break;
 	}
 
@@ -1058,33 +1098,33 @@ void CommunicationManager::processInterrupt()
 	{
 		case kCommunicationsStatusWaitingPayload:
 
-			if(this->syncReceivedByte)
+			if(communicationManager->syncReceivedByte)
 			{
-				*this->syncReceivedByte = _communicationRegisters[__CDRR];
-				this->syncReceivedByte++;
-				--this->numberOfBytesPendingTransmission;
+				*communicationManager->syncReceivedByte = _communicationRegisters[__CDRR];
+				communicationManager->syncReceivedByte++;
+				--communicationManager->numberOfBytesPendingTransmission;
 			}
-			else if(this->asyncReceivedByte)
+			else if(communicationManager->asyncReceivedByte)
 			{
-				*this->asyncReceivedByte = _communicationRegisters[__CDRR];
-				this->asyncReceivedByte++;
+				*communicationManager->asyncReceivedByte = _communicationRegisters[__CDRR];
+				communicationManager->asyncReceivedByte++;
 
-				if(0 < --this->numberOfBytesPendingTransmission)
+				if(0 < --communicationManager->numberOfBytesPendingTransmission)
 				{
-					CommunicationManager::receivePayload(this, false);
+					CommunicationManager::receivePayload(false);
 				}
 				else
 				{
-					CommunicationManager::fireEvent(this, kEventCommunicationsTransmissionCompleted);
+					CommunicationManager::fireEvent(communicationManager, kEventCommunicationsTransmissionCompleted);
 
 					NM_ASSERT
 					(
-						!isDeleted(this), 
-						"CommunicationManager::processInterrupt: deleted this during kEventCommunicationsTransmissionCompleted"
+						!isDeleted(communicationManager), 
+						"CommunicationManager::processInterrupt: deleted communicationManager during kEventCommunicationsTransmissionCompleted"
 					);
 
-					CommunicationManager::removeEventListeners(this, NULL, kEventCommunicationsTransmissionCompleted);
-					this->asyncReceivedByte = NULL;
+					CommunicationManager::removeEventListeners(communicationManager, NULL, kEventCommunicationsTransmissionCompleted);
+					communicationManager->asyncReceivedByte = NULL;
 #ifdef __ENABLE_PROFILER
 					Profiler::lap(Profiler::getInstance(), kProfilerLapTypeCommunicationsInterruptProcess, PROCESS_NAME_COMMUNICATIONS);
 #endif
@@ -1095,32 +1135,32 @@ void CommunicationManager::processInterrupt()
 
 		case kCommunicationsStatusSendingPayload:
 
-			if(this->syncSentByte)
+			if(communicationManager->syncSentByte)
 			{
-				this->syncSentByte++;
-				--this->numberOfBytesPendingTransmission;
+				communicationManager->syncSentByte++;
+				--communicationManager->numberOfBytesPendingTransmission;
 			}
-			else if(this->asyncSentByte)
+			else if(communicationManager->asyncSentByte)
 			{
-				this->asyncSentByte++;
+				communicationManager->asyncSentByte++;
 
-				if(0 < --this->numberOfBytesPendingTransmission)
+				if(0 < --communicationManager->numberOfBytesPendingTransmission)
 				{
-					CommunicationManager::sendPayload(this, *this->asyncSentByte, true);
+					CommunicationManager::sendPayload(*communicationManager->asyncSentByte, true);
 				}
 				else
 				{
-					CommunicationManager::fireEvent(this, kEventCommunicationsTransmissionCompleted);
+					CommunicationManager::fireEvent(communicationManager, kEventCommunicationsTransmissionCompleted);
 					
 					NM_ASSERT
 					(
-						!isDeleted(this), 
-						"CommunicationManager::processInterrupt: deleted this during kEventCommunicationsTransmissionCompleted"
+						!isDeleted(communicationManager), 
+						"CommunicationManager::processInterrupt: deleted communicationManager during kEventCommunicationsTransmissionCompleted"
 					);
 
-					CommunicationManager::removeEventListeners(this, NULL, kEventCommunicationsTransmissionCompleted);
-					this->asyncSentByte = NULL;
-					this->broadcast = kCommunicationsBroadcastNone;
+					CommunicationManager::removeEventListeners(communicationManager, NULL, kEventCommunicationsTransmissionCompleted);
+					communicationManager->asyncSentByte = NULL;
+					communicationManager->broadcast = kCommunicationsBroadcastNone;
 #ifdef __ENABLE_PROFILER
 					Profiler::lap(Profiler::getInstance(), kProfilerLapTypeCommunicationsInterruptProcess, PROCESS_NAME_COMMUNICATIONS);
 #endif
@@ -1131,36 +1171,36 @@ void CommunicationManager::processInterrupt()
 
 		case kCommunicationsStatusSendingAndReceivingPayload:
 
-			if(this->syncSentByte && this->syncReceivedByte)
+			if(communicationManager->syncSentByte && communicationManager->syncReceivedByte)
 			{
-				*this->syncReceivedByte = _communicationRegisters[__CDRR];
-				this->syncReceivedByte++;
-				this->syncSentByte++;
-				--this->numberOfBytesPendingTransmission;
+				*communicationManager->syncReceivedByte = _communicationRegisters[__CDRR];
+				communicationManager->syncReceivedByte++;
+				communicationManager->syncSentByte++;
+				--communicationManager->numberOfBytesPendingTransmission;
 			}
-			else if(this->asyncSentByte && this->asyncReceivedByte)
+			else if(communicationManager->asyncSentByte && communicationManager->asyncReceivedByte)
 			{
-				*this->asyncReceivedByte = _communicationRegisters[__CDRR];
-				this->asyncReceivedByte++;
-				this->asyncSentByte++;
+				*communicationManager->asyncReceivedByte = _communicationRegisters[__CDRR];
+				communicationManager->asyncReceivedByte++;
+				communicationManager->asyncSentByte++;
 
-				if(0 < --this->numberOfBytesPendingTransmission)
+				if(0 < --communicationManager->numberOfBytesPendingTransmission)
 				{
-					CommunicationManager::sendAndReceivePayload(this, *this->asyncSentByte, false);
+					CommunicationManager::sendAndReceivePayload(*communicationManager->asyncSentByte, false);
 				}
 				else
 				{
-					CommunicationManager::fireEvent(this, kEventCommunicationsTransmissionCompleted);
+					CommunicationManager::fireEvent(communicationManager, kEventCommunicationsTransmissionCompleted);
 					
 					NM_ASSERT
 					(
-						!isDeleted(this), 
-						"CommunicationManager::processInterrupt: deleted this during kEventCommunicationsTransmissionCompleted"
+						!isDeleted(communicationManager), 
+						"CommunicationManager::processInterrupt: deleted communicationManager during kEventCommunicationsTransmissionCompleted"
 					);
 
-					CommunicationManager::removeEventListeners(this, NULL, kEventCommunicationsTransmissionCompleted);
-					this->asyncSentByte = NULL;
-					this->asyncReceivedByte = NULL;
+					CommunicationManager::removeEventListeners(communicationManager, NULL, kEventCommunicationsTransmissionCompleted);
+					communicationManager->asyncSentByte = NULL;
+					communicationManager->asyncReceivedByte = NULL;
 
 #ifdef __ENABLE_PROFILER
 					Profiler::lap(Profiler::getInstance(), kProfilerLapTypeCommunicationsInterruptProcess, PROCESS_NAME_COMMUNICATIONS);
@@ -1170,6 +1210,33 @@ void CommunicationManager::processInterrupt()
 
 			break;
 	}
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+// CLASS' PRIVATE METHODS
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void CommunicationManager::constructor()
+{
+	// Always explicitly call the base's constructor 
+	Base::constructor();
+
+	this->status = 	kCommunicationsStatusNone;
+
+	CommunicationManager::reset();
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void CommunicationManager::destructor()
+{
+	// Allow a new construct
+	// Always explicitly call the base's destructor 
+	Base::destructor();
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
