@@ -827,7 +827,7 @@ void Debug::charMemoryShowMemory(int32 increment __attribute__ ((unused)), int32
 		24,	25,	26,	27,	28,	29,	30,	31
 	};
 
-	uint32 printingBgmap = BgmapTextureManager::getPrintingBgmapSegment(BgmapTextureManager::getInstance());;
+	uint32 printingBgmap = BgmapTextureManager::getPrintingBgmapSegment();
 	uint16* const bgmapSpaceBaseAddress = (uint16*)__BGMAP_SPACE_BASE_ADDRESS;
 
 	// Put the map into memory calculating the number of char for each reference
@@ -879,7 +879,7 @@ void Debug::showDebugBgmap()
 
 void Debug::showBgmapSegment()
 {
-	uint32 printingBgmap = BgmapTextureManager::getPrintingBgmapSegment(BgmapTextureManager::getInstance());;
+	uint32 printingBgmap = BgmapTextureManager::getPrintingBgmapSegment();
 	int32 topBorder = 0;
 	int32 bottomBorder = 0;
 	int32 leftBorder = 0;
@@ -1059,7 +1059,7 @@ void Debug::texturesShowStatus(int32 increment, int32 x, int32 y)
 
 	if(-1 > this->bgmapSegment)
 	{
-		this->bgmapSegment = BgmapTextureManager::getAvailableBgmapSegmentsForTextures(BgmapTextureManager::getInstance()) - 1;
+		this->bgmapSegment = BgmapTextureManager::getAvailableBgmapSegmentsForTextures() - 1;
 	}
 
 	if(-1 == this->bgmapSegment)
@@ -1068,7 +1068,7 @@ void Debug::texturesShowStatus(int32 increment, int32 x, int32 y)
 		BgmapTextureManager::print(x, y);
 		ParamTableManager::print(x + 27, y);
 	}
-	else if(BgmapTextureManager::getAvailableBgmapSegmentsForTextures(BgmapTextureManager::getInstance()) > this->bgmapSegment)
+	else if(BgmapTextureManager::getAvailableBgmapSegmentsForTextures() > this->bgmapSegment)
 	{
 		Printing::text(" \x1E\x1A\x1B\x1C\x1D\x1F\x1A\x1B\x1C\x1D ", 35, 0, NULL);
 		Printing::text("BGMAP TEXTURES INSPECTOR           Segment: ", x, y, NULL);
