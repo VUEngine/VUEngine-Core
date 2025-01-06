@@ -22,11 +22,7 @@
 // FORWARD DECLARATIONS
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-class BgmapTextureManager;
-class CharSetManager;
 class ObjectSpriteContainer;
-class ObjectTextureManager;
-class ParamTableManager;
 class Printing;
 class VirtualList;
 

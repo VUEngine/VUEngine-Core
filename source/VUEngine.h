@@ -78,12 +78,6 @@ singleton class VUEngine : ListenerObject
 	/// Global timer
 	Clock clock;
 
-	/// VIP manager
-	VIPManager vipManager;
-
-	/// Timer manager
-	TimerManager timerManager;
-
 	/// Saved data manager
 	ListenerObject saveDataManager;
 

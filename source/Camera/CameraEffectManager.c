@@ -182,7 +182,7 @@ void CameraEffectManager::fxFadeStart(int32 effect, int32 delay)
 			CameraEffectManager::hideCamera(this);
 
 			TimerManager::repeatMethodCall(
-				TimerManager::getInstance(),
+				
 				defaultBrightness.darkRed,
 				(delay * defaultBrightness.darkRed),
 				ListenerObject::safeCast(this),
@@ -195,7 +195,7 @@ void CameraEffectManager::fxFadeStart(int32 effect, int32 delay)
 			CameraEffectManager::showCamera(this);
 
 			TimerManager::repeatMethodCall(
-				TimerManager::getInstance(),
+				
 				defaultBrightness.darkRed,
 				(delay * defaultBrightness.darkRed),
 				ListenerObject::safeCast(this),
@@ -286,7 +286,7 @@ void CameraEffectManager::fxFadeIn()
 		_vipRegisters[__BRTC] - _vipRegisters[__BRTB] - _vipRegisters[__BRTA] + 1
 	};
 	
-	VIPManager::setupBrightness(VIPManager::getInstance(), &incrementalBrightness);
+	VIPManager::setupBrightness(&incrementalBrightness);
 
 #ifdef __DIMM_FOR_PROFILING
 
@@ -314,7 +314,7 @@ void CameraEffectManager::fxFadeOut()
 		(_vipRegisters[__BRTC] > 0) ? _vipRegisters[__BRTC] - 1 : 0
 	};
 	
-	VIPManager::setupBrightness(VIPManager::getInstance(), &decrementalBrightness);
+	VIPManager::setupBrightness(&decrementalBrightness);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -437,14 +437,14 @@ void CameraEffectManager::showCamera()
 {
 	Brightness defaultBrightness = CameraEffectManager::getDefaultBrightness(this);
 	defaultBrightness = CameraEffectManager::convertBrightnessToVipFormat(this, defaultBrightness);
-	VIPManager::setupBrightness(VIPManager::getInstance(), &defaultBrightness);
+	VIPManager::setupBrightness(&defaultBrightness);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void CameraEffectManager::hideCamera()
 {
-	VIPManager::lowerBrightness(VIPManager::getInstance());
+	VIPManager::lowerBrightness();
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

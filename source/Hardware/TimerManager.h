@@ -29,16 +29,16 @@ class ListenerObject;
 #define __TIMER_COUNTER_DELTA						1
 
 // Use with 20us timer (range = 0 to 1300)
-#define __TIME_US(n)								(((n) / TimerManager::getResolutionInUS(TimerManager::getInstance())) 				\
+#define __TIME_US(n)								(((n) / TimerManager::getResolutionInUS()) 				\
 													- __TIMER_COUNTER_DELTA)
 #define __TIME_INVERSE_US(n)						((n + __TIMER_COUNTER_DELTA) * 														\
-													TimerManager::getResolutionInUS(TimerManager::getInstance()))
+													TimerManager::getResolutionInUS())
 
 // Use with 100us timer (range = 0 to 6500, and 0 to 6.5)
 #define __TIME_MS(n)								((((n) * __MICROSECONDS_PER_MILLISECOND) / 											\
-													TimerManager::getResolutionInUS(TimerManager::getInstance())) - __TIMER_COUNTER_DELTA)
+													TimerManager::getResolutionInUS()) - __TIMER_COUNTER_DELTA)
 #define __TIME_INVERSE_MS(n)						((n + __TIMER_COUNTER_DELTA) * 														\
-													TimerManager::getResolutionInUS(TimerManager::getInstance()) / 1000)
+													TimerManager::getResolutionInUS() / 1000)
 
 #define __TIMER_ENB									0x01
 #define __TIMER_ZSTAT								0x02
@@ -47,10 +47,10 @@ class ListenerObject;
 #define __TIMER_20US								0x10
 #define __TIMER_100US								0x00
 
-#define __MINIMUM_TIME_PER_INTERRUPT_US_STEP		(TimerManager::getResolutionInUS(TimerManager::getInstance()))
+#define __MINIMUM_TIME_PER_INTERRUPT_US_STEP		(TimerManager::getResolutionInUS())
 #define __MINIMUM_TIME_PER_INTERRUPT_MS_STEP		1
-#define __MINIMUM_TIME_PER_INTERRUPT_US				(TimerManager::getResolutionInUS(TimerManager::getInstance()) + 					\
-													TimerManager::getResolutionInUS(TimerManager::getInstance()) * __TIMER_COUNTER_DELTA)
+#define __MINIMUM_TIME_PER_INTERRUPT_US				(TimerManager::getResolutionInUS() + 					\
+													TimerManager::getResolutionInUS() * __TIMER_COUNTER_DELTA)
 #define __MAXIMUM_TIME_PER_INTERRUPT_US 			(1.3f * 1000)
 #define __MINIMUM_TIME_PER_INTERRUPT_MS				1
 #define __MAXIMUM_TIME_PER_INTERRUPT_MS 			49
@@ -116,105 +116,105 @@ singleton class TimerManager : Object
 	static void interruptHandler();
 
 	/// Reset the manager's state.
-	void reset();
+	static void reset();
 
 	/// Reset timer's counter.
-	void resetTimerCounter();
+	static void resetTimerCounter();
 
 	/// Configure the timer with the provided arguments.
 	/// @param timerResolution: Timer's resolution (__TIMER_100US or __TIMER_20US)
 	/// @param targetTimePerInterrupt: Target elapsed time between timer interrupts
 	/// @param targetTimePerInterrupttUnits: Timer interrupt's target time units
-	void configure(uint16 timerResolution, uint16 targetTimePerInterrupt, uint16 targetTimePerInterrupttUnits);
+	static void configure(uint16 timerResolution, uint16 targetTimePerInterrupt, uint16 targetTimePerInterrupttUnits);
 
 	/// Apply the settings to the hardware timer.
 	/// @param enable: If true, the hardware timer is enabled
-	void applySettings(bool enable);
+	static void applySettings(bool enable);
 
 	/// Enable the timer.
-	void enable();
+	static void enable();
 
 	/// Disable the timer.
-	void disable();
+	static void disable();
 
 	/// Set the timer's resolution.
 	/// @param resolution: __TIMER_20US or __TIMER_100US
-	void setResolution(uint16 resolution);
+	static void setResolution(uint16 resolution);
 
 	/// Retrieve the timer's resolution.
 	/// @return Timer's resolution
-	uint16 getResolution();
+	static uint16 getResolution();
 
 	/// Retrieve the timer's resolution in microseconds.
 	/// @return Timer's resolution in microseconds
-	uint16 getResolutionInUS();
+	static uint16 getResolutionInUS();
 
 	/// Set the target time between interrupt calls.
 	/// @param targetTimePerInterrupt: Target time between interrupt calls
-	void setTargetTimePerInterrupt(uint16 targetTimePerInterrupt);
+	static void setTargetTimePerInterrupt(uint16 targetTimePerInterrupt);
 
 	/// Retrieve the target time between interrupt calls.
 	/// @return Target time between interrupt calls
-	uint16 getTargetTimePerInterrupt();
+	static uint16 getTargetTimePerInterrupt();
 
 	/// Retrieve the target time in milliseconds between interrupt calls.
 	/// @return Target time in milliseconds between interrupt calls
-	float getTargetTimePerInterruptInMS();
+	static float getTargetTimePerInterruptInMS();
 
 	/// Retrieve the target time in microseconds between interrupt calls.
 	/// @return Target time in microseconds between interrupt calls
-	uint32 getTargetTimePerInterruptInUS();
+	static uint32 getTargetTimePerInterruptInUS();
 	
 	/// Set the target time units between interrupt calls.
 	/// @param targetTimePerInterrupttUnits: Target time units between interrupt calls
-	void setTargetTimePerInterruptUnits(uint16 targetTimePerInterrupttUnits);
+	static void setTargetTimePerInterruptUnits(uint16 targetTimePerInterrupttUnits);
 
 	/// Retrieve the target time units between interrupt calls.
 	/// @return Target time units between interrupt calls
-	uint16 getTargetTimePerInterruptUnits();
+	static uint16 getTargetTimePerInterruptUnits();
 
 	/// Retrieve the configured timer counter.
 	/// @return Configured timer counter
-	uint16 getTimerCounter();
+	static uint16 getTimerCounter();
 	
 	/// Retrieve the current timer counter.
 	/// @return Current timer counter
-	uint16 getCurrentTimerCounter();
+	static uint16 getCurrentTimerCounter();
 
 	/// Retrieve the minimum timer per interrupt step.
 	/// @return Minimum timer per interrupt step
-	uint16 getMinimumTimePerInterruptStep();
+	static uint16 getMinimumTimePerInterruptStep();
 
 	/// Retrieve elapsed milliseconds since the last call to reset.
 	/// @return Elapsed milliseconds since the last call to reset
-	uint32 getElapsedMilliseconds();
+	static uint32 getElapsedMilliseconds();
 
 	/// Retrieve elapsed milliseconds since the start of the program.
 	/// @return Elapsed milliseconds since the start of the program
-	uint32 getTotalElapsedMilliseconds();
+	static uint32 getTotalElapsedMilliseconds();
 
 	/// Halt the program by the provided time.
 	/// @param milliseconds: Time to halt the program
-	void wait(uint32 milliseconds);
+	static void wait(uint32 milliseconds);
 
 	/// Call a method on the provided scope a numer of time during a lapse of time.
 	/// @param callTimes: Number of calls to produce during the total duration
 	/// @param duration: Time that must take the callTimes
 	/// @param object: Called method's scope
  	/// @param method: Method to call
-	void repeatMethodCall(uint32 callTimes, uint32 duration, ListenerObject object, void (*method)(ListenerObject, uint32));
+	static void repeatMethodCall(uint32 callTimes, uint32 duration, ListenerObject object, void (*method)(ListenerObject, uint32));
 
 	/// Call when the next frame starts.
 	/// @param elapsedMicroseconds: Elapsed microseconds between calls
-	void frameStarted(uint32 elapsedMicroseconds);
+	static void frameStarted(uint32 elapsedMicroseconds);
 
 	/// Call when the next second starts.
-	void nextSecondStarted();
+	static void nextSecondStarted();
 
 	/// Print the manager's configuration.
 	/// @param x: Screen x coordinate where to print
 	/// @param y: Screen y coordinate where to print
-	void print(int32 x, int32 y);
+	static void print(int32 x, int32 y);
 }
 
 #endif

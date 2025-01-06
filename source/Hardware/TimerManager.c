@@ -4,7 +4,7 @@
  * © Jorge Eremiev <jorgech3@gmail.com> and Christian Radke <c.radke@posteo.de>
  *
  * For the full copyright and license information, please view the LICENSE file
- * that was distributed with this source code.
+ * that was distributed with timerManager source code.
  */
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -24,12 +24,6 @@
 #include "TimerManager.h"
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-// CLASS' ATTRIBUTES
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-static TimerManager _timerManager;
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' STATIC METHODS
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
@@ -37,44 +31,46 @@ static TimerManager _timerManager;
 
 static void TimerManager::interruptHandler()
 {
+	TimerManager timerManager = TimerManager::getInstance();
+
 	//disable
 #ifndef __ENABLE_PROFILER
-	TimerManager::disable(_timerManager);
-	TimerManager::clearStat(_timerManager);
+	TimerManager::disable();
+	TimerManager::clearStat();
 #else
-	TimerManager::disableInterrupt(_timerManager);
+	TimerManager::disableInterrupt();
 
 	Profiler::lap(Profiler::getInstance(), kProfilerLapTypeStartInterrupt, NULL);
 #endif
 
-	_timerManager->interruptsPerSecond++;
+	timerManager->interruptsPerSecond++;
 
-	_timerManager->interruptsPerGameFrame++;
+	timerManager->interruptsPerGameFrame++;
 
-	_timerManager->elapsedMicroseconds += _timerManager->elapsedMicrosecondsPerInterrupt;
+	timerManager->elapsedMicroseconds += timerManager->elapsedMicrosecondsPerInterrupt;
 
-	if(_timerManager->elapsedMicroseconds > __MICROSECONDS_PER_MILLISECOND)
+	if(timerManager->elapsedMicroseconds > __MICROSECONDS_PER_MILLISECOND)
 	{
-		uint32 elapsedMilliseconds = _timerManager->elapsedMicroseconds / __MICROSECONDS_PER_MILLISECOND;
+		uint32 elapsedMilliseconds = timerManager->elapsedMicroseconds / __MICROSECONDS_PER_MILLISECOND;
 
-		_timerManager->elapsedMicroseconds = _timerManager->elapsedMicroseconds % __MICROSECONDS_PER_MILLISECOND;
+		timerManager->elapsedMicroseconds = timerManager->elapsedMicroseconds % __MICROSECONDS_PER_MILLISECOND;
 
-		_timerManager->elapsedMilliseconds += elapsedMilliseconds;
+		timerManager->elapsedMilliseconds += elapsedMilliseconds;
 
-		_timerManager->totalElapsedMilliseconds += elapsedMilliseconds;
+		timerManager->totalElapsedMilliseconds += elapsedMilliseconds;
 	}
 
 	// Update sounds
-	SoundManager::playSounds(_timerManager->elapsedMicrosecondsPerInterrupt);
+	SoundManager::playSounds(timerManager->elapsedMicrosecondsPerInterrupt);
 
-	// Update Stopwatchs: no use is being done of them so this is commented out for now since it affects PCM playback
+	// Update Stopwatchs: no use is being done of them so timerManager is commented out for now since it affects PCM playback
 	//StopwatchManager::update();
 
 // enable
 #ifndef __ENABLE_PROFILER
-	TimerManager::enable(_timerManager);
+	TimerManager::enable();
 #else
-	TimerManager::enableInterrupt(_timerManager);
+	TimerManager::enableInterrupt();
 	Profiler::lap(Profiler::getInstance(), kProfilerLapTypeTimerInterruptProcess, PROCESS_NAME_SOUND_PLAY);
 #endif
 }
@@ -87,37 +83,41 @@ static void TimerManager::interruptHandler()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void TimerManager::initialize()
+static void TimerManager::initialize()
 {
-	TimerManager::disableInterrupt(this);
-	TimerManager::setTimerResolution(this);
-	TimerManager::clearStat(this);
-	TimerManager::resetTimerCounter(this);
-	TimerManager::enable(this);
-	TimerManager::enableInterrupt(this);
+	TimerManager::disableInterrupt();
+	TimerManager::setTimerResolution();
+	TimerManager::clearStat();
+	TimerManager::resetTimerCounter();
+	TimerManager::enable();
+	TimerManager::enableInterrupt();
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void TimerManager::reset()
+static void TimerManager::reset()
 {
-	this->tcrValue = 0;
-	this->elapsedMilliseconds = 0;
-	this->elapsedMicroseconds = 0;
-	this->resolution = __TIMER_100US;
-	this->targetTimePerInterrupt = 1;
-	this->targetTimePerInterrupttUnits = kMS;
-	this->interruptsPerGameFrame = 0;
-	this->elapsedMicrosecondsPerInterrupt = TimerManager::getTargetTimePerInterruptInUS(this);
+	TimerManager timerManager = TimerManager::getInstance();
+
+	timerManager->tcrValue = 0;
+	timerManager->elapsedMilliseconds = 0;
+	timerManager->elapsedMicroseconds = 0;
+	timerManager->resolution = __TIMER_100US;
+	timerManager->targetTimePerInterrupt = 1;
+	timerManager->targetTimePerInterrupttUnits = kMS;
+	timerManager->interruptsPerGameFrame = 0;
+	timerManager->elapsedMicrosecondsPerInterrupt = TimerManager::getTargetTimePerInterruptInUS();
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void TimerManager::resetTimerCounter()
+static void TimerManager::resetTimerCounter()
 {
-	uint16 timerCounter = TimerManager::computeTimerCounter(this);
+	TimerManager timerManager = TimerManager::getInstance();
 
-	switch(this->resolution)
+	uint16 timerCounter = TimerManager::computeTimerCounter();
+
+	switch(timerManager->resolution)
 	{
 		case __TIMER_20US:
 
@@ -136,76 +136,82 @@ void TimerManager::resetTimerCounter()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void TimerManager::configure(uint16 timerResolution, uint16 targetTimePerInterrupt, uint16 targetTimePerInterrupttUnits)
+static void TimerManager::configure(uint16 timerResolution, uint16 targetTimePerInterrupt, uint16 targetTimePerInterrupttUnits)
 {
-	TimerManager::setResolution(this, timerResolution);
-	TimerManager::setTargetTimePerInterruptUnits(this, targetTimePerInterrupttUnits);
-	TimerManager::setTargetTimePerInterrupt(this, targetTimePerInterrupt);
-	TimerManager::applySettings(this, true);
+	TimerManager::setResolution(timerResolution);
+	TimerManager::setTargetTimePerInterruptUnits(targetTimePerInterrupttUnits);
+	TimerManager::setTargetTimePerInterrupt(targetTimePerInterrupt);
+	TimerManager::applySettings(true);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void TimerManager::applySettings(bool enable)
+static void TimerManager::applySettings(bool enable)
 {
-	TimerManager::disable(this);
-	TimerManager::initialize(this);
+	TimerManager::disable();
+	TimerManager::initialize();
 
 	if(enable)
 	{
-		TimerManager::enable(this);
+		TimerManager::enable();
 	}
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void TimerManager::enable()
+static void TimerManager::enable()
 {
-	this->tcrValue |= __TIMER_ENB | __TIMER_INT;
+	TimerManager timerManager = TimerManager::getInstance();
 
-	_hardwareRegisters[__TCR] = this->tcrValue;
+	timerManager->tcrValue |= __TIMER_ENB | __TIMER_INT;
+
+	_hardwareRegisters[__TCR] = timerManager->tcrValue;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void TimerManager::disable()
+static void TimerManager::disable()
 {
-	this->tcrValue &= ~(__TIMER_ENB | __TIMER_INT);
+	TimerManager timerManager = TimerManager::getInstance();
 
-	_hardwareRegisters[__TCR] = this->tcrValue;
+	timerManager->tcrValue &= ~(__TIMER_ENB | __TIMER_INT);
+
+	_hardwareRegisters[__TCR] = timerManager->tcrValue;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void TimerManager::setResolution(uint16 resolution)
+static void TimerManager::setResolution(uint16 resolution)
 {
+	TimerManager timerManager = TimerManager::getInstance();
+
 	switch(resolution)
 	{
 		case __TIMER_20US:
 
-			this->resolution = resolution;
+			timerManager->resolution = resolution;
 			break;
 
 		case __TIMER_100US:
 
-			this->resolution = resolution;
+			timerManager->resolution = resolution;
 			break;
 
 		default:
 
 			NM_ASSERT(false, "TimerManager::setResolution: wrong timer resolution");
 
-			this->resolution =  __TIMER_20US;
+			timerManager->resolution =  __TIMER_20US;
 			break;
 	}
 
-	uint32 targetTimePerInterrupt = this->targetTimePerInterrupt;
+	uint32 targetTimePerInterrupt = timerManager->targetTimePerInterrupt;
 
-	switch(this->targetTimePerInterrupttUnits)
+	switch(timerManager->targetTimePerInterrupttUnits)
 	{
 		case kUS:
 			{
-				uint32 residue = targetTimePerInterrupt % TimerManager::getResolutionInUS(this);
+				uint32 residue = targetTimePerInterrupt % TimerManager::getResolutionInUS();
 
 				if(targetTimePerInterrupt > residue)
 				{
@@ -224,21 +230,25 @@ void TimerManager::setResolution(uint16 resolution)
 			break;
 	}
 
-	TimerManager::setTargetTimePerInterrupt(this, targetTimePerInterrupt);
+	TimerManager::setTargetTimePerInterrupt(targetTimePerInterrupt);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-uint16 TimerManager::getResolution()
+static uint16 TimerManager::getResolution()
 {
-	return this->resolution;
+	TimerManager timerManager = TimerManager::getInstance();
+
+	return timerManager->resolution;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-uint16 TimerManager::getResolutionInUS()
+static uint16 TimerManager::getResolutionInUS()
 {
-	switch(this->resolution)
+	TimerManager timerManager = TimerManager::getInstance();
+
+	switch(timerManager->resolution)
 	{
 		case __TIMER_20US:
 
@@ -262,12 +272,14 @@ uint16 TimerManager::getResolutionInUS()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void TimerManager::setTargetTimePerInterrupt(uint16 targetTimePerInterrupt)
+static void TimerManager::setTargetTimePerInterrupt(uint16 targetTimePerInterrupt)
 {
+	TimerManager timerManager = TimerManager::getInstance();
+
 	int16 minimumTimePerInterrupt = 0;
 	int16 maximumTimePerInterrupt = 1000;
 
-	switch(this->targetTimePerInterrupttUnits)
+	switch(timerManager->targetTimePerInterrupttUnits)
 	{
 		case kUS:
 
@@ -296,31 +308,35 @@ void TimerManager::setTargetTimePerInterrupt(uint16 targetTimePerInterrupt)
 		targetTimePerInterrupt = maximumTimePerInterrupt;
 	}
 
-	this->targetTimePerInterrupt = targetTimePerInterrupt;
-	this->elapsedMicrosecondsPerInterrupt = TimerManager::getTargetTimePerInterruptInUS(this);
+	timerManager->targetTimePerInterrupt = targetTimePerInterrupt;
+	timerManager->elapsedMicrosecondsPerInterrupt = TimerManager::getTargetTimePerInterruptInUS();
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-uint16 TimerManager::getTargetTimePerInterrupt()
+static uint16 TimerManager::getTargetTimePerInterrupt()
 {
-	return this->targetTimePerInterrupt;
+	TimerManager timerManager = TimerManager::getInstance();
+
+	return timerManager->targetTimePerInterrupt;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-float TimerManager::getTargetTimePerInterruptInMS()
+static float TimerManager::getTargetTimePerInterruptInMS()
 {
-	switch(this->targetTimePerInterrupttUnits)
+	TimerManager timerManager = TimerManager::getInstance();
+
+	switch(timerManager->targetTimePerInterrupttUnits)
 	{
 		case kUS:
 
-			return this->targetTimePerInterrupt / (float)__MICROSECONDS_PER_MILLISECOND;
+			return timerManager->targetTimePerInterrupt / (float)__MICROSECONDS_PER_MILLISECOND;
 			break;
 
 		case kMS:
 
-			return this->targetTimePerInterrupt;
+			return timerManager->targetTimePerInterrupt;
 			break;
 
 		default:
@@ -334,18 +350,20 @@ float TimerManager::getTargetTimePerInterruptInMS()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-uint32 TimerManager::getTargetTimePerInterruptInUS()
+static uint32 TimerManager::getTargetTimePerInterruptInUS()
 {
-	switch(this->targetTimePerInterrupttUnits)
+	TimerManager timerManager = TimerManager::getInstance();
+
+	switch(timerManager->targetTimePerInterrupttUnits)
 	{
 		case kUS:
 
-			return this->targetTimePerInterrupt;
+			return timerManager->targetTimePerInterrupt;
 			break;
 
 		case kMS:
 
-			return this->targetTimePerInterrupt * __MICROSECONDS_PER_MILLISECOND;
+			return timerManager->targetTimePerInterrupt * __MICROSECONDS_PER_MILLISECOND;
 			break;
 
 		default:
@@ -359,14 +377,16 @@ uint32 TimerManager::getTargetTimePerInterruptInUS()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void TimerManager::setTargetTimePerInterruptUnits(uint16 targetTimePerInterrupttUnits)
+static void TimerManager::setTargetTimePerInterruptUnits(uint16 targetTimePerInterrupttUnits)
 {
+	TimerManager timerManager = TimerManager::getInstance();
+
 	switch(targetTimePerInterrupttUnits)
 	{
 		case kUS:
 		case kMS:
 
-			this->targetTimePerInterrupttUnits = targetTimePerInterrupttUnits;
+			timerManager->targetTimePerInterrupttUnits = targetTimePerInterrupttUnits;
 			break;
 
 		default:
@@ -375,35 +395,39 @@ void TimerManager::setTargetTimePerInterruptUnits(uint16 targetTimePerInterruptt
 			break;
 	}
 
-	TimerManager::setResolution(this, this->resolution);
+	TimerManager::setResolution(timerManager->resolution);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-uint16 TimerManager::getTargetTimePerInterruptUnits()
+static uint16 TimerManager::getTargetTimePerInterruptUnits()
 {
-	return this->targetTimePerInterrupttUnits;
+	TimerManager timerManager = TimerManager::getInstance();
+
+	return timerManager->targetTimePerInterrupttUnits;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-uint16 TimerManager::getTimerCounter()
+static uint16 TimerManager::getTimerCounter()
 {
-	return TimerManager::computeTimerCounter(this);
+	return TimerManager::computeTimerCounter();
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-uint16 TimerManager::getCurrentTimerCounter()
+static uint16 TimerManager::getCurrentTimerCounter()
 {
 	return (_hardwareRegisters[__THR] << 8 ) | _hardwareRegisters[__TLR];
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-uint16 TimerManager::getMinimumTimePerInterruptStep()
+static uint16 TimerManager::getMinimumTimePerInterruptStep()
 {
-	switch(this->targetTimePerInterrupttUnits)
+	TimerManager timerManager = TimerManager::getInstance();
+
+	switch(timerManager->targetTimePerInterrupttUnits)
 	{
 		case kUS:
 			return __MINIMUM_TIME_PER_INTERRUPT_US_STEP;
@@ -420,51 +444,59 @@ uint16 TimerManager::getMinimumTimePerInterruptStep()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-uint32 TimerManager::getElapsedMilliseconds()
+static uint32 TimerManager::getElapsedMilliseconds()
 {
-	return this->elapsedMilliseconds;
+	TimerManager timerManager = TimerManager::getInstance();
+
+	return timerManager->elapsedMilliseconds;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-uint32 TimerManager::getTotalElapsedMilliseconds()
+static uint32 TimerManager::getTotalElapsedMilliseconds()
 {
-	return this->totalElapsedMilliseconds;
+	TimerManager timerManager = TimerManager::getInstance();
+
+	return timerManager->totalElapsedMilliseconds;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void TimerManager::wait(uint32 milliseconds)
+static void TimerManager::wait(uint32 milliseconds)
 {
+	TimerManager timerManager = TimerManager::getInstance();
+
 	// Declare as volatile to prevent the compiler to optimize currentMilliseconds away
 	// Making the last assignment invalid
-	volatile uint32 currentMilliseconds = this->totalElapsedMilliseconds;
-	uint32 waitStartTime = this->totalElapsedMilliseconds;
-	volatile uint32 *totalElapsedMilliseconds = (uint32*)&this->totalElapsedMilliseconds;
+	volatile uint32 currentMilliseconds = timerManager->totalElapsedMilliseconds;
+	uint32 waitStartTime = timerManager->totalElapsedMilliseconds;
+	volatile uint32 *totalElapsedMilliseconds = (uint32*)&timerManager->totalElapsedMilliseconds;
 
 	while ((*totalElapsedMilliseconds - waitStartTime) < milliseconds)
 	{
 		HardwareManager::halt();
 	}
 
-	this->elapsedMilliseconds = currentMilliseconds;
+	timerManager->elapsedMilliseconds = currentMilliseconds;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void TimerManager::repeatMethodCall(uint32 callTimes, uint32 duration, ListenerObject object, void (*method)(ListenerObject, uint32))
+static void TimerManager::repeatMethodCall(uint32 callTimes, uint32 duration, ListenerObject object, void (*method)(ListenerObject, uint32))
 {
+	TimerManager timerManager = TimerManager::getInstance();
+
 	if(!isDeleted(object) && method)
 	{
 		// Declare as volatile to prevent the compiler to optimize currentMilliseconds away
 		// Making the last assignment invalid
-		volatile uint32 currentMilliseconds = this->elapsedMilliseconds;
+		volatile uint32 currentMilliseconds = timerManager->elapsedMilliseconds;
 
 		uint32 i = 0;
 
 		for(; i < callTimes; i++)
 		{
-			TimerManager::wait(this, duration / callTimes);
+			TimerManager::wait(duration / callTimes);
 
 			if(isDeleted(object))
 			{
@@ -474,33 +506,37 @@ void TimerManager::repeatMethodCall(uint32 callTimes, uint32 duration, ListenerO
 			method(object, i);
 		}
 
-		this->elapsedMilliseconds = currentMilliseconds;
+		timerManager->elapsedMilliseconds = currentMilliseconds;
 	}
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void TimerManager::frameStarted(uint32 elapsedMicroseconds)
+static void TimerManager::frameStarted(uint32 elapsedMicroseconds)
 {
-	this->elapsedMilliseconds = 0;
-	this->elapsedMicroseconds = 0;
+	TimerManager timerManager = TimerManager::getInstance();
 
-	if(0 >= this->interruptsPerGameFrame)
+	timerManager->elapsedMilliseconds = 0;
+	timerManager->elapsedMicroseconds = 0;
+
+	if(0 >= timerManager->interruptsPerGameFrame)
 	{
-		this->elapsedMicrosecondsPerInterrupt = TimerManager::getTargetTimePerInterruptInUS(this);
+		timerManager->elapsedMicrosecondsPerInterrupt = TimerManager::getTargetTimePerInterruptInUS();
 	}
 	else
 	{
-		this->elapsedMicrosecondsPerInterrupt = elapsedMicroseconds / this->interruptsPerGameFrame;
+		timerManager->elapsedMicrosecondsPerInterrupt = elapsedMicroseconds / timerManager->interruptsPerGameFrame;
 	}
 
-	this->interruptsPerGameFrame = 0;
+	timerManager->interruptsPerGameFrame = 0;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void TimerManager::nextSecondStarted()
+static void TimerManager::nextSecondStarted()
 {
+	TimerManager timerManager = TimerManager::getInstance();
+
 #ifndef __SHIPPING
 #ifdef __SHOW_TIMER_MANAGER_STATUS
 	int x = 1;
@@ -508,27 +544,29 @@ void TimerManager::nextSecondStarted()
 	
 	PRINT_TEXT("TIMER STATUS", x, y++);
 	PRINT_TEXT("Inter./sec.:          ", x, y);
-	PRINT_INT(this->interruptsPerSecond, x + 17, y++);
+	PRINT_INT(timerManager->interruptsPerSecond, x + 17, y++);
 	PRINT_TEXT("Inter./frm:           ", x, y);
-	PRINT_INT(this->interruptsPerSecond / __TARGET_FPS, x + 17, y++);
+	PRINT_INT(timerManager->interruptsPerSecond / __TARGET_FPS, x + 17, y++);
 	PRINT_TEXT("Aver. us/inter.:      ", x, y);
-	PRINT_INT(__MICROSECONDS_PER_SECOND / this->interruptsPerSecond, x + 17, y++);
+	PRINT_INT(__MICROSECONDS_PER_SECOND / timerManager->interruptsPerSecond, x + 17, y++);
 	PRINT_TEXT("Real us/inter.:       ", x, y);
-	PRINT_INT(this->elapsedMicrosecondsPerInterrupt, x + 17, y++);
+	PRINT_INT(timerManager->elapsedMicrosecondsPerInterrupt, x + 17, y++);
 #endif
 #endif
 
-	this->interruptsPerSecond = 0;
+	timerManager->interruptsPerSecond = 0;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void TimerManager::print(int32 x, int32 y)
+static void TimerManager::print(int32 x, int32 y)
 {
+	TimerManager timerManager = TimerManager::getInstance();
+
 	Printing::text("TIMER CONFIG", x, y++, NULL);
 	y++;
 
-	switch(this->resolution)
+	switch(timerManager->resolution)
 	{
 		case __TIMER_20US:
 
@@ -546,7 +584,7 @@ void TimerManager::print(int32 x, int32 y)
 			break;
 	}
 
-	switch(this->targetTimePerInterrupttUnits)
+	switch(timerManager->targetTimePerInterrupttUnits)
 	{
 		case kUS:
 
@@ -564,59 +602,37 @@ void TimerManager::print(int32 x, int32 y)
 			break;
 	}
 
-	Printing::int32(this->targetTimePerInterrupt, x + 14, y++, NULL);
+	Printing::int32(timerManager->targetTimePerInterrupt, x + 14, y++, NULL);
 
 	Printing::text("Timer counter        ", x, y, NULL);
-	Printing::int32(TimerManager::getTimerCounter(this), x + 14, y++, NULL);
+	Printing::int32(TimerManager::getTimerCounter(), x + 14, y++, NULL);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-// CLASS' PRIVATE METHODS
+// CLASS' PRIVATE STATIC METHODS
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void TimerManager::constructor()
+
+static uint16 TimerManager::computeTimerCounter()
 {
-	_timerManager = this;
+	TimerManager timerManager = TimerManager::getInstance();
 
-	// Always explicitly call the base's constructor 
-	Base::constructor();
-
-	this->totalElapsedMilliseconds = 0;
-
-	TimerManager::reset(this);
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void TimerManager::destructor()
-{
-	_timerManager = NULL;
-
-	// Allow a new construct
-	// Always explicitly call the base's destructor 
-	Base::destructor();
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-uint16 TimerManager::computeTimerCounter()
-{
 	int16 timerCounter = 0;
 
-	switch(this->targetTimePerInterrupttUnits)
+	switch(timerManager->targetTimePerInterrupttUnits)
 	{
 		case kUS:
 
-			timerCounter = __TIME_US(this->targetTimePerInterrupt);
+			timerCounter = __TIME_US(timerManager->targetTimePerInterrupt);
 			break;
 
 		case kMS:
 
-			timerCounter = __TIME_MS(this->targetTimePerInterrupt);
+			timerCounter = __TIME_MS(timerManager->targetTimePerInterrupt);
 			break;
 
 		default:
@@ -630,35 +646,70 @@ uint16 TimerManager::computeTimerCounter()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void TimerManager::enableInterrupt()
+static void TimerManager::enableInterrupt()
 {
-	this->tcrValue |= __TIMER_INT;
+	TimerManager timerManager = TimerManager::getInstance();
 
-	_hardwareRegisters[__TCR] = this->tcrValue;
+	timerManager->tcrValue |= __TIMER_INT;
+
+	_hardwareRegisters[__TCR] = timerManager->tcrValue;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void TimerManager::disableInterrupt()
+static void TimerManager::disableInterrupt()
 {
-	this->tcrValue &= ~__TIMER_INT;
+	TimerManager timerManager = TimerManager::getInstance();
 
-	_hardwareRegisters[__TCR] = this->tcrValue;
+	timerManager->tcrValue &= ~__TIMER_INT;
+
+	_hardwareRegisters[__TCR] = timerManager->tcrValue;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void TimerManager::setTimerResolution()
+static void TimerManager::setTimerResolution()
 {
-	this->tcrValue = (this->tcrValue & 0x0F) | this->resolution;
-	_hardwareRegisters[__TCR] = this->tcrValue;
+	TimerManager timerManager = TimerManager::getInstance();
+
+	timerManager->tcrValue = (timerManager->tcrValue & 0x0F) | timerManager->resolution;
+	_hardwareRegisters[__TCR] = timerManager->tcrValue;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void TimerManager::clearStat()
+static void TimerManager::clearStat()
 {
-	_hardwareRegisters[__TCR] = (this->tcrValue | __TIMER_ZCLR);
+	TimerManager timerManager = TimerManager::getInstance();
+
+	_hardwareRegisters[__TCR] = (timerManager->tcrValue | __TIMER_ZCLR);
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+// CLASS' PRIVATE METHODS
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void TimerManager::constructor()
+{
+	// Always explicitly call the base's constructor 
+	Base::constructor();
+
+	this->totalElapsedMilliseconds = 0;
+
+	TimerManager::reset();
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void TimerManager::destructor()
+{
+	// Allow a new construct
+	// Always explicitly call the base's destructor 
+	Base::destructor();
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

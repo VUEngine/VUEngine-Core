@@ -113,7 +113,7 @@ bool GameState::handleMessage(Telegram telegram)
 
 void GameState::enter(void* owner __attribute__ ((unused)))
 {
-	VIPManager::removePostProcessingEffects(VIPManager::getInstance());
+	VIPManager::removePostProcessingEffects();
 	Printing::resetCoordinates();
 
 	GameState::pauseClocks(this);

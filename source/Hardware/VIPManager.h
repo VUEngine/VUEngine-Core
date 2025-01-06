@@ -324,90 +324,90 @@ singleton class VIPManager : ListenerObject
 	static void interruptHandler();
 
 	/// Reset the manager's state.
-	void reset();
+	static void reset();
 
 	/// Enable VIP interrupts that the engine doesn't use.
 	/// @param customInterrupts: Interrupts to enable
-	void enableCustomInterrupts(uint16 customInterrupts);
+	static void enableCustomInterrupts(uint16 customInterrupts);
 
 	/// Set the multiplexed interrupts that are allowed
 	/// @param enabledMultiplexedInterrupts: Multiplexed interrupts to allow
-	void enableMultiplexedInterrupts(uint32 enabledMultiplexedInterrupts);
+	static void enableMultiplexedInterrupts(uint32 enabledMultiplexedInterrupts);
 
 	/// Start VIP drawing operations.
-	void startDrawing();
+	static void startDrawing();
 
 	/// Resume VIP drawing operations.
-	void resumeDrawing();
+	static void resumeDrawing();
 
 	/// Suspend VIP drawing operations.
-	void suspendDrawing();
+	static void suspendDrawing();
 
 	/// Stop VIP drawing operations.
-	void stopDrawing();
+	static void stopDrawing();
 
 	/// Start VIP displaying operations.
-	void startDisplaying();
+	static void startDisplaying();
 
 	/// Stop VIP displaying operations.
-	void stopDisplaying();
+	static void stopDisplaying();
 
 	/// Set the FRMCYC value
 	/// @param frameCycle: FRMCYC value
-	void setFrameCycle(uint8 frameCycle);
+	static void setFrameCycle(uint8 frameCycle);
 
 	/// Configure the VIP's palettes with the provided configuration.
 	/// @param paletteConfig: Palettes configuration
-	void configurePalettes(PaletteConfig* paletteConfig);
+	static void configurePalettes(PaletteConfig* paletteConfig);
 
 	/// Setup the column table with the provided spec.
 	/// @param columnTableSpec: Specification for the configuration of the column table
-	void setupColumnTable(ColumnTableSpec* columnTableSpec);
+	static void setupColumnTable(ColumnTableSpec* columnTableSpec);
 
 	/// Configure the brightness registers with the provided configuration.
 	/// @param brightness: Brightness configuration
-	void setupBrightness(Brightness* brightness);
+	static void setupBrightness(Brightness* brightness);
 
 	/// Configure the column table brightness repeat values.
 	/// @param brightnessRepeat: Brightness configuration
-	void setupBrightnessRepeat(BrightnessRepeatSpec* brightnessRepeat);
+	static void setupBrightnessRepeat(BrightnessRepeatSpec* brightnessRepeat);
 
 	/// Configure the background color.
 	/// @param color: Color to apply to the background
-	void setBackgroundColor(uint8 color);
+	static void setBackgroundColor(uint8 color);
 
 	/// Up the brightness to the maximum.
-	void upBrightness();
+	static void upBrightness();
 
 	/// Lower the brightness to the minimum.
-	void lowerBrightness();
+	static void lowerBrightness();
 
 	/// Push a post processing effect at the start of the list of effects.
 	/// @param postProcessingEffect: Post-processing effect function
 	/// @param entity: Post-processing effect function's scope
-	void pushFrontPostProcessingEffect(PostProcessingEffect postProcessingEffect, Entity entity);
+	static void pushFrontPostProcessingEffect(PostProcessingEffect postProcessingEffect, Entity entity);
 
 	/// Push a post processing effect at the end of the list of effects.
 	/// @param postProcessingEffect: Post-processing effect function
 	/// @param entity: Post-processing effect function's scope
-	void pushBackPostProcessingEffect(PostProcessingEffect postProcessingEffect, Entity entity);
+	static void pushBackPostProcessingEffect(PostProcessingEffect postProcessingEffect, Entity entity);
 
 	/// Remove a post-processing effect from the list of effects.
 	/// @param postProcessingEffect: Post-processing effect function
 	/// @param entity: Post-processing effect function's scope
-	void removePostProcessingEffect(PostProcessingEffect postProcessingEffect, Entity entity);
+	static void removePostProcessingEffect(PostProcessingEffect postProcessingEffect, Entity entity);
 
 	/// Remove all a post-processing effects.
-	void removePostProcessingEffects();
+	static void removePostProcessingEffects();
 
 	/// Retrieve the registry of the interrupts being processed.
 	/// @return The registry of the interrupts being processed
-	uint16 getCurrentInterrupt();
+	static uint16 getCurrentInterrupt();
 
 	/// Retrieve the time in milliseconds that each game frame lasts.
 	/// @return Time in milliseconds that the game frame last according
 	/// to the FRMCYC configuration
-	uint16 getGameFrameDuration();
+	static uint16 getGameFrameDuration();
 }
 
 #endif

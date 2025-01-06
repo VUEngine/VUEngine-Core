@@ -264,7 +264,7 @@ void Stage::resume()
 	Stage::transform(this, &_neutralEnvironmentTransformation, __INVALIDATE_TRANSFORMATION);
 
 	// Setup colors and brightness
-	VIPManager::setBackgroundColor(VIPManager::getInstance(), this->stageSpec->rendering.colorConfig.backgroundColor);
+	VIPManager::setBackgroundColor(this->stageSpec->rendering.colorConfig.backgroundColor);
 	// TODO: properly handle brightness and brightness repeat on resume
 
 	this->actorFactory = new ActorFactory();
@@ -285,7 +285,7 @@ void Stage::configureTimer()
 {
 	TimerManager::configure
 	(
-		TimerManager::getInstance(), this->stageSpec->timer.resolution, this->stageSpec->timer.targetTimePerInterrupt, 
+		this->stageSpec->timer.resolution, this->stageSpec->timer.targetTimePerInterrupt, 
 		this->stageSpec->timer.targetTimePerInterrupttUnits
 	);
 }
@@ -294,7 +294,7 @@ void Stage::configureTimer()
 
 void Stage::configurePalettes()
 {
-	VIPManager::configurePalettes(VIPManager::getInstance(), &this->stageSpec->rendering.paletteConfig);
+	VIPManager::configurePalettes(&this->stageSpec->rendering.paletteConfig);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -659,9 +659,9 @@ void Stage::configure(VirtualList positionedActorsToIgnore)
 	Stage::setFocusActor(this, Camera::getFocusActor());
 
 	// Setup colors and brightness
-	VIPManager::setBackgroundColor(VIPManager::getInstance(), this->stageSpec->rendering.colorConfig.backgroundColor);
-	VIPManager::setupBrightness(VIPManager::getInstance(), &this->stageSpec->rendering.colorConfig.brightness);
-	VIPManager::setupBrightnessRepeat(VIPManager::getInstance(), this->stageSpec->rendering.colorConfig.brightnessRepeat);
+	VIPManager::setBackgroundColor(this->stageSpec->rendering.colorConfig.backgroundColor);
+	VIPManager::setupBrightness(&this->stageSpec->rendering.colorConfig.brightness);
+	VIPManager::setupBrightnessRepeat(this->stageSpec->rendering.colorConfig.brightnessRepeat);
 
 	// Apply transformations
 	Stage::transform(this, &_neutralEnvironmentTransformation, __INVALIDATE_TRANSFORMATION);
@@ -686,7 +686,7 @@ bool Stage::unloadOutOfRangeActors(int32 defer __attribute__((unused)))
 
 #ifdef __PROFILE_STREAMING
 	_renderingProcessTimeHelper = 0;
-	timeBeforeProcess = TimerManager::getElapsedMilliseconds(TimerManager::getInstance());
+	timeBeforeProcess = TimerManager::getElapsedMilliseconds();
 #endif
 
 	bool unloadedActors = false;
@@ -754,7 +754,7 @@ bool Stage::unloadOutOfRangeActors(int32 defer __attribute__((unused)))
 
 #ifdef __PROFILE_STREAMING
 		uint32 processTime = 
-			-_renderingProcessTimeHelper + TimerManager::getElapsedMilliseconds(TimerManager::getInstance()) - timeBeforeProcess;
+			-_renderingProcessTimeHelper + TimerManager::getElapsedMilliseconds() - timeBeforeProcess;
 		
 		unloadOutOfRangeActorsHighestTime = 
 			processTime > unloadOutOfRangeActorsHighestTime ? processTime : unloadOutOfRangeActorsHighestTime;
@@ -769,7 +769,7 @@ bool Stage::loadInRangeActors(int32 defer)
 {
 #ifdef __PROFILE_STREAMING
 	_renderingProcessTimeHelper = 0;
-	timeBeforeProcess = TimerManager::getElapsedMilliseconds(TimerManager::getInstance());
+	timeBeforeProcess = TimerManager::getElapsedMilliseconds();
 #endif
 
 	bool loadedActors = false;
@@ -908,7 +908,7 @@ bool Stage::loadInRangeActors(int32 defer)
 
 #ifdef __PROFILE_STREAMING
 	uint32 processTime = 
-		-_renderingProcessTimeHelper + TimerManager::getElapsedMilliseconds(TimerManager::getInstance()) - timeBeforeProcess;
+		-_renderingProcessTimeHelper + TimerManager::getElapsedMilliseconds() - timeBeforeProcess;
 	loadInRangeActorsHighestTime = processTime > loadInRangeActorsHighestTime ? processTime : loadInRangeActorsHighestTime;
 #endif
 
@@ -1052,14 +1052,14 @@ bool Stage::updateActorFactory()
 {
 #ifdef __PROFILE_STREAMING
 	_renderingProcessTimeHelper = 0;
-	timeBeforeProcess = TimerManager::getElapsedMilliseconds(TimerManager::getInstance());
+	timeBeforeProcess = TimerManager::getElapsedMilliseconds();
 #endif
 
 	bool preparingActors = ActorFactory::createNextActor(this->actorFactory);
 
 #ifdef __PROFILE_STREAMING
 	uint32 processTime = 
-		-_renderingProcessTimeHelper + TimerManager::getElapsedMilliseconds(TimerManager::getInstance()) - timeBeforeProcess;
+		-_renderingProcessTimeHelper + TimerManager::getElapsedMilliseconds() - timeBeforeProcess;
 	actorFactoryHighestTime = processTime > actorFactoryHighestTime ? processTime : actorFactoryHighestTime;
 #endif
 

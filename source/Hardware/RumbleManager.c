@@ -159,8 +159,6 @@ static void RumbleManager::sendCode(uint8 code __attribute__((unused)))
 
 static void RumbleManager::execute()
 {
-	RumbleManager rumbleManager = RumbleManager::getInstance();
-
 // Rumble only is called in release mode since emulators that don't implement communications, 
 // lock when trying to broadcast message throught the EXT port
 #ifdef __EMU_ONLY
@@ -221,8 +219,6 @@ static void RumbleManager::toggleAsync()
 
 static void RumbleManager::sendCommandWithValue(uint8 command, uint8 value)
 {
-	RumbleManager rumbleManager = RumbleManager::getInstance();
-
 	RumbleManager::sendCode(command);
 	RumbleManager::sendCode(value);
 }
@@ -231,8 +227,6 @@ static void RumbleManager::sendCommandWithValue(uint8 command, uint8 value)
 
 static void RumbleManager::setEffect(uint8 effect)
 {
-	RumbleManager rumbleManager = RumbleManager::getInstance();
-
 	if(effect >= __RUMBLE_CMD_MIN_EFFECT && effect <= __RUMBLE_CMD_MAX_EFFECT)
 	{
 		RumbleManager::sendCode(effect);
@@ -243,8 +237,6 @@ static void RumbleManager::setEffect(uint8 effect)
 
 static void RumbleManager::storeEffectChain(uint8 chainNumber, uint8* effectChain)
 {
-	RumbleManager rumbleManager = RumbleManager::getInstance();
-
 	uint8 i = 0;
 	
 	RumbleManager::sendCode(__RUMBLE_CMD_WRITE_EFFECT_CHAIN);
@@ -263,8 +255,6 @@ static void RumbleManager::storeEffectChain(uint8 chainNumber, uint8* effectChai
 
 static void RumbleManager::setEffectChain(uint8 effectChain)
 {
-	RumbleManager rumbleManager = RumbleManager::getInstance();
-
 	uint8 command = effectChain;
 
 	if(command <= __RUMBLE_CHAIN_EFFECT_4)
@@ -375,8 +365,6 @@ static void RumbleManager::setBreak(uint8 value)
 
 static void RumbleManager::play()
 {
-	RumbleManager rumbleManager = RumbleManager::getInstance();
-
 	RumbleManager::sendCode(__RUMBLE_CMD_PLAY);
 }
 
@@ -384,8 +372,6 @@ static void RumbleManager::play()
 
 static void RumbleManager::stop()
 {
-	RumbleManager rumbleManager = RumbleManager::getInstance();
-
 	RumbleManager::sendCode(__RUMBLE_CMD_STOP);
 }
 
@@ -393,10 +379,8 @@ static void RumbleManager::stop()
 
 static void RumbleManager::stopAllEffects()
 {
-	RumbleManager rumbleManager = RumbleManager::getInstance();
-
-	RumbleManager::stop(rumbleManager);
-	RumbleManager::execute(rumbleManager);
+	RumbleManager::stop();
+	RumbleManager::execute();
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -409,7 +393,6 @@ static void RumbleManager::stopAllEffects()
 
 void RumbleManager::constructor()
 {
-	RumbleManager rumbleManager = RumbleManager::getInstance();
 	
 	// Always explicitly call the base's constructor 
 	Base::constructor();

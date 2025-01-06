@@ -499,7 +499,8 @@ void WireframeManager::constructor()
 
 	VIPManager::addEventListener
 	(
-		VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)WireframeManager::onVIPManagerGAMESTARTDuringXPEND, 
+		VIPManager::getInstance(),
+		ListenerObject::safeCast(this), (EventListener)WireframeManager::onVIPManagerGAMESTARTDuringXPEND, 
 		kEventVIPManagerGAMESTARTDuringXPEND
 	);
 }
@@ -517,7 +518,8 @@ void WireframeManager::destructor()
 
 	VIPManager::removeEventListener
 	(
-		VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)WireframeManager::onVIPManagerGAMESTARTDuringXPEND, 
+		VIPManager::getInstance(),
+		ListenerObject::safeCast(this), (EventListener)WireframeManager::onVIPManagerGAMESTARTDuringXPEND, 
 		kEventVIPManagerGAMESTARTDuringXPEND
 	);
 

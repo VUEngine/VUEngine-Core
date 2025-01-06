@@ -425,8 +425,6 @@ static void SoundManager::resumePlayingSounds()
 
 void SoundManager::constructor()
 {
-	SoundManager soundManager = SoundManager::getInstance();
-	
 	// Always explicitly call the base's constructor 
 	Base::constructor();
 

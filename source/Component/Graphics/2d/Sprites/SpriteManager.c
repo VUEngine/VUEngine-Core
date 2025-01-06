@@ -399,7 +399,7 @@ static void SpriteManager::prepareAll()
 	bool deferTextureUpdating = spriteManager->deferTextureUpdating;
 
 	// Prevent VIP's interrupt from calling render during spriteManager process
-	VIPManager::suspendDrawing(VIPManager::getInstance());
+	VIPManager::suspendDrawing();
 
 	// Must make sure that all textures are completely written
 	SpriteManager::deferParamTableEffects(false);
@@ -425,7 +425,7 @@ static void SpriteManager::prepareAll()
 	SpriteManager::deferParamTableEffects(true);
 
 	// Restore drawing
-	VIPManager::resumeDrawing(VIPManager::getInstance());
+	VIPManager::resumeDrawing();
 
 	spriteManager->deferTextureUpdating = deferTextureUpdating;
 }

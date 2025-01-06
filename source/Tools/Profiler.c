@@ -95,7 +95,7 @@ void Profiler::reset()
 	VirtualList::deleteData(this->laps);
 	
 	this->started = false;
-	this->timerManager = TimerManager::getInstance();
+	this->timerManager = ;
 	this->initialized = false;
 	this->currentProfilingProcess = 0;
 	this->printedProcessesNames = false;
@@ -164,7 +164,7 @@ void Profiler::end()
 	{
 		Profiler::computeLap(this, "HEADROOM", kProfilerLapTypeNormalProcess, true);
 
-		VIPManager::setupBrightnessRepeat(VIPManager::getInstance(), (BrightnessRepeatSpec*)&profileBrightnessRepeatSpec);
+		VIPManager::setupBrightnessRepeat((BrightnessRepeatSpec*)&profileBrightnessRepeatSpec);
 
 		for(int32 i = 0; i < 96; i++)
 		{
