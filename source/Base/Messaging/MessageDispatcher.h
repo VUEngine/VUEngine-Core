@@ -77,7 +77,8 @@ singleton class MessageDispatcher : Object
 	/// @param message: Message's code
 	/// @param extraInfo: Pointer to any extra data that must accompany the message
 	/// @return	Boolean indicating the status of the processing of the message if immediately dispatched
-	static bool dispatchMessage(
+	static bool dispatchMessage
+	(
 		uint32 delay, ListenerObject sender, ListenerObject receiver, int32 message, void* extraInfo
 	);
 
@@ -88,7 +89,8 @@ singleton class MessageDispatcher : Object
 	/// @param receiver: Object that receives the message
 	/// @param message: Message's code
 	/// @param extraInfo: Pointer to any extra data that must accompany the message
-	void dispatchDelayedMessage(
+	void dispatchDelayedMessage
+	(
 		Clock clock, uint32 delay, ListenerObject sender, ListenerObject receiver, int32 message,
 		void* extraInfo
 	);

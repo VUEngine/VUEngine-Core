@@ -190,7 +190,8 @@ class Body : Component
 	/// @param friction: Friction affecting the mass that will aquire the computed speed
 	/// @param maximumSpeed: Maximum value that the computated speed can reach
 	/// @return The instantaneous speed caused by the provided physical properties
-	static fixed_t computeInstantaneousSpeed(
+	static fixed_t computeInstantaneousSpeed
+	(
 		fixed_t forceMagnitude, fixed_t gravity, fixed_t mass, fixed_t friction, fixed_t maximumSpeed
 	);
 

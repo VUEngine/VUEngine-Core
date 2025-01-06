@@ -385,16 +385,12 @@ singleton class VIPManager : ListenerObject
 	/// Push a post processing effect at the start of the list of effects.
 	/// @param postProcessingEffect: Post-processing effect function
 	/// @param entity: Post-processing effect function's scope
-	void pushFrontPostProcessingEffect(
-		PostProcessingEffect postProcessingEffect, Entity entity
-	);
+	void pushFrontPostProcessingEffect(PostProcessingEffect postProcessingEffect, Entity entity);
 
 	/// Push a post processing effect at the end of the list of effects.
 	/// @param postProcessingEffect: Post-processing effect function
 	/// @param entity: Post-processing effect function's scope
-	void pushBackPostProcessingEffect(
-		PostProcessingEffect postProcessingEffect, Entity entity
-	);
+	void pushBackPostProcessingEffect(PostProcessingEffect postProcessingEffect, Entity entity);
 
 	/// Remove a post-processing effect from the list of effects.
 	/// @param postProcessingEffect: Post-processing effect function
