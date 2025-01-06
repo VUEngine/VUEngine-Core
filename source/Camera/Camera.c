@@ -245,7 +245,7 @@ void Camera::setPosition(Vector3D position, bool cap)
 		Camera::capPosition(this);
 	}
 
-	this->transformationFlags |= Camera::computeTranslationFlags(Vector3D::sub(this->transformation.position, currentPosition));
+	Camera::updateTranslationFlags(this, Vector3D::sub(this->transformation.position, currentPosition));
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -260,7 +260,7 @@ void Camera::translate(Vector3D displacement, int32 cap)
 		Camera::capPosition(this);
 	}
 
-	this->transformationFlags |= Camera::computeTranslationFlags(Vector3D::sub(this->transformation.position, currentPosition));
+	Camera::updateTranslationFlags(this, Vector3D::sub(this->transformation.position, currentPosition));
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -274,7 +274,7 @@ Vector3D Camera::getPosition()
 
 void Camera::setRotation(Rotation rotation)
 {
-	this->transformationFlags |= Camera::computeRotationFlags(Rotation::sub(rotation, this->transformation.rotation));
+	Camera::updateRotationFlags(this, Rotation::sub(rotation, this->transformation.rotation));
 
 	this->transformation.rotation = Rotation::clamp(rotation.x, rotation.y, rotation.z);
 	this->invertedRotation = Rotation::invert(this->transformation.rotation);
@@ -284,7 +284,7 @@ void Camera::setRotation(Rotation rotation)
 
 void Camera::rotate(Rotation rotation)
 {
-	this->transformationFlags |= Camera::computeRotationFlags(rotation);
+	Camera::updateRotationFlags(this, rotation);
 
 	this->transformation.rotation = Rotation::sum(this->transformation.rotation, rotation);
 	this->invertedRotation = Rotation::invert(this->transformation.rotation);
@@ -569,30 +569,26 @@ CameraFrustum Camera::computeClampledFrustum(CameraFrustum cameraFrustum)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static uint8 Camera::computeTranslationFlags(Vector3D translation)
+void Camera::updateTranslationFlags(Vector3D translation)
 {
 	if(0 != translation.z)
 	{
-		return __INVALIDATE_PROJECTION | __INVALIDATE_SCALE;
+		this->transformationFlags |= __INVALIDATE_PROJECTION | __INVALIDATE_SCALE;
 	}
 	else if(0 != translation.x || 0 != translation.y)
 	{
-		return __INVALIDATE_PROJECTION;
+		this->transformationFlags |= __INVALIDATE_PROJECTION;
 	}
-
-	return false;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static uint8 Camera::computeRotationFlags(Rotation rotation)
+void Camera::updateRotationFlags(Rotation rotation)
 {
 	if(rotation.x || rotation.y || rotation.z)
 	{
-		return __INVALIDATE_ROTATION;
+		this->transformationFlags |= __INVALIDATE_ROTATION;
 	}
-
-	return false;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
