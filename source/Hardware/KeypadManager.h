@@ -101,7 +101,7 @@ typedef struct UserInput
 /// Inherits from ListenerObject
 ///
 /// Manages keypad inputs.
-singleton class KeypadManager : ListenerObject
+singleton! class KeypadManager : ListenerObject
 {
 	/// @protectedsection
 
@@ -123,9 +123,17 @@ singleton class KeypadManager : ListenerObject
 
 	/// @publicsection
 
-	/// Method to retrieve the singleton instance
-	/// @return CommunicationManager singleton
-	static KeypadManager getInstance();
+	/// Register an object that will listen for events.
+	/// @param listener: ListenerObject that listen for the event
+	/// @param callback: EventListener callback for the listener object
+	/// @param eventCode: Event's code to listen for
+	static void registerEventListener(ListenerObject listener, EventListener callback, uint16 eventCode);
+
+	/// Remove a specific listener object from the listening to a give code with the provided callback.
+	/// @param listener: ListenerObject to remove from the list of listeners
+	/// @param callback: EventListener callback for the listener object
+	/// @param eventCode: Event's code to stop listen for
+	static void unregisterEventListener(ListenerObject listener, EventListener callback, uint16 eventCode);
 
 	/// Interrupt handler for keypad's interrupts
 	static void interruptHandler();

@@ -35,6 +35,24 @@
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+static void FrameRate::registerEventListener(ListenerObject listener, EventListener callback, uint16 eventCode)
+{
+	FrameRate frameRate = FrameRate::getInstance();
+
+	FrameRate::addEventListener(frameRate, listener, callback, eventCode);
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+static void FrameRate::unregisterEventListener(ListenerObject listener, EventListener callback, uint16 eventCode)
+{
+	FrameRate frameRate = FrameRate::getInstance();
+
+	FrameRate::removeEventListener(frameRate, listener, callback, eventCode);
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 static void FrameRate::reset()
 {
 	FrameRate frameRate = FrameRate::getInstance();

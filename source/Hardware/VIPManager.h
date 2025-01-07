@@ -278,7 +278,7 @@ static ObjectAttributes* const _objectAttributesBaseAddress =
 /// Inherits from ListenerObject
 ///
 /// Manages the VIP.
-singleton class VIPManager : ListenerObject
+singleton! class VIPManager : ListenerObject
 {
 	/// @protectedsection
 
@@ -314,14 +314,21 @@ singleton class VIPManager : ListenerObject
 	/// If true, FRAMESTART happened during XPEND
 	volatile bool FRAMESTARTDuringXPEND;
 
-	/// @publicsection
-
-	/// Method to retrieve the singleton instance
-	/// @return VIPManager singleton
-	static VIPManager getInstance();
-
 	/// Interrupt handler for timer's interrupts
 	static void interruptHandler();
+
+	/// @publicsection
+	/// Register an object that will listen for events.
+	/// @param listener: ListenerObject that listen for the event
+	/// @param callback: EventListener callback for the listener object
+	/// @param eventCode: Event's code to listen for
+	static void registerEventListener(ListenerObject listener, EventListener callback, uint16 eventCode);
+
+	/// Remove a specific listener object from the listening to a give code with the provided callback.
+	/// @param listener: ListenerObject to remove from the list of listeners
+	/// @param callback: EventListener callback for the listener object
+	/// @param eventCode: Event's code to stop listen for
+	static void unregisterEventListener(ListenerObject listener, EventListener callback, uint16 eventCode);
 
 	/// Reset the manager's state.
 	static void reset();

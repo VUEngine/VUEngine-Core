@@ -497,9 +497,8 @@ void WireframeManager::constructor()
 	this->renderedWireframes = 0;
 	this->drawnWireframes = 00;
 
-	VIPManager::addEventListener
+	VIPManager::registerEventListener
 	(
-		VIPManager::getInstance(),
 		ListenerObject::safeCast(this), (EventListener)WireframeManager::onVIPManagerGAMESTARTDuringXPEND, 
 		kEventVIPManagerGAMESTARTDuringXPEND
 	);
@@ -516,9 +515,8 @@ void WireframeManager::destructor()
 		VirtualList::deleteData(this->components);
 	}
 
-	VIPManager::removeEventListener
+	VIPManager::unregisterEventListener
 	(
-		VIPManager::getInstance(),
 		ListenerObject::safeCast(this), (EventListener)WireframeManager::onVIPManagerGAMESTARTDuringXPEND, 
 		kEventVIPManagerGAMESTARTDuringXPEND
 	);

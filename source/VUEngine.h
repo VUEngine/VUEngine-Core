@@ -108,6 +108,19 @@ singleton class VUEngine : ListenerObject
 	/// @return True if the telegram was processed
 	override bool handleMessage(Telegram telegram);
 
+	/// @publicsection
+	/// Register an object that will listen for events.
+	/// @param listener: ListenerObject that listen for the event
+	/// @param callback: EventListener callback for the listener object
+	/// @param eventCode: Event's code to listen for
+	static void registerEventListener(ListenerObject listener, EventListener callback, uint16 eventCode);
+
+	/// Remove a specific listener object from the listening to a give code with the provided callback.
+	/// @param listener: ListenerObject to remove from the list of listeners
+	/// @param callback: EventListener callback for the listener object
+	/// @param eventCode: Event's code to stop listen for
+	static void unregisterEventListener(ListenerObject listener, EventListener callback, uint16 eventCode);
+
 	/// Reset the engine's sub components.
 	/// @param resetSounds: If false, any playing sounds will keep playing
 	static void reset(bool resetSounds);

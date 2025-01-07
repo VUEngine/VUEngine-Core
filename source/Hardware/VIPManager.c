@@ -74,6 +74,24 @@ static uint16* const _columnTableBaseAddressRight =	(uint16*)0x0003DE00; // base
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+static void VIPManager::registerEventListener(ListenerObject listener, EventListener callback, uint16 eventCode)
+{
+	VIPManager vipManager = VIPManager::getInstance();
+
+	VIPManager::addEventListener(vipManager, listener, callback, eventCode);
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+static void VIPManager::unregisterEventListener(ListenerObject listener, EventListener callback, uint16 eventCode)
+{
+	VIPManager vipManager = VIPManager::getInstance();
+
+	VIPManager::removeEventListener(vipManager, listener, callback, eventCode);
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 static void VIPManager::interruptHandler()
 {
 	VIPManager vipManager = VIPManager::getInstance();

@@ -176,7 +176,7 @@ typedef const FontData FontROMData;
 /// Inherits from ListenerObject
 ///
 /// Manages printing layer and offers various functions to write to it.
-singleton class Printing : ListenerObject
+singleton! class Printing : ListenerObject
 {
 	/// @protectedsection
 
@@ -212,9 +212,17 @@ singleton class Printing : ListenerObject
 
 	/// @publicsection
 
-	/// Method to retrieve the singleton instance
-	/// @return Printing singleton
-	static Printing getInstance();
+	/// Register an object that will listen for events.
+	/// @param listener: ListenerObject that listen for the event
+	/// @param callback: EventListener callback for the listener object
+	/// @param eventCode: Event's code to listen for
+	static void registerEventListener(ListenerObject listener, EventListener callback, uint16 eventCode);
+
+	/// Remove a specific listener object from the listening to a give code with the provided callback.
+	/// @param listener: ListenerObject to remove from the list of listeners
+	/// @param callback: EventListener callback for the listener object
+	/// @param eventCode: Event's code to stop listen for
+	static void unregisterEventListener(ListenerObject listener, EventListener callback, uint16 eventCode);
 
 	/// Set mode to debug to bypass loading fonts through CharSets
 	static void setDebugMode();

@@ -37,9 +37,21 @@ static void KeypadManager::interruptHandler()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+static void KeypadManager::registerEventListener(ListenerObject listener, EventListener callback, uint16 eventCode)
+{
+	KeypadManager keypadManager = KeypadManager::getInstance();
+
+	KeypadManager::addEventListener(keypadManager, listener, callback, eventCode);
+}
+
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-// CLASS' PUBLIC METHODS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+static void KeypadManager::unregisterEventListener(ListenerObject listener, EventListener callback, uint16 eventCode)
+{
+	KeypadManager keypadManager = KeypadManager::getInstance();
+
+	KeypadManager::removeEventListener(keypadManager, listener, callback, eventCode);
+}
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
