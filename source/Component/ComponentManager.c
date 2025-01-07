@@ -60,7 +60,7 @@ static Component ComponentManager::addComponent(Entity owner, const ComponentSpe
 
 	Component component = ComponentManager::createComponent(componentManager, owner, componentSpec);
 
-	if(!isDeleted(component))
+	if(!isDeleted(owner) && !isDeleted(component))
 	{
 		Entity::addedComponent(owner, component);
 	}
@@ -86,7 +86,7 @@ static void ComponentManager::removeComponent(Entity owner, Component component)
 		return;
 	}
 
-	if(!isDeleted(component))
+	if(!isDeleted(owner) && !isDeleted(component))
 	{
 		Entity::removedComponent(owner, component);
 	}
@@ -424,6 +424,11 @@ static uint32 ComponentManager::getComponentType(Component component)
 
 static void ComponentManager::cleanOwnerComponentLists(Entity owner, uint32 componentType)
 {
+	if(NULL == owner)
+	{
+		return;
+	}
+	
 	if(NULL != owner->components && NULL != owner->components[componentType])
 	{
 		delete owner->components[componentType];
