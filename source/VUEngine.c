@@ -877,9 +877,8 @@ static void VUEngine::processUserInput(GameState currentGameState)
 
 static void VUEngine::simulatePhysics(GameState gameState)
 {
-	VUEngine vuEngine = VUEngine::getInstance();
-
 #ifdef __REGISTER_LAST_PROCESS_NAME
+	VUEngine vuEngine = VUEngine::getInstance();
 	vuEngine->processName = PROCESS_NAME_PHYSICS;
 #endif
 
@@ -895,9 +894,8 @@ static void VUEngine::simulatePhysics(GameState gameState)
 
 static void VUEngine::processTransformations(GameState gameState)
 {
-	VUEngine vuEngine = VUEngine::getInstance();
-
 #ifdef __REGISTER_LAST_PROCESS_NAME
+	VUEngine vuEngine = VUEngine::getInstance();
 	vuEngine->processName = PROCESS_NAME_TRANSFORMS;
 #endif
 
@@ -913,10 +911,8 @@ static void VUEngine::processTransformations(GameState gameState)
 
 static void VUEngine::processCollisions(GameState gameState)
 {
-	VUEngine vuEngine = VUEngine::getInstance();
-
-	// Process the collisions after the transformations have taken place
 #ifdef __REGISTER_LAST_PROCESS_NAME
+	VUEngine vuEngine = VUEngine::getInstance();
 	vuEngine->processName = PROCESS_NAME_COLLISIONS;
 #endif
 
@@ -932,9 +928,8 @@ static void VUEngine::processCollisions(GameState gameState)
 
 static void VUEngine::dispatchDelayedMessages()
 {
-	VUEngine vuEngine = VUEngine::getInstance();
-
 #ifdef __REGISTER_LAST_PROCESS_NAME
+	VUEngine vuEngine = VUEngine::getInstance();
 	vuEngine->processName = PROCESS_NAME_MESSAGES;
 #endif
 
@@ -976,9 +971,8 @@ static GameState VUEngine::updateLogic(GameState currentGameState)
 
 static bool VUEngine::stream(GameState gameState)
 {
-	VUEngine vuEngine = VUEngine::getInstance();
-
 #ifdef __REGISTER_LAST_PROCESS_NAME
+	VUEngine vuEngine = VUEngine::getInstance();
 	vuEngine->processName = PROCESS_NAME_STREAMING;
 #endif
 
@@ -1077,9 +1071,8 @@ static void VUEngine::run(GameState currentGameState)
 
 static void VUEngine::focusCamera()
 {
-	VUEngine vuEngine = VUEngine::getInstance();
-
 #ifdef __REGISTER_LAST_PROCESS_NAME
+	VUEngine vuEngine = VUEngine::getInstance();
 	vuEngine->processName = PROCESS_NAME_CAMERA;
 #endif
 

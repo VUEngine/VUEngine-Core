@@ -168,6 +168,8 @@ static void RumbleManager::execute()
 #endif
 
 #ifdef __RELEASE
+	RumbleManager rumbleManager = RumbleManager::getInstance();
+
 	if(rumbleManager->async)
 	{
 		if(rumbleManager->overridePreviousEffect)
