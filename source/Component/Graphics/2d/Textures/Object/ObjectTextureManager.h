@@ -26,7 +26,7 @@
 /// Inherits from Texture
 ///
 /// Manages textures for OBJECT space.
-singleton class ObjectTextureManager : Object
+singleton! class ObjectTextureManager : Object
 {
 	/// @publicsection
 

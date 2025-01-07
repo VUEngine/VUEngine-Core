@@ -32,7 +32,7 @@ class Clock;
 /// Inherits from Object
 ///
 /// Manages the instances of Clock.
-singleton class ClockManager : Object
+singleton! class ClockManager : Object
 {
 	/// @protectedsection
 

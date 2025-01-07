@@ -33,7 +33,7 @@ struct SaveData;
 ///
 /// Manages SRAM space since most carts requiere a proxy to address 
 /// by not having all the pins routed.
-singleton class SRAMManager : Object
+singleton! class SRAMManager : Object
 {
 	/// @protectedsection
 

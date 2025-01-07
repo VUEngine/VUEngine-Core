@@ -602,7 +602,7 @@ typedef void* (*(*ClassPointer)(void*))(void*);
 		}																																\
 																																		\
 		/* define get instance method */																								\
-		__VA_ARGS__ ClassName ClassName ## _getInstance()																							\
+		__VA_ARGS__ __attribute__((unused)) ClassName ClassName ## _getInstance () 														\
 		{																																\
 			/* first check if not constructed yet */																					\
 			if(__SINGLETON_NOT_CONSTRUCTED == _singletonConstructed)																	\

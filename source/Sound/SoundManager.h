@@ -36,7 +36,7 @@
 /// Inherits from ListenerObject
 ///
 /// Manages the Sound instances.
-singleton class SoundManager : ListenerObject
+singleton! class SoundManager : ListenerObject
 {
 	/// @protectedsection
 

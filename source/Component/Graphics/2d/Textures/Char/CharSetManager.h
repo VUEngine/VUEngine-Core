@@ -32,7 +32,7 @@ class VirtualList;
 /// Inherits from Object
 ///
 /// Manages char sets and CHAR memory allocation.
-singleton class CharSetManager : Object
+singleton! class CharSetManager : Object
 {
 	/// @protectedsection
 

@@ -73,7 +73,7 @@
 		}																								\
 																										\
 		/* define get instance method */																\
-		ClassName ClassName ## _getInstance()															\
+		static ClassName ClassName ## _getInstance()															\
 		{																								\
 			/* first check if not constructed yet */													\
 			if(__SINGLETON_NOT_CONSTRUCTED == _singletonConstructed)									\

@@ -93,7 +93,6 @@ static void HardwareManager::checkMemoryMap()
 {
 	if((uint32)&_dramDataStart < __WORLD_SPACE_BASE_ADDRESS && (uint32)&_dramBssEnd >= __WORLD_SPACE_BASE_ADDRESS)
 	{
-		MemoryPool::getInstance();
 		Printing::setDebugMode();
 		int32 y = 15;
 		uint32 missingSpace = (uint32)&_dramBssEnd - __WORLD_SPACE_BASE_ADDRESS;

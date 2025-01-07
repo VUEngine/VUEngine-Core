@@ -1140,9 +1140,6 @@ void VUEngine::constructor()
 	// Always explicitly call the base's constructor 
 	Base::constructor();
 
-	// Make sure the memory pool is initialized now
-	MemoryPool::getInstance();
-
 	// Construct the general clock
 	this->clock = new Clock();
 

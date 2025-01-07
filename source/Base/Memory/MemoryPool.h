@@ -51,7 +51,7 @@ enum MemoryPoolSizes
 /// Inherits from Object
 ///
 /// Implements a memory pool for dynamic object allocation.
-singleton class MemoryPool : Object
+singleton! class MemoryPool : Object
 {
 	/// @protectedsection
 
@@ -68,10 +68,6 @@ singleton class MemoryPool : Object
 	BYTE* poolLastFreeBlock[__MEMORY_POOLS];
 
 	/// @publicsection
-
-	/// Method to retrieve the singleton instance
-	/// @return MemoryPool singleton
-	static MemoryPool getInstance();
 
 	/// Allocate a block big enough to hold the provided amount of bytes.
 	/// @param numBytes: Total number of bytes to allocate

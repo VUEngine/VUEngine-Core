@@ -58,6 +58,7 @@ singleton class WireframeManager : ComponentManager
 	uint8 drawnWireframes;
 
 	/// @publicsection
+
 	/// Method to retrieve the singleton instance
 	/// @return WireframeManager singleton
 	static WireframeManager getInstance();
