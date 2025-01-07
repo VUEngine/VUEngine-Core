@@ -554,7 +554,7 @@ typedef void* (*(*ClassPointer)(void*))(void*);
 /// Defines a singleton class' fundamental methods.
 /// @param ClassName: Singleton class' name to define
 /// @return Implementation of a singleton class' fundamental methods
-#define __SINGLETON(ClassName)																											\
+#define __SINGLETON(ClassName, ...)																											\
 																																		\
 		/* declare the static instance */																								\
 		typedef struct SingletonWrapper ## ClassName																					\
@@ -602,7 +602,7 @@ typedef void* (*(*ClassPointer)(void*))(void*);
 		}																																\
 																																		\
 		/* define get instance method */																								\
-		ClassName ClassName ## _getInstance()																							\
+		__VA_ARGS__ ClassName ClassName ## _getInstance()																							\
 		{																																\
 			/* first check if not constructed yet */																					\
 			if(__SINGLETON_NOT_CONSTRUCTED == _singletonConstructed)																	\

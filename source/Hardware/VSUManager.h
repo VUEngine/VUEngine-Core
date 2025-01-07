@@ -153,7 +153,7 @@ typedef struct VSUSoundSourceConfiguration
 /// Inherits from Object
 ///
 /// Manages the VSU.
-singleton class VSUManager : Object
+singleton! class VSUManager : Object
 {
 	/// @protectedsection
 

@@ -248,7 +248,7 @@ then
 	exit 0
 fi
 
-classDeclaration=`grep -n -e "^[ 	]*[A-z0-9]*[ 	]*class[ 	]\+[A-Z][A-z0-9]*[ 	]*:[ 	]*[A-Z][A-z0-9]*" $INPUT_FILE`
+classDeclaration=`grep -n -e "^[ 	]*[A-z0-9\!]*[ 	]*class[ 	]\+[A-Z][A-z0-9]*[ 	]*:[ 	]*[A-Z][A-z0-9]*" $INPUT_FILE`
 cleanClassDeclaration=`cut -d: -f2,3 <<< "$classDeclaration"`
 className=`sed -e 's#^.*class \([A-z][A-z0-9]*\)[ 	]*\:.*#\1#' <<< "$cleanClassDeclaration"`
 baseClassName=`cut -d: -f2 <<< "$cleanClassDeclaration" | sed -e 's/[^[:alnum:]_-]//g'`
@@ -685,7 +685,8 @@ mv $CLASS_INHERITED_METHODS_DICTIONARY.tmp $CLASS_INHERITED_METHODS_DICTIONARY
 
 #echo methodDeclarations
 #echo "$methodDeclarations"
-echo "Computing class modifiers on caller $CALLER"  >> $CLASS_LOG_FILE
+echo "Computing class modifiers on caller $CALLER" >> $CLASS_LOG_FILE
+echo "Modifiers: $classModifiers"  >> $CLASS_LOG_FILE
 
 while IFS= read -r classModifier;
 do
@@ -706,7 +707,7 @@ do
 		isFinalClass=true;
 	fi
 
-	if [ -z "${classModifier##*singleton *}" ];
+	if [ -z "${classModifier##*singleton*}" ];
 	then
 
 		isSingletonClass=true

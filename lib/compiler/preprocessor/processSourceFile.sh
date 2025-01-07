@@ -370,8 +370,8 @@ then
 
 		classDefinition="__CLASS_DEFINITION($className, $baseClassName) $prototypes"
 
-		# Add allocator if it is not abstract nor a singleton class
-		if [ ! -z "${classModifiers##*singleton *}" ] && [ ! -z "${classModifiers##*static *}" ] && [ ! -z "${classModifiers##*abstract *}" ];
+		# Add allocator if it is not abstract nor a singletonclass
+		if [ ! -z "${classModifiers##*singleton*}" ] && [ ! -z "${classModifiers##*static *}" ] && [ ! -z "${classModifiers##*abstract *}" ];
 		then
 			#echo "Adding allocator"
 			constructor=`grep -m 1 -e $className"!DECLARATION_MIDDLE!_constructor[ 	]*(.*)" $OUTPUT_FILE`
@@ -395,17 +395,22 @@ then
 				classDefinition=$classDefinition"__CLASS_NEW_END($className, this, $allocatorArguments);"
 			fi
 		else
-			if [ -z "${classModifiers##*singleton *}" ];
+			if [ -z "${classModifiers##*singleton*}" ];
 			then
 				customSingletonDefinition=`grep -o -e '#define[ 	][ 	]*.*SINGLETON.*(' $OUTPUT_FILE`
 
 				if [ -z "$customSingletonDefinition" ];
 				then
-					if [ -z "${classModifiers##*dynamic_singleton *}" ];
+					if [ -z "${classModifiers##*dynamic_singleton*}" ];
 					then
 						classDefinition=$classDefinition"__SINGLETON_DYNAMIC($className);"
 					else
-						classDefinition=$classDefinition"__SINGLETON($className);"
+						if [ -z "${classModifiers##*singleton! *}" ];
+						then
+							classDefinition=$classDefinition"__SINGLETON($className, static);"
+						else
+							classDefinition=$classDefinition"__SINGLETON($className);"
+						fi
 					fi
 				else
 					customSingletonDefinition=`sed -e 's@^.*[ 	][ 	]*\(.*SINGLETON.*\)(@\1@' <<< $customSingletonDefinition`
