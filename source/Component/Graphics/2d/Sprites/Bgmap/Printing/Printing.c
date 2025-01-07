@@ -96,7 +96,7 @@ static void Printing::reset()
 	{
 		for(VirtualNode node = VirtualList::begin(printing->printingSprites); NULL != node; node = VirtualNode::getNext(node))
 		{
-			SpriteManager::destroySprite(Sprite::safeCast(VirtualNode::getData(node)));
+			ComponentManager::destroyComponent(NULL, VirtualNode::getData(node));
 		}
 
 		VirtualList::clear(printing->printingSprites);
@@ -466,7 +466,7 @@ static void Printing::addSprite()
 {
 	Printing printing = Printing::getInstance();
 
-	PrintingSpriteSpec DefaultPrintingSpriteSpec =
+	static PrintingSpriteSpec DefaultPrintingSpriteSpec =
 	{
 		{
 			{
@@ -508,7 +508,7 @@ static void Printing::addSprite()
 
 	printing->printingBgmapSegment = BgmapTextureManager::getPrintingBgmapSegment();
 	printing->activePrintingSprite = 
-		PrintingSprite::safeCast(SpriteManager::createSprite(NULL, (SpriteSpec*)&DefaultPrintingSpriteSpec));
+		PrintingSprite::safeCast(ComponentManager::createComponent(NULL, (ComponentSpec*)&DefaultPrintingSpriteSpec));
 
 	PrintingSprite::setPrintingBgmapSegment(printing->activePrintingSprite, printing->printingBgmapSegment);
 

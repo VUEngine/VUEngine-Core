@@ -746,7 +746,7 @@ void StageEditor::removePreviousSprite()
 {
 	if(this->userActorSprite)
 	{
-		delete this->userActorSprite;
+		ComponentManager::destroyComponent(NULL, Component::safeCast(this->userActorSprite));
 		this->userActorSprite = NULL;
 	}
 
@@ -764,7 +764,7 @@ void StageEditor::showSelectedUserObject()
 
 	if(spriteSpec)
 	{
-		this->userActorSprite = SpriteManager::createSprite(NULL, spriteSpec);
+		this->userActorSprite = ComponentManager::createComponent(NULL, (ComponentSpec*)spriteSpec);
 		ASSERT(this->userActorSprite, "AnimationInspector::createSprite: null animatedSprite");
 		ASSERT(Sprite::getTexture(this->userActorSprite), "AnimationInspector::createSprite: null texture");
 

@@ -43,6 +43,17 @@ abstract class ComponentManager : Object
 
 	/// @publicsection
 
+	/// Create a component with the specified owner.
+	/// @param owner: Owner of the component (can be NULL)
+	/// @param componentSpec: Spec to initialize the new component
+	/// @return Created component
+	static Component createComponent(Entity owner, const ComponentSpec* componentSpec);
+
+	/// Destroy a component from the specified owner.
+	/// @param owner: Owner of the component (can be NULL), must match the component's owner
+	/// @param component: Component to destroy
+	static void destroyComponent(Entity owner, Component component);
+
 	/// Add a component to the specified owner.
 	/// @param owner: Object to which the components attach to
 	/// @param componentSpec: Spec to initialize the new component
@@ -124,12 +135,12 @@ abstract class ComponentManager : Object
 	/// @param owner: Object to which the component will attach to
 	/// @param componentSpec: Spec to use to initialize the component
 	/// @return Created component
-	virtual Component createComponent(Entity owner, const ComponentSpec* componentSpec);
+	virtual Component instantiateComponent(Entity owner, const ComponentSpec* componentSpec);
 
 	/// Destroy the provided component.
 	/// @param owner: Object to which the component will attach to
 	/// @param component: Comoponent to destroy
-	virtual void destroyComponent(Entity owner, Component component) ;
+	virtual void deinstantiateComponent(Entity owner, Component component) ;
 
 	/// Retrieve a list with the components of the provided type belonging to the provided owner.
 	/// @param owner: Object to which the components attach to

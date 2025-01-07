@@ -72,12 +72,12 @@ singleton class WireframeManager : ComponentManager
 	/// @param owner: Object to which the wireframe will attach to
 	/// @param wireframeSpec: Spec to use to create the wireframe
 	/// @return Created wireframe
-	override Wireframe createComponent(Entity owner, const WireframeSpec* wireframeSpec);
+	override Wireframe instantiateComponent(Entity owner, const WireframeSpec* wireframeSpec);
 
 	/// Destroy the provided wireframe.
 	/// @param owner: Object to which the sprite will attach to
 	/// @param wireframe: Wireframe to destroy
-	override void destroyComponent(Entity owner, Wireframe wireframe);
+	override void deinstantiateComponent(Entity owner, Wireframe wireframe);
 
 	/// Reset the manager's state.
 	static void reset();
@@ -87,16 +87,6 @@ singleton class WireframeManager : ComponentManager
 
 	/// Disable wireframe rendering and drawing.
 	static void disable();
-
-	/// Create a wireframe with the provided spec.
-	/// @param owner: Object to which the wireframe will attach toc
-	/// @param wireframeSpec: Spec to use to create the wireframe
-	/// @return Created wireframe
-	static Wireframe createWireframe(Entity owner, const WireframeSpec* wireframeSpec);
-
-	/// Destroy the provided wireframe.
-	/// @param wireframe: Wireframe to destroy
-	static void destroyWireframe(Wireframe wireframe);
 
 	/// Register a wireframe to be managed
 	/// @param wireframe: Wireframe to be managed

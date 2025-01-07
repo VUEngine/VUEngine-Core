@@ -58,12 +58,12 @@ class ColliderManager : ComponentManager
 	/// @param owner: Object to which the collider will attach to
 	/// @param colliderSpec: Spec to use to create the collider
 	/// @return Created collider
-	override Collider createComponent(Entity owner, const ColliderSpec* colliderSpec);
+	override Collider instantiateComponent(Entity owner, const ColliderSpec* colliderSpec);
 
 	/// Destroy the provided collider.
 	/// @param owner: Object to which the sprite will attach to
 	/// @param collider: Collider to destroy
-	override void destroyComponent(Entity owner, Collider collider);
+	override void deinstantiateComponent(Entity owner, Collider collider);
 
 	/// Reset the manager's state.
 	void reset();
@@ -73,16 +73,6 @@ class ColliderManager : ComponentManager
 
 	/// Update colliders and test collisions.
 	uint32 update();
-
-	/// Create a collider with the provided spec.
-	/// @param owner: Object to which the collider will attach to
-	/// @param colliderSpec: Spec to use to create the collider
-	/// @return Created collider
-	Collider createCollider(Entity owner, const ColliderSpec* colliderSpec);
-
-	/// Destroy the provided collider.
-	/// @param collider: Collider to destroy
-	void destroyCollider(Collider collider);
 
 	/// Set if the colliders out of camera's range are culled of from collision testing.
 	/// @param value: If false, colliders out of camera's range are culled of from collision testing

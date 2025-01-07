@@ -49,8 +49,13 @@ friend class VirtualList;
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static Component ComponentManager::addComponent(Entity owner, const ComponentSpec* componentSpec)
+static Component ComponentManager::createComponent(Entity owner, const ComponentSpec* componentSpec)
 {
+	if(NULL == componentSpec)
+	{
+		return NULL;
+	}
+
 	ComponentManager componentManager = ComponentManager::getManager(componentSpec->componentType);
 
 	if(NULL == componentManager)
@@ -58,9 +63,70 @@ static Component ComponentManager::addComponent(Entity owner, const ComponentSpe
 		return NULL;
 	}
 
-	Component component = ComponentManager::createComponent(componentManager, owner, componentSpec);
+	return ComponentManager::instantiateComponent(componentManager, owner, componentSpec);
+}
 
-	if(!isDeleted(owner) && !isDeleted(component))
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+static void ComponentManager::destroyComponent(Entity owner, Component component)
+{
+	NM_ASSERT(!isDeleted(component), "ComponentManager::destroyComponent: deleted component");
+
+	if(isDeleted(component))
+	{
+		return;
+	}
+
+	NM_ASSERT(owner == component->owner, "ComponentManager::destroyComponent: illegal owner");
+
+	if(owner != component->owner)
+	{
+		return;
+	}
+
+	uint32 componentType = ComponentManager::getComponentType(component);
+
+		if(kComponentTypes <= componentType)
+		{
+		Printing::setDebugMode();
+		Printing::clear();
+		Printing::text(__GET_CLASS_NAME(component), 20, 27, NULL);
+
+		Error::triggerException("MemoryPool::allocate: pool exhausted", NULL);		
+
+		}
+
+	NM_ASSERT(kComponentTypes > componentType, "ComponentManager::destroyComponent: illegal type");
+
+	if(kComponentTypes <= componentType)
+	{
+		return;
+	}
+
+	ComponentManager componentManager = ComponentManager::getManager(componentType);
+
+	NM_ASSERT(NULL != componentManager, "ComponentManager::destroyComponent: no manager");
+
+	if(NULL == componentManager)
+	{
+		return;
+	}
+
+	ComponentManager::deinstantiateComponent(componentManager, owner, component);
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+static Component ComponentManager::addComponent(Entity owner, const ComponentSpec* componentSpec)
+{
+	if(isDeleted(owner))
+	{
+		return NULL;
+	}
+
+	Component component = ComponentManager::createComponent(owner, componentSpec);
+
+	if(!isDeleted(component))
 	{
 		Entity::addedComponent(owner, component);
 	}
@@ -72,26 +138,22 @@ static Component ComponentManager::addComponent(Entity owner, const ComponentSpe
 
 static void ComponentManager::removeComponent(Entity owner, Component component)
 {
-	uint32 componentType = ComponentManager::getComponentType(component);
-
-	if(kComponentTypes <= componentType)
+	if(isDeleted(component))
 	{
 		return;
 	}
 
-	ComponentManager componentManager = ComponentManager::getManager(componentType);
-
-	if(NULL == componentManager)
+	if(owner != component->owner)
 	{
 		return;
 	}
 
-	if(!isDeleted(owner) && !isDeleted(component))
+	if(!isDeleted(owner))
 	{
 		Entity::removedComponent(owner, component);
 	}
 
-	ComponentManager::destroyComponent(componentManager, owner, component);
+	ComponentManager::destroyComponent(owner, component);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -137,9 +199,7 @@ static void ComponentManager::removeComponents(Entity owner, uint32 componentTyp
 
 			if(!component->deleteMe && owner == component->owner)
 			{
-				Entity::removedComponent(owner, component);
-
-				ComponentManager::destroyComponent(componentManager, owner, component);
+				ComponentManager::removeComponent(owner, component);
 			}
 		}	
 	}
@@ -642,7 +702,7 @@ void ComponentManager::destructor()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-Component ComponentManager::createComponent(Entity owner, const ComponentSpec* componentSpec)
+Component ComponentManager::instantiateComponent(Entity owner, const ComponentSpec* componentSpec)
 {
 	if(kComponentTypes <= componentSpec->componentType)
 	{
@@ -656,7 +716,7 @@ Component ComponentManager::createComponent(Entity owner, const ComponentSpec* c
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void ComponentManager::destroyComponent(Entity owner, Component component) 
+void ComponentManager::deinstantiateComponent(Entity owner, Component component) 
 {
 	if(isDeleted(component))
 	{

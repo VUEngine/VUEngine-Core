@@ -61,28 +61,28 @@ bool WireframeManager::isAnyVisible(Entity owner)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-Wireframe WireframeManager::createComponent(Entity owner, const WireframeSpec* wireframeSpec)
+Wireframe WireframeManager::instantiateComponent(Entity owner, const WireframeSpec* wireframeSpec)
 {
 	if(NULL == wireframeSpec)
 	{
 		return NULL;
 	}
 
-	Base::createComponent(this, owner, (ComponentSpec*)wireframeSpec);
+	Base::instantiateComponent(this, owner, (ComponentSpec*)wireframeSpec);
 
 	return WireframeManager::createWireframe(owner, wireframeSpec);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void WireframeManager::destroyComponent(Entity owner, Wireframe wireframe) 
+void WireframeManager::deinstantiateComponent(Entity owner, Wireframe wireframe) 
 {
 	if(isDeleted(wireframe))
 	{
 		return;
 	}
 
-	Base::destroyComponent(this, owner, Component::safeCast(wireframe));
+	Base::deinstantiateComponent(this, owner, Component::safeCast(wireframe));
 
 	WireframeManager::destroyWireframe(wireframe);
 }

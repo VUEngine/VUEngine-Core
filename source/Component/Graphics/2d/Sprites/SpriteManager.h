@@ -102,12 +102,12 @@ singleton class SpriteManager : ComponentManager
 	/// @param owner: Object to which the sprite will attach to
 	/// @param spriteSpec: Spec to use to create the sprite
 	/// @return Created sprite
-	override Sprite createComponent(Entity owner, const SpriteSpec* spriteSpec);
+	override Sprite instantiateComponent(Entity owner, const SpriteSpec* spriteSpec);
 
 	/// Destroy the provided sprite.
 	/// @param owner: Object to which the sprite will attach to
 	/// @param sprite: Sprite to destroy
-	override void destroyComponent(Entity owner, Sprite sprite);
+	override void deinstantiateComponent(Entity owner, Sprite sprite);
 
 	/// Reset the manager's state
 	static void reset();
@@ -115,16 +115,6 @@ singleton class SpriteManager : ComponentManager
 	/// Set the clock that determines if the animations must be updated or not.
 	/// @param clock: Clock for the animations
 	static void setAnimationsClock(Clock clock);
-
-	/// Create a sprite with the provided spec.
-	/// @param owner: Object to which the sprite will attach to
-	/// @param spriteSpec: Spec to use to create the sprite
-	/// @return Created sprite
-	static Sprite createSprite(Entity owner, const SpriteSpec* spriteSpec);
-
-	/// Destroy the provided sprite.
-	/// @param sprite: Sprite to destroy
-	static void destroySprite(Sprite sprite);
 
 	/// Register a sprite to be managed
 	/// @param sprite: Sprite to be managed

@@ -55,28 +55,28 @@ static uint16 _checkCycles;
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-Collider ColliderManager::createComponent(Entity owner, const ColliderSpec* colliderSpec)
+Collider ColliderManager::instantiateComponent(Entity owner, const ColliderSpec* colliderSpec)
 {
 	if(NULL == colliderSpec)
 	{
 		return NULL;
 	}
 
-	Base::createComponent(this, owner, (ComponentSpec*)colliderSpec);
+	Base::instantiateComponent(this, owner, (ComponentSpec*)colliderSpec);
 
 	return ColliderManager::createCollider(this, owner, colliderSpec);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void ColliderManager::destroyComponent(Entity owner, Collider collider) 
+void ColliderManager::deinstantiateComponent(Entity owner, Collider collider) 
 {
 	if(isDeleted(collider))
 	{
 		return;
 	}
 
-	Base::destroyComponent(this, owner, Component::safeCast(collider));
+	Base::deinstantiateComponent(this, owner, Component::safeCast(collider));
 
 	ColliderManager::destroyCollider(this, collider);
 }
@@ -291,6 +291,7 @@ void ColliderManager::destroyCollider(Collider collider)
 	if(!isDeleted(collider))
 	{
 #ifndef __ENABLE_PROFILER
+		NM_ASSERT(NULL != __GET_CAST(Collider, collider), "ColliderManager::destroyCollider: invalide collider");
 		NM_ASSERT(NULL != VirtualList::find(this->components, collider), "ColliderManager::destroyCollider: non registerd collider");
 #endif
 		collider->deleteMe = true;

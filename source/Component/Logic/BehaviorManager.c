@@ -28,14 +28,14 @@ friend class Behavior;
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-Behavior BehaviorManager::createComponent(Entity owner, const BehaviorSpec* behaviorSpec)
+Behavior BehaviorManager::instantiateComponent(Entity owner, const BehaviorSpec* behaviorSpec)
 {
 	if(NULL == behaviorSpec)
 	{
 		return NULL;
 	}
 
-	Base::createComponent(this, owner, (ComponentSpec*)behaviorSpec);
+	Base::instantiateComponent(this, owner, (ComponentSpec*)behaviorSpec);
 
 	Behavior behavior = ((Behavior (*)(Entity, const BehaviorSpec*)) ((ComponentSpec*)behaviorSpec)->allocator)(owner, behaviorSpec);
 
@@ -46,14 +46,14 @@ Behavior BehaviorManager::createComponent(Entity owner, const BehaviorSpec* beha
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void BehaviorManager::destroyComponent(Entity owner, Behavior behavior) 
+void BehaviorManager::deinstantiateComponent(Entity owner, Behavior behavior) 
 {
 	if(isDeleted(behavior))
 	{
 		return;
 	}
 
-	Base::destroyComponent(this, owner, Component::safeCast(behavior));
+	Base::deinstantiateComponent(this, owner, Component::safeCast(behavior));
 
 	VirtualList::removeData(this->components, behavior);
 

@@ -63,28 +63,28 @@ int32 _writtenObjectTiles = 0;
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-Sprite SpriteManager::createComponent(Entity owner, const SpriteSpec* spriteSpec)
+Sprite SpriteManager::instantiateComponent(Entity owner, const SpriteSpec* spriteSpec)
 {
 	if(NULL == spriteSpec)
 	{
 		return NULL;
 	}
 
-	Base::createComponent(this, owner, (ComponentSpec*)spriteSpec);
+	Base::instantiateComponent(this, owner, (ComponentSpec*)spriteSpec);
 
 	return SpriteManager::createSprite(owner, spriteSpec);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void SpriteManager::destroyComponent(Entity owner, Sprite sprite) 
+void SpriteManager::deinstantiateComponent(Entity owner, Sprite sprite) 
 {
 	if(isDeleted(sprite))
 	{
 		return;
 	}
 
-	Base::destroyComponent(this, owner, Component::safeCast(sprite));
+	Base::deinstantiateComponent(this, owner, Component::safeCast(sprite));
 	
 	SpriteManager::destroySprite(sprite);
 }

@@ -128,11 +128,6 @@ Component Entity::addComponent(const ComponentSpec* componentSpec)
 
 void Entity::removeComponent(Component component)
 {
-	if(NULL == component)
-	{
-		return;
-	}
-
 	ComponentManager::removeComponent(this, component);
 }
 
@@ -435,7 +430,7 @@ void Entity::createComponents(ComponentSpec** componentSpecs)
 
 void Entity::destroyComponents()
 {
-	ComponentManager::removeComponents(this, kComponentTypes);
+	Entity::removeComponents(this, kComponentTypes);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

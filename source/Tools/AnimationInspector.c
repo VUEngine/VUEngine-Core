@@ -401,7 +401,7 @@ void AnimationInspector::removePreviousSprite()
 {
 	if(!isDeleted(this->sprite))
 	{
-		SpriteManager::destroySprite(this->sprite);
+		ComponentManager::destroyComponent(this->sprite);
 		this->sprite = NULL;
 	}
 }
@@ -718,7 +718,7 @@ void AnimationInspector::createSprite()
 
 	NM_ASSERT(spriteSpec, "AnimationInspector::createSprite: null spriteSpec");
 
-	this->sprite = Sprite::safeCast(SpriteManager::createSprite(NULL, (SpriteSpec*)spriteSpec));
+	this->sprite = Sprite::safeCast(ComponentManager::createComponent(NULL, (SpriteSpec*)spriteSpec));
 	ASSERT(this->sprite, "AnimationInspector::createSprite: null sprite");
 	ASSERT(Sprite::getTexture(this->sprite), "AnimationInspector::createSprite: null texture");
 

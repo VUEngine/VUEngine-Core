@@ -47,28 +47,28 @@ static fixed_t BodyManager::getElapsedTimeStep()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-Body BodyManager::createComponent(Entity owner, const BodySpec* bodySpec)
+Body BodyManager::instantiateComponent(Entity owner, const BodySpec* bodySpec)
 {
 	if(NULL == bodySpec)
 	{
 		return NULL;
 	}
 
-	Base::createComponent(this, owner, (ComponentSpec*)bodySpec);
+	Base::instantiateComponent(this, owner, (ComponentSpec*)bodySpec);
 
 	return BodyManager::createBody(this, owner, bodySpec);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void BodyManager::destroyComponent(Entity owner, Body body) 
+void BodyManager::deinstantiateComponent(Entity owner, Body body) 
 {
 	if(isDeleted(body))
 	{
 		return;
 	}
 
-	Base::destroyComponent(this, owner, Component::safeCast(body));
+	Base::deinstantiateComponent(this, owner, Component::safeCast(body));
 
 	BodyManager::destroyBody(this, body);
 }
