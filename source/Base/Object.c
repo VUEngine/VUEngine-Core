@@ -212,7 +212,7 @@ const void* Object::getVTable()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-bool Object::evolveTo(const void* targetClass)
+bool Object::mutateTo(const void* targetClass)
 {
 	const struct Object_vTable* targetClassVTable = (const struct Object_vTable*)targetClass;
 	const struct Object_vTable* thisVTable = (const struct Object_vTable*)this->vTable;
@@ -226,7 +226,12 @@ bool Object::evolveTo(const void* targetClass)
 
 	while((ClassPointer)Object::getBaseClass != (ClassPointer)baseClassGetClassMethod)
 	{
-		if((ClassPointer)thisVTable->getBaseClass == baseClassGetClassMethod)
+		if
+		(
+			(ClassPointer)thisVTable->getBaseClass == baseClassGetClassMethod
+			||
+			(ClassPointer)thisVTable->getBaseClass(NULL) == baseClassGetClassMethod
+		)
 		{
 			this->vTable = (void*)targetClassVTable;
 			return true;
@@ -239,7 +244,12 @@ bool Object::evolveTo(const void* targetClass)
 	
 	while((ClassPointer)Object::getBaseClass != (ClassPointer)baseClassGetClassMethod)
 	{
-		if((ClassPointer)targetClassVTable->getBaseClass == baseClassGetClassMethod)
+		if
+		(
+			(ClassPointer)targetClassVTable->getBaseClass == baseClassGetClassMethod
+			||
+			(ClassPointer)targetClassVTable->getBaseClass(NULL) == baseClassGetClassMethod
+		)
 		{
 			this->vTable = (void*)targetClassVTable;
 			return true;
