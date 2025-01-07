@@ -412,7 +412,7 @@ void RumbleManager::destructor()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static bool RumbleManager::onBroadcastDataDone(ListenerObject eventFirer __attribute__ ((unused)))
+bool RumbleManager::onBroadcastDataDone(ListenerObject eventFirer __attribute__ ((unused)))
 {
 	RumbleManager rumbleManager = RumbleManager::getInstance();
 
