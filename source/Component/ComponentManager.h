@@ -106,6 +106,17 @@ abstract class ComponentManager : Object
 	/// @return Number of components belonging to the provided owner
 	static uint16 getCount(Entity owner, uint32 componentType);
 
+	/// Compute the rightbox for the owner in base of its visual components.
+	/// @param owner: Entity that the components attaches to
+	/// @param rightBox: Rightbox to configure
+	/// @return True if the owner has visual components; false otherwise
+	static bool calculateRightBox(Entity owner, RightBox* rightBox);
+
+	/// Check if at least of the visual components that attach to the provided owner is visible.
+	/// @param owner: Object to which the visual components attach to
+	/// @return True if at least of the visual components that attach to the provided owner is visible
+	static bool isAnyCompomentVisible(Entity owner);
+
 	/// Class' constructor
 	void constructor();
 

@@ -30,111 +30,6 @@ friend class VirtualList;
 friend class VirtualNode;
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-// CLASS' PUBLIC METHODS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-static bool VisualComponent::calculateRightBox(Entity owner, RightBox* rightBox)
-{
-	bool modified = false;
-
-	if(0 < ComponentManager::getCount(owner, kSpriteComponent))
-	{
-		VirtualList sprites = ComponentManager::getComponents(owner, kSpriteComponent);
-
-		VisualComponent::getRightBoxFromVisualComponents(sprites, rightBox);
-
-		modified = true;
-	}
-
-	if(0 < ComponentManager::getCount(owner, kWireframeComponent))
-	{
-		VirtualList wireframes = ComponentManager::getComponents(owner, kWireframeComponent);
-
-		VisualComponent::getRightBoxFromVisualComponents(wireframes, rightBox);
-
-		modified = true;
-	}
-
-	return modified;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-static bool VisualComponent::isAnyVisible(Entity owner)
-{
-	if(SpriteManager::isAnyVisible(SpriteManager::getInstance(), owner))
-	{
-		return true;
-	}
-
-	if(WireframeManager::isAnyVisible(WireframeManager::getInstance(), owner))
-	{
-		return true;
-	}	
-
-	return false;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-// CLASS' PRIVATE METHODS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-static void VisualComponent::getRightBoxFromVisualComponents(VirtualList visualComponents, RightBox* rightBox)
-{
-	if(isDeleted(visualComponents) || NULL == rightBox)
-	{
-		return;
-	}
-
-	for(VirtualNode node = visualComponents->head; node; node = node->next)
-	{
-		VisualComponent visualComponent = VisualComponent::safeCast(node->data);
-
-		RightBox visualComponentRightBox = VisualComponent::getRightBox(visualComponent);
-
-		NM_ASSERT(visualComponentRightBox.x0 < visualComponentRightBox.x1, "VisualComponent::getRightBoxFromVisualComponents: 0 width");
-		NM_ASSERT(visualComponentRightBox.y0 < visualComponentRightBox.y1, "VisualComponent::getRightBoxFromVisualComponents: 0 height");
-		NM_ASSERT(visualComponentRightBox.z0 < visualComponentRightBox.z1, "VisualComponent::getRightBoxFromVisualComponents: 0 depth");
-
-		if(rightBox->x0 > visualComponentRightBox.x0)
-		{
-			rightBox->x0 = visualComponentRightBox.x0;
-		}
-
-		if(rightBox->x1 < visualComponentRightBox.x1)
-		{
-			rightBox->x1 = visualComponentRightBox.x1;
-		}
-
-		if(rightBox->y0 > visualComponentRightBox.y0)
-		{
-			rightBox->y0 = visualComponentRightBox.y0;
-		}
-
-		if(rightBox->y1 < visualComponentRightBox.y1)
-		{
-			rightBox->y1 = visualComponentRightBox.y1;
-		}
-
-		if(rightBox->z0 > visualComponentRightBox.z0)
-		{
-			rightBox->z0 = visualComponentRightBox.z0;
-		}
-
-		if(rightBox->z1 < visualComponentRightBox.z1)
-		{
-			rightBox->z1 = visualComponentRightBox.z1;
-		}
-	}
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PUBLIC METHODS
@@ -454,13 +349,6 @@ uint8 VisualComponent::getTransparent()
 void VisualComponent::setTransparency(uint8 transparency)
 {
 	this->transparency = transparency;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-RightBox VisualComponent::getRightBox()
-{
-	return (RightBox){-1, -1, -1, 1, 1, 1};
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

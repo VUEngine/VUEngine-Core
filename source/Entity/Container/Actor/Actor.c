@@ -714,7 +714,7 @@ bool Actor::isInCameraRange(int16 padding, bool recursive)
 		return true;
 	}
 
-	if(VisualComponent::isAnyVisible(Entity::safeCast(this)))
+	if(ComponentManager::isAnyCompomentVisible(Entity::safeCast(this)))
 	{
 		return true;
 	}
@@ -853,7 +853,7 @@ void Actor::calculateSizeFromChildren(RightBox* rightBox, Vector3D environmentPo
 
 	if(0 == this->size.x || 0 == this->size.y || 0 == this->size.z)
 	{
-		bool rightBoxComputed = VisualComponent::calculateRightBox(Entity::safeCast(this), &myRightBox);
+		bool rightBoxComputed = ComponentManager::calculateRightBox(Entity::safeCast(this), &myRightBox);
 
 		if(!rightBoxComputed)
 		{

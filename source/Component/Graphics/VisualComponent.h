@@ -103,17 +103,6 @@ abstract class VisualComponent : Component
 
 	/// @publicsection
 
-	/// Compute the rightbox for the owner in base of its visual components.
-	/// @param owner: Entity that the components attaches to
-	/// @param rightBox: Rightbox to configure
-	/// @return True if the owner has visual components; false otherwise
-	static bool calculateRightBox(Entity owner, RightBox* rightBox);
-
-	/// Check if at least of the visual components that attach to the provided owner is visible.
-	/// @param owner: Object to which the visual components attach to
-	/// @return True if at least of the visual components that attach to the provided owner is visible
-	static bool isAnyVisible(Entity owner);
-
 	/// Class' constructor
 	/// @param owner: Entity that this component attaches to
 	/// @param visualComponentSpec: Pointer to the spec that defines how to initialize the visual component
@@ -209,10 +198,6 @@ abstract class VisualComponent : Component
 	/// Force the change of frame according to each child class' implementation.
 	/// @param actualFrame: The frame of the playing animation to skip to
 	virtual void forceChangeOfFrame(int16 actualFrame);
-
-	/// Retrieve the mesh's bounding box.
-	/// @return Bounding box of the mesh
-	virtual RightBox getRightBox();
 }
 
 #endif

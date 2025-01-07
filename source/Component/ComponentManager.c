@@ -398,6 +398,66 @@ static uint16 ComponentManager::getCount(Entity owner, uint32 componentType)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+static bool ComponentManager::calculateRightBox(Entity owner, RightBox* rightBox)
+{
+	bool modified = false;
+
+	if(NULL == owner)
+	{
+		return false;
+	}
+
+	for(int16 i = 0; i < kComponentTypes; i++)
+	{
+		ComponentManager componentManager = ComponentManager::getManager(i);
+
+		if(NULL == componentManager || !ComponentManager::overrides(componentManager, isAnyVisible))
+		{
+			continue;
+		}
+
+		if(0 < ComponentManager::getCount(owner, i))
+		{
+			VirtualList components = ComponentManager::getComponents(owner, kSpriteComponent);
+
+			ComponentManager::getRightBoxFromComponents(components, rightBox);
+
+			modified = true;
+		}
+	}
+
+	return modified;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+static bool ComponentManager::isAnyCompomentVisible(Entity owner)
+{
+	if(NULL == owner)
+	{
+		return false;
+	}
+
+	for(int16 i = 0; i < kComponentTypes; i++)
+	{
+		ComponentManager componentManager = ComponentManager::getManager(i);
+
+		if(NULL == componentManager || !ComponentManager::overrides(componentManager, isAnyVisible))
+		{
+			continue;
+		}
+
+		if(ComponentManager::isAnyVisible(componentManager, owner))
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PRIVATE STATIC METHODS
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -495,6 +555,57 @@ static void ComponentManager::cleanOwnerComponentLists(Entity owner, uint32 comp
 	{
 		delete owner->components[componentType];
 		owner->components[componentType] = NULL;
+	}
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+static void ComponentManager::getRightBoxFromComponents(VirtualList components, RightBox* rightBox)
+{
+	if(isDeleted(components) || NULL == rightBox)
+	{
+		return;
+	}
+
+	for(VirtualNode node = components->head; node; node = node->next)
+	{
+		Component component = Component::safeCast(node->data);
+
+		RightBox componentRightBox = Component::getRightBox(component);
+
+		NM_ASSERT(componentRightBox.x0 < componentRightBox.x1, "ComponentManager::getRightBoxFromComponents: 0 width");
+		NM_ASSERT(componentRightBox.y0 < componentRightBox.y1, "ComponentManager::getRightBoxFromComponents: 0 height");
+		NM_ASSERT(componentRightBox.z0 < componentRightBox.z1, "ComponentManager::getRightBoxFromComponents: 0 depth");
+
+		if(rightBox->x0 > componentRightBox.x0)
+		{
+			rightBox->x0 = componentRightBox.x0;
+		}
+
+		if(rightBox->x1 < componentRightBox.x1)
+		{
+			rightBox->x1 = componentRightBox.x1;
+		}
+
+		if(rightBox->y0 > componentRightBox.y0)
+		{
+			rightBox->y0 = componentRightBox.y0;
+		}
+
+		if(rightBox->y1 < componentRightBox.y1)
+		{
+			rightBox->y1 = componentRightBox.y1;
+		}
+
+		if(rightBox->z0 > componentRightBox.z0)
+		{
+			rightBox->z0 = componentRightBox.z0;
+		}
+
+		if(rightBox->z1 < componentRightBox.z1)
+		{
+			rightBox->z1 = componentRightBox.z1;
+		}
 	}
 }
 

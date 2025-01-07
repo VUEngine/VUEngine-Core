@@ -114,6 +114,10 @@ abstract class Component : ListenerObject
 	/// @param command: Command to handle
 	/// @param args: Variable arguments list depending on the command to handle
 	virtual void handleCommand(int32 command, va_list args);
+
+	/// Retrieve the mesh's bounding box.
+	/// @return Bounding box of the mesh
+	virtual RightBox getRightBox();
 }
 
 #endif

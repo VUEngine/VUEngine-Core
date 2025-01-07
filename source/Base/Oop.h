@@ -250,8 +250,8 @@
 /// @return True if the object's class overrides the provided method; false otherwise
 #define __OVERRIDES_METHOD(ClassName, object, MethodName) 																				\
 																																		\
-		(void (*)())&ClassName ## _ ## MethodName != 																					\
-			(void (*)())__VIRTUAL_CALL_ADDRESS(ClassName, MethodName, object)
+		((void (*)())&ClassName ## _ ## MethodName != 																					\
+			(void (*)())__VIRTUAL_CALL_ADDRESS(ClassName, MethodName, object))
 
 /// Check if an object is not destroyed.
 /// @param object: Oject to check
