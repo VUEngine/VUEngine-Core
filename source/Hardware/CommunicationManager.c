@@ -113,6 +113,24 @@ static void CommunicationManager::interruptHandler()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+static void CommunicationManager::registerEventListener(ListenerObject listener, EventListener callback, uint16 eventCode)
+{
+	CommunicationManager communicationManager = CommunicationManager::getInstance();
+
+	CommunicationManager::addEventListener(communicationManager, listener, callback, eventCode);
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+static void CommunicationManager::unregisterEventListener(ListenerObject listener, EventListener callback, uint16 eventCode)
+{
+	CommunicationManager communicationManager = CommunicationManager::getInstance();
+
+	CommunicationManager::removeEventListener(communicationManager, listener, callback, eventCode);
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 static void CommunicationManager::reset()
 {
 	CommunicationManager communicationManager = CommunicationManager::getInstance();

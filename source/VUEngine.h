@@ -99,15 +99,6 @@ singleton! class VUEngine : ListenerObject
 
 	/// @publicsection
 
-	/// Method to retrieve the singleton instance
-	/// @return VUEngine singleton
-	static VUEngine getInstance();
-
-	/// Receive and process a Telegram.
-	/// @param telegram: Received telegram to process
-	/// @return True if the telegram was processed
-	override bool handleMessage(Telegram telegram);
-
 	/// @publicsection
 	/// Register an object that will listen for events.
 	/// @param listener: ListenerObject that listen for the event
@@ -285,6 +276,10 @@ singleton! class VUEngine : ListenerObject
 	/// Start profiling the game.
 	static void startProfiling();
 
+	/// Receive and process a Telegram.
+	/// @param telegram: Received telegram to process
+	/// @return True if the telegram was processed
+	override bool handleMessage(Telegram telegram);
 }
 
 #endif
