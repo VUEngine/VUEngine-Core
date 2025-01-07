@@ -751,9 +751,9 @@ void Actor::playAnimation(const char* animationName)
 		return;
 	}
 
-	SpriteManager::propagateCommand
+	ComponentManager::propagateCommand
 	(
-		SpriteManager::getInstance(), cVisualComponentCommandPlay, Entity::safeCast(this), 
+		cVisualComponentCommandPlay, Entity::safeCast(this), kSpriteComponent,
 		((ActorSpec*)this->actorSpec)->animationFunctions, animationName, ListenerObject::safeCast(this), 
 		(EventListener)Actor::onAnimationComplete
 	);
@@ -763,7 +763,7 @@ void Actor::playAnimation(const char* animationName)
 
 void Actor::pauseAnimation(bool pause)
 {
-	SpriteManager::propagateCommand(SpriteManager::getInstance(), cVisualComponentCommandPause, Entity::safeCast(this), pause);
+	ComponentManager::propagateCommand(cVisualComponentCommandPause, Entity::safeCast(this), kSpriteComponent, pause);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -772,28 +772,28 @@ void Actor::stopAnimation()
 {
 	this->playingAnimationName = NULL;
 
-	SpriteManager::propagateCommand(SpriteManager::getInstance(), cVisualComponentCommandStop, Entity::safeCast(this));
+	ComponentManager::propagateCommand(cVisualComponentCommandStop, Entity::safeCast(this), kSpriteComponent);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Actor::setActualFrame(int16 frame)
 {
-	SpriteManager::propagateCommand(SpriteManager::getInstance(), cVisualComponentCommandSetFrame, Entity::safeCast(this), frame);
+	ComponentManager::propagateCommand(cVisualComponentCommandSetFrame, Entity::safeCast(this), kSpriteComponent, frame);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Actor::nextFrame()
 {
-	SpriteManager::propagateCommand(SpriteManager::getInstance(), cVisualComponentCommandNextFrame, Entity::safeCast(this));
+	ComponentManager::propagateCommand(cVisualComponentCommandNextFrame, Entity::safeCast(this), kSpriteComponent);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Actor::previousFrame()
 {
-	SpriteManager::propagateCommand(SpriteManager::getInstance(), cVisualComponentCommandPreviousFrame, Entity::safeCast(this));
+	ComponentManager::propagateCommand(cVisualComponentCommandPreviousFrame, Entity::safeCast(this), kSpriteComponent);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

@@ -103,12 +103,6 @@ abstract class VisualComponent : Component
 
 	/// @publicsection
 
-	/// Propagate a command to the components.
-	/// @param command: Command to propagate to all the components
-	/// @param owner: Owner of the components to command (all if NULL)
-	/// @param ...: Variable arguments list depending on the command
-	static void propagateCommand(int32 command, Entity owner, ...);
-
 	/// Compute the rightbox for the owner in base of its visual components.
 	/// @param owner: Entity that the components attaches to
 	/// @param rightBox: Rightbox to configure

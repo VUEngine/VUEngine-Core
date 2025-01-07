@@ -182,7 +182,7 @@ uint16 Entity::getComponentsCount(uint32 componentType)
 
 void Entity::resetComponents()
 {
-	ColliderManager::propagateCommand(VUEngine::getColliderManager(), cComponentCommandReset, this);
+	ComponentManager::propagateCommand(cComponentCommandReset, this, kComponentTypes);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -329,44 +329,35 @@ fixed_t Entity::getFrictionCoefficient()
 
 void Entity::enableCollisions()
 {
-	ColliderManager::propagateCommand(VUEngine::getColliderManager(), cComponentCommandEnable, this);
+	ComponentManager::propagateCommand(cComponentCommandEnable, this, kColliderComponent);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Entity::disableCollisions()
 {
-	ColliderManager::propagateCommand(VUEngine::getColliderManager(), cComponentCommandDisable, this);
+	ComponentManager::propagateCommand(cComponentCommandDisable, this, kColliderComponent);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Entity::checkCollisions(bool active)
 {
-	ColliderManager::propagateCommand
-	(
-		VUEngine::getColliderManager(), cColliderComponentCommandCheckCollisions, this, (uint32)active
-	);
+	ComponentManager::propagateCommand(cColliderComponentCommandCheckCollisions, this, kColliderComponent, (uint32)active);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Entity::registerCollisions(bool value)
 {
-	ColliderManager::propagateCommand
-	(
-		VUEngine::getColliderManager(), cColliderComponentCommandRegisterCollisions, this, (uint32)value
-	);
+	ComponentManager::propagateCommand(cColliderComponentCommandRegisterCollisions, this, kColliderComponent, (uint32)value);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Entity::setCollidersLayers(uint32 layers)
 {
-	ColliderManager::propagateCommand
-	(
-		VUEngine::getColliderManager(), cColliderComponentCommandSetLayers, this, (uint32)layers
-	);
+	ComponentManager::propagateCommand(cColliderComponentCommandSetLayers, this, kColliderComponent, (uint32)layers);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -391,10 +382,7 @@ uint32 Entity::getCollidersLayers()
 
 void Entity::setCollidersLayersToIgnore(uint32 layersToIgnore)
 {
-	ColliderManager::propagateCommand
-	(
-		VUEngine::getColliderManager(), cColliderComponentCommandSetLayersToIgnore, this, (uint32)layersToIgnore
-	);
+	ComponentManager::propagateCommand(cColliderComponentCommandSetLayersToIgnore, this, (uint32)layersToIgnore);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -419,14 +407,14 @@ uint32 Entity::getCollidersLayersToIgnore()
 
 void Entity::showColliders()
 {
-	ColliderManager::propagateCommand(VUEngine::getColliderManager(), cColliderComponentCommandShow, this);
+	ComponentManager::propagateCommand(cColliderComponentCommandShow, this, kColliderComponent);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Entity::hideColliders()
 {
-	ColliderManager::propagateCommand(VUEngine::getColliderManager(), cColliderComponentCommandHide, this);
+	ComponentManager::propagateCommand(cColliderComponentCommandHide, this, kColliderComponent);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -521,21 +509,24 @@ void Entity::removedComponent(Component component __attribute__((unused)))
 
 void Entity::show()
 {
-	VisualComponent::propagateCommand(cVisualComponentCommandShow, this);
+	ComponentManager::propagateCommand(cVisualComponentCommandShow, this, kSpriteComponent);
+	ComponentManager::propagateCommand(cVisualComponentCommandShow, this, kWireframeComponent);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Entity::hide()
 {
-	VisualComponent::propagateCommand(cVisualComponentCommandHide, this);
+	ComponentManager::propagateCommand(cVisualComponentCommandHide, this, kSpriteComponent);
+	ComponentManager::propagateCommand(cVisualComponentCommandHide, this, kWireframeComponent);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Entity::setTransparency(uint8 transparency)
 {
-	VisualComponent::propagateCommand(cVisualComponentCommandSetTransparency, this, (uint32)transparency);
+	ComponentManager::propagateCommand(cVisualComponentCommandSetTransparency, this, kSpriteComponent, (uint32)transparency);
+	ComponentManager::propagateCommand(cVisualComponentCommandSetTransparency, this, kWireframeComponent, (uint32)transparency);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

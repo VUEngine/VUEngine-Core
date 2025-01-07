@@ -122,36 +122,8 @@ static void ComponentManager::addComponents(Entity owner, ComponentSpec** compon
 
 static void ComponentManager::removeComponents(Entity owner, uint32 componentType)
 {
-	if(kComponentTypes <= componentType)
+	void removeComponents(ComponentManager componentManager)
 	{
-		for(int16 i = 0; i < kComponentTypes; i++)
-		{
-			ComponentManager componentManager = ComponentManager::getManager(i);
-
-			if(NULL == componentManager)
-			{
-				continue;
-			}
-
-			for(VirtualNode node = componentManager->components->head, nextNode = NULL; NULL != node; node = nextNode)
-			{
-				nextNode = node->next;
-		
-				Component component = Component::safeCast(node->data);
-
-				if(!component->deleteMe && owner == component->owner)
-				{
-					Entity::removedComponent(owner, component);
-
-					ComponentManager::destroyComponent(componentManager, owner, component);
-				}
-			}	
-		}
-	}
-	else
-	{
-		ComponentManager componentManager = ComponentManager::getManager(componentType);
-
 		if(NULL == componentManager)
 		{
 			return;
@@ -170,6 +142,18 @@ static void ComponentManager::removeComponents(Entity owner, uint32 componentTyp
 				ComponentManager::destroyComponent(componentManager, owner, component);
 			}
 		}	
+	}
+
+	if(kComponentTypes <= componentType)
+	{
+		for(int16 i = 0; i < kComponentTypes; i++)
+		{
+			removeComponents(ComponentManager::getManager(i));
+		}
+	}
+	else
+	{		
+		removeComponents(ComponentManager::getManager(componentType));
 	}
 }
 
@@ -239,7 +223,17 @@ static VirtualList ComponentManager::getComponents(Entity owner, uint32 componen
 		return NULL;
 	}
 
-	return ComponentManager::doGetComponents(componentManager, owner, owner->components[componentType]);
+	for(VirtualNode node = componentManager->components->head; NULL != node; node = node->next)
+	{
+		Component component = Component::safeCast(node->data);
+
+		if(owner == component->owner)
+		{
+			VirtualList::pushBack(owner->components[componentType], component);
+		}
+	}
+
+	return owner->components[componentType];
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -285,38 +279,14 @@ static bool ComponentManager::getComponentsOfClass(Entity owner, ClassPointer cl
 
 static uint16 ComponentManager::getComponentsCount(Entity owner, uint32 componentType)
 {
-	uint16 count = 0;
-
-	if(kComponentTypes <= componentType)
+	uint16 getCount(ComponentManager componentManager)
 	{
-		for(int16 i = 0; i < kComponentTypes; i++)
-		{
-			ComponentManager componentManager = ComponentManager::getManager(i);
-
-			if(NULL == componentManager || NULL == componentManager->components)
-			{
-				continue;
-			}
-
-			for(VirtualNode node = componentManager->components->head; NULL != node; node = node->next)
-			{
-				Component component = Component::safeCast(node->data);
-
-				if(owner == component->owner && !component->deleteMe)
-				{
-					count++;
-				}
-			}
-		}
-	}
-	else
-	{
-		ComponentManager componentManager = ComponentManager::getManager(componentType);
-
 		if(NULL == componentManager)
 		{
 			return 0;
 		}
+
+		uint16 count = 0;
 
 		for(VirtualNode node = componentManager->components->head, nextNode = NULL; NULL != node; node = nextNode)
 		{
@@ -328,7 +298,99 @@ static uint16 ComponentManager::getComponentsCount(Entity owner, uint32 componen
 			{
 				count++;
 			}
-		}	
+		}
+
+		return count;
+	}
+
+	uint16 count = 0;
+
+	if(kComponentTypes <= componentType)
+	{
+		for(int16 i = 0; i < kComponentTypes; i++)
+		{
+			count += getCount(ComponentManager::getManager(i));
+		}
+	}
+	else
+	{
+		count = getCount(ComponentManager::getManager(componentType));
+	}
+
+	return count;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+static void ComponentManager::propagateCommand(int32 command, Entity owner, uint32 componentType, ...)
+{
+
+	void propagateCommand(ComponentManager componentManager, va_list args)
+	{
+		for(VirtualNode node = componentManager->components->head; NULL != node; node = node->next)
+		{
+			Component component = Component::safeCast(node->data);
+
+			if(NULL != owner && owner != component->owner)
+			{
+				continue;
+			}
+
+			Component::handleCommand(component, command, args);
+		}
+	}
+
+	if(kComponentTypes <= componentType)
+	{
+		for(int16 i = 0; i < kComponentTypes; i++)
+		{
+			va_list args;
+			va_start(args, componentType);
+
+			propagateCommand(ComponentManager::getManager(i), args);
+
+			va_end(args);
+		}
+	}
+	else
+	{		
+		va_list args;
+		va_start(args, componentType);
+	
+		propagateCommand(ComponentManager::getManager(componentType), args);
+
+		va_end(args);
+	}
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+static uint16 ComponentManager::getCount(Entity owner, uint32 componentType)
+{
+	if(kComponentTypes <= componentType)
+	{
+		return 0;
+	}
+
+	int16 count = 0;
+
+	ComponentManager componentManager = ComponentManager::getManager(componentType);
+
+	if(NULL == componentManager)
+	{
+		return 0;
+	}
+
+	for(VirtualNode node = componentManager->components->head; NULL != node; node = node->next)
+	{
+		Component component = Component::safeCast(node->data);
+
+		if(NULL != owner && owner != component->owner)
+		{
+			continue;
+		}
+		
+		count++;
 	}
 
 	return count;
@@ -469,49 +531,6 @@ void ComponentManager::destructor()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void ComponentManager::propagateCommand(int32 command, Entity owner, ...)
-{
-	for(VirtualNode node = this->components->head; NULL != node; node = node->next)
-	{
-		Component component = Component::safeCast(node->data);
-
-		if(NULL != owner && owner != component->owner)
-		{
-			continue;
-		}
-
-		va_list args;
-		va_start(args, owner);
-
-		Component::handleCommand(component, command, args);
-
-		va_end(args);
-	}
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-uint16 ComponentManager::getCount(Entity owner)
-{
-	uint16 count = 0;
-
-	for(VirtualNode node = this->components->head; NULL != node; node = node->next)
-	{
-		Component component = Component::safeCast(node->data);
-
-		if(NULL != owner && owner != component->owner)
-		{
-			continue;
-		}
-		
-		count++;
-	}
-
-	return count;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
 Component ComponentManager::createComponent(Entity owner, const ComponentSpec* componentSpec)
 {
 	if(kComponentTypes <= componentSpec->componentType)
@@ -539,23 +558,6 @@ void ComponentManager::destroyComponent(Entity owner, Component component)
 	}
 
 	ComponentManager::cleanOwnerComponentLists(owner, component->componentSpec->componentType);
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-VirtualList ComponentManager::doGetComponents(Entity owner, VirtualList components)
-{
-	for(VirtualNode node = this->components->head; NULL != node; node = node->next)
-	{
-		Component component = Component::safeCast(node->data);
-
-		if(owner == component->owner)
-		{
-			VirtualList::pushBack(components, component);
-		}
-	}
-
-	return components;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

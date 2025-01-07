@@ -93,19 +93,21 @@ abstract class ComponentManager : Object
 	/// @return Number of components belonging to the provided owner
 	static uint16 getComponentsCount(Entity owner, uint32 componentType);
 
+	/// Propagate a command to the components of the provided type.
+	/// @param command: Command to propagate to all the components of the provided tyep
+	/// @param owner: Owner of the components to command (all if NULL)
+	/// @param componentType: Type of components towards which to propagate the command
+	/// @param ...: Variable arguments list depending on the command
+	static void propagateCommand(int32 command, Entity owner, uint32 componentType, ...);
+
+	/// Retrieve the number of components of the a type belonging to the provided owner.
+	/// @param owner: Object to which the components attach to
+	/// @param componentType: Type of components to count
+	/// @return Number of components belonging to the provided owner
+	static uint16 getCount(Entity owner, uint32 componentType);
+
 	/// Class' constructor
 	void constructor();
-
-	/// Propagate a command to the components.
-	/// @param command: Command to propagate to all the components
-	/// @param owner: Owner of the components to command (all if NULL)
-	/// @param ...: Variable arguments list depending on the command
-	void propagateCommand(int32 command, Entity owner, ...);
-
-	/// Retrieve the number of components belonging to the provided owner.
-	/// @param owner: Object to which the components attach to
-	/// @return Number of components belonging to the provided owner
-	uint16 getCount(Entity owner);
 
 	/// Create a component with the provided spec.
 	/// @param owner: Object to which the component will attach to

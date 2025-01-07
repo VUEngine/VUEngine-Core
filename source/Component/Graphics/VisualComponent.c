@@ -35,45 +35,24 @@ friend class VirtualNode;
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void VisualComponent::propagateCommand(int32 command, Entity owner, ...)
-{
-	va_list args;
-	va_start(args, owner);
-	int32 value = va_arg(args, int32);
-	va_end(args);
-
-	SpriteManager::propagateCommand(SpriteManager::getInstance(), command, owner, value);
-	WireframeManager::propagateCommand(WireframeManager::getInstance(), command, owner, value);
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
 static bool VisualComponent::calculateRightBox(Entity owner, RightBox* rightBox)
 {
 	bool modified = false;
 
-	if(0 < SpriteManager::getCount(SpriteManager::getInstance(), owner))
+	if(0 < ComponentManager::getCount(owner, kSpriteComponent))
 	{
-		VirtualList sprites = new VirtualList();
-
-		SpriteManager::doGetComponents(SpriteManager::getInstance(), owner, sprites);
+		VirtualList sprites = ComponentManager::getComponents(owner, kSpriteComponent);
 
 		VisualComponent::getRightBoxFromVisualComponents(sprites, rightBox);
-
-		delete sprites;
 
 		modified = true;
 	}
 
-	if(0 < WireframeManager::getCount(WireframeManager::getInstance(), owner))
+	if(0 < ComponentManager::getCount(owner, kWireframeComponent))
 	{
-		VirtualList wireframes = new VirtualList();
-
-		WireframeManager::doGetComponents(WireframeManager::getInstance(), owner, wireframes);
+		VirtualList wireframes = ComponentManager::getComponents(owner, kWireframeComponent);
 
 		VisualComponent::getRightBoxFromVisualComponents(wireframes, rightBox);
-
-		delete wireframes;
 
 		modified = true;
 	}
