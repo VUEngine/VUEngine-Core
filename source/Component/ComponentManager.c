@@ -70,14 +70,10 @@ static Component ComponentManager::createComponent(Entity owner, const Component
 
 static void ComponentManager::destroyComponent(Entity owner, Component component)
 {
-	NM_ASSERT(!isDeleted(component), "ComponentManager::destroyComponent: deleted component");
-
 	if(isDeleted(component))
 	{
 		return;
 	}
-
-	NM_ASSERT(owner == component->owner, "ComponentManager::destroyComponent: illegal owner");
 
 	if(owner != component->owner)
 	{
@@ -86,26 +82,12 @@ static void ComponentManager::destroyComponent(Entity owner, Component component
 
 	uint32 componentType = ComponentManager::getComponentType(component);
 
-		if(kComponentTypes <= componentType)
-		{
-		Printing::setDebugMode();
-		Printing::clear();
-		Printing::text(__GET_CLASS_NAME(component), 20, 27, NULL);
-
-		Error::triggerException("MemoryPool::allocate: pool exhausted", NULL);		
-
-		}
-
-	NM_ASSERT(kComponentTypes > componentType, "ComponentManager::destroyComponent: illegal type");
-
 	if(kComponentTypes <= componentType)
 	{
 		return;
 	}
 
 	ComponentManager componentManager = ComponentManager::getManager(componentType);
-
-	NM_ASSERT(NULL != componentManager, "ComponentManager::destroyComponent: no manager");
 
 	if(NULL == componentManager)
 	{
