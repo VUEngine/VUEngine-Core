@@ -52,6 +52,46 @@ FontROMData VUENGINE_DEBUG_FONT_DATA =
 	NULL,
 };
 
+const PrintingSpriteSpec DefaultPrintingSpriteSpec =
+{
+	{
+		{
+			// Component
+			{
+				// Allocator
+				__TYPE(PrintingSprite),
+
+				// Component type
+				kSpriteComponent
+			},
+
+			// Spec for the texture to display
+			NULL,
+
+			// Transparency mode (__TRANSPARENCY_NONE, __TRANSPARENCY_EVEN or __TRANSPARENCY_ODD)
+			__TRANSPARENCY_NONE,
+
+			// Displacement added to the sprite's position
+			{
+				0, // x
+				0, // y
+				0, // z
+				0, // parallax
+			},
+		},
+
+		// The display mode (__WORLD_BGMAP, __WORLD_AFFINE, __WORLD_OBJECT or __WORLD_HBIAS)
+		// Make sure to use the proper corresponding sprite type throughout the spec (BgmapSprite or ObjectSprite)
+		__WORLD_BGMAP,
+
+		// Pointer to affine/hbias manipulation function
+		NULL,
+
+		// Flag to indicate in which display to show the texture (__WORLD_ON, __WORLD_LON or __WORLD_RON)
+		__WORLD_ON,
+	}
+};
+
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PUBLIC METHODS
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -465,47 +505,6 @@ static void Printing::setPrintingBgmapSegment(int8 printingBgmapSegment)
 static void Printing::addSprite()
 {
 	Printing printing = Printing::getInstance();
-
-	static PrintingSpriteSpec DefaultPrintingSpriteSpec =
-	{
-		{
-			{
-				// Component
-				{
-					// Allocator
-					__TYPE(PrintingSprite),
-
-					// Component type
-					kSpriteComponent
-				},
-
-				// Spec for the texture to display
-				NULL,
-
-				// Transparency mode (__TRANSPARENCY_NONE, __TRANSPARENCY_EVEN or __TRANSPARENCY_ODD)
-				__TRANSPARENCY_NONE,
-
-				// Displacement added to the sprite's position
-				{
-					0, // x
-					0, // y
-					0, // z
-					0, // parallax
-				},
-			},
-
-			// The display mode (__WORLD_BGMAP, __WORLD_AFFINE, __WORLD_OBJECT or __WORLD_HBIAS)
-			// Make sure to use the proper corresponding sprite type throughout the spec (BgmapSprite or ObjectSprite)
-			__WORLD_BGMAP,
-
-			// Pointer to affine/hbias manipulation function
-			NULL,
-
-			// Flag to indicate in which display to show the texture (__WORLD_ON, __WORLD_LON or __WORLD_RON)
-			__WORLD_ON,
-		}
-	};
-
 	printing->printingBgmapSegment = BgmapTextureManager::getPrintingBgmapSegment();
 	printing->activePrintingSprite = 
 		PrintingSprite::safeCast(ComponentManager::createComponent(NULL, (ComponentSpec*)&DefaultPrintingSpriteSpec));
