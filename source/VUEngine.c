@@ -113,6 +113,15 @@ static void VUEngine::unregisterEventListener(ListenerObject listener, EventList
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+static bool VUEngine::receieveMessage(uint32 delay, ListenerObject sender, int32 message, void* extraInfo)
+{
+	VUEngine vuEngine = VUEngine::getInstance();
+
+	return MessageDispatcher::dispatchMessage(delay, sender, ListenerObject::safeCast(vuEngine), message, extraInfo);
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 static void VUEngine::reset(bool resetSounds)
 {
 #ifdef __ENABLE_PROFILER
