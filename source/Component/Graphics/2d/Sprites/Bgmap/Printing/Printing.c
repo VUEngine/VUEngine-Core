@@ -864,68 +864,6 @@ static FontSize Printing::getTextSize(const char* string, const char* font)
 // CLASS' PRIVATE METHODS
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void Printing::constructor()
-{
-	// Always explicitly call the base's constructor 
-	Base::constructor();
-
-	// Initialize members
-	this->fonts = new VirtualList();
-	this->printingSprites = new VirtualList();
-	this->mode = __PRINTING_MODE_DEFAULT;
-	this->palette = __PRINTING_PALETTE;
-	this->orientation = kPrintingOrientationHorizontal;
-	this->direction = kPrintingDirectionLTR;
-	this->lastUsedFont = NULL;
-	this->lastUsedFontData = NULL;
-	this->activePrintingSprite = NULL;
-	this->printingBgmapSegment = -1;
-
-	Printing::reset();
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void Printing::destructor()
-{
-	if(!isDeleted(this->fonts))
-	{
-		delete this->fonts;
-	}
-
-	this->fonts = NULL;
-
-	if(!isDeleted(this->printingSprites))
-	{
-		delete this->printingSprites;
-	}
-
-	this->printingSprites = NULL;
-
-	// Allow a new construct
-	// Always explicitly call the base's destructor 
-	Base::destructor();
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-static bool Printing::onFontCharChangedOffset(ListenerObject eventFirer __attribute__((unused)))
-{
-	Printing printing = Printing::getInstance();
-
-	CharSet charSet = CharSet::safeCast(eventFirer);
-
-	if(!isDeleted(charSet))
-	{
-		CharSet::write(charSet);
-		Printing::fireEvent(printing, kEventFontRewritten);
-		NM_ASSERT(!isDeleted(printing), "Printing::onFontCharChangedOffset: deleted printing during kEventFontRewritten");
-	}
-
-	return true;
-}
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
@@ -1108,6 +1046,75 @@ static void Printing::out(uint8 x, uint8 y, const char* string, const char* font
 		}
 		i++;
 	}
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+// CLASS' PRIVATE METHODS
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void Printing::constructor()
+{
+	// Always explicitly call the base's constructor 
+	Base::constructor();
+
+	// Initialize members
+	this->fonts = new VirtualList();
+	this->printingSprites = new VirtualList();
+	this->mode = __PRINTING_MODE_DEFAULT;
+	this->palette = __PRINTING_PALETTE;
+	this->orientation = kPrintingOrientationHorizontal;
+	this->direction = kPrintingDirectionLTR;
+	this->lastUsedFont = NULL;
+	this->lastUsedFontData = NULL;
+	this->activePrintingSprite = NULL;
+	this->printingBgmapSegment = -1;
+
+	Printing::reset();
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void Printing::destructor()
+{
+	if(!isDeleted(this->fonts))
+	{
+		delete this->fonts;
+	}
+
+	this->fonts = NULL;
+
+	if(!isDeleted(this->printingSprites))
+	{
+		delete this->printingSprites;
+	}
+
+	this->printingSprites = NULL;
+
+	// Allow a new construct
+	// Always explicitly call the base's destructor 
+	Base::destructor();
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+bool Printing::onFontCharChangedOffset(ListenerObject eventFirer __attribute__((unused)))
+{
+	Printing printing = Printing::getInstance();
+
+	CharSet charSet = CharSet::safeCast(eventFirer);
+
+	if(!isDeleted(charSet))
+	{
+		CharSet::write(charSet);
+		Printing::fireEvent(printing, kEventFontRewritten);
+		NM_ASSERT(!isDeleted(printing), "Printing::onFontCharChangedOffset: deleted printing during kEventFontRewritten");
+	}
+
+	return true;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

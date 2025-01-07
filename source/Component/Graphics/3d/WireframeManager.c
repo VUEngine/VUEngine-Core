@@ -469,17 +469,6 @@ static bool WireframeManager::sortProgressively()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static bool WireframeManager::onVIPManagerGAMESTARTDuringXPEND(ListenerObject eventFirer __attribute__ ((unused)))
-{
-	WireframeManager wireframeManager = WireframeManager::getInstance();
-
-	wireframeManager->stopDrawing = true;
-
-	return true;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PRIVATE METHODS
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -524,6 +513,17 @@ void WireframeManager::destructor()
 	// Allow a new construct
 	// Always explicitly call the base's destructor 
 	Base::destructor();
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+bool WireframeManager::onVIPManagerGAMESTARTDuringXPEND(ListenerObject eventFirer __attribute__ ((unused)))
+{
+	WireframeManager wireframeManager = WireframeManager::getInstance();
+
+	wireframeManager->stopDrawing = true;
+
+	return true;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

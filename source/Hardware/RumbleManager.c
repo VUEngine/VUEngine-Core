@@ -198,17 +198,6 @@ static void RumbleManager::execute()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static bool RumbleManager::onBroadcastDataDone(ListenerObject eventFirer __attribute__ ((unused)))
-{
-	RumbleManager rumbleManager = RumbleManager::getInstance();
-
-	rumbleManager->rumbleCommandIndex = 0;
-
-	return false;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
 static void RumbleManager::toggleAsync()
 {
 	RumbleManager rumbleManager = RumbleManager::getInstance();
@@ -419,6 +408,17 @@ void RumbleManager::destructor()
 	// Allow a new construct
 	// Always explicitly call the base's destructor 
 	Base::destructor();
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+static bool RumbleManager::onBroadcastDataDone(ListenerObject eventFirer __attribute__ ((unused)))
+{
+	RumbleManager rumbleManager = RumbleManager::getInstance();
+
+	rumbleManager->rumbleCommandIndex = 0;
+
+	return false;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
