@@ -546,7 +546,9 @@ static void VIPManager::processInterrupt(uint16 interrupt)
 				Profiler::lap(kProfilerLapTypeStartInterrupt, NULL);
 #endif
 
-				vipManager->processingXPEND = true;
+				VIPManager::suspendDrawing();
+
+				vipManager->processingXPEND = true;				
 
 				if(vipManager->processingGAMESTART)
 				{
@@ -554,12 +556,6 @@ static void VIPManager::processInterrupt(uint16 interrupt)
 				}
 				else
 				{
-#ifdef __RELEASE
-					_vipRegisters[__XPCTRL] &= ~__XPEN;
-#else
-					VIPManager::suspendDrawing();
-#endif
-
 					// Allow game start interrupt because the frame buffers can change mid drawing
 					if(!(__GAMESTART & interrupt) && 0 != (kVIPGameStartMultiplexedInterrupts & vipManager->enabledMultiplexedInterrupts))
 					{
@@ -570,21 +566,14 @@ static void VIPManager::processInterrupt(uint16 interrupt)
 				}
 
 				VIPManager::applyPostProcessingEffects();
-	
+
 				vipManager->processingXPEND = false;
 
 #ifdef __ENABLE_PROFILER
 				Profiler::lap(kProfilerLapTypeVIPInterruptXPENDProcess, PROCESS_NAME_VRAM_WRITE);
 #endif
 
-				if(!vipManager->processingGAMESTART)
-				{
-#ifdef __RELEASE
-					_vipRegisters[__XPCTRL] |= __XPEN;
-#else
-					VIPManager::resumeDrawing();
-#endif
-				}
+				VIPManager::resumeDrawing();
 
 				break;
 
