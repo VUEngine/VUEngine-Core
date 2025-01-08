@@ -243,7 +243,7 @@ typedef struct PaletteConfig
 
 /// Enums used to control VIP interrupts
 /// @memberof VIPManager
-enum MultiplexedInterrupts
+enum VIPMultiplexedInterrupts
 {
 	kVIPNoMultiplexedInterrupts = 1 << 0,
 	kVIPGameStartMultiplexedInterrupts = 1 << 1,
@@ -251,6 +251,16 @@ enum MultiplexedInterrupts
 	kVIPOnlyVIPMultiplexedInterrupts = kVIPGameStartMultiplexedInterrupts | kVIPXpendMultiplexedInterrupts,
 	kVIPOnlyNonVIPMultiplexedInterrupts = 1 << 3,
 	kVIPAllMultiplexedInterrupts = 0x7FFFFFFF,
+};
+
+/// Enums used to control the suspension and resuming of drawing
+/// @member of VIPManager
+enum VIPManagerStrategies
+{
+	kVIPManagerFavorStability = 0,
+	kVIPManagerFavorPerformance,
+
+	kVIPManagerStrategyLimiter
 };
 
 /// A method pointer for processing special effects after drawing operations are completed
@@ -291,6 +301,10 @@ singleton! class VIPManager : ListenerObject
 
 	/// Enum that determines which multiplexed interrupts are allowed
 	uint32 enabledMultiplexedInterrupts;
+
+	/// Enum to determine if the manager waits for the VIP before suspending/resuming
+	/// the VIP's drawing operations
+	uint32 strategy;
 
 	/// Allows VIP interrupts that the engine doesn't use
 	uint16 customInterrupts;
@@ -340,6 +354,10 @@ singleton! class VIPManager : ListenerObject
 	/// Set the multiplexed interrupts that are allowed
 	/// @param enabledMultiplexedInterrupts: Multiplexed interrupts to allow
 	static void enableMultiplexedInterrupts(uint32 enabledMultiplexedInterrupts);
+
+	/// Set the drawing management strategy interrupts that are allowed
+	/// @param strategy: Value to control the suspension and resuming of drawing
+	static void favorStrategy(uint32 strategy);
 
 	/// Start VIP drawing operations.
 	static void startDrawing();
