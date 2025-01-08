@@ -522,14 +522,19 @@ static ComponentManager ComponentManager::getManager(uint32 componentType)
 
 	switch (componentType)
 	{
+		case kSpriteComponent:
+
+			return ComponentManager::safeCast(SpriteManager::getInstance());
+			break;
+
 		case kColliderComponent:
 
 			return ComponentManager::safeCast(VUEngine::getColliderManager());	
 			break;
 
-		case kSpriteComponent:
+		case kPhysicsComponent:
 
-			return ComponentManager::safeCast(SpriteManager::getInstance());
+			return ComponentManager::safeCast(VUEngine::getBodyManager());	
 			break;
 
 		case kWireframeComponent:
@@ -540,11 +545,6 @@ static ComponentManager ComponentManager::getManager(uint32 componentType)
 		case kBehaviorComponent:
 
 			return ComponentManager::safeCast(BehaviorManager::getInstance());
-			break;
-
-		case kPhysicsComponent:
-
-			return ComponentManager::safeCast(VUEngine::getBodyManager());	
 			break;
 	}
 

@@ -42,11 +42,11 @@ enum ComponentCommands
 /// @memberof Component
 enum ComponentTypes
 {
-	kColliderComponent = 0,
-	kSpriteComponent,
+	kSpriteComponent = 0,
+	kColliderComponent,
+	kPhysicsComponent,
 	kWireframeComponent,
 	kBehaviorComponent,
-	kPhysicsComponent,
 
 	// Limmiter
 	kComponentTypes,
