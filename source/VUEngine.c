@@ -154,9 +154,6 @@ static void VUEngine::reset(bool resetSounds)
 
 	// The order of reset for the graphics managers must not be changed!
 	VIPManager::reset();
-	SpriteManager::reset();
-	DirectDraw::reset();
-	AnimationCoordinatorFactory::reset();
 
 	VIPManager::registerEventListener
 	(
@@ -177,6 +174,11 @@ static void VUEngine::reset(bool resetSounds)
 		kEventVIPManagerXPEND
 	);
 #endif
+
+	SpriteManager::reset();
+	WireframeManager::reset();
+	DirectDraw::reset();
+	AnimationCoordinatorFactory::reset();
 
 	HardwareManager::enableInterrupts();
 }
@@ -1208,19 +1210,19 @@ static void VUEngine::cleanUp()
 {
 	VUEngine vuEngine = VUEngine::getInstance();
 
-	VIPManager::registerEventListener
+	VIPManager::unregisterEventListener
 	(
 		ListenerObject::safeCast(vuEngine), (EventListener)VUEngine::onVIPFRAMESTART, 
 		kEventVIPManagerFRAMESTART
 	);
 
-	VIPManager::registerEventListener
+	VIPManager::unregisterEventListener
 	(
 		ListenerObject::safeCast(vuEngine), (EventListener)VUEngine::onVIPGAMESTART, 
 		kEventVIPManagerGAMESTART
 	);
 
-	VIPManager::registerEventListener
+	VIPManager::unregisterEventListener
 	(
 		ListenerObject::safeCast(vuEngine), (EventListener)VUEngine::onVIPXPEND, 
 		kEventVIPManagerXPEND
