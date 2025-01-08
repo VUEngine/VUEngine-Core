@@ -64,9 +64,12 @@ enum Events
 	kEventVIPManagerInterrupt,
 	kEventVIPManagerTimeError,
 	kEventVIPManagerScanError,
+	kEventVIPManagerFRAMESTART,
+	kEventVIPManagerGAMESTART,
 	kEventVIPManagerGAMESTARTDuringGAMESTART,
-	kEventVIPManagerXPENDDuringXPEND,
 	kEventVIPManagerGAMESTARTDuringXPEND,
+	kEventVIPManagerXPEND,
+	kEventVIPManagerXPENDDuringXPEND,
 	kEventVIPManagerXPENDDuringGAMESTART,
 
 	kEventKeypadManagerRaisedPowerFlag,

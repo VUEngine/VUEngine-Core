@@ -15,18 +15,12 @@
 #include <Debug.h>
 #endif
 #include <DebugConfig.h>
-#include <DirectDraw.h>
 #include <HardwareManager.h>
 #include <Mem.h>
-#include <ObjectSprite.h>
-#include <ObjectSpriteContainer.h>
 #include <Printing.h>
 #include <Profiler.h>
-#include <SpriteManager.h>
 #include <VirtualList.h>
 #include <VirtualNode.h>
-#include <VUEngine.h>
-#include <WireframeManager.h>
 
 #include "VIPManager.h"
 
@@ -511,24 +505,15 @@ static void VIPManager::processInterrupt(uint16 interrupt)
 		{
 			case __FRAMESTART:
 
-#ifdef __SHOW_PROCESS_NAME_DURING_FRAMESTART
-				PRINT_TEXT("F START:            ", 0, 27);
-				PRINT_TEXT(VUEngine::getProcessName(), 9, 27);
-#endif
-
 				vipManager->FRAMESTARTDuringXPEND = vipManager->processingXPEND;
-				VUEngine::frameStarted(__MILLISECONDS_PER_SECOND / __MAXIMUM_FPS);
+
+				VIPManager::fireEvent(vipManager, kEventVIPManagerFRAMESTART);
 				break;
 
 			case __GAMESTART:
 
 #ifdef __ENABLE_PROFILER
 				Profiler::lap(kProfilerLapTypeStartInterrupt, NULL);
-#endif
-
-#ifdef __SHOW_PROCESS_NAME_DURING_GAMESTART
-				PRINT_TEXT("G START:           ", 0, 26);
-				PRINT_TEXT(VUEngine::getProcessName(), 9, 26);
 #endif
 
 				vipManager->processingGAMESTART = true;
@@ -538,10 +523,7 @@ static void VIPManager::processInterrupt(uint16 interrupt)
 
 				if(vipManager->processingXPEND)
 				{
-					if(NULL != vipManager->events)
-					{
-						VIPManager::fireEvent(vipManager, kEventVIPManagerGAMESTARTDuringXPEND);
-					}
+					VIPManager::fireEvent(vipManager, kEventVIPManagerGAMESTARTDuringXPEND);
 				}
 				else
 				{
@@ -550,12 +532,9 @@ static void VIPManager::processInterrupt(uint16 interrupt)
 					{
 						VIPManager::enableInterrupts(__XPEND);
 					}
-				}
 
-				// Process game's logic
-				VUEngine::gameFrameStarted(vipManager->gameFrameDuration);
-				SpriteManager::render();
-				WireframeManager::render();
+					VIPManager::fireEvent(vipManager, kEventVIPManagerGAMESTART);
+				}
 
 				vipManager->processingGAMESTART = false;
 
@@ -574,19 +553,11 @@ static void VIPManager::processInterrupt(uint16 interrupt)
 				Profiler::lap(kProfilerLapTypeStartInterrupt, NULL);
 #endif
 
-#ifdef __SHOW_PROCESS_NAME_DURING_XPEND
-				PRINT_TEXT("XPEND:            ", 0, 27);
-				PRINT_TEXT(VUEngine::getProcessName(), 9, 27);
-#endif
-
 				vipManager->processingXPEND = true;
 
 				if(vipManager->processingGAMESTART)
 				{
-					if(NULL != vipManager->events)
-					{
-						VIPManager::fireEvent(vipManager, kEventVIPManagerXPENDDuringGAMESTART);
-					}
+					VIPManager::fireEvent(vipManager, kEventVIPManagerXPENDDuringGAMESTART);
 				}
 				else
 				{
@@ -601,11 +572,10 @@ static void VIPManager::processInterrupt(uint16 interrupt)
 					{
 						VIPManager::enableInterrupts(__GAMESTART);
 					}
+
+					VIPManager::fireEvent(vipManager, kEventVIPManagerXPEND);
 				}
 
-				SpriteManager::writeDRAM();
-				DirectDraw::preparteToDraw();
-				WireframeManager::draw();
 				VIPManager::applyPostProcessingEffects();
 
 				vipManager->processingXPEND = false;
@@ -741,12 +711,12 @@ static void VIPManager::clearDRAM()
 	for(int32 i = 0; i < __TOTAL_OBJECTS; i++)
 	{
 		_objectAttributesCache[i].jx = 0;
-		_objectAttributesCache[i].head = __OBJECT_SPRITE_CHAR_HIDE_MASK;
+		_objectAttributesCache[i].head = 0;
 		_objectAttributesCache[i].jy = 0;
 		_objectAttributesCache[i].tile = 0;
 
 		_objectAttributesBaseAddress[i].jx = 0;
-		_objectAttributesBaseAddress[i].head = __OBJECT_SPRITE_CHAR_HIDE_MASK;
+		_objectAttributesBaseAddress[i].head = 0;
 		_objectAttributesBaseAddress[i].jy = 0;
 		_objectAttributesBaseAddress[i].tile = 0;
 	}

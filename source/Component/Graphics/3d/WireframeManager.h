@@ -42,6 +42,9 @@ singleton class WireframeManager : ComponentManager
 {
 	/// @protectedsection
 
+	/// Flag used to break the rendering due to high frame time
+	volatile bool stopRendering;
+
 	/// Flag used to break the drawing due to high frame time
 	volatile bool stopDrawing;
 

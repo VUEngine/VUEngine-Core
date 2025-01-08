@@ -13,6 +13,7 @@
 
 #include <Camera.h>
 #include <DebugConfig.h>
+#include <DirectDraw.h>
 #include <Printing.h>
 #include <VirtualList.h>
 #include <VIPManager.h>
@@ -118,6 +119,30 @@ static void WireframeManager::enable()
 	WireframeManager wireframeManager = WireframeManager::getInstance();
 
 	wireframeManager->disabled = false;
+
+	VIPManager::registerEventListener
+	(
+		ListenerObject::safeCast(wireframeManager), (EventListener)WireframeManager::onVIPGAMESTART, 
+		kEventVIPManagerGAMESTART
+	);
+
+	VIPManager::registerEventListener
+	(
+		ListenerObject::safeCast(wireframeManager), (EventListener)WireframeManager::onVIPXPEND, 
+		kEventVIPManagerXPEND
+	);
+
+	VIPManager::registerEventListener
+	(
+		ListenerObject::safeCast(wireframeManager), (EventListener)WireframeManager::onVIPManagerGAMESTARTDuringXPEND, 
+		kEventVIPManagerGAMESTARTDuringXPEND
+	);
+
+	VIPManager::registerEventListener
+	(
+		ListenerObject::safeCast(wireframeManager), (EventListener)WireframeManager::onVIPManagerXPENDDuringGAMESTART, 
+		kEventVIPManagerGAMESTARTDuringXPEND
+	);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -127,6 +152,30 @@ static void WireframeManager::disable()
 	WireframeManager wireframeManager = WireframeManager::getInstance();
 
 	wireframeManager->disabled = true;
+
+	VIPManager::unregisterEventListener
+	(
+		ListenerObject::safeCast(wireframeManager), (EventListener)WireframeManager::onVIPGAMESTART, 
+		kEventVIPManagerGAMESTARTDuringXPEND
+	);
+
+	VIPManager::unregisterEventListener
+	(
+		ListenerObject::safeCast(wireframeManager), (EventListener)WireframeManager::onVIPXPEND, 
+		kEventVIPManagerGAMESTARTDuringXPEND
+	);
+
+	VIPManager::unregisterEventListener
+	(
+		ListenerObject::safeCast(wireframeManager), (EventListener)WireframeManager::onVIPManagerGAMESTARTDuringXPEND, 
+		kEventVIPManagerGAMESTARTDuringXPEND
+	);
+
+	VIPManager::unregisterEventListener
+	(
+		ListenerObject::safeCast(wireframeManager), (EventListener)WireframeManager::onVIPManagerXPENDDuringGAMESTART, 
+		kEventVIPManagerGAMESTARTDuringXPEND
+	);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -230,7 +279,7 @@ static void WireframeManager::render()
 	wireframeManager->renderedWireframes = 0;
 #endif
 
-	for(VirtualNode node = wireframeManager->components->head; NULL != node; node = node->next)
+	for(VirtualNode node = wireframeManager->components->head; !wireframeManager->stopRendering &&  NULL != node; node = node->next)
 	{
 		Wireframe wireframe = Wireframe::safeCast(node->data);
 
@@ -288,20 +337,17 @@ static void WireframeManager::draw()
 		return;
 	}
 
-	wireframeManager->stopDrawing = false;
-
 #ifdef __PROFILE_WIREFRAMES
 	wireframeManager->drawnWireframes = 0;
 #endif
 
-	// Check the colliders
 	for(VirtualNode node = wireframeManager->components->head; !wireframeManager->stopDrawing && NULL != node; node = node->next)
 	{
 		Wireframe wireframe = Wireframe::safeCast(node->data);
 
 		wireframe->drawn = false;
 
-		if(!wireframe->rendered || __COLOR_BLACK == wireframe->color)
+		if(__COLOR_BLACK == wireframe->color)
 		{
 			continue;
 		}
@@ -477,17 +523,12 @@ void WireframeManager::constructor()
 	// Always explicitly call the base's constructor 
 	Base::constructor();
 
+	this->stopRendering = false;
 	this->stopDrawing = false;
 	this->evenFrame = __TRANSPARENCY_EVEN;
 	this->disabled = false;
 	this->renderedWireframes = 0;
 	this->drawnWireframes = 00;
-
-	VIPManager::registerEventListener
-	(
-		ListenerObject::safeCast(this), (EventListener)WireframeManager::onVIPManagerGAMESTARTDuringXPEND, 
-		kEventVIPManagerGAMESTARTDuringXPEND
-	);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -501,12 +542,6 @@ void WireframeManager::destructor()
 		VirtualList::deleteData(this->components);
 	}
 
-	VIPManager::unregisterEventListener
-	(
-		ListenerObject::safeCast(this), (EventListener)WireframeManager::onVIPManagerGAMESTARTDuringXPEND, 
-		kEventVIPManagerGAMESTARTDuringXPEND
-	);
-
 	// Allow a new construct
 	// Always explicitly call the base's destructor 
 	Base::destructor();
@@ -514,11 +549,43 @@ void WireframeManager::destructor()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+bool WireframeManager::onVIPGAMESTART(ListenerObject eventFirer __attribute__ ((unused)))
+{
+	this->stopRendering = false;
+//	this->stopDrawing = true;
+
+	WireframeManager::render();
+
+	return true;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+bool WireframeManager::onVIPXPEND(ListenerObject eventFirer __attribute__ ((unused)))
+{
+	this->stopRendering = true;
+	this->stopDrawing = false;
+
+	DirectDraw::preparteToDraw();
+	WireframeManager::draw();
+
+	return true;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 bool WireframeManager::onVIPManagerGAMESTARTDuringXPEND(ListenerObject eventFirer __attribute__ ((unused)))
 {
-	WireframeManager wireframeManager = WireframeManager::getInstance();
+//	this->stopDrawing = true;
 
-	wireframeManager->stopDrawing = true;
+	return true;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+bool WireframeManager::onVIPManagerXPENDDuringGAMESTART(ListenerObject eventFirer __attribute__ ((unused)))
+{
+	this->stopRendering = true;
 
 	return true;
 }

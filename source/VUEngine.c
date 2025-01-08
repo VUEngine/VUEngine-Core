@@ -124,6 +124,8 @@ static bool VUEngine::receieveMessage(uint32 delay, ListenerObject sender, int32
 
 static void VUEngine::reset(bool resetSounds)
 {
+	VUEngine vuEngine = VUEngine::getInstance();
+
 #ifdef __ENABLE_PROFILER
 	Profiler::reset();
 #endif
@@ -155,6 +157,26 @@ static void VUEngine::reset(bool resetSounds)
 	SpriteManager::reset();
 	DirectDraw::reset();
 	AnimationCoordinatorFactory::reset();
+
+	VIPManager::registerEventListener
+	(
+		ListenerObject::safeCast(vuEngine), (EventListener)VUEngine::onVIPFRAMESTART, 
+		kEventVIPManagerFRAMESTART
+	);
+
+	VIPManager::registerEventListener
+	(
+		ListenerObject::safeCast(vuEngine), (EventListener)VUEngine::onVIPGAMESTART, 
+		kEventVIPManagerGAMESTART
+	);
+
+#ifdef __SHOW_PROCESS_NAME_DURING_XPEND
+	VIPManager::registerEventListener
+	(
+		ListenerObject::safeCast(vuEngine), (EventListener)VUEngine::onVIPXPEND, 
+		kEventVIPManagerXPEND
+	);
+#endif
 
 	HardwareManager::enableInterrupts();
 }
@@ -577,6 +599,11 @@ static void VUEngine::frameStarted(uint16 gameFrameDuration)
 {
 	VUEngine vuEngine = VUEngine::getInstance();
 
+#ifdef __SHOW_PROCESS_NAME_DURING_FRAMESTART
+	PRINT_TEXT("F START:            ", 0, 27);
+	PRINT_TEXT(vuEngine->processName, 9, 27);
+#endif
+
 	static uint16 totalTime = 0;
 
 	totalTime += gameFrameDuration;
@@ -653,6 +680,11 @@ static void VUEngine::gameFrameStarted(uint16 gameFrameDuration)
 {
 	VUEngine vuEngine = VUEngine::getInstance();
 
+#ifdef __SHOW_PROCESS_NAME_DURING_GAMESTART
+	PRINT_TEXT("G START:           ", 0, 26);
+	PRINT_TEXT(vuEngine->processName, 9, 26);
+#endif
+
 	vuEngine->gameFrameStarted = true;
 
 	VUEngine::focusCamera();
@@ -673,6 +705,16 @@ static void VUEngine::gameFrameStarted(uint16 gameFrameDuration)
 #endif
 
 	FrameRate::gameFrameStarted(vuEngine->currentGameCycleEnded, printFPS);
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+static void VUEngine::drawingStarted()
+{
+#ifdef __SHOW_PROCESS_NAME_DURING_XPEND
+	PRINT_TEXT("XPEND:            ", 0, 27);
+	PRINT_TEXT(vuEngine->processName, 9, 26);
+#endif
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -1162,6 +1204,31 @@ static bool VUEngine::isInSoundTest()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+static void VUEngine::cleanUp()
+{
+	VUEngine vuEngine = VUEngine::getInstance();
+
+	VIPManager::registerEventListener
+	(
+		ListenerObject::safeCast(vuEngine), (EventListener)VUEngine::onVIPFRAMESTART, 
+		kEventVIPManagerFRAMESTART
+	);
+
+	VIPManager::registerEventListener
+	(
+		ListenerObject::safeCast(vuEngine), (EventListener)VUEngine::onVIPGAMESTART, 
+		kEventVIPManagerGAMESTART
+	);
+
+	VIPManager::registerEventListener
+	(
+		ListenerObject::safeCast(vuEngine), (EventListener)VUEngine::onVIPXPEND, 
+		kEventVIPManagerXPEND
+	);
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PRIVATE METHODS
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -1206,6 +1273,8 @@ void VUEngine::constructor()
 
 void VUEngine::destructor()
 {
+	VUEngine::cleanUp();
+
 	// Destroy the clocks
 	Clock::destructor(this->clock);
 
@@ -1377,6 +1446,33 @@ bool VUEngine::changedState(ListenerObject eventFirer)
 	FrameRate::reset();
 
 	return false;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+bool VUEngine::onVIPFRAMESTART(ListenerObject eventFirer __attribute__ ((unused)))
+{
+	VUEngine::frameStarted(__MILLISECONDS_PER_SECOND / __MAXIMUM_FPS);
+
+	return true;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+bool VUEngine::onVIPGAMESTART(ListenerObject eventFirer __attribute__ ((unused)))
+{
+	VUEngine::gameFrameStarted(VIPManager::getGameFrameDuration());
+
+	return true;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+bool VUEngine::onVIPXPEND(ListenerObject eventFirer __attribute__ ((unused)))
+{
+	VUEngine::drawingStarted();
+	
+	return true;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

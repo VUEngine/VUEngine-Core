@@ -149,6 +149,18 @@ static void SpriteManager::reset()
 
 	spriteManager->evenFrame = __TRANSPARENCY_EVEN;
 
+	VIPManager::registerEventListener
+	(
+		ListenerObject::safeCast(spriteManager), (EventListener)SpriteManager::onVIPGAMESTART, 
+		kEventVIPManagerGAMESTART
+	);
+
+	VIPManager::registerEventListener
+	(
+		ListenerObject::safeCast(spriteManager), (EventListener)SpriteManager::onVIPXPEND, 
+		kEventVIPManagerXPEND
+	);
+
 	HardwareManager::resumeInterrupts();
 }
 
@@ -866,6 +878,18 @@ static void SpriteManager::cleanUp()
 {
 	SpriteManager spriteManager = SpriteManager::getInstance();
 
+	VIPManager::unregisterEventListener
+	(
+		ListenerObject::safeCast(spriteManager), (EventListener)SpriteManager::onVIPGAMESTART, 
+		kEventVIPManagerGAMESTARTDuringXPEND
+	);
+
+	VIPManager::unregisterEventListener
+	(
+		ListenerObject::safeCast(spriteManager), (EventListener)SpriteManager::onVIPXPEND, 
+		kEventVIPManagerGAMESTARTDuringXPEND
+	);
+
 	if(!isDeleted(spriteManager->components))
 	{
 		VirtualList::deleteData(spriteManager->components);
@@ -1109,6 +1133,24 @@ void SpriteManager::destructor()
 	// Allow a new construct
 	// Always explicitly call the base's destructor 
 	Base::destructor();
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+bool SpriteManager::onVIPGAMESTART(ListenerObject eventFirer __attribute__ ((unused)))
+{
+	SpriteManager::render();
+
+	return true;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+bool SpriteManager::onVIPXPEND(ListenerObject eventFirer __attribute__ ((unused)))
+{
+	SpriteManager::writeDRAM();
+
+	return true;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
