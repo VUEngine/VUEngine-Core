@@ -234,8 +234,6 @@ static void WireframeManager::render()
 	{
 		Wireframe wireframe = Wireframe::safeCast(node->data);
 
-		wireframe->rendered = false;
-
 		if
 		(
 			__HIDE == wireframe->show || (wireframe->transparency & wireframeManager->evenFrame) || 
@@ -250,7 +248,6 @@ static void WireframeManager::render()
 		}
 
 		Vector3D relativePosition = Vector3D::zero();
-		wireframe->rendered = false;
 
 		if(!Wireframe::prepareForRender(wireframe, &relativePosition))
 		{
