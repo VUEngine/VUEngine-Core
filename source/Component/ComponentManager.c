@@ -472,14 +472,7 @@ static bool ComponentManager::calculateRightBox(Entity owner, RightBox* rightBox
 			continue;
 		}
 
-		if(0 < ComponentManager::getCount(owner, i))
-		{
-			VirtualList components = ComponentManager::getComponents(owner, kSpriteComponent);
-
-			ComponentManager::getRightBoxFromComponents(components, rightBox);
-
-			modified = true;
-		}
+		modified |= ComponentManager::getRightBoxFromComponents(componentManager, owner, rightBox);
 	}
 
 	return modified;
@@ -616,16 +609,25 @@ static void ComponentManager::cleanOwnerComponentLists(Entity owner, uint32 comp
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void ComponentManager::getRightBoxFromComponents(VirtualList components, RightBox* rightBox)
+static bool ComponentManager::getRightBoxFromComponents(ComponentManager componentMananager, Entity owner, RightBox* rightBox)
 {
-	if(isDeleted(components) || NULL == rightBox)
+	if(NULL == rightBox)
 	{
-		return;
+		return false;
 	}
 
-	for(VirtualNode node = components->head; node; node = node->next)
+	bool modified = false;
+
+	for(VirtualNode node = componentMananager->components->head; node; node = node->next)
 	{
 		Component component = Component::safeCast(node->data);
+
+		if(owner != component->owner)
+		{
+			continue;
+		}
+
+		modified = true;
 
 		RightBox componentRightBox = Component::getRightBox(component);
 
@@ -663,6 +665,8 @@ static void ComponentManager::getRightBoxFromComponents(VirtualList components, 
 			rightBox->z1 = componentRightBox.z1;
 		}
 	}
+
+	return modified;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
