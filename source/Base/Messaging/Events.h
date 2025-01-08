@@ -61,7 +61,6 @@ enum Events
 	kEventSoundFinished,
 	kEventSoundReleased,
 
-	kEventVIPManagerInterrupt,
 	kEventVIPManagerTimeError,
 	kEventVIPManagerScanError,
 	kEventVIPManagerFRAMESTART,

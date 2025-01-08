@@ -141,7 +141,7 @@ static void WireframeManager::enable()
 	VIPManager::registerEventListener
 	(
 		ListenerObject::safeCast(wireframeManager), (EventListener)WireframeManager::onVIPManagerXPENDDuringGAMESTART, 
-		kEventVIPManagerGAMESTARTDuringXPEND
+		kEventVIPManagerXPENDDuringGAMESTART
 	);
 }
 
@@ -168,7 +168,7 @@ static void WireframeManager::disable()
 	VIPManager::unregisterEventListener
 	(
 		ListenerObject::safeCast(wireframeManager), (EventListener)WireframeManager::onVIPManagerGAMESTARTDuringXPEND, 
-		kEventVIPManagerGAMESTARTDuringXPEND
+		kEventVIPManagerXPENDDuringGAMESTART
 	);
 
 	VIPManager::unregisterEventListener
@@ -552,7 +552,7 @@ void WireframeManager::destructor()
 bool WireframeManager::onVIPGAMESTART(ListenerObject eventFirer __attribute__ ((unused)))
 {
 	this->stopRendering = false;
-//	this->stopDrawing = true;
+	this->stopDrawing = false;
 
 	WireframeManager::render();
 
@@ -563,7 +563,6 @@ bool WireframeManager::onVIPGAMESTART(ListenerObject eventFirer __attribute__ ((
 
 bool WireframeManager::onVIPXPEND(ListenerObject eventFirer __attribute__ ((unused)))
 {
-	this->stopRendering = true;
 	this->stopDrawing = false;
 
 	DirectDraw::preparteToDraw();
@@ -586,6 +585,8 @@ bool WireframeManager::onVIPManagerGAMESTARTDuringXPEND(ListenerObject eventFire
 bool WireframeManager::onVIPManagerXPENDDuringGAMESTART(ListenerObject eventFirer __attribute__ ((unused)))
 {
 	this->stopRendering = true;
+	DirectDraw::preparteToDraw();
+	WireframeManager::draw();
 
 	return true;
 }

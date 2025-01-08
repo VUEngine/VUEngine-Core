@@ -107,13 +107,6 @@ static void VIPManager::interruptHandler()
 	}
 #endif
 
-#ifdef __VIP_MANAGER_FIRE_INTERRUPT_EVENT
-	if(vipManager->events)
-	{
-		VIPManager::fireEvent(vipManager, kEventVIPManagerInterrupt);
-	}
-#endif
-
 	// Handle the interrupt
 	VIPManager::processInterrupt(vipManager->currrentInterrupt);
 
@@ -577,7 +570,7 @@ static void VIPManager::processInterrupt(uint16 interrupt)
 				}
 
 				VIPManager::applyPostProcessingEffects();
-
+	
 				vipManager->processingXPEND = false;
 
 #ifdef __ENABLE_PROFILER
