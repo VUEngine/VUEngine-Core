@@ -163,7 +163,7 @@ static void VUEngine::reset(bool resetSounds)
 
 	VIPManager::registerEventListener
 	(
-		ListenerObject::safeCast(vuEngine), (EventListener)VUEngine::onVIPGAMESTART, 
+		ListenerObject::safeCast(vuEngine), (EventListener)VUEngine::onVIPGAMESTART,
 		kEventVIPManagerGAMESTART
 	);
 
@@ -601,11 +601,6 @@ static void VUEngine::frameStarted(uint16 gameFrameDuration)
 {
 	VUEngine vuEngine = VUEngine::getInstance();
 
-#ifdef __SHOW_PROCESS_NAME_DURING_FRAMESTART
-	PRINT_TEXT("F START:            ", 0, 27);
-	PRINT_TEXT(vuEngine->processName, 9, 27);
-#endif
-
 	static uint16 totalTime = 0;
 
 	totalTime += gameFrameDuration;
@@ -682,11 +677,6 @@ static void VUEngine::gameFrameStarted(uint16 gameFrameDuration)
 {
 	VUEngine vuEngine = VUEngine::getInstance();
 
-#ifdef __SHOW_PROCESS_NAME_DURING_GAMESTART
-	PRINT_TEXT("G START:           ", 0, 26);
-	PRINT_TEXT(vuEngine->processName, 9, 26);
-#endif
-
 	vuEngine->gameFrameStarted = true;
 
 	VUEngine::focusCamera();
@@ -712,12 +702,7 @@ static void VUEngine::gameFrameStarted(uint16 gameFrameDuration)
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 static void VUEngine::drawingStarted()
-{
-#ifdef __SHOW_PROCESS_NAME_DURING_XPEND
-	PRINT_TEXT("XPEND:            ", 0, 27);
-	PRINT_TEXT(vuEngine->processName, 9, 26);
-#endif
-}
+{}
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
@@ -1454,6 +1439,11 @@ bool VUEngine::changedState(ListenerObject eventFirer)
 
 bool VUEngine::onVIPFRAMESTART(ListenerObject eventFirer __attribute__ ((unused)))
 {
+#ifdef __SHOW_PROCESS_NAME_DURING_FRAMESTART
+	PRINT_TEXT("F START:            ", 0, 27);
+	PRINT_TEXT(vuEngine->processName, 9, 27);
+#endif
+
 	VUEngine::frameStarted(__MILLISECONDS_PER_SECOND / __MAXIMUM_FPS);
 
 	return true;
@@ -1463,6 +1453,11 @@ bool VUEngine::onVIPFRAMESTART(ListenerObject eventFirer __attribute__ ((unused)
 
 bool VUEngine::onVIPGAMESTART(ListenerObject eventFirer __attribute__ ((unused)))
 {
+#ifdef __SHOW_PROCESS_NAME_DURING_GAMESTART
+	PRINT_TEXT("G START:           ", 0, 26);
+	PRINT_TEXT(vuEngine->processName, 9, 26);
+#endif
+
 	VUEngine::gameFrameStarted(VIPManager::getGameFrameDuration());
 
 	return true;
@@ -1472,6 +1467,11 @@ bool VUEngine::onVIPGAMESTART(ListenerObject eventFirer __attribute__ ((unused))
 
 bool VUEngine::onVIPXPEND(ListenerObject eventFirer __attribute__ ((unused)))
 {
+#ifdef __SHOW_PROCESS_NAME_DURING_XPEND
+	PRINT_TEXT("XPEND:            ", 0, 27);
+	PRINT_TEXT(vuEngine->processName, 9, 26);
+#endif
+
 	VUEngine::drawingStarted();
 	
 	return true;
