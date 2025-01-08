@@ -77,7 +77,14 @@ static Component ComponentManager::createComponent(Entity owner, const Component
 	}
 #endif
 
-	return ComponentManager::instantiateComponent(componentManager, owner, componentSpec);
+	Component component = ComponentManager::instantiateComponent(componentManager, owner, componentSpec);
+
+	if(!isDeleted(component) && !isDeleted(owner))
+	{
+		Entity::addedComponent(owner, component);
+	}
+
+	return component;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -108,6 +115,11 @@ static void ComponentManager::destroyComponent(Entity owner, Component component
 		return;
 	}
 
+	if(!isDeleted(owner))
+	{
+		Entity::removedComponent(owner, component);
+	}
+
 	ComponentManager::deinstantiateComponent(componentManager, owner, component);
 }
 
@@ -120,14 +132,7 @@ static Component ComponentManager::addComponent(Entity owner, const ComponentSpe
 		return NULL;
 	}
 
-	Component component = ComponentManager::createComponent(owner, componentSpec);
-
-	if(!isDeleted(component))
-	{
-		Entity::addedComponent(owner, component);
-	}
-
-	return component;
+	return ComponentManager::createComponent(owner, componentSpec);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -142,11 +147,6 @@ static void ComponentManager::removeComponent(Entity owner, Component component)
 	if(owner != component->owner)
 	{
 		return;
-	}
-
-	if(!isDeleted(owner))
-	{
-		Entity::removedComponent(owner, component);
 	}
 
 	ComponentManager::destroyComponent(owner, component);
