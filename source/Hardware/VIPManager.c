@@ -92,8 +92,8 @@ static void VIPManager::interruptHandler()
 
 	vipManager->currrentInterrupt = _vipRegisters[__INTPND];
 
-	// Disable interrupts
-	VIPManager::disableInterrupts();
+	// Clear interrupts
+	VIPManager::clearInterrupts();
 
 #ifndef __DEBUG
 	if(kVIPNoMultiplexedInterrupts != vipManager->enabledMultiplexedInterrupts)
@@ -540,20 +540,14 @@ static void VIPManager::processInterrupt(uint16 interrupt)
 				// Configure the drawing frame buffers
 				VIPManager::registerCurrentDrawingFrameBufferSet();
 
-				if(vipManager->processingXPEND)
-				{
-					VIPManager::fireEvent(vipManager, kEventVIPManagerGAMESTARTDuringXPEND);
-				}
-				else
-				{
-					// Listen for the end of drawing operations
-					if(!(__XPEND & interrupt) && 0 != (kVIPAllMultiplexedInterrupts & vipManager->enabledMultiplexedInterrupts))
-					{
-						VIPManager::enableInterrupts(__XPEND);
-					}
-
-					VIPManager::fireEvent(vipManager, kEventVIPManagerGAMESTART);
-				}
+				VIPManager::fireEvent
+				(
+					vipManager, 
+					vipManager->processingXPEND ? 
+						kEventVIPManagerGAMESTARTDuringXPEND 
+						:
+						kEventVIPManagerGAMESTART
+				);
 
 				vipManager->processingGAMESTART = false;
 
@@ -571,25 +565,18 @@ static void VIPManager::processInterrupt(uint16 interrupt)
 #ifdef __ENABLE_PROFILER
 				Profiler::lap(kProfilerLapTypeStartInterrupt, NULL);
 #endif
-
 				VIPManager::suspendDrawing();
 
 				vipManager->processingXPEND = true;				
 
-				if(vipManager->processingGAMESTART)
-				{
-					VIPManager::fireEvent(vipManager, kEventVIPManagerXPENDDuringGAMESTART);
-				}
-				else
-				{
-					// Allow game start interrupt because the frame buffers can change mid drawing
-					if(!(__GAMESTART & interrupt) && 0 != (kVIPGameStartMultiplexedInterrupts & vipManager->enabledMultiplexedInterrupts))
-					{
-						VIPManager::enableInterrupts(__GAMESTART);
-					}
-
-					VIPManager::fireEvent(vipManager, kEventVIPManagerXPEND);
-				}
+				VIPManager::fireEvent
+				(
+					vipManager, 
+					vipManager->processingGAMESTART ? 
+						kEventVIPManagerXPENDDuringGAMESTART 
+						:
+						kEventVIPManagerXPEND
+				);
 
 				VIPManager::applyPostProcessingEffects();
 
@@ -641,9 +628,18 @@ static void VIPManager::enableInterrupts(uint16 interruptCode)
 
 static void VIPManager::disableInterrupts()
 {
-	_vipRegisters[__INTENB]= 0;
+	_vipRegisters[__INTENB] = 0;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+static void VIPManager::clearInterrupts()
+{
 	_vipRegisters[__INTCLR] = _vipRegisters[__INTPND];
 }
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 static void VIPManager::applyPostProcessingEffects()
 {
 	VIPManager vipManager = VIPManager::getInstance();
