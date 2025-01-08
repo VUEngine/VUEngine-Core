@@ -217,6 +217,10 @@ static void VIPManager::resumeDrawing()
 	{
 		if(kVIPManagerFavorStability == vipManager->strategy)
 		{
+			// If this is removed, there is some race condition that causes flickering with 
+			// wireframe drawing
+			VIPManager::enableInterrupts(__GAMESTART | __XPEND);
+
 			while(_vipRegisters[__XPSTTS] & __XPBSY);
 		}
 
