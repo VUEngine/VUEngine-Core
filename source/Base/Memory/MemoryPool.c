@@ -58,7 +58,8 @@
 																										\
 			/*  */																						\
 			ClassName instance = &_singletonWrapper ## ClassName.instance;								\
-			_singletonWrapper ## ClassName.objectMemoryFootprint =  (__OBJECT_MEMORY_FOOT_PRINT << 16) | -1;												\
+			_singletonWrapper ## ClassName.objectMemoryFootprint 										\
+				=  (__OBJECT_MEMORY_FOOT_PRINT << 16) | -1;												\
 			/* set the vtable pointer */																\
 			instance->vTable = &ClassName ## _vTable;													\
 																										\
@@ -73,7 +74,7 @@
 		}																								\
 																										\
 		/* define get instance method */																\
-		static ClassName ClassName ## _getInstance()															\
+		static ClassName ClassName ## _getInstance()													\
 		{																								\
 			/* first check if not constructed yet */													\
 			if(__SINGLETON_NOT_CONSTRUCTED == _singletonConstructed)									\
