@@ -147,6 +147,7 @@ void Stage::constructor(StageSpec *stageSpec)
 	this->streamingAmplitude = this->stageSpec->streaming.streamingAmplitude;
 	this->reverseStreaming = false;
 	this->cameraTransformation.position = Vector3D::getFromPixelVector(this->stageSpec->level.cameraInitialPosition);
+	this->cameraTransformation.rotation = Rotation::zero();
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

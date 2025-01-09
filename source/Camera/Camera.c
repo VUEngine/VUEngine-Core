@@ -4,7 +4,7 @@
  * © Jorge Eremiev <jorgech3@gmail.com> and Christian Radke <c.radke@posteo.de>
  *
  * For the full copyright and license information, please view the LICENSE file
- * that was distributed with camera source code.
+ * that was distributed with this source code.
  */
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -38,139 +38,119 @@ const CameraFrustum* _cameraFrustum __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE 
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void Camera::reset()
+void Camera::reset()
 {
-	Camera camera = Camera::getInstance();
+	this->transformation.position = Vector3D::zero();
+	this->transformation.rotation = Rotation::zero();
+	this->displacement = Vector3D::zero();
+	this->invertedRotation = Rotation::zero();
+	this->lastDisplacement = Vector3D::zero();
 
-	camera->transformation.position = Vector3D::zero();
-	camera->transformation.rotation = Rotation::zero();
-	camera->displacement = Vector3D::zero();
-	camera->invertedRotation = Rotation::zero();
-	camera->lastDisplacement = Vector3D::zero();
+	this->transformationFlags = __VALID_TRANSFORMATION;
 
-	camera->transformationFlags = __VALID_TRANSFORMATION;
+	Camera::resetCameraFrustum(this);
 
-	Camera::resetCameraFrustum(camera);
-
-	if(!isDeleted(camera->cameraMovementManager))
+	if(!isDeleted(this->cameraMovementManager))
 	{
-		CameraMovementManager::reset(camera->cameraMovementManager);
+		CameraMovementManager::reset(this->cameraMovementManager);
 	}
 
-	if(!isDeleted(camera->cameraEffectManager))
+	if(!isDeleted(this->cameraEffectManager))
 	{
-		CameraEffectManager::reset(camera->cameraEffectManager);
+		CameraEffectManager::reset(this->cameraEffectManager);
 	}
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void Camera::setup(PixelOptical pixelOptical, CameraFrustum cameraFrustum)
+void Camera::setup(PixelOptical pixelOptical, CameraFrustum cameraFrustum)
 {
-	Camera camera = Camera::getInstance();
-	
-	camera->cameraFrustum = Camera::computeClampledFrustum(cameraFrustum);
-	camera->optical = Optical::getFromPixelOptical(pixelOptical, camera->cameraFrustum);
-	camera->transformationFlags |= __INVALIDATE_TRANSFORMATION;
+	this->cameraFrustum = Camera::computeClampledFrustum(this, cameraFrustum);
+	this->optical = Optical::getFromPixelOptical(pixelOptical, this->cameraFrustum);
+	this->transformationFlags |= __INVALIDATE_TRANSFORMATION;
 
-	DirectDraw::setFrustum(camera->cameraFrustum);
+	DirectDraw::setFrustum(DirectDraw::getInstance(), this->cameraFrustum);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void Camera::setCameraMovementManager(CameraMovementManager cameraMovementManager)
+void Camera::setCameraMovementManager(CameraMovementManager cameraMovementManager)
 {
-	Camera camera = Camera::getInstance();
-	
-	if(camera->cameraMovementManager != cameraMovementManager)
+	if(this->cameraMovementManager != cameraMovementManager)
 	{
-		if(!isDeleted(camera->cameraMovementManager))
+		if(!isDeleted(this->cameraMovementManager))
 		{
-			delete camera->cameraMovementManager;
+			delete this->cameraMovementManager;
 		}
 
-		camera->cameraMovementManager = cameraMovementManager;
+		this->cameraMovementManager = cameraMovementManager;
 	}
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static CameraMovementManager Camera::getCameraMovementManager()
+CameraMovementManager Camera::getCameraMovementManager()
 {
-	Camera camera = Camera::getInstance();
-	
-	return camera->cameraMovementManager;
+	return this->cameraMovementManager;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void Camera::setCameraEffectManager(CameraEffectManager cameraEffectManager)
+void Camera::setCameraEffectManager(CameraEffectManager cameraEffectManager)
 {
-	Camera camera = Camera::getInstance();
-	
-	if(camera->cameraEffectManager != cameraEffectManager)
+	if(this->cameraEffectManager != cameraEffectManager)
 	{
-		if(!isDeleted(camera->cameraEffectManager))
+		if(!isDeleted(this->cameraEffectManager))
 		{
-			delete camera->cameraEffectManager;
+			delete this->cameraEffectManager;
 		}
 
-		camera->cameraEffectManager = cameraEffectManager;
+		this->cameraEffectManager = cameraEffectManager;
 	}
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static CameraEffectManager Camera::getCameraEffectManager()
+CameraEffectManager Camera::getCameraEffectManager()
 {
-	Camera camera = Camera::getInstance();
-	
-	return camera->cameraEffectManager;
+	return this->cameraEffectManager;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static Size Camera::getStageSize()
+Size Camera::getStageSize()
 {
-	Camera camera = Camera::getInstance();
-	
-	return camera->stageSize;
+	return this->stageSize;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void Camera::setStageSize(Size size)
+void Camera::setStageSize(Size size)
 {
-	Camera camera = Camera::getInstance();
-	
-	camera->stageSize = size;
+	this->stageSize = size;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void Camera::setFocusActor(Actor focusActor)
+void Camera::setFocusActor(Actor focusActor)
 {
-	Camera camera = Camera::getInstance();
-	
-	if(!isDeleted(camera->cameraMovementManager))
+	if(!isDeleted(this->cameraMovementManager))
 	{
-		CameraMovementManager::setFocusActor(camera->cameraMovementManager, focusActor);
+		CameraMovementManager::setFocusActor(this->cameraMovementManager, focusActor);
 
-		Camera::focus(camera);
+		Camera::focus(this);
 	}
 
-	camera->lastDisplacement = Vector3D::zero();
+	this->lastDisplacement = Vector3D::zero();
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static Actor Camera::getFocusActor()
+Actor Camera::getFocusActor()
 {
-	Camera camera = Camera::getInstance();
-	
-	if(!isDeleted(camera->cameraMovementManager))
+	if(!isDeleted(this->cameraMovementManager))
 	{
-		return CameraMovementManager::getFocusActor(camera->cameraMovementManager);
+		return CameraMovementManager::getFocusActor(this->cameraMovementManager);
 	}
 
 	return NULL;
@@ -178,37 +158,31 @@ static Actor Camera::getFocusActor()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void Camera::unsetFocusActor()
+void Camera::unsetFocusActor()
 {
-	Camera camera = Camera::getInstance();
-	
-	if(!isDeleted(camera->cameraMovementManager))
+	if(!isDeleted(this->cameraMovementManager))
 	{
-		CameraMovementManager::setFocusActor(camera->cameraMovementManager, NULL);
+		CameraMovementManager::setFocusActor(this->cameraMovementManager, NULL);
 	}
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void Camera::setFocusActorPositionDisplacement(Vector3D focusActorPositionDisplacement)
+void Camera::setFocusActorPositionDisplacement(Vector3D focusActorPositionDisplacement)
 {
-	Camera camera = Camera::getInstance();
-	
-	if(!isDeleted(camera->cameraMovementManager))
+	if(!isDeleted(this->cameraMovementManager))
 	{
-		CameraMovementManager::setFocusActorPositionDisplacement(camera->cameraMovementManager, &focusActorPositionDisplacement);
+		CameraMovementManager::setFocusActorPositionDisplacement(this->cameraMovementManager, &focusActorPositionDisplacement);
 	}
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static Vector3D Camera::getFocusActorPositionDisplacement()
+Vector3D Camera::getFocusActorPositionDisplacement()
 {
-	Camera camera = Camera::getInstance();
-	
-	if(!isDeleted(camera->cameraMovementManager))
+	if(!isDeleted(this->cameraMovementManager))
 	{
-		return *CameraMovementManager::getFocusActorPositionDisplacement(camera->cameraMovementManager);
+		return *CameraMovementManager::getFocusActorPositionDisplacement(this->cameraMovementManager);
 	}
 
 	return Vector3D::zero();
@@ -216,171 +190,143 @@ static Vector3D Camera::getFocusActorPositionDisplacement()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void Camera::setDisplacement(Vector3D displacement)
+void Camera::setDisplacement(Vector3D displacement)
 {
-	Camera camera = Camera::getInstance();
-	
-	camera->displacement = displacement;
+	this->displacement = displacement;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static Vector3D Camera::geDisplacement()
+Vector3D Camera::geDisplacement()
 {
-	Camera camera = Camera::getInstance();
-	
-	return camera->displacement;
+	return this->displacement;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void Camera::setOptical(Optical optical)
+void Camera::setOptical(Optical optical)
 {
-	Camera camera = Camera::getInstance();
-	
-	camera->optical = optical;
+	this->optical = optical;
 
-	camera->transformationFlags |= __INVALIDATE_TRANSFORMATION;
+	this->transformationFlags |= __INVALIDATE_TRANSFORMATION;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static Optical Camera::getOptical()
+Optical Camera::getOptical()
 {
-	Camera camera = Camera::getInstance();
-	
-	return camera->optical;
+	return this->optical;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void Camera::setTransformation(Transformation transformation, bool cap)
-{	
-	Camera::setPosition(transformation.position, cap);
-	Camera::setRotation(transformation.rotation);
+void Camera::setTransformation(Transformation transformation, bool cap)
+{
+	Camera::setPosition(this, transformation.position, cap);
+	Camera::setRotation(this, transformation.rotation);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static Transformation Camera::getTransformation()
+Transformation Camera::getTransformation()
 {
-	Camera camera = Camera::getInstance();
-	
-	return camera->transformation;
+	return this->transformation;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void Camera::setPosition(Vector3D position, bool cap)
+void Camera::setPosition(Vector3D position, bool cap)
 {
-	Camera camera = Camera::getInstance();
-	
-	Vector3D currentPosition = camera->transformation.position;
-	camera->transformation.position = position;
+	Vector3D currentPosition = this->transformation.position;
+	this->transformation.position = position;
 
 	if(cap)
 	{
-		Camera::capPosition(camera);
+		Camera::capPosition(this);
 	}
 
-	Camera::updateTranslationFlags(Vector3D::sub(camera->transformation.position, currentPosition));
+	this->transformationFlags |= Camera::computeTranslationFlags(Vector3D::sub(this->transformation.position, currentPosition));
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void Camera::translate(Vector3D displacement, int32 cap)
+void Camera::translate(Vector3D displacement, int32 cap)
 {
-	Camera camera = Camera::getInstance();
-	
-	Vector3D currentPosition = camera->transformation.position;
-	camera->transformation.position = Vector3D::sum(camera->transformation.position, displacement);
+	Vector3D currentPosition = this->transformation.position;
+	this->transformation.position = Vector3D::sum(this->transformation.position, displacement);
 
 	if(cap)
 	{
-		Camera::capPosition(camera);
+		Camera::capPosition(this);
 	}
 
-	Camera::updateTranslationFlags(Vector3D::sub(camera->transformation.position, currentPosition));
+	this->transformationFlags |= Camera::computeTranslationFlags(Vector3D::sub(this->transformation.position, currentPosition));
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static Vector3D Camera::getPosition()
+Vector3D Camera::getPosition()
 {
-	Camera camera = Camera::getInstance();
-	
-	return camera->transformation.position;
+	return this->transformation.position;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void Camera::setRotation(Rotation rotation)
+void Camera::setRotation(Rotation rotation)
 {
-	Camera camera = Camera::getInstance();
-	
-	Camera::updateRotationFlags(Rotation::sub(rotation, camera->transformation.rotation));
+	Rotation currentRotation = this->transformation.rotation;
 
-	camera->transformation.rotation = Rotation::clamp(rotation.x, rotation.y, rotation.z);
-	camera->invertedRotation = Rotation::invert(camera->transformation.rotation);
+	this->transformation.rotation = Rotation::clamp(rotation.x, rotation.y, rotation.z);
+	this->invertedRotation = Rotation::invert(this->transformation.rotation);
+	this->transformationFlags |= Camera::computeRotationFlags(Rotation::sub(this->transformation.rotation, currentRotation));
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void Camera::rotate(Rotation rotation)
+void Camera::rotate(Rotation rotation)
 {
-	Camera camera = Camera::getInstance();
-	
-	Camera::updateRotationFlags(rotation);
+	Rotation currentRotation = this->transformation.rotation;
 
-	camera->transformation.rotation = Rotation::sum(camera->transformation.rotation, rotation);
-	camera->invertedRotation = Rotation::invert(camera->transformation.rotation);
+	this->transformation.rotation = Rotation::sum(this->transformation.rotation, rotation);
+	this->invertedRotation = Rotation::invert(this->transformation.rotation);
+	this->transformationFlags |= Camera::computeRotationFlags(Rotation::sub(this->transformation.rotation, currentRotation));
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static Rotation Camera::getRotation()
+Rotation Camera::getRotation()
 {
-	Camera camera = Camera::getInstance();
-	
-	return camera->transformation.rotation;
+	return this->transformation.rotation;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static CameraFrustum Camera::getCameraFrustum()
+CameraFrustum Camera::getCameraFrustum()
 {
-	Camera camera = Camera::getInstance();
-	
-	return camera->cameraFrustum;
+	return this->cameraFrustum;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static Vector3D Camera::getLastDisplacement()
+Vector3D Camera::getLastDisplacement()
 {
-	Camera camera = Camera::getInstance();
-	
-	return camera->lastDisplacement;
+	return this->lastDisplacement;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static uint8 Camera::getTransformationFlags()
+uint8 Camera::getTransformationFlags()
 {
-	Camera camera = Camera::getInstance();
-	
-	return camera->transformationFlags;
+	return this->transformationFlags;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void Camera::focus()
+void Camera::focus()
 {
-	Camera camera = Camera::getInstance();
-	
-	ASSERT(camera->cameraMovementManager, "Camera::focus: null cameraMovementManager");
+	ASSERT(this->cameraMovementManager, "Camera::focus: null cameraMovementManager");
 
-	if(NULL == CameraMovementManager::getFocusActor(camera->cameraMovementManager))
+	if(NULL == CameraMovementManager::getFocusActor(this->cameraMovementManager))
 	{
 		return;
 	}
@@ -391,35 +337,33 @@ static void Camera::focus()
 
 	if(takeTransformationFlagsDown)
 	{
-		camera->transformationFlags = __VALID_TRANSFORMATION;
+		this->transformationFlags = __VALID_TRANSFORMATION;
 		takeTransformationFlagsDown = false;
 	}
 
-	if(camera->transformationFlags)
+	if(this->transformationFlags)
 	{
 		takeTransformationFlagsDown = true;
 	}
 
-	camera->lastDisplacement = camera->transformation.position;
+	this->lastDisplacement = this->transformation.position;
 
-	Camera::setPosition(CameraMovementManager::focus(camera->cameraMovementManager, camera), true);
+	Camera::setPosition(this, CameraMovementManager::focus(this->cameraMovementManager, this), true);
 
-	camera->transformation.position = Vector3D::sum(camera->transformation.position, camera->displacement);
-	camera->lastDisplacement = Vector3D::sub(camera->transformation.position, camera->lastDisplacement);
+	this->transformation.position = Vector3D::sum(this->transformation.position, this->displacement);
+	this->lastDisplacement = Vector3D::sub(this->transformation.position, this->lastDisplacement);
 
 #ifdef __SHOW_CAMERA_STATUS
-	Camera::print(1, 1, true);
+	Camera::print(this, 1, 1, true);
 #endif
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void Camera::startEffect(int32 effect, ...)
+void Camera::startEffect(int32 effect, ...)
 {
-	Camera camera = Camera::getInstance();
-	
 #ifdef __TOOLS
-	if(VUEngine::isInToolStateTransition())
+	if(VUEngine::isInToolStateTransition(VUEngine::getInstance()))
 	{
 		return;
 	}
@@ -427,48 +371,46 @@ static void Camera::startEffect(int32 effect, ...)
 
 	va_list args;
 	va_start(args, effect);
-	CameraEffectManager::startEffect(camera->cameraEffectManager, effect, args);
+	CameraEffectManager::startEffect(this->cameraEffectManager, effect, args);
 	va_end(args);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void Camera::stopEffect(int32 effect)
+void Camera::stopEffect(int32 effect)
 {
-	Camera camera = Camera::getInstance();
-	
 #ifdef __TOOLS
-	if(VUEngine::isInToolStateTransition())
+	if(VUEngine::isInToolStateTransition(VUEngine::getInstance()))
 	{
 		return;
 	}
 #endif
 
-	CameraEffectManager::stopEffect(camera->cameraEffectManager, effect);
+	CameraEffectManager::stopEffect(this->cameraEffectManager, effect);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #ifndef __SHIPPING
-static void Camera::print(int32 x, int32 y, bool inPixels)
-{	
+void Camera::print(int32 x, int32 y, bool inPixels)
+{
+	Printing printing = Printing::getInstance();
 	
-	
-	Printing::text("CAMERA ", x, y++, NULL);
-	Printing::text("Position: ", x, ++y, NULL);
+	Printing::text(printing, "CAMERA ", x, y++, NULL);
+	Printing::text(printing, "Position: ", x, ++y, NULL);
 
 	if(inPixels)
 	{
-		PixelVector::print(PixelVector::getFromVector3D(Camera::getPosition(), 0), x, ++y);
+		PixelVector::print(PixelVector::getFromVector3D(Camera::getPosition(Camera::getInstance()), 0), x, ++y);
 	}
 	else
 	{
-		Vector3D::print(Camera::getPosition(), x, ++y);
+		Vector3D::print(Camera::getPosition(Camera::getInstance()), x, ++y);
 	}
 
 	y += 3;
-	Printing::text("Rotation: ", x, ++y, NULL);
-	Rotation::print(Camera::getRotation(), x, ++y);
+	Printing::text(printing, "Rotation: ", x, ++y, NULL);
+	Rotation::print(Camera::getRotation(Camera::getInstance()), x, ++y);
 }
 #endif
 
@@ -480,41 +422,90 @@ static void Camera::print(int32 x, int32 y, bool inPixels)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void Camera::resetCameraFrustum()
+void Camera::constructor()
 {
-	Camera camera = Camera::getInstance();
-	
-	camera->cameraFrustum.x0 = 0;
-	camera->cameraFrustum.y0 = 0;
-	camera->cameraFrustum.z0 = 0;
-	camera->cameraFrustum.x1 = __SCREEN_WIDTH;
-	camera->cameraFrustum.y1 = __SCREEN_HEIGHT;
-	camera->cameraFrustum.z1 = __SCREEN_DEPTH;
+	// Always explicitly call the base's constructor 
+	Base::constructor();
+
+	this->transformation.position = Vector3D::zero();
+	this->cameraMovementManager = CameraMovementManager::getInstance();
+	this->cameraEffectManager = CameraEffectManager::getInstance();
+
+	this->transformation.position = Vector3D::zero();
+	this->displacement = Vector3D::zero();
+	this->transformation.rotation = Rotation::zero();
+	this->invertedRotation = Rotation::invert(this->transformation.rotation);
+	this->lastDisplacement = Vector3D::zero();
+
+	this->cameraFrustum.x0 = 0;
+	this->cameraFrustum.y0 = 0;
+	this->cameraFrustum.z0 = 0;
+	this->cameraFrustum.x1 = __SCREEN_WIDTH;
+	this->cameraFrustum.y1 = __SCREEN_HEIGHT;
+	this->cameraFrustum.z1 = __SCREEN_DEPTH;
+
+	this->transformationFlags = __VALID_TRANSFORMATION;
+
+	PixelOptical pixelOptical =
+    {
+    	__MAXIMUM_X_VIEW_DISTANCE,				// maximum distance from the screen to the infinite
+    	__MAXIMUM_Y_VIEW_DISTANCE,				// maximum distance from the screen to the infinite
+		__CAMERA_NEAR_PLANE,					// distance from player's eyes to the virtual screen
+    	__BASE_FACTOR,							// distance from left to right eye (depth perception)
+    	__HORIZONTAL_VIEW_POINT_CENTER,			// horizontal View point center
+    	__VERTICAL_VIEW_POINT_CENTER,			// vertical View point center
+    	__SCALING_MODIFIER_FACTOR,				// scaling factor for sprite resizing
+    };
+
+	Camera::setup(this, pixelOptical, this->cameraFrustum);
+
+	// Set global pointer to improve access to critical values
+	_optical = &this->optical;
+	_cameraPosition = &this->transformation.position;
+	_cameraFrustum = &this->cameraFrustum;
+	_cameraRotation = &this->transformation.rotation;
+	_cameraInvertedRotation = &this->invertedRotation;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void Camera::capPosition()
+void Camera::destructor()
 {
-	Camera camera = Camera::getInstance();
-	
-	camera->transformation.position = Camera::computCappedPosition(camera->transformation.position);
+	// Always explicitly call the base's destructor 
+	Base::destructor();
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static Vector3D Camera::computCappedPosition(Vector3D position)
+void Camera::resetCameraFrustum()
 {
-	Camera camera = Camera::getInstance();
-	
+	this->cameraFrustum.x0 = 0;
+	this->cameraFrustum.y0 = 0;
+	this->cameraFrustum.z0 = 0;
+	this->cameraFrustum.x1 = __SCREEN_WIDTH;
+	this->cameraFrustum.y1 = __SCREEN_HEIGHT;
+	this->cameraFrustum.z1 = __SCREEN_DEPTH;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void Camera::capPosition()
+{
+	this->transformation.position = Camera::computCappedPosition(this, this->transformation.position);
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+Vector3D Camera::computCappedPosition(Vector3D position)
+{
 	if(position.x < 0)
 	{
 		position.x = 0;
 	}
 
-	if(position.x + __SCREEN_WIDTH_METERS > camera->stageSize.x)
+	if(position.x + __SCREEN_WIDTH_METERS > this->stageSize.x)
 	{
-		position.x = camera->stageSize.x - __SCREEN_WIDTH_METERS;
+		position.x = this->stageSize.x - __SCREEN_WIDTH_METERS;
 	}
 
 	if(position.y < 0)
@@ -522,9 +513,9 @@ static Vector3D Camera::computCappedPosition(Vector3D position)
 		position.y = 0;
 	}
 
-	if(position.y + __SCREEN_HEIGHT_METERS > camera->stageSize.y)
+	if(position.y + __SCREEN_HEIGHT_METERS > this->stageSize.y)
 	{
-		position.y = camera->stageSize.y - __SCREEN_HEIGHT_METERS;
+		position.y = this->stageSize.y - __SCREEN_HEIGHT_METERS;
 	}
 
 	if(position.z < 0)
@@ -532,9 +523,9 @@ static Vector3D Camera::computCappedPosition(Vector3D position)
 		position.z = 0;
 	}
 
-	if(position.z > camera->stageSize.z)
+	if(position.z > this->stageSize.z)
 	{
-		position.z = camera->stageSize.z;
+		position.z = this->stageSize.z;
 	}
 
 	return position;
@@ -542,7 +533,7 @@ static Vector3D Camera::computCappedPosition(Vector3D position)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static CameraFrustum Camera::computeClampledFrustum(CameraFrustum cameraFrustum)
+CameraFrustum Camera::computeClampledFrustum(CameraFrustum cameraFrustum)
 {
 	if(cameraFrustum.x1 > __SCREEN_WIDTH)
 	{
@@ -580,91 +571,30 @@ static CameraFrustum Camera::computeClampledFrustum(CameraFrustum cameraFrustum)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void Camera::updateTranslationFlags(Vector3D translation)
+static uint8 Camera::computeTranslationFlags(Vector3D translation)
 {
-	Camera camera = Camera::getInstance();
-	
 	if(0 != translation.z)
 	{
-		camera->transformationFlags |= __INVALIDATE_PROJECTION | __INVALIDATE_SCALE;
+		return __INVALIDATE_PROJECTION | __INVALIDATE_SCALE;
 	}
 	else if(0 != translation.x || 0 != translation.y)
 	{
-		camera->transformationFlags |= __INVALIDATE_PROJECTION;
+		return __INVALIDATE_PROJECTION;
 	}
+
+	return false;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void Camera::updateRotationFlags(Rotation rotation)
+static uint8 Camera::computeRotationFlags(Rotation rotation)
 {
-	Camera camera = Camera::getInstance();
-	
-	if(rotation.x || rotation.y || rotation.z)
+	if(0 != rotation.x || 0 != rotation.y || 0 != rotation.z)
 	{
-		camera->transformationFlags |= __INVALIDATE_ROTATION;
+		return __INVALIDATE_ROTATION;
 	}
-}
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-// CLASS' PRIVATE METHODS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void Camera::constructor()
-{	
-	// Always explicitly call the base's constructor 
-	Base::constructor();
-
-	this->transformation.position = Vector3D::zero();
-	this->cameraMovementManager = CameraMovementManager::getInstance();
-	this->cameraEffectManager = CameraEffectManager::getInstance();
-
-	this->transformation.position = Vector3D::zero();
-	this->displacement = Vector3D::zero();
-	this->transformation.rotation = Rotation::zero();
-	this->invertedRotation = Rotation::invert(this->transformation.rotation);
-	this->lastDisplacement = Vector3D::zero();
-
-	this->cameraFrustum.x0 = 0;
-	this->cameraFrustum.y0 = 0;
-	this->cameraFrustum.z0 = 0;
-	this->cameraFrustum.x1 = __SCREEN_WIDTH;
-	this->cameraFrustum.y1 = __SCREEN_HEIGHT;
-	this->cameraFrustum.z1 = __SCREEN_DEPTH;
-
-	this->transformationFlags = __VALID_TRANSFORMATION;
-
-	PixelOptical pixelOptical =
-	{
-		__MAXIMUM_X_VIEW_DISTANCE,				// maximum distance from the screen to the infinite
-		__MAXIMUM_Y_VIEW_DISTANCE,				// maximum distance from the screen to the infinite
-		__CAMERA_NEAR_PLANE,					// distance from player's eyes to the virtual screen
-		__BASE_FACTOR,							// distance from left to right eye (depth perception)
-		__HORIZONTAL_VIEW_POINT_CENTER,			// horizontal View point center
-		__VERTICAL_VIEW_POINT_CENTER,			// vertical View point center
-		__SCALING_MODIFIER_FACTOR,				// scaling factor for sprite resizing
-	};
-
-	Camera::setup(pixelOptical, this->cameraFrustum);
-
-	// Set global pointer to improve access to critical values
-	_optical = &this->optical;
-	_cameraPosition = &this->transformation.position;
-	_cameraFrustum = &this->cameraFrustum;
-	_cameraRotation = &this->transformation.rotation;
-	_cameraInvertedRotation = &this->invertedRotation;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void Camera::destructor()
-{
-	// Always explicitly call the base's destructor 
-	Base::destructor();
+	return false;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
