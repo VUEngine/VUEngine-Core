@@ -124,7 +124,7 @@ abstract class Entity : ListenerObject
 	const Scale* getScale();
 
 	/// Retrieve the statefulActor's physical body.
-	/// @return StatefulActor's physical body
+	/// @return Actor's physical body
 	Body getBody();
 
 	/// Check if the statefulActor is moving.

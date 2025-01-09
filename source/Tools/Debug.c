@@ -13,7 +13,7 @@
 // INCLUDES
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-#include <StatefulActor.h>
+#include <Actor.h>
 #include <AnimationController.h>
 #include <AnimationCoordinator.h>
 #include <AnimationCoordinatorFactory.h>
@@ -617,7 +617,7 @@ void Debug::memoryStatusShowFifthPage(int32 increment __attribute__ ((unused)), 
 
 	ClassSizeData classesSizeData[] =
 	{
-		{&StatefulActor_getObjectSize,					"StatefulActor"},
+		{&Actor_getObjectSize,					"Actor"},
 		{&Actor_getObjectSize,							"Actor"},
 		{&Container_getObjectSize,						"Container"},
 		{&Actor_getObjectSize,							"Actor"},

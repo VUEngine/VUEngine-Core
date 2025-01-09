@@ -13,7 +13,7 @@
 
 #include <string.h>
 
-#include <StatefulActor.h>
+#include <Actor.h>
 #include <AnimationCoordinatorFactory.h>
 #include <Actor.h>
 #include <Ball.h>

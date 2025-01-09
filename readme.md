@@ -73,7 +73,7 @@ Features:
 	- Container: for transformation propagation (translation/rotation/scaling)
 	- Actor: a container with a list of sprites (a "visual object")
 	- Actor: an actor with animated sprites
-	- StatefulActor: animated actor that has a physical body and can resolve collisions
+	- Actor: animated actor that has a physical body and can resolve collisions
 
 
 LICENSE

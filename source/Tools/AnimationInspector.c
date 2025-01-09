@@ -47,7 +47,7 @@ extern UserActor _userAnimatedActors[];
 enum AnimationInspectorStates
 {
 	kFirstState = 0,
-	kSelectStatefulActor,
+	kSelectActor,
 	kSelectSprite,
 	kSelectAnimation,
 	kEditAnimation,
@@ -203,7 +203,7 @@ void AnimationInspector::processUserInput(uint16 pressedKey)
 
 	switch(this->state)
 	{
-		case kSelectStatefulActor:
+		case kSelectActor:
 
 			AnimationInspector::selectActor(this, pressedKey);
 			break;
@@ -305,7 +305,7 @@ void AnimationInspector::configureState()
 
 	switch(this->state)
 	{
-		case kSelectStatefulActor:
+		case kSelectActor:
 
 			AnimationInspector::removePreviousSprite(this);
 			Printing::text("Select \x13  ", 39, 2, NULL);
