@@ -556,6 +556,8 @@ bool WireframeManager::onVIPGAMESTART(ListenerObject eventFirer __attribute__ ((
 
 	WireframeManager::render();
 
+	this->stopDrawing = false;
+
 	return true;
 }
 
