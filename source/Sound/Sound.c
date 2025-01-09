@@ -561,17 +561,20 @@ void Sound::update(uint32 elapsedMicroseconds, uint32 targetPCMUpdates)
 	{
 		SoundTrack soundTrack = SoundTrack::safeCast(node->data);
 
-		finished = SoundTrack::update(
-										soundTrack, 
-										elapsedMicroseconds, 
-										targetPCMUpdates, 
-										this->tickStep, 
-										this->targetTimerResolutionFactor, 
-										leftVolumeFactor, 
-										rightVolumeFactor, 
-										this->volumeReduction, 
-										this->volumenScalePower, 
-										this->frequencyDelta) && finished;
+		finished = 
+			SoundTrack::update
+			(
+				soundTrack, 
+				elapsedMicroseconds, 
+				targetPCMUpdates, 
+				this->tickStep, 
+				this->targetTimerResolutionFactor, 
+				leftVolumeFactor, 
+				rightVolumeFactor, 
+				this->volumeReduction, 
+				this->volumenScalePower, 
+				this->frequencyDelta
+			) && finished;
 	}
 
 	if(finished)

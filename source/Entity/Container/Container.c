@@ -283,7 +283,8 @@ void Container::setNormalizedDirection(NormalizedDirection normalizedDirection)
 	NormalizedDirection currentNormalizedDirection = Container::getNormalizedDirection(this);
 
 	// If directions XOR is 0, they are equal
-	if(
+	if
+	(
 		!(
 			(currentNormalizedDirection.x ^ normalizedDirection.x) |
 			(currentNormalizedDirection.y ^ normalizedDirection.y) |

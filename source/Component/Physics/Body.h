@@ -226,7 +226,8 @@ class Body : Component
 	/// @param bouncingPlaneNormal: Normal of the plane on which the body has to bounce
 	/// @param frictionCoefficient: Friction coefficient of the bounce referent
 	/// @param bounciness: Bounciness coefficient of the bounce referent
-	void bounce(
+	void bounce
+	(
 		ListenerObject bounceReferent, Vector3D bouncingPlaneNormal, fixed_t frictionCoefficient,
 		fixed_t bounciness
 	);

@@ -60,7 +60,8 @@ void ObjectSprite::constructor(Entity owner, const ObjectSpriteSpec* objectSprit
 
 		NM_ASSERT(this->texture, "ObjectSprite::constructor: null texture");
 
-		Texture::addEventListener(
+		Texture::addEventListener
+		(
 			this->texture, ListenerObject::safeCast(this), (EventListener)ObjectSprite::onTextureRewritten, kEventTextureRewritten);
 
 		this->totalObjects = objectSpriteSpec->spriteSpec.textureSpec->cols * objectSpriteSpec->spriteSpec.textureSpec->rows;

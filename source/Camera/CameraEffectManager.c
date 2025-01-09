@@ -181,7 +181,8 @@ void CameraEffectManager::fxFadeStart(int32 effect, int32 delay)
 
 			CameraEffectManager::hideCamera(this);
 
-			TimerManager::repeatMethodCall(
+			TimerManager::repeatMethodCall
+			(
 				
 				defaultBrightness.darkRed,
 				(delay * defaultBrightness.darkRed),
@@ -194,7 +195,8 @@ void CameraEffectManager::fxFadeStart(int32 effect, int32 delay)
 
 			CameraEffectManager::showCamera(this);
 
-			TimerManager::repeatMethodCall(
+			TimerManager::repeatMethodCall
+			(
 				
 				defaultBrightness.darkRed,
 				(delay * defaultBrightness.darkRed),

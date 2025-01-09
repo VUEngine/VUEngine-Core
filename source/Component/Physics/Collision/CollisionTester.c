@@ -278,7 +278,8 @@ static void CollisionTester::getSolutionVectorBetweenBallAndLineField(Ball ball,
 	Vector3D lineFieldB = Vector3D::sum(lineField->b, lineField->position);
 
 	// Test against the bounding box first to avoid the projection if possible
-	if(
+	if
+	(
 		(
 			lineFieldA.x != lineFieldB.x
 			&&

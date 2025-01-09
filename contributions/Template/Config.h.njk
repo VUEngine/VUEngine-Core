@@ -36,7 +36,6 @@
 {%- endif -%}
 #define {{ gameConfig.key | toUpperSnakeCase }} {{ gameConfigValue | safe }}
 {% endfor %}
-
 {% endif -%}
 
 {{ macros.sectionHeader('Game Entry Point') }}

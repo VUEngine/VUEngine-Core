@@ -868,7 +868,8 @@ static FontSize Printing::getTextSize(const char* string, const char* font)
 
 static void Printing::loadDebugFont()
 {
-	Mem::copyWORD(
+	Mem::copyWORD
+	(
 		(uint32*)(__CHAR_SPACE_BASE_ADDRESS + (((uint32)VUENGINE_DEBUG_FONT_CHARSET_OFFSET) << 4)),
 		VUENGINE_DEBUG_FONT_DATA.fontSpec->charSetSpec->tiles + 1,
 		__UINT32S_PER_CHARS(VUENGINE_DEBUG_FONT_SIZE)

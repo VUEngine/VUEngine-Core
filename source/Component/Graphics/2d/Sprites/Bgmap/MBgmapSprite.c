@@ -285,7 +285,8 @@ void MBgmapSprite::loadTexture(TextureSpec* textureSpec, bool isFirstTextureAndH
 
 	if(!isDeleted(bgmapTexture))
 	{
-		BgmapTexture::addEventListener(
+		BgmapTexture::addEventListener
+		(
 			bgmapTexture, ListenerObject::safeCast(this), (EventListener)BgmapSprite::onTextureRewritten, kEventTextureRewritten
 		);
 
@@ -323,7 +324,8 @@ void MBgmapSprite::releaseTextures()
 
 			if(!isDeleted(bgmapTexture))
 			{
-				BgmapTexture::removeEventListener(
+				BgmapTexture::removeEventListener
+				(
 					bgmapTexture, ListenerObject::safeCast(this), (EventListener)BgmapSprite::onTextureRewritten, kEventTextureRewritten
 				);
 				

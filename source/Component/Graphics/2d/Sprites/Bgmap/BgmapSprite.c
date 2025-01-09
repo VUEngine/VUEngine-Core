@@ -42,7 +42,8 @@ static int16 BgmapSprite::doApplyAffineTransformations(BgmapSprite bgmapSprite)
 
 	if(0 < bgmapSprite->param)
 	{
-		return Affine::transform(
+		return Affine::transform
+		(
 			bgmapSprite->param,
 			bgmapSprite->paramTableRow,
 			// Geometrically accurate, but kills the CPU
@@ -376,21 +377,39 @@ void BgmapSprite::setScale(const PixelScale* scale)
 		if(!isDeleted(this->texture))
 		{
 			// Add 1 pixel to the width and 7 to the height to avoid cutting off the graphics
-			this->halfWidth = __FIXED_TO_I(__ABS(__FIXED_MULT(
-				__FIX7_9_TO_FIXED(__COS(__FIXED_TO_I(this->transformation->rotation.y))),
-				__FIXED_MULT(
-					__I_TO_FIXED((int32)this->texture->textureSpec->cols << 2),
-					__FIX7_9_TO_FIXED(scaleHelper.x)
-				)
-			))) + 1;
+			this->halfWidth = 
+				__FIXED_TO_I
+				(
+					__ABS
+					(
+						__FIXED_MULT
+						(
+							__FIX7_9_TO_FIXED(__COS(__FIXED_TO_I(this->transformation->rotation.y))),
+							__FIXED_MULT
+							(
+							__I_TO_FIXED((int32)this->texture->textureSpec->cols << 2),
+							__FIX7_9_TO_FIXED(scaleHelper.x)
+							)
+						)
+					)
+				) + 1;
 
-			this->halfHeight = __FIXED_TO_I(__ABS(__FIXED_MULT(
-				__FIX7_9_TO_FIXED(__COS(__FIXED_TO_I(this->transformation->rotation.x))),
-				__FIXED_MULT(
-					__I_TO_FIXED((int32)this->texture->textureSpec->rows << 2),
-					__FIX7_9_TO_FIXED(scaleHelper.y)
-				)
-			))) + 1;
+			this->halfHeight = 
+				__FIXED_TO_I
+				(
+					__ABS
+					(
+						__FIXED_MULT
+						(
+							__FIX7_9_TO_FIXED(__COS(__FIXED_TO_I(this->transformation->rotation.x))),
+							__FIXED_MULT
+							(
+							__I_TO_FIXED((int32)this->texture->textureSpec->rows << 2),
+							__FIX7_9_TO_FIXED(scaleHelper.y)
+							)
+						)
+					)
+				) + 1;
 		}
 
 		if(0 < this->param)
@@ -444,7 +463,8 @@ void BgmapSprite::configureTexture()
 
 	if(0 != this->param && !isDeleted(this->texture))
 	{
-		Texture::addEventListener(
+		Texture::addEventListener
+		(
 			this->texture, ListenerObject::safeCast(this), (EventListener)BgmapSprite::onTextureRewritten, kEventTextureRewritten
 		);
 	}
@@ -597,7 +617,8 @@ void BgmapSprite::releaseTexture()
 
 		if(0 != this->param)
 		{
-			Texture::removeEventListener(
+			Texture::removeEventListener
+			(
 				this->texture, ListenerObject::safeCast(this), (EventListener)BgmapSprite::onTextureRewritten, kEventTextureRewritten
 			);
 		}

@@ -48,7 +48,8 @@ __attribute__ ((unused)) static void* memcpy(void *destination, const void *sour
 {
 	BYTE* finalSource = (BYTE*)source + numberOfBytes / sizeof(uint32) + __MODULO(numberOfBytes, sizeof(uint32));
 
-	asm(
+	asm
+	(
 		"jr		end%=		\n\t"	  \
 		"loop%=:			\n\t"	  \
 		"ld.w	0[%1], r10	\n\t"	  \
