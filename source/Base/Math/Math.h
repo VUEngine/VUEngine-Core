@@ -526,7 +526,7 @@ static inline int32 Math::random(uint32 seed, int32 range)
 	seed += 
 		Clock::getMilliseconds(VUEngine::getClock()) 
 		+
-		KeypadManager::getAccumulatedUserInput(KeypadManager::getInstance());
+		KeypadManager::getAccumulatedUserInput();
 #endif
 
 	return 0 != range ? __ABS((int32)(seed % range)) : 0;
