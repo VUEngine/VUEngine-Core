@@ -31,12 +31,12 @@ extern uint32 _gameRandomSeed __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE;
 
 #define __USE_WORDS_SIZE_ABS_FUNCTION
 #ifdef __USE_WORDS_SIZE_ABS_FUNCTION
-#define __ABS(number)   (((number) + ((number) >> 31)) ^ ((number) >> 31))
+#define __ABS(number)	(((number) + ((number) >> 31)) ^ ((number) >> 31))
 #else
 #ifdef __USE_VB_REGISTER_ABS_FUNCTION
 #define __ABS(number)	Math::abs(number)
 #else
-#define __ABS(number)   abs(number)
+#define __ABS(number)	abs(number)
 #endif
 #endif
 

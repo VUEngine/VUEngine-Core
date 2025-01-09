@@ -28,10 +28,10 @@ class PrintingSprite;
 // CLASS' MACROS
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-#define PRINT_TEXT(string, x, y)	   Printing::text(string, x, y, NULL)
-#define PRINT_INT(number, x, y)		   Printing::int32(number, x, y, NULL)
-#define PRINT_FLOAT(number, x, y)	   Printing::float(number, x, y, 2, NULL)
-#define PRINT_HEX(number, x, y)		   Printing::hex(number, x, y, 8, NULL)
+#define PRINT_TEXT(string, x, y)		Printing::text(string, x, y, NULL)
+#define PRINT_INT(number, x, y)			Printing::int32(number, x, y, NULL)
+#define PRINT_FLOAT(number, x, y)		Printing::float(number, x, y, 2, NULL)
+#define PRINT_HEX(number, x, y)			Printing::hex(number, x, y, 8, NULL)
 #define PRINT_HEX_EXT(number, x, y, d) Printing::hex(number, x, y, d, NULL)
 #define PRINT_TIME(x, y)																					\
 	Printing::int32																							\

@@ -322,7 +322,7 @@ Actor::isInsideFrustrum(Vector3D vector3D, RightBox rightBox)
 	(
 		vector3D.x + rightBox.x0 > __PIXELS_TO_METERS(_cameraFrustum->x1) 
 		||
-	   vector3D.x + rightBox.x1 < __PIXELS_TO_METERS(_cameraFrustum->x0)
+		vector3D.x + rightBox.x1 < __PIXELS_TO_METERS(_cameraFrustum->x0)
 	)
 	{
 		return false;

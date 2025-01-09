@@ -332,7 +332,7 @@ class Stage : Container
 	/// because of the preprocessor's limitations for forward declarations
 	/// in source files. Don't call these.
 	bool unloadOutOfRangeActors(int32 defer);
-    bool loadInRangeActors(int32 defer);
+	 bool loadInRangeActors(int32 defer);
 }
 
 #endif

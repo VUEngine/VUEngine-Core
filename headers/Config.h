@@ -17,7 +17,7 @@
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 // game title (20 chars) 	 ####################
-#define __GAME_TITLE		"Game Title          "
+#define __GAME_TITLE		"Game Title			 "
 // maker code (2 chars)		 ##
 #define __MAKER_CODE		"??"
 // game code (4 chars)		 ####

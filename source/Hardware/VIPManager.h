@@ -48,14 +48,14 @@ extern uint32 _dramDirtyStart;
 #define __DPRST						0x0001	// RESET VPU COUNTER AND WAIT __FCLK
 #define __DPBSY						0x003C	// In the midst of displaying
 
-#define __SBOUT						0x8000				   // In FrameBuffer drawing included
-#define __SBCOUNT					0x1F00				   // Current bloc being drawn
-#define __OVERTIME					0x0010				   // Processing
-#define __XPBSY1					0x0008				   // In the midst of FrameBuffer 1 picture editing
-#define __XPBSY0					0x0004				   // In the midst of FrameBuffer 0 picture editing
+#define __SBOUT						0x8000					// In FrameBuffer drawing included
+#define __SBCOUNT					0x1F00					// Current bloc being drawn
+#define __OVERTIME					0x0010					// Processing
+#define __XPBSY1					0x0008					// In the midst of FrameBuffer 1 picture editing
+#define __XPBSY0					0x0004					// In the midst of FrameBuffer 0 picture editing
 #define __XPBSY						(__XPBSY0 | __XPBSY1)  // In the midst of drawing
-#define __XPEN						0x0002				   // Start of drawing
-#define __XPRST						0x0001				   // Forcing idling
+#define __XPEN						0x0002					// Start of drawing
+#define __XPRST						0x0001					// Forcing idling
 
 // VIP Register Mnemonics
 #define __INTPND					0x00  // Interrupt Pending
@@ -105,7 +105,7 @@ extern uint32 _dramDirtyStart;
 #define __OBJECT_SPACE_BASE_ADDRESS 0x0003E000	// Base address of ListenerObject Attribute Memory
 #define __WORLD_SPACE_BASE_ADDRESS	0x0003D800	// Base address of World Attribute Memory
 
-#define __BGMAP_SEGMENT(b)                                                                                 \
+#define __BGMAP_SEGMENT(b)																											\
 	(__BGMAP_SPACE_BASE_ADDRESS + ((b) * 0x2000))  // Address of BGMap b (0 <= b <= 13)
 
 #define __WORLD_OFF					0x0000
