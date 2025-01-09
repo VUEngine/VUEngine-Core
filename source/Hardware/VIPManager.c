@@ -540,7 +540,6 @@ static void VIPManager::processInterrupt(uint16 interrupt)
 
 				vipManager->processingGAMESTART = true;
 
-				// Configure the drawing frame buffers
 				VIPManager::registerCurrentDrawingFrameBufferSet();
 
 				VIPManager::fireEvent
@@ -556,10 +555,6 @@ static void VIPManager::processInterrupt(uint16 interrupt)
 
 #ifdef __ENABLE_PROFILER
 				Profiler::lap(kProfilerLapTypeVIPInterruptGAMESTARTProcess, PROCESS_NAME_RENDER);
-#endif
-
-#ifdef __SHOW_VIP_STATUS
-				VIPManager::print(1, 2);
 #endif
 				break;
 
@@ -585,12 +580,11 @@ static void VIPManager::processInterrupt(uint16 interrupt)
 
 				vipManager->processingXPEND = false;
 
+				VIPManager::resumeDrawing();
+
 #ifdef __ENABLE_PROFILER
 				Profiler::lap(kProfilerLapTypeVIPInterruptXPENDProcess, PROCESS_NAME_VRAM_WRITE);
 #endif
-
-				VIPManager::resumeDrawing();
-
 				break;
 
 #ifndef __SHIPPING
@@ -817,15 +811,6 @@ static int16 VIPManager::getCurrentBlockBeingDrawn()
 
 	return (_vipRegisters[__XPSTTS] & __SBCOUNT) >> 8;
 }
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-#ifndef __SHIPPING
-static void VIPManager::print(int32 x, int32 y)
-{
-	Printing::text("VIP Status", x, y++, NULL);
-}
-#endif
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
