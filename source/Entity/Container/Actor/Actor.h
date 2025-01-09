@@ -317,22 +317,33 @@ Actor::isInsideFrustrum(Vector3D vector3D, RightBox rightBox)
 	extern const CameraFrustum* _cameraFrustum;
 	vector3D = Vector3D::rotate(Vector3D::getRelativeToCamera(vector3D), *_cameraInvertedRotation);
 
-	if(vector3D.x + rightBox.x0 > __PIXELS_TO_METERS(_cameraFrustum->x1) ||
-	   vector3D.x + rightBox.x1 < __PIXELS_TO_METERS(_cameraFrustum->x0))
+	if
+	(
+		vector3D.x + rightBox.x0 > __PIXELS_TO_METERS(_cameraFrustum->x1) 
+		||
+	   vector3D.x + rightBox.x1 < __PIXELS_TO_METERS(_cameraFrustum->x0)
+	)
 	{
 		return false;
 	}
 
 	// Check y visibility
-	if(vector3D.y + rightBox.y0 > __PIXELS_TO_METERS(_cameraFrustum->y1) ||
-	   vector3D.y + rightBox.y1 < __PIXELS_TO_METERS(_cameraFrustum->y0))
+	if
+	(
+		vector3D.y + rightBox.y0 > __PIXELS_TO_METERS(_cameraFrustum->y1) 
+		||
+		vector3D.y + rightBox.y1 < __PIXELS_TO_METERS(_cameraFrustum->y0)
+	)
 	{
 		return false;
 	}
 
 	// Check z visibility
-	if(vector3D.z + rightBox.z0 > __PIXELS_TO_METERS(_cameraFrustum->z1) ||
-	   vector3D.z + rightBox.z1 < __PIXELS_TO_METERS(_cameraFrustum->z0))
+	if
+	(
+		vector3D.z + rightBox.z0 > __PIXELS_TO_METERS(_cameraFrustum->z1)
+		||
+		vector3D.z + rightBox.z1 < __PIXELS_TO_METERS(_cameraFrustum->z0))
 	{
 		return false;
 	}
