@@ -129,7 +129,8 @@ class Actor : Container
 	/// visibility check of the actor withing the camera's frustum
 	Vector3D* centerDisplacement;
 
-	/// Name of the currently playing animation
+	/// Name of the currently playing animation. This is here to save on memory on Entities that
+	/// don't need to keep track of the playing animation for resuming
 	const char* playingAnimationName;
 
 	/// @publicsection
