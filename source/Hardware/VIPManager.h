@@ -245,12 +245,10 @@ typedef struct PaletteConfig
 /// @memberof VIPManager
 enum VIPMultiplexedInterrupts
 {
-	kVIPNoMultiplexedInterrupts = 1 << 0,
-	kVIPGameStartMultiplexedInterrupts = 1 << 1,
-	kVIPXpendMultiplexedInterrupts = 1 << 2,
-	kVIPOnlyVIPMultiplexedInterrupts = kVIPGameStartMultiplexedInterrupts | kVIPXpendMultiplexedInterrupts,
-	kVIPOnlyNonVIPMultiplexedInterrupts = 1 << 3,
-	kVIPAllMultiplexedInterrupts = 0x7FFFFFFF,
+	kVIPNoMultiplexedInterrupts 			= 1 << 0,
+	kVIPOnlyVIPMultiplexedInterrupts 		= 1 << 2,
+	kVIPOnlyNonVIPMultiplexedInterrupts 	= 1 << 3,
+	kVIPAllMultiplexedInterrupts 			= 0x7FFFFFFF,
 };
 
 /// Enums used to control the suspension and resuming of drawing
@@ -358,6 +356,10 @@ singleton! class VIPManager : ListenerObject
 	/// Set the drawing management drawingStrategy interrupts that are allowed
 	/// @param drawingStrategy: Value to control the suspension and resuming of drawing
 	static void setDrawingStrategy(uint32 drawingStrategy);
+
+	/// Retrieve the drawing management drawingStrategy interrupts that are allowed
+	/// @return Value that controls the suspension and resuming of drawing
+	static uint32 getDrawingStrategy();
 
 	/// Start VIP drawing operations.
 	static void startDrawing();

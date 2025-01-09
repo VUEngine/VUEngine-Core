@@ -193,7 +193,7 @@ static void VIPManager::setDrawingStrategy(uint32 drawingStrategy)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static uin32 VIPManager::getDrawingStrategy()
+static uint32 VIPManager::getDrawingStrategy()
 {
 	VIPManager vipManager = VIPManager::getInstance();
 
