@@ -63,9 +63,6 @@ typedef struct StageSpec
 		/// Target refresh rate for PCM playback
 		uint16 pcmTargetPlaybackRefreshRate;
 
-		// TODO: remove
-		uint16 MIDIPlaybackCounterPerInterrupt;
-
 	} sound;
 
 	/// General stage's attributes
