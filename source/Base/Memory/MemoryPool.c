@@ -18,42 +18,6 @@
 
 #include "MemoryPool.h"
 
-#undef __MEMORY_POOLS
-#define __MEMORY_POOLS												13
-
-#undef __MEMORY_POOL_ARRAYS
-#define __MEMORY_POOL_ARRAYS \
-	__BLOCK_DEFINITION(356, 1) \
-	__BLOCK_DEFINITION(332, 8) \
-	__BLOCK_DEFINITION(172, 8) \
-	__BLOCK_DEFINITION(152, 30) \
-	__BLOCK_DEFINITION(120, 20) \
-	__BLOCK_DEFINITION(108, 70) \
-	__BLOCK_DEFINITION(80, 40) \
-	__BLOCK_DEFINITION(48, 65) \
-	__BLOCK_DEFINITION(40, 50) \
-	__BLOCK_DEFINITION(28, 150) \
-	__BLOCK_DEFINITION(20, 900) \
-	__BLOCK_DEFINITION(16, 460) \
-	__BLOCK_DEFINITION(12, 145) \
-
-#undef __SET_MEMORY_POOL_ARRAYS
-#define __SET_MEMORY_POOL_ARRAYS \
-	__SET_MEMORY_POOL_ARRAY(356) \
-	__SET_MEMORY_POOL_ARRAY(332) \
-	__SET_MEMORY_POOL_ARRAY(172) \
-	__SET_MEMORY_POOL_ARRAY(152) \
-	__SET_MEMORY_POOL_ARRAY(120) \
-	__SET_MEMORY_POOL_ARRAY(108) \
-	__SET_MEMORY_POOL_ARRAY(80) \
-	__SET_MEMORY_POOL_ARRAY(48) \
-	__SET_MEMORY_POOL_ARRAY(40) \
-	__SET_MEMORY_POOL_ARRAY(28) \
-	__SET_MEMORY_POOL_ARRAY(20) \
-	__SET_MEMORY_POOL_ARRAY(16) \
-	__SET_MEMORY_POOL_ARRAY(12) \
-
-
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' MACROS
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
