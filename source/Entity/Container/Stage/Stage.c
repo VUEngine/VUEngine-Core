@@ -237,7 +237,7 @@ void Stage::resume()
 {
 	// Set camera to its previous position
 	Camera::setStageSize(Size::getFromPixelSize(this->stageSpec->level.pixelSize));
-	Camera::setTransformation(this->cameraTransformation, true);
+	Camera::setTransformation(this->cameraTransformation, false);
 	Camera::setup(this->stageSpec->rendering.pixelOptical, this->stageSpec->level.cameraFrustum);
 
 	// Setup timer
