@@ -45,14 +45,14 @@ typedef struct BgmapSpriteSpec
 {
 	SpriteSpec spriteSpec;
 
+	/// Flag to indicate in which display to show the bg texture
+	uint16 display;
+
 	// The display mode (__WORLD_BGMAP, __WORLD_AFFINE or __WORLD_HBIAS)
 	uint16 bgmapMode;
 
 	/// Pointer to affine/hbias manipulation function
 	ParamTableEffectMethod applyParamTableEffect;
-
-	/// Flag to indicate in which display to show the bg texture
-	uint16 display;
 
 } BgmapSpriteSpec;
 
