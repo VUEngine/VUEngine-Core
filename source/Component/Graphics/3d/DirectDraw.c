@@ -444,6 +444,9 @@ static bool DirectDraw::drawLine(PixelVector fromPoint, PixelVector toPoint, int
 		return false;
 	}
 
+	// Configure the drawing frame buffers
+	//VIPManager::registerCurrentDrawingFrameBufferSet();
+
 	if(interlaced)
 	{
 		uint32 leftBuffer = *_currentDrawingFrameBufferSet | (bufferIndex << __FRAME_BUFFER_SIDE_BIT_INDEX);
