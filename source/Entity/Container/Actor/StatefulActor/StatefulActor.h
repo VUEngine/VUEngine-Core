@@ -48,7 +48,9 @@ typedef const StatefulActorSpec StatefulActorROMSpec;
 ///
 /// Inherits from Actor
 ///
-/// Implements an animated actor that can have complex behavior and physical simulations.
+/// Implements an Actor with a StateMachine to support complex behavior.
+/// It should go away once StateMachines are components too, which seems
+/// not possible unless the VUEngine becomes an Entity
 class StatefulActor : Actor
 {
 	/// @protectedsection
