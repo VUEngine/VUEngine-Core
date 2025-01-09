@@ -158,9 +158,9 @@ static int32 HardwareManager::getInterruptLevel()
 
 	asm
 	(
-		"stsr	sr5, r6			\n\t"      \
-		"shr	0x10, r6		\n\t"      \
-		"andi	0x000F, r6, r6	\n\t"      \
+		"stsr	sr5, r6			\n\t"	  \
+		"shr	0x10, r6		\n\t"	  \
+		"andi	0x000F, r6, r6	\n\t"	  \
 		"mov	r6, %0			\n\t"
 		: "=r" (level) // Output
 		: // Input
@@ -297,7 +297,7 @@ static void HardwareManager::printStackStatus(int32 x, int32 y, bool resumed)
 			x = (__SCREEN_WIDTH_IN_CHARS) - Math::getDigitsCount(room) - 13;
 		}
 
-		Printing::text("   STACK'S ROOM        " , x - 3, y, NULL);
+		Printing::text("   STACK'S ROOM		" , x - 3, y, NULL);
 		Printing::int32(room, x + 13, y, NULL);
 	}
 	else
@@ -312,11 +312,11 @@ static void HardwareManager::printStackStatus(int32 x, int32 y, bool resumed)
 		Printing::hex((int32)&_bssEnd, x + 15, y, 4, NULL);
 		Printing::text("Stack Pointer:" , x, ++y, NULL);
 		Printing::hex(sp, x + 15, y, 4, NULL);
-		Printing::text("Minimum Room:           " , x, ++y, NULL);
+		Printing::text("Minimum Room:		   " , x, ++y, NULL);
 		Printing::int32(__STACK_HEADROOM, x + 15, y, NULL);
-		Printing::text("Actual Room:           " , x, ++y, NULL);
+		Printing::text("Actual Room:		   " , x, ++y, NULL);
 		Printing::int32(room, x + 15, y, NULL);
-		Printing::text("Overflow:           " , x, ++y, NULL);
+		Printing::text("Overflow:		   " , x, ++y, NULL);
 		Printing::int32(__STACK_HEADROOM - room, x + 15, y, NULL);
 	}
 }

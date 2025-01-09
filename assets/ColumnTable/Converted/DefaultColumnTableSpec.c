@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
-//                              THIS FILE WAS AUTO-GENERATED - DO NOT EDIT                               //
+//							  THIS FILE WAS AUTO-GENERATED - DO NOT EDIT							   //
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -19,7 +19,7 @@ ColumnTableROMSpec DefaultColumnTableSpec =
 
 	// Column table spec
 	{
-        0xFE, 0xFE, 0xFE, 0xFE, 0xFE, 0xFE, 0xFE, 0xFE, 
+		0xFE, 0xFE, 0xFE, 0xFE, 0xFE, 0xFE, 0xFE, 0xFE, 
 		0xFE, 0xFE, 0xFE, 0xFE, 0xFE, 0xFE, 0xFE, 0xFE, 
 		0xFE, 0xFE, 0xFE, 0xFE, 0xFE, 0xFE, 0xFE, 0xFE, 
 		0xFE, 0xFE, 0xFE, 0xFE, 0xFE, 0xFE, 0xFE, 0xFE, 

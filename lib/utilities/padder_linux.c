@@ -8,11 +8,11 @@ int main(int argc, char **argv) {
 	unsigned char *pad;
 	char *str;
 	FILE *fp,*fpAux;
-        if ((argc != 2)) {
+		if ((argc != 2)) {
 		if ((str = strrchr(argv[0],'\\'))) str++; //filter directori
 		else str = argv[0];
 		printf("Usage: %s <infile> ",str);
-		return 1;							        }
+		return 1;									}
 
 	if (!(fp = fopen(argv[1],"a+b"))) {
 		printf("Cannot open \"%s\"\n",argv[1]);

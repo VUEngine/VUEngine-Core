@@ -193,8 +193,8 @@ static void CommunicationManager::enableCommunications(EventListener eventLister
 	VUEngine::wait(wait);
 
 	// If handshake is taking place
-    if(CommunicationManager::isHandshakeIncoming(communicationManager))
-    {
+	if(CommunicationManager::isHandshakeIncoming(communicationManager))
+	{
 		// There is another system attached already managing
 		// The channel
 		communicationManager->communicationMode = __COM_AS_MASTER;
@@ -210,7 +210,7 @@ static void CommunicationManager::enableCommunications(EventListener eventLister
 
 		// Wait for incoming clock
 		CommunicationManager::sendHandshake(communicationManager);
-    }
+	}
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -364,7 +364,7 @@ static bool CommunicationManager::broadcastData(BYTE* data, int32 numberOfBytes)
 		numberOfBytes--;
 	}
 
-    
+	
 	communicationManager->broadcast = kCommunicationsBroadcastNone;
 
 	return true;

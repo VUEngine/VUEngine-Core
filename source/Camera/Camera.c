@@ -639,15 +639,15 @@ void Camera::constructor()
 	this->transformationFlags = __VALID_TRANSFORMATION;
 
 	PixelOptical pixelOptical =
-    {
-    	__MAXIMUM_X_VIEW_DISTANCE,				// maximum distance from the screen to the infinite
-    	__MAXIMUM_Y_VIEW_DISTANCE,				// maximum distance from the screen to the infinite
+	{
+		__MAXIMUM_X_VIEW_DISTANCE,				// maximum distance from the screen to the infinite
+		__MAXIMUM_Y_VIEW_DISTANCE,				// maximum distance from the screen to the infinite
 		__CAMERA_NEAR_PLANE,					// distance from player's eyes to the virtual screen
-    	__BASE_FACTOR,							// distance from left to right eye (depth perception)
-    	__HORIZONTAL_VIEW_POINT_CENTER,			// horizontal View point center
-    	__VERTICAL_VIEW_POINT_CENTER,			// vertical View point center
-    	__SCALING_MODIFIER_FACTOR,				// scaling factor for sprite resizing
-    };
+		__BASE_FACTOR,							// distance from left to right eye (depth perception)
+		__HORIZONTAL_VIEW_POINT_CENTER,			// horizontal View point center
+		__VERTICAL_VIEW_POINT_CENTER,			// vertical View point center
+		__SCALING_MODIFIER_FACTOR,				// scaling factor for sprite resizing
+	};
 
 	Camera::setup(pixelOptical, this->cameraFrustum);
 

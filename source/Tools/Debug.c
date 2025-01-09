@@ -903,11 +903,11 @@ void Debug::showBgmapSegment()
 
 			Printing::text("                                                ", 0, 26, NULL);
 
-        	for(i = yOffset + 1; i < 28; i++)
-        	{
-        		Printing::text(" \x07", 0, i, NULL);
-        		Printing::text(" ", 46, i, NULL);
-        	}
+			for(i = yOffset + 1; i < 28; i++)
+			{
+				Printing::text(" \x07", 0, i, NULL);
+				Printing::text(" ", 46, i, NULL);
+			}
 
 			topBorder = 5;
 			bottomBorder = 0;
@@ -927,11 +927,11 @@ void Debug::showBgmapSegment()
 
 			Printing::text("                                                ", 0, 26, NULL);
 
-        	for(i = yOffset + 1; i < 28; i++)
-        	{
-        		Printing::text(" ", 1, i, NULL);
-        		Printing::text("\x07 ", 46, i, NULL);
-        	}
+			for(i = yOffset + 1; i < 28; i++)
+			{
+				Printing::text(" ", 1, i, NULL);
+				Printing::text("\x07 ", 46, i, NULL);
+			}
 
 			topBorder = 5;
 			bottomBorder = 0;
@@ -946,11 +946,11 @@ void Debug::showBgmapSegment()
 			Printing::text("                                                ", 0, yOffset, NULL);
 			Printing::text("                                                ", 0, 26, NULL);
 
-        	for(i = yOffset; i < 28; i++)
-        	{
-        		Printing::text(" \x07", 0, i, NULL);
-        		Printing::text(" ", 46, i, NULL);
-        	}
+			for(i = yOffset; i < 28; i++)
+			{
+				Printing::text(" \x07", 0, i, NULL);
+				Printing::text(" ", 46, i, NULL);
+			}
 
 			topBorder = 4;
 			bottomBorder = 0;
@@ -965,11 +965,11 @@ void Debug::showBgmapSegment()
 			Printing::text("                                                ", 0, yOffset, NULL);
 			Printing::text("                                                ", 0, 26, NULL);
 
-        	for(i = yOffset; i < 28; i++)
-        	{
-        		Printing::text(" ", 1, i, NULL);
-        		Printing::text("\x07 ", 46, i, NULL);
-        	}
+			for(i = yOffset; i < 28; i++)
+			{
+				Printing::text(" ", 1, i, NULL);
+				Printing::text("\x07 ", 46, i, NULL);
+			}
 
 			topBorder = 4;
 			bottomBorder = 0;
@@ -990,11 +990,11 @@ void Debug::showBgmapSegment()
 
 			Printing::text("                                                ", 0, 27, NULL);
 
-        	for(i = yOffset; i < 26; i++)
-        	{
-        		Printing::text(" \x07", 0, i, NULL);
-        		Printing::text(" ", 46, i, NULL);
-        	}
+			for(i = yOffset; i < 26; i++)
+			{
+				Printing::text(" \x07", 0, i, NULL);
+				Printing::text(" ", 46, i, NULL);
+			}
 
 			topBorder = 4;
 			bottomBorder = 2;
@@ -1015,11 +1015,11 @@ void Debug::showBgmapSegment()
 
 			Printing::text("                                                ", 0, 27, NULL);
 
-        	for(i = yOffset; i < 26; i++)
-        	{
-        		Printing::text(" ", 1, i, NULL);
-        		Printing::text("\x07 ", 46, i, NULL);
-        	}
+			for(i = yOffset; i < 26; i++)
+			{
+				Printing::text(" ", 1, i, NULL);
+				Printing::text("\x07 ", 46, i, NULL);
+			}
 
 			topBorder = 4;
 			bottomBorder = 2;

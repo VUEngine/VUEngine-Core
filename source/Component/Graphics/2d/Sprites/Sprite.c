@@ -115,7 +115,7 @@ RightBox Sprite::getRightBox()
 
 void Sprite::createAnimationController()
 {
-    this->animationController = new AnimationController();
+	this->animationController = new AnimationController();
 
 	if(isDeleted(this->animationController))
 	{

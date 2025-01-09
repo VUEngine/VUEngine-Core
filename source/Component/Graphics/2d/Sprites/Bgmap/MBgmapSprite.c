@@ -138,7 +138,7 @@ int16 MBgmapSprite::doRender(int16 index)
 	// Set the world size
 	if(!((MBgmapSpriteSpec*)this->componentSpec)->xLoop)
 	{
-    	w = (this->halfWidth << 1) - mxDisplacement;
+		w = (this->halfWidth << 1) - mxDisplacement;
 
 		if(w + gx >= _cameraFrustum->x1)
 		{
@@ -160,7 +160,7 @@ int16 MBgmapSprite::doRender(int16 index)
 
 	if(!((MBgmapSpriteSpec*)this->componentSpec)->yLoop)
 	{
-    	h = (this->halfHeight << 1) - myDisplacement;
+		h = (this->halfHeight << 1) - myDisplacement;
 
 		if(h + gy >= _cameraFrustum->y1)
 		{

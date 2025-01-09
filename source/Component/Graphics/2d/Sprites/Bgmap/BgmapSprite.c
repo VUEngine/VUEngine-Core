@@ -394,7 +394,7 @@ void BgmapSprite::setScale(const PixelScale* scale)
 		}
 
 		if(0 < this->param)
-    	{
+		{
 			this->paramTableRow = -1 == this->paramTableRow ? 0 : this->paramTableRow;
 		}
 	}

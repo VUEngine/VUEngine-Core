@@ -562,7 +562,7 @@ static bool DirectDraw::drawCircle(PixelVector center, int16 radius, int32 color
 
 		int16 x = radius;
 		int16 y = 0;		
-	    int16 radiusError = 1 - x;
+		int16 radiusError = 1 - x;
 
 		center.parallax /= 2;
 
@@ -574,7 +574,7 @@ static bool DirectDraw::drawCircle(PixelVector center, int16 radius, int32 color
 			center.parallax = -center.parallax;
 		}
 
-	    while (x >= y)
+		while (x >= y)
 		{
 			DirectDraw::drawColorPixelInterlaced((BYTE*)leftBuffer, center.x + x + radius, center.y + y + radius, center.parallax, color);
 			DirectDraw::drawColorPixelInterlaced((BYTE*)leftBuffer, center.x + y + radius, center.y + x + radius, center.parallax, color);
@@ -626,12 +626,12 @@ static bool DirectDraw::drawCircle(PixelVector center, int16 radius, int32 color
 
 		int16 x = radius;
 		int16 y = 0;		
-	    int16 radiusError = 1 - x;
+		int16 radiusError = 1 - x;
 
 		center.x -= radius;
 		center.y -= radius;
 
-	    while (x >= y)
+		while (x >= y)
 		{
 			DirectDraw::drawColorPixel
 			(

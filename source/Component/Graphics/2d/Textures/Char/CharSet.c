@@ -249,20 +249,20 @@ void CharSet::write()
 			);
 #else
 			// Based on dasi's memcpy
-		    asm
+			asm
 			(
-				"loop%=:				\n\t"      \
-				"ld.w	0[%1], r11		\n\t"      \
-				"ld.w	4[%1], r12		\n\t"      \
-				"ld.w	8[%1], r13		\n\t"      \
-				"st.w	r11, 0[%0]		\n\t"      \
-				"addi	16, %0, %0		\n\t"      \
-				"ld.w	12[%1], r11		\n\t"      \
-				"st.w	r12, -12[%0]	\n\t"      \
-				"addi	16, %1, %1		\n\t"      \
-				"st.w	r13, -8[%0]		\n\t"      \
-				"add 	-1, %2			\n\t"      \
-				"st.w	r11, -4[%0]		\n\t"      \
+				"loop%=:				\n\t"	  \
+				"ld.w	0[%1], r11		\n\t"	  \
+				"ld.w	4[%1], r12		\n\t"	  \
+				"ld.w	8[%1], r13		\n\t"	  \
+				"st.w	r11, 0[%0]		\n\t"	  \
+				"addi	16, %0, %0		\n\t"	  \
+				"ld.w	12[%1], r11		\n\t"	  \
+				"st.w	r12, -12[%0]	\n\t"	  \
+				"addi	16, %1, %1		\n\t"	  \
+				"st.w	r13, -8[%0]		\n\t"	  \
+				"add 	-1, %2			\n\t"	  \
+				"st.w	r11, -4[%0]		\n\t"	  \
 				"bne   loop%=			\n\t"
 				: // No Output
 				: "r" ((uint32*)(__CHAR_SPACE_BASE_ADDRESS + (((uint32)this->offset) << 4))), 
