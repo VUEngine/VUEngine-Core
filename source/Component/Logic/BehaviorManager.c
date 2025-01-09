@@ -68,7 +68,6 @@ void BehaviorManager::deinstantiateComponent(Entity owner, Behavior behavior)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-
 static void BehaviorManager::reset()
 {	
 	BehaviorManager::cleanUp();

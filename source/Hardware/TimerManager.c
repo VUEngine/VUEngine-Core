@@ -616,7 +616,6 @@ static void TimerManager::print(int32 x, int32 y)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-
 static uint16 TimerManager::computeTimerCounter()
 {
 	TimerManager timerManager = TimerManager::getInstance();

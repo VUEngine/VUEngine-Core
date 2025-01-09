@@ -40,7 +40,6 @@ void UIContainer::destructor()
 {
 	this->deleteMe = true;
 
-
 	// Always explicitly call the base's destructor 
 	Base::destructor();
 }

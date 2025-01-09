@@ -45,7 +45,7 @@ typedef struct BgmapSpriteSpec
 {
 	SpriteSpec spriteSpec;
 
-	/// The display mode (BGMAP, AFFINE, H-BIAS)
+	// The display mode (__WORLD_BGMAP, __WORLD_AFFINE or __WORLD_HBIAS)
 	uint16 bgmapMode;
 
 	/// Pointer to affine/hbias manipulation function

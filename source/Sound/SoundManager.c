@@ -337,7 +337,6 @@ static void SoundManager::printPlaybackTime(int32 x, int32 y)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-
 static Sound SoundManager::doGetSound(const SoundSpec* soundSpec, EventListener soundReleaseListener, ListenerObject scope)
 {
 	SoundManager soundManager = SoundManager::getInstance();

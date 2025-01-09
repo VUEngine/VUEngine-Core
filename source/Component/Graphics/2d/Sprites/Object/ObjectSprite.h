@@ -37,10 +37,7 @@ typedef struct ObjectSpriteSpec
 	/// it has a Sprite spec at the beginning
 	SpriteSpec spriteSpec;
 
-	/// the display mode (BGMAP, AFFINE, H-BIAS)
-	uint16 bgmapMode;
-
-	/// flag to indicate in which display to show the bg texture
+	/// Flag to indicate in which display to show the texture (__WORLD_ON, __WORLD_LON or __WORLD_RON)
 	uint16 display;
 
 } ObjectSpriteSpec;
