@@ -123,8 +123,6 @@ static void VIPManager::interruptHandler()
 #endif
 
 	vipManager->currrentInterrupt = 0;
-
-	VIPManager::enableInterrupts(__GAMESTART | __XPEND);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
