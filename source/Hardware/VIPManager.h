@@ -304,7 +304,7 @@ singleton! class VIPManager : ListenerObject
 
 	/// Enum to determine if the manager waits for the VIP before suspending/resuming
 	/// the VIP's drawing operations
-	uint32 strategy;
+	uint32 drawingStrategy;
 
 	/// Allows VIP interrupts that the engine doesn't use
 	uint16 customInterrupts;
@@ -355,9 +355,9 @@ singleton! class VIPManager : ListenerObject
 	/// @param enabledMultiplexedInterrupts: Multiplexed interrupts to allow
 	static void enableMultiplexedInterrupts(uint32 enabledMultiplexedInterrupts);
 
-	/// Set the drawing management strategy interrupts that are allowed
-	/// @param strategy: Value to control the suspension and resuming of drawing
-	static void favorStrategy(uint32 strategy);
+	/// Set the drawing management drawingStrategy interrupts that are allowed
+	/// @param drawingStrategy: Value to control the suspension and resuming of drawing
+	static void setDrawingStrategy(uint32 drawingStrategy);
 
 	/// Start VIP drawing operations.
 	static void startDrawing();
