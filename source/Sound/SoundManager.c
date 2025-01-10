@@ -30,12 +30,6 @@ friend class VirtualNode;
 friend class VirtualList;
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-// CLASS' ATTRIBUTES
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-static VSUManager _vsuManager = NULL;
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' STATIC METHODS
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
@@ -45,7 +39,7 @@ static void SoundManager::playSounds(uint32 elapsedMicroseconds)
 {
 	SoundManager soundManager = SoundManager::getInstance();
 
-	VSUManager::update(_vsuManager);
+	VSUManager::update();
 
 	for(VirtualNode node = soundManager->sounds->head; NULL != node; node = node->next)
 	{
@@ -59,7 +53,7 @@ static void SoundManager::reset()
 {
 	SoundManager soundManager = SoundManager::getInstance();
 
-	VSUManager::reset(_vsuManager);
+	VSUManager::reset();
 
 	for(VirtualNode node = soundManager->sounds->head; NULL != node; node = node->next)
 	{
