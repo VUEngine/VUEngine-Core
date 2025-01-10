@@ -15,13 +15,11 @@
 
 #include <Body.h>
 #include <Collider.h>
-#include <ColliderManager.h>
 #include <ComponentManager.h>
 #include <Printing.h>
 #include <Telegram.h>
 #include <VirtualList.h>
 #include <VirtualNode.h>
-#include <VUEngine.h>
 
 #include "Entity.h"
 

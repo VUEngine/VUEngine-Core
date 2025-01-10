@@ -13,17 +13,15 @@
 
 #include <string.h>
 
-#include <DebugConfig.h>
 #include <ActorFactory.h>
-#include <Optics.h>
+#include <ComponentManager.h>
+#include <DebugConfig.h>
 #include <Mesh.h>
 #include <Printing.h>
 #include <Sprite.h>
-#include <SpriteManager.h>
 #include <Telegram.h>
 #include <VirtualList.h>
 #include <VirtualNode.h>
-#include <VUEngine.h>
 
 #include "Actor.h"
 

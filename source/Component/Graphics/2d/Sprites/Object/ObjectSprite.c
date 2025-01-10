@@ -16,7 +16,6 @@
 #include <ObjectTexture.h>
 #include <ObjectTextureManager.h>
 #include <SpriteManager.h>
-#include <VIPManager.h>
 
 #include "ObjectSprite.h"
 

@@ -13,7 +13,6 @@
 
 #include <CharSetManager.h>
 #include <Optics.h>
-#include <SpriteManager.h>
 #include <VirtualList.h>
 #include <VirtualNode.h>
 
