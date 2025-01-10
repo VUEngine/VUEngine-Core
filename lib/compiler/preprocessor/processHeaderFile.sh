@@ -436,8 +436,6 @@ then
 		releaseLock $classesHierarchyFile
 	done
 
-echo BASE CLASSS "$baseBaseClassName"
-
 	while : ; do
 
 		if [ -z "${baseBaseClassName##Object}" ];
