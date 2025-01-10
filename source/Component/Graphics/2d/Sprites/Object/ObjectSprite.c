@@ -14,7 +14,6 @@
 #include <DebugConfig.h>
 #include <ObjectSpriteContainer.h>
 #include <ObjectTexture.h>
-#include <ObjectTextureManager.h>
 #include <SpriteManager.h>
 
 #include "ObjectSprite.h"
@@ -54,8 +53,7 @@ void ObjectSprite::constructor(Entity owner, const ObjectSpriteSpec* objectSprit
 
 	if(NULL != objectSpriteSpec->spriteSpec.textureSpec)
 	{
-		this->texture = 
-			Texture::safeCast(ObjectTextureManager::getTexture((ObjectTextureSpec*)objectSpriteSpec->spriteSpec.textureSpec));
+		this->texture = Texture::get(typeofclass(ObjectTexture), (ObjectTextureSpec*)objectSpriteSpec->spriteSpec.textureSpec, 0, 0, 0);
 
 		NM_ASSERT(this->texture, "ObjectSprite::constructor: null texture");
 
@@ -91,7 +89,7 @@ void ObjectSprite::destructor()
 			this->texture, ListenerObject::safeCast(this), (EventListener)ObjectSprite::onTextureRewritten, kEventTextureRewritten
 		);
 		
-		ObjectTextureManager::releaseTexture(ObjectTexture::safeCast(this->texture));		
+		Texture::release(this->texture);		
 	}
 
 	this->texture = NULL;

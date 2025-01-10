@@ -449,7 +449,7 @@ echo BASE CLASSS "$baseBaseClassName"
 
 		isBaseClassSingleton=`echo "$classesHierarchy" | grep -e "^$baseBaseClassName:.*" | grep -e "singleton!"`
 
-		if [ ! -z "$isBaseClassSingleton" ];
+		if [ ! -z "$isBaseClassSingleton"];
 		then
 			echo "ERROR: $className inherits from $baseClassName but"
 			echo "	$baseClassName is final because it is a singleton"
@@ -460,7 +460,24 @@ echo BASE CLASSS "$baseBaseClassName"
 			fi
 
 			exit 0
+		else
+
+			isBaseClassFinal=`echo "$classesHierarchy" | grep -e "^$baseBaseClassName:.*" | grep -e "final "`
+	
+			if [ ! -z "$isBaseClassFinal"];
+			then
+				echo "ERROR: $className inherits from $baseClassName but"
+				echo "	$baseClassName is final"
+
+				if [ -f $OUTPUT_FILE ];
+				then
+					rm -f $OUTPUT_FILE
+				fi
+
+				exit 0
+			fi
 		fi
+
 
 		if (set -f ; IFS=$'\n'; set -- x${baseBaseClassNameLine}x ; [ $# = 1 ]) ; 
 		then
@@ -788,20 +805,17 @@ then
 	echo "$virtualMethodOverrides" >> $TEMPORAL_FILE
 #	echo "" >> $TEMPORAL_FILE
 
-	if [ ! "$isFinalClass" = true ];
+	if [ ! -z "$baseClassName" ];
 	then
-		if [ ! -z "$baseClassName" ];
-		then
-			attributes="#define "$className"_ATTRIBUTES "$baseClassName"_ATTRIBUTES $attributes"
+		attributes="#define "$className"_ATTRIBUTES "$baseClassName"_ATTRIBUTES $attributes"
 
-			virtualMethodDeclarations=$virtualMethodDeclarations" "$baseClassName"_METHODS(ClassName) "
-			virtualMethodOverrides=$virtualMethodOverrides" "$baseClassName"_SET_VTABLE(ClassName) "
-		else
-			attributes="#define "$className"_ATTRIBUTES $attributes"
-		fi
-
-		echo "$attributes" >> $TEMPORAL_FILE
+		virtualMethodDeclarations=$virtualMethodDeclarations" "$baseClassName"_METHODS(ClassName) "
+		virtualMethodOverrides=$virtualMethodOverrides" "$baseClassName"_SET_VTABLE(ClassName) "
+	else
+		attributes="#define "$className"_ATTRIBUTES $attributes"
 	fi
+
+	echo "$attributes" >> $TEMPORAL_FILE
 fi
 
 #echo "" >> $TEMPORAL_FILE

@@ -11,14 +11,11 @@
 // INCLUDES
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-#include <BgmapTextureManager.h>
-#include <Camera.h>
-#include <Optics.h>
+#include <BgmapTexture.h>
+#include <DebugConfig.h>
 #include <ParamTableManager.h>
 #include <VirtualList.h>
 #include <VirtualNode.h>
-#include <DebugConfig.h>
-#include <VIPManager.h>
 
 #include "MBgmapSprite.h"
 
@@ -53,7 +50,7 @@ void MBgmapSprite::constructor(Entity owner, const MBgmapSpriteSpec* mBgmapSprit
 
 	if(!isDeleted(this->texture))
 	{
-		BgmapTextureManager::releaseTexture(BgmapTexture::safeCast(this->texture));
+		Texture::release(this->texture);
 		this->texture = NULL;
 	}
 
@@ -269,10 +266,13 @@ void MBgmapSprite::loadTexture(TextureSpec* textureSpec, bool isFirstTextureAndH
 	}
 
 	BgmapTexture bgmapTexture = 
-		BgmapTextureManager::getTexture
+		BgmapTexture::safeCast
 		(
-			textureSpec, minimumSegment, isFirstTextureAndHasMultipleTextures,
-			((MBgmapSpriteSpec*)this->componentSpec)->scValue
+			Texture::get
+			(
+				typeofclass(BgmapTexture), textureSpec, minimumSegment, 
+				isFirstTextureAndHasMultipleTextures, ((MBgmapSpriteSpec*)this->componentSpec)->scValue
+			)
 		);
 
 	NM_ASSERT(!isDeleted(bgmapTexture), "MBgmapSprite::loadTexture: texture not loaded");
@@ -329,7 +329,7 @@ void MBgmapSprite::releaseTextures()
 					bgmapTexture, ListenerObject::safeCast(this), (EventListener)BgmapSprite::onTextureRewritten, kEventTextureRewritten
 				);
 				
-				BgmapTextureManager::releaseTexture(bgmapTexture);
+				Texture::release(Texture::safeCast(bgmapTexture));
 			}
 		}
 

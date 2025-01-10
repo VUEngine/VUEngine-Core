@@ -18,6 +18,12 @@
 #include <ListenerObject.h>
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+// FORWARD DECLARATIONS
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+class Texture;
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DATA
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
@@ -115,6 +121,22 @@ abstract class Texture : ListenerObject
 
 	/// Reset class' state.
 	static void reset();
+
+	/// Get a texture configured with the provided spec.
+	/// @param textureClass: Class of texture to instantiate
+	/// @param textureSpec: Spec used to select or initialize a texture with
+	/// @param minimumSegment: Minimum BGMAP segment where to allocate the texture
+	/// @param mustLiveAtEvenSegment: Required BGMAP segment where to allocate the texture
+	/// @param scValue: SC configuration value for multi segment textures
+	/// @return Texture initialized with the provided spec
+	static Texture get
+	(
+		ClassPointer textureClass, const TextureSpec* textureSpec, int16 minimumSegment, bool mustLiveAtEvenSegment, uint32 scValue
+	);
+
+	/// Release a texture.
+	/// @param texture: Texture to release
+	static void release(Texture texture);
 
 	/// Update texture pending rewriting of data in DRAM.
 	/// @param maximumTextureRowsToWrite: Number of texture rows to write during this call

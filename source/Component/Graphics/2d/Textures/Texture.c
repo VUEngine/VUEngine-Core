@@ -12,6 +12,8 @@
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <CharSetManager.h>
+#include <BgmapTextureManager.h>
+#include <ObjectTextureManager.h>
 #include <Optics.h>
 #include <VirtualList.h>
 #include <VirtualNode.h>
@@ -35,6 +37,56 @@ static VirtualList _texturesToUpdate = NULL;
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' STATIC METHODS
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+static Texture Texture::get
+(
+	ClassPointer textureClass, const TextureSpec* textureSpec, int16 minimumSegment, bool mustLiveAtEvenSegment, uint32 scValue
+)
+{
+	if(NULL == textureSpec)
+	{
+		return NULL;
+	}
+
+	if(typeofclass(BgmapTexture) == textureClass)
+	{
+		return 
+			Texture::safeCast
+			(
+				BgmapTextureManager::getTexture
+				(
+					(BgmapTextureSpec*)textureSpec, minimumSegment, mustLiveAtEvenSegment, scValue
+				)
+			);
+	}
+	else if(typeofclass(ObjectTexture) == textureClass)
+	{
+		return Texture::safeCast(ObjectTextureManager::getTexture((ObjectTextureSpec*)textureSpec));
+	}
+
+	return NULL;	
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+static void Texture::release(Texture texture)
+{
+	if(isDeleted(texture))
+	{
+		return;
+	}
+
+	if(__IS_INSTANCE_OF(BgmapTexture, texture))
+	{
+		BgmapTextureManager::releaseTexture(BgmapTexture::safeCast(texture));
+	}
+	else if(__IS_INSTANCE_OF(ObjectTexture, texture))
+	{
+		ObjectTextureManager::releaseTexture(ObjectTexture::safeCast(texture));
+	}
+}
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
