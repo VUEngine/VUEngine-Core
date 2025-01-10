@@ -14,12 +14,10 @@
 #include <Affine.h>
 #include <BgmapTexture.h>
 #include <BgmapTextureManager.h>
-#include <Camera.h>
 #include <DebugConfig.h>
 #include <Optics.h>
 #include <ParamTableManager.h>
 #include <SpriteManager.h>
-#include <VIPManager.h>
 
 #include "BgmapSprite.h"
 
