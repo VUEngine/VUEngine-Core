@@ -436,6 +436,8 @@ then
 		releaseLock $classesHierarchyFile
 	done
 
+echo BASE CLASSS "$baseBaseClassName"
+
 	while : ; do
 
 		if [ -z "${baseBaseClassName##Object}" ];
@@ -444,6 +446,21 @@ then
 		fi
 
 		baseBaseClassNameLine=`grep -e "^$baseBaseClassName:.* | grep -v "extension <<< "$classesHierarchy"`
+
+		isBaseClassSingleton=`echo "$classesHierarchy" | grep -e "^$baseBaseClassName:.*" | grep -e "singleton!"`
+
+		if [ ! -z "$isBaseClassSingleton" ];
+		then
+			echo "ERROR: $className inherits from $baseClassName but"
+			echo "	$baseClassName is final because it is a singleton"
+
+			if [ -f $OUTPUT_FILE ];
+			then
+				rm -f $OUTPUT_FILE
+			fi
+
+			exit 0
+		fi
 
 		if (set -f ; IFS=$'\n'; set -- x${baseBaseClassNameLine}x ; [ $# = 1 ]) ; 
 		then
