@@ -17,6 +17,12 @@
 #include <ListenerObject.h>
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+// FORWARD DECLARATIONS
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+class CharSet;
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' MACROS
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
@@ -90,6 +96,15 @@ class CharSet : ListenerObject
 	uint8 usageCount;
 
 	/// @publicsection
+
+	/// Get a charSet configured with the provided spec.
+	/// @param charSetSpec: Spec used to select or initialize a texture with
+	/// @return CharSet initialized with the provided spec
+	static CharSet get(const CharSetSpec* charSetSpec);
+
+	/// Release a charSet.
+	/// @param charSet: CharSet to release
+	static void release(CharSet charSet);
 
 	/// Class' constructor
 	/// @param charSetSpec: Spec to use in the construction of the char set

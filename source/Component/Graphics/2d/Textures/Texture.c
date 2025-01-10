@@ -40,6 +40,21 @@ static VirtualList _texturesToUpdate = NULL;
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+static void Texture::reset()
+{
+	if(NULL == _texturesToUpdate)
+	{
+		_texturesToUpdate = new VirtualList();
+	}
+
+	if(!isDeleted(_texturesToUpdate))
+	{
+		VirtualList::clear(_texturesToUpdate);
+	}
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 static Texture Texture::get
 (
 	ClassPointer textureClass, const TextureSpec* textureSpec, int16 minimumSegment, bool mustLiveAtEvenSegment, uint32 scValue
@@ -85,21 +100,6 @@ static void Texture::release(Texture texture)
 	else if(__IS_INSTANCE_OF(ObjectTexture, texture))
 	{
 		ObjectTextureManager::releaseTexture(ObjectTexture::safeCast(texture));
-	}
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-static void Texture::reset()
-{
-	if(NULL == _texturesToUpdate)
-	{
-		_texturesToUpdate = new VirtualList();
-	}
-
-	if(!isDeleted(_texturesToUpdate))
-	{
-		VirtualList::clear(_texturesToUpdate);
 	}
 }
 
@@ -630,7 +630,7 @@ void Texture::loadCharSet()
 		return;
 	}
 
-	this->charSet = CharSetManager::getCharSet(this->textureSpec->charSetSpec);
+	this->charSet = CharSet::get(this->textureSpec->charSetSpec);
 
 	if(isDeleted(this->charSet))
 	{
@@ -676,7 +676,7 @@ void Texture::releaseCharSet()
 			this->charSet, ListenerObject::safeCast(this), (EventListener)Texture::onCharSetDeleted, kEventCharSetDeleted
 		);
 
-		CharSetManager::releaseCharSet(this->charSet);
+		CharSet::release(this->charSet);
 
 		this->charSet = NULL;
 	}
