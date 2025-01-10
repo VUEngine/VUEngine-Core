@@ -62,21 +62,21 @@ abstract class Entity : ListenerObject
 	/// @param componentType: Type of components whose lists must be cleard
 	void clearComponentLists(uint32 componentType);
 
-	/// Attach a new component to the actor and configure it with the provided spec.
+	/// Attach a new component to the entity and configure it with the provided spec.
 	/// @param componentSpec: Specification to be used to configure the new component
 	/// @return Added component
 	Component addComponent(const ComponentSpec* componentSpec);
 
-	/// Remove a component from the actor.
+	/// Remove a component from the entity.
 	/// @param component: Component to remove
 	void removeComponent(Component component);
 
-	/// Attach a new components to the actor and configure it with the provided specs.
+	/// Attach a new components to the entity and configure it with the provided specs.
 	/// @param componentSpecs: Specifications to be used to configure the new components
 	/// @param componentType: Type of components to add
 	void addComponents(ComponentSpec** componentSpecs, uint32 componentType);
 
-	/// Remove the components of a give type from the actor.
+	/// Remove the components of a give type from the entity.
 	/// @param componentType: Type of components to remove
 	void removeComponents(uint32 componentType);
 
@@ -99,9 +99,9 @@ abstract class Entity : ListenerObject
 	/// @return True if one or more behaviors met the search criteria; false otherwise
 	bool getComponentsOfClass(ClassPointer classPointer, VirtualList components, uint32 componentType);
 
-	/// Retrieve the number of components belonging to the actor.
+	/// Retrieve the number of components belonging to the entity.
 	/// @param componentType: Type of components to count
-	/// @return Number of components belonging to the actor
+	/// @return Number of components belonging to the entity
 	uint16 getComponentsCount(uint32 componentType);
 
 	/// Reset components.
@@ -123,26 +123,26 @@ abstract class Entity : ListenerObject
 	/// @return Pointer to the object's 3D
 	const Scale* getScale();
 
-	/// Retrieve the statefulActor's physical body.
-	/// @return Actor's physical body
+	/// Retrieve the entity's physical body.
+	/// @return Entity's physical body
 	Body getBody();
 
-	/// Check if the statefulActor is moving.
-	/// @return True if the statefulActor's body is moving; false otherwise
+	/// Check if the entity is moving.
+	/// @return True if the entity's body is moving; false otherwise
 	bool isMoving();
 
-	/// Stop all statefulActor's movement.
+	/// Stop all entity's movement.
 	void stopAllMovement();
 
-	/// Stop the statefulActor's movement in the specified axis.
-	/// @param axis: Axis on which to stop the movement of the statefulActor's body
+	/// Stop the entity's movement in the specified axis.
+	/// @param axis: Axis on which to stop the movement of the entity's body
 	void stopMovement(uint16 axis);
 
-	/// Set the statefulActor's velocity vector.
-	/// @param velocity: Velocity vector to assign to the statefulActor's body
-	/// @param checkIfCanMove: If true, the statefulActor checks that none of its colliders will
+	/// Set the entity's velocity vector.
+	/// @param velocity: Velocity vector to assign to the entity's body
+	/// @param checkIfCanMove: If true, the entity checks that none of its colliders will
 	/// enter a collision if it were to move in the direction of the provided velocity
-	/// @return True if the statefulActor started to move in the direction specified by the
+	/// @return True if the entity started to move in the direction specified by the
 	/// provided velocity vector
 	bool setVelocity(const Vector3D* velocity, bool checkIfCanMove);
 
@@ -154,58 +154,58 @@ abstract class Entity : ListenerObject
 	/// @return Object's current speed (velocity vector's magnitude)
 	fixed_t getSpeed();
 
-	/// Retrieve the statefulActor's maximum speed.
-	/// @return Maximum speed at which the statefulActor's body is allowed to move
+	/// Retrieve the entity's maximum speed.
+	/// @return Maximum speed at which the entity's body is allowed to move
 	fixed_t getMaximumSpeed();
 
-	/// Retrieve the object's bounciness factor.
-	/// @return Object's bounciness factor
+	/// Retrieve the object's bounciness fentity.
+	/// @return Object's bounciness fentity
 	fixed_t getBounciness();
 
 	/// Retrieve the object's friction coefficient.
 	/// @return Object's friction coefficient
 	fixed_t getFrictionCoefficient();
 
-	/// Enable collision detection on the actor's colliders.
+	/// Enable collision detection on the entity's colliders.
 	void enableCollisions();
 
-	/// Disable collision detection on the actor's colliders.
+	/// Disable collision detection on the entity's colliders.
 	void disableCollisions();
 
-	/// Enable or disable collision detection against other actors' colliders.
-	/// @param activate: If true, this actor's colliders check collision against other actors'
+	/// Enable or disable collision detection against other entitys' colliders.
+	/// @param activate: If true, this entity's colliders check collision against other entitys'
 	void checkCollisions(bool activate);
 
 	/// Enable or disable the register of detected collisions.
-	/// @param activate: If false, this actor's colliders won't keep track of collisions, hence they
+	/// @param activate: If false, this entity's colliders won't keep track of collisions, hence they
 	/// won't notify of it of persisting (::collisionPersists) collisions or when end (::collisionEnds)
 	void registerCollisions(bool activate);
 
-	/// Set the layers in which this actor's colliders must live.
-	/// @param layers: Flags that determine the layers for the actor's colliders
+	/// Set the layers in which this entity's colliders must live.
+	/// @param layers: Flags that determine the layers for the entity's colliders
 	void setCollidersLayers(uint32 layers);
 
-	/// Retrieve the layers in which this actor's colliders live.
-	/// @return Flags that determine the layers where the actor's colliders live
+	/// Retrieve the layers in which this entity's colliders live.
+	/// @return Flags that determine the layers where the entity's colliders live
 	uint32 getCollidersLayers();
 
-	/// Set the layers that the actor's colliders must ignore when detecting collision.
+	/// Set the layers that the entity's colliders must ignore when detecting collision.
 	/// @param layersToIgnore: Flags that determine the layers with colliders to ignore when detecting
 	/// collisions
 	void setCollidersLayersToIgnore(uint32 layersToIgnore);
 
-	/// Retrieve the layers that the actor's colliders ignore when detecting collision.
-	/// @return The layers that the actor's colliders ignore when detecting collision
+	/// Retrieve the layers that the entity's colliders ignore when detecting collision.
+	/// @return The layers that the entity's colliders ignore when detecting collision
 	uint32 getCollidersLayersToIgnore();
 
-	/// Check if the actor has attached colliders.
-	/// @return True if the actor hast at least on collider arrached; false otherwise
+	/// Check if the entity has attached colliders.
+	/// @return True if the entity hast at least on collider arrached; false otherwise
 	bool hasColliders();
 
-	/// Make the actor's colliders visible.
+	/// Make the entity's colliders visible.
 	void showColliders();
 
-	/// Make the actor's colliders invisible.
+	/// Make the entity's colliders invisible.
 	void hideColliders();
 
 	/// Create the components that must attach to this container. 	
@@ -215,11 +215,11 @@ abstract class Entity : ListenerObject
 	/// Destroy the components that attach to this container. 	
 	virtual void destroyComponents();
 
-	/// A new component has been added to this statefulActor. 
+	/// A new component has been added to this entity. 
 	/// @param component: Added component
 	virtual void addedComponent(Component component);
 
-	/// A component has been removed from this statefulActor. 
+	/// A component has been removed from this entity. 
 	/// @param component: Removed component
 	virtual void removedComponent(Component component);
 
@@ -233,7 +233,7 @@ abstract class Entity : ListenerObject
 	/// @param transparency: Transparecy effect (__TRANSPARENCY_NONE, __EVEN or __ODD)
 	virtual void setTransparency(uint8 transparency);
 
-	/// Configure the actor's size.
+	/// Configure the entity's size.
 	virtual void calculateSize();
 
 	/// Retrieve the object's radius.
@@ -260,23 +260,23 @@ abstract class Entity : ListenerObject
 	/// @return Pointer to the direction towards which the object is moving
 	virtual const Vector3D* getDirection();
 
-	/// Apply a force to the statefulActor's body.
+	/// Apply a force to the entity's body.
 	/// @param force: Force to be applied
-	/// @param checkIfCanMove: If true, the statefulActor checks that none of its colliders will
-	/// @return True if the force was succesfully applied to the statefulActor's body
+	/// @param checkIfCanMove: If true, the entity checks that none of its colliders will
+	/// @return True if the force was succesfully applied to the entity's body
 	virtual bool applyForce(const Vector3D* force, bool checkIfCanMove);
 
-	/// Check if the statefulActor will enter a collision if it were to move in the provided direction
+	/// Check if the entity will enter a collision if it were to move in the provided direction
 	/// @param direction: Direction vector to check
 	virtual bool canMoveTowards(Vector3D direction);
 
-	/// Check if when the statefulActor bounces it has to take into account the colliding object's bounciness.
-	/// @return True if the statefulActor has to take into account the colliding object's bounciness when bouncing
+	/// Check if when the entity bounces it has to take into account the colliding object's bounciness.
+	/// @return True if the entity has to take into account the colliding object's bounciness when bouncing
 	virtual bool isSensibleToCollidingObjectBouncinessOnCollision(Entity collidingEntity);
 
-	/// Check if when the statefulActor bounces it has to take into account the colliding object's friction
+	/// Check if when the entity bounces it has to take into account the colliding object's friction
 	/// coefficient.
-	/// @return True if the statefulActor has to take into account the colliding object's friction coefficient when
+	/// @return True if the entity has to take into account the colliding object's friction coefficient when
 	/// bouncing
 	virtual bool isSensibleToCollidingObjectFrictionOnCollision(Entity collidingEntity);
 
