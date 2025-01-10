@@ -24,7 +24,7 @@
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static CharSet CharSet::get(const CharSetSpec* charSetSpec)
+static CharSet CharSet::get(CharSetSpec* charSetSpec)
 {
 	if(NULL == charSetSpec)
 	{
