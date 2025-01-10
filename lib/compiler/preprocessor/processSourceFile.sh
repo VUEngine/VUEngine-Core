@@ -397,6 +397,9 @@ then
 		else
 			if [ -z "${classModifiers##*singleton*}" ];
 			then
+
+				sed -i '1s/^/#include <Authenticator.h>\n/' $OUTPUT_FILE
+
 				customSingletonDefinition=`grep -o -e '#define[ 	][ 	]*.*SINGLETON.*(' $OUTPUT_FILE`
 
 				if [ -z "$customSingletonDefinition" ];
