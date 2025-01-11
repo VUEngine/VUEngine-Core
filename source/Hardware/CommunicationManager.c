@@ -16,7 +16,6 @@
 #endif
 #include <DebugConfig.h>
 #include <Mem.h>
-#include <MessageDispatcher.h>
 #include <Printing.h>
 #include <Profiler.h>
 #include <Telegram.h>
@@ -245,8 +244,7 @@ static bool CommunicationManager::cancelCommunications()
 
 	CommunicationManager::removeEventListeners(communicationManager, NULL, kEventCommunicationsConnected);
 	CommunicationManager::removeEventListeners(communicationManager, NULL, kEventCommunicationsTransmissionCompleted);
-
-	MessageDispatcher::discardAllDelayedMessagesForReceiver(ListenerObject::safeCast(communicationManager));
+	CommunicationManager::discardAllMessages(communicationManager);
 
 	return true;
 }
@@ -633,10 +631,7 @@ static void CommunicationManager::waitForRemote()
 {
 	CommunicationManager communicationManager = CommunicationManager::getInstance();
 
-	MessageDispatcher::dispatchMessage
-	(
-		1, ListenerObject::safeCast(communicationManager), ListenerObject::safeCast(communicationManager), kMessageCheckIfRemoteIsReady, NULL
-	);
+	CommunicationManager::sendMessageToSelf(communicationManager, kMessageCheckIfRemoteIsReady, 1, 0);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
