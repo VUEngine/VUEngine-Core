@@ -48,13 +48,13 @@ void Component::constructor(Entity owner, const ComponentSpec* componentSpec)
 	extern uint32 _textStart __attribute__((unused));
 	extern uint32 _dataLma __attribute__((unused));
 
-	if(!(&_textStart < (uint32*)componentSpec && (uint32*)componentSpec < &_dataLma))
+	if(NULL != componentSpec && !(&_textStart < (uint32*)componentSpec && (uint32*)componentSpec < &_dataLma))
 	{
 		Printing::setDebugMode();
 		Printing::clear();
-		Printing::text(__GET_CLASS_NAME(this), 44, 25, NULL);
-		Printing::hex((WORD)componentSpec, 44, 26, 8, NULL);
-		NM_ASSERT(false, "Actor::constructor: the provided spec lives in WRAM");
+		Printing::text(__GET_CLASS_NAME(this), 1, 25, NULL);
+		Printing::hex((WORD)componentSpec, 1, 26, 8, NULL);
+		NM_ASSERT(false, "Component::constructor: the provided spec lives in WRAM");
 	}
 #endif
 

@@ -368,8 +368,8 @@ void Actor::constructor(const ActorSpec* actorSpec, int16 internalId, const char
 	{
 		Printing::setDebugMode();
 		Printing::clear();
-		Printing::text(__GET_CLASS_NAME(this), 44, 25, NULL);
-		Printing::hex((WORD)actorSpec, 44, 26, 8, NULL);
+		Printing::text(__GET_CLASS_NAME(this), 1, 25, NULL);
+		Printing::hex((WORD)actorSpec, 1, 26, 8, NULL);
 		NM_ASSERT(false, "Actor::constructor: the provided spec lives in WRAM");
 	}
 #endif
