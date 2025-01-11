@@ -614,6 +614,10 @@ static void VUEngine::gameFrameStarted(uint16 gameFrameDuration)
 	bool printFPS = !vuEngine->syncToVIP;
 #endif
 
+#ifdef __TOOLS
+	printFPS = !VUEngine::isInToolState();
+#endif
+
 	FrameRate::gameFrameStarted(vuEngine->currentGameCycleEnded, printFPS);
 }
 

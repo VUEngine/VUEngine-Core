@@ -273,7 +273,6 @@ static BgmapTexture BgmapTextureManager::getTexture
 
 static void BgmapTextureManager::releaseTexture(BgmapTexture bgmapTexture)
 {
-	// If no one is using the texture anymore
 	if(!isDeleted(bgmapTexture))
 	{
 		BgmapTexture::decreaseUsageCount(bgmapTexture);
