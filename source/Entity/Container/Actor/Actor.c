@@ -535,7 +535,7 @@ bool Actor::handlePropagatedString(const char* string __attribute__ ((unused)))
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-ActorSpec* Actor::getSpec()
+const ActorSpec* Actor::getSpec()
 {
 	return this->actorSpec;
 }

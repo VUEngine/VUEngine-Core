@@ -214,7 +214,7 @@ class Actor : Container
 
 	/// Retrieve the actor's spec.
 	/// @return Specification that determines how the actor was configured
-	ActorSpec* getSpec();
+	const ActorSpec* getSpec();
 
 	/// Retrieve the actor's actor factory
 	/// @return Actor's actor facotyr
