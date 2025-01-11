@@ -729,7 +729,7 @@ void AnimationInspector::createSprite()
 	Sprite::setPosition(this->sprite, &spritePosition);
 	Sprite::setRotation(this->sprite, &spriteRotation);
 	Sprite::setScale(this->sprite, &spriteScale);
-	Sprite::processEffects(this->sprite);
+	Sprite::processEffects(this->sprite, -1);
 
 	this->sprite->updateAnimationFrame = true;
 

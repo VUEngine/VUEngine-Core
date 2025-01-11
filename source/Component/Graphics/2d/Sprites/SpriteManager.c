@@ -1068,6 +1068,8 @@ static void SpriteManager::applySpecialEffects()
 {
 	SpriteManager spriteManager = SpriteManager::getInstance();
 
+	int32 maximumParamTableRowsToComputePerCall = SpriteManager::getMaximumParamTableRowsToComputePerCall();
+
 	for(VirtualNode node = spriteManager->specialSprites->head; NULL != node; node = node->next)
 	{
 		NM_ASSERT(!isDeleted(node->data), "SpriteManager::writeGraphicsToDRAM: NULL node's data");
@@ -1079,7 +1081,7 @@ static void SpriteManager::applySpecialEffects()
 			continue;
 		}
 
-		Sprite::processEffects(sprite);
+		Sprite::processEffects(sprite, maximumParamTableRowsToComputePerCall);
 	}
 }
 
