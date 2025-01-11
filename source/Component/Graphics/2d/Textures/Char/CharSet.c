@@ -36,9 +36,9 @@ static CharSet CharSet::get(const CharSetSpec* charSetSpec)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void CharSet::release(CharSet charSet)
+static bool CharSet::release(CharSet charSet)
 {
-	CharSetManager::releaseCharSet(charSet);
+	return CharSetManager::releaseCharSet(charSet);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

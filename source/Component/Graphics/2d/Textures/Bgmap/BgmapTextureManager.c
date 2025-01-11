@@ -13,7 +13,6 @@
 
 #include <BgmapTexture.h>
 #include <Mem.h>
-#include <ParamTableManager.h>
 #include <Printing.h>
 #include <VirtualList.h>
 #include <VIPManager.h>
@@ -83,11 +82,9 @@ static void BgmapTextureManager::clearBgmapSegment(int32 segment)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void BgmapTextureManager::calculateAvailableBgmapSegments()
+static void BgmapTextureManager::configure(uint32 paramTableBase)
 {
 	BgmapTextureManager bgmapTextureManager = BgmapTextureManager::getInstance(NULL);
-
-	uint32 paramTableBase = ParamTableManager::getParamTableBase();
 
 	bgmapTextureManager->availableBgmapSegmentsForTextures = (uint32)((paramTableBase - __BGMAP_SPACE_BASE_ADDRESS) / __BGMAP_SEGMENT_SIZE);
 
@@ -121,8 +118,13 @@ static int8 BgmapTextureManager::getPrintingBgmapSegment()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void BgmapTextureManager::loadTextures(const TextureSpec** textureSpecs)
+static void BgmapTextureManager::loadTextures(const TextureSpec** textureSpecs, bool removeOldTextures)
 {
+	if(removeOldTextures)
+	{
+		BgmapTextureManager::reset();
+	}
+
 	// Textures
 	if(NULL != textureSpecs)
 	{
@@ -271,7 +273,6 @@ static BgmapTexture BgmapTextureManager::getTexture
 
 static void BgmapTextureManager::releaseTexture(BgmapTexture bgmapTexture)
 {
-	// If no one is using the texture anymore
 	if(!isDeleted(bgmapTexture))
 	{
 		BgmapTexture::decreaseUsageCount(bgmapTexture);

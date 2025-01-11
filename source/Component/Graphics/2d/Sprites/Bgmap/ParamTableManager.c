@@ -12,7 +12,6 @@
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <BgmapSprite.h>
-#include <BgmapTextureManager.h>
 #include <Printing.h>
 #include <VirtualList.h>
 #include <VirtualNode.h>
@@ -56,7 +55,7 @@ static void ParamTableManager::reset()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void ParamTableManager::setup(int32 availableBgmapSegmentsForParamTable)
+static uint32 ParamTableManager::configure(int32 availableBgmapSegmentsForParamTable)
 {
 	ParamTableManager paramTableManager = ParamTableManager::getInstance(NULL);
 
@@ -77,13 +76,13 @@ static void ParamTableManager::setup(int32 availableBgmapSegmentsForParamTable)
 
 	paramTableManager->size = __PARAM_TABLE_END - paramTableManager->paramTableBase;
 
-	BgmapTextureManager::calculateAvailableBgmapSegments();
-
 	// Clean param tables memory
 	for(uint8* data = (uint8*)paramTableManager->paramTableBase; data < (uint8*)__PARAM_TABLE_END; data++)
 	{
 		*data = 0;
 	}
+
+	return paramTableManager->paramTableBase;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -260,15 +259,6 @@ static void ParamTableManager::defragment(bool deferred)
 		}
 		while(!deferred && 0 != paramTableManager->paramTableFreeData.param);
 	}
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-static uint32 ParamTableManager::getParamTableBase()
-{
-	ParamTableManager paramTableManager = ParamTableManager::getInstance(NULL);
-
-	return paramTableManager->paramTableBase;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

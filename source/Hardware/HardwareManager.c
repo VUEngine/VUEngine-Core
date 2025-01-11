@@ -84,101 +84,12 @@ uint32 _wramSample __attribute__((section(".dram_dirty"))) __attribute__((unused
 uint32 _sramSample __attribute__((section(".dram_dirty"))) __attribute__((unused));
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-// CLASS' PRIVATE STATIC METHODS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-static void HardwareManager::checkMemoryMap()
-{
-	if((uint32)&_dramDataStart < __WORLD_SPACE_BASE_ADDRESS && (uint32)&_dramBssEnd >= __WORLD_SPACE_BASE_ADDRESS)
-	{
-		Printing::setDebugMode();
-		int32 y = 15;
-		uint32 missingSpace = (uint32)&_dramBssEnd - __WORLD_SPACE_BASE_ADDRESS;
-		uint32 recommendedDramStart = (uint32)&_dramDataStart - missingSpace;
-		uint32 recommendedDramSize = (__WORLD_SPACE_BASE_ADDRESS - recommendedDramStart);
-		uint32 recommendedBgmapSegments = (recommendedDramStart - __BGMAP_SPACE_BASE_ADDRESS) / 8192;
-
-		Printing::text("Increase the dram section in the vb.ld file", 1, y++, NULL);
-		Printing::text("Missing space: ", 1, ++y, NULL);
-		Printing::int32(missingSpace, 17, y, NULL);
-		Printing::text("Bytes ", 17 + Math::getDigitsCount(missingSpace) + 1, y++, NULL);
-		Printing::text("WORLD space: ", 1, ++y, NULL);
-		Printing::hex((uint32)__WORLD_SPACE_BASE_ADDRESS, 17, y, 4, NULL);
-		Printing::text("DRAM start: ", 1, ++y, NULL);
-		Printing::hex((uint32)&_dramDataStart, 17, y, 4, NULL);
-		Printing::text("DRAM end: ", 1, ++y, NULL);
-		Printing::hex((uint32)&_dramBssEnd, 17, y++, 4, NULL);
-		Printing::text("Suggested DRAM start: ", 1, ++y, NULL);
-		Printing::hex(recommendedDramStart, 25, y, 4, NULL);
-		Printing::text("Suggested DRAM size: ", 1, ++y, NULL);
-		Printing::int32(recommendedDramSize, 25, y, NULL);
-		Printing::text("Bytes ", 25 + Math::getDigitsCount(recommendedDramSize) + 1, y++, NULL);
-		Printing::text("Maximum BGMAP segments: ", 1, ++y, NULL);
-		Printing::int32(recommendedBgmapSegments, 25, y, NULL);
-
-		NM_ASSERT(false, "HardwareManager::checkMemoryMap: DRAM section overflow");
-	}
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-static void HardwareManager::croInterruptHandler()
-{
-	Printing::resetCoordinates();
-	Printing::text("EXP cron", 48 - 13, 0, NULL);
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-static void HardwareManager::setInterruptVectors()
-{
-	keyVector = (uint32)KeypadManager::interruptHandler;
-	timVector = (uint32)TimerManager::interruptHandler;
-	croVector = (uint32)HardwareManager::croInterruptHandler;
-	comVector = (uint32)CommunicationManager::interruptHandler;
-	vipVector = (uint32)VIPManager::interruptHandler;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-static void HardwareManager::setExceptionVectors()
-{
-	zeroDivisionVector = (uint32)Error::zeroDivisionException;
-	invalidOpcodeVector = (uint32)Error::invalidOpcodeException;
-	floatingPointVector = (uint32)Error::floatingPointException;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-static int32 HardwareManager::getInterruptLevel()
-{
-	int32 level;
-
-	asm
-	(
-		"stsr	sr5, r6			\n\t"	  \
-		"shr	0x10, r6		\n\t"	  \
-		"andi	0x000F, r6, r6	\n\t"	  \
-		"mov	r6, %0			\n\t"
-		: "=r" (level) // Output
-		: // Input
-		: "r6" // Clobber
-	);
-
-	return level;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' STATIC METHODS
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void HardwareManager::initialize()
+static void HardwareManager::reset()
 {
 	// Set ROM waiting to 1 cycle
 	_hardwareRegisters[__WCR] |= 0x0001;
@@ -319,6 +230,96 @@ static void HardwareManager::printStackStatus(int32 x, int32 y, bool resumed)
 		Printing::text("Overflow:		   " , x, ++y, NULL);
 		Printing::int32(__STACK_HEADROOM - room, x + 15, y, NULL);
 	}
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+// CLASS' PRIVATE STATIC METHODS
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+static void HardwareManager::checkMemoryMap()
+{
+	if((uint32)&_dramDataStart < __WORLD_SPACE_BASE_ADDRESS && (uint32)&_dramBssEnd >= __WORLD_SPACE_BASE_ADDRESS)
+	{
+		Printing::setDebugMode();
+		int32 y = 15;
+		uint32 missingSpace = (uint32)&_dramBssEnd - __WORLD_SPACE_BASE_ADDRESS;
+		uint32 recommendedDramStart = (uint32)&_dramDataStart - missingSpace;
+		uint32 recommendedDramSize = (__WORLD_SPACE_BASE_ADDRESS - recommendedDramStart);
+		uint32 recommendedBgmapSegments = (recommendedDramStart - __BGMAP_SPACE_BASE_ADDRESS) / 8192;
+
+		Printing::text("Increase the dram section in the vb.ld file", 1, y++, NULL);
+		Printing::text("Missing space: ", 1, ++y, NULL);
+		Printing::int32(missingSpace, 17, y, NULL);
+		Printing::text("Bytes ", 17 + Math::getDigitsCount(missingSpace) + 1, y++, NULL);
+		Printing::text("WORLD space: ", 1, ++y, NULL);
+		Printing::hex((uint32)__WORLD_SPACE_BASE_ADDRESS, 17, y, 4, NULL);
+		Printing::text("DRAM start: ", 1, ++y, NULL);
+		Printing::hex((uint32)&_dramDataStart, 17, y, 4, NULL);
+		Printing::text("DRAM end: ", 1, ++y, NULL);
+		Printing::hex((uint32)&_dramBssEnd, 17, y++, 4, NULL);
+		Printing::text("Suggested DRAM start: ", 1, ++y, NULL);
+		Printing::hex(recommendedDramStart, 25, y, 4, NULL);
+		Printing::text("Suggested DRAM size: ", 1, ++y, NULL);
+		Printing::int32(recommendedDramSize, 25, y, NULL);
+		Printing::text("Bytes ", 25 + Math::getDigitsCount(recommendedDramSize) + 1, y++, NULL);
+		Printing::text("Maximum BGMAP segments: ", 1, ++y, NULL);
+		Printing::int32(recommendedBgmapSegments, 25, y, NULL);
+
+		NM_ASSERT(false, "HardwareManager::checkMemoryMap: DRAM section overflow");
+	}
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+static void HardwareManager::croInterruptHandler()
+{
+	Printing::resetCoordinates();
+	Printing::text("EXP cron", 48 - 13, 0, NULL);
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+static void HardwareManager::setInterruptVectors()
+{
+	keyVector = (uint32)KeypadManager::interruptHandler;
+	timVector = (uint32)TimerManager::interruptHandler;
+	croVector = (uint32)HardwareManager::croInterruptHandler;
+	comVector = (uint32)CommunicationManager::interruptHandler;
+	vipVector = (uint32)VIPManager::interruptHandler;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+static void HardwareManager::setExceptionVectors()
+{
+	zeroDivisionVector = (uint32)Error::zeroDivisionException;
+	invalidOpcodeVector = (uint32)Error::invalidOpcodeException;
+	floatingPointVector = (uint32)Error::floatingPointException;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+static int32 HardwareManager::getInterruptLevel()
+{
+	int32 level;
+
+	asm
+	(
+		"stsr	sr5, r6			\n\t"	  \
+		"shr	0x10, r6		\n\t"	  \
+		"andi	0x000F, r6, r6	\n\t"	  \
+		"mov	r6, %0			\n\t"
+		: "=r" (level) // Output
+		: // Input
+		: "r6" // Clobber
+	);
+
+	return level;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

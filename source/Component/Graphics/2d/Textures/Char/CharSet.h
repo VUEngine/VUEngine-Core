@@ -104,7 +104,8 @@ class CharSet : ListenerObject
 
 	/// Release a charSet.
 	/// @param charSet: CharSet to release
-	static void release(CharSet charSet);
+	/// @return True if the char set is successfully deleted; false otherwise
+	static bool release(CharSet charSet);
 
 	/// Class' constructor
 	/// @param charSetSpec: Spec to use in the construction of the char set

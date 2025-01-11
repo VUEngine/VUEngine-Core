@@ -13,7 +13,6 @@
 
 #include <BgmapTextureManager.h>
 #include <ParamTableManager.h>
-#include <SpriteManager.h>
 
 #include "Affine.h"
 
@@ -31,8 +30,8 @@ extern double fabs (double);
 
 static int16 Affine::transform
 (
-	uint32 param, int16 paramTableRow, fixed_t targetHalfWidth, fixed_t targetHalfHeight, fix13_3 mx, 
-	fix13_3 my, fixed_t halfWidth, fixed_t halfHeight, const Rotation* rotation
+	int32 maximumParamTableRowsToComputePerCall, uint32 param, int16 paramTableRow, fixed_t targetHalfWidth, 
+	fixed_t targetHalfHeight, fix13_3 mx, fix13_3 my, fixed_t halfWidth, fixed_t halfHeight, const Rotation* rotation
 )
 {
 	fixed_t finalScaleX = __FIXED_MULT(__FIX7_9_TO_FIXED(__COS(__FIXED_TO_I(rotation->y))), __FIXED_DIV(targetHalfWidth, halfWidth));
@@ -93,7 +92,7 @@ static int16 Affine::transform
 
 	int16 i = 0 <= paramTableRow ? paramTableRow : 0;
 	int32 lastRow = __FIXED_TO_I(__FIXED_MULT((halfHeight << 1), finalScaleY)) + 1;
-	int32 counter = SpriteManager::getMaximumParamTableRowsToComputePerCall();
+	int32 counter = maximumParamTableRowsToComputePerCall;
 
 	if(rotation->x)
 	{
@@ -269,8 +268,8 @@ PRINT_INT(lastRow, 1, 16);
 
 static int16 Affine::rotate
 (
-	uint32 param, int16 paramTableRow, fixed_t targetHalfWidth, fixed_t targetHalfHeight, fix13_3 mx, fix13_3 my, 
-	fixed_t halfWidth, fixed_t halfHeight, const Rotation* rotation
+	int32 maximumParamTableRowsToComputePerCall __attribute__((unused)), uint32 param, int16 paramTableRow, fixed_t targetHalfWidth, 
+	fixed_t targetHalfHeight, fix13_3 mx, fix13_3 my, fixed_t halfWidth, fixed_t halfHeight, const Rotation* rotation
 )
 {
 	fixed_t highPrecisionPa = __FIX7_9_TO_FIXED(__COS(-__FIXED_TO_I(rotation->z)));
@@ -322,7 +321,6 @@ static int16 Affine::rotate
 /*
 	int16 i = 0 <= paramTableRow ? paramTableRow : 0;
 	int32 lastRow = __FIXED_TO_I(__FIXED_MULT((halfHeight << 1), finalScaleY)) + 1;
-	int32 counter = SpriteManager::getMaximumParamTableRowsToComputePerCall();
 */
 //	for(;counter && i <= lastRow; i++, counter--)
 	for(;i <= lastRow; i++, )

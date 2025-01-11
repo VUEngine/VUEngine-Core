@@ -14,11 +14,12 @@
 #include <string.h>
 
 #include <BgmapTextureManager.h>
+#include <CharSet.h>
 #include <CharSetManager.h>
+#include <ComponentManager.h>
 #include <DebugConfig.h>
 #include <Mem.h>
 #include <PrintingSprite.h>
-#include <SpriteManager.h>
 #include <Utilities.h>
 #include <VirtualList.h>
 #include <VIPManager.h>
@@ -147,9 +148,7 @@ static void Printing::reset()
 	printing->printingBgmapSegment = -1;
 
 	Printing::releaseFonts(printing);
-
-	VirtualList::clear(printing->fonts);
-
+	Printing::resetCoordinates();
 	Printing::setOrientation(kPrintingOrientationHorizontal);
 	Printing::setDirection(kPrintingDirectionLTR);
 }
@@ -195,8 +194,8 @@ static void Printing::loadFonts(FontSpec** fontSpecs)
 	// Prevent VIP's interrupt from calling render during printing process
 	HardwareManager::suspendInterrupts();
 
-	// Make sure all sprites are ready
-	SpriteManager::prepareAll();
+	/// Must force CHAR defragmentation
+	CharSetManager::writeCharSets();
 
 	// Iterate over all defined fonts and add to internal list
 	uint32 i = 0, j = 0;
@@ -216,7 +215,7 @@ static void Printing::loadFonts(FontSpec** fontSpecs)
 				// Preload charset and save charset reference, if font was found
 				if(_fonts[i]->charSetSpec == fontSpecs[j]->charSetSpec)
 				{
-					fontData->charSet = CharSetManager::getCharSet(fontSpecs[j]->charSetSpec);
+					fontData->charSet = CharSet::get(fontSpecs[j]->charSetSpec);
 
 					CharSet::addEventListener(fontData->charSet, ListenerObject::safeCast(printing), (EventListener)Printing::onFontCharChangedOffset, kEventCharSetChangedOffset);
 				}
@@ -259,7 +258,7 @@ static void Printing::releaseFonts()
 					kEventCharSetChangedOffset
 				);
 
-				while(!CharSetManager::releaseCharSet(fontData->charSet));
+				while(!CharSet::release(fontData->charSet));
 			}
 
 			delete fontData;
@@ -781,7 +780,7 @@ static FontData* Printing::getFontByName(const char* font)
 			// If font's charset has not been preloaded, load it now
 			if(NULL == result->charSet)
 			{
-				result->charSet = CharSetManager::getCharSet(result->fontSpec->charSetSpec);
+				result->charSet = CharSet::get(result->fontSpec->charSetSpec);
 
 				CharSet::addEventListener
 				(

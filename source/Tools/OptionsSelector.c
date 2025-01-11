@@ -41,7 +41,6 @@
 #include <MBgmapSprite.h>
 #include <Mem.h>
 #include <MemoryPool.h>
-#include <MessageDispatcher.h>
 #include <ObjectTexture.h>
 #include <Optics.h>
 #include <ParamTableManager.h>

@@ -30,9 +30,11 @@ static uint32 volatile* _readingStatus = NULL;
 static void KeypadManager::interruptHandler()
 {
 	KeypadManager::disableInterrupt();
+#ifndef __RELEASE
 	Printing::resetCoordinates();
 	Printing::text("KYP interrupt", 48 - 13, 26, NULL);
 	Printing::hex((((_hardwareRegisters[__SDHR] << 8)) | _hardwareRegisters[__SDLR]), 48 - 13, 27, 8, NULL);
+#endif
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

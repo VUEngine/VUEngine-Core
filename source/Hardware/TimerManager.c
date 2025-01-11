@@ -18,8 +18,6 @@
 #include <Profiler.h>
 #include <SoundManager.h>
 #include <StopwatchManager.h>
-#include <SoundTest.h>
-#include <VUEngine.h>
 
 #include "TimerManager.h"
 
@@ -226,7 +224,7 @@ static void TimerManager::setResolution(uint16 resolution)
 
 		default:
 
-			ASSERT(false, "SoundTest::setResolution: wrong timer resolution scale");
+			ASSERT(false, "TimerManager::setResolution: wrong timer resolution scale");
 			break;
 	}
 
@@ -341,7 +339,7 @@ static float TimerManager::getTargetTimePerInterruptInMS()
 
 		default:
 
-			ASSERT(false, "SoundTest::getTargetTimePerInterruptInMS: wrong timer resolution scale");
+			ASSERT(false, "TimerManager::getTargetTimePerInterruptInMS: wrong timer resolution scale");
 			break;
 	}
 
@@ -368,7 +366,7 @@ static uint32 TimerManager::getTargetTimePerInterruptInUS()
 
 		default:
 
-			ASSERT(false, "SoundTest::getTargetTimePerInterruptInUS: wrong timer resolution scale");
+			ASSERT(false, "TimerManager::getTargetTimePerInterruptInUS: wrong timer resolution scale");
 			break;
 	}
 

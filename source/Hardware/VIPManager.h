@@ -108,6 +108,9 @@ extern uint32 _dramDirtyStart;
 #define __BGMAP_SEGMENT(b)																											\
 	(__BGMAP_SPACE_BASE_ADDRESS + ((b) * 0x2000))  // Address of BGMap b (0 <= b <= 13)
 
+#define __PARAM_TABLE_END			((uint32) & _dramDirtyStart)
+#define __BGMAP_SEGMENT_SIZE		8192
+
 #define __WORLD_OFF					0x0000
 #define __WORLD_ON					0xC000
 #define __WORLD_LON					0x8000
@@ -131,7 +134,6 @@ extern uint32 _dramDirtyStart;
 #define __WORLD_OVR					0x0080
 #define __WORLD_END					0x0040
 
-#define __PARAM_TABLE_END			((uint32) & _dramDirtyStart)
 
 #define __COLUMN_TABLE_ENTRIES		256
 #define __BRIGHTNESS_REPEAT_ENTRIES 96
@@ -345,6 +347,19 @@ singleton! class VIPManager : ListenerObject
 	/// Reset the manager's state.
 	static void reset();
 
+	/// Configure the manager's state.
+	/// @param backgroundColor: Color to apply to the background
+	/// @param brightness: Brightness configuration
+	/// @param brightnessRepeat: Brightness configuration
+	/// @param paletteConfig: Palettes configuration
+	/// @param postProcessingEffects: Array of postprocessing effects
+	/// Configure the brightness registers with the provided configuration.
+	static void configure
+	(
+		uint8 backgroundColor, Brightness* brightness, BrightnessRepeatSpec* brightnessRepeat,
+		PaletteConfig* paletteConfig, PostProcessingEffect* postProcessingEffects
+	);
+
 	/// Enable VIP interrupts that the engine doesn't use.
 	/// @param customInterrupts: Interrupts to enable
 	static void enableCustomInterrupts(uint16 customInterrupts);
@@ -393,15 +408,15 @@ singleton! class VIPManager : ListenerObject
 
 	/// Configure the brightness registers with the provided configuration.
 	/// @param brightness: Brightness configuration
-	static void setupBrightness(Brightness* brightness);
+	static void configureBrightness(Brightness* brightness);
 
 	/// Configure the column table brightness repeat values.
 	/// @param brightnessRepeat: Brightness configuration
-	static void setupBrightnessRepeat(BrightnessRepeatSpec* brightnessRepeat);
+	static void configureBrightnessRepeat(BrightnessRepeatSpec* brightnessRepeat);
 
 	/// Configure the background color.
 	/// @param color: Color to apply to the background
-	static void setBackgroundColor(uint8 color);
+	static void configureBackgroundColor(uint8 color);
 
 	/// Up the brightness to the maximum.
 	static void upBrightness();

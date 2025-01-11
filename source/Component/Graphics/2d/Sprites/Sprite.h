@@ -256,7 +256,9 @@ abstract class Sprite : VisualComponent
 	virtual void updateAnimation();
 
 	/// Process special effects.
-	virtual void processEffects();
+	/// @param maximumParamTableRowsToComputePerCall: Used to defer param table computations 
+	/// (-1 to compute the whole table)
+	virtual void processEffects(int32 maximumParamTableRowsToComputePerCall);
 
 	/// Set the current multiframe.
 	/// @param frame: Current animation frame

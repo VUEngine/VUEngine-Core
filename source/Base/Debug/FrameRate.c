@@ -13,7 +13,6 @@
 
 #include <DebugConfig.h>
 #include <Printing.h>
-#include <VUEngine.h>
 
 #include "FrameRate.h"
 
@@ -118,12 +117,7 @@ static void FrameRate::gameFrameStarted(bool gameCycleEnded, bool printFPS)
 
 		if(printFPS)
 		{
-#ifdef __TOOLS
-			if(!VUEngine::isInToolState())
-#endif
-			{
-				FrameRate::print(__PRINT_FRAMERATE_AT_X, __PRINT_FRAMERATE_AT_Y);
-			}
+			FrameRate::print(__PRINT_FRAMERATE_AT_X, __PRINT_FRAMERATE_AT_Y);
 		}
 
 		frameRate->FPS = 0;

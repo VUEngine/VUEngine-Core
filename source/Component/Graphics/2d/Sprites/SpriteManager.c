@@ -26,7 +26,6 @@
 #include <Sprite.h>
 #include <VirtualList.h>
 #include <VirtualNode.h>
-#include <VUEngine.h>
 
 #include "SpriteManager.h"
 
@@ -113,13 +112,13 @@ static void SpriteManager::reset()
 	SpriteManager spriteManager = SpriteManager::getInstance(NULL);
 
 	HardwareManager::suspendInterrupts();
-
+	
 	Texture::reset();
 	Printing::reset();
 	CharSetManager::reset();
 	BgmapTextureManager::reset();
 	ParamTableManager::reset();
-	
+
 	SpriteManager::cleanUp();
 	ObjectSpriteContainer::reset();
 
@@ -162,6 +161,20 @@ static void SpriteManager::reset()
 	);
 
 	HardwareManager::resumeInterrupts();
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+static void SpriteManager::configure
+(
+	uint8 texturesMaximumRowsToWrite, int32 maximumParamTableRowsToComputePerCall,
+	int16 size[__TOTAL_OBJECT_SEGMENTS], int16 z[__TOTAL_OBJECT_SEGMENTS], Clock animationsClock
+)
+{
+	SpriteManager::setTexturesMaximumRowsToWrite(texturesMaximumRowsToWrite);
+	SpriteManager::setMaximumParamTableRowsToComputePerCall(maximumParamTableRowsToComputePerCall);
+	SpriteManager::configureObjectSpriteContainers(size, z);
+	SpriteManager::setAnimationsClock(animationsClock);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -297,7 +310,7 @@ static void SpriteManager::unregisterSprite(Sprite sprite)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void SpriteManager::setupObjectSpriteContainers(int16 size[__TOTAL_OBJECT_SEGMENTS], int16 z[__TOTAL_OBJECT_SEGMENTS])
+static void SpriteManager::configureObjectSpriteContainers(int16 size[__TOTAL_OBJECT_SEGMENTS], int16 z[__TOTAL_OBJECT_SEGMENTS])
 {
 	SpriteManager spriteManager = SpriteManager::getInstance(NULL);
 
@@ -312,7 +325,7 @@ static void SpriteManager::setupObjectSpriteContainers(int16 size[__TOTAL_OBJECT
 	
 	for(int32 i = __TOTAL_OBJECT_SEGMENTS; i--; )
 	{
-		NM_ASSERT(z[i] <= previousZ, "SpriteManager::setupObjectSpriteContainers: wrong z");
+		NM_ASSERT(z[i] <= previousZ, "SpriteManager::configureObjectSpriteContainers: wrong z");
 
 		if(0 < size[i])
 		{
@@ -504,10 +517,7 @@ static void SpriteManager::render()
 	SpriteManager::stopRendering();
 
 #ifdef __SHOW_SPRITES_PROFILING
-	if(!VUEngine::isInToolState())
-	{
-		SpriteManager::computeTotalPixelsDrawn();
-	}
+	SpriteManager::computeTotalPixelsDrawn();
 #endif
 }
 
@@ -563,15 +573,12 @@ static void SpriteManager::writeDRAM()
 	SpriteManager::writeWORLDAttributesToDRAM();
 
 #ifdef __SHOW_SPRITES_PROFILING
-	if(!VUEngine::isInToolState())
-	{
-		static int32 counter = __TARGET_FPS / 5;
+	static int32 counter = __TARGET_FPS / 5;
 
-		if(0 >= --counter)
-		{
-			counter = __TARGET_FPS / 10;
-			SpriteManager::print(1, 15, true);
-		}
+	if(0 >= --counter)
+	{
+		counter = __TARGET_FPS / 10;
+		SpriteManager::print(1, 15, true);
 	}
 #endif
 }
@@ -1068,6 +1075,8 @@ static void SpriteManager::applySpecialEffects()
 {
 	SpriteManager spriteManager = SpriteManager::getInstance(NULL);
 
+	int32 maximumParamTableRowsToComputePerCall = SpriteManager::getMaximumParamTableRowsToComputePerCall();
+
 	for(VirtualNode node = spriteManager->specialSprites->head; NULL != node; node = node->next)
 	{
 		NM_ASSERT(!isDeleted(node->data), "SpriteManager::writeGraphicsToDRAM: NULL node's data");
@@ -1079,7 +1088,7 @@ static void SpriteManager::applySpecialEffects()
 			continue;
 		}
 
-		Sprite::processEffects(sprite);
+		Sprite::processEffects(sprite, maximumParamTableRowsToComputePerCall);
 	}
 }
 

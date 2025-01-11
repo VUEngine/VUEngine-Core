@@ -149,10 +149,28 @@ static void VIPManager::reset()
 	vipManager->enabledMultiplexedInterrupts = kVIPNoMultiplexedInterrupts;
 #endif
 
+	VIPManager::lowerBrightness();
+	VIPManager::removePostProcessingEffects();
+
 	VIPManager::setFrameCycle(__FRAME_CYCLE);
 	VIPManager::setupColumnTable(NULL);
 
 	VIPManager::clearDRAM();
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+static void VIPManager::configure
+(
+	uint8 backgroundColor, Brightness* brightness, BrightnessRepeatSpec* brightnessRepeat, 
+	PaletteConfig* paletteConfig, PostProcessingEffect* postProcessingEffects
+)
+{
+	VIPManager::configureBackgroundColor(backgroundColor);
+	VIPManager::configureBrightness(brightness);
+	VIPManager::configureBrightnessRepeat(brightnessRepeat);
+	VIPManager::configurePalettes(paletteConfig);
+	VIPManager::configurePostProcessingEffects(postProcessingEffects);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -338,7 +356,7 @@ static void VIPManager::setupColumnTable(ColumnTableSpec* columnTableSpec)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void VIPManager::setupBrightness(Brightness* brightness)
+static void VIPManager::configureBrightness(Brightness* brightness)
 {
 	while(_vipRegisters[__XPSTTS] & __XPBSY);
 	_vipRegisters[__BRTA] = brightness->darkRed;
@@ -348,7 +366,7 @@ static void VIPManager::setupBrightness(Brightness* brightness)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void VIPManager::setupBrightnessRepeat(BrightnessRepeatSpec* brightnessRepeatSpec)
+static void VIPManager::configureBrightnessRepeat(BrightnessRepeatSpec* brightnessRepeatSpec)
 {
 	// Use the default repeat values as fallback
 	if(brightnessRepeatSpec == NULL)
@@ -375,11 +393,27 @@ static void VIPManager::setupBrightnessRepeat(BrightnessRepeatSpec* brightnessRe
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void VIPManager::setBackgroundColor(uint8 color)
+static void VIPManager::configureBackgroundColor(uint8 color)
 {
 	_vipRegisters[__BACKGROUND_COLOR] = (color <= __COLOR_BRIGHT_RED)
 		? color
 		: __COLOR_BRIGHT_RED;
+}
+
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+static void VIPManager::configurePostProcessingEffects(PostProcessingEffect* postProcessingEffects)
+{
+	if(NULL == postProcessingEffects)
+	{
+		return;
+	}
+
+	for(int32 i = 0; NULL != postProcessingEffects[i]; i++)
+	{
+		VIPManager::pushFrontPostProcessingEffect(postProcessingEffects[i], NULL);
+	}
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

@@ -18,12 +18,6 @@
 #include <BgmapTexture.h>
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-// CLASS' MACROS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-#define __BGMAP_SEGMENT_SIZE	8192
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DATA
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
@@ -78,7 +72,8 @@ singleton! class BgmapTextureManager : Object
 	static void clearBgmapSegment(int32 segment);
 
 	/// Compute the number of available BGMAP segments for texture allocation.
-	static void calculateAvailableBgmapSegments();
+	/// @param paramTableBase: Displacement in bytes to keep track of the start address of param table space
+	static void configure(uint32 paramTableBase);
 
 	/// Retrieve the number of available BGMAP segments to allocate textures.
 	/// @return Number of available BGMAP segments to allocate textures
@@ -90,7 +85,8 @@ singleton! class BgmapTextureManager : Object
 
 	/// Load textures in function of the provided array of specs.
 	/// @param textureSpecs: Array of texture specs in function of which to load textures 
-	static void loadTextures(const TextureSpec** textureSpecs);
+	/// @param removeOldTextures: If true, previously loaded texturered are first destroyed and deallocated
+	static void loadTextures(const TextureSpec** textureSpecs, bool removeOldTextures);
 
 	/// Retrieve a texture initialized with the provided spec.
 	/// @param bgmapTextureSpec: Spec to use to initilize the desired texture

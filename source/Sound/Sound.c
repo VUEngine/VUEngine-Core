@@ -11,7 +11,6 @@
 // INCLUDES
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-#include <MessageDispatcher.h>
 #include <Printing.h>
 #include <SoundTrack.h>
 #include <TimerManager.h>
@@ -111,8 +110,6 @@ void Sound::constructor(const SoundSpec* soundSpec, EventListener soundReleaseLi
 void Sound::destructor()
 {
 	this->soundSpec = NULL;
-
-	MessageDispatcher::discardAllDelayedMessagesFromSender(ListenerObject::safeCast(this));
 
 	if(!isDeleted(this->soundTracks))
 	{

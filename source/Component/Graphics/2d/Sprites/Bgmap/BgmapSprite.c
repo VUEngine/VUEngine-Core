@@ -34,7 +34,7 @@ friend class BgmapTexture;
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static int16 BgmapSprite::doApplyAffineTransformations(BgmapSprite bgmapSprite)
+static int16 BgmapSprite::doApplyAffineTransformations(BgmapSprite bgmapSprite, int32 maximumParamTableRowsToComputePerCall)
 {
 	ASSERT(bgmapSprite->texture, "BgmapSprite::doApplyAffineTransformations: null texture");
 
@@ -42,6 +42,7 @@ static int16 BgmapSprite::doApplyAffineTransformations(BgmapSprite bgmapSprite)
 	{
 		return Affine::transform
 		(
+			maximumParamTableRowsToComputePerCall,
 			bgmapSprite->param,
 			bgmapSprite->paramTableRow,
 			// Geometrically accurate, but kills the CPU
@@ -135,7 +136,7 @@ bool BgmapSprite::hasSpecialEffects()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void BgmapSprite::processEffects()
+void BgmapSprite::processEffects(int32 maximumParamTableRowsToComputePerCall)
 {
 	// Set the world size according to the zoom
 	if(0 < this->param && (uint8)__NO_RENDER_INDEX != this->index)
@@ -145,7 +146,7 @@ void BgmapSprite::processEffects()
 			if(0 <= this->paramTableRow)
 			{
 				// Apply affine transformation
-				this->paramTableRow = this->applyParamTableEffect(this);
+				this->paramTableRow = this->applyParamTableEffect(this, maximumParamTableRowsToComputePerCall);
 
 				if(0 > this->paramTableRow)
 				{
@@ -558,7 +559,7 @@ void BgmapSprite::invalidateParamTable()
 
 bool BgmapSprite::onTextureRewritten(ListenerObject eventFirer __attribute__ ((unused)))
 {
-	BgmapSprite::processEffects(this);
+	BgmapSprite::processEffects(this, SpriteManager::getMaximumParamTableRowsToComputePerCall());
 
 	return true;
 }

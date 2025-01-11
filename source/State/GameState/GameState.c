@@ -17,9 +17,7 @@
 #include <BodyManager.h>
 #include <Printing.h>
 #include <Stage.h>
-#include <SpriteManager.h>
 #include <Telegram.h>
-#include <VIPManager.h>
 #include <VUEngine.h>
 
 #include "GameState.h"
@@ -113,11 +111,9 @@ bool GameState::handleMessage(Telegram telegram)
 
 void GameState::enter(void* owner __attribute__ ((unused)))
 {
-	VIPManager::removePostProcessingEffects();
 	Printing::resetCoordinates();
 
 	GameState::pauseClocks(this);
-	SpriteManager::setAnimationsClock(this->animationsClock);
 
 	Clock::start(this->messagingClock);
 }
@@ -201,10 +197,6 @@ void GameState::suspend(void* owner __attribute__ ((unused)))
 		{
 			UIContainer::suspend(this->uiContainer);
 		}
-
-		// Make sure that all graphical resources are released.
-		SpriteManager::reset();
-		SpriteManager::setAnimationsClock(this->animationsClock);
 	}
 }
 
@@ -291,9 +283,6 @@ void GameState::configureStage(StageSpec* stageSpec, VirtualList positionedActor
 
 	// Transform everything definitively
 	GameState::transform(this);
-
-	// Make sure all graphics are ready
-	VUEngine::prepareGraphics();
 
 	HardwareManager::resumeInterrupts();
 
@@ -682,7 +671,7 @@ void GameState::createStage(StageSpec* stageSpec, VirtualList positionedActorsTo
 		this->stage = NULL;
 	}
 
-	this->stage = ((Stage (*)(StageSpec*)) stageSpec->allocator)((StageSpec*)stageSpec);
+	this->stage = ((Stage (*)(StageSpec*, GameState)) stageSpec->allocator)((StageSpec*)stageSpec, this);
 	
 	NM_ASSERT(!isDeleted(this->stage), "GameState::configureStage: null stage");
 

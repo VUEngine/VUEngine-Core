@@ -13,7 +13,6 @@
 
 #include <DebugConfig.h>
 #include <FrameRate.h>
-#include <MessageDispatcher.h>
 #include <BodyManager.h>
 #include <Printing.h>
 #include <Entity.h>
@@ -311,11 +310,7 @@ void Body::update(uint16 cycle, fix7_9_ext elapsedTime)
 
 		if(!isDeleted(this->owner) && 0 != movementResult.axisStoppedMovement && this->sendMessages)
 		{
-			MessageDispatcher::dispatchMessage
-			(
-				0, ListenerObject::safeCast(this), ListenerObject::safeCast(this->owner), kMessageBodyStopped, 
-				&movementResult.axisStoppedMovement
-			);
+			Body::sendMessageTo(this, ListenerObject::safeCast(this->owner), kMessageBodyStopped, 0, 0);
 		}
 	}
 
@@ -449,10 +444,7 @@ void Body::bounce(ListenerObject bounceReferent, Vector3D bouncingPlaneNormal, f
 
 			if(!isDeleted(this->owner) && __NO_AXIS != axisOfStopping && this->sendMessages)
 			{
-				MessageDispatcher::dispatchMessage
-				(
-					0, ListenerObject::safeCast(this), ListenerObject::safeCast(this->owner), kMessageBodyStopped, &axisOfStopping
-				);
+				Body::sendMessageTo(this, ListenerObject::safeCast(this->owner), kMessageBodyStopped, 0, 0);
 			}
 		}
 
@@ -1339,10 +1331,7 @@ void Body::awake(uint16 axisOfAwakening)
 
 		if(!isDeleted(this->owner) && dispatchMessage)
 		{
-			MessageDispatcher::dispatchMessage
-			(
-				0, ListenerObject::safeCast(this), ListenerObject::safeCast(this->owner), kMessageBodyStartedMoving, &axisOfAwakening
-			);
+			Body::sendMessageTo(this, ListenerObject::safeCast(this->owner), kMessageBodyStartedMoving, 0, 0);
 		}
 	}
 }

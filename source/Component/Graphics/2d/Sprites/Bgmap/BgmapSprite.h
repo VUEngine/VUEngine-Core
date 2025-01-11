@@ -37,7 +37,7 @@ class BgmapSprite;
 // CLASS' DATA
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-typedef int16 (*ParamTableEffectMethod)(BgmapSprite);
+typedef int16 (*ParamTableEffectMethod)(BgmapSprite, int32);
 
 /// A BgmapSprite spec
 /// @memberof BgmapSprite
@@ -104,7 +104,9 @@ class BgmapSprite : Sprite
 	override bool hasSpecialEffects();
 	
 	/// Process affine and hbias effects
-	override void processEffects();
+	/// @param maximumParamTableRowsToComputePerCall: Used to defer param table computations 
+	/// (-1 to compute the whole table)
+	override void processEffects(int32 maximumParamTableRowsToComputePerCall);
 
 	/// Render the sprite by configuring the DRAM assigned to it by means of the provided index.
 	/// @param index: Determines the region of DRAM that this sprite is allowed to configure
