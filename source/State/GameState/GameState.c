@@ -292,9 +292,6 @@ void GameState::configureStage(StageSpec* stageSpec, VirtualList positionedActor
 	// Transform everything definitively
 	GameState::transform(this);
 
-	// Make sure all graphics are ready
-	VUEngine::prepareGraphics();
-
 	HardwareManager::resumeInterrupts();
 
 	GameState::changeFramerate(this, __TARGET_FPS >> 1, 100);

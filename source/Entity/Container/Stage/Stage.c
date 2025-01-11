@@ -470,8 +470,6 @@ void Stage::streamAll()
 
 		Stage::purgeChildren(this);
 
-		VUEngine::prepareGraphics();
-
 	} while(Stage::unloadOutOfRangeActors(this, false));
 
 	this->streamingHeadNode = NULL;
@@ -482,11 +480,7 @@ void Stage::streamAll()
 	while(ActorFactory::createNextActor(this->actorFactory))
 	{
 		Stage::transform(this, &_neutralEnvironmentTransformation, __INVALIDATE_TRANSFORMATION);
-
-		VUEngine::prepareGraphics();
 	}
-
-	VUEngine::prepareGraphics();
 
 	this->streamingAmplitude = this->stageSpec->streaming.streamingAmplitude;
 	this->streamingHeadNode = NULL;

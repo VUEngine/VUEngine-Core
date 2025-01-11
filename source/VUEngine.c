@@ -642,13 +642,6 @@ static void VUEngine::wait(uint32 milliSeconds)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void VUEngine::prepareGraphics()
-{
-	SpriteManager::prepareAll();
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
 #ifdef __ENABLE_PROFILER
 static void VUEngine::startProfiling()
 {
@@ -1371,9 +1364,6 @@ bool VUEngine::changedState(ListenerObject eventFirer)
 	{
 		CommunicationManager::startSyncCycle();
 	}
-
-	// Make sure everything is properly rendered
-	VUEngine::prepareGraphics();
 
 	VIPManager::startDrawing();
 	VIPManager::startDisplaying();

@@ -270,9 +270,6 @@ singleton! class VUEngine : ListenerObject
 	/// @param milliSeconds: Time to halt the game
 	static void wait(uint32 milliSeconds);
 
-	/// Force the complete initialization of all graphics.
-	static void prepareGraphics();
-
 	/// Start profiling the game.
 	static void startProfiling();
 
