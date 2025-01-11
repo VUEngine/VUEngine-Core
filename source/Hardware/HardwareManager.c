@@ -271,7 +271,7 @@ static void HardwareManager::print(int32 x, int32 y)
 	Printing::text("VER:", x, ++auxY, NULL);
 	Printing::hex(_vipRegisters[__VER], x + xDisplacement, auxY, 4, NULL);
 
-//	Printing::hex(HardwareManager::readKeypad(HardwareManager::getInstance()), 38, 5, 4, NULL);
+//	Printing::hex(HardwareManager::readKeypad(HardwareManager::getInstance(NULL)), 38, 5, 4, NULL);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

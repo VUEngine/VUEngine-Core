@@ -91,7 +91,7 @@ static volatile BYTE* _communicationRegisters =			(uint8*)0x02000000;
 
 static void CommunicationManager::interruptHandler()
 {
-	CommunicationManager communicationManager = CommunicationManager::getInstance();
+	CommunicationManager communicationManager = CommunicationManager::getInstance(NULL);
 
 #ifdef __ENABLE_PROFILER
 	Profiler::lap(kProfilerLapTypeStartInterrupt, NULL);
@@ -115,7 +115,7 @@ static void CommunicationManager::interruptHandler()
 
 static void CommunicationManager::registerEventListener(ListenerObject listener, EventListener callback, uint16 eventCode)
 {
-	CommunicationManager communicationManager = CommunicationManager::getInstance();
+	CommunicationManager communicationManager = CommunicationManager::getInstance(NULL);
 
 	CommunicationManager::addEventListener(communicationManager, listener, callback, eventCode);
 }
@@ -124,7 +124,7 @@ static void CommunicationManager::registerEventListener(ListenerObject listener,
 
 static void CommunicationManager::unregisterEventListener(ListenerObject listener, EventListener callback, uint16 eventCode)
 {
-	CommunicationManager communicationManager = CommunicationManager::getInstance();
+	CommunicationManager communicationManager = CommunicationManager::getInstance(NULL);
 
 	CommunicationManager::removeEventListener(communicationManager, listener, callback, eventCode);
 }
@@ -133,7 +133,7 @@ static void CommunicationManager::unregisterEventListener(ListenerObject listene
 
 static void CommunicationManager::reset()
 {
-	CommunicationManager communicationManager = CommunicationManager::getInstance();
+	CommunicationManager communicationManager = CommunicationManager::getInstance(NULL);
 
 	switch(communicationManager->status)
 	{
@@ -169,7 +169,7 @@ static void CommunicationManager::reset()
 
 static void CommunicationManager::enableCommunications(EventListener eventLister, ListenerObject scope)
 {
-	CommunicationManager communicationManager = CommunicationManager::getInstance();
+	CommunicationManager communicationManager = CommunicationManager::getInstance(NULL);
 
 	if(communicationManager->connected || kCommunicationsStatusIdle != communicationManager->status)
 	{
@@ -217,7 +217,7 @@ static void CommunicationManager::enableCommunications(EventListener eventLister
 
 static void CommunicationManager::disableCommunications()
 {
-	CommunicationManager communicationManager = CommunicationManager::getInstance();
+	CommunicationManager communicationManager = CommunicationManager::getInstance(NULL);
 
 	CommunicationManager::cancelCommunications(communicationManager);
 
@@ -230,7 +230,7 @@ static void CommunicationManager::disableCommunications()
 
 static bool CommunicationManager::cancelCommunications()
 {
-	CommunicationManager communicationManager = CommunicationManager::getInstance();
+	CommunicationManager communicationManager = CommunicationManager::getInstance(NULL);
 
 	CommunicationManager::endCommunications(communicationManager);
 
@@ -265,7 +265,7 @@ static bool CommunicationManager::cancelCommunications()
 
 static void CommunicationManager::startSyncCycle()
 {
-	CommunicationManager communicationManager = CommunicationManager::getInstance();
+	CommunicationManager communicationManager = CommunicationManager::getInstance(NULL);
 
 	if(!communicationManager->connected)
 	{
@@ -309,7 +309,7 @@ static void CommunicationManager::startSyncCycle()
 
 static bool CommunicationManager::isConnected()
 {
-	CommunicationManager communicationManager = CommunicationManager::getInstance();
+	CommunicationManager communicationManager = CommunicationManager::getInstance(NULL);
 
 	return communicationManager->connected;
 }
@@ -318,7 +318,7 @@ static bool CommunicationManager::isConnected()
 
 static bool CommunicationManager::isMaster()
 {
-	CommunicationManager communicationManager = CommunicationManager::getInstance();
+	CommunicationManager communicationManager = CommunicationManager::getInstance(NULL);
 
 	return __COM_AS_MASTER == communicationManager->communicationMode;
 }
@@ -327,7 +327,7 @@ static bool CommunicationManager::isMaster()
 
 static bool CommunicationManager::broadcastData(BYTE* data, int32 numberOfBytes)
 {
-	CommunicationManager communicationManager = CommunicationManager::getInstance();
+	CommunicationManager communicationManager = CommunicationManager::getInstance(NULL);
 
 	if(CommunicationManager::isConnected(communicationManager))
 	{
@@ -374,7 +374,7 @@ static bool CommunicationManager::broadcastData(BYTE* data, int32 numberOfBytes)
 
 static void CommunicationManager::broadcastDataAsync(BYTE* data, int32 numberOfBytes, EventListener eventLister, ListenerObject scope)
 {
-	CommunicationManager communicationManager = CommunicationManager::getInstance();
+	CommunicationManager communicationManager = CommunicationManager::getInstance(NULL);
 
 	if(CommunicationManager::isConnected(communicationManager))
 	{
@@ -424,7 +424,7 @@ static bool CommunicationManager::sendAndReceiveDataAsync
 
 static WORD CommunicationManager::getSentMessage()
 {
-	CommunicationManager communicationManager = CommunicationManager::getInstance();
+	CommunicationManager communicationManager = CommunicationManager::getInstance(NULL);
 
 	return *(WORD*)communicationManager->sentData;
 }
@@ -433,7 +433,7 @@ static WORD CommunicationManager::getSentMessage()
 
 static WORD CommunicationManager::getReceivedMessage()
 {
-	CommunicationManager communicationManager = CommunicationManager::getInstance();
+	CommunicationManager communicationManager = CommunicationManager::getInstance(NULL);
 
 	return *(WORD*)communicationManager->receivedData;
 }
@@ -442,7 +442,7 @@ static WORD CommunicationManager::getReceivedMessage()
 
 const BYTE* CommunicationManager::getSentData()
 {
-	CommunicationManager communicationManager = CommunicationManager::getInstance();
+	CommunicationManager communicationManager = CommunicationManager::getInstance(NULL);
 
 	return (const BYTE*)communicationManager->sentData + __MESSAGE_SIZE;
 }
@@ -451,7 +451,7 @@ const BYTE* CommunicationManager::getSentData()
 
 const BYTE* CommunicationManager::getReceivedData()
 {
-	CommunicationManager communicationManager = CommunicationManager::getInstance();
+	CommunicationManager communicationManager = CommunicationManager::getInstance(NULL);
 
 	return (const BYTE*)communicationManager->receivedData + __MESSAGE_SIZE;
 }
@@ -461,7 +461,7 @@ const BYTE* CommunicationManager::getReceivedData()
 #ifndef __SHIPPING
 static void CommunicationManager::print(int32 x, int32 y)
 {
-	CommunicationManager communicationManager = CommunicationManager::getInstance();
+	CommunicationManager communicationManager = CommunicationManager::getInstance(NULL);
 
 	PRINT_TEXT(CommunicationManager::isConnected(communicationManager) ? "Connected   " : "Disconnected", x, y);
 
@@ -533,7 +533,7 @@ static void CommunicationManager::print(int32 x, int32 y)
 
 bool CommunicationManager::handleMessage(Telegram telegram)
 {
-	CommunicationManager communicationManager = CommunicationManager::getInstance();
+	CommunicationManager communicationManager = CommunicationManager::getInstance(NULL);
 
 	switch(Telegram::getMessage(telegram))
 	{
@@ -572,7 +572,7 @@ static bool CommunicationManager::isTransmitting()
 
 static bool CommunicationManager::managesChannel()
 {
-	CommunicationManager communicationManager = CommunicationManager::getInstance();
+	CommunicationManager communicationManager = CommunicationManager::getInstance(NULL);
 
 	return !CommunicationManager::isMaster(communicationManager);
 }
@@ -581,7 +581,7 @@ static bool CommunicationManager::managesChannel()
 
 static bool CommunicationManager::isHandshakeIncoming()
 {
-	CommunicationManager communicationManager = CommunicationManager::getInstance();
+	CommunicationManager communicationManager = CommunicationManager::getInstance(NULL);
 
 	// Try to close the communication channel
 	CommunicationManager::setReady(false);
@@ -615,7 +615,7 @@ static bool CommunicationManager::isAuxChannelOpen()
 
 static bool CommunicationManager::isFreeForTransmissions()
 {
-	CommunicationManager communicationManager = CommunicationManager::getInstance();
+	CommunicationManager communicationManager = CommunicationManager::getInstance(NULL);
 
 	return (
 		(communicationManager->connected || communicationManager->broadcast) &&
@@ -641,7 +641,7 @@ static void CommunicationManager::endCommunications()
 
 static void CommunicationManager::waitForRemote()
 {
-	CommunicationManager communicationManager = CommunicationManager::getInstance();
+	CommunicationManager communicationManager = CommunicationManager::getInstance(NULL);
 
 	MessageDispatcher::dispatchMessage
 	(
@@ -653,7 +653,7 @@ static void CommunicationManager::waitForRemote()
 
 static bool CommunicationManager::sendHandshake()
 {
-	CommunicationManager communicationManager = CommunicationManager::getInstance();
+	CommunicationManager communicationManager = CommunicationManager::getInstance(NULL);
 
 	if(kCommunicationsStatusIdle == communicationManager->status)
 	{
@@ -669,7 +669,7 @@ static bool CommunicationManager::sendHandshake()
 
 static void CommunicationManager::startClockSignal()
 {
-	CommunicationManager communicationManager = CommunicationManager::getInstance();
+	CommunicationManager communicationManager = CommunicationManager::getInstance(NULL);
 
 	// Make sure to disable COMCNT interrupts
 	// _communicationRegisters[__CCSR] |= __COM_DISABLE_INTERRUPT;
@@ -703,7 +703,7 @@ static void CommunicationManager::startClockSignal()
 
 static void CommunicationManager::startTransmissions(uint8 payload, bool async)
 {
-	CommunicationManager communicationManager = CommunicationManager::getInstance();
+	CommunicationManager communicationManager = CommunicationManager::getInstance(NULL);
 
 	// Set transmission data
 	_communicationRegisters[__CDTR] = payload;
@@ -753,7 +753,7 @@ static void CommunicationManager::startTransmissions(uint8 payload, bool async)
 
 static void CommunicationManager::setReady(bool ready)
 {
-	CommunicationManager communicationManager = CommunicationManager::getInstance();
+	CommunicationManager communicationManager = CommunicationManager::getInstance(NULL);
 
 	if(ready)
 	{
@@ -783,7 +783,7 @@ static void CommunicationManager::setReady(bool ready)
 
 static bool CommunicationManager::sendPayload(uint8 payload, bool async)
 {
-	CommunicationManager communicationManager = CommunicationManager::getInstance();
+	CommunicationManager communicationManager = CommunicationManager::getInstance(NULL);
 
 	if(kCommunicationsStatusIdle == communicationManager->status)
 	{
@@ -799,7 +799,7 @@ static bool CommunicationManager::sendPayload(uint8 payload, bool async)
 
 static bool CommunicationManager::receivePayload(bool async)
 {
-	CommunicationManager communicationManager = CommunicationManager::getInstance();
+	CommunicationManager communicationManager = CommunicationManager::getInstance(NULL);
 
 	if(kCommunicationsStatusIdle == communicationManager->status)
 	{
@@ -815,7 +815,7 @@ static bool CommunicationManager::receivePayload(bool async)
 
 static bool CommunicationManager::sendAndReceivePayload(uint8 payload, bool async)
 {
-	CommunicationManager communicationManager = CommunicationManager::getInstance();
+	CommunicationManager communicationManager = CommunicationManager::getInstance(NULL);
 
 	if(kCommunicationsStatusIdle == communicationManager->status)
 	{
@@ -831,7 +831,7 @@ static bool CommunicationManager::sendAndReceivePayload(uint8 payload, bool asyn
 
 static bool CommunicationManager::startDataTransmission(BYTE* data, int32 numberOfBytes, bool sendingData)
 {
-	CommunicationManager communicationManager = CommunicationManager::getInstance();
+	CommunicationManager communicationManager = CommunicationManager::getInstance(NULL);
 
 	if((sendingData && NULL == data) || 0 >= numberOfBytes || !CommunicationManager::isFreeForTransmissions(communicationManager))
 	{
@@ -890,7 +890,7 @@ static bool CommunicationManager::startDataTransmission(BYTE* data, int32 number
 
 static bool CommunicationManager::sendDataAsync(BYTE* data, int32 numberOfBytes, EventListener eventLister, ListenerObject scope)
 {
-	CommunicationManager communicationManager = CommunicationManager::getInstance();
+	CommunicationManager communicationManager = CommunicationManager::getInstance(NULL);
 
 	if(NULL == data || 0 >= numberOfBytes || !CommunicationManager::isFreeForTransmissions(communicationManager))
 	{
@@ -956,7 +956,7 @@ static bool CommunicationManager::receiveData(BYTE* data, int32 numberOfBytes)
 
 static bool CommunicationManager::startBidirectionalDataTransmission(WORD message, BYTE* data, int32 numberOfBytes)
 {
-	CommunicationManager communicationManager = CommunicationManager::getInstance();
+	CommunicationManager communicationManager = CommunicationManager::getInstance(NULL);
 
 	if((NULL == data) || 0 >= numberOfBytes || !CommunicationManager::isFreeForTransmissions(communicationManager))
 	{
@@ -1025,7 +1025,7 @@ static bool CommunicationManager::startBidirectionalDataTransmissionAsync
 	WORD message, BYTE* data, int32 numberOfBytes, EventListener eventLister, ListenerObject scope
 )
 {
-	CommunicationManager communicationManager = CommunicationManager::getInstance();
+	CommunicationManager communicationManager = CommunicationManager::getInstance(NULL);
 
 	if(NULL == data || 0 >= numberOfBytes || !CommunicationManager::isFreeForTransmissions(communicationManager))
 	{
@@ -1086,7 +1086,7 @@ static bool CommunicationManager::startBidirectionalDataTransmissionAsync
 
 static void CommunicationManager::processInterrupt()
 {
-	CommunicationManager communicationManager = CommunicationManager::getInstance();
+	CommunicationManager communicationManager = CommunicationManager::getInstance(NULL);
 
 	int32 status = communicationManager->status;
 	communicationManager->status = kCommunicationsStatusIdle;

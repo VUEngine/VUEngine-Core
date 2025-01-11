@@ -95,7 +95,7 @@ static void VSUManager::printVSUSoundSourceConfiguration
 
 static void VSUManager::applySoundSourceConfiguration(const VSUSoundSourceConfiguration* vsuSoundSourceConfiguration)
 {
-	VSUManager vsuManager = VSUManager::getInstance();
+	VSUManager vsuManager = VSUManager::getInstance(NULL);
 
 	int16 vsuSoundSourceIndex = 
 		VSUManager::findAvailableSoundSource
@@ -145,7 +145,7 @@ static void VSUManager::applyPCMSampleToSoundSource(int8 sample)
 
 static void VSUManager::reset()
 {
-	VSUManager vsuManager = VSUManager::getInstance();
+	VSUManager vsuManager = VSUManager::getInstance(NULL);
 
 	VSUManager::stopAllSounds();
 	VSUManager::enableQueue();
@@ -230,7 +230,7 @@ static void VSUManager::reset()
 
 static void VSUManager::setMode(uint32 playbackMode)
 {
-	VSUManager vsuManager = VSUManager::getInstance();
+	VSUManager vsuManager = VSUManager::getInstance(NULL);
 
 	vsuManager->playbackMode = playbackMode;
 
@@ -241,7 +241,7 @@ static void VSUManager::setMode(uint32 playbackMode)
 
 static void VSUManager::update()
 {
-	VSUManager vsuManager = VSUManager::getInstance();
+	VSUManager vsuManager = VSUManager::getInstance(NULL);
 
 	if(vsuManager->haveUsedSoundSources)
 	{
@@ -267,7 +267,7 @@ static void VSUManager::stopAllSounds()
 
 static void VSUManager::enableQueue()
 {
-	VSUManager vsuManager = VSUManager::getInstance();
+	VSUManager vsuManager = VSUManager::getInstance(NULL);
 
 	vsuManager->allowQueueingSoundRequests = true;
 }
@@ -276,7 +276,7 @@ static void VSUManager::enableQueue()
 
 static void VSUManager::disableQueue()
 {
-	VSUManager vsuManager = VSUManager::getInstance();
+	VSUManager vsuManager = VSUManager::getInstance(NULL);
 
 	vsuManager->allowQueueingSoundRequests = false;
 }
@@ -285,7 +285,7 @@ static void VSUManager::disableQueue()
 
 static void VSUManager::flushQueuedSounds()
 {
-	VSUManager vsuManager = VSUManager::getInstance();
+	VSUManager vsuManager = VSUManager::getInstance(NULL);
 
 	VirtualList::deleteData(vsuManager->queuedVSUSoundSourceConfigurations);
 }
@@ -295,7 +295,7 @@ static void VSUManager::flushQueuedSounds()
 #ifndef __SHIPPING
 static void VSUManager::print(int32 x, int32 y)
 {
-	VSUManager vsuManager = VSUManager::getInstance();
+	VSUManager vsuManager = VSUManager::getInstance(NULL);
 
 	int32 xDisplacement = 15;
 	int32 yDisplacement = y;
@@ -324,7 +324,7 @@ static void VSUManager::print(int32 x, int32 y)
 #ifndef __RELEASE
 static void VSUManager::printWaveFormStatus(int32 x, int32 y)
 {
-	VSUManager vsuManager = VSUManager::getInstance();
+	VSUManager vsuManager = VSUManager::getInstance(NULL);
 
 	for(uint32 i = 0; i < __TOTAL_WAVEFORMS; i++)
 	{
@@ -349,7 +349,7 @@ static void VSUManager::configureSoundSource
 	int16 vsuSoundSourceIndex, const VSUSoundSourceConfiguration* vsuSoundSourceConfiguration, Waveform* waveform
 )
 {
-	VSUManager vsuManager = VSUManager::getInstance();
+	VSUManager vsuManager = VSUManager::getInstance(NULL);
 
 	int16 i = vsuSoundSourceIndex;
 	VSUSoundSource* vsuSoundSource = vsuManager->vsuSoundSourceConfigurations[i].vsuSoundSource;
@@ -391,7 +391,7 @@ static void VSUManager::configureSoundSource
 
 static int16 VSUManager::findAvailableSoundSource(Object requester, uint32 soundSourceType, bool force)
 {
-	VSUManager vsuManager = VSUManager::getInstance();
+	VSUManager vsuManager = VSUManager::getInstance(NULL);
 
 	// First try to find a sound source that has previously assigned to the same requester
 	for(int16 i = 0; i < __TOTAL_SOUND_SOURCES; i++)
@@ -459,7 +459,7 @@ static int16 VSUManager::findAvailableSoundSource(Object requester, uint32 sound
 
 static void VSUManager::releaseSoundSources()
 {
-	VSUManager vsuManager = VSUManager::getInstance();
+	VSUManager vsuManager = VSUManager::getInstance(NULL);
 
 	vsuManager->haveUsedSoundSources = false;
 
@@ -497,7 +497,7 @@ static void VSUManager::releaseSoundSources()
 
 static void VSUManager::dispatchQueuedSoundSourceConfigurations()
 {
-	VSUManager vsuManager = VSUManager::getInstance();
+	VSUManager vsuManager = VSUManager::getInstance(NULL);
 
 	if(isDeleted(vsuManager->queuedVSUSoundSourceConfigurations) || NULL == vsuManager->queuedVSUSoundSourceConfigurations->head)
 	{
@@ -536,7 +536,7 @@ static void VSUManager::dispatchQueuedSoundSourceConfigurations()
 
 static void VSUManager::registerQueuedSoundSourceConfiguration(const VSUSoundSourceConfiguration* vsuSoundSourceConfiguration)
 {
-	VSUManager vsuManager = VSUManager::getInstance();
+	VSUManager vsuManager = VSUManager::getInstance(NULL);
 
 	if(NULL == vsuSoundSourceConfiguration || isDeleted(vsuManager->queuedVSUSoundSourceConfigurations))
 	{
@@ -556,7 +556,7 @@ static void VSUManager::registerQueuedSoundSourceConfiguration(const VSUSoundSou
 
 static Waveform* VSUManager::findWaveform(const int8* waveFormData)
 {
-	VSUManager vsuManager = VSUManager::getInstance();
+	VSUManager vsuManager = VSUManager::getInstance(NULL);
 
 	if(NULL == waveFormData)
 	{
@@ -589,7 +589,7 @@ static Waveform* VSUManager::findWaveform(const int8* waveFormData)
 
 static void VSUManager::setWaveform(Waveform* waveform, const int8* data)
 {
-	VSUManager vsuManager = VSUManager::getInstance();
+	VSUManager vsuManager = VSUManager::getInstance(NULL);
 
 	if(NULL != waveform)// && waveform->overwrite)
 	{

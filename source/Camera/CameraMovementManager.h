@@ -53,7 +53,7 @@ singleton class CameraMovementManager : ListenerObject
 
 	/// Method to retrieve the singleton instance
 	/// @return CameraMovementManager singleton
-	static CameraMovementManager getInstance();
+	static CameraMovementManager getInstance(ClassPointer requesterClass);
 
 	/// Class' constructor
 	void constructor();

@@ -28,7 +28,7 @@ void AnimationInspectorState::constructor()
 	// Always explicitly call the base's constructor 
 	Base::constructor();
 
-	this->tool = Tool::safeCast(AnimationInspector::getInstance());
+	this->tool = Tool::safeCast(AnimationInspector::getInstance(NULL));
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

@@ -77,7 +77,7 @@ singleton class Debug : Tool
 
 	/// Method to retrieve the singleton instance
 	/// @return Debug singleton
-	static Debug getInstance();
+	static Debug getInstance(ClassPointer requesterClass);
 
 	/// Update the tool's state.
 	override void update();

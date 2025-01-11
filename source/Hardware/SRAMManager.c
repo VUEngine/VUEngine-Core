@@ -42,7 +42,7 @@ static void SRAMManager::reset()
 
 static void SRAMManager::clear(int32 startOffset, int32 endOffset)
 {
-	SRAMManager sramManager = SRAMManager::getInstance();
+	SRAMManager sramManager = SRAMManager::getInstance(NULL);
 
 	int32 i = startOffset;
 	for(; i < endOffset; i++)
@@ -55,7 +55,7 @@ static void SRAMManager::clear(int32 startOffset, int32 endOffset)
 
 static void SRAMManager::save(const BYTE* const source, int32 memberOffset, int32 dataSize)
 {
-	SRAMManager sramManager = SRAMManager::getInstance();
+	SRAMManager sramManager = SRAMManager::getInstance(NULL);
 
 	int32 i = 0;
 
@@ -72,7 +72,7 @@ static void SRAMManager::save(const BYTE* const source, int32 memberOffset, int3
 
 static void SRAMManager::read(BYTE* destination, int32 memberOffset, int32 dataSize)
 {
-	SRAMManager sramManager = SRAMManager::getInstance();
+	SRAMManager sramManager = SRAMManager::getInstance(NULL);
 
 	int32 i = 0;
 

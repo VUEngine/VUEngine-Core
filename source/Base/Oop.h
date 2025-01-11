@@ -57,7 +57,7 @@
 /// @return Method definitions of the provided class
 #define __CLASS_NEW_DEFINITION(ClassName, ...)																							\
 																																		\
-		/* define the method */																											\
+		/* Define the method */																											\
 		ClassName ClassName ## _new(__VA_ARGS__)																						\
 		{																																\
 			/* make sure that the class is properly set */																				\
@@ -351,7 +351,7 @@
 /// @return Implementation of the class' virtual table's configuration method
 #define __SET_VTABLE_DEFINITION(ClassName, BaseClassName)																				\
 																																		\
-		/* define the static method */																									\
+		/* Define the static method */																									\
 		void __attribute__ ((noinline)) ClassName ## _setVTable(bool force)																\
 		{																																\
 			/* setup the class's vtable only if destructor is NULL */																	\
@@ -487,10 +487,10 @@ typedef void* (*(*ClassPointer)(void*))(void*);
 		/* class' base's destructor */																									\
 			(void (*)(Object))&BaseClassName ## _destructor;																			\
 																																		\
-		/* define class's getSize method */																								\
+		/* Define class's getSize method */																								\
 		__GET_INSTANCE_SIZE_DEFINITION(ClassName)																						\
 																																		\
-		/* define class's getBaseClass method */																						\
+		/* Define class's getBaseClass method */																						\
 		ClassPointer ClassName ## _getBaseClass(void* this __attribute__ ((unused)))													\
 		{																																\
 			ASSERT(&BaseClassName ## _getBaseClass != &ClassName ## _getBaseClass,														\
@@ -499,7 +499,7 @@ typedef void* (*(*ClassPointer)(void*))(void*);
 			return (ClassPointer)&BaseClassName ## _getBaseClass;																		\
 		}																																\
 																																		\
-		/* define class's getSize method */																								\
+		/* Define class's getSize method */																								\
 		const char* ClassName ## _getClassName(ClassName this __attribute__ ((unused)))													\
 		{																																\
 			ASSERT(&BaseClassName ## _getBaseClass != &ClassName ## _getBaseClass,														\
@@ -551,10 +551,82 @@ typedef void* (*(*ClassPointer)(void*))(void*);
 #define __SINGLETON_BEING_CONSTRUCTED		1
 #define __SINGLETON_CONSTRUCTED				2
 
+/// Checks that the provided authorization array lives in non volatile memory.
+/// @param ClassName: Class to verity
+/// @return Implementation of a check for the validity of the authorization array
+#ifdef __SHIPPING
+#define __SINGLETON_SECURITY_CHECKER(ClassName)																							\
+																																		\
+	extern uint32 _textStart __attribute__((unused));																					\
+	extern uint32 _dataLma __attribute__((unused));																						\
+																																		\
+	if(!(&_textStart < (uint32*)requesterClasses && (uint32*)requesterClasses < &_dataLma))												\
+	{																																	\
+		Printing_setDebugMode();																										\
+		Printing_clear();																												\
+		Printing_text(#ClassName, 44, 25, NULL);																						\
+		Printing_hex((WORD)requesterClasses, 44, 26, 8, NULL);																			\
+		NM_ASSERT(false, ClassName ## initialize: the provided array lives in WRAM);													\
+	}
+#else
+#define __SINGLETON_SECURITY_CHECKER(ClassName)
+#endif
+
+#define __SINGLETON_ACCESS(ClassName, GetInstantLinkage)																				\
+																																		\
+		/* Define get instance method */																								\
+		bool ClassName ## _authorize(ClassPointer requesterClass)																		\
+		{																																\
+			for(int16 i = 0; NULL != (*_authorizedRequesters)[i]; i++)																	\
+			{																															\
+				if(requesterClass == (*_authorizedRequesters)[i])																		\
+				{																														\
+					return true;																										\
+				}																														\
+			}																															\
+																																		\
+			return false;																												\
+		}																																\
+																																		\
+		/* Define get instance method */																								\
+		GetInstantLinkage __attribute__((unused)) ClassName ClassName ## _getInstance (ClassPointer requesterClass)						\
+		{																																\
+			if(NULL != _authorizedRequesters && !ClassName ## _authorize(requesterClass))												\
+			{																															\
+				NM_ASSERT(false, Unauthorized access to ClassName singleton);															\
+				return NULL;																											\
+			}																															\
+																																		\
+			/* first check if not constructed yet */																					\
+			if(__SINGLETON_NOT_CONSTRUCTED == _singletonConstructed)																	\
+			{																															\
+				ClassName ## _instantiate();																							\
+			}																															\
+																																		\
+			/* return the created singleton */																							\
+			return &_singletonWrapper ## ClassName.instance;																			\
+		}																																\
+																																		\
+		/* Define secure */																												\
+		void ClassName ## _secure (ClassPointer const (*requesterClasses)[])															\
+		{																																\
+			/* Check the validity of the provided array */																				\
+			__SINGLETON_SECURITY_CHECKER(ClassName)																						\
+																																		\
+			if(NULL != _authorizedRequesters)																							\
+			{																															\
+				return;																													\
+			}																															\
+																																		\
+			/* Register the provided array */																							\
+			_authorizedRequesters = requesterClasses;																					\
+		}																																\
+
+
 /// Defines a singleton class' fundamental methods.
 /// @param ClassName: Singleton class' name to define
 /// @return Implementation of a singleton class' fundamental methods
-#define __SINGLETON(ClassName, ...)																											\
+#define __SINGLETON(ClassName, ...)																										\
 																																		\
 		/* declare the static instance */																								\
 		typedef struct SingletonWrapper ## ClassName																					\
@@ -565,6 +637,9 @@ typedef void* (*(*ClassPointer)(void*))(void*);
 			ClassName ## _str instance;																									\
 		} SingletonWrapper ## ClassName;																								\
 																																		\
+		/* Array of authorized callers */																								\
+		static ClassPointer const (*_authorizedRequesters)[] = NULL;																	\
+																																		\
 		static SingletonWrapper ## ClassName _singletonWrapper ## ClassName 															\
 				__STATIC_SINGLETONS_DATA_SECTION_ATTRIBUTE;																				\
 																																		\
@@ -572,7 +647,7 @@ typedef void* (*(*ClassPointer)(void*))(void*);
 		static int8 _singletonConstructed __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE													\
 										= __SINGLETON_NOT_CONSTRUCTED;																	\
 																																		\
-		/* define get instance method */																								\
+		/* Define get instance method */																								\
 		static void __attribute__ ((noinline)) ClassName ## _instantiate()																\
 		{																																\
 			NM_ASSERT(__SINGLETON_BEING_CONSTRUCTED != _singletonConstructed,															\
@@ -601,18 +676,7 @@ typedef void* (*(*ClassPointer)(void*))(void*);
 			_singletonConstructed = __SINGLETON_CONSTRUCTED;																			\
 		}																																\
 																																		\
-		/* define get instance method */																								\
-		__VA_ARGS__ __attribute__((unused)) ClassName ClassName ## _getInstance () 														\
-		{																																\
-			/* first check if not constructed yet */																					\
-			if(__SINGLETON_NOT_CONSTRUCTED == _singletonConstructed)																	\
-			{																															\
-				ClassName ## _instantiate();																							\
-			}																															\
-																																		\
-			/* return the created singleton */																							\
-			return &_singletonWrapper ## ClassName.instance;																			\
-		}																																\
+		__SINGLETON_ACCESS(ClassName, __VA_ARGS__)																						\
 																																		\
 		/* dummy redeclaration to avoid warning when compiling with -pedantic */														\
 		void ClassName ## dummyMethodSingleton()
@@ -636,7 +700,7 @@ typedef void* (*(*ClassPointer)(void*))(void*);
 		/* declare the static pointer to instance */																					\
 		static ClassName _instance ## ClassName __NON_INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE;										\
 																																		\
-		/* define allocator */																											\
+		/* Define allocator */																											\
 		__CLASS_NEW_DEFINITION(ClassName, void)																							\
 		__CLASS_NEW_END(ClassName, this);																								\
 																																		\
@@ -644,7 +708,7 @@ typedef void* (*(*ClassPointer)(void*))(void*);
 		static int8 _singletonConstructed __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE													\
 										= __SINGLETON_NOT_CONSTRUCTED;																	\
 																																		\
-		/* define get instance method */																								\
+		/* Define get instance method */																								\
 		static void __attribute__ ((noinline)) ClassName ## _instantiate()																\
 		{																																\
 			NM_ASSERT(__SINGLETON_BEING_CONSTRUCTED != _singletonConstructed,															\
@@ -659,8 +723,8 @@ typedef void* (*(*ClassPointer)(void*))(void*);
 			_singletonConstructed = __SINGLETON_CONSTRUCTED;																			\
 		}																																\
 																																		\
-		/* define get instance method */																								\
-		ClassName ClassName ## _getInstance()																							\
+		/* Define get instance method */																								\
+		__attribute__((unused)) ClassName ClassName ## _getInstance (ClassPointer requesterClass)										\
 		{																																\
 			/* first check if not constructed yet */																					\
 			if(__SINGLETON_NOT_CONSTRUCTED == _singletonConstructed)																	\
@@ -671,6 +735,8 @@ typedef void* (*(*ClassPointer)(void*))(void*);
 			/* return the created singleton */																							\
 			return _instance ## ClassName;																								\
 		}																																\
+																																		\
+		__SINGLETON_ACCESS(ClassName, __VA_ARGS__)																						\
 																																		\
 		/* dummy redeclaration to avoid warning when compiling with -pedantic */														\
 		void ClassName ## dummyMethodSingletonNew()

@@ -35,7 +35,7 @@ friend class VirtualList;
 
 static void ParamTableManager::reset()
 {
-	ParamTableManager paramTableManager = ParamTableManager::getInstance();
+	ParamTableManager paramTableManager = ParamTableManager::getInstance(NULL);
 
 	VirtualList::clear(paramTableManager->bgmapSprites);
 
@@ -58,7 +58,7 @@ static void ParamTableManager::reset()
 
 static void ParamTableManager::setup(int32 availableBgmapSegmentsForParamTable)
 {
-	ParamTableManager paramTableManager = ParamTableManager::getInstance();
+	ParamTableManager paramTableManager = ParamTableManager::getInstance(NULL);
 
 	if(0 == availableBgmapSegmentsForParamTable)
 	{
@@ -90,7 +90,7 @@ static void ParamTableManager::setup(int32 availableBgmapSegmentsForParamTable)
 
 static uint32 ParamTableManager::allocate(BgmapSprite bgmapSprite)
 {
-	ParamTableManager paramTableManager = ParamTableManager::getInstance();
+	ParamTableManager paramTableManager = ParamTableManager::getInstance(NULL);
 
 	ASSERT(bgmapSprite, "ParamTableManager::allocate: null sprite");
 
@@ -165,7 +165,7 @@ static uint32 ParamTableManager::allocate(BgmapSprite bgmapSprite)
 
 static void ParamTableManager::free(BgmapSprite bgmapSprite)
 {
-	ParamTableManager paramTableManager = ParamTableManager::getInstance();
+	ParamTableManager paramTableManager = ParamTableManager::getInstance(NULL);
 
 	if(VirtualList::removeData(paramTableManager->bgmapSprites, bgmapSprite))
 	{
@@ -204,7 +204,7 @@ static void ParamTableManager::free(BgmapSprite bgmapSprite)
 
 static void ParamTableManager::defragment(bool deferred)
 {
-	ParamTableManager paramTableManager = ParamTableManager::getInstance();
+	ParamTableManager paramTableManager = ParamTableManager::getInstance(NULL);
 
 	if(0 != paramTableManager->paramTableFreeData.param)
 	{
@@ -266,7 +266,7 @@ static void ParamTableManager::defragment(bool deferred)
 
 static uint32 ParamTableManager::getParamTableBase()
 {
-	ParamTableManager paramTableManager = ParamTableManager::getInstance();
+	ParamTableManager paramTableManager = ParamTableManager::getInstance(NULL);
 
 	return paramTableManager->paramTableBase;
 }
@@ -275,7 +275,7 @@ static uint32 ParamTableManager::getParamTableBase()
 
 static void ParamTableManager::print(int32 x, int32 y)
 {
-	ParamTableManager paramTableManager = ParamTableManager::getInstance();
+	ParamTableManager paramTableManager = ParamTableManager::getInstance(NULL);
 
 	int32 xDisplacement = 11;
 

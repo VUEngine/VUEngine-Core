@@ -66,7 +66,7 @@ singleton class StageEditor : Tool
 
 	/// Method to retrieve the singleton instance
 	/// @return StageEditor singleton
-	static StageEditor getInstance();
+	static StageEditor getInstance(ClassPointer requesterClass);
 
 	/// Update the tool's state.
 	override void update();

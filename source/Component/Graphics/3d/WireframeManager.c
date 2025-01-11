@@ -98,7 +98,7 @@ void WireframeManager::deinstantiateComponent(Entity owner, Wireframe wireframe)
 
 static void WireframeManager::reset()
 {
-	WireframeManager wireframeManager = WireframeManager::getInstance();
+	WireframeManager wireframeManager = WireframeManager::getInstance(NULL);
 
 	WireframeManager::enable(wireframeManager);
 	
@@ -116,7 +116,7 @@ static void WireframeManager::reset()
 
 static void WireframeManager::enable()
 {
-	WireframeManager wireframeManager = WireframeManager::getInstance();
+	WireframeManager wireframeManager = WireframeManager::getInstance(NULL);
 
 	wireframeManager->disabled = false;
 
@@ -149,7 +149,7 @@ static void WireframeManager::enable()
 
 static void WireframeManager::disable()
 {
-	WireframeManager wireframeManager = WireframeManager::getInstance();
+	WireframeManager wireframeManager = WireframeManager::getInstance(NULL);
 
 	wireframeManager->disabled = true;
 
@@ -225,7 +225,7 @@ static void WireframeManager::destroyWireframe(Wireframe wireframe)
 
 static bool WireframeManager::registerWireframe(Wireframe wireframe)
 {
-	WireframeManager wireframeManager = WireframeManager::getInstance();
+	WireframeManager wireframeManager = WireframeManager::getInstance(NULL);
 
 	NM_ASSERT(!isDeleted(wireframe), "WireframeManager::registerWireframe: coudln't create wireframe");
 
@@ -250,7 +250,7 @@ static bool WireframeManager::registerWireframe(Wireframe wireframe)
 
 static bool WireframeManager::unregisterWireframe(Wireframe wireframe)
 {
-	WireframeManager wireframeManager = WireframeManager::getInstance();
+	WireframeManager wireframeManager = WireframeManager::getInstance(NULL);
 
 	NM_ASSERT(!isDeleted(wireframe), "WireframeManager::createWireframe: coudln't create wireframe");
 
@@ -266,7 +266,7 @@ static bool WireframeManager::unregisterWireframe(Wireframe wireframe)
 
 static void WireframeManager::render()
 {
-	WireframeManager wireframeManager = WireframeManager::getInstance();
+	WireframeManager wireframeManager = WireframeManager::getInstance(NULL);
 
 	if(NULL == wireframeManager->components->head)
 	{
@@ -330,7 +330,7 @@ static void WireframeManager::render()
 
 static void WireframeManager::draw()
 {
-	WireframeManager wireframeManager = WireframeManager::getInstance();
+	WireframeManager wireframeManager = WireframeManager::getInstance(NULL);
 
 	if(wireframeManager->disabled || NULL == wireframeManager->components->head)
 	{
@@ -371,7 +371,7 @@ static void WireframeManager::draw()
 
 static void WireframeManager::showWireframes(Entity owner)
 {
-	WireframeManager wireframeManager = WireframeManager::getInstance();
+	WireframeManager wireframeManager = WireframeManager::getInstance(NULL);
 
 	for(VirtualNode node = wireframeManager->components->head; NULL != node; node = node->next)
 	{
@@ -388,7 +388,7 @@ static void WireframeManager::showWireframes(Entity owner)
 
 static void WireframeManager::hideWireframes(Entity owner)
 {
-	WireframeManager wireframeManager = WireframeManager::getInstance();
+	WireframeManager wireframeManager = WireframeManager::getInstance(NULL);
 
 	for(VirtualNode node = wireframeManager->components->head; NULL != node; node = node->next)
 	{
@@ -405,7 +405,7 @@ static void WireframeManager::hideWireframes(Entity owner)
 
 static void WireframeManager::showAllWireframes()
 {
-	WireframeManager wireframeManager = WireframeManager::getInstance();
+	WireframeManager wireframeManager = WireframeManager::getInstance(NULL);
 
 	for(VirtualNode node = wireframeManager->components->head; NULL != node; node = node->next)
 	{
@@ -419,7 +419,7 @@ static void WireframeManager::showAllWireframes()
 
 static void WireframeManager::hideAllWireframes()
 {
-	WireframeManager wireframeManager = WireframeManager::getInstance();
+	WireframeManager wireframeManager = WireframeManager::getInstance(NULL);
 
 	for(VirtualNode node = wireframeManager->components->head; NULL != node; node = node->next)
 	{
@@ -433,7 +433,7 @@ static void WireframeManager::hideAllWireframes()
 
 static bool WireframeManager::hasWireframes()
 {
-	WireframeManager wireframeManager = WireframeManager::getInstance();
+	WireframeManager wireframeManager = WireframeManager::getInstance(NULL);
 
 	return NULL != wireframeManager->components && NULL != wireframeManager->components->head;
 }
@@ -443,7 +443,7 @@ static bool WireframeManager::hasWireframes()
 #ifndef __SHIPPING
 static void WireframeManager::print(int32 x, int32 y)
 {
-	WireframeManager wireframeManager = WireframeManager::getInstance();
+	WireframeManager wireframeManager = WireframeManager::getInstance(NULL);
 
 	Printing::text("WIREFRAME MANAGER", x, y++, NULL);
 	y++;
@@ -466,7 +466,7 @@ static void WireframeManager::print(int32 x, int32 y)
 
 static void WireframeManager::sort()
 {
-	WireframeManager wireframeManager = WireframeManager::getInstance();
+	WireframeManager wireframeManager = WireframeManager::getInstance(NULL);
 
 	while(WireframeManager::sortProgressively(wireframeManager));
 }
@@ -475,7 +475,7 @@ static void WireframeManager::sort()
 
 static bool WireframeManager::sortProgressively()
 {
-	WireframeManager wireframeManager = WireframeManager::getInstance();
+	WireframeManager wireframeManager = WireframeManager::getInstance(NULL);
 
 	bool swapped = false;
 

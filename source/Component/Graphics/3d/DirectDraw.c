@@ -293,7 +293,7 @@ static bool DirectDraw::drawPoint(PixelVector point, int32 color, uint8 bufferIn
 
 static bool DirectDraw::drawLine(PixelVector fromPoint, PixelVector toPoint, int32 color, uint8 bufferIndex, bool interlaced)
 {
-	DirectDraw directDraw = DirectDraw::getInstance();
+	DirectDraw directDraw = DirectDraw::getInstance(NULL);
 	
 	uint16 xFromDeltaLeft = (unsigned)(fromPoint.x - fromPoint.parallax - _frustum.x0);
 	uint16 xFromDeltaRight = (unsigned)(fromPoint.x +  fromPoint.parallax - _frustum.x0);
@@ -1080,7 +1080,7 @@ static bool DirectDraw::isPointInsideFrustum(PixelVector point)
 
 static void DirectDraw::reset()
 {
-	DirectDraw directDraw = DirectDraw::getInstance();
+	DirectDraw directDraw = DirectDraw::getInstance(NULL);
 
 	directDraw->maximumPixelsToDraw = __DIRECT_DRAW_MAXIMUM_NUMBER_OF_PIXELS;
 
@@ -1094,7 +1094,7 @@ static void DirectDraw::reset()
 
 static void DirectDraw::preparteToDraw()
 {
-	DirectDraw directDraw = DirectDraw::getInstance();
+	DirectDraw directDraw = DirectDraw::getInstance(NULL);
 
 #ifdef __SHOW_DIRECT_DRAWING_PROFILING
 	static int counter = 0;
@@ -1181,7 +1181,7 @@ static CameraFrustum DirectDraw::getFrustum()
 #ifndef __SHIPPING
 static void DirectDraw::print(int16 x, int16 y)
 {
-	DirectDraw directDraw = DirectDraw::getInstance();
+	DirectDraw directDraw = DirectDraw::getInstance(NULL);
 
 	Printing::text("DIRECT DRAW", x, y++, NULL);
 	y++;

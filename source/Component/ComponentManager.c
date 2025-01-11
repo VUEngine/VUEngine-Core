@@ -73,7 +73,7 @@ static Component ComponentManager::createComponent(Entity owner, const Component
 		Printing::clear();
 		Printing::text(__GET_CLASS_NAME(owner), 44, 25, NULL);
 		Printing::hex((WORD)componentSpec, 44, 26, 8, NULL);
-		NM_ASSERT(false, "ComponentManager::createComponent: the provided asset lives in WRAM");
+		NM_ASSERT(false, "ComponentManager::createComponent: the provided spec lives in WRAM");
 	}
 #endif
 
@@ -524,7 +524,7 @@ static ComponentManager ComponentManager::getManager(uint32 componentType)
 	{
 		case kSpriteComponent:
 
-			return ComponentManager::safeCast(SpriteManager::getInstance());
+			return ComponentManager::safeCast(SpriteManager::getInstance(NULL));
 			break;
 
 		case kColliderComponent:
@@ -539,12 +539,12 @@ static ComponentManager ComponentManager::getManager(uint32 componentType)
 
 		case kWireframeComponent:
 
-			return ComponentManager::safeCast(WireframeManager::getInstance());
+			return ComponentManager::safeCast(WireframeManager::getInstance(NULL));
 			break;
 
 		case kBehaviorComponent:
 
-			return ComponentManager::safeCast(BehaviorManager::getInstance());
+			return ComponentManager::safeCast(BehaviorManager::getInstance(NULL));
 			break;
 	}
 

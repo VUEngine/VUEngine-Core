@@ -39,7 +39,7 @@ static bool MessageDispatcher::dispatchMessage
 	uint32 delay, ListenerObject sender, ListenerObject receiver, int32 message, void* extraInfo
 )
 {
-	MessageDispatcher messageDispatcher = MessageDispatcher::getInstance();
+	MessageDispatcher messageDispatcher = MessageDispatcher::getInstance(NULL);
 
 	// Make sure the receiver is valid
 	ASSERT(sender, "MessageDispatcher::dispatchMessage: null sender");
@@ -99,7 +99,7 @@ static void MessageDispatcher::dispatchDelayedMessage
 	Clock clock, uint32 delay, ListenerObject sender, ListenerObject receiver, int32 message, void* extraInfo
 )
 {
-	MessageDispatcher messageDispatcher = MessageDispatcher::getInstance();
+	MessageDispatcher messageDispatcher = MessageDispatcher::getInstance(NULL);
 
 	// Create the telegram
 	DelayedMessage* delayedMessage = new DelayedMessage;
@@ -116,7 +116,7 @@ static void MessageDispatcher::dispatchDelayedMessage
 
 static bool MessageDispatcher::dispatchDelayedMessages()
 {
-	MessageDispatcher messageDispatcher = MessageDispatcher::getInstance();
+	MessageDispatcher messageDispatcher = MessageDispatcher::getInstance(NULL);
 	
 
 	ASSERT(messageDispatcher->delayedMessages, "MessageDispatcher::dispatchDelayedMessages: null delayedMessages");
@@ -208,7 +208,7 @@ static bool MessageDispatcher::dispatchDelayedMessages()
 
 static void MessageDispatcher::processDiscardedMessages()
 {
-	MessageDispatcher messageDispatcher = MessageDispatcher::getInstance();
+	MessageDispatcher messageDispatcher = MessageDispatcher::getInstance(NULL);
 	
 	for(VirtualNode node = messageDispatcher->delayedMessages->head, nextNode = NULL; NULL != node; node = nextNode)
 	{
@@ -243,7 +243,7 @@ static void MessageDispatcher::processDiscardedMessages()
 
 static bool MessageDispatcher::discardDelayedMessagesWithClock(Clock clock)
 {
-	MessageDispatcher messageDispatcher = MessageDispatcher::getInstance();
+	MessageDispatcher messageDispatcher = MessageDispatcher::getInstance(NULL);
 	
 	bool messagesWereDiscarded = false;
 	VirtualNode node = messageDispatcher->delayedMessages->head;
@@ -266,7 +266,7 @@ static bool MessageDispatcher::discardDelayedMessagesWithClock(Clock clock)
 
 static bool MessageDispatcher::discardDelayedMessagesFromSender(ListenerObject sender, int32 message)
 {
-	MessageDispatcher messageDispatcher = MessageDispatcher::getInstance();
+	MessageDispatcher messageDispatcher = MessageDispatcher::getInstance(NULL);
 	
 	bool messagesWereDiscarded = false;
 	VirtualNode node = messageDispatcher->delayedMessages->head;
@@ -294,7 +294,7 @@ static bool MessageDispatcher::discardDelayedMessagesFromSender(ListenerObject s
 
 static bool MessageDispatcher::discardDelayedMessagesForReceiver(ListenerObject receiver, int32 message)
 {
-	MessageDispatcher messageDispatcher = MessageDispatcher::getInstance();
+	MessageDispatcher messageDispatcher = MessageDispatcher::getInstance(NULL);
 	
 	bool messagesWereDiscarded = false;
 	VirtualNode node = messageDispatcher->delayedMessages->head;
@@ -322,7 +322,7 @@ static bool MessageDispatcher::discardDelayedMessagesForReceiver(ListenerObject 
 
 static bool MessageDispatcher::discardAllDelayedMessagesFromSender(ListenerObject sender)
 {
-	MessageDispatcher messageDispatcher = MessageDispatcher::getInstance();
+	MessageDispatcher messageDispatcher = MessageDispatcher::getInstance(NULL);
 
 	bool messagesWereDiscarded = false;
 	VirtualNode node = messageDispatcher->delayedMessages->head;
@@ -350,7 +350,7 @@ static bool MessageDispatcher::discardAllDelayedMessagesFromSender(ListenerObjec
 
 static bool MessageDispatcher::discardAllDelayedMessagesForReceiver(ListenerObject receiver)
 {
-	MessageDispatcher messageDispatcher = MessageDispatcher::getInstance();
+	MessageDispatcher messageDispatcher = MessageDispatcher::getInstance(NULL);
 
 	bool messagesWereDiscarded = false;
 	VirtualNode node = messageDispatcher->delayedMessages->head;
@@ -378,7 +378,7 @@ static bool MessageDispatcher::discardAllDelayedMessagesForReceiver(ListenerObje
 
 static bool MessageDispatcher::discardAllDelayedMessages(ListenerObject listenerObject)
 {
-	MessageDispatcher messageDispatcher = MessageDispatcher::getInstance();
+	MessageDispatcher messageDispatcher = MessageDispatcher::getInstance(NULL);
 
 	bool messagesWereDiscarded = false;
 	VirtualNode node = messageDispatcher->delayedMessages->head;
@@ -407,7 +407,7 @@ static bool MessageDispatcher::discardAllDelayedMessages(ListenerObject listener
 #ifndef __RELEASE
 static void MessageDispatcher::print(int32 x, int32 y)
 {
-	MessageDispatcher messageDispatcher = MessageDispatcher::getInstance();
+	MessageDispatcher messageDispatcher = MessageDispatcher::getInstance(NULL);
 
 	Printing::text("MESSAGE DISPATCHER' STATUS", x, y++, NULL);
 	Printing::text("Delayed messages:     ", x, ++y, NULL);
@@ -420,7 +420,7 @@ static void MessageDispatcher::print(int32 x, int32 y)
 #ifndef __SHIPPING
 static void MessageDispatcher::printAllDelayedMessagesFromSender(ListenerObject sender, int16 x, int16 y)
 {
-	MessageDispatcher messageDispatcher = MessageDispatcher::getInstance();	
+	MessageDispatcher messageDispatcher = MessageDispatcher::getInstance(NULL);	
 
 	for(VirtualNode node = messageDispatcher->delayedMessages->head; NULL != node; node = node->next)
 	{

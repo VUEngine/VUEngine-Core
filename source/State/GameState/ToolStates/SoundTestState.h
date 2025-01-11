@@ -29,7 +29,7 @@ singleton class SoundTestState : ToolState
 {
 	/// Method to retrieve the singleton instance
 	/// @return SoundTestState singleton
-	static SoundTestState getInstance();
+	static SoundTestState getInstance(ClassPointer requesterClass);
 
 	/// Prepares the object to enter this state.
 	/// @param owner: Object that is entering in this state

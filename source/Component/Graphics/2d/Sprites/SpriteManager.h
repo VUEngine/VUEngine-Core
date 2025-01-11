@@ -91,7 +91,7 @@ singleton class SpriteManager : ComponentManager
 
 	/// Method to retrieve the singleton instance
 	/// @return SpriteManager singleton
-	static SpriteManager getInstance();
+	static SpriteManager getInstance(ClassPointer requesterClass);
 
 	/// Check if at least of the sprites that attach to the provided owner is visible.
 	/// @param owner: Object to which the sprites attach to

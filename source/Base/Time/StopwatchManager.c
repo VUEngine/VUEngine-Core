@@ -33,7 +33,7 @@ friend class VirtualNode;
 
 static void StopwatchManager::reset()
 {
-	StopwatchManager stopwatchManager = StopwatchManager::getInstance();
+	StopwatchManager stopwatchManager = StopwatchManager::getInstance(NULL);
 
 	VirtualNode node = stopwatchManager->stopwatchs->head;
 
@@ -48,7 +48,7 @@ static void StopwatchManager::reset()
 
 static void StopwatchManager::register(Stopwatch clock)
 {
-	StopwatchManager stopwatchManager = StopwatchManager::getInstance();
+	StopwatchManager stopwatchManager = StopwatchManager::getInstance(NULL);
 
 	if(!VirtualList::find(stopwatchManager->stopwatchs, clock))
 	{
@@ -60,7 +60,7 @@ static void StopwatchManager::register(Stopwatch clock)
 
 static void StopwatchManager::unregister(Stopwatch clock)
 {
-	StopwatchManager stopwatchManager = StopwatchManager::getInstance();
+	StopwatchManager stopwatchManager = StopwatchManager::getInstance(NULL);
 
 	VirtualList::removeData(stopwatchManager->stopwatchs, clock);
 }
@@ -69,7 +69,7 @@ static void StopwatchManager::unregister(Stopwatch clock)
 
 static void StopwatchManager::update()
 {
-	StopwatchManager stopwatchManager = StopwatchManager::getInstance();
+	StopwatchManager stopwatchManager = StopwatchManager::getInstance(NULL);
 
 	VirtualNode node = stopwatchManager->stopwatchs->head;
 

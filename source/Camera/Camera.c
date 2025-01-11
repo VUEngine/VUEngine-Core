@@ -40,7 +40,7 @@ const CameraFrustum* _cameraFrustum __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE 
 
 static void Camera::reset()
 {
-	Camera camera = Camera::getInstance();
+	Camera camera = Camera::getInstance(NULL);
 
 	camera->transformation.position = Vector3D::zero();
 	camera->transformation.rotation = Rotation::zero();
@@ -67,7 +67,7 @@ static void Camera::reset()
 
 static void Camera::setup(PixelOptical pixelOptical, CameraFrustum cameraFrustum)
 {
-	Camera camera = Camera::getInstance();
+	Camera camera = Camera::getInstance(NULL);
 	
 	camera->cameraFrustum = Camera::computeClampledFrustum(cameraFrustum);
 	camera->optical = Optical::getFromPixelOptical(pixelOptical, camera->cameraFrustum);
@@ -80,7 +80,7 @@ static void Camera::setup(PixelOptical pixelOptical, CameraFrustum cameraFrustum
 
 static void Camera::setCameraMovementManager(CameraMovementManager cameraMovementManager)
 {
-	Camera camera = Camera::getInstance();
+	Camera camera = Camera::getInstance(NULL);
 	
 	if(camera->cameraMovementManager != cameraMovementManager)
 	{
@@ -97,7 +97,7 @@ static void Camera::setCameraMovementManager(CameraMovementManager cameraMovemen
 
 static CameraMovementManager Camera::getCameraMovementManager()
 {
-	Camera camera = Camera::getInstance();
+	Camera camera = Camera::getInstance(NULL);
 	
 	return camera->cameraMovementManager;
 }
@@ -106,7 +106,7 @@ static CameraMovementManager Camera::getCameraMovementManager()
 
 static void Camera::setCameraEffectManager(CameraEffectManager cameraEffectManager)
 {
-	Camera camera = Camera::getInstance();
+	Camera camera = Camera::getInstance(NULL);
 	
 	if(camera->cameraEffectManager != cameraEffectManager)
 	{
@@ -123,7 +123,7 @@ static void Camera::setCameraEffectManager(CameraEffectManager cameraEffectManag
 
 static CameraEffectManager Camera::getCameraEffectManager()
 {
-	Camera camera = Camera::getInstance();
+	Camera camera = Camera::getInstance(NULL);
 	
 	return camera->cameraEffectManager;
 }
@@ -132,7 +132,7 @@ static CameraEffectManager Camera::getCameraEffectManager()
 
 static Size Camera::getStageSize()
 {
-	Camera camera = Camera::getInstance();
+	Camera camera = Camera::getInstance(NULL);
 	
 	return camera->stageSize;
 }
@@ -141,7 +141,7 @@ static Size Camera::getStageSize()
 
 static void Camera::setStageSize(Size size)
 {
-	Camera camera = Camera::getInstance();
+	Camera camera = Camera::getInstance(NULL);
 	
 	camera->stageSize = size;
 }
@@ -150,7 +150,7 @@ static void Camera::setStageSize(Size size)
 
 static void Camera::setFocusActor(Actor focusActor)
 {
-	Camera camera = Camera::getInstance();
+	Camera camera = Camera::getInstance(NULL);
 	
 	if(!isDeleted(camera->cameraMovementManager))
 	{
@@ -166,7 +166,7 @@ static void Camera::setFocusActor(Actor focusActor)
 
 static Actor Camera::getFocusActor()
 {
-	Camera camera = Camera::getInstance();
+	Camera camera = Camera::getInstance(NULL);
 	
 	if(!isDeleted(camera->cameraMovementManager))
 	{
@@ -180,7 +180,7 @@ static Actor Camera::getFocusActor()
 
 static void Camera::unsetFocusActor()
 {
-	Camera camera = Camera::getInstance();
+	Camera camera = Camera::getInstance(NULL);
 	
 	if(!isDeleted(camera->cameraMovementManager))
 	{
@@ -192,7 +192,7 @@ static void Camera::unsetFocusActor()
 
 static void Camera::setFocusActorPositionDisplacement(Vector3D focusActorPositionDisplacement)
 {
-	Camera camera = Camera::getInstance();
+	Camera camera = Camera::getInstance(NULL);
 	
 	if(!isDeleted(camera->cameraMovementManager))
 	{
@@ -204,7 +204,7 @@ static void Camera::setFocusActorPositionDisplacement(Vector3D focusActorPositio
 
 static Vector3D Camera::getFocusActorPositionDisplacement()
 {
-	Camera camera = Camera::getInstance();
+	Camera camera = Camera::getInstance(NULL);
 	
 	if(!isDeleted(camera->cameraMovementManager))
 	{
@@ -218,7 +218,7 @@ static Vector3D Camera::getFocusActorPositionDisplacement()
 
 static void Camera::setDisplacement(Vector3D displacement)
 {
-	Camera camera = Camera::getInstance();
+	Camera camera = Camera::getInstance(NULL);
 	
 	camera->displacement = displacement;
 }
@@ -227,7 +227,7 @@ static void Camera::setDisplacement(Vector3D displacement)
 
 static Vector3D Camera::geDisplacement()
 {
-	Camera camera = Camera::getInstance();
+	Camera camera = Camera::getInstance(NULL);
 	
 	return camera->displacement;
 }
@@ -236,7 +236,7 @@ static Vector3D Camera::geDisplacement()
 
 static void Camera::setOptical(Optical optical)
 {
-	Camera camera = Camera::getInstance();
+	Camera camera = Camera::getInstance(NULL);
 	
 	camera->optical = optical;
 
@@ -247,7 +247,7 @@ static void Camera::setOptical(Optical optical)
 
 static Optical Camera::getOptical()
 {
-	Camera camera = Camera::getInstance();
+	Camera camera = Camera::getInstance(NULL);
 	
 	return camera->optical;
 }
@@ -264,7 +264,7 @@ static void Camera::setTransformation(Transformation transformation, bool cap)
 
 static Transformation Camera::getTransformation()
 {
-	Camera camera = Camera::getInstance();
+	Camera camera = Camera::getInstance(NULL);
 	
 	return camera->transformation;
 }
@@ -273,7 +273,7 @@ static Transformation Camera::getTransformation()
 
 static void Camera::setPosition(Vector3D position, bool cap)
 {
-	Camera camera = Camera::getInstance();
+	Camera camera = Camera::getInstance(NULL);
 	
 	Vector3D currentPosition = camera->transformation.position;
 	camera->transformation.position = position;
@@ -290,7 +290,7 @@ static void Camera::setPosition(Vector3D position, bool cap)
 
 static void Camera::translate(Vector3D displacement, int32 cap)
 {
-	Camera camera = Camera::getInstance();
+	Camera camera = Camera::getInstance(NULL);
 	
 	Vector3D currentPosition = camera->transformation.position;
 	camera->transformation.position = Vector3D::sum(camera->transformation.position, displacement);
@@ -307,7 +307,7 @@ static void Camera::translate(Vector3D displacement, int32 cap)
 
 static Vector3D Camera::getPosition()
 {
-	Camera camera = Camera::getInstance();
+	Camera camera = Camera::getInstance(NULL);
 	
 	return camera->transformation.position;
 }
@@ -316,7 +316,7 @@ static Vector3D Camera::getPosition()
 
 static void Camera::setRotation(Rotation rotation)
 {
-	Camera camera = Camera::getInstance();
+	Camera camera = Camera::getInstance(NULL);
 	
 	Rotation currentRotation = camera->transformation.rotation;
 
@@ -330,7 +330,7 @@ static void Camera::setRotation(Rotation rotation)
 
 static void Camera::rotate(Rotation rotation)
 {
-	Camera camera = Camera::getInstance();
+	Camera camera = Camera::getInstance(NULL);
 	
 	Rotation currentRotation = camera->transformation.rotation;
 
@@ -343,7 +343,7 @@ static void Camera::rotate(Rotation rotation)
 
 static Rotation Camera::getRotation()
 {
-	Camera camera = Camera::getInstance();
+	Camera camera = Camera::getInstance(NULL);
 	
 	return camera->transformation.rotation;
 }
@@ -352,7 +352,7 @@ static Rotation Camera::getRotation()
 
 static CameraFrustum Camera::getCameraFrustum()
 {
-	Camera camera = Camera::getInstance();
+	Camera camera = Camera::getInstance(NULL);
 	
 	return camera->cameraFrustum;
 }
@@ -361,7 +361,7 @@ static CameraFrustum Camera::getCameraFrustum()
 
 static Vector3D Camera::getLastDisplacement()
 {
-	Camera camera = Camera::getInstance();
+	Camera camera = Camera::getInstance(NULL);
 	
 	return camera->lastDisplacement;
 }
@@ -370,7 +370,7 @@ static Vector3D Camera::getLastDisplacement()
 
 static uint8 Camera::getTransformationFlags()
 {
-	Camera camera = Camera::getInstance();
+	Camera camera = Camera::getInstance(NULL);
 	
 	return camera->transformationFlags;
 }
@@ -379,7 +379,7 @@ static uint8 Camera::getTransformationFlags()
 
 static void Camera::focus()
 {
-	Camera camera = Camera::getInstance();
+	Camera camera = Camera::getInstance(NULL);
 	
 	ASSERT(camera->cameraMovementManager, "Camera::focus: null cameraMovementManager");
 
@@ -419,7 +419,7 @@ static void Camera::focus()
 
 static void Camera::startEffect(int32 effect, ...)
 {
-	Camera camera = Camera::getInstance();
+	Camera camera = Camera::getInstance(NULL);
 	
 #ifdef __TOOLS
 	if(VUEngine::isInToolStateTransition())
@@ -438,7 +438,7 @@ static void Camera::startEffect(int32 effect, ...)
 
 static void Camera::stopEffect(int32 effect)
 {
-	Camera camera = Camera::getInstance();
+	Camera camera = Camera::getInstance(NULL);
 	
 #ifdef __TOOLS
 	if(VUEngine::isInToolStateTransition())
@@ -485,7 +485,7 @@ static void Camera::print(int32 x, int32 y, bool inPixels)
 
 static void Camera::resetCameraFrustum()
 {
-	Camera camera = Camera::getInstance();
+	Camera camera = Camera::getInstance(NULL);
 	
 	camera->cameraFrustum.x0 = 0;
 	camera->cameraFrustum.y0 = 0;
@@ -499,7 +499,7 @@ static void Camera::resetCameraFrustum()
 
 static void Camera::capPosition()
 {
-	Camera camera = Camera::getInstance();
+	Camera camera = Camera::getInstance(NULL);
 	
 	camera->transformation.position = Camera::computCappedPosition(camera->transformation.position);
 }
@@ -508,7 +508,7 @@ static void Camera::capPosition()
 
 static Vector3D Camera::computCappedPosition(Vector3D position)
 {
-	Camera camera = Camera::getInstance();
+	Camera camera = Camera::getInstance(NULL);
 	
 	if(position.x < 0)
 	{
@@ -585,7 +585,7 @@ static CameraFrustum Camera::computeClampledFrustum(CameraFrustum cameraFrustum)
 
 static void Camera::updateTranslationFlags(Vector3D translation)
 {
-	Camera camera = Camera::getInstance();
+	Camera camera = Camera::getInstance(NULL);
 	
 	if(0 != translation.z)
 	{
@@ -601,7 +601,7 @@ static void Camera::updateTranslationFlags(Vector3D translation)
 
 static void Camera::updateRotationFlags(Rotation rotation)
 {
-	Camera camera = Camera::getInstance();
+	Camera camera = Camera::getInstance(NULL);
 	
 	if(rotation.x || rotation.y || rotation.z)
 	{
@@ -616,15 +616,28 @@ static void Camera::updateRotationFlags(Rotation rotation)
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+	
+void CameraEffectManager_secure(ClassPointer const (*requesterClasses)[]);
+
+
 
 void Camera::constructor()
 {	
 	// Always explicitly call the base's constructor 
+const ClassPointer  authData[] =
+{
+	typeofclass(CameraMovementManager),
+	typeofclass(Camera),
+	NULL
+};
 	Base::constructor();
 
+	CameraEffectManager::secure(&authData);
+
 	this->transformation.position = Vector3D::zero();
-	this->cameraMovementManager = CameraMovementManager::getInstance();
-	this->cameraEffectManager = CameraEffectManager::getInstance();
+	this->cameraMovementManager = CameraMovementManager::getInstance(NULL);
+
+	this->cameraEffectManager = CameraEffectManager::getInstance(typeofclass(Camera));
 
 	this->transformation.position = Vector3D::zero();
 	this->displacement = Vector3D::zero();

@@ -31,7 +31,7 @@ singleton class AnimationInspectorState : ToolState
 
 	/// Method to retrieve the singleton instance
 	/// @return AnimationInspectorState singleton
-	static AnimationInspectorState getInstance();
+	static AnimationInspectorState getInstance(ClassPointer requesterClass);
 
 	/// Check if the provided user input unlocks the tool managed by this state.
 	/// @return True if the input matches the combination defined by the state

@@ -37,7 +37,7 @@
 
 static void FrameRate::registerEventListener(ListenerObject listener, EventListener callback, uint16 eventCode)
 {
-	FrameRate frameRate = FrameRate::getInstance();
+	FrameRate frameRate = FrameRate::getInstance(NULL);
 
 	FrameRate::addEventListener(frameRate, listener, callback, eventCode);
 }
@@ -46,7 +46,7 @@ static void FrameRate::registerEventListener(ListenerObject listener, EventListe
 
 static void FrameRate::unregisterEventListener(ListenerObject listener, EventListener callback, uint16 eventCode)
 {
-	FrameRate frameRate = FrameRate::getInstance();
+	FrameRate frameRate = FrameRate::getInstance(NULL);
 
 	FrameRate::removeEventListener(frameRate, listener, callback, eventCode);
 }
@@ -55,7 +55,7 @@ static void FrameRate::unregisterEventListener(ListenerObject listener, EventLis
 
 static void FrameRate::reset()
 {
-	FrameRate frameRate = FrameRate::getInstance();
+	FrameRate frameRate = FrameRate::getInstance(NULL);
 
 	frameRate->FPS = 0;
 	frameRate->unevenFPS = 0;
@@ -69,7 +69,7 @@ static void FrameRate::reset()
 
 static void FrameRate::setTarget(uint8 targetFPS)
 {
-	FrameRate frameRate = FrameRate::getInstance();
+	FrameRate frameRate = FrameRate::getInstance(NULL);
 
 	FrameRate::reset();
 	frameRate->targetFPS = targetFPS;
@@ -79,7 +79,7 @@ static void FrameRate::setTarget(uint8 targetFPS)
 
 static void FrameRate::update()
 {
-	FrameRate frameRate = FrameRate::getInstance();
+	FrameRate frameRate = FrameRate::getInstance(NULL);
 
 	frameRate->FPS++;
 }
@@ -88,7 +88,7 @@ static void FrameRate::update()
 
 static void FrameRate::gameFrameStarted(bool gameCycleEnded, bool printFPS)
 {
-	FrameRate frameRate = FrameRate::getInstance();
+	FrameRate frameRate = FrameRate::getInstance(NULL);
 
 	if(!gameCycleEnded)
 	{
@@ -136,7 +136,7 @@ static void FrameRate::gameFrameStarted(bool gameCycleEnded, bool printFPS)
 
 static void FrameRate::print(int32 x, int32 y)
 {
-	FrameRate frameRate = FrameRate::getInstance();
+	FrameRate frameRate = FrameRate::getInstance(NULL);
 
 	Printing::text("FPS     |TORN  |AVR     ", x, y, NULL);
 	Printing::int32(frameRate->FPS, x + 4, y, NULL);

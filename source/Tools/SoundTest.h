@@ -39,7 +39,7 @@ singleton class SoundTest : Tool
 
 	/// Method to retrieve the singleton instance
 	/// @return SoundTest singleton
-	static SoundTest getInstance();
+	static SoundTest getInstance(ClassPointer requesterClass);
 
 	/// Update the tool's state.
 	override void update();

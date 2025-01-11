@@ -398,15 +398,14 @@ then
 			if [ -z "${classModifiers##*singleton*}" ];
 			then
 
-				sed -i '1s/^/#include <Authenticator.h>\n/' $OUTPUT_FILE
-
 				customSingletonDefinition=`grep -o -e '#define[ 	][ 	]*.*SINGLETON.*(' $OUTPUT_FILE`
 
 				if [ -z "$customSingletonDefinition" ];
 				then
 					if [ -z "${classModifiers##*dynamic_singleton*}" ];
 					then
-						classDefinition=$classDefinition"__SINGLETON_DYNAMIC($className);"
+						classDefinition=$classDefinition"__SINGLETON($className);"
+#						classDefinition=$classDefinition"__SINGLETON_DYNAMIC($className);"
 					else
 						if [ -z "${classModifiers##*singleton! *}" ];
 						then
@@ -495,6 +494,12 @@ if [ ! -s $OUTPUT_FILE ];
 then
 	echo " error (10): could not processess file $OUTPUT_FILE"
 	exit 0
+fi
+
+if [ -z "${classModifiers##*singleton*}" ];
+then
+
+	sed -i '1s/^/#include <Authenticator.h>\n/' $OUTPUT_FILE
 fi
 
 rm -f $OUTPUT_FILE"-e"

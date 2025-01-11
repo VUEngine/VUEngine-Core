@@ -75,7 +75,7 @@ singleton class AnimationInspector : Tool
 
 	/// Method to retrieve the singleton instance
 	/// @return AnimationInspector singleton
-	static AnimationInspector getInstance();
+	static AnimationInspector getInstance(ClassPointer requesterClass);
 
 	/// Update the tool's state.
 	override void update();

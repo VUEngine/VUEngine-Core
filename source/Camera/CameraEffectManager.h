@@ -69,7 +69,7 @@ singleton class CameraEffectManager : ListenerObject
 	
 	/// Method to retrieve the singleton instance
 	/// @return CameraEffectManager singleton
-	static CameraEffectManager getInstance();
+	static CameraEffectManager getInstance(ClassPointer requesterClass);
 
 	/// Class' constructor
 	void constructor();

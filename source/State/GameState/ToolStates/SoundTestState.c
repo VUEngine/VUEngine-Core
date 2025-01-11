@@ -28,7 +28,7 @@ void SoundTestState::constructor()
 	// Always explicitly call the base's constructor 
 	Base::constructor();
 
-	this->tool = Tool::safeCast(SoundTest::getInstance());
+	this->tool = Tool::safeCast(SoundTest::getInstance(NULL));
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
