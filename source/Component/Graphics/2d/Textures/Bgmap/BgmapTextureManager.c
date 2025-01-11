@@ -334,7 +334,7 @@ static void BgmapTextureManager::print(int32 x, int32 y)
 	{
 		BgmapTexture bgmapTexture = BgmapTexture::safeCast(node->data);
 
-		TextureSpec* allocatedTextureSpec = Texture::getSpec(bgmapTexture);
+		const TextureSpec* allocatedTextureSpec = Texture::getSpec(bgmapTexture);
 
 		if(allocatedTextureSpec->recyclable)
 		{
@@ -371,7 +371,7 @@ static void BgmapTextureManager::print(int32 x, int32 y)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static BgmapTexture BgmapTextureManager::findTexture(BgmapTextureSpec* bgmapTextureSpec, bool recyclableOnly)
+static BgmapTexture BgmapTextureManager::findTexture(const BgmapTextureSpec* bgmapTextureSpec, bool recyclableOnly)
 {
 	BgmapTextureManager bgmapTextureManager = BgmapTextureManager::getInstance();
 
@@ -384,7 +384,7 @@ static BgmapTexture BgmapTextureManager::findTexture(BgmapTextureSpec* bgmapText
 	for(VirtualNode node = bgmapTextureManager->bgmapTextures->head; NULL != node; node = node->next)
 	{
 		BgmapTexture allocatedBgmapTexture = BgmapTexture::safeCast(node->data);
-		TextureSpec* allocatedTextureSpec = allocatedBgmapTexture->textureSpec;
+		const TextureSpec* allocatedTextureSpec = allocatedBgmapTexture->textureSpec;
 
 		if(!recyclableOnly && allocatedTextureSpec == textureSpec)
 		{

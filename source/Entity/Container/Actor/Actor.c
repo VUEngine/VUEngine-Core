@@ -358,7 +358,7 @@ static Actor Actor::instantiate(const PositionedActor* const positionedActor, in
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void Actor::constructor(ActorSpec* actorSpec, int16 internalId, const char* const name)
+void Actor::constructor(const ActorSpec* actorSpec, int16 internalId, const char* const name)
 {
 #ifndef __SHIPPING
 	extern uint32 _textStart __attribute__((unused));

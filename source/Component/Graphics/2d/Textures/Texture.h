@@ -96,7 +96,7 @@ abstract class Texture : ListenerObject
 	CharSet charSet;
 
 	/// Spec used to configure the texture
-	TextureSpec* textureSpec;
+	const TextureSpec* textureSpec;
 
 	/// Displacement inside the map array modified according to the frame's value
 	uint32 mapDisplacement;
@@ -159,7 +159,7 @@ abstract class Texture : ListenerObject
 	/// Class' constructor
 	/// @param textureSpec: Specification that determines how to configure the texture
 	/// @param id: Texture's identificator
-	void constructor(TextureSpec* textureSpec, uint16 id);
+	void constructor(const TextureSpec* textureSpec, uint16 id);
 
 	/// Retrieve the texture's identificator.
 	/// @return Texture's identificator
@@ -171,7 +171,7 @@ abstract class Texture : ListenerObject
 
 	/// Retrieve the texture's spec.
 	/// @return Specification that determines how to configure the texture
-	TextureSpec* getSpec();
+	const TextureSpec* getSpec();
 
 	/// Retrieve the texture's char set.
 	/// @param loadIfNeeded: If true and the char set is not loaded, loads it

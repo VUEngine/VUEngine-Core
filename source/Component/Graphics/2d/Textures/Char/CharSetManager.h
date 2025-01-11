@@ -54,7 +54,7 @@ singleton! class CharSetManager : Object
 	/// Retrieve a char set initialized with the provided spec.
 	/// @param charSetSpec: Spec to use to initilize the desired char set
 	/// @return Char set initialized with the provided spec
-	static CharSet getCharSet(CharSetSpec* charSetSpec);
+	static CharSet getCharSet(const CharSetSpec* charSetSpec);
 
 	/// Release a char set.
 	/// @param charSet: Char set to release

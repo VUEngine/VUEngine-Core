@@ -170,7 +170,7 @@ class Actor : Container
 	/// @param actorSpec: Specification that determines how to configure the actor
 	/// @param internalId: ID to keep track internally of the new instance
 	/// @param name: Name to assign to the new instance
-	void constructor(ActorSpec* actorSpec, int16 internalId, const char* const name);
+	void constructor(const ActorSpec* actorSpec, int16 internalId, const char* const name);
 
 	/// Add the components that must attach to this actor.
 	/// Create the components that must attach to this container. 	

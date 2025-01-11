@@ -64,7 +64,7 @@ class BgmapTexture : Texture
 	/// Class' constructor
 	/// @param bgmapTextureSpec: Specification that determines how to configure the texture
 	/// @param id: Texture's identificator
-	void constructor(BgmapTextureSpec* bgmapTextureSpec, uint16 id);
+	void constructor(const BgmapTextureSpec* bgmapTextureSpec, uint16 id);
 
 	/// Write graphical data to the allocated BGMAP space.
 	/// @param maximumTextureRowsToWrite: Number of texture rows to write during this call

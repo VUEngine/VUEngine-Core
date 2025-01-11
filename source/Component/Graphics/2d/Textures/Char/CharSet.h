@@ -81,7 +81,7 @@ class CharSet : ListenerObject
 	/// @protectedsection
 
 	/// Spec used in the construction of the char set
-	CharSetSpec* charSetSpec;
+	const CharSetSpec* charSetSpec;
 
 	// Offset in the array of graphical data
 	uint32 tilesDisplacement;
@@ -100,7 +100,7 @@ class CharSet : ListenerObject
 	/// Get a charSet configured with the provided spec.
 	/// @param charSetSpec: Spec used to select or initialize a texture with
 	/// @return CharSet initialized with the provided spec
-	static CharSet get(CharSetSpec* charSetSpec);
+	static CharSet get(const CharSetSpec* charSetSpec);
 
 	/// Release a charSet.
 	/// @param charSet: CharSet to release
@@ -109,7 +109,7 @@ class CharSet : ListenerObject
 	/// Class' constructor
 	/// @param charSetSpec: Spec to use in the construction of the char set
 	/// @param offset: Offset in CHAR space where the block allocated for this char set starts
-	void constructor(CharSetSpec* charSetSpec, uint16 offset);
+	void constructor(const CharSetSpec* charSetSpec, uint16 offset);
 
 	/// Increase the usage count.
 	void increaseUsageCount();
@@ -139,7 +139,7 @@ class CharSet : ListenerObject
 
 	/// Retrieve the spec used in the construction of the char set.
 	/// @return Spec used in the construction of the char set
-	CharSetSpec* getSpec();
+	const CharSetSpec* getSpec();
 
 	/// Retrieve the number of CHARs used by the char set.
 	/// @return Number of CHARs used by the char set
