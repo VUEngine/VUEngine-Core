@@ -147,9 +147,7 @@ static void Printing::reset()
 	printing->printingBgmapSegment = -1;
 
 	Printing::releaseFonts(printing);
-
-	VirtualList::clear(printing->fonts);
-
+	Printing::resetCoordinates();
 	Printing::setOrientation(kPrintingOrientationHorizontal);
 	Printing::setDirection(kPrintingDirectionLTR);
 }

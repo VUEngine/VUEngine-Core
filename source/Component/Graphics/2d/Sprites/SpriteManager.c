@@ -169,12 +169,13 @@ static void SpriteManager::reset()
 static void SpriteManager::configure
 (
 	uint8 texturesMaximumRowsToWrite, int32 maximumParamTableRowsToComputePerCall,
-	int16 size[__TOTAL_OBJECT_SEGMENTS], int16 z[__TOTAL_OBJECT_SEGMENTS]
+	int16 size[__TOTAL_OBJECT_SEGMENTS], int16 z[__TOTAL_OBJECT_SEGMENTS], Clock animationsClock
 )
 {
 	SpriteManager::setTexturesMaximumRowsToWrite(texturesMaximumRowsToWrite);
 	SpriteManager::setMaximumParamTableRowsToComputePerCall(maximumParamTableRowsToComputePerCall);
 	SpriteManager::configureObjectSpriteContainers(size, z);
+	SpriteManager::setAnimationsClock(animationsClock);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

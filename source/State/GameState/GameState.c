@@ -17,9 +17,7 @@
 #include <BodyManager.h>
 #include <Printing.h>
 #include <Stage.h>
-#include <SpriteManager.h>
 #include <Telegram.h>
-#include <VIPManager.h>
 #include <VUEngine.h>
 
 #include "GameState.h"
@@ -113,11 +111,9 @@ bool GameState::handleMessage(Telegram telegram)
 
 void GameState::enter(void* owner __attribute__ ((unused)))
 {
-	VIPManager::removePostProcessingEffects();
 	Printing::resetCoordinates();
 
 	GameState::pauseClocks(this);
-	SpriteManager::setAnimationsClock(this->animationsClock);
 
 	Clock::start(this->messagingClock);
 }
@@ -201,8 +197,6 @@ void GameState::suspend(void* owner __attribute__ ((unused)))
 		{
 			UIContainer::suspend(this->uiContainer);
 		}
-
-		SpriteManager::setAnimationsClock(this->animationsClock);
 	}
 }
 

@@ -1077,7 +1077,8 @@ void Stage::configureGraphics()
 		this->stageSpec->rendering.texturesMaximumRowsToWrite,
 		this->stageSpec->rendering.maximumAffineRowsToComputePerCall,
 		this->stageSpec->rendering.objectSpritesContainersSize,
-		this->stageSpec->rendering.objectSpritesContainersZPosition
+		this->stageSpec->rendering.objectSpritesContainersZPosition,
+		GameState::getAnimationsClock(this->gameState)
 	);
 
 	VIPManager::configure

@@ -117,15 +117,16 @@ singleton class SpriteManager : ComponentManager
 	/// @param maximumParamTableRowsToComputePerCall: Number of param table rows to write during each rendering cycle 
 	/// @param size: Array with the number of OBJECTS for each container
 	/// @param z: Array of Z coordinates for each container
+	/// @param animationsClock: Clock for the animations
 	static void configure
 	(
 		uint8 texturesMaximumRowsToWrite, int32 maximumParamTableRowsToComputePerCall,
-		int16 size[__TOTAL_OBJECT_SEGMENTS], int16 z[__TOTAL_OBJECT_SEGMENTS]
+		int16 size[__TOTAL_OBJECT_SEGMENTS], int16 z[__TOTAL_OBJECT_SEGMENTS], Clock animationsClock
 	);
 
 	/// Set the clock that determines if the animations must be updated or not.
 	/// @param clock: Clock for the animations
-	static void setAnimationsClock(Clock clock);
+	static void setAnimationsClock(Clock animationsClock);
 
 	/// Register a sprite to be managed
 	/// @param sprite: Sprite to be managed
