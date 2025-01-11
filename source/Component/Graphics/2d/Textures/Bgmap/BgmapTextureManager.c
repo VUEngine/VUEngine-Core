@@ -13,7 +13,6 @@
 
 #include <BgmapTexture.h>
 #include <Mem.h>
-#include <ParamTableManager.h>
 #include <Printing.h>
 #include <VirtualList.h>
 #include <VIPManager.h>
@@ -83,11 +82,9 @@ static void BgmapTextureManager::clearBgmapSegment(int32 segment)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void BgmapTextureManager::calculateAvailableBgmapSegments()
+static void BgmapTextureManager::calculateAvailableBgmapSegments(uint32 paramTableBase)
 {
 	BgmapTextureManager bgmapTextureManager = BgmapTextureManager::getInstance();
-
-	uint32 paramTableBase = ParamTableManager::getParamTableBase();
 
 	bgmapTextureManager->availableBgmapSegmentsForTextures = (uint32)((paramTableBase - __BGMAP_SPACE_BASE_ADDRESS) / __BGMAP_SEGMENT_SIZE);
 

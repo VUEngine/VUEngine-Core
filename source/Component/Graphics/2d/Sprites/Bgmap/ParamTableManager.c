@@ -12,7 +12,6 @@
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <BgmapSprite.h>
-#include <BgmapTextureManager.h>
 #include <Printing.h>
 #include <VirtualList.h>
 #include <VirtualNode.h>
@@ -76,8 +75,6 @@ static void ParamTableManager::setup(int32 availableBgmapSegmentsForParamTable)
 	NM_ASSERT(paramTableManager->paramTableBase <= __PARAM_TABLE_END, "ParamTableManager::setup: param table size is negative");
 
 	paramTableManager->size = __PARAM_TABLE_END - paramTableManager->paramTableBase;
-
-	BgmapTextureManager::calculateAvailableBgmapSegments();
 
 	// Clean param tables memory
 	for(uint8* data = (uint8*)paramTableManager->paramTableBase; data < (uint8*)__PARAM_TABLE_END; data++)

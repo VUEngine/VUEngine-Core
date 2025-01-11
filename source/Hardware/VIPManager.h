@@ -108,6 +108,9 @@ extern uint32 _dramDirtyStart;
 #define __BGMAP_SEGMENT(b)																											\
 	(__BGMAP_SPACE_BASE_ADDRESS + ((b) * 0x2000))  // Address of BGMap b (0 <= b <= 13)
 
+#define __PARAM_TABLE_END			((uint32) & _dramDirtyStart)
+#define __BGMAP_SEGMENT_SIZE		8192
+
 #define __WORLD_OFF					0x0000
 #define __WORLD_ON					0xC000
 #define __WORLD_LON					0x8000
@@ -131,7 +134,6 @@ extern uint32 _dramDirtyStart;
 #define __WORLD_OVR					0x0080
 #define __WORLD_END					0x0040
 
-#define __PARAM_TABLE_END			((uint32) & _dramDirtyStart)
 
 #define __COLUMN_TABLE_ENTRIES		256
 #define __BRIGHTNESS_REPEAT_ENTRIES 96
