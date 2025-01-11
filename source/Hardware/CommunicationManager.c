@@ -20,8 +20,7 @@
 #include <Printing.h>
 #include <Profiler.h>
 #include <Telegram.h>
-#include <TimerManager.h>
-#include <VUEngine.h>
+#include <VIPManager.h>
 
 #include "CommunicationManager.h"
 
@@ -182,15 +181,6 @@ static void CommunicationManager::enableCommunications(EventListener eventLister
 	{
 		CommunicationManager::addEventListener(communicationManager, scope, eventLister, kEventCommunicationsConnected);
 	}
-
-#ifdef __RELEASE
-	uint32 wait = 2000;
-#else
-	uint32 wait = 500;
-#endif
-
-	// Wait a little bit for channel to stabilize
-	VUEngine::wait(wait);
 
 	// If handshake is taking place
 	if(CommunicationManager::isHandshakeIncoming(communicationManager))

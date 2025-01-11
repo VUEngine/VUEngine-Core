@@ -11,9 +11,7 @@
 // INCLUDES
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-#include <Camera.h>
 #include <Printing.h>
-#include <Profiler.h>
 #include <Sound.h>
 #include <VirtualList.h>
 #include <VSUManager.h>

@@ -149,6 +149,9 @@ static void VIPManager::reset()
 	vipManager->enabledMultiplexedInterrupts = kVIPNoMultiplexedInterrupts;
 #endif
 
+	VIPManager::lowerBrightness();
+	VIPManager::removePostProcessingEffects();
+
 	VIPManager::setFrameCycle(__FRAME_CYCLE);
 	VIPManager::setupColumnTable(NULL);
 

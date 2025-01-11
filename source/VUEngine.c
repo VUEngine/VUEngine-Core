@@ -124,61 +124,29 @@ static bool VUEngine::receieveMessage(uint32 delay, ListenerObject sender, int32
 
 static void VUEngine::reset(bool resetSounds)
 {
-	VUEngine vuEngine = VUEngine::getInstance();
-
 #ifdef __ENABLE_PROFILER
 	Profiler::reset();
 #endif
 
 	HardwareManager::disableInterrupts();
 
-	// Disable timer
-
-	// Disable rendering
-	VIPManager::lowerBrightness();
-	VIPManager::removePostProcessingEffects();
-
-	// Reset managers
+	KeypadManager::reset();
+	StopwatchManager::reset();
+	FrameRate::reset();
+	VIPManager::reset();
+	DirectDraw::reset();
+	SpriteManager::reset();
 	WireframeManager::reset();
+	SRAMManager::reset();
+	TimerManager::reset();
+	RumbleManager::reset();
+	CommunicationManager::reset();
+	AnimationCoordinatorFactory::reset();
 
 	if(resetSounds)
 	{
 		SoundManager::reset();
 	}
-
-	TimerManager::reset();
-	KeypadManager::reset();
-	CommunicationManager::reset();
-	StopwatchManager::reset();
-	FrameRate::reset();
-
-	// The order of reset for the graphics managers must not be changed!
-	VIPManager::reset();
-
-	VIPManager::registerEventListener
-	(
-		ListenerObject::safeCast(vuEngine), (EventListener)VUEngine::onVIPFRAMESTART, 
-		kEventVIPManagerFRAMESTART
-	);
-
-	VIPManager::registerEventListener
-	(
-		ListenerObject::safeCast(vuEngine), (EventListener)VUEngine::onVIPGAMESTART,
-		kEventVIPManagerGAMESTART
-	);
-
-#ifdef __SHOW_PROCESS_NAME_DURING_XPEND
-	VIPManager::registerEventListener
-	(
-		ListenerObject::safeCast(vuEngine), (EventListener)VUEngine::onVIPXPEND, 
-		kEventVIPManagerXPEND
-	);
-#endif
-
-	SpriteManager::reset();
-	WireframeManager::reset();
-	DirectDraw::reset();
-	AnimationCoordinatorFactory::reset();
 
 	HardwareManager::enableInterrupts();
 }
@@ -247,7 +215,7 @@ static void VUEngine::unpause(GameState pauseState)
 	{
 		VUEngine::removeState(pauseState);
 		vuEngine->isPaused = false;
-		// VUEngine::fireEvent(vuEngine, kEventGameUnpaused);
+		VUEngine::fireEvent(vuEngine, kEventGameUnpaused);
 	}
 }
 
@@ -707,44 +675,6 @@ bool VUEngine::handleMessage(Telegram telegram)
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PRIVATE STATIC METHODS
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-static void VUEngine::initialize()
-{
-	VUEngine vuEngine = VUEngine::getInstance();
-
-	SpriteManager::reset();
-	DirectDraw::reset();
-	SRAMManager::reset();
-
-	// Initialize hardware registries
-	HardwareManager::initialize();
-
-	// Make sure timer interrupts are enable
-	TimerManager::configure(__TIMER_100US, 10, kMS);
-
-	// Reset sounds
-	SoundManager::reset();
-
-	// Reset Rumble Pak
-	RumbleManager::reset();
-
-	// Start the game's general clock
-	Clock::start(vuEngine->clock);
-
-	// Enable interrupts
-	HardwareManager::enableInterrupts();
-
-	// Enable communications
-#ifdef __ENABLE_COMMUNICATIONS
-	CommunicationManager::enableCommunications(NULL, NULL);
-#else
-#ifdef __RELEASE
-	VUEngine::wait(4000);
-#endif
-#endif
-}
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
@@ -1239,6 +1169,7 @@ void VUEngine::constructor()
 
 	// Construct the general clock
 	this->clock = new Clock();
+	Clock::start(this->clock);
 
 	// Construct the game's state machine
 	this->stateMachine = new StateMachine(this);
@@ -1252,18 +1183,31 @@ void VUEngine::constructor()
 	// Make sure all managers are initialized now
 	this->saveDataManager = NULL;
 
-#ifdef __TOOLS
-	DebugState::getInstance();
-	StageEditorState::getInstance();
-	AnimationInspectorState::getInstance();
-	SoundTestState::getInstance();
-#endif
-
 	// To make debugging easier
 	this->processName = PROCESS_NAME_START_UP;
 
-	// Setup engine parameters
-	VUEngine::initialize();
+	// configure hardwware
+	HardwareManager::configure();
+
+	VIPManager::registerEventListener
+	(
+		ListenerObject::safeCast(this), (EventListener)VUEngine::onVIPFRAMESTART, 
+		kEventVIPManagerFRAMESTART
+	);
+
+	VIPManager::registerEventListener
+	(
+		ListenerObject::safeCast(this), (EventListener)VUEngine::onVIPGAMESTART,
+		kEventVIPManagerGAMESTART
+	);
+
+#ifdef __SHOW_PROCESS_NAME_DURING_XPEND
+	VIPManager::registerEventListener
+	(
+		ListenerObject::safeCast(this), (EventListener)VUEngine::onVIPXPEND, 
+		kEventVIPManagerXPEND
+	);
+#endif
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
