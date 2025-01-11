@@ -15,7 +15,6 @@
 #include <DebugConfig.h>
 #include <Actor.h>
 #include <GameState.h>
-#include <MessageDispatcher.h>
 #include <Telegram.h>
 #include <TimerManager.h>
 #include <VIPManager.h>
@@ -252,7 +251,7 @@ void CameraEffectManager::fxFadeAsyncStart
 	// Start effect
 	// TODO: check if the message really needs to be delayed.
 	initialDelay = 0 >= initialDelay ? 1 : initialDelay;
-	MessageDispatcher::dispatchMessage(initialDelay, ListenerObject::safeCast(this), ListenerObject::safeCast(this), kFadeTo, NULL);
+	CameraEffectManager::sendMessageToSelf(this, kFadeTo, initialDelay, 0);
 
 	// Fire effect started event
 	CameraEffectManager::fireEvent(this, kEventEffectFadeStart);
@@ -266,7 +265,7 @@ void CameraEffectManager::fxFadeAsyncStop()
 	CameraEffectManager::removeEventListeners(this, NULL, kEventEffectFadeComplete);
 
 	// Discard pending delayed messages to stop effect
-	MessageDispatcher::discardDelayedMessagesForReceiver(ListenerObject::safeCast(this), kFadeTo);
+	CameraEffectManager::discardMessages(this, kFadeTo);
 
 	// Reset effect variables
 	this->fxFadeTargetBrightness = (Brightness){0, 0, 0};
@@ -417,10 +416,7 @@ void CameraEffectManager::fxFadeAsync()
 	}
 	else
 	{
-		MessageDispatcher::dispatchMessage
-		(
-			this->fxFadeDelay, ListenerObject::safeCast(this), ListenerObject::safeCast(this), kFadeTo, NULL
-		);
+		CameraEffectManager::sendMessageToSelf(this, kFadeTo, initialDelay, this->fxFadeDelay);
 	}
 }
 
