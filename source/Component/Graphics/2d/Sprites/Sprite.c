@@ -18,7 +18,6 @@
 #include <ObjectSprite.h>
 #include <Optics.h>
 #include <Printing.h>
-#include <SpriteManager.h>
 #include <Texture.h>
 #include <VIPManager.h>
 
@@ -556,6 +555,13 @@ void Sprite::invalidateRendering()
 {
 	this->rendered = false;
 	Sprite::transform(this);
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void* Sprite::getManager()
+{
+	return NULL;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

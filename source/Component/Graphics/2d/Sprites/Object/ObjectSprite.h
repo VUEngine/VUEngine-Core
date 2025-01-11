@@ -100,11 +100,13 @@ class ObjectSprite : Sprite
 	/// @param objectSpriteSpec: Specification that determines how to configure the sprite
 	void constructor(Entity owner, const ObjectSpriteSpec* objectSpriteSpec);
 
-	/// Register this sprite with the appropriate sprites manager.
-	override void registerWithManager();
+	/// Retrieve the sprite's manager.
+	/// @return Generic pointer to the manager
+	override void* getManager();
 
-	/// Unegister this sprite with the appropriate sprites manager.	
-	override void unregisterWithManager();
+	/// Retrieve the class of the manager for the sprite.
+	/// @return ClassPointer of the manager
+	override ClassPointer getManagerClass();
 
 	/// Render the sprite by configuring the DRAM assigned to it by means of the provided index.
 	/// @param index: Determines the region of DRAM that this sprite is allowed to configure

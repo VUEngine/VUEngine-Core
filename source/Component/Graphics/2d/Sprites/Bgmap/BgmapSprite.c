@@ -115,16 +115,9 @@ void BgmapSprite::destructor()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void BgmapSprite::registerWithManager()
+ClassPointer BgmapSprite::getManagerClass()
 {
-	SpriteManager::registerSprite(Sprite::safeCast(this));
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void BgmapSprite::unregisterWithManager()
-{
-	SpriteManager::unregisterSprite(Sprite::safeCast(this));
+	return typeofclass(SpriteManager);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

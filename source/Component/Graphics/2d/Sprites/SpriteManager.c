@@ -109,7 +109,7 @@ bool SpriteManager::isAnyVisible(Entity owner)
 
 static void SpriteManager::reset()
 {
-	SpriteManager spriteManager = SpriteManager::getInstance(NULL);
+	SpriteManager spriteManager = SpriteManager::getInstance(typeofclass(SpriteManager));
 
 	HardwareManager::suspendInterrupts();
 	
@@ -181,7 +181,7 @@ static void SpriteManager::configure
 
 static void SpriteManager::setAnimationsClock(Clock clock)
 {
-	SpriteManager spriteManager = SpriteManager::getInstance(NULL);
+	SpriteManager spriteManager = SpriteManager::getInstance(typeofclass(SpriteManager));
 
 	spriteManager->animationsClock = clock;
 }
@@ -190,7 +190,7 @@ static void SpriteManager::setAnimationsClock(Clock clock)
 
 static Sprite SpriteManager::createSprite(Entity owner, const SpriteSpec* spriteSpec)
 {
-	SpriteManager spriteManager = SpriteManager::getInstance(NULL);
+	SpriteManager spriteManager = SpriteManager::getInstance(typeofclass(SpriteManager));
 
 	NM_ASSERT(NULL != spriteSpec, "SpriteManager::createSprite: null spriteSpec");
 
@@ -205,7 +205,27 @@ static Sprite SpriteManager::createSprite(Entity owner, const SpriteSpec* sprite
 	VirtualList::pushBack(spriteManager->components, sprite);
 
 	Sprite::transform(sprite);
-	Sprite::registerWithManager(sprite);
+
+	ClassPointer managerClassPointer = Sprite::getManagerClass(sprite);
+
+	if(typeofclass(SpriteManager) == managerClassPointer)
+	{
+		SpriteManager::registerSprite(sprite);
+	}
+	else if(typeofclass(ObjectSpriteContainer) == managerClassPointer)
+	{
+		int16 z = 0;
+
+		if(NULL != sprite->transformation)
+		{
+			z = __METERS_TO_PIXELS(sprite->transformation->position.z);
+		}
+		
+		ObjectSpriteContainer objectSpriteContainer = SpriteManager::getObjectSpriteContainer(z + sprite->displacement.z);
+
+		NM_ASSERT(!isDeleted(objectSpriteContainer), "SpriteManager::createSprite: couldn't get a manager");
+		ObjectSpriteContainer::registerSprite(objectSpriteContainer, ObjectSprite::safeCast(sprite));
+	}
 
 	return sprite;
 }
@@ -214,7 +234,7 @@ static Sprite SpriteManager::createSprite(Entity owner, const SpriteSpec* sprite
 
 static void SpriteManager::destroySprite(Sprite sprite)
 {
-	SpriteManager spriteManager = SpriteManager::getInstance(NULL);
+	SpriteManager spriteManager = SpriteManager::getInstance(typeofclass(SpriteManager));
 
 	NM_ASSERT(!isDeleted(sprite), "SpriteManager::destroySprite: trying to dispose dead sprite");
 	NM_ASSERT(__GET_CAST(Sprite, sprite), "SpriteManager::destroySprite: trying to dispose a non sprite");
@@ -227,7 +247,20 @@ static void SpriteManager::destroySprite(Sprite sprite)
 	VirtualList::removeData(spriteManager->components, sprite);
 
 	Sprite::hide(sprite);
-	Sprite::unregisterWithManager(sprite);
+
+	ClassPointer managerClassPointer = Sprite::getManagerClass(sprite);
+
+	if(typeofclass(SpriteManager) == managerClassPointer)
+	{
+		SpriteManager::unregisterSprite(sprite);
+	}
+	else if(typeofclass(ObjectSpriteContainer) == managerClassPointer)
+	{
+		ObjectSpriteContainer objectSpriteContainer = ObjectSpriteContainer::safeCast(Sprite::getManager(sprite));
+
+		NM_ASSERT(!isDeleted(objectSpriteContainer), "SpriteManager::destroySprite: couldn't get a manager");
+		ObjectSpriteContainer::unregisterSprite(objectSpriteContainer, ObjectSprite::safeCast(sprite));
+	}
 
 	delete sprite;
 }
@@ -236,7 +269,7 @@ static void SpriteManager::destroySprite(Sprite sprite)
 
 static bool SpriteManager::registerSprite(Sprite sprite)
 {
-	SpriteManager spriteManager = SpriteManager::getInstance(NULL);
+	SpriteManager spriteManager = SpriteManager::getInstance(typeofclass(SpriteManager));
 
 #ifndef __RELEASE
 	static bool registeringSprite = false;
@@ -288,7 +321,7 @@ static bool SpriteManager::registerSprite(Sprite sprite)
 
 static void SpriteManager::unregisterSprite(Sprite sprite)
 {
-	SpriteManager spriteManager = SpriteManager::getInstance(NULL);
+	SpriteManager spriteManager = SpriteManager::getInstance(typeofclass(SpriteManager));
 
 	NM_ASSERT(Sprite::safeCast(sprite), "SpriteManager::unregisterSprite: removing no sprite");
 
@@ -312,7 +345,7 @@ static void SpriteManager::unregisterSprite(Sprite sprite)
 
 static void SpriteManager::configureObjectSpriteContainers(int16 size[__TOTAL_OBJECT_SEGMENTS], int16 z[__TOTAL_OBJECT_SEGMENTS])
 {
-	SpriteManager spriteManager = SpriteManager::getInstance(NULL);
+	SpriteManager spriteManager = SpriteManager::getInstance(typeofclass(SpriteManager));
 
 #ifndef __RELEASE
 	int16 previousZ = z[__TOTAL_OBJECT_SEGMENTS - 1];
@@ -330,7 +363,8 @@ static void SpriteManager::configureObjectSpriteContainers(int16 size[__TOTAL_OB
 		if(0 < size[i])
 		{
 			ObjectSpriteContainer objectSpriteContainer = new ObjectSpriteContainer();
-			ObjectSpriteContainer::registerWithManager(objectSpriteContainer);
+			
+			SpriteManager::registerSprite(Sprite::safeCast(objectSpriteContainer));
 			VirtualList::pushBack(spriteManager->objectSpriteContainers, objectSpriteContainer);
 
 			PixelVector position =
@@ -354,7 +388,7 @@ static void SpriteManager::configureObjectSpriteContainers(int16 size[__TOTAL_OB
 
 static void SpriteManager::setMaximumParamTableRowsToComputePerCall(int32 maximumParamTableRowsToComputePerCall)
 {
-	SpriteManager spriteManager = SpriteManager::getInstance(NULL);
+	SpriteManager spriteManager = SpriteManager::getInstance(typeofclass(SpriteManager));
 
 	spriteManager->maximumParamTableRowsToComputePerCall = maximumParamTableRowsToComputePerCall;
 }
@@ -363,7 +397,7 @@ static void SpriteManager::setMaximumParamTableRowsToComputePerCall(int32 maximu
 
 static int32 SpriteManager::getMaximumParamTableRowsToComputePerCall()
 {
-	SpriteManager spriteManager = SpriteManager::getInstance(NULL);
+	SpriteManager spriteManager = SpriteManager::getInstance(typeofclass(SpriteManager));
 
 	return spriteManager->deferParamTableEffects ? spriteManager->maximumParamTableRowsToComputePerCall : -1;
 }
@@ -372,7 +406,7 @@ static int32 SpriteManager::getMaximumParamTableRowsToComputePerCall()
 
 static void SpriteManager::setTexturesMaximumRowsToWrite(uint8 texturesMaximumRowsToWrite)
 {
-	SpriteManager spriteManager = SpriteManager::getInstance(NULL);
+	SpriteManager spriteManager = SpriteManager::getInstance(typeofclass(SpriteManager));
 
 	spriteManager->texturesMaximumRowsToWrite = 2 > (int8)texturesMaximumRowsToWrite ? 2 : texturesMaximumRowsToWrite;
 }
@@ -381,7 +415,7 @@ static void SpriteManager::setTexturesMaximumRowsToWrite(uint8 texturesMaximumRo
 
 static int8 SpriteManager::getTexturesMaximumRowsToWrite()
 {
-	SpriteManager spriteManager = SpriteManager::getInstance(NULL);
+	SpriteManager spriteManager = SpriteManager::getInstance(typeofclass(SpriteManager));
 
 	return spriteManager->texturesMaximumRowsToWrite;
 }
@@ -390,7 +424,7 @@ static int8 SpriteManager::getTexturesMaximumRowsToWrite()
 
 static void SpriteManager::deferTextureUpdating(bool deferTextureUpdating)
 {
-	SpriteManager spriteManager = SpriteManager::getInstance(NULL);
+	SpriteManager spriteManager = SpriteManager::getInstance(typeofclass(SpriteManager));
 
 	spriteManager->deferTextureUpdating = deferTextureUpdating;
 }
@@ -399,7 +433,7 @@ static void SpriteManager::deferTextureUpdating(bool deferTextureUpdating)
 
 static void SpriteManager::deferParamTableEffects(bool deferParamTableEffects)
 {
-	SpriteManager spriteManager = SpriteManager::getInstance(NULL);
+	SpriteManager spriteManager = SpriteManager::getInstance(typeofclass(SpriteManager));
 
 	spriteManager->deferParamTableEffects = deferParamTableEffects;
 }
@@ -408,7 +442,7 @@ static void SpriteManager::deferParamTableEffects(bool deferParamTableEffects)
 
 static void SpriteManager::sortSprites()
 {
-	SpriteManager spriteManager = SpriteManager::getInstance(NULL);
+	SpriteManager spriteManager = SpriteManager::getInstance(typeofclass(SpriteManager));
 
 	while(SpriteManager::sortProgressively(true));
 
@@ -419,7 +453,7 @@ static void SpriteManager::sortSprites()
 
 static void SpriteManager::prepareAll()
 {
-	SpriteManager spriteManager = SpriteManager::getInstance(NULL);
+	SpriteManager spriteManager = SpriteManager::getInstance(typeofclass(SpriteManager));
 
 	bool deferTextureUpdating = spriteManager->deferTextureUpdating;
 
@@ -459,7 +493,7 @@ static void SpriteManager::prepareAll()
 
 static void SpriteManager::render()
 {
-	SpriteManager spriteManager = SpriteManager::getInstance(NULL);
+	SpriteManager spriteManager = SpriteManager::getInstance(typeofclass(SpriteManager));
 
 #ifdef __SHOW_SPRITES_PROFILING
 	_renderedSprites = 0;
@@ -525,7 +559,7 @@ static void SpriteManager::render()
 
 static void SpriteManager::forceRendering()
 {
-	SpriteManager spriteManager = SpriteManager::getInstance(NULL);
+	SpriteManager spriteManager = SpriteManager::getInstance(typeofclass(SpriteManager));
 
 	for(VirtualNode node = spriteManager->components->tail; NULL != node; node = node->previous)
 	{
@@ -547,7 +581,7 @@ static void SpriteManager::renderAndDraw()
 
 static void SpriteManager::writeDRAM()
 {
-	SpriteManager spriteManager = SpriteManager::getInstance(NULL);
+	SpriteManager spriteManager = SpriteManager::getInstance(typeofclass(SpriteManager));
 
 #ifdef __SHOW_SPRITES_PROFILING
 	_writtenTiles = 0;
@@ -598,7 +632,7 @@ static void SpriteManager::writeTextures()
 
 static void SpriteManager::showAllSprites(Sprite spareSprite, bool showPrinting)
 {
-	SpriteManager spriteManager = SpriteManager::getInstance(NULL);
+	SpriteManager spriteManager = SpriteManager::getInstance(typeofclass(SpriteManager));
 
 	for(VirtualNode node = spriteManager->components->tail; NULL != node; node = node->previous)
 	{
@@ -635,7 +669,7 @@ static void SpriteManager::showAllSprites(Sprite spareSprite, bool showPrinting)
 
 static void SpriteManager::hideAllSprites(Sprite spareSprite, bool hidePrinting)
 {
-	SpriteManager spriteManager = SpriteManager::getInstance(NULL);
+	SpriteManager spriteManager = SpriteManager::getInstance(typeofclass(SpriteManager));
 
 	for(VirtualNode node = spriteManager->components->head; NULL != node; node = node->next)
 	{
@@ -666,7 +700,7 @@ static void SpriteManager::hideAllSprites(Sprite spareSprite, bool hidePrinting)
 
 static void SpriteManager::computeTotalPixelsDrawn()
 {
-	SpriteManager spriteManager = SpriteManager::getInstance(NULL);
+	SpriteManager spriteManager = SpriteManager::getInstance(typeofclass(SpriteManager));
 
 	spriteManager->totalPixelsDrawn = SpriteManager::getTotalPixelsDrawn();
 }
@@ -675,7 +709,7 @@ static void SpriteManager::computeTotalPixelsDrawn()
 
 static int8 SpriteManager::getFreeLayer()
 {
-	SpriteManager spriteManager = SpriteManager::getInstance(NULL);
+	SpriteManager spriteManager = SpriteManager::getInstance(typeofclass(SpriteManager));
 
 	return spriteManager->freeLayer;
 }
@@ -684,7 +718,7 @@ static int8 SpriteManager::getFreeLayer()
 
 static int32 SpriteManager::getNumberOfSprites()
 {
-	SpriteManager spriteManager = SpriteManager::getInstance(NULL);
+	SpriteManager spriteManager = SpriteManager::getInstance(typeofclass(SpriteManager));
 
 	return VirtualList::getCount(spriteManager->bgmapSprites);
 }
@@ -693,7 +727,7 @@ static int32 SpriteManager::getNumberOfSprites()
 
 static Sprite SpriteManager::getSpriteAtIndex(int16 position)
 {
-	SpriteManager spriteManager = SpriteManager::getInstance(NULL);
+	SpriteManager spriteManager = SpriteManager::getInstance(typeofclass(SpriteManager));
 
 	if(0 > position || position >= VirtualList::getCount(spriteManager->bgmapSprites))
 	{
@@ -717,7 +751,7 @@ static Sprite SpriteManager::getSpriteAtIndex(int16 position)
 
 static ObjectSpriteContainer SpriteManager::getObjectSpriteContainer(fixed_t z)
 {
-	SpriteManager spriteManager = SpriteManager::getInstance(NULL);
+	SpriteManager spriteManager = SpriteManager::getInstance(typeofclass(SpriteManager));
 
 	ObjectSpriteContainer suitableObjectSpriteContainer = NULL;
 
@@ -764,7 +798,7 @@ static ObjectSpriteContainer SpriteManager::getObjectSpriteContainer(fixed_t z)
 
 static ObjectSpriteContainer SpriteManager::getObjectSpriteContainerBySPT(int32 spt)
 {
-	SpriteManager spriteManager = SpriteManager::getInstance(NULL);
+	SpriteManager spriteManager = SpriteManager::getInstance(typeofclass(SpriteManager));
 
 	ASSERT((unsigned)spt < __TOTAL_OBJECT_SEGMENTS, "SpriteManager::getObjectSpriteContainerBySPT: invalid segment");
 
@@ -793,7 +827,7 @@ static ObjectSpriteContainer SpriteManager::getObjectSpriteContainerBySPT(int32 
 
 static void SpriteManager::print(int32 x, int32 y, bool resumed)
 {
-	SpriteManager spriteManager = SpriteManager::getInstance(NULL);
+	SpriteManager spriteManager = SpriteManager::getInstance(typeofclass(SpriteManager));
 
 	Printing::setWorldCoordinates(0, 0, Printing::getSpriteIndex().z, 0);
 #ifndef __SHOW_SPRITES_PROFILING
@@ -858,7 +892,7 @@ static void SpriteManager::print(int32 x, int32 y, bool resumed)
 
 static void SpriteManager::printObjectSpriteContainersStatus(int32 x, int32 y)
 {
-	SpriteManager spriteManager = SpriteManager::getInstance(NULL);
+	SpriteManager spriteManager = SpriteManager::getInstance(typeofclass(SpriteManager));
 
 	Printing::text("OBJECTS USAGE", x, y++, NULL);
 	int32 totalUsedObjects = 0;
@@ -883,7 +917,7 @@ static void SpriteManager::printObjectSpriteContainersStatus(int32 x, int32 y)
 
 static void SpriteManager::cleanUp()
 {
-	SpriteManager spriteManager = SpriteManager::getInstance(NULL);
+	SpriteManager spriteManager = SpriteManager::getInstance(typeofclass(SpriteManager));
 
 	VIPManager::unregisterEventListener
 	(
@@ -927,7 +961,7 @@ static void SpriteManager::cleanUp()
 
 static bool SpriteManager::doRegisterSprite(Sprite sprite)
 {
-	SpriteManager spriteManager = SpriteManager::getInstance(NULL);
+	SpriteManager spriteManager = SpriteManager::getInstance(typeofclass(SpriteManager));
 
 	for(VirtualNode node = spriteManager->bgmapSprites->head; NULL != node; node = node->next)
 	{
@@ -958,7 +992,7 @@ static bool SpriteManager::doRegisterSprite(Sprite sprite)
 
 static bool SpriteManager::sortProgressively(bool complete)
 {
-	SpriteManager spriteManager = SpriteManager::getInstance(NULL);
+	SpriteManager spriteManager = SpriteManager::getInstance(typeofclass(SpriteManager));
 
 	if(NULL == spriteManager->sortingSpriteNode)
 	{
@@ -1036,7 +1070,7 @@ static bool SpriteManager::sortProgressively(bool complete)
 
 static int32 SpriteManager::getTotalPixelsDrawn()
 {
-	SpriteManager spriteManager = SpriteManager::getInstance(NULL);
+	SpriteManager spriteManager = SpriteManager::getInstance(typeofclass(SpriteManager));
 
 	int32 totalPixelsToDraw = 0;
 	
@@ -1059,7 +1093,7 @@ static int32 SpriteManager::getTotalPixelsDrawn()
 
 static void SpriteManager::stopRendering()
 {
-	SpriteManager spriteManager = SpriteManager::getInstance(NULL);
+	SpriteManager spriteManager = SpriteManager::getInstance(typeofclass(SpriteManager));
 
 	NM_ASSERT(0 <= (int8)spriteManager->freeLayer, "SpriteManager::stopRendering: no more layers");
 
@@ -1073,7 +1107,7 @@ static void SpriteManager::stopRendering()
 
 static void SpriteManager::applySpecialEffects()
 {
-	SpriteManager spriteManager = SpriteManager::getInstance(NULL);
+	SpriteManager spriteManager = SpriteManager::getInstance(typeofclass(SpriteManager));
 
 	int32 maximumParamTableRowsToComputePerCall = SpriteManager::getMaximumParamTableRowsToComputePerCall();
 
@@ -1096,7 +1130,7 @@ static void SpriteManager::applySpecialEffects()
 
 static void SpriteManager::writeWORLDAttributesToDRAM()
 {
-	SpriteManager spriteManager = SpriteManager::getInstance(NULL);
+	SpriteManager spriteManager = SpriteManager::getInstance(typeofclass(SpriteManager));
 
 	CACHE_RESET;
 	Mem::copyWORD

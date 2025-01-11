@@ -237,11 +237,13 @@ abstract class Sprite : VisualComponent
 	/// Invalidate the flags that determine if the sprite requires rendering.
 	void invalidateRendering();
 
-	/// Register this sprite with the appropriate sprites manager.
-	virtual void registerWithManager() = 0;
+	/// Retrieve the sprite's manager.
+	/// @return Generic pointer to the manager
+	virtual void* getManager();
 
-	/// Unegister this sprite with the appropriate sprites manager.
-	virtual void unregisterWithManager() = 0;
+	/// Retrieve the class of the manager for the sprite.
+	/// @return ClassPointer of the manager
+	virtual ClassPointer getManagerClass() = 0;
 
 	/// Check if the sprite has special effects.
 	/// @return True if the sprite has special effects

@@ -601,28 +601,15 @@ static void Camera::updateRotationFlags(Rotation rotation)
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-	
-void CameraEffectManager_secure(ClassPointer const (*requesterClasses)[]);
-
-
 
 void Camera::constructor()
 {	
 	// Always explicitly call the base's constructor 
-const ClassPointer  authData[] =
-{
-	typeofclass(CameraMovementManager),
-	typeofclass(Camera),
-	NULL
-};
 	Base::constructor();
-
-	CameraEffectManager::secure(&authData);
 
 	this->transformation.position = Vector3D::zero();
 	this->cameraMovementManager = CameraMovementManager::getInstance(NULL);
-
-	this->cameraEffectManager = CameraEffectManager::getInstance(typeofclass(Camera));
+	this->cameraEffectManager = CameraEffectManager::getInstance(NULL);
 
 	this->transformation.position = Vector3D::zero();
 	this->displacement = Vector3D::zero();

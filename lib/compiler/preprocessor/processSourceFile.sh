@@ -169,7 +169,7 @@ tail -n +2 $OUTPUT_FILE > $OUTPUT_FILE.tmp
 mv $OUTPUT_FILE.tmp $OUTPUT_FILE
 
 # Inject this pointer
-sed -i.b 's/<%>[ 	]*{[ 	]*<START_BLOCK>/{/g; s/{[ 	]*<START_BLOCK>\(.*\)<method>\(.*\)<%method><%DECLARATION>/{__CHECK_STACK_STATUS NM_ASSERT(!isDeleted(_this), "'"$className"'::\2: null this"); '"$className"' this '"__attribute__((unused))"' = __SAFE_CAST('"$className"' , _this); ASSERT(!isDeleted(this), "'"$className"'::\2: this failed the cast");\1/g' $OUTPUT_FILE
+sed -i.b 's/<%>[ 	]*{[ 	]*<START_BLOCK>/{/g; s/{[ 	]*<START_BLOCK>\(.*\)<method>\(.*\)<%method><%DECLARATION>/{extern ClassPointer _authClass; _authClass = typeofclass('"$className"'); __CHECK_STACK_STATUS NM_ASSERT(!isDeleted(_this), "'"$className"'::\2: null this"); '"$className"' this '"__attribute__((unused))"' = __SAFE_CAST('"$className"' , _this); ASSERT(!isDeleted(this), "'"$className"'::\2: this failed the cast");\1/g' $OUTPUT_FILE
 
 firstMethodDeclarationLine=`grep -m1 -n -e "^<DECLARATION>" $OUTPUT_FILE | cut -d ":" -f1`
 

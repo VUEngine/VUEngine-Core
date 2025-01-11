@@ -69,6 +69,8 @@ int32 __GAME_ENTRY_POINT(void);
 uint32 _dispatchCycle = 0;
 #endif
 
+ClassPointer _authClass = NULL;
+
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // GLOBAL FUNCTIONS
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -1151,6 +1153,27 @@ static void VUEngine::printDebug()
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+#include <ObjectSprite.h>
+#include <ObjectSpriteContainer.h>
+#include <BgmapSprite.h>
+	
+void SpriteManager_secure(ClassPointer const (*requesterClasses)[]);
+
+const ClassPointer authData[] =
+{
+	typeofclass(ComponentManager),
+	typeofclass(BgmapSprite),
+	typeofclass(SpriteManager),
+	typeofclass(Stage),
+	typeofclass(VUEngine),
+	NULL
+};
+
+static void VUEngine::secureSingletons()
+{
+
+	SpriteManager::secure(&authData);
+}
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PRIVATE METHODS
@@ -1201,6 +1224,8 @@ void VUEngine::constructor()
 		kEventVIPManagerXPEND
 	);
 #endif
+
+	VUEngine::secureSingletons();
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

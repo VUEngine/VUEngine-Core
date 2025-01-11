@@ -676,8 +676,6 @@ void GameState::createStage(StageSpec* stageSpec, VirtualList positionedActorsTo
 	NM_ASSERT(!isDeleted(this->stage), "GameState::configureStage: null stage");
 
 	Stage::configure(this->stage, positionedActorsToIgnore);
-
-	SpriteManager::setAnimationsClock(this->animationsClock);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

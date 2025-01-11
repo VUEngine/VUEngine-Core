@@ -80,6 +80,8 @@ void ObjectSprite::constructor(Entity owner, const ObjectSpriteSpec* objectSprit
 
 void ObjectSprite::destructor()
 {
+	this->objectSpriteContainer = NULL;
+
 	ObjectSprite::removeFromCache(this);
 
 	if(!isDeleted(this->texture))
@@ -100,34 +102,16 @@ void ObjectSprite::destructor()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void ObjectSprite::registerWithManager()
+void* ObjectSprite::getManager()
 {
-	if(NULL == this->objectSpriteContainer)
-	{
-		int16 z = 0;
-
-		if(NULL != this->transformation)
-		{
-			z = __METERS_TO_PIXELS(this->transformation->position.z);
-		}
-		
-		this->objectSpriteContainer = SpriteManager::getObjectSpriteContainer(z + this->displacement.z);
-
-		NM_ASSERT(!isDeleted(this->objectSpriteContainer), "ObjectSprite::registerWithManager: couldn't get a manager");
-		ObjectSpriteContainer::registerSprite(this->objectSpriteContainer, this);
-	}
+	return this->objectSpriteContainer;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void ObjectSprite::unregisterWithManager()
+ClassPointer ObjectSprite::getManagerClass()
 {
-	if(NULL != this->objectSpriteContainer)
-	{
-		ObjectSpriteContainer::unregisterSprite(this->objectSpriteContainer, this);
-	}
-
-	this->objectSpriteContainer = NULL;
+	return typeofclass(ObjectSpriteContainer);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
