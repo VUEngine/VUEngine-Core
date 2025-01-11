@@ -50,9 +50,6 @@ class ObjectSpriteContainer : Sprite
 	/// SPT index that this container manages
 	int32 spt;
 
-	/// Flag to control the behavior of renderSprites
-	bool hideSprites;
-
 	/// @publicsection
 
 	/// Reset the state of the class's attributes.
