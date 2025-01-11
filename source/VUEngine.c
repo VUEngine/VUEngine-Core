@@ -1381,9 +1381,6 @@ bool VUEngine::changedState(ListenerObject eventFirer)
 	// Fire event
 	VUEngine::fireEvent(this, kEventNextStateSet);
 
-	StopwatchManager::reset();
-	FrameRate::reset();
-
 	return false;
 }
 
