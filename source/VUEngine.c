@@ -16,6 +16,7 @@
 #include <AnimationCoordinatorFactory.h>
 #include <AnimationInspectorState.h>
 #include <BgmapTextureManager.h>
+#include <BodyManager.h>
 #include <Camera.h>
 #include <CommunicationManager.h>
 #include <CharSetManager.h>
@@ -34,7 +35,6 @@
 #include <MessageDispatcher.h>
 #include <Optics.h>
 #include <ParamTableManager.h>
-#include <BodyManager.h>
 #include <Profiler.h>
 #include <RumbleManager.h>
 #include <SoundManager.h>
@@ -613,62 +613,13 @@ static void VUEngine::frameStarted(uint16 gameFrameDuration)
 		{
 			VUEngine::fireEvent(vuEngine, kEventVUEngineNextSecondStarted);
 		}
-#ifdef __SHOW_TIMER_MANAGER_STATUS
-		TimerManager::nextSecondStarted();
-#endif
 
 		totalTime = 0;
 
-#ifdef __SHOW_STREAMING_PROFILING
-
-		if(!VUEngine::isInToolState())
-		{
-			Printing::resetCoordinates();
-			Stage::print(VUEngine::getStage(), 1, 1);
-		}
-#endif
-
-#ifdef __DEBUG
-#ifdef __PRINT_DEBUG_ALERT
-		Printing::text(EN_HEIGHT_IN_CHARS) - 1, NULL);
-#endif
-#endif
-
-#ifdef __SHOW_CHAR_MEMORY_STATUS
-		CharSetManager::print(1, 5);
-#endif
-
-#ifdef __SHOW_BGMAP_MEMORY_STATUS
-		BgmapTextureManager::print(1, 5);
-		ParamTableManager::print(1 + 27, 5);
-#endif
-
-#ifdef __SHOW_MEMORY_POOL_STATUS
-		if(!VUEngine::isInToolState())
-		{
-#ifdef __SHOW_DETAILED_MEMORY_POOL_STATUS
-			MemoryPool::printDetailedUsage(30, 1);
-#else
-			MemoryPool::printResumedUsage(35, 1);
-#endif
-		}
-#endif
-
-#ifdef __SHOW_STACK_OVERFLOW_ALERT
-		if(!VUEngine::isInToolState())
-		{
-			Printing::resetCoordinates();
-			HardwareManager::printStackStatus((__SCREEN_WIDTH_IN_CHARS) - 25, 0, false);
-		}
+#ifndef __RELEASE
+		VUEngine::printDebug();
 #endif
 	}
-
-#ifdef __TOOLS
-	if(VUEngine::isInSoundTest())
-	{
-		SoundManager::printPlaybackTime(1, 6);
-	}
-#endif
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -1212,6 +1163,65 @@ static void VUEngine::cleanUp()
 		ListenerObject::safeCast(vuEngine), (EventListener)VUEngine::onVIPXPEND, 
 		kEventVIPManagerXPEND
 	);
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+static void VUEngine::printDebug()
+{
+#ifdef __SHOW_TIMER_MANAGER_STATUS
+	TimerManager::nextSecondStarted();
+#endif
+
+#ifdef __SHOW_STREAMING_PROFILING
+
+	if(!VUEngine::isInToolState())
+	{
+		Printing::resetCoordinates();
+		Stage::print(VUEngine::getStage(), 1, 1);
+	}
+#endif
+
+#ifdef __DEBUG
+#ifdef __PRINT_DEBUG_ALERT
+	Printing::text(EN_HEIGHT_IN_CHARS) - 1, NULL);
+#endif
+#endif
+
+#ifdef __SHOW_CHAR_MEMORY_STATUS
+	CharSetManager::print(1, 5);
+#endif
+
+#ifdef __SHOW_BGMAP_MEMORY_STATUS
+	BgmapTextureManager::print(1, 5);
+	ParamTableManager::print(1 + 27, 5);
+#endif
+
+#ifdef __SHOW_MEMORY_POOL_STATUS
+	if(!VUEngine::isInToolState())
+	{
+#ifdef __SHOW_DETAILED_MEMORY_POOL_STATUS
+		MemoryPool::printDetailedUsage(30, 1);
+#else
+		MemoryPool::printResumedUsage(35, 1);
+#endif
+	}
+#endif
+
+#ifdef __SHOW_STACK_OVERFLOW_ALERT
+	if(!VUEngine::isInToolState())
+	{
+		Printing::resetCoordinates();
+		HardwareManager::printStackStatus((__SCREEN_WIDTH_IN_CHARS) - 25, 0, false);
+	}
+#endif
+
+#ifdef __TOOLS
+	if(VUEngine::isInSoundTest())
+	{
+		SoundManager::printPlaybackTime(1, 6);
+	}
+#endif
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
