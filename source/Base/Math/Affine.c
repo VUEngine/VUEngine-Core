@@ -321,7 +321,6 @@ static int16 Affine::rotate
 /*
 	int16 i = 0 <= paramTableRow ? paramTableRow : 0;
 	int32 lastRow = __FIXED_TO_I(__FIXED_MULT((halfHeight << 1), finalScaleY)) + 1;
-	int32 counter = SpriteManager::getMaximumParamTableRowsToComputePerCall();
 */
 //	for(;counter && i <= lastRow; i++, counter--)
 	for(;i <= lastRow; i++, )
