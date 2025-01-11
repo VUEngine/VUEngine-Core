@@ -430,7 +430,7 @@ static void Camera::startEffect(int32 effect, ...)
 
 static void Camera::stopEffect(int32 effect)
 {
-	Camera camera = Camera::getInstance();
+	Camera camera = Camera::getInstance(NULL);
 
 	CameraEffectManager::stopEffect(camera->cameraEffectManager, effect);
 }
