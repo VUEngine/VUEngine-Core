@@ -130,6 +130,7 @@ static void VUEngine::reset(bool resetSounds)
 
 	HardwareManager::disableInterrupts();
 
+	HardwareManager::reset();
 	KeypadManager::reset();
 	StopwatchManager::reset();
 	FrameRate::reset();
@@ -1185,9 +1186,6 @@ void VUEngine::constructor()
 
 	// To make debugging easier
 	this->processName = PROCESS_NAME_START_UP;
-
-	// configure hardwware
-	HardwareManager::configure();
 
 	VIPManager::registerEventListener
 	(

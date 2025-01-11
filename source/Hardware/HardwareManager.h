@@ -60,8 +60,8 @@ static class HardwareManager : Object
 {
 	/// @publicsection
 
-	/// Initialize hardware registries.
-	static void configure();
+	/// Reset hardware registries.
+	static void reset();
 
 	/// Halt the CPU.
 	static inline void halt();

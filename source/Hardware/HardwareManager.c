@@ -89,7 +89,7 @@ uint32 _sramSample __attribute__((section(".dram_dirty"))) __attribute__((unused
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void HardwareManager::configure()
+static void HardwareManager::reset()
 {
 	// Set ROM waiting to 1 cycle
 	_hardwareRegisters[__WCR] |= 0x0001;
