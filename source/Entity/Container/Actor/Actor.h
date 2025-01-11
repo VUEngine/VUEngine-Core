@@ -70,7 +70,7 @@ typedef const ActorSpec ActorROMSpec;
 typedef struct PositionedActor
 {
 	// Pointer to the actor spec in ROM
-	ActorSpec* actorSpec;
+	const ActorSpec* actorSpec;
 
 	// Position in the screen coordinates
 	ScreenPixelVector onScreenPosition;
@@ -123,7 +123,7 @@ class Actor : Container
 	ActorFactory actorFactory;
 
 	/// Pointer to the spec that defines how to initialize the actor
-	ActorSpec* actorSpec;
+	const ActorSpec* actorSpec;
 
 	/// Diplacement between the actor's bounding box's center and its local position used to speed up the
 	/// visibility check of the actor withing the camera's frustum
