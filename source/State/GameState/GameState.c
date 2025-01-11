@@ -202,8 +202,6 @@ void GameState::suspend(void* owner __attribute__ ((unused)))
 			UIContainer::suspend(this->uiContainer);
 		}
 
-		// Make sure that all graphical resources are released.
-		SpriteManager::reset();
 		SpriteManager::setAnimationsClock(this->animationsClock);
 	}
 }
@@ -679,7 +677,7 @@ void GameState::createStage(StageSpec* stageSpec, VirtualList positionedActorsTo
 		this->stage = NULL;
 	}
 
-	this->stage = ((Stage (*)(StageSpec*)) stageSpec->allocator)((StageSpec*)stageSpec);
+	this->stage = ((Stage (*)(StageSpec*, GameState)) stageSpec->allocator)((StageSpec*)stageSpec, this);
 	
 	NM_ASSERT(!isDeleted(this->stage), "GameState::configureStage: null stage");
 

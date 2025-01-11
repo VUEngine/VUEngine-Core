@@ -148,8 +148,6 @@ static void VUEngine::reset(bool resetSounds)
 	{
 		SoundManager::reset();
 	}
-
-	HardwareManager::enableInterrupts();
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -1367,6 +1365,7 @@ bool VUEngine::changedState(ListenerObject eventFirer)
 
 	VIPManager::startDrawing();
 	VIPManager::startDisplaying();
+	HardwareManager::enableInterrupts();
 
 	// Fire event
 	VUEngine::fireEvent(this, kEventNextStateSet);

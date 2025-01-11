@@ -13,14 +13,15 @@
 
 #include <string.h>
 
+#include <ActorFactory.h>
+#include <Actor.h>
 #include <BgmapTexture.h>
 #include <BgmapTextureManager.h>
 #include <BodyManager.h>
 #include <Camera.h>
 #include <CharSetManager.h>
 #include <DebugConfig.h>
-#include <Actor.h>
-#include <ActorFactory.h>
+#include <GameState.h>
 #include <HardwareManager.h>
 #include <ParamTableManager.h>
 #include <Printing.h>
@@ -31,7 +32,6 @@
 #include <VirtualList.h>
 #include <VirtualNode.h>
 #include <VIPManager.h>
-#include <VUEngine.h>
 
 #include "Stage.h"
 
@@ -128,11 +128,12 @@ static uint32 Stage::computeDistanceToOrigin(StageActorDescription* stageActorDe
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void Stage::constructor(StageSpec *stageSpec)
+void Stage::constructor(StageSpec *stageSpec, GameState gameState)
 {
 	// Always explicitly call the base's constructor 
 	Base::constructor(0, NULL);
 
+	this->gameState = gameState;
 	this->actorFactory = new ActorFactory();
 	this->children = new VirtualList();
 	this->actorLoadingListeners = NULL;
@@ -557,6 +558,10 @@ void Stage::print(int32 x, int32 y)
 	processRemovedActorsHighestTime = 0;
 	actorFactoryHighestTime = 0;
 #endif
+
+#ifdef __SHOW_STREAMING_PROFILING
+	ActorFactory::print(this->actorFactory, x, y);
+#endif
 }
 #endif
 
@@ -564,13 +569,6 @@ void Stage::print(int32 x, int32 y)
 
 bool Stage::stream()
 {
-#ifdef __SHOW_STREAMING_PROFILING
-	if(!VUEngine::isInToolState())
-	{
-		ActorFactory::print(this->actorFactory, 25, 3);
-	}
-#endif
-
 	if(NULL == this->stageActorDescriptions->head)
 	{
 		return false;
@@ -1153,8 +1151,10 @@ void Stage::configureSounds()
 
 void Stage::configurePhysics()
 {
-	BodyManager::setFrictionCoefficient(VUEngine::getBodyManager(), this->stageSpec->physics.frictionCoefficient);
-	BodyManager::setGravity(VUEngine::getBodyManager(), this->stageSpec->physics.gravity);
+	NM_ASSERT(!isDeleted(this->gameState), "Stage::configurePhysics: invalid game state");
+
+	BodyManager::setFrictionCoefficient(GameState::getBodyManager(this->gameState), this->stageSpec->physics.frictionCoefficient);
+	BodyManager::setGravity(GameState::getBodyManager(this->gameState), this->stageSpec->physics.gravity);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
