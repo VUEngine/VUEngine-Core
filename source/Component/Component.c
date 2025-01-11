@@ -13,6 +13,7 @@
 
 #include <DebugConfig.h>
 #include <Entity.h>
+#include <Printing.h>
 
 #include "Component.h"
 
@@ -43,6 +44,20 @@ void Component::constructor(Entity owner, const ComponentSpec* componentSpec)
 	// Always explicitly call the base's constructor 
 	Base::constructor();
 	
+#ifndef __SHIPPING
+	extern uint32 _textStart __attribute__((unused));
+	extern uint32 _dataLma __attribute__((unused));
+
+	if(!(&_textStart < (uint32*)componentSpec && (uint32*)componentSpec < &_dataLma))
+	{
+		Printing::setDebugMode();
+		Printing::clear();
+		Printing::text(__GET_CLASS_NAME(this), 44, 25, NULL);
+		Printing::hex((WORD)componentSpec, 44, 26, 8, NULL);
+		NM_ASSERT(false, "Actor::constructor: the provided spec lives in WRAM");
+	}
+#endif
+
 	this->componentSpec = componentSpec;
 	this->owner = owner;
 	this->deleteMe = false;
