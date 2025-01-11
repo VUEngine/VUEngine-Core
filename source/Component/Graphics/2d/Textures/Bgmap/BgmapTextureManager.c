@@ -118,8 +118,13 @@ static int8 BgmapTextureManager::getPrintingBgmapSegment()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void BgmapTextureManager::loadTextures(const TextureSpec** textureSpecs)
+static void BgmapTextureManager::loadTextures(const TextureSpec** textureSpecs, bool removeOldTextures)
 {
+	if(removeOldTextures)
+	{
+		BgmapTextureManager::reset();
+	}
+
 	// Textures
 	if(NULL != textureSpecs)
 	{

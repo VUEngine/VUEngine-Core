@@ -85,7 +85,8 @@ singleton! class BgmapTextureManager : Object
 
 	/// Load textures in function of the provided array of specs.
 	/// @param textureSpecs: Array of texture specs in function of which to load textures 
-	static void loadTextures(const TextureSpec** textureSpecs);
+	/// @param removeOldTextures: If true, previously loaded texturered are first destroyed and deallocated
+	static void loadTextures(const TextureSpec** textureSpecs, bool removeOldTextures);
 
 	/// Retrieve a texture initialized with the provided spec.
 	/// @param bgmapTextureSpec: Spec to use to initilize the desired texture

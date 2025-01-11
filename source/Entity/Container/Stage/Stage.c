@@ -1096,7 +1096,7 @@ void Stage::configureGraphics()
 
 	Printing::loadFonts(this->stageSpec->assets.fontSpecs);
 	CharSetManager::loadCharSets((const CharSetSpec**)this->stageSpec->assets.charSetSpecs);
-	BgmapTextureManager::loadTextures((const TextureSpec**)this->stageSpec->assets.textureSpecs);
+	BgmapTextureManager::loadTextures((const TextureSpec**)this->stageSpec->assets.textureSpecs, true);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
