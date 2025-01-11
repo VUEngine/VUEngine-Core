@@ -18,7 +18,6 @@
 #include <Actor.h>
 #include <Optics.h>
 #include <Printing.h>
-#include <VUEngine.h>
 
 #include "Camera.h"
 
@@ -421,13 +420,6 @@ static void Camera::startEffect(int32 effect, ...)
 {
 	Camera camera = Camera::getInstance();
 	
-#ifdef __TOOLS
-	if(VUEngine::isInToolStateTransition())
-	{
-		return;
-	}
-#endif
-
 	va_list args;
 	va_start(args, effect);
 	CameraEffectManager::startEffect(camera->cameraEffectManager, effect, args);
@@ -439,13 +431,6 @@ static void Camera::startEffect(int32 effect, ...)
 static void Camera::stopEffect(int32 effect)
 {
 	Camera camera = Camera::getInstance();
-	
-#ifdef __TOOLS
-	if(VUEngine::isInToolStateTransition())
-	{
-		return;
-	}
-#endif
 
 	CameraEffectManager::stopEffect(camera->cameraEffectManager, effect);
 }

@@ -26,7 +26,6 @@
 #include <Sprite.h>
 #include <VirtualList.h>
 #include <VirtualNode.h>
-#include <VUEngine.h>
 
 #include "SpriteManager.h"
 
@@ -518,10 +517,7 @@ static void SpriteManager::render()
 	SpriteManager::stopRendering();
 
 #ifdef __SHOW_SPRITES_PROFILING
-	if(!VUEngine::isInToolState())
-	{
-		SpriteManager::computeTotalPixelsDrawn();
-	}
+	SpriteManager::computeTotalPixelsDrawn();
 #endif
 }
 
@@ -577,15 +573,12 @@ static void SpriteManager::writeDRAM()
 	SpriteManager::writeWORLDAttributesToDRAM();
 
 #ifdef __SHOW_SPRITES_PROFILING
-	if(!VUEngine::isInToolState())
-	{
-		static int32 counter = __TARGET_FPS / 5;
+	static int32 counter = __TARGET_FPS / 5;
 
-		if(0 >= --counter)
-		{
-			counter = __TARGET_FPS / 10;
-			SpriteManager::print(1, 15, true);
-		}
+	if(0 >= --counter)
+	{
+		counter = __TARGET_FPS / 10;
+		SpriteManager::print(1, 15, true);
 	}
 #endif
 }

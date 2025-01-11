@@ -54,7 +54,7 @@ typedef struct DelayedMessage
 /// Inherits from Object
 ///
 /// Implements a dispatcher central of message codes wrapped in a Telegram.
-singleton class MessageDispatcher : Object
+singleton! class MessageDispatcher : Object
 {
 	/// @protectedsection
 
