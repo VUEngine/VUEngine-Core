@@ -416,7 +416,7 @@ void CameraEffectManager::fxFadeAsync()
 	}
 	else
 	{
-		CameraEffectManager::sendMessageToSelf(this, kFadeTo, initialDelay, this->fxFadeDelay);
+		CameraEffectManager::sendMessageToSelf(this, kFadeTo, this->fxFadeDelay, 0);
 	}
 }
 
