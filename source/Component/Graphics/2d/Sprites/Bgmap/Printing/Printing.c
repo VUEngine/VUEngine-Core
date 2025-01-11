@@ -15,10 +15,11 @@
 
 #include <BgmapTextureManager.h>
 #include <CharSet.h>
+#include <CharSetManager.h>
+#include <ComponentManager.h>
 #include <DebugConfig.h>
 #include <Mem.h>
 #include <PrintingSprite.h>
-#include <SpriteManager.h>
 #include <Utilities.h>
 #include <VirtualList.h>
 #include <VIPManager.h>
@@ -193,8 +194,8 @@ static void Printing::loadFonts(FontSpec** fontSpecs)
 	// Prevent VIP's interrupt from calling render during printing process
 	HardwareManager::suspendInterrupts();
 
-	// Make sure all sprites are ready
-	SpriteManager::prepareAll();
+	/// Must force CHAR defragmentation
+	CharSetManager::writeCharSets();
 
 	// Iterate over all defined fonts and add to internal list
 	uint32 i = 0, j = 0;
