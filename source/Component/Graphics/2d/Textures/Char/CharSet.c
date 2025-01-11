@@ -24,7 +24,7 @@
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static CharSet CharSet::get(CharSetSpec* charSetSpec)
+static CharSet CharSet::get(const CharSetSpec* charSetSpec)
 {
 	if(NULL == charSetSpec)
 	{
@@ -47,7 +47,7 @@ static void CharSet::release(CharSet charSet)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void CharSet::constructor(CharSetSpec* charSetSpec, uint16 offset)
+void CharSet::constructor(const CharSetSpec* charSetSpec, uint16 offset)
 {
 	// Always explicitly call the base's constructor 
 	Base::constructor();
@@ -143,7 +143,7 @@ uint16 CharSet::getOffset()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-CharSetSpec* CharSet::getSpec()
+const CharSetSpec* CharSet::getSpec()
 {
 	return this->charSetSpec;
 }

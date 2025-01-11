@@ -50,7 +50,7 @@ class ObjectTexture : Texture
 	/// Class' constructor
 	/// @param objectTextureSpec: Specification that determines how to configure the texture
 	/// @param id: Texture's identificator
-	void constructor(ObjectTextureSpec* objectTextureSpec, uint16 id);
+	void constructor(const ObjectTextureSpec* objectTextureSpec, uint16 id);
 }
 
 #endif

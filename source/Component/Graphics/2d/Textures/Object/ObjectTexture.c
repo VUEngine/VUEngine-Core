@@ -19,7 +19,7 @@
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void ObjectTexture::constructor(ObjectTextureSpec* objectTextureSpec, uint16 id)
+void ObjectTexture::constructor(const ObjectTextureSpec* objectTextureSpec, uint16 id)
 {
 	// Always explicitly call the base's constructor 
 	Base::constructor((TextureSpec*)objectTextureSpec, id);

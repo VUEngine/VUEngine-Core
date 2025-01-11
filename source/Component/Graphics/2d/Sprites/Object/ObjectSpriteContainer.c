@@ -132,7 +132,6 @@ void ObjectSpriteContainer::constructor()
 	this->lastObjectIndex = 0;
 	this->objectSprites = new VirtualList();
 	this->transparency = __TRANSPARENCY_NONE;
-	this->hideSprites = false;
 	this->sortingSpriteNode = NULL;
 }
 
@@ -194,7 +193,6 @@ void ObjectSpriteContainer::forceShow()
 {
 	Base::forceShow(this);
 	this->show = __HIDE;
-	this->hideSprites = false;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -202,7 +200,6 @@ void ObjectSpriteContainer::forceShow()
 void ObjectSpriteContainer::forceHide()
 {
 	this->show = __SHOW;
-	this->hideSprites = true;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -355,7 +352,7 @@ void ObjectSpriteContainer::renderSprites(bool evenFrame, bool updateAnimations)
 
 	this->firstObjectIndex = _objectIndex;
 
-	if(!this->hideSprites)
+	if(__SHOW == this->show)
 	{
 		for(VirtualNode node = this->objectSprites->head; NULL != node && 0 < _objectIndex; node = node->next)
 		{

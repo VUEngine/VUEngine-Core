@@ -63,20 +63,6 @@ static Component ComponentManager::createComponent(Entity owner, const Component
 		return NULL;
 	}
 
-#ifndef __SHIPPING
-	extern uint32 _textStart __attribute__((unused));
-	extern uint32 _dataLma __attribute__((unused));
-
-	if(!(&_textStart < (uint32*)componentSpec && (uint32*)componentSpec < &_dataLma))
-	{
-		Printing::setDebugMode();
-		Printing::clear();
-		Printing::text(__GET_CLASS_NAME(owner), 44, 25, NULL);
-		Printing::hex((WORD)componentSpec, 44, 26, 8, NULL);
-		NM_ASSERT(false, "ComponentManager::createComponent: the provided spec lives in WRAM");
-	}
-#endif
-
 	Component component = ComponentManager::instantiateComponent(componentManager, owner, componentSpec);
 
 	if(!isDeleted(component) && !isDeleted(owner))

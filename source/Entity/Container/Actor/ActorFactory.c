@@ -353,7 +353,7 @@ uint32 ActorFactory::transformActors()
 
 		if(!positionedActorDescription->componentsCreated)
 		{
-			ActorSpec* actorSpec = Actor::getSpec(positionedActorDescription->actor);
+			const ActorSpec* actorSpec = Actor::getSpec(positionedActorDescription->actor);
 			
 			if
 			(

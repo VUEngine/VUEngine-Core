@@ -61,7 +61,7 @@ static void CharSetManager::loadCharSets(const CharSetSpec** charSetSpecs)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static CharSet CharSetManager::getCharSet(CharSetSpec* charSetSpec)
+static CharSet CharSetManager::getCharSet(const CharSetSpec* charSetSpec)
 {
 	if(NULL == charSetSpec)
 	{
@@ -224,7 +224,7 @@ static void CharSetManager::print(int32 x, int32 y)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static CharSet CharSetManager::findCharSet(CharSetSpec* charSetSpec)
+static CharSet CharSetManager::findCharSet(const CharSetSpec* charSetSpec)
 {
 	CharSetManager charSetManager = CharSetManager::getInstance(NULL);
 
@@ -245,7 +245,7 @@ static CharSet CharSetManager::findCharSet(CharSetSpec* charSetSpec)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static CharSet CharSetManager::allocateCharSet(CharSetSpec* charSetSpec)
+static CharSet CharSetManager::allocateCharSet(const CharSetSpec* charSetSpec)
 {
 	CharSetManager charSetManager = CharSetManager::getInstance(NULL);
 

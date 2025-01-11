@@ -275,7 +275,7 @@ static void Texture::updateMulti(Texture texture, int16 maximumTextureRowsToWrit
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void Texture::constructor(TextureSpec* textureSpec, uint16 id)
+void Texture::constructor(const TextureSpec* textureSpec, uint16 id)
 {
 	if(NULL == _texturesToUpdate)
 	{
@@ -358,7 +358,7 @@ void Texture::setSpec(TextureSpec* textureSpec)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-TextureSpec* Texture::getSpec()
+const TextureSpec* Texture::getSpec()
 {
 	return this->textureSpec;
 }

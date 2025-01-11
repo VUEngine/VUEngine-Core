@@ -70,7 +70,7 @@ typedef const ActorSpec ActorROMSpec;
 typedef struct PositionedActor
 {
 	// Pointer to the actor spec in ROM
-	ActorSpec* actorSpec;
+	const ActorSpec* actorSpec;
 
 	// Position in the screen coordinates
 	ScreenPixelVector onScreenPosition;
@@ -123,7 +123,7 @@ class Actor : Container
 	ActorFactory actorFactory;
 
 	/// Pointer to the spec that defines how to initialize the actor
-	ActorSpec* actorSpec;
+	const ActorSpec* actorSpec;
 
 	/// Diplacement between the actor's bounding box's center and its local position used to speed up the
 	/// visibility check of the actor withing the camera's frustum
@@ -170,7 +170,7 @@ class Actor : Container
 	/// @param actorSpec: Specification that determines how to configure the actor
 	/// @param internalId: ID to keep track internally of the new instance
 	/// @param name: Name to assign to the new instance
-	void constructor(ActorSpec* actorSpec, int16 internalId, const char* const name);
+	void constructor(const ActorSpec* actorSpec, int16 internalId, const char* const name);
 
 	/// Add the components that must attach to this actor.
 	/// Create the components that must attach to this container. 	
@@ -214,7 +214,7 @@ class Actor : Container
 
 	/// Retrieve the actor's spec.
 	/// @return Specification that determines how the actor was configured
-	ActorSpec* getSpec();
+	const ActorSpec* getSpec();
 
 	/// Retrieve the actor's actor factory
 	/// @return Actor's actor facotyr
