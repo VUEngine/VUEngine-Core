@@ -113,13 +113,13 @@ static void SpriteManager::reset()
 	SpriteManager spriteManager = SpriteManager::getInstance();
 
 	HardwareManager::suspendInterrupts();
-
+	
 	Texture::reset();
 	Printing::reset();
 	CharSetManager::reset();
 	BgmapTextureManager::reset();
 	ParamTableManager::reset();
-	
+
 	SpriteManager::cleanUp();
 	ObjectSpriteContainer::reset();
 
@@ -172,7 +172,6 @@ static void SpriteManager::configure
 	int16 size[__TOTAL_OBJECT_SEGMENTS], int16 z[__TOTAL_OBJECT_SEGMENTS]
 )
 {
-	SpriteManager::reset();
 	SpriteManager::setTexturesMaximumRowsToWrite(texturesMaximumRowsToWrite);
 	SpriteManager::setMaximumParamTableRowsToComputePerCall(maximumParamTableRowsToComputePerCall);
 	SpriteManager::configureObjectSpriteContainers(size, z);
