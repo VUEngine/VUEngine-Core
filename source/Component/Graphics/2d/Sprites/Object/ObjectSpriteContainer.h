@@ -67,11 +67,9 @@ class ObjectSpriteContainer : Sprite
 	/// Class' constructor
 	void constructor();
 
-	/// Register this sprite with the appropriate sprites manager.
-	override void registerWithManager();
-
-	/// Unegister this sprite with the appropriate sprites manager.	
-	override void unregisterWithManager();
+	/// Retrieve the class of the manager for the sprite.
+	/// @return ClassPointer of the manager
+	override ClassPointer getManagerClass();
 
 	/// Render the sprite by configuring the DRAM assigned to it by means of the provided index.
 	/// @param index: Determines the region of DRAM that this sprite is allowed to configure

@@ -92,12 +92,10 @@ class BgmapSprite : Sprite
 	/// @param owner: Entity to which the sprite attaches to
 	/// @param bgmapSpriteSpec: Specification that determines how to configure the sprite
 	void constructor(Entity owner, const BgmapSpriteSpec* bgmapSpriteSpec);
-	
-	/// Register this sprite with the appropriate sprites manager.
-	override void registerWithManager();
 
-	/// Unegister this sprite with the appropriate sprites manager.	
-	override void unregisterWithManager();
+	/// Retrieve the class of the manager for the sprite.
+	/// @return ClassPointer of the manager
+	override ClassPointer getManagerClass();
 
 	/// Check if the sprite has affine or hbias effects.
 	/// @return True if the sprite's mode of display is (__WORLD_AFFINE or __WORLD_HBIAS)

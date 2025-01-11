@@ -154,16 +154,9 @@ void ObjectSpriteContainer::destructor()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void ObjectSpriteContainer::registerWithManager()
+ClassPointer ObjectSpriteContainer::getManagerClass()
 {
-	SpriteManager::registerSprite(Sprite::safeCast(this));
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void ObjectSpriteContainer::unregisterWithManager()
-{
-	SpriteManager::unregisterSprite(Sprite::safeCast(this));
+	return typeofclass(SpriteManager);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -237,6 +230,8 @@ void ObjectSpriteContainer::print(int32 x, int32 y)
 
 bool ObjectSpriteContainer::registerSprite(ObjectSprite objectSprite)
 {
+	objectSprite->objectSpriteContainer = this;
+
 	for(VirtualNode node = this->objectSprites->head; NULL != node; node = node->next)
 	{
 		NM_ASSERT(!isDeleted(node->data), "ObjectSpriteContainer::registerSprite: NULL node's data");
@@ -266,11 +261,13 @@ bool ObjectSpriteContainer::registerSprite(ObjectSprite objectSprite)
 
 void ObjectSpriteContainer::unregisterSprite(ObjectSprite objectSprite)
 {
-	ASSERT(objectSprite, "ObjectSpriteContainer::unregisterSprite: null objectSprite");
+	NM_ASSERT(!isDeleted(objectSprite), "ObjectSpriteContainer::unregisterSprite: null objectSprite");
+	NM_ASSERT(objectSprite->objectSpriteContainer == this, "ObjectSpriteContainer::unregisterSprite: not my objectSprite");
 #ifndef __ENABLE_PROFILER
-	NM_ASSERT(VirtualList::find(this->objectSprites, objectSprite), "ObjectSpriteContainer::unregisterSprite: null found");
+	NM_ASSERT(VirtualList::find(this->objectSprites, objectSprite), "ObjectSpriteContainer::unregisterSprite: sprite not found");
 #endif
 
+	objectSprite->objectSpriteContainer = NULL;
 	this->sortingSpriteNode = NULL;
 
 	// Remove the objectSprite to prevent rendering afterwards

@@ -205,7 +205,27 @@ static Sprite SpriteManager::createSprite(Entity owner, const SpriteSpec* sprite
 	VirtualList::pushBack(spriteManager->components, sprite);
 
 	Sprite::transform(sprite);
-	Sprite::registerWithManager(sprite);
+
+	ClassPointer managerClassPointer = Sprite::getManagerClass(sprite);
+
+	if(typeofclass(SpriteManager) == managerClassPointer)
+	{
+		SpriteManager::registerSprite(sprite);
+	}
+	else if(typeofclass(ObjectSpriteContainer) == managerClassPointer)
+	{
+		int16 z = 0;
+
+		if(NULL != sprite->transformation)
+		{
+			z = __METERS_TO_PIXELS(sprite->transformation->position.z);
+		}
+		
+		ObjectSpriteContainer objectSpriteContainer = SpriteManager::getObjectSpriteContainer(z + sprite->displacement.z);
+
+		NM_ASSERT(!isDeleted(objectSpriteContainer), "SpriteManager::createSprite: couldn't get a manager");
+		ObjectSpriteContainer::registerSprite(objectSpriteContainer, ObjectSprite::safeCast(sprite));
+	}
 
 	return sprite;
 }
@@ -227,7 +247,20 @@ static void SpriteManager::destroySprite(Sprite sprite)
 	VirtualList::removeData(spriteManager->components, sprite);
 
 	Sprite::hide(sprite);
-	Sprite::unregisterWithManager(sprite);
+
+	ClassPointer managerClassPointer = Sprite::getManagerClass(sprite);
+
+	if(typeofclass(SpriteManager) == managerClassPointer)
+	{
+		SpriteManager::unregisterSprite(sprite);
+	}
+	else if(typeofclass(ObjectSpriteContainer) == managerClassPointer)
+	{
+		ObjectSpriteContainer objectSpriteContainer = ObjectSpriteContainer::safeCast(Sprite::getManager(sprite));
+
+		NM_ASSERT(!isDeleted(objectSpriteContainer), "SpriteManager::destroySprite: couldn't get a manager");
+		ObjectSpriteContainer::unregisterSprite(objectSpriteContainer, ObjectSprite::safeCast(sprite));
+	}
 
 	delete sprite;
 }
@@ -330,7 +363,8 @@ static void SpriteManager::configureObjectSpriteContainers(int16 size[__TOTAL_OB
 		if(0 < size[i])
 		{
 			ObjectSpriteContainer objectSpriteContainer = new ObjectSpriteContainer();
-			ObjectSpriteContainer::registerWithManager(objectSpriteContainer);
+			
+			SpriteManager::registerSprite(Sprite::safeCast(objectSpriteContainer));
 			VirtualList::pushBack(spriteManager->objectSpriteContainers, objectSpriteContainer);
 
 			PixelVector position =
