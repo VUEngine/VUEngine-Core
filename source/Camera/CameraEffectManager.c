@@ -288,7 +288,7 @@ void CameraEffectManager::fxFadeIn()
 		_vipRegisters[__BRTC] - _vipRegisters[__BRTB] - _vipRegisters[__BRTA] + 1
 	};
 	
-	VIPManager::setupBrightness(&incrementalBrightness);
+	VIPManager::configureBrightness(&incrementalBrightness);
 
 #ifdef __DIMM_FOR_PROFILING
 
@@ -316,7 +316,7 @@ void CameraEffectManager::fxFadeOut()
 		(_vipRegisters[__BRTC] > 0) ? _vipRegisters[__BRTC] - 1 : 0
 	};
 	
-	VIPManager::setupBrightness(&decrementalBrightness);
+	VIPManager::configureBrightness(&decrementalBrightness);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -439,7 +439,7 @@ void CameraEffectManager::showCamera()
 {
 	Brightness defaultBrightness = CameraEffectManager::getDefaultBrightness(this);
 	defaultBrightness = CameraEffectManager::convertBrightnessToVipFormat(this, defaultBrightness);
-	VIPManager::setupBrightness(&defaultBrightness);
+	VIPManager::configureBrightness(&defaultBrightness);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

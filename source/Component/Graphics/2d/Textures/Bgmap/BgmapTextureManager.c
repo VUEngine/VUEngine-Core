@@ -82,7 +82,7 @@ static void BgmapTextureManager::clearBgmapSegment(int32 segment)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void BgmapTextureManager::calculateAvailableBgmapSegments(uint32 paramTableBase)
+static void BgmapTextureManager::configure(uint32 paramTableBase)
 {
 	BgmapTextureManager bgmapTextureManager = BgmapTextureManager::getInstance();
 

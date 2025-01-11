@@ -15,6 +15,7 @@
 
 #include <BgmapTexture.h>
 #include <BgmapTextureManager.h>
+#include <BodyManager.h>
 #include <Camera.h>
 #include <CharSetManager.h>
 #include <DebugConfig.h>
@@ -22,7 +23,6 @@
 #include <ActorFactory.h>
 #include <HardwareManager.h>
 #include <ParamTableManager.h>
-#include <BodyManager.h>
 #include <Printing.h>
 #include <SpriteManager.h>
 #include <SoundManager.h>
@@ -236,22 +236,11 @@ void Stage::suspend()
 
 void Stage::resume()
 {
-	// Set camera to its previous position
-	Camera::setStageSize(Size::getFromPixelSize(this->stageSpec->level.pixelSize));
-	Camera::setTransformation(this->cameraTransformation, false);
-	Camera::setup(this->stageSpec->rendering.pixelOptical, this->stageSpec->level.cameraFrustum);
-
-	// Setup timer
 	Stage::configureTimer(this);
-
-	// Load background sounds
-	Stage::setupSounds(this);
-
-	// Set physics
-	BodyManager::setFrictionCoefficient(VUEngine::getBodyManager(), this->stageSpec->physics.frictionCoefficient);
-	BodyManager::setGravity(VUEngine::getBodyManager(), this->stageSpec->physics.gravity);
-
-	Stage::prepareGraphics(this);
+	Stage::configureCamera(this, true);
+	Stage::configureGraphics(this);
+	Stage::configureSounds(this);
+	Stage::configurePhysics(this);
 
 	if(!isDeleted(this->focusActor))
 	{
@@ -261,16 +250,9 @@ void Stage::resume()
 
 	Base::resume(this);
 
-	// Apply transformations
 	Stage::transform(this, &_neutralEnvironmentTransformation, __INVALIDATE_TRANSFORMATION);
 
-	// Setup colors and brightness
-	VIPManager::setBackgroundColor(this->stageSpec->rendering.colorConfig.backgroundColor);
-	// TODO: properly handle brightness and brightness repeat on resume
-
 	this->actorFactory = new ActorFactory();
-
-	Stage::loadPostProcessingEffects(this);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -278,17 +260,6 @@ void Stage::resume()
 StageSpec* Stage::getSpec()
 {
 	return this->stageSpec;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void Stage::configureTimer()
-{
-	TimerManager::configure
-	(
-		this->stageSpec->timer.resolution, this->stageSpec->timer.targetTimePerInterrupt, 
-		this->stageSpec->timer.targetTimePerInterrupttUnits
-	);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -501,7 +472,7 @@ void Stage::streamAll()
 
 		VUEngine::prepareGraphics();
 
-	}while(Stage::unloadOutOfRangeActors(this, false));
+	} while(Stage::unloadOutOfRangeActors(this, false));
 
 	this->streamingHeadNode = NULL;
 	this->streamingAmplitude = (uint16)-1;
@@ -630,44 +601,22 @@ bool Stage::stream()
 
 void Stage::configure(VirtualList positionedActorsToIgnore)
 {
-	// Setup timer
 	Stage::configureTimer(this);
-
-	// Load background music
-	Stage::setupSounds(this);
-
-	Camera::reset();
-	Camera::setStageSize(Size::getFromPixelSize(this->stageSpec->level.pixelSize));
-	Camera::setTransformation(this->cameraTransformation, true);
-
-	// Set optical values
-	Camera::setup(this->stageSpec->rendering.pixelOptical, this->stageSpec->level.cameraFrustum);
-
-	// Set physics
-	BodyManager::setFrictionCoefficient(VUEngine::getBodyManager(), this->stageSpec->physics.frictionCoefficient);
-	BodyManager::setGravity(VUEngine::getBodyManager(), this->stageSpec->physics.gravity);
-
-	// Preload graphics
-	Stage::prepareGraphics(this);
+	Stage::configureCamera(this, true);
+	Stage::configureGraphics(this);
+	Stage::configureSounds(this);
+	Stage::configurePhysics(this);
 
 	// Register all the actors in the stage's spec
 	Stage::registerActors(this, positionedActorsToIgnore);
 
-	// Load actors
 	Stage::loadInitialActors(this);
 
 	// Retrieve focus actor for streaming
 	Stage::setFocusActor(this, Camera::getFocusActor());
 
-	// Setup colors and brightness
-	VIPManager::setBackgroundColor(this->stageSpec->rendering.colorConfig.backgroundColor);
-	VIPManager::setupBrightness(&this->stageSpec->rendering.colorConfig.brightness);
-	VIPManager::setupBrightnessRepeat(this->stageSpec->rendering.colorConfig.brightnessRepeat);
-
 	// Apply transformations
 	Stage::transform(this, &_neutralEnvironmentTransformation, __INVALIDATE_TRANSFORMATION);
-
-	Stage::loadPostProcessingEffects(this);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -1069,20 +1018,6 @@ bool Stage::updateActorFactory()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void Stage::loadPostProcessingEffects()
-{
-	if(this->stageSpec->postProcessingEffects)
-	{
-		int32 i = 0;
-		for(; this->stageSpec->postProcessingEffects[i]; i++)
-		{
-			VUEngine::pushFrontPostProcessingEffect(this->stageSpec->postProcessingEffects[i], NULL);
-		}
-	}
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
 StageActorDescription* Stage::registerActor(PositionedActor* positionedActor)
 {
 	ASSERT(positionedActor, "Stage::registerActor: null positionedActor");
@@ -1118,38 +1053,55 @@ StageActorDescription* Stage::registerActor(PositionedActor* positionedActor)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void Stage::prepareGraphics()
+void Stage::configureTimer()
 {
-	// Must clean DRAM
-	SpriteManager::reset();
-
-	// Set palettes
-	Stage::configurePalettes(this);
-
-	// Setup OBJs
-	SpriteManager::setupObjectSpriteContainers
+	TimerManager::configure
 	(
-		this->stageSpec->rendering.objectSpritesContainersSize,
-		this->stageSpec->rendering.objectSpritesContainersZPosition
-	);
-
-	// Preload textures
-	Stage::preloadAssets(this);
-
-	// Setup SpriteManager's configuration
-	SpriteManager::setTexturesMaximumRowsToWrite(this->stageSpec->rendering.texturesMaximumRowsToWrite);
-	SpriteManager::setMaximumParamTableRowsToComputePerCall
-	(
-		this->stageSpec->rendering.maximumAffineRowsToComputePerCall
+		this->stageSpec->timer.resolution, this->stageSpec->timer.targetTimePerInterrupt, 
+		this->stageSpec->timer.targetTimePerInterrupttUnits
 	);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void Stage::preloadAssets()
+void Stage::configureCamera(bool reset)
 {
-	ParamTableManager::setup(this->stageSpec->rendering.paramTableSegments);
-	BgmapTextureManager::calculateAvailableBgmapSegments(ParamTableManager::getParamTableBase());
+	if(reset)
+	{
+		Camera::reset();
+	}
+
+	Camera::setStageSize(Size::getFromPixelSize(this->stageSpec->level.pixelSize));
+	Camera::setTransformation(this->cameraTransformation, true);
+	Camera::setup(this->stageSpec->rendering.pixelOptical, this->stageSpec->level.cameraFrustum);
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void Stage::configureGraphics()
+{
+	SpriteManager::configure
+	(
+		this->stageSpec->rendering.texturesMaximumRowsToWrite,
+		this->stageSpec->rendering.maximumAffineRowsToComputePerCall,
+		this->stageSpec->rendering.objectSpritesContainersSize,
+		this->stageSpec->rendering.objectSpritesContainersZPosition
+	);
+
+	VIPManager::configure
+	(
+		this->stageSpec->rendering.colorConfig.backgroundColor,
+		&this->stageSpec->rendering.colorConfig.brightness,
+		this->stageSpec->rendering.colorConfig.brightnessRepeat,
+		&this->stageSpec->rendering.paletteConfig,
+		this->stageSpec->postProcessingEffects
+	);
+
+	BgmapTextureManager::configure
+	(
+		ParamTableManager::configure(this->stageSpec->rendering.paramTableSegments)
+	);
+
 	Printing::loadFonts(this->stageSpec->assets.fontSpecs);
 	CharSetManager::loadCharSets((const CharSetSpec**)this->stageSpec->assets.charSetSpecs);
 	BgmapTextureManager::loadTextures((const TextureSpec**)this->stageSpec->assets.textureSpecs);
@@ -1157,7 +1109,7 @@ void Stage::preloadAssets()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void Stage::setupSounds()
+void Stage::configureSounds()
 {
 	SoundManager::unlock();
 	SoundManager::setPCMTargetPlaybackRefreshRate(this->stageSpec->sound.pcmTargetPlaybackRefreshRate);
@@ -1201,6 +1153,14 @@ void Stage::setupSounds()
 			}
 		}
 	}
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void Stage::configurePhysics()
+{
+	BodyManager::setFrictionCoefficient(VUEngine::getBodyManager(), this->stageSpec->physics.frictionCoefficient);
+	BodyManager::setGravity(VUEngine::getBodyManager(), this->stageSpec->physics.gravity);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

@@ -171,7 +171,7 @@ static void Profiler::end()
 	{
 		Profiler::computeLap("HEADROOM", kProfilerLapTypeNormalProcess, true);
 
-		VIPManager::setupBrightnessRepeat((BrightnessRepeatSpec*)&profileBrightnessRepeatSpec);
+		VIPManager::configureBrightnessRepeat((BrightnessRepeatSpec*)&profileBrightnessRepeatSpec);
 
 		for(int32 i = 0; i < 96; i++)
 		{

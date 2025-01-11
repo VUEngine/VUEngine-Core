@@ -109,8 +109,19 @@ singleton class SpriteManager : ComponentManager
 	/// @param sprite: Sprite to destroy
 	override void deinstantiateComponent(Entity owner, Sprite sprite);
 
-	/// Reset the manager's state
+	/// Reset the manager's state.
 	static void reset();
+
+	/// Configure the manager's state.
+	/// @param texturesMaximumRowsToWrite: Number of texture rows to write during each rendering cycle
+	/// @param maximumParamTableRowsToComputePerCall: Number of param table rows to write during each rendering cycle 
+	/// @param size: Array with the number of OBJECTS for each container
+	/// @param z: Array of Z coordinates for each container
+	static void configure
+	(
+		uint8 texturesMaximumRowsToWrite, int32 maximumParamTableRowsToComputePerCall,
+		int16 size[__TOTAL_OBJECT_SEGMENTS], int16 z[__TOTAL_OBJECT_SEGMENTS]
+	);
 
 	/// Set the clock that determines if the animations must be updated or not.
 	/// @param clock: Clock for the animations

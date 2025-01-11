@@ -55,7 +55,7 @@ static void ParamTableManager::reset()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void ParamTableManager::setup(int32 availableBgmapSegmentsForParamTable)
+static uint32 ParamTableManager::configure(int32 availableBgmapSegmentsForParamTable)
 {
 	ParamTableManager paramTableManager = ParamTableManager::getInstance();
 
@@ -81,6 +81,8 @@ static void ParamTableManager::setup(int32 availableBgmapSegmentsForParamTable)
 	{
 		*data = 0;
 	}
+
+	return paramTableManager->paramTableBase;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -257,15 +259,6 @@ static void ParamTableManager::defragment(bool deferred)
 		}
 		while(!deferred && 0 != paramTableManager->paramTableFreeData.param);
 	}
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-static uint32 ParamTableManager::getParamTableBase()
-{
-	ParamTableManager paramTableManager = ParamTableManager::getInstance();
-
-	return paramTableManager->paramTableBase;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

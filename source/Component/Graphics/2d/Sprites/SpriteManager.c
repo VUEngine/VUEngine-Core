@@ -166,6 +166,20 @@ static void SpriteManager::reset()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+static void SpriteManager::configure
+(
+	uint8 texturesMaximumRowsToWrite, int32 maximumParamTableRowsToComputePerCall,
+	int16 size[__TOTAL_OBJECT_SEGMENTS], int16 z[__TOTAL_OBJECT_SEGMENTS]
+)
+{
+	SpriteManager::reset();
+	SpriteManager::setTexturesMaximumRowsToWrite(texturesMaximumRowsToWrite);
+	SpriteManager::setMaximumParamTableRowsToComputePerCall(maximumParamTableRowsToComputePerCall);
+	SpriteManager::configureObjectSpriteContainers(size, z);
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 static void SpriteManager::setAnimationsClock(Clock clock)
 {
 	SpriteManager spriteManager = SpriteManager::getInstance();
@@ -297,7 +311,7 @@ static void SpriteManager::unregisterSprite(Sprite sprite)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void SpriteManager::setupObjectSpriteContainers(int16 size[__TOTAL_OBJECT_SEGMENTS], int16 z[__TOTAL_OBJECT_SEGMENTS])
+static void SpriteManager::configureObjectSpriteContainers(int16 size[__TOTAL_OBJECT_SEGMENTS], int16 z[__TOTAL_OBJECT_SEGMENTS])
 {
 	SpriteManager spriteManager = SpriteManager::getInstance();
 
@@ -312,7 +326,7 @@ static void SpriteManager::setupObjectSpriteContainers(int16 size[__TOTAL_OBJECT
 	
 	for(int32 i = __TOTAL_OBJECT_SEGMENTS; i--; )
 	{
-		NM_ASSERT(z[i] <= previousZ, "SpriteManager::setupObjectSpriteContainers: wrong z");
+		NM_ASSERT(z[i] <= previousZ, "SpriteManager::configureObjectSpriteContainers: wrong z");
 
 		if(0 < size[i])
 		{

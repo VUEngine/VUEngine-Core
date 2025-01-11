@@ -347,6 +347,19 @@ singleton! class VIPManager : ListenerObject
 	/// Reset the manager's state.
 	static void reset();
 
+	/// Configure the manager's state.
+	/// @param backgroundColor: Color to apply to the background
+	/// @param brightness: Brightness configuration
+	/// @param brightnessRepeat: Brightness configuration
+	/// @param paletteConfig: Palettes configuration
+	/// @param postProcessingEffects: Array of postprocessing effects
+	/// Configure the brightness registers with the provided configuration.
+	static void configure
+	(
+		uint8 backgroundColor, Brightness* brightness, BrightnessRepeatSpec* brightnessRepeat,
+		PaletteConfig* paletteConfig, PostProcessingEffect* postProcessingEffects
+	);
+
 	/// Enable VIP interrupts that the engine doesn't use.
 	/// @param customInterrupts: Interrupts to enable
 	static void enableCustomInterrupts(uint16 customInterrupts);
@@ -395,15 +408,15 @@ singleton! class VIPManager : ListenerObject
 
 	/// Configure the brightness registers with the provided configuration.
 	/// @param brightness: Brightness configuration
-	static void setupBrightness(Brightness* brightness);
+	static void configureBrightness(Brightness* brightness);
 
 	/// Configure the column table brightness repeat values.
 	/// @param brightnessRepeat: Brightness configuration
-	static void setupBrightnessRepeat(BrightnessRepeatSpec* brightnessRepeat);
+	static void configureBrightnessRepeat(BrightnessRepeatSpec* brightnessRepeat);
 
 	/// Configure the background color.
 	/// @param color: Color to apply to the background
-	static void setBackgroundColor(uint8 color);
+	static void configureBackgroundColor(uint8 color);
 
 	/// Up the brightness to the maximum.
 	static void upBrightness();

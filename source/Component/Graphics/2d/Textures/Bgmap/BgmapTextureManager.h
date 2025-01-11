@@ -73,7 +73,7 @@ singleton! class BgmapTextureManager : Object
 
 	/// Compute the number of available BGMAP segments for texture allocation.
 	/// @param paramTableBase: Displacement in bytes to keep track of the start address of param table space
-	static void calculateAvailableBgmapSegments(uint32 paramTableBase);
+	static void configure(uint32 paramTableBase);
 
 	/// Retrieve the number of available BGMAP segments to allocate textures.
 	/// @return Number of available BGMAP segments to allocate textures
