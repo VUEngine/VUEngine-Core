@@ -137,7 +137,7 @@ static void VUEngine::reset(bool resetSounds)
 	
 	AnimationCoordinatorFactory::reset(AnimationCoordinatorFactory::getInstance());
 	BehaviorManager::reset(BehaviorManager::getInstance());
-	CommunicationManager::reset();
+	CommunicationManager::reset(CommunicationManager::getInstance());
 	DirectDraw::reset(DirectDraw::getInstance());
 	FrameRate::reset(FrameRate::getInstance());
 	KeypadManager::reset();
@@ -154,7 +154,6 @@ static void VUEngine::reset(bool resetSounds)
 	TimerManager::reset();
 	VIPManager::reset();
 	WireframeManager::reset(WireframeManager::getInstance());
-
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -1210,6 +1209,13 @@ const ClassPointer ClockManagerAuthClasses[] =
 	NULL
 };
 
+const ClassPointer CommunicationManagerAuthClasses[] =
+{
+	typeofclass(RumbleManager),
+	typeofclass(VUEngine),
+	NULL
+};
+
 const ClassPointer DirectDrawAuthClasses[] =
 {
 	typeofclass(VUEngine),
@@ -1268,6 +1274,7 @@ static void VUEngine::secureSingletons()
 	Camera::secure(&CameraAuthClasses);
 	CharSetManager::secure(&CharSetManagerAuthClasses);
 	ClockManager::secure(&ClockManagerAuthClasses);
+	CommunicationManager::secure(&CommunicationManagerAuthClasses);
 	DirectDraw::secure(&DirectDrawAuthClasses);
 	MessageDispatcher::secure(&MessageDispatcherAuthClasses);
 	ObjectTextureManager::secure(&ObjectTextureManagerAuthClasses);
@@ -1491,7 +1498,7 @@ bool VUEngine::changedState(ListenerObject eventFirer)
 
 	if(GameState::isVersusMode(currentGameState))
 	{
-		CommunicationManager::startSyncCycle();
+		CommunicationManager::startSyncCycle(CommunicationManager::getInstance());
 	}
 
 	VIPManager::startDrawing();

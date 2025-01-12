@@ -76,61 +76,49 @@ singleton class CommunicationManager : ListenerObject
 	/// Interrupt handler for COM interrupts
 	static void interruptHandler();
 
-	/// Register an object that will listen for events.
-	/// @param listener: ListenerObject that listen for the event
-	/// @param callback: EventListener callback for the listener object
-	/// @param eventCode: Event's code to listen for
-	static void registerEventListener(ListenerObject listener, EventListener callback, uint16 eventCode);
-
-	/// Remove a specific listener object from the listening to a give code with the provided callback.
-	/// @param listener: ListenerObject to remove from the list of listeners
-	/// @param callback: EventListener callback for the listener object
-	/// @param eventCode: Event's code to stop listen for
-	static void unregisterEventListener(ListenerObject listener, EventListener callback, uint16 eventCode);
-
 	/// Reset the manager's state.
-	static void reset();
+	void reset();
 
 	/// Enable communications on the EXT port.
 	/// @param eventListener: Callback method for when a connection is stablished
 	/// @param scope: Object on which to perform the callback
-	static void enableCommunications(EventListener eventListener, ListenerObject scope);
+	void enableCommunications(EventListener eventListener, ListenerObject scope);
 
 	/// Disable communication on the EXT port.
-	static void disableCommunications();
+	void disableCommunications();
 
 	/// Cancel all pending transmissions on the EXT port.
-	static bool cancelCommunications();
+	bool cancelCommunications();
 
 	/// Start the sync procedure according to the official documentation once a connection
 	/// has been stablished.
-	static void startSyncCycle();
+	void startSyncCycle();
 
 	/// Check if there is something attached to the EXT port.
 	/// @return True if there is something attached to the EXT port; false otherwise
-	static bool isConnected();
+	bool isConnected();
 
 	/// Check if the system is the master during the next cycle of communications over the EXT port.
 	/// @return True if the system is the master; false otherwise
-	static bool isMaster();
+	bool isMaster();
 
 	/// Send data synchronously over the EXT port if there is nothing detectable attached to it.
 	/// @param data: Data to broadcast
 	/// @param numberOfBytes: Number of bytes to broadcast
-	static bool broadcastData(BYTE* data, int32 numberOfBytes);
+	bool broadcastData(BYTE* data, int32 numberOfBytes);
 
 	/// Send data asynchronously over the EXT port if there is nothing detectable attached to it.
 	/// @param data: Data to broadcast
 	/// @param numberOfBytes: Number of bytes to broadcast
 	/// @param eventListener: Callback method for when a connection is stablished
 	/// @param scope: Object on which to perform the callback
-	static void broadcastDataAsync(BYTE* data, int32 numberOfBytes, EventListener eventListener, ListenerObject scope);
+	void broadcastDataAsync(BYTE* data, int32 numberOfBytes, EventListener eventListener, ListenerObject scope);
 
 	/// Send and receive data synchronously over the EXT port if there is something detectable attached to it.
 	/// @param message: Control message for the receiving partner
 	/// @param data: Data to broadcast
 	/// @param numberOfBytes: Number of bytes to broadcast
-	static bool sendAndReceiveData(WORD message, BYTE* data, int32 numberOfBytes);
+	bool sendAndReceiveData(WORD message, BYTE* data, int32 numberOfBytes);
 
 	/// Send and receive data asynchronously over the EXT port if there is something detectable attached to it.
 	/// @param message: Control message for the receiving partner
@@ -138,24 +126,24 @@ singleton class CommunicationManager : ListenerObject
 	/// @param numberOfBytes: Number of bytes to broadcast
 	/// @param eventListener: Callback method for when a connection is stablished
 	/// @param scope: Object on which to perform the callback
-	static bool sendAndReceiveDataAsync(WORD message, BYTE* data, int32 numberOfBytes, EventListener eventListener, ListenerObject scope);
+	bool sendAndReceiveDataAsync(WORD message, BYTE* data, int32 numberOfBytes, EventListener eventListener, ListenerObject scope);
 
 	/// Retrieve the last sent message on the EXT port.
-	static WORD getSentMessage();
+	WORD getSentMessage();
 
 	/// Retrieve the last received message on the EXT port.
-	static WORD getReceivedMessage();
+	WORD getReceivedMessage();
 
 	/// Retrieve the last sent data on the EXT port.
-	static const BYTE* getSentData();
+	const BYTE* getSentData();
 
 	/// Retrieve the last received data on the EXT port.
-	static const BYTE* getReceivedData();
+	const BYTE* getReceivedData();
 
 	/// Print the manager's status.
 	/// @param x: Screen x coordinate where to print
 	/// @param y: Screen y coordinate where to print
-	static void print(int32 x, int32 y);
+	void print(int32 x, int32 y);
 
 	/// Receive and process a Telegram.
 	/// @param telegram: Received telegram to process
