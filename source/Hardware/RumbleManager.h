@@ -133,25 +133,25 @@ singleton class RumbleManager : Object
 
 	/// Start a rumble effect configured with the provided spec.
 	/// @param rumbleEffectSpec: Specification of the rumble effect to play
-	static void startEffect(const RumbleEffectSpec* rumbleEffectSpec);
+	void startEffect(const RumbleEffectSpec* rumbleEffectSpec);
 
 	/// Stop a rumble effect configured with the provided spec.
 	/// @param rumbleEffectSpec: Specification of the rumble effect to stop; if NULL,
 	/// any playing effect is stoped
-	static void stopEffect(const RumbleEffectSpec* rumbleEffectSpec);
+	void stopEffect(const RumbleEffectSpec* rumbleEffectSpec);
 
 	/// Reset the manager's state.
-	static void reset();
+	void reset();
 
 	/// Set the async flag.
 	/// @param async: If true, rumble commands are broadcasted asynchronously
-	static void setAsync(bool async);
+	void setAsync(bool async);
 
 	/// Set the flag to broadcast new effects regardless of if there is a previous queue effect pending
 	/// broadcasted
 	/// @param overridePreviousEffect: If true, new effects are broadcasted regardless of if there is a
 	/// queued effect pending broadcasting
-	static void setOverridePreviousEffect(bool overridePreviousEffect);
+	void setOverridePreviousEffect(bool overridePreviousEffect);
 }
 
 #endif
