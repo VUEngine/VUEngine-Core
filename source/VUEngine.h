@@ -99,19 +99,6 @@ singleton class VUEngine : ListenerObject
 
 	/// @publicsection
 
-	/// @publicsection
-	/// Register an object that will listen for events.
-	/// @param listener: ListenerObject that listen for the event
-	/// @param callback: EventListener callback for the listener object
-	/// @param eventCode: Event's code to listen for
-	static void registerEventListener(ListenerObject listener, EventListener callback, uint16 eventCode);
-
-	/// Remove a specific listener object from the listening to a give code with the provided callback.
-	/// @param listener: ListenerObject to remove from the list of listeners
-	/// @param callback: EventListener callback for the listener object
-	/// @param eventCode: Event's code to stop listen for
-	static void unregisterEventListener(ListenerObject listener, EventListener callback, uint16 eventCode);
-
 	/// Dispatch a message to the VUEngine instance
 	/// @param delay: Milliseconds to wait before dispatching the message
 	/// @param sender: Object that sends the message

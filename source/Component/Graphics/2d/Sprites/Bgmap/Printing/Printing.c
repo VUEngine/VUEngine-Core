@@ -100,24 +100,6 @@ const PrintingSpriteSpec DefaultPrintingSpriteSpec =
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void Printing::registerEventListener(ListenerObject listener, EventListener callback, uint16 eventCode)
-{
-	Printing printing = Printing::getInstance();
-
-	Printing::addEventListener(printing, listener, callback, eventCode);
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-static void Printing::unregisterEventListener(ListenerObject listener, EventListener callback, uint16 eventCode)
-{
-	Printing printing = Printing::getInstance();
-
-	Printing::removeEventListener(printing, listener, callback, eventCode);
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
 static void Printing::setDebugMode()
 {
 	Printing printing = Printing::getInstance();

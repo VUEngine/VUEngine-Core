@@ -99,24 +99,6 @@ static void VUEngine::init()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void VUEngine::registerEventListener(ListenerObject listener, EventListener callback, uint16 eventCode)
-{
-	VUEngine vuEngine = VUEngine::getInstance();
-
-	VUEngine::addEventListener(vuEngine, listener, callback, eventCode);
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-static void VUEngine::unregisterEventListener(ListenerObject listener, EventListener callback, uint16 eventCode)
-{
-	VUEngine vuEngine = VUEngine::getInstance();
-
-	VUEngine::removeEventListener(vuEngine, listener, callback, eventCode);
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
 static bool VUEngine::receieveMessage(uint32 delay, ListenerObject sender, int32 message, void* extraInfo)
 {
 	VUEngine vuEngine = VUEngine::getInstance();
