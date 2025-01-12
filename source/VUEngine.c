@@ -1393,7 +1393,7 @@ bool VUEngine::onVIPGAMESTART(ListenerObject eventFirer __attribute__ ((unused))
 	PRINT_TEXT(vuEngine->processName, 9, 26);
 #endif
 
-	VUEngine::gameFrameStarted(VIPManager::getGameFrameDuration(VIPManager::getInstance()));
+	VUEngine::gameFrameStarted(VIPManager::getGameFrameDuration(eventFirer));
 
 	return true;
 }

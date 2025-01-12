@@ -204,7 +204,7 @@ secure void VIPManager::startDrawing()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void VIPManager::resumeDrawing()
+secure void VIPManager::resumeDrawing()
 {
 	if(this->isDrawingAllowed)
 	{
@@ -219,7 +219,7 @@ void VIPManager::resumeDrawing()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void VIPManager::suspendDrawing()
+secure void VIPManager::suspendDrawing()
 {
 	this->isDrawingAllowed = VIPManager::isDrawingAllowed(this);
 	
@@ -653,7 +653,7 @@ secure void VIPManager::clearInterrupts()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void VIPManager::applyPostProcessingEffects()
+secure void VIPManager::applyPostProcessingEffects()
 {
 	for
 	(

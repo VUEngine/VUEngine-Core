@@ -516,7 +516,7 @@ void WireframeManager::destructor()
 bool WireframeManager::onVIPGAMESTART(ListenerObject eventFirer __attribute__ ((unused)))
 {
 	this->stopRendering = false;
-	this->stopDrawing = kVIPManagerFavorPerformance == VIPManager::getDrawingStrategy(VIPManager::getInstance());
+	this->stopDrawing = kVIPManagerFavorPerformance == VIPManager::getDrawingStrategy(eventFirer);
 
 	WireframeManager::render(this);
 
@@ -530,7 +530,7 @@ bool WireframeManager::onVIPGAMESTART(ListenerObject eventFirer __attribute__ ((
 bool WireframeManager::onVIPXPEND(ListenerObject eventFirer __attribute__ ((unused)))
 {
 	this->stopDrawing = false;
-	this->stopRendering = kVIPManagerFavorPerformance == VIPManager::getDrawingStrategy(VIPManager::getInstance());
+	this->stopRendering = kVIPManagerFavorPerformance == VIPManager::getDrawingStrategy(eventFirer);
 
 	DirectDraw::preparteToDraw(DirectDraw::getInstance());
 	WireframeManager::draw(this);
@@ -542,7 +542,7 @@ bool WireframeManager::onVIPXPEND(ListenerObject eventFirer __attribute__ ((unus
 
 bool WireframeManager::onVIPManagerGAMESTARTDuringXPEND(ListenerObject eventFirer __attribute__ ((unused)))
 {
-	this->stopDrawing = kVIPManagerFavorPerformance == VIPManager::getDrawingStrategy(VIPManager::getInstance());
+	this->stopDrawing = kVIPManagerFavorPerformance == VIPManager::getDrawingStrategy(eventFirer);
 
 	return true;
 }
@@ -551,7 +551,7 @@ bool WireframeManager::onVIPManagerGAMESTARTDuringXPEND(ListenerObject eventFire
 
 bool WireframeManager::onVIPManagerXPENDDuringGAMESTART(ListenerObject eventFirer __attribute__ ((unused)))
 {
-	this->stopRendering = kVIPManagerFavorPerformance == VIPManager::getDrawingStrategy(VIPManager::getInstance());
+	this->stopRendering = kVIPManagerFavorPerformance == VIPManager::getDrawingStrategy(eventFirer);
 
 	DirectDraw::preparteToDraw(DirectDraw::getInstance());
 	WireframeManager::draw(this);
