@@ -134,7 +134,7 @@ void Clock::constructor()
 	this->previousMinute = 0;
 
 	// Register clock
-	ClockManager::register(this);
+	ClockManager::register(ClockManager::getInstance(), this);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -142,7 +142,7 @@ void Clock::constructor()
 void Clock::destructor()
 {
 	// Unregister the clock
-	ClockManager::unregister(this);
+	ClockManager::unregister(ClockManager::getInstance(), this);
 
 	// Always explicitly call the base's destructor 
 	Base::destructor();

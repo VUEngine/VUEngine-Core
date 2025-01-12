@@ -608,7 +608,7 @@ static void VUEngine::gameFrameStarted(uint16 gameFrameDuration)
 		GameState::transformUI(gameState);
 	}
 
-	ClockManager::update(gameFrameDuration);
+	ClockManager::update(ClockManager::getInstance(), gameFrameDuration);
 
 #ifdef __PRINT_FRAMERATE
 	bool printFPS = true;
@@ -1157,12 +1157,9 @@ static void VUEngine::printDebug()
 #include <ObjectSpriteContainer.h>
 #include <BgmapSprite.h>
 	
-void SpriteManager_secure(ClassPointer const (*requesterClasses)[]);
-
-const ClassPointer SpriteManagerAuthClasses[] =
+const ClassPointer ClockManagerAuthClasses[] =
 {
-	typeofclass(ComponentManager),
-	typeofclass(Stage),
+	typeofclass(Clock),
 	typeofclass(VUEngine),
 	NULL
 };
@@ -1173,10 +1170,19 @@ const ClassPointer MessageDispatcherAuthClasses[] =
 	NULL
 };
 
+const ClassPointer SpriteManagerAuthClasses[] =
+{
+	typeofclass(ComponentManager),
+	typeofclass(Stage),
+	typeofclass(VUEngine),
+	NULL
+};
+
 static void VUEngine::secureSingletons()
 {
 	MessageDispatcher::secure(&MessageDispatcherAuthClasses);
 	SpriteManager::secure(&SpriteManagerAuthClasses);
+	ClockManager::secure(&ClockManagerAuthClasses);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

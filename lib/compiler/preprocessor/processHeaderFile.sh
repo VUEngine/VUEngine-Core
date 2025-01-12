@@ -759,6 +759,7 @@ then
 	if [ "$isSingletonClass" = true ];
 	then
 		methodDeclarations=$methodDeclarations"
+	void "$className"_secure(ClassPointer const (*requesterClasses)[]);
 	"$className" "$className"_getInstance(ClassPointer requesterClass);"
 	fi
 
