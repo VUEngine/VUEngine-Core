@@ -99,17 +99,6 @@ singleton class VUEngine : ListenerObject
 
 	/// @publicsection
 
-	/// Dispatch a message to the VUEngine instance
-	/// @param delay: Milliseconds to wait before dispatching the message
-	/// @param sender: Object that sends the message
-	/// @param message: Message's code
-	/// @param extraInfo: Pointer to any extra data that must accompany the message
-	/// @return	Boolean indicating the status of the processing of the message if immediately dispatched
-	static bool receieveMessage
-	(
-		uint32 delay, ListenerObject sender, int32 message, void* extraInfo
-	);
-
 	/// Reset the engine's main clock.
 	static void resetClock();
 

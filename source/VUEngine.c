@@ -99,15 +99,6 @@ static void VUEngine::init()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static bool VUEngine::receieveMessage(uint32 delay, ListenerObject sender, int32 message, void* extraInfo)
-{
-	VUEngine vuEngine = VUEngine::getInstance();
-
-	return MessageDispatcher::dispatchMessage(delay, sender, ListenerObject::safeCast(vuEngine), message, extraInfo);
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
 static void VUEngine::resetClock()
 {
 	VUEngine vuEngine = VUEngine::getInstance();
