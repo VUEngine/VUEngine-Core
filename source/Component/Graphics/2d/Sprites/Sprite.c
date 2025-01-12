@@ -129,6 +129,7 @@ void Sprite::createAnimationController()
 			this->animationController,
 			AnimationCoordinatorFactory::getCoordinator
 			(
+				AnimationCoordinatorFactory::getInstance(),
 				this->animationController, 
 				ListenerObject::safeCast(this->owner), 
 				Texture::getSpec(this->texture)->charSetSpec

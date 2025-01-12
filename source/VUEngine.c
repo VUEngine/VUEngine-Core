@@ -144,7 +144,7 @@ static void VUEngine::reset(bool resetSounds)
 	TimerManager::reset();
 	RumbleManager::reset();
 	CommunicationManager::reset();
-	AnimationCoordinatorFactory::reset();
+	AnimationCoordinatorFactory::reset(AnimationCoordinatorFactory::getInstance());
 
 	if(resetSounds)
 	{
@@ -1158,7 +1158,14 @@ static void VUEngine::printDebug()
 #include <Stopwatch.h>
 #include <ObjectSprite.h>
 #include <ObjectSpriteContainer.h>
-	
+
+const ClassPointer AnimationCoordinatorFactoryAuthClasses[] =
+{
+	typeofclass(Sprite),
+	typeofclass(VUEngine),
+	NULL
+};
+
 const ClassPointer CameraAuthClasses[] =
 {
 	typeofclass(GameState),
@@ -1214,6 +1221,7 @@ const ClassPointer StopwatchManagerAuthClasses[] =
 
 static void VUEngine::secureSingletons()
 {
+	AnimationCoordinatorFactory::secure(&AnimationCoordinatorFactoryAuthClasses);
 	Camera::secure(&CameraAuthClasses);
 	ClockManager::secure(&ClockManagerAuthClasses);
 	BgmapTextureManager::secure(&BgmapTextureManagerAuthClasses);
