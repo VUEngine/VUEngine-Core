@@ -247,8 +247,8 @@ secure bool WireframeManager::unregisterWireframe(Wireframe wireframe)
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-secure void WireframeManager::render()
+// secure
+void WireframeManager::render()
 {
 	if(NULL == this->components->head)
 	{
@@ -309,8 +309,8 @@ secure void WireframeManager::render()
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-secure void WireframeManager::draw()
+// secure
+void WireframeManager::draw()
 {
 	if(this->disabled || NULL == this->components->head)
 	{

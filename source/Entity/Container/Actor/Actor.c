@@ -379,20 +379,6 @@ void Actor::constructor(const ActorSpec* actorSpec, int16 internalId, const char
 	// Always explicitly call the base's constructor 
 	Base::constructor(internalId, name);
 
-#ifndef __SHIPPING
-	extern uint32 _textStart __attribute__((unused));
-	extern uint32 _dataLma __attribute__((unused));
-
-	if(!(&_textStart < (uint32*)actorSpec && (uint32*)actorSpec < &_dataLma))
-	{
-		Printing::setDebugMode();
-		Printing::clear();
-		Printing::text(__GET_CLASS_NAME(this), 44, 25, NULL);
-		Printing::hex((WORD)actorSpec, 44, 26, 8, NULL);
-		NM_ASSERT(false, "Entity::constructor: the provided spec lives in WRAM");
-	}
-#endif
-
 	this->actorSpec = actorSpec;
 	this->size = Size::getFromPixelSize(actorSpec->pixelSize);
 	this->centerDisplacement = NULL;

@@ -195,7 +195,9 @@ const ClassPointer StopwatchManagerAuthClasses[] =
 
 const ClassPointer TimerManagerAuthClasses[] =
 {
+#ifdef __TOOLS
 	typeofclass(SoundTest),
+#endif
 	typeofclass(VUEngine),
 	NULL
 };

@@ -36,8 +36,8 @@ const CameraFrustum* _cameraFrustum __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-secure void Camera::reset()
+// secure
+void Camera::reset()
 {
 	this->transformation.position = Vector3D::zero();
 	this->transformation.rotation = Rotation::zero();
@@ -62,7 +62,7 @@ secure void Camera::reset()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-secure void Camera::setup(PixelOptical pixelOptical, CameraFrustum cameraFrustum)
+void Camera::setup(PixelOptical pixelOptical, CameraFrustum cameraFrustum)
 {	
 	this->cameraFrustum = Camera::computeClampledFrustum(this, cameraFrustum);
 	this->optical = Optical::getFromPixelOptical(pixelOptical, this->cameraFrustum);
@@ -321,8 +321,8 @@ uint8 Camera::getTransformationFlags()
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-secure void Camera::focus()
+// secure
+void Camera::focus()
 {	
 	ASSERT(this->cameraMovementManager, "Camera::focus: null cameraMovementManager");
 
