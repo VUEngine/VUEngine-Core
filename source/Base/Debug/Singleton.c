@@ -26,7 +26,7 @@
 #include <DebugConfig.h>
 #include <DebugState.h>
 #include <DirectDraw.h>
-#include <ColliderManager.h>
+#include <Error.h>
 #include <FrameRate.h>
 #include <GameState.h>
 #include <HardwareManager.h>
@@ -88,6 +88,7 @@ const ClassPointer BehaviorManagerAuthClasses[] =
 
 const ClassPointer BgmapTextureManagerAuthClasses[] =
 {
+	typeofclass(Printing),
 	typeofclass(SpriteManager),
 	typeofclass(Stage),
 	typeofclass(Texture),
@@ -217,6 +218,12 @@ const ClassPointer VSUManagerAuthClasses[] =
 	NULL
 };
 
+const ClassPointer VUEngineAuthClasses[] =
+{
+	typeofclass(GameState),
+	NULL
+};
+
 const ClassPointer WireframeManagerAuthClasses[] =
 {
 	typeofclass(ComponentManager),
@@ -255,6 +262,7 @@ static void Singleton::secure()
 	TimerManager::secure(&TimerManagerAuthClasses);
 	VIPManager::secure(&VIPManagerAuthClasses);	
 	VSUManager::secure(&VSUManagerAuthClasses);
+	VUEngine::secure(&VUEngineAuthClasses);
 	WireframeManager::secure(&WireframeManagerAuthClasses);
 #endif
 }

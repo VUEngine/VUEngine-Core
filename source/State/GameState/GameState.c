@@ -213,7 +213,7 @@ void GameState::resume(void* owner __attribute__ ((unused)))
 #endif
 	{
 		// Reset the engine state
-		VUEngine::reset(NULL == Stage::getSpec(this->stage)->assets.sounds);
+		VUEngine::reset(VUEngine::getInstance(), NULL == Stage::getSpec(this->stage)->assets.sounds);
 
 		// Resume the stage
 		Stage::resume(this->stage);
@@ -262,7 +262,7 @@ void GameState::configureStage(StageSpec* stageSpec, VirtualList positionedActor
 	}
 
 	// Reset the engine state
-	VUEngine::reset(NULL == stageSpec->assets.sounds);
+	VUEngine::reset(VUEngine::getInstance(), NULL == stageSpec->assets.sounds);
 
 	HardwareManager::suspendInterrupts();
 

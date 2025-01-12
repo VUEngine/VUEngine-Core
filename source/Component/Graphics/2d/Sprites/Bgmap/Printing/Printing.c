@@ -19,6 +19,7 @@
 #include <ComponentManager.h>
 #include <DebugConfig.h>
 #include <Mem.h>
+#include <ParamTableManager.h>
 #include <PrintingSprite.h>
 #include <Utilities.h>
 #include <VirtualList.h>
@@ -103,6 +104,11 @@ const PrintingSpriteSpec DefaultPrintingSpriteSpec =
 static void Printing::setDebugMode()
 {
 	Printing printing = Printing::getInstance();
+
+	BgmapTextureManager::configure
+	(
+		BgmapTextureManager::getInstance(), ParamTableManager::configure(ParamTableManager::getInstance(), 0)
+	);
 
 	Printing::loadDebugFont();
 	printing->mode = __PRINTING_MODE_DEBUG;

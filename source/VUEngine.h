@@ -110,17 +110,8 @@ singleton class VUEngine : ListenerObject
 		uint32 delay, ListenerObject sender, int32 message, void* extraInfo
 	);
 
-	/// Reset the engine's sub components.
-	/// @param resetSounds: If false, any playing sounds will keep playing
-	static void reset(bool resetSounds);
-
 	/// Reset the engine's main clock.
 	static void resetClock();
-
-	/// Start the game with the provided game state.
-	/// @param gameState: Game state the engine must enter when starting
-	/// @return Return code (0)
-	static int32 start(GameState gameState);
 
 	/// Pause the game by pushing the provided game state into the engine's state machine's stack.
 	/// @param pauseState: Pause game state
@@ -241,14 +232,6 @@ singleton class VUEngine : ListenerObject
  	/// @param entity: Post-processing effect function's scope
 	static void removePostProcessingEffect(PostProcessingEffect postProcessingEffect, Entity entity);
 
-	/// Called when the VIP reaches FRAMESTART.
-	/// @param gameFrameDuration: Time in milliseconds that each game frame lasts.
-	static void frameStarted(uint16 gameFrameDuration);
-
-	/// Called when the VIP reaches GAMESTART.
-	/// @param gameFrameDuration: Time in milliseconds that each game frame lasts.
-	static void gameFrameStarted(uint16 gameFrameDuration);
-
 	/// Check if the game is paused.
 	/// @return True if the game is paused; false otherwise
 	static bool isPaused();
@@ -264,6 +247,15 @@ singleton class VUEngine : ListenerObject
 	/// @param telegram: Received telegram to process
 	/// @return True if the telegram was processed
 	override bool handleMessage(Telegram telegram);
+
+	/// Reset the engine's sub components.
+	/// @param resetSounds: If false, any playing sounds will keep playing
+	void reset(bool resetSounds);
+
+	/// Start the game with the provided game state.
+	/// @param gameState: Game state the engine must enter when starting
+	/// @return Return code (0)
+	int32 start(GameState gameState);
 }
 
 #endif

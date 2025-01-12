@@ -108,67 +108,11 @@ static bool VUEngine::receieveMessage(uint32 delay, ListenerObject sender, int32
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void VUEngine::reset(bool resetSounds)
-{
-#ifdef __ENABLE_PROFILER
-	Profiler::reset();
-#endif
-
-	HardwareManager::disableInterrupts();
-
-	HardwareManager::reset();
-	
-	AnimationCoordinatorFactory::reset(AnimationCoordinatorFactory::getInstance());
-	BehaviorManager::reset(BehaviorManager::getInstance());
-	CommunicationManager::reset(CommunicationManager::getInstance());
-	DirectDraw::reset(DirectDraw::getInstance());
-	FrameRate::reset(FrameRate::getInstance());
-	KeypadManager::reset(KeypadManager::getInstance());
-	RumbleManager::reset(RumbleManager::getInstance());
-
-	if(resetSounds)
-	{
-		SoundManager::reset(SoundManager::getInstance());
-	}
-
-	SpriteManager::reset(SpriteManager::getInstance());
-	SRAMManager::reset(SRAMManager::getInstance());
-	StopwatchManager::reset(StopwatchManager::getInstance());
-	TimerManager::reset(TimerManager::getInstance());
-	VIPManager::reset(VIPManager::getInstance());
-	WireframeManager::reset(WireframeManager::getInstance());
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
 static void VUEngine::resetClock()
 {
 	VUEngine vuEngine = VUEngine::getInstance();
 
 	Clock::reset(vuEngine->clock);
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-static int32 VUEngine::start(GameState currentGameState)
-{
-	VUEngine vuEngine = VUEngine::getInstance();
-
-	ASSERT(currentGameState, "VUEngine::start: currentGameState is NULL");
-
-	// Initialize VPU and turn off the brightness
-	VIPManager::lowerBrightness(VIPManager::getInstance());
-
-	if(NULL == StateMachine::getCurrentState(vuEngine->stateMachine))
-	{
-		VUEngine::run(currentGameState);
-	}
-	else
-	{
-		ASSERT(false, "VUEngine::start: already started");
-	}
-
-	return 0;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -653,6 +597,64 @@ bool VUEngine::handleMessage(Telegram telegram)
 	ASSERT(!isDeleted(this->stateMachine), "VUEngine::handleMessage: NULL stateMachine");
 
 	return StateMachine::handleMessage(this->stateMachine, telegram);
+}
+
+//—————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+secure void VUEngine::reset(bool resetSounds)
+{
+#ifdef __ENABLE_PROFILER
+	Profiler::reset();
+#endif
+
+	HardwareManager::disableInterrupts();
+
+	HardwareManager::reset();
+	
+	AnimationCoordinatorFactory::reset(AnimationCoordinatorFactory::getInstance());
+	BehaviorManager::reset(BehaviorManager::getInstance());
+	CommunicationManager::reset(CommunicationManager::getInstance());
+	DirectDraw::reset(DirectDraw::getInstance());
+	FrameRate::reset(FrameRate::getInstance());
+	KeypadManager::reset(KeypadManager::getInstance());
+	RumbleManager::reset(RumbleManager::getInstance());
+
+	if(resetSounds)
+	{
+		SoundManager::reset(SoundManager::getInstance());
+	}
+
+	SpriteManager::reset(SpriteManager::getInstance());
+	SRAMManager::reset(SRAMManager::getInstance());
+	StopwatchManager::reset(StopwatchManager::getInstance());
+	TimerManager::reset(TimerManager::getInstance());
+	VIPManager::reset(VIPManager::getInstance());
+	WireframeManager::reset(WireframeManager::getInstance());
+}
+
+//—————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+secure int32 VUEngine::start(GameState currentGameState)
+{
+	ASSERT(currentGameState, "VUEngine::start: currentGameState is NULL");
+
+#ifndef __RELEASE
+	Singleton::secure();
+#endif
+
+	// Initialize VPU and turn off the brightness
+	VIPManager::lowerBrightness(VIPManager::getInstance());
+
+	if(NULL == StateMachine::getCurrentState(this->stateMachine))
+	{
+		VUEngine::run(currentGameState);
+	}
+	else
+	{
+		ASSERT(false, "VUEngine::start: already started");
+	}
+
+	return 0;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -1189,10 +1191,6 @@ void VUEngine::constructor()
 		VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)VUEngine::onVIPXPEND, 
 		kEventVIPManagerXPEND
 	);
-#endif
-
-#ifndef __RELEASE
-	Singleton::secure();
 #endif
 }
 
