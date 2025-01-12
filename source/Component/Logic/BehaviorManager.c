@@ -62,15 +62,9 @@ void BehaviorManager::deinstantiateComponent(Entity owner, Behavior behavior)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-// CLASS' STATIC METHODS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-static void BehaviorManager::reset()
+secure void BehaviorManager::reset()
 {	
-	BehaviorManager::cleanUp();
+	BehaviorManager::cleanUp(this);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -81,13 +75,11 @@ static void BehaviorManager::reset()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void BehaviorManager::cleanUp()
+secure void BehaviorManager::cleanUp()
 {
-	BehaviorManager behaviorManager = BehaviorManager::getInstance();
-
-	if(!isDeleted(behaviorManager->components))
+	if(!isDeleted(this->components))
 	{
-		VirtualList::deleteData(behaviorManager->components);
+		VirtualList::deleteData(this->components);
 	}
 }
 
@@ -109,7 +101,7 @@ void BehaviorManager::constructor()
 
 void BehaviorManager::destructor()
 {
-	BehaviorManager::cleanUp();
+	BehaviorManager::cleanUp(this);
 
 	// Allow a new construct
 	// Always explicitly call the base's destructor 

@@ -15,6 +15,7 @@
 
 #include <AnimationCoordinatorFactory.h>
 #include <AnimationInspectorState.h>
+#include <BehaviorManager.h>
 #include <BgmapTextureManager.h>
 #include <BodyManager.h>
 #include <Camera.h>
@@ -133,23 +134,27 @@ static void VUEngine::reset(bool resetSounds)
 	HardwareManager::disableInterrupts();
 
 	HardwareManager::reset();
-	KeypadManager::reset();
-	StopwatchManager::reset(StopwatchManager::getInstance());
-	FrameRate::reset(FrameRate::getInstance());
-	VIPManager::reset();
-	DirectDraw::reset(DirectDraw::getInstance());
-	SpriteManager::reset(SpriteManager::getInstance());
-	WireframeManager::reset(WireframeManager::getInstance());
-	SRAMManager::reset();
-	TimerManager::reset();
-	RumbleManager::reset();
-	CommunicationManager::reset();
+	
 	AnimationCoordinatorFactory::reset(AnimationCoordinatorFactory::getInstance());
+	BehaviorManager::reset(BehaviorManager::getInstance());
+	CommunicationManager::reset();
+	DirectDraw::reset(DirectDraw::getInstance());
+	FrameRate::reset(FrameRate::getInstance());
+	KeypadManager::reset();
+	RumbleManager::reset();
 
 	if(resetSounds)
 	{
 		SoundManager::reset();
 	}
+
+	SpriteManager::reset(SpriteManager::getInstance());
+	SRAMManager::reset();
+	StopwatchManager::reset(StopwatchManager::getInstance());
+	TimerManager::reset();
+	VIPManager::reset();
+	WireframeManager::reset(WireframeManager::getInstance());
+
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -1167,6 +1172,21 @@ const ClassPointer AnimationCoordinatorFactoryAuthClasses[] =
 	NULL
 };
 
+const ClassPointer BehaviorManagerAuthClasses[] =
+{
+	typeofclass(VUEngine),
+	NULL
+};
+
+const ClassPointer BgmapTextureManagerAuthClasses[] =
+{
+	typeofclass(SpriteManager),
+	typeofclass(Stage),
+	typeofclass(Texture),
+	typeofclass(VUEngine),
+	NULL
+};
+
 const ClassPointer CameraAuthClasses[] =
 {
 	typeofclass(GameState),
@@ -1194,15 +1214,6 @@ const ClassPointer DirectDrawAuthClasses[] =
 {
 	typeofclass(VUEngine),
 	typeofclass(WireframeManager),
-	NULL
-};
-
-const ClassPointer BgmapTextureManagerAuthClasses[] =
-{
-	typeofclass(SpriteManager),
-	typeofclass(Stage),
-	typeofclass(Texture),
-	typeofclass(VUEngine),
 	NULL
 };
 
@@ -1252,6 +1263,7 @@ const ClassPointer WireframeManagerAuthClasses[] =
 static void VUEngine::secureSingletons()
 {
 	AnimationCoordinatorFactory::secure(&AnimationCoordinatorFactoryAuthClasses);
+	BehaviorManager::secure(&BehaviorManagerAuthClasses);
 	BgmapTextureManager::secure(&BgmapTextureManagerAuthClasses);
 	Camera::secure(&CameraAuthClasses);
 	CharSetManager::secure(&CharSetManagerAuthClasses);
