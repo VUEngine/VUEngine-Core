@@ -31,12 +31,12 @@ friend class VirtualNode;
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void ObjectTextureManager::reset()
+secure void ObjectTextureManager::reset()
 {}
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static ObjectTexture ObjectTextureManager::getTexture(ObjectTextureSpec* objectTextureSpec)
+secure ObjectTexture ObjectTextureManager::getTexture(ObjectTextureSpec* objectTextureSpec)
 {
 	NM_ASSERT(NULL != objectTextureSpec, "ObjectTextureManager::getTexture: NULL objectTextureSpec");
 
@@ -56,7 +56,7 @@ static ObjectTexture ObjectTextureManager::getTexture(ObjectTextureSpec* objectT
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void ObjectTextureManager::releaseTexture(ObjectTexture objectTexture)
+secure void ObjectTextureManager::releaseTexture(ObjectTexture objectTexture)
 {
 	NM_ASSERT(!isDeleted(objectTexture), "ObjectTextureManager::releaseTexture: trying to release an invalid objectTexture");
 

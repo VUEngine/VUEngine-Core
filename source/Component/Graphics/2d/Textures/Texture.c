@@ -78,7 +78,7 @@ static Texture Texture::get
 	}
 	else if(typeofclass(ObjectTexture) == textureClass)
 	{
-		return Texture::safeCast(ObjectTextureManager::getTexture((ObjectTextureSpec*)textureSpec));
+		return Texture::safeCast(ObjectTextureManager::getTexture(ObjectTextureManager::getInstance(), (ObjectTextureSpec*)textureSpec));
 	}
 
 	return NULL;	
@@ -99,7 +99,7 @@ static void Texture::release(Texture texture)
 	}
 	else if(__IS_INSTANCE_OF(ObjectTexture, texture))
 	{
-		ObjectTextureManager::releaseTexture(ObjectTexture::safeCast(texture));
+		ObjectTextureManager::releaseTexture(ObjectTextureManager::getInstance(), ObjectTexture::safeCast(texture));
 	}
 }
 

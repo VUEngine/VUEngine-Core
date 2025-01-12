@@ -1158,6 +1158,7 @@ static void VUEngine::printDebug()
 #include <Stopwatch.h>
 #include <ObjectSprite.h>
 #include <ObjectSpriteContainer.h>
+#include <ObjectTextureManager.h>
 
 const ClassPointer AnimationCoordinatorFactoryAuthClasses[] =
 {
@@ -1193,7 +1194,14 @@ const ClassPointer BgmapTextureManagerAuthClasses[] =
 {
 	typeofclass(SpriteManager),
 	typeofclass(Stage),
+	typeofclass(Texture),
 	typeofclass(VUEngine),
+	NULL
+};
+
+const ClassPointer ObjectTextureManagerAuthClasses[] =
+{
+	typeofclass(Texture),
 	NULL
 };
 
@@ -1235,6 +1243,7 @@ static void VUEngine::secureSingletons()
 	ClockManager::secure(&ClockManagerAuthClasses);
 	BgmapTextureManager::secure(&BgmapTextureManagerAuthClasses);
 	MessageDispatcher::secure(&MessageDispatcherAuthClasses);
+	ObjectTextureManager::secure(&ObjectTextureManagerAuthClasses);
 	ParamTableManager::secure(&ParamTableManagerAuthClasses);
 	SpriteManager::secure(&SpriteManagerAuthClasses);
 	StopwatchManager::secure(&StopwatchManagerAuthClasses);

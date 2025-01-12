@@ -191,7 +191,7 @@ secure void BgmapTextureManager::loadTextures(const TextureSpec** textureSpecs, 
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-BgmapTexture BgmapTextureManager::getTexture
+secure BgmapTexture BgmapTextureManager::getTexture
 (
 	BgmapTextureSpec* bgmapTextureSpec, int16 minimumSegment, bool mustLiveAtEvenSegment, uint32 scValue
 )
@@ -263,7 +263,7 @@ BgmapTexture BgmapTextureManager::getTexture
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void BgmapTextureManager::releaseTexture(BgmapTexture bgmapTexture)
+secure void BgmapTextureManager::releaseTexture(BgmapTexture bgmapTexture)
 {
 	if(!isDeleted(bgmapTexture))
 	{
