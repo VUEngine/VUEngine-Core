@@ -4,7 +4,7 @@
  * © Jorge Eremiev <jorgech3@gmail.com> and Christian Radke <c.radke@posteo.de>
  *
  * For the full copyright and license information, please view the LICENSE file
- * that was distributed with charSetManager source code.
+ * that was distributed with this source code.
  */
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -31,21 +31,19 @@ friend class CharSet;
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void CharSetManager::reset()
+secure void CharSetManager::reset()
 {
-	CharSetManager charSetManager = CharSetManager::getInstance();
-
-	if(charSetManager->charSets)
+	if(this->charSets)
 	{
-		VirtualList::deleteData(charSetManager->charSets);
+		VirtualList::deleteData(this->charSets);
 	}
 
-	charSetManager->freedOffset = 1;
+	this->freedOffset = 1;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void CharSetManager::loadCharSets(const CharSetSpec** charSetSpecs)
+secure void CharSetManager::loadCharSets(const CharSetSpec** charSetSpecs)
 {
 	if(NULL != charSetSpecs)
 	{
@@ -53,7 +51,7 @@ static void CharSetManager::loadCharSets(const CharSetSpec** charSetSpecs)
 		{
 			if(charSetSpecs[i]->shared)
 			{
-				CharSetManager::getCharSet((CharSetSpec*)charSetSpecs[i]);
+				CharSetManager::getCharSet(this, (CharSetSpec*)charSetSpecs[i]);
 			}
 		}
 	}
@@ -61,7 +59,7 @@ static void CharSetManager::loadCharSets(const CharSetSpec** charSetSpecs)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static CharSet CharSetManager::getCharSet(const CharSetSpec* charSetSpec)
+CharSet CharSetManager::getCharSet(const CharSetSpec* charSetSpec)
 {
 	if(NULL == charSetSpec)
 	{
@@ -73,16 +71,16 @@ static CharSet CharSetManager::getCharSet(const CharSetSpec* charSetSpec)
 	if(!charSetSpec->shared)
 	{
 		// Ask for allocation
-		charSet = CharSetManager::allocateCharSet(charSetSpec);
+		charSet = CharSetManager::allocateCharSet(this, charSetSpec);
 	}
 	else
 	{
 		// First try to find an already created charset
-		charSet = CharSetManager::findCharSet(charSetSpec);
+		charSet = CharSetManager::findCharSet(this, charSetSpec);
 
 		if(NULL == charSet)
 		{
-			charSet = CharSetManager::allocateCharSet(charSetSpec);
+			charSet = CharSetManager::allocateCharSet(this, charSetSpec);
 		}
 		else
 		{
@@ -95,10 +93,8 @@ static CharSet CharSetManager::getCharSet(const CharSetSpec* charSetSpec)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static bool CharSetManager::releaseCharSet(CharSet charSet)
+bool CharSetManager::releaseCharSet(CharSet charSet)
 {
-	CharSetManager charSetManager = CharSetManager::getInstance();
-
 	if(isDeleted(charSet))
 	{
 		return false;
@@ -106,13 +102,13 @@ static bool CharSetManager::releaseCharSet(CharSet charSet)
 
 	if(CharSet::decreaseUsageCount(charSet))
 	{
-		VirtualList::removeData(charSetManager->charSets, charSet);
+		VirtualList::removeData(this->charSets, charSet);
 
 		uint32 offset = CharSet::getOffset(charSet);
 
-		if(1 == charSetManager->freedOffset || offset < charSetManager->freedOffset)
+		if(1 == this->freedOffset || offset < this->freedOffset)
 		{
-			charSetManager->freedOffset = offset;
+			this->freedOffset = offset;
 		}
 
 		delete charSet;
@@ -125,15 +121,13 @@ static bool CharSetManager::releaseCharSet(CharSet charSet)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void CharSetManager::defragment(bool deferred)
+secure void CharSetManager::defragment(bool deferred)
 {
-	CharSetManager charSetManager = CharSetManager::getInstance();
-
-	if(1 < charSetManager->freedOffset)
+	if(1 < this->freedOffset)
 	{
 		do
 		{
-			VirtualNode node = charSetManager->charSets->head;
+			VirtualNode node = this->charSets->head;
 
 			for(; NULL != node; node = node->next)
 			{
@@ -146,73 +140,65 @@ static void CharSetManager::defragment(bool deferred)
 
 				uint32 offset = CharSet::getOffset(charSet);
 
-				if(charSetManager->freedOffset < offset)
+				if(this->freedOffset < offset)
 				{
-					uint16 newOffset = charSetManager->freedOffset;
-					charSetManager->freedOffset += CharSet::getNumberOfChars(charSet);
+					uint16 newOffset = this->freedOffset;
+					this->freedOffset += CharSet::getNumberOfChars(charSet);
 					CharSet::setOffset(charSet, newOffset);
 					break;
 				}
-				else if(charSetManager->freedOffset == offset)
+				else if(this->freedOffset == offset)
 				{
-					charSetManager->freedOffset += CharSet::getNumberOfChars(charSet);
+					this->freedOffset += CharSet::getNumberOfChars(charSet);
 				}
 			}
 
 			if(NULL == node)
 			{
-				charSetManager->freedOffset = 1;
+				this->freedOffset = 1;
 			}
 		}
-		while(!deferred && 1 < charSetManager->freedOffset);
+		while(!deferred && 1 < this->freedOffset);
 	}
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static int32 CharSetManager::getTotalUsedChars()
+int32 CharSetManager::getTotalUsedChars()
 {
-	CharSetManager charSetManager = CharSetManager::getInstance();
+	ASSERT(this->charSets, "CharSetManager::getTotalFreeChars: null charSets list");
 
-	ASSERT(charSetManager->charSets, "CharSetManager::getTotalFreeChars: null charSets list");
-
-	CharSet lastCharSet = VirtualList::back(charSetManager->charSets);
+	CharSet lastCharSet = VirtualList::back(this->charSets);
 	return (int32)CharSet::getOffset(lastCharSet) + CharSet::getNumberOfChars(lastCharSet);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static int32 CharSetManager::getTotalFreeChars()
+int32 CharSetManager::getTotalFreeChars()
 {
-	CharSetManager charSetManager = CharSetManager::getInstance();
-
-	return __CHAR_MEMORY_TOTAL_CHARS - CharSetManager::getTotalUsedChars(charSetManager);
+	return __CHAR_MEMORY_TOTAL_CHARS - CharSetManager::getTotalUsedChars(this);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static int32 CharSetManager::getTotalCharSets()
+int32 CharSetManager::getTotalCharSets()
 {
-	CharSetManager charSetManager = CharSetManager::getInstance();
-
-	return VirtualList::getCount(charSetManager->charSets);
+	return VirtualList::getCount(this->charSets);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #ifndef __SHIPPING
-static void CharSetManager::print(int32 x, int32 y)
+void CharSetManager::print(int32 x, int32 y)
 {
-	CharSetManager charSetManager = CharSetManager::getInstance();
-
 	Printing::text("CHAR MEMORY USAGE", x, y++, NULL);
 
 	Printing::text("Total CharSets:        ", x, ++y, NULL);
-	Printing::int32(VirtualList::getCount(charSetManager->charSets), x + 18, y, NULL);
+	Printing::int32(VirtualList::getCount(this->charSets), x + 18, y, NULL);
 	Printing::text("Total used chars:      ", x, ++y, NULL);
-	Printing::int32(CharSetManager::getTotalUsedChars(charSetManager), x + 18, y, NULL);
+	Printing::int32(CharSetManager::getTotalUsedChars(this), x + 18, y, NULL);
 	Printing::text("Total free chars:      ", x, ++y, NULL);
-	Printing::int32(CharSetManager::getTotalFreeChars(charSetManager), x + 18, y, NULL);
+	Printing::int32(CharSetManager::getTotalFreeChars(this), x + 18, y, NULL);
 }
 #endif
 
@@ -224,13 +210,11 @@ static void CharSetManager::print(int32 x, int32 y)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static CharSet CharSetManager::findCharSet(const CharSetSpec* charSetSpec)
+CharSet CharSetManager::findCharSet(const CharSetSpec* charSetSpec)
 {
-	CharSetManager charSetManager = CharSetManager::getInstance();
-
 	CACHE_RESET;
 
-	for(VirtualNode node = charSetManager->charSets->head; NULL != node; node = node->next)
+	for(VirtualNode node = this->charSets->head; NULL != node; node = node->next)
 	{
 		CharSet charSet = CharSet::safeCast(node->data);
 
@@ -245,20 +229,18 @@ static CharSet CharSetManager::findCharSet(const CharSetSpec* charSetSpec)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static CharSet CharSetManager::allocateCharSet(const CharSetSpec* charSetSpec)
+CharSet CharSetManager::allocateCharSet(const CharSetSpec* charSetSpec)
 {
-	CharSetManager charSetManager = CharSetManager::getInstance();
-
-	NM_ASSERT(charSetManager->charSets, "CharSetManager::allocateCharSet: null charSetManager");
+	NM_ASSERT(this->charSets, "CharSetManager::allocateCharSet: null this");
 	NM_ASSERT(charSetSpec, "CharSetManager::allocateCharSet: null charSetSpec");
 	NM_ASSERT(charSetSpec->numberOfChars > 0, "CharSetManager::allocateCharSet: number of chars < 0");
 	NM_ASSERT(charSetSpec->numberOfChars < __CHAR_MEMORY_TOTAL_CHARS, "CharSetManager::allocateCharSet: too many chars in spec");
 
-	uint16 offset = NULL != charSetManager->charSets->head ? 0 : 1;
+	uint16 offset = NULL != this->charSets->head ? 0 : 1;
 
-	if(NULL != charSetManager->charSets->head)
+	if(NULL != this->charSets->head)
 	{
-		CharSet lastCharSet = CharSet::safeCast(VirtualList::back(charSetManager->charSets));
+		CharSet lastCharSet = CharSet::safeCast(VirtualList::back(this->charSets));
 		offset += CharSet::getOffset(lastCharSet) + CharSet::getNumberOfChars(lastCharSet);
 	}
 
@@ -266,7 +248,7 @@ static CharSet CharSetManager::allocateCharSet(const CharSetSpec* charSetSpec)
 	{
 		CharSet charSet = new CharSet(charSetSpec, offset);
 
-		VirtualList::pushBack(charSetManager->charSets, charSet);
+		VirtualList::pushBack(this->charSets, charSet);
 
 		return charSet;
 	}
@@ -277,7 +259,7 @@ static CharSet CharSetManager::allocateCharSet(const CharSetSpec* charSetSpec)
 	{
 		CharSet charSet = new CharSet(charSetSpec, __CHAR_MEMORY_TOTAL_CHARS - charSetSpec->numberOfChars);
 
-		VirtualList::pushBack(charSetManager->charSets, charSet);
+		VirtualList::pushBack(this->charSets, charSet);
 
 		return charSet;		
 	}
@@ -296,13 +278,11 @@ static CharSet CharSetManager::allocateCharSet(const CharSetSpec* charSetSpec)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void CharSetManager::writeCharSets()
+secure void CharSetManager::writeCharSets()
 {
-	CharSetManager charSetManager = CharSetManager::getInstance();
+	CharSetManager::defragment(this, false);
 
-	CharSetManager::defragment(false);
-
-	for(VirtualNode node = charSetManager->charSets->head; NULL != node; node = node->next)
+	for(VirtualNode node = this->charSets->head; NULL != node; node = node->next)
 	{
 		CharSet::write(node->data);
 	}
@@ -329,7 +309,7 @@ void CharSetManager::constructor()
 
 void CharSetManager::destructor()
 {
-	CharSetManager::reset();
+	CharSetManager::reset(this);
 
 	delete this->charSets;
 	this->charSets = NULL;

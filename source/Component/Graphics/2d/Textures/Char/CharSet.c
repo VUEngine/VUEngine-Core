@@ -31,14 +31,14 @@ static CharSet CharSet::get(const CharSetSpec* charSetSpec)
 		return NULL;
 	}
 
-	return CharSetManager::getCharSet(charSetSpec);
+	return CharSetManager::getCharSet(CharSetManager::getInstance(), charSetSpec);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 static bool CharSet::release(CharSet charSet)
 {
-	return CharSetManager::releaseCharSet(charSet);
+	return CharSetManager::releaseCharSet(CharSetManager::getInstance(), charSet);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

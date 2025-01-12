@@ -1117,7 +1117,7 @@ static void VUEngine::printDebug()
 #endif
 
 #ifdef __SHOW_CHAR_MEMORY_STATUS
-	CharSetManager::print(1, 5);
+	CharSetManager::print(CharSetManager::getInstance(), 1, 5);
 #endif
 
 #ifdef __SHOW_BGMAP_MEMORY_STATUS
@@ -1174,6 +1174,14 @@ const ClassPointer CameraAuthClasses[] =
 	NULL
 };
 
+const ClassPointer CharSetManagerAuthClasses[] =
+{
+	typeofclass(Printing),
+	typeofclass(Stage),
+	typeofclass(SpriteManager),
+	NULL
+};
+
 const ClassPointer ClockManagerAuthClasses[] =
 {
 	typeofclass(Clock),
@@ -1223,6 +1231,7 @@ static void VUEngine::secureSingletons()
 {
 	AnimationCoordinatorFactory::secure(&AnimationCoordinatorFactoryAuthClasses);
 	Camera::secure(&CameraAuthClasses);
+	CharSetManager::secure(&CharSetManagerAuthClasses);
 	ClockManager::secure(&ClockManagerAuthClasses);
 	BgmapTextureManager::secure(&BgmapTextureManagerAuthClasses);
 	MessageDispatcher::secure(&MessageDispatcherAuthClasses);

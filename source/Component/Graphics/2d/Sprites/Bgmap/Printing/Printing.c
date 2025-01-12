@@ -195,7 +195,7 @@ static void Printing::loadFonts(FontSpec** fontSpecs)
 	HardwareManager::suspendInterrupts();
 
 	/// Must force CHAR defragmentation
-	CharSetManager::writeCharSets();
+	CharSetManager::writeCharSets(CharSetManager::getInstance());
 
 	// Iterate over all defined fonts and add to internal list
 	uint32 i = 0, j = 0;

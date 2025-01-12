@@ -113,7 +113,7 @@ void SpriteManager::reset()
 	
 	Texture::reset();
 	Printing::reset();
-	CharSetManager::reset();
+	CharSetManager::reset(CharSetManager::getInstance());
 	BgmapTextureManager::reset(BgmapTextureManager::getInstance());
 	ParamTableManager::reset(ParamTableManager::getInstance());
 
@@ -556,7 +556,7 @@ void SpriteManager::writeDRAM()
 	// Update all graphical data
 
 	// Update CHAR memory
-	CharSetManager::defragment(true);
+	CharSetManager::defragment(CharSetManager::getInstance(), true);
 
 	// Update DRAM memory
 	Texture::updateTextures(this->texturesMaximumRowsToWrite, this->deferTextureUpdating);
@@ -585,11 +585,11 @@ void SpriteManager::writeDRAM()
 
 void SpriteManager::writeTextures()
 {
-	CharSetManager::writeCharSets();
+	CharSetManager::writeCharSets(CharSetManager::getInstance());
 
 	Texture::updateTextures(-1, false);
 
-	CharSetManager::writeCharSets();
+	CharSetManager::writeCharSets(CharSetManager::getInstance());
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

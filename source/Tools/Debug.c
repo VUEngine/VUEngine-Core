@@ -767,7 +767,7 @@ void Debug::charMemoryShowStatus(int32 increment __attribute__ ((unused)), int32
 	if(-1 == this->charSegment)
 	{
 		Debug::setBlackBackground(this);
-		CharSetManager::print(x, y);
+		CharSetManager::print(CharSetManager::getInstance(), x, y);
 	}
 	else if(charSegments > this->charSegment)
 	{
@@ -788,7 +788,7 @@ void Debug::charMemoryShowStatus(int32 increment __attribute__ ((unused)), int32
 	{
 		this->charSegment = -1;
 		Debug::setBlackBackground(this);
-		CharSetManager::print(x, y);
+		CharSetManager::print(CharSetManager::getInstance(), x, y);
 	}
 }
 
