@@ -1112,13 +1112,13 @@ void Stage::configureGraphics()
 
 void Stage::configureSounds()
 {
-	SoundManager::unlock();
-	SoundManager::setPCMTargetPlaybackRefreshRate(this->stageSpec->sound.pcmTargetPlaybackRefreshRate);
+	SoundManager::unlock(SoundManager::getInstance());
+	SoundManager::setPCMTargetPlaybackRefreshRate(SoundManager::getInstance(), this->stageSpec->sound.pcmTargetPlaybackRefreshRate);
 
 	int32 i = 0;
 
 	// Stop all sounds
-	SoundManager::stopAllSounds(true, this->stageSpec->assets.sounds);
+	SoundManager::stopAllSounds(SoundManager::getInstance(), true, this->stageSpec->assets.sounds);
 
 	for(; NULL != this->stageSpec->assets.sounds[i]; i++)
 	{

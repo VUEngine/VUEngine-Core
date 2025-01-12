@@ -51,21 +51,6 @@ singleton class SoundManager : ListenerObject
 
 	/// @publicsection
 
-	/// Play the allocated sounds.
-	/// @param elapsedMicroseconds: Elapsed time between call
-	static void playSounds(uint32 elapsedMicroseconds);
-
-	/// Reset the manager's state.
-	static void reset();
-
-	/// Set the target refresh rate for PCM playback.
-	/// @param pcmTargetPlaybackRefreshRate: Target refresh rate for PCM playback
-	static void setPCMTargetPlaybackRefreshRate(uint16 pcmTargetPlaybackRefreshRate);
-
-	///  Check if a sound with the provided spec is playing.
-	/// @param soundSpec: Sound spec to check for
-	static bool isPlayingSound(const SoundSpec* soundSpec);
-
 	/// Play a sound defined by the provided spec.
 	/// @param soundSpec: Spec that defines the sound to play
 	/// @param position: Position for spatilly position sound
@@ -90,31 +75,46 @@ singleton class SoundManager : ListenerObject
 	/// @param scope: Object on which to perform the callback
 	static Sound findSound(const SoundSpec* soundSpec, EventListener soundReleaseListener, ListenerObject scope);
 
+	/// Play the allocated sounds.
+	/// @param elapsedMicroseconds: Elapsed time between call
+	void playSounds(uint32 elapsedMicroseconds);
+
+	/// Reset the manager's state.
+	void reset();
+
+	/// Set the target refresh rate for PCM playback.
+	/// @param pcmTargetPlaybackRefreshRate: Target refresh rate for PCM playback
+	void setPCMTargetPlaybackRefreshRate(uint16 pcmTargetPlaybackRefreshRate);
+
+	///  Check if a sound with the provided spec is playing.
+	/// @param soundSpec: Sound spec to check for
+	bool isPlayingSound(const SoundSpec* soundSpec);
+
 	/// Mute all playing sounds
-	static void muteAllSounds();
+	void muteAllSounds();
 
 	/// Unmute all playing sounds
-	static void unmuteAllSounds();
+	void unmuteAllSounds();
 
 	/// Rewind all playing sounds
-	static void rewindAllSounds();
+	void rewindAllSounds();
 
 	/// Stop all playing sounds.
 	/// @param release: If true, sounds are not only stopped but released
 	/// @param excludedSounds: Array of sound specs to not stop
-	static void stopAllSounds(bool release, SoundSpec** excludedSounds);
+	void stopAllSounds(bool release, SoundSpec** excludedSounds);
 
 	/// Refuse petitions to play or allocate sounds are processed.
-	static void lock();
+	void lock();
 
 	/// Allow petitions to play or allocate sounds are processed.
-	static void unlock();
+	void unlock();
 
 	/// Print the manager's status.
-	static void print(int32 x, int32 y);
+	void print(int32 x, int32 y);
 
 	/// Print playback time of the playing sounds.
-	static void printPlaybackTime(int32 x, int32 y);
+	void printPlaybackTime(int32 x, int32 y);
 }
 
 #endif

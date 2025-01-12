@@ -4,7 +4,7 @@
  * © Jorge Eremiev <jorgech3@gmail.com> and Christian Radke <c.radke@posteo.de>
  *
  * For the full copyright and license information, please view the LICENSE file
- * that was distributed with soundManager source code.
+ * that was distributed with this source code.
  */
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -33,81 +33,6 @@ friend class VirtualList;
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void SoundManager::playSounds(uint32 elapsedMicroseconds)
-{
-	SoundManager soundManager = SoundManager::getInstance();
-
-	VSUManager::update(VSUManager::getInstance());
-
-	for(VirtualNode node = soundManager->sounds->head; NULL != node; node = node->next)
-	{
-		Sound::update(Sound::safeCast(node->data), elapsedMicroseconds, soundManager->targetPCMUpdates);
-	}
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-static void SoundManager::reset()
-{
-	SoundManager soundManager = SoundManager::getInstance();
-
-	VSUManager::reset(VSUManager::getInstance());
-
-	for(VirtualNode node = soundManager->sounds->head; NULL != node; node = node->next)
-	{
-		Sound sound = Sound::safeCast(node->data);
-
-		NM_ASSERT(!isDeleted(sound), "SoundManager::reset: deleted soundSpec wrapper");
-
-		delete sound;
-	}
-
-	VirtualList::clear(soundManager->sounds);
-
-	SoundManager::setPCMTargetPlaybackRefreshRate(__DEFAULT_PCM_HZ);
-	SoundManager::stopAllSounds(false, NULL);
-	SoundManager::unlock();
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-static void SoundManager::setPCMTargetPlaybackRefreshRate(uint16 pcmTargetPlaybackRefreshRate)
-{
-	SoundManager soundManager = SoundManager::getInstance();
-
-	if(0 == pcmTargetPlaybackRefreshRate)
-	{
-		pcmTargetPlaybackRefreshRate = __DEFAULT_PCM_HZ;
-	}
-
-	soundManager->targetPCMUpdates = __MICROSECONDS_PER_SECOND / pcmTargetPlaybackRefreshRate;
-
-	SoundTrack::setPCMTargetPlaybackRefreshRate(pcmTargetPlaybackRefreshRate);
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-static bool SoundManager::isPlayingSound(const SoundSpec* soundSpec)
-{
-	SoundManager soundManager = SoundManager::getInstance();
-
-	VirtualNode node = soundManager->sounds->head;
-
-	for(; NULL != node; node = node->next)
-	{
-		Sound sound = Sound::safeCast(node->data);
-
-		if(soundSpec == sound->soundSpec)
-		{
-			return true;
-		}
-	}
-
-	return false;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
 static bool SoundManager::playSound
 (
 	const SoundSpec* soundSpec, const Vector3D* position, uint32 playbackType, EventListener soundReleaseListener, ListenerObject scope
@@ -120,7 +45,7 @@ static bool SoundManager::playSound
 		return false;
 	}
 
-	Sound sound = SoundManager::doGetSound(soundSpec, soundReleaseListener, scope);
+	Sound sound = SoundManager::doGetSound(soundManager, soundSpec, soundReleaseListener, scope);
 
 	if(!isDeleted(sound))
 	{
@@ -144,7 +69,7 @@ static Sound SoundManager::getSound(const SoundSpec* soundSpec, EventListener so
 		return NULL;
 	}
 
-	return SoundManager::doGetSound(soundSpec, soundReleaseListener, scope);
+	return SoundManager::doGetSound(soundManager, soundSpec, soundReleaseListener, scope);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -177,11 +102,82 @@ static Sound SoundManager::findSound(const SoundSpec* soundSpec, EventListener s
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void SoundManager::muteAllSounds()
-{
-	SoundManager soundManager = SoundManager::getInstance();
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+// CLASS' PUBLIC METHODS
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-	VirtualNode node = soundManager->sounds->head;
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+secure void SoundManager::playSounds(uint32 elapsedMicroseconds)
+{
+	VSUManager::update(VSUManager::getInstance());
+
+	for(VirtualNode node = this->sounds->head; NULL != node; node = node->next)
+	{
+		Sound::update(Sound::safeCast(node->data), elapsedMicroseconds, this->targetPCMUpdates);
+	}
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+secure void SoundManager::reset()
+{
+	VSUManager::reset(VSUManager::getInstance());
+
+	for(VirtualNode node = this->sounds->head; NULL != node; node = node->next)
+	{
+		Sound sound = Sound::safeCast(node->data);
+
+		NM_ASSERT(!isDeleted(sound), "SoundManager::reset: deleted soundSpec wrapper");
+
+		delete sound;
+	}
+
+	VirtualList::clear(this->sounds);
+
+	SoundManager::setPCMTargetPlaybackRefreshRate(this, __DEFAULT_PCM_HZ);
+	SoundManager::stopAllSounds(this, false, NULL);
+	SoundManager::unlock(this);
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void SoundManager::setPCMTargetPlaybackRefreshRate(uint16 pcmTargetPlaybackRefreshRate)
+{
+	if(0 == pcmTargetPlaybackRefreshRate)
+	{
+		pcmTargetPlaybackRefreshRate = __DEFAULT_PCM_HZ;
+	}
+
+	this->targetPCMUpdates = __MICROSECONDS_PER_SECOND / pcmTargetPlaybackRefreshRate;
+
+	SoundTrack::setPCMTargetPlaybackRefreshRate(pcmTargetPlaybackRefreshRate);
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+bool SoundManager::isPlayingSound(const SoundSpec* soundSpec)
+{
+	VirtualNode node = this->sounds->head;
+
+	for(; NULL != node; node = node->next)
+	{
+		Sound sound = Sound::safeCast(node->data);
+
+		if(soundSpec == sound->soundSpec)
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void SoundManager::muteAllSounds()
+{
+	VirtualNode node = this->sounds->head;
 
 	for(; NULL != node; node = node->next)
 	{
@@ -193,11 +189,9 @@ static void SoundManager::muteAllSounds()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void SoundManager::unmuteAllSounds()
+void SoundManager::unmuteAllSounds()
 {
-	SoundManager soundManager = SoundManager::getInstance();
-
-	VirtualNode node = soundManager->sounds->head;
+	VirtualNode node = this->sounds->head;
 
 	for(; NULL != node; node = node->next)
 	{
@@ -209,11 +203,9 @@ static void SoundManager::unmuteAllSounds()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void SoundManager::rewindAllSounds()
+void SoundManager::rewindAllSounds()
 {
-	SoundManager soundManager = SoundManager::getInstance();
-
-	VirtualNode node = soundManager->sounds->head;
+	VirtualNode node = this->sounds->head;
 
 	for(; NULL != node; node = node->next)
 	{
@@ -225,11 +217,9 @@ static void SoundManager::rewindAllSounds()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void SoundManager::stopAllSounds(bool release, SoundSpec** excludedSounds)
+void SoundManager::stopAllSounds(bool release, SoundSpec** excludedSounds)
 {
-	SoundManager soundManager = SoundManager::getInstance();
-
-	VirtualNode node = soundManager->sounds->head;
+	VirtualNode node = this->sounds->head;
 
 	for(; NULL != node; node = node->next)
 	{
@@ -273,7 +263,7 @@ static void SoundManager::stopAllSounds(bool release, SoundSpec** excludedSounds
 
 	if(release)
 	{
-		SoundManager::purgeReleasedSounds();
+		SoundManager::purgeReleasedSounds(this);
 	}
 
 	if(NULL == excludedSounds)
@@ -284,30 +274,24 @@ static void SoundManager::stopAllSounds(bool release, SoundSpec** excludedSounds
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void SoundManager::lock()
+void SoundManager::lock()
 {
-	SoundManager soundManager = SoundManager::getInstance();
-
-	soundManager->lock = true;
+	this->lock = true;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void SoundManager::unlock()
+void SoundManager::unlock()
 {
-	SoundManager soundManager = SoundManager::getInstance();
-
-	soundManager->lock = false;
+	this->lock = false;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #ifdef __SOUND_TEST
-static void SoundManager::printPlaybackTime(int32 x, int32 y)
+void SoundManager::printPlaybackTime(int32 x, int32 y)
 {
-	SoundManager soundManager = SoundManager::getInstance();
-
-	VirtualNode node = soundManager->sounds->head;
+	VirtualNode node = this->sounds->head;
 
 	if(!isDeleted(node))
 	{
@@ -320,91 +304,6 @@ static void SoundManager::printPlaybackTime(int32 x, int32 y)
 	}
 }
 #endif
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-// CLASS' PRIVATE STATIC METHODS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-static Sound SoundManager::doGetSound(const SoundSpec* soundSpec, EventListener soundReleaseListener, ListenerObject scope)
-{
-	SoundManager soundManager = SoundManager::getInstance();
-
-	SoundManager::purgeReleasedSounds();
-
-	if(NULL == soundSpec)
-	{
-		return NULL;
-	}
-
-	Sound sound = new Sound(soundSpec, soundReleaseListener, scope);
-
-	VirtualList::pushBack(soundManager->sounds, sound);
-
-	return sound;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-static void SoundManager::purgeReleasedSounds()
-{
-	SoundManager soundManager = SoundManager::getInstance();
-
-	for(VirtualNode node = soundManager->sounds->head, nextNode = NULL; NULL != node; node = nextNode)
-	{
-		nextNode = node->next;
-
-		Sound sound = Sound::safeCast(node->data);
-
-		if(NULL == sound->soundSpec)
-		{
-			VirtualList::removeNode(soundManager->sounds, node);
-
-			delete sound;
-		}
-	}
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-static void SoundManager::suspendPlayingSounds()
-{
-	SoundManager soundManager = SoundManager::getInstance();
-
-	VirtualNode node = soundManager->sounds->head;
-
-	for(; NULL != node; node = node->next)
-	{
-		Sound sound = Sound::safeCast(node->data);
-
-		if(!isDeleted(sound) && !Sound::isPaused(sound))
-		{
-			Sound::suspend(sound);
-		}
-	}
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-static void SoundManager::resumePlayingSounds()
-{
-	SoundManager soundManager = SoundManager::getInstance();
-
-	VirtualNode node = soundManager->sounds->head;
-
-	for(; NULL != node; node = node->next)
-	{
-		Sound sound = Sound::safeCast(node->data);
-
-		if(!isDeleted(sound) && !Sound::isPaused(sound))
-		{
-			Sound::resume(sound);
-		}
-	}
-}
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
@@ -438,6 +337,77 @@ void SoundManager::destructor()
 
 	// Always explicitly call the base's destructor 
 	Base::destructor();
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+Sound SoundManager::doGetSound(const SoundSpec* soundSpec, EventListener soundReleaseListener, ListenerObject scope)
+{
+	SoundManager::purgeReleasedSounds(this);
+
+	if(NULL == soundSpec)
+	{
+		return NULL;
+	}
+
+	Sound sound = new Sound(soundSpec, soundReleaseListener, scope);
+
+	VirtualList::pushBack(this->sounds, sound);
+
+	return sound;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void SoundManager::purgeReleasedSounds()
+{
+	for(VirtualNode node = this->sounds->head, nextNode = NULL; NULL != node; node = nextNode)
+	{
+		nextNode = node->next;
+
+		Sound sound = Sound::safeCast(node->data);
+
+		if(NULL == sound->soundSpec)
+		{
+			VirtualList::removeNode(this->sounds, node);
+
+			delete sound;
+		}
+	}
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void SoundManager::suspendPlayingSounds()
+{
+	VirtualNode node = this->sounds->head;
+
+	for(; NULL != node; node = node->next)
+	{
+		Sound sound = Sound::safeCast(node->data);
+
+		if(!isDeleted(sound) && !Sound::isPaused(sound))
+		{
+			Sound::suspend(sound);
+		}
+	}
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void SoundManager::resumePlayingSounds()
+{
+	VirtualNode node = this->sounds->head;
+
+	for(; NULL != node; node = node->next)
+	{
+		Sound sound = Sound::safeCast(node->data);
+
+		if(!isDeleted(sound) && !Sound::isPaused(sound))
+		{
+			Sound::resume(sound);
+		}
+	}
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

@@ -58,7 +58,7 @@ void SoundTest::show()
 {
 	this->soundIndex = 0;
 
-	SoundManager::reset();
+	SoundManager::reset(SoundManager::getInstance());
 
 	Printing::clear();
 	SpriteManager::hideAllSprites(SpriteManager::getInstance(), NULL, false);

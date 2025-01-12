@@ -67,7 +67,7 @@ static void TimerManager::interruptHandler()
 	}
 
 	// Update sounds
-	SoundManager::playSounds(timerManager->elapsedMicrosecondsPerInterrupt);
+	SoundManager::playSounds(SoundManager::getInstance(), timerManager->elapsedMicrosecondsPerInterrupt);
 
 	// Update Stopwatchs: no use is being done of them so this is commented out for now since it affects PCM playback
 	//StopwatchManager::update();
