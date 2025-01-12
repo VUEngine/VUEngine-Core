@@ -151,7 +151,7 @@ static void VUEngine::reset(bool resetSounds)
 	SpriteManager::reset(SpriteManager::getInstance());
 	SRAMManager::reset(SRAMManager::getInstance());
 	StopwatchManager::reset(StopwatchManager::getInstance());
-	TimerManager::reset();
+	TimerManager::reset(TimerManager::getInstance());
 	VIPManager::reset();
 	WireframeManager::reset(WireframeManager::getInstance());
 }
@@ -578,7 +578,7 @@ static void VUEngine::frameStarted(uint16 gameFrameDuration)
 
 	totalTime += gameFrameDuration;
 
-	TimerManager::frameStarted(gameFrameDuration * __MICROSECONDS_PER_MILLISECOND);
+	TimerManager::frameStarted(TimerManager::getInstance(), gameFrameDuration * __MICROSECONDS_PER_MILLISECOND);
 
 	if(__MILLISECONDS_PER_SECOND <= totalTime)
 	{
@@ -645,7 +645,7 @@ static bool VUEngine::isPaused()
 
 static void VUEngine::wait(uint32 milliSeconds)
 {
-	TimerManager::wait(milliSeconds);
+	TimerManager::wait(TimerManager::getInstance(), milliSeconds);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -1102,7 +1102,7 @@ static void VUEngine::cleanUp()
 static void VUEngine::printDebug()
 {
 #ifdef __SHOW_TIMER_MANAGER_STATUS
-	TimerManager::nextSecondStarted();
+	TimerManager::nextSecondStarted(TimerManager::getInstance());
 #endif
 
 #ifdef __SHOW_STREAMING_PROFILING
@@ -1163,6 +1163,7 @@ static void VUEngine::printDebug()
 #include <ObjectSprite.h>
 #include <ObjectSpriteContainer.h>
 #include <ObjectTextureManager.h>
+#include <SoundTest.h>
 
 const ClassPointer AnimationCoordinatorFactoryAuthClasses[] =
 {
@@ -1205,13 +1206,6 @@ const ClassPointer CharSetManagerAuthClasses[] =
 const ClassPointer ClockManagerAuthClasses[] =
 {
 	typeofclass(Clock),
-	typeofclass(VUEngine),
-	NULL
-};
-
-const ClassPointer CommunicationManagerAuthClasses[] =
-{
-	typeofclass(RumbleManager),
 	typeofclass(VUEngine),
 	NULL
 };
@@ -1277,6 +1271,13 @@ const ClassPointer StopwatchManagerAuthClasses[] =
 	NULL
 };
 
+const ClassPointer TimerManagerAuthClasses[] =
+{
+	typeofclass(SoundTest),
+	typeofclass(VUEngine),
+	NULL
+};
+
 const ClassPointer WireframeManagerAuthClasses[] =
 {
 	typeofclass(ComponentManager),
@@ -1292,7 +1293,6 @@ static void VUEngine::secureSingletons()
 	Camera::secure(&CameraAuthClasses);
 	CharSetManager::secure(&CharSetManagerAuthClasses);
 	ClockManager::secure(&ClockManagerAuthClasses);
-	CommunicationManager::secure(&CommunicationManagerAuthClasses);
 	DirectDraw::secure(&DirectDrawAuthClasses);
 	KeypadManager::secure(&KeypadManagerAuthClasses);
 	MessageDispatcher::secure(&MessageDispatcherAuthClasses);
@@ -1302,6 +1302,7 @@ static void VUEngine::secureSingletons()
 	SpriteManager::secure(&SpriteManagerAuthClasses);
 	SRAMManager::secure(&SRAMManagerAuthClasses);
 	StopwatchManager::secure(&StopwatchManagerAuthClasses);
+	TimerManager::secure(&TimerManagerAuthClasses);
 	WireframeManager::secure(&WireframeManagerAuthClasses);
 }
 
