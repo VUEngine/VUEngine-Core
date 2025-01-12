@@ -222,7 +222,7 @@ void GameState::resume(void* owner __attribute__ ((unused)))
 		UIContainer::resume(this->uiContainer);
 
 		// Move the camera to its previous position
-		Camera::focus();
+		Camera::focus(Camera::getInstance());
 
 		// Force all transformations to take place again
 		GameState::transform(this);
@@ -267,7 +267,7 @@ void GameState::configureStage(StageSpec* stageSpec, VirtualList positionedActor
 	HardwareManager::suspendInterrupts();
 
 	// Make sure no actor is set as focus for the camera
-	Camera::setFocusActor(NULL);
+	Camera::setFocusActor(Camera::getInstance(), NULL);
 
 	// Setup the stage
 	GameState::createStage(this, stageSpec, positionedActorsToIgnore);
@@ -276,7 +276,7 @@ void GameState::configureStage(StageSpec* stageSpec, VirtualList positionedActor
 	GameState::configureUI(this, stageSpec);
 
 	// Move the camera to its previous position
-	Camera::focus();
+	Camera::focus(Camera::getInstance());
 
 	// Transformation everything
 	GameState::transform(this);
@@ -492,14 +492,14 @@ void GameState::transform()
 
 	extern Transformation _neutralEnvironmentTransformation;
 
-	Stage::transform(this->stage, &_neutralEnvironmentTransformation, Camera::getTransformationFlags());
+	Stage::transform(this->stage, &_neutralEnvironmentTransformation, Camera::getTransformationFlags(Camera::getInstance()));
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void GameState::transformUI()
 {
-	if(!this->transform && __VALID_TRANSFORMATION == Camera::getTransformationFlags())
+	if(!this->transform && __VALID_TRANSFORMATION == Camera::getTransformationFlags(Camera::getInstance()))
 	{
 		return;
 	}
@@ -706,7 +706,7 @@ void GameState::configureUI(StageSpec* stageSpec)
 		extern Transformation _neutralEnvironmentTransformation;
 	
 		// Apply transformations
-		UIContainer::transform(this->uiContainer, &_neutralEnvironmentTransformation, Camera::getTransformationFlags());
+		UIContainer::transform(this->uiContainer, &_neutralEnvironmentTransformation, Camera::getTransformationFlags(Camera::getInstance()));
 	}
 }
 
@@ -720,7 +720,7 @@ void GameState::streamAll()
 	GameState::transform(this);
 
 	// Move the camera to its initial position
-	Camera::focus();
+	Camera::focus(Camera::getInstance());
 
 	// Invalidate transformations
 	Stage::invalidateTransformation(this->stage);

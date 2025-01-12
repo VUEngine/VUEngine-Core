@@ -207,7 +207,7 @@ void Stage::destructor()
 void Stage::suspend()
 {
 	// Save the camera position for resume reconfiguration
-	this->cameraTransformation = Camera::getTransformation();
+	this->cameraTransformation = Camera::getTransformation(Camera::getInstance());
 
 	// Stream all pending actors to avoid having manually recover
 	// The stage actor registries
@@ -218,15 +218,15 @@ void Stage::suspend()
 	// Relinquish camera focus priority
 	if(!isDeleted(this->focusActor))
 	{
-		if(this->focusActor == Camera::getFocusActor())
+		if(this->focusActor == Camera::getFocusActor(Camera::getInstance()))
 		{
 			// Relinquish focus actor
-			Camera::setFocusActor(NULL);
+			Camera::setFocusActor(Camera::getInstance(), NULL);
 		}
 	}
 	else
 	{
-		Stage::setFocusActor(this, Camera::getFocusActor());
+		Stage::setFocusActor(this, Camera::getFocusActor(Camera::getInstance()));
 	}
 
 	delete this->actorFactory;
@@ -246,7 +246,7 @@ void Stage::resume()
 	if(!isDeleted(this->focusActor))
 	{
 		// Recover focus actor
-		Camera::setFocusActor(Actor::safeCast(this->focusActor));
+		Camera::setFocusActor(Camera::getInstance(), Actor::safeCast(this->focusActor));
 	}
 
 	Base::resume(this);
@@ -605,7 +605,7 @@ void Stage::configure(VirtualList positionedActorsToIgnore)
 	Stage::loadInitialActors(this);
 
 	// Retrieve focus actor for streaming
-	Stage::setFocusActor(this, Camera::getFocusActor());
+	Stage::setFocusActor(this, Camera::getFocusActor(Camera::getInstance()));
 
 	// Apply transformations
 	Stage::transform(this, &_neutralEnvironmentTransformation, __INVALIDATE_TRANSFORMATION);
@@ -1060,12 +1060,12 @@ void Stage::configureCamera(bool reset)
 {
 	if(reset)
 	{
-		Camera::reset();
+		Camera::reset(Camera::getInstance());
 	}
 
-	Camera::setStageSize(Size::getFromPixelSize(this->stageSpec->level.pixelSize));
-	Camera::setTransformation(this->cameraTransformation, true);
-	Camera::setup(this->stageSpec->rendering.pixelOptical, this->stageSpec->level.cameraFrustum);
+	Camera::setStageSize(Camera::getInstance(), Size::getFromPixelSize(this->stageSpec->level.pixelSize));
+	Camera::setTransformation(Camera::getInstance(), this->cameraTransformation, true);
+	Camera::setup(Camera::getInstance(), this->stageSpec->rendering.pixelOptical, this->stageSpec->level.cameraFrustum);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -1271,9 +1271,9 @@ bool Stage::onFocusActorDeleted(ListenerObject eventFirer __attribute__ ((unused
 {
 	if(!isDeleted(this->focusActor) && ListenerObject::safeCast(this->focusActor) == eventFirer)
 	{
-		if(this->focusActor == Camera::getFocusActor())
+		if(this->focusActor == Camera::getFocusActor(Camera::getInstance()))
 		{
-			Camera::setFocusActor(NULL);
+			Camera::setFocusActor(Camera::getInstance(), NULL);
 		}
 	}
 

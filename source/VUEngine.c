@@ -1022,7 +1022,7 @@ static void VUEngine::focusCamera()
 	{
 #endif
 		// Position the camera
-		Camera::focus();
+		Camera::focus(Camera::getInstance());
 #ifdef __TOOLS
 	}
 #endif
@@ -1159,6 +1159,14 @@ static void VUEngine::printDebug()
 #include <ObjectSprite.h>
 #include <ObjectSpriteContainer.h>
 	
+const ClassPointer CameraAuthClasses[] =
+{
+	typeofclass(GameState),
+	typeofclass(Stage),
+	typeofclass(VUEngine),
+	NULL
+};
+
 const ClassPointer ClockManagerAuthClasses[] =
 {
 	typeofclass(Clock),
@@ -1206,6 +1214,7 @@ const ClassPointer StopwatchManagerAuthClasses[] =
 
 static void VUEngine::secureSingletons()
 {
+	Camera::secure(&CameraAuthClasses);
 	ClockManager::secure(&ClockManagerAuthClasses);
 	BgmapTextureManager::secure(&BgmapTextureManagerAuthClasses);
 	MessageDispatcher::secure(&MessageDispatcherAuthClasses);
