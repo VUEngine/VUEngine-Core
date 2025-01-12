@@ -73,20 +73,20 @@
 
 #ifndef __RELEASE
 
-const ClassPointer AnimationCoordinatorFactoryAuthClasses[] =
+const ClassPointer AnimationCoordinatorFactoryAuthorizedClasses[] =
 {
 	typeofclass(Sprite),
 	typeofclass(VUEngine),
 	NULL
 };
 
-const ClassPointer BehaviorManagerAuthClasses[] =
+const ClassPointer BehaviorManagerAuthorizedClasses[] =
 {
 	typeofclass(VUEngine),
 	NULL
 };
 
-const ClassPointer BgmapTextureManagerAuthClasses[] =
+const ClassPointer BgmapTextureManagerAuthorizedClasses[] =
 {
 	typeofclass(Printing),
 	typeofclass(SpriteManager),
@@ -96,7 +96,7 @@ const ClassPointer BgmapTextureManagerAuthClasses[] =
 	NULL
 };
 
-const ClassPointer CameraAuthClasses[] =
+const ClassPointer CameraAuthorizedClasses[] =
 {
 	typeofclass(GameState),
 	typeofclass(Stage),
@@ -104,7 +104,7 @@ const ClassPointer CameraAuthClasses[] =
 	NULL
 };
 
-const ClassPointer CharSetManagerAuthClasses[] =
+const ClassPointer CharSetManagerAuthorizedClasses[] =
 {
 	typeofclass(Printing),
 	typeofclass(Stage),
@@ -112,46 +112,46 @@ const ClassPointer CharSetManagerAuthClasses[] =
 	NULL
 };
 
-const ClassPointer ClockManagerAuthClasses[] =
+const ClassPointer ClockManagerAuthorizedClasses[] =
 {
 	typeofclass(Clock),
 	typeofclass(VUEngine),
 	NULL
 };
 
-const ClassPointer CommunicationManagerAuthClasses[] =
+const ClassPointer CommunicationManagerAuthorizedClasses[] =
 {
 	typeofclass(RumbleManager),
 	typeofclass(VUEngine),
 	NULL
 };
 
-const ClassPointer DirectDrawAuthClasses[] =
+const ClassPointer DirectDrawAuthorizedClasses[] =
 {
 	typeofclass(VUEngine),
 	typeofclass(WireframeManager),
 	NULL
 };
 
-const ClassPointer KeypadManagerAuthClasses[] =
+const ClassPointer KeypadManagerAuthorizedClasses[] =
 {
 	typeofclass(VUEngine),
 	NULL
 };
 
-const ClassPointer MessageDispatcherAuthClasses[] =
+const ClassPointer MessageDispatcherAuthorizedClasses[] =
 {
 	typeofclass(VUEngine),
 	NULL
 };
 
-const ClassPointer ObjectTextureManagerAuthClasses[] =
+const ClassPointer ObjectTextureManagerAuthorizedClasses[] =
 {
 	typeofclass(Texture),
 	NULL
 };
 
-const ClassPointer ParamTableManagerAuthClasses[] =
+const ClassPointer ParamTableManagerAuthorizedClasses[] =
 {
 	typeofclass(BgmapSprite),
 	typeofclass(MBgmapSprite),
@@ -160,20 +160,20 @@ const ClassPointer ParamTableManagerAuthClasses[] =
 	NULL
 };
 
-const ClassPointer RumbleManagerAuthClasses[] =
+const ClassPointer RumbleManagerAuthorizedClasses[] =
 {
 	typeofclass(VUEngine),
 	NULL
 };
 
-const ClassPointer SoundManagerAuthClasses[] =
+const ClassPointer SoundManagerAuthorizedClasses[] =
 {
 	typeofclass(TimerManager),
 	typeofclass(VUEngine),
 	NULL
 };
 
-const ClassPointer SpriteManagerAuthClasses[] =
+const ClassPointer SpriteManagerAuthorizedClasses[] =
 {
 	typeofclass(ComponentManager),
 	typeofclass(Stage),
@@ -181,20 +181,20 @@ const ClassPointer SpriteManagerAuthClasses[] =
 	NULL
 };
 
-const ClassPointer SRAMManagerAuthClasses[] =
+const ClassPointer SRAMManagerAuthorizedClasses[] =
 {
 	typeofclass(VUEngine),
 	NULL
 };
 
-const ClassPointer StopwatchManagerAuthClasses[] =
+const ClassPointer StopwatchManagerAuthorizedClasses[] =
 {
 	typeofclass(Stopwatch),
 	typeofclass(VUEngine),
 	NULL
 };
 
-const ClassPointer TimerManagerAuthClasses[] =
+const ClassPointer TimerManagerAuthorizedClasses[] =
 {
 #ifdef __TOOLS
 	typeofclass(SoundTest),
@@ -203,14 +203,14 @@ const ClassPointer TimerManagerAuthClasses[] =
 	NULL
 };
 
-const ClassPointer VIPManagerAuthClasses[] =
+const ClassPointer VIPManagerAuthorizedClasses[] =
 {
 	typeofclass(Stage),
 	typeofclass(VUEngine),
 	NULL
 };
 
-const ClassPointer VSUManagerAuthClasses[] =
+const ClassPointer VSUManagerAuthorizedClasses[] =
 {
 	typeofclass(SoundManager),
 	typeofclass(SoundTrack),
@@ -218,13 +218,13 @@ const ClassPointer VSUManagerAuthClasses[] =
 	NULL
 };
 
-const ClassPointer VUEngineAuthClasses[] =
+const ClassPointer VUEngineAuthorizedClasses[] =
 {
 	typeofclass(GameState),
 	NULL
 };
 
-const ClassPointer WireframeManagerAuthClasses[] =
+const ClassPointer WireframeManagerAuthorizedClasses[] =
 {
 	typeofclass(ComponentManager),
 	typeofclass(VUEngine),
@@ -242,28 +242,28 @@ const ClassPointer WireframeManagerAuthClasses[] =
 static void Singleton::secure()
 {
 #ifndef __RELEASE
-	AnimationCoordinatorFactory::secure(&AnimationCoordinatorFactoryAuthClasses);
-	BehaviorManager::secure(&BehaviorManagerAuthClasses);
-	BgmapTextureManager::secure(&BgmapTextureManagerAuthClasses);
-	Camera::secure(&CameraAuthClasses);
-	CharSetManager::secure(&CharSetManagerAuthClasses);
-	ClockManager::secure(&ClockManagerAuthClasses);
-//	CommunicationManager::secure(&CommunicationManagerAuthClasses);
-	DirectDraw::secure(&DirectDrawAuthClasses);
-	KeypadManager::secure(&KeypadManagerAuthClasses);
-	MessageDispatcher::secure(&MessageDispatcherAuthClasses);
-	ObjectTextureManager::secure(&ObjectTextureManagerAuthClasses);
-	ParamTableManager::secure(&ParamTableManagerAuthClasses);
-	RumbleManager::secure(&RumbleManagerAuthClasses);
-	SoundManager::secure(&SoundManagerAuthClasses);
-	SpriteManager::secure(&SpriteManagerAuthClasses);
-	SRAMManager::secure(&SRAMManagerAuthClasses);
-	StopwatchManager::secure(&StopwatchManagerAuthClasses);
-	TimerManager::secure(&TimerManagerAuthClasses);
-	VIPManager::secure(&VIPManagerAuthClasses);	
-	VSUManager::secure(&VSUManagerAuthClasses);
-	VUEngine::secure(&VUEngineAuthClasses);
-	WireframeManager::secure(&WireframeManagerAuthClasses);
+	AnimationCoordinatorFactory::secure(&AnimationCoordinatorFactoryAuthorizedClasses);
+	BehaviorManager::secure(&BehaviorManagerAuthorizedClasses);
+	BgmapTextureManager::secure(&BgmapTextureManagerAuthorizedClasses);
+	Camera::secure(&CameraAuthorizedClasses);
+	CharSetManager::secure(&CharSetManagerAuthorizedClasses);
+	ClockManager::secure(&ClockManagerAuthorizedClasses);
+//	CommunicationManager::secure(&CommunicationManagerAuthorizedClasses);
+	DirectDraw::secure(&DirectDrawAuthorizedClasses);
+	KeypadManager::secure(&KeypadManagerAuthorizedClasses);
+	MessageDispatcher::secure(&MessageDispatcherAuthorizedClasses);
+	ObjectTextureManager::secure(&ObjectTextureManagerAuthorizedClasses);
+	ParamTableManager::secure(&ParamTableManagerAuthorizedClasses);
+	RumbleManager::secure(&RumbleManagerAuthorizedClasses);
+	SoundManager::secure(&SoundManagerAuthorizedClasses);
+	SpriteManager::secure(&SpriteManagerAuthorizedClasses);
+	SRAMManager::secure(&SRAMManagerAuthorizedClasses);
+	StopwatchManager::secure(&StopwatchManagerAuthorizedClasses);
+	TimerManager::secure(&TimerManagerAuthorizedClasses);
+	VIPManager::secure(&VIPManagerAuthorizedClasses);	
+	VSUManager::secure(&VSUManagerAuthorizedClasses);
+	VUEngine::secure(&VUEngineAuthorizedClasses);
+	WireframeManager::secure(&WireframeManagerAuthorizedClasses);
 #endif
 }
 
