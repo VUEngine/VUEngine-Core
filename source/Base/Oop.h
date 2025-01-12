@@ -593,7 +593,7 @@ typedef void* (*(*ClassPointer)(void*))(void*);
 /// Checks that the provided authorization array lives in non volatile memory.
 /// @param ClassName: Class to verity
 /// @return Implementation of a check for the validity of the authorization array
-#ifdef __RELEASE
+#ifndef __RELEASE
 #define __SINGLETON_AUTHORIZATION_CHECK(ClassName)																						\
 																																		\
 	_authorized = true;																													\
@@ -696,9 +696,9 @@ typedef void* (*(*ClassPointer)(void*))(void*);
 		__SINGLETON_ACCESS(ClassName)																									\
 																																		\
 		/* Define get instance method */																								\
-		__attribute__((unused)) ClassName ClassName ## _getInstance (ClassPointer requesterClass)										\
+		__attribute__((unused)) ClassName ClassName ## _getInstance (ClassPointer requesterClass __attribute__((unused)))				\
 		{																																\
-																																		\
+			/* Check if the call has higher privileges */																															\
 			__SINGLETON_AUTHORIZATION_CHECK(ClassName)																					\
 																																		\
 			/* first check if not constructed yet */																					\
@@ -759,9 +759,9 @@ typedef void* (*(*ClassPointer)(void*))(void*);
 		__SINGLETON_ACCESS(ClassName)																									\
 																																		\
 		/* Define get instance method */																								\
-		__attribute__((unused)) ClassName ClassName ## _getInstance (ClassPointer requesterClass)										\
+		__attribute__((unused)) ClassName ClassName ## _getInstance (ClassPointer requesterClass __attribute__((unused)))				\
 		{																																\
-																																		\
+			/* Check if the call has higher privileges */																															\
 			__SINGLETON_AUTHORIZATION_CHECK(ClassName)																					\
 																																		\
 			/* first check if not constructed yet */																					\
