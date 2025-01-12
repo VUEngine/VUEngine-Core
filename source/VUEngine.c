@@ -1164,6 +1164,8 @@ static void VUEngine::printDebug()
 #include <ObjectSpriteContainer.h>
 #include <ObjectTextureManager.h>
 #include <SoundTest.h>
+#include <SoundTrack.h>
+#include <VSUManager.h>
 
 const ClassPointer AnimationCoordinatorFactoryAuthClasses[] =
 {
@@ -1292,6 +1294,13 @@ const ClassPointer VIPManagerAuthClasses[] =
 	NULL
 };
 
+const ClassPointer VSUManagerAuthClasses[] =
+{
+	typeofclass(SoundManager),
+	typeofclass(SoundTrack),
+	typeofclass(VUEngine),
+	NULL
+};
 
 const ClassPointer WireframeManagerAuthClasses[] =
 {
@@ -1319,7 +1328,8 @@ static void VUEngine::secureSingletons()
 	SRAMManager::secure(&SRAMManagerAuthClasses);
 	StopwatchManager::secure(&StopwatchManagerAuthClasses);
 	TimerManager::secure(&TimerManagerAuthClasses);
-	VIPManager::secure(&VIPManagerAuthClasses);
+	VIPManager::secure(&VIPManagerAuthClasses);	
+	VSUManager::secure(&VSUManagerAuthClasses);
 	WireframeManager::secure(&WireframeManagerAuthClasses);
 }
 

@@ -37,7 +37,7 @@ static void SoundManager::playSounds(uint32 elapsedMicroseconds)
 {
 	SoundManager soundManager = SoundManager::getInstance();
 
-	VSUManager::update();
+	VSUManager::update(VSUManager::getInstance());
 
 	for(VirtualNode node = soundManager->sounds->head; NULL != node; node = node->next)
 	{
@@ -51,7 +51,7 @@ static void SoundManager::reset()
 {
 	SoundManager soundManager = SoundManager::getInstance();
 
-	VSUManager::reset();
+	VSUManager::reset(VSUManager::getInstance());
 
 	for(VirtualNode node = soundManager->sounds->head; NULL != node; node = node->next)
 	{
@@ -278,7 +278,7 @@ static void SoundManager::stopAllSounds(bool release, SoundSpec** excludedSounds
 
 	if(NULL == excludedSounds)
 	{
-		VSUManager::stopAllSounds();
+		VSUManager::stopAllSounds(VSUManager::getInstance());
 	}
 }
 
