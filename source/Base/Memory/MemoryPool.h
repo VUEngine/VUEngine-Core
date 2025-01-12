@@ -25,10 +25,10 @@
 	BYTE pool ## BlockSize ## B[BlockSize * Elements]; 													\
 
 #define __SET_MEMORY_POOL_ARRAY(BlockSize)																\
-	memoryPool->poolLocation[pool] = &memoryPool->pool ## BlockSize ## B[0];							\
-	memoryPool->poolSizes[pool][ePoolSize] = sizeof(memoryPool->pool ## BlockSize ## B);				\
-	memoryPool->poolSizes[pool][eBlockSize] = BlockSize;												\
-	memoryPool->poolLastFreeBlock[pool] = &memoryPool->poolLocation[pool][0];							\
+	this->poolLocation[pool] = &this->pool ## BlockSize ## B[0];										\
+	this->poolSizes[pool][ePoolSize] = sizeof(this->pool ## BlockSize ## B);							\
+	this->poolSizes[pool][eBlockSize] = BlockSize;														\
+	this->poolLastFreeBlock[pool] = &this->poolLocation[pool][0];										\
 	pool++;																								\
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -51,7 +51,7 @@ enum MemoryPoolSizes
 /// Inherits from Object
 ///
 /// Implements a memory pool for dynamic object allocation.
-singleton! class MemoryPool : Object
+singleton class MemoryPool : Object
 {
 	/// @protectedsection
 

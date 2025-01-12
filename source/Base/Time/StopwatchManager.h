@@ -31,7 +31,7 @@ class Stopwatch;
 /// Inherits from Object
 ///
 /// Manages the instances of Stopwatch.
-singleton! class StopwatchManager : Object
+singleton class StopwatchManager : Object
 {
 	/// @protectedsection
 
@@ -41,18 +41,18 @@ singleton! class StopwatchManager : Object
 	/// @publicsection
 
 	/// Reset all the registered stopwatches.
-	static void reset();
+	void reset();
 
 	/// Register a new stopwatch
 	/// @param clock: Stopwatch to register
-	static void register(Stopwatch clock);
+	void register(Stopwatch clock);
 
 	/// Unregister stopwatch.
 	/// @param clock: Stopwatch to unregister
-	static void unregister(Stopwatch clock);
+	void unregister(Stopwatch clock);
 
 	/// Update the stopwatches.
-	static void update();
+	void update();
 }
 
 #endif

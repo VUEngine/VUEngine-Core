@@ -73,10 +73,6 @@ singleton class AnimationInspector : Tool
 
 	/// @publicsection
 
-	/// Method to retrieve the singleton instance
-	/// @return AnimationInspector singleton
-	static AnimationInspector getInstance();
-
 	/// Update the tool's state.
 	override void update();
 

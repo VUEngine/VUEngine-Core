@@ -4,7 +4,7 @@
  * © Jorge Eremiev <jorgech3@gmail.com> and Christian Radke <c.radke@posteo.de>
  *
  * For the full copyright and license information, please view the LICENSE file
- * that was distributed with wireframeManager source code.
+ * that was distributed with this source code.
  */
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -62,7 +62,7 @@ bool WireframeManager::isAnyVisible(Entity owner)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-Wireframe WireframeManager::instantiateComponent(Entity owner, const WireframeSpec* wireframeSpec)
+secure Wireframe WireframeManager::instantiateComponent(Entity owner, const WireframeSpec* wireframeSpec)
 {
 	if(NULL == wireframeSpec)
 	{
@@ -71,12 +71,12 @@ Wireframe WireframeManager::instantiateComponent(Entity owner, const WireframeSp
 
 	Base::instantiateComponent(this, owner, (ComponentSpec*)wireframeSpec);
 
-	return WireframeManager::createWireframe(owner, wireframeSpec);
+	return WireframeManager::createWireframe(this, owner, wireframeSpec);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void WireframeManager::deinstantiateComponent(Entity owner, Wireframe wireframe) 
+secure void WireframeManager::deinstantiateComponent(Entity owner, Wireframe wireframe) 
 {
 	if(isDeleted(wireframe))
 	{
@@ -85,25 +85,17 @@ void WireframeManager::deinstantiateComponent(Entity owner, Wireframe wireframe)
 
 	Base::deinstantiateComponent(this, owner, Component::safeCast(wireframe));
 
-	WireframeManager::destroyWireframe(wireframe);
+	WireframeManager::destroyWireframe(this, wireframe);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-// CLASS' STATIC METHODS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-static void WireframeManager::reset()
+secure void WireframeManager::reset()
 {
-	WireframeManager wireframeManager = WireframeManager::getInstance();
-
-	WireframeManager::enable(wireframeManager);
+	WireframeManager::enable(this);
 	
-	VirtualList::clear(wireframeManager->components);
-	wireframeManager->disabled = false;
+	VirtualList::clear(this->components);
+	this->disabled = false;
 
 	_previousCameraPosition = *_cameraPosition;
 	_previousCameraPositionBuffer = _previousCameraPosition;
@@ -114,73 +106,69 @@ static void WireframeManager::reset()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void WireframeManager::enable()
+secure void WireframeManager::enable()
 {
-	WireframeManager wireframeManager = WireframeManager::getInstance();
+	this->disabled = false;
 
-	wireframeManager->disabled = false;
-
-	VIPManager::registerEventListener
+	VIPManager::addEventListener
 	(
-		ListenerObject::safeCast(wireframeManager), (EventListener)WireframeManager::onVIPGAMESTART, 
+		VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)WireframeManager::onVIPGAMESTART, 
 		kEventVIPManagerGAMESTART
 	);
 
-	VIPManager::registerEventListener
+	VIPManager::addEventListener
 	(
-		ListenerObject::safeCast(wireframeManager), (EventListener)WireframeManager::onVIPXPEND, 
+		VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)WireframeManager::onVIPXPEND, 
 		kEventVIPManagerXPEND
 	);
 
-	VIPManager::registerEventListener
+	VIPManager::addEventListener
 	(
-		ListenerObject::safeCast(wireframeManager), (EventListener)WireframeManager::onVIPManagerGAMESTARTDuringXPEND, 
+		VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)WireframeManager::onVIPManagerGAMESTARTDuringXPEND, 
 		kEventVIPManagerGAMESTARTDuringXPEND
 	);
 
-	VIPManager::registerEventListener
+	VIPManager::addEventListener
 	(
-		ListenerObject::safeCast(wireframeManager), (EventListener)WireframeManager::onVIPManagerXPENDDuringGAMESTART, 
+		VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)WireframeManager::onVIPManagerXPENDDuringGAMESTART, 
 		kEventVIPManagerXPENDDuringGAMESTART
 	);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void WireframeManager::disable()
+secure void WireframeManager::disable()
 {
-	WireframeManager wireframeManager = WireframeManager::getInstance();
+	this->disabled = true;
 
-	wireframeManager->disabled = true;
-
-	VIPManager::unregisterEventListener
+	VIPManager::removeEventListener
 	(
-		ListenerObject::safeCast(wireframeManager), (EventListener)WireframeManager::onVIPGAMESTART, 
+		VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)WireframeManager::onVIPGAMESTART, 
 		kEventVIPManagerGAMESTARTDuringXPEND
 	);
 
-	VIPManager::unregisterEventListener
+	VIPManager::removeEventListener
 	(
-		ListenerObject::safeCast(wireframeManager), (EventListener)WireframeManager::onVIPXPEND, 
+		VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)WireframeManager::onVIPXPEND, 
 		kEventVIPManagerGAMESTARTDuringXPEND
 	);
 
-	VIPManager::unregisterEventListener
+	VIPManager::removeEventListener
 	(
-		ListenerObject::safeCast(wireframeManager), (EventListener)WireframeManager::onVIPManagerGAMESTARTDuringXPEND, 
+		VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)WireframeManager::onVIPManagerGAMESTARTDuringXPEND, 
 		kEventVIPManagerXPENDDuringGAMESTART
 	);
 
-	VIPManager::unregisterEventListener
+	VIPManager::removeEventListener
 	(
-		ListenerObject::safeCast(wireframeManager), (EventListener)WireframeManager::onVIPManagerXPENDDuringGAMESTART, 
+		VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)WireframeManager::onVIPManagerXPENDDuringGAMESTART, 
 		kEventVIPManagerGAMESTARTDuringXPEND
 	);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static Wireframe WireframeManager::createWireframe(Entity owner, const WireframeSpec* wireframeSpec)
+secure Wireframe WireframeManager::createWireframe(Entity owner, const WireframeSpec* wireframeSpec)
 {
 	if(NULL == wireframeSpec)
 	{
@@ -190,7 +178,7 @@ static Wireframe WireframeManager::createWireframe(Entity owner, const Wireframe
 	Wireframe wireframe = 
 		((Wireframe (*)(Entity, const WireframeSpec*))((ComponentSpec*)wireframeSpec)->allocator)(owner, wireframeSpec);
 
-	if(!isDeleted(wireframe) && WireframeManager::registerWireframe( wireframe))
+	if(!isDeleted(wireframe) && WireframeManager::registerWireframe(this, wireframe))
 	{
 		return wireframe;
 	}
@@ -200,7 +188,7 @@ static Wireframe WireframeManager::createWireframe(Entity owner, const Wireframe
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void WireframeManager::destroyWireframe(Wireframe wireframe)
+secure void WireframeManager::destroyWireframe(Wireframe wireframe)
 {
 	NM_ASSERT(!isDeleted(wireframe), "WireframeManager::destroyWireframe: trying to dispose dead wireframe");
 	ASSERT(__GET_CAST(Wireframe, wireframe), "WireframeManager::destroyWireframe: trying to dispose non wireframe");
@@ -210,7 +198,7 @@ static void WireframeManager::destroyWireframe(Wireframe wireframe)
 		return;
 	}
 
-	if(WireframeManager::unregisterWireframe(wireframe))
+	if(WireframeManager::unregisterWireframe(this, wireframe))
 	{
 		Wireframe::hide(wireframe);
 		delete wireframe;
@@ -223,10 +211,8 @@ static void WireframeManager::destroyWireframe(Wireframe wireframe)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static bool WireframeManager::registerWireframe(Wireframe wireframe)
+secure bool WireframeManager::registerWireframe(Wireframe wireframe)
 {
-	WireframeManager wireframeManager = WireframeManager::getInstance();
-
 	NM_ASSERT(!isDeleted(wireframe), "WireframeManager::registerWireframe: coudln't create wireframe");
 
 	if(isDeleted(wireframe))
@@ -234,9 +220,9 @@ static bool WireframeManager::registerWireframe(Wireframe wireframe)
 		return false;
 	}
 
-	if(!VirtualList::find(wireframeManager->components, wireframe))
+	if(!VirtualList::find(this->components, wireframe))
 	{
-		VirtualList::pushBack(wireframeManager->components, wireframe);
+		VirtualList::pushBack(this->components, wireframe);
 	}
 	else
 	{
@@ -248,10 +234,8 @@ static bool WireframeManager::registerWireframe(Wireframe wireframe)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static bool WireframeManager::unregisterWireframe(Wireframe wireframe)
+secure bool WireframeManager::unregisterWireframe(Wireframe wireframe)
 {
-	WireframeManager wireframeManager = WireframeManager::getInstance();
-
 	NM_ASSERT(!isDeleted(wireframe), "WireframeManager::createWireframe: coudln't create wireframe");
 
 	if(isDeleted(wireframe))
@@ -259,16 +243,14 @@ static bool WireframeManager::unregisterWireframe(Wireframe wireframe)
 		return false;
 	}
 
-	return VirtualList::removeData(wireframeManager->components, wireframe);
+	return VirtualList::removeData(this->components, wireframe);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void WireframeManager::render()
+secure void WireframeManager::render()
 {
-	WireframeManager wireframeManager = WireframeManager::getInstance();
-
-	if(NULL == wireframeManager->components->head)
+	if(NULL == this->components->head)
 	{
 		return;
 	}
@@ -276,16 +258,16 @@ static void WireframeManager::render()
 	_cameraDirection = Vector3D::rotate((Vector3D){0, 0, __1I_FIXED}, *_cameraRotation);
 
 #ifdef __PROFILE_WIREFRAMES
-	wireframeManager->renderedWireframes = 0;
+	this->renderedWireframes = 0;
 #endif
 
-	for(VirtualNode node = wireframeManager->components->head; !wireframeManager->stopRendering &&  NULL != node; node = node->next)
+	for(VirtualNode node = this->components->head; !this->stopRendering &&  NULL != node; node = node->next)
 	{
 		Wireframe wireframe = Wireframe::safeCast(node->data);
 
 		if
 		(
-			__HIDE == wireframe->show || (wireframe->transparency & wireframeManager->evenFrame) || 
+			__HIDE == wireframe->show || (wireframe->transparency & this->evenFrame) || 
 			__NON_TRANSFORMED == wireframe->transformation->invalid
 		)
 		{
@@ -307,16 +289,16 @@ static void WireframeManager::render()
 		wireframe->rendered = true;
 
 #ifdef __PROFILE_WIREFRAMES
-		wireframeManager->renderedWireframes++;
+		this->renderedWireframes++;
 #endif
 	}
 
 #ifdef __PROFILE_WIREFRAMES
-	WireframeManager::print(wireframeManager, 1, 1);
+	WireframeManager::print(this, 1, 1);
 #endif
 
 #ifdef __WIREFRAME_MANAGER_SORT_FOR_DRAWING
-	WireframeManager::sortProgressively(wireframeManager);
+	WireframeManager::sortProgressively(this);
 #endif
 
 	_previousCameraPosition = _previousCameraPositionBuffer;
@@ -328,20 +310,18 @@ static void WireframeManager::render()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void WireframeManager::draw()
+secure void WireframeManager::draw()
 {
-	WireframeManager wireframeManager = WireframeManager::getInstance();
-
-	if(wireframeManager->disabled || NULL == wireframeManager->components->head)
+	if(this->disabled || NULL == this->components->head)
 	{
 		return;
 	}
 
 #ifdef __PROFILE_WIREFRAMES
-	wireframeManager->drawnWireframes = 0;
+	this->drawnWireframes = 0;
 #endif
 
-	for(VirtualNode node = wireframeManager->components->head; !wireframeManager->stopDrawing && NULL != node; node = node->next)
+	for(VirtualNode node = this->components->head; !this->stopDrawing && NULL != node; node = node->next)
 	{
 		Wireframe wireframe = Wireframe::safeCast(node->data);
 
@@ -352,7 +332,7 @@ static void WireframeManager::draw()
 			continue;
 		}
 
-		if((__HIDE == wireframe->show) || (wireframe->transparency & wireframeManager->evenFrame))
+		if((__HIDE == wireframe->show) || (wireframe->transparency & this->evenFrame))
 		{
 			continue;
 		}
@@ -360,20 +340,18 @@ static void WireframeManager::draw()
 		wireframe->drawn = Wireframe::draw(wireframe);
 
 #ifdef __PROFILE_WIREFRAMES
-		wireframeManager->drawnWireframes++;
+		this->drawnWireframes++;
 #endif
 	}
 
-	wireframeManager->evenFrame = __TRANSPARENCY_EVEN == wireframeManager->evenFrame ? __TRANSPARENCY_ODD : __TRANSPARENCY_EVEN;
+	this->evenFrame = __TRANSPARENCY_EVEN == this->evenFrame ? __TRANSPARENCY_ODD : __TRANSPARENCY_EVEN;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void WireframeManager::showWireframes(Entity owner)
+void WireframeManager::showWireframes(Entity owner)
 {
-	WireframeManager wireframeManager = WireframeManager::getInstance();
-
-	for(VirtualNode node = wireframeManager->components->head; NULL != node; node = node->next)
+	for(VirtualNode node = this->components->head; NULL != node; node = node->next)
 	{
 		Wireframe wireframe = Wireframe::safeCast(node->data);
 
@@ -386,11 +364,9 @@ static void WireframeManager::showWireframes(Entity owner)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void WireframeManager::hideWireframes(Entity owner)
+void WireframeManager::hideWireframes(Entity owner)
 {
-	WireframeManager wireframeManager = WireframeManager::getInstance();
-
-	for(VirtualNode node = wireframeManager->components->head; NULL != node; node = node->next)
+	for(VirtualNode node = this->components->head; NULL != node; node = node->next)
 	{
 		Wireframe wireframe = Wireframe::safeCast(node->data);
 
@@ -403,11 +379,9 @@ static void WireframeManager::hideWireframes(Entity owner)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void WireframeManager::showAllWireframes()
+void WireframeManager::showAllWireframes()
 {
-	WireframeManager wireframeManager = WireframeManager::getInstance();
-
-	for(VirtualNode node = wireframeManager->components->head; NULL != node; node = node->next)
+	for(VirtualNode node = this->components->head; NULL != node; node = node->next)
 	{
 		Wireframe wireframe = Wireframe::safeCast(node->data);
 
@@ -417,11 +391,9 @@ static void WireframeManager::showAllWireframes()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void WireframeManager::hideAllWireframes()
+void WireframeManager::hideAllWireframes()
 {
-	WireframeManager wireframeManager = WireframeManager::getInstance();
-
-	for(VirtualNode node = wireframeManager->components->head; NULL != node; node = node->next)
+	for(VirtualNode node = this->components->head; NULL != node; node = node->next)
 	{
 		Wireframe wireframe = Wireframe::safeCast(node->data);
 
@@ -431,28 +403,24 @@ static void WireframeManager::hideAllWireframes()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static bool WireframeManager::hasWireframes()
+bool WireframeManager::hasWireframes()
 {
-	WireframeManager wireframeManager = WireframeManager::getInstance();
-
-	return NULL != wireframeManager->components && NULL != wireframeManager->components->head;
+	return NULL != this->components && NULL != this->components->head;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #ifndef __SHIPPING
-static void WireframeManager::print(int32 x, int32 y)
+void WireframeManager::print(int32 x, int32 y)
 {
-	WireframeManager wireframeManager = WireframeManager::getInstance();
-
 	Printing::text("WIREFRAME MANAGER", x, y++, NULL);
 	y++;
 	Printing::text("Wireframes:   ", x, y, NULL);
-	Printing::int32(VirtualList::getCount(wireframeManager->components), x + 12, y++, NULL);
+	Printing::int32(VirtualList::getCount(this->components), x + 12, y++, NULL);
 	Printing::text("Rendered:     ", x, y, NULL);
-	Printing::int32(wireframeManager->renderedWireframes, x + 12, y++, NULL);
+	Printing::int32(this->renderedWireframes, x + 12, y++, NULL);
 	Printing::text("Drawn:        ", x, y, NULL);
-	Printing::int32(wireframeManager->drawnWireframes, x + 12, y++, NULL);
+	Printing::int32(this->drawnWireframes, x + 12, y++, NULL);
 }
 #endif
 
@@ -464,22 +432,18 @@ static void WireframeManager::print(int32 x, int32 y)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void WireframeManager::sort()
+secure void WireframeManager::sort()
 {
-	WireframeManager wireframeManager = WireframeManager::getInstance();
-
-	while(WireframeManager::sortProgressively(wireframeManager));
+	while(WireframeManager::sortProgressively(this));
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static bool WireframeManager::sortProgressively()
+bool WireframeManager::sortProgressively()
 {
-	WireframeManager wireframeManager = WireframeManager::getInstance();
-
 	bool swapped = false;
 
-	for(VirtualNode node = wireframeManager->components->head; NULL != node && NULL != node->next; node = node->next)
+	for(VirtualNode node = this->components->head; NULL != node && NULL != node->next; node = node->next)
 	{
 		VirtualNode nextNode = node->next;
 
@@ -552,9 +516,9 @@ void WireframeManager::destructor()
 bool WireframeManager::onVIPGAMESTART(ListenerObject eventFirer __attribute__ ((unused)))
 {
 	this->stopRendering = false;
-	this->stopDrawing = kVIPManagerFavorPerformance == VIPManager::getDrawingStrategy();
+	this->stopDrawing = kVIPManagerFavorPerformance == VIPManager::getDrawingStrategy(VIPManager::getInstance());
 
-	WireframeManager::render();
+	WireframeManager::render(this);
 
 	this->stopDrawing = false;
 
@@ -566,10 +530,10 @@ bool WireframeManager::onVIPGAMESTART(ListenerObject eventFirer __attribute__ ((
 bool WireframeManager::onVIPXPEND(ListenerObject eventFirer __attribute__ ((unused)))
 {
 	this->stopDrawing = false;
-	this->stopRendering = kVIPManagerFavorPerformance == VIPManager::getDrawingStrategy();
+	this->stopRendering = kVIPManagerFavorPerformance == VIPManager::getDrawingStrategy(VIPManager::getInstance());
 
-	DirectDraw::preparteToDraw();
-	WireframeManager::draw();
+	DirectDraw::preparteToDraw(DirectDraw::getInstance());
+	WireframeManager::draw(this);
 
 	return true;
 }
@@ -578,7 +542,7 @@ bool WireframeManager::onVIPXPEND(ListenerObject eventFirer __attribute__ ((unus
 
 bool WireframeManager::onVIPManagerGAMESTARTDuringXPEND(ListenerObject eventFirer __attribute__ ((unused)))
 {
-	this->stopDrawing = kVIPManagerFavorPerformance == VIPManager::getDrawingStrategy();
+	this->stopDrawing = kVIPManagerFavorPerformance == VIPManager::getDrawingStrategy(VIPManager::getInstance());
 
 	return true;
 }
@@ -587,10 +551,10 @@ bool WireframeManager::onVIPManagerGAMESTARTDuringXPEND(ListenerObject eventFire
 
 bool WireframeManager::onVIPManagerXPENDDuringGAMESTART(ListenerObject eventFirer __attribute__ ((unused)))
 {
-	this->stopRendering = kVIPManagerFavorPerformance == VIPManager::getDrawingStrategy();
+	this->stopRendering = kVIPManagerFavorPerformance == VIPManager::getDrawingStrategy(VIPManager::getInstance());
 
-	DirectDraw::preparteToDraw();
-	WireframeManager::draw();
+	DirectDraw::preparteToDraw(DirectDraw::getInstance());
+	WireframeManager::draw(this);
 
 	return true;
 }

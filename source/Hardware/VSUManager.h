@@ -153,7 +153,7 @@ typedef struct VSUSoundSourceConfiguration
 /// Inherits from Object
 ///
 /// Manages the VSU.
-singleton! class VSUManager : Object
+singleton class VSUManager : Object
 {
 	/// @protectedsection
 
@@ -189,7 +189,7 @@ singleton! class VSUManager : Object
 
 	/// Play the allocated sounds.
 	/// @param elapsedMicroseconds: Elapsed time between call
-	static void playSounds(uint32 elapsedMicroseconds);
+	void playSounds(uint32 elapsedMicroseconds);
 
 	/// Apply a sound source configuration to a VSU sound source with the provided data.
 	/// @param vsuSoundSourceConfiguration: VSU sound source configuration
@@ -200,31 +200,31 @@ singleton! class VSUManager : Object
 	static void applyPCMSampleToSoundSource(int8 sample);
 
 	/// Reset the manager's state.
-	static void reset();
+	void reset();
 
 	/// Set the playback mode (stops any playing sound).
 	/// @param playbackMode: kPlaybackNative or kPlaybackPCM
-	static void setMode(uint32 playbackMode);
+	void setMode(uint32 playbackMode);
 
 	/// Update the manager.
-	static void update();
+	void update();
 
 	/// Stop all sound sources.
-	static void stopAllSounds();
+	void stopAllSounds();
 
 	/// Enable queueing petitions to play sounds.
-	static void enableQueue();
+	void enableQueue();
 
 	/// Disable queueing petitions to play sounds (if there are no
 	/// sound sources availables at the time of request, the petition
 	/// is ignored).
-	static void disableQueue();
+	void disableQueue();
 
 	/// Print the manager's status.
-	static void print(int32 x, int32 y);
+	void print(int32 x, int32 y);
 
 	/// Print waveforms.
-	static void printWaveFormStatus(int32 x, int32 y);
+	void printWaveFormStatus(int32 x, int32 y);
 }
 
 #endif

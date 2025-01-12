@@ -36,7 +36,7 @@ class PrintingSprite;
 #define PRINT_TIME(x, y)																					\
 	Printing::int32																							\
 	(																										\
-		TimerManager::getTotalElapsedMilliseconds(),														\
+		TimerManager::getTotalElapsedMilliseconds(TimerManager::getInstance(NULL)),							\
 		x,																									\
 		y,																									\
 		NULL																								\
@@ -176,7 +176,7 @@ typedef const FontData FontROMData;
 /// Inherits from ListenerObject
 ///
 /// Manages printing layer and offers various functions to write to it.
-singleton! class Printing : ListenerObject
+singleton class Printing : ListenerObject
 {
 	/// @protectedsection
 

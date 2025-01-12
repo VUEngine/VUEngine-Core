@@ -26,21 +26,21 @@
 /// Inherits from Texture
 ///
 /// Manages textures for OBJECT space.
-singleton! class ObjectTextureManager : Object
+singleton class ObjectTextureManager : Object
 {
 	/// @publicsection
 
 	/// Reset the manager's state.
-	static void reset();
+	void reset();
 
 	/// Retrieve a texture initialized with the provided spec.
 	/// @param objectTextureSpec: Spec to use to initilize the desired texture
 	/// @return Texture initialized with the provided spec
-	static ObjectTexture getTexture(ObjectTextureSpec* objectTextureSpec);
+	ObjectTexture getTexture(ObjectTextureSpec* objectTextureSpec);
 
 	/// Release a texture.
 	/// @param objectTexture: Texture to release
-	static void releaseTexture(ObjectTexture objectTexture);
+	void releaseTexture(ObjectTexture objectTexture);
 }
 
 #endif

@@ -32,25 +32,21 @@ friend class VirtualNode;
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void AnimationCoordinatorFactory::reset()
+void AnimationCoordinatorFactory::reset()
 {
-	AnimationCoordinatorFactory animationCoordinatorFactory = AnimationCoordinatorFactory::getInstance();
-
-	VirtualList::deleteData(animationCoordinatorFactory->animationCoordinators);
+	VirtualList::deleteData(this->animationCoordinators);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static AnimationCoordinator AnimationCoordinatorFactory::getCoordinator(AnimationController animationController, ListenerObject scope, const CharSetSpec* charSetSpec)
+AnimationCoordinator AnimationCoordinatorFactory::getCoordinator(AnimationController animationController, ListenerObject scope, const CharSetSpec* charSetSpec)
 {
-	AnimationCoordinatorFactory animationCoordinatorFactory = AnimationCoordinatorFactory::getInstance();
-
 	NM_ASSERT(NULL != charSetSpec, "AnimationCoordinatorFactory::getCoordinator: null charSetSpec");
 
 	if(NULL != charSetSpec && charSetSpec->shared)
 	{
 		// Try to find an already created coordinator
-		for(VirtualNode node = animationCoordinatorFactory->animationCoordinators->head; NULL != node; node = node->next)
+		for(VirtualNode node = this->animationCoordinators->head; NULL != node; node = node->next)
 		{
 			AnimationCoordinator animationCoordinator = AnimationCoordinator::safeCast(node->data);
 
@@ -66,7 +62,7 @@ static AnimationCoordinator AnimationCoordinatorFactory::getCoordinator(Animatio
 		// Create a new coordinator
 		AnimationCoordinator::addAnimationController(animationCoordinator, animationController);
 
-		VirtualList::pushBack(animationCoordinatorFactory->animationCoordinators, animationCoordinator);
+		VirtualList::pushBack(this->animationCoordinators, animationCoordinator);
 
 		return animationCoordinator;
 	}

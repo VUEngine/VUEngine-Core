@@ -72,13 +72,13 @@ static Texture Texture::get
 			(
 				BgmapTextureManager::getTexture
 				(
-					(BgmapTextureSpec*)textureSpec, minimumSegment, mustLiveAtEvenSegment, scValue
+					BgmapTextureManager::getInstance(), (BgmapTextureSpec*)textureSpec, minimumSegment, mustLiveAtEvenSegment, scValue
 				)
 			);
 	}
 	else if(typeofclass(ObjectTexture) == textureClass)
 	{
-		return Texture::safeCast(ObjectTextureManager::getTexture((ObjectTextureSpec*)textureSpec));
+		return Texture::safeCast(ObjectTextureManager::getTexture(ObjectTextureManager::getInstance(), (ObjectTextureSpec*)textureSpec));
 	}
 
 	return NULL;	
@@ -95,11 +95,11 @@ static void Texture::release(Texture texture)
 
 	if(__IS_INSTANCE_OF(BgmapTexture, texture))
 	{
-		BgmapTextureManager::releaseTexture(BgmapTexture::safeCast(texture));
+		BgmapTextureManager::releaseTexture(BgmapTextureManager::getInstance(), BgmapTexture::safeCast(texture));
 	}
 	else if(__IS_INSTANCE_OF(ObjectTexture, texture))
 	{
-		ObjectTextureManager::releaseTexture(ObjectTexture::safeCast(texture));
+		ObjectTextureManager::releaseTexture(ObjectTextureManager::getInstance(), ObjectTexture::safeCast(texture));
 	}
 }
 

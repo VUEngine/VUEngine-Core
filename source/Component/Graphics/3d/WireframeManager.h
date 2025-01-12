@@ -62,10 +62,6 @@ singleton class WireframeManager : ComponentManager
 
 	/// @publicsection
 
-	/// Method to retrieve the singleton instance
-	/// @return WireframeManager singleton
-	static WireframeManager getInstance();
-
 	/// Check if at least of the sprites that attach to the provided owner is visible.
 	/// @param owner: Object to which the sprites attach to
 	/// @return True if at least of the sprites that attach to the provided owner is visible
@@ -83,52 +79,52 @@ singleton class WireframeManager : ComponentManager
 	override void deinstantiateComponent(Entity owner, Wireframe wireframe);
 
 	/// Reset the manager's state.
-	static void reset();
+	void reset();
 
 	/// Enable wireframe rendering and drawing.
-	static void enable();
+	void enable();
 
 	/// Disable wireframe rendering and drawing.
-	static void disable();
+	void disable();
 
 	/// Register a wireframe to be managed
 	/// @param wireframe: Wireframe to be managed
 	/// @return True if the wireframe was successfully registered; false otherwise
-	static bool registerWireframe(Wireframe wireframe);
+	bool registerWireframe(Wireframe wireframe);
 
 	/// Unregister a wireframe to be managed
 	/// @param wireframe: Wireframe to no longer manage
 	/// @return True if the wireframe was successfully unregistered; false otherwise
-	static bool unregisterWireframe(Wireframe wireframe);
+	bool unregisterWireframe(Wireframe wireframe);
 
 	/// Prepare wireframe's graphical data for drawing
-	static void render();
+	void render();
 
 	/// Draw wireframes to the frame buffers
-	static void draw();
+	void draw();
 
 	/// Show all wireframes belonging to the provided owner.
 	/// @param owner: Object to which the wireframe will attach to
-	static void showWireframes(Entity owner);
+	void showWireframes(Entity owner);
 
 	/// Hide all wireframes belonging to the provided owner.
 	/// @param owner: Object to which the wireframe will attach to
-	static void hideWireframes(Entity owner);
+	void hideWireframes(Entity owner);
 
 	/// Show all wireframes.
-	static void showAllWireframes();
+	void showAllWireframes();
 	
 	/// Hide all wireframes.
-	static void hideAllWireframes();
+	void hideAllWireframes();
 
 	/// Check if there are any registered wireframes.
 	/// @return True if there are any registered wireframes; false otherwise
-	static bool hasWireframes();	
+	bool hasWireframes();	
 
 	/// Print the manager's state.
 	/// @param x: Screen x coordinate where to print
 	/// @param y: Screen y coordinate where to print
-	static void print(int32 x, int32 y);
+	void print(int32 x, int32 y);
 }
 
 #endif

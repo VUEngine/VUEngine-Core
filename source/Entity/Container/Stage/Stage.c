@@ -207,7 +207,7 @@ void Stage::destructor()
 void Stage::suspend()
 {
 	// Save the camera position for resume reconfiguration
-	this->cameraTransformation = Camera::getTransformation();
+	this->cameraTransformation = Camera::getTransformation(Camera::getInstance());
 
 	// Stream all pending actors to avoid having manually recover
 	// The stage actor registries
@@ -218,15 +218,15 @@ void Stage::suspend()
 	// Relinquish camera focus priority
 	if(!isDeleted(this->focusActor))
 	{
-		if(this->focusActor == Camera::getFocusActor())
+		if(this->focusActor == Camera::getFocusActor(Camera::getInstance()))
 		{
 			// Relinquish focus actor
-			Camera::setFocusActor(NULL);
+			Camera::setFocusActor(Camera::getInstance(), NULL);
 		}
 	}
 	else
 	{
-		Stage::setFocusActor(this, Camera::getFocusActor());
+		Stage::setFocusActor(this, Camera::getFocusActor(Camera::getInstance()));
 	}
 
 	delete this->actorFactory;
@@ -246,7 +246,7 @@ void Stage::resume()
 	if(!isDeleted(this->focusActor))
 	{
 		// Recover focus actor
-		Camera::setFocusActor(Actor::safeCast(this->focusActor));
+		Camera::setFocusActor(Camera::getInstance(), Actor::safeCast(this->focusActor));
 	}
 
 	Base::resume(this);
@@ -267,7 +267,7 @@ StageSpec* Stage::getSpec()
 
 void Stage::configurePalettes()
 {
-	VIPManager::configurePalettes(&this->stageSpec->rendering.paletteConfig);
+	VIPManager::configurePalettes(VIPManager::getInstance(), &this->stageSpec->rendering.paletteConfig);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -605,7 +605,7 @@ void Stage::configure(VirtualList positionedActorsToIgnore)
 	Stage::loadInitialActors(this);
 
 	// Retrieve focus actor for streaming
-	Stage::setFocusActor(this, Camera::getFocusActor());
+	Stage::setFocusActor(this, Camera::getFocusActor(Camera::getInstance()));
 
 	// Apply transformations
 	Stage::transform(this, &_neutralEnvironmentTransformation, __INVALIDATE_TRANSFORMATION);
@@ -1049,7 +1049,7 @@ void Stage::configureTimer()
 {
 	TimerManager::configure
 	(
-		this->stageSpec->timer.resolution, this->stageSpec->timer.targetTimePerInterrupt, 
+		TimerManager::getInstance(), this->stageSpec->timer.resolution, this->stageSpec->timer.targetTimePerInterrupt, 
 		this->stageSpec->timer.targetTimePerInterrupttUnits
 	);
 }
@@ -1060,20 +1060,23 @@ void Stage::configureCamera(bool reset)
 {
 	if(reset)
 	{
-		Camera::reset();
+		Camera::reset(Camera::getInstance());
 	}
 
-	Camera::setStageSize(Size::getFromPixelSize(this->stageSpec->level.pixelSize));
-	Camera::setTransformation(this->cameraTransformation, true);
-	Camera::setup(this->stageSpec->rendering.pixelOptical, this->stageSpec->level.cameraFrustum);
+	Camera::setStageSize(Camera::getInstance(), Size::getFromPixelSize(this->stageSpec->level.pixelSize));
+	Camera::setTransformation(Camera::getInstance(), this->cameraTransformation, true);
+	Camera::setup(Camera::getInstance(), this->stageSpec->rendering.pixelOptical, this->stageSpec->level.cameraFrustum);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Stage::configureGraphics()
 {
+		SpriteManager		spriteManager = SpriteManager::getInstance();
+
 	SpriteManager::configure
 	(
+		spriteManager,
 		this->stageSpec->rendering.texturesMaximumRowsToWrite,
 		this->stageSpec->rendering.maximumAffineRowsToComputePerCall,
 		this->stageSpec->rendering.objectSpritesContainersSize,
@@ -1083,6 +1086,7 @@ void Stage::configureGraphics()
 
 	VIPManager::configure
 	(
+		VIPManager::getInstance(), 
 		this->stageSpec->rendering.colorConfig.backgroundColor,
 		&this->stageSpec->rendering.colorConfig.brightness,
 		this->stageSpec->rendering.colorConfig.brightnessRepeat,
@@ -1092,25 +1096,29 @@ void Stage::configureGraphics()
 
 	BgmapTextureManager::configure
 	(
-		ParamTableManager::configure(this->stageSpec->rendering.paramTableSegments)
+		BgmapTextureManager::getInstance(), ParamTableManager::configure(ParamTableManager::getInstance(), this->stageSpec->rendering.paramTableSegments)
 	);
 
 	Printing::loadFonts(this->stageSpec->assets.fontSpecs);
-	CharSetManager::loadCharSets((const CharSetSpec**)this->stageSpec->assets.charSetSpecs);
-	BgmapTextureManager::loadTextures((const TextureSpec**)this->stageSpec->assets.textureSpecs, true);
+	CharSetManager::loadCharSets(CharSetManager::getInstance(), (const CharSetSpec**)this->stageSpec->assets.charSetSpecs);
+	
+	BgmapTextureManager::loadTextures
+	(
+		BgmapTextureManager::getInstance(), (const TextureSpec**)this->stageSpec->assets.textureSpecs, true
+	);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Stage::configureSounds()
 {
-	SoundManager::unlock();
-	SoundManager::setPCMTargetPlaybackRefreshRate(this->stageSpec->sound.pcmTargetPlaybackRefreshRate);
+	SoundManager::unlock(SoundManager::getInstance());
+	SoundManager::setPCMTargetPlaybackRefreshRate(SoundManager::getInstance(), this->stageSpec->sound.pcmTargetPlaybackRefreshRate);
 
 	int32 i = 0;
 
 	// Stop all sounds
-	SoundManager::stopAllSounds(true, this->stageSpec->assets.sounds);
+	SoundManager::stopAllSounds(SoundManager::getInstance(), true, this->stageSpec->assets.sounds);
 
 	for(; NULL != this->stageSpec->assets.sounds[i]; i++)
 	{
@@ -1264,9 +1272,9 @@ bool Stage::onFocusActorDeleted(ListenerObject eventFirer __attribute__ ((unused
 {
 	if(!isDeleted(this->focusActor) && ListenerObject::safeCast(this->focusActor) == eventFirer)
 	{
-		if(this->focusActor == Camera::getFocusActor())
+		if(this->focusActor == Camera::getFocusActor(Camera::getInstance()))
 		{
-			Camera::setFocusActor(NULL);
+			Camera::setFocusActor(Camera::getInstance(), NULL);
 		}
 	}
 

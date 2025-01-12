@@ -10,7 +10,7 @@ clean_up() {
 #	sed -i.b 's/<START_BLOCK>//g' $OUTPUT_FILE
 #	sed -i.b 's/,<Â·>/,\'$'\n/g' $OUTPUT_FILE
 	
-	sed -i.b 's/<%>//g; s/<[%]*DECLARATION>[ 	]*static[ 	][ 	]*/ /g; s/<[%]*DECLARATION>//g; s/!DECLARATION_MIDDLE!//g; s#\([A-Z][A-z0-9]*\)::\([a-z][A-z0-9]*\)#\1_\2#g; s/<START_BLOCK>//g; s/,<Â·>/,\'$'\n/g;' $OUTPUT_FILE 
+	sed -i.b 's/<%>//g; s/<[%]*DECLARATION>[ 	]*\(static\|secure\)[ 	][ 	]*/ /g; s/<[%]*DECLARATION>//g; s/!DECLARATION_MIDDLE!//g; s#\([A-Z][A-z0-9]*\)::\([a-z][A-z0-9]*\)#\1_\2#g; s/<START_BLOCK>//g; s/,<Â·>/,\'$'\n/g;' $OUTPUT_FILE 
 	
 	# Replace casts
 	sed -i.b 's/\([A-Z][A-z0-9]*\)_safeCast[ 	]*(/__SAFE_CAST(\1, /g' $OUTPUT_FILE 
@@ -21,6 +21,7 @@ clean_up() {
 	sed -i.b -z 's/(<NEW_LINE>/\n(/g'  $OUTPUT_FILE
 	sed -i.b -z 's/<NEW_LINE>/\n/g'  $OUTPUT_FILE
 	sed -i.b -e 's/<STATIC>//g'  $OUTPUT_FILE
+	sed -i.b -e 's/<SECURE>//g'  $OUTPUT_FILE
 
 #	rm -f $OUTPUT_FILE"-e"
 }
@@ -109,7 +110,7 @@ fi
 if [ -z "$className" ];
 then
 	# Maybe it is a static class
-	className=`grep -o -m 1 -e '^static[ 	]*.*[ 	][ 	]*[A-Z][A-z0-9]*[ 	]*::[ 	]*[a-z][A-z0-9]*[ 	]*(' $OUTPUT_FILE | sed -e 's/^.*[ 	][ 	]*\([A-Z][A-z0-9]*\)[ 	]*::.*/\1/'`
+	className=`grep -o -m 1 -e '^\(static\|secure\)[ 	]*.*[ 	][ 	]*[A-Z][A-z0-9]*[ 	]*::[ 	]*[a-z][A-z0-9]*[ 	]*(' $OUTPUT_FILE | sed -e 's/^.*[ 	][ 	]*\([A-Z][A-z0-9]*\)[ 	]*::.*/\1/'`
 
 	if [ -z "$className" ];
 	then
@@ -137,14 +138,21 @@ awk '{if ($0 ~ "<Â·>") printf "%s ", $0; else print;}' $OUTPUT_FILE > $OUTPUT_
 sed -i.b 's/.*static.*/&<%>/g' $OUTPUT_FILE 
 echo >> $OUTPUT_FILE
 
+# Identify secure declarations
+sed -i.b 's/^secure[ 	].*/&<#>/g' $OUTPUT_FILE 
+echo >> $OUTPUT_FILE
+
 # Find method declarations
 sed -e 's/.*/'"$mark"'&/g' $OUTPUT_FILE | tr -d "\r\n" | sed -e 's/'"$mark"'\([ 	]*[A-z0-9_ 	]*[A-z0-9_\*][A-z0-9_\*]*[ 	][ 	]*'"$className"'\)[ 	]*::\([ 	]*[a-z][A-z0-9]*[ 	]*\)\(([^{}]*{[ 	]*<START_BLOCK>\)/'"$mark"'<DECLARATION>\1!DECLARATION_MIDDLE!_\2\3<method>\2<%method><%DECLARATION>/g' > $OUTPUT_FILE.tmp  && mv -f $OUTPUT_FILE.tmp $OUTPUT_FILE
 
 # Clean methods with no parameters declarations
 sed -i.b 's/\(<DECLARATION>[^<]*\)<%>\([^{]*\)@N@{/\1@N@\2<%>{/g; s/\(!DECLARATION_MIDDLE!_[^(]*\)(\([^%{]*{\)/\1(void* _this '"__attribute__((unused))"', \2/g; s/,[ 	]*)/)/g' $OUTPUT_FILE 
 
-# Mark startin blocks of static methods
+# Mark starting blocks of static methods
 sed -i.b 's/\(<%>[^;!]*\?{\)\(<START_BLOCK><method>\)/\1<STATIC>\2/g' $OUTPUT_FILE
+
+# Mark starting blocks of static methods
+sed -i.b 's/<#>\([^;!]*\?{\)\(<START_BLOCK><method>\)/\1<SECURE>\2/g' $OUTPUT_FILE
 
 # Put back line breaks
 sed -e 's/'"$mark"'/\'$'\n/g' $OUTPUT_FILE > $OUTPUT_FILE.tmp
@@ -159,7 +167,7 @@ rm -f $OUTPUT_FILE.tmp
 # Replace :: by _
 sed -i.b 's#\([A-Z][A-z0-9]*\)::\([a-z][A-z0-9]*\)#\1_\2#g' $OUTPUT_FILE 
 
-prototypes=`sed -e 's/<DECLARATION>/\'$'\n<DECLARATION>/g' $OUTPUT_FILE | sed -e 's/<%DECLARATION>/<%DECLARATION>\'$'\n/g' | grep "DECLARATION>" | sed -e 's/<[%]*DECLARATION>//g' | sed -e 's/{<START_BLOCK>.*<method>.*<%method>/;/g' | sed -e 's/{<STATIC><START_BLOCK>.*<method>.*<%method>/;/g' |sed  -e 's/'"$mark"'//g' |sed  -e 's/<%>//g' | tr -d "\r\n" | sed -e 's/\([^A-z0-9]*\)static[ 	]/\1 /g'`
+prototypes=`sed -e 's/<DECLARATION>/\'$'\n<DECLARATION>/g' $OUTPUT_FILE | sed -e 's/<%DECLARATION>/<%DECLARATION>\'$'\n/g' | grep "DECLARATION>" | sed -e 's/<[%]*DECLARATION>//g' | sed -e 's/{<START_BLOCK>.*<method>.*<%method>/;/g' | sed -e 's/{<\(STATIC\|SECURE\)><START_BLOCK>.*<method>.*<%method>/;/g' |sed  -e 's/'"$mark"'//g' |sed  -e 's/<%>//g' | tr -d "\r\n" | sed -e 's/\([^A-z0-9]*\)\(static\|secure\)[ 	]/\1 /g'`
 
 # Put back line breaks
 sed -i.b 's/'"$mark"'/\'$'\n/g' $OUTPUT_FILE 
@@ -169,7 +177,10 @@ tail -n +2 $OUTPUT_FILE > $OUTPUT_FILE.tmp
 mv $OUTPUT_FILE.tmp $OUTPUT_FILE
 
 # Inject this pointer
-sed -i.b 's/<%>[ 	]*{[ 	]*<START_BLOCK>/{/g; s/{[ 	]*<START_BLOCK>\(.*\)<method>\(.*\)<%method><%DECLARATION>/{__CHECK_STACK_STATUS NM_ASSERT(!isDeleted(_this), "'"$className"'::\2: null this"); '"$className"' this '"__attribute__((unused))"' = __SAFE_CAST('"$className"' , _this); ASSERT(!isDeleted(this), "'"$className"'::\2: this failed the cast");\1/g' $OUTPUT_FILE
+sed -i.b 's/<%>[ 	]*{[ 	]*<START_BLOCK>/{/g;' $OUTPUT_FILE
+sed -i.b 's/{[ 	]*<SECURE>[ 	]*<START_BLOCK>/{<START_SECURE_BLOCK>/g;' $OUTPUT_FILE
+sed -i.b 's/{[ 	]*<START_BLOCK>\(.*\)<method>\(.*\)<%method><%DECLARATION>/{__CHECK_STACK_STATUS NM_ASSERT(!isDeleted(_this), "'"$className"'::\2: null this"); '"$className"' this '"__attribute__((unused))"' = __SAFE_CAST('"$className"' , _this); ASSERT(!isDeleted(this), "'"$className"'::\2: this failed the cast");\1/g' $OUTPUT_FILE
+sed -i.b 's/{[ 	]*<START_SECURE_BLOCK>\(.*\)<method>\(.*\)<%method><%DECLARATION>/{__CHECK_STACK_STATUS NM_ASSERT(!isDeleted(_this), "'"$className"'::\2: null this"); '"$className"' this '"__attribute__((unused))"' = __SAFE_CAST('"$className"' , _this); ASSERT(!isDeleted(this), "'"$className"'::\2: this failed the cast"); NM_ASSERT(_authorized, "'"$className"'::\2: unauthorized access");\1/g' $OUTPUT_FILE
 
 firstMethodDeclarationLine=`grep -m1 -n -e "^<DECLARATION>" $OUTPUT_FILE | cut -d ":" -f1`
 
@@ -186,6 +197,7 @@ fileName=$className
 
 if [ -z "$className" ];
 then
+
 	clean_up
 	if [ -z "${INPUT_FILE##*source*}" ];
 	then
@@ -197,7 +209,11 @@ then
 		fi
 	fi
 
+	sed -i 's/getInstance()/getInstance(NULL)/g' $OUTPUT_FILE
+
 	echo "Compiling file: $fileName"
+else
+	sed -i 's/getInstance(/getInstance((ClassPointer)\&'"$className"'_getBaseClass/g' $OUTPUT_FILE
 fi
 
 if [ ! -s $OUTPUT_FILE ];
@@ -354,7 +370,7 @@ then
 fi
 
 # clean up
-sed -i.b 's/<%>//g; s/<[%]*DECLARATION>[ 	]*static[ 	][ 	]*/ /g; s/<[%]*DECLARATION>//g; s/<START_BLOCK>//g; s/<method>.*<%method>//g' $OUTPUT_FILE 
+sed -i.b 's/<%>//g; s/<[%]*DECLARATION>[ 	]*\(static\|secure\)[ 	][ 	]*/ /g; s/<[%]*DECLARATION>//g; s/<START_BLOCK>//g; s/<method>.*<%method>//g' $OUTPUT_FILE 
 
 classModifiers=`grep -m1 -e "^$className:" $CLASSES_HIERARCHY_FILE | sed -e 's/^.*::\(.*\)/\1/g'`
 
@@ -398,8 +414,6 @@ then
 			if [ -z "${classModifiers##*singleton*}" ];
 			then
 
-#				sed -i '1s/^/#include <Authenticator.h>\n/' $OUTPUT_FILE
-
 				customSingletonDefinition=`grep -o -e '#define[ 	][ 	]*.*SINGLETON.*(' $OUTPUT_FILE`
 
 				if [ -z "$customSingletonDefinition" ];
@@ -408,11 +422,11 @@ then
 					then
 						classDefinition=$classDefinition"__SINGLETON_DYNAMIC($className);"
 					else
-						if [ -z "${classModifiers##*singleton! *}" ];
+						if [ -z "${className##*MemoryPool*}" ];
 						then
-							classDefinition=$classDefinition"__SINGLETON($className, static);"
+							classDefinition=$classDefinition"__SINGLETON($className, __MEMORY_POOL_SECTION_ATTRIBUTE);"
 						else
-							classDefinition=$classDefinition"__SINGLETON($className);"
+							classDefinition=$classDefinition"__SINGLETON($className, __STATIC_SINGLETONS_DATA_SECTION_ATTRIBUTE);"
 						fi
 					fi
 				else
@@ -425,7 +439,7 @@ then
 			fi
 		fi
 	else
-		classDefinition="$prototypes"
+		classDefinition="__CLASS_FUNDAMENTAL_DEFINITION($className, $baseClassName) $prototypes"
 	fi
 else
 	classDefinition="$prototypes"
@@ -495,6 +509,12 @@ if [ ! -s $OUTPUT_FILE ];
 then
 	echo " error (10): could not processess file $OUTPUT_FILE"
 	exit 0
+fi
+
+if [ -z "${classModifiers##*singleton*}" ];
+then
+
+	sed -i '1s/^/#include <Authenticator.h>\n/' $OUTPUT_FILE
 fi
 
 rm -f $OUTPUT_FILE"-e"

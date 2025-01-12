@@ -4,7 +4,7 @@
  * © Jorge Eremiev <jorgech3@gmail.com> and Christian Radke <c.radke@posteo.de>
  *
  * For the full copyright and license information, please view the LICENSE file
- * that was distributed with bgmapTextureManager source code.
+ * that was distributed with this source code.
  */
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -34,95 +34,87 @@ friend class VirtualNode;
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void BgmapTextureManager::reset()
+secure void BgmapTextureManager::reset()
 {
-	BgmapTextureManager bgmapTextureManager = BgmapTextureManager::getInstance();
-
 	NM_ASSERT(__BGMAP_SPACE_BASE_ADDRESS < __PARAM_TABLE_END, "BgmapTextureManager::reset: bgmap address space is negative");
 
-	VirtualList::deleteData(bgmapTextureManager->bgmapTextures);
+	VirtualList::deleteData(this->bgmapTextures);
 
-	bgmapTextureManager->availableBgmapSegmentsForTextures = (uint32)((__PARAM_TABLE_END - __BGMAP_SPACE_BASE_ADDRESS) / __BGMAP_SEGMENT_SIZE);
+	this->availableBgmapSegmentsForTextures = (uint32)((__PARAM_TABLE_END - __BGMAP_SPACE_BASE_ADDRESS) / __BGMAP_SEGMENT_SIZE);
 
-	if(bgmapTextureManager->availableBgmapSegmentsForTextures > __MAX_NUMBER_OF_BGMAPS_SEGMENTS)
+	if(this->availableBgmapSegmentsForTextures > __MAX_NUMBER_OF_BGMAPS_SEGMENTS)
 	{
-		bgmapTextureManager->availableBgmapSegmentsForTextures = __MAX_NUMBER_OF_BGMAPS_SEGMENTS;
+		this->availableBgmapSegmentsForTextures = __MAX_NUMBER_OF_BGMAPS_SEGMENTS;
 	}
 
-	bgmapTextureManager->printingBgmapSegment = bgmapTextureManager->availableBgmapSegmentsForTextures - 1;
+	this->printingBgmapSegment = this->availableBgmapSegmentsForTextures - 1;
 
 	// Clear each bgmap segment usage
 	for(int32 i = 0; i < __MAX_NUMBER_OF_BGMAPS_SEGMENTS; i++)
 	{
-		bgmapTextureManager->usedTiles[i] = 0;
+		this->usedTiles[i] = 0;
 
 		// Clear the offsets
 		for(int32 j = 0; j <__NUM_BGMAPS_PER_SEGMENT; j++)
 		{
-			bgmapTextureManager->xOffset[i][j] = 0;
-			bgmapTextureManager->yOffset[i][j] = 0;
+			this->xOffset[i][j] = 0;
+			this->yOffset[i][j] = 0;
 		}
 	}
 
 	for(int32 i = 0; i < __MAX_NUMBER_OF_BGMAPS_SEGMENTS * __NUM_BGMAPS_PER_SEGMENT; i++)
 	{
-		bgmapTextureManager->offset[i][kXOffset] = -1;
-		bgmapTextureManager->offset[i][kYOffset] = -1;
-		bgmapTextureManager->offset[i][kCols] = 0;
-		bgmapTextureManager->offset[i][kRows] = 0;
+		this->offset[i][kXOffset] = -1;
+		this->offset[i][kYOffset] = -1;
+		this->offset[i][kCols] = 0;
+		this->offset[i][kRows] = 0;
 	}
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void BgmapTextureManager::clearBgmapSegment(int32 segment)
+void BgmapTextureManager::clearBgmapSegment(int32 segment)
 {
 	Mem::clear((BYTE*)__BGMAP_SEGMENT(segment), 64 * 64 * 2);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void BgmapTextureManager::configure(uint32 paramTableBase)
+secure void BgmapTextureManager::configure(uint32 paramTableBase)
 {
-	BgmapTextureManager bgmapTextureManager = BgmapTextureManager::getInstance();
+	this->availableBgmapSegmentsForTextures = (uint32)((paramTableBase - __BGMAP_SPACE_BASE_ADDRESS) / __BGMAP_SEGMENT_SIZE);
 
-	bgmapTextureManager->availableBgmapSegmentsForTextures = (uint32)((paramTableBase - __BGMAP_SPACE_BASE_ADDRESS) / __BGMAP_SEGMENT_SIZE);
-
-	if(bgmapTextureManager->availableBgmapSegmentsForTextures > __MAX_NUMBER_OF_BGMAPS_SEGMENTS)
+	if(this->availableBgmapSegmentsForTextures > __MAX_NUMBER_OF_BGMAPS_SEGMENTS)
 	{
-		bgmapTextureManager->availableBgmapSegmentsForTextures = __MAX_NUMBER_OF_BGMAPS_SEGMENTS;
+		this->availableBgmapSegmentsForTextures = __MAX_NUMBER_OF_BGMAPS_SEGMENTS;
 	}
 
-	bgmapTextureManager->printingBgmapSegment = bgmapTextureManager->availableBgmapSegmentsForTextures - 1;
+	this->printingBgmapSegment = this->availableBgmapSegmentsForTextures - 1;
 
-	Printing::setPrintingBgmapSegment(bgmapTextureManager->printingBgmapSegment);
+	Printing::setPrintingBgmapSegment(this->printingBgmapSegment);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static int8 BgmapTextureManager::getAvailableBgmapSegmentsForTextures()
+int8 BgmapTextureManager::getAvailableBgmapSegmentsForTextures()
 {
-	BgmapTextureManager bgmapTextureManager = BgmapTextureManager::getInstance();
-
-	return bgmapTextureManager->availableBgmapSegmentsForTextures;
+	return this->availableBgmapSegmentsForTextures;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static int8 BgmapTextureManager::getPrintingBgmapSegment()
+int8 BgmapTextureManager::getPrintingBgmapSegment()
 {
-	BgmapTextureManager bgmapTextureManager = BgmapTextureManager::getInstance();
-
-	return bgmapTextureManager->printingBgmapSegment;
+	return this->printingBgmapSegment;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void BgmapTextureManager::loadTextures(const TextureSpec** textureSpecs, bool removeOldTextures)
+secure void BgmapTextureManager::loadTextures(const TextureSpec** textureSpecs, bool removeOldTextures)
 {
 	if(removeOldTextures)
 	{
-		BgmapTextureManager::reset();
+		BgmapTextureManager::reset(this);
 	}
 
 	// Textures
@@ -180,7 +172,7 @@ static void BgmapTextureManager::loadTextures(const TextureSpec** textureSpecs, 
 		{
 			TextureSpec* textureSpec = (TextureSpec*)node->data;
 
-			BgmapTexture bgmapTexture = BgmapTextureManager::getTexture(textureSpec, 0, false, __WORLD_1x1);
+			BgmapTexture bgmapTexture = BgmapTextureManager::getTexture(this, textureSpec, 0, false, __WORLD_1x1);
 
 			NM_ASSERT(!isDeleted(bgmapTexture), "BgmapTextureManager::loadTextures: failed to load bgmapTexture");
 			VirtualList::pushBack(preloadedTextures, bgmapTexture);
@@ -190,7 +182,7 @@ static void BgmapTextureManager::loadTextures(const TextureSpec** textureSpecs, 
 
 		for(VirtualNode node = VirtualList::begin(preloadedTextures); NULL != node; node = node->next)
 		{
-			BgmapTextureManager::releaseTexture(BgmapTexture::safeCast(node->data));
+			BgmapTextureManager::releaseTexture(this, BgmapTexture::safeCast(node->data));
 		}
 
 		delete preloadedTextures;
@@ -199,7 +191,7 @@ static void BgmapTextureManager::loadTextures(const TextureSpec** textureSpecs, 
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static BgmapTexture BgmapTextureManager::getTexture
+secure BgmapTexture BgmapTextureManager::getTexture
 (
 	BgmapTextureSpec* bgmapTextureSpec, int16 minimumSegment, bool mustLiveAtEvenSegment, uint32 scValue
 )
@@ -214,7 +206,7 @@ static BgmapTexture BgmapTextureManager::getTexture
 
 	if(NULL == bgmapTextureSpec->charSetSpec)
 	{
-		bgmapTexture = BgmapTextureManager::allocateTexture(bgmapTextureSpec, minimumSegment, mustLiveAtEvenSegment, scValue);
+		bgmapTexture = BgmapTextureManager::allocateTexture(this, bgmapTextureSpec, minimumSegment, mustLiveAtEvenSegment, scValue);
 
 		ASSERT(!isDeleted(bgmapTexture), "BgmapTextureManager::getTexture: (animated) texture no allocated");
 	}
@@ -224,7 +216,7 @@ static BgmapTexture BgmapTextureManager::getTexture
 		{
 			if(bgmapTextureSpec->recyclable)
 			{
-				bgmapTexture = BgmapTextureManager::findTexture(bgmapTextureSpec, true);
+				bgmapTexture = BgmapTextureManager::findTexture(this, bgmapTextureSpec, true);
 			}
 			
 			if(NULL != bgmapTexture)
@@ -235,7 +227,7 @@ static BgmapTexture BgmapTextureManager::getTexture
 			{
 				// Load a new texture
 				bgmapTexture = 
-					BgmapTextureManager::allocateTexture(bgmapTextureSpec, minimumSegment, mustLiveAtEvenSegment, scValue);
+					BgmapTextureManager::allocateTexture(this, bgmapTextureSpec, minimumSegment, mustLiveAtEvenSegment, scValue);
 			}
 
 			ASSERT(bgmapTexture, "BgmapTextureManager::getTexture: (animated) texture no allocated");
@@ -243,7 +235,7 @@ static BgmapTexture BgmapTextureManager::getTexture
 		else
 		{
 			// First try to find an already created texture
-			bgmapTexture = BgmapTextureManager::findTexture(bgmapTextureSpec, false);
+			bgmapTexture = BgmapTextureManager::findTexture(this, bgmapTextureSpec, false);
 
 			// If couldn't find the texture
 			if(NULL != bgmapTexture)
@@ -254,7 +246,7 @@ static BgmapTexture BgmapTextureManager::getTexture
 			{
 				// Load it
 				bgmapTexture = 
-					BgmapTextureManager::allocateTexture(bgmapTextureSpec, minimumSegment, mustLiveAtEvenSegment, scValue);
+					BgmapTextureManager::allocateTexture(this, bgmapTextureSpec, minimumSegment, mustLiveAtEvenSegment, scValue);
 			}
 
 			ASSERT(!isDeleted(bgmapTexture), "BgmapTextureManager::getTexture: (shared) texture no allocated");
@@ -271,7 +263,7 @@ static BgmapTexture BgmapTextureManager::getTexture
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void BgmapTextureManager::releaseTexture(BgmapTexture bgmapTexture)
+secure void BgmapTextureManager::releaseTexture(BgmapTexture bgmapTexture)
 {
 	if(!isDeleted(bgmapTexture))
 	{
@@ -281,36 +273,30 @@ static void BgmapTextureManager::releaseTexture(BgmapTexture bgmapTexture)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static int16 BgmapTextureManager::getXOffset(int32 id)
+int16 BgmapTextureManager::getXOffset(int32 id)
 {
-	BgmapTextureManager bgmapTextureManager = BgmapTextureManager::getInstance();
-
-	return bgmapTextureManager->offset[id][kXOffset];
+	return this->offset[id][kXOffset];
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static int16 BgmapTextureManager::getYOffset(int32 id)
+int16 BgmapTextureManager::getYOffset(int32 id)
 {
-	BgmapTextureManager bgmapTextureManager = BgmapTextureManager::getInstance();
-
-	return bgmapTextureManager->offset[id][kYOffset];
+	return this->offset[id][kYOffset];
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #ifndef __SHIPPING
-static void BgmapTextureManager::print(int32 x, int32 y)
+void BgmapTextureManager::print(int32 x, int32 y)
 {
-	BgmapTextureManager bgmapTextureManager = BgmapTextureManager::getInstance();
-
 	Printing::text("BGMAP TEXTURES USAGE", x, y++, NULL);
 	Printing::text("Segments for textures: ", x, ++y, NULL);
-	Printing::int32(BgmapTextureManager::getAvailableBgmapSegmentsForTextures(bgmapTextureManager), x + 23, y, NULL);
+	Printing::int32(BgmapTextureManager::getAvailableBgmapSegmentsForTextures(this), x + 23, y, NULL);
 	Printing::text("Printing segment: ", x, ++y, NULL);
-	Printing::int32(BgmapTextureManager::getPrintingBgmapSegment(bgmapTextureManager), x + 23, y, NULL);
+	Printing::int32(BgmapTextureManager::getPrintingBgmapSegment(this), x + 23, y, NULL);
 	Printing::text("Textures count: ", x, ++y, NULL);
-	Printing::int32(VirtualList::getCount(bgmapTextureManager->bgmapTextures), x + 23, y, NULL);
+	Printing::int32(VirtualList::getCount(this->bgmapTextures), x + 23, y, NULL);
 
 	y++;
 	y++;
@@ -331,7 +317,7 @@ static void BgmapTextureManager::print(int32 x, int32 y)
 	int32 freeEntries = 0;
 
 	// Try to find a texture with the same bgmap spec
-	for(VirtualNode node = bgmapTextureManager->bgmapTextures->head; NULL != node; node = node->next)
+	for(VirtualNode node = this->bgmapTextures->head; NULL != node; node = node->next)
 	{
 		BgmapTexture bgmapTexture = BgmapTexture::safeCast(node->data);
 
@@ -372,17 +358,15 @@ static void BgmapTextureManager::print(int32 x, int32 y)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static BgmapTexture BgmapTextureManager::findTexture(const BgmapTextureSpec* bgmapTextureSpec, bool recyclableOnly)
+BgmapTexture BgmapTextureManager::findTexture(const BgmapTextureSpec* bgmapTextureSpec, bool recyclableOnly)
 {
-	BgmapTextureManager bgmapTextureManager = BgmapTextureManager::getInstance();
-
 	TextureSpec* textureSpec = (TextureSpec*)bgmapTextureSpec;
 	BgmapTexture selectedBgmapTexture = NULL;
 
 	CACHE_RESET;
 
 	// Try to find a texture with the same bgmap spec
-	for(VirtualNode node = bgmapTextureManager->bgmapTextures->head; NULL != node; node = node->next)
+	for(VirtualNode node = this->bgmapTextures->head; NULL != node; node = node->next)
 	{
 		BgmapTexture allocatedBgmapTexture = BgmapTexture::safeCast(node->data);
 		const TextureSpec* allocatedTextureSpec = allocatedBgmapTexture->textureSpec;
@@ -417,8 +401,8 @@ static BgmapTexture BgmapTextureManager::findTexture(const BgmapTextureSpec* bgm
 		if(allocatedTextureSpec->recyclable && 0 == allocatedBgmapTexture->usageCount)
 		{
 			uint16 id = allocatedBgmapTexture->id;
-			uint16 cols = bgmapTextureManager->offset[id][kCols];
-			uint16 rows = bgmapTextureManager->offset[id][kRows];
+			uint16 cols = this->offset[id][kCols];
+			uint16 rows = this->offset[id][kRows];
 
 			if
 			(
@@ -439,8 +423,8 @@ static BgmapTexture BgmapTextureManager::findTexture(const BgmapTextureSpec* bgm
 				else 
 				{
 					uint16 selectedBgmapTextureId = selectedBgmapTexture->id;
-					uint16 selectedBgmapTextureCols = bgmapTextureManager->offset[selectedBgmapTextureId][kCols];
-					uint16 selectedBgmapTextureRows = bgmapTextureManager->offset[selectedBgmapTextureId][kRows];
+					uint16 selectedBgmapTextureCols = this->offset[selectedBgmapTextureId][kCols];
+					uint16 selectedBgmapTextureRows = this->offset[selectedBgmapTextureId][kRows];
 
 					if(cols < selectedBgmapTextureCols || rows < selectedBgmapTextureRows)
 					{
@@ -461,18 +445,16 @@ static BgmapTexture BgmapTextureManager::findTexture(const BgmapTextureSpec* bgm
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static BgmapTexture BgmapTextureManager::allocateTexture
+BgmapTexture BgmapTextureManager::allocateTexture
 (
 	BgmapTextureSpec* bgmapTextureSpec, int16 minimumSegment, bool mustLiveAtEvenSegment, uint32 scValue
 )
 {
-	BgmapTextureManager bgmapTextureManager = BgmapTextureManager::getInstance();
-
-	uint16 id = VirtualList::getCount(bgmapTextureManager->bgmapTextures);
+	uint16 id = VirtualList::getCount(this->bgmapTextures);
 
 	//if not, then allocate
 	int32 segment = 
-		BgmapTextureManager::doAllocate(id, (TextureSpec*)bgmapTextureSpec, minimumSegment, mustLiveAtEvenSegment, scValue);
+		BgmapTextureManager::doAllocate(this, id, (TextureSpec*)bgmapTextureSpec, minimumSegment, mustLiveAtEvenSegment, scValue);
 
 	if(0 > segment)
 	{
@@ -482,22 +464,20 @@ static BgmapTexture BgmapTextureManager::allocateTexture
 	// Create new texture and register it
 	BgmapTexture bgmapTexture = new BgmapTexture(bgmapTextureSpec, id);
 	BgmapTexture::setSegment(bgmapTexture, segment);
-	BgmapTexture::setOffsets(bgmapTexture, BgmapTextureManager::getXOffset(id), BgmapTextureManager::getYOffset(id));
+	BgmapTexture::setOffsets(bgmapTexture, BgmapTextureManager::getXOffset(this, id), BgmapTextureManager::getYOffset(this, id));
 
-	VirtualList::pushBack(bgmapTextureManager->bgmapTextures, bgmapTexture);
+	VirtualList::pushBack(this->bgmapTextures, bgmapTexture);
 
 	return bgmapTexture;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static int32 BgmapTextureManager::doAllocate
+int32 BgmapTextureManager::doAllocate
 (
 	uint16 id, TextureSpec* textureSpec, int16 minimumSegment, bool mustLiveAtEvenSegment, uint32 scValue
 )
 {
-	BgmapTextureManager bgmapTextureManager = BgmapTextureManager::getInstance();
-
 	int32 i = 0;
 	int32 j = 0;
 	int32 aux = 0;
@@ -548,40 +528,40 @@ static int32 BgmapTextureManager::doAllocate
 
 	CACHE_RESET;
 
-	for(i = minimumSegment; i < __MAX_NUMBER_OF_BGMAPS_SEGMENTS && i < bgmapTextureManager->availableBgmapSegmentsForTextures; i += segmentStep)
+	for(i = minimumSegment; i < __MAX_NUMBER_OF_BGMAPS_SEGMENTS && i < this->availableBgmapSegmentsForTextures; i += segmentStep)
 	{
-		int32 maximumRow = i == bgmapTextureManager->printingBgmapSegment ? 64 - __SCREEN_HEIGHT_IN_CHARS : 64;
+		int32 maximumRow = i == this->printingBgmapSegment ? 64 - __SCREEN_HEIGHT_IN_CHARS : 64;
 		
 		// If there is space in the segment memory
 		// There are 4096 chars in each bgmap segment
-		if((int32)(4096 - bgmapTextureManager->usedTiles[i]) >= (int32)area )
+		if((int32)(4096 - this->usedTiles[i]) >= (int32)area )
 		{
 			// Check if there is space within the segment
 			// We check the next so don't go to the last element
 			for(j = 0; j < __NUM_BGMAPS_PER_SEGMENT - 1; j++)
 			{
 				// Determine the y offset inside the bgmap segment
-				if(!bgmapTextureManager->yOffset[i][j + 1])
+				if(!this->yOffset[i][j + 1])
 				{
 					aux = maximumRow;
 				}
 				else
 				{
-					aux = bgmapTextureManager->yOffset[i][j + 1];
+					aux = this->yOffset[i][j + 1];
 				}
 
 				// Determine if there is still mem space (columns) in the current y offset
-				if(rows + rowsPad <= aux - bgmapTextureManager->yOffset[i][j] || (!bgmapTextureManager->yOffset[i][j + 1]))
+				if(rows + rowsPad <= aux - this->yOffset[i][j] || (!this->yOffset[i][j + 1]))
 				{
-					if(rows + rowsPad <= maximumRow - bgmapTextureManager->yOffset[i][j])
+					if(rows + rowsPad <= maximumRow - this->yOffset[i][j])
 					{
-						if(cols + colsPad <= 64 - bgmapTextureManager->xOffset[i][j])
+						if(cols + colsPad <= 64 - this->xOffset[i][j])
 						{
 							// Register bgmap spec
-							bgmapTextureManager->offset[id][kXOffset] = bgmapTextureManager->xOffset[i][j] + (colsPad >> 1);
-							bgmapTextureManager->offset[id][kYOffset] = bgmapTextureManager->yOffset[i][j] + (rowsPad >> 1);
-							bgmapTextureManager->offset[id][kCols] = cols;
-							bgmapTextureManager->offset[id][kRows] = rows;
+							this->offset[id][kXOffset] = this->xOffset[i][j] + (colsPad >> 1);
+							this->offset[id][kYOffset] = this->yOffset[i][j] + (rowsPad >> 1);
+							this->offset[id][kCols] = cols;
+							this->offset[id][kRows] = rows;
 
 							NM_ASSERT
 							(
@@ -590,17 +570,17 @@ static int32 BgmapTextureManager::doAllocate
 							);
 
 							// Increment the x offset
-							bgmapTextureManager->xOffset[i][j] += cols + colsPad;
+							this->xOffset[i][j] += cols + colsPad;
 
 							// If the number of rows of the bgmap spec is greater than the
 							// Next y offset defined, increase the next y offset
-							if(bgmapTextureManager->yOffset[i][j + 1] - bgmapTextureManager->yOffset[i][j] < rows + rowsPad)
+							if(this->yOffset[i][j + 1] - this->yOffset[i][j] < rows + rowsPad)
 							{
-								bgmapTextureManager->yOffset[i][j + 1] = bgmapTextureManager->yOffset[i][j] + rows + rowsPad;
+								this->yOffset[i][j + 1] = this->yOffset[i][j] + rows + rowsPad;
 							}
 							
 							// Update the number of chars defined inside the bgmap segment
-							bgmapTextureManager->usedTiles[i] += area;
+							this->usedTiles[i] += area;
 
 							// If there is a free bgmap segment
 							return i;
@@ -613,7 +593,7 @@ static int32 BgmapTextureManager::doAllocate
 				}
 				else
 				{
-					if(rows + rowsPad > 64 - bgmapTextureManager->yOffset[i][j])
+					if(rows + rowsPad > 64 - this->yOffset[i][j])
 					{
 						break;
 					}
@@ -651,7 +631,7 @@ void BgmapTextureManager::constructor()
 	Base::constructor();
 
 	this->bgmapTextures = new VirtualList();
-	BgmapTextureManager::reset();
+	BgmapTextureManager::reset(this);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

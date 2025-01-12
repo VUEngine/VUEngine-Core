@@ -27,9 +27,6 @@
 /// Implements a tool state to test sounds.
 singleton class SoundTestState : ToolState
 {
-	/// Method to retrieve the singleton instance
-	/// @return SoundTestState singleton
-	static SoundTestState getInstance();
 
 	/// Prepares the object to enter this state.
 	/// @param owner: Object that is entering in this state

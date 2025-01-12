@@ -54,7 +54,7 @@ typedef struct DelayedMessage
 /// Inherits from Object
 ///
 /// Implements a dispatcher central of message codes wrapped in a Telegram.
-singleton! class MessageDispatcher : Object
+singleton class MessageDispatcher : Object
 {
 	/// @protectedsection
 
@@ -94,17 +94,6 @@ singleton! class MessageDispatcher : Object
 		void* extraInfo
 	);
 
-	/// Dispatch the delayed messages whose delay has expired.
-	static bool dispatchDelayedMessages();
-
-	/// Force the destruction of discarded messages.
-	static void processDiscardedMessages();
-
-	/// Discarde delayed messages associated to the given clock.
-	/// @param clock: Clock to search in delayed messages to discard
-	/// @return True if any messages is discarded
-	static bool discardDelayedMessagesWithClock(Clock clock);
-
 	/// Discard delayed messages sent by an object.
 	/// @param sender: Object that originally sent the message
 	/// @param message: Message's code
@@ -141,6 +130,17 @@ singleton! class MessageDispatcher : Object
 	/// @param x: Screen x coordinate where to print
 	/// @param y: Screen y coordinate where to print
 	static void printAllDelayedMessagesFromSender(ListenerObject sender, int16 x, int16 y);
+
+	/// Dispatch the delayed messages whose delay has expired.
+	bool dispatchDelayedMessages();
+
+	/// Force the destruction of discarded messages.
+	void processDiscardedMessages();
+
+	/// Discarde delayed messages associated to the given clock.
+	/// @param clock: Clock to search in delayed messages to discard
+	/// @return True if any messages is discarded
+	bool discardDelayedMessagesWithClock(Clock clock);
 }
 
 #endif

@@ -33,10 +33,6 @@ singleton class BehaviorManager : ComponentManager
 
 	/// @publicsection
 
-	/// Method to retrieve the singleton instance
-	/// @return BehaviorManager singleton
-	static BehaviorManager getInstance();
-
 	/// Create a behavior with the provided spec.
 	/// @param owner: Object to which the behavior will attach to
 	/// @param behaviorSpec: Spec to use to create the behavior
@@ -49,7 +45,7 @@ singleton class BehaviorManager : ComponentManager
 	override void deinstantiateComponent(Entity owner, Behavior behavior);
 
 	/// Reset the manager's state
-	static void reset();
+	void reset();
 }
 
 #endif

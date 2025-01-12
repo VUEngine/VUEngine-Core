@@ -308,7 +308,7 @@ void MBgmapSprite::releaseTextures()
 		if(((__WORLD_AFFINE | __WORLD_HBIAS) & this->head) && this->param)
 		{
 			// Free param table space
-			ParamTableManager::free(BgmapSprite::safeCast(this));
+			ParamTableManager::free(ParamTableManager::getInstance(), BgmapSprite::safeCast(this));
 		}
 	}
 

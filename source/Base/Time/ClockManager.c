@@ -30,13 +30,11 @@ friend class VirtualList;
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void ClockManager::reset()
+secure void ClockManager::reset()
 {
-	ClockManager clockManager = ClockManager::getInstance();
+	ASSERT(this->clocks, "ClockManager::reset: null clocks list");
 
-	ASSERT(clockManager->clocks, "ClockManager::reset: null clocks list");
-
-	VirtualNode node = clockManager->clocks->head;
+	VirtualNode node = this->clocks->head;
 
 	// Update all registered clocks
 	for(; node ; node = node->next)
@@ -47,34 +45,28 @@ static void ClockManager::reset()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void ClockManager::register(Clock clock)
+secure void ClockManager::register(Clock clock)
 {
-	ClockManager clockManager = ClockManager::getInstance();
-
-	if(!VirtualList::find(clockManager->clocks, clock))
+	if(!VirtualList::find(this->clocks, clock))
 	{
-		VirtualList::pushFront(clockManager->clocks, clock);
+		VirtualList::pushFront(this->clocks, clock);
 	}
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void ClockManager::unregister(Clock clock)
+secure void ClockManager::unregister(Clock clock)
 {
-	ClockManager clockManager = ClockManager::getInstance();
-
-	VirtualList::removeData(clockManager->clocks, clock);
+	VirtualList::removeData(this->clocks, clock);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void ClockManager::update(uint32 elapsedMilliseconds)
+secure void ClockManager::update(uint32 elapsedMilliseconds)
 {
-	ClockManager clockManager = ClockManager::getInstance();
+	ASSERT(this->clocks, "ClockManager::update: null clocks list");
 
-	ASSERT(clockManager->clocks, "ClockManager::update: null clocks list");
-
-	VirtualNode node = clockManager->clocks->head;
+	VirtualNode node = this->clocks->head;
 
 	// Update all registered clocks
 	for(; node ; node = node->next)

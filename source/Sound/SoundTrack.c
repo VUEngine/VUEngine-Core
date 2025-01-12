@@ -53,7 +53,7 @@ void SoundTrack::start(bool wasPaused)
 
 	if(kTrackPCM == this->soundTrackSpec->trackType)
 	{
-		VSUManager::setMode(kPlaybackPCM);
+		VSUManager::setMode(VSUManager::getInstance(), kPlaybackPCM);
 	}
 }
 
@@ -63,7 +63,7 @@ void SoundTrack::stop()
 {
 	if(kTrackPCM == this->soundTrackSpec->trackType)
 	{
-		VSUManager::setMode(kPlaybackNative);
+		VSUManager::setMode(VSUManager::getInstance(), kPlaybackNative);
 	}
 }
 

@@ -42,7 +42,7 @@ typedef struct UserObject
 /// Inherits from Tool
 ///
 /// Implements a tool that permits to manipulate a stage's actors.
-singleton! class StageEditor : Tool
+singleton class StageEditor : Tool
 {
 	/// Node of the stage's selected actor
 	VirtualNode actorNode;
@@ -63,10 +63,6 @@ singleton! class StageEditor : Tool
 	int32 translationStepSize;
 
 	/// @publicsection
-
-	/// Method to retrieve the singleton instance
-	/// @return StageEditor singleton
-	static StageEditor getInstance();
 
 	/// Update the tool's state.
 	override void update();

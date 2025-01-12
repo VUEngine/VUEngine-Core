@@ -39,7 +39,7 @@ enum OffsetIndex
 /// Inherits from Texture
 ///
 /// Allocates BGMAP space for textures.
-singleton! class BgmapTextureManager : Object
+singleton class BgmapTextureManager : Object
 {
 	// List of textures with BGMAP space allocated for them
 	VirtualList bgmapTextures;
@@ -65,28 +65,28 @@ singleton! class BgmapTextureManager : Object
 	/// @publicsection
 
 	/// Reset the manager's state.
-	static void reset();
+	void reset();
 
 	/// Clear the data in the BGMAP spaced defined by the provided segment.
 	/// @param segment: Index of the BGMAP segment to clear
-	static void clearBgmapSegment(int32 segment);
+	void clearBgmapSegment(int32 segment);
 
 	/// Compute the number of available BGMAP segments for texture allocation.
 	/// @param paramTableBase: Displacement in bytes to keep track of the start address of param table space
-	static void configure(uint32 paramTableBase);
+	void configure(uint32 paramTableBase);
 
 	/// Retrieve the number of available BGMAP segments to allocate textures.
 	/// @return Number of available BGMAP segments to allocate textures
-	static int8 getAvailableBgmapSegmentsForTextures();
+	int8 getAvailableBgmapSegmentsForTextures();
 
 	/// Retrieve the number of the BGMAP segment available for printing.
 	/// @return Number of the BGMAP segment available for printing
-	static int8 getPrintingBgmapSegment();
+	int8 getPrintingBgmapSegment();
 
 	/// Load textures in function of the provided array of specs.
 	/// @param textureSpecs: Array of texture specs in function of which to load textures 
 	/// @param removeOldTextures: If true, previously loaded texturered are first destroyed and deallocated
-	static void loadTextures(const TextureSpec** textureSpecs, bool removeOldTextures);
+	void loadTextures(const TextureSpec** textureSpecs, bool removeOldTextures);
 
 	/// Retrieve a texture initialized with the provided spec.
 	/// @param bgmapTextureSpec: Spec to use to initilize the desired texture
@@ -94,26 +94,26 @@ singleton! class BgmapTextureManager : Object
 	/// @param mustLiveAtEvenSegment: Required BGMAP segment where to allocate the texture
 	/// @param scValue: SC configuration value for multi segment textures
 	/// @return Texture initialized with the provided spec
-	static BgmapTexture getTexture(BgmapTextureSpec* bgmapTextureSpec, int16 minimumSegment, bool mustLiveAtEvenSegment, uint32 scValue);
+	BgmapTexture getTexture(BgmapTextureSpec* bgmapTextureSpec, int16 minimumSegment, bool mustLiveAtEvenSegment, uint32 scValue);
 
 	/// Release a texture.
 	/// @param bgmapTexture: Texture to release
-	static void releaseTexture(BgmapTexture bgmapTexture);
+	void releaseTexture(BgmapTexture bgmapTexture);
 
 	/// Retrieve the X coordinate in BGMAP space for the texture ID provided.
 	/// @param id: Texture's id
 	/// @return X coordinate in BGMAP space for the texture ID provided
-	static int16 getXOffset(int32 id);
+	int16 getXOffset(int32 id);
 
 	/// Retrieve the Y coordinate in BGMAP space for the texture ID provided.
 	/// @param id: Texture's id
 	/// @return Y coordinate in BGMAP space for the texture ID provided
-	static int16 getYOffset(int32 id);
+	int16 getYOffset(int32 id);
 
 	/// Print the manager's status.
 	/// @param x: Screen x coordinate where to print
 	/// @param y: Screen y coordinate where to print
-	static void print(int32 x, int32 y);
+	void print(int32 x, int32 y);
 }
 
 #endif

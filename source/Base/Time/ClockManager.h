@@ -32,7 +32,7 @@ class Clock;
 /// Inherits from Object
 ///
 /// Manages the instances of Clock.
-singleton! class ClockManager : Object
+singleton class ClockManager : Object
 {
 	/// @protectedsection
 
@@ -42,19 +42,19 @@ singleton! class ClockManager : Object
 	/// @publicsection
 
 	/// Reset all the registered clocks.
-	static void reset();
+	void reset();
 
 	/// Register a new clock
 	/// @param clock: Clock to register
-	static void register(Clock clock);
+	void register(Clock clock);
 
 	/// Unregister clock.
 	/// @param clock: Clock to unregister
-	static void unregister(Clock clock);
+	void unregister(Clock clock);
 
 	/// Update the clocks.
 	/// @param elapsedMilliseconds: Milliseconds that passed since the previous call to this method
-	static void update(uint32 elapsedMilliseconds);
+	void update(uint32 elapsedMilliseconds);
 }
 
 #endif

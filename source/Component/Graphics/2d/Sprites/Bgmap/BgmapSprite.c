@@ -470,7 +470,7 @@ void BgmapSprite::setMode(uint16 display, uint16 mode)
 	if(((__WORLD_AFFINE | __WORLD_HBIAS) & this->head) && 0 != this->param)
 	{
 		// Free param table space
-		ParamTableManager::free(this);
+		ParamTableManager::free(ParamTableManager::getInstance(), this);
 
 		this->param = 0;
 	}
@@ -488,7 +488,7 @@ void BgmapSprite::setMode(uint16 display, uint16 mode)
 			case __WORLD_AFFINE:
 
 				this->head = display | __WORLD_AFFINE;
-				this->param = ParamTableManager::allocate(this);
+				this->param = ParamTableManager::allocate(ParamTableManager::getInstance(), this);
 				this->applyParamTableEffect = 
 					NULL != this->applyParamTableEffect ? this->applyParamTableEffect : BgmapSprite::doApplyAffineTransformations;
 				break;
@@ -500,7 +500,7 @@ void BgmapSprite::setMode(uint16 display, uint16 mode)
 
 				if(NULL != this->applyParamTableEffect)
 				{
-					this->param = ParamTableManager::allocate(this);
+					this->param = ParamTableManager::allocate(ParamTableManager::getInstance(), this);
 				}
 
 				break;
@@ -552,7 +552,7 @@ void BgmapSprite::invalidateParamTable()
 
 bool BgmapSprite::onTextureRewritten(ListenerObject eventFirer __attribute__ ((unused)))
 {
-	BgmapSprite::processEffects(this, SpriteManager::getMaximumParamTableRowsToComputePerCall());
+	BgmapSprite::processEffects(this, SpriteManager::getMaximumParamTableRowsToComputePerCall(SpriteManager::getInstance()));
 
 	return true;
 }
@@ -603,7 +603,7 @@ void BgmapSprite::releaseTexture()
 		if(((__WORLD_AFFINE | __WORLD_HBIAS) & this->head) && 0 != this->param)
 		{
 			// Free param table space
-			ParamTableManager::free(this);
+			ParamTableManager::free(ParamTableManager::getInstance(), this);
 		}
 
 		if(0 != this->param)

@@ -15,6 +15,7 @@
 
 #include <AnimationCoordinatorFactory.h>
 #include <AnimationInspectorState.h>
+#include <BehaviorManager.h>
 #include <BgmapTextureManager.h>
 #include <BodyManager.h>
 #include <Camera.h>
@@ -68,6 +69,8 @@ int32 __GAME_ENTRY_POINT(void);
 #ifdef __RUN_DELAYED_MESSAGES_DISPATCHING_AT_HALF_FRAME_RATE
 uint32 _dispatchCycle = 0;
 #endif
+
+ClassPointer _authClass = NULL;
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // GLOBAL FUNCTIONS
@@ -131,23 +134,26 @@ static void VUEngine::reset(bool resetSounds)
 	HardwareManager::disableInterrupts();
 
 	HardwareManager::reset();
-	KeypadManager::reset();
-	StopwatchManager::reset();
-	FrameRate::reset();
-	VIPManager::reset();
-	DirectDraw::reset();
-	SpriteManager::reset();
-	WireframeManager::reset();
-	SRAMManager::reset();
-	TimerManager::reset();
-	RumbleManager::reset();
-	CommunicationManager::reset();
-	AnimationCoordinatorFactory::reset();
+	
+	AnimationCoordinatorFactory::reset(AnimationCoordinatorFactory::getInstance());
+	BehaviorManager::reset(BehaviorManager::getInstance());
+	CommunicationManager::reset(CommunicationManager::getInstance());
+	DirectDraw::reset(DirectDraw::getInstance());
+	FrameRate::reset(FrameRate::getInstance());
+	KeypadManager::reset(KeypadManager::getInstance());
+	RumbleManager::reset(RumbleManager::getInstance());
 
 	if(resetSounds)
 	{
-		SoundManager::reset();
+		SoundManager::reset(SoundManager::getInstance());
 	}
+
+	SpriteManager::reset(SpriteManager::getInstance());
+	SRAMManager::reset(SRAMManager::getInstance());
+	StopwatchManager::reset(StopwatchManager::getInstance());
+	TimerManager::reset(TimerManager::getInstance());
+	VIPManager::reset(VIPManager::getInstance());
+	WireframeManager::reset(WireframeManager::getInstance());
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -168,7 +174,7 @@ static int32 VUEngine::start(GameState currentGameState)
 	ASSERT(currentGameState, "VUEngine::start: currentGameState is NULL");
 
 	// Initialize VPU and turn off the brightness
-	VIPManager::lowerBrightness();
+	VIPManager::lowerBrightness(VIPManager::getInstance());
 
 	if(NULL == StateMachine::getCurrentState(vuEngine->stateMachine))
 	{
@@ -475,7 +481,7 @@ static char* VUEngine::getProcessName()
 
 static uint16 VUEngine::getGameFrameDuration()
 {
-	return VIPManager::getGameFrameDuration();
+	return VIPManager::getGameFrameDuration(VIPManager::getInstance());
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -487,8 +493,8 @@ static void VUEngine::setGameFrameRate(uint16 gameFrameRate)
 		gameFrameRate = __MAXIMUM_FPS;
 	}
 
-	FrameRate::setTarget(gameFrameRate);
-	VIPManager::setFrameCycle(__MAXIMUM_FPS / gameFrameRate - 1);
+	FrameRate::setTarget(FrameRate::getInstance(), gameFrameRate);
+	VIPManager::setFrameCycle(VIPManager::getInstance(), __MAXIMUM_FPS / gameFrameRate - 1);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -513,14 +519,14 @@ static void VUEngine::unlockFrameRate()
 
 static void VUEngine::enableKeypad()
 {
-	KeypadManager::enable();
+	KeypadManager::enable(KeypadManager::getInstance());
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 static void VUEngine::disableKeypad()
 {
-	KeypadManager::disable();
+	KeypadManager::disable(KeypadManager::getInstance());
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -545,21 +551,21 @@ static ListenerObject VUEngine::getSaveDataManager()
 
 static void VUEngine::pushFrontPostProcessingEffect(PostProcessingEffect postProcessingEffect, Entity entity)
 {
-	VIPManager::pushFrontPostProcessingEffect(postProcessingEffect, entity);
+	VIPManager::pushFrontPostProcessingEffect(VIPManager::getInstance(), postProcessingEffect, entity);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 static void VUEngine::pushBackPostProcessingEffect(PostProcessingEffect postProcessingEffect, Entity entity)
 {
-	VIPManager::pushBackPostProcessingEffect(postProcessingEffect, entity);
+	VIPManager::pushBackPostProcessingEffect(VIPManager::getInstance(), postProcessingEffect, entity);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 static void VUEngine::removePostProcessingEffect(PostProcessingEffect postProcessingEffect, Entity entity)
 {
-	VIPManager::removePostProcessingEffect(postProcessingEffect, entity);
+	VIPManager::removePostProcessingEffect(VIPManager::getInstance(), postProcessingEffect, entity);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -572,7 +578,7 @@ static void VUEngine::frameStarted(uint16 gameFrameDuration)
 
 	totalTime += gameFrameDuration;
 
-	TimerManager::frameStarted(gameFrameDuration * __MICROSECONDS_PER_MILLISECOND);
+	TimerManager::frameStarted(TimerManager::getInstance(), gameFrameDuration * __MICROSECONDS_PER_MILLISECOND);
 
 	if(__MILLISECONDS_PER_SECOND <= totalTime)
 	{
@@ -606,7 +612,7 @@ static void VUEngine::gameFrameStarted(uint16 gameFrameDuration)
 		GameState::transformUI(gameState);
 	}
 
-	ClockManager::update(gameFrameDuration);
+	ClockManager::update(ClockManager::getInstance(), gameFrameDuration);
 
 #ifdef __PRINT_FRAMERATE
 	bool printFPS = true;
@@ -618,7 +624,7 @@ static void VUEngine::gameFrameStarted(uint16 gameFrameDuration)
 	printFPS = !VUEngine::isInToolState();
 #endif
 
-	FrameRate::gameFrameStarted(vuEngine->currentGameCycleEnded, printFPS);
+	FrameRate::gameFrameStarted(FrameRate::getInstance(), vuEngine->currentGameCycleEnded, printFPS);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -639,7 +645,7 @@ static bool VUEngine::isPaused()
 
 static void VUEngine::wait(uint32 milliSeconds)
 {
-	TimerManager::wait(milliSeconds);
+	TimerManager::wait(TimerManager::getInstance(), milliSeconds);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -772,7 +778,7 @@ static void VUEngine::updateFrameRate()
 	}
 #endif
 
-	FrameRate::update();
+	FrameRate::update(FrameRate::getInstance());
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -781,7 +787,7 @@ static void VUEngine::processUserInput(GameState currentGameState)
 {
 	VUEngine vuEngine = VUEngine::getInstance();
 
-	if(!KeypadManager::isEnabled())
+	if(!KeypadManager::isEnabled(KeypadManager::getInstance()))
 	{
 #ifdef __ENABLE_PROFILER
 		Profiler::lap(kProfilerLapTypeNormalProcess, PROCESS_NAME_INPUT);
@@ -793,7 +799,7 @@ static void VUEngine::processUserInput(GameState currentGameState)
 	vuEngine->processName = PROCESS_NAME_INPUT;
 #endif
 
-	UserInput userInput = KeypadManager::readUserInput(vuEngine->syncToVIP);
+	UserInput userInput = KeypadManager::readUserInput(KeypadManager::getInstance(), vuEngine->syncToVIP);
 	
 #ifdef __TOOLS
 	if(VUEngine::checkIfToggleTool(&userInput))
@@ -878,7 +884,7 @@ static void VUEngine::dispatchDelayedMessages()
 #endif
 #endif
 	{
-		MessageDispatcher::dispatchDelayedMessages();
+		MessageDispatcher::dispatchDelayedMessages(MessageDispatcher::getInstance());
 
 #ifdef __ENABLE_PROFILER
 		Profiler::lap(kProfilerLapTypeNormalProcess, PROCESS_NAME_MESSAGES);
@@ -1020,7 +1026,7 @@ static void VUEngine::focusCamera()
 	{
 #endif
 		// Position the camera
-		Camera::focus();
+		Camera::focus(Camera::getInstance());
 #ifdef __TOOLS
 	}
 #endif
@@ -1072,21 +1078,21 @@ static void VUEngine::cleanUp()
 {
 	VUEngine vuEngine = VUEngine::getInstance();
 
-	VIPManager::unregisterEventListener
+	VIPManager::removeEventListener
 	(
-		ListenerObject::safeCast(vuEngine), (EventListener)VUEngine::onVIPFRAMESTART, 
+		VIPManager::getInstance(), ListenerObject::safeCast(vuEngine), (EventListener)VUEngine::onVIPFRAMESTART, 
 		kEventVIPManagerFRAMESTART
 	);
 
-	VIPManager::unregisterEventListener
+	VIPManager::removeEventListener
 	(
-		ListenerObject::safeCast(vuEngine), (EventListener)VUEngine::onVIPGAMESTART, 
+		VIPManager::getInstance(), ListenerObject::safeCast(vuEngine), (EventListener)VUEngine::onVIPGAMESTART, 
 		kEventVIPManagerGAMESTART
 	);
 
-	VIPManager::unregisterEventListener
+	VIPManager::removeEventListener
 	(
-		ListenerObject::safeCast(vuEngine), (EventListener)VUEngine::onVIPXPEND, 
+		VIPManager::getInstance(), ListenerObject::safeCast(vuEngine), (EventListener)VUEngine::onVIPXPEND, 
 		kEventVIPManagerXPEND
 	);
 }
@@ -1096,7 +1102,7 @@ static void VUEngine::cleanUp()
 static void VUEngine::printDebug()
 {
 #ifdef __SHOW_TIMER_MANAGER_STATUS
-	TimerManager::nextSecondStarted();
+	TimerManager::nextSecondStarted(TimerManager::getInstance());
 #endif
 
 #ifdef __SHOW_STREAMING_PROFILING
@@ -1115,12 +1121,12 @@ static void VUEngine::printDebug()
 #endif
 
 #ifdef __SHOW_CHAR_MEMORY_STATUS
-	CharSetManager::print(1, 5);
+	CharSetManager::print(CharSetManager::getInstance(), 1, 5);
 #endif
 
 #ifdef __SHOW_BGMAP_MEMORY_STATUS
-	BgmapTextureManager::print(1, 5);
-	ParamTableManager::print(1 + 27, 5);
+	BgmapTextureManager::print(BgmapTextureManager::getInstance(), 1, 5);
+	ParamTableManager::print(ParamTableManager::getInstance(), 1 + 27, 5);
 #endif
 
 #ifdef __SHOW_MEMORY_POOL_STATUS
@@ -1151,6 +1157,189 @@ static void VUEngine::printDebug()
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+#include <BgmapSprite.h>
+#include <MBgmapSprite.h>
+#include <Stopwatch.h>
+#include <ObjectSprite.h>
+#include <ObjectSpriteContainer.h>
+#include <ObjectTextureManager.h>
+#include <SoundTest.h>
+#include <SoundTrack.h>
+#include <VSUManager.h>
+
+const ClassPointer AnimationCoordinatorFactoryAuthClasses[] =
+{
+	typeofclass(Sprite),
+	typeofclass(VUEngine),
+	NULL
+};
+
+const ClassPointer BehaviorManagerAuthClasses[] =
+{
+	typeofclass(VUEngine),
+	NULL
+};
+
+const ClassPointer BgmapTextureManagerAuthClasses[] =
+{
+	typeofclass(SpriteManager),
+	typeofclass(Stage),
+	typeofclass(Texture),
+	typeofclass(VUEngine),
+	NULL
+};
+
+const ClassPointer CameraAuthClasses[] =
+{
+	typeofclass(GameState),
+	typeofclass(Stage),
+	typeofclass(VUEngine),
+	NULL
+};
+
+const ClassPointer CharSetManagerAuthClasses[] =
+{
+	typeofclass(Printing),
+	typeofclass(Stage),
+	typeofclass(SpriteManager),
+	NULL
+};
+
+const ClassPointer ClockManagerAuthClasses[] =
+{
+	typeofclass(Clock),
+	typeofclass(VUEngine),
+	NULL
+};
+
+const ClassPointer CommunicationManagerAuthClasses[] =
+{
+	typeofclass(RumbleManager),
+	typeofclass(VUEngine),
+	NULL
+};
+
+const ClassPointer DirectDrawAuthClasses[] =
+{
+	typeofclass(VUEngine),
+	typeofclass(WireframeManager),
+	NULL
+};
+
+const ClassPointer KeypadManagerAuthClasses[] =
+{
+	typeofclass(VUEngine),
+	NULL
+};
+
+const ClassPointer MessageDispatcherAuthClasses[] =
+{
+	typeofclass(VUEngine),
+	NULL
+};
+
+const ClassPointer ObjectTextureManagerAuthClasses[] =
+{
+	typeofclass(Texture),
+	NULL
+};
+
+const ClassPointer ParamTableManagerAuthClasses[] =
+{
+	typeofclass(BgmapSprite),
+	typeofclass(MBgmapSprite),
+	typeofclass(SpriteManager),
+	typeofclass(Stage),
+	NULL
+};
+
+const ClassPointer RumbleManagerAuthClasses[] =
+{
+	typeofclass(VUEngine),
+	NULL
+};
+
+const ClassPointer SoundManagerAuthClasses[] =
+{
+	typeofclass(TimerManager),
+	typeofclass(VUEngine),
+	NULL
+};
+
+const ClassPointer SpriteManagerAuthClasses[] =
+{
+	typeofclass(ComponentManager),
+	typeofclass(Stage),
+	typeofclass(VUEngine),
+	NULL
+};
+
+const ClassPointer SRAMManagerAuthClasses[] =
+{
+	typeofclass(VUEngine),
+	NULL
+};
+
+const ClassPointer StopwatchManagerAuthClasses[] =
+{
+	typeofclass(Stopwatch),
+	typeofclass(VUEngine),
+	NULL
+};
+
+const ClassPointer TimerManagerAuthClasses[] =
+{
+	typeofclass(SoundTest),
+	typeofclass(VUEngine),
+	NULL
+};
+
+const ClassPointer VIPManagerAuthClasses[] =
+{
+	typeofclass(Stage),
+	typeofclass(VUEngine),
+	NULL
+};
+
+const ClassPointer VSUManagerAuthClasses[] =
+{
+	typeofclass(SoundManager),
+	typeofclass(SoundTrack),
+	typeofclass(VUEngine),
+	NULL
+};
+
+const ClassPointer WireframeManagerAuthClasses[] =
+{
+	typeofclass(ComponentManager),
+	typeofclass(VUEngine),
+	NULL
+};
+
+static void VUEngine::secureSingletons()
+{
+	AnimationCoordinatorFactory::secure(&AnimationCoordinatorFactoryAuthClasses);
+	BehaviorManager::secure(&BehaviorManagerAuthClasses);
+	BgmapTextureManager::secure(&BgmapTextureManagerAuthClasses);
+	Camera::secure(&CameraAuthClasses);
+	CharSetManager::secure(&CharSetManagerAuthClasses);
+	ClockManager::secure(&ClockManagerAuthClasses);
+//	CommunicationManager::secure(&CommunicationManagerAuthClasses);
+	DirectDraw::secure(&DirectDrawAuthClasses);
+	KeypadManager::secure(&KeypadManagerAuthClasses);
+	MessageDispatcher::secure(&MessageDispatcherAuthClasses);
+	ObjectTextureManager::secure(&ObjectTextureManagerAuthClasses);
+	ParamTableManager::secure(&ParamTableManagerAuthClasses);
+	RumbleManager::secure(&RumbleManagerAuthClasses);
+	SoundManager::secure(&SoundManagerAuthClasses);
+	SpriteManager::secure(&SpriteManagerAuthClasses);
+	SRAMManager::secure(&SRAMManagerAuthClasses);
+	StopwatchManager::secure(&StopwatchManagerAuthClasses);
+	TimerManager::secure(&TimerManagerAuthClasses);
+	VIPManager::secure(&VIPManagerAuthClasses);	
+	VSUManager::secure(&VSUManagerAuthClasses);
+	WireframeManager::secure(&WireframeManagerAuthClasses);
+}
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PRIVATE METHODS
@@ -1182,25 +1371,27 @@ void VUEngine::constructor()
 	// To make debugging easier
 	this->processName = PROCESS_NAME_START_UP;
 
-	VIPManager::registerEventListener
+	VIPManager::addEventListener
 	(
-		ListenerObject::safeCast(this), (EventListener)VUEngine::onVIPFRAMESTART, 
+		VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)VUEngine::onVIPFRAMESTART, 
 		kEventVIPManagerFRAMESTART
 	);
 
-	VIPManager::registerEventListener
+	VIPManager::addEventListener
 	(
-		ListenerObject::safeCast(this), (EventListener)VUEngine::onVIPGAMESTART,
+		VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)VUEngine::onVIPGAMESTART,
 		kEventVIPManagerGAMESTART
 	);
 
 #ifdef __SHOW_PROCESS_NAME_DURING_XPEND
-	VIPManager::registerEventListener
+	VIPManager::addEventListener
 	(
-		ListenerObject::safeCast(this), (EventListener)VUEngine::onVIPXPEND, 
+		VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)VUEngine::onVIPXPEND, 
 		kEventVIPManagerXPEND
 	);
 #endif
+
+	VUEngine::secureSingletons();
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -1231,9 +1422,9 @@ bool VUEngine::cleaniningStatesStack(ListenerObject eventFirer)
 	this->processName = PROCESS_NAME_STATE_SWAP;
 #endif
 
-	VIPManager::stopDisplaying();
+	VIPManager::stopDisplaying(VIPManager::getInstance());
 
-	VIPManager::stopDrawing();
+	VIPManager::stopDrawing(VIPManager::getInstance());
 
 	// Clean the game's stack
 	// Pop states until the stack is empty
@@ -1246,8 +1437,8 @@ bool VUEngine::cleaniningStatesStack(ListenerObject eventFirer)
 	{
 		GameState gameState = GameState::safeCast(VirtualNode::getData(node));
 
-		MessageDispatcher::discardDelayedMessagesWithClock(GameState::getMessagingClock(gameState));
-		MessageDispatcher::processDiscardedMessages();
+		MessageDispatcher::discardDelayedMessagesWithClock(MessageDispatcher::getInstance(), GameState::getMessagingClock(gameState));
+		MessageDispatcher::processDiscardedMessages(MessageDispatcher::getInstance());
 	}
 
 	return false;
@@ -1270,8 +1461,8 @@ bool VUEngine::pushingState(ListenerObject eventFirer)
 	this->isInToolStateTransition = NULL != __GET_CAST(ToolState, StateMachine::getNextState(this->stateMachine));
 #endif
 
-	VIPManager::stopDisplaying();
-	VIPManager::stopDrawing();
+	VIPManager::stopDisplaying(VIPManager::getInstance());
+	VIPManager::stopDrawing(VIPManager::getInstance());
 
 	return false;
 }
@@ -1289,8 +1480,8 @@ bool VUEngine::swappingState(ListenerObject eventFirer)
 	this->processName = PROCESS_NAME_STATE_SWAP;
 #endif
 
-	VIPManager::stopDisplaying();
-	VIPManager::stopDrawing();
+	VIPManager::stopDisplaying(VIPManager::getInstance());
+	VIPManager::stopDrawing(VIPManager::getInstance());
 
 	GameState currentGameState = GameState::safeCast(StateMachine::getCurrentState(this->stateMachine));
 
@@ -1299,10 +1490,10 @@ bool VUEngine::swappingState(ListenerObject eventFirer)
 		// Discard delayed messages from the current state
 		MessageDispatcher::discardDelayedMessagesWithClock
 		(
-			GameState::getMessagingClock(currentGameState)
+			MessageDispatcher::getInstance(), GameState::getMessagingClock(currentGameState)
 		);
 
-		MessageDispatcher::processDiscardedMessages();
+		MessageDispatcher::processDiscardedMessages(MessageDispatcher::getInstance());
 	}
 
 	return false;
@@ -1321,8 +1512,8 @@ bool VUEngine::poppingState(ListenerObject eventFirer)
 	this->processName = PROCESS_NAME_STATE_SWAP;
 #endif
 
-	VIPManager::stopDisplaying();
-	VIPManager::stopDrawing();
+	VIPManager::stopDisplaying(VIPManager::getInstance());
+	VIPManager::stopDrawing(VIPManager::getInstance());
 
 	GameState currentGameState = GameState::safeCast(StateMachine::getCurrentState(this->stateMachine));
 
@@ -1331,10 +1522,10 @@ bool VUEngine::poppingState(ListenerObject eventFirer)
 		// Discard delayed messages from the current state
 		MessageDispatcher::discardDelayedMessagesWithClock
 		(
-			GameState::getMessagingClock(currentGameState)
+			MessageDispatcher::getInstance(), GameState::getMessagingClock(currentGameState)
 		);
 
-		MessageDispatcher::processDiscardedMessages();
+		MessageDispatcher::processDiscardedMessages(MessageDispatcher::getInstance());
 	}
 
 #ifdef __TOOLS
@@ -1364,11 +1555,11 @@ bool VUEngine::changedState(ListenerObject eventFirer)
 
 	if(GameState::isVersusMode(currentGameState))
 	{
-		CommunicationManager::startSyncCycle();
+		CommunicationManager::startSyncCycle(CommunicationManager::getInstance());
 	}
 
-	VIPManager::startDrawing();
-	VIPManager::startDisplaying();
+	VIPManager::startDrawing(VIPManager::getInstance());
+	VIPManager::startDisplaying(VIPManager::getInstance());
 	HardwareManager::enableInterrupts();
 
 	// Fire event
@@ -1400,7 +1591,7 @@ bool VUEngine::onVIPGAMESTART(ListenerObject eventFirer __attribute__ ((unused))
 	PRINT_TEXT(vuEngine->processName, 9, 26);
 #endif
 
-	VUEngine::gameFrameStarted(VIPManager::getGameFrameDuration());
+	VUEngine::gameFrameStarted(VIPManager::getGameFrameDuration(VIPManager::getInstance()));
 
 	return true;
 }

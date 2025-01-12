@@ -134,7 +134,6 @@ extern uint32 _dramDirtyStart;
 #define __WORLD_OVR					0x0080
 #define __WORLD_END					0x0040
 
-
 #define __COLUMN_TABLE_ENTRIES		256
 #define __BRIGHTNESS_REPEAT_ENTRIES 96
 
@@ -288,7 +287,7 @@ static ObjectAttributes* const _objectAttributesBaseAddress =
 /// Inherits from ListenerObject
 ///
 /// Manages the VIP.
-singleton! class VIPManager : ListenerObject
+singleton class VIPManager : ListenerObject
 {
 	/// @protectedsection
 
@@ -331,21 +330,8 @@ singleton! class VIPManager : ListenerObject
 	/// Interrupt handler for timer's interrupts
 	static void interruptHandler();
 
-	/// @publicsection
-	/// Register an object that will listen for events.
-	/// @param listener: ListenerObject that listen for the event
-	/// @param callback: EventListener callback for the listener object
-	/// @param eventCode: Event's code to listen for
-	static void registerEventListener(ListenerObject listener, EventListener callback, uint16 eventCode);
-
-	/// Remove a specific listener object from the listening to a give code with the provided callback.
-	/// @param listener: ListenerObject to remove from the list of listeners
-	/// @param callback: EventListener callback for the listener object
-	/// @param eventCode: Event's code to stop listen for
-	static void unregisterEventListener(ListenerObject listener, EventListener callback, uint16 eventCode);
-
 	/// Reset the manager's state.
-	static void reset();
+	void reset();
 
 	/// Configure the manager's state.
 	/// @param backgroundColor: Color to apply to the background
@@ -354,7 +340,7 @@ singleton! class VIPManager : ListenerObject
 	/// @param paletteConfig: Palettes configuration
 	/// @param postProcessingEffects: Array of postprocessing effects
 	/// Configure the brightness registers with the provided configuration.
-	static void configure
+	void configure
 	(
 		uint8 backgroundColor, Brightness* brightness, BrightnessRepeatSpec* brightnessRepeat,
 		PaletteConfig* paletteConfig, PostProcessingEffect* postProcessingEffects
@@ -362,94 +348,94 @@ singleton! class VIPManager : ListenerObject
 
 	/// Enable VIP interrupts that the engine doesn't use.
 	/// @param customInterrupts: Interrupts to enable
-	static void enableCustomInterrupts(uint16 customInterrupts);
+	void enableCustomInterrupts(uint16 customInterrupts);
 
 	/// Set the multiplexed interrupts that are allowed
 	/// @param enabledMultiplexedInterrupts: Multiplexed interrupts to allow
-	static void enableMultiplexedInterrupts(uint32 enabledMultiplexedInterrupts);
+	void enableMultiplexedInterrupts(uint32 enabledMultiplexedInterrupts);
 
 	/// Set the drawing management drawingStrategy interrupts that are allowed
 	/// @param drawingStrategy: Value to control the suspension and resuming of drawing
-	static void setDrawingStrategy(uint32 drawingStrategy);
+	void setDrawingStrategy(uint32 drawingStrategy);
 
 	/// Retrieve the drawing management drawingStrategy interrupts that are allowed
 	/// @return Value that controls the suspension and resuming of drawing
-	static uint32 getDrawingStrategy();
+	uint32 getDrawingStrategy();
 
 	/// Start VIP drawing operations.
-	static void startDrawing();
+	void startDrawing();
 
 	/// Resume VIP drawing operations.
-	static void resumeDrawing();
+	void resumeDrawing();
 
 	/// Suspend VIP drawing operations.
-	static void suspendDrawing();
+	void suspendDrawing();
 
 	/// Stop VIP drawing operations.
-	static void stopDrawing();
+	void stopDrawing();
 
 	/// Start VIP displaying operations.
-	static void startDisplaying();
+	void startDisplaying();
 
 	/// Stop VIP displaying operations.
-	static void stopDisplaying();
+	void stopDisplaying();
 
 	/// Set the FRMCYC value
 	/// @param frameCycle: FRMCYC value
-	static void setFrameCycle(uint8 frameCycle);
+	void setFrameCycle(uint8 frameCycle);
 
 	/// Configure the VIP's palettes with the provided configuration.
 	/// @param paletteConfig: Palettes configuration
-	static void configurePalettes(PaletteConfig* paletteConfig);
+	void configurePalettes(PaletteConfig* paletteConfig);
 
 	/// Setup the column table with the provided spec.
 	/// @param columnTableSpec: Specification for the configuration of the column table
-	static void setupColumnTable(ColumnTableSpec* columnTableSpec);
+	void setupColumnTable(ColumnTableSpec* columnTableSpec);
 
 	/// Configure the brightness registers with the provided configuration.
 	/// @param brightness: Brightness configuration
-	static void configureBrightness(Brightness* brightness);
+	void configureBrightness(Brightness* brightness);
 
 	/// Configure the column table brightness repeat values.
 	/// @param brightnessRepeat: Brightness configuration
-	static void configureBrightnessRepeat(BrightnessRepeatSpec* brightnessRepeat);
+	void configureBrightnessRepeat(BrightnessRepeatSpec* brightnessRepeat);
 
 	/// Configure the background color.
 	/// @param color: Color to apply to the background
-	static void configureBackgroundColor(uint8 color);
+	void configureBackgroundColor(uint8 color);
 
 	/// Up the brightness to the maximum.
-	static void upBrightness();
+	void upBrightness();
 
 	/// Lower the brightness to the minimum.
-	static void lowerBrightness();
+	void lowerBrightness();
 
 	/// Push a post processing effect at the start of the list of effects.
 	/// @param postProcessingEffect: Post-processing effect function
 	/// @param entity: Post-processing effect function's scope
-	static void pushFrontPostProcessingEffect(PostProcessingEffect postProcessingEffect, Entity entity);
+	void pushFrontPostProcessingEffect(PostProcessingEffect postProcessingEffect, Entity entity);
 
 	/// Push a post processing effect at the end of the list of effects.
 	/// @param postProcessingEffect: Post-processing effect function
 	/// @param entity: Post-processing effect function's scope
-	static void pushBackPostProcessingEffect(PostProcessingEffect postProcessingEffect, Entity entity);
+	void pushBackPostProcessingEffect(PostProcessingEffect postProcessingEffect, Entity entity);
 
 	/// Remove a post-processing effect from the list of effects.
 	/// @param postProcessingEffect: Post-processing effect function
 	/// @param entity: Post-processing effect function's scope
-	static void removePostProcessingEffect(PostProcessingEffect postProcessingEffect, Entity entity);
+	void removePostProcessingEffect(PostProcessingEffect postProcessingEffect, Entity entity);
 
 	/// Remove all a post-processing effects.
-	static void removePostProcessingEffects();
+	void removePostProcessingEffects();
 
 	/// Retrieve the registry of the interrupts being processed.
 	/// @return The registry of the interrupts being processed
-	static uint16 getCurrentInterrupt();
+	uint16 getCurrentInterrupt();
 
 	/// Retrieve the time in milliseconds that each game frame lasts.
 	/// @return Time in milliseconds that the game frame last according
 	/// to the FRMCYC configuration
-	static uint16 getGameFrameDuration();
+	uint16 getGameFrameDuration();
 }
 
 #endif

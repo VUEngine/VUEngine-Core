@@ -37,10 +37,6 @@ singleton class SoundTest : Tool
 
 	/// @publicsection
 
-	/// Method to retrieve the singleton instance
-	/// @return SoundTest singleton
-	static SoundTest getInstance();
-
 	/// Update the tool's state.
 	override void update();
 

@@ -31,7 +31,7 @@ void Stopwatch::constructor()
 	Stopwatch::reset(this);
 
 	// Register clock
-	StopwatchManager::register(this);
+	StopwatchManager::register(StopwatchManager::getInstance(), this);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -39,7 +39,7 @@ void Stopwatch::constructor()
 void Stopwatch::destructor()
 {
 	// Unregister the clock
-	StopwatchManager::unregister(this);
+	StopwatchManager::unregister(StopwatchManager::getInstance(), this);
 
 	// Always explicitly call the base's destructor 
 	Base::destructor();
@@ -51,8 +51,8 @@ void Stopwatch::reset()
 {
 	this->interrupts = 0;
 	this->milliSeconds = 0;
-	this->timerCounter = TimerManager::getTimerCounter();
-	this->timeProportion = TimerManager::getTargetTimePerInterruptInMS() / (float)this->timerCounter;
+	this->timerCounter = TimerManager::getTimerCounter(TimerManager::getInstance());
+	this->timeProportion = TimerManager::getTargetTimePerInterruptInMS(TimerManager::getInstance()) / (float)this->timerCounter;
 	this->previousTimerCounter = this->timerCounter;
 }
 
@@ -69,7 +69,7 @@ float Stopwatch::lap()
 {
 	extern uint8* const _hardwareRegisters;
 
-	TimerManager::disable();
+	TimerManager::disable(TimerManager::getInstance());
 
 	uint16 currentTimerCounter = (_hardwareRegisters[__THR] << 8 ) | _hardwareRegisters[__TLR];
 
@@ -104,7 +104,7 @@ float Stopwatch::lap()
 
 	this->milliSeconds += elapsedTime;
 
-	TimerManager::enable();
+	TimerManager::enable(TimerManager::getInstance());
 
 	return elapsedTime;
 }
