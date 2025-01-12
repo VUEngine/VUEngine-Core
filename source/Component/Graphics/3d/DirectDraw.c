@@ -1078,13 +1078,11 @@ static bool DirectDraw::isPointInsideFrustum(PixelVector point)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void DirectDraw::reset()
+secure void DirectDraw::reset()
 {
-	DirectDraw directDraw = DirectDraw::getInstance();
+	this->maximumPixelsToDraw = __DIRECT_DRAW_MAXIMUM_NUMBER_OF_PIXELS;
 
-	directDraw->maximumPixelsToDraw = __DIRECT_DRAW_MAXIMUM_NUMBER_OF_PIXELS;
-
-	DirectDraw::setFrustum((CameraFrustum)
+	DirectDraw::setFrustum(this, (CameraFrustum)
 	{
 		0, 0, 0, __SCREEN_WIDTH - 1, __SCREEN_HEIGHT - 1, 8191
 	});
@@ -1092,10 +1090,8 @@ static void DirectDraw::reset()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void DirectDraw::preparteToDraw()
+secure void DirectDraw::preparteToDraw()
 {
-	DirectDraw directDraw = DirectDraw::getInstance();
-
 #ifdef __SHOW_DIRECT_DRAWING_PROFILING
 	static int counter = 0;
 
@@ -1106,22 +1102,22 @@ static void DirectDraw::preparteToDraw()
 	}
 #endif
 
-	if(directDraw->drawnPixelsCounter <= directDraw->maximumPixelsToDraw)
+	if(this->drawnPixelsCounter <= this->maximumPixelsToDraw)
 	{
-		directDraw->maximumPixelsToDraw += __DIRECT_DRAW_MAXIMUM_NUMBER_OF_PIXELS_RECOVERY;
+		this->maximumPixelsToDraw += __DIRECT_DRAW_MAXIMUM_NUMBER_OF_PIXELS_RECOVERY;
 
-		if(__DIRECT_DRAW_MAXIMUM_NUMBER_OF_PIXELS < directDraw->maximumPixelsToDraw)
+		if(__DIRECT_DRAW_MAXIMUM_NUMBER_OF_PIXELS < this->maximumPixelsToDraw)
 		{
-			directDraw->maximumPixelsToDraw = __DIRECT_DRAW_MAXIMUM_NUMBER_OF_PIXELS;
+			this->maximumPixelsToDraw = __DIRECT_DRAW_MAXIMUM_NUMBER_OF_PIXELS;
 		}
 	}
 
-	directDraw->drawnPixelsCounter = 0;
+	this->drawnPixelsCounter = 0;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void DirectDraw::setFrustum(CameraFrustum frustum)
+void DirectDraw::setFrustum(CameraFrustum frustum)
 {
 	if(frustum.x1 >= __SCREEN_WIDTH)
 	{
@@ -1171,7 +1167,7 @@ static void DirectDraw::setFrustum(CameraFrustum frustum)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static CameraFrustum DirectDraw::getFrustum()
+CameraFrustum DirectDraw::getFrustum()
 {
 	return _frustum;
 }
@@ -1179,16 +1175,14 @@ static CameraFrustum DirectDraw::getFrustum()
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #ifndef __SHIPPING
-static void DirectDraw::print(int16 x, int16 y)
+void DirectDraw::print(int16 x, int16 y)
 {
-	DirectDraw directDraw = DirectDraw::getInstance();
-
 	Printing::text("DIRECT DRAW", x, y++, NULL);
 	y++;
 	Printing::text("Drawn pixels:      ", x, y, NULL);
-	Printing::int32(directDraw->drawnPixelsCounter, x + 14, y++, NULL);
+	Printing::int32(this->drawnPixelsCounter, x + 14, y++, NULL);
 	Printing::text("Max. pixels:       ", x, y, NULL);
-	Printing::int32(directDraw->maximumPixelsToDraw, x + 14, y++, NULL);
+	Printing::int32(this->maximumPixelsToDraw, x + 14, y++, NULL);
 }
 #endif
 

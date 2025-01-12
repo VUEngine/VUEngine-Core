@@ -568,7 +568,7 @@ bool WireframeManager::onVIPXPEND(ListenerObject eventFirer __attribute__ ((unus
 	this->stopDrawing = false;
 	this->stopRendering = kVIPManagerFavorPerformance == VIPManager::getDrawingStrategy();
 
-	DirectDraw::preparteToDraw();
+	DirectDraw::preparteToDraw(DirectDraw::getInstance());
 	WireframeManager::draw();
 
 	return true;
@@ -589,7 +589,7 @@ bool WireframeManager::onVIPManagerXPENDDuringGAMESTART(ListenerObject eventFire
 {
 	this->stopRendering = kVIPManagerFavorPerformance == VIPManager::getDrawingStrategy();
 
-	DirectDraw::preparteToDraw();
+	DirectDraw::preparteToDraw(DirectDraw::getInstance());
 	WireframeManager::draw();
 
 	return true;
