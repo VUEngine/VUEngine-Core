@@ -1095,7 +1095,7 @@ void Stage::configureGraphics()
 
 	BgmapTextureManager::configure
 	(
-		BgmapTextureManager::getInstance(), ParamTableManager::configure(this->stageSpec->rendering.paramTableSegments)
+		BgmapTextureManager::getInstance(), ParamTableManager::configure(ParamTableManager::getInstance(), this->stageSpec->rendering.paramTableSegments)
 	);
 
 	Printing::loadFonts(this->stageSpec->assets.fontSpecs);

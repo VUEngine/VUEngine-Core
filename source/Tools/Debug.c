@@ -1066,7 +1066,7 @@ void Debug::texturesShowStatus(int32 increment, int32 x, int32 y)
 	{
 		Debug::setBlackBackground(this);
 		BgmapTextureManager::print(x, y);
-		ParamTableManager::print(x + 27, y);
+		ParamTableManager::print(ParamTableManager::getInstance(), x + 27, y);
 	}
 	else if(BgmapTextureManager::getAvailableBgmapSegmentsForTextures() > this->bgmapSegment)
 	{
@@ -1083,7 +1083,7 @@ void Debug::texturesShowStatus(int32 increment, int32 x, int32 y)
 		this->bgmapSegment = -1;
 		Debug::setBlackBackground(this);
 		BgmapTextureManager::print(x, y);
-		ParamTableManager::print(x + 27, y);
+		ParamTableManager::print(ParamTableManager::getInstance(), x + 27, y);
 	}
 }
 

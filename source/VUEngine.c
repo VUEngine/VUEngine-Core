@@ -1122,7 +1122,7 @@ static void VUEngine::printDebug()
 
 #ifdef __SHOW_BGMAP_MEMORY_STATUS
 	BgmapTextureManager::print(BgmapTextureManager::getInstance(), 1, 5);
-	ParamTableManager::print(1 + 27, 5);
+	ParamTableManager::print(ParamTableManager::getInstance(), 1 + 27, 5);
 #endif
 
 #ifdef __SHOW_MEMORY_POOL_STATUS
@@ -1153,10 +1153,11 @@ static void VUEngine::printDebug()
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+#include <BgmapSprite.h>
+#include <MBgmapSprite.h>
 #include <Stopwatch.h>
 #include <ObjectSprite.h>
 #include <ObjectSpriteContainer.h>
-#include <BgmapSprite.h>
 	
 const ClassPointer ClockManagerAuthClasses[] =
 {
@@ -1176,6 +1177,15 @@ const ClassPointer BgmapTextureManagerAuthClasses[] =
 const ClassPointer MessageDispatcherAuthClasses[] =
 {
 	typeofclass(VUEngine),
+	NULL
+};
+
+const ClassPointer ParamTableManagerAuthClasses[] =
+{
+	typeofclass(BgmapSprite),
+	typeofclass(MBgmapSprite),
+	typeofclass(SpriteManager),
+	typeofclass(Stage),
 	NULL
 };
 
@@ -1199,6 +1209,7 @@ static void VUEngine::secureSingletons()
 	ClockManager::secure(&ClockManagerAuthClasses);
 	BgmapTextureManager::secure(&BgmapTextureManagerAuthClasses);
 	MessageDispatcher::secure(&MessageDispatcherAuthClasses);
+	ParamTableManager::secure(&ParamTableManagerAuthClasses);
 	SpriteManager::secure(&SpriteManagerAuthClasses);
 	StopwatchManager::secure(&StopwatchManagerAuthClasses);
 }

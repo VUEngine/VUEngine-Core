@@ -115,7 +115,7 @@ void SpriteManager::reset()
 	Printing::reset();
 	CharSetManager::reset();
 	BgmapTextureManager::reset(BgmapTextureManager::getInstance());
-	ParamTableManager::reset();
+	ParamTableManager::reset(ParamTableManager::getInstance());
 
 	SpriteManager::cleanUp(this);
 	ObjectSpriteContainer::reset();
@@ -469,7 +469,7 @@ void SpriteManager::render()
 
 	this->completeSort = SpriteManager::sortProgressively(this, this->completeSort);
 
-	ParamTableManager::defragment(true);
+	ParamTableManager::defragment(ParamTableManager::getInstance(), true);
 
 	// Switch between even and odd frame
 	this->evenFrame = __TRANSPARENCY_EVEN == this->evenFrame ? __TRANSPARENCY_ODD : __TRANSPARENCY_EVEN;
