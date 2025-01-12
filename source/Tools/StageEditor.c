@@ -286,7 +286,7 @@ void StageEditor::releaseWireframe()
 {
 	if(!isDeleted(this->wireframe))
 	{
-		WireframeManager::destroyWireframe(this->wireframe);
+		ComponentManager::destroyComponent(Component::safeCast(this->wireframe));
 
 		this->wireframe = NULL;
 	}
@@ -362,11 +362,7 @@ void StageEditor::highLightActor()
 				(PixelVector(*)[2])MeshesSegments
 			};
 
-			this->wireframe = 
-				WireframeManager::createWireframe
-				(
-					Entity::safeCast(actor), (WireframeSpec*)&meshSpec
-				);
+			this->wireframe = Wireframe::safeCast(ComponentManager::createComponent(NULL, (ComponentSpec*)&meshSpec));
 		}
 	}
 	else
