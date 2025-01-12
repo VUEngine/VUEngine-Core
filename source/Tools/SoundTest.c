@@ -347,7 +347,7 @@ void SoundTest::loadSound()
 		return;
 	}
 
-	VUEngine::disableKeypad();
+	KeypadManager::disable(KeypadManager::getInstance());
 
 #ifdef __SOUND_TEST
 	Printing::clear();
@@ -380,7 +380,7 @@ void SoundTest::loadSound()
 #endif
 	}
 
-	VUEngine::enableKeypad();
+	KeypadManager::enable(KeypadManager::getInstance());
 
 	SoundTest::printGUI(this, false);
 }

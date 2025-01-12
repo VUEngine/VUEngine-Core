@@ -154,10 +154,6 @@ singleton class VUEngine : ListenerObject
 	/// @return Current game state's collision manager
 	static ColliderManager getColliderManager();
 
-	/// Retrieve the engine's state machine.
-	/// @return Engine's state machine
-	static StateMachine getStateMachine();
-
 	/// Retrieve the engine's main clock.
 	/// @return Engine's main clock
 	static Clock getClock();
@@ -192,12 +188,6 @@ singleton class VUEngine : ListenerObject
 	/// Unlock the frame rate.
 	static void unlockFrameRate();
 
-	/// Enable user input.
-	static void enableKeypad();
-
-	/// Disable user input.
-	static void disableKeypad();
-
 	/// Set the saved data manager.
 	/// @param saveDataManager:: Save data manager to use
 	static void setSaveDataManager(ListenerObject saveDataManager);
@@ -205,21 +195,6 @@ singleton class VUEngine : ListenerObject
 	/// Retrieve the saved data manager.
 	/// @return Save data manager
 	static ListenerObject getSaveDataManager();
-
-	/// Push a post processing effect at the start of the list of effects.
-	/// @param postProcessingEffect: Post-processing effect function
-	/// @param entity: Post-processing effect function's scope
-	static void pushFrontPostProcessingEffect(PostProcessingEffect postProcessingEffect, Entity entity);
-	
-	/// Push a post processing effect at the end of the list of effects.
-	/// @param postProcessingEffect: Post-processing effect function
-	/// @param entity: Post-processing effect function's scope
-	static void pushBackPostProcessingEffect(PostProcessingEffect postProcessingEffect, Entity entity);
-
-	/// Remove a post-processing effect from the list of effects.
-	/// @param postProcessingEffect: Post-processing effect function
- 	/// @param entity: Post-processing effect function's scope
-	static void removePostProcessingEffect(PostProcessingEffect postProcessingEffect, Entity entity);
 
 	/// Check if the game is paused.
 	/// @return True if the game is paused; false otherwise

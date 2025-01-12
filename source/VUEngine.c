@@ -340,15 +340,6 @@ static ColliderManager VUEngine::getColliderManager()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static StateMachine VUEngine::getStateMachine()
-{
-	VUEngine vuEngine = VUEngine::getInstance();
-
-	return vuEngine->stateMachine;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
 static Clock VUEngine::getClock()
 {
 	VUEngine vuEngine = VUEngine::getInstance();
@@ -435,20 +426,6 @@ static void VUEngine::unlockFrameRate()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void VUEngine::enableKeypad()
-{
-	KeypadManager::enable(KeypadManager::getInstance());
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-static void VUEngine::disableKeypad()
-{
-	KeypadManager::disable(KeypadManager::getInstance());
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
 static void VUEngine::setSaveDataManager(ListenerObject saveDataManager)
 {
 	VUEngine vuEngine = VUEngine::getInstance();
@@ -463,27 +440,6 @@ static ListenerObject VUEngine::getSaveDataManager()
 	VUEngine vuEngine = VUEngine::getInstance();
 
 	return vuEngine->saveDataManager;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-static void VUEngine::pushFrontPostProcessingEffect(PostProcessingEffect postProcessingEffect, Entity entity)
-{
-	VIPManager::pushFrontPostProcessingEffect(VIPManager::getInstance(), postProcessingEffect, entity);
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-static void VUEngine::pushBackPostProcessingEffect(PostProcessingEffect postProcessingEffect, Entity entity)
-{
-	VIPManager::pushBackPostProcessingEffect(VIPManager::getInstance(), postProcessingEffect, entity);
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-static void VUEngine::removePostProcessingEffect(PostProcessingEffect postProcessingEffect, Entity entity)
-{
-	VIPManager::removePostProcessingEffect(VIPManager::getInstance(), postProcessingEffect, entity);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

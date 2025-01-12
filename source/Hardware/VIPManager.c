@@ -400,7 +400,7 @@ void VIPManager::lowerBrightness()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-secure void VIPManager::pushFrontPostProcessingEffect(PostProcessingEffect postProcessingEffect, Entity entity)
+void VIPManager::pushFrontPostProcessingEffect(PostProcessingEffect postProcessingEffect, Entity entity)
 {
 	PostProcessingEffectRegistry* postProcessingEffectRegistry = 
 		VIPManager::isPostProcessingEffectRegistered(this, postProcessingEffect, entity);
@@ -421,7 +421,7 @@ secure void VIPManager::pushFrontPostProcessingEffect(PostProcessingEffect postP
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-secure void VIPManager::pushBackPostProcessingEffect(PostProcessingEffect postProcessingEffect, Entity entity)
+void VIPManager::pushBackPostProcessingEffect(PostProcessingEffect postProcessingEffect, Entity entity)
 {
 	PostProcessingEffectRegistry* postProcessingEffectRegistry = 
 		VIPManager::isPostProcessingEffectRegistered(this, postProcessingEffect, entity);
@@ -442,7 +442,7 @@ secure void VIPManager::pushBackPostProcessingEffect(PostProcessingEffect postPr
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-secure void VIPManager::removePostProcessingEffect(PostProcessingEffect postProcessingEffect, Entity entity)
+void VIPManager::removePostProcessingEffect(PostProcessingEffect postProcessingEffect, Entity entity)
 {
 	for(VirtualNode node = this->postProcessingEffects->head; NULL != node; node = node->next)
 	{
