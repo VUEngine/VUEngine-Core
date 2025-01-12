@@ -263,7 +263,7 @@ static void Printing::clear()
 	{
 		Mem::clear
 		(
-			(BYTE*)__BGMAP_SEGMENT(BgmapTextureManager::getPrintingBgmapSegment(BgmapTextureManager::getInstance()) + 1) - 
+			(BYTE*)__BGMAP_SEGMENT(printing->printingBgmapSegment + 1) - 
 			__PRINTABLE_BGMAP_AREA * 2, __PRINTABLE_BGMAP_AREA * 2
 		);
 	}

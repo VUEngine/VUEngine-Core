@@ -366,7 +366,6 @@ static uint16 ComponentManager::getComponentsCount(Entity owner, uint32 componen
 
 static void ComponentManager::propagateCommand(int32 command, Entity owner, uint32 componentType, ...)
 {
-
 	void propagateCommand(ComponentManager componentManager, va_list args)
 	{
 		for(VirtualNode node = componentManager->components->head; NULL != node; node = node->next)
