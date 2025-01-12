@@ -152,7 +152,7 @@ static void VUEngine::reset(bool resetSounds)
 	SRAMManager::reset(SRAMManager::getInstance());
 	StopwatchManager::reset(StopwatchManager::getInstance());
 	TimerManager::reset(TimerManager::getInstance());
-	VIPManager::reset();
+	VIPManager::reset(VIPManager::getInstance());
 	WireframeManager::reset(WireframeManager::getInstance());
 }
 
@@ -174,7 +174,7 @@ static int32 VUEngine::start(GameState currentGameState)
 	ASSERT(currentGameState, "VUEngine::start: currentGameState is NULL");
 
 	// Initialize VPU and turn off the brightness
-	VIPManager::lowerBrightness();
+	VIPManager::lowerBrightness(VIPManager::getInstance());
 
 	if(NULL == StateMachine::getCurrentState(vuEngine->stateMachine))
 	{
@@ -481,7 +481,7 @@ static char* VUEngine::getProcessName()
 
 static uint16 VUEngine::getGameFrameDuration()
 {
-	return VIPManager::getGameFrameDuration();
+	return VIPManager::getGameFrameDuration(VIPManager::getInstance());
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -494,7 +494,7 @@ static void VUEngine::setGameFrameRate(uint16 gameFrameRate)
 	}
 
 	FrameRate::setTarget(FrameRate::getInstance(), gameFrameRate);
-	VIPManager::setFrameCycle(__MAXIMUM_FPS / gameFrameRate - 1);
+	VIPManager::setFrameCycle(VIPManager::getInstance(), __MAXIMUM_FPS / gameFrameRate - 1);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -551,21 +551,21 @@ static ListenerObject VUEngine::getSaveDataManager()
 
 static void VUEngine::pushFrontPostProcessingEffect(PostProcessingEffect postProcessingEffect, Entity entity)
 {
-	VIPManager::pushFrontPostProcessingEffect(postProcessingEffect, entity);
+	VIPManager::pushFrontPostProcessingEffect(VIPManager::getInstance(), postProcessingEffect, entity);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 static void VUEngine::pushBackPostProcessingEffect(PostProcessingEffect postProcessingEffect, Entity entity)
 {
-	VIPManager::pushBackPostProcessingEffect(postProcessingEffect, entity);
+	VIPManager::pushBackPostProcessingEffect(VIPManager::getInstance(), postProcessingEffect, entity);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 static void VUEngine::removePostProcessingEffect(PostProcessingEffect postProcessingEffect, Entity entity)
 {
-	VIPManager::removePostProcessingEffect(postProcessingEffect, entity);
+	VIPManager::removePostProcessingEffect(VIPManager::getInstance(), postProcessingEffect, entity);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -1078,21 +1078,21 @@ static void VUEngine::cleanUp()
 {
 	VUEngine vuEngine = VUEngine::getInstance();
 
-	VIPManager::unregisterEventListener
+	VIPManager::removeEventListener
 	(
-		ListenerObject::safeCast(vuEngine), (EventListener)VUEngine::onVIPFRAMESTART, 
+		VIPManager::getInstance(), ListenerObject::safeCast(vuEngine), (EventListener)VUEngine::onVIPFRAMESTART, 
 		kEventVIPManagerFRAMESTART
 	);
 
-	VIPManager::unregisterEventListener
+	VIPManager::removeEventListener
 	(
-		ListenerObject::safeCast(vuEngine), (EventListener)VUEngine::onVIPGAMESTART, 
+		VIPManager::getInstance(), ListenerObject::safeCast(vuEngine), (EventListener)VUEngine::onVIPGAMESTART, 
 		kEventVIPManagerGAMESTART
 	);
 
-	VIPManager::unregisterEventListener
+	VIPManager::removeEventListener
 	(
-		ListenerObject::safeCast(vuEngine), (EventListener)VUEngine::onVIPXPEND, 
+		VIPManager::getInstance(), ListenerObject::safeCast(vuEngine), (EventListener)VUEngine::onVIPXPEND, 
 		kEventVIPManagerXPEND
 	);
 }
@@ -1210,6 +1210,13 @@ const ClassPointer ClockManagerAuthClasses[] =
 	NULL
 };
 
+const ClassPointer CommunicationManagerAuthClasses[] =
+{
+	typeofclass(RumbleManager),
+	typeofclass(VUEngine),
+	NULL
+};
+
 const ClassPointer DirectDrawAuthClasses[] =
 {
 	typeofclass(VUEngine),
@@ -1278,6 +1285,14 @@ const ClassPointer TimerManagerAuthClasses[] =
 	NULL
 };
 
+const ClassPointer VIPManagerAuthClasses[] =
+{
+	typeofclass(Stage),
+	typeofclass(VUEngine),
+	NULL
+};
+
+
 const ClassPointer WireframeManagerAuthClasses[] =
 {
 	typeofclass(ComponentManager),
@@ -1293,6 +1308,7 @@ static void VUEngine::secureSingletons()
 	Camera::secure(&CameraAuthClasses);
 	CharSetManager::secure(&CharSetManagerAuthClasses);
 	ClockManager::secure(&ClockManagerAuthClasses);
+//	CommunicationManager::secure(&CommunicationManagerAuthClasses);
 	DirectDraw::secure(&DirectDrawAuthClasses);
 	KeypadManager::secure(&KeypadManagerAuthClasses);
 	MessageDispatcher::secure(&MessageDispatcherAuthClasses);
@@ -1303,6 +1319,7 @@ static void VUEngine::secureSingletons()
 	SRAMManager::secure(&SRAMManagerAuthClasses);
 	StopwatchManager::secure(&StopwatchManagerAuthClasses);
 	TimerManager::secure(&TimerManagerAuthClasses);
+	VIPManager::secure(&VIPManagerAuthClasses);
 	WireframeManager::secure(&WireframeManagerAuthClasses);
 }
 
@@ -1336,22 +1353,22 @@ void VUEngine::constructor()
 	// To make debugging easier
 	this->processName = PROCESS_NAME_START_UP;
 
-	VIPManager::registerEventListener
+	VIPManager::addEventListener
 	(
-		ListenerObject::safeCast(this), (EventListener)VUEngine::onVIPFRAMESTART, 
+		VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)VUEngine::onVIPFRAMESTART, 
 		kEventVIPManagerFRAMESTART
 	);
 
-	VIPManager::registerEventListener
+	VIPManager::addEventListener
 	(
-		ListenerObject::safeCast(this), (EventListener)VUEngine::onVIPGAMESTART,
+		VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)VUEngine::onVIPGAMESTART,
 		kEventVIPManagerGAMESTART
 	);
 
 #ifdef __SHOW_PROCESS_NAME_DURING_XPEND
-	VIPManager::registerEventListener
+	VIPManager::addEventListener
 	(
-		ListenerObject::safeCast(this), (EventListener)VUEngine::onVIPXPEND, 
+		VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)VUEngine::onVIPXPEND, 
 		kEventVIPManagerXPEND
 	);
 #endif
@@ -1387,9 +1404,9 @@ bool VUEngine::cleaniningStatesStack(ListenerObject eventFirer)
 	this->processName = PROCESS_NAME_STATE_SWAP;
 #endif
 
-	VIPManager::stopDisplaying();
+	VIPManager::stopDisplaying(VIPManager::getInstance());
 
-	VIPManager::stopDrawing();
+	VIPManager::stopDrawing(VIPManager::getInstance());
 
 	// Clean the game's stack
 	// Pop states until the stack is empty
@@ -1426,8 +1443,8 @@ bool VUEngine::pushingState(ListenerObject eventFirer)
 	this->isInToolStateTransition = NULL != __GET_CAST(ToolState, StateMachine::getNextState(this->stateMachine));
 #endif
 
-	VIPManager::stopDisplaying();
-	VIPManager::stopDrawing();
+	VIPManager::stopDisplaying(VIPManager::getInstance());
+	VIPManager::stopDrawing(VIPManager::getInstance());
 
 	return false;
 }
@@ -1445,8 +1462,8 @@ bool VUEngine::swappingState(ListenerObject eventFirer)
 	this->processName = PROCESS_NAME_STATE_SWAP;
 #endif
 
-	VIPManager::stopDisplaying();
-	VIPManager::stopDrawing();
+	VIPManager::stopDisplaying(VIPManager::getInstance());
+	VIPManager::stopDrawing(VIPManager::getInstance());
 
 	GameState currentGameState = GameState::safeCast(StateMachine::getCurrentState(this->stateMachine));
 
@@ -1477,8 +1494,8 @@ bool VUEngine::poppingState(ListenerObject eventFirer)
 	this->processName = PROCESS_NAME_STATE_SWAP;
 #endif
 
-	VIPManager::stopDisplaying();
-	VIPManager::stopDrawing();
+	VIPManager::stopDisplaying(VIPManager::getInstance());
+	VIPManager::stopDrawing(VIPManager::getInstance());
 
 	GameState currentGameState = GameState::safeCast(StateMachine::getCurrentState(this->stateMachine));
 
@@ -1523,8 +1540,8 @@ bool VUEngine::changedState(ListenerObject eventFirer)
 		CommunicationManager::startSyncCycle(CommunicationManager::getInstance());
 	}
 
-	VIPManager::startDrawing();
-	VIPManager::startDisplaying();
+	VIPManager::startDrawing(VIPManager::getInstance());
+	VIPManager::startDisplaying(VIPManager::getInstance());
 	HardwareManager::enableInterrupts();
 
 	// Fire event
@@ -1556,7 +1573,7 @@ bool VUEngine::onVIPGAMESTART(ListenerObject eventFirer __attribute__ ((unused))
 	PRINT_TEXT(vuEngine->processName, 9, 26);
 #endif
 
-	VUEngine::gameFrameStarted(VIPManager::getGameFrameDuration());
+	VUEngine::gameFrameStarted(VIPManager::getGameFrameDuration(VIPManager::getInstance()));
 
 	return true;
 }

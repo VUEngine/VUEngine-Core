@@ -110,27 +110,27 @@ secure void WireframeManager::enable()
 {
 	this->disabled = false;
 
-	VIPManager::registerEventListener
+	VIPManager::addEventListener
 	(
-		ListenerObject::safeCast(this), (EventListener)WireframeManager::onVIPGAMESTART, 
+		VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)WireframeManager::onVIPGAMESTART, 
 		kEventVIPManagerGAMESTART
 	);
 
-	VIPManager::registerEventListener
+	VIPManager::addEventListener
 	(
-		ListenerObject::safeCast(this), (EventListener)WireframeManager::onVIPXPEND, 
+		VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)WireframeManager::onVIPXPEND, 
 		kEventVIPManagerXPEND
 	);
 
-	VIPManager::registerEventListener
+	VIPManager::addEventListener
 	(
-		ListenerObject::safeCast(this), (EventListener)WireframeManager::onVIPManagerGAMESTARTDuringXPEND, 
+		VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)WireframeManager::onVIPManagerGAMESTARTDuringXPEND, 
 		kEventVIPManagerGAMESTARTDuringXPEND
 	);
 
-	VIPManager::registerEventListener
+	VIPManager::addEventListener
 	(
-		ListenerObject::safeCast(this), (EventListener)WireframeManager::onVIPManagerXPENDDuringGAMESTART, 
+		VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)WireframeManager::onVIPManagerXPENDDuringGAMESTART, 
 		kEventVIPManagerXPENDDuringGAMESTART
 	);
 }
@@ -141,27 +141,27 @@ secure void WireframeManager::disable()
 {
 	this->disabled = true;
 
-	VIPManager::unregisterEventListener
+	VIPManager::removeEventListener
 	(
-		ListenerObject::safeCast(this), (EventListener)WireframeManager::onVIPGAMESTART, 
+		VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)WireframeManager::onVIPGAMESTART, 
 		kEventVIPManagerGAMESTARTDuringXPEND
 	);
 
-	VIPManager::unregisterEventListener
+	VIPManager::removeEventListener
 	(
-		ListenerObject::safeCast(this), (EventListener)WireframeManager::onVIPXPEND, 
+		VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)WireframeManager::onVIPXPEND, 
 		kEventVIPManagerGAMESTARTDuringXPEND
 	);
 
-	VIPManager::unregisterEventListener
+	VIPManager::removeEventListener
 	(
-		ListenerObject::safeCast(this), (EventListener)WireframeManager::onVIPManagerGAMESTARTDuringXPEND, 
+		VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)WireframeManager::onVIPManagerGAMESTARTDuringXPEND, 
 		kEventVIPManagerXPENDDuringGAMESTART
 	);
 
-	VIPManager::unregisterEventListener
+	VIPManager::removeEventListener
 	(
-		ListenerObject::safeCast(this), (EventListener)WireframeManager::onVIPManagerXPENDDuringGAMESTART, 
+		VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)WireframeManager::onVIPManagerXPENDDuringGAMESTART, 
 		kEventVIPManagerGAMESTARTDuringXPEND
 	);
 }
@@ -516,7 +516,7 @@ void WireframeManager::destructor()
 bool WireframeManager::onVIPGAMESTART(ListenerObject eventFirer __attribute__ ((unused)))
 {
 	this->stopRendering = false;
-	this->stopDrawing = kVIPManagerFavorPerformance == VIPManager::getDrawingStrategy();
+	this->stopDrawing = kVIPManagerFavorPerformance == VIPManager::getDrawingStrategy(VIPManager::getInstance());
 
 	WireframeManager::render(this);
 
@@ -530,7 +530,7 @@ bool WireframeManager::onVIPGAMESTART(ListenerObject eventFirer __attribute__ ((
 bool WireframeManager::onVIPXPEND(ListenerObject eventFirer __attribute__ ((unused)))
 {
 	this->stopDrawing = false;
-	this->stopRendering = kVIPManagerFavorPerformance == VIPManager::getDrawingStrategy();
+	this->stopRendering = kVIPManagerFavorPerformance == VIPManager::getDrawingStrategy(VIPManager::getInstance());
 
 	DirectDraw::preparteToDraw(DirectDraw::getInstance());
 	WireframeManager::draw(this);
@@ -542,7 +542,7 @@ bool WireframeManager::onVIPXPEND(ListenerObject eventFirer __attribute__ ((unus
 
 bool WireframeManager::onVIPManagerGAMESTARTDuringXPEND(ListenerObject eventFirer __attribute__ ((unused)))
 {
-	this->stopDrawing = kVIPManagerFavorPerformance == VIPManager::getDrawingStrategy();
+	this->stopDrawing = kVIPManagerFavorPerformance == VIPManager::getDrawingStrategy(VIPManager::getInstance());
 
 	return true;
 }
@@ -551,7 +551,7 @@ bool WireframeManager::onVIPManagerGAMESTARTDuringXPEND(ListenerObject eventFire
 
 bool WireframeManager::onVIPManagerXPENDDuringGAMESTART(ListenerObject eventFirer __attribute__ ((unused)))
 {
-	this->stopRendering = kVIPManagerFavorPerformance == VIPManager::getDrawingStrategy();
+	this->stopRendering = kVIPManagerFavorPerformance == VIPManager::getDrawingStrategy(VIPManager::getInstance());
 
 	DirectDraw::preparteToDraw(DirectDraw::getInstance());
 	WireframeManager::draw(this);

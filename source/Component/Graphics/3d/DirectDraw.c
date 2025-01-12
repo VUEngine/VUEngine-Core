@@ -1204,9 +1204,9 @@ void DirectDraw::constructor()
 
 	DirectDraw::reset(this);
 
-	VIPManager::registerEventListener
+	VIPManager::addEventListener
 	(
-		ListenerObject::safeCast(this), (EventListener)DirectDraw::onVIPManagerGAMESTARTDuringXPEND, 
+		VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)DirectDraw::onVIPManagerGAMESTARTDuringXPEND, 
 		kEventVIPManagerGAMESTARTDuringXPEND
 	);
 }
@@ -1215,9 +1215,9 @@ void DirectDraw::constructor()
 
 void DirectDraw::destructor()
 {
-	VIPManager::unregisterEventListener
+	VIPManager::removeEventListener
 	(
-		ListenerObject::safeCast(this), (EventListener)DirectDraw::onVIPManagerGAMESTARTDuringXPEND, 
+		VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)DirectDraw::onVIPManagerGAMESTARTDuringXPEND, 
 		kEventVIPManagerGAMESTARTDuringXPEND
 	);
 

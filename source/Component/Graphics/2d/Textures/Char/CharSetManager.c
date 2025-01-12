@@ -231,7 +231,7 @@ CharSet CharSetManager::findCharSet(const CharSetSpec* charSetSpec)
 
 CharSet CharSetManager::allocateCharSet(const CharSetSpec* charSetSpec)
 {
-	NM_ASSERT(this->charSets, "CharSetManager::allocateCharSet: null this");
+	NM_ASSERT(!isDeleted(this->charSets), "CharSetManager::allocateCharSet: null charSets");
 	NM_ASSERT(charSetSpec, "CharSetManager::allocateCharSet: null charSetSpec");
 	NM_ASSERT(charSetSpec->numberOfChars > 0, "CharSetManager::allocateCharSet: number of chars < 0");
 	NM_ASSERT(charSetSpec->numberOfChars < __CHAR_MEMORY_TOTAL_CHARS, "CharSetManager::allocateCharSet: too many chars in spec");

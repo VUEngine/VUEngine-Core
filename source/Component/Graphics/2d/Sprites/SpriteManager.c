@@ -146,15 +146,15 @@ void SpriteManager::reset()
 
 	this->evenFrame = __TRANSPARENCY_EVEN;
 
-	VIPManager::registerEventListener
+	VIPManager::addEventListener
 	(
-		ListenerObject::safeCast(this), (EventListener)SpriteManager::onVIPGAMESTART, 
+		VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)SpriteManager::onVIPGAMESTART, 
 		kEventVIPManagerGAMESTART
 	);
 
-	VIPManager::registerEventListener
+	VIPManager::addEventListener
 	(
-		ListenerObject::safeCast(this), (EventListener)SpriteManager::onVIPXPEND, 
+		VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)SpriteManager::onVIPXPEND, 
 		kEventVIPManagerXPEND
 	);
 
@@ -428,7 +428,7 @@ void SpriteManager::prepareAll()
 	bool deferTextureUpdating = this->deferTextureUpdating;
 
 	// Prevent VIP's interrupt from calling render during spriteManager process
-	VIPManager::suspendDrawing();
+	VIPManager::suspendDrawing(VIPManager::getInstance());
 
 	// Must make sure that all textures are completely written
 	SpriteManager::deferParamTableEffects(this, false);
@@ -454,7 +454,7 @@ void SpriteManager::prepareAll()
 	SpriteManager::deferParamTableEffects(this, true);
 
 	// Restore drawing
-	VIPManager::resumeDrawing();
+	VIPManager::resumeDrawing(VIPManager::getInstance());
 
 	this->deferTextureUpdating = deferTextureUpdating;
 }
@@ -861,15 +861,15 @@ void SpriteManager::printObjectSpriteContainersStatus(int32 x, int32 y)
 
 void SpriteManager::cleanUp()
 {
-	VIPManager::unregisterEventListener
+	VIPManager::removeEventListener
 	(
-		ListenerObject::safeCast(this), (EventListener)SpriteManager::onVIPGAMESTART, 
+		VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)SpriteManager::onVIPGAMESTART, 
 		kEventVIPManagerGAMESTARTDuringXPEND
 	);
 
-	VIPManager::unregisterEventListener
+	VIPManager::removeEventListener
 	(
-		ListenerObject::safeCast(this), (EventListener)SpriteManager::onVIPXPEND, 
+		VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)SpriteManager::onVIPXPEND, 
 		kEventVIPManagerGAMESTARTDuringXPEND
 	);
 

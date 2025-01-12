@@ -267,7 +267,7 @@ StageSpec* Stage::getSpec()
 
 void Stage::configurePalettes()
 {
-	VIPManager::configurePalettes(&this->stageSpec->rendering.paletteConfig);
+	VIPManager::configurePalettes(VIPManager::getInstance(), &this->stageSpec->rendering.paletteConfig);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -1086,6 +1086,7 @@ void Stage::configureGraphics()
 
 	VIPManager::configure
 	(
+		VIPManager::getInstance(), 
 		this->stageSpec->rendering.colorConfig.backgroundColor,
 		&this->stageSpec->rendering.colorConfig.brightness,
 		this->stageSpec->rendering.colorConfig.brightnessRepeat,
