@@ -113,7 +113,6 @@ static void MessageDispatcher::dispatchDelayedMessage
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 static bool MessageDispatcher::discardDelayedMessagesFromSender(ListenerObject sender, int32 message)
 {

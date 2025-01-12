@@ -590,6 +590,22 @@ typedef void* (*(*ClassPointer)(void*))(void*);
 #define __SINGLETON_SECURITY_CHECKER(ClassName)
 #endif
 
+/// Checks that the provided authorization array lives in non volatile memory.
+/// @param ClassName: Class to verity
+/// @return Implementation of a check for the validity of the authorization array
+#ifdef __RELEASE
+#define __SINGLETON_AUTHORIZATION_CHECK(ClassName)																						\
+																																		\
+	_authorized = true;																													\
+																																		\
+	if(NULL != _authorizedRequesters && !ClassName ## _authorize(requesterClass))														\
+	{																																	\
+		_authorized = false;																											\
+	}
+#else
+#define __SINGLETON_AUTHORIZATION_CHECK(ClassName)
+#endif
+
 #define __SINGLETON_ACCESS(ClassName)																									\
 																																		\
 		/* Array of authorized callers */																								\
@@ -682,12 +698,8 @@ typedef void* (*(*ClassPointer)(void*))(void*);
 		/* Define get instance method */																								\
 		__attribute__((unused)) ClassName ClassName ## _getInstance (ClassPointer requesterClass)										\
 		{																																\
-			_authorized = true;																											\
 																																		\
-			if(NULL != _authorizedRequesters && !ClassName ## _authorize(requesterClass))												\
-			{																															\
-				_authorized = false;																									\
-			}																															\
+			__SINGLETON_AUTHORIZATION_CHECK(ClassName)																					\
 																																		\
 			/* first check if not constructed yet */																					\
 			if(__SINGLETON_NOT_CONSTRUCTED == _singletonConstructed)																	\
@@ -749,12 +761,8 @@ typedef void* (*(*ClassPointer)(void*))(void*);
 		/* Define get instance method */																								\
 		__attribute__((unused)) ClassName ClassName ## _getInstance (ClassPointer requesterClass)										\
 		{																																\
-			_authorized = true;																											\
 																																		\
-			if(NULL != _authorizedRequesters && !ClassName ## _authorize(requesterClass))												\
-			{																															\
-				_authorized = false;																									\
-			}																															\
+			__SINGLETON_AUTHORIZATION_CHECK(ClassName)																					\
 																																		\
 			/* first check if not constructed yet */																					\
 			if(__SINGLETON_NOT_CONSTRUCTED == _singletonConstructed)																	\
