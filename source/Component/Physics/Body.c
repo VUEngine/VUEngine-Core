@@ -173,7 +173,7 @@ void Body::constructor(Entity owner, const BodySpec* bodySpec)
 	this->gravity = Body::getGravity(this);
 
 	Body::setFrictionCoefficient(this, bodySpec->frictionCoefficient);
-	Body::computeFrictionForceMagnitude(this, BodyManager::getFrictionCoefficient(VUEngine::getBodyManager()));
+	Body::computeFrictionForceMagnitude(this, BodyManager::getFrictionCoefficient(VUEngine::getBodyManager(VUEngine::getInstance())));
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -1371,7 +1371,7 @@ void Body::computeTotalNormal()
 	if(0 != this->totalNormal.x || 0 != this->totalNormal.y || 0 != this->totalNormal.z)
 	{
 		Body::computeTotalFrictionCoefficient(this);
-		Body::computeFrictionForceMagnitude(this, BodyManager::getFrictionCoefficient(VUEngine::getBodyManager()));
+		Body::computeFrictionForceMagnitude(this, BodyManager::getFrictionCoefficient(VUEngine::getBodyManager(VUEngine::getInstance())));
 	}
 }
 
@@ -1483,7 +1483,7 @@ void Body::computeFrictionForceMagnitude(fixed_t currentWorldFriction)
 
 void Body::computeTotalFrictionCoefficient()
 {
-	fixed_t currentWorldFriction = BodyManager::getFrictionCoefficient(VUEngine::getBodyManager());
+	fixed_t currentWorldFriction = BodyManager::getFrictionCoefficient(VUEngine::getBodyManager(VUEngine::getInstance()));
 	this->totalFrictionCoefficient = this->frictionCoefficient;
 
 	this->totalFrictionCoefficient += currentWorldFriction + this->surroundingFrictionCoefficient;
@@ -1504,7 +1504,7 @@ void Body::computeTotalFrictionCoefficient()
 
 Vector3D Body::getGravity()
 {
-	Vector3D gravity = BodyManager::getGravity(VUEngine::getBodyManager());
+	Vector3D gravity = BodyManager::getGravity(VUEngine::getBodyManager(VUEngine::getInstance()));
 	
 	return (Vector3D)
 	{

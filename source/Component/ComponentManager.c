@@ -514,12 +514,12 @@ static ComponentManager ComponentManager::getManager(uint32 componentType)
 
 		case kColliderComponent:
 
-			return ComponentManager::safeCast(VUEngine::getColliderManager());	
+			return ComponentManager::safeCast(VUEngine::getColliderManager(VUEngine::getInstance()));	
 			break;
 
 		case kPhysicsComponent:
 
-			return ComponentManager::safeCast(VUEngine::getBodyManager());	
+			return ComponentManager::safeCast(VUEngine::getBodyManager(VUEngine::getInstance()));	
 			break;
 
 		case kWireframeComponent:

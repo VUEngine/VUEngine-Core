@@ -270,23 +270,6 @@ static GameState VUEngine::getPreviousState()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static UIContainer VUEngine::getUIContainer()
-{
-	VUEngine vuEngine = VUEngine::getInstance();
-
-#ifdef __TOOLS
-	if(VUEngine::isInToolState())
-	{
-		return GameState::getUIContainer(GameState::safeCast(StateMachine::getPreviousState(vuEngine->stateMachine)));
-	}
-#endif
-
-	State state = StateMachine::getCurrentState(vuEngine->stateMachine);
-	return isDeleted(state) ? NULL : GameState::getUIContainer(GameState::safeCast(state));
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
 static Stage VUEngine::getStage()
 {
 	VUEngine vuEngine = VUEngine::getInstance();
@@ -300,42 +283,6 @@ static Stage VUEngine::getStage()
 
 	State state = StateMachine::getCurrentState(vuEngine->stateMachine);
 	return isDeleted(state) ? NULL : GameState::getStage(GameState::safeCast(state));
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-static BodyManager VUEngine::getBodyManager()
-{
-	VUEngine vuEngine = VUEngine::getInstance();
-
-#ifdef __TOOLS
-	if(VUEngine::isInToolState())
-	{
-		State state = StateMachine::getPreviousState(vuEngine->stateMachine);
-		return isDeleted(state) ? NULL : GameState::getBodyManager(state);
-	}
-#endif
-
-	State state = StateMachine::getCurrentState(vuEngine->stateMachine);
-	return isDeleted(state) ? NULL : GameState::getBodyManager(state);
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-static ColliderManager VUEngine::getColliderManager()
-{
-	VUEngine vuEngine = VUEngine::getInstance();
-
-#ifdef __TOOLS
-	if(VUEngine::isInToolState())
-	{
-		State state = StateMachine::getPreviousState(vuEngine->stateMachine);
-		return isDeleted(state) ? NULL : GameState::getColliderManager(state);
-	}
-#endif
-
-	State state = StateMachine::getCurrentState(vuEngine->stateMachine);
-	return isDeleted(state) ? NULL : GameState::getColliderManager(state);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -602,6 +549,38 @@ secure int32 VUEngine::start(GameState currentGameState)
 	}
 
 	return 0;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+secure BodyManager VUEngine::getBodyManager()
+{
+#ifdef __TOOLS
+	if(VUEngine::isInToolState())
+	{
+		State state = StateMachine::getPreviousState(this->stateMachine);
+		return isDeleted(state) ? NULL : GameState::getBodyManager(state);
+	}
+#endif
+
+	State state = StateMachine::getCurrentState(this->stateMachine);
+	return isDeleted(state) ? NULL : GameState::getBodyManager(state);
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+secure ColliderManager VUEngine::getColliderManager()
+{
+#ifdef __TOOLS
+	if(VUEngine::isInToolState())
+	{
+		State state = StateMachine::getPreviousState(this->stateMachine);
+		return isDeleted(state) ? NULL : GameState::getColliderManager(state);
+	}
+#endif
+
+	State state = StateMachine::getCurrentState(this->stateMachine);
+	return isDeleted(state) ? NULL : GameState::getColliderManager(state);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

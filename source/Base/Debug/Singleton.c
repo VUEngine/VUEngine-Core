@@ -16,6 +16,7 @@
 #include <BehaviorManager.h>
 #include <BgmapSprite.h>
 #include <BgmapTextureManager.h>
+#include <Body.h>
 #include <BodyManager.h>
 #include <Camera.h>
 #include <CommunicationManager.h>
@@ -220,6 +221,8 @@ const ClassPointer VSUManagerAuthorizedClasses[] =
 
 const ClassPointer VUEngineAuthorizedClasses[] =
 {
+	typeofclass(Body),
+	typeofclass(ComponentManager),
 	typeofclass(GameState),
 	NULL
 };

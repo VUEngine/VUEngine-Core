@@ -138,21 +138,9 @@ singleton class VUEngine : ListenerObject
 	/// @return Previous game state
 	static GameState getPreviousState();
 
-	/// Retrieve the current UI container.
-	/// @return Current game state's UI container
-	static UIContainer getUIContainer();
-
 	/// Retrieve the current stage.
 	/// @return Current game state's stage
 	static Stage getStage();
-
-	/// Retrieve the current game state's physical world.
-	/// @return Current game state's physical world
-	static BodyManager getBodyManager();
-
-	/// Retrieve the current game state's collision manager.
-	/// @return Current game state's collision manager
-	static ColliderManager getColliderManager();
 
 	/// Retrieve the engine's main clock.
 	/// @return Engine's main clock
@@ -220,6 +208,14 @@ singleton class VUEngine : ListenerObject
 	/// @param gameState: Game state the engine must enter when starting
 	/// @return Return code (0)
 	int32 start(GameState gameState);
+
+	/// Retrieve the current game state's physical world.
+	/// @return Current game state's physical world
+	BodyManager getBodyManager();
+
+	/// Retrieve the current game state's collision manager.
+	/// @return Current game state's collision manager
+	ColliderManager getColliderManager();
 }
 
 #endif
