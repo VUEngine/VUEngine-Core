@@ -29,10 +29,6 @@ singleton class DebugState : ToolState
 {
 	/// @publicsection
 
-	/// Method to retrieve the singleton instance
-	/// @return DebugState singleton
-	static DebugState getInstance(ClassPointer requesterClass);
-
 	/// Check if the provided user input unlocks the tool managed by this state.
 	/// @return True if the input matches the combination defined by the state
 	override bool isKeyCombination(const UserInput* userInput);

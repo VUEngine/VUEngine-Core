@@ -510,7 +510,7 @@ static ComponentManager ComponentManager::getManager(uint32 componentType)
 	{
 		case kSpriteComponent:
 
-			return ComponentManager::safeCast(SpriteManager::getInstance(typeofclass(ComponentManager)));
+			return ComponentManager::safeCast(SpriteManager::getInstance());
 			break;
 
 		case kColliderComponent:
@@ -525,12 +525,12 @@ static ComponentManager ComponentManager::getManager(uint32 componentType)
 
 		case kWireframeComponent:
 
-			return ComponentManager::safeCast(WireframeManager::getInstance(NULL));
+			return ComponentManager::safeCast(WireframeManager::getInstance());
 			break;
 
 		case kBehaviorComponent:
 
-			return ComponentManager::safeCast(BehaviorManager::getInstance(NULL));
+			return ComponentManager::safeCast(BehaviorManager::getInstance());
 			break;
 	}
 

@@ -1072,8 +1072,11 @@ void Stage::configureCamera(bool reset)
 
 void Stage::configureGraphics()
 {
+		SpriteManager		spriteManager = SpriteManager::getInstance();
+
 	SpriteManager::configure
 	(
+		spriteManager,
 		this->stageSpec->rendering.texturesMaximumRowsToWrite,
 		this->stageSpec->rendering.maximumAffineRowsToComputePerCall,
 		this->stageSpec->rendering.objectSpritesContainersSize,

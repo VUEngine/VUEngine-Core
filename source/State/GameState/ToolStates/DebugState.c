@@ -28,7 +28,7 @@ void DebugState::constructor()
 	// Always explicitly call the base's constructor 
 	Base::constructor();
 
-	this->tool = Tool::safeCast(Debug::getInstance(NULL));
+	this->tool = Tool::safeCast(Debug::getInstance());
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

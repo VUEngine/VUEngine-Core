@@ -31,7 +31,7 @@ class Stopwatch;
 /// Inherits from Object
 ///
 /// Manages the instances of Stopwatch.
-singleton! class StopwatchManager : Object
+singleton class StopwatchManager : Object
 {
 	/// @protectedsection
 

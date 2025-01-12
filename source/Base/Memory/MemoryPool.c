@@ -22,73 +22,6 @@
 // CLASS' MACROS
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-// defines a singleton (unique instance of a class)
-#define __MEMORY_POOL_SINGLETON(ClassName)																\
-																										\
-		/* declare the static instance */																\
-		typedef struct SingletonWrapper ## ClassName													\
-		{																								\
-			/* footprint to differentiate between objects and structs */								\
-			uint32 objectMemoryFootprint;																\
-			/* declare the static instance */															\
-			ClassName ## _str instance;																	\
-		} SingletonWrapper ## ClassName;																\
-																										\
-		static SingletonWrapper ## ClassName _singletonWrapper ## ClassName 							\
-				__MEMORY_POOL_SECTION_ATTRIBUTE;														\
-																										\
-		/* global pointer to speed up allocation and free */											\
-		ClassName _memoryPool __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE = 							\
-			&_singletonWrapper ## ClassName.instance;													\
-																										\
-		/* a flag to know when to allow construction */													\
-		static int8 _singletonConstructed __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE					\
-										= __SINGLETON_NOT_CONSTRUCTED;									\
-																										\
-		/* define get instance method */																\
-		static void __attribute__ ((noinline)) ClassName ## _instantiate()								\
-		{																								\
-			NM_ASSERT(__SINGLETON_BEING_CONSTRUCTED != _singletonConstructed,							\
-				ClassName get instance during construction);											\
-																										\
-			_singletonConstructed = __SINGLETON_BEING_CONSTRUCTED;										\
-																										\
-			/* make sure that the class is properly set */												\
-			__CALL_CHECK_VTABLE(ClassName);																\
-																										\
-			/*  */																						\
-			ClassName instance = &_singletonWrapper ## ClassName.instance;								\
-			_singletonWrapper ## ClassName.objectMemoryFootprint 										\
-				=  (__OBJECT_MEMORY_FOOT_PRINT << 16) | -1;												\
-			/* set the vtable pointer */																\
-			instance->vTable = &ClassName ## _vTable;													\
-																										\
-			/* call constructor */																		\
-			ClassName ## _constructor(instance);														\
-																										\
-			/* set the vtable pointer */																\
-			instance->vTable = &ClassName ## _vTable;													\
-																										\
-			/* don't allow more constructs */															\
-			_singletonConstructed = __SINGLETON_CONSTRUCTED;											\
-		}																								\
-																										\
-		/* define get instance method */																\
-		static ClassName ClassName ## _getInstance()													\
-		{																								\
-			/* first check if not constructed yet */													\
-			if(__SINGLETON_NOT_CONSTRUCTED == _singletonConstructed)									\
-			{																							\
-				ClassName ## _instantiate();															\
-			}																							\
-																										\
-			/* return the created singleton */															\
-			return &_singletonWrapper ## ClassName.instance;											\
-		}																								\
-																										\
-		/* dummy redeclaration to avoid warning when compiling with -pedantic */						\
-		void ClassName ## dummyMethodSingleton()
-
 // Have to undefine these in order for the lp to not get corrupted by the checks on the memoryPool pointer
 #undef ASSERT
 #undef NM_ASSERT
@@ -347,7 +280,7 @@ static void MemoryPool::printResumedUsage(int32 x, int32 y)
 	Printing::resetCoordinates();
 
 	Printing::text("MEMORY:", x, y, NULL);
-	uint32 poolSize = MemoryPool::getPoolSize();
+	uint32 poolSize = MemoryPool::getPoolSize(memoryPool);
 	Printing::text("Total: ", x, ++y, NULL);
 	Printing::int32(poolSize, x + 12 - Math::getDigitsCount(poolSize), y, NULL);
 
@@ -451,76 +384,6 @@ static void MemoryPool::printDetailedUsage(int32 x, int32 y)
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-// CLASS' PRIVATE STATIC METHODS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-static void MemoryPool::reset()
-{
-	MemoryPool memoryPool = MemoryPool::getInstance();
-
-	uint32 pool = 0;
-	uint32 i;
-
-	// Initialize pool's sizes and pointers
-	__SET_MEMORY_POOL_ARRAYS
-
-	// Clear all memory pool entries
-	for(pool = 0; pool < __MEMORY_POOLS; pool++)
-	{
-		for(i = 0; i < memoryPool->poolSizes[pool][ePoolSize]; i++)
-		{
-			*((uint32*)&memoryPool->poolLocation[pool][i]) = __MEMORY_FREE_BLOCK_FLAG;
-		}
-	}
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-static void MemoryPool::cleanUp()
-{
-	MemoryPool memoryPool = MemoryPool::getInstance();
-
-	uint32 pool = 0;
-
-	// Clear all memory pool entries
-	for(pool = 0; pool < __MEMORY_POOLS; pool++)
-	{
-		uint32 i = 0;
-		for(; i < memoryPool->poolSizes[pool][ePoolSize]; i += memoryPool->poolSizes[pool][eBlockSize])
-		{
-			if(!*((uint32*)&memoryPool->poolLocation[pool][i]))
-			{
-				uint32 j = i;
-				for(; j < memoryPool->poolSizes[pool][eBlockSize]; j++)
-				{
-					memoryPool->poolLocation[pool][j] = 0;
-				}
-			}
-		}
-	}
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-static uint32 MemoryPool::getPoolSize()
-{
-	MemoryPool memoryPool = MemoryPool::getInstance();
-
-	uint32 size = 0;
-	uint32 pool = 0;
-
-	// Clear all allocable objects usage
-	for(pool = 0; pool < __MEMORY_POOLS; pool++)
-	{
-		size += memoryPool->poolSizes[pool][ePoolSize];
-	}
-
-	return size;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PRIVATE METHODS
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
@@ -531,8 +394,8 @@ void MemoryPool::constructor()
 	// Always explicitly call the base's constructor 
 	Base::constructor();
 
-	MemoryPool::reset();
-	MemoryPool::cleanUp();
+	MemoryPool::reset(this);
+	MemoryPool::cleanUp(this);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -542,6 +405,67 @@ void MemoryPool::constructor()
 	// Allow a new construct
 	// Always explicitly call the base's destructor 
 	Base::destructor();
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+
+void MemoryPool::reset()
+{
+	uint32 pool = 0;
+	uint32 i;
+
+	// Initialize pool's sizes and pointers
+	__SET_MEMORY_POOL_ARRAYS
+
+	// Clear all memory pool entries
+	for(pool = 0; pool < __MEMORY_POOLS; pool++)
+	{
+		for(i = 0; i < this->poolSizes[pool][ePoolSize]; i++)
+		{
+			*((uint32*)&this->poolLocation[pool][i]) = __MEMORY_FREE_BLOCK_FLAG;
+		}
+	}
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void MemoryPool::cleanUp()
+{
+	uint32 pool = 0;
+
+	// Clear all memory pool entries
+	for(pool = 0; pool < __MEMORY_POOLS; pool++)
+	{
+		uint32 i = 0;
+		for(; i < this->poolSizes[pool][ePoolSize]; i += this->poolSizes[pool][eBlockSize])
+		{
+			if(!*((uint32*)&this->poolLocation[pool][i]))
+			{
+				uint32 j = i;
+				for(; j < this->poolSizes[pool][eBlockSize]; j++)
+				{
+					this->poolLocation[pool][j] = 0;
+				}
+			}
+		}
+	}
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+uint32 MemoryPool::getPoolSize()
+{
+	uint32 size = 0;
+	uint32 pool = 0;
+
+	// Clear all allocable objects usage
+	for(pool = 0; pool < __MEMORY_POOLS; pool++)
+	{
+		size += this->poolSizes[pool][ePoolSize];
+	}
+
+	return size;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

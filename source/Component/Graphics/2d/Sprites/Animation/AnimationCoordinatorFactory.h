@@ -34,7 +34,7 @@ class ListenerObject;
 /// Inherits from ListenerObject
 ///
 /// Creates instances of animation coordinators.
-singleton! class AnimationCoordinatorFactory : Object
+singleton class AnimationCoordinatorFactory : Object
 {
 	/// @protectedsection
 

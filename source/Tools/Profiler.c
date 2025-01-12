@@ -71,7 +71,7 @@ static BrightnessRepeatSpec profileBrightnessRepeatSpec =
 
 static void Profiler::initialize()
 {
-	Profiler profiler = Profiler::getInstance(NULL);
+	Profiler profiler = Profiler::getInstance();
 
 	Profiler::reset();
 	Printing::resetCoordinates();
@@ -94,7 +94,7 @@ static void Profiler::initialize()
 
 static void Profiler::reset()
 {
-	Profiler profiler = Profiler::getInstance(NULL);
+	Profiler profiler = Profiler::getInstance();
 
 	VirtualList::deleteData(profiler->laps);
 	
@@ -124,7 +124,7 @@ static void Profiler::reset()
 
 static void Profiler::start()
 {
-	Profiler profiler = Profiler::getInstance(NULL);
+	Profiler profiler = Profiler::getInstance();
 
 	if(!profiler->initialized)
 	{
@@ -165,7 +165,7 @@ static void Profiler::start()
 
 static void Profiler::end()
 {
-	Profiler profiler = Profiler::getInstance(NULL);
+	Profiler profiler = Profiler::getInstance();
 
 	if(profiler->started)
 	{
@@ -190,7 +190,7 @@ static void Profiler::end()
 
 static void Profiler::lap(uint32 lapType, const char* processName)
 {
-	Profiler profiler = Profiler::getInstance(NULL);
+	Profiler profiler = Profiler::getInstance();
 
 	if(!profiler->started)
 	{
@@ -233,7 +233,7 @@ static void Profiler::wait(int16 delay)
 
 static void Profiler::registerLap(const char* processName, float elapsedTime, uint32 lapType, uint8 column)
 {
-	Profiler profiler = Profiler::getInstance(NULL);
+	Profiler profiler = Profiler::getInstance();
 
 	Lap* lap = new Lap;
 
@@ -253,7 +253,7 @@ static void Profiler::registerLap(const char* processName, float elapsedTime, ui
 
 static void Profiler::computeLap(const char* processName, uint32 lapType, bool isHeadroom)
 {
-	Profiler profiler = Profiler::getInstance(NULL);
+	Profiler profiler = Profiler::getInstance();
 
 	HardwareManager::suspendInterrupts();
 
@@ -322,7 +322,7 @@ static void Profiler::computeLap(const char* processName, uint32 lapType, bool i
 
 static void Profiler::print()
 {
-	Profiler profiler = Profiler::getInstance(NULL);
+	Profiler profiler = Profiler::getInstance();
 
 	Printing::resetCoordinates();
 	Printing::setWorldCoordinates(0, 0, -64, +3);

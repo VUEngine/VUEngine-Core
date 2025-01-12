@@ -102,7 +102,7 @@ const PrintingSpriteSpec DefaultPrintingSpriteSpec =
 
 static void Printing::registerEventListener(ListenerObject listener, EventListener callback, uint16 eventCode)
 {
-	Printing printing = Printing::getInstance(NULL);
+	Printing printing = Printing::getInstance();
 
 	Printing::addEventListener(printing, listener, callback, eventCode);
 }
@@ -111,7 +111,7 @@ static void Printing::registerEventListener(ListenerObject listener, EventListen
 
 static void Printing::unregisterEventListener(ListenerObject listener, EventListener callback, uint16 eventCode)
 {
-	Printing printing = Printing::getInstance(NULL);
+	Printing printing = Printing::getInstance();
 
 	Printing::removeEventListener(printing, listener, callback, eventCode);
 }
@@ -120,7 +120,7 @@ static void Printing::unregisterEventListener(ListenerObject listener, EventList
 
 static void Printing::setDebugMode()
 {
-	Printing printing = Printing::getInstance(NULL);
+	Printing printing = Printing::getInstance();
 
 	Printing::loadDebugFont();
 	printing->mode = __PRINTING_MODE_DEBUG;
@@ -132,7 +132,7 @@ static void Printing::setDebugMode()
 
 static void Printing::reset()
 {
-	Printing printing = Printing::getInstance(NULL);
+	Printing printing = Printing::getInstance();
 
 	if(!isDeleted(printing->printingSprites))
 	{
@@ -157,7 +157,7 @@ static void Printing::reset()
 
 static void Printing::show()
 {
-	Printing printing = Printing::getInstance(NULL);
+	Printing printing = Printing::getInstance();
 
 	if(!isDeleted(printing->activePrintingSprite))
 	{
@@ -170,7 +170,7 @@ static void Printing::show()
 
 static void Printing::hide()
 {
-	Printing printing = Printing::getInstance(NULL);
+	Printing printing = Printing::getInstance();
 
 	if(!isDeleted(printing->activePrintingSprite))
 	{
@@ -182,7 +182,7 @@ static void Printing::hide()
 
 static void Printing::loadFonts(FontSpec** fontSpecs)
 {
-	Printing printing = Printing::getInstance(NULL);
+	Printing printing = Printing::getInstance();
 
 	// Since fonts' charsets will be released, there is no reason to keep
 	// Anything in the printing area
@@ -238,7 +238,7 @@ static void Printing::loadFonts(FontSpec** fontSpecs)
 
 static void Printing::releaseFonts()
 {
-	Printing printing = Printing::getInstance(NULL);
+	Printing printing = Printing::getInstance();
 
 	Printing::removeEventListeners(printing, NULL, kEventFontRewritten);
 
@@ -275,7 +275,7 @@ static void Printing::releaseFonts()
 
 static void Printing::clear()
 {
-	Printing printing = Printing::getInstance(NULL);
+	Printing printing = Printing::getInstance();
 
 	if(!isDeleted(printing->activePrintingSprite))
 	{
@@ -443,7 +443,7 @@ static void Printing::setFontPage(const char* font, uint16 page)
 
 static void Printing::setOrientation(uint8 value)
 {
-	Printing printing = Printing::getInstance(NULL);
+	Printing printing = Printing::getInstance();
 
 	printing->orientation = value;
 
@@ -465,7 +465,7 @@ static void Printing::setOrientation(uint8 value)
 
 static void Printing::setDirection(uint8 value)
 {
-	Printing printing = Printing::getInstance(NULL);
+	Printing printing = Printing::getInstance();
 
 	printing->direction = value;
 
@@ -487,7 +487,7 @@ static void Printing::setDirection(uint8 value)
 
 static void Printing::setPrintingBgmapSegment(int8 printingBgmapSegment)
 {
-	Printing printing = Printing::getInstance(NULL);
+	Printing printing = Printing::getInstance();
 
 	if((unsigned)printingBgmapSegment < __MAX_NUMBER_OF_BGMAPS_SEGMENTS)
 	{
@@ -504,7 +504,7 @@ static void Printing::setPrintingBgmapSegment(int8 printingBgmapSegment)
 
 static void Printing::addSprite()
 {
-	Printing printing = Printing::getInstance(NULL);
+	Printing printing = Printing::getInstance();
 	printing->printingBgmapSegment = BgmapTextureManager::getPrintingBgmapSegment();
 	printing->activePrintingSprite = 
 		PrintingSprite::safeCast(ComponentManager::createComponent(NULL, (ComponentSpec*)&DefaultPrintingSpriteSpec));
@@ -525,7 +525,7 @@ static void Printing::addSprite()
 
 static bool Printing::setActiveSprite(uint16 printingSpriteIndex)
 {
-	Printing printing = Printing::getInstance(NULL);
+	Printing printing = Printing::getInstance();
 
 	printing->activePrintingSprite = PrintingSprite::safeCast(VirtualList::getDataAtIndex(printing->printingSprites, printingSpriteIndex));
 
@@ -543,7 +543,7 @@ static bool Printing::setActiveSprite(uint16 printingSpriteIndex)
 
 static void Printing::printSprite(int16 x, int16 y)
 {
-	Printing printing = Printing::getInstance(NULL);
+	Printing printing = Printing::getInstance();
 
 	if(!isDeleted(printing->activePrintingSprite))
 	{
@@ -573,7 +573,7 @@ static void Printing::setCoordinates(int16 x, int16 y, int16 z, int8 parallax)
 #ifdef __FORCE_PRINTING_LAYER
 static void Printing::setWorldCoordinates(int16 x __attribute__ ((unused)), int16 y __attribute__ ((unused)), int16 z __attribute__ ((unused)), int8 parallax __attribute__ ((unused)))
 {
-	Printing printing = Printing::getInstance(NULL);
+	Printing printing = Printing::getInstance();
 
 	if(!isDeleted(printing->activePrintingSprite))
 	{
@@ -588,7 +588,7 @@ static void Printing::setWorldCoordinates(int16 x __attribute__ ((unused)), int1
 #else
 static void Printing::setWorldCoordinates(int16 x, int16 y, int16 z, int8 parallax)
 {
-	Printing printing = Printing::getInstance(NULL);
+	Printing printing = Printing::getInstance();
 
 	if(!isDeleted(printing->activePrintingSprite))
 	{
@@ -610,7 +610,7 @@ static void Printing::setWorldCoordinates(int16 x, int16 y, int16 z, int8 parall
 #ifdef __FORCE_PRINTING_LAYER
 static void Printing::setBgmapCoordinates(int16 mx __attribute__ ((unused)), int16 my __attribute__ ((unused)), int8 mp __attribute__ ((unused)))
 {
-	Printing printing = Printing::getInstance(NULL);
+	Printing printing = Printing::getInstance();
 
 	if(!isDeleted(printing->activePrintingSprite))
 	{
@@ -620,7 +620,7 @@ static void Printing::setBgmapCoordinates(int16 mx __attribute__ ((unused)), int
 #else
 static void Printing::setBgmapCoordinates(int16 mx __attribute__ ((unused)), int16 my __attribute__ ((unused)), int8 mp __attribute__ ((unused)))
 {
-	Printing printing = Printing::getInstance(NULL);
+	Printing printing = Printing::getInstance();
 
 	if(!isDeleted(printing->activePrintingSprite))
 	{
@@ -643,7 +643,7 @@ static void Printing::setBgmapCoordinates(int16 mx __attribute__ ((unused)), int
 #ifdef __FORCE_PRINTING_LAYER
 static void Printing::setWorldSize(uint16 w __attribute__ ((unused)), uint16 h __attribute__ ((unused)))
 {
-	Printing printing = Printing::getInstance(NULL);
+	Printing printing = Printing::getInstance();
 
 	if(!isDeleted(printing->activePrintingSprite))
 	{
@@ -653,7 +653,7 @@ static void Printing::setWorldSize(uint16 w __attribute__ ((unused)), uint16 h _
 #else
 static void Printing::setWorldSize(uint16 w __attribute__ ((unused)), uint16 h __attribute__ ((unused)))
 {
-	Printing printing = Printing::getInstance(NULL);
+	Printing printing = Printing::getInstance();
 
 	if(!isDeleted(printing->activePrintingSprite))
 	{
@@ -669,7 +669,7 @@ static void Printing::setWorldSize(uint16 w __attribute__ ((unused)), uint16 h _
 
 static void Printing::setTransparency(uint8 transparency)
 {
-	Printing printing = Printing::getInstance(NULL);
+	Printing printing = Printing::getInstance();
 
 	if(!isDeleted(printing->activePrintingSprite))
 	{
@@ -681,7 +681,7 @@ static void Printing::setTransparency(uint8 transparency)
 
 static void Printing::setPalette(uint8 palette)
 {
-	Printing printing = Printing::getInstance(NULL);
+	Printing printing = Printing::getInstance();
 
 	if(4 > palette)
 	{
@@ -693,7 +693,7 @@ static void Printing::setPalette(uint8 palette)
 
 static void Printing::resetCoordinates()
 {
-	Printing printing = Printing::getInstance(NULL);
+	Printing printing = Printing::getInstance();
 
 	if(!isDeleted(printing->activePrintingSprite))
 	{
@@ -705,7 +705,7 @@ static void Printing::resetCoordinates()
 
 static int16 Printing::getWorldCoordinatesX()
 {
-	Printing printing = Printing::getInstance(NULL);
+	Printing printing = Printing::getInstance();
 
 	return !isDeleted(printing->activePrintingSprite) ? PrintingSprite::getEffectiveX(printing->activePrintingSprite) : 0;
 }
@@ -714,7 +714,7 @@ static int16 Printing::getWorldCoordinatesX()
 
 static int16 Printing::getWorldCoordinatesY()
 {
-	Printing printing = Printing::getInstance(NULL);
+	Printing printing = Printing::getInstance();
 
 	return !isDeleted(printing->activePrintingSprite) ? PrintingSprite::getEffectiveY(printing->activePrintingSprite) : 0;
 }
@@ -723,7 +723,7 @@ static int16 Printing::getWorldCoordinatesY()
 
 static int16 Printing::getWorldCoordinatesP()
 {
-	Printing printing = Printing::getInstance(NULL);
+	Printing printing = Printing::getInstance();
 
 	return !isDeleted(printing->activePrintingSprite) ? PrintingSprite::getEffectiveP(printing->activePrintingSprite) : 0;
 }
@@ -732,7 +732,7 @@ static int16 Printing::getWorldCoordinatesP()
 
 static PixelVector Printing::getSpriteIndex()
 {
-	Printing printing = Printing::getInstance(NULL);
+	Printing printing = Printing::getInstance();
 
 	return 
 		!isDeleted(printing->activePrintingSprite) ? 
@@ -745,7 +745,7 @@ static PixelVector Printing::getSpriteIndex()
 
 static FontData* Printing::getFontByName(const char* font)
 {
-	Printing printing = Printing::getInstance(NULL);
+	Printing printing = Printing::getInstance();
 
 	FontData* result = NULL;
 
@@ -892,7 +892,7 @@ static void Printing::number(int32 value, uint8 x, uint8 y, const char* font)
 
 static void Printing::out(uint8 x, uint8 y, const char* string, const char* font)
 {
-	Printing printing = Printing::getInstance(NULL);
+	Printing printing = Printing::getInstance();
 
 #ifdef __DEFAULT_FONT
 	if(NULL == font)
@@ -1102,7 +1102,7 @@ void Printing::destructor()
 
 bool Printing::onFontCharChangedOffset(ListenerObject eventFirer __attribute__((unused)))
 {
-	Printing printing = Printing::getInstance(NULL);
+	Printing printing = Printing::getInstance();
 
 	CharSet charSet = CharSet::safeCast(eventFirer);
 

@@ -193,14 +193,11 @@ fi
 #echo "prototypes $prototypes"
 #echo "firstMethodDeclarationLine $firstMethodDeclarationLine"
 
-sed -i 's/getInstance(/getInstance((ClassPointer)\&'"$className"'_getBaseClass/g' $OUTPUT_FILE
-
 fileName=$className
 
 if [ -z "$className" ];
 then
 
-	sed -i 's/getInstance()/getInstance(NULL)/g' $INPUT_FILE
 	clean_up
 	if [ -z "${INPUT_FILE##*source*}" ];
 	then
@@ -212,7 +209,11 @@ then
 		fi
 	fi
 
+	sed -i 's/getInstance()/getInstance(NULL)/g' $OUTPUT_FILE
+
 	echo "Compiling file: $fileName"
+else
+	sed -i 's/getInstance(/getInstance((ClassPointer)\&'"$className"'_getBaseClass/g' $OUTPUT_FILE
 fi
 
 if [ ! -s $OUTPUT_FILE ];
@@ -419,14 +420,13 @@ then
 				then
 					if [ -z "${classModifiers##*dynamic_singleton*}" ];
 					then
-						classDefinition=$classDefinition"__SINGLETON($className);"
-#						classDefinition=$classDefinition"__SINGLETON_DYNAMIC($className);"
+						classDefinition=$classDefinition"__SINGLETON_DYNAMIC($className);"
 					else
-						if [ -z "${classModifiers##*singleton! *}" ];
+						if [ -z "${className##*MemoryPool*}" ];
 						then
-							classDefinition=$classDefinition"__SINGLETON($className, static);"
+							classDefinition=$classDefinition"__SINGLETON($className, __MEMORY_POOL_SECTION_ATTRIBUTE);"
 						else
-							classDefinition=$classDefinition"__SINGLETON($className);"
+							classDefinition=$classDefinition"__SINGLETON($className, __STATIC_SINGLETONS_DATA_SECTION_ATTRIBUTE);"
 						fi
 					fi
 				else

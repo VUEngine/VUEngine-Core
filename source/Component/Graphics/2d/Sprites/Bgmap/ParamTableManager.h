@@ -100,7 +100,7 @@ typedef struct ParamTableFreeData
 /// Inherits from Object
 ///
 /// Manages param table space allocating and releasing blocks in it.
-singleton! class ParamTableManager : Object
+singleton class ParamTableManager : Object
 {
 	/// @protectedsection
 

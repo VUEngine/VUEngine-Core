@@ -39,7 +39,7 @@ const CameraFrustum* _cameraFrustum __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE 
 
 static void Camera::reset()
 {
-	Camera camera = Camera::getInstance(NULL);
+	Camera camera = Camera::getInstance();
 
 	camera->transformation.position = Vector3D::zero();
 	camera->transformation.rotation = Rotation::zero();
@@ -66,7 +66,7 @@ static void Camera::reset()
 
 static void Camera::setup(PixelOptical pixelOptical, CameraFrustum cameraFrustum)
 {
-	Camera camera = Camera::getInstance(NULL);
+	Camera camera = Camera::getInstance();
 	
 	camera->cameraFrustum = Camera::computeClampledFrustum(cameraFrustum);
 	camera->optical = Optical::getFromPixelOptical(pixelOptical, camera->cameraFrustum);
@@ -79,7 +79,7 @@ static void Camera::setup(PixelOptical pixelOptical, CameraFrustum cameraFrustum
 
 static void Camera::setCameraMovementManager(CameraMovementManager cameraMovementManager)
 {
-	Camera camera = Camera::getInstance(NULL);
+	Camera camera = Camera::getInstance();
 	
 	if(camera->cameraMovementManager != cameraMovementManager)
 	{
@@ -96,7 +96,7 @@ static void Camera::setCameraMovementManager(CameraMovementManager cameraMovemen
 
 static CameraMovementManager Camera::getCameraMovementManager()
 {
-	Camera camera = Camera::getInstance(NULL);
+	Camera camera = Camera::getInstance();
 	
 	return camera->cameraMovementManager;
 }
@@ -105,7 +105,7 @@ static CameraMovementManager Camera::getCameraMovementManager()
 
 static void Camera::setCameraEffectManager(CameraEffectManager cameraEffectManager)
 {
-	Camera camera = Camera::getInstance(NULL);
+	Camera camera = Camera::getInstance();
 	
 	if(camera->cameraEffectManager != cameraEffectManager)
 	{
@@ -122,7 +122,7 @@ static void Camera::setCameraEffectManager(CameraEffectManager cameraEffectManag
 
 static CameraEffectManager Camera::getCameraEffectManager()
 {
-	Camera camera = Camera::getInstance(NULL);
+	Camera camera = Camera::getInstance();
 	
 	return camera->cameraEffectManager;
 }
@@ -131,7 +131,7 @@ static CameraEffectManager Camera::getCameraEffectManager()
 
 static Size Camera::getStageSize()
 {
-	Camera camera = Camera::getInstance(NULL);
+	Camera camera = Camera::getInstance();
 	
 	return camera->stageSize;
 }
@@ -140,7 +140,7 @@ static Size Camera::getStageSize()
 
 static void Camera::setStageSize(Size size)
 {
-	Camera camera = Camera::getInstance(NULL);
+	Camera camera = Camera::getInstance();
 	
 	camera->stageSize = size;
 }
@@ -149,7 +149,7 @@ static void Camera::setStageSize(Size size)
 
 static void Camera::setFocusActor(Actor focusActor)
 {
-	Camera camera = Camera::getInstance(NULL);
+	Camera camera = Camera::getInstance();
 	
 	if(!isDeleted(camera->cameraMovementManager))
 	{
@@ -165,7 +165,7 @@ static void Camera::setFocusActor(Actor focusActor)
 
 static Actor Camera::getFocusActor()
 {
-	Camera camera = Camera::getInstance(NULL);
+	Camera camera = Camera::getInstance();
 	
 	if(!isDeleted(camera->cameraMovementManager))
 	{
@@ -179,7 +179,7 @@ static Actor Camera::getFocusActor()
 
 static void Camera::unsetFocusActor()
 {
-	Camera camera = Camera::getInstance(NULL);
+	Camera camera = Camera::getInstance();
 	
 	if(!isDeleted(camera->cameraMovementManager))
 	{
@@ -191,7 +191,7 @@ static void Camera::unsetFocusActor()
 
 static void Camera::setFocusActorPositionDisplacement(Vector3D focusActorPositionDisplacement)
 {
-	Camera camera = Camera::getInstance(NULL);
+	Camera camera = Camera::getInstance();
 	
 	if(!isDeleted(camera->cameraMovementManager))
 	{
@@ -203,7 +203,7 @@ static void Camera::setFocusActorPositionDisplacement(Vector3D focusActorPositio
 
 static Vector3D Camera::getFocusActorPositionDisplacement()
 {
-	Camera camera = Camera::getInstance(NULL);
+	Camera camera = Camera::getInstance();
 	
 	if(!isDeleted(camera->cameraMovementManager))
 	{
@@ -217,7 +217,7 @@ static Vector3D Camera::getFocusActorPositionDisplacement()
 
 static void Camera::setDisplacement(Vector3D displacement)
 {
-	Camera camera = Camera::getInstance(NULL);
+	Camera camera = Camera::getInstance();
 	
 	camera->displacement = displacement;
 }
@@ -226,7 +226,7 @@ static void Camera::setDisplacement(Vector3D displacement)
 
 static Vector3D Camera::geDisplacement()
 {
-	Camera camera = Camera::getInstance(NULL);
+	Camera camera = Camera::getInstance();
 	
 	return camera->displacement;
 }
@@ -235,7 +235,7 @@ static Vector3D Camera::geDisplacement()
 
 static void Camera::setOptical(Optical optical)
 {
-	Camera camera = Camera::getInstance(NULL);
+	Camera camera = Camera::getInstance();
 	
 	camera->optical = optical;
 
@@ -246,7 +246,7 @@ static void Camera::setOptical(Optical optical)
 
 static Optical Camera::getOptical()
 {
-	Camera camera = Camera::getInstance(NULL);
+	Camera camera = Camera::getInstance();
 	
 	return camera->optical;
 }
@@ -263,7 +263,7 @@ static void Camera::setTransformation(Transformation transformation, bool cap)
 
 static Transformation Camera::getTransformation()
 {
-	Camera camera = Camera::getInstance(NULL);
+	Camera camera = Camera::getInstance();
 	
 	return camera->transformation;
 }
@@ -272,7 +272,7 @@ static Transformation Camera::getTransformation()
 
 static void Camera::setPosition(Vector3D position, bool cap)
 {
-	Camera camera = Camera::getInstance(NULL);
+	Camera camera = Camera::getInstance();
 	
 	Vector3D currentPosition = camera->transformation.position;
 	camera->transformation.position = position;
@@ -289,7 +289,7 @@ static void Camera::setPosition(Vector3D position, bool cap)
 
 static void Camera::translate(Vector3D displacement, int32 cap)
 {
-	Camera camera = Camera::getInstance(NULL);
+	Camera camera = Camera::getInstance();
 	
 	Vector3D currentPosition = camera->transformation.position;
 	camera->transformation.position = Vector3D::sum(camera->transformation.position, displacement);
@@ -306,7 +306,7 @@ static void Camera::translate(Vector3D displacement, int32 cap)
 
 static Vector3D Camera::getPosition()
 {
-	Camera camera = Camera::getInstance(NULL);
+	Camera camera = Camera::getInstance();
 	
 	return camera->transformation.position;
 }
@@ -315,7 +315,7 @@ static Vector3D Camera::getPosition()
 
 static void Camera::setRotation(Rotation rotation)
 {
-	Camera camera = Camera::getInstance(NULL);
+	Camera camera = Camera::getInstance();
 	
 	Rotation currentRotation = camera->transformation.rotation;
 
@@ -329,7 +329,7 @@ static void Camera::setRotation(Rotation rotation)
 
 static void Camera::rotate(Rotation rotation)
 {
-	Camera camera = Camera::getInstance(NULL);
+	Camera camera = Camera::getInstance();
 	
 	Rotation currentRotation = camera->transformation.rotation;
 
@@ -342,7 +342,7 @@ static void Camera::rotate(Rotation rotation)
 
 static Rotation Camera::getRotation()
 {
-	Camera camera = Camera::getInstance(NULL);
+	Camera camera = Camera::getInstance();
 	
 	return camera->transformation.rotation;
 }
@@ -351,7 +351,7 @@ static Rotation Camera::getRotation()
 
 static CameraFrustum Camera::getCameraFrustum()
 {
-	Camera camera = Camera::getInstance(NULL);
+	Camera camera = Camera::getInstance();
 	
 	return camera->cameraFrustum;
 }
@@ -360,7 +360,7 @@ static CameraFrustum Camera::getCameraFrustum()
 
 static Vector3D Camera::getLastDisplacement()
 {
-	Camera camera = Camera::getInstance(NULL);
+	Camera camera = Camera::getInstance();
 	
 	return camera->lastDisplacement;
 }
@@ -369,7 +369,7 @@ static Vector3D Camera::getLastDisplacement()
 
 static uint8 Camera::getTransformationFlags()
 {
-	Camera camera = Camera::getInstance(NULL);
+	Camera camera = Camera::getInstance();
 	
 	return camera->transformationFlags;
 }
@@ -378,7 +378,7 @@ static uint8 Camera::getTransformationFlags()
 
 static void Camera::focus()
 {
-	Camera camera = Camera::getInstance(NULL);
+	Camera camera = Camera::getInstance();
 	
 	ASSERT(camera->cameraMovementManager, "Camera::focus: null cameraMovementManager");
 
@@ -418,7 +418,7 @@ static void Camera::focus()
 
 static void Camera::startEffect(int32 effect, ...)
 {
-	Camera camera = Camera::getInstance(NULL);
+	Camera camera = Camera::getInstance();
 	
 	va_list args;
 	va_start(args, effect);
@@ -430,7 +430,7 @@ static void Camera::startEffect(int32 effect, ...)
 
 static void Camera::stopEffect(int32 effect)
 {
-	Camera camera = Camera::getInstance(NULL);
+	Camera camera = Camera::getInstance();
 
 	CameraEffectManager::stopEffect(camera->cameraEffectManager, effect);
 }
@@ -470,7 +470,7 @@ static void Camera::print(int32 x, int32 y, bool inPixels)
 
 static void Camera::resetCameraFrustum()
 {
-	Camera camera = Camera::getInstance(NULL);
+	Camera camera = Camera::getInstance();
 	
 	camera->cameraFrustum.x0 = 0;
 	camera->cameraFrustum.y0 = 0;
@@ -484,7 +484,7 @@ static void Camera::resetCameraFrustum()
 
 static void Camera::capPosition()
 {
-	Camera camera = Camera::getInstance(NULL);
+	Camera camera = Camera::getInstance();
 	
 	camera->transformation.position = Camera::computCappedPosition(camera->transformation.position);
 }
@@ -493,7 +493,7 @@ static void Camera::capPosition()
 
 static Vector3D Camera::computCappedPosition(Vector3D position)
 {
-	Camera camera = Camera::getInstance(NULL);
+	Camera camera = Camera::getInstance();
 	
 	if(position.x < 0)
 	{
@@ -570,7 +570,7 @@ static CameraFrustum Camera::computeClampledFrustum(CameraFrustum cameraFrustum)
 
 static void Camera::updateTranslationFlags(Vector3D translation)
 {
-	Camera camera = Camera::getInstance(NULL);
+	Camera camera = Camera::getInstance();
 	
 	if(0 != translation.z)
 	{
@@ -586,7 +586,7 @@ static void Camera::updateTranslationFlags(Vector3D translation)
 
 static void Camera::updateRotationFlags(Rotation rotation)
 {
-	Camera camera = Camera::getInstance(NULL);
+	Camera camera = Camera::getInstance();
 	
 	if(rotation.x || rotation.y || rotation.z)
 	{
@@ -608,8 +608,8 @@ void Camera::constructor()
 	Base::constructor();
 
 	this->transformation.position = Vector3D::zero();
-	this->cameraMovementManager = CameraMovementManager::getInstance(NULL);
-	this->cameraEffectManager = CameraEffectManager::getInstance(NULL);
+	this->cameraMovementManager = CameraMovementManager::getInstance();
+	this->cameraEffectManager = CameraEffectManager::getInstance();
 
 	this->transformation.position = Vector3D::zero();
 	this->displacement = Vector3D::zero();

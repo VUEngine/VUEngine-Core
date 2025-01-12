@@ -36,7 +36,7 @@ friend class VirtualNode;
 
 static void BgmapTextureManager::reset()
 {
-	BgmapTextureManager bgmapTextureManager = BgmapTextureManager::getInstance(NULL);
+	BgmapTextureManager bgmapTextureManager = BgmapTextureManager::getInstance();
 
 	NM_ASSERT(__BGMAP_SPACE_BASE_ADDRESS < __PARAM_TABLE_END, "BgmapTextureManager::reset: bgmap address space is negative");
 
@@ -84,7 +84,7 @@ static void BgmapTextureManager::clearBgmapSegment(int32 segment)
 
 static void BgmapTextureManager::configure(uint32 paramTableBase)
 {
-	BgmapTextureManager bgmapTextureManager = BgmapTextureManager::getInstance(NULL);
+	BgmapTextureManager bgmapTextureManager = BgmapTextureManager::getInstance();
 
 	bgmapTextureManager->availableBgmapSegmentsForTextures = (uint32)((paramTableBase - __BGMAP_SPACE_BASE_ADDRESS) / __BGMAP_SEGMENT_SIZE);
 
@@ -102,7 +102,7 @@ static void BgmapTextureManager::configure(uint32 paramTableBase)
 
 static int8 BgmapTextureManager::getAvailableBgmapSegmentsForTextures()
 {
-	BgmapTextureManager bgmapTextureManager = BgmapTextureManager::getInstance(NULL);
+	BgmapTextureManager bgmapTextureManager = BgmapTextureManager::getInstance();
 
 	return bgmapTextureManager->availableBgmapSegmentsForTextures;
 }
@@ -111,7 +111,7 @@ static int8 BgmapTextureManager::getAvailableBgmapSegmentsForTextures()
 
 static int8 BgmapTextureManager::getPrintingBgmapSegment()
 {
-	BgmapTextureManager bgmapTextureManager = BgmapTextureManager::getInstance(NULL);
+	BgmapTextureManager bgmapTextureManager = BgmapTextureManager::getInstance();
 
 	return bgmapTextureManager->printingBgmapSegment;
 }
@@ -283,7 +283,7 @@ static void BgmapTextureManager::releaseTexture(BgmapTexture bgmapTexture)
 
 static int16 BgmapTextureManager::getXOffset(int32 id)
 {
-	BgmapTextureManager bgmapTextureManager = BgmapTextureManager::getInstance(NULL);
+	BgmapTextureManager bgmapTextureManager = BgmapTextureManager::getInstance();
 
 	return bgmapTextureManager->offset[id][kXOffset];
 }
@@ -292,7 +292,7 @@ static int16 BgmapTextureManager::getXOffset(int32 id)
 
 static int16 BgmapTextureManager::getYOffset(int32 id)
 {
-	BgmapTextureManager bgmapTextureManager = BgmapTextureManager::getInstance(NULL);
+	BgmapTextureManager bgmapTextureManager = BgmapTextureManager::getInstance();
 
 	return bgmapTextureManager->offset[id][kYOffset];
 }
@@ -302,7 +302,7 @@ static int16 BgmapTextureManager::getYOffset(int32 id)
 #ifndef __SHIPPING
 static void BgmapTextureManager::print(int32 x, int32 y)
 {
-	BgmapTextureManager bgmapTextureManager = BgmapTextureManager::getInstance(NULL);
+	BgmapTextureManager bgmapTextureManager = BgmapTextureManager::getInstance();
 
 	Printing::text("BGMAP TEXTURES USAGE", x, y++, NULL);
 	Printing::text("Segments for textures: ", x, ++y, NULL);
@@ -374,7 +374,7 @@ static void BgmapTextureManager::print(int32 x, int32 y)
 
 static BgmapTexture BgmapTextureManager::findTexture(const BgmapTextureSpec* bgmapTextureSpec, bool recyclableOnly)
 {
-	BgmapTextureManager bgmapTextureManager = BgmapTextureManager::getInstance(NULL);
+	BgmapTextureManager bgmapTextureManager = BgmapTextureManager::getInstance();
 
 	TextureSpec* textureSpec = (TextureSpec*)bgmapTextureSpec;
 	BgmapTexture selectedBgmapTexture = NULL;
@@ -466,7 +466,7 @@ static BgmapTexture BgmapTextureManager::allocateTexture
 	BgmapTextureSpec* bgmapTextureSpec, int16 minimumSegment, bool mustLiveAtEvenSegment, uint32 scValue
 )
 {
-	BgmapTextureManager bgmapTextureManager = BgmapTextureManager::getInstance(NULL);
+	BgmapTextureManager bgmapTextureManager = BgmapTextureManager::getInstance();
 
 	uint16 id = VirtualList::getCount(bgmapTextureManager->bgmapTextures);
 
@@ -496,7 +496,7 @@ static int32 BgmapTextureManager::doAllocate
 	uint16 id, TextureSpec* textureSpec, int16 minimumSegment, bool mustLiveAtEvenSegment, uint32 scValue
 )
 {
-	BgmapTextureManager bgmapTextureManager = BgmapTextureManager::getInstance(NULL);
+	BgmapTextureManager bgmapTextureManager = BgmapTextureManager::getInstance();
 
 	int32 i = 0;
 	int32 j = 0;

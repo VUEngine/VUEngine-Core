@@ -134,7 +134,6 @@ extern uint32 _dramDirtyStart;
 #define __WORLD_OVR					0x0080
 #define __WORLD_END					0x0040
 
-
 #define __COLUMN_TABLE_ENTRIES		256
 #define __BRIGHTNESS_REPEAT_ENTRIES 96
 
@@ -288,7 +287,7 @@ static ObjectAttributes* const _objectAttributesBaseAddress =
 /// Inherits from ListenerObject
 ///
 /// Manages the VIP.
-singleton! class VIPManager : ListenerObject
+singleton class VIPManager : ListenerObject
 {
 	/// @protectedsection
 

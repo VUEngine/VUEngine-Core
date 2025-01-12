@@ -572,7 +572,13 @@ typedef void* (*(*ClassPointer)(void*))(void*);
 #define __SINGLETON_SECURITY_CHECKER(ClassName)
 #endif
 
-#define __SINGLETON_ACCESS(ClassName, GetInstantLinkage)																				\
+#define __SINGLETON_ACCESS(ClassName)																									\
+																																		\
+		/* Array of authorized callers */																								\
+		static ClassPointer const (*_authorizedRequesters)[] = NULL;																	\
+																																		\
+		/* Flag to authorize access to secure methods */																				\
+		static bool _authorized = true;																									\
 																																		\
 		/* Define get instance method */																								\
 		bool ClassName ## _authorize(ClassPointer requesterClass)																		\
@@ -585,26 +591,7 @@ typedef void* (*(*ClassPointer)(void*))(void*);
 				}																														\
 			}																															\
 																																		\
-			return false;																												\
-		}																																\
-																																		\
-		/* Define get instance method */																								\
-		GetInstantLinkage __attribute__((unused)) ClassName ClassName ## _getInstance (ClassPointer requesterClass)						\
-		{																																\
-			if(NULL != _authorizedRequesters && !ClassName ## _authorize(requesterClass))												\
-			{																															\
-				NM_ASSERT(false, Unauthorized access to ClassName singleton);															\
-				return NULL;																											\
-			}																															\
-																																		\
-			/* first check if not constructed yet */																					\
-			if(__SINGLETON_NOT_CONSTRUCTED == _singletonConstructed)																	\
-			{																															\
-				ClassName ## _instantiate();																							\
-			}																															\
-																																		\
-			/* return the created singleton */																							\
-			return &_singletonWrapper ## ClassName.instance;																			\
+			return typeofclass(ClassName) == requesterClass;																			\
 		}																																\
 																																		\
 		/* Define secure */																												\
@@ -622,11 +609,10 @@ typedef void* (*(*ClassPointer)(void*))(void*);
 			_authorizedRequesters = requesterClasses;																					\
 		}																																\
 
-
 /// Defines a singleton class' fundamental methods.
 /// @param ClassName: Singleton class' name to define
 /// @return Implementation of a singleton class' fundamental methods
-#define __SINGLETON(ClassName, ...)																										\
+#define __SINGLETON(ClassName, MemorySection)																										\
 																																		\
 		/* declare the static instance */																								\
 		typedef struct SingletonWrapper ## ClassName																					\
@@ -637,11 +623,8 @@ typedef void* (*(*ClassPointer)(void*))(void*);
 			ClassName ## _str instance;																									\
 		} SingletonWrapper ## ClassName;																								\
 																																		\
-		/* Array of authorized callers */																								\
-		static ClassPointer const (*_authorizedRequesters)[] = NULL;																	\
-																																		\
 		static SingletonWrapper ## ClassName _singletonWrapper ## ClassName 															\
-				__STATIC_SINGLETONS_DATA_SECTION_ATTRIBUTE;																				\
+				MemorySection;																											\
 																																		\
 		/* a flag to know when to allow construction */																					\
 		static int8 _singletonConstructed __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE													\
@@ -676,7 +659,27 @@ typedef void* (*(*ClassPointer)(void*))(void*);
 			_singletonConstructed = __SINGLETON_CONSTRUCTED;																			\
 		}																																\
 																																		\
-		__SINGLETON_ACCESS(ClassName, __VA_ARGS__)																						\
+		__SINGLETON_ACCESS(ClassName)																									\
+																																		\
+		/* Define get instance method */																								\
+		__attribute__((unused)) ClassName ClassName ## _getInstance (ClassPointer requesterClass)										\
+		{																																\
+			_authorized = true;																											\
+																																		\
+			if(NULL != _authorizedRequesters && !ClassName ## _authorize(requesterClass))												\
+			{																															\
+				_authorized = false;																									\
+			}																															\
+																																		\
+			/* first check if not constructed yet */																					\
+			if(__SINGLETON_NOT_CONSTRUCTED == _singletonConstructed)																	\
+			{																															\
+				ClassName ## _instantiate();																							\
+			}																															\
+																																		\
+			/* return the created singleton */																							\
+			return &_singletonWrapper ## ClassName.instance;																			\
+		}																																\
 																																		\
 		/* dummy redeclaration to avoid warning when compiling with -pedantic */														\
 		void ClassName ## dummyMethodSingleton()
@@ -723,9 +726,18 @@ typedef void* (*(*ClassPointer)(void*))(void*);
 			_singletonConstructed = __SINGLETON_CONSTRUCTED;																			\
 		}																																\
 																																		\
+		__SINGLETON_ACCESS(ClassName)																									\
+																																		\
 		/* Define get instance method */																								\
 		__attribute__((unused)) ClassName ClassName ## _getInstance (ClassPointer requesterClass)										\
 		{																																\
+			_authorized = true;																											\
+																																		\
+			if(NULL != _authorizedRequesters && !ClassName ## _authorize(requesterClass))												\
+			{																															\
+				_authorized = false;																									\
+			}																															\
+																																		\
 			/* first check if not constructed yet */																					\
 			if(__SINGLETON_NOT_CONSTRUCTED == _singletonConstructed)																	\
 			{																															\
@@ -733,10 +745,8 @@ typedef void* (*(*ClassPointer)(void*))(void*);
 			}																															\
 																																		\
 			/* return the created singleton */																							\
-			return _instance ## ClassName;																								\
+			return _instance ## ClassName;																			\
 		}																																\
-																																		\
-		__SINGLETON_ACCESS(ClassName, __VA_ARGS__)																						\
 																																		\
 		/* dummy redeclaration to avoid warning when compiling with -pedantic */														\
 		void ClassName ## dummyMethodSingletonNew()

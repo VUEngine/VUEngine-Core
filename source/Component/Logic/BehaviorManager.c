@@ -83,7 +83,7 @@ static void BehaviorManager::reset()
 
 static void BehaviorManager::cleanUp()
 {
-	BehaviorManager behaviorManager = BehaviorManager::getInstance(NULL);
+	BehaviorManager behaviorManager = BehaviorManager::getInstance();
 
 	if(!isDeleted(behaviorManager->components))
 	{

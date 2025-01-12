@@ -734,7 +734,7 @@ void StageEditor::applyTranslationToActor(Vector3D translation)
 
 		StageEditor::printActorPosition(this);
 
-		SpriteManager::sortSprites();
+		SpriteManager::sortSprites(SpriteManager::getInstance());
 
 		StageEditor::printTranslationStepSize(this, 38, 8);
 	}
@@ -750,7 +750,7 @@ void StageEditor::removePreviousSprite()
 		this->userActorSprite = NULL;
 	}
 
-	SpriteManager::sortSprites();
+	SpriteManager::sortSprites(SpriteManager::getInstance());
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -780,11 +780,11 @@ void StageEditor::showSelectedUserObject()
 		Sprite::setScale(this->userActorSprite, &spriteScale);
 
 		this->userActorSprite->updateAnimationFrame = true;
-		SpriteManager::writeTextures();
-		SpriteManager::sortSprites();
-		SpriteManager::deferParamTableEffects(false);
-		SpriteManager::render();
-		SpriteManager::deferParamTableEffects(true);
+		SpriteManager::writeTextures(SpriteManager::getInstance());
+		SpriteManager::sortSprites(SpriteManager::getInstance());
+		SpriteManager::deferParamTableEffects(SpriteManager::getInstance(), false);
+		SpriteManager::render(SpriteManager::getInstance());
+		SpriteManager::deferParamTableEffects(SpriteManager::getInstance(), true);
 	}
 }
 
@@ -809,7 +809,7 @@ void StageEditor::selectUserObject(uint32 pressedKey)
 	}
 	else if(pressedKey & K_A)
 	{
-		if(1 >= SpriteManager::getFreeLayer())
+		if(1 >= SpriteManager::getFreeLayer(SpriteManager::getInstance()))
 		{
 			Printing::text("No more WORLDs", 48 - 15, 5, NULL);
 			Printing::text("available     ", 48 - 15, 6, NULL);
@@ -836,7 +836,7 @@ void StageEditor::selectUserObject(uint32 pressedKey)
 		};
 
 		Stage::spawnChildActor(this->stage, &DUMMY_ENTITY, false);
-		SpriteManager::sortSprites();
+		SpriteManager::sortSprites(SpriteManager::getInstance());
 
 		VirtualList stageActors = (Container::safeCast(this->stage))->children;
 		this->actorNode = stageActors ? stageActors->tail : NULL;
@@ -846,11 +846,11 @@ void StageEditor::selectUserObject(uint32 pressedKey)
 		StageEditor::configureState(this);
 
 		StageEditor::removePreviousSprite(this);
-		SpriteManager::sortSprites();
-		SpriteManager::writeTextures();
-		SpriteManager::deferParamTableEffects(false);
-		SpriteManager::render();
-		SpriteManager::deferParamTableEffects(true);
+		SpriteManager::sortSprites(SpriteManager::getInstance());
+		SpriteManager::writeTextures(SpriteManager::getInstance());
+		SpriteManager::deferParamTableEffects(SpriteManager::getInstance(), false);
+		SpriteManager::render(SpriteManager::getInstance());
+		SpriteManager::deferParamTableEffects(SpriteManager::getInstance(), true);
 	}
 }
 

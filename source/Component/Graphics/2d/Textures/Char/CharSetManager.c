@@ -33,7 +33,7 @@ friend class CharSet;
 
 static void CharSetManager::reset()
 {
-	CharSetManager charSetManager = CharSetManager::getInstance(NULL);
+	CharSetManager charSetManager = CharSetManager::getInstance();
 
 	if(charSetManager->charSets)
 	{
@@ -97,7 +97,7 @@ static CharSet CharSetManager::getCharSet(const CharSetSpec* charSetSpec)
 
 static bool CharSetManager::releaseCharSet(CharSet charSet)
 {
-	CharSetManager charSetManager = CharSetManager::getInstance(NULL);
+	CharSetManager charSetManager = CharSetManager::getInstance();
 
 	if(isDeleted(charSet))
 	{
@@ -127,7 +127,7 @@ static bool CharSetManager::releaseCharSet(CharSet charSet)
 
 static void CharSetManager::defragment(bool deferred)
 {
-	CharSetManager charSetManager = CharSetManager::getInstance(NULL);
+	CharSetManager charSetManager = CharSetManager::getInstance();
 
 	if(1 < charSetManager->freedOffset)
 	{
@@ -172,7 +172,7 @@ static void CharSetManager::defragment(bool deferred)
 
 static int32 CharSetManager::getTotalUsedChars()
 {
-	CharSetManager charSetManager = CharSetManager::getInstance(NULL);
+	CharSetManager charSetManager = CharSetManager::getInstance();
 
 	ASSERT(charSetManager->charSets, "CharSetManager::getTotalFreeChars: null charSets list");
 
@@ -184,7 +184,7 @@ static int32 CharSetManager::getTotalUsedChars()
 
 static int32 CharSetManager::getTotalFreeChars()
 {
-	CharSetManager charSetManager = CharSetManager::getInstance(NULL);
+	CharSetManager charSetManager = CharSetManager::getInstance();
 
 	return __CHAR_MEMORY_TOTAL_CHARS - CharSetManager::getTotalUsedChars(charSetManager);
 }
@@ -193,7 +193,7 @@ static int32 CharSetManager::getTotalFreeChars()
 
 static int32 CharSetManager::getTotalCharSets()
 {
-	CharSetManager charSetManager = CharSetManager::getInstance(NULL);
+	CharSetManager charSetManager = CharSetManager::getInstance();
 
 	return VirtualList::getCount(charSetManager->charSets);
 }
@@ -203,7 +203,7 @@ static int32 CharSetManager::getTotalCharSets()
 #ifndef __SHIPPING
 static void CharSetManager::print(int32 x, int32 y)
 {
-	CharSetManager charSetManager = CharSetManager::getInstance(NULL);
+	CharSetManager charSetManager = CharSetManager::getInstance();
 
 	Printing::text("CHAR MEMORY USAGE", x, y++, NULL);
 
@@ -226,7 +226,7 @@ static void CharSetManager::print(int32 x, int32 y)
 
 static CharSet CharSetManager::findCharSet(const CharSetSpec* charSetSpec)
 {
-	CharSetManager charSetManager = CharSetManager::getInstance(NULL);
+	CharSetManager charSetManager = CharSetManager::getInstance();
 
 	CACHE_RESET;
 
@@ -247,7 +247,7 @@ static CharSet CharSetManager::findCharSet(const CharSetSpec* charSetSpec)
 
 static CharSet CharSetManager::allocateCharSet(const CharSetSpec* charSetSpec)
 {
-	CharSetManager charSetManager = CharSetManager::getInstance(NULL);
+	CharSetManager charSetManager = CharSetManager::getInstance();
 
 	NM_ASSERT(charSetManager->charSets, "CharSetManager::allocateCharSet: null charSetManager");
 	NM_ASSERT(charSetSpec, "CharSetManager::allocateCharSet: null charSetSpec");
@@ -298,7 +298,7 @@ static CharSet CharSetManager::allocateCharSet(const CharSetSpec* charSetSpec)
 
 static void CharSetManager::writeCharSets()
 {
-	CharSetManager charSetManager = CharSetManager::getInstance(NULL);
+	CharSetManager charSetManager = CharSetManager::getInstance();
 
 	CharSetManager::defragment(false);
 

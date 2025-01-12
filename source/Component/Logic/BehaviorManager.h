@@ -33,10 +33,6 @@ singleton class BehaviorManager : ComponentManager
 
 	/// @publicsection
 
-	/// Method to retrieve the singleton instance
-	/// @return BehaviorManager singleton
-	static BehaviorManager getInstance(ClassPointer requesterClass);
-
 	/// Create a behavior with the provided spec.
 	/// @param owner: Object to which the behavior will attach to
 	/// @param behaviorSpec: Spec to use to create the behavior

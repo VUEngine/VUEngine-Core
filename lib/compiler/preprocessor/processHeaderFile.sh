@@ -756,6 +756,12 @@ done <<< "$classModifiers"
 # Add destructor declaration
 if [ ! "$isStaticClass" = true ] && [ ! "$isExtensionClass" = true ];
 then
+	if [ "$isSingletonClass" = true ];
+	then
+		methodDeclarations=$methodDeclarations"
+	"$className" "$className"_getInstance(ClassPointer requesterClass);"
+	fi
+
 	methodDeclarations=$methodDeclarations"
 	void "$className"_destructor(void* _this);"
 fi

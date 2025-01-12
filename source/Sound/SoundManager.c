@@ -35,7 +35,7 @@ friend class VirtualList;
 
 static void SoundManager::playSounds(uint32 elapsedMicroseconds)
 {
-	SoundManager soundManager = SoundManager::getInstance(NULL);
+	SoundManager soundManager = SoundManager::getInstance();
 
 	VSUManager::update();
 
@@ -49,7 +49,7 @@ static void SoundManager::playSounds(uint32 elapsedMicroseconds)
 
 static void SoundManager::reset()
 {
-	SoundManager soundManager = SoundManager::getInstance(NULL);
+	SoundManager soundManager = SoundManager::getInstance();
 
 	VSUManager::reset();
 
@@ -73,7 +73,7 @@ static void SoundManager::reset()
 
 static void SoundManager::setPCMTargetPlaybackRefreshRate(uint16 pcmTargetPlaybackRefreshRate)
 {
-	SoundManager soundManager = SoundManager::getInstance(NULL);
+	SoundManager soundManager = SoundManager::getInstance();
 
 	if(0 == pcmTargetPlaybackRefreshRate)
 	{
@@ -89,7 +89,7 @@ static void SoundManager::setPCMTargetPlaybackRefreshRate(uint16 pcmTargetPlayba
 
 static bool SoundManager::isPlayingSound(const SoundSpec* soundSpec)
 {
-	SoundManager soundManager = SoundManager::getInstance(NULL);
+	SoundManager soundManager = SoundManager::getInstance();
 
 	VirtualNode node = soundManager->sounds->head;
 
@@ -113,7 +113,7 @@ static bool SoundManager::playSound
 	const SoundSpec* soundSpec, const Vector3D* position, uint32 playbackType, EventListener soundReleaseListener, ListenerObject scope
 )
 {
-	SoundManager soundManager = SoundManager::getInstance(NULL);
+	SoundManager soundManager = SoundManager::getInstance();
 
 	if(soundManager->lock || NULL == soundSpec)
 	{
@@ -137,7 +137,7 @@ static bool SoundManager::playSound
 
 static Sound SoundManager::getSound(const SoundSpec* soundSpec, EventListener soundReleaseListener, ListenerObject scope)
 {
-	SoundManager soundManager = SoundManager::getInstance(NULL);
+	SoundManager soundManager = SoundManager::getInstance();
 
 	if(soundManager->lock || NULL == soundReleaseListener || NULL == scope)
 	{
@@ -151,7 +151,7 @@ static Sound SoundManager::getSound(const SoundSpec* soundSpec, EventListener so
 
 static Sound SoundManager::findSound(const SoundSpec* soundSpec, EventListener soundReleaseListener, ListenerObject scope)
 {
-	SoundManager soundManager = SoundManager::getInstance(NULL);
+	SoundManager soundManager = SoundManager::getInstance();
 
 	if(NULL == soundReleaseListener || NULL == scope)
 	{
@@ -179,7 +179,7 @@ static Sound SoundManager::findSound(const SoundSpec* soundSpec, EventListener s
 
 static void SoundManager::muteAllSounds()
 {
-	SoundManager soundManager = SoundManager::getInstance(NULL);
+	SoundManager soundManager = SoundManager::getInstance();
 
 	VirtualNode node = soundManager->sounds->head;
 
@@ -195,7 +195,7 @@ static void SoundManager::muteAllSounds()
 
 static void SoundManager::unmuteAllSounds()
 {
-	SoundManager soundManager = SoundManager::getInstance(NULL);
+	SoundManager soundManager = SoundManager::getInstance();
 
 	VirtualNode node = soundManager->sounds->head;
 
@@ -211,7 +211,7 @@ static void SoundManager::unmuteAllSounds()
 
 static void SoundManager::rewindAllSounds()
 {
-	SoundManager soundManager = SoundManager::getInstance(NULL);
+	SoundManager soundManager = SoundManager::getInstance();
 
 	VirtualNode node = soundManager->sounds->head;
 
@@ -227,7 +227,7 @@ static void SoundManager::rewindAllSounds()
 
 static void SoundManager::stopAllSounds(bool release, SoundSpec** excludedSounds)
 {
-	SoundManager soundManager = SoundManager::getInstance(NULL);
+	SoundManager soundManager = SoundManager::getInstance();
 
 	VirtualNode node = soundManager->sounds->head;
 
@@ -286,7 +286,7 @@ static void SoundManager::stopAllSounds(bool release, SoundSpec** excludedSounds
 
 static void SoundManager::lock()
 {
-	SoundManager soundManager = SoundManager::getInstance(NULL);
+	SoundManager soundManager = SoundManager::getInstance();
 
 	soundManager->lock = true;
 }
@@ -295,7 +295,7 @@ static void SoundManager::lock()
 
 static void SoundManager::unlock()
 {
-	SoundManager soundManager = SoundManager::getInstance(NULL);
+	SoundManager soundManager = SoundManager::getInstance();
 
 	soundManager->lock = false;
 }
@@ -305,7 +305,7 @@ static void SoundManager::unlock()
 #ifdef __SOUND_TEST
 static void SoundManager::printPlaybackTime(int32 x, int32 y)
 {
-	SoundManager soundManager = SoundManager::getInstance(NULL);
+	SoundManager soundManager = SoundManager::getInstance();
 
 	VirtualNode node = soundManager->sounds->head;
 
@@ -331,7 +331,7 @@ static void SoundManager::printPlaybackTime(int32 x, int32 y)
 
 static Sound SoundManager::doGetSound(const SoundSpec* soundSpec, EventListener soundReleaseListener, ListenerObject scope)
 {
-	SoundManager soundManager = SoundManager::getInstance(NULL);
+	SoundManager soundManager = SoundManager::getInstance();
 
 	SoundManager::purgeReleasedSounds();
 
@@ -351,7 +351,7 @@ static Sound SoundManager::doGetSound(const SoundSpec* soundSpec, EventListener 
 
 static void SoundManager::purgeReleasedSounds()
 {
-	SoundManager soundManager = SoundManager::getInstance(NULL);
+	SoundManager soundManager = SoundManager::getInstance();
 
 	for(VirtualNode node = soundManager->sounds->head, nextNode = NULL; NULL != node; node = nextNode)
 	{
@@ -372,7 +372,7 @@ static void SoundManager::purgeReleasedSounds()
 
 static void SoundManager::suspendPlayingSounds()
 {
-	SoundManager soundManager = SoundManager::getInstance(NULL);
+	SoundManager soundManager = SoundManager::getInstance();
 
 	VirtualNode node = soundManager->sounds->head;
 
@@ -391,7 +391,7 @@ static void SoundManager::suspendPlayingSounds()
 
 static void SoundManager::resumePlayingSounds()
 {
-	SoundManager soundManager = SoundManager::getInstance(NULL);
+	SoundManager soundManager = SoundManager::getInstance();
 
 	VirtualNode node = soundManager->sounds->head;
 

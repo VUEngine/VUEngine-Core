@@ -446,7 +446,7 @@ void Debug::generalStatusPage(int32 increment __attribute__ ((unused)), int32 x 
 	}
 /*
 	Printing::text("Active Language:", 1, ++y, NULL);
-	Printing::text(I18n::getActiveLanguageName(I18n::getInstance(NULL)), 20, y, NULL);
+	Printing::text(I18n::getActiveLanguageName(I18n::getInstance()), 20, y, NULL);
 */
 	y += 3;
 

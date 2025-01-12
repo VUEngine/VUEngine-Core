@@ -28,7 +28,7 @@ void StageEditorState::constructor()
 	// Always explicitly call the base's constructor 
 	Base::constructor();
 
-	this->tool = Tool::safeCast(StageEditor::getInstance(NULL));
+	this->tool = Tool::safeCast(StageEditor::getInstance());
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

@@ -51,10 +51,6 @@ singleton class CameraMovementManager : ListenerObject
 	
 	/// @publicsection
 
-	/// Method to retrieve the singleton instance
-	/// @return CameraMovementManager singleton
-	static CameraMovementManager getInstance(ClassPointer requesterClass);
-
 	/// Class' constructor
 	void constructor();
 

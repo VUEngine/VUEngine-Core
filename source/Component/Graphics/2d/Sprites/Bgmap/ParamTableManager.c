@@ -34,7 +34,7 @@ friend class VirtualList;
 
 static void ParamTableManager::reset()
 {
-	ParamTableManager paramTableManager = ParamTableManager::getInstance(NULL);
+	ParamTableManager paramTableManager = ParamTableManager::getInstance();
 
 	VirtualList::clear(paramTableManager->bgmapSprites);
 
@@ -57,7 +57,7 @@ static void ParamTableManager::reset()
 
 static uint32 ParamTableManager::configure(int32 availableBgmapSegmentsForParamTable)
 {
-	ParamTableManager paramTableManager = ParamTableManager::getInstance(NULL);
+	ParamTableManager paramTableManager = ParamTableManager::getInstance();
 
 	if(0 == availableBgmapSegmentsForParamTable)
 	{
@@ -89,7 +89,7 @@ static uint32 ParamTableManager::configure(int32 availableBgmapSegmentsForParamT
 
 static uint32 ParamTableManager::allocate(BgmapSprite bgmapSprite)
 {
-	ParamTableManager paramTableManager = ParamTableManager::getInstance(NULL);
+	ParamTableManager paramTableManager = ParamTableManager::getInstance();
 
 	ASSERT(bgmapSprite, "ParamTableManager::allocate: null sprite");
 
@@ -164,7 +164,7 @@ static uint32 ParamTableManager::allocate(BgmapSprite bgmapSprite)
 
 static void ParamTableManager::free(BgmapSprite bgmapSprite)
 {
-	ParamTableManager paramTableManager = ParamTableManager::getInstance(NULL);
+	ParamTableManager paramTableManager = ParamTableManager::getInstance();
 
 	if(VirtualList::removeData(paramTableManager->bgmapSprites, bgmapSprite))
 	{
@@ -203,7 +203,7 @@ static void ParamTableManager::free(BgmapSprite bgmapSprite)
 
 static void ParamTableManager::defragment(bool deferred)
 {
-	ParamTableManager paramTableManager = ParamTableManager::getInstance(NULL);
+	ParamTableManager paramTableManager = ParamTableManager::getInstance();
 
 	if(0 != paramTableManager->paramTableFreeData.param)
 	{
@@ -265,7 +265,7 @@ static void ParamTableManager::defragment(bool deferred)
 
 static void ParamTableManager::print(int32 x, int32 y)
 {
-	ParamTableManager paramTableManager = ParamTableManager::getInstance(NULL);
+	ParamTableManager paramTableManager = ParamTableManager::getInstance();
 
 	int32 xDisplacement = 11;
 

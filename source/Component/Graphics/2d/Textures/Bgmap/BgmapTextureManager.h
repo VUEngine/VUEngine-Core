@@ -39,7 +39,7 @@ enum OffsetIndex
 /// Inherits from Texture
 ///
 /// Allocates BGMAP space for textures.
-singleton! class BgmapTextureManager : Object
+singleton class BgmapTextureManager : Object
 {
 	// List of textures with BGMAP space allocated for them
 	VirtualList bgmapTextures;

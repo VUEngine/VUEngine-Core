@@ -29,7 +29,7 @@
 
 static void TimerManager::interruptHandler()
 {
-	TimerManager timerManager = TimerManager::getInstance(NULL);
+	TimerManager timerManager = TimerManager::getInstance();
 
 	//disable
 #ifndef __ENABLE_PROFILER
@@ -95,7 +95,7 @@ static void TimerManager::initialize()
 
 static void TimerManager::reset()
 {
-	TimerManager timerManager = TimerManager::getInstance(NULL);
+	TimerManager timerManager = TimerManager::getInstance();
 
 	timerManager->tcrValue = 0;
 	timerManager->elapsedMilliseconds = 0;
@@ -111,7 +111,7 @@ static void TimerManager::reset()
 
 static void TimerManager::resetTimerCounter()
 {
-	TimerManager timerManager = TimerManager::getInstance(NULL);
+	TimerManager timerManager = TimerManager::getInstance();
 
 	uint16 timerCounter = TimerManager::computeTimerCounter();
 
@@ -159,7 +159,7 @@ static void TimerManager::applySettings(bool enable)
 
 static void TimerManager::enable()
 {
-	TimerManager timerManager = TimerManager::getInstance(NULL);
+	TimerManager timerManager = TimerManager::getInstance();
 
 	timerManager->tcrValue |= __TIMER_ENB | __TIMER_INT;
 
@@ -170,7 +170,7 @@ static void TimerManager::enable()
 
 static void TimerManager::disable()
 {
-	TimerManager timerManager = TimerManager::getInstance(NULL);
+	TimerManager timerManager = TimerManager::getInstance();
 
 	timerManager->tcrValue &= ~(__TIMER_ENB | __TIMER_INT);
 
@@ -181,7 +181,7 @@ static void TimerManager::disable()
 
 static void TimerManager::setResolution(uint16 resolution)
 {
-	TimerManager timerManager = TimerManager::getInstance(NULL);
+	TimerManager timerManager = TimerManager::getInstance();
 
 	switch(resolution)
 	{
@@ -235,7 +235,7 @@ static void TimerManager::setResolution(uint16 resolution)
 
 static uint16 TimerManager::getResolution()
 {
-	TimerManager timerManager = TimerManager::getInstance(NULL);
+	TimerManager timerManager = TimerManager::getInstance();
 
 	return timerManager->resolution;
 }
@@ -244,7 +244,7 @@ static uint16 TimerManager::getResolution()
 
 static uint16 TimerManager::getResolutionInUS()
 {
-	TimerManager timerManager = TimerManager::getInstance(NULL);
+	TimerManager timerManager = TimerManager::getInstance();
 
 	switch(timerManager->resolution)
 	{
@@ -272,7 +272,7 @@ static uint16 TimerManager::getResolutionInUS()
 
 static void TimerManager::setTargetTimePerInterrupt(uint16 targetTimePerInterrupt)
 {
-	TimerManager timerManager = TimerManager::getInstance(NULL);
+	TimerManager timerManager = TimerManager::getInstance();
 
 	int16 minimumTimePerInterrupt = 0;
 	int16 maximumTimePerInterrupt = 1000;
@@ -314,7 +314,7 @@ static void TimerManager::setTargetTimePerInterrupt(uint16 targetTimePerInterrup
 
 static uint16 TimerManager::getTargetTimePerInterrupt()
 {
-	TimerManager timerManager = TimerManager::getInstance(NULL);
+	TimerManager timerManager = TimerManager::getInstance();
 
 	return timerManager->targetTimePerInterrupt;
 }
@@ -323,7 +323,7 @@ static uint16 TimerManager::getTargetTimePerInterrupt()
 
 static float TimerManager::getTargetTimePerInterruptInMS()
 {
-	TimerManager timerManager = TimerManager::getInstance(NULL);
+	TimerManager timerManager = TimerManager::getInstance();
 
 	switch(timerManager->targetTimePerInterrupttUnits)
 	{
@@ -350,7 +350,7 @@ static float TimerManager::getTargetTimePerInterruptInMS()
 
 static uint32 TimerManager::getTargetTimePerInterruptInUS()
 {
-	TimerManager timerManager = TimerManager::getInstance(NULL);
+	TimerManager timerManager = TimerManager::getInstance();
 
 	switch(timerManager->targetTimePerInterrupttUnits)
 	{
@@ -377,7 +377,7 @@ static uint32 TimerManager::getTargetTimePerInterruptInUS()
 
 static void TimerManager::setTargetTimePerInterruptUnits(uint16 targetTimePerInterrupttUnits)
 {
-	TimerManager timerManager = TimerManager::getInstance(NULL);
+	TimerManager timerManager = TimerManager::getInstance();
 
 	switch(targetTimePerInterrupttUnits)
 	{
@@ -400,7 +400,7 @@ static void TimerManager::setTargetTimePerInterruptUnits(uint16 targetTimePerInt
 
 static uint16 TimerManager::getTargetTimePerInterruptUnits()
 {
-	TimerManager timerManager = TimerManager::getInstance(NULL);
+	TimerManager timerManager = TimerManager::getInstance();
 
 	return timerManager->targetTimePerInterrupttUnits;
 }
@@ -423,7 +423,7 @@ static uint16 TimerManager::getCurrentTimerCounter()
 
 static uint16 TimerManager::getMinimumTimePerInterruptStep()
 {
-	TimerManager timerManager = TimerManager::getInstance(NULL);
+	TimerManager timerManager = TimerManager::getInstance();
 
 	switch(timerManager->targetTimePerInterrupttUnits)
 	{
@@ -444,7 +444,7 @@ static uint16 TimerManager::getMinimumTimePerInterruptStep()
 
 static uint32 TimerManager::getElapsedMilliseconds()
 {
-	TimerManager timerManager = TimerManager::getInstance(NULL);
+	TimerManager timerManager = TimerManager::getInstance();
 
 	return timerManager->elapsedMilliseconds;
 }
@@ -453,7 +453,7 @@ static uint32 TimerManager::getElapsedMilliseconds()
 
 static uint32 TimerManager::getTotalElapsedMilliseconds()
 {
-	TimerManager timerManager = TimerManager::getInstance(NULL);
+	TimerManager timerManager = TimerManager::getInstance();
 
 	return timerManager->totalElapsedMilliseconds;
 }
@@ -462,7 +462,7 @@ static uint32 TimerManager::getTotalElapsedMilliseconds()
 
 static void TimerManager::wait(uint32 milliseconds)
 {
-	TimerManager timerManager = TimerManager::getInstance(NULL);
+	TimerManager timerManager = TimerManager::getInstance();
 
 	// Declare as volatile to prevent the compiler to optimize currentMilliseconds away
 	// Making the last assignment invalid
@@ -482,7 +482,7 @@ static void TimerManager::wait(uint32 milliseconds)
 
 static void TimerManager::repeatMethodCall(uint32 callTimes, uint32 duration, ListenerObject object, void (*method)(ListenerObject, uint32))
 {
-	TimerManager timerManager = TimerManager::getInstance(NULL);
+	TimerManager timerManager = TimerManager::getInstance();
 
 	if(!isDeleted(object) && method)
 	{
@@ -512,7 +512,7 @@ static void TimerManager::repeatMethodCall(uint32 callTimes, uint32 duration, Li
 
 static void TimerManager::frameStarted(uint32 elapsedMicroseconds)
 {
-	TimerManager timerManager = TimerManager::getInstance(NULL);
+	TimerManager timerManager = TimerManager::getInstance();
 
 	timerManager->elapsedMilliseconds = 0;
 	timerManager->elapsedMicroseconds = 0;
@@ -533,7 +533,7 @@ static void TimerManager::frameStarted(uint32 elapsedMicroseconds)
 
 static void TimerManager::nextSecondStarted()
 {
-	TimerManager timerManager = TimerManager::getInstance(NULL);
+	TimerManager timerManager = TimerManager::getInstance();
 
 #ifndef __SHIPPING
 #ifdef __SHOW_TIMER_MANAGER_STATUS
@@ -559,7 +559,7 @@ static void TimerManager::nextSecondStarted()
 
 static void TimerManager::print(int32 x, int32 y)
 {
-	TimerManager timerManager = TimerManager::getInstance(NULL);
+	TimerManager timerManager = TimerManager::getInstance();
 
 	Printing::text("TIMER CONFIG", x, y++, NULL);
 	y++;
@@ -616,7 +616,7 @@ static void TimerManager::print(int32 x, int32 y)
 
 static uint16 TimerManager::computeTimerCounter()
 {
-	TimerManager timerManager = TimerManager::getInstance(NULL);
+	TimerManager timerManager = TimerManager::getInstance();
 
 	int16 timerCounter = 0;
 
@@ -645,7 +645,7 @@ static uint16 TimerManager::computeTimerCounter()
 
 static void TimerManager::enableInterrupt()
 {
-	TimerManager timerManager = TimerManager::getInstance(NULL);
+	TimerManager timerManager = TimerManager::getInstance();
 
 	timerManager->tcrValue |= __TIMER_INT;
 
@@ -656,7 +656,7 @@ static void TimerManager::enableInterrupt()
 
 static void TimerManager::disableInterrupt()
 {
-	TimerManager timerManager = TimerManager::getInstance(NULL);
+	TimerManager timerManager = TimerManager::getInstance();
 
 	timerManager->tcrValue &= ~__TIMER_INT;
 
@@ -667,7 +667,7 @@ static void TimerManager::disableInterrupt()
 
 static void TimerManager::setTimerResolution()
 {
-	TimerManager timerManager = TimerManager::getInstance(NULL);
+	TimerManager timerManager = TimerManager::getInstance();
 
 	timerManager->tcrValue = (timerManager->tcrValue & 0x0F) | timerManager->resolution;
 	_hardwareRegisters[__TCR] = timerManager->tcrValue;
@@ -677,7 +677,7 @@ static void TimerManager::setTimerResolution()
 
 static void TimerManager::clearStat()
 {
-	TimerManager timerManager = TimerManager::getInstance(NULL);
+	TimerManager timerManager = TimerManager::getInstance();
 
 	_hardwareRegisters[__TCR] = (timerManager->tcrValue | __TIMER_ZCLR);
 }

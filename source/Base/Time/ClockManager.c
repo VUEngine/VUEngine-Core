@@ -32,7 +32,7 @@ friend class VirtualList;
 
 static void ClockManager::reset()
 {
-	ClockManager clockManager = ClockManager::getInstance(NULL);
+	ClockManager clockManager = ClockManager::getInstance();
 
 	ASSERT(clockManager->clocks, "ClockManager::reset: null clocks list");
 
@@ -49,7 +49,7 @@ static void ClockManager::reset()
 
 static void ClockManager::register(Clock clock)
 {
-	ClockManager clockManager = ClockManager::getInstance(NULL);
+	ClockManager clockManager = ClockManager::getInstance();
 
 	if(!VirtualList::find(clockManager->clocks, clock))
 	{
@@ -61,7 +61,7 @@ static void ClockManager::register(Clock clock)
 
 static void ClockManager::unregister(Clock clock)
 {
-	ClockManager clockManager = ClockManager::getInstance(NULL);
+	ClockManager clockManager = ClockManager::getInstance();
 
 	VirtualList::removeData(clockManager->clocks, clock);
 }
@@ -70,7 +70,7 @@ static void ClockManager::unregister(Clock clock)
 
 static void ClockManager::update(uint32 elapsedMilliseconds)
 {
-	ClockManager clockManager = ClockManager::getInstance(NULL);
+	ClockManager clockManager = ClockManager::getInstance();
 
 	ASSERT(clockManager->clocks, "ClockManager::update: null clocks list");
 

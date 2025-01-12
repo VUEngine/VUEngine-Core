@@ -66,7 +66,7 @@ class VUEngine;
 /// Inherits from ListenerObject
 ///
 /// Implements the game's life cycle.
-singleton! class VUEngine : ListenerObject
+singleton class VUEngine : ListenerObject
 {
 	/// @protectedsection
 

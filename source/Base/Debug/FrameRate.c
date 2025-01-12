@@ -4,7 +4,7 @@
  * © Jorge Eremiev <jorgech3@gmail.com> and Christian Radke <c.radke@posteo.de>
  *
  * For the full copyright and license information, please view the LICENSE file
- * that was distributed with frameRate source code.
+ * that was distributed with this source code.
  */
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -34,108 +34,80 @@
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void FrameRate::registerEventListener(ListenerObject listener, EventListener callback, uint16 eventCode)
+void FrameRate::reset()
 {
-	FrameRate frameRate = FrameRate::getInstance(NULL);
-
-	FrameRate::addEventListener(frameRate, listener, callback, eventCode);
+	this->FPS = 0;
+	this->unevenFPS = 0;
+	this->gameFrameStarts = 0;
+	this->seconds = 0;
+	this->totalFPS = 0;
+	this->totalUnevenFPS = 0;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void FrameRate::unregisterEventListener(ListenerObject listener, EventListener callback, uint16 eventCode)
+void FrameRate::setTarget(uint8 targetFPS)
 {
-	FrameRate frameRate = FrameRate::getInstance(NULL);
-
-	FrameRate::removeEventListener(frameRate, listener, callback, eventCode);
+	FrameRate::reset(this);
+	this->targetFPS = targetFPS;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void FrameRate::reset()
+void FrameRate::update()
 {
-	FrameRate frameRate = FrameRate::getInstance(NULL);
-
-	frameRate->FPS = 0;
-	frameRate->unevenFPS = 0;
-	frameRate->gameFrameStarts = 0;
-	frameRate->seconds = 0;
-	frameRate->totalFPS = 0;
-	frameRate->totalUnevenFPS = 0;
+	this->FPS++;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void FrameRate::setTarget(uint8 targetFPS)
+void FrameRate::gameFrameStarted(bool gameCycleEnded, bool printFPS)
 {
-	FrameRate frameRate = FrameRate::getInstance(NULL);
-
-	FrameRate::reset();
-	frameRate->targetFPS = targetFPS;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-static void FrameRate::update()
-{
-	FrameRate frameRate = FrameRate::getInstance(NULL);
-
-	frameRate->FPS++;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-static void FrameRate::gameFrameStarted(bool gameCycleEnded, bool printFPS)
-{
-	FrameRate frameRate = FrameRate::getInstance(NULL);
-
 	if(!gameCycleEnded)
 	{
-		frameRate->unevenFPS++;
+		this->unevenFPS++;
 	}
 
-	frameRate->gameFrameStarts++;
+	this->gameFrameStarts++;
 
-	if(frameRate->targetFPS <= frameRate->gameFrameStarts)
+	if(this->targetFPS <= this->gameFrameStarts)
 	{
-		frameRate->seconds++;
-		frameRate->totalFPS += frameRate->FPS;
-		frameRate->totalUnevenFPS += frameRate->unevenFPS;
+		this->seconds++;
+		this->totalFPS += this->FPS;
+		this->totalUnevenFPS += this->unevenFPS;
 
-		if(!isDeleted(frameRate->events))
+		if(!isDeleted(this->events))
 		{
-			FrameRate::fireEvent(frameRate, kEventFramerateReady);
+			FrameRate::fireEvent(this, kEventFramerateReady);
 		}
 
-		if(frameRate->targetFPS > frameRate->FPS)
+		if(this->targetFPS > this->FPS)
 		{
-			if(!isDeleted(frameRate->events))
+			if(!isDeleted(this->events))
 			{
-				FrameRate::fireEvent(frameRate, kEventFramerateDipped);
+				FrameRate::fireEvent(this, kEventFramerateDipped);
 			}
 		}
 
 		if(printFPS)
 		{
-			FrameRate::print(__PRINT_FRAMERATE_AT_X, __PRINT_FRAMERATE_AT_Y);
+			FrameRate::print(this, __PRINT_FRAMERATE_AT_X, __PRINT_FRAMERATE_AT_Y);
 		}
 
-		frameRate->FPS = 0;
-		frameRate->unevenFPS = 0;
-		frameRate->gameFrameStarts = 0;
+		this->FPS = 0;
+		this->unevenFPS = 0;
+		this->gameFrameStarts = 0;
 	}
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void FrameRate::print(int32 x, int32 y)
+void FrameRate::print(int32 x, int32 y)
 {
-	FrameRate frameRate = FrameRate::getInstance(NULL);
-
 	Printing::text("FPS     |TORN  |AVR     ", x, y, NULL);
-	Printing::int32(frameRate->FPS, x + 4, y, NULL);
-	Printing::int32(frameRate->unevenFPS, x + 14, y, NULL);
-	Printing::int32(((float)frameRate->totalFPS / frameRate->seconds) + 0.5f, x + 20, y, NULL);
+	Printing::int32(this->FPS, x + 4, y, NULL);
+	Printing::int32(this->unevenFPS, x + 14, y, NULL);
+	Printing::int32(((float)this->totalFPS / this->seconds) + 0.5f, x + 20, y, NULL);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

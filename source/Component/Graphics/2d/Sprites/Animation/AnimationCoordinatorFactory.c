@@ -34,7 +34,7 @@ friend class VirtualNode;
 
 static void AnimationCoordinatorFactory::reset()
 {
-	AnimationCoordinatorFactory animationCoordinatorFactory = AnimationCoordinatorFactory::getInstance(NULL);
+	AnimationCoordinatorFactory animationCoordinatorFactory = AnimationCoordinatorFactory::getInstance();
 
 	VirtualList::deleteData(animationCoordinatorFactory->animationCoordinators);
 }
@@ -43,7 +43,7 @@ static void AnimationCoordinatorFactory::reset()
 
 static AnimationCoordinator AnimationCoordinatorFactory::getCoordinator(AnimationController animationController, ListenerObject scope, const CharSetSpec* charSetSpec)
 {
-	AnimationCoordinatorFactory animationCoordinatorFactory = AnimationCoordinatorFactory::getInstance(NULL);
+	AnimationCoordinatorFactory animationCoordinatorFactory = AnimationCoordinatorFactory::getInstance();
 
 	NM_ASSERT(NULL != charSetSpec, "AnimationCoordinatorFactory::getCoordinator: null charSetSpec");
 

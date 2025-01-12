@@ -67,10 +67,6 @@ singleton class CameraEffectManager : ListenerObject
 
 	/// @publicsection
 	
-	/// Method to retrieve the singleton instance
-	/// @return CameraEffectManager singleton
-	static CameraEffectManager getInstance(ClassPointer requesterClass);
-
 	/// Class' constructor
 	void constructor();
 

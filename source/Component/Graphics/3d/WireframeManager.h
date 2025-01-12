@@ -62,10 +62,6 @@ singleton class WireframeManager : ComponentManager
 
 	/// @publicsection
 
-	/// Method to retrieve the singleton instance
-	/// @return WireframeManager singleton
-	static WireframeManager getInstance(ClassPointer requesterClass);
-
 	/// Check if at least of the sprites that attach to the provided owner is visible.
 	/// @param owner: Object to which the sprites attach to
 	/// @return True if at least of the sprites that attach to the provided owner is visible

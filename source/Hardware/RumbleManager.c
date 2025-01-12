@@ -27,15 +27,15 @@
 
 static void RumbleManager::startEffect(const RumbleEffectSpec* rumbleEffect)
 {
-	RumbleManager rumbleManager = RumbleManager::getInstance(NULL);
+	RumbleManager rumbleManager = RumbleManager::getInstance();
 
 	if(isDeleted(rumbleManager))
 	{
-		RumbleManager::getInstance(NULL);
+		RumbleManager::getInstance();
 
 		if(isDeleted(rumbleManager))
 		{
-			RumbleManager::getInstance(NULL);
+			RumbleManager::getInstance();
 			return;
 		}
 	}
@@ -84,7 +84,7 @@ static void RumbleManager::startEffect(const RumbleEffectSpec* rumbleEffect)
 
 static void RumbleManager::stopEffect(const RumbleEffectSpec* rumbleEffect)
 {
-	RumbleManager rumbleManager = RumbleManager::getInstance(NULL);
+	RumbleManager rumbleManager = RumbleManager::getInstance();
 
 	if(NULL == rumbleEffect || rumbleManager->rumbleEffectSpec == rumbleEffect)
 	{
@@ -103,7 +103,7 @@ static void RumbleManager::stopEffect(const RumbleEffectSpec* rumbleEffect)
 
 static void RumbleManager::reset()
 {
-	RumbleManager rumbleManager = RumbleManager::getInstance(NULL);
+	RumbleManager rumbleManager = RumbleManager::getInstance();
 
 	rumbleManager->async = true;
 	rumbleManager->overridePreviousEffect = true;
@@ -125,7 +125,7 @@ static void RumbleManager::reset()
 
 static void RumbleManager::setAsync(bool async)
 {
-	RumbleManager rumbleManager = RumbleManager::getInstance(NULL);
+	RumbleManager rumbleManager = RumbleManager::getInstance();
 
 	rumbleManager->async = async;
 	RumbleManager::stopAllEffects(rumbleManager);
@@ -135,7 +135,7 @@ static void RumbleManager::setAsync(bool async)
 
 static void RumbleManager::setOverridePreviousEffect(bool overridePreviousEffect)
 {
-	RumbleManager rumbleManager = RumbleManager::getInstance(NULL);
+	RumbleManager rumbleManager = RumbleManager::getInstance();
 
 	rumbleManager->overridePreviousEffect = overridePreviousEffect;
 }
@@ -150,7 +150,7 @@ static void RumbleManager::setOverridePreviousEffect(bool overridePreviousEffect
 
 static void RumbleManager::sendCode(uint8 code __attribute__((unused)))
 {
-	RumbleManager rumbleManager = RumbleManager::getInstance(NULL);
+	RumbleManager rumbleManager = RumbleManager::getInstance();
 
 	rumbleManager->rumbleCommands[rumbleManager->rumbleCommandIndex++] = code;
 }
@@ -168,7 +168,7 @@ static void RumbleManager::execute()
 #endif
 
 #ifdef __RELEASE
-	RumbleManager rumbleManager = RumbleManager::getInstance(NULL);
+	RumbleManager rumbleManager = RumbleManager::getInstance();
 
 	if(rumbleManager->async)
 	{
@@ -200,7 +200,7 @@ static void RumbleManager::execute()
 
 static void RumbleManager::toggleAsync()
 {
-	RumbleManager rumbleManager = RumbleManager::getInstance(NULL);
+	RumbleManager rumbleManager = RumbleManager::getInstance();
 
 	rumbleManager->async = !rumbleManager->async;
 	RumbleManager::stopAllEffects(rumbleManager);
@@ -263,7 +263,7 @@ static void RumbleManager::setEffectChain(uint8 effectChain)
 
 static void RumbleManager::setFrequency(uint8 value)
 {
-	RumbleManager rumbleManager = RumbleManager::getInstance(NULL);
+	RumbleManager rumbleManager = RumbleManager::getInstance();
 
 	if(rumbleManager->cachedRumbleEffect.frequency == value)
 	{
@@ -287,7 +287,7 @@ static void RumbleManager::setFrequency(uint8 value)
 
 static void RumbleManager::setOverdrive(uint8 value)
 {
-	RumbleManager rumbleManager = RumbleManager::getInstance(NULL);
+	RumbleManager rumbleManager = RumbleManager::getInstance();
 
 	if(rumbleManager->cachedRumbleEffect.overdrive == value)
 	{
@@ -308,7 +308,7 @@ static void RumbleManager::setOverdrive(uint8 value)
 
 static void RumbleManager::setSustainPositive(uint8 value)
 {
-	RumbleManager rumbleManager = RumbleManager::getInstance(NULL);
+	RumbleManager rumbleManager = RumbleManager::getInstance();
 
 	if(rumbleManager->cachedRumbleEffect.sustainPositive == value)
 	{
@@ -324,7 +324,7 @@ static void RumbleManager::setSustainPositive(uint8 value)
 
 static void RumbleManager::setSustainNegative(uint8 value)
 {
-	RumbleManager rumbleManager = RumbleManager::getInstance(NULL);
+	RumbleManager rumbleManager = RumbleManager::getInstance();
 
 	if(rumbleManager->cachedRumbleEffect.sustainNegative == value)
 	{
@@ -340,7 +340,7 @@ static void RumbleManager::setSustainNegative(uint8 value)
 
 static void RumbleManager::setBreak(uint8 value)
 {
-	RumbleManager rumbleManager = RumbleManager::getInstance(NULL);
+	RumbleManager rumbleManager = RumbleManager::getInstance();
 
 	if(rumbleManager->cachedRumbleEffect.breaking == value)
 	{
@@ -414,7 +414,7 @@ void RumbleManager::destructor()
 
 bool RumbleManager::onBroadcastDataDone(ListenerObject eventFirer __attribute__ ((unused)))
 {
-	RumbleManager rumbleManager = RumbleManager::getInstance(NULL);
+	RumbleManager rumbleManager = RumbleManager::getInstance();
 
 	rumbleManager->rumbleCommandIndex = 0;
 
