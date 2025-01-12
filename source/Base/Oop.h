@@ -414,31 +414,39 @@
 /// typedef for RTTI
 typedef void* (*(*ClassPointer)(void*))(void*);
 
+/// Declare a class' fundamental methods.
+/// @param ClassName: Class being declared
+/// @return Declaration of methods that all classes must have
+#define __CLASS_FUNDAMENTAL_METHODS(ClassName)																							\
+																																		\
+		/* declare getBaseClass method */																								\
+		ClassPointer ClassName ## _getBaseClass(void*)
+
 /// Declare a class.
 /// @param ClassName: Class being declared
 /// @return Class' declaration
 #define __CLASS(ClassName)																												\
 																																		\
-		/* declare vtable */																											\
+		/* Declare vtable */																											\
 		__VTABLE(ClassName);																											\
 																																		\
-		/* declare vtable */																											\
+		/* Declare vtable */																											\
 		void ClassName ## _setVTable(bool force);																						\
 																																		\
 		/* get class */																													\
 		const void* ClassName ## _getClass();																							\
 																																		\
-		/* declare getSize method */																									\
-		int32 ClassName ## _getObjectSize();																							\
+		/* Declare restoreMethods name method */																						\
+		void ClassName ## _restoreMethods();																								\
 																																		\
-		/* declare getBaseClass method */																								\
-		ClassPointer ClassName ## _getBaseClass(void*);																					\
+		/* Declare getSize method */																									\
+		int32 ClassName ## _getObjectSize();																							\
 																																		\
 		/* declare getClass name method */																								\
 		const char* ClassName ## _getClassName(ClassName);																				\
 																																		\
-		/* declare restoreMethods name method */																						\
-		void ClassName ## _restoreMethods()																								\
+		/* Declare fundamental class methods */																							\
+		__CLASS_FUNDAMENTAL_METHODS(ClassName);
 
 /// Copy a class' declaration to make its member accessible to a compilation unit.
 /// @param ClassName: Class being friended
@@ -470,6 +478,21 @@ typedef void* (*(*ClassPointer)(void*))(void*);
 /// @param ClassName: Class whose methods are defined
 /// @param BaseClassName: Base class' from which the class inherits
 /// @return Class' fundamental method's definition
+#define __CLASS_FUNDAMENTAL_DEFINITION(ClassName, BaseClassName)																		\
+																																		\
+		/* Define class's getBaseClass method */																						\
+		ClassPointer ClassName ## _getBaseClass(void* this __attribute__ ((unused)))													\
+		{																																\
+			ASSERT(&BaseClassName ## _getBaseClass != &ClassName ## _getBaseClass,														\
+					"Wrong class spec: __CLASS_DEFINITION(" __MAKE_STRING(ClassName) ", "												\
+					__MAKE_STRING(BaseClassName) ")");																					\
+			return (ClassPointer)&BaseClassName ## _getBaseClass;																		\
+		}
+
+/// Define the methods of a class.
+/// @param ClassName: Class whose methods are defined
+/// @param BaseClassName: Base class' from which the class inherits
+/// @return Class' fundamental method's definition
 #define __CLASS_DEFINITION(ClassName, BaseClassName)																					\
 																																		\
 		typedef struct ClassName ## _str																								\
@@ -488,15 +511,9 @@ typedef void* (*(*ClassPointer)(void*))(void*);
 			(void (*)(Object))&BaseClassName ## _destructor;																			\
 																																		\
 		/* Define class's getSize method */																								\
-		__GET_INSTANCE_SIZE_DEFINITION(ClassName)																						\
-																																		\
-		/* Define class's getBaseClass method */																						\
-		ClassPointer ClassName ## _getBaseClass(void* this __attribute__ ((unused)))													\
+		const void* ClassName ## _getClass()																							\
 		{																																\
-			ASSERT(&BaseClassName ## _getBaseClass != &ClassName ## _getBaseClass,														\
-					"Wrong class spec: __CLASS_DEFINITION(" __MAKE_STRING(ClassName) ", "												\
-					__MAKE_STRING(BaseClassName) ")");																					\
-			return (ClassPointer)&BaseClassName ## _getBaseClass;																		\
+			return (const void*)&ClassName ## _vTable;																					\
 		}																																\
 																																		\
 		/* Define class's getSize method */																								\
@@ -508,6 +525,12 @@ typedef void* (*(*ClassPointer)(void*))(void*);
 			return (char*)__OBFUSCATE_NAME(ClassName);																					\
 		}																																\
 																																		\
+		/* Define class's fundamental methods */																						\
+		__CLASS_FUNDAMENTAL_DEFINITION(ClassName, BaseClassName)																		\
+																																		\
+		/* Define class's getSize method */																								\
+		__GET_INSTANCE_SIZE_DEFINITION(ClassName)																						\
+																																		\
 		/* restore class vTable */																										\
 		void ClassName ## _restoreMethods()																								\
 		{																																\
@@ -518,11 +541,6 @@ typedef void* (*(*ClassPointer)(void*))(void*);
 																																		\
 			/* resume interrupts */																										\
 			HardwareManager_resumeInterrupts();																							\
-		}																																\
-																																		\
-		const void* ClassName ## _getClass()																							\
-		{																																\
-			return (const void*)&ClassName ## _vTable;																					\
 		}																																\
 																																		\
 		/* now add the function which will handle the vtable */																			\

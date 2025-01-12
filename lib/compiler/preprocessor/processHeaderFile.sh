@@ -837,6 +837,8 @@ else
 		echo "__FORWARD_CLASS($className);" >> $TEMPORAL_FILE
 		echo "#endif" >> $TEMPORAL_FILE
 		echo "__CLASS($className);" >> $TEMPORAL_FILE
+	else
+		echo "__CLASS_FUNDAMENTAL_METHODS($className);" >> $TEMPORAL_FILE
 	fi
 fi
 

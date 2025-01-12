@@ -281,7 +281,7 @@ static void Printing::clear()
 	{
 		Mem::clear
 		(
-			(BYTE*)__BGMAP_SEGMENT(BgmapTextureManager::getPrintingBgmapSegment() + 1) - 
+			(BYTE*)__BGMAP_SEGMENT(BgmapTextureManager::getPrintingBgmapSegment(BgmapTextureManager::getInstance()) + 1) - 
 			__PRINTABLE_BGMAP_AREA * 2, __PRINTABLE_BGMAP_AREA * 2
 		);
 	}
@@ -505,7 +505,7 @@ static void Printing::setPrintingBgmapSegment(int8 printingBgmapSegment)
 static void Printing::addSprite()
 {
 	Printing printing = Printing::getInstance();
-	printing->printingBgmapSegment = BgmapTextureManager::getPrintingBgmapSegment();
+	printing->printingBgmapSegment = BgmapTextureManager::getPrintingBgmapSegment(BgmapTextureManager::getInstance());
 	printing->activePrintingSprite = 
 		PrintingSprite::safeCast(ComponentManager::createComponent(NULL, (ComponentSpec*)&DefaultPrintingSpriteSpec));
 
@@ -907,7 +907,7 @@ static void Printing::out(uint8 x, uint8 y, const char* string, const char* font
 
 	if(-1 == printing->printingBgmapSegment)
 	{
-		printing->printingBgmapSegment = BgmapTextureManager::getPrintingBgmapSegment();
+		printing->printingBgmapSegment = BgmapTextureManager::getPrintingBgmapSegment(BgmapTextureManager::getInstance());
 
 		if(-1 == printing->printingBgmapSegment)
 		{

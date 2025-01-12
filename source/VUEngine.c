@@ -1121,7 +1121,7 @@ static void VUEngine::printDebug()
 #endif
 
 #ifdef __SHOW_BGMAP_MEMORY_STATUS
-	BgmapTextureManager::print(1, 5);
+	BgmapTextureManager::print(BgmapTextureManager::getInstance(), 1, 5);
 	ParamTableManager::print(1 + 27, 5);
 #endif
 
@@ -1165,6 +1165,14 @@ const ClassPointer ClockManagerAuthClasses[] =
 	NULL
 };
 
+const ClassPointer BgmapTextureManagerAuthClasses[] =
+{
+	typeofclass(SpriteManager),
+	typeofclass(Stage),
+	typeofclass(VUEngine),
+	NULL
+};
+
 const ClassPointer MessageDispatcherAuthClasses[] =
 {
 	typeofclass(VUEngine),
@@ -1189,6 +1197,7 @@ const ClassPointer StopwatchManagerAuthClasses[] =
 static void VUEngine::secureSingletons()
 {
 	ClockManager::secure(&ClockManagerAuthClasses);
+	BgmapTextureManager::secure(&BgmapTextureManagerAuthClasses);
 	MessageDispatcher::secure(&MessageDispatcherAuthClasses);
 	SpriteManager::secure(&SpriteManagerAuthClasses);
 	StopwatchManager::secure(&StopwatchManagerAuthClasses);

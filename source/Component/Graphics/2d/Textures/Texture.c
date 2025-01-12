@@ -72,7 +72,7 @@ static Texture Texture::get
 			(
 				BgmapTextureManager::getTexture
 				(
-					(BgmapTextureSpec*)textureSpec, minimumSegment, mustLiveAtEvenSegment, scValue
+					BgmapTextureManager::getInstance(), (BgmapTextureSpec*)textureSpec, minimumSegment, mustLiveAtEvenSegment, scValue
 				)
 			);
 	}
@@ -95,7 +95,7 @@ static void Texture::release(Texture texture)
 
 	if(__IS_INSTANCE_OF(BgmapTexture, texture))
 	{
-		BgmapTextureManager::releaseTexture(BgmapTexture::safeCast(texture));
+		BgmapTextureManager::releaseTexture(BgmapTextureManager::getInstance(), BgmapTexture::safeCast(texture));
 	}
 	else if(__IS_INSTANCE_OF(ObjectTexture, texture))
 	{

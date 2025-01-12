@@ -439,7 +439,7 @@ then
 			fi
 		fi
 	else
-		classDefinition="$prototypes"
+		classDefinition="__CLASS_FUNDAMENTAL_DEFINITION($className, $baseClassName) $prototypes"
 	fi
 else
 	classDefinition="$prototypes"

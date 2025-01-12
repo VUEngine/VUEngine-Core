@@ -114,7 +114,7 @@ void SpriteManager::reset()
 	Texture::reset();
 	Printing::reset();
 	CharSetManager::reset();
-	BgmapTextureManager::reset();
+	BgmapTextureManager::reset(BgmapTextureManager::getInstance());
 	ParamTableManager::reset();
 
 	SpriteManager::cleanUp(this);

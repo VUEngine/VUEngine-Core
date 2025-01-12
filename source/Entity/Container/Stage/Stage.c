@@ -1095,12 +1095,16 @@ void Stage::configureGraphics()
 
 	BgmapTextureManager::configure
 	(
-		ParamTableManager::configure(this->stageSpec->rendering.paramTableSegments)
+		BgmapTextureManager::getInstance(), ParamTableManager::configure(this->stageSpec->rendering.paramTableSegments)
 	);
 
 	Printing::loadFonts(this->stageSpec->assets.fontSpecs);
 	CharSetManager::loadCharSets((const CharSetSpec**)this->stageSpec->assets.charSetSpecs);
-	BgmapTextureManager::loadTextures((const TextureSpec**)this->stageSpec->assets.textureSpecs, true);
+	
+	BgmapTextureManager::loadTextures
+	(
+		BgmapTextureManager::getInstance(), (const TextureSpec**)this->stageSpec->assets.textureSpecs, true
+	);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
