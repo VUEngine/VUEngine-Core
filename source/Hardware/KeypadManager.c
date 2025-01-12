@@ -4,7 +4,7 @@
  * © Jorge Eremiev <jorgech3@gmail.com> and Christian Radke <c.radke@posteo.de>
  *
  * For the full copyright and license information, please view the LICENSE file
- * that was distributed with keypadManager source code.
+ * that was distributed with this source code.
  */
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -19,7 +19,7 @@
 // CLASS' ATTRIBUTES
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static uint32 volatile* _readingStatus = NULL;
+uint32 volatile* _readingStatus = NULL;
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' STATIC METHODS
@@ -29,7 +29,7 @@ static uint32 volatile* _readingStatus = NULL;
 
 static void KeypadManager::interruptHandler()
 {
-	KeypadManager::disableInterrupt();
+	KeypadManager::disableInterrupt(KeypadManager::getInstance());
 #ifndef __RELEASE
 	Printing::resetCoordinates();
 	Printing::text("KYP interrupt", 48 - 13, 26, NULL);
@@ -39,74 +39,52 @@ static void KeypadManager::interruptHandler()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void KeypadManager::registerEventListener(ListenerObject listener, EventListener callback, uint16 eventCode)
-{
-	KeypadManager keypadManager = KeypadManager::getInstance();
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+// CLASS' PUBLIC METHODS
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-	KeypadManager::addEventListener(keypadManager, listener, callback, eventCode);
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+secure void KeypadManager::reset()
+{	
+	this->userInput.dummyKey = K_NON;
+
+	KeypadManager::flush(this);
+
+	this->reseted = true;
+	this->enabled = false;
+	this->accumulatedUserInput = 0;
+	this->userInputToRegister = (UserInput){0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF};
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void KeypadManager::unregisterEventListener(ListenerObject listener, EventListener callback, uint16 eventCode)
+void KeypadManager::enable()
 {
-	KeypadManager keypadManager = KeypadManager::getInstance();
-
-	KeypadManager::removeEventListener(keypadManager, listener, callback, eventCode);
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-static void KeypadManager::reset()
-{
-	KeypadManager keypadManager = KeypadManager::getInstance();
-	
-	keypadManager->userInput.dummyKey = K_NON;
-
-	KeypadManager::flush(keypadManager);
-
-	keypadManager->reseted = true;
-	keypadManager->enabled = false;
-	keypadManager->accumulatedUserInput = 0;
-	keypadManager->userInputToRegister = (UserInput){0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF};
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-static void KeypadManager::enable()
-{
-	KeypadManager keypadManager = KeypadManager::getInstance();
-
-	keypadManager->enabled = true;
+	this->enabled = true;
 	_hardwareRegisters[__SCR] = (__S_INTDIS | __S_HW);
-	KeypadManager::flush(keypadManager);
-	keypadManager->reseted = true;
+	KeypadManager::flush(this);
+	this->reseted = true;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void KeypadManager::disable()
-{
-	KeypadManager keypadManager = KeypadManager::getInstance();
-	
-	keypadManager->enabled = false;
+void KeypadManager::disable()
+{	
+	this->enabled = false;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static int32 KeypadManager::isEnabled()
-{
-	KeypadManager keypadManager = KeypadManager::getInstance();
-	
-	return keypadManager->enabled;
+int32 KeypadManager::isEnabled()
+{	
+	return this->enabled;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static UserInput KeypadManager::readUserInput(bool waitForStableReading)
-{
-	KeypadManager keypadManager = KeypadManager::getInstance();
-	
+secure UserInput KeypadManager::readUserInput(bool waitForStableReading)
+{	
 	if(!waitForStableReading)
 	{
 		if(*_readingStatus & __S_STAT)
@@ -121,189 +99,109 @@ static UserInput KeypadManager::readUserInput(bool waitForStableReading)
 	}
 
 	// Now read the keys
-	keypadManager->userInput.allKeys = (((_hardwareRegisters[__SDHR] << 8)) | _hardwareRegisters[__SDLR]);
+	this->userInput.allKeys = (((_hardwareRegisters[__SDHR] << 8)) | _hardwareRegisters[__SDLR]);
 
 	// Enable next reading cycle
 	_hardwareRegisters[__SCR] = (__S_INTDIS | __S_HW);
 
 	// Store keys
-	if(0 == keypadManager->userInput.powerFlag)
+	if(0 == this->userInput.powerFlag)
 	{
-		if(K_PWR == (keypadManager->userInput.allKeys & K_PWR))
+		if(K_PWR == (this->userInput.allKeys & K_PWR))
 		{
-			KeypadManager::fireEvent(keypadManager, kEventKeypadManagerRaisedPowerFlag);
+			KeypadManager::fireEvent(this, kEventKeypadManagerRaisedPowerFlag);
 
-			keypadManager->userInput.powerFlag = keypadManager->userInput.allKeys & K_PWR;
+			this->userInput.powerFlag = this->userInput.allKeys & K_PWR;
 		}
 	}
 
-	keypadManager->userInput.allKeys &= K_ANY;
+	this->userInput.allKeys &= K_ANY;
 
-	if(keypadManager->reseted)
+	if(this->reseted)
 	{
-		keypadManager->userInput.pressedKey = 0;
-		keypadManager->userInput.releasedKey = 0;
+		this->userInput.pressedKey = 0;
+		this->userInput.releasedKey = 0;
 	}
 	else
 	{
-		keypadManager->userInput.pressedKey = KeypadManager::getPressedKey(keypadManager) & keypadManager->userInputToRegister.pressedKey;
-		keypadManager->userInput.releasedKey = KeypadManager::getReleasedKey(keypadManager) & keypadManager->userInputToRegister.releasedKey;
+		this->userInput.pressedKey = KeypadManager::getPressedKey(this) & this->userInputToRegister.pressedKey;
+		this->userInput.releasedKey = KeypadManager::getReleasedKey(this) & this->userInputToRegister.releasedKey;
 	}
 
-	keypadManager->userInput.holdKey = KeypadManager::getHoldKey(keypadManager) & keypadManager->userInputToRegister.holdKey;
-	keypadManager->userInput.previousKey = keypadManager->userInput.allKeys;
-	keypadManager->userInput.holdKeyDuration = (keypadManager->userInput.holdKey && keypadManager->userInput.holdKey == keypadManager->userInput.previousKey)
-		? keypadManager->userInput.holdKeyDuration + 1
+	this->userInput.holdKey = KeypadManager::getHoldKey(this) & this->userInputToRegister.holdKey;
+	this->userInput.previousKey = this->userInput.allKeys;
+	this->userInput.holdKeyDuration = (this->userInput.holdKey && this->userInput.holdKey == this->userInput.previousKey)
+		? this->userInput.holdKeyDuration + 1
 		: 0;
 
-	keypadManager->accumulatedUserInput += keypadManager->userInput.allKeys;
+	this->accumulatedUserInput += this->userInput.allKeys;
 
-	keypadManager->reseted = false;
+	this->reseted = false;
 
-	return keypadManager->userInput;
+	return this->userInput;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void KeypadManager::enableDummyKey()
-{
-	KeypadManager keypadManager = KeypadManager::getInstance();
-	
-	keypadManager->userInput.dummyKey = K_ANY;
+void KeypadManager::enableDummyKey()
+{	
+	this->userInput.dummyKey = K_ANY;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void KeypadManager::disableDummyKey()
-{
-	KeypadManager keypadManager = KeypadManager::getInstance();
-	
-	keypadManager->userInput.dummyKey = K_NON;
+void KeypadManager::disableDummyKey()
+{	
+	this->userInput.dummyKey = K_NON;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void KeypadManager::registerInput(uint16 inputToRegister)
-{
-	KeypadManager keypadManager = KeypadManager::getInstance();
-	
+void KeypadManager::registerInput(uint16 inputToRegister)
+{	
 #ifdef __TOOLS
 	inputToRegister = __KEY_PRESSED | __KEY_RELEASED | __KEY_HOLD;
 #endif
-	keypadManager->userInputToRegister.pressedKey = __KEY_PRESSED & inputToRegister? 0xFFFF : 0;
-	keypadManager->userInputToRegister.releasedKey = __KEY_RELEASED & inputToRegister? 0xFFFF : 0;
-	keypadManager->userInputToRegister.holdKey = __KEY_HOLD & inputToRegister? 0xFFFF : 0;
+	this->userInputToRegister.pressedKey = __KEY_PRESSED & inputToRegister? 0xFFFF : 0;
+	this->userInputToRegister.releasedKey = __KEY_RELEASED & inputToRegister? 0xFFFF : 0;
+	this->userInputToRegister.holdKey = __KEY_HOLD & inputToRegister? 0xFFFF : 0;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static long KeypadManager::getAccumulatedUserInput()
-{
-	KeypadManager keypadManager = KeypadManager::getInstance();
-	
-	return keypadManager->accumulatedUserInput;
+long KeypadManager::getAccumulatedUserInput()
+{	
+	return this->accumulatedUserInput;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #ifndef __SHIPPING
-static void KeypadManager::printUserInput(int32 x, int32 y)
-{
-	KeypadManager keypadManager = KeypadManager::getInstance();
-	
+void KeypadManager::printUserInput(int32 x, int32 y)
+{	
 	int32 xDisplacement = 13;
 
 	PRINT_TEXT("USER INPUT:", x, y++);
 
 	PRINT_TEXT("allKeys:", x, ++y);
-	PRINT_HEX(keypadManager->userInput.allKeys, x + xDisplacement, y);
+	PRINT_HEX(this->userInput.allKeys, x + xDisplacement, y);
 
 	PRINT_TEXT("pressedKey:", x, ++y);
-	PRINT_HEX(keypadManager->userInput.pressedKey, x + xDisplacement, y);
+	PRINT_HEX(this->userInput.pressedKey, x + xDisplacement, y);
 
 	PRINT_TEXT("releasedKey:", x, ++y);
-	PRINT_HEX(keypadManager->userInput.releasedKey, x + xDisplacement, y);
+	PRINT_HEX(this->userInput.releasedKey, x + xDisplacement, y);
 
 	PRINT_TEXT("holdKey:", x, ++y);
-	PRINT_HEX(keypadManager->userInput.holdKey, x + xDisplacement, y);
+	PRINT_HEX(this->userInput.holdKey, x + xDisplacement, y);
 
 	PRINT_TEXT("holdKeyDuration:", x, ++y);
-	PRINT_HEX(keypadManager->userInput.holdKeyDuration, x + xDisplacement, y);
+	PRINT_HEX(this->userInput.holdKeyDuration, x + xDisplacement, y);
 
 	PRINT_TEXT("powerFlag:", x, ++y);
-	PRINT_HEX(keypadManager->userInput.powerFlag, x + xDisplacement, y);
+	PRINT_HEX(this->userInput.powerFlag, x + xDisplacement, y);
 }
 #endif
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-// CLASS' PRIVATE STATIC METHODS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-static void KeypadManager::enableInterrupt()
-{
-	KeypadManager keypadManager = KeypadManager::getInstance();
-	
-	KeypadManager::flush(keypadManager);
-
-	_hardwareRegisters[__SCR] = 0;
-	_hardwareRegisters[__SCR] &= ~(__S_HWDIS | __S_INTDIS);
-	_hardwareRegisters[__SCR] |= __S_HW;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-static void KeypadManager::disableInterrupt()
-{
-	_hardwareRegisters[__SCR] |= __S_INTDIS;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-static void KeypadManager::flush()
-{
-	KeypadManager keypadManager = KeypadManager::getInstance();
-	
-	keypadManager->userInput = (UserInput){K_NON, K_NON, K_NON, K_NON, K_NON, K_NON, K_NON, keypadManager->userInput.dummyKey};
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-static uint16 KeypadManager::getPressedKey()
-{
-	KeypadManager keypadManager = KeypadManager::getInstance();
-	
-	return keypadManager->userInput.allKeys & ~keypadManager->userInput.previousKey;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-static uint16 KeypadManager::getReleasedKey()
-{
-	KeypadManager keypadManager = KeypadManager::getInstance();
-	
-	return ~keypadManager->userInput.allKeys & keypadManager->userInput.previousKey;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-static uint16 KeypadManager::getHoldKey()
-{
-	KeypadManager keypadManager = KeypadManager::getInstance();
-	
-	return keypadManager->userInput.allKeys & keypadManager->userInput.previousKey;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-static uint16 KeypadManager::getPreviousKey()
-{
-	KeypadManager keypadManager = KeypadManager::getInstance();
-	
-	return keypadManager->userInput.previousKey;
-}
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
@@ -318,7 +216,7 @@ void KeypadManager::constructor()
 	// Always explicitly call the base's constructor 
 	Base::constructor();
 
-	KeypadManager::reset();
+	KeypadManager::reset(this);
 
 	_readingStatus = (uint32 *)&_hardwareRegisters[__SCR];
 }
@@ -330,6 +228,58 @@ void KeypadManager::destructor()
 	// Allow a new construct
 	// Always explicitly call the base's destructor 
 	Base::destructor();
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+void KeypadManager::enableInterrupt()
+{	
+	KeypadManager::flush(this);
+
+	_hardwareRegisters[__SCR] = 0;
+	_hardwareRegisters[__SCR] &= ~(__S_HWDIS | __S_INTDIS);
+	_hardwareRegisters[__SCR] |= __S_HW;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void KeypadManager::disableInterrupt()
+{
+	_hardwareRegisters[__SCR] |= __S_INTDIS;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void KeypadManager::flush()
+{	
+	this->userInput = (UserInput){K_NON, K_NON, K_NON, K_NON, K_NON, K_NON, K_NON, this->userInput.dummyKey};
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+uint16 KeypadManager::getPressedKey()
+{	
+	return this->userInput.allKeys & ~this->userInput.previousKey;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+uint16 KeypadManager::getReleasedKey()
+{	
+	return ~this->userInput.allKeys & this->userInput.previousKey;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+uint16 KeypadManager::getHoldKey()
+{	
+	return this->userInput.allKeys & this->userInput.previousKey;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+uint16 KeypadManager::getPreviousKey()
+{	
+	return this->userInput.previousKey;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

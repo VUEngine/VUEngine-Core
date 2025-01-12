@@ -123,57 +123,45 @@ singleton class KeypadManager : ListenerObject
 
 	/// @publicsection
 
-	/// Register an object that will listen for events.
-	/// @param listener: ListenerObject that listen for the event
-	/// @param callback: EventListener callback for the listener object
-	/// @param eventCode: Event's code to listen for
-	static void registerEventListener(ListenerObject listener, EventListener callback, uint16 eventCode);
-
-	/// Remove a specific listener object from the listening to a give code with the provided callback.
-	/// @param listener: ListenerObject to remove from the list of listeners
-	/// @param callback: EventListener callback for the listener object
-	/// @param eventCode: Event's code to stop listen for
-	static void unregisterEventListener(ListenerObject listener, EventListener callback, uint16 eventCode);
-
 	/// Interrupt handler for keypad's interrupts
 	static void interruptHandler();
 
 	/// Reset the manager's state.
-	static void reset();
+	void reset();
 
 	/// Enable user input.
-	static void enable();
+	void enable();
 
 	/// Disable user input.
-	static void disable();
+	void disable();
 
 	/// Check if user input is enabled.
 	/// @return True if user input is enabled
-	static int32 isEnabled();
+	int32 isEnabled();
 
 	/// Retrieve the user input during the last game frame
 	/// @param waitForStableReading: If true, wait for reading to be stable (__S_STAT)
 	/// @return User input struct with the key presses of the last game frame
-	static UserInput readUserInput(bool waitForStableReading);
+	UserInput readUserInput(bool waitForStableReading);
 
 	/// Enable the dummy key to force user input processing.
-	static void enableDummyKey();
+	void enableDummyKey();
 
 	/// Disable the dummy key to not enforce user input processing.
-	static void disableDummyKey();
+	void disableDummyKey();
 
 	/// Register the user input according to the provided flags.
 	/// @param inputToRegister: Flags to select which inputs to register and which to ignore
-	static void registerInput(uint16 inputToRegister);
+	void registerInput(uint16 inputToRegister);
 
 	/// Retrieve the accumulated sum of user inputs since the start of the program.
 	/// @return The mathematical sum of all user's presses.
-	static long getAccumulatedUserInput();
+	long getAccumulatedUserInput();
 
 	/// Print the last reads of user input.
 	/// @param x: Screen x coordinate where to print
 	/// @param y: Screen y coordinate where to print
-	static void print(int32 x, int32 y);
+	void print(int32 x, int32 y);
 }
 
 #endif

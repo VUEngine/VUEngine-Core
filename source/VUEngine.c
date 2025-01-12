@@ -140,7 +140,7 @@ static void VUEngine::reset(bool resetSounds)
 	CommunicationManager::reset(CommunicationManager::getInstance());
 	DirectDraw::reset(DirectDraw::getInstance());
 	FrameRate::reset(FrameRate::getInstance());
-	KeypadManager::reset();
+	KeypadManager::reset(KeypadManager::getInstance());
 	RumbleManager::reset();
 
 	if(resetSounds)
@@ -519,14 +519,14 @@ static void VUEngine::unlockFrameRate()
 
 static void VUEngine::enableKeypad()
 {
-	KeypadManager::enable();
+	KeypadManager::enable(KeypadManager::getInstance());
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 static void VUEngine::disableKeypad()
 {
-	KeypadManager::disable();
+	KeypadManager::disable(KeypadManager::getInstance());
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -787,7 +787,7 @@ static void VUEngine::processUserInput(GameState currentGameState)
 {
 	VUEngine vuEngine = VUEngine::getInstance();
 
-	if(!KeypadManager::isEnabled())
+	if(!KeypadManager::isEnabled(KeypadManager::getInstance()))
 	{
 #ifdef __ENABLE_PROFILER
 		Profiler::lap(kProfilerLapTypeNormalProcess, PROCESS_NAME_INPUT);
@@ -799,7 +799,7 @@ static void VUEngine::processUserInput(GameState currentGameState)
 	vuEngine->processName = PROCESS_NAME_INPUT;
 #endif
 
-	UserInput userInput = KeypadManager::readUserInput(vuEngine->syncToVIP);
+	UserInput userInput = KeypadManager::readUserInput(KeypadManager::getInstance(), vuEngine->syncToVIP);
 	
 #ifdef __TOOLS
 	if(VUEngine::checkIfToggleTool(&userInput))
@@ -1223,15 +1223,21 @@ const ClassPointer DirectDrawAuthClasses[] =
 	NULL
 };
 
-const ClassPointer ObjectTextureManagerAuthClasses[] =
+const ClassPointer KeypadManagerAuthClasses[] =
 {
-	typeofclass(Texture),
+	typeofclass(VUEngine),
 	NULL
 };
 
 const ClassPointer MessageDispatcherAuthClasses[] =
 {
 	typeofclass(VUEngine),
+	NULL
+};
+
+const ClassPointer ObjectTextureManagerAuthClasses[] =
+{
+	typeofclass(Texture),
 	NULL
 };
 
@@ -1276,6 +1282,7 @@ static void VUEngine::secureSingletons()
 	ClockManager::secure(&ClockManagerAuthClasses);
 	CommunicationManager::secure(&CommunicationManagerAuthClasses);
 	DirectDraw::secure(&DirectDrawAuthClasses);
+	KeypadManager::secure(&KeypadManagerAuthClasses);
 	MessageDispatcher::secure(&MessageDispatcherAuthClasses);
 	ObjectTextureManager::secure(&ObjectTextureManagerAuthClasses);
 	ParamTableManager::secure(&ParamTableManagerAuthClasses);
