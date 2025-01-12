@@ -31,11 +31,9 @@ friend class VirtualNode;
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void StopwatchManager::reset()
+secure void StopwatchManager::reset()
 {
-	StopwatchManager stopwatchManager = StopwatchManager::getInstance();
-
-	VirtualNode node = stopwatchManager->stopwatchs->head;
+	VirtualNode node = this->stopwatchs->head;
 
 	// Update all registered stopwatchs
 	for(; node ; node = node->next)
@@ -46,32 +44,26 @@ static void StopwatchManager::reset()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void StopwatchManager::register(Stopwatch clock)
+secure void StopwatchManager::register(Stopwatch clock)
 {
-	StopwatchManager stopwatchManager = StopwatchManager::getInstance();
-
-	if(!VirtualList::find(stopwatchManager->stopwatchs, clock))
+	if(!VirtualList::find(this->stopwatchs, clock))
 	{
-		VirtualList::pushFront(stopwatchManager->stopwatchs, clock);
+		VirtualList::pushFront(this->stopwatchs, clock);
 	}
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void StopwatchManager::unregister(Stopwatch clock)
+secure void StopwatchManager::unregister(Stopwatch clock)
 {
-	StopwatchManager stopwatchManager = StopwatchManager::getInstance();
-
-	VirtualList::removeData(stopwatchManager->stopwatchs, clock);
+	VirtualList::removeData(this->stopwatchs, clock);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void StopwatchManager::update()
+secure void StopwatchManager::update()
 {
-	StopwatchManager stopwatchManager = StopwatchManager::getInstance();
-
-	VirtualNode node = stopwatchManager->stopwatchs->head;
+	VirtualNode node = this->stopwatchs->head;
 
 	// Update all registered stopwatchs
 	for(; node ; node = node->next)

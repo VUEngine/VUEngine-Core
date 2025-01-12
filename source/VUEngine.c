@@ -134,7 +134,7 @@ static void VUEngine::reset(bool resetSounds)
 
 	HardwareManager::reset();
 	KeypadManager::reset();
-	StopwatchManager::reset();
+	StopwatchManager::reset(StopwatchManager::getInstance());
 	FrameRate::reset(FrameRate::getInstance());
 	VIPManager::reset();
 	DirectDraw::reset();
@@ -1153,6 +1153,7 @@ static void VUEngine::printDebug()
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+#include <Stopwatch.h>
 #include <ObjectSprite.h>
 #include <ObjectSpriteContainer.h>
 #include <BgmapSprite.h>
@@ -1178,11 +1179,19 @@ const ClassPointer SpriteManagerAuthClasses[] =
 	NULL
 };
 
+const ClassPointer StopwatchManagerAuthClasses[] =
+{
+	typeofclass(Stopwatch),
+	typeofclass(VUEngine),
+	NULL
+};
+
 static void VUEngine::secureSingletons()
 {
+	ClockManager::secure(&ClockManagerAuthClasses);
 	MessageDispatcher::secure(&MessageDispatcherAuthClasses);
 	SpriteManager::secure(&SpriteManagerAuthClasses);
-	ClockManager::secure(&ClockManagerAuthClasses);
+	StopwatchManager::secure(&StopwatchManagerAuthClasses);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
