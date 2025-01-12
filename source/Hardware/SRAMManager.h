@@ -41,24 +41,24 @@ singleton class SRAMManager : Object
 	uint16* spaceAddress;
 
 	/// Reset the manager's state.
-	static void reset();
+	void reset();
 
 	/// Delete all data in SRAM in the provided range.
 	/// @param startOffset: Start offset of range to clear
 	/// @param endOffset: End address of range to clear
-	static void clear(int32 startOffset, int32 endOffset);
+	void clear(int32 startOffset, int32 endOffset);
 
 	/// Save data to SRAM.
 	/// @param source			WRAM address from were data will be copied
 	/// @param memberOffset		WRAM address offset
 	/// @param dataSize			Number of BYTES to read
-	static void save(const BYTE* const source, int32 memberOffset, int32 dataSize);
+	void save(const BYTE* const source, int32 memberOffset, int32 dataSize);
 
 	/// Retrieve data from SRAM.
 	/// @param destination		WRAM address were data will be loaded
 	/// @param memberOffset		WRAM address offset
 	/// @param dataSize			Number of BYTES to read
-	static void read(BYTE* destination, int32 memberOffset, int32 dataSize);
+	void read(BYTE* destination, int32 memberOffset, int32 dataSize);
 }
 
 #endif

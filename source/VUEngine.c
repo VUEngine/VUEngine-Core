@@ -149,7 +149,7 @@ static void VUEngine::reset(bool resetSounds)
 	}
 
 	SpriteManager::reset(SpriteManager::getInstance());
-	SRAMManager::reset();
+	SRAMManager::reset(SRAMManager::getInstance());
 	StopwatchManager::reset(StopwatchManager::getInstance());
 	TimerManager::reset();
 	VIPManager::reset();
@@ -1264,6 +1264,12 @@ const ClassPointer SpriteManagerAuthClasses[] =
 	NULL
 };
 
+const ClassPointer SRAMManagerAuthClasses[] =
+{
+	typeofclass(VUEngine),
+	NULL
+};
+
 const ClassPointer StopwatchManagerAuthClasses[] =
 {
 	typeofclass(Stopwatch),
@@ -1294,6 +1300,7 @@ static void VUEngine::secureSingletons()
 	ParamTableManager::secure(&ParamTableManagerAuthClasses);
 	RumbleManager::secure(&RumbleManagerAuthClasses);
 	SpriteManager::secure(&SpriteManagerAuthClasses);
+	SRAMManager::secure(&SRAMManagerAuthClasses);
 	StopwatchManager::secure(&StopwatchManagerAuthClasses);
 	WireframeManager::secure(&WireframeManagerAuthClasses);
 }
