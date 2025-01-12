@@ -880,7 +880,7 @@ static void VUEngine::dispatchDelayedMessages()
 #endif
 #endif
 	{
-		MessageDispatcher::dispatchDelayedMessages();
+		MessageDispatcher::dispatchDelayedMessages(MessageDispatcher::getInstance());
 
 #ifdef __ENABLE_PROFILER
 		Profiler::lap(kProfilerLapTypeNormalProcess, PROCESS_NAME_MESSAGES);
@@ -1159,7 +1159,7 @@ static void VUEngine::printDebug()
 	
 void SpriteManager_secure(ClassPointer const (*requesterClasses)[]);
 
-const ClassPointer authData[] =
+const ClassPointer SpriteManagerAuthClasses[] =
 {
 	typeofclass(ComponentManager),
 	typeofclass(Stage),
@@ -1167,9 +1167,16 @@ const ClassPointer authData[] =
 	NULL
 };
 
+const ClassPointer MessageDispatcherAuthClasses[] =
+{
+	typeofclass(VUEngine),
+	NULL
+};
+
 static void VUEngine::secureSingletons()
 {
-	SpriteManager::secure(&authData);
+	MessageDispatcher::secure(&MessageDispatcherAuthClasses);
+	SpriteManager::secure(&SpriteManagerAuthClasses);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -1268,8 +1275,8 @@ bool VUEngine::cleaniningStatesStack(ListenerObject eventFirer)
 	{
 		GameState gameState = GameState::safeCast(VirtualNode::getData(node));
 
-		MessageDispatcher::discardDelayedMessagesWithClock(GameState::getMessagingClock(gameState));
-		MessageDispatcher::processDiscardedMessages();
+		MessageDispatcher::discardDelayedMessagesWithClock(MessageDispatcher::getInstance(), GameState::getMessagingClock(gameState));
+		MessageDispatcher::processDiscardedMessages(MessageDispatcher::getInstance());
 	}
 
 	return false;
@@ -1321,10 +1328,10 @@ bool VUEngine::swappingState(ListenerObject eventFirer)
 		// Discard delayed messages from the current state
 		MessageDispatcher::discardDelayedMessagesWithClock
 		(
-			GameState::getMessagingClock(currentGameState)
+			MessageDispatcher::getInstance(), GameState::getMessagingClock(currentGameState)
 		);
 
-		MessageDispatcher::processDiscardedMessages();
+		MessageDispatcher::processDiscardedMessages(MessageDispatcher::getInstance());
 	}
 
 	return false;
@@ -1353,10 +1360,10 @@ bool VUEngine::poppingState(ListenerObject eventFirer)
 		// Discard delayed messages from the current state
 		MessageDispatcher::discardDelayedMessagesWithClock
 		(
-			GameState::getMessagingClock(currentGameState)
+			MessageDispatcher::getInstance(), GameState::getMessagingClock(currentGameState)
 		);
 
-		MessageDispatcher::processDiscardedMessages();
+		MessageDispatcher::processDiscardedMessages(MessageDispatcher::getInstance());
 	}
 
 #ifdef __TOOLS

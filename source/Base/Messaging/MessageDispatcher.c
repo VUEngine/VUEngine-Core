@@ -4,7 +4,7 @@
  * © Jorge Eremiev <jorgech3@gmail.com> and Christian Radke <c.radke@posteo.de>
  *
  * For the full copyright and license information, please view the LICENSE file
- * that was distributed with messageDispatcher source code.
+ * that was distributed with this source code.
  */
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -113,155 +113,6 @@ static void MessageDispatcher::dispatchDelayedMessage
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-static bool MessageDispatcher::dispatchDelayedMessages()
-{
-	MessageDispatcher messageDispatcher = MessageDispatcher::getInstance();
-	
-
-	ASSERT(messageDispatcher->delayedMessages, "MessageDispatcher::dispatchDelayedMessages: null delayedMessages");
-
-	bool messagesDispatched = false;
-
-	for(VirtualNode node = messageDispatcher->delayedMessages->head, nextNode = NULL; NULL != node; node = nextNode)
-	{
-		nextNode = node->next;
-
-		DelayedMessage* delayedMessage = (DelayedMessage*)node->data;
-
-		if(isDeleted(delayedMessage))
-		{	
-			VirtualList::removeNode(messageDispatcher->delayedMessages, node);
-
-			continue;	
-		}
-		else if
-		(
-			!delayedMessage->discarded 
-			&& 
-			!Clock::isPaused(delayedMessage->clock) 
-			&& 
-			Clock::getMilliseconds(delayedMessage->clock) > delayedMessage->timeOfArrival
-		)
-		{
-			Telegram telegram = delayedMessage->telegram;
-
-			if(!isDeleted(telegram))
-			{
-				void* sender = Telegram::getSender(telegram);
-				void* receiver = Telegram::getReceiver(telegram);
-
-				// Check if sender and receiver are still alive
-				if(!isDeleted(sender) && !isDeleted(receiver))
-				{
-					messagesDispatched |= true;
-					HardwareManager::suspendInterrupts();
-					ListenerObject::handleMessage(receiver, telegram);
-					HardwareManager::resumeInterrupts();
-				}
-#ifndef __RELEASE
-				else if(isDeleted(sender) || isDeleted(receiver))
-				{
-					Printing::setDebugMode();
-					Printing::clear();
-					PRINT_TEXT("Message: ", 1, 16);
-					PRINT_INT(Telegram::getMessage(telegram), 10, 16);
-
-					if(!isDeleted(sender))
-					{
-						PRINT_TEXT("Sender: ", 1, 15);
-						PRINT_TEXT(__GET_CLASS_NAME(sender), 10, 15);
-					}
-
-					if(!isDeleted(receiver))
-					{
-						PRINT_TEXT("Receiver: ", 1, 15);
-						PRINT_TEXT(__GET_CLASS_NAME(receiver), 10, 15);
-					}
-
-					NM_ASSERT(!isDeleted(receiver), "MessageDispatcher::dispatchDelayedMessages: null receiver");
-					NM_ASSERT(!isDeleted(sender), "MessageDispatcher::dispatchDelayedMessages: null sender");
-				}
-#endif			
-			}
-
-			delayedMessage->discarded = true;
-		}
-
-		if(delayedMessage->discarded)
-		{
-			if(!isDeleted(delayedMessage->telegram))
-			{
-				delete delayedMessage->telegram;
-			}
-	
-			VirtualList::removeNode(messageDispatcher->delayedMessages, node);	
-
-			delete delayedMessage;
-		}
-	}
-
-	return messagesDispatched;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-static void MessageDispatcher::processDiscardedMessages()
-{
-	MessageDispatcher messageDispatcher = MessageDispatcher::getInstance();
-	
-	for(VirtualNode node = messageDispatcher->delayedMessages->head, nextNode = NULL; NULL != node; node = nextNode)
-	{
-		nextNode = node->next;
-
-		DelayedMessage* delayedMessage = (DelayedMessage*)node->data;
-
-		if(!delayedMessage->discarded)
-		{
-			continue;
-		}
-
-		Telegram telegram = delayedMessage->telegram;
-		ASSERT(telegram, "MessageDispatcher::processDiscardedMessages: null telegram");
-		ASSERT(delayedMessage, "MessageDispatcher::processDiscardedMessages: null delayedMessage");
-
-		VirtualList::removeNode(messageDispatcher->delayedMessages, node);
-
-		if(!isDeleted(delayedMessage))
-		{
-			delete delayedMessage;
-		}
-
-		if(!isDeleted(telegram))
-		{
-			delete telegram;
-		}
-	}
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-static bool MessageDispatcher::discardDelayedMessagesWithClock(Clock clock)
-{
-	MessageDispatcher messageDispatcher = MessageDispatcher::getInstance();
-	
-	bool messagesWereDiscarded = false;
-	VirtualNode node = messageDispatcher->delayedMessages->head;
-
-	for(; NULL != node; node = node->next)
-	{
-		DelayedMessage* delayedMessage = (DelayedMessage*)node->data;
-
-		if(!isDeleted(delayedMessage) && delayedMessage->clock == clock)
-		{
-			delayedMessage->discarded = true;
-			messagesWereDiscarded |= true;
-		}
-	}
-
-	return messagesWereDiscarded;
-}
-
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 static bool MessageDispatcher::discardDelayedMessagesFromSender(ListenerObject sender, int32 message)
@@ -446,6 +297,153 @@ static void MessageDispatcher::printAllDelayedMessagesFromSender(ListenerObject 
 	}
 }
 #endif
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+// CLASS' PUBLIC METHODS
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+secure bool MessageDispatcher::dispatchDelayedMessages()
+{
+	bool messagesDispatched = false;
+
+	for(VirtualNode node = this->delayedMessages->head, nextNode = NULL; NULL != node; node = nextNode)
+	{
+		nextNode = node->next;
+
+		DelayedMessage* delayedMessage = (DelayedMessage*)node->data;
+
+		if(isDeleted(delayedMessage))
+		{	
+			VirtualList::removeNode(this->delayedMessages, node);
+
+			continue;	
+		}
+		else if
+		(
+			!delayedMessage->discarded 
+			&& 
+			!Clock::isPaused(delayedMessage->clock) 
+			&& 
+			Clock::getMilliseconds(delayedMessage->clock) > delayedMessage->timeOfArrival
+		)
+		{
+			Telegram telegram = delayedMessage->telegram;
+
+			if(!isDeleted(telegram))
+			{
+				void* sender = Telegram::getSender(telegram);
+				void* receiver = Telegram::getReceiver(telegram);
+
+				// Check if sender and receiver are still alive
+				if(!isDeleted(sender) && !isDeleted(receiver))
+				{
+					messagesDispatched |= true;
+					HardwareManager::suspendInterrupts();
+					ListenerObject::handleMessage(receiver, telegram);
+					HardwareManager::resumeInterrupts();
+				}
+#ifndef __RELEASE
+				else if(isDeleted(sender) || isDeleted(receiver))
+				{
+					Printing::setDebugMode();
+					Printing::clear();
+					PRINT_TEXT("Message: ", 1, 16);
+					PRINT_INT(Telegram::getMessage(telegram), 10, 16);
+
+					if(!isDeleted(sender))
+					{
+						PRINT_TEXT("Sender: ", 1, 15);
+						PRINT_TEXT(__GET_CLASS_NAME(sender), 10, 15);
+					}
+
+					if(!isDeleted(receiver))
+					{
+						PRINT_TEXT("Receiver: ", 1, 15);
+						PRINT_TEXT(__GET_CLASS_NAME(receiver), 10, 15);
+					}
+
+					NM_ASSERT(!isDeleted(receiver), "MessageDispatcher::dispatchDelayedMessages: null receiver");
+					NM_ASSERT(!isDeleted(sender), "MessageDispatcher::dispatchDelayedMessages: null sender");
+				}
+#endif			
+			}
+
+			delayedMessage->discarded = true;
+		}
+
+		if(delayedMessage->discarded)
+		{
+			if(!isDeleted(delayedMessage->telegram))
+			{
+				delete delayedMessage->telegram;
+			}
+	
+			VirtualList::removeNode(this->delayedMessages, node);	
+
+			delete delayedMessage;
+		}
+	}
+
+	return messagesDispatched;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+secure void MessageDispatcher::processDiscardedMessages()
+{
+	for(VirtualNode node = this->delayedMessages->head, nextNode = NULL; NULL != node; node = nextNode)
+	{
+		nextNode = node->next;
+
+		DelayedMessage* delayedMessage = (DelayedMessage*)node->data;
+
+		if(!delayedMessage->discarded)
+		{
+			continue;
+		}
+
+		Telegram telegram = delayedMessage->telegram;
+		ASSERT(telegram, "MessageDispatcher::processDiscardedMessages: null telegram");
+		ASSERT(delayedMessage, "MessageDispatcher::processDiscardedMessages: null delayedMessage");
+
+		VirtualList::removeNode(this->delayedMessages, node);
+
+		if(!isDeleted(delayedMessage))
+		{
+			delete delayedMessage;
+		}
+
+		if(!isDeleted(telegram))
+		{
+			delete telegram;
+		}
+	}
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+secure bool MessageDispatcher::discardDelayedMessagesWithClock(Clock clock)
+{	
+	bool messagesWereDiscarded = false;
+	VirtualNode node = this->delayedMessages->head;
+
+	for(; NULL != node; node = node->next)
+	{
+		DelayedMessage* delayedMessage = (DelayedMessage*)node->data;
+
+		if(!isDeleted(delayedMessage) && delayedMessage->clock == clock)
+		{
+			delayedMessage->discarded = true;
+			messagesWereDiscarded |= true;
+		}
+	}
+
+	return messagesWereDiscarded;
+}
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
