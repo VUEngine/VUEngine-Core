@@ -156,6 +156,7 @@ const ClassPointer ParamTableManagerAuthorizedClasses[] =
 {
 	typeofclass(BgmapSprite),
 	typeofclass(MBgmapSprite),
+	typeofclass(Printing),
 	typeofclass(SpriteManager),
 	typeofclass(Stage),
 	NULL

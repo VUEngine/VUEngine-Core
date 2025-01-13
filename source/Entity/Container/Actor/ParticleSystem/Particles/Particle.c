@@ -206,7 +206,7 @@ bool Particle::isVisible()
 
 void Particle::playAnimation(const AnimationFunction** animationFunctions, const char* animationName)
 {
-	if(NULL == this->visualComponent)
+	if(isDeleted(this->visualComponent))
 	{
 		return;
 	}
