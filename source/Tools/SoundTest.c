@@ -65,9 +65,9 @@ void SoundTest::show()
 	Printing::resetCoordinates();
 	Printing::show();
 
-	TimerManager::setResolution(TimerManager::getInstance(), __TIMER_100US);
-	TimerManager::setTargetTimePerInterruptUnits(TimerManager::getInstance(), kMS);
-	TimerManager::setTargetTimePerInterrupt(TimerManager::getInstance(), 10);
+	TimerManager::setResolution(__TIMER_100US);
+	TimerManager::setTargetTimePerInterruptUnits(kMS);
+	TimerManager::setTargetTimePerInterrupt(10);
 
 	SoundTest::applyTimerSettings(this);
 	SoundTest::loadSound(this);
@@ -173,7 +173,7 @@ void SoundTest::processUserInput(uint16 pressedKey)
 				break;
 		}
 
-		TimerManager::setResolution(TimerManager::getInstance(), timerResolution);
+		TimerManager::setResolution(timerResolution);
 		timerChanged = true;
 	}
 	else if(K_RD & pressedKey)
@@ -201,8 +201,8 @@ void SoundTest::processUserInput(uint16 pressedKey)
 				break;
 		}
 
-		TimerManager::setTargetTimePerInterruptUnits(TimerManager::getInstance(), targetTimePerInterrupttUnits);
-		TimerManager::setTargetTimePerInterrupt(TimerManager::getInstance(), targetTimePerInterrupt);
+		TimerManager::setTargetTimePerInterruptUnits(targetTimePerInterrupttUnits);
+		TimerManager::setTargetTimePerInterrupt(targetTimePerInterrupt);
 		timerChanged = true;
 	}
 	else if(K_RL & pressedKey)
@@ -211,7 +211,7 @@ void SoundTest::processUserInput(uint16 pressedKey)
 
 		targetTimePerInterrupt -= TimerManager::getMinimumTimePerInterruptStep(TimerManager::getInstance());
 
-		TimerManager::setTargetTimePerInterrupt(TimerManager::getInstance(), targetTimePerInterrupt);
+		TimerManager::setTargetTimePerInterrupt(targetTimePerInterrupt);
 		timerChanged = true;
 	}
 	else if(K_RR & pressedKey)
@@ -220,7 +220,7 @@ void SoundTest::processUserInput(uint16 pressedKey)
 
 		targetTimePerInterrupt += TimerManager::getMinimumTimePerInterruptStep(TimerManager::getInstance());
 
-		TimerManager::setTargetTimePerInterrupt(TimerManager::getInstance(), targetTimePerInterrupt);
+		TimerManager::setTargetTimePerInterrupt(targetTimePerInterrupt);
 		timerChanged = true;
 	}
 
@@ -357,9 +357,9 @@ void SoundTest::loadSound()
 	SoundTest::releaseSound(this);
 
 	TimerManager::reset(TimerManager::getInstance());
-	TimerManager::setResolution(TimerManager::getInstance(), __TIMER_20US);
-	TimerManager::setTargetTimePerInterruptUnits(TimerManager::getInstance(), kUS);
-	TimerManager::setTargetTimePerInterrupt(TimerManager::getInstance(), _userSounds[this->soundIndex]->targetTimerResolutionUS);
+	TimerManager::setResolution(__TIMER_20US);
+	TimerManager::setTargetTimePerInterruptUnits(kUS);
+	TimerManager::setTargetTimePerInterrupt(_userSounds[this->soundIndex]->targetTimerResolutionUS);
 
 	this->sound = 
 		SoundManager::getSound
@@ -414,7 +414,7 @@ bool SoundTest::onSoundReleased(ListenerObject eventFirer __attribute__((unused)
 
 void SoundTest::applyTimerSettings()
 {
-	TimerManager::applySettings(TimerManager::getInstance(), true);
+	TimerManager::applySettings(true);
 
 	SoundTest::printTimer(this);
 }
@@ -428,7 +428,7 @@ void SoundTest::printTimer()
 		return;
 	}
 
-	TimerManager::print(TimerManager::getInstance(), 1, 11);
+	TimerManager::print(1, 11);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
