@@ -28,7 +28,46 @@ extern uint32 _sramBssEnd;
 #define	__SRAM_DUMMY_READ_LENGTH		100
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-// CLASS' PUBLI METHODS
+// CLASS' STATIC METHODS
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+static void SRAMManager::save(const BYTE* const source, int32 memberOffset, int32 dataSize)
+{
+	SRAMManager sramManager = SRAMManager::getInstance();
+
+	int32 i = 0;
+
+	uint16* destination = sramManager->spaceAddress + memberOffset;
+	ASSERT(0 == ((int32)destination % 2), "SRAMManager::save: odd destination");
+
+	for(; i < dataSize; i++)
+	{
+		destination[i] = source[i];
+	}
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+static void SRAMManager::read(BYTE* destination, int32 memberOffset, int32 dataSize)
+{
+	SRAMManager sramManager = SRAMManager::getInstance();
+
+	int32 i = 0;
+
+	uint16* source = sramManager->spaceAddress + memberOffset;
+	ASSERT(0 == ((int32)source % 2), "SRAMManager::constructor: odd source");
+
+	for(; i < dataSize; i++)
+	{
+		destination[i] = source[i] & 0x00FF;
+	}
+}
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+// CLASS' PUBLIC METHODS
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -46,36 +85,6 @@ void SRAMManager::clear(int32 startOffset, int32 endOffset)
 	for(; i < endOffset; i++)
 	{
 		this->spaceAddress[i] = 0;
-	}
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void SRAMManager::save(const BYTE* const source, int32 memberOffset, int32 dataSize)
-{
-	int32 i = 0;
-
-	uint16* destination = this->spaceAddress + memberOffset;
-	ASSERT(0 == ((int32)destination % 2), "SRAMManager::save: odd destination");
-
-	for(; i < dataSize; i++)
-	{
-		destination[i] = source[i];
-	}
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void SRAMManager::read(BYTE* destination, int32 memberOffset, int32 dataSize)
-{
-	int32 i = 0;
-
-	uint16* source = this->spaceAddress + memberOffset;
-	ASSERT(0 == ((int32)source % 2), "SRAMManager::constructor: odd source");
-
-	for(; i < dataSize; i++)
-	{
-		destination[i] = source[i] & 0x00FF;
 	}
 }
 
@@ -114,7 +123,7 @@ void SRAMManager::initialize()
 	for(; i--;)
 	{
 		uint16 dummyChar[__SRAM_DUMMY_READ_LENGTH];
-		SRAMManager::read(this, (BYTE*)&dummyChar, i, sizeof(dummyChar));
+		SRAMManager::read((BYTE*)&dummyChar, i, sizeof(dummyChar));
 	}
 }
 
