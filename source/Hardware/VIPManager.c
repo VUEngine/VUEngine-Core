@@ -253,8 +253,6 @@ static void VIPManager::setFrameCycle(uint8 frameCycle __attribute__((unused)))
 
 static void VIPManager::configurePalettes(PaletteConfig* paletteConfig)
 {
-	VIPManager vipManager = VIPManager::getInstance();
-
 	_vipRegisters[__GPLT0] = paletteConfig->bgmap.gplt0;
 	_vipRegisters[__GPLT1] = paletteConfig->bgmap.gplt1;
 	_vipRegisters[__GPLT2] = paletteConfig->bgmap.gplt2;
@@ -270,8 +268,6 @@ static void VIPManager::configurePalettes(PaletteConfig* paletteConfig)
 
 static void VIPManager::setupColumnTable(ColumnTableSpec* columnTableSpec)
 {
-	VIPManager vipManager = VIPManager::getInstance();
-
 	int32 i, value;
 
 	// Use the default column table as fallback
@@ -296,8 +292,6 @@ static void VIPManager::setupColumnTable(ColumnTableSpec* columnTableSpec)
 
 static void VIPManager::configureBrightness(Brightness* brightness)
 {
-	VIPManager vipManager = VIPManager::getInstance();
-
 	while(_vipRegisters[__XPSTTS] & __XPBSY);
 	_vipRegisters[__BRTA] = brightness->darkRed;
 	_vipRegisters[__BRTB] = brightness->mediumRed;
@@ -308,8 +302,6 @@ static void VIPManager::configureBrightness(Brightness* brightness)
 
 static void VIPManager::configureBrightnessRepeat(BrightnessRepeatSpec* brightnessRepeatSpec)
 {
-	VIPManager vipManager = VIPManager::getInstance();
-
 	// Use the default repeat values as fallback
 	if(brightnessRepeatSpec == NULL)
 	{
@@ -337,8 +329,6 @@ static void VIPManager::configureBrightnessRepeat(BrightnessRepeatSpec* brightne
 
 static void VIPManager::configureBackgroundColor(uint8 color)
 {
-	VIPManager vipManager = VIPManager::getInstance();
-
 	_vipRegisters[__BACKGROUND_COLOR] = (color <= __COLOR_BRIGHT_RED)
 		? color
 		: __COLOR_BRIGHT_RED;
@@ -349,8 +339,6 @@ static void VIPManager::configureBackgroundColor(uint8 color)
 
 static void VIPManager::configurePostProcessingEffects(PostProcessingEffect* postProcessingEffects)
 {
-	VIPManager vipManager = VIPManager::getInstance();
-
 	if(NULL == postProcessingEffects)
 	{
 		return;
@@ -366,8 +354,6 @@ static void VIPManager::configurePostProcessingEffects(PostProcessingEffect* pos
 
 static void VIPManager::upBrightness()
 {
-	VIPManager vipManager = VIPManager::getInstance();
-
 	while(_vipRegisters[__XPSTTS] & __XPBSY);
 	_vipRegisters[__BRTA] = 32;
 	_vipRegisters[__BRTB] = 64;
@@ -378,8 +364,6 @@ static void VIPManager::upBrightness()
 
 static void VIPManager::lowerBrightness()
 {
-	VIPManager vipManager = VIPManager::getInstance();
-
 	while(_vipRegisters[__XPSTTS] & __XPBSY);
 	_vipRegisters[__BRTA] = 0;
 	_vipRegisters[__BRTB] = 0;
