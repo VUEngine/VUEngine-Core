@@ -283,6 +283,13 @@ static Component ComponentManager::getComponentAtIndex(Entity owner, uint32 comp
 
 static VirtualList ComponentManager::getComponents(Entity owner, uint32 componentType)
 {
+	ComponentManager componentManager = ComponentManager::getManager(componentType);
+
+	if(NULL == componentManager)
+	{
+		return NULL;
+	}
+
 	if(NULL == owner->components)
 	{
 		owner->components = 
@@ -304,13 +311,6 @@ static VirtualList ComponentManager::getComponents(Entity owner, uint32 componen
 	else
 	{
 		return owner->components[componentType];
-	}
-
-	ComponentManager componentManager = ComponentManager::getManager(componentType);
-
-	if(NULL == componentManager)
-	{
-		return NULL;
 	}
 
 	for(VirtualNode node = componentManager->components->head; NULL != node; node = node->next)
