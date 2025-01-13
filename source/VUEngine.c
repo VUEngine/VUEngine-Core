@@ -698,7 +698,7 @@ static void VUEngine::processUserInput(GameState currentGameState)
 {
 	VUEngine vuEngine = VUEngine::getInstance();
 
-	if(!KeypadManager::isEnabled(KeypadManager::getInstance()))
+	if(!KeypadManager::isEnabled())
 	{
 #ifdef __ENABLE_PROFILER
 		Profiler::lap(kProfilerLapTypeNormalProcess, PROCESS_NAME_INPUT);

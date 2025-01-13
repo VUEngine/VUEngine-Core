@@ -1072,7 +1072,7 @@ void Stage::configureCamera(bool reset)
 
 void Stage::configureGraphics()
 {
-		SpriteManager		spriteManager = SpriteManager::getInstance();
+	SpriteManager spriteManager = SpriteManager::getInstance();
 
 	SpriteManager::configure
 	(

@@ -347,7 +347,7 @@ void SoundTest::loadSound()
 		return;
 	}
 
-	KeypadManager::disable(KeypadManager::getInstance());
+	KeypadManager::disable();
 
 #ifdef __SOUND_TEST
 	Printing::clear();
@@ -380,7 +380,7 @@ void SoundTest::loadSound()
 #endif
 	}
 
-	KeypadManager::enable(KeypadManager::getInstance());
+	KeypadManager::enable();
 
 	SoundTest::printGUI(this, false);
 }
