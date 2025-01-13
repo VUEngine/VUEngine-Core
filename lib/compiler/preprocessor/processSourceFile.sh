@@ -511,10 +511,4 @@ then
 	exit 0
 fi
 
-if [ -z "${classModifiers##*singleton*}" ];
-then
-
-	sed -i '1s/^/#include <Authenticator.h>\n/' $OUTPUT_FILE
-fi
-
 rm -f $OUTPUT_FILE"-e"
