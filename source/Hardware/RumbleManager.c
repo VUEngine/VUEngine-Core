@@ -20,6 +20,89 @@
 #include "RumbleManager.h"
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+// CLASS' STATIC METHODS
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+static void RumbleManager::startEffect(const RumbleEffectSpec* rumbleEffect)
+{
+	RumbleManager rumbleManager = RumbleManager::getInstance();
+
+	rumbleManager->rumbleCommandIndex = 0;
+
+	if(!rumbleManager->overridePreviousEffect && 0 != rumbleManager->rumbleCommandIndex)
+	{
+		return;
+	}
+
+	if(NULL == rumbleEffect)
+	{
+		return;
+	}
+
+	if(rumbleManager->rumbleEffectSpec == rumbleEffect)
+	{
+		if(rumbleEffect->stop)
+		{
+			RumbleManager::stop(rumbleManager);
+		}
+
+		RumbleManager::play(rumbleManager);
+		RumbleManager::execute(rumbleManager);
+		return;
+	}
+
+	rumbleManager->rumbleEffectSpec = rumbleEffect;
+
+	if(rumbleEffect->stop)
+	{
+		RumbleManager::stop(rumbleManager);
+	}
+
+	RumbleManager::setFrequency(rumbleManager, rumbleEffect->frequency);
+	RumbleManager::setSustainPositive(rumbleManager, rumbleEffect->sustainPositive);
+	RumbleManager::setSustainNegative(rumbleManager, rumbleEffect->sustainNegative);
+	RumbleManager::setOverdrive(rumbleManager, rumbleEffect->overdrive);
+	RumbleManager::setBreak(rumbleManager, rumbleEffect->breaking);
+	RumbleManager::setEffect(rumbleManager, rumbleEffect->effect);
+	RumbleManager::execute(rumbleManager);
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+static void RumbleManager::stopEffect(const RumbleEffectSpec* rumbleEffect)
+{
+	RumbleManager rumbleManager = RumbleManager::getInstance();
+
+	if(NULL == rumbleEffect || rumbleManager->rumbleEffectSpec == rumbleEffect)
+	{
+		RumbleManager::stop(rumbleManager);
+		RumbleManager::execute(rumbleManager);
+	}
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+static void RumbleManager::setAsync(bool async)
+{
+	RumbleManager rumbleManager = RumbleManager::getInstance();
+
+	rumbleManager->async = async;
+	RumbleManager::stopAllEffects(rumbleManager);
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+static void RumbleManager::setOverridePreviousEffect(bool overridePreviousEffect)
+{
+	RumbleManager rumbleManager = RumbleManager::getInstance();
+
+	rumbleManager->overridePreviousEffect = overridePreviousEffect;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PUBLIC METHODS
@@ -42,87 +125,6 @@ secure void RumbleManager::reset()
 	for(int32 i = 0; i < __RUMBLE_TOTAL_COMMANDS; i++)
 	{
 		this->rumbleCommands[i] = 0;
-	}
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void RumbleManager::setAsync(bool async)
-{
-	this->async = async;
-	RumbleManager::stopAllEffects(this);
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void RumbleManager::setOverridePreviousEffect(bool overridePreviousEffect)
-{
-	this->overridePreviousEffect = overridePreviousEffect;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void RumbleManager::startEffect(const RumbleEffectSpec* rumbleEffect)
-{
-	if(isDeleted(this))
-	{
-		RumbleManager::getInstance();
-
-		if(isDeleted(this))
-		{
-			RumbleManager::getInstance();
-			return;
-		}
-	}
-
-	this->rumbleCommandIndex = 0;
-
-	if(!this->overridePreviousEffect && 0 != this->rumbleCommandIndex)
-	{
-		return;
-	}
-
-	if(NULL == rumbleEffect)
-	{
-		return;
-	}
-
-	if(this->rumbleEffectSpec == rumbleEffect)
-	{
-		if(rumbleEffect->stop)
-		{
-			RumbleManager::stop(this);
-		}
-
-		RumbleManager::play(this);
-		RumbleManager::execute(this);
-		return;
-	}
-
-	this->rumbleEffectSpec = rumbleEffect;
-
-	if(rumbleEffect->stop)
-	{
-		RumbleManager::stop(this);
-	}
-
-	RumbleManager::setFrequency(this, rumbleEffect->frequency);
-	RumbleManager::setSustainPositive(this, rumbleEffect->sustainPositive);
-	RumbleManager::setSustainNegative(this, rumbleEffect->sustainNegative);
-	RumbleManager::setOverdrive(this, rumbleEffect->overdrive);
-	RumbleManager::setBreak(this, rumbleEffect->breaking);
-	RumbleManager::setEffect(this, rumbleEffect->effect);
-	RumbleManager::execute(this);
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void RumbleManager::stopEffect(const RumbleEffectSpec* rumbleEffect)
-{
-	if(NULL == rumbleEffect || this->rumbleEffectSpec == rumbleEffect)
-	{
-		RumbleManager::stop(this);
-		RumbleManager::execute(this);
 	}
 }
 
