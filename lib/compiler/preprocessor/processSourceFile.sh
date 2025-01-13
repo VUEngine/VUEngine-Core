@@ -18,8 +18,8 @@ clean_up() {
 	# Replace override checks
 	sed -i.b 's/\([A-Z][A-z0-9]*\)_overrides[ 	]*(/__OVERRIDES_METHOD(\1, /g' $OUTPUT_FILE 
 
-	sed -i.b -z 's/(<NEW_LINE>/\n(/g'  $OUTPUT_FILE
-	sed -i.b -z 's/<NEW_LINE>/\n/g'  $OUTPUT_FILE
+	sed -i.b 's/(<NEW_LINE>/\n(/g'  $OUTPUT_FILE
+	sed -i.b 's/<NEW_LINE>/\n/g'  $OUTPUT_FILE
 	sed -i.b -e 's/<STATIC>//g'  $OUTPUT_FILE
 	sed -i.b -e 's/<SECURE>//g'  $OUTPUT_FILE
 
@@ -84,7 +84,20 @@ cp -p -f $INPUT_FILE $OUTPUT_FILE
 
 # Inline multiline declarations
 sed -i.b 's/^[	]\+(/(/g'  $OUTPUT_FILE
-sed -i.b -z 's/\n(/(<NEW_LINE>/g'  $OUTPUT_FILE
+sedGNU=`sed --version|grep -i GNU`
+
+if [ ! -z "$sedGNU" ];
+then
+	sed -i.b -z 's/\n(/(<NEW_LINE>/g'  $OUTPUT_FILE
+else
+	sed -i.b 's/^[	]*(/(<NEW_LINE>/g'  $OUTPUT_FILE
+	tr '\n' '\`' < $OUTPUT_FILE > $OUTPUT_FILE.tmp
+	mv $OUTPUT_FILE.tmp $OUTPUT_FILE
+
+	sed -i.b 's/`(<NEW_LINE>/(<NEW_LINE>/g'  $OUTPUT_FILE
+	tr '\`' '\n' < $OUTPUT_FILE > $OUTPUT_FILE.tmp
+	mv $OUTPUT_FILE.tmp $OUTPUT_FILE
+fi
 
 if [ -z "${INPUT_FILE##*assets/*}" ];
 then
