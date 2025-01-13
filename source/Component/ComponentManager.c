@@ -201,6 +201,54 @@ static void ComponentManager::removeComponents(Entity owner, uint32 componentTyp
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+static void ComponentManager::createComponents(Entity owner, ComponentSpec** componentSpecs)
+{
+	for(int32 i = 0; NULL != componentSpecs[i] && NULL != componentSpecs[i]->allocator; i++)
+	{
+		ComponentManager::addComponent(owner, componentSpecs[i]);
+
+#ifndef __RELEASE
+		if(__MAXIMUM_NUMBER_OF_COMPONENTS < i)
+		{
+			Printing::setDebugMode();
+			Printing::clear();
+			Printing::text("Component specs array: ", 1, 26, NULL);
+			Printing::hex((uint32)componentSpecs, 1, 27, 8, NULL);
+			Error::triggerException("ComponentManager::addComponents: Non terminated component specs array", NULL);	
+		}
+#endif
+	}
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+static void ComponentManager::destroyComponents(Entity owner)
+{
+	if(isDeleted(owner))
+	{
+		return;
+	}
+
+	for(int16 i = 0; i < kComponentTypes; i++)
+	{
+		ComponentManager componentManager = ComponentManager::getManager(i);
+
+		for(VirtualNode node = componentManager->components->head, nextNode = NULL; NULL != node; node = nextNode)
+		{
+			nextNode = node->next;
+	
+			Component component = Component::safeCast(node->data);
+
+			if(!component->deleteMe && owner == component->owner)
+			{
+				ComponentManager::deinstantiateComponent(componentManager, owner, component);
+			}
+		}	
+	}
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 static Component ComponentManager::getComponentAtIndex(Entity owner, uint32 componentType, int16 componentIndex)
 {
 	if(kComponentTypes <= componentType || 0 > componentIndex)

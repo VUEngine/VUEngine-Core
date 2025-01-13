@@ -421,14 +421,14 @@ void Entity::createComponents(ComponentSpec** componentSpecs)
 		return;
 	}
 
-	Entity::addComponents(this, componentSpecs, kComponentTypes);
+	ComponentManager::createComponents(this, componentSpecs);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Entity::destroyComponents()
 {
-	Entity::removeComponents(this, kComponentTypes);
+	ComponentManager::destroyComponents(this);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

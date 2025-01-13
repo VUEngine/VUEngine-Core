@@ -76,6 +76,15 @@ abstract class ComponentManager : Object
 	/// @param componentType: Type of components to remove
 	static void removeComponents(Entity owner, uint32 componentType);
 
+	/// Create all the components from the specified specs array and attache to the provided owner.
+	/// @param owner: Object to which the components attach to
+	/// @param componentSpecs: Specs to initialize the new components
+	static void createComponents(Entity owner, ComponentSpec** componentSpecs);
+
+	/// Destroy all the components from the specified owner.
+	/// @param owner: Object to which the components attach to
+	static void destroyComponents(Entity owner);
+
 	/// Retrieve a component of the given type at the desired position.
 	/// @param owner: Object to which the components attach to
 	/// @param componentType: Type of components to add
