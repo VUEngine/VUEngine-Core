@@ -771,7 +771,7 @@ typedef void* (*(*ClassPointer)(void*))(void*);
 			}																															\
 																																		\
 			/* return the created singleton */																							\
-			return _instance ## ClassName;																			\
+			return _instance ## ClassName;																								\
 		}																																\
 																																		\
 		/* dummy redeclaration to avoid warning when compiling with -pedantic */														\
