@@ -612,7 +612,7 @@ typedef void* (*(*ClassPointer)(void*))(void*);
 		static ClassPointer const (*_authorizedRequesters)[] = NULL;																	\
 																																		\
 		/* Flag to authorize access to secure methods */																				\
-		static bool _authorized = true;																									\
+		static bool _authorized __attribute__((unused)) = true;																			\
 																																		\
 		/* Define get instance method */																								\
 		bool ClassName ## _authorize(ClassPointer requesterClass)																		\
