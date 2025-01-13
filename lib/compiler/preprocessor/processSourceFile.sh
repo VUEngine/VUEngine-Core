@@ -84,7 +84,7 @@ cp -p -f $INPUT_FILE $OUTPUT_FILE
 
 # Inline multiline declarations
 sed -i.b 's/^[	]\+(/(/g'  $OUTPUT_FILE
-sedGNU=`sed --version|grep -i GNU`
+sedGNU=`strings $(which sed)|grep -i gnu`
 
 if [ ! -z "$sedGNU" ];
 then
