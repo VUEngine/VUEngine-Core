@@ -330,6 +330,21 @@ singleton class VIPManager : ListenerObject
 	/// Interrupt handler for timer's interrupts
 	static void interruptHandler();
 
+	/// Push a post processing effect at the start of the list of effects.
+	/// @param postProcessingEffect: Post-processing effect function
+	/// @param entity: Post-processing effect function's scope
+	static void pushFrontPostProcessingEffect(PostProcessingEffect postProcessingEffect, Entity entity);
+
+	/// Push a post processing effect at the end of the list of effects.
+	/// @param postProcessingEffect: Post-processing effect function
+	/// @param entity: Post-processing effect function's scope
+	static void pushBackPostProcessingEffect(PostProcessingEffect postProcessingEffect, Entity entity);
+
+	/// Remove a post-processing effect from the list of effects.
+	/// @param postProcessingEffect: Post-processing effect function
+	/// @param entity: Post-processing effect function's scope
+	static void removePostProcessingEffect(PostProcessingEffect postProcessingEffect, Entity entity);
+
 	/// Reset the manager's state.
 	void reset();
 
@@ -409,21 +424,6 @@ singleton class VIPManager : ListenerObject
 
 	/// Lower the brightness to the minimum.
 	void lowerBrightness();
-
-	/// Push a post processing effect at the start of the list of effects.
-	/// @param postProcessingEffect: Post-processing effect function
-	/// @param entity: Post-processing effect function's scope
-	void pushFrontPostProcessingEffect(PostProcessingEffect postProcessingEffect, Entity entity);
-
-	/// Push a post processing effect at the end of the list of effects.
-	/// @param postProcessingEffect: Post-processing effect function
-	/// @param entity: Post-processing effect function's scope
-	void pushBackPostProcessingEffect(PostProcessingEffect postProcessingEffect, Entity entity);
-
-	/// Remove a post-processing effect from the list of effects.
-	/// @param postProcessingEffect: Post-processing effect function
-	/// @param entity: Post-processing effect function's scope
-	void removePostProcessingEffect(PostProcessingEffect postProcessingEffect, Entity entity);
 
 	/// Remove all a post-processing effects.
 	void removePostProcessingEffects();

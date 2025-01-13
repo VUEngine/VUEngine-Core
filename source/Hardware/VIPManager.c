@@ -109,6 +109,73 @@ static void VIPManager::interruptHandler()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+static void VIPManager::pushFrontPostProcessingEffect(PostProcessingEffect postProcessingEffect, Entity entity)
+{
+	VIPManager vipManager = VIPManager::getInstance();
+
+	PostProcessingEffectRegistry* postProcessingEffectRegistry = 
+		VIPManager::isPostProcessingEffectRegistered(vipManager, postProcessingEffect, entity);
+
+	if(!isDeleted(postProcessingEffectRegistry))
+	{
+		postProcessingEffectRegistry->remove = false;
+		return;
+	}
+
+	postProcessingEffectRegistry = new PostProcessingEffectRegistry;
+	postProcessingEffectRegistry->postProcessingEffect = postProcessingEffect;
+	postProcessingEffectRegistry->entity = entity;
+	postProcessingEffectRegistry->remove = false;
+
+	VirtualList::pushFront(vipManager->postProcessingEffects, postProcessingEffectRegistry);
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+static void VIPManager::pushBackPostProcessingEffect(PostProcessingEffect postProcessingEffect, Entity entity)
+{
+	VIPManager vipManager = VIPManager::getInstance();
+
+	PostProcessingEffectRegistry* postProcessingEffectRegistry = 
+		VIPManager::isPostProcessingEffectRegistered(vipManager, postProcessingEffect, entity);
+
+	if(!isDeleted(postProcessingEffectRegistry))
+	{
+		postProcessingEffectRegistry->remove = false;
+		return;
+	}
+
+	postProcessingEffectRegistry = new PostProcessingEffectRegistry;
+	postProcessingEffectRegistry->postProcessingEffect = postProcessingEffect;
+	postProcessingEffectRegistry->entity = entity;
+	postProcessingEffectRegistry->remove = false;
+
+	VirtualList::pushBack(vipManager->postProcessingEffects, postProcessingEffectRegistry);
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+static void VIPManager::removePostProcessingEffect(PostProcessingEffect postProcessingEffect, Entity entity)
+{
+	VIPManager vipManager = VIPManager::getInstance();
+
+	for(VirtualNode node = vipManager->postProcessingEffects->head; NULL != node; node = node->next)
+	{
+		PostProcessingEffectRegistry* postProcessingEffectRegistry = (PostProcessingEffectRegistry*)node->data;
+
+		if
+		(
+			postProcessingEffectRegistry->postProcessingEffect == postProcessingEffect 
+			&& 
+			postProcessingEffectRegistry->entity == entity
+		)
+		{
+			postProcessingEffectRegistry->remove = true;
+			return;
+		}
+	}
+}
+
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PUBLIC METHODS
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -374,7 +441,7 @@ void VIPManager::configurePostProcessingEffects(PostProcessingEffect* postProces
 
 	for(int32 i = 0; NULL != postProcessingEffects[i]; i++)
 	{
-		VIPManager::pushFrontPostProcessingEffect(this, postProcessingEffects[i], NULL);
+		VIPManager::pushFrontPostProcessingEffect(postProcessingEffects[i], NULL);
 	}
 }
 
@@ -396,69 +463,6 @@ void VIPManager::lowerBrightness()
 	_vipRegisters[__BRTA] = 0;
 	_vipRegisters[__BRTB] = 0;
 	_vipRegisters[__BRTC] = 0;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void VIPManager::pushFrontPostProcessingEffect(PostProcessingEffect postProcessingEffect, Entity entity)
-{
-	PostProcessingEffectRegistry* postProcessingEffectRegistry = 
-		VIPManager::isPostProcessingEffectRegistered(this, postProcessingEffect, entity);
-
-	if(!isDeleted(postProcessingEffectRegistry))
-	{
-		postProcessingEffectRegistry->remove = false;
-		return;
-	}
-
-	postProcessingEffectRegistry = new PostProcessingEffectRegistry;
-	postProcessingEffectRegistry->postProcessingEffect = postProcessingEffect;
-	postProcessingEffectRegistry->entity = entity;
-	postProcessingEffectRegistry->remove = false;
-
-	VirtualList::pushFront(this->postProcessingEffects, postProcessingEffectRegistry);
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void VIPManager::pushBackPostProcessingEffect(PostProcessingEffect postProcessingEffect, Entity entity)
-{
-	PostProcessingEffectRegistry* postProcessingEffectRegistry = 
-		VIPManager::isPostProcessingEffectRegistered(this, postProcessingEffect, entity);
-
-	if(!isDeleted(postProcessingEffectRegistry))
-	{
-		postProcessingEffectRegistry->remove = false;
-		return;
-	}
-
-	postProcessingEffectRegistry = new PostProcessingEffectRegistry;
-	postProcessingEffectRegistry->postProcessingEffect = postProcessingEffect;
-	postProcessingEffectRegistry->entity = entity;
-	postProcessingEffectRegistry->remove = false;
-
-	VirtualList::pushBack(this->postProcessingEffects, postProcessingEffectRegistry);
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void VIPManager::removePostProcessingEffect(PostProcessingEffect postProcessingEffect, Entity entity)
-{
-	for(VirtualNode node = this->postProcessingEffects->head; NULL != node; node = node->next)
-	{
-		PostProcessingEffectRegistry* postProcessingEffectRegistry = (PostProcessingEffectRegistry*)node->data;
-
-		if
-		(
-			postProcessingEffectRegistry->postProcessingEffect == postProcessingEffect 
-			&& 
-			postProcessingEffectRegistry->entity == entity
-		)
-		{
-			postProcessingEffectRegistry->remove = true;
-			return;
-		}
-	}
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
