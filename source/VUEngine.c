@@ -466,7 +466,7 @@ static bool VUEngine::isPaused()
 
 static void VUEngine::wait(uint32 milliSeconds)
 {
-	TimerManager::wait(TimerManager::getInstance(), milliSeconds);
+	TimerManager::wait(milliSeconds);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -835,6 +835,7 @@ static bool VUEngine::stream(GameState gameState)
 #ifndef __ENABLE_PROFILER
 	bool result = GameState::stream(gameState);
 #else
+	VUEngine vuEngine = VUEngine::getInstance();
 	bool result = false;
 
 	// While we wait for the next game start

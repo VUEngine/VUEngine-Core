@@ -1049,7 +1049,7 @@ void Stage::configureTimer()
 {
 	TimerManager::configure
 	(
-		TimerManager::getInstance(), this->stageSpec->timer.resolution, this->stageSpec->timer.targetTimePerInterrupt, 
+		this->stageSpec->timer.resolution, this->stageSpec->timer.targetTimePerInterrupt, 
 		this->stageSpec->timer.targetTimePerInterrupttUnits
 	);
 }

@@ -36,7 +36,7 @@ class PrintingSprite;
 #define PRINT_TIME(x, y)																					\
 	Printing::int32																							\
 	(																										\
-		TimerManager::getTotalElapsedMilliseconds(TimerManager::getInstance(NULL)),							\
+		TimerManager::getTotalElapsedMilliseconds(),														\
 		x,																									\
 		y,																									\
 		NULL																								\

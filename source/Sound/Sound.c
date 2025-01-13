@@ -706,7 +706,7 @@ fix7_9_ext Sound::computeTimerResolutionFactor()
 	uint32 timerUsPerInterrupt = timerCounter * __SOUND_TARGET_US_PER_TICK;
 	uint32 targetTimerResolutionUS = 0 != this->soundSpec->targetTimerResolutionUS ? this->soundSpec->targetTimerResolutionUS : 1000;
 	uint32 soundTargetUsPerInterrupt = 
-		(__TIME_US(TimerManager::getInstance(), targetTimerResolutionUS) + __TIMER_COUNTER_DELTA) * __SOUND_TARGET_US_PER_TICK;
+		(__TIME_US(targetTimerResolutionUS) + __TIMER_COUNTER_DELTA) * __SOUND_TARGET_US_PER_TICK;
 
 	NM_ASSERT(0 < soundTargetUsPerInterrupt, "Sound::computeTimerResolutionFactor: zero soundTargetUsPerInterrupt");
 

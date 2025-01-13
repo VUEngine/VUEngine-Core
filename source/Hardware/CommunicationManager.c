@@ -20,6 +20,7 @@
 #include <Profiler.h>
 #include <Telegram.h>
 #include <VIPManager.h>
+#include <VUEngine.h>
 
 #include "CommunicationManager.h"
 

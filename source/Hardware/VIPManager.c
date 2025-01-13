@@ -21,6 +21,7 @@
 #include <Profiler.h>
 #include <VirtualList.h>
 #include <VirtualNode.h>
+#include <VUEngine.h>
 
 #include "VIPManager.h"
 
