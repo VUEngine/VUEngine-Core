@@ -267,7 +267,7 @@ StageSpec* Stage::getSpec()
 
 void Stage::configurePalettes()
 {
-	VIPManager::configurePalettes(VIPManager::getInstance(), &this->stageSpec->rendering.paletteConfig);
+	VIPManager::configurePalettes(&this->stageSpec->rendering.paletteConfig);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

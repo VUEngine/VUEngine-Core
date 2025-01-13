@@ -345,6 +345,64 @@ singleton class VIPManager : ListenerObject
 	/// @param entity: Post-processing effect function's scope
 	static void removePostProcessingEffect(PostProcessingEffect postProcessingEffect, Entity entity);
 
+	/// Remove all a post-processing effects.
+	static void removePostProcessingEffects();
+
+	/// Enable VIP interrupts that the engine doesn't use.
+	/// @param customInterrupts: Interrupts to enable
+	static void enableCustomInterrupts(uint16 customInterrupts);
+
+	/// Set the multiplexed interrupts that are allowed
+	/// @param enabledMultiplexedInterrupts: Multiplexed interrupts to allow
+	static void enableMultiplexedInterrupts(uint32 enabledMultiplexedInterrupts);
+
+	/// Set the drawing management drawingStrategy interrupts that are allowed
+	/// @param drawingStrategy: Value to control the suspension and resuming of drawing
+	static void setDrawingStrategy(uint32 drawingStrategy);
+
+	/// Retrieve the drawing management drawingStrategy interrupts that are allowed
+	/// @return Value that controls the suspension and resuming of drawing
+	static uint32 getDrawingStrategy();
+
+	/// Configure the VIP's palettes with the provided configuration.
+	/// @param paletteConfig: Palettes configuration
+	static void configurePalettes(PaletteConfig* paletteConfig);
+
+	/// Setup the column table with the provided spec.
+	/// @param columnTableSpec: Specification for the configuration of the column table
+	static void setupColumnTable(ColumnTableSpec* columnTableSpec);
+
+	/// Configure the brightness registers with the provided configuration.
+	/// @param brightness: Brightness configuration
+	static void configureBrightness(Brightness* brightness);
+
+	/// Configure the column table brightness repeat values.
+	/// @param brightnessRepeat: Brightness configuration
+	static void configureBrightnessRepeat(BrightnessRepeatSpec* brightnessRepeat);
+
+	/// Configure the background color.
+	/// @param color: Color to apply to the background
+	static void configureBackgroundColor(uint8 color);
+
+	/// Up the brightness to the maximum.
+	static void upBrightness();
+
+	/// Lower the brightness to the minimum.
+	static void lowerBrightness();
+
+	/// Retrieve the registry of the interrupts being processed.
+	/// @return The registry of the interrupts being processed
+	static uint16 getCurrentInterrupt();
+
+	/// Retrieve the time in milliseconds that each game frame lasts.
+	/// @return Time in milliseconds that the game frame last according
+	/// to the FRMCYC configuration
+	static uint16 getGameFrameDuration();
+
+	/// Set the FRMCYC value
+	/// @param frameCycle: FRMCYC value
+	static void setFrameCycle(uint8 frameCycle);
+
 	/// Reset the manager's state.
 	void reset();
 
@@ -360,22 +418,6 @@ singleton class VIPManager : ListenerObject
 		uint8 backgroundColor, Brightness* brightness, BrightnessRepeatSpec* brightnessRepeat,
 		PaletteConfig* paletteConfig, PostProcessingEffect* postProcessingEffects
 	);
-
-	/// Enable VIP interrupts that the engine doesn't use.
-	/// @param customInterrupts: Interrupts to enable
-	void enableCustomInterrupts(uint16 customInterrupts);
-
-	/// Set the multiplexed interrupts that are allowed
-	/// @param enabledMultiplexedInterrupts: Multiplexed interrupts to allow
-	void enableMultiplexedInterrupts(uint32 enabledMultiplexedInterrupts);
-
-	/// Set the drawing management drawingStrategy interrupts that are allowed
-	/// @param drawingStrategy: Value to control the suspension and resuming of drawing
-	void setDrawingStrategy(uint32 drawingStrategy);
-
-	/// Retrieve the drawing management drawingStrategy interrupts that are allowed
-	/// @return Value that controls the suspension and resuming of drawing
-	uint32 getDrawingStrategy();
 
 	/// Start VIP drawing operations.
 	void startDrawing();
@@ -394,48 +436,6 @@ singleton class VIPManager : ListenerObject
 
 	/// Stop VIP displaying operations.
 	void stopDisplaying();
-
-	/// Set the FRMCYC value
-	/// @param frameCycle: FRMCYC value
-	void setFrameCycle(uint8 frameCycle);
-
-	/// Configure the VIP's palettes with the provided configuration.
-	/// @param paletteConfig: Palettes configuration
-	void configurePalettes(PaletteConfig* paletteConfig);
-
-	/// Setup the column table with the provided spec.
-	/// @param columnTableSpec: Specification for the configuration of the column table
-	void setupColumnTable(ColumnTableSpec* columnTableSpec);
-
-	/// Configure the brightness registers with the provided configuration.
-	/// @param brightness: Brightness configuration
-	void configureBrightness(Brightness* brightness);
-
-	/// Configure the column table brightness repeat values.
-	/// @param brightnessRepeat: Brightness configuration
-	void configureBrightnessRepeat(BrightnessRepeatSpec* brightnessRepeat);
-
-	/// Configure the background color.
-	/// @param color: Color to apply to the background
-	void configureBackgroundColor(uint8 color);
-
-	/// Up the brightness to the maximum.
-	void upBrightness();
-
-	/// Lower the brightness to the minimum.
-	void lowerBrightness();
-
-	/// Remove all a post-processing effects.
-	void removePostProcessingEffects();
-
-	/// Retrieve the registry of the interrupts being processed.
-	/// @return The registry of the interrupts being processed
-	uint16 getCurrentInterrupt();
-
-	/// Retrieve the time in milliseconds that each game frame lasts.
-	/// @return Time in milliseconds that the game frame last according
-	/// to the FRMCYC configuration
-	uint16 getGameFrameDuration();
 }
 
 #endif

@@ -84,7 +84,7 @@ static void Error::triggerException(char* message __attribute__((unused)), char*
 	_vipRegisters[__BRTB] = 64;
 	_vipRegisters[__BRTC] = 32;
 
-	VIPManager::configureBackgroundColor(VIPManager::getInstance(), __COLOR_BLACK);
+	VIPManager::configureBackgroundColor(__COLOR_BLACK);
 
 	// Make sure there are fonts to show the exception
 	Printing::setDebugMode();
