@@ -85,6 +85,9 @@ class Particle : Entity
 	/// ParticleSpec used to configure the particle
 	const ParticleSpec* particleSpec;
 
+	/// Cache the VisualComponent to bypass the ComponentManager's usage
+	VisualComponent visualComponent;
+
 	/// @publicsection
 
 	/// Class' constructor

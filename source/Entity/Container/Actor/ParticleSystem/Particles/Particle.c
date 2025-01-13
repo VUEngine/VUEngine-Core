@@ -42,6 +42,7 @@ void Particle::constructor(const ParticleSpec* particleSpec)
 	this->lifeSpan = 0;
 	this->expired = false;
 	this->body = NULL;
+	this->visualComponent = NULL;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -49,6 +50,7 @@ void Particle::constructor(const ParticleSpec* particleSpec)
 void Particle::destructor()
 {
 	this->body = NULL;
+	this->visualComponent = NULL;
 
 	// Always explicitly call the base's destructor 
 	Base::destructor();
@@ -98,7 +100,7 @@ void Particle::setup
 	{
 		Particle::removeComponents(this, kSpriteComponent);
 		Particle::removeComponents(this, kWireframeComponent);
-		Particle::addComponent(this, visualComponentSpec);
+		this->visualComponent = VisualComponent::safeCast(Particle::addComponent(this, visualComponentSpec));
 	}
 
 	if(NULL != physicsComponentSpec && NULL == this->body)
@@ -131,7 +133,10 @@ void Particle::setup
 		}
 	}
 
-	Particle::show(this);
+	if(!isDeleted(this->visualComponent))
+	{
+		VisualComponent::show(this->visualComponent);
+	}
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -156,7 +161,10 @@ void Particle::expire()
 {
 	this->expired = true;
 
-	Particle::hide(this);
+	if(!isDeleted(this->visualComponent))
+	{
+		VisualComponent::hide(this->visualComponent);
+	}
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -198,16 +206,12 @@ bool Particle::isVisible()
 
 void Particle::playAnimation(const AnimationFunction** animationFunctions, const char* animationName)
 {
-	ComponentManager::propagateCommand
-	(
-		cVisualComponentCommandPlay, 
-		Entity::safeCast(this),
-		kSpriteComponent, 
-		animationFunctions, 
-		animationName, 
-		NULL, 
-		NULL
-	);
+	if(NULL == this->visualComponent)
+	{
+		return;
+	}
+
+	VisualComponent::play(this->visualComponent, animationFunctions, animationName, NULL, NULL);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
