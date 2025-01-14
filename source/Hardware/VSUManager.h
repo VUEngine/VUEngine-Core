@@ -113,28 +113,28 @@ typedef struct VSUSoundSourceConfiguration
 	uint32 type;
 
 	/// SxINT values
-	int16 SxINT;
+	uint8 SxINT;
 
 	/// SxLRV values
-	int16 SxLRV;
+	uint8 SxLRV;
 
 	/// SxFQL values
-	int16 SxFQL;
+	uint8 SxFQL;
 
 	/// SxFQH values
-	int16 SxFQH;
+	uint8 SxFQH;
 
 	/// SxEV0 values
-	int16 SxEV0;
+	uint8 SxEV0;
 
 	/// SxEV1 values
-	int16 SxEV1;
+	uint8 SxEV1;
 
 	/// SxRAM pointer
 	const int8* SxRAM;
 
 	/// SxSWP values
-	int16 SxSWP;
+	uint8 SxSWP;
 
 	/// SxMOD pointer
 	const int8* SxMOD;
@@ -198,6 +198,10 @@ singleton class VSUManager : Object
 	/// Apply a sound source configuration to a VSU sound source with the provided data for PCM playback.
 	/// @param sample: PCM sample data
 	static void applyPCMSampleToSoundSource(int8 sample);
+
+	/// Stop sound output in the sound sources in use by the requester object.
+	/// @param requester: Object using a sound source
+	static void stopSoundSourcesUsedByedBy(Object requester);
 
 	/// Reset the manager's state.
 	void reset();

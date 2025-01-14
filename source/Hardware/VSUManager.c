@@ -32,7 +32,7 @@ friend class VirtualList;
 #define __WAVE_ADDRESS(n)					(uint8*)(0x01000000 + (n * 128))
 #define __MODULATION_DATA					(uint8*)0x01000280;
 #define __SSTOP								*(uint8*)0x01000580
-#define __SOUND_WRAPPER_STOP_SOUND 			0x21
+#define __SOUND_WRAPPER_STOP_SOUND 			0x20
 #define __MAXIMUM_VOLUME					0xF
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -93,6 +93,24 @@ static void VSUManager::applyPCMSampleToSoundSource(int8 sample)
 
 		vsuSoundSourceIndex++;
 	}
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+static void VSUManager::stopSoundSourcesUsedBy(Object requester)
+{
+	VSUManager vsuManager = VSUManager::getInstance();
+
+	for(int16 i = 0; i < __TOTAL_SOUND_SOURCES; i++)
+	{
+		if(requester == vsuManager->vsuSoundSourceConfigurations[i].requester)
+		{
+			vsuManager->vsuSoundSourceConfigurations[i].timeout = -1;
+			vsuManager->vsuSoundSourceConfigurations[i].waveform = NULL;
+			vsuManager->vsuSoundSourceConfigurations[i].SxINT = 0;
+			vsuManager->vsuSoundSourceConfigurations[i].vsuSoundSource->SxINT = 0;
+		}
+	}	
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -418,9 +436,9 @@ void VSUManager::releaseSoundSources()
 		if(this->ticks >= this->vsuSoundSourceConfigurations[i].timeout)
 		{
 			this->vsuSoundSourceConfigurations[i].timeout = -1;
-			this->vsuSoundSourceConfigurations[i].SxINT |= __SOUND_WRAPPER_STOP_SOUND;
 			this->vsuSoundSourceConfigurations[i].waveform = NULL;
-			this->vsuSoundSourceConfigurations[i].vsuSoundSource->SxEV1 |= 0x01;
+			this->vsuSoundSourceConfigurations[i].SxINT |= __SOUND_WRAPPER_STOP_SOUND;
+			this->vsuSoundSourceConfigurations[i].vsuSoundSource->SxINT |= __SOUND_WRAPPER_STOP_SOUND;
 		}
 		else if(NULL != this->vsuSoundSourceConfigurations[i].waveform)
 		{
@@ -531,10 +549,7 @@ void VSUManager::setWaveform(Waveform* waveform, const int8* data)
 		HardwareManager::suspendInterrupts();
 
 		// Must stop all sound sources before writing the waveforms
-		for(int32 i = 0; i < __TOTAL_SOUND_SOURCES; i++)
-		{
-			this->vsuSoundSourceConfigurations[i].vsuSoundSource->SxEV1 |= 0x01;
-		}
+		VSUManager::stopAllSounds(this);
 
 		// Set the wave data
 		for(uint32 i = 0; i < 32; i++)
