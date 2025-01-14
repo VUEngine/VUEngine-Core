@@ -391,6 +391,21 @@ void SoundManager::destructor()
 
 Sound SoundManager::doGetSound(const SoundSpec* soundSpec, EventListener soundReleaseListener, ListenerObject scope)
 {
+#ifdef __RELEASE
+	// This is an aggressive optimization that bypasses the SoundTrack's methods altogether
+	// to keep the PCM playback viable on hardware
+	if(kPlaybackPCM == VSUManager::getMode() && NULL != this->sounds->head)
+	{
+#ifndef __SHIPPING
+		Printing::setDebugMode();
+		Printing::clear();
+		Error::triggerException("SoundManager::doGetSound: a PCM sound is loaded, unload it first", NULL);		
+#endif
+
+		return NULL;
+	}
+#endif
+	
 	SoundManager::purgeReleasedSounds(this);
 
 	if(NULL == soundSpec)
