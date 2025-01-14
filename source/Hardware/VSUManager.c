@@ -321,7 +321,7 @@ void VSUManager::configureSoundSource
 	this->vsuSoundSourceConfigurations[i].requester = vsuSoundSourceConfiguration->requester;
 	this->vsuSoundSourceConfigurations[i].waveform = waveform;
 	this->vsuSoundSourceConfigurations[i].timeout = this->ticks + vsuSoundSourceConfiguration->timeout;
-	this->vsuSoundSourceConfigurations[i].SxINT = vsuSoundSourceConfiguration->SxINT;
+	this->vsuSoundSourceConfigurations[i].SxINT = vsuSoundSourceConfiguration->SxINT | 0x80;
 	this->vsuSoundSourceConfigurations[i].SxLRV = vsuSoundSourceConfiguration->SxLRV;
 	this->vsuSoundSourceConfigurations[i].SxFQL = vsuSoundSourceConfiguration->SxFQL;
 	this->vsuSoundSourceConfigurations[i].SxFQH = vsuSoundSourceConfiguration->SxFQH;
@@ -343,7 +343,7 @@ void VSUManager::configureSoundSource
 	/// resets various of the VSU's internal counters.
 	if(setSxINT)
 	{
-		vsuSoundSource->SxINT = vsuSoundSourceConfiguration->SxINT;
+		vsuSoundSource->SxINT = vsuSoundSourceConfiguration->SxINT | 0x80;
 	}
 }
 
