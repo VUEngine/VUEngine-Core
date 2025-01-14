@@ -24,9 +24,7 @@
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 friend class Sound;
-#ifdef __RELEASE
 friend class SoundTrack;
-#endif
 friend class VirtualNode;
 friend class VirtualList;
 
@@ -111,8 +109,7 @@ static Sound SoundManager::findSound(const SoundSpec* soundSpec, EventListener s
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-#ifdef __RELEASE
-static inline void SoundManager::updatePCM(Sound sound, uint32 elapsedMicroseconds, uint32 targetPCMUpdates)
+static inline void SoundManager::updatePCM (Sound sound, uint32 elapsedMicroseconds, uint32 targetPCMUpdates)
 {
 	if(kSoundPlaying !=	sound->state)
 	{
@@ -137,7 +134,6 @@ static inline void SoundManager::updatePCM(Sound sound, uint32 elapsedMicrosecon
 		Sound::finishPlayback(sound);
 	}
 }
-#endif
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
