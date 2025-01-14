@@ -201,7 +201,7 @@ singleton class VSUManager : Object
 
 	/// Stop sound output in the sound sources in use by the requester object.
 	/// @param requester: Object using a sound source
-	static void stopSoundSourcesUsedByedBy(Object requester);
+	static void stopSoundSourcesUsedBy(Object requester);
 
 	/// Reset the manager's state.
 	void reset();
