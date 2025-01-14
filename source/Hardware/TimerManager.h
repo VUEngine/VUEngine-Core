@@ -196,15 +196,17 @@ singleton class TimerManager : Object
 	/// @param y: Screen y coordinate where to print
 	static void print(int32 x, int32 y);
 
+	/// Print the stats related to the interrupts.
+	/// @param x: Screen x coordinate where to print
+	/// @param y: Screen y coordinate where to print
+	static void printInterruptStats(int x, int y);
+
 	/// Reset the manager's state.
 	void reset();
 
 	/// Call when the next frame starts.
 	/// @param elapsedMicroseconds: Elapsed microseconds between calls
 	void frameStarted(uint32 elapsedMicroseconds);
-
-	/// Call when the next second starts.
-	void nextSecondStarted();
 }
 
 #endif

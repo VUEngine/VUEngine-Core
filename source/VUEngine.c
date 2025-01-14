@@ -1014,7 +1014,7 @@ static void VUEngine::cleanUp()
 static void VUEngine::printDebug()
 {
 #ifdef __SHOW_TIMER_MANAGER_STATUS
-	TimerManager::nextSecondStarted(TimerManager::getInstance());
+	TimerManager::printInterruptStats(1, 1);
 #endif
 
 #ifdef __SHOW_STREAMING_PROFILING

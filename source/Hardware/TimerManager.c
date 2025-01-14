@@ -542,6 +542,25 @@ static void TimerManager::print(int32 x, int32 y)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+static void TimerManager::printInterruptStats(int x, int y)
+{
+	TimerManager timerManager = TimerManager::getInstance();
+
+	PRINT_TEXT("TIMER STATUS", x, y++);
+	PRINT_TEXT("Inter./sec.:          ", x, y);
+	PRINT_INT(timerManager->interruptsPerSecond, x + 17, y++);
+	PRINT_TEXT("Inter./frm:           ", x, y);
+	PRINT_INT(timerManager->interruptsPerSecond / __TARGET_FPS, x + 17, y++);
+	PRINT_TEXT("Aver. us/inter.:      ", x, y);
+	PRINT_INT(__MICROSECONDS_PER_SECOND / timerManager->interruptsPerSecond, x + 17, y++);
+	PRINT_TEXT("Real us/inter.:       ", x, y);
+	PRINT_INT(timerManager->elapsedMicrosecondsPerInterrupt, x + 17, y++);
+
+	timerManager->interruptsPerSecond = 0;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PUBLIC METHODS
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -577,30 +596,6 @@ secure void TimerManager::frameStarted(uint32 elapsedMicroseconds)
 	}
 
 	this->interruptsPerGameFrame = 0;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-secure void TimerManager::nextSecondStarted()
-{
-#ifndef __SHIPPING
-#ifdef __SHOW_TIMER_MANAGER_STATUS
-	int x = 1;
-	int y = 1;
-	
-	PRINT_TEXT("TIMER STATUS", x, y++);
-	PRINT_TEXT("Inter./sec.:          ", x, y);
-	PRINT_INT(this->interruptsPerSecond, x + 17, y++);
-	PRINT_TEXT("Inter./frm:           ", x, y);
-	PRINT_INT(this->interruptsPerSecond / __TARGET_FPS, x + 17, y++);
-	PRINT_TEXT("Aver. us/inter.:      ", x, y);
-	PRINT_INT(__MICROSECONDS_PER_SECOND / this->interruptsPerSecond, x + 17, y++);
-	PRINT_TEXT("Real us/inter.:       ", x, y);
-	PRINT_INT(this->elapsedMicrosecondsPerInterrupt, x + 17, y++);
-#endif
-#endif
-
-	this->interruptsPerSecond = 0;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
