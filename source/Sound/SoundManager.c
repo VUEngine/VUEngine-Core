@@ -24,6 +24,9 @@
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 friend class Sound;
+#ifdef __RELEASE
+friend class SoundTrack;
+#endif
 friend class VirtualNode;
 friend class VirtualList;
 
@@ -103,6 +106,40 @@ static Sound SoundManager::findSound(const SoundSpec* soundSpec, EventListener s
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+// CLASS' STATIC PRIVATE METHODS
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+static inline void SoundManager::updatePCM(Sound sound, uint32 elapsedMicroseconds, uint32 targetPCMUpdates)
+{
+	if(kSoundPlaying !=	sound->state)
+	{
+		return;
+	}
+
+	SoundTrack soundTrack = SoundTrack::safeCast(sound->soundTracks->head->data);
+
+	CACHE_ENABLE;
+
+	// Elapsed time during PCM playback is based on the cursor, track's ticks and target Hz
+	soundTrack->elapsedTicks += elapsedMicroseconds;
+
+	soundTrack->cursor = soundTrack->elapsedTicks / targetPCMUpdates;
+
+	VSUManager::applyPCMSampleToSoundSource(soundTrack->soundTrackSpec->SxLRV[soundTrack->cursor]);
+
+	CACHE_DISABLE;
+
+	if(soundTrack->cursor >= soundTrack->samples)
+	{
+		Sound::finishPlayback(sound);
+	}
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PUBLIC METHODS
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
@@ -110,15 +147,25 @@ static Sound SoundManager::findSound(const SoundSpec* soundSpec, EventListener s
 
 secure void SoundManager::playSounds(uint32 elapsedMicroseconds)
 {
-	if(kPlaybackPCM != VSUManager::getMode())
+#ifdef __RELEASE
+	// This is an aggressive optimization that bypasses the SoundTrack's methods altogether
+	// to keep the PCM playback viable on hardware
+	if(kPlaybackPCM == VSUManager::getMode() && NULL != this->sounds->head)
 	{
+		SoundManager::updatePCM(Sound::safeCast(this->sounds->head->data), elapsedMicroseconds, this->targetPCMUpdates);
+	}
+	else
+	{
+#endif
 		VSUManager::update(VSUManager::getInstance());
-	}
 
-	for(VirtualNode node = this->sounds->head; NULL != node; node = node->next)
-	{
-		Sound::update(Sound::safeCast(node->data), elapsedMicroseconds, this->targetPCMUpdates);
+		for(VirtualNode node = this->sounds->head; NULL != node; node = node->next)
+		{
+			Sound::update(Sound::safeCast(node->data), elapsedMicroseconds, this->targetPCMUpdates);
+		}
+#ifdef __RELEASE
 	}
+#endif
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
