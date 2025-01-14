@@ -111,6 +111,7 @@ static Sound SoundManager::findSound(const SoundSpec* soundSpec, EventListener s
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+#ifdef __RELEASE
 static inline void SoundManager::updatePCM(Sound sound, uint32 elapsedMicroseconds, uint32 targetPCMUpdates)
 {
 	if(kSoundPlaying !=	sound->state)
@@ -136,6 +137,7 @@ static inline void SoundManager::updatePCM(Sound sound, uint32 elapsedMicrosecon
 		Sound::finishPlayback(sound);
 	}
 }
+#endif
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
