@@ -299,7 +299,10 @@ void VSUManager::configureSoundSource
 
 	this->haveUsedSoundSources = true;
 
-	bool setSxINT = 0 != (0x80 & vsuSoundSourceConfiguration->SxINT) || (this->vsuSoundSourceConfigurations[i].requester != vsuSoundSourceConfiguration->requester);
+	bool setSxINT = 
+		0 != (0x80 & vsuSoundSourceConfiguration->SxINT) 
+		|| 
+		(this->vsuSoundSourceConfigurations[i].requester != vsuSoundSourceConfiguration->requester);
 
 	this->vsuSoundSourceConfigurations[i].requester = vsuSoundSourceConfiguration->requester;
 	this->vsuSoundSourceConfigurations[i].waveform = waveform;
