@@ -27,6 +27,7 @@
 #define __TOTAL_NOISE_CHANNELS					1
 #define __TOTAL_NORMAL_CHANNELS					(__TOTAL_SOUND_SOURCES - __TOTAL_MODULATION_CHANNELS - __TOTAL_NOISE_CHANNELS)
 #define __TOTAL_POTENTIAL_NORMAL_CHANNELS 		(__TOTAL_NORMAL_CHANNELS + __TOTAL_MODULATION_CHANNELS)
+#define __MAXIMUM_VOLUME						0xF
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DATA
@@ -196,11 +197,15 @@ singleton class VSUManager : Object
 
 	/// Apply a sound source configuration to a VSU sound source with the provided data for PCM playback.
 	/// @param sample: PCM sample data
-	static void applyPCMSampleToSoundSource(int8 sample);
+	static inline void applyPCMSampleToSoundSource(int8 sample);
 
 	/// Stop sound output in the sound sources in use by the requester object.
 	/// @param requester: Object using a sound source
 	static void stopSoundSourcesUsedBy(Object requester);
+
+	/// Retriev the playback mode (stops any playing sound).
+	/// @return kPlaybackNative or kPlaybackPCM
+	static uint32 getMode();
 
 	/// Reset the manager's state.
 	void reset();
@@ -231,3 +236,34 @@ singleton class VSUManager : Object
 }
 
 #endif
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+// CLASS' STATIC METHODS
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+static inline void VSUManager::applyPCMSampleToSoundSource(int8 sample)
+{
+	extern VSUSoundSource* const _vsuSoundSources;
+
+	int16 vsuSoundSourceIndex = 0;
+	
+	while(true)
+	{
+		if(__MAXIMUM_VOLUME <= sample)
+		{
+			_vsuSoundSources[vsuSoundSourceIndex].SxLRV = 0xFF;
+			sample -= __MAXIMUM_VOLUME;
+		}
+		else
+		{
+			_vsuSoundSources[vsuSoundSourceIndex].SxLRV = ((sample << 4) | sample);
+			break;
+		}
+
+		vsuSoundSourceIndex++;
+	}
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

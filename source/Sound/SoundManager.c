@@ -110,7 +110,10 @@ static Sound SoundManager::findSound(const SoundSpec* soundSpec, EventListener s
 
 secure void SoundManager::playSounds(uint32 elapsedMicroseconds)
 {
-	VSUManager::update(VSUManager::getInstance());
+	if(kPlaybackPCM != VSUManager::getMode())
+	{
+		VSUManager::update(VSUManager::getInstance());
+	}
 
 	for(VirtualNode node = this->sounds->head; NULL != node; node = node->next)
 	{

@@ -17,6 +17,9 @@
 #include <VirtualList.h>
 #include <Utilities.h>
 #include <VUEngine.h>
+#ifdef __RELEASE
+#include <VSUManager.h>
+#endif
 
 #include "Sound.h"
 
@@ -492,88 +495,113 @@ void Sound::update(uint32 elapsedMicroseconds, uint32 targetPCMUpdates)
 
 	bool finished = true;
 
-	fixed_t leftVolumeFactor = -1;
-	fixed_t rightVolumeFactor = -1;
-
-	if(NULL != this->position)
+#ifdef __RELEASE
+	// This is an aggressive optimization that bypasses the SoundTrack's methods altogether
+	// to keep the PCM playback viable on hardware
+	if(0 == targetPCMUpdates)
 	{
-#ifndef __LEGACY_COORDINATE_PROJECTION
-		Vector3D relativePosition = Vector3D::rotate(Vector3D::getRelativeToCamera(*this->position), *_cameraInvertedRotation);
-#else
-		Vector3D relativePosition = 
-			Vector3D::rotate
-			(
-				Vector3D::sub
-				(
-					Vector3D::getRelativeToCamera
-					(
-						*this->position), (Vector3D){__HALF_SCREEN_WIDTH_METERS, __HALF_SCREEN_HEIGHT_METERS, 0}
-					), 
-					*_cameraInvertedRotation
-			);
+		SoundTrack soundTrack = SoundTrack::safeCast(this->soundTracks->head->data);
+
+		CACHE_ENABLE;
+
+		// Elapsed time during PCM playback is based on the cursor, track's ticks and target Hz
+		soundTrack->elapsedTicks += elapsedMicroseconds;
+
+		soundTrack->cursor = soundTrack->elapsedTicks / targetPCMUpdates;
+
+		VSUManager::applyPCMSampleToSoundSource(soundTrack->soundTrackSpec->SxLRV[soundTrack->cursor]);
+
+		CACHE_DISABLE;
+
+		finished = soundTrack->cursor >= soundTrack->samples;
+	}
+	else
+	{
 #endif
-		if(_mirror.x)
+		fixed_t leftVolumeFactor = -1;
+		fixed_t rightVolumeFactor = -1;
+
+		if(NULL != this->position)
 		{
-			relativePosition.x = -relativePosition.x;
+	#ifndef __LEGACY_COORDINATE_PROJECTION
+			Vector3D relativePosition = Vector3D::rotate(Vector3D::getRelativeToCamera(*this->position), *_cameraInvertedRotation);
+	#else
+			Vector3D relativePosition = 
+				Vector3D::rotate
+				(
+					Vector3D::sub
+					(
+						Vector3D::getRelativeToCamera
+						(
+							*this->position), (Vector3D){__HALF_SCREEN_WIDTH_METERS, __HALF_SCREEN_HEIGHT_METERS, 0}
+						), 
+						*_cameraInvertedRotation
+				);
+	#endif
+			if(_mirror.x)
+			{
+				relativePosition.x = -relativePosition.x;
+			}
+
+			if(_mirror.y)
+			{
+				relativePosition.y = -relativePosition.y;
+			}
+
+			if(_mirror.z)
+			{
+				relativePosition.z = -relativePosition.z;
+			}
+
+			Vector3D leftEar = (Vector3D){__PIXELS_TO_METERS(-__EAR_DISPLACEMENT), 0, 0};
+			Vector3D rightEar = (Vector3D){__PIXELS_TO_METERS(__EAR_DISPLACEMENT), 0, 0};
+
+			fixed_ext_t squaredDistanceToLeftEar = Vector3D::squareLength(Vector3D::get(leftEar, relativePosition));
+			fixed_ext_t squaredDistanceToRightEar = Vector3D::squareLength(Vector3D::get(rightEar, relativePosition));
+
+			leftVolumeFactor  = 
+				__1I_FIXED - 
+				__FIXED_EXT_DIV(squaredDistanceToLeftEar, __FIXED_SQUARE(__PIXELS_TO_METERS(__SOUND_STEREO_ATTENUATION_DISTANCE)));
+			
+			rightVolumeFactor = 
+				__1I_FIXED - 
+				__FIXED_EXT_DIV(squaredDistanceToRightEar, __FIXED_SQUARE(__PIXELS_TO_METERS(__SOUND_STEREO_ATTENUATION_DISTANCE)));
+
+			if(leftVolumeFactor > rightVolumeFactor)
+			{
+				rightVolumeFactor -= (leftVolumeFactor - rightVolumeFactor);
+			}
+			else
+			{
+				leftVolumeFactor -= (rightVolumeFactor - leftVolumeFactor);
+			}
+
+			leftVolumeFactor = 0 > leftVolumeFactor ? 0 : leftVolumeFactor;
+			rightVolumeFactor = 0 > rightVolumeFactor ? 0 : rightVolumeFactor;
 		}
 
-		if(_mirror.y)
+		for(VirtualNode node = this->soundTracks->head; NULL != node; node = node->next)
 		{
-			relativePosition.y = -relativePosition.y;
+			SoundTrack soundTrack = SoundTrack::safeCast(node->data);
+
+			finished = 
+				SoundTrack::update
+				(
+					soundTrack, 
+					elapsedMicroseconds, 
+					targetPCMUpdates, 
+					this->tickStep, 
+					this->targetTimerResolutionFactor, 
+					leftVolumeFactor, 
+					rightVolumeFactor, 
+					this->volumeReduction, 
+					this->volumenScalePower, 
+					this->frequencyDelta
+				) && finished;
 		}
-
-		if(_mirror.z)
-		{
-			relativePosition.z = -relativePosition.z;
-		}
-
-		Vector3D leftEar = (Vector3D){__PIXELS_TO_METERS(-__EAR_DISPLACEMENT), 0, 0};
-		Vector3D rightEar = (Vector3D){__PIXELS_TO_METERS(__EAR_DISPLACEMENT), 0, 0};
-
-		fixed_ext_t squaredDistanceToLeftEar = Vector3D::squareLength(Vector3D::get(leftEar, relativePosition));
-		fixed_ext_t squaredDistanceToRightEar = Vector3D::squareLength(Vector3D::get(rightEar, relativePosition));
-
-		leftVolumeFactor  = 
-			__1I_FIXED - 
-			__FIXED_EXT_DIV(squaredDistanceToLeftEar, __FIXED_SQUARE(__PIXELS_TO_METERS(__SOUND_STEREO_ATTENUATION_DISTANCE)));
-		
-		rightVolumeFactor = 
-			__1I_FIXED - 
-			__FIXED_EXT_DIV(squaredDistanceToRightEar, __FIXED_SQUARE(__PIXELS_TO_METERS(__SOUND_STEREO_ATTENUATION_DISTANCE)));
-
-		if(leftVolumeFactor > rightVolumeFactor)
-		{
-			rightVolumeFactor -= (leftVolumeFactor - rightVolumeFactor);
-		}
-		else
-		{
-			leftVolumeFactor -= (rightVolumeFactor - leftVolumeFactor);
-		}
-
-		leftVolumeFactor = 0 > leftVolumeFactor ? 0 : leftVolumeFactor;
-		rightVolumeFactor = 0 > rightVolumeFactor ? 0 : rightVolumeFactor;
+#ifdef __RELEASE
 	}
-
-	for(VirtualNode node = this->soundTracks->head; NULL != node; node = node->next)
-	{
-		SoundTrack soundTrack = SoundTrack::safeCast(node->data);
-
-		finished = 
-			SoundTrack::update
-			(
-				soundTrack, 
-				elapsedMicroseconds, 
-				targetPCMUpdates, 
-				this->tickStep, 
-				this->targetTimerResolutionFactor, 
-				leftVolumeFactor, 
-				rightVolumeFactor, 
-				this->volumeReduction, 
-				this->volumenScalePower, 
-				this->frequencyDelta
-			) && finished;
-	}
-
+#endif
 	if(finished)
 	{
 		Sound::completedPlayback(this);

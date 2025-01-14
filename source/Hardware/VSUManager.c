@@ -33,7 +33,6 @@ friend class VirtualList;
 #define __MODULATION_DATA					(uint8*)0x01000280;
 #define __SSTOP								*(uint8*)0x01000580
 #define __SOUND_WRAPPER_STOP_SOUND 			0x20
-#define __MAXIMUM_VOLUME					0xF
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' ATTRIBUTES
@@ -74,29 +73,6 @@ static void VSUManager::applySoundSourceConfiguration(const VSUSoundSourceConfig
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void VSUManager::applyPCMSampleToSoundSource(int8 sample)
-{
-	int16 vsuSoundSourceIndex = 0;
-	
-	while(true)
-	{
-		if(__MAXIMUM_VOLUME <= sample)
-		{
-			_vsuSoundSources[vsuSoundSourceIndex].SxLRV = 0xFF;
-			sample -= __MAXIMUM_VOLUME;
-		}
-		else
-		{
-			_vsuSoundSources[vsuSoundSourceIndex].SxLRV = ((sample << 4) | sample);
-			break;
-		}
-
-		vsuSoundSourceIndex++;
-	}
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
 static void VSUManager::stopSoundSourcesUsedBy(Object requester)
 {
 	VSUManager vsuManager = VSUManager::getInstance();
@@ -111,6 +87,13 @@ static void VSUManager::stopSoundSourcesUsedBy(Object requester)
 			vsuManager->vsuSoundSourceConfigurations[i].vsuSoundSource->SxINT = 0;
 		}
 	}	
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+static uint32 VSUManager::getMode()
+{
+	return VSUManager::getInstance()->playbackMode;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
