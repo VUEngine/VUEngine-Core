@@ -20,14 +20,13 @@
 // CLASS' MACROS
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-#define __DEFAULT_PCM_HZ			8000
-#define __TOTAL_WAVEFORMS			5
-#define __TOTAL_SOUND_SOURCES		6
-#define __TOTAL_MODULATION_CHANNELS 1
-#define __TOTAL_NOISE_CHANNELS		1
-#define __TOTAL_NORMAL_CHANNELS																									 \
-	(__TOTAL_SOUND_SOURCES - __TOTAL_MODULATION_CHANNELS - __TOTAL_NOISE_CHANNELS)
-#define __TOTAL_POTENTIAL_NORMAL_CHANNELS (__TOTAL_NORMAL_CHANNELS + __TOTAL_MODULATION_CHANNELS)
+#define __DEFAULT_PCM_HZ						8000
+#define __TOTAL_WAVEFORMS						5
+#define __TOTAL_SOUND_SOURCES					6
+#define __TOTAL_MODULATION_CHANNELS 			1
+#define __TOTAL_NOISE_CHANNELS					1
+#define __TOTAL_NORMAL_CHANNELS					(__TOTAL_SOUND_SOURCES - __TOTAL_MODULATION_CHANNELS - __TOTAL_NOISE_CHANNELS)
+#define __TOTAL_POTENTIAL_NORMAL_CHANNELS 		(__TOTAL_NORMAL_CHANNELS + __TOTAL_MODULATION_CHANNELS)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DATA
