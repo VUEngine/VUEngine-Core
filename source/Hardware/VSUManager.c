@@ -13,6 +13,7 @@
 
 #include <Printing.h>
 #include <Profiler.h>
+#include <VIPManager.h>
 #include <VirtualList.h>
 #include <WaveForms.h>
 
@@ -191,6 +192,20 @@ secure void VSUManager::setMode(uint32 playbackMode)
 {
 	this->playbackMode = playbackMode;
 
+	switch(playbackMode)
+	{
+		case kPlaybackPCM:
+		{
+			VIPManager::enableMultiplexedInterrupts(kVIPAllMultiplexedInterrupts);	
+			break;
+		}
+		default:
+		{
+			VIPManager::enableMultiplexedInterrupts(kVIPNoMultiplexedInterrupts);
+			break;
+		}
+	}
+
 	VSUManager::reset(this);
 }
 
@@ -215,6 +230,21 @@ secure void VSUManager::update()
 
 secure void VSUManager::stopAllSounds()
 {
+	for(int16 i = 0; i < __TOTAL_SOUND_SOURCES; i++)
+	{
+		this->vsuSoundSourceConfigurations[i].requester = NULL;
+		this->vsuSoundSourceConfigurations[i].waveform = NULL;
+		this->vsuSoundSourceConfigurations[i].timeout = -1;
+		this->vsuSoundSourceConfigurations[i].SxLRV = 0;
+		this->vsuSoundSourceConfigurations[i].SxFQL = 0;
+		this->vsuSoundSourceConfigurations[i].SxFQH = 0;
+		this->vsuSoundSourceConfigurations[i].SxEV0 = kPlaybackPCM == this->playbackMode ? 0xFF : 0x00;
+		this->vsuSoundSourceConfigurations[i].SxEV1 = 0;
+		this->vsuSoundSourceConfigurations[i].SxRAM = kPlaybackPCM == this->playbackMode ? PCMWaveForm : NULL;
+		this->vsuSoundSourceConfigurations[i].SxSWP = 0;
+		this->vsuSoundSourceConfigurations[i].SxINT = kPlaybackPCM == this->playbackMode ? 0x9F : 0;
+	}
+
 	__SSTOP = 0x01;
 }
 
@@ -301,6 +331,8 @@ void VSUManager::configureSoundSource
 
 	bool setSxINT = 
 		0 != (0x80 & vsuSoundSourceConfiguration->SxINT) 
+		|| 
+		(this->vsuSoundSourceConfigurations[i].requester != vsuSoundSourceConfiguration->requester)
 		|| 
 		(this->vsuSoundSourceConfigurations[i].requester != vsuSoundSourceConfiguration->requester);
 
@@ -421,6 +453,7 @@ void VSUManager::releaseSoundSources()
 		/// arrives in during the same timer interrupt as this.
 		if(this->ticks >= this->vsuSoundSourceConfigurations[i].timeout)
 		{
+			this->vsuSoundSourceConfigurations[i].requester = NULL;
 			this->vsuSoundSourceConfigurations[i].timeout = -1;
 			this->vsuSoundSourceConfigurations[i].waveform = NULL;
 			this->vsuSoundSourceConfigurations[i].SxINT |= __SOUND_WRAPPER_STOP_SOUND;
