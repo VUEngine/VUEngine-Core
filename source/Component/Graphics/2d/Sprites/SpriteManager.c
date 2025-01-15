@@ -864,13 +864,13 @@ void SpriteManager::cleanUp()
 	VIPManager::removeEventListener
 	(
 		VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)SpriteManager::onVIPGAMESTART, 
-		kEventVIPManagerGAMESTARTDuringXPEND
+		kEventVIPManagerGAMESTART
 	);
 
 	VIPManager::removeEventListener
 	(
 		VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)SpriteManager::onVIPXPEND, 
-		kEventVIPManagerGAMESTARTDuringXPEND
+		kEventVIPManagerXPEND
 	);
 
 	if(!isDeleted(this->components))
