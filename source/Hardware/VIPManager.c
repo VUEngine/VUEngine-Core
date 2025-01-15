@@ -405,12 +405,7 @@ secure void VIPManager::reset()
 	this->processingXPEND = false;
 	this->isDrawingAllowed = false;
 	this->drawingStrategy = kVIPManagerFavorStability;
-	
-#ifndef __ENABLE_PROFILER
-	this->enabledMultiplexedInterrupts = kVIPAllMultiplexedInterrupts;
-#else
 	this->enabledMultiplexedInterrupts = kVIPNoMultiplexedInterrupts;
-#endif
 
 	VIPManager::lowerBrightness();
 	VIPManager::removePostProcessingEffects();
@@ -526,7 +521,7 @@ void VIPManager::constructor()
 	this->processingGAMESTART = false;
 	this->customInterrupts = 0;
 	this->currrentInterrupt = 0;
-	this->enabledMultiplexedInterrupts = kVIPAllMultiplexedInterrupts;
+	this->enabledMultiplexedInterrupts = kVIPNoMultiplexedInterrupts;
 	this->isDrawingAllowed = false;
 	this->drawingStrategy = kVIPManagerFavorStability;
 
