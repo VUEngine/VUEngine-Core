@@ -404,6 +404,7 @@ secure void VIPManager::reset()
 	this->processingGAMESTART = false;
 	this->processingXPEND = false;
 	this->isDrawingAllowed = false;
+	this->drawingStrategy = kVIPManagerFavorStability;
 	
 #ifndef __ENABLE_PROFILER
 	this->enabledMultiplexedInterrupts = kVIPAllMultiplexedInterrupts;
