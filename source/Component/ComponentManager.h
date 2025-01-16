@@ -34,7 +34,7 @@ class VirtualList;
 /// Inherits from Object
 ///
 /// Manages component instances.
-abstract class ComponentManager : Object
+abstract class ComponentManager : ListenerObject
 {
 	/// @protectedsection
 

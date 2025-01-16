@@ -237,13 +237,13 @@ static void VIPManager::setFrameCycle(uint8 frameCycle __attribute__((unused)))
 	VIPManager vipManager = VIPManager::getInstance();
 
 #ifdef __DEBUG
-	frameCycle = 2;
-#else
+	frameCycle++;
+#endif
+
 	if(3 < frameCycle)
 	{
 		frameCycle = 3;
 	}
-#endif
 
 	vipManager->gameFrameDuration = (__MILLISECONDS_PER_SECOND / __MAXIMUM_FPS) << frameCycle;
 
