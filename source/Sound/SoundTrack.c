@@ -212,6 +212,8 @@ void SoundTrack::constructor(const SoundTrackSpec* soundTrackSpec)
 
 void SoundTrack::destructor()
 {
+	SoundTrack::stop(this);
+	
 	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
