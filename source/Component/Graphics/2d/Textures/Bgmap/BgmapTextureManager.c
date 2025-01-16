@@ -90,8 +90,6 @@ secure void BgmapTextureManager::configure(uint32 paramTableBase)
 	}
 
 	this->printingBgmapSegment = this->availableBgmapSegmentsForTextures - 1;
-
-	Printing::setPrintingBgmapSegment(this->printingBgmapSegment);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

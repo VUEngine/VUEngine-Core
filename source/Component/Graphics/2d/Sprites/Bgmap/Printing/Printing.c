@@ -259,6 +259,7 @@ static void Printing::releaseFonts()
 
 	printing->lastUsedFont = NULL;
 	printing->lastUsedFontData = NULL;
+	printing->printingBgmapSegment = -1;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -906,7 +907,7 @@ static void Printing::out(uint8 x, uint8 y, const char* string, const char* font
 
 	if(-1 == printing->printingBgmapSegment)
 	{
-		printing->printingBgmapSegment = BgmapTextureManager::getPrintingBgmapSegment(BgmapTextureManager::getInstance());
+		Printing::setPrintingBgmapSegment(BgmapTextureManager::getPrintingBgmapSegment(BgmapTextureManager::getInstance()));
 
 		if(-1 == printing->printingBgmapSegment)
 		{
