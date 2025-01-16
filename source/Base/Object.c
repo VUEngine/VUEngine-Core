@@ -53,10 +53,10 @@ static Object Object::getCast(void* object, ClassPointer targetClassGetClassMeth
 #ifdef __DEBUG
 	static int counter = 0;
 
-	if(10 < ++counter)
+	if(20 < ++counter)
 	{
 		Printing::setDebugMode();
-		Printing::text("Object's address: ", 1, 15, NULL);
+		Printing::text("Object's class: ", 1, 15, NULL);
 		Printing::text(__GET_CLASS_NAME(object), 18, 15, NULL);
 		Printing::text("Object's address: ", 1, 16, NULL);
 		Printing::hex((uint32)object, 18, 16, 8, NULL);
@@ -148,11 +148,11 @@ static Object Object::getCast(void* object, ClassPointer targetClassGetClassMeth
 	{
 		lp = -1;
 		sp = -1;
-
+/*
 #ifdef __DEBUG
 		counter = 0;
 		Printing::setDebugMode();
-		Printing::text("Object's address: ", 1, 15, NULL);
+		Printing::text("Object's class: ", 1, 15, NULL);
 		Printing::text(__GET_CLASS_NAME(object), 18, 15, NULL);
 		Printing::text("Target class: ", 1, 16, NULL);
 		Printing::hex((uint32)targetClassGetClassMethod, 18, 16, 8, NULL);
@@ -161,7 +161,7 @@ static Object Object::getCast(void* object, ClassPointer targetClassGetClassMeth
 		_vuengineStackPointer = sp;
 		NM_CAST_ASSERT(false, "Object::getCast: failed cast");
 #endif
-
+*/
 		HardwareManager::resumeInterrupts();
 		return NULL;
 	}
