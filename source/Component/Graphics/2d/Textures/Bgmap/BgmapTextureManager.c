@@ -605,7 +605,7 @@ int32 BgmapTextureManager::doAllocate
 #ifdef __DEBUG
 	Printing::setDebugMode();
 	Printing::clear();
-	BgmapTextureManager::print(1, 10);
+	BgmapTextureManager::print(this, 1, 10);
 	Printing::text("Texture ", 1, 19, NULL);
 	Printing::text("    Address: ", 1, 21, NULL);
 	Printing::hex((WORD)textureSpec, 14, 21, 8, NULL);

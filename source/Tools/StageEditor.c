@@ -286,7 +286,7 @@ void StageEditor::releaseWireframe()
 {
 	if(!isDeleted(this->wireframe))
 	{
-		ComponentManager::destroyComponent(Component::safeCast(this->wireframe));
+		ComponentManager::destroyComponent(NULL, Component::safeCast(this->wireframe));
 
 		this->wireframe = NULL;
 	}
@@ -601,11 +601,11 @@ void StageEditor::changeProjection(uint32 pressedKey)
 		StageEditor::printTranslationStepSize(this, 38, 10);
 	}
 
-	Camera::setOptical(optical);
+	Camera::setOptical(Camera::getInstance(), optical);
 
 	StageEditor::printProjectionValues(this);
 
-	Stage::transform(this->stage, &_neutralEnvironmentTransformation, Camera::getTransformationFlags());
+	Stage::transform(this->stage, &_neutralEnvironmentTransformation, Camera::getTransformationFlags(Camera::getInstance()));
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -726,7 +726,7 @@ void StageEditor::applyTranslationToActor(Vector3D translation)
 
 		Container::setLocalPosition(container, &localPosition);
 
-		Stage::transform(this->stage, &_neutralEnvironmentTransformation, Camera::getTransformationFlags());
+		Stage::transform(this->stage, &_neutralEnvironmentTransformation, Camera::getTransformationFlags(Camera::getInstance()));
 
 		StageEditor::printActorPosition(this);
 
@@ -760,7 +760,7 @@ void StageEditor::showSelectedUserObject()
 
 	if(spriteSpec)
 	{
-		this->userActorSprite = ComponentManager::createComponent(NULL, (ComponentSpec*)spriteSpec);
+		this->userActorSprite = Sprite::safeCast(ComponentManager::createComponent(NULL, (ComponentSpec*)spriteSpec));
 		ASSERT(this->userActorSprite, "AnimationInspector::createSprite: null animatedSprite");
 		ASSERT(Sprite::getTexture(this->userActorSprite), "AnimationInspector::createSprite: null texture");
 
@@ -812,7 +812,7 @@ void StageEditor::selectUserObject(uint32 pressedKey)
 			return;
 		}
 
-		Vector3D cameraPosition = Camera::getPosition();
+		Vector3D cameraPosition = Camera::getPosition(Camera::getInstance());
 
 		PositionedActor DUMMY_ENTITY =
 		{
@@ -912,8 +912,8 @@ void StageEditor::applyTranslationToCamera(Vector3D translation)
 		return;
 	}
 
-	Camera::translate(translation, true);
-	Stage::transform(this->stage, &_neutralEnvironmentTransformation, Camera::getTransformationFlags());
+	Camera::translate(Camera::getInstance(), translation, true);
+	Stage::transform(this->stage, &_neutralEnvironmentTransformation, Camera::getTransformationFlags(Camera::getInstance()));
 	StageEditor::printCameraPosition(this);
 	Stage::streamAll(this->stage);
 }
@@ -922,7 +922,7 @@ void StageEditor::applyTranslationToCamera(Vector3D translation)
 
 void StageEditor::printCameraPosition()
 {
-	Camera::print(1, 2, true);
+	Camera::print(Camera::getInstance(), 1, 2, true);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

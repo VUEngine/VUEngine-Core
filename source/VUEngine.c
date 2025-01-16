@@ -698,7 +698,7 @@ static void VUEngine::processUserInput(GameState currentGameState)
 {
 	VUEngine vuEngine = VUEngine::getInstance();
 
-	if(!KeypadManager::isEnabled())
+	if(!KeypadManager::isEnabled(KeypadManager::getInstance()))
 	{
 #ifdef __ENABLE_PROFILER
 		Profiler::lap(kProfilerLapTypeNormalProcess, PROCESS_NAME_INPUT);
@@ -912,7 +912,15 @@ static void VUEngine::run(GameState currentGameState)
 				// Stream the heck out of the pending actors
 				if(!VUEngine::stream(currentGameState))
 				{
+#ifndef __ENABLE_PROFILER
 					vuEngine->currentGameCycleEnded = true;
+
+					if(!vuEngine->gameFrameStarted)
+					{
+						// Don't spin cycle the CPU
+						HardwareManager::halt();
+					}
+#endif
 				}
 			}
 			// While we wait for the next game start
@@ -1063,7 +1071,7 @@ static void VUEngine::printDebug()
 #ifdef __TOOLS
 	if(VUEngine::isInSoundTest())
 	{
-		SoundManager::printPlaybackTime(1, 6);
+		SoundManager::printPlaybackTime(SoundManager::getInstance(), 1, 6);
 	}
 #endif
 }

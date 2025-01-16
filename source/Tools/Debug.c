@@ -116,8 +116,8 @@ void Debug::show()
 {
 	Printing::clear();
 	Printing::setCoordinates(0, 0, -64, -2);
-	SpriteManager::showAllSprites(NULL, true);
-	SpriteManager::computeTotalPixelsDrawn();
+	SpriteManager::showAllSprites(SpriteManager::getInstance(), NULL, true);
+	SpriteManager::computeTotalPixelsDrawn(SpriteManager::getInstance(), );
 
 	Debug::showPage(this, 0);
 }
@@ -128,7 +128,7 @@ void Debug::hide()
 {
 	ColliderManager::hideColliders(GameState::getColliderManager(VUEngine::getPreviousState()));
 	Printing::clear();
-	SpriteManager::showAllSprites(NULL, true);
+	SpriteManager::showAllSprites(SpriteManager::getInstance(), NULL, true);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -238,14 +238,14 @@ uint8 Debug::getCurrentPageNumber()
 
 void Debug::setBlackBackground()
 {
-	SpriteManager::hideAllSprites(NULL, false);
+	SpriteManager::hideAllSprites(SpriteManager::getInstance(), NULL, false);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Debug::showPreviousPage()
 {
-	SpriteManager::showAllSprites(NULL, true);
+	SpriteManager::showAllSprites(SpriteManager::getInstance(), NULL, true);
 
 	this->currentPage = VirtualNode::getPrevious(this->currentPage);
 
@@ -261,7 +261,7 @@ void Debug::showPreviousPage()
 
 void Debug::showNextPage()
 {
-	SpriteManager::showAllSprites(NULL, true);
+	SpriteManager::showAllSprites(SpriteManager::getInstance(), NULL, true);
 
 	this->currentPage = this->currentPage->next;
 
@@ -338,7 +338,7 @@ void Debug::showPage(int32 increment)
 	if(this->currentPage && this->currentPage->data)
 	{
 		Printing::clear();
-		SpriteManager::showAllSprites(NULL, true);
+		SpriteManager::showAllSprites(SpriteManager::getInstance(), NULL, true);
 
 		Debug::printHeader(this);
 		Printing::text(" \x1E\x1C\x1D ", 42, 0, NULL);
@@ -1065,10 +1065,10 @@ void Debug::texturesShowStatus(int32 increment, int32 x, int32 y)
 	if(-1 == this->bgmapSegment)
 	{
 		Debug::setBlackBackground(this);
-		BgmapTextureManager::print(x, y);
+		BgmapTextureManager::print(BgmapTextureManager::getInstance(), x, y);
 		ParamTableManager::print(ParamTableManager::getInstance(), x + 27, y);
 	}
-	else if(BgmapTextureManager::getAvailableBgmapSegmentsForTextures() > this->bgmapSegment)
+	else if(BgmapTextureManager::getAvailableBgmapSegmentsForTextures(BgmapTextureManager::getInstance()) > this->bgmapSegment)
 	{
 		Printing::text(" \x1E\x1A\x1B\x1C\x1D\x1F\x1A\x1B\x1C\x1D ", 35, 0, NULL);
 		Printing::text("BGMAP TEXTURES INSPECTOR           Segment: ", x, y, NULL);
@@ -1082,7 +1082,7 @@ void Debug::texturesShowStatus(int32 increment, int32 x, int32 y)
 	{
 		this->bgmapSegment = -1;
 		Debug::setBlackBackground(this);
-		BgmapTextureManager::print(x, y);
+		BgmapTextureManager::print(BgmapTextureManager::getInstance(), x, y);
 		ParamTableManager::print(ParamTableManager::getInstance(), x + 27, y);
 	}
 }
@@ -1118,18 +1118,18 @@ void Debug::objectsShowStatus(int32 increment, int32 x, int32 y)
 	if(-1 == this->objectSegment)
 	{
 		Debug::setBlackBackground(this);
-		SpriteManager::printObjectSpriteContainersStatus(x, y);
+		SpriteManager::printObjectSpriteContainersStatus(SpriteManager::getInstance(), x, y);
 	}
 	else if(__TOTAL_OBJECT_SEGMENTS > this->objectSegment)
 	{
 		Printing::text("OBJECTS INSPECTOR", x, y++, NULL);
 
 		ObjectSpriteContainer objectSpriteContainer = 
-			SpriteManager::getObjectSpriteContainerBySPT(this->objectSegment);
+			SpriteManager::getObjectSpriteContainerBySPT(SpriteManager::getInstance(), this->objectSegment);
 
 		while(NULL == objectSpriteContainer && (this->objectSegment >= 0 && __TOTAL_OBJECT_SEGMENTS > this->objectSegment))
 		{
-			objectSpriteContainer = SpriteManager::getObjectSpriteContainerBySPT(this->objectSegment);
+			objectSpriteContainer = SpriteManager::getObjectSpriteContainerBySPT(SpriteManager::getInstance(), this->objectSegment);
 
 			if(!objectSpriteContainer)
 			{
@@ -1139,21 +1139,21 @@ void Debug::objectsShowStatus(int32 increment, int32 x, int32 y)
 
 		if(objectSpriteContainer)
 		{
-			SpriteManager::hideAllSprites(Sprite::safeCast(objectSpriteContainer), false);
+			SpriteManager::hideAllSprites(SpriteManager::getInstance(), Sprite::safeCast(objectSpriteContainer), false);
 			ObjectSpriteContainer::print(objectSpriteContainer, x, ++y);
 		}
 		else
 		{
 			this->objectSegment = -1;
 			Debug::setBlackBackground(this);
-			SpriteManager::printObjectSpriteContainersStatus(x, y);
+			SpriteManager::printObjectSpriteContainersStatus(SpriteManager::getInstance(), x, y);
 		}
 	}
 	else
 	{
 		this->objectSegment = -1;
 		Debug::setBlackBackground(this);
-		SpriteManager::printObjectSpriteContainersStatus(x, y);
+		SpriteManager::printObjectSpriteContainersStatus(SpriteManager::getInstance(), x, y);
 	}
 }
 
@@ -1180,7 +1180,7 @@ void Debug::spritesShowStatus(int32 increment, int32 x, int32 y)
 
 	Debug::dimmGame(this);
 
-	int32 numberOfSprites = SpriteManager::getNumberOfSprites();
+	int32 numberOfSprites = SpriteManager::getNumberOfSprites(SpriteManager::getInstance());
 
 	if(this->spriteIndex > numberOfSprites)
 	{
@@ -1190,13 +1190,13 @@ void Debug::spritesShowStatus(int32 increment, int32 x, int32 y)
 	if(numberOfSprites == this->spriteIndex)
 	{
 		Debug::setBlackBackground(this);
-		SpriteManager::print(x, y, false);
+		SpriteManager::print(SpriteManager::getInstance(), x, y, false);
 	}
 	else if(0 <= this->spriteIndex && this->spriteIndex < numberOfSprites)
 	{
-		Sprite sprite = SpriteManager::getSpriteAtIndex(this->spriteIndex);
-		SpriteManager::hideAllSprites(sprite, false);
-		SpriteManager::renderAndDraw();
+		Sprite sprite = SpriteManager::getSpriteAtIndex(SpriteManager::getInstance(), this->spriteIndex);
+		SpriteManager::hideAllSprites(SpriteManager::getInstance(), sprite, false);
+		SpriteManager::renderAndDraw(SpriteManager::getInstance());
 		Printing::text("SPRITES INSPECTOR", x, y++, NULL);
 		Sprite::print(sprite, x, ++y);
 	}
@@ -1205,7 +1205,7 @@ void Debug::spritesShowStatus(int32 increment, int32 x, int32 y)
 		this->spriteIndex = numberOfSprites;
 
 		Debug::setBlackBackground(this);
-		SpriteManager::print(x, y, false);
+		SpriteManager::print(SpriteManager::getInstance(), x, y, false);
 	}
 }
 
@@ -1239,7 +1239,7 @@ void Debug::physicStatusShowColliders(int32 increment __attribute__ ((unused)), 
 {
 	Printing::text("COLLISION SHAPES", x, y++, NULL);
 
-	SpriteManager::showAllSprites(NULL, true);
+	SpriteManager::showAllSprites(SpriteManager::getInstance(), NULL, true);
 	Debug::dimmGame(this);
 	ColliderManager::showColliders(GameState::getColliderManager(VUEngine::getPreviousState()));
 }

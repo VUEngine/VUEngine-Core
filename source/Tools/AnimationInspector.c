@@ -401,7 +401,7 @@ void AnimationInspector::removePreviousSprite()
 {
 	if(!isDeleted(this->sprite))
 	{
-		ComponentManager::destroyComponent(this->sprite);
+		ComponentManager::destroyComponent(NULL, Component::safeCast(this->sprite));
 		this->sprite = NULL;
 	}
 }
@@ -573,7 +573,7 @@ void AnimationInspector::editAnimation(uint32 pressedKey)
 					Texture texture = Sprite::getTexture(this->sprite);
 					NM_ASSERT(texture, "AnimationInspector::selectAnimation: null texture");
 
-					TextureSpec* textureSpec = Texture::getSpec(texture);
+					const TextureSpec* textureSpec = Texture::getSpec(texture);
 					NM_ASSERT(textureSpec, "AnimationInspector::selectAnimation: null textureSpec");
 
 					if
@@ -718,7 +718,7 @@ void AnimationInspector::createSprite()
 
 	NM_ASSERT(spriteSpec, "AnimationInspector::createSprite: null spriteSpec");
 
-	this->sprite = Sprite::safeCast(ComponentManager::createComponent(NULL, (SpriteSpec*)spriteSpec));
+	this->sprite = Sprite::safeCast(ComponentManager::createComponent(NULL, (ComponentSpec*)spriteSpec));
 	ASSERT(this->sprite, "AnimationInspector::createSprite: null sprite");
 	ASSERT(Sprite::getTexture(this->sprite), "AnimationInspector::createSprite: null texture");
 

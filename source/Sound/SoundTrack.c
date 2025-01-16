@@ -130,7 +130,7 @@ bool SoundTrack::update
 	{
 		this->finished = SoundTrack::updatePCM(this, elapsedMicroseconds, targetPCMUpdates, volumeReduction);
 	}
-	else if(kTrackNative == this->soundTrackSpec->trackType)
+	else /*if(kTrackNative == this->soundTrackSpec->trackType)*/
 	{
 		this->finished = 
 			SoundTrack::updateNative
