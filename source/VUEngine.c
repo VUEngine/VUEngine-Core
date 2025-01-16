@@ -94,7 +94,7 @@ int32 main(void)
 
 static void VUEngine::init()
 {
-	VUEngine::getInstance();
+	VUEngine::reset(VUEngine::getInstance(), true);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
