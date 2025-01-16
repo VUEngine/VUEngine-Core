@@ -288,6 +288,10 @@ singleton class Printing : ListenerObject
 	/// @param printingBgmapSegment: Index of the bgmap segment to print to
 	static void setPrintingBgmapSegment(int8 printingBgmapSegment);
 
+	/// Get the printing bgmap segment.
+	/// @return Index of the bgmap segment to print to
+	static int8 getPrintingBgmapSegment();
+
 	/// Create a printing sprite.
 	static void addSprite();
 

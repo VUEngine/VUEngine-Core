@@ -14,7 +14,7 @@
 // INCLUDES
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-#include <Object.h>
+#include <ListenerObject.h>
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' MACROS
@@ -31,7 +31,7 @@
 /// Inherits from Object
 ///
 /// Implements various draw rutines that manipulate the frame buffers.
-singleton class DirectDraw : Object
+singleton class DirectDraw : ListenerObject
 {
 	/// @protectedsection
 

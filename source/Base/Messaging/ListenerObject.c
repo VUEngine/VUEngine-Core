@@ -63,6 +63,10 @@ void ListenerObject::destructor()
 
 void ListenerObject::addEventListener(ListenerObject listener, EventListener callback, uint16 eventCode)
 {
+	// Don't remove these asserts!
+	NM_ASSERT(!isDeleted(listener), "ListenerObject::addEventListener: invalid listener");
+	NM_ASSERT(NULL != callback, "ListenerObject::addEventListener: NULL callback");
+
 	if(NULL == listener || NULL == callback)
 	{
 		return;

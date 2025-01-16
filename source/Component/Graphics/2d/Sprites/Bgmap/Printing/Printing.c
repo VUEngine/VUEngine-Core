@@ -105,15 +105,17 @@ static void Printing::setDebugMode()
 {
 	Printing printing = Printing::getInstance();
 
-	BgmapTextureManager::configure
-	(
-		BgmapTextureManager::getInstance(), ParamTableManager::configure(ParamTableManager::getInstance(), 0)
-	);
+	if(__PRINTING_MODE_DEBUG == printing->mode)
+	{
+		return;
+	}
 
-	Printing::loadDebugFont();
 	printing->mode = __PRINTING_MODE_DEBUG;
 	printing->lastUsedFontData = NULL;
 	printing->lastUsedFont = NULL;
+	printing->printingBgmapSegment = 0;
+	Printing::loadDebugFont();
+	Printing::clear();
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -486,6 +488,15 @@ static void Printing::setPrintingBgmapSegment(int8 printingBgmapSegment)
 			PrintingSprite::setPrintingBgmapSegment(PrintingSprite::safeCast(VirtualNode::getData(node)), printingBgmapSegment);
 		}
 	}	
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+static int8 Printing::getPrintingBgmapSegment()
+{
+	Printing printing = Printing::getInstance();
+
+	return printing->printingBgmapSegment;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

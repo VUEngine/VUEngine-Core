@@ -53,12 +53,14 @@ static Object Object::getCast(void* object, ClassPointer targetClassGetClassMeth
 #ifdef __DEBUG
 	static int counter = 0;
 
-	if(100 < ++counter)
+	if(10 < ++counter)
 	{
 		Printing::setDebugMode();
 		Printing::text("Object's address: ", 1, 15, NULL);
-		Printing::hex((uint32)object, 18, 15, 8, NULL);
-	
+		Printing::text(__GET_CLASS_NAME(object), 18, 15, NULL);
+		Printing::text("Object's address: ", 1, 16, NULL);
+		Printing::hex((uint32)object, 18, 16, 8, NULL);
+
 		_vuengineLinkPointer = lp;
 		_vuengineStackPointer = sp;
 		NM_CAST_ASSERT(false, "Object::getCast: infinite callback");
@@ -149,6 +151,15 @@ static Object Object::getCast(void* object, ClassPointer targetClassGetClassMeth
 
 #ifdef __DEBUG
 		counter = 0;
+		Printing::setDebugMode();
+		Printing::text("Object's address: ", 1, 15, NULL);
+		Printing::text(__GET_CLASS_NAME(object), 18, 15, NULL);
+		Printing::text("Target class: ", 1, 16, NULL);
+		Printing::hex((uint32)targetClassGetClassMethod, 18, 16, 8, NULL);
+	
+		_vuengineLinkPointer = lp;
+		_vuengineStackPointer = sp;
+		NM_CAST_ASSERT(false, "Object::getCast: failed cast");
 #endif
 
 		HardwareManager::resumeInterrupts();

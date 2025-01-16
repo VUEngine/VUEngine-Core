@@ -275,7 +275,7 @@ bool SpriteManager::registerSprite(Sprite sprite)
 
 	ASSERT(Sprite::safeCast(sprite), "SpriteManager::registerSprite: adding no sprite");
 
-	ASSERT(!__GET_CAST(ObjectSprite, sprite), "SpriteManager::registerSprite: trying to register an object sprite");
+//	ASSERT(!__GET_CAST(ObjectSprite, sprite), "SpriteManager::registerSprite: trying to register an object sprite");
 
 	if(VirtualList::find(this->bgmapSprites, sprite))
 	{

@@ -646,7 +646,7 @@ typedef void* (*(*ClassPointer)(void*))(void*);
 /// Defines a singleton class' fundamental methods.
 /// @param ClassName: Singleton class' name to define
 /// @return Implementation of a singleton class' fundamental methods
-#define __SINGLETON(ClassName, MemorySection)																										\
+#define __SINGLETON(ClassName, MemorySection)																							\
 																																		\
 		/* declare the static instance */																								\
 		typedef struct SingletonWrapper ## ClassName																					\
