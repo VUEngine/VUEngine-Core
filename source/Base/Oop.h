@@ -437,7 +437,7 @@ typedef void* (*(*ClassPointer)(void*))(void*);
 		const void* ClassName ## _getClass();																							\
 																																		\
 		/* Declare restoreMethods name method */																						\
-		void ClassName ## _restoreMethods();																								\
+		void ClassName ## _restoreMethods();																							\
 																																		\
 		/* Declare getSize method */																									\
 		int32 ClassName ## _getObjectSize();																							\
@@ -446,7 +446,7 @@ typedef void* (*(*ClassPointer)(void*))(void*);
 		const char* ClassName ## _getClassName(ClassName);																				\
 																																		\
 		/* Declare fundamental class methods */																							\
-		__CLASS_FUNDAMENTAL_METHODS(ClassName);
+		__CLASS_FUNDAMENTAL_METHODS(ClassName)
 
 /// Copy a class' declaration to make its member accessible to a compilation unit.
 /// @param ClassName: Class being friended
