@@ -186,8 +186,7 @@ enum DefaulCollisionLayers
 #define __MINIMUM_Y_VIEW_DISTANCE_POWER			4
 
 #define __HIDE									0
-#define __SHOW_NEXT_FRAME						1
-#define __SHOW									2
+#define __SHOW									1
 
 #define __STRINGIFY(a)							__MAKE_STRING(a)
 

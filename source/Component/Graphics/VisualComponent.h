@@ -92,7 +92,7 @@ abstract class VisualComponent : Component
 	/// Transparecy effect (__TRANSPARENCY_NONE, __TRANSPARENCY_EVEN or __TRANSPARENCY_ODD)
 	uint8 transparency;
 
-	/// Show state flag (__HIDE, __SHOW_NEXT_FRAME, __SHOW)
+	/// Show state flag (__HIDE, __SHOW)
 	uint8 show;
 
 	/// Rendering status flag
