@@ -97,7 +97,7 @@ void LineField::configureWireframe()
 
 	this->meshSpec = new MeshSpec;
 
-	const PixelVector MeshesSegments[][2]=
+	PixelVector MeshesSegments[][2]=
 	{
 		// Line
 		{
