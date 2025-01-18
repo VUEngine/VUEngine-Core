@@ -94,7 +94,9 @@ int32 main(void)
 
 static void VUEngine::init()
 {
-	VUEngine::reset(VUEngine::getInstance());
+	HardwareManager::initialize();
+
+	VUEngine::getInstance();
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -491,29 +493,6 @@ bool VUEngine::handleMessage(Telegram telegram)
 	ASSERT(!isDeleted(this->stateMachine), "VUEngine::handleMessage: NULL stateMachine");
 
 	return StateMachine::handleMessage(this->stateMachine, telegram);
-}
-
-//—————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-secure void VUEngine::reset()
-{
-#ifdef __ENABLE_PROFILER
-	Profiler::reset();
-#endif
-
-	HardwareManager::disableInterrupts();
-
-	HardwareManager::reset();
-	CommunicationManager::reset(CommunicationManager::getInstance());
-	DirectDraw::reset(DirectDraw::getInstance());
-	FrameRate::reset(FrameRate::getInstance());
-	KeypadManager::reset(KeypadManager::getInstance());
-	RumbleManager::reset(RumbleManager::getInstance());
-	SoundManager::reset(SoundManager::getInstance());
-	SRAMManager::reset(SRAMManager::getInstance());
-	StopwatchManager::reset(StopwatchManager::getInstance());
-	TimerManager::reset(TimerManager::getInstance());
-	VIPManager::reset(VIPManager::getInstance());
 }
 
 //—————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
