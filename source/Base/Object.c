@@ -26,9 +26,7 @@
 
 static Object Object::getCast(void* object, ClassPointer targetClassGetClassMethod, ClassPointer baseClassGetClassMethod)
 {
-#ifdef __BYPASS_CAST
-	return object;
-#endif
+	__CHECK_STACK_STATUS
 
 	HardwareManager::suspendInterrupts();
 
