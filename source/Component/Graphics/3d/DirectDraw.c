@@ -1237,7 +1237,7 @@ bool DirectDraw::onVIPManagerXPEND(ListenerObject eventFirer __attribute__ ((unu
 
 	this->drawnPixelsCounter = 0;
 
-	return;
+	return true;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
