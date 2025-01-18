@@ -1090,33 +1090,6 @@ secure void DirectDraw::reset()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-secure void DirectDraw::preparteToDraw()
-{
-#ifdef __SHOW_DIRECT_DRAWING_PROFILING
-	static int counter = 0;
-
-	if(__TARGET_FPS <= counter++)
-	{
-		DirectDraw::print(1, 1);
-		counter = 0;
-	}
-#endif
-
-	if(this->drawnPixelsCounter <= this->maximumPixelsToDraw)
-	{
-		this->maximumPixelsToDraw += __DIRECT_DRAW_MAXIMUM_NUMBER_OF_PIXELS_RECOVERY;
-
-		if(__DIRECT_DRAW_MAXIMUM_NUMBER_OF_PIXELS < this->maximumPixelsToDraw)
-		{
-			this->maximumPixelsToDraw = __DIRECT_DRAW_MAXIMUM_NUMBER_OF_PIXELS;
-		}
-	}
-
-	this->drawnPixelsCounter = 0;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
 void DirectDraw::setFrustum(CameraFrustum frustum)
 {
 	if(frustum.x1 >= __SCREEN_WIDTH)
@@ -1206,6 +1179,12 @@ void DirectDraw::constructor()
 
 	VIPManager::addEventListener
 	(
+		VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)DirectDraw::onVIPManagerXPEND, 
+		kEventVIPManagerXPEND
+	);
+
+	VIPManager::addEventListener
+	(
 		VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)DirectDraw::onVIPManagerGAMESTARTDuringXPEND, 
 		kEventVIPManagerGAMESTARTDuringXPEND
 	);
@@ -1217,6 +1196,12 @@ void DirectDraw::destructor()
 {
 	VIPManager::removeEventListener
 	(
+		VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)DirectDraw::onVIPManagerXPEND, 
+		kEventVIPManagerXPEND
+	);
+
+	VIPManager::removeEventListener
+	(
 		VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)DirectDraw::onVIPManagerGAMESTARTDuringXPEND, 
 		kEventVIPManagerGAMESTARTDuringXPEND
 	);
@@ -1224,6 +1209,35 @@ void DirectDraw::destructor()
 	// Allow a new construct
 	// Always explicitly call the base's destructor 
 	Base::destructor();
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+bool DirectDraw::onVIPManagerXPEND(ListenerObject eventFirer __attribute__ ((unused)))
+{
+#ifdef __SHOW_DIRECT_DRAWING_PROFILING
+	static int counter = 0;
+
+	if(__TARGET_FPS <= counter++)
+	{
+		DirectDraw::print(1, 1);
+		counter = 0;
+	}
+#endif
+
+	if(this->drawnPixelsCounter <= this->maximumPixelsToDraw)
+	{
+		this->maximumPixelsToDraw += __DIRECT_DRAW_MAXIMUM_NUMBER_OF_PIXELS_RECOVERY;
+
+		if(__DIRECT_DRAW_MAXIMUM_NUMBER_OF_PIXELS < this->maximumPixelsToDraw)
+		{
+			this->maximumPixelsToDraw = __DIRECT_DRAW_MAXIMUM_NUMBER_OF_PIXELS;
+		}
+	}
+
+	this->drawnPixelsCounter = 0;
+
+	return;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

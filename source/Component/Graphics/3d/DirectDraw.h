@@ -108,9 +108,6 @@ singleton class DirectDraw : ListenerObject
 	/// Reset the manager's state
 	void reset();
 
-	/// Prepare the manager to start drawing to the frame buffers.
-	void preparteToDraw();
-	
 	/// Configure the frustum where drawing is allowed.
 	/// @param frustum: 3D boundary when drawing is allowed
 	void setFrustum(CameraFrustum frustum);

@@ -13,7 +13,6 @@
 
 #include <Camera.h>
 #include <DebugConfig.h>
-#include <DirectDraw.h>
 #include <Printing.h>
 #include <VirtualList.h>
 #include <VIPManager.h>
@@ -453,7 +452,6 @@ void WireframeManager::startListeningForVIP()
 	HardwareManager::resumeInterrupts();
 }
 
-
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void WireframeManager::stopListeningForVIP()
@@ -508,7 +506,6 @@ bool WireframeManager::onVIPXPEND(ListenerObject eventFirer __attribute__ ((unus
 	this->stopDrawing = false;
 	this->stopRendering = kVIPManagerFavorPerformance == VIPManager::getDrawingStrategy(eventFirer);
 
-	DirectDraw::preparteToDraw(DirectDraw::getInstance());
 	WireframeManager::draw(this);
 
 	return true;
@@ -529,7 +526,6 @@ bool WireframeManager::onVIPManagerXPENDDuringGAMESTART(ListenerObject eventFire
 {
 	this->stopRendering = kVIPManagerFavorPerformance == VIPManager::getDrawingStrategy(eventFirer);
 
-	DirectDraw::preparteToDraw(DirectDraw::getInstance());
 	WireframeManager::draw(this);
 
 	return true;
