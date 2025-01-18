@@ -63,7 +63,7 @@ void SoundTest::show()
 	Printing::clear();
 	SpriteManager::hideAllSprites(SpriteManager::safeCast(ComponentManager::getManager(kSpriteComponent)), NULL, false);
 	Printing::resetCoordinates();
-	Printing::show();
+	Printing::show(Printing::getInstance());
 
 	TimerManager::setResolution(__TIMER_100US);
 	TimerManager::setTargetTimePerInterruptUnits(kMS);

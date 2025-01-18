@@ -120,41 +120,16 @@ static void Printing::setDebugMode()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void Printing::show()
-{
-	Printing printing = Printing::getInstance();
-
-	if(!isDeleted(printing->activePrintingSprite))
-	{
-		PrintingSprite::show(printing->activePrintingSprite);
-		PrintingSprite::setPosition(printing->activePrintingSprite, PrintingSprite::getPosition(printing->activePrintingSprite));
-	}
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-static void Printing::hide()
-{
-	Printing printing = Printing::getInstance();
-
-	if(!isDeleted(printing->activePrintingSprite))
-	{
-		PrintingSprite::hide(printing->activePrintingSprite);
-	}
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
 static void Printing::loadFonts(FontSpec** fontSpecs)
 {
 	Printing printing = Printing::getInstance();
 
 	// Since fonts' charsets will be released, there is no reason to keep
 	// Anything in the printing area
-	Printing::clear(printing);
+	Printing::clear();
 
 	// Empty list of registered fonts
-	Printing::releaseFonts(printing);
+	Printing::releaseFonts();
 
 	// Prevent VIP's interrupt from calling render during printing process
 	HardwareManager::suspendInterrupts();
@@ -429,7 +404,7 @@ static void Printing::setOrientation(uint8 value)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void Printing::setDirection(uint8 value)
+static void Printing::setTextDirection(uint8 value)
 {
 	Printing printing = Printing::getInstance();
 
@@ -459,10 +434,14 @@ static void Printing::setPrintingBgmapSegment(int8 printingBgmapSegment)
 	{
 		printing->printingBgmapSegment = printingBgmapSegment;
 
-		for(VirtualNode node = VirtualList::begin(printing->printingSprites); NULL != node; node = VirtualNode::getNext(node))
+		VirtualList printingSprites = Printing::getComponents(printing, kSpriteComponent);
+
+		for(VirtualNode node = VirtualList::begin(printingSprites); NULL != node; node = VirtualNode::getNext(node))
 		{
 			PrintingSprite::setPrintingBgmapSegment(PrintingSprite::safeCast(VirtualNode::getData(node)), printingBgmapSegment);
 		}
+
+		Printing::clearComponentLists(printing, kSpriteComponent);
 	}	
 }
 
@@ -482,7 +461,7 @@ static void Printing::addSprite()
 	Printing printing = Printing::getInstance();
 	printing->printingBgmapSegment = BgmapTextureManager::getPrintingBgmapSegment(BgmapTextureManager::getInstance());
 	printing->activePrintingSprite = 
-		PrintingSprite::safeCast(ComponentManager::createComponent(NULL, (ComponentSpec*)&DefaultPrintingSpriteSpec));
+		PrintingSprite::safeCast(Printing::addComponent(printing, (ComponentSpec*)&DefaultPrintingSpriteSpec));
 
 	PrintingSprite::setPrintingBgmapSegment(printing->activePrintingSprite, printing->printingBgmapSegment);
 
@@ -492,8 +471,6 @@ static void Printing::addSprite()
 	};
 
 	PrintingSprite::setPosition(printing->activePrintingSprite, &position);
-
-	VirtualList::pushBack(printing->printingSprites, printing->activePrintingSprite);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -502,13 +479,13 @@ static bool Printing::setActiveSprite(uint16 printingSpriteIndex)
 {
 	Printing printing = Printing::getInstance();
 
-	printing->activePrintingSprite = PrintingSprite::safeCast(VirtualList::getDataAtIndex(printing->printingSprites, printingSpriteIndex));
+	printing->activePrintingSprite = PrintingSprite::safeCast(Printing::getComponentAtIndex(printing, kSpriteComponent, printingSpriteIndex));
 
 	bool result = NULL != printing->activePrintingSprite;
 
 	if(NULL == printing->activePrintingSprite)
 	{
-		printing->activePrintingSprite = PrintingSprite::safeCast(VirtualList::getDataAtIndex(printing->printingSprites, 0));
+		printing->activePrintingSprite = PrintingSprite::safeCast(Printing::getComponentAtIndex(printing, kSpriteComponent, 0));
 	}
 
 	return result;
@@ -1030,17 +1007,24 @@ static void Printing::out(uint8 x, uint8 y, const char* string, const char* font
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+void Printing::removedComponent(Component component)
+{
+	this->activePrintingSprite = NULL;
+
+	Printing::setActiveSprite(0);
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 secure void Printing::reset()
 {
-	VirtualList::clear(this->printingSprites);
-
 	this->activePrintingSprite = NULL;
 	this->printingBgmapSegment = -1;
 
 	Printing::releaseFonts(this);
 	Printing::resetCoordinates();
 	Printing::setOrientation(kPrintingOrientationHorizontal);
-	Printing::setDirection(kPrintingDirectionLTR);
+	Printing::setTextDirection(kPrintingDirectionLTR);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -1058,7 +1042,6 @@ void Printing::constructor()
 
 	// Initialize members
 	this->fonts = new VirtualList();
-	this->printingSprites = new VirtualList();
 	this->mode = __PRINTING_MODE_DEFAULT;
 	this->palette = __PRINTING_PALETTE;
 	this->orientation = kPrintingOrientationHorizontal;
@@ -1079,13 +1062,6 @@ void Printing::destructor()
 	}
 
 	this->fonts = NULL;
-
-	if(!isDeleted(this->printingSprites))
-	{
-		delete this->printingSprites;
-	}
-
-	this->printingSprites = NULL;
 
 	// Allow a new construct
 	// Always explicitly call the base's destructor 

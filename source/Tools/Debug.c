@@ -359,7 +359,7 @@ void Debug::showPage(int32 increment)
 		((void (*)(Debug, int32, int32, int32))this->currentPage->data)(this, increment, 1, 2);
 	}
 
-	Printing::show();
+	Printing::show(Printing::getInstance());
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -376,7 +376,7 @@ void Debug::showSubPage(int32 increment)
 		((void (*)(Debug, int32, int32, int32))VirtualNode::getData(this->currentSubPage))(this, increment, 1, 2);
 	}
 
-	Printing::show();
+	Printing::show(Printing::getInstance());
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

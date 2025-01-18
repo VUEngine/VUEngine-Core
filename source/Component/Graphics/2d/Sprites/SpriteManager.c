@@ -649,11 +649,11 @@ void SpriteManager::showAllSprites(Sprite spareSprite, bool showPrinting)
 
 	if(showPrinting)
 	{
-		Printing::show();
+		Printing::show(Printing::getInstance());
 	}
 	else
 	{
-		Printing::hide();
+		Printing::hide(Printing::getInstance());
 	}
 
 	SpriteManager::stopRendering(this);
@@ -680,11 +680,11 @@ void SpriteManager::hideAllSprites(Sprite spareSprite, bool hidePrinting)
 
 	if(hidePrinting)
 	{
-		Printing::hide();
+		Printing::hide(Printing::getInstance());
 	}
 	else
 	{
-		Printing::show();
+		Printing::show(Printing::getInstance());
 	}
 }
 

@@ -15,7 +15,7 @@
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <CharSet.h>
-#include <ListenerObject.h>
+#include <Entity.h>
 #include <TimerManager.h>
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -176,12 +176,9 @@ typedef const FontData FontROMData;
 /// Inherits from ListenerObject
 ///
 /// Manages printing layer and offers various functions to write to it.
-singleton class Printing : ListenerObject
+singleton class Printing : Entity
 {
 	/// @protectedsection
-
-	/// Sprites used to diplay the printing area from BGMAP memory
-	VirtualList printingSprites;
 
 	/// Active sprite that is manipulated by this class' interface
 	PrintingSprite activePrintingSprite;
@@ -214,12 +211,6 @@ singleton class Printing : ListenerObject
 
 	/// Set mode to debug to bypass loading fonts through CharSets
 	static void setDebugMode();
-
-	/// Force printing layer to show up.
-	static void show();
-
-	/// Force printing layer to hide.
-	static void hide();
 
 	/// Add fonts to internal VirtualList and preload CharSets for specified fonts.
 	/// @param fontSpecs: Array of font specs whose charset should pre preloaded
@@ -279,7 +270,7 @@ singleton class Printing : ListenerObject
 	/// Sets the direction for the following call to print.
 	/// Resets its self automatically to LTR (Left to Right).
 	/// @param value: PrintingDirection
-	static void setDirection(uint8 value);
+	static void setTextDirection(uint8 value);
 
 	/// Cache the printing bgmap segment.
 	/// @param printingBgmapSegment: Index of the bgmap segment to print to
@@ -362,6 +353,10 @@ singleton class Printing : ListenerObject
 	/// @param string: String to compute size for
 	/// @param font: Name of font to use for size computation
 	static FontSize getTextSize(const char* string, const char* font);
+
+	/// A component has been removed from this entity. 
+	/// @param component: Removed component
+	override void removedComponent(Component component);
 
 	/// Empties internal virtual list of registered fonts
 	void reset();
