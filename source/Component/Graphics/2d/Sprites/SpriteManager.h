@@ -41,7 +41,7 @@ class VirtualList;
 /// Inherits from ComponentManager
 ///
 /// Manages all the sprite instances.
-singleton class SpriteManager : ComponentManager
+class SpriteManager : ComponentManager
 {
 	/// @protectedsection
 
@@ -89,10 +89,18 @@ singleton class SpriteManager : ComponentManager
 
 	/// @publicsection
 
-	/// Check if at least of the sprites that attach to the provided owner is visible.
-	/// @param owner: Object to which the sprites attach to
-	/// @return True if at least of the sprites that attach to the provided owner is visible
-	override bool isAnyVisible(Entity owner);
+	/// Class' constructor
+	void constructor();
+
+	/// Retrieve the compoment type that the manager manages.
+	/// @return Component type
+	override uint32 getType();
+
+	/// Enable the manager.
+	override void enable();
+
+	/// Disable the manager.
+	override void disable();
 
 	/// Create a sprite with the provided spec.
 	/// @param owner: Object to which the sprite will attach to
@@ -105,8 +113,10 @@ singleton class SpriteManager : ComponentManager
 	/// @param sprite: Sprite to destroy
 	override void deinstantiateComponent(Entity owner, Sprite sprite);
 
-	/// Reset the manager's state.
-	void reset();
+	/// Check if at least of the sprites that attach to the provided owner is visible.
+	/// @param owner: Object to which the sprites attach to
+	/// @return True if at least of the sprites that attach to the provided owner is visible
+	override bool isAnyVisible(Entity owner);
 
 	/// Configure the manager's state.
 	/// @param texturesMaximumRowsToWrite: Number of texture rows to write during each rendering cycle

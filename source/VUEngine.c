@@ -504,9 +504,7 @@ secure void VUEngine::reset(bool resetSounds)
 	HardwareManager::disableInterrupts();
 
 	HardwareManager::reset();
-	
-	AnimationCoordinatorFactory::reset(AnimationCoordinatorFactory::getInstance());
-	BehaviorManager::reset(BehaviorManager::getInstance());
+
 	CommunicationManager::reset(CommunicationManager::getInstance());
 	DirectDraw::reset(DirectDraw::getInstance());
 	FrameRate::reset(FrameRate::getInstance());
@@ -518,12 +516,10 @@ secure void VUEngine::reset(bool resetSounds)
 		SoundManager::reset(SoundManager::getInstance());
 	}
 
-	SpriteManager::reset(SpriteManager::getInstance());
 	SRAMManager::reset(SRAMManager::getInstance());
 	StopwatchManager::reset(StopwatchManager::getInstance());
 	TimerManager::reset(TimerManager::getInstance());
 	VIPManager::reset(VIPManager::getInstance());
-	WireframeManager::reset(WireframeManager::getInstance());
 }
 
 //—————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -549,38 +545,6 @@ secure int32 VUEngine::start(GameState currentGameState)
 	}
 
 	return 0;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-secure BodyManager VUEngine::getBodyManager()
-{
-#ifdef __TOOLS
-	if(VUEngine::isInToolState())
-	{
-		State state = StateMachine::getPreviousState(this->stateMachine);
-		return isDeleted(state) ? NULL : GameState::getBodyManager(state);
-	}
-#endif
-
-	State state = StateMachine::getCurrentState(this->stateMachine);
-	return isDeleted(state) ? NULL : GameState::getBodyManager(state);
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-secure ColliderManager VUEngine::getColliderManager()
-{
-#ifdef __TOOLS
-	if(VUEngine::isInToolState())
-	{
-		State state = StateMachine::getPreviousState(this->stateMachine);
-		return isDeleted(state) ? NULL : GameState::getColliderManager(state);
-	}
-#endif
-
-	State state = StateMachine::getCurrentState(this->stateMachine);
-	return isDeleted(state) ? NULL : GameState::getColliderManager(state);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -914,12 +878,13 @@ static void VUEngine::run(GameState currentGameState)
 				{
 #ifndef __ENABLE_PROFILER
 					vuEngine->currentGameCycleEnded = true;
-
+#ifndef __DEBUG
 					if(!vuEngine->gameFrameStarted)
 					{
 						// Don't spin cycle the CPU
 						HardwareManager::halt();
 					}
+#endif
 #endif
 				}
 			}

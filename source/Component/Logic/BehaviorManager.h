@@ -27,11 +27,24 @@
 /// Inherits from ComponentManager
 ///
 /// Manages all the behavior instances.
-singleton class BehaviorManager : ComponentManager
+class BehaviorManager : ComponentManager
 {
 	/// @protectedsection
 
 	/// @publicsection
+
+	/// Class' constructor
+	void constructor();
+
+	/// Retrieve the compoment type that the manager manages.
+	/// @return Component type
+	override uint32 getType();
+
+	/// Enable the manager.
+	override void enable();
+
+	/// Disable the manager.
+	override void disable();
 
 	/// Create a behavior with the provided spec.
 	/// @param owner: Object to which the behavior will attach to

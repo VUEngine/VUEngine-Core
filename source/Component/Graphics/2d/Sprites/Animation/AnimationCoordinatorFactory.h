@@ -43,9 +43,6 @@ singleton class AnimationCoordinatorFactory : Object
 
 	/// @publicsection
 
-	/// Reset the animation coordinator factory's state.
-	void reset();
-
 	/// Get an animation coordinator.
 	/// @param animationController: Animation controller to potentially coordinate
 	/// @param scope: Object that might need to listen for playback related events

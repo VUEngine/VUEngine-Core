@@ -38,7 +38,7 @@ extern Rotation _previousCameraInvertedRotationBuffer __INITIALIZED_GLOBAL_DATA_
 /// Inherits from ComponentManager
 ///
 /// Manages instances of Wireframe.
-singleton class WireframeManager : ComponentManager
+class WireframeManager : ComponentManager
 {
 	/// @protectedsection
 
@@ -51,9 +51,6 @@ singleton class WireframeManager : ComponentManager
 	/// Flag to distinguish between even and odd game frames
 	bool evenFrame;
 
-	/// Disabled wireframe drawing
-	bool disabled;
-
 	/// Number of rendered wireframes during the last game cycle
 	uint8 renderedWireframes;
 
@@ -62,10 +59,18 @@ singleton class WireframeManager : ComponentManager
 
 	/// @publicsection
 
-	/// Check if at least of the sprites that attach to the provided owner is visible.
-	/// @param owner: Object to which the sprites attach to
-	/// @return True if at least of the sprites that attach to the provided owner is visible
-	override bool isAnyVisible(Entity owner);
+	/// Class' constructor
+	void constructor();
+
+	/// Retrieve the compoment type that the manager manages.
+	/// @return Component type
+	override uint32 getType();
+
+	/// Enable the manager.
+	override void enable();
+
+	/// Disable the manager.
+	override void disable();
 
 	/// Create a wireframe with the provided spec.
 	/// @param owner: Object to which the wireframe will attach to
@@ -78,8 +83,10 @@ singleton class WireframeManager : ComponentManager
 	/// @param wireframe: Wireframe to destroy
 	override void deinstantiateComponent(Entity owner, Wireframe wireframe);
 
-	/// Reset the manager's state.
-	void reset();
+	/// Check if at least of the sprites that attach to the provided owner is visible.
+	/// @param owner: Object to which the sprites attach to
+	/// @return True if at least of the sprites that attach to the provided owner is visible
+	override bool isAnyVisible(Entity owner);
 
 	/// Enable wireframe rendering and drawing.
 	void enable();

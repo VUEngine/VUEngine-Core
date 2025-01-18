@@ -22,9 +22,7 @@
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 class Clock;
-class ColliderManager;
 class GameState;
-class BodyManager;
 class Entity;
 class StateMachine;
 class Stage;
@@ -208,14 +206,6 @@ singleton class VUEngine : ListenerObject
 	/// @param gameState: Game state the engine must enter when starting
 	/// @return Return code (0)
 	int32 start(GameState gameState);
-
-	/// Retrieve the current game state's physical world.
-	/// @return Current game state's physical world
-	BodyManager getBodyManager();
-
-	/// Retrieve the current game state's collision manager.
-	/// @return Current game state's collision manager
-	ColliderManager getColliderManager();
 }
 
 #endif

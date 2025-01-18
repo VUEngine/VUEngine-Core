@@ -22,6 +22,7 @@
 // FORWARD DECLARATIONS
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+class ComponentManager;
 class Entity;
 class VirtualList;
 
@@ -42,6 +43,10 @@ abstract class ComponentManager : ListenerObject
 	VirtualList components;
 
 	/// @publicsection
+
+	/// Retrieve the active manager for the component type.
+	/// @param componentType: Type of components of the desired manager
+	static ComponentManager getManager(uint32 componentType);
 
 	/// Create a component with the specified owner.
 	/// @param owner: Owner of the component (can be NULL)
@@ -139,6 +144,19 @@ abstract class ComponentManager : ListenerObject
 
 	/// Class' constructor
 	void constructor();
+
+	/// Destroy all the manager's components
+	void destroyAllComponents();
+
+	/// Retrieve the compoment type that the manager manages.
+	/// @return Component type
+	virtual uint32 getType() = 0;
+
+	/// Enable the manager.
+	virtual void enable();
+
+	/// Disable the manager.
+	virtual void disable();
 
 	/// Create a component with the provided spec.
 	/// @param owner: Object to which the component will attach to

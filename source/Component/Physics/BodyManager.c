@@ -47,6 +47,27 @@ static fixed_t BodyManager::getElapsedTimeStep()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+uint32 BodyManager::getType()
+{
+	return kPhysicsComponent;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void BodyManager::enable()
+{
+	Base::enable(this);
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void BodyManager::disable()
+{
+	Base::disable(this);
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 Body BodyManager::instantiateComponent(Entity owner, const BodySpec* bodySpec)
 {
 	if(NULL == bodySpec)
@@ -343,14 +364,7 @@ void BodyManager::constructor()
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void BodyManager::destructor()
-{
-	ASSERT(this->components, "BodyManager::destructor: null bodies");
-
-	if(!isDeleted(this->components))
-	{
-		VirtualList::deleteData(this->components);
-	}
-
+{	
 	// Always explicitly call the base's destructor 
 	Base::destructor();
 }

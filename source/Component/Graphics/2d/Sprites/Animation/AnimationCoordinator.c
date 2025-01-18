@@ -111,7 +111,7 @@ void AnimationCoordinator::addAnimationController(AnimationController animationC
 
 void AnimationCoordinator::removeAnimationController(AnimationController animationController)
 {
-	ASSERT(this->animationControllers->head, "AnimationCoordinator::removeAnimationController: null this");
+	NM_ASSERT(this->animationControllers->head, "AnimationCoordinator::removeAnimationController: null this");
 
 	bool mustChangeLeader = animationController == AnimationController::safeCast(VirtualList::front(this->animationControllers));
 	VirtualList::removeData(this->animationControllers, animationController);
@@ -128,6 +128,7 @@ void AnimationCoordinator::removeAnimationController(AnimationController animati
 				(
 					firstAnimationController, AnimationController::getPlayingAnimationFunction(animationController), this->scope
 				);
+
 				int16 currentFrame = AnimationController::getActualFrame(animationController);
 				uint8 frameDuration = AnimationController::getFrameDuration(animationController);
 				AnimationController::setActualFrame(firstAnimationController, currentFrame);

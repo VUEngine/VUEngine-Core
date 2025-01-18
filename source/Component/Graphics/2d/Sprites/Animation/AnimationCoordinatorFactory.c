@@ -32,13 +32,6 @@ friend class VirtualNode;
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void AnimationCoordinatorFactory::reset()
-{
-	VirtualList::deleteData(this->animationCoordinators);
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
 AnimationCoordinator AnimationCoordinatorFactory::getCoordinator(AnimationController animationController, ListenerObject scope, const CharSetSpec* charSetSpec)
 {
 	NM_ASSERT(NULL != charSetSpec, "AnimationCoordinatorFactory::getCoordinator: null charSetSpec");
@@ -92,9 +85,12 @@ void AnimationCoordinatorFactory::destructor()
 {
 	ASSERT(this->animationCoordinators, "AnimationCoordinatorFactory::destructor: null animationCoordinators");
 
-	AnimationCoordinatorFactory::reset(this);
-	delete this->animationCoordinators;
-	this->animationCoordinators = NULL;
+	if(NULL != this->animationCoordinators)
+	{
+		VirtualList::deleteData(this->animationCoordinators);
+		delete this->animationCoordinators;
+		this->animationCoordinators = NULL;
+	}
 
 	// Allow a new construct
 	// Always explicitly call the base's destructor 

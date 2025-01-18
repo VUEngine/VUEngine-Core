@@ -552,7 +552,14 @@ void BgmapSprite::invalidateParamTable()
 
 bool BgmapSprite::onTextureRewritten(ListenerObject eventFirer __attribute__ ((unused)))
 {
-	BgmapSprite::processEffects(this, SpriteManager::getMaximumParamTableRowsToComputePerCall(SpriteManager::getInstance()));
+	BgmapSprite::processEffects
+	(
+		this, 
+		SpriteManager::getMaximumParamTableRowsToComputePerCall
+		(
+			SpriteManager::safeCast(ComponentManager::getManager(kSpriteComponent))
+		)
+	);
 
 	return true;
 }

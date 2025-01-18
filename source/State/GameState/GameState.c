@@ -11,14 +11,18 @@
 // INCLUDES
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+#include <BehaviorManager.h>
+#include <BodyManager.h>
 #include <Camera.h>
 #include <Clock.h>
 #include <ColliderManager.h>
-#include <BodyManager.h>
+#include <MessageDispatcher.h>
 #include <Printing.h>
+#include <SpriteManager.h>
 #include <Stage.h>
 #include <Telegram.h>
 #include <VUEngine.h>
+#include <WireframeManager.h>
 
 #include "GameState.h"
 
@@ -41,9 +45,11 @@ void GameState::constructor()
 	this->animationsClock = new Clock();
 	this->physicsClock = new Clock();
 
-	// Construct the physical world and collision manager
+	this->behaviorManager = NULL;
 	this->bodyManager = NULL;
 	this->colliderManager = NULL;
+	this->spriteManager = NULL;
+	this->wireframeManager = NULL;
 
 	this->stream = true;
 	this->transform = true;
@@ -60,12 +66,21 @@ void GameState::destructor()
 	delete this->animationsClock;
 	delete this->physicsClock;
 
-	// Destroy the stage
+	MessageDispatcher::discardDelayedMessagesWithClock(MessageDispatcher::getInstance(), this->messagingClock);
+	GameState::destroyContainers(this);
+	GameState::destroyManagers(this);
+
+	// Always explicitly call the base's destructor 
+	Base::destructor();
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void GameState::destroyContainers()
+{
 	if(!isDeleted(this->stage))
 	{
-		// Destroy the stage
 		delete this->stage;
-
 		this->stage = NULL;
 	}
 
@@ -74,8 +89,45 @@ void GameState::destructor()
 		delete this->uiContainer;
 		this->uiContainer = NULL;
 	}
+}
 
-	// Must delete these after deleting the stage
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void GameState::createManagers()
+{
+	if(NULL == this->behaviorManager)
+	{
+		this->behaviorManager = new BehaviorManager();
+	}
+
+	if(NULL == this->bodyManager)
+	{
+		this->bodyManager = new BodyManager();
+	}
+	if(NULL == this->colliderManager)
+	{
+		this->colliderManager = new ColliderManager();
+	}
+	if(NULL == this->spriteManager)
+	{
+		this->spriteManager = new SpriteManager();
+	}
+	if(NULL == this->wireframeManager)
+	{
+		this->wireframeManager = new WireframeManager();
+	}
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void GameState::destroyManagers()
+{
+	if(!isDeleted(this->behaviorManager))
+	{
+		delete this->behaviorManager;
+		this->behaviorManager = NULL;
+	}
+
 	if(!isDeleted(this->bodyManager))
 	{
 		delete this->bodyManager;
@@ -88,8 +140,39 @@ void GameState::destructor()
 		this->colliderManager = NULL;
 	}
 
-	// Always explicitly call the base's destructor 
-	Base::destructor();
+	if(!isDeleted(this->spriteManager))
+	{
+		delete this->spriteManager;
+		this->spriteManager = NULL;
+	}
+
+	if(!isDeleted(this->wireframeManager))
+	{
+		delete this->wireframeManager;
+		this->wireframeManager = NULL;
+	}
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void GameState::enableManagers()
+{
+	BehaviorManager::enable(this->behaviorManager);
+	BodyManager::enable(this->bodyManager);
+	ColliderManager::enable(this->colliderManager);
+	SpriteManager::enable(this->spriteManager);
+	WireframeManager::enable(this->wireframeManager);
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void GameState::disableManagers()
+{
+	BehaviorManager::disable(this->behaviorManager);
+	BodyManager::disable(this->bodyManager);
+	ColliderManager::disable(this->colliderManager);
+	SpriteManager::disable(this->spriteManager);
+	WireframeManager::disable(this->wireframeManager);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -112,9 +195,7 @@ bool GameState::handleMessage(Telegram telegram)
 void GameState::enter(void* owner __attribute__ ((unused)))
 {
 	Printing::resetCoordinates();
-
 	GameState::pauseClocks(this);
-
 	Clock::start(this->messagingClock);
 }
 
@@ -142,31 +223,11 @@ void GameState::exit(void* owner __attribute__ ((unused)))
 	this->updatePhysics = true;
 	this->processCollisions = true;
 
-	if(!isDeleted(this->stage))
-	{
-		delete this->stage;
-		this->stage = NULL;
-	}
+	MessageDispatcher::discardDelayedMessagesWithClock(MessageDispatcher::getInstance(), this->messagingClock);
 
-	if(!isDeleted(this->uiContainer))
-	{
-		delete this->uiContainer;
-		this->uiContainer = NULL;
-	}
-
-	if(!isDeleted(this->bodyManager))
-	{
-		delete this->bodyManager;
-		this->bodyManager = NULL;
-	}
-
-	if(!isDeleted(this->colliderManager))
-	{
-		delete this->colliderManager;
-		this->colliderManager = NULL;
-	}
-
-	this->stage = NULL;
+	GameState::destroyContainers(this);
+	//GameState::disableManagers(this);
+	GameState::destroyManagers(this);
 
 	// Stop my clocks
 	GameState::stopClocks(this);
@@ -182,6 +243,8 @@ void GameState::suspend(void* owner __attribute__ ((unused)))
 	if(!VUEngine::isInToolStateTransition())
 #endif
 	{
+		GameState::disableManagers(this);
+
 		// Make sure collision colliders are not drawn while suspended
 		if(this->colliderManager)
 		{
@@ -212,6 +275,8 @@ void GameState::resume(void* owner __attribute__ ((unused)))
 	if(!VUEngine::isInToolStateTransition())
 #endif
 	{
+		GameState::enableManagers(this);
+
 		// Reset the engine state
 		VUEngine::reset(VUEngine::getInstance(), NULL == Stage::getSpec(this->stage)->assets.sounds);
 
@@ -261,6 +326,9 @@ void GameState::configureStage(StageSpec* stageSpec, VirtualList positionedActor
 		stageSpec = (StageSpec*)&EmptyStageSpec;
 	}
 
+	GameState::createManagers(this);
+	GameState::enableManagers(this);
+
 	// Reset the engine state
 	VUEngine::reset(VUEngine::getInstance(), NULL == stageSpec->assets.sounds);
 
@@ -305,13 +373,15 @@ Stage GameState::getStage()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+BehaviorManager GameState::getBehaviorManager()
+{
+	return this->behaviorManager;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 BodyManager GameState::getBodyManager()
 {
-	if(NULL == this->bodyManager)
-	{
-		this->bodyManager = new BodyManager();
-	}
-
 	return this->bodyManager;
 }
 
@@ -319,12 +389,21 @@ BodyManager GameState::getBodyManager()
 
 ColliderManager GameState::getColliderManager()
 {
-	if(NULL == this->colliderManager)
-	{
-		this->colliderManager = new ColliderManager();
-	}
-
 	return this->colliderManager;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+SpriteManager GameState::getSpriteManager()
+{
+	return this->spriteManager;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+WireframeManager GameState::getWireframeManager()
+{
+	return this->wireframeManager;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

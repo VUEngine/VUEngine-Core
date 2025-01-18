@@ -23,10 +23,13 @@
 // FORWARD DECLARATIONS
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+class Actor;
+class BehaviorManager;
+class BodyManager;
 class Clock;
 class ColliderManager;
-class Actor;
-class BodyManager;
+class SpriteManager;
+class WireframeManager;
 class Telegram;
 class VirtualList;
 
@@ -47,11 +50,20 @@ class GameState : State
 	/// A container for the game entites 
 	Stage stage;
 
+	/// Manager for behavioral components
+	BehaviorManager behaviorManager;
+
 	/// A world where physical bodies exist
 	BodyManager bodyManager;
 
 	/// A manager for collisions and colliders
 	ColliderManager colliderManager;
+	
+	/// A manager for sprites
+	SpriteManager spriteManager;
+	
+	/// A manager for wireframes
+	WireframeManager wireframeManager;
 	
 	/// A clock for logics
 	Clock logicsClock;
@@ -124,14 +136,26 @@ class GameState : State
 	/// Retrieve the stage instance.
 	/// @return Game state's stage
 	Stage getStage();
-	
-	/// Retrieve the physical world.
+
+	/// Retrieve the game state's behavior manager.
+	/// @return Game state's behavior manager
+	BehaviorManager getBehaviorManager();
+
+	/// Retrieve the game state's physical world.
 	/// @return Game state's physical world
 	BodyManager getBodyManager();
 
-	/// Retrieve the collision manager.
+	/// Retrieve the game state's collision manager.
 	/// @return Game state's collision manager
 	ColliderManager getColliderManager();
+
+	/// Retrieve the game state's sprite manager.
+	/// @return Game state's sprite manager
+	SpriteManager getSpriteManager();
+
+	/// Retrieve the game state's wireframe manager.
+	/// @return Game state's wireframe manager
+	WireframeManager getWireframeManager();
 
 	/// Retrieve the clock that serves to control the game's logic.
 	/// @return Game state's logics clock

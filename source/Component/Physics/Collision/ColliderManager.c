@@ -55,6 +55,27 @@ static uint16 _checkCycles;
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+uint32 ColliderManager::getType()
+{
+	return kColliderComponent;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void ColliderManager::enable()
+{
+	Base::enable(this);
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void ColliderManager::disable()
+{
+	Base::disable(this);
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 Collider ColliderManager::instantiateComponent(Entity owner, const ColliderSpec* colliderSpec)
 {
 	if(NULL == colliderSpec)
@@ -79,26 +100,6 @@ void ColliderManager::deinstantiateComponent(Entity owner, Collider collider)
 	Base::deinstantiateComponent(this, owner, Component::safeCast(collider));
 
 	ColliderManager::destroyCollider(this, collider);
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void ColliderManager::reset()
-{
-	ASSERT(this->components, "ColliderManager::reset: null colliders");
-
-	VirtualList::deleteData(this->components);
-
-	this->dirty = false;
-
-#ifdef __SHOW_PHYSICS_PROFILING
-	_lastCycleCheckProducts = 0;
-	_lastCycleCollisionChecks = 0;
-	_lastCycleCollisions = 0;
-	_checkCycles = 0;
-	_collisionChecks = 0;
-	_collisions = 0;
-#endif
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -391,13 +392,6 @@ void ColliderManager::constructor()
 
 void ColliderManager::destructor()
 {
-	ASSERT(this->components, "ColliderManager::destructor: null colliders");
-
-	if(!isDeleted(this->components))
-	{
-		VirtualList::deleteData(this->components);
-	}
-
 	// Always explicitly call the base's destructor 
 	Base::destructor();
 }

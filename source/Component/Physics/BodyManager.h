@@ -69,6 +69,16 @@ class BodyManager : ComponentManager
 	/// Class' constructor
 	void constructor();
 
+	/// Retrieve the compoment type that the manager manages.
+	/// @return Component type
+	override uint32 getType();
+
+	/// Enable the manager.
+	override void enable();
+
+	/// Disable the manager.
+	override void disable();
+
 	/// Create a body with the provided spec.
 	/// @param owner: Object to which the body will attach to
 	/// @param bodySpec: Spec to use to create the body

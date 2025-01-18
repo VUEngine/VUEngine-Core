@@ -54,6 +54,16 @@ class ColliderManager : ComponentManager
 	/// Class' constructor
 	void constructor();
 
+	/// Retrieve the compoment type that the manager manages.
+	/// @return Component type
+	override uint32 getType();
+
+	/// Enable the manager.
+	override void enable();
+
+	/// Disable the manager.
+	override void disable();
+
 	/// Create a collider with the provided spec.
 	/// @param owner: Object to which the collider will attach to
 	/// @param colliderSpec: Spec to use to create the collider
@@ -64,9 +74,6 @@ class ColliderManager : ComponentManager
 	/// @param owner: Object to which the sprite will attach to
 	/// @param collider: Collider to destroy
 	override void deinstantiateComponent(Entity owner, Collider collider);
-
-	/// Reset the manager's state.
-	void reset();
 
 	/// Purge destroyed colliders.
 	void purgeDestroyedColliders();

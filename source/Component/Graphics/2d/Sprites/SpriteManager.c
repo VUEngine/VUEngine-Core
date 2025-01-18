@@ -62,6 +62,75 @@ int32 _writtenObjectTiles = 0;
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+uint32 SpriteManager::getType()
+{
+	return kSpriteComponent;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void SpriteManager::enable()
+{
+	Base::enable(this);
+
+	HardwareManager::suspendInterrupts();
+
+	Texture::reset();
+	Printing::reset();
+	CharSetManager::reset(CharSetManager::getInstance());
+	BgmapTextureManager::reset(BgmapTextureManager::getInstance());
+	ParamTableManager::reset(ParamTableManager::getInstance());
+	ObjectSpriteContainer::reset();
+
+	for(int32 i = 0; i < __TOTAL_OBJECTS; i++)
+	{
+		_vipRegisters[__SPT3 - i] = 0;
+		_objectAttributesCache[i].jx = 0;
+		_objectAttributesCache[i].head = 0;
+		_objectAttributesCache[i].jy = 0;
+		_objectAttributesCache[i].tile = 0;
+	}
+
+	this->freeLayer = __TOTAL_LAYERS - 1;
+	this->sortingSpriteNode = NULL;
+	this->completeSort = true;
+	this->evenFrame = __TRANSPARENCY_EVEN;
+
+	SpriteManager::stopRendering(this);
+
+	HardwareManager::resumeInterrupts();
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void SpriteManager::disable()
+{
+	Base::disable(this);
+
+	HardwareManager::suspendInterrupts();
+
+	SpriteManager::destroyAllComponents(this);
+
+	if(!isDeleted(this->bgmapSprites))
+	{
+		VirtualList::clear(this->bgmapSprites);
+	}
+
+	if(!isDeleted(this->objectSpriteContainers))
+	{
+		VirtualList::deleteData(this->objectSpriteContainers);
+	}
+
+	if(!isDeleted(this->specialSprites))
+	{
+		VirtualList::clear(this->specialSprites);
+	}
+
+	HardwareManager::resumeInterrupts();
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 Sprite SpriteManager::instantiateComponent(Entity owner, const SpriteSpec* spriteSpec)
 {
 	if(NULL == spriteSpec)
@@ -107,62 +176,6 @@ bool SpriteManager::isAnyVisible(Entity owner)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void SpriteManager::reset()
-{
-	HardwareManager::suspendInterrupts();
-	
-	Texture::reset();
-	Printing::reset();
-	CharSetManager::reset(CharSetManager::getInstance());
-	BgmapTextureManager::reset(BgmapTextureManager::getInstance());
-	ParamTableManager::reset(ParamTableManager::getInstance());
-
-	SpriteManager::cleanUp(this);
-	ObjectSpriteContainer::reset();
-
-	int32 i = 0;
-	// Clean OBJ memory
-	for(; i < __TOTAL_OBJECTS; i++)
-	{
-		_vipRegisters[__SPT3 - i] = 0;
-		_objectAttributesCache[i].jx = 0;
-		_objectAttributesCache[i].head = 0;
-		_objectAttributesCache[i].jy = 0;
-		_objectAttributesCache[i].tile = 0;
-	}
-
-	this->animationsClock = NULL;
-	this->bgmapSprites = new VirtualList();
-	this->objectSpriteContainers = new VirtualList();
-	this->specialSprites = new VirtualList();
-
-	this->freeLayer = __TOTAL_LAYERS - 1;
-	this->deferTextureUpdating = false;
-	this->texturesMaximumRowsToWrite = -1;
-	this->sortingSpriteNode = NULL;
-	this->completeSort = true;
-
-	SpriteManager::stopRendering(this);
-
-	this->evenFrame = __TRANSPARENCY_EVEN;
-
-	VIPManager::addEventListener
-	(
-		VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)SpriteManager::onVIPGAMESTART, 
-		kEventVIPManagerGAMESTART
-	);
-
-	VIPManager::addEventListener
-	(
-		VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)SpriteManager::onVIPXPEND, 
-		kEventVIPManagerXPEND
-	);
-
-	HardwareManager::resumeInterrupts();
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
 void SpriteManager::configure
 (
 	uint8 texturesMaximumRowsToWrite, int32 maximumParamTableRowsToComputePerCall,
@@ -177,7 +190,7 @@ void SpriteManager::configure
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-secure void SpriteManager::setAnimationsClock(Clock clock)
+void SpriteManager::setAnimationsClock(Clock clock)
 {
 	this->animationsClock = clock;
 }
@@ -195,6 +208,11 @@ Sprite SpriteManager::createSprite(Entity owner, const SpriteSpec* spriteSpec)
 
 	Sprite sprite = ((Sprite (*)(Entity, const SpriteSpec*)) ((ComponentSpec*)spriteSpec)->allocator)(owner, spriteSpec);
 	ASSERT(!isDeleted(sprite), "SpriteManager::createSprite: failed creating sprite");
+
+	if(NULL == this->components->head)
+	{
+		SpriteManager::startListeningForVIP(this);			
+	}
 
 	VirtualList::pushBack(this->components, sprite);
 
@@ -228,8 +246,8 @@ Sprite SpriteManager::createSprite(Entity owner, const SpriteSpec* spriteSpec)
 
 void SpriteManager::destroySprite(Sprite sprite)
 {
-	NM_ASSERT(!isDeleted(sprite), "SpriteManager::destroySprite: trying to dispose dead sprite");
-	NM_ASSERT(__GET_CAST(Sprite, sprite), "SpriteManager::destroySprite: trying to dispose a non sprite");
+	NM_ASSERT(!isDeleted(sprite), "SpriteManager::destroySprite: trying to destroy dead sprite");
+	NM_ASSERT(__GET_CAST(Sprite, sprite), "SpriteManager::destroySprite: trying to destroy a non sprite");
 
 	if(isDeleted(sprite))
 	{
@@ -237,6 +255,11 @@ void SpriteManager::destroySprite(Sprite sprite)
 	}
 
 	VirtualList::removeData(this->components, sprite);
+
+	if(NULL == this->components->head)
+	{
+		SpriteManager::stopListeningForVIP(this);			
+	}
 
 	Sprite::hide(sprite);
 
@@ -246,7 +269,7 @@ void SpriteManager::destroySprite(Sprite sprite)
 	{
 		SpriteManager::unregisterSprite(this, sprite);
 	}
-	else if(typeofclass(ObjectSpriteContainer) == managerClassPointer)
+	else if(typeofclass(ObjectSpriteContainer) == managerClassPointer && NULL != this->objectSpriteContainers->head)
 	{
 		ObjectSpriteContainer objectSpriteContainer = ObjectSpriteContainer::safeCast(Sprite::getManager(sprite));
 
@@ -311,21 +334,27 @@ bool SpriteManager::registerSprite(Sprite sprite)
 
 void SpriteManager::unregisterSprite(Sprite sprite)
 {
-	NM_ASSERT(Sprite::safeCast(sprite), "SpriteManager::unregisterSprite: removing no sprite");
+	if(NULL != this->bgmapSprites)
+	{
+		NM_ASSERT(Sprite::safeCast(sprite), "SpriteManager::unregisterSprite: removing no sprite");
 
 #ifndef __ENABLE_PROFILER
-	NM_ASSERT(!isDeleted(VirtualList::find(this->bgmapSprites, sprite)), "SpriteManager::unregisterSprite: sprite not found");
+		NM_ASSERT(!isDeleted(VirtualList::find(this->bgmapSprites, sprite)), "SpriteManager::unregisterSprite: sprite not found");
 #endif
 
-	this->sortingSpriteNode = NULL;
+		this->sortingSpriteNode = NULL;
 
-	VirtualList::removeData(this->bgmapSprites, sprite);
+		VirtualList::removeData(this->bgmapSprites, sprite);		
+	}
 
-#ifdef __RELEASE
-	if(Sprite::hasSpecialEffects(sprite))
-#endif
+	if(NULL != this->specialSprites)
 	{
-		VirtualList::removeData(this->specialSprites, sprite);
+#ifdef __RELEASE
+		if(Sprite::hasSpecialEffects(sprite))
+#endif
+		{
+			VirtualList::removeData(this->specialSprites, sprite);
+		}
 	}
 }
 
@@ -859,48 +888,6 @@ void SpriteManager::printObjectSpriteContainersStatus(int32 x, int32 y)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void SpriteManager::cleanUp()
-{
-	VIPManager::removeEventListener
-	(
-		VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)SpriteManager::onVIPGAMESTART, 
-		kEventVIPManagerGAMESTART
-	);
-
-	VIPManager::removeEventListener
-	(
-		VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)SpriteManager::onVIPXPEND, 
-		kEventVIPManagerXPEND
-	);
-
-	if(!isDeleted(this->components))
-	{
-		VirtualList::deleteData(this->components);
-	}
-
-	if(!isDeleted(this->bgmapSprites))
-	{
-		delete this->bgmapSprites;
-	}
-
-	if(!isDeleted(this->objectSpriteContainers))
-	{
-		VirtualList::deleteData(this->objectSpriteContainers);
-		delete this->objectSpriteContainers;
-	}
-
-	if(!isDeleted(this->specialSprites))
-	{
-		delete this->specialSprites;
-	}
-
-	this->bgmapSprites = NULL;
-	this->objectSpriteContainers = NULL;
-	this->specialSprites = NULL;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
 bool SpriteManager::doRegisterSprite(Sprite sprite)
 {
 	for(VirtualNode node = this->bgmapSprites->head; NULL != node; node = node->next)
@@ -1083,29 +1070,92 @@ void SpriteManager::constructor()
 	// Always explicitly call the base's constructor 
 	Base::constructor();
 
+	this->bgmapSprites = new VirtualList();
+	this->objectSpriteContainers = new VirtualList();
+	this->specialSprites = new VirtualList();
 	this->totalPixelsDrawn = 0;
-	this->deferTextureUpdating = false;
-	this->bgmapSprites = NULL;
-	this->objectSpriteContainers = NULL;
-	this->specialSprites = NULL;
-	this->texturesMaximumRowsToWrite = -1;
 	this->maximumParamTableRowsToComputePerCall = -1;
 	this->deferParamTableEffects = false;
-	this->evenFrame = __TRANSPARENCY_EVEN;
 	this->animationsClock = NULL;
+	this->freeLayer = __TOTAL_LAYERS - 1;
+	this->deferTextureUpdating = false;
+	this->texturesMaximumRowsToWrite = -1;
 	this->sortingSpriteNode = NULL;
 	this->completeSort = true;
+	this->evenFrame = __TRANSPARENCY_EVEN;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void SpriteManager::destructor()
 {
-	SpriteManager::cleanUp(this);
+	SpriteManager::stopListeningForVIP(this);
+
+	if(!isDeleted(this->bgmapSprites))
+	{
+		delete this->bgmapSprites;
+	}
+
+	if(!isDeleted(this->objectSpriteContainers))
+	{
+		VirtualList::deleteData(this->objectSpriteContainers);
+		delete this->objectSpriteContainers;
+	}
+
+	if(!isDeleted(this->specialSprites))
+	{
+		delete this->specialSprites;
+	}
+
+	this->bgmapSprites = NULL;
+	this->objectSpriteContainers = NULL;
+	this->specialSprites = NULL;
 
 	// Allow a new construct
 	// Always explicitly call the base's destructor 
 	Base::destructor();
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void SpriteManager::startListeningForVIP()
+{
+	HardwareManager::suspendInterrupts();
+
+	VIPManager::addEventListener
+	(
+		VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)SpriteManager::onVIPGAMESTART, 
+		kEventVIPManagerGAMESTART
+	);
+
+	VIPManager::addEventListener
+	(
+		VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)SpriteManager::onVIPXPEND, 
+		kEventVIPManagerXPEND
+	);
+
+	HardwareManager::resumeInterrupts();
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void SpriteManager::stopListeningForVIP()
+{
+	HardwareManager::suspendInterrupts();
+
+	VIPManager::removeEventListener
+	(
+		VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)SpriteManager::onVIPGAMESTART, 
+		kEventVIPManagerGAMESTART
+	);
+
+	VIPManager::removeEventListener
+	(
+		VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)SpriteManager::onVIPXPEND, 
+		kEventVIPManagerXPEND
+	);
+
+	HardwareManager::resumeInterrupts();
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

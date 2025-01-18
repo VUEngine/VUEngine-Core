@@ -1072,7 +1072,9 @@ void Stage::configureCamera(bool reset)
 
 void Stage::configureGraphics()
 {
-	SpriteManager spriteManager = SpriteManager::getInstance();
+	SpriteManager spriteManager = SpriteManager::safeCast(ComponentManager::getManager(kSpriteComponent));
+
+	NM_ASSERT(!isDeleted(spriteManager), "Stage::configureGraphics: NULL spriteManager");
 
 	SpriteManager::configure
 	(
@@ -1098,10 +1100,10 @@ void Stage::configureGraphics()
 	(
 		BgmapTextureManager::getInstance(), ParamTableManager::configure(ParamTableManager::getInstance(), this->stageSpec->rendering.paramTableSegments)
 	);
-
+	
 	Printing::loadFonts(this->stageSpec->assets.fontSpecs);
 	CharSetManager::loadCharSets(CharSetManager::getInstance(), (const CharSetSpec**)this->stageSpec->assets.charSetSpecs);
-	
+
 	BgmapTextureManager::loadTextures
 	(
 		BgmapTextureManager::getInstance(), (const TextureSpec**)this->stageSpec->assets.textureSpecs, true

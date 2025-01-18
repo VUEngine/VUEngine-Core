@@ -14,17 +14,13 @@
 #include <Component.h>
 #include <Behavior.h>
 #include <Body.h>
-#include <BehaviorManager.h>
 #include <Collider.h>
-#include <ColliderManager.h>
 #include <Printing.h>
 #include <Entity.h>
 #include <Sprite.h>
-#include <SpriteManager.h>
 #include <VirtualList.h>
 #include <VUEngine.h>
 #include <Wireframe.h>
-#include <WireframeManager.h>
 
 #include "ComponentManager.h"
 
@@ -44,8 +40,25 @@ friend class VirtualList;
 #define __MAXIMUM_NUMBER_OF_COMPONENTS		10
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+// CLASS' DATA
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+static ComponentManager _activeComponentManagers[] = {NULL};
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' STATIC METHODS
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+static ComponentManager ComponentManager::getManager(uint32 componentType)
+{
+	ComponentManager componentManager = ComponentManager::doGetManager(componentType);
+
+	NM_ASSERT(!isDeleted(componentManager), "ComponentManager::getManager: NULL active manager");
+
+	return componentManager;
+}
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
@@ -56,7 +69,7 @@ static Component ComponentManager::createComponent(Entity owner, const Component
 		return NULL;
 	}
 
-	ComponentManager componentManager = ComponentManager::getManager(componentSpec->componentType);
+	ComponentManager componentManager = ComponentManager::doGetManager(componentSpec->componentType);
 
 	if(NULL == componentManager)
 	{
@@ -94,16 +107,16 @@ static void ComponentManager::destroyComponent(Entity owner, Component component
 		return;
 	}
 
-	ComponentManager componentManager = ComponentManager::getManager(componentType);
+	if(!isDeleted(owner))
+	{
+		Entity::removedComponent(owner, component);
+	}
+
+	ComponentManager componentManager = ComponentManager::doGetManager(componentType);
 
 	if(NULL == componentManager)
 	{
 		return;
-	}
-
-	if(!isDeleted(owner))
-	{
-		Entity::removedComponent(owner, component);
 	}
 
 	ComponentManager::deinstantiateComponent(componentManager, owner, component);
@@ -190,12 +203,12 @@ static void ComponentManager::removeComponents(Entity owner, uint32 componentTyp
 	{
 		for(int16 i = 0; i < kComponentTypes; i++)
 		{
-			removeComponents(ComponentManager::getManager(i));
+			removeComponents(ComponentManager::doGetManager(i));
 		}
 	}
 	else
 	{		
-		removeComponents(ComponentManager::getManager(componentType));
+		removeComponents(ComponentManager::doGetManager(componentType));
 	}
 }
 
@@ -231,7 +244,12 @@ static void ComponentManager::destroyComponents(Entity owner)
 
 	for(int16 i = 0; i < kComponentTypes; i++)
 	{
-		ComponentManager componentManager = ComponentManager::getManager(i);
+		ComponentManager componentManager = ComponentManager::doGetManager(i);
+
+		if(NULL == componentManager)
+		{
+			return;
+		}
 
 		for(VirtualNode node = componentManager->components->head, nextNode = NULL; NULL != node; node = nextNode)
 		{
@@ -256,7 +274,7 @@ static Component ComponentManager::getComponentAtIndex(Entity owner, uint32 comp
 		return NULL;
 	}
 
-	ComponentManager componentManager = ComponentManager::getManager(componentType);
+	ComponentManager componentManager = ComponentManager::doGetManager(componentType);
 
 	if(NULL == componentManager)
 	{
@@ -283,7 +301,7 @@ static Component ComponentManager::getComponentAtIndex(Entity owner, uint32 comp
 
 static VirtualList ComponentManager::getComponents(Entity owner, uint32 componentType)
 {
-	ComponentManager componentManager = ComponentManager::getManager(componentType);
+	ComponentManager componentManager = ComponentManager::doGetManager(componentType);
 
 	if(NULL == componentManager)
 	{
@@ -335,7 +353,7 @@ static bool ComponentManager::getComponentsOfClass(Entity owner, ClassPointer cl
 		return false;
 	}
 
-	ComponentManager componentManager = ComponentManager::getManager(componentType);
+	ComponentManager componentManager = ComponentManager::doGetManager(componentType);
 
 	if(NULL == componentManager)
 	{
@@ -399,12 +417,12 @@ static uint16 ComponentManager::getComponentsCount(Entity owner, uint32 componen
 	{
 		for(int16 i = 0; i < kComponentTypes; i++)
 		{
-			count += getCount(ComponentManager::getManager(i));
+			count += getCount(ComponentManager::doGetManager(i));
 		}
 	}
 	else
 	{
-		count = getCount(ComponentManager::getManager(componentType));
+		count = getCount(ComponentManager::doGetManager(componentType));
 	}
 
 	return count;
@@ -416,6 +434,11 @@ static void ComponentManager::propagateCommand(int32 command, Entity owner, uint
 {
 	void propagateCommand(ComponentManager componentManager, va_list args)
 	{
+		if(NULL == componentManager)
+		{
+			return;
+		}
+
 		for(VirtualNode node = componentManager->components->head; NULL != node; node = node->next)
 		{
 			Component component = Component::safeCast(node->data);
@@ -436,7 +459,7 @@ static void ComponentManager::propagateCommand(int32 command, Entity owner, uint
 			va_list args;
 			va_start(args, componentType);
 
-			propagateCommand(ComponentManager::getManager(i), args);
+			propagateCommand(ComponentManager::doGetManager(i), args);
 
 			va_end(args);
 		}
@@ -446,7 +469,7 @@ static void ComponentManager::propagateCommand(int32 command, Entity owner, uint
 		va_list args;
 		va_start(args, componentType);
 	
-		propagateCommand(ComponentManager::getManager(componentType), args);
+		propagateCommand(ComponentManager::doGetManager(componentType), args);
 
 		va_end(args);
 	}
@@ -463,7 +486,7 @@ static uint16 ComponentManager::getCount(Entity owner, uint32 componentType)
 
 	int16 count = 0;
 
-	ComponentManager componentManager = ComponentManager::getManager(componentType);
+	ComponentManager componentManager = ComponentManager::doGetManager(componentType);
 
 	if(NULL == componentManager)
 	{
@@ -498,7 +521,7 @@ static bool ComponentManager::calculateRightBox(Entity owner, RightBox* rightBox
 
 	for(int16 i = 0; i < kComponentTypes; i++)
 	{
-		ComponentManager componentManager = ComponentManager::getManager(i);
+		ComponentManager componentManager = ComponentManager::doGetManager(i);
 
 		if(NULL == componentManager || !ComponentManager::overrides(componentManager, isAnyVisible))
 		{
@@ -522,7 +545,7 @@ static bool ComponentManager::isAnyCompomentVisible(Entity owner)
 
 	for(int16 i = 0; i < kComponentTypes; i++)
 	{
-		ComponentManager componentManager = ComponentManager::getManager(i);
+		ComponentManager componentManager = ComponentManager::doGetManager(i);
 
 		if(NULL == componentManager || !ComponentManager::overrides(componentManager, isAnyVisible))
 		{
@@ -546,42 +569,65 @@ static bool ComponentManager::isAnyCompomentVisible(Entity owner)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static ComponentManager ComponentManager::getManager(uint32 componentType)
+static ComponentManager ComponentManager::doGetManager(uint32 componentType)
 {
 	if(kComponentTypes <= componentType)
 	{
+		NM_ASSERT(false, "ComponentManager::doGetManager: invalid type");
 		return NULL;
 	}
+	
+	return _activeComponentManagers[componentType];
+}
 
-	switch (componentType)
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+static void ComponentManager::useManager(ComponentManager componentManager)
+{
+	NM_ASSERT(!isDeleted(componentManager), "ComponentManager::useManager: NULL componentManager");
+
+	if(NULL == componentManager)
 	{
-		case kSpriteComponent:
-
-			return ComponentManager::safeCast(SpriteManager::getInstance());
-			break;
-
-		case kColliderComponent:
-
-			return ComponentManager::safeCast(VUEngine::getColliderManager(VUEngine::getInstance()));	
-			break;
-
-		case kPhysicsComponent:
-
-			return ComponentManager::safeCast(VUEngine::getBodyManager(VUEngine::getInstance()));	
-			break;
-
-		case kWireframeComponent:
-
-			return ComponentManager::safeCast(WireframeManager::getInstance());
-			break;
-
-		case kBehaviorComponent:
-
-			return ComponentManager::safeCast(BehaviorManager::getInstance());
-			break;
+		return;
 	}
 
-	return NULL;
+	uint32 componentType = ComponentManager::getType(componentManager);
+
+	if(kComponentTypes <= componentType)
+	{
+		return;
+	}
+
+	if(NULL != _activeComponentManagers[componentType])
+	{
+		ComponentManager::disable(_activeComponentManagers[componentType]);
+	}
+
+	_activeComponentManagers[componentType] = componentManager;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+static void ComponentManager::dontUseManager(ComponentManager componentManager)
+{
+	NM_ASSERT(!isDeleted(componentManager), "ComponentManager::dontUseManager: NULL componentManager");
+
+	if(NULL == componentManager)
+	{
+		return;
+	}
+
+	uint32 componentType = ComponentManager::getType(componentManager);
+
+	if(kComponentTypes <= componentType)
+	{
+		return;
+	}
+
+	if(componentManager == _activeComponentManagers[componentType])
+	{
+		_activeComponentManagers[componentType] = NULL;
+	}
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -722,15 +768,69 @@ void ComponentManager::constructor()
 
 void ComponentManager::destructor()
 {
-	if(!isDeleted(this->components))
+	HardwareManager::suspendInterrupts();
+
+	ComponentManager::destroyAllComponents(this);
+
+	if(NULL != this->components)
 	{
-		VirtualList::deleteData(this->components);
 		delete this->components;
 		this->components = NULL;
 	}
 
+	ComponentManager::dontUseManager(this);
+
+	HardwareManager::resumeInterrupts();
+
 	// Always explicitly call the base's destructor 
 	Base::destructor();
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void ComponentManager::destroyAllComponents()
+{
+	if(NULL == this->components)
+	{
+		return;
+	}
+
+	HardwareManager::suspendInterrupts();
+
+	VirtualList componentsHelper = new VirtualList();
+	VirtualList::copy(componentsHelper, this->components);
+
+	for(VirtualNode node = componentsHelper->head, nextNode = NULL; NULL != node; node = nextNode)
+	{
+		nextNode = node->next;
+
+		Component component = Component::safeCast(node->data);
+
+		ComponentManager::deinstantiateComponent(this, component->owner, component);
+	}
+
+	delete componentsHelper;
+
+	if(!isDeleted(this->components))
+	{
+		VirtualList::deleteData(this->components);
+	}
+
+	HardwareManager::resumeInterrupts();
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void ComponentManager::enable()
+{
+	ComponentManager::useManager(this);
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void ComponentManager::disable()
+{
+	ComponentManager::dontUseManager(this);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
