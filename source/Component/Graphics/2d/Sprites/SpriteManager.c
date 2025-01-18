@@ -105,6 +105,8 @@ void SpriteManager::enable()
 
 void SpriteManager::disable()
 {
+	SpriteManager::stopListeningForVIP(this);
+
 	Base::disable(this);
 
 	HardwareManager::suspendInterrupts();

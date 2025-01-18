@@ -60,9 +60,9 @@ void WireframeManager::enable()
 
 void WireframeManager::disable()
 {
-	Base::disable(this);
-
 	WireframeManager::stopListeningForVIP(this);
+
+	Base::disable(this);
 
 	WireframeManager::destroyAllComponents(this);
 
@@ -461,25 +461,25 @@ void WireframeManager::stopListeningForVIP()
 	VIPManager::removeEventListener
 	(
 		VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)WireframeManager::onVIPGAMESTART, 
-		kEventVIPManagerGAMESTARTDuringXPEND
+		kEventVIPManagerGAMESTART
 	);
 
 	VIPManager::removeEventListener
 	(
 		VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)WireframeManager::onVIPXPEND, 
-		kEventVIPManagerGAMESTARTDuringXPEND
+		kEventVIPManagerXPEND
 	);
 
 	VIPManager::removeEventListener
 	(
 		VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)WireframeManager::onVIPManagerGAMESTARTDuringXPEND, 
-		kEventVIPManagerXPENDDuringGAMESTART
+		kEventVIPManagerGAMESTARTDuringXPEND
 	);
 
 	VIPManager::removeEventListener
 	(
 		VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)WireframeManager::onVIPManagerXPENDDuringGAMESTART, 
-		kEventVIPManagerGAMESTARTDuringXPEND
+		kEventVIPManagerXPENDDuringGAMESTART
 	);
 
 	HardwareManager::resumeInterrupts();
