@@ -89,10 +89,14 @@ static Component ComponentManager::createComponent(Entity owner, const Component
 
 static void ComponentManager::destroyComponent(Entity owner, Component component)
 {
+	NM_ASSERT(!isDeleted(component), "ComponentManager::destroyComponent: NULL component");
+
 	if(isDeleted(component))
 	{
 		return;
 	}
+
+	NM_ASSERT(__GET_CAST(Component, component), "ComponentManager::destroyComponent: trying to destroy a non component");
 
 	if(owner != component->owner)
 	{
@@ -255,6 +259,8 @@ static void ComponentManager::destroyComponents(Entity owner)
 			nextNode = node->next;
 	
 			Component component = Component::safeCast(node->data);
+
+			NM_ASSERT(__GET_CAST(Component, component), "ComponentManager::destroyComponents: trying to destroy a non component");
 
 			if(!component->deleteMe && owner == component->owner)
 			{
@@ -804,6 +810,8 @@ void ComponentManager::destroyAllComponents()
 		nextNode = node->next;
 
 		Component component = Component::safeCast(node->data);
+
+		NM_ASSERT(__GET_CAST(Component, component), "ComponentManager::destroyAllComponents: trying to destroy a non component");
 
 		ComponentManager::deinstantiateComponent(this, component->owner, component);
 	}
