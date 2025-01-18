@@ -12,11 +12,13 @@
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <CommunicationManager.h>
+#include <DirectDraw.h>
 #include <DebugConfig.h>
 #include <KeypadManager.h>
 #include <Printing.h>
 #include <RumbleManager.h>
 #include <SoundManager.h>
+#include <SRAMManager.h>
 #include <TimerManager.h>
 #include <Utilities.h>
 #include <VIPManager.h>
