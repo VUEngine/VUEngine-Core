@@ -205,8 +205,6 @@ secure BgmapTexture BgmapTextureManager::getTexture
 	if(NULL == bgmapTextureSpec->charSetSpec)
 	{
 		bgmapTexture = BgmapTextureManager::allocateTexture(this, bgmapTextureSpec, minimumSegment, mustLiveAtEvenSegment, scValue);
-
-		ASSERT(!isDeleted(bgmapTexture), "BgmapTextureManager::getTexture: (animated) texture no allocated");
 	}
 	else
 	{
@@ -227,8 +225,6 @@ secure BgmapTexture BgmapTextureManager::getTexture
 				bgmapTexture = 
 					BgmapTextureManager::allocateTexture(this, bgmapTextureSpec, minimumSegment, mustLiveAtEvenSegment, scValue);
 			}
-
-			ASSERT(bgmapTexture, "BgmapTextureManager::getTexture: (animated) texture no allocated");
 		}
 		else
 		{
@@ -246,8 +242,6 @@ secure BgmapTexture BgmapTextureManager::getTexture
 				bgmapTexture = 
 					BgmapTextureManager::allocateTexture(this, bgmapTextureSpec, minimumSegment, mustLiveAtEvenSegment, scValue);
 			}
-
-			ASSERT(!isDeleted(bgmapTexture), "BgmapTextureManager::getTexture: (shared) texture no allocated");
 		}
 	}
 
@@ -599,18 +593,6 @@ int32 BgmapTextureManager::doAllocate
 			}
 		}
 	}
-
-#ifdef __DEBUG
-	Printing::setDebugMode();
-	Printing::clear();
-	BgmapTextureManager::print(this, 1, 10);
-	Printing::text("Texture ", 1, 19, NULL);
-	Printing::text("    Address: ", 1, 21, NULL);
-	Printing::hex((WORD)textureSpec, 14, 21, 8, NULL);
-
-	// Throw an exception if there is no enough space to allocate the bgmap spec
-	Error::triggerException("BgmapTextureManager::doAllocate: bgmap segments depleted", NULL);		
-#endif
 
 	return -1;
 }
