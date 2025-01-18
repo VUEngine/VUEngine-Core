@@ -42,7 +42,7 @@ friend class VirtualList;
 // CLASS' DATA
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static ComponentManager _activeComponentManagers[] = {NULL};
+static ComponentManager _activeComponentManagers[kComponentTypes] = {NULL};
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' STATIC METHODS

@@ -110,14 +110,17 @@ void GameState::createManagers()
 	{
 		this->bodyManager = new BodyManager();
 	}
+
 	if(NULL == this->colliderManager)
 	{
 		this->colliderManager = new ColliderManager();
 	}
+	
 	if(NULL == this->spriteManager)
 	{
 		this->spriteManager = new SpriteManager();
 	}
+	
 	if(NULL == this->wireframeManager)
 	{
 		this->wireframeManager = new WireframeManager();
@@ -273,14 +276,7 @@ void GameState::suspend(void* owner __attribute__ ((unused)))
 
 void GameState::reset(bool resetSounds)
 {
-#ifdef __ENABLE_PROFILER
-	Profiler::reset();
-#endif
-
 	HardwareManager::disableInterrupts();
-
-	GameState::createManagers(this);
-	GameState::enableManagers(this);
 
 	CommunicationManager::reset(CommunicationManager::getInstance());
 	DirectDraw::reset(DirectDraw::getInstance());
@@ -297,6 +293,13 @@ void GameState::reset(bool resetSounds)
 	StopwatchManager::reset(StopwatchManager::getInstance());
 	TimerManager::reset(TimerManager::getInstance());
 	VIPManager::reset(VIPManager::getInstance());
+
+#ifdef __ENABLE_PROFILER
+	Profiler::reset();
+#endif
+
+	GameState::createManagers(this);
+	GameState::enableManagers(this);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
