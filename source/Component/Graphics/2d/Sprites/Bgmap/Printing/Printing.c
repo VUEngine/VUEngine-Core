@@ -96,7 +96,7 @@ const PrintingSpriteSpec DefaultPrintingSpriteSpec =
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-// CLASS' PUBLIC METHODS
+// CLASS' STATIC METHODS
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -116,31 +116,6 @@ static void Printing::setDebugMode()
 	printing->printingBgmapSegment = 0;
 	Printing::loadDebugFont();
 	Printing::clear();
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-static void Printing::reset()
-{
-	Printing printing = Printing::getInstance();
-
-	if(!isDeleted(printing->printingSprites))
-	{
-		for(VirtualNode node = VirtualList::begin(printing->printingSprites); NULL != node; node = VirtualNode::getNext(node))
-		{
-			ComponentManager::destroyComponent(NULL, VirtualNode::getData(node));
-		}
-
-		VirtualList::clear(printing->printingSprites);
-	}
-
-	printing->activePrintingSprite = NULL;
-	printing->printingBgmapSegment = -1;
-
-	Printing::releaseFonts(printing);
-	Printing::resetCoordinates();
-	Printing::setOrientation(kPrintingOrientationHorizontal);
-	Printing::setDirection(kPrintingDirectionLTR);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -1050,6 +1025,27 @@ static void Printing::out(uint8 x, uint8 y, const char* string, const char* font
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+// CLASS' PUBLIC METHODS
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+secure void Printing::reset()
+{
+	VirtualList::clear(this->printingSprites);
+
+	this->activePrintingSprite = NULL;
+	this->printingBgmapSegment = -1;
+
+	Printing::releaseFonts(this);
+	Printing::resetCoordinates();
+	Printing::setOrientation(kPrintingOrientationHorizontal);
+	Printing::setDirection(kPrintingDirectionLTR);
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PRIVATE METHODS
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
@@ -1071,8 +1067,6 @@ void Printing::constructor()
 	this->lastUsedFontData = NULL;
 	this->activePrintingSprite = NULL;
 	this->printingBgmapSegment = -1;
-
-	Printing::reset();
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

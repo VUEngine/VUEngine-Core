@@ -76,7 +76,7 @@ void SpriteManager::enable()
 	HardwareManager::suspendInterrupts();
 
 	Texture::reset();
-	Printing::reset();
+	Printing::reset(Printing::getInstance());
 	CharSetManager::reset(CharSetManager::getInstance());
 	BgmapTextureManager::reset(BgmapTextureManager::getInstance());
 	ParamTableManager::reset(ParamTableManager::getInstance());

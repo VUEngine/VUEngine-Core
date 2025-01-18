@@ -215,9 +215,6 @@ singleton class Printing : ListenerObject
 	/// Set mode to debug to bypass loading fonts through CharSets
 	static void setDebugMode();
 
-	/// Empties internal virtual list of registered fonts
-	static void reset();
-
 	/// Force printing layer to show up.
 	static void show();
 
@@ -365,6 +362,9 @@ singleton class Printing : ListenerObject
 	/// @param string: String to compute size for
 	/// @param font: Name of font to use for size computation
 	static FontSize getTextSize(const char* string, const char* font);
+
+	/// Empties internal virtual list of registered fonts
+	void reset();
 }
 
 #endif

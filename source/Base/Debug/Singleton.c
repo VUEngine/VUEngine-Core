@@ -158,6 +158,12 @@ const ClassPointer ParamTableManagerAuthorizedClasses[] =
 	NULL
 };
 
+const ClassPointer PrintingAuthorizedClasses[] =
+{
+	typeofclass(SpriteManager),
+	NULL
+};
+
 const ClassPointer RumbleManagerAuthorizedClasses[] =
 {
 	typeofclass(HardwareManager),
@@ -242,6 +248,7 @@ static void Singleton::secure()
 	MessageDispatcher::secure(&MessageDispatcherAuthorizedClasses);
 	ObjectTextureManager::secure(&ObjectTextureManagerAuthorizedClasses);
 	ParamTableManager::secure(&ParamTableManagerAuthorizedClasses);
+	Printing::secure(&PrintingAuthorizedClasses);
 	RumbleManager::secure(&RumbleManagerAuthorizedClasses);
 	SoundManager::secure(&SoundManagerAuthorizedClasses);
 	SRAMManager::secure(&SRAMManagerAuthorizedClasses);
