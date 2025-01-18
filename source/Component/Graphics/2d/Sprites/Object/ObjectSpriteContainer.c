@@ -143,6 +143,15 @@ void ObjectSpriteContainer::destructor()
 
 	if(!isDeleted(this->objectSprites))
 	{
+		for(VirtualNode node = this->objectSprites->head; NULL != node; node = node->next)
+		{
+			NM_ASSERT(!isDeleted(node->data), "ObjectSpriteContainer::registerSprite: NULL node's data");
+
+			ObjectSprite otherSprite = ObjectSprite::safeCast(node->data);
+
+			otherSprite->objectSpriteContainer = NULL;
+		}
+
 		VirtualList objectSprites = this->objectSprites;
 		this->objectSprites = NULL;
 		delete objectSprites;

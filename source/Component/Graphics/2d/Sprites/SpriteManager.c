@@ -249,12 +249,13 @@ Sprite SpriteManager::createSprite(Entity owner, const SpriteSpec* spriteSpec)
 void SpriteManager::destroySprite(Sprite sprite)
 {
 	NM_ASSERT(!isDeleted(sprite), "SpriteManager::destroySprite: trying to destroy dead sprite");
-	NM_ASSERT(__GET_CAST(Sprite, sprite), "SpriteManager::destroySprite: trying to destroy a non sprite");
 
-	if(isDeleted(sprite))
+	if(isDeleted(sprite) || NULL == this->components->head)
 	{
 		return;
 	}
+
+	NM_ASSERT(__GET_CAST(Sprite, sprite), "SpriteManager::destroySprite: trying to destroy a non sprite");
 
 	VirtualList::removeData(this->components, sprite);
 
@@ -271,7 +272,7 @@ void SpriteManager::destroySprite(Sprite sprite)
 	{
 		SpriteManager::unregisterSprite(this, sprite);
 	}
-	else if(typeofclass(ObjectSpriteContainer) == managerClassPointer && NULL != this->objectSpriteContainers->head)
+	else if(typeofclass(ObjectSpriteContainer) == managerClassPointer && NULL != this->objectSpriteContainers)
 	{
 		ObjectSpriteContainer objectSpriteContainer = ObjectSpriteContainer::safeCast(Sprite::getManager(sprite));
 
@@ -1096,22 +1097,22 @@ void SpriteManager::destructor()
 	if(!isDeleted(this->bgmapSprites))
 	{
 		delete this->bgmapSprites;
+		this->bgmapSprites = NULL;
+	}
+
+	if(!isDeleted(this->specialSprites))
+	{
+		delete this->specialSprites;
+		this->specialSprites = NULL;
 	}
 
 	if(!isDeleted(this->objectSpriteContainers))
 	{
 		VirtualList::deleteData(this->objectSpriteContainers);
 		delete this->objectSpriteContainers;
+		this->objectSpriteContainers = NULL;
 	}
 
-	if(!isDeleted(this->specialSprites))
-	{
-		delete this->specialSprites;
-	}
-
-	this->bgmapSprites = NULL;
-	this->objectSpriteContainers = NULL;
-	this->specialSprites = NULL;
 
 	// Allow a new construct
 	// Always explicitly call the base's destructor 
