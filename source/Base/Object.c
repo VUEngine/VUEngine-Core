@@ -28,6 +28,13 @@ static Object Object::getCast(void* object, ClassPointer targetClassGetClassMeth
 {
 	__CHECK_STACK_STATUS
 
+	if(NULL == object)
+	{
+		return NULL;
+	}
+
+	NM_ASSERT(!isDeleted(object), "Object::getCast: call with deleted object");
+
 	HardwareManager::suspendInterrupts();
 
 	static int32 lp = -1;
