@@ -15,10 +15,12 @@
 #include <DebugConfig.h>
 #include <KeypadManager.h>
 #include <Printing.h>
+#include <RumbleManager.h>
 #include <SoundManager.h>
 #include <TimerManager.h>
 #include <Utilities.h>
 #include <VIPManager.h>
+#include <VSUManager.h>
 
 #include "HardwareManager.h"
 
@@ -89,18 +91,38 @@ uint32 _sramSample __attribute__((section(".dram_dirty"))) __attribute__((unused
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void HardwareManager::reset()
+static void HardwareManager::initialize()
 {
+	HardwareManager::disableInterrupts();
+
 	// Set ROM waiting to 1 cycle
 	_hardwareRegisters[__WCR] |= 0x0001;
 
 	// Check memory map before anything else
 	HardwareManager::checkMemoryMap();
 
-	//setup timer interrupts
+	// Setup interrupts
 	HardwareManager::setInterruptVectors();
 	HardwareManager::setInterruptLevel(0);
 	HardwareManager::setExceptionVectors();
+
+	// Reset the hardware managers
+	HardwareManager::reset();
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+static void HardwareManager::reset()
+{
+	// Reset hardware managers
+	CommunicationManager::reset(CommunicationManager::getInstance());
+	DirectDraw::reset(DirectDraw::getInstance());
+	KeypadManager::reset(KeypadManager::getInstance());
+	RumbleManager::reset(RumbleManager::getInstance());
+	VSUManager::reset(VSUManager::getInstance());
+	SRAMManager::reset(SRAMManager::getInstance());
+	TimerManager::reset(TimerManager::getInstance());
+	VIPManager::reset(VIPManager::getInstance());
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

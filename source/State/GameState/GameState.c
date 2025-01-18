@@ -16,14 +16,10 @@
 #include <Camera.h>
 #include <Clock.h>
 #include <ColliderManager.h>
-#include <CommunicationManager.h>
-#include <DirectDraw.h>
 #include <FrameRate.h>
 #include <MessageDispatcher.h>
 #include <Printing.h>
-#include <RumbleManager.h>
 #include <SpriteManager.h>
-#include <SRAMManager.h>
 #include <StopwatchManager.h>
 #include <Stage.h>
 #include <Telegram.h>
@@ -172,21 +168,15 @@ void GameState::reset(bool resetSounds)
 {
 	HardwareManager::disableInterrupts();
 
-	CommunicationManager::reset(CommunicationManager::getInstance());
-	DirectDraw::reset(DirectDraw::getInstance());
+	HardwareManager::reset();
+
 	FrameRate::reset(FrameRate::getInstance());
-	KeypadManager::reset(KeypadManager::getInstance());
-	RumbleManager::reset(RumbleManager::getInstance());
+	StopwatchManager::reset(StopwatchManager::getInstance());
 
 	if(resetSounds)
 	{
 		SoundManager::reset(SoundManager::getInstance());
 	}
-
-	SRAMManager::reset(SRAMManager::getInstance());
-	StopwatchManager::reset(StopwatchManager::getInstance());
-	TimerManager::reset(TimerManager::getInstance());
-	VIPManager::reset(VIPManager::getInstance());
 
 #ifdef __ENABLE_PROFILER
 	Profiler::reset();

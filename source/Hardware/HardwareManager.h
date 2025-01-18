@@ -60,7 +60,10 @@ static class HardwareManager : Object
 {
 	/// @publicsection
 
-	/// Reset hardware registries.
+	/// Initialize the basic hardware registries.
+	static void initialize();
+
+	/// Reset the hardware managers.
 	static void reset();
 
 	/// Halt the CPU.
