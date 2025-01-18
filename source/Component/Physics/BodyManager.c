@@ -364,7 +364,7 @@ void BodyManager::constructor()
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void BodyManager::destructor()
-{	
+{
 	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
