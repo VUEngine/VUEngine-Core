@@ -81,12 +81,6 @@ const ClassPointer AnimationCoordinatorFactoryAuthorizedClasses[] =
 	NULL
 };
 
-const ClassPointer BehaviorManagerAuthorizedClasses[] =
-{
-	typeofclass(VUEngine),
-	NULL
-};
-
 const ClassPointer BgmapTextureManagerAuthorizedClasses[] =
 {
 	typeofclass(Printing),
@@ -175,14 +169,6 @@ const ClassPointer SoundManagerAuthorizedClasses[] =
 	NULL
 };
 
-const ClassPointer SpriteManagerAuthorizedClasses[] =
-{
-	typeofclass(ComponentManager),
-	typeofclass(Stage),
-	typeofclass(VUEngine),
-	NULL
-};
-
 const ClassPointer SRAMManagerAuthorizedClasses[] =
 {
 	typeofclass(VUEngine),
@@ -228,13 +214,6 @@ const ClassPointer VUEngineAuthorizedClasses[] =
 	NULL
 };
 
-const ClassPointer WireframeManagerAuthorizedClasses[] =
-{
-	typeofclass(ComponentManager),
-	typeofclass(VUEngine),
-	NULL
-};
-
 #endif
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -247,7 +226,6 @@ static void Singleton::secure()
 {
 #ifndef __RELEASE
 	AnimationCoordinatorFactory::secure(&AnimationCoordinatorFactoryAuthorizedClasses);
-	BehaviorManager::secure(&BehaviorManagerAuthorizedClasses);
 	BgmapTextureManager::secure(&BgmapTextureManagerAuthorizedClasses);
 	Camera::secure(&CameraAuthorizedClasses);
 	CharSetManager::secure(&CharSetManagerAuthorizedClasses);
@@ -260,14 +238,12 @@ static void Singleton::secure()
 	ParamTableManager::secure(&ParamTableManagerAuthorizedClasses);
 	RumbleManager::secure(&RumbleManagerAuthorizedClasses);
 	SoundManager::secure(&SoundManagerAuthorizedClasses);
-	SpriteManager::secure(&SpriteManagerAuthorizedClasses);
 	SRAMManager::secure(&SRAMManagerAuthorizedClasses);
 	StopwatchManager::secure(&StopwatchManagerAuthorizedClasses);
 	TimerManager::secure(&TimerManagerAuthorizedClasses);
 	VIPManager::secure(&VIPManagerAuthorizedClasses);	
 	VSUManager::secure(&VSUManagerAuthorizedClasses);
 	VUEngine::secure(&VUEngineAuthorizedClasses);
-	WireframeManager::secure(&WireframeManagerAuthorizedClasses);
 #endif
 }
 
