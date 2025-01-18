@@ -671,45 +671,14 @@ void GameState::createManagers()
 {
 	for(int16 i = 0; i < kComponentTypes; i++)
 	{
-		AllocatorPointer allocator = NULL;
+		AllocatorPointer _componentManagerAllocators[kComponentTypes];
+		_componentManagerAllocators[kBehaviorComponent] = __TYPE(BehaviorManager);
+		_componentManagerAllocators[kPhysicsComponent] = __TYPE(BodyManager);
+		_componentManagerAllocators[kColliderComponent] = __TYPE(ColliderManager);
+		_componentManagerAllocators[kSpriteComponent] = __TYPE(SpriteManager);
+		_componentManagerAllocators[kWireframeComponent] = __TYPE(WireframeManager);
 
-		switch(i)
-		{
-			case kBehaviorComponent:
-			{
-				allocator = __TYPE(BehaviorManager);
-				break;
-			}
-
-			case kPhysicsComponent:
-			{
-				allocator = __TYPE(BodyManager);
-				break;
-			}
-
-			case kColliderComponent:
-			{
-				allocator = __TYPE(ColliderManager);
-				break;
-			}
-
-			case kSpriteComponent:
-			{
-				allocator = __TYPE(SpriteManager);
-				break;
-			}
-
-			case kWireframeComponent:
-			{
-				allocator = __TYPE(WireframeManager);
-				break;
-			}
-		}
-
-		if(NULL != allocator)
-		{
-			this->componentManagers[i] = ComponentManager::safeCast(allocator());
-		}
+		this->componentManagers[i] = ComponentManager::safeCast(_componentManagerAllocators[i]());
 	}
 }
 
@@ -723,7 +692,7 @@ void GameState::destroyManagers()
 		{
 			continue;
 		}
-		
+
 		delete this->componentManagers[i];
 		this->componentManagers[i] = NULL;
 	}
