@@ -100,7 +100,7 @@ void StageEditor::hide()
 {
 	ColliderManager::hideColliders
 	(
-		GameState::getColliderManager(GameState::safeCast(VUEngine::getPreviousState()))
+		ColliderManager::safeCast(GameState::getComponentManager(VUEngine::getPreviousState(), kColliderComponent))
 	);
 
 	Printing::clear();

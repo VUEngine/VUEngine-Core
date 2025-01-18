@@ -14,6 +14,7 @@
 // INCLUDES
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+#include <ComponentManager.h>
 #include <State.h>
 #include <KeypadManager.h>
 #include <Stage.h>
@@ -24,12 +25,7 @@
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 class Actor;
-class BehaviorManager;
-class BodyManager;
 class Clock;
-class ColliderManager;
-class SpriteManager;
-class WireframeManager;
 class Telegram;
 class VirtualList;
 
@@ -50,20 +46,8 @@ class GameState : State
 	/// A container for the game entites 
 	Stage stage;
 
-	/// Manager for behavioral components
-	BehaviorManager behaviorManager;
-
-	/// A world where physical bodies exist
-	BodyManager bodyManager;
-
-	/// A manager for collisions and colliders
-	ColliderManager colliderManager;
-	
-	/// A manager for sprites
-	SpriteManager spriteManager;
-	
-	/// A manager for wireframes
-	WireframeManager wireframeManager;
+	/// Array of component managers
+	ComponentManager componentManagers[kComponentTypes];
 	
 	/// A clock for logics
 	Clock logicsClock;
@@ -133,29 +117,14 @@ class GameState : State
 	/// @return UI Container
 	UIContainer getUIContainer();
 
+	/// Retrieve the manager for the provided component type.
+	/// @param componentType: Type of components of the desired manager
+	/// @return Component manager for the provided component type
+	ComponentManager getComponentManager(uint32 componentType);
+
 	/// Retrieve the stage instance.
 	/// @return Game state's stage
 	Stage getStage();
-
-	/// Retrieve the game state's behavior manager.
-	/// @return Game state's behavior manager
-	BehaviorManager getBehaviorManager();
-
-	/// Retrieve the game state's physical world.
-	/// @return Game state's physical world
-	BodyManager getBodyManager();
-
-	/// Retrieve the game state's collision manager.
-	/// @return Game state's collision manager
-	ColliderManager getColliderManager();
-
-	/// Retrieve the game state's sprite manager.
-	/// @return Game state's sprite manager
-	SpriteManager getSpriteManager();
-
-	/// Retrieve the game state's wireframe manager.
-	/// @return Game state's wireframe manager
-	WireframeManager getWireframeManager();
 
 	/// Retrieve the clock that serves to control the game's logic.
 	/// @return Game state's logics clock

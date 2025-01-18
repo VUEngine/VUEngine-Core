@@ -51,16 +51,15 @@ void GameState::constructor()
 	this->animationsClock = new Clock();
 	this->physicsClock = new Clock();
 
-	this->behaviorManager = NULL;
-	this->bodyManager = NULL;
-	this->colliderManager = NULL;
-	this->spriteManager = NULL;
-	this->wireframeManager = NULL;
-
 	this->stream = true;
 	this->transform = true;
 	this->updatePhysics = true;
 	this->processCollisions = true;
+
+	for(int16 i = 0; i < kComponentTypes; i++)
+	{
+		this->componentManagers[i] = NULL;
+	}
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -78,110 +77,6 @@ void GameState::destructor()
 
 	// Always explicitly call the base's destructor 
 	Base::destructor();
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void GameState::destroyContainers()
-{
-	if(!isDeleted(this->stage))
-	{
-		delete this->stage;
-		this->stage = NULL;
-	}
-
-	if(!isDeleted(this->uiContainer))
-	{
-		delete this->uiContainer;
-		this->uiContainer = NULL;
-	}
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void GameState::createManagers()
-{
-	if(NULL == this->behaviorManager)
-	{
-		this->behaviorManager = new BehaviorManager();
-	}
-
-	if(NULL == this->bodyManager)
-	{
-		this->bodyManager = new BodyManager();
-	}
-
-	if(NULL == this->colliderManager)
-	{
-		this->colliderManager = new ColliderManager();
-	}
-	
-	if(NULL == this->spriteManager)
-	{
-		this->spriteManager = new SpriteManager();
-	}
-	
-	if(NULL == this->wireframeManager)
-	{
-		this->wireframeManager = new WireframeManager();
-	}
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void GameState::destroyManagers()
-{
-	if(!isDeleted(this->behaviorManager))
-	{
-		delete this->behaviorManager;
-		this->behaviorManager = NULL;
-	}
-
-	if(!isDeleted(this->bodyManager))
-	{
-		delete this->bodyManager;
-		this->bodyManager = NULL;
-	}
-
-	if(!isDeleted(this->colliderManager))
-	{
-		delete this->colliderManager;
-		this->colliderManager = NULL;
-	}
-
-	if(!isDeleted(this->spriteManager))
-	{
-		delete this->spriteManager;
-		this->spriteManager = NULL;
-	}
-
-	if(!isDeleted(this->wireframeManager))
-	{
-		delete this->wireframeManager;
-		this->wireframeManager = NULL;
-	}
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void GameState::enableManagers()
-{
-	BehaviorManager::enable(this->behaviorManager);
-	BodyManager::enable(this->bodyManager);
-	ColliderManager::enable(this->colliderManager);
-	SpriteManager::enable(this->spriteManager);
-	WireframeManager::enable(this->wireframeManager);
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void GameState::disableManagers()
-{
-	BehaviorManager::disable(this->behaviorManager);
-	BodyManager::disable(this->bodyManager);
-	ColliderManager::disable(this->colliderManager);
-	SpriteManager::disable(this->spriteManager);
-	WireframeManager::disable(this->wireframeManager);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -235,7 +130,6 @@ void GameState::exit(void* owner __attribute__ ((unused)))
 	MessageDispatcher::discardDelayedMessagesWithClock(MessageDispatcher::getInstance(), this->messagingClock);
 
 	GameState::destroyContainers(this);
-	//GameState::disableManagers(this);
 	GameState::destroyManagers(this);
 
 	// Stop my clocks
@@ -255,9 +149,9 @@ void GameState::suspend(void* owner __attribute__ ((unused)))
 		GameState::disableManagers(this);
 
 		// Make sure collision colliders are not drawn while suspended
-		if(this->colliderManager)
+		if(!isDeleted(this->componentManagers[kColliderComponent]))
 		{
-			ColliderManager::hideColliders(this->colliderManager);
+			ColliderManager::hideColliders(this->componentManagers[kColliderComponent]);
 		}
 
 		if(!isDeleted(this->stage))
@@ -391,6 +285,20 @@ void GameState::configureStage(StageSpec* stageSpec, VirtualList positionedActor
 	GameState::changeFramerate(this, __TARGET_FPS >> 1, 100);
 }
 
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+ComponentManager GameState::getComponentManager(uint32 componentType)
+{
+	if(kComponentTypes <= componentType)
+	{
+		NM_ASSERT(false, "GameState::getComponentManager: invalid type");
+		return NULL;
+	}
+	
+	return this->componentManagers[componentType];	
+}
+
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 UIContainer GameState::getUIContainer()
@@ -403,41 +311,6 @@ UIContainer GameState::getUIContainer()
 Stage GameState::getStage()
 {
 	return this->stage;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-BehaviorManager GameState::getBehaviorManager()
-{
-	return this->behaviorManager;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-BodyManager GameState::getBodyManager()
-{
-	return this->bodyManager;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-ColliderManager GameState::getColliderManager()
-{
-	return this->colliderManager;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-SpriteManager GameState::getSpriteManager()
-{
-	return this->spriteManager;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-WireframeManager GameState::getWireframeManager()
-{
-	return this->wireframeManager;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -628,7 +501,7 @@ void GameState::transformUI()
 
 void GameState::simulatePhysics()
 {
-	if(!this->updatePhysics || isDeleted(this->bodyManager))
+	if(!this->updatePhysics || isDeleted(this->componentManagers[kPhysicsComponent]))
 	{
 		return;
 	}
@@ -638,14 +511,14 @@ void GameState::simulatePhysics()
 		return;
 	}
 
-	BodyManager::update(this->bodyManager);
+	BodyManager::update(this->componentManagers[kPhysicsComponent]);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void GameState::processCollisions()
 {
-	if(!this->processCollisions || isDeleted(this->colliderManager))
+	if(!this->processCollisions || isDeleted(this->componentManagers[kColliderComponent]))
 	{
 		return;
 	}
@@ -655,7 +528,7 @@ void GameState::processCollisions()
 		return;
 	}
 
-	ColliderManager::update(this->colliderManager);
+	ColliderManager::update(this->componentManagers[kColliderComponent]);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -774,6 +647,118 @@ bool GameState::isVersusMode()
 // CLASS' PRIVATE METHODS
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void GameState::destroyContainers()
+{
+	if(!isDeleted(this->stage))
+	{
+		delete this->stage;
+		this->stage = NULL;
+	}
+
+	if(!isDeleted(this->uiContainer))
+	{
+		delete this->uiContainer;
+		this->uiContainer = NULL;
+	}
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void GameState::createManagers()
+{
+	for(int16 i = 0; i < kComponentTypes; i++)
+	{
+		AllocatorPointer allocator = NULL;
+
+		switch(i)
+		{
+			case kBehaviorComponent:
+			{
+				allocator = __TYPE(BehaviorManager);
+				break;
+			}
+
+			case kPhysicsComponent:
+			{
+				allocator = __TYPE(BodyManager);
+				break;
+			}
+
+			case kColliderComponent:
+			{
+				allocator = __TYPE(ColliderManager);
+				break;
+			}
+
+			case kSpriteComponent:
+			{
+				allocator = __TYPE(SpriteManager);
+				break;
+			}
+
+			case kWireframeComponent:
+			{
+				allocator = __TYPE(WireframeManager);
+				break;
+			}
+		}
+
+		if(NULL != allocator)
+		{
+			this->componentManagers[i] = ComponentManager::safeCast(allocator());
+		}
+	}
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void GameState::destroyManagers()
+{
+	for(int16 i = 0; i < kComponentTypes; i++)
+	{
+		if(isDeleted(this->componentManagers[i]))
+		{
+			continue;
+		}
+		
+		delete this->componentManagers[i];
+		this->componentManagers[i] = NULL;
+	}
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void GameState::enableManagers()
+{
+	for(int16 i = 0; i < kComponentTypes; i++)
+	{
+		if(NULL == this->componentManagers[i])
+		{
+			return;
+		}
+
+		ComponentManager::enable(this->componentManagers[i]);
+	}
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void GameState::disableManagers()
+{
+	for(int16 i = 0; i < kComponentTypes; i++)
+	{
+		if(NULL == this->componentManagers[i])
+		{
+			return;
+		}
+
+		ComponentManager::disable(this->componentManagers[i]);
+	}
+}
+
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void GameState::createStage(StageSpec* stageSpec, VirtualList positionedActorsToIgnore)
@@ -845,9 +830,9 @@ void GameState::streamAll()
 	Stage::streamAll(this->stage);
 
 	// Force collision purging
-	if(!isDeleted(this->colliderManager))
+	if(!isDeleted(this->componentManagers[kColliderComponent]))
 	{
-		ColliderManager::purgeDestroyedColliders(this->colliderManager);
+		ColliderManager::purgeDestroyedColliders(this->componentManagers[kColliderComponent]);
 	}
 
 	HardwareManager::resumeInterrupts();

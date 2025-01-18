@@ -126,7 +126,11 @@ void Debug::show()
 
 void Debug::hide()
 {
-	ColliderManager::hideColliders(GameState::getColliderManager(VUEngine::getPreviousState()));
+	ColliderManager::hideColliders
+	(
+		Debug::getColliderManager(this)
+	);
+
 	Printing::clear();
 	SpriteManager::showAllSprites(SpriteManager::safeCast(ComponentManager::getManager(kSpriteComponent)), NULL, true);
 }
@@ -206,6 +210,11 @@ void Debug::destructor()
 	// Allow a new construct
 	// Always explicitly call the base's destructor 
 	Base::destructor();
+}
+
+ColliderManager Debug::getColliderManager()
+{
+	return ColliderManager::safeCast(GameState::getComponentManager(VUEngine::getPreviousState(), kColliderComponent));
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -345,7 +354,7 @@ void Debug::showPage(int32 increment)
 
 		Debug::setBlackBackground(this);
 
-		ColliderManager::hideColliders(GameState::getColliderManager(VUEngine::getPreviousState()));
+		ColliderManager::hideColliders(Debug::getColliderManager(this));
 
 		((void (*)(Debug, int32, int32, int32))this->currentPage->data)(this, increment, 1, 2);
 	}
@@ -1226,9 +1235,9 @@ void Debug::physicsPage(int32 increment __attribute__ ((unused)), int32 x __attr
 
 void Debug::physicStatusShowStatistics(int32 increment __attribute__ ((unused)), int32 x, int32 y)
 {
-	BodyManager::print(GameState::getBodyManager(VUEngine::getPreviousState()), x, y);
-	ColliderManager::print(GameState::getColliderManager(VUEngine::getPreviousState()), x, y + 6);
-	ColliderManager::hideColliders(GameState::getColliderManager(VUEngine::getPreviousState()));
+	BodyManager::print(BodyManager::safeCast(GameState::getComponentManager(VUEngine::getPreviousState(), kPhysicsComponent)), x, y);
+	ColliderManager::print(Debug::getColliderManager(this), x, y + 6);
+	ColliderManager::hideColliders(Debug::getColliderManager(this));
 
 	Debug::setBlackBackground(this);
 }
@@ -1241,7 +1250,7 @@ void Debug::physicStatusShowColliders(int32 increment __attribute__ ((unused)), 
 
 	SpriteManager::showAllSprites(SpriteManager::safeCast(ComponentManager::getManager(kSpriteComponent)), NULL, true);
 	Debug::dimmGame(this);
-	ColliderManager::showColliders(GameState::getColliderManager(VUEngine::getPreviousState()));
+	ColliderManager::showColliders(Debug::getColliderManager(this));
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

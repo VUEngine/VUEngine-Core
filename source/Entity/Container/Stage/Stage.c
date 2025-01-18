@@ -1164,8 +1164,10 @@ void Stage::configurePhysics()
 {
 	NM_ASSERT(!isDeleted(this->gameState), "Stage::configurePhysics: invalid game state");
 
-	BodyManager::setFrictionCoefficient(GameState::getBodyManager(this->gameState), this->stageSpec->physics.frictionCoefficient);
-	BodyManager::setGravity(GameState::getBodyManager(this->gameState), this->stageSpec->physics.gravity);
+	BodyManager bodyManager = BodyManager::safeCast(GameState::getComponentManager(this->gameState, kPhysicsComponent));
+
+	BodyManager::setFrictionCoefficient(bodyManager, this->stageSpec->physics.frictionCoefficient);
+	BodyManager::setGravity(bodyManager, this->stageSpec->physics.gravity);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
