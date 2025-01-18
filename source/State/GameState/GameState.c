@@ -16,9 +16,15 @@
 #include <Camera.h>
 #include <Clock.h>
 #include <ColliderManager.h>
+#include <CommunicationManager.h>
+#include <DirectDraw.h>
+#include <FrameRate.h>
 #include <MessageDispatcher.h>
 #include <Printing.h>
+#include <RumbleManager.h>
 #include <SpriteManager.h>
+#include <SRAMManager.h>
+#include <StopwatchManager.h>
 #include <Stage.h>
 #include <Telegram.h>
 #include <VUEngine.h>
@@ -263,6 +269,36 @@ void GameState::suspend(void* owner __attribute__ ((unused)))
 	}
 }
 
+//—————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void GameState::reset(bool resetSounds)
+{
+#ifdef __ENABLE_PROFILER
+	Profiler::reset();
+#endif
+
+	HardwareManager::disableInterrupts();
+
+	GameState::createManagers(this);
+	GameState::enableManagers(this);
+
+	CommunicationManager::reset(CommunicationManager::getInstance());
+	DirectDraw::reset(DirectDraw::getInstance());
+	FrameRate::reset(FrameRate::getInstance());
+	KeypadManager::reset(KeypadManager::getInstance());
+	RumbleManager::reset(RumbleManager::getInstance());
+
+	if(resetSounds)
+	{
+		SoundManager::reset(SoundManager::getInstance());
+	}
+
+	SRAMManager::reset(SRAMManager::getInstance());
+	StopwatchManager::reset(StopwatchManager::getInstance());
+	TimerManager::reset(TimerManager::getInstance());
+	VIPManager::reset(VIPManager::getInstance());
+}
+
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void GameState::resume(void* owner __attribute__ ((unused)))
@@ -275,10 +311,8 @@ void GameState::resume(void* owner __attribute__ ((unused)))
 	if(!VUEngine::isInToolStateTransition())
 #endif
 	{
-		GameState::enableManagers(this);
-
 		// Reset the engine state
-		VUEngine::reset(VUEngine::getInstance(), NULL == Stage::getSpec(this->stage)->assets.sounds);
+		GameState::reset(this, NULL == Stage::getSpec(this->stage)->assets.sounds);
 
 		// Resume the stage
 		Stage::resume(this->stage);
@@ -326,11 +360,8 @@ void GameState::configureStage(StageSpec* stageSpec, VirtualList positionedActor
 		stageSpec = (StageSpec*)&EmptyStageSpec;
 	}
 
-	GameState::createManagers(this);
-	GameState::enableManagers(this);
-
 	// Reset the engine state
-	VUEngine::reset(VUEngine::getInstance(), NULL == stageSpec->assets.sounds);
+	GameState::reset(this, NULL == stageSpec->assets.sounds);
 
 	HardwareManager::suspendInterrupts();
 

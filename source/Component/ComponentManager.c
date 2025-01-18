@@ -19,7 +19,6 @@
 #include <Entity.h>
 #include <Sprite.h>
 #include <VirtualList.h>
-#include <VUEngine.h>
 #include <Wireframe.h>
 
 #include "ComponentManager.h"

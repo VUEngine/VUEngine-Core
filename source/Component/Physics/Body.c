@@ -18,7 +18,6 @@
 #include <Entity.h>
 #include <VirtualList.h>
 #include <VirtualNode.h>
-#include <VUEngine.h>
 
 #include "Body.h"
 

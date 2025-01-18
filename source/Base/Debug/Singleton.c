@@ -123,13 +123,14 @@ const ClassPointer CommunicationManagerAuthorizedClasses[] =
 
 const ClassPointer DirectDrawAuthorizedClasses[] =
 {
+	typeofclass(GameState),
 	typeofclass(VUEngine),
-	typeofclass(WireframeManager),
 	NULL
 };
 
 const ClassPointer KeypadManagerAuthorizedClasses[] =
 {
+	typeofclass(GameState),
 	typeofclass(VUEngine),
 	NULL
 };
@@ -159,12 +160,14 @@ const ClassPointer ParamTableManagerAuthorizedClasses[] =
 
 const ClassPointer RumbleManagerAuthorizedClasses[] =
 {
+	typeofclass(GameState),
 	typeofclass(VUEngine),
 	NULL
 };
 
 const ClassPointer SoundManagerAuthorizedClasses[] =
 {
+	typeofclass(GameState),
 	typeofclass(TimerManager),
 	typeofclass(VUEngine),
 	NULL
@@ -172,12 +175,14 @@ const ClassPointer SoundManagerAuthorizedClasses[] =
 
 const ClassPointer SRAMManagerAuthorizedClasses[] =
 {
+	typeofclass(GameState),
 	typeofclass(VUEngine),
 	NULL
 };
 
 const ClassPointer StopwatchManagerAuthorizedClasses[] =
 {
+	typeofclass(GameState),
 	typeofclass(Stopwatch),
 	typeofclass(VUEngine),
 	NULL
@@ -188,12 +193,14 @@ const ClassPointer TimerManagerAuthorizedClasses[] =
 #ifdef __TOOLS
 	typeofclass(SoundTest),
 #endif
+	typeofclass(GameState),
 	typeofclass(VUEngine),
 	NULL
 };
 
 const ClassPointer VIPManagerAuthorizedClasses[] =
 {
+	typeofclass(GameState),
 	typeofclass(Stage),
 	typeofclass(VUEngine),
 	NULL
@@ -209,9 +216,6 @@ const ClassPointer VSUManagerAuthorizedClasses[] =
 
 const ClassPointer VUEngineAuthorizedClasses[] =
 {
-	typeofclass(Body),
-	typeofclass(ComponentManager),
-	typeofclass(GameState),
 	NULL
 };
 

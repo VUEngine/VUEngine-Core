@@ -198,10 +198,6 @@ singleton class VUEngine : ListenerObject
 	/// @return True if the telegram was processed
 	override bool handleMessage(Telegram telegram);
 
-	/// Reset the engine's sub components.
-	/// @param resetSounds: If false, any playing sounds will keep playing
-	void reset(bool resetSounds);
-
 	/// Start the game with the provided game state.
 	/// @param gameState: Game state the engine must enter when starting
 	/// @return Return code (0)
