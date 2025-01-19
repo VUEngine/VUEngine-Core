@@ -138,8 +138,6 @@ void GameState::suspend(void* owner __attribute__ ((unused)))
 {
 	Clock::pause(this->messagingClock, true);
 
-	HardwareManager::suspendInterrupts();
-
 #ifdef __TOOLS
 	if(!VUEngine::isInToolStateTransition())
 #endif
@@ -168,8 +166,6 @@ void GameState::suspend(void* owner __attribute__ ((unused)))
 		// Disable the managers
 		GameState::disableManagers(this);
 	}
-
-	HardwareManager::resumeInterrupts();
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -177,8 +173,6 @@ void GameState::suspend(void* owner __attribute__ ((unused)))
 void GameState::resume(void* owner __attribute__ ((unused)))
 {
 	NM_ASSERT(this->stage, "GameState::resume: null stage");
-
-	HardwareManager::suspendInterrupts();
 
 #ifdef __TOOLS
 	if(!VUEngine::isInToolStateTransition())
@@ -205,8 +199,6 @@ void GameState::resume(void* owner __attribute__ ((unused)))
 
 	// Unpause clock
 	Clock::pause(this->messagingClock, false);
-
-	HardwareManager::resumeInterrupts();
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -236,8 +228,6 @@ void GameState::configureStage(StageSpec* stageSpec, VirtualList positionedActor
 	// Reset the engine state
 	GameState::reset(this, NULL == stageSpec->assets.sounds);
 
-	HardwareManager::suspendInterrupts();
-
 	// Make sure no actor is set as focus for the camera
 	Camera::setFocusActor(Camera::getInstance(), NULL);
 
@@ -256,8 +246,8 @@ void GameState::configureStage(StageSpec* stageSpec, VirtualList positionedActor
 	// Transform everything definitively
 	GameState::transform(this);
 
-	HardwareManager::resumeInterrupts();
-
+	// Slow down the frame rate briefly to give the CPU a chance to
+	// setup everything without the VIP commint into its way
 	GameState::changeFramerate(this, __TARGET_FPS >> 1, 100);
 }
 
@@ -627,8 +617,6 @@ bool GameState::isVersusMode()
 
 void GameState::reset(bool resetSounds)
 {
-	HardwareManager::disableInterrupts();
-
 	HardwareManager::reset();
 
 	FrameRate::reset(FrameRate::getInstance());
@@ -783,8 +771,6 @@ void GameState::configureUI(StageSpec* stageSpec)
 
 void GameState::streamAll()
 {
-	HardwareManager::suspendInterrupts();
-
 	// Make sure that the focus actor is transformed before focusing the camera
 	GameState::transform(this);
 
@@ -805,8 +791,6 @@ void GameState::streamAll()
 	{
 		ColliderManager::purgeDestroyedColliders(this->componentManagers[kColliderComponent]);
 	}
-
-	HardwareManager::resumeInterrupts();
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

@@ -116,6 +116,8 @@ static void HardwareManager::initialize()
 
 static void HardwareManager::reset()
 {
+	HardwareManager::suspendInterrupts();
+
 	// Reset hardware managers
 	CommunicationManager::reset(CommunicationManager::getInstance());
 	DirectDraw::reset(DirectDraw::getInstance());
@@ -125,6 +127,8 @@ static void HardwareManager::reset()
 	SRAMManager::reset(SRAMManager::getInstance());
 	TimerManager::reset(TimerManager::getInstance());
 	VIPManager::reset(VIPManager::getInstance());
+
+	HardwareManager::resumeInterrupts();
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

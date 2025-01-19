@@ -1240,7 +1240,6 @@ bool VUEngine::changedState(ListenerObject eventFirer)
 
 	VIPManager::startDrawing(VIPManager::getInstance());
 	VIPManager::startDisplaying(VIPManager::getInstance());
-	HardwareManager::enableInterrupts();
 
 	// Fire event
 	VUEngine::fireEvent(this, kEventNextStateSet);
