@@ -78,7 +78,6 @@ static void VIPManager::interruptHandler()
 	// Clear interrupts
 	VIPManager::clearInterrupts(vipManager);
 
-#ifndef __DEBUG
 	if(kVIPNoMultiplexedInterrupts != vipManager->enabledMultiplexedInterrupts)
 	{
 		if(kVIPOnlyVIPMultiplexedInterrupts == vipManager->enabledMultiplexedInterrupts)
@@ -88,12 +87,9 @@ static void VIPManager::interruptHandler()
 
 		HardwareManager::enableMultiplexedInterrupts();
 	}
-#endif
 
 	// Handle the interrupt
 	VIPManager::processInterrupt(vipManager, vipManager->currrentInterrupt);
-
-#ifndef __DEBUG
 	if(kVIPNoMultiplexedInterrupts != vipManager->enabledMultiplexedInterrupts)
 	{
 		HardwareManager::disableMultiplexedInterrupts();
@@ -103,7 +99,6 @@ static void VIPManager::interruptHandler()
 			HardwareManager::setInterruptLevel(0);
 		}
 	}
-#endif
 
 	vipManager->currrentInterrupt = 0;
 }
@@ -438,7 +433,7 @@ secure void VIPManager::startDrawing()
 {
 	this->isDrawingAllowed = true;
 
-	VIPManager::enableInterrupts(this, __FRAMESTART | __XPEND);
+	VIPManager::enableInterrupts(this, __GAMESTART | __XPEND);
 
 	while(_vipRegisters[__XPSTTS] & __XPBSY);
 	_vipRegisters[__XPCTRL] |= __XPEN;
