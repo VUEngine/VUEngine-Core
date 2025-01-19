@@ -138,6 +138,8 @@ void GameState::suspend(void* owner __attribute__ ((unused)))
 {
 	Clock::pause(this->messagingClock, true);
 
+	HardwareManager::suspendInterrupts();
+
 #ifdef __TOOLS
 	if(!VUEngine::isInToolStateTransition())
 #endif
@@ -166,6 +168,8 @@ void GameState::suspend(void* owner __attribute__ ((unused)))
 		// Disable the managers
 		GameState::disableManagers(this);
 	}
+
+	HardwareManager::resumeInterrupts();
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
