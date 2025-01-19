@@ -206,14 +206,10 @@ void Stage::destructor()
 
 void Stage::suspend()
 {
+	Base::suspend(this);
+
 	// Save the camera position for resume reconfiguration
 	this->cameraTransformation = Camera::getTransformation(Camera::getInstance());
-
-	// Stream all pending actors to avoid having manually recover
-	// The stage actor registries
-	while(ActorFactory::createNextActor(this->actorFactory));
-
-	Base::suspend(this);
 
 	// Relinquish camera focus priority
 	if(!isDeleted(this->focusActor))

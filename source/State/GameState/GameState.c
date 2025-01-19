@@ -142,8 +142,11 @@ void GameState::suspend(void* owner __attribute__ ((unused)))
 	if(!VUEngine::isInToolStateTransition())
 #endif
 	{
-		GameState::disableManagers(this);
-
+		// Force all streaming right now of any pending entity
+		// to make sure that their components are fully created
+		// This must happen before the managers are disabled
+		GameState::streamAll(this);
+		
 		// Make sure collision colliders are not drawn while suspended
 		if(!isDeleted(this->componentManagers[kColliderComponent]))
 		{
@@ -159,6 +162,9 @@ void GameState::suspend(void* owner __attribute__ ((unused)))
 		{
 			UIContainer::suspend(this->uiContainer);
 		}
+
+		// Disable the managers
+		GameState::disableManagers(this);
 	}
 }
 
