@@ -162,30 +162,6 @@ void GameState::suspend(void* owner __attribute__ ((unused)))
 	}
 }
 
-//—————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void GameState::reset(bool resetSounds)
-{
-	HardwareManager::disableInterrupts();
-
-	HardwareManager::reset();
-
-	FrameRate::reset(FrameRate::getInstance());
-	StopwatchManager::reset(StopwatchManager::getInstance());
-
-	if(resetSounds)
-	{
-		SoundManager::reset(SoundManager::getInstance());
-	}
-
-#ifdef __ENABLE_PROFILER
-	Profiler::reset();
-#endif
-
-	GameState::createManagers(this);
-	GameState::enableManagers(this);
-}
-
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void GameState::resume(void* owner __attribute__ ((unused)))
@@ -637,6 +613,29 @@ bool GameState::isVersusMode()
 // CLASS' PRIVATE METHODS
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+//—————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void GameState::reset(bool resetSounds)
+{
+	HardwareManager::disableInterrupts();
+
+	HardwareManager::reset();
+
+	FrameRate::reset(FrameRate::getInstance());
+	StopwatchManager::reset(StopwatchManager::getInstance());
+
+	if(resetSounds)
+	{
+		SoundManager::reset(SoundManager::getInstance());
+	}
+
+#ifdef __ENABLE_PROFILER
+	Profiler::reset();
+#endif
+
+	GameState::createManagers(this);
+	GameState::enableManagers(this);
+}
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
