@@ -90,6 +90,7 @@ static void VIPManager::interruptHandler()
 
 	// Handle the interrupt
 	VIPManager::processInterrupt(vipManager, vipManager->currrentInterrupt);
+	
 	if(kVIPNoMultiplexedInterrupts != vipManager->enabledMultiplexedInterrupts)
 	{
 		HardwareManager::disableMultiplexedInterrupts();
