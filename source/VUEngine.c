@@ -1095,8 +1095,9 @@ bool VUEngine::cleaniningStatesStack(ListenerObject eventFirer)
 	this->processName = PROCESS_NAME_STATE_SWAP;
 #endif
 
-	VIPManager::stopDisplaying(VIPManager::getInstance());
+	HardwareManager::disableInterrupts();
 
+	VIPManager::stopDisplaying(VIPManager::getInstance());
 	VIPManager::stopDrawing(VIPManager::getInstance());
 
 	// Clean the game's stack
@@ -1134,6 +1135,8 @@ bool VUEngine::pushingState(ListenerObject eventFirer)
 	this->isInToolStateTransition = NULL != __GET_CAST(ToolState, StateMachine::getNextState(this->stateMachine));
 #endif
 
+	HardwareManager::disableInterrupts();
+
 	VIPManager::stopDisplaying(VIPManager::getInstance());
 	VIPManager::stopDrawing(VIPManager::getInstance());
 
@@ -1153,6 +1156,8 @@ bool VUEngine::swappingState(ListenerObject eventFirer)
 	this->processName = PROCESS_NAME_STATE_SWAP;
 #endif
 
+	HardwareManager::disableInterrupts();
+	
 	VIPManager::stopDisplaying(VIPManager::getInstance());
 	VIPManager::stopDrawing(VIPManager::getInstance());
 
@@ -1184,6 +1189,8 @@ bool VUEngine::poppingState(ListenerObject eventFirer)
 #ifdef __REGISTER_LAST_PROCESS_NAME
 	this->processName = PROCESS_NAME_STATE_SWAP;
 #endif
+
+	HardwareManager::disableInterrupts();
 
 	VIPManager::stopDisplaying(VIPManager::getInstance());
 	VIPManager::stopDrawing(VIPManager::getInstance());
@@ -1237,6 +1244,8 @@ bool VUEngine::changedState(ListenerObject eventFirer)
 
 	// Fire event
 	VUEngine::fireEvent(this, kEventNextStateSet);
+
+	HardwareManager::enableInterrupts();
 
 	return false;
 }
