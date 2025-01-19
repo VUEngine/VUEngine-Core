@@ -481,13 +481,13 @@ void Actor::suspend()
 
 void Actor::resume()
 {
+	Base::resume(this);
+
 	if(NULL != this->actorSpec)
 	{
 		Actor::addComponents(this, this->actorSpec->componentSpecs, kSpriteComponent);
 		Actor::addComponents(this, this->actorSpec->componentSpecs, kWireframeComponent);
 	}
-
-	Base::resume(this);
 
 	Actor::playAnimation(this, this->playingAnimationName);
 }
