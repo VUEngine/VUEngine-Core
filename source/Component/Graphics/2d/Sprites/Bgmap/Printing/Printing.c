@@ -1007,7 +1007,7 @@ static void Printing::out(uint8 x, uint8 y, const char* string, const char* font
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void Printing::removedComponent(Component component)
+void Printing::removedComponent(Component component __attribute__((unused)))
 {
 	this->activePrintingSprite = NULL;
 
