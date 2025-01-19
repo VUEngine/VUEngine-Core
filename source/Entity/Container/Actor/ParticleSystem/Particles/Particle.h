@@ -94,6 +94,10 @@ class Particle : Entity
 	/// @param particleSpec: Specification that determines how to configure the particle
 	void constructor(const ParticleSpec* particleSpec);
 
+	/// A component has been removed from this particle. 
+	/// @param component: Removed component
+	override void removedComponent(Component component);
+
 	/// Process a newly detected collision by one of the component colliders.
 	/// @param collisionInformation: Information struct about the collision to resolve 
 	override bool collisionStarts(const CollisionInformation* collisionInformation);

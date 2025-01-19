@@ -58,6 +58,16 @@ void Particle::destructor()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+void Particle::removedComponent(Component component)
+{
+	if(VisualComponent::safeCast(component) == this->visualComponent)
+	{
+		this->visualComponent = NULL;
+	}
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 uint32 Particle::getInGameType()
 {
 	return this->particleSpec->inGameType;
@@ -151,6 +161,8 @@ void Particle::resume(const VisualComponentSpec* visualComponentSpec, const Anim
 
 void Particle::suspend()
 {
+	this->visualComponent = NULL;
+
 	Particle::removeComponents(this, kSpriteComponent);
 	Particle::removeComponents(this, kWireframeComponent);
 }
