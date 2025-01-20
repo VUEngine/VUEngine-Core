@@ -52,6 +52,8 @@ void GameState::constructor()
 	this->updatePhysics = true;
 	this->processCollisions = true;
 
+	this->framerate = __TARGET_FPS;
+
 	for(int16 i = 0; i < kComponentTypes; i++)
 	{
 		this->componentManagers[i] = NULL;
@@ -83,7 +85,7 @@ bool GameState::handleMessage(Telegram telegram)
 	{
 		case kMessageRestoreFPS:
 
-			VUEngine::setGameFrameRate(__TARGET_FPS);
+			VUEngine::setGameFrameRate(this->framerate);
 			break;
 	}
 
@@ -199,6 +201,9 @@ void GameState::resume(void* owner __attribute__ ((unused)))
 
 	// Unpause clock
 	Clock::pause(this->messagingClock, false);
+
+	// Restore the frame rate
+	GameState::changeFramerate(this, this->framerate, -1);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -578,6 +583,10 @@ void GameState::changeFramerate(int16 targetFPS, int32 duration)
 	if(0 < duration)
 	{
 		GameState::sendMessageToSelf(this, kMessageRestoreFPS, duration + 1, 0);
+	}
+	else
+	{
+		this->framerate = targetFPS;
 	}
 }
 

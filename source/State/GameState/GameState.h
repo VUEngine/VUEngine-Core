@@ -73,6 +73,10 @@ class GameState : State
 	/// Flags to enable or disable the collision detection and processing
 	bool processCollisions;
 
+	/// Each game state needs to keep track of the frame rate that it runs at
+	/// in case it is paused and resumed
+	uint8 framerate;
+
 	/// @publicsection
 
 	/// Class' constructor
