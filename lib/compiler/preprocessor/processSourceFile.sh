@@ -222,11 +222,11 @@ then
 		fi
 	fi
 
-	sed -i 's/getInstance()/getInstance(NULL)/g' $OUTPUT_FILE
+	sed -i.b 's/getInstance()/getInstance(NULL)/g' $OUTPUT_FILE
 
 	echo "Compiling file: $fileName"
 else
-	sed -i 's/getInstance(/getInstance((ClassPointer)\&'"$className"'_getBaseClass/g' $OUTPUT_FILE
+	sed -i.b 's/getInstance(/getInstance((ClassPointer)\&'"$className"'_getBaseClass/g' $OUTPUT_FILE
 fi
 
 if [ ! -s $OUTPUT_FILE ];
