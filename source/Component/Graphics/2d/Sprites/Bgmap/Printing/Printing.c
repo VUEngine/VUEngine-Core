@@ -682,7 +682,7 @@ static int16 Printing::getWorldCoordinatesP()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static PixelVector Printing::getSpriteIndex()
+static PixelVector Printing::getActiveSpritePosition()
 {
 	Printing printing = Printing::getInstance();
 

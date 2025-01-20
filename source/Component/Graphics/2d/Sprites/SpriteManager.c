@@ -807,7 +807,7 @@ ObjectSpriteContainer SpriteManager::getObjectSpriteContainerBySPT(int32 spt)
 
 void SpriteManager::print(int32 x, int32 y, bool resumed)
 {
-	Printing::setWorldCoordinates(0, 0, Printing::getSpriteIndex().z, 0);
+	Printing::setWorldCoordinates(0, 0, Printing::getActiveSpritePosition().z, 0);
 #ifndef __SHOW_SPRITES_PROFILING
 	SpriteManager::computeTotalPixelsDrawn(this);
 #endif

@@ -340,9 +340,9 @@ singleton class Printing : Entity
 	/// @return: WORLD's gp
 	static int16 getWorldCoordinatesP();
 
-	/// Retrieve sprite's position.
+	/// Retrieve the active sprite's position.
 	/// @return Sprite's position
-	static PixelVector getSpriteIndex();
+	static PixelVector getActiveSpritePosition();
 
 	/// Get font spec and starting position in character memory.
 	/// @param font: Name of font to get spec for
