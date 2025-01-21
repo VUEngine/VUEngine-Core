@@ -48,7 +48,8 @@ enum Events
 	kEventCharSetDeleted,
 	kEventFontRewritten,
 
-	kEventEffectFadeComplete,
+	kEventEffectFadeInComplete,
+	kEventEffectFadeOutComplete,
 	kEventEffectFadeStart,
 	kEventEffectFadeStop,
 
@@ -85,6 +86,8 @@ enum Events
 	kEventVUEngineNextSecondStarted,
 
 	// Do not remove me
+	kEventPluginsFirst = 1000,
+	kEventGameFirst = 10000,
 	kEventEngineLast
 };
 

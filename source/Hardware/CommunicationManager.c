@@ -176,7 +176,7 @@ secure void CommunicationManager::reset()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void CommunicationManager::enableCommunications(EventListener eventLister, ListenerObject scope)
+void CommunicationManager::enableCommunications(ListenerObject scope)
 {
 	if(this->connected || kCommunicationsStatusIdle != this->status)
 	{
@@ -185,9 +185,9 @@ void CommunicationManager::enableCommunications(EventListener eventLister, Liste
 
 	CommunicationManager::endCommunications(this);
 
-	if(eventLister && !isDeleted(scope))
+	if(!isDeleted(scope))
 	{
-		CommunicationManager::addEventListener(this, scope, eventLister, kEventCommunicationsConnected);
+		CommunicationManager::addEventListener(this, scope, kEventCommunicationsConnected);
 	}
 
 	// If handshake is taking place
@@ -247,8 +247,8 @@ bool CommunicationManager::cancelCommunications()
 	this->status = kCommunicationsStatusIdle;
 	this->broadcast = kCommunicationsBroadcastNone;
 
-	CommunicationManager::removeEventListeners(this, NULL, kEventCommunicationsConnected);
-	CommunicationManager::removeEventListeners(this, NULL, kEventCommunicationsTransmissionCompleted);
+	CommunicationManager::removeEventListeners(this, kEventCommunicationsConnected);
+	CommunicationManager::removeEventListeners(this, kEventCommunicationsTransmissionCompleted);
 	CommunicationManager::discardAllMessages(this);
 
 	return true;
@@ -357,7 +357,7 @@ secure bool CommunicationManager::broadcastData(BYTE* data, int32 numberOfBytes)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-secure void CommunicationManager::broadcastDataAsync(BYTE* data, int32 numberOfBytes, EventListener eventLister, ListenerObject scope)
+secure void CommunicationManager::broadcastDataAsync(BYTE* data, int32 numberOfBytes, ListenerObject scope)
 {
 	if(CommunicationManager::isConnected(this))
 	{
@@ -381,7 +381,7 @@ secure void CommunicationManager::broadcastDataAsync(BYTE* data, int32 numberOfB
 	this->communicationMode = __COM_AS_MASTER;
 
 	this->broadcast = kCommunicationsBroadcastAsync;
-	CommunicationManager::sendDataAsync(this, data, numberOfBytes, eventLister, scope);
+	CommunicationManager::sendDataAsync(this, data, numberOfBytes, scope);
 
 	return;
 }
@@ -397,10 +397,10 @@ bool CommunicationManager::sendAndReceiveData(WORD message, BYTE* data, int32 nu
 
 bool CommunicationManager::sendAndReceiveDataAsync
 (
-	WORD message, BYTE* data, int32 numberOfBytes, EventListener eventLister, ListenerObject scope
+	WORD message, BYTE* data, int32 numberOfBytes, ListenerObject scope
 )
 {
-	return CommunicationManager::startBidirectionalDataTransmissionAsync(this, message, data, numberOfBytes, eventLister, scope);
+	return CommunicationManager::startBidirectionalDataTransmissionAsync(this, message, data, numberOfBytes, scope);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -803,17 +803,17 @@ bool CommunicationManager::startDataTransmission(BYTE* data, int32 numberOfBytes
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-bool CommunicationManager::sendDataAsync(BYTE* data, int32 numberOfBytes, EventListener eventLister, ListenerObject scope)
+bool CommunicationManager::sendDataAsync(BYTE* data, int32 numberOfBytes, ListenerObject scope)
 {
 	if(NULL == data || 0 >= numberOfBytes || !CommunicationManager::isFreeForTransmissions(this))
 	{
 		return false;
 	}
 
-	if(eventLister && !isDeleted(scope))
+	if(!isDeleted(scope))
 	{
-		CommunicationManager::removeEventListeners(this, NULL, kEventCommunicationsTransmissionCompleted);
-		CommunicationManager::addEventListener(this, scope, eventLister, kEventCommunicationsTransmissionCompleted);
+		CommunicationManager::removeEventListeners(this, kEventCommunicationsTransmissionCompleted);
+		CommunicationManager::addEventListener(this, scope, kEventCommunicationsTransmissionCompleted);
 	}
 
 	if(this->numberOfBytesPreviouslySent < numberOfBytes)
@@ -933,7 +933,7 @@ bool CommunicationManager::startBidirectionalDataTransmission(WORD message, BYTE
 
 bool CommunicationManager::startBidirectionalDataTransmissionAsync
 (
-	WORD message, BYTE* data, int32 numberOfBytes, EventListener eventLister, ListenerObject scope
+	WORD message, BYTE* data, int32 numberOfBytes, ListenerObject scope
 )
 {
 	if(NULL == data || 0 >= numberOfBytes || !CommunicationManager::isFreeForTransmissions(this))
@@ -941,10 +941,10 @@ bool CommunicationManager::startBidirectionalDataTransmissionAsync
 		return false;
 	}
 
-	if(NULL != eventLister && !isDeleted(scope))
+	if(!isDeleted(scope))
 	{
-		CommunicationManager::removeEventListeners(this, NULL, kEventCommunicationsTransmissionCompleted);
-		CommunicationManager::addEventListener(this, scope, eventLister, kEventCommunicationsTransmissionCompleted);
+		CommunicationManager::removeEventListeners(this, kEventCommunicationsTransmissionCompleted);
+		CommunicationManager::addEventListener(this, scope, kEventCommunicationsTransmissionCompleted);
 	}
 
 	if(this->numberOfBytesPreviouslySent < numberOfBytes)
@@ -1011,7 +1011,7 @@ void CommunicationManager::processInterrupt()
 			this->connected = true;
 			CommunicationManager::fireEvent(this, kEventCommunicationsConnected);
 			NM_ASSERT(!isDeleted(this), "CommunicationManager::processInterrupt: deleted this during kEventCommunicationsConnected");
-			CommunicationManager::removeEventListeners(this, NULL, kEventCommunicationsConnected);
+			CommunicationManager::removeEventListeners(this, kEventCommunicationsConnected);
 
 		default:
 
@@ -1048,7 +1048,7 @@ void CommunicationManager::processInterrupt()
 						"CommunicationManager::processInterrupt: deleted this during kEventCommunicationsTransmissionCompleted"
 					);
 
-					CommunicationManager::removeEventListeners(this, NULL, kEventCommunicationsTransmissionCompleted);
+					CommunicationManager::removeEventListeners(this, kEventCommunicationsTransmissionCompleted);
 					this->asyncReceivedByte = NULL;
 #ifdef __ENABLE_PROFILER
 					Profiler::lap(kProfilerLapTypeCommunicationsInterruptProcess, PROCESS_NAME_COMMUNICATIONS);
@@ -1083,7 +1083,7 @@ void CommunicationManager::processInterrupt()
 						"CommunicationManager::processInterrupt: deleted this during kEventCommunicationsTransmissionCompleted"
 					);
 
-					CommunicationManager::removeEventListeners(this, NULL, kEventCommunicationsTransmissionCompleted);
+					CommunicationManager::removeEventListeners(this, kEventCommunicationsTransmissionCompleted);
 					this->asyncSentByte = NULL;
 					this->broadcast = kCommunicationsBroadcastNone;
 #ifdef __ENABLE_PROFILER
@@ -1123,7 +1123,7 @@ void CommunicationManager::processInterrupt()
 						"CommunicationManager::processInterrupt: deleted this during kEventCommunicationsTransmissionCompleted"
 					);
 
-					CommunicationManager::removeEventListeners(this, NULL, kEventCommunicationsTransmissionCompleted);
+					CommunicationManager::removeEventListeners(this, kEventCommunicationsTransmissionCompleted);
 					this->asyncSentByte = NULL;
 					this->asyncReceivedByte = NULL;
 

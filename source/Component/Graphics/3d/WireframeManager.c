@@ -44,6 +44,79 @@ Rotation _previousCameraInvertedRotationBuffer __INITIALIZED_GLOBAL_DATA_SECTION
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+void WireframeManager::constructor()
+{
+	// Always explicitly call the base's constructor 
+	Base::constructor();
+
+	this->stopRendering = false;
+	this->stopDrawing = false;
+	this->evenFrame = __TRANSPARENCY_EVEN;
+	this->renderedWireframes = 0;
+	this->drawnWireframes = 00;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void WireframeManager::destructor()
+{
+	WireframeManager::stopListeningForVIP(this);
+
+	// Allow a new construct
+	// Always explicitly call the base's destructor 
+	Base::destructor();
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+bool WireframeManager::onEvent(ListenerObject eventFirer __attribute__((unused)), uint32 eventCode)
+{
+	switch(eventCode)
+	{
+		case kEventVIPManagerGAMESTART:
+		{
+			this->stopRendering = false;
+			this->stopDrawing = kVIPManagerFavorPerformance == VIPManager::getDrawingStrategy(eventFirer);
+
+			WireframeManager::render(this);
+
+			this->stopDrawing = false;
+
+			return true;
+		}
+
+		case kEventVIPManagerXPEND:
+		{
+			this->stopDrawing = false;
+			this->stopRendering = kVIPManagerFavorPerformance == VIPManager::getDrawingStrategy(eventFirer);
+
+			WireframeManager::draw(this);
+
+			return true;
+		}
+
+		case kEventVIPManagerGAMESTARTDuringXPEND:
+		{
+			this->stopDrawing = kVIPManagerFavorPerformance == VIPManager::getDrawingStrategy(eventFirer);
+
+			return true;
+		}
+
+		case kEventVIPManagerXPENDDuringGAMESTART:
+		{
+			this->stopRendering = kVIPManagerFavorPerformance == VIPManager::getDrawingStrategy(eventFirer);
+
+			WireframeManager::draw(this);
+
+			return true;
+		}
+	}
+
+	return Base::onEvent(this, eventFirer, eventCode);
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 uint32 WireframeManager::getType()
 {
 	return kWireframeComponent;
@@ -396,58 +469,14 @@ void WireframeManager::print(int32 x, int32 y)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void WireframeManager::constructor()
-{
-	// Always explicitly call the base's constructor 
-	Base::constructor();
-
-	this->stopRendering = false;
-	this->stopDrawing = false;
-	this->evenFrame = __TRANSPARENCY_EVEN;
-	this->renderedWireframes = 0;
-	this->drawnWireframes = 00;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void WireframeManager::destructor()
-{
-	WireframeManager::stopListeningForVIP(this);
-
-	// Allow a new construct
-	// Always explicitly call the base's destructor 
-	Base::destructor();
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
 void WireframeManager::startListeningForVIP()
 {
 	HardwareManager::suspendInterrupts();
 
-	VIPManager::addEventListener
-	(
-		VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)WireframeManager::onVIPGAMESTART, 
-		kEventVIPManagerGAMESTART
-	);
-
-	VIPManager::addEventListener
-	(
-		VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)WireframeManager::onVIPXPEND, 
-		kEventVIPManagerXPEND
-	);
-
-	VIPManager::addEventListener
-	(
-		VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)WireframeManager::onVIPManagerGAMESTARTDuringXPEND, 
-		kEventVIPManagerGAMESTARTDuringXPEND
-	);
-
-	VIPManager::addEventListener
-	(
-		VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)WireframeManager::onVIPManagerXPENDDuringGAMESTART, 
-		kEventVIPManagerXPENDDuringGAMESTART
-	);
+	VIPManager::addEventListener(VIPManager::getInstance(), ListenerObject::safeCast(this), kEventVIPManagerGAMESTART);
+	VIPManager::addEventListener(VIPManager::getInstance(), ListenerObject::safeCast(this), kEventVIPManagerXPEND);
+	VIPManager::addEventListener(VIPManager::getInstance(), ListenerObject::safeCast(this), kEventVIPManagerGAMESTARTDuringXPEND);
+	VIPManager::addEventListener(VIPManager::getInstance(), ListenerObject::safeCast(this), kEventVIPManagerXPENDDuringGAMESTART);
 
 	HardwareManager::resumeInterrupts();
 }
@@ -458,77 +487,12 @@ void WireframeManager::stopListeningForVIP()
 {
 	HardwareManager::suspendInterrupts();
 
-	VIPManager::removeEventListener
-	(
-		VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)WireframeManager::onVIPGAMESTART, 
-		kEventVIPManagerGAMESTART
-	);
-
-	VIPManager::removeEventListener
-	(
-		VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)WireframeManager::onVIPXPEND, 
-		kEventVIPManagerXPEND
-	);
-
-	VIPManager::removeEventListener
-	(
-		VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)WireframeManager::onVIPManagerGAMESTARTDuringXPEND, 
-		kEventVIPManagerGAMESTARTDuringXPEND
-	);
-
-	VIPManager::removeEventListener
-	(
-		VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)WireframeManager::onVIPManagerXPENDDuringGAMESTART, 
-		kEventVIPManagerXPENDDuringGAMESTART
-	);
+	VIPManager::removeEventListener(VIPManager::getInstance(), ListenerObject::safeCast(this), kEventVIPManagerGAMESTART);
+	VIPManager::removeEventListener(VIPManager::getInstance(), ListenerObject::safeCast(this), kEventVIPManagerXPEND);
+	VIPManager::removeEventListener(VIPManager::getInstance(), ListenerObject::safeCast(this), kEventVIPManagerGAMESTARTDuringXPEND);
+	VIPManager::removeEventListener(VIPManager::getInstance(), ListenerObject::safeCast(this), kEventVIPManagerXPENDDuringGAMESTART);
 
 	HardwareManager::resumeInterrupts();
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-bool WireframeManager::onVIPGAMESTART(ListenerObject eventFirer __attribute__ ((unused)))
-{
-	this->stopRendering = false;
-	this->stopDrawing = kVIPManagerFavorPerformance == VIPManager::getDrawingStrategy(eventFirer);
-
-	WireframeManager::render(this);
-
-	this->stopDrawing = false;
-
-	return true;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-bool WireframeManager::onVIPXPEND(ListenerObject eventFirer __attribute__ ((unused)))
-{
-	this->stopDrawing = false;
-	this->stopRendering = kVIPManagerFavorPerformance == VIPManager::getDrawingStrategy(eventFirer);
-
-	WireframeManager::draw(this);
-
-	return true;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-bool WireframeManager::onVIPManagerGAMESTARTDuringXPEND(ListenerObject eventFirer __attribute__ ((unused)))
-{
-	this->stopDrawing = kVIPManagerFavorPerformance == VIPManager::getDrawingStrategy(eventFirer);
-
-	return true;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-bool WireframeManager::onVIPManagerXPENDDuringGAMESTART(ListenerObject eventFirer __attribute__ ((unused)))
-{
-	this->stopRendering = kVIPManagerFavorPerformance == VIPManager::getDrawingStrategy(eventFirer);
-
-	WireframeManager::draw(this);
-
-	return true;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

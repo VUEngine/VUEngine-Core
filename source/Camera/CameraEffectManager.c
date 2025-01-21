@@ -65,6 +65,7 @@ bool CameraEffectManager::handleMessage(Telegram telegram)
 	switch(Telegram::getMessage(telegram))
 	{
 		case kFadeTo:
+			
 			CameraEffectManager::fxFadeAsync(this);
 			break;
 	}
@@ -138,11 +139,12 @@ void CameraEffectManager::startEffect(int32 effect, va_list args)
 
 		case kFadeTo:
 
-			CameraEffectManager::fxFadeAsyncStart(this,
+			CameraEffectManager::fxFadeAsyncStart
+			(
+				this,
 				va_arg(args, int32),
 				va_arg(args, Brightness*),
 				va_arg(args, int32),
-				va_arg(args, EventListener),
 				va_arg(args, ListenerObject)
 			);
 			break;
@@ -209,7 +211,7 @@ void CameraEffectManager::fxFadeStart(int32 effect, int32 delay)
 
 void CameraEffectManager::fxFadeAsyncStart
 (
-	int32 initialDelay, const Brightness* targetBrightness, int32 delayBetweenSteps, EventListener callback, ListenerObject callbackScope
+	int32 initialDelay, const Brightness* targetBrightness, int32 delayBetweenSteps, ListenerObject callbackScope
 )
 {
 	// Stop previous effect
@@ -232,17 +234,24 @@ void CameraEffectManager::fxFadeAsyncStart
 	// Set effect parameters
 	this->fxFadeDelay = (0 >= delayBetweenSteps) ? 1 : (uint8)(delayBetweenSteps);
 
-	// Set callback
-	if(callback != NULL)
+	if(callbackScope != NULL)
 	{
-		if(callbackScope != NULL)
-		{
-			this->fxFadeCallbackScope = callbackScope;
-			CameraEffectManager::addEventListener(this, callbackScope, callback, kEventEffectFadeComplete);
+		this->fxFadeCallbackScope = callbackScope;
+
+		if
+		(
+			0 == _vipRegisters[__BRTA]
+			&&
+			0 == _vipRegisters[__BRTB]
+			&&
+			0 == _vipRegisters[__BRTC]
+		)
+		{		
+			CameraEffectManager::addEventListener(this, callbackScope, kEventEffectFadeInComplete);
 		}
 		else
-		{
-			NM_ASSERT(false, "CameraEffectManager::fxFadeAsyncStart: null callbackScope");
+		{		
+			CameraEffectManager::addEventListener(this, callbackScope, kEventEffectFadeOutComplete);
 		}
 	}
 
@@ -260,7 +269,8 @@ void CameraEffectManager::fxFadeAsyncStart
 void CameraEffectManager::fxFadeAsyncStop()
 {
 	// Remove event listener
-	CameraEffectManager::removeEventListeners(this, NULL, kEventEffectFadeComplete);
+	CameraEffectManager::removeEventListeners(this, kEventEffectFadeInComplete);
+	CameraEffectManager::removeEventListeners(this, kEventEffectFadeOutComplete);
 
 	// Discard pending delayed messages to stop effect
 	CameraEffectManager::discardMessages(this, kFadeTo);
@@ -276,7 +286,7 @@ void CameraEffectManager::fxFadeAsyncStop()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void CameraEffectManager::fxFadeIn()
+void CameraEffectManager::fxFadeIn(uint32 call __attribute__((unused)))
 {
 	Brightness incrementalBrightness =
 	{
@@ -391,7 +401,9 @@ void CameraEffectManager::fxFadeAsync()
 		this->startingANewEffect = false;
 
 		// Fire effect ended event
-		CameraEffectManager::fireEvent(this, kEventEffectFadeComplete);
+		CameraEffectManager::fireEvent(this, kEventEffectFadeInComplete);
+		CameraEffectManager::fireEvent(this, kEventEffectFadeOutComplete);
+
 
 #ifdef __DIMM_FOR_PROFILING
 
@@ -409,7 +421,8 @@ void CameraEffectManager::fxFadeAsync()
 
 		if(!this->startingANewEffect)
 		{
-			CameraEffectManager::removeEventListenerScopes(this, NULL, kEventEffectFadeComplete);
+			CameraEffectManager::removeEventListeners(this, kEventEffectFadeInComplete);
+			CameraEffectManager::removeEventListeners(this, kEventEffectFadeOutComplete);
 		}
 	}
 	else

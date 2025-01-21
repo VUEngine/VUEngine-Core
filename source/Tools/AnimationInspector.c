@@ -692,7 +692,6 @@ void AnimationInspector::loadAnimationFunction()
 	this->animationFunction.numberOfFrames = animationFunction->numberOfFrames;
 	this->animationFunction.delay = animationFunction->delay;
 	this->animationFunction.loop = animationFunction->loop;
-	this->animationFunction.onAnimationComplete = (EventListener)&AnimationInspector_onAnimationComplete;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

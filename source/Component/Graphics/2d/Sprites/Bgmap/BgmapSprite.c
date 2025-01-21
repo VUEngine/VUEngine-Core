@@ -115,6 +115,30 @@ void BgmapSprite::destructor()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+bool BgmapSprite::onEvent(ListenerObject eventFirer __attribute__((unused)), uint32 eventCode)
+{
+	switch(eventCode)
+	{
+		case kEventTextureRewritten:
+		{
+			BgmapSprite::processEffects
+			(
+				this, 
+				SpriteManager::getMaximumParamTableRowsToComputePerCall
+				(
+					SpriteManager::safeCast(ComponentManager::getManager(kSpriteComponent))
+				)
+			);
+
+			return true;
+		}
+	}
+
+	return Base::onEvent(this, eventFirer, eventCode);
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 ClassPointer BgmapSprite::getManagerClass()
 {
 	return typeofclass(SpriteManager);
@@ -454,10 +478,7 @@ void BgmapSprite::configureTexture()
 
 	if(0 != this->param && !isDeleted(this->texture))
 	{
-		Texture::addEventListener
-		(
-			this->texture, ListenerObject::safeCast(this), (EventListener)BgmapSprite::onTextureRewritten, kEventTextureRewritten
-		);
+		Texture::addEventListener(this->texture, ListenerObject::safeCast(this), kEventTextureRewritten);
 	}
 }
 
@@ -550,22 +571,6 @@ void BgmapSprite::invalidateParamTable()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-bool BgmapSprite::onTextureRewritten(ListenerObject eventFirer __attribute__ ((unused)))
-{
-	BgmapSprite::processEffects
-	(
-		this, 
-		SpriteManager::getMaximumParamTableRowsToComputePerCall
-		(
-			SpriteManager::safeCast(ComponentManager::getManager(kSpriteComponent))
-		)
-	);
-
-	return true;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
 void BgmapSprite::applyAffineTransformations()
 {
 	ASSERT(this->texture, "BgmapSprite::applyAffineTransformations: null texture");
@@ -615,10 +620,7 @@ void BgmapSprite::releaseTexture()
 
 		if(0 != this->param)
 		{
-			Texture::removeEventListener
-			(
-				this->texture, ListenerObject::safeCast(this), (EventListener)BgmapSprite::onTextureRewritten, kEventTextureRewritten
-			);
+			Texture::removeEventListener(this->texture, ListenerObject::safeCast(this), kEventTextureRewritten);
 		}
 		
 		Texture::release(this->texture);

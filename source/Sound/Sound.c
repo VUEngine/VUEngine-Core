@@ -69,7 +69,7 @@ static void Sound::setMirror(Mirror mirror)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void Sound::constructor(const SoundSpec* soundSpec, EventListener soundReleaseListener, ListenerObject scope)
+void Sound::constructor(const SoundSpec* soundSpec, ListenerObject scope)
 {
 	// Always explicitly call the base's constructor 
 	Base::constructor();
@@ -102,9 +102,9 @@ void Sound::constructor(const SoundSpec* soundSpec, EventListener soundReleaseLi
 
 	Sound::configureTracks(this);
 
-	if(NULL != soundReleaseListener && !isDeleted(scope))
+	if(!isDeleted(scope))
 	{
-		Sound::addEventListener(this, scope, soundReleaseListener, kEventSoundReleased);
+		Sound::addEventListener(this, scope, kEventSoundReleased);
 	}
 }
 

@@ -1078,6 +1078,61 @@ static bool DirectDraw::isPointInsideFrustum(PixelVector point)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+// CLASS' PUBLIC METHODS
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+bool DirectDraw::onEvent(ListenerObject eventFirer __attribute__((unused)), uint32 eventCode)
+{
+	switch(eventCode)
+	{
+		case kEventVIPManagerXPEND:
+		{
+#ifdef __SHOW_DIRECT_DRAWING_PROFILING
+			static int counter = 0;
+
+			if(__TARGET_FPS <= counter++)
+			{
+				DirectDraw::print(1, 1);
+				counter = 0;
+			}
+#endif
+
+			if(this->drawnPixelsCounter <= this->maximumPixelsToDraw)
+			{
+				this->maximumPixelsToDraw += __DIRECT_DRAW_MAXIMUM_NUMBER_OF_PIXELS_RECOVERY;
+
+				if(__DIRECT_DRAW_MAXIMUM_NUMBER_OF_PIXELS < this->maximumPixelsToDraw)
+				{
+					this->maximumPixelsToDraw = __DIRECT_DRAW_MAXIMUM_NUMBER_OF_PIXELS;
+				}
+			}
+
+			this->drawnPixelsCounter = 0;
+
+			return true;
+		}
+
+		case kEventVIPManagerGAMESTARTDuringXPEND:
+		{
+			this->maximumPixelsToDraw = this->drawnPixelsCounter - __DIRECT_DRAW_MAXIMUM_NUMBER_OF_PIXELS_OVERHEAD;
+
+			if(__DIRECT_DRAW_MINIMUM_NUMBER_OF_PIXELS > this->maximumPixelsToDraw)
+			{
+				this->maximumPixelsToDraw = __DIRECT_DRAW_MINIMUM_NUMBER_OF_PIXELS;
+			}
+
+			return true;
+		}
+	}
+
+	return Base::onEvent(this, eventFirer, eventCode);
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 secure void DirectDraw::reset()
 {
 	this->maximumPixelsToDraw = __DIRECT_DRAW_MAXIMUM_NUMBER_OF_PIXELS;
@@ -1177,67 +1232,23 @@ void DirectDraw::constructor()
 
 	DirectDraw::reset(this);
 
-	VIPManager::addEventListener
-	(
-		VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)DirectDraw::onVIPManagerXPEND, 
-		kEventVIPManagerXPEND
-	);
+	VIPManager::addEventListener(VIPManager::getInstance(), ListenerObject::safeCast(this), kEventVIPManagerXPEND);
 
-	VIPManager::addEventListener
-	(
-		VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)DirectDraw::onVIPManagerGAMESTARTDuringXPEND, 
-		kEventVIPManagerGAMESTARTDuringXPEND
-	);
+	VIPManager::addEventListener(VIPManager::getInstance(), ListenerObject::safeCast(this), kEventVIPManagerGAMESTARTDuringXPEND);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void DirectDraw::destructor()
 {
-	VIPManager::removeEventListener
-	(
-		VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)DirectDraw::onVIPManagerXPEND, 
-		kEventVIPManagerXPEND
-	);
 
-	VIPManager::removeEventListener
-	(
-		VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)DirectDraw::onVIPManagerGAMESTARTDuringXPEND, 
-		kEventVIPManagerGAMESTARTDuringXPEND
-	);
+	VIPManager::removeEventListener(VIPManager::getInstance(), ListenerObject::safeCast(this), kEventVIPManagerXPEND);
+
+	VIPManager::removeEventListener(VIPManager::getInstance(), ListenerObject::safeCast(this), kEventVIPManagerGAMESTARTDuringXPEND);
 
 	// Allow a new construct
 	// Always explicitly call the base's destructor 
 	Base::destructor();
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-bool DirectDraw::onVIPManagerXPEND(ListenerObject eventFirer __attribute__ ((unused)))
-{
-#ifdef __SHOW_DIRECT_DRAWING_PROFILING
-	static int counter = 0;
-
-	if(__TARGET_FPS <= counter++)
-	{
-		DirectDraw::print(1, 1);
-		counter = 0;
-	}
-#endif
-
-	if(this->drawnPixelsCounter <= this->maximumPixelsToDraw)
-	{
-		this->maximumPixelsToDraw += __DIRECT_DRAW_MAXIMUM_NUMBER_OF_PIXELS_RECOVERY;
-
-		if(__DIRECT_DRAW_MAXIMUM_NUMBER_OF_PIXELS < this->maximumPixelsToDraw)
-		{
-			this->maximumPixelsToDraw = __DIRECT_DRAW_MAXIMUM_NUMBER_OF_PIXELS;
-		}
-	}
-
-	this->drawnPixelsCounter = 0;
-
-	return true;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

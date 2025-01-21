@@ -285,10 +285,7 @@ void MBgmapSprite::loadTexture(TextureSpec* textureSpec, bool isFirstTextureAndH
 
 	if(!isDeleted(bgmapTexture))
 	{
-		BgmapTexture::addEventListener
-		(
-			bgmapTexture, ListenerObject::safeCast(this), (EventListener)BgmapSprite::onTextureRewritten, kEventTextureRewritten
-		);
+		BgmapTexture::addEventListener(bgmapTexture, ListenerObject::safeCast(this), kEventTextureRewritten);
 
 		VirtualList::pushBack(this->textures, bgmapTexture);
 
@@ -324,10 +321,7 @@ void MBgmapSprite::releaseTextures()
 
 			if(!isDeleted(bgmapTexture))
 			{
-				BgmapTexture::removeEventListener
-				(
-					bgmapTexture, ListenerObject::safeCast(this), (EventListener)BgmapSprite::onTextureRewritten, kEventTextureRewritten
-				);
+				BgmapTexture::removeEventListener(bgmapTexture, ListenerObject::safeCast(this), kEventTextureRewritten);
 				
 				Texture::release(Texture::safeCast(bgmapTexture));
 			}

@@ -16,7 +16,7 @@
 // INCLUDES
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-#include <Object.h>
+#include <ListenerObject.h>
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' MACROS
@@ -105,7 +105,7 @@ typedef const RumbleEffectSpec RumbleEffectROMSpec;
 /// Inherits from Object
 ///
 /// Manages rumble effects.
-singleton class RumbleManager : Object
+singleton class RumbleManager : ListenerObject
 {
 	/// @protectedsection
 
@@ -149,6 +149,12 @@ singleton class RumbleManager : Object
 	/// @param overridePreviousEffect: If true, new effects are broadcasted regardless of if there is a
 	/// queued effect pending broadcasting
 	static void setOverridePreviousEffect(bool overridePreviousEffect);
+
+	/// Process an event that the instance is listen for.
+	/// @param eventFirer: ListenerObject that signals the event
+	/// @param eventCode: Code of the firing event
+	/// @return False if the listener has to be removed; true to keep it
+	override bool onEvent(ListenerObject eventFirer __attribute__((unused)), uint32 eventCode);
 
 	/// Reset the manager's state.
 	void reset();

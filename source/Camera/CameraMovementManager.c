@@ -48,6 +48,26 @@ void CameraMovementManager::destructor()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+bool CameraMovementManager::onEvent(ListenerObject eventFirer __attribute__((unused)), uint32 eventCode)
+{
+	switch(eventCode)
+	{
+		case kEventContainerDeleted:
+		{
+			if(ListenerObject::safeCast(this->focusActor) == eventFirer)
+			{
+				CameraMovementManager::setFocusActor(this, NULL);
+			}
+	
+			return false;
+		}
+	}
+
+	return Base::onEvent(this, eventFirer, eventCode);
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void CameraMovementManager::reset()
 {
 	this->focusActor = NULL;
@@ -59,17 +79,18 @@ void CameraMovementManager::reset()
 
 void CameraMovementManager::setFocusActor(Actor focusActor)
 {
+	if(!isDeleted(this->focusActor))
+	{
+		Actor::removeEventListener(this->focusActor, ListenerObject::safeCast(this), kEventContainerDeleted);
+	}
+
 	this->focusActor = focusActor;
 	this->focusActorPosition = NULL;
 	this->focusActorRotation = NULL;
 
 	if(!isDeleted(this->focusActor))
 	{
-		Actor::addEventListener
-		(
-			this->focusActor, ListenerObject::safeCast(this), (EventListener)CameraMovementManager::onFocusActorDeleted, 
-			kEventContainerDeleted
-		);
+		Actor::addEventListener(this->focusActor, ListenerObject::safeCast(this), kEventContainerDeleted);
 		
 		this->focusActorPosition = Actor::getPosition(this->focusActor);
 		this->focusActorRotation = Actor::getRotation(this->focusActor);
@@ -128,24 +149,6 @@ Vector3D CameraMovementManager::focus(Camera camera)
 	};
 
 	return cameraNewPosition;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-// CLASS' PRIVATE METHODS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-bool CameraMovementManager::onFocusActorDeleted(ListenerObject eventFirer)
-{
-	if(ListenerObject::safeCast(this->focusActor) == eventFirer)
-	{
-		CameraMovementManager::setFocusActor(this, NULL);
-	}
-
-	return false;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

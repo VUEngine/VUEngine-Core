@@ -404,6 +404,47 @@ void Actor::destructor()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+bool Actor::onEvent(ListenerObject eventFirer __attribute__((unused)), uint32 eventCode)
+{
+	switch(eventCode)
+	{
+		case kEventActorLoaded:
+		{
+			if(ListenerObject::safeCast(this) != eventFirer)
+			{
+				return false;
+			} 
+
+			if(isDeleted(this->actorFactory))
+			{
+				return false;
+			}
+
+			if(!ActorFactory::hasActorsPending(this->actorFactory))
+			{
+				Actor::destroyActorFactory(this);
+			}
+
+			return false;
+		}
+
+		case kEventAnimationCompleted:
+		{
+			if(!AnimationController::isAnimationLooped(eventFirer))
+			{
+				this->playingAnimationName = NULL;
+			}
+
+			return true;
+		}
+
+	}
+
+	return Base::onEvent(this, eventFirer, eventCode);
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void Actor::createComponents(ComponentSpec** componentSpecs)
 {
 	Base::createComponents(this, NULL != componentSpecs ? componentSpecs : this->actorSpec->componentSpecs);
@@ -607,17 +648,14 @@ void Actor::addChildActorsDeferred(const PositionedActor* childrenSpecs)
 	{
 		this->actorFactory = new ActorFactory();
 
-		Actor::addEventListener
-		(
-			this, ListenerObject::safeCast(this), (EventListener)Actor::onActorLoadedDeferred, kEventActorLoaded
-		);
+		Actor::addEventListener(this, ListenerObject::safeCast(this), kEventActorLoaded);
 	}
 
 	for(int32 i = 0; NULL != childrenSpecs[i].actorSpec; i++)
 	{
 		ActorFactory::spawnActor
 		(
-			this->actorFactory, &childrenSpecs[i], Container::safeCast(this), NULL, this->internalId + Actor::getChildrenCount(this)
+			this->actorFactory, &childrenSpecs[i], Container::safeCast(this), this->internalId + Actor::getChildrenCount(this)
 		);
 	}
 }
@@ -768,8 +806,7 @@ void Actor::playAnimation(const char* animationName)
 	ComponentManager::propagateCommand
 	(
 		cVisualComponentCommandPlay, Entity::safeCast(this), kSpriteComponent,
-		((ActorSpec*)this->actorSpec)->animationFunctions, animationName, ListenerObject::safeCast(this), 
-		(EventListener)Actor::onAnimationComplete
+		((ActorSpec*)this->actorSpec)->animationFunctions, animationName, ListenerObject::safeCast(this)
 	);
 }
 
@@ -937,37 +974,6 @@ void Actor::destroyActorFactory()
 		delete this->actorFactory;
 		this->actorFactory = NULL;
 	}
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-bool Actor::onActorLoadedDeferred(ListenerObject eventFirer __attribute__ ((unused)))
-{
-	if(ListenerObject::safeCast(this) != eventFirer)
-	{
-		return false;
-	} 
-
-	if(isDeleted(this->actorFactory))
-	{
-		return false;
-	}
-
-	if(!ActorFactory::hasActorsPending(this->actorFactory))
-	{
-		Actor::destroyActorFactory(this);
-	}
-
-	return false;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-bool Actor::onAnimationComplete(ListenerObject eventFirer __attribute__((unused)))
-{
-	this->playingAnimationName = NULL;
-
-	return true;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

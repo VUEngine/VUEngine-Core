@@ -93,6 +93,12 @@ class BgmapSprite : Sprite
 	/// @param bgmapSpriteSpec: Specification that determines how to configure the sprite
 	void constructor(Entity owner, const BgmapSpriteSpec* bgmapSpriteSpec);
 
+	/// Process an event that the instance is listen for.
+	/// @param eventFirer: ListenerObject that signals the event
+	/// @param eventCode: Code of the firing event
+	/// @return False if the listener has to be removed; true to keep it
+	override bool onEvent(ListenerObject eventFirer __attribute__((unused)), uint32 eventCode);
+
 	/// Retrieve the class of the manager for the sprite.
 	/// @return ClassPointer of the manager
 	override ClassPointer getManagerClass();

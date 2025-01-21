@@ -68,7 +68,7 @@ void AnimationController::destructor()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-bool AnimationController::play(const AnimationFunction* animationFunctions[], const char* animationName, ListenerObject scope, EventListener callback)
+bool AnimationController::play(const AnimationFunction* animationFunctions[], const char* animationName, ListenerObject scope)
 {
 	if(NULL == animationFunctions || NULL == animationName)
 	{
@@ -102,9 +102,9 @@ bool AnimationController::play(const AnimationFunction* animationFunctions[], co
 			if(0 == strncmp((const char *)animationName, (const char *)animationFunctions[i]->name, __MAX_ANIMATION_FUNCTION_NAME_LENGTH))
 			{
 				// Remove previous listeners
-				if(NULL != this->animationFunction && NULL != this->animationFunction->onAnimationComplete)
+				if(NULL != this->animationFunction)
 				{
-					AnimationController::removeEventListeners(this, this->animationFunction->onAnimationComplete, kEventAnimationCompleted);
+					AnimationController::removeEventListeners(this, kEventAnimationCompleted);
 				}
 
 				this->animationFunction = animationFunctions[i];
@@ -123,15 +123,7 @@ bool AnimationController::play(const AnimationFunction* animationFunctions[], co
 
 	if(!isDeleted(scope))
 	{
-		if(NULL != this->animationFunction->onAnimationComplete)
-		{
-			AnimationController::addEventListener(this, scope, this->animationFunction->onAnimationComplete, kEventAnimationCompleted);
-		}
-		
-		if(NULL != callback)
-		{
-			AnimationController::addEventListener(this, scope, callback, kEventAnimationCompleted);
-		}		
+		AnimationController::addEventListener(this, scope, kEventAnimationCompleted);
 	}
 
 	this->actualFrame = 0;
@@ -148,18 +140,18 @@ void AnimationController::playAnimationFunction(const AnimationFunction* animati
 	ASSERT(animationFunction, "AnimationController::playAnimationFunction: null animationFunction");
 
 	// Remove previous listeners
-	if(NULL != this->animationFunction && NULL != this->animationFunction->onAnimationComplete)
+	if(NULL != this->animationFunction)
 	{
-		AnimationController::removeEventListeners(this, this->animationFunction->onAnimationComplete, kEventAnimationCompleted);
+		AnimationController::removeEventListeners(this, kEventAnimationCompleted);
 	}
 
 	// Setup animation frame
 	this->animationFunction = animationFunction;
 
-	// Register event callback
-	if(!isDeleted(scope) && NULL != this->animationFunction && NULL != this->animationFunction->onAnimationComplete)
+	// Register event listener
+	if(!isDeleted(scope) && NULL != this->animationFunction)
 	{
-		AnimationController::addEventListener(this, scope, this->animationFunction->onAnimationComplete, kEventAnimationCompleted);
+		AnimationController::addEventListener(this, scope, kEventAnimationCompleted);
 	}
 
 	// Reset frame to play
@@ -274,7 +266,7 @@ bool AnimationController::updateAnimation()
 			}
 
 			// The last frame has been reached
-			if(NULL != this->animationFunction->onAnimationComplete && !isDeleted(this->events))
+			if(!isDeleted(this->events))
 			{
 				AnimationController::fireEvent(this, kEventAnimationCompleted);
 				NM_ASSERT(!isDeleted(this), "AnimationController::updateAnimation: deleted this during kEventAnimationCompleted");
@@ -471,6 +463,13 @@ int32 AnimationController::getNumberOfFrames()
 	}
 
 	return -1;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+bool AnimationController::isAnimationLooped()
+{
+	return NULL == this->animationFunction? false : this->animationFunction->loop;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

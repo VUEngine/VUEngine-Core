@@ -193,6 +193,12 @@ singleton class VUEngine : ListenerObject
 	/// Start profiling the game.
 	static void startProfiling();
 
+	/// Process an event that the instance is listen for.
+	/// @param eventFirer: ListenerObject that signals the event
+	/// @param eventCode: Code of the firing event
+	/// @return False if the listener has to be removed; true to keep it
+	override bool onEvent(ListenerObject eventFirer, uint32 eventCode);
+
 	/// Receive and process a Telegram.
 	/// @param telegram: Received telegram to process
 	/// @return True if the telegram was processed

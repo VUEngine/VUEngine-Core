@@ -105,6 +105,12 @@ singleton class DirectDraw : ListenerObject
 	/// @return True if a pixel was written to the frame buffers
 	static bool drawSolidRhumbus(PixelVector center, int16 radius, int32 color, uint8 bufferIndex, bool interlaced);
 
+	/// Process an event that the instance is listen for.
+	/// @param eventFirer: ListenerObject that signals the event
+	/// @param eventCode: Code of the firing event
+	/// @return False if the listener has to be removed; true to keep it
+	override bool onEvent(ListenerObject eventFirer __attribute__((unused)), uint32 eventCode);
+
 	/// Reset the manager's state
 	void reset();
 

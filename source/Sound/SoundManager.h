@@ -55,25 +55,23 @@ singleton class SoundManager : ListenerObject
 	/// @param soundSpec: Spec that defines the sound to play
 	/// @param position: Position for spatilly position sound
 	/// @param playbackType: How to play the sound
-	/// @param soundReleaseListener: Callback method for when the sound is released
 	/// @param scope: Object on which to perform the callback
 	static bool playSound
 	(
-		const SoundSpec* soundSpec, const Vector3D* position, uint32 playbackType, 
-		EventListener soundReleaseListener, ListenerObject scope
+		const SoundSpec* soundSpec, const Vector3D* position, uint32 playbackType, ListenerObject scope
 	);
 
 	/// Allocate sound defined by the provided spec.
 	/// @param soundSpec: Spec that defines the sound to play
 	/// @param soundReleaseListener: Callback method for when the sound is released
 	/// @param scope: Object on which to perform the callback
-	static Sound getSound(const SoundSpec* soundSpec, EventListener soundReleaseListener, ListenerObject scope);
+	static Sound getSound(const SoundSpec* soundSpec, ListenerObject scope);
 
 	/// Retrieve a previously allocated sound defined by the provided spec.
 	/// @param soundSpec: Spec that defines the sound to play
 	/// @param soundReleaseListener: Callback method for when the sound is released
 	/// @param scope: Object on which to perform the callback
-	static Sound findSound(const SoundSpec* soundSpec, EventListener soundReleaseListener, ListenerObject scope);
+	static Sound findSound(const SoundSpec* soundSpec, ListenerObject scope);
 
 	/// Play the allocated sounds.
 	/// @param elapsedMicroseconds: Elapsed time between call

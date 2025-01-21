@@ -61,9 +61,6 @@ typedef struct AnimationFunction
 	/// Whether to play it in loop or not
 	bool loop;
 
-	/// Callback on function completion
-	EventListener onAnimationComplete;
-
 	/// Animation's name
 	char name[__MAX_ANIMATION_FUNCTION_NAME_LENGTH];
 
@@ -132,9 +129,8 @@ abstract class VisualComponent : Component
 	/// @param animationFunctions: Array of animation functions to look for the animation function to replay
 	/// @param animationName: Name of the animation to play
 	/// @param scope: Object that will be notified of playback events
-	/// @param callback: EventListener callback for the scope object
 	/// @return True if the animation started playing; false otherwise
-	bool play(const AnimationFunction* animationFunctions[], const char* animationName, ListenerObject scope, EventListener callback);
+	bool play(const AnimationFunction* animationFunctions[], const char* animationName, ListenerObject scope);
 
 	/// Replay the last playing animation, if any, from the provided array of animation functions.
 	/// @param animationFunctions: Array of animation functions to look for the animation function to replay

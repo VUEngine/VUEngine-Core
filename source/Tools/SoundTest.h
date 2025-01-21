@@ -37,6 +37,12 @@ singleton class SoundTest : Tool
 
 	/// @publicsection
 
+	/// Process an event that the instance is listen for.
+	/// @param eventFirer: ListenerObject that signals the event
+	/// @param eventCode: Code of the firing event
+	/// @return False if the listener has to be removed; true to keep it
+	override bool onEvent(ListenerObject eventFirer __attribute__((unused)), uint32 eventCode);
+
 	/// Update the tool's state.
 	override void update();
 

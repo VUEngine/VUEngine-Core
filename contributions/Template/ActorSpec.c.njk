@@ -369,9 +369,6 @@ AnimationFunctionROMSpec {{ sanitizedSpecName }}Animation{{ loop.index }}Animati
 	// Whether to play it in loop or not
 	{{ animation.loop }},
 
-	// Callback on animation completion
-	{% if animation.callback %}(EventListener){{ animation.callback }}{% else %}NULL{% endif %},
-
 	// Animation's name
 	"{{ animationName }}",
 };

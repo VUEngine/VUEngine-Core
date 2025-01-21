@@ -26,7 +26,7 @@
 /// Inherits from Object
 ///
 /// Defines an interface for debugging tools.
-abstract class Tool : Object
+abstract class Tool : ListenerObject
 {
 	/// @protectedsection
 

@@ -354,6 +354,12 @@ singleton class Printing : Entity
 	/// @param font: Name of font to use for size computation
 	static FontSize getTextSize(const char* string, const char* font);
 
+	/// Process an event that the instance is listen for.
+	/// @param eventFirer: ListenerObject that signals the event
+	/// @param eventCode: Code of the firing event
+	/// @return False if the listener has to be removed; true to keep it
+	override bool onEvent(ListenerObject eventFirer __attribute__((unused)), uint32 eventCode);
+
 	/// A component has been removed from this entity. 
 	/// @param component: Removed component
 	override void removedComponent(Component component);

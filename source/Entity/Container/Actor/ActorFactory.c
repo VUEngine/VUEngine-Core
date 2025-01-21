@@ -41,7 +41,6 @@ typedef struct PositionedActorDescription
 	const PositionedActor* positionedActor;
 	Container parent;
 	Actor actor;
-	EventListener callback;
 	int16 internalId;
 	uint8 componentIndex;
 	bool componentsCreated;
@@ -158,7 +157,7 @@ void ActorFactory::destructor()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void ActorFactory::spawnActor(const PositionedActor* positionedActor, Container parent, EventListener callback, int16 internalId)
+void ActorFactory::spawnActor(const PositionedActor* positionedActor, Container parent, int16 internalId)
 {
 	if(NULL == positionedActor || NULL == parent)
 	{
@@ -170,7 +169,6 @@ void ActorFactory::spawnActor(const PositionedActor* positionedActor, Container 
 	positionedActorDescription->positionedActor = positionedActor;
 	positionedActorDescription->parent = parent;
 	positionedActorDescription->actor = NULL;
-	positionedActorDescription->callback = callback;
 	positionedActorDescription->internalId = internalId;
 	positionedActorDescription->transformed = false;
 	positionedActorDescription->graphicsSynchronized = false;
@@ -306,12 +304,11 @@ uint32 ActorFactory::instantiateActors()
 				Actor::createActorDeferred(positionedActorDescription->positionedActor, positionedActorDescription->internalId);
 			NM_ASSERT(positionedActorDescription->actor, "ActorFactory::spawnActors: actor not loaded");
 
-			if(!isDeleted(positionedActorDescription->actor) && NULL != positionedActorDescription->callback)
+			if(!isDeleted(positionedActorDescription->actor))
 			{
 				Actor::addEventListener
 				(
-					positionedActorDescription->actor, ListenerObject::safeCast(positionedActorDescription->parent), 
-					positionedActorDescription->callback, kEventActorLoaded
+					positionedActorDescription->actor, ListenerObject::safeCast(positionedActorDescription->parent), kEventActorLoaded
 				);
 			}
 		}
@@ -471,12 +468,9 @@ uint32 ActorFactory::cleanUp()
 
 	if(!isDeleted(positionedActorDescription->parent) && !isDeleted(positionedActorDescription->actor))
 	{
-		if(NULL != positionedActorDescription->callback)
-		{
-			Actor::fireEvent(positionedActorDescription->actor, kEventActorLoaded);
-			NM_ASSERT(!isDeleted(positionedActorDescription->actor), "ActorFactory::cleanUp: deleted actor during kEventActorLoaded");
-			Actor::removeEventListeners(positionedActorDescription->actor, NULL, kEventActorLoaded);
-		}
+		Actor::fireEvent(positionedActorDescription->actor, kEventActorLoaded);
+		NM_ASSERT(!isDeleted(positionedActorDescription->actor), "ActorFactory::cleanUp: deleted actor during kEventActorLoaded");
+		Actor::removeEventListeners(positionedActorDescription->actor, kEventActorLoaded);
 
 		VirtualList::removeData(this->spawnedActors, positionedActorDescription);
 		delete positionedActorDescription;

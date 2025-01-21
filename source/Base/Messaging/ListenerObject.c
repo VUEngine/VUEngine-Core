@@ -61,13 +61,12 @@ void ListenerObject::destructor()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void ListenerObject::addEventListener(ListenerObject listener, EventListener callback, uint16 eventCode)
+void ListenerObject::addEventListener(ListenerObject listener, uint16 eventCode)
 {
 	// Don't remove these asserts!
 	NM_ASSERT(!isDeleted(listener), "ListenerObject::addEventListener: invalid listener");
-	NM_ASSERT(NULL != callback, "ListenerObject::addEventListener: NULL callback");
 
-	if(NULL == listener || NULL == callback)
+	if(NULL == listener)
 	{
 		return;
 	}
@@ -82,7 +81,7 @@ void ListenerObject::addEventListener(ListenerObject listener, EventListener cal
 		{
 			Event* event = (Event*)node->data;
 
-			if(listener == event->listener && callback == event->callback && eventCode == event->code)
+			if(listener == event->listener && eventCode == event->code)
 			{
 				event->remove = false;
 				return;
@@ -92,7 +91,6 @@ void ListenerObject::addEventListener(ListenerObject listener, EventListener cal
 
 	Event* event = new Event;
 	event->listener = listener;
-	event->callback = callback;
 	event->code = eventCode;
 	event->remove = false;
 
@@ -101,7 +99,7 @@ void ListenerObject::addEventListener(ListenerObject listener, EventListener cal
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void ListenerObject::removeEventListener(ListenerObject listener, EventListener callback, uint16 eventCode)
+void ListenerObject::removeEventListener(ListenerObject listener, uint16 eventCode)
 {
 	if(NULL != this->events)
 	{
@@ -122,106 +120,58 @@ void ListenerObject::removeEventListener(ListenerObject listener, EventListener 
 					continue;
 				}
 
-			}
-
-			if(listener == event->listener && callback == event->callback && eventCode == event->code)
-			{
-				if(0 < this->eventFirings)
-				{
-					event->remove = true;
-				}
-				else
-				{
-					VirtualList::removeNode(this->events, node);
-					delete event;
-				}
-			}
-		}
-
-		if(NULL != this->events && NULL == this->events->head)
-		{
-			delete this->events;
-			this->events = NULL;
-		}
-
-		HardwareManager::resumeInterrupts();
-	}
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void ListenerObject::removeEventListeners(EventListener callback, uint16 eventCode)
-{
-	if(NULL != this->events)
-	{
-		HardwareManager::suspendInterrupts();
-
-		for(VirtualNode node = this->events->head, nextNode = NULL; NULL != node; node = nextNode)
-		{
-			nextNode = node->next;
-
-			Event* event = (Event*)node->data;
-
-			if(isDeleted(event))
-			{
-				if(0 == this->eventFirings)
-				{
-					VirtualList::removeNode(this->events, node);
-
-					continue;
-				}
-
-			}
-
-			if((NULL == callback || callback == event->callback) && eventCode == event->code)
-			{
-				if(0 < this->eventFirings)
-				{
-					event->remove = true;
-				}
-				else
-				{
-					VirtualList::removeNode(this->events, node);
-					delete event;
-				}
-			}
-		}
-
-		if(NULL != this->events && NULL == this->events->head)
-		{
-			delete this->events;
-			this->events = NULL;
-		}
-
-		HardwareManager::resumeInterrupts();
-	}
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void ListenerObject::removeEventListenerScopes(ListenerObject listener, uint16 eventCode)
-{
-	if(NULL != this->events)
-	{
-		HardwareManager::suspendInterrupts();
-
-		for(VirtualNode node = this->events->head, nextNode = NULL; NULL != node; node = nextNode)
-		{
-			nextNode = node->next;
-
-			Event* event = (Event*)node->data;
-
-			if(isDeleted(event))
-			{
-				if(0 == this->eventFirings)
-				{
-					VirtualList::removeNode(this->events, node);
-				}
-
-				continue;
 			}
 
 			if(listener == event->listener && eventCode == event->code)
+			{
+				if(0 < this->eventFirings)
+				{
+					event->remove = true;
+				}
+				else
+				{
+					VirtualList::removeNode(this->events, node);
+					delete event;
+				}
+			}
+		}
+
+		if(NULL != this->events && NULL == this->events->head)
+		{
+			delete this->events;
+			this->events = NULL;
+		}
+
+		HardwareManager::resumeInterrupts();
+	}
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void ListenerObject::removeEventListeners(uint16 eventCode)
+{
+	if(NULL != this->events)
+	{
+		HardwareManager::suspendInterrupts();
+
+		for(VirtualNode node = this->events->head, nextNode = NULL; NULL != node; node = nextNode)
+		{
+			nextNode = node->next;
+
+			Event* event = (Event*)node->data;
+
+			if(isDeleted(event))
+			{
+				if(0 == this->eventFirings)
+				{
+					VirtualList::removeNode(this->events, node);
+
+					continue;
+				}
+
+			}
+
+			if(eventCode == event->code)
 			{
 				if(0 < this->eventFirings)
 				{
@@ -317,7 +267,7 @@ void ListenerObject::fireEvent(uint16 eventCode)
 			}
 			else if(eventCode == event->code)
 			{
-				event->remove = !event->callback(event->listener, this);
+				event->remove = !ListenerObject::onEvent(event->listener, this, event->code);
 
 				// Safe check in case that I have been deleted during the previous event
 				if(isDeleted(this))
@@ -327,8 +277,6 @@ void ListenerObject::fireEvent(uint16 eventCode)
 					Printing::clear();
 					Printing::text("Class:    ", 1, 12, NULL);
 					Printing::text(__GET_CLASS_NAME(this), 13, 12, NULL);
-					Printing::text("Method:    ", 1, 13, NULL);
-					Printing::hex((int32)event->callback, 13, 13, 8, NULL);
 					Printing::text("Event code: ", 1, 14, NULL);
 					Printing::int32(event->code, 13, 14, NULL);
 					NM_ASSERT(!isDeleted(this), "ListenerObject::fireEvent: deleted during event listening");
@@ -385,6 +333,13 @@ void ListenerObject::discardMessages(uint32 message)
 {
 	MessageDispatcher::discardDelayedMessagesFromSender(ListenerObject::safeCast(this), message);
 	MessageDispatcher::discardDelayedMessagesForReceiver(ListenerObject::safeCast(this), message);
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+bool ListenerObject::onEvent(ListenerObject eventFirer __attribute__((unused)), uint32 eventCode __attribute__((unused)))
+{
+	return false;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

@@ -295,9 +295,8 @@ class Stage : Container
 	VirtualList getStageActorDescriptions();
 
 	/// Register an event listener for the event when a new actor is instantiated.
-	/// @param scope: Object that will be notified of event
-	/// @param callback: Callback to inform the parent when the new actor is loaded
-	void addActorLoadingListener(ListenerObject scope, EventListener callback);
+	/// @param listener: Object that will be notified of event
+	void addActorLoadingListener(ListenerObject listener);
 
 	/// Spawn a new child and configure it with the provided positioned actor struct.
 	/// @param positionedActor: Struct that defines which actor spec to use to configure the new child

@@ -80,9 +80,8 @@ singleton class CommunicationManager : ListenerObject
 	void reset();
 
 	/// Enable communications on the EXT port.
-	/// @param eventListener: Callback method for when a connection is stablished
 	/// @param scope: Object on which to perform the callback
-	void enableCommunications(EventListener eventListener, ListenerObject scope);
+	void enableCommunications(ListenerObject scope);
 
 	/// Disable communication on the EXT port.
 	void disableCommunications();
@@ -110,9 +109,8 @@ singleton class CommunicationManager : ListenerObject
 	/// Send data asynchronously over the EXT port if there is nothing detectable attached to it.
 	/// @param data: Data to broadcast
 	/// @param numberOfBytes: Number of bytes to broadcast
-	/// @param eventListener: Callback method for when a connection is stablished
 	/// @param scope: Object on which to perform the callback
-	void broadcastDataAsync(BYTE* data, int32 numberOfBytes, EventListener eventListener, ListenerObject scope);
+	void broadcastDataAsync(BYTE* data, int32 numberOfBytes, ListenerObject scope);
 
 	/// Send and receive data synchronously over the EXT port if there is something detectable attached to it.
 	/// @param message: Control message for the receiving partner
@@ -124,9 +122,8 @@ singleton class CommunicationManager : ListenerObject
 	/// @param message: Control message for the receiving partner
 	/// @param data: Data to broadcast
 	/// @param numberOfBytes: Number of bytes to broadcast
-	/// @param eventListener: Callback method for when a connection is stablished
 	/// @param scope: Object on which to perform the callback
-	bool sendAndReceiveDataAsync(WORD message, BYTE* data, int32 numberOfBytes, EventListener eventListener, ListenerObject scope);
+	bool sendAndReceiveDataAsync(WORD message, BYTE* data, int32 numberOfBytes, ListenerObject scope);
 
 	/// Retrieve the last sent message on the EXT port.
 	WORD getSentMessage();

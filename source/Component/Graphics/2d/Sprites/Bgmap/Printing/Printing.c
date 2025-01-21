@@ -157,7 +157,7 @@ static void Printing::loadFonts(FontSpec** fontSpecs)
 				{
 					fontData->charSet = CharSet::get(fontSpecs[j]->charSetSpec);
 
-					CharSet::addEventListener(fontData->charSet, ListenerObject::safeCast(printing), (EventListener)Printing::onFontCharChangedOffset, kEventCharSetChangedOffset);
+					CharSet::addEventListener(fontData->charSet, ListenerObject::safeCast(printing), kEventCharSetChangedOffset);
 				}
 			}
 		}
@@ -180,7 +180,7 @@ static void Printing::releaseFonts()
 {
 	Printing printing = Printing::getInstance();
 
-	Printing::removeEventListeners(printing, NULL, kEventFontRewritten);
+	Printing::removeEventListeners(printing, kEventFontRewritten);
 
 	VirtualNode node = VirtualList::begin(printing->fonts);
 
@@ -194,8 +194,7 @@ static void Printing::releaseFonts()
 			{
 				CharSet::removeEventListener
 				(
-					fontData->charSet, ListenerObject::safeCast(printing), (EventListener)Printing::onFontCharChangedOffset,
-					kEventCharSetChangedOffset
+					fontData->charSet, ListenerObject::safeCast(printing), kEventCharSetChangedOffset
 				);
 
 				while(!CharSet::release(fontData->charSet));
@@ -734,11 +733,7 @@ static FontData* Printing::getFontByName(const char* font)
 			{
 				result->charSet = CharSet::get(result->fontSpec->charSetSpec);
 
-				CharSet::addEventListener
-				(
-					result->charSet, ListenerObject::safeCast(printing), (EventListener)Printing::onFontCharChangedOffset, 
-					kEventCharSetChangedOffset
-				);
+				CharSet::addEventListener(result->charSet, ListenerObject::safeCast(printing), kEventCharSetChangedOffset);
 			}
 		}
 	}
@@ -1007,6 +1002,30 @@ static void Printing::out(uint8 x, uint8 y, const char* string, const char* font
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+bool Printing::onEvent(ListenerObject eventFirer __attribute__((unused)), uint32 eventCode)
+{
+	switch(eventCode)
+	{
+		case kEventFontRewritten:
+		{
+			CharSet charSet = CharSet::safeCast(eventFirer);
+
+			if(!isDeleted(charSet))
+			{
+				CharSet::write(charSet);
+				Printing::fireEvent(this, kEventFontRewritten);
+				NM_ASSERT(!isDeleted(this), "Printing::onEvent: deleted printing during kEventFontRewritten");
+			}
+
+			return true;
+		}
+	}
+
+	return Base::onEvent(this, eventFirer, eventCode);
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void Printing::removedComponent(Component component __attribute__((unused)))
 {
 	this->activePrintingSprite = NULL;
@@ -1066,24 +1085,6 @@ void Printing::destructor()
 	// Allow a new construct
 	// Always explicitly call the base's destructor 
 	Base::destructor();
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-bool Printing::onFontCharChangedOffset(ListenerObject eventFirer __attribute__((unused)))
-{
-	Printing printing = Printing::getInstance();
-
-	CharSet charSet = CharSet::safeCast(eventFirer);
-
-	if(!isDeleted(charSet))
-	{
-		CharSet::write(charSet);
-		Printing::fireEvent(printing, kEventFontRewritten);
-		NM_ASSERT(!isDeleted(printing), "Printing::onFontCharChangedOffset: deleted printing during kEventFontRewritten");
-	}
-
-	return true;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

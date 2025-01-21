@@ -60,6 +60,84 @@ int32 _writtenObjectTiles = 0;
 // CLASS' PUBLIC METHODS
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void SpriteManager::constructor()
+{
+	// Always explicitly call the base's constructor 
+	Base::constructor();
+
+	this->bgmapSprites = new VirtualList();
+	this->objectSpriteContainers = new VirtualList();
+	this->specialSprites = new VirtualList();
+	this->totalPixelsDrawn = 0;
+	this->maximumParamTableRowsToComputePerCall = -1;
+	this->deferParamTableEffects = false;
+	this->animationsClock = NULL;
+	this->freeLayer = __TOTAL_LAYERS - 1;
+	this->deferTextureUpdating = false;
+	this->texturesMaximumRowsToWrite = -1;
+	this->sortingSpriteNode = NULL;
+	this->completeSort = true;
+	this->evenFrame = __TRANSPARENCY_EVEN;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void SpriteManager::destructor()
+{
+	SpriteManager::stopListeningForVIP(this);
+
+	if(!isDeleted(this->bgmapSprites))
+	{
+		delete this->bgmapSprites;
+		this->bgmapSprites = NULL;
+	}
+
+	if(!isDeleted(this->specialSprites))
+	{
+		delete this->specialSprites;
+		this->specialSprites = NULL;
+	}
+
+	if(!isDeleted(this->objectSpriteContainers))
+	{
+		VirtualList::deleteData(this->objectSpriteContainers);
+		delete this->objectSpriteContainers;
+		this->objectSpriteContainers = NULL;
+	}
+
+
+	// Allow a new construct
+	// Always explicitly call the base's destructor 
+	Base::destructor();
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+bool SpriteManager::onEvent(ListenerObject eventFirer __attribute__((unused)), uint32 eventCode)
+{
+	switch(eventCode)
+	{
+		case kEventVIPManagerGAMESTART:
+		{
+			SpriteManager::render(this);
+
+			return true;
+		}
+
+		case kEventVIPManagerXPEND:
+		{
+			SpriteManager::writeDRAM(this);
+
+			return true;
+		}
+	}
+
+	return Base::onEvent(this, eventFirer, eventCode);
+}
+
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 uint32 SpriteManager::getType()
@@ -1068,74 +1146,13 @@ void SpriteManager::writeWORLDAttributesToDRAM()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void SpriteManager::constructor()
-{
-	// Always explicitly call the base's constructor 
-	Base::constructor();
-
-	this->bgmapSprites = new VirtualList();
-	this->objectSpriteContainers = new VirtualList();
-	this->specialSprites = new VirtualList();
-	this->totalPixelsDrawn = 0;
-	this->maximumParamTableRowsToComputePerCall = -1;
-	this->deferParamTableEffects = false;
-	this->animationsClock = NULL;
-	this->freeLayer = __TOTAL_LAYERS - 1;
-	this->deferTextureUpdating = false;
-	this->texturesMaximumRowsToWrite = -1;
-	this->sortingSpriteNode = NULL;
-	this->completeSort = true;
-	this->evenFrame = __TRANSPARENCY_EVEN;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void SpriteManager::destructor()
-{
-	SpriteManager::stopListeningForVIP(this);
-
-	if(!isDeleted(this->bgmapSprites))
-	{
-		delete this->bgmapSprites;
-		this->bgmapSprites = NULL;
-	}
-
-	if(!isDeleted(this->specialSprites))
-	{
-		delete this->specialSprites;
-		this->specialSprites = NULL;
-	}
-
-	if(!isDeleted(this->objectSpriteContainers))
-	{
-		VirtualList::deleteData(this->objectSpriteContainers);
-		delete this->objectSpriteContainers;
-		this->objectSpriteContainers = NULL;
-	}
-
-
-	// Allow a new construct
-	// Always explicitly call the base's destructor 
-	Base::destructor();
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
 void SpriteManager::startListeningForVIP()
 {
 	HardwareManager::suspendInterrupts();
 
-	VIPManager::addEventListener
-	(
-		VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)SpriteManager::onVIPGAMESTART, 
-		kEventVIPManagerGAMESTART
-	);
+	VIPManager::addEventListener(VIPManager::getInstance(), ListenerObject::safeCast(this), kEventVIPManagerGAMESTART);
 
-	VIPManager::addEventListener
-	(
-		VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)SpriteManager::onVIPXPEND, 
-		kEventVIPManagerXPEND
-	);
+	VIPManager::addEventListener(VIPManager::getInstance(), ListenerObject::safeCast(this), kEventVIPManagerXPEND);
 
 	HardwareManager::resumeInterrupts();
 }
@@ -1146,37 +1163,11 @@ void SpriteManager::stopListeningForVIP()
 {
 	HardwareManager::suspendInterrupts();
 
-	VIPManager::removeEventListener
-	(
-		VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)SpriteManager::onVIPGAMESTART, 
-		kEventVIPManagerGAMESTART
-	);
+	VIPManager::removeEventListener(VIPManager::getInstance(), ListenerObject::safeCast(this), kEventVIPManagerGAMESTART);
 
-	VIPManager::removeEventListener
-	(
-		VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)SpriteManager::onVIPXPEND, 
-		kEventVIPManagerXPEND
-	);
+	VIPManager::removeEventListener(VIPManager::getInstance(), ListenerObject::safeCast(this), kEventVIPManagerXPEND);
 
 	HardwareManager::resumeInterrupts();
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-bool SpriteManager::onVIPGAMESTART(ListenerObject eventFirer __attribute__ ((unused)))
-{
-	SpriteManager::render(this);
-
-	return true;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-bool SpriteManager::onVIPXPEND(ListenerObject eventFirer __attribute__ ((unused)))
-{
-	SpriteManager::writeDRAM(this);
-
-	return true;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

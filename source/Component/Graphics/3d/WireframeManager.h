@@ -62,6 +62,12 @@ class WireframeManager : ComponentManager
 	/// Class' constructor
 	void constructor();
 
+	/// Process an event that the instance is listen for.
+	/// @param eventFirer: ListenerObject that signals the event
+	/// @param eventCode: Code of the firing event
+	/// @return False if the listener has to be removed; true to keep it
+	override bool onEvent(ListenerObject eventFirer __attribute__((unused)), uint32 eventCode);
+
 	/// Retrieve the compoment type that the manager manages.
 	/// @return Component type
 	override uint32 getType();

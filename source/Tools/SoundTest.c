@@ -280,6 +280,37 @@ void SoundTest::destructor()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+bool SoundTest::onEvent(ListenerObject eventFirer __attribute__((unused)), uint32 eventCode)
+{
+	switch(eventCode)
+	{
+		case kEventSoundFinished:
+		{
+			if(!isDeleted(this->sound))
+			{
+				Sound::printPlaybackTime(this->sound, 24, 8);
+				Sound::printPlaybackProgress(this->sound, 1, 6);
+			}
+
+			return true;
+		}
+
+		case kEventSoundReleased:
+		{
+			if(Sound::safeCast(eventFirer) == this->sound)
+			{
+				this->sound = NULL;		
+			}
+
+			return false;
+		}
+	}
+
+	return Base::onEvent(this, eventFirer, eventCode);
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void SoundTest::releaseSound()
 {
 	if(!isDeleted(this->sound))
@@ -361,18 +392,13 @@ void SoundTest::loadSound()
 	TimerManager::setTargetTimePerInterruptUnits(kUS);
 	TimerManager::setTargetTimePerInterrupt(_userSounds[this->soundIndex]->targetTimerResolutionUS);
 
-	this->sound = 
-		SoundManager::getSound
-		(
-			(SoundSpec*)_userSounds[this->soundIndex], (EventListener)SoundTest::onSoundReleased, 
-			ListenerObject::safeCast(this)
-		);
+	this->sound = SoundManager::getSound((SoundSpec*)_userSounds[this->soundIndex], ListenerObject::safeCast(this));
 
 	NM_ASSERT(!isDeleted(this->sound), "SoundTest::loadSound: no sound");
 
 	if(!isDeleted(this->sound))
 	{
-		Sound::addEventListener(this->sound, ListenerObject::safeCast(this), (EventListener)SoundTest::onSoundFinish, kEventSoundFinished);
+		Sound::addEventListener(this->sound, ListenerObject::safeCast(this), kEventSoundFinished);
 		SoundTest::applyTimerSettings(this);
 
 #ifdef __SOUND_TEST
@@ -383,31 +409,6 @@ void SoundTest::loadSound()
 	KeypadManager::enable();
 
 	SoundTest::printGUI(this, false);
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-bool SoundTest::onSoundFinish(ListenerObject eventFirer __attribute__((unused)))
-{
-	if(!isDeleted(this->sound))
-	{
-		Sound::printPlaybackTime(this->sound, 24, 8);
-		Sound::printPlaybackProgress(this->sound, 1, 6);
-	}
-
-	return true;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-bool SoundTest::onSoundReleased(ListenerObject eventFirer __attribute__((unused)))
-{
-	if(Sound::safeCast(eventFirer) == this->sound)
-	{
-		this->sound = NULL;		
-	}
-
-	return false;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

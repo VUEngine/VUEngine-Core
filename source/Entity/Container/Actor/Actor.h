@@ -172,6 +172,12 @@ class Actor : Container
 	/// @param name: Name to assign to the new instance
 	void constructor(const ActorSpec* actorSpec, int16 internalId, const char* const name);
 
+	/// Process an event that the instance is listen for.
+	/// @param eventFirer: ListenerObject that signals the event
+	/// @param eventCode: Code of the firing event
+	/// @return False if the listener has to be removed; true to keep it
+	override bool onEvent(ListenerObject eventFirer __attribute__((unused)), uint32 eventCode);
+
 	/// Add the components that must attach to this actor.
 	/// Create the components that must attach to this container. 	
 	/// @param componentSpecs: Specifications to be used to configure the new components

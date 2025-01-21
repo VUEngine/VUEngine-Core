@@ -66,9 +66,8 @@ class AnimationController : ListenerObject
 	/// @param animationFunctions: Array of functions where to look for the animation to play
 	/// @param animationName: Name of the animation to play
 	/// @param scope: Object that will be notified of playback events
-	/// @param callback: EventListener callback for the scope object
 	/// @return True if the animation started playing; false otherwise
-	bool play(const AnimationFunction* animationFunctions[], const char* animationName, ListenerObject scope, EventListener callback);
+	bool play(const AnimationFunction* animationFunctions[], const char* animationName, ListenerObject scope);
 
 	/// Play the animation defined by the the provided animation function.
 	/// @param animationFunction: Animation function to play
@@ -152,6 +151,10 @@ class AnimationController : ListenerObject
 	/// Retrieve the number of frames in the currently playing if any
 	/// @return Number of frames in the currently playing if any
 	int32 getNumberOfFrames();
+
+	/// Check if the currently playing animation is looped or not.
+	/// @return True or false
+	bool isAnimationLooped();
 }
 
 #endif

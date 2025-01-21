@@ -89,17 +89,8 @@ void Collider::destructor()
 
 			if(!isDeleted(otherColliderRegistry->collider))
 			{
-				Collider::removeEventListener
-				(
-					otherColliderRegistry->collider, ListenerObject::safeCast(this), (EventListener)Collider::onOtherColliderChanged, 
-					kEventColliderDeleted
-				);
-
-				Collider::removeEventListener
-				(
-					otherColliderRegistry->collider, ListenerObject::safeCast(this), (EventListener)Collider::onOtherColliderChanged, 
-					kEventColliderChanged
-				);
+				Collider::removeEventListener(otherColliderRegistry->collider, ListenerObject::safeCast(this), kEventColliderDeleted);
+				Collider::removeEventListener(otherColliderRegistry->collider, ListenerObject::safeCast(this), kEventColliderChanged);
 			}
 
 			delete otherColliderRegistry;
@@ -111,6 +102,46 @@ void Collider::destructor()
 
 	// Always explicitly call the base's destructor 
 	Base::destructor();
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+bool Collider::onEvent(ListenerObject eventFirer __attribute__((unused)), uint32 eventCode)
+{
+	switch(eventCode)
+	{
+		case kEventColliderDeleted:
+		case kEventColliderChanged:
+		{
+			if(isDeleted(this->owner) || isDeleted(eventFirer))
+			{
+				return false;
+			}
+
+			Collider otherCollider = Collider::safeCast(eventFirer);
+
+			OtherColliderRegistry* otherColliderRegistry = Collider::findOtherColliderRegistry(this, otherCollider);
+			NM_ASSERT(!isDeleted(otherColliderRegistry), "Collider::onEvent: dead otherColliderRegistry");
+
+			if(NULL == otherColliderRegistry)
+			{
+				return false;
+			}
+
+			if(Collider::unregisterOtherCollider(this, otherCollider))
+			{
+				CollisionInformation collisionInformation;
+				collisionInformation.collider = this;
+				collisionInformation.otherCollider = otherCollider;
+
+				Entity::collisionEnds(this->owner, &collisionInformation);
+			}
+
+			return true;
+		}
+	}
+
+	return Base::onEvent(this, eventFirer, eventCode);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -434,17 +465,8 @@ void Collider::discardCollisions()
 
 			if(!isDeleted(otherColliderRegistry->collider))
 			{
-				Collider::removeEventListener
-				(
-					otherColliderRegistry->collider, ListenerObject::safeCast(this), (EventListener)Collider::onOtherColliderChanged, 
-					kEventColliderDeleted
-				);
-				
-				Collider::removeEventListener
-				(
-					otherColliderRegistry->collider, ListenerObject::safeCast(this), (EventListener)Collider::onOtherColliderChanged, 
-					kEventColliderChanged
-				);
+				Collider::removeEventListener(otherColliderRegistry->collider, ListenerObject::safeCast(this), kEventColliderDeleted);
+				Collider::removeEventListener(otherColliderRegistry->collider, ListenerObject::safeCast(this), kEventColliderChanged);
 			}
 
 			delete otherColliderRegistry;
@@ -583,37 +605,6 @@ void Collider::collisionEnds(Collision* collision)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-bool Collider::onOtherColliderChanged(ListenerObject eventFirer)
-{
-	if(isDeleted(this->owner) || isDeleted(eventFirer))
-	{
-		return false;
-	}
-
-	Collider otherCollider = Collider::safeCast(eventFirer);
-
-	OtherColliderRegistry* otherColliderRegistry = Collider::findOtherColliderRegistry(this, otherCollider);
-	NM_ASSERT(!isDeleted(otherColliderRegistry), "Collider::onOtherColliderChanged: dead otherColliderRegistry");
-
-	if(NULL == otherColliderRegistry)
-	{
-		return false;
-	}
-
-	if(Collider::unregisterOtherCollider(this, otherCollider))
-	{
-		CollisionInformation collisionInformation;
-		collisionInformation.collider = this;
-		collisionInformation.otherCollider = otherCollider;
-
-		Entity::collisionEnds(this->owner, &collisionInformation);
-	}
-
-	return true;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
 OtherColliderRegistry* Collider::registerOtherCollider(Collider otherCollider, SolutionVector solutionVector, bool isImpenetrable)
 {
 	if(!this->otherColliders)
@@ -639,15 +630,8 @@ OtherColliderRegistry* Collider::registerOtherCollider(Collider otherCollider, S
 	{
 		VirtualList::pushBack(this->otherColliders, otherColliderRegistry);
 
-		Collider::addEventListener
-		(
-			otherCollider, ListenerObject::safeCast(this), (EventListener)Collider::onOtherColliderChanged, kEventColliderDeleted
-		);
-		
-		Collider::addEventListener
-		(
-			otherCollider, ListenerObject::safeCast(this), (EventListener)Collider::onOtherColliderChanged, kEventColliderChanged
-		);
+		Collider::addEventListener(otherCollider, ListenerObject::safeCast(this), kEventColliderDeleted);
+		Collider::addEventListener(otherCollider, ListenerObject::safeCast(this), kEventColliderChanged);
 	}
 
 	return otherColliderRegistry;
@@ -672,15 +656,8 @@ bool Collider::unregisterOtherCollider(Collider otherCollider)
 
 	if(!isDeleted(otherCollider))
 	{
-		Collider::removeEventListener
-		(
-			otherCollider, ListenerObject::safeCast(this), (EventListener)Collider::onOtherColliderChanged, kEventColliderDeleted
-		);
-		
-		Collider::removeEventListener
-		(
-			otherCollider, ListenerObject::safeCast(this), (EventListener)Collider::onOtherColliderChanged, kEventColliderChanged
-		);
+		Collider::removeEventListener(otherCollider, ListenerObject::safeCast(this), kEventColliderDeleted);
+		Collider::removeEventListener(otherCollider, ListenerObject::safeCast(this), kEventColliderChanged);
 	}
 
 	return true;

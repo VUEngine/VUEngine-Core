@@ -81,7 +81,7 @@ bool AnimationCoordinator::playAnimation(AnimationController animationController
 		)
 		{
 			// First animate the frame
-			AnimationController::play(firstAnimationController, animationFunctions, animationName, this->scope, NULL);
+			AnimationController::play(firstAnimationController, animationFunctions, animationName, this->scope);
 		}
 
 		return false;

@@ -56,9 +56,7 @@ void ObjectSprite::constructor(Entity owner, const ObjectSpriteSpec* objectSprit
 
 		NM_ASSERT(this->texture, "ObjectSprite::constructor: null texture");
 
-		Texture::addEventListener
-		(
-			this->texture, ListenerObject::safeCast(this), (EventListener)ObjectSprite::onTextureRewritten, kEventTextureRewritten);
+		Texture::addEventListener(this->texture, ListenerObject::safeCast(this), kEventTextureRewritten);
 
 		this->totalObjects = objectSpriteSpec->spriteSpec.textureSpec->cols * objectSpriteSpec->spriteSpec.textureSpec->rows;
 
@@ -85,10 +83,7 @@ void ObjectSprite::destructor()
 
 	if(!isDeleted(this->texture))
 	{
-		Texture::removeEventListener
-		(
-			this->texture, ListenerObject::safeCast(this), (EventListener)ObjectSprite::onTextureRewritten, kEventTextureRewritten
-		);
+		Texture::removeEventListener(this->texture, ListenerObject::safeCast(this), kEventTextureRewritten);
 		
 		Texture::release(this->texture);		
 	}
@@ -97,6 +92,23 @@ void ObjectSprite::destructor()
 
 	// Always explicitly call the base's destructor 
 	Base::destructor();
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+bool ObjectSprite::onEvent(ListenerObject eventFirer __attribute__((unused)), uint32 eventCode)
+{
+	switch(eventCode)
+	{
+		case kEventTextureRewritten:
+		{
+			ObjectSprite::rewrite(this);
+
+			return true;
+		}
+	}
+
+	return Base::onEvent(this, eventFirer, eventCode);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -256,8 +268,6 @@ int32 ObjectSprite::getTotalPixels()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
 void ObjectSprite::resetTotalObjects()
 {
 	this->totalObjects = Texture::getCols(this->texture) * Texture::getRows(this->texture);
@@ -341,15 +351,6 @@ void ObjectSprite::rewrite()
 			objectPointer->tile = fourthWordValue + framePointer[jDisplacement + j];
 		}
 	}
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-bool ObjectSprite::onTextureRewritten(ListenerObject eventFirer __attribute__ ((unused)))
-{
-	ObjectSprite::rewrite(this);
-
-	return true;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

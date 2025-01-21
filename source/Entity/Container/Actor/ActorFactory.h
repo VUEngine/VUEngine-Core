@@ -69,9 +69,8 @@ class ActorFactory : Object
 	/// @param positionedActor: Struct that defines which actor spec to use to configure the new actor
 	/// and the spatial information about where and how to positione it
 	/// @param parent: The parent of the new actor instance
-	/// @param callback: Callback to inform the parent when the new actor is ready
 	/// @param internalId: ID to keep track internally of the new instance
-	void spawnActor(const PositionedActor* positionedActor, Container parent, EventListener callback, int16 internalId);
+	void spawnActor(const PositionedActor* positionedActor, Container parent, int16 internalId);
 
 	/// Create the next queued actor.
 	/// @return False if there are no actors pending instantiation; true otherwise

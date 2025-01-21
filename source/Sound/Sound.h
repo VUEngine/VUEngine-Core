@@ -149,7 +149,7 @@ class Sound : ListenerObject
 	/// @param soundSpec: Specification that determines how to configure the sound
 	/// @param soundReleaseListener: Callback for when the sound is released
 	/// @param scope: Object that listens for the releasing event
-	void constructor(const SoundSpec* soundSpec, EventListener soundReleaseListener, ListenerObject scope);
+	void constructor(const SoundSpec* soundSpec, ListenerObject scope);
 
 	/// Play the sound.
 	/// @param position: Pointer to the spatial position of the sound

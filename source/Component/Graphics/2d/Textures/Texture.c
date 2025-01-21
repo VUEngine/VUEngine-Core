@@ -324,6 +324,30 @@ void Texture::destructor()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+bool Texture::onEvent(ListenerObject eventFirer __attribute__((unused)), uint32 eventCode)
+{
+	switch(eventCode)
+	{
+		case kEventCharSetChangedOffset:
+		{
+			Texture::rewrite(this);
+
+			return true;
+		}
+
+		case kEventCharSetDeleted:
+		{
+			this->charSet = CharSet::safeCast(eventFirer) == this->charSet ? NULL : this->charSet;
+
+			return false;
+		}
+	}
+
+	return Base::onEvent(this, eventFirer, eventCode);
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 uint16 Texture::getId()
 {
 	return this->id;
@@ -641,15 +665,9 @@ void Texture::loadCharSet()
 
 	Texture::setupUpdateFunction(this);
 
-	CharSet::addEventListener
-	(
-		this->charSet, ListenerObject::safeCast(this), (EventListener)Texture::onCharSetChangedOffset, kEventCharSetChangedOffset
-	);
+	CharSet::addEventListener(this->charSet, ListenerObject::safeCast(this), kEventCharSetChangedOffset);
 	
-	CharSet::addEventListener
-	(
-		this->charSet, ListenerObject::safeCast(this), (EventListener)Texture::onCharSetDeleted, kEventCharSetDeleted
-	);
+	CharSet::addEventListener(this->charSet, ListenerObject::safeCast(this), kEventCharSetDeleted);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -666,15 +684,9 @@ void Texture::releaseCharSet()
 
 	if(!isDeleted(this->charSet))
 	{
-		CharSet::removeEventListener
-		(
-			this->charSet, ListenerObject::safeCast(this), (EventListener)Texture::onCharSetChangedOffset, kEventCharSetChangedOffset
-		);
+		CharSet::removeEventListener(this->charSet, ListenerObject::safeCast(this), kEventCharSetChangedOffset);
 		
-		CharSet::removeEventListener
-		(
-			this->charSet, ListenerObject::safeCast(this), (EventListener)Texture::onCharSetDeleted, kEventCharSetDeleted
-		);
+		CharSet::removeEventListener(this->charSet, ListenerObject::safeCast(this), kEventCharSetDeleted);
 
 		CharSet::release(this->charSet);
 
@@ -777,24 +789,6 @@ void Texture::setupUpdateFunction()
 	{			
 		this->doUpdate = Texture::updateDefault;
 	}
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-bool Texture::onCharSetChangedOffset(ListenerObject eventFirer __attribute__ ((unused)))
-{
-	Texture::rewrite(this);
-
-	return true;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-bool Texture::onCharSetDeleted(ListenerObject eventFirer)
-{
-	this->charSet = CharSet::safeCast(eventFirer) == this->charSet ? NULL : this->charSet;
-
-	return false;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

@@ -88,7 +88,7 @@ void VisualComponent::handleCommand(int32 command, va_list args)
 			VisualComponent::play
 			(
 				this, (const AnimationFunction**)va_arg(args, AnimationFunction**), (const char*)va_arg(args, char*), 
-				va_arg(args, ListenerObject), (EventListener)va_arg(args, EventListener)
+				va_arg(args, ListenerObject)
 			);
 			break;
 
@@ -145,7 +145,7 @@ void VisualComponent::forceChangeOfFrame(int16 actualFrame __attribute__((unused
 
 bool VisualComponent::play
 (
-	const AnimationFunction* animationFunctions[], const char* animationName, ListenerObject scope, EventListener callback
+	const AnimationFunction* animationFunctions[], const char* animationName, ListenerObject scope
 )
 {
 	if(NULL == animationFunctions || NULL == animationName)
@@ -160,7 +160,7 @@ bool VisualComponent::play
 
 	if(!isDeleted(this->animationController))
 	{
-		playBackStarted = AnimationController::play(this->animationController, animationFunctions, animationName, scope, callback);
+		playBackStarted = AnimationController::play(this->animationController, animationFunctions, animationName, scope);
 		this->rendered = this->rendered && !this->updateAnimationFrame;
 	}
 

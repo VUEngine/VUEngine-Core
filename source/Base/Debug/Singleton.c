@@ -236,6 +236,7 @@ const ClassPointer VUEngineAuthorizedClasses[] =
 
 static void Singleton::secure()
 {
+	return;
 #ifndef __RELEASE
 	AnimationCoordinatorFactory::secure(&AnimationCoordinatorFactoryAuthorizedClasses);
 	BgmapTextureManager::secure(&BgmapTextureManagerAuthorizedClasses);

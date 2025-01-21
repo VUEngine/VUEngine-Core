@@ -58,8 +58,8 @@ typedef bool (*StreamingPhase)(void*, int32);
 
 typedef struct ActorLoadingListener
 {
-	ListenerObject scope;
-	EventListener callback;
+	ListenerObject listener;
+
 } ActorLoadingListener;
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -177,7 +177,7 @@ void Stage::destructor()
 
 			if(!isDeleted(sound))
 			{
-				Sound::removeEventListenerScopes(sound, ListenerObject::safeCast(this), kEventSoundReleased);
+				Sound::removeEventListener(sound, ListenerObject::safeCast(this), kEventSoundReleased);
 			}
 		}
 
@@ -384,9 +384,9 @@ VirtualList Stage::getStageActorDescriptions()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void Stage::addActorLoadingListener(ListenerObject scope, EventListener callback)
+void Stage::addActorLoadingListener(ListenerObject listener)
 {
-	if(isDeleted(scope) || NULL == callback)
+	if(isDeleted(listener))
 	{
 		return;
 	}
@@ -397,8 +397,7 @@ void Stage::addActorLoadingListener(ListenerObject scope, EventListener callback
 	}
 
 	ActorLoadingListener* actorLoadingListener = new ActorLoadingListener;
-	actorLoadingListener->scope = scope;
-	actorLoadingListener->callback = callback;
+	actorLoadingListener->listener = listener;
 
 	VirtualList::pushBack(this->actorLoadingListeners, actorLoadingListener);
 }
@@ -505,7 +504,7 @@ void Stage::fadeSounds(uint32 playbackType)
 
 			if(!isDeleted(sound))
 			{
-				Sound::removeEventListenerScopes(sound, ListenerObject::safeCast(this), kEventSoundReleased);
+				Sound::removeEventListener(sound, ListenerObject::safeCast(this), kEventSoundReleased);
 				Sound::play(sound, NULL, playbackType);
 			}
 		}
@@ -763,10 +762,7 @@ bool Stage::loadInRangeActors(int32 defer)
 						ActorFactory::spawnActor
 						(
 							this->actorFactory, stageActorDescription->positionedActor, Container::safeCast(this), 
-							!isDeleted(this->actorLoadingListeners) ? 
-								(EventListener)Stage::onActorLoaded 
-								: 
-								NULL, stageActorDescription->internalId
+							stageActorDescription->internalId
 						);
 					}
 					else
@@ -826,8 +822,6 @@ bool Stage::loadInRangeActors(int32 defer)
 						ActorFactory::spawnActor
 						(
 							this->actorFactory, stageActorDescription->positionedActor, Container::safeCast(this), 
-							!isDeleted(this->actorLoadingListeners) ? 
-								(EventListener)Stage::onActorLoaded : NULL, 
 							stageActorDescription->internalId
 						);
 					}
@@ -923,16 +917,48 @@ Actor Stage::doAddChildActor(const PositionedActor* const positionedActor, bool 
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-bool Stage::onActorLoaded(ListenerObject eventFirer)
+bool Stage::onEvent(ListenerObject eventFirer __attribute__((unused)), uint32 eventCode)
 {
-	Actor actor = Actor::safeCast(eventFirer);
-
-	if(!isDeleted(actor) && !isDeleted(this->actorLoadingListeners))
+	switch(eventCode)
 	{
-		Stage::alertOfLoadedActor(this, actor);
+		case kEventActorLoaded:
+		{
+			Actor actor = Actor::safeCast(eventFirer);
+
+			if(!isDeleted(actor) && !isDeleted(this->actorLoadingListeners))
+			{
+				Stage::alertOfLoadedActor(this, actor);
+			}
+
+			return false;
+		}
+
+		case kEventSoundReleased:
+		{
+			VirtualList::removeData(this->sounds, eventFirer);
+
+			Stage::fireEvent(this, kEventSoundReleased);
+
+			return false;
+		}
+
+		case kEventContainerDeleted:
+		{
+			if(!isDeleted(this->focusActor) && ListenerObject::safeCast(this->focusActor) == eventFirer)
+			{
+				if(this->focusActor == Camera::getFocusActor(Camera::getInstance()))
+				{
+					Camera::setFocusActor(Camera::getInstance(), NULL);
+				}
+			}
+
+			this->focusActor = NULL;
+
+			return false;
+		}
 	}
 
-	return false;
+	return Base::onEvent(this, eventFirer, eventCode);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -948,15 +974,15 @@ void Stage::alertOfLoadedActor(Actor actor)
 	{
 		ActorLoadingListener* actorLoadingListener = (ActorLoadingListener*)node->data;
 
-		if(!isDeleted(actorLoadingListener->scope))
+		if(!isDeleted(actorLoadingListener->listener))
 		{
-			Actor::addEventListener(actor, actorLoadingListener->scope, actorLoadingListener->callback, kEventActorLoaded);
+			Actor::addEventListener(actor, actorLoadingListener->listener, kEventActorLoaded);
 		}
 	}
 
 	Actor::fireEvent(actor, kEventActorLoaded);
 	NM_ASSERT(!isDeleted(actor), "Stage::alertOfLoadedActor: deleted actor during kEventActorLoaded");
-	Actor::removeEventListeners(actor, NULL, kEventActorLoaded);
+	Actor::removeEventListeners(actor, kEventActorLoaded);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -1120,21 +1146,11 @@ void Stage::configureSounds()
 
 	for(; NULL != this->stageSpec->assets.sounds[i]; i++)
 	{
-		Sound sound = 
-			SoundManager::findSound
-			(
-				this->stageSpec->assets.sounds[i], 
-				(EventListener)Stage::onSoundReleased, ListenerObject::safeCast(this)
-			);
+		Sound sound = SoundManager::findSound(this->stageSpec->assets.sounds[i], ListenerObject::safeCast(this));
 
 		if(isDeleted(sound))
 		{
-			sound = 
-				SoundManager::getSound
-				(
-					this->stageSpec->assets.sounds[i], 
-					(EventListener)Stage::onSoundReleased, ListenerObject::safeCast(this)
-				);
+			sound = SoundManager::getSound(this->stageSpec->assets.sounds[i], ListenerObject::safeCast(this));
 		}
 
 		if(!isDeleted(sound))
@@ -1181,7 +1197,7 @@ void Stage::pauseSounds()
 
 			if(!isDeleted(sound))
 			{
-				Sound::removeEventListenerScopes(sound, ListenerObject::safeCast(this), kEventSoundReleased);
+				Sound::removeEventListener(sound, ListenerObject::safeCast(this), kEventSoundReleased);
 				Sound::pause(sound);
 			}
 		}
@@ -1203,22 +1219,11 @@ void Stage::unpauseSounds()
 
 			if(!isDeleted(sound))
 			{
-				Sound::removeEventListenerScopes(sound, ListenerObject::safeCast(this), kEventSoundReleased);
+				Sound::removeEventListener(sound, ListenerObject::safeCast(this), kEventSoundReleased);
 				Sound::unpause(sound);
 			}
 		}
 	}
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-bool Stage::onSoundReleased(ListenerObject eventFirer __attribute__((unused)))
-{
-	VirtualList::removeData(this->sounds, eventFirer);
-
-	Stage::fireEvent(this, kEventSoundReleased);
-
-	return false;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -1244,43 +1249,20 @@ void Stage::setFocusActor(Actor focusActor)
 {
 	if(!isDeleted(this->focusActor))
 	{
-		Actor::removeEventListener
-		(
-			this->focusActor, ListenerObject::safeCast(this), (EventListener)Stage::onFocusActorDeleted, kEventContainerDeleted
-		);
+		Actor::removeEventListener(this->focusActor, ListenerObject::safeCast(this), kEventContainerDeleted);
 	}
 
 	this->focusActor = focusActor;
 
 	if(!isDeleted(this->focusActor))
 	{
-		Actor::addEventListener
-		(
-			this->focusActor, ListenerObject::safeCast(this), (EventListener)Stage::onFocusActorDeleted, kEventContainerDeleted
-		);
+		Actor::addEventListener(this->focusActor, ListenerObject::safeCast(this), kEventContainerDeleted);
 
 		Vector3D focusActorPosition = *Container::getPosition(this->focusActor);
 		focusActorPosition.x = __METERS_TO_PIXELS(focusActorPosition.x);
 		focusActorPosition.y = __METERS_TO_PIXELS(focusActorPosition.y);
 		focusActorPosition.z = __METERS_TO_PIXELS(focusActorPosition.z);
 	}
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-bool Stage::onFocusActorDeleted(ListenerObject eventFirer __attribute__ ((unused)))
-{
-	if(!isDeleted(this->focusActor) && ListenerObject::safeCast(this->focusActor) == eventFirer)
-	{
-		if(this->focusActor == Camera::getFocusActor(Camera::getInstance()))
-		{
-			Camera::setFocusActor(Camera::getInstance(), NULL);
-		}
-	}
-
-	this->focusActor = NULL;
-
-	return false;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

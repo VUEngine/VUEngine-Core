@@ -36,7 +36,7 @@ friend class VirtualList;
 
 static bool SoundManager::playSound
 (
-	const SoundSpec* soundSpec, const Vector3D* position, uint32 playbackType, EventListener soundReleaseListener, ListenerObject scope
+	const SoundSpec* soundSpec, const Vector3D* position, uint32 playbackType, ListenerObject scope
 )
 {
 	SoundManager soundManager = SoundManager::getInstance();
@@ -46,7 +46,7 @@ static bool SoundManager::playSound
 		return false;
 	}
 
-	Sound sound = SoundManager::doGetSound(soundManager, soundSpec, soundReleaseListener, scope);
+	Sound sound = SoundManager::doGetSound(soundManager, soundSpec, scope);
 
 	if(!isDeleted(sound))
 	{
@@ -61,25 +61,25 @@ static bool SoundManager::playSound
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static Sound SoundManager::getSound(const SoundSpec* soundSpec, EventListener soundReleaseListener, ListenerObject scope)
+static Sound SoundManager::getSound(const SoundSpec* soundSpec, ListenerObject scope)
 {
 	SoundManager soundManager = SoundManager::getInstance();
 
-	if(soundManager->lock || NULL == soundReleaseListener || NULL == scope)
+	if(soundManager->lock || NULL == scope)
 	{
 		return NULL;
 	}
 
-	return SoundManager::doGetSound(soundManager, soundSpec, soundReleaseListener, scope);
+	return SoundManager::doGetSound(soundManager, soundSpec, scope);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static Sound SoundManager::findSound(const SoundSpec* soundSpec, EventListener soundReleaseListener, ListenerObject scope)
+static Sound SoundManager::findSound(const SoundSpec* soundSpec, ListenerObject scope)
 {
 	SoundManager soundManager = SoundManager::getInstance();
 
-	if(NULL == soundReleaseListener || NULL == scope)
+	if(NULL == scope)
 	{
 		return NULL;
 	}
@@ -92,7 +92,7 @@ static Sound SoundManager::findSound(const SoundSpec* soundSpec, EventListener s
 		{
 			if(soundSpec == sound->soundSpec)
 			{
-				Sound::addEventListener(sound, scope, soundReleaseListener, kEventSoundReleased);
+				Sound::addEventListener(sound, scope, kEventSoundReleased);
 				return sound;
 			}
 		}
@@ -389,7 +389,7 @@ void SoundManager::destructor()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-Sound SoundManager::doGetSound(const SoundSpec* soundSpec, EventListener soundReleaseListener, ListenerObject scope)
+Sound SoundManager::doGetSound(const SoundSpec* soundSpec, ListenerObject scope)
 {
 #ifdef __RELEASE
 	// This is an aggressive optimization that bypasses the SoundTrack's methods altogether
@@ -413,7 +413,7 @@ Sound SoundManager::doGetSound(const SoundSpec* soundSpec, EventListener soundRe
 		return NULL;
 	}
 
-	Sound sound = new Sound(soundSpec, soundReleaseListener, scope);
+	Sound sound = new Sound(soundSpec, scope);
 
 	VirtualList::pushBack(this->sounds, sound);
 

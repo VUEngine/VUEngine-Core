@@ -28,18 +28,12 @@ class VirtualList;
 // CLASS' DATA
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-/// @memberof ListenerObject
-typedef bool (*EventListener)(ListenerObject, ListenerObject);
-
 /// Event struct
 /// @memberof ListenerObject
 typedef struct Event
 {
 	/// The object listening for the event
 	ListenerObject listener;
-
-	/// The callback on the listener object
-	EventListener callback;
 
 	/// The code of the event
 	uint16 code;
@@ -78,25 +72,17 @@ abstract class ListenerObject : Object
 
 	/// Register an object that will listen for events.
 	/// @param listener: ListenerObject that listen for the event
-	/// @param callback: EventListener callback for the listener object
 	/// @param eventCode: Event's code to listen for
-	void addEventListener(ListenerObject listener, EventListener callback, uint16 eventCode);
+	void addEventListener(ListenerObject listener, uint16 eventCode);
 
-	/// Remove a specific listener object from the listening to a give code with the provided callback.
-	/// @param listener: ListenerObject to remove from the list of listeners
-	/// @param callback: EventListener callback for the listener object
-	/// @param eventCode: Event's code to stop listen for
-	void removeEventListener(ListenerObject listener, EventListener callback, uint16 eventCode);
-
-	/// Remove all listener objects for a specific callback and code from the listeners.
-	/// @param callback: EventListener callback for the listener object
-	/// @param eventCode: Event's code to stop listen for
-	void removeEventListeners(EventListener callback, uint16 eventCode);
-
-	/// Remove a specific listener object from the listeners.
+	/// Remove a specific listener object from the listening to a give code.
 	/// @param listener: ListenerObject to remove from the list of listeners
 	/// @param eventCode: Event's code to stop listen for
-	void removeEventListenerScopes(ListenerObject listener, uint16 eventCode);
+	void removeEventListener(ListenerObject listener, uint16 eventCode);
+
+	/// Remove all listener objects for a specific code from the listeners.
+	/// @param eventCode: Event's code to stop listen for
+	void removeEventListeners(uint16 eventCode);
 
 	/// Remove all listener objects.
 	void removeAllEventListeners();
@@ -128,6 +114,12 @@ abstract class ListenerObject : Object
 	/// Discard all messages with a specific code, both to be sent and to be received.
 	/// @param message: The message's code to discard
 	void discardMessages(uint32 message);
+
+	/// Process an event that the instance is listen for.
+	/// @param eventFirer: ListenerObject that signals the event
+	/// @param eventCode: Code of the firing event
+	/// @return False if the listener has to be removed; true to keep it
+	virtual bool onEvent(ListenerObject eventFirer, uint32 eventCode);
 
 	/// Receive and process a Telegram.
 	/// @param telegram: Received telegram to process

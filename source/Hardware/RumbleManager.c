@@ -110,6 +110,23 @@ static void RumbleManager::setOverridePreviousEffect(bool overridePreviousEffect
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+bool RumbleManager::onEvent(ListenerObject eventFirer __attribute__((unused)), uint32 eventCode)
+{
+	switch(eventCode)
+	{
+		case kEventCommunicationsTransmissionCompleted:
+		{
+			this->rumbleCommandIndex = 0;
+
+			return false;
+		}
+	}
+
+	return Base::onEvent(this, eventFirer, eventCode);
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 secure void RumbleManager::reset()
 {
 	this->async = true;
@@ -160,15 +177,14 @@ void RumbleManager::execute()
 		{
 			CommunicationManager::broadcastDataAsync
 			(
-				CommunicationManager::getInstance(), (BYTE*)this->rumbleCommands, this->rumbleCommandIndex, NULL, NULL
+				CommunicationManager::getInstance(), (BYTE*)this->rumbleCommands, this->rumbleCommandIndex, NULL
 			);
 		}
 		else
 		{
 			CommunicationManager::broadcastDataAsync
 			(
-				CommunicationManager::getInstance(), (BYTE*)this->rumbleCommands, this->rumbleCommandIndex, 
-				(EventListener)RumbleManager::onBroadcastDataDone, ListenerObject::safeCast(this)
+				CommunicationManager::getInstance(), (BYTE*)this->rumbleCommands, this->rumbleCommandIndex, ListenerObject::safeCast(this)
 			);
 		}
 	}
@@ -381,15 +397,6 @@ void RumbleManager::destructor()
 	// Allow a new construct
 	// Always explicitly call the base's destructor 
 	Base::destructor();
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-bool RumbleManager::onBroadcastDataDone(ListenerObject eventFirer __attribute__ ((unused)))
-{
-	this->rumbleCommandIndex = 0;
-
-	return false;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

@@ -223,7 +223,7 @@ void Particle::playAnimation(const AnimationFunction** animationFunctions, const
 		return;
 	}
 
-	VisualComponent::play(this->visualComponent, animationFunctions, animationName, NULL, NULL);
+	VisualComponent::play(this->visualComponent, animationFunctions, animationName, NULL);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

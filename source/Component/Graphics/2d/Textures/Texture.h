@@ -161,6 +161,12 @@ abstract class Texture : ListenerObject
 	/// @param id: Texture's identificator
 	void constructor(const TextureSpec* textureSpec, uint16 id);
 
+	/// Process an event that the instance is listen for.
+	/// @param eventFirer: ListenerObject that signals the event
+	/// @param eventCode: Code of the firing event
+	/// @return False if the listener has to be removed; true to keep it
+	override bool onEvent(ListenerObject eventFirer __attribute__((unused)), uint32 eventCode);
+
 	/// Retrieve the texture's identificator.
 	/// @return Texture's identificator
 	uint16 getId();
