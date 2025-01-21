@@ -7,33 +7,32 @@
  * that was distributed with this source code.
  */
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // INCLUDES
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <BgmapTextureManager.h>
 #include <ParamTableManager.h>
-#include <SpriteManager.h>
 
 #include "Affine.h"
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DECLARATIONS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 extern double fabs (double);
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' STATIC METHODS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-static int16 Affine::transform(uint32 param, int16 paramTableRow, fixed_t targetHalfWidth, fixed_t targetHalfHeight, fix13_3 mx, fix13_3 my, fixed_t halfWidth, fixed_t halfHeight, const Rotation* rotation)
+static int16 Affine::transform
+(
+	int32 maximumParamTableRowsToComputePerCall, uint32 param, int16 paramTableRow, fixed_t targetHalfWidth, 
+	fixed_t targetHalfHeight, fix13_3 mx, fix13_3 my, fixed_t halfWidth, fixed_t halfHeight, const Rotation* rotation
+)
 {
 	fixed_t finalScaleX = __FIXED_MULT(__FIX7_9_TO_FIXED(__COS(__FIXED_TO_I(rotation->y))), __FIXED_DIV(targetHalfWidth, halfWidth));
 	fixed_t finalScaleY = __FIXED_MULT(__FIX7_9_TO_FIXED(__COS(__FIXED_TO_I(rotation->x))), __FIXED_DIV(targetHalfHeight, halfHeight));
@@ -57,7 +56,7 @@ static int16 Affine::transform(uint32 param, int16 paramTableRow, fixed_t target
 	fixedAffineMatrix.pa = __FIXED_TO_FIX7_9(highPrecisionPa);
 	fixedAffineMatrix.pc = __FIXED_TO_FIX7_9(highPrecisionPc);
 
-	// bgX + bgWidth - pa * dispX - pb * dispY
+	// BgX + bgWidth - pa * dispX - pb * dispY
 	fixedAffineMatrix.dx =
 		mx
 		+
@@ -72,7 +71,7 @@ static int16 Affine::transform(uint32 param, int16 paramTableRow, fixed_t target
 			)
 		);
 
-	// bgY + bgHeight - pc * dispX - pd * dispY
+	// BgY + bgHeight - pc * dispX - pd * dispY
 	fixedAffineMatrix.dy =
 		my
 		+
@@ -91,17 +90,22 @@ static int16 Affine::transform(uint32 param, int16 paramTableRow, fixed_t target
 
 	AffineEntry* affine = (AffineEntry*)param;
 
-
 	int16 i = 0 <= paramTableRow ? paramTableRow : 0;
 	int32 lastRow = __FIXED_TO_I(__FIXED_MULT((halfHeight << 1), finalScaleY)) + 1;
-	int32 counter = SpriteManager::getMaximumParamTableRowsToComputePerCall(SpriteManager::getInstance());
+	int32 counter = maximumParamTableRowsToComputePerCall;
 
 	if(rotation->x)
 	{
 		fix19_13 topEdgeSizeZ = __FIX19_13_MULT(__FIXED_TO_FIX19_13(halfHeight), __FIX7_9_TO_FIX19_13(__SIN(__FIXED_TO_I(rotation->x))));
 		fix19_13 bottomEdgeSizeZ = -topEdgeSizeZ;
 
-		fix19_13 scaleXDifference = __FIX19_13_MULT(__I_TO_FIX19_13(1), __FIXED_TO_FIX19_13(__FIXED_DIV(__PIXELS_TO_METERS(__FIX19_13_TO_I(topEdgeSizeZ)), _optical->scalingFactor)));
+		fix19_13 scaleXDifference = 
+			__FIX19_13_MULT
+			(
+				__I_TO_FIX19_13(1), 
+				__FIXED_TO_FIX19_13(__FIXED_DIV(__PIXELS_TO_METERS(__FIX19_13_TO_I(topEdgeSizeZ)), _optical->scalingFactor))
+			);
+
 		fix19_13 scaleYDifference = __FIX7_9_TO_FIX19_13(__SIN(__FIXED_TO_I(rotation->x)));
 
 		fix19_13 scaleXFactor = __FIXED_TO_FIX19_13(finalScaleX);
@@ -192,7 +196,7 @@ PRINT_INT(lastRow, 1, 16);
 			fixedAffineMatrix.pa = __FIX19_13_TO_FIX7_9(highPrecisionPa);
 			fixedAffineMatrix.pc = __FIX19_13_TO_FIX7_9(highPrecisionPc);
 
-			// bgX + bgWidth - pa * dispX - pb * dispY
+			// BgX + bgWidth - pa * dispX - pb * dispY
 			fixedAffineMatrix.dx =
 				mx
 				+
@@ -207,7 +211,7 @@ PRINT_INT(lastRow, 1, 16);
 					)
 				);
 
-			// bgY + bgHeight - pc * dispX - pd * dispY
+			// BgY + bgHeight - pc * dispX - pd * dispY
 			fixedAffineMatrix.dy =
 				my
 				+
@@ -248,6 +252,7 @@ PRINT_INT(lastRow, 1, 16);
 	if(i <= lastRow)
 	{
 		return i;
+
 	}
 
 	affine[i].pb_y = 0;
@@ -259,9 +264,13 @@ PRINT_INT(lastRow, 1, 16);
 	return -1;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static int16 Affine::rotate(uint32 param, int16 paramTableRow, fixed_t targetHalfWidth, fixed_t targetHalfHeight, fix13_3 mx, fix13_3 my, fixed_t halfWidth, fixed_t halfHeight, const Rotation* rotation)
+static int16 Affine::rotate
+(
+	int32 maximumParamTableRowsToComputePerCall __attribute__((unused)), uint32 param, int16 paramTableRow, fixed_t targetHalfWidth, 
+	fixed_t targetHalfHeight, fix13_3 mx, fix13_3 my, fixed_t halfWidth, fixed_t halfHeight, const Rotation* rotation
+)
 {
 	fixed_t highPrecisionPa = __FIX7_9_TO_FIXED(__COS(-__FIXED_TO_I(rotation->z)));
 	fixed_t highPrecisionPb = -__FIX7_9_TO_FIXED(__SIN(-__FIXED_TO_I(rotation->z)));
@@ -272,7 +281,7 @@ static int16 Affine::rotate(uint32 param, int16 paramTableRow, fixed_t targetHal
 	fixedAffineMatrix.pa = __FIXED_TO_FIX7_9(highPrecisionPa);
 	fixedAffineMatrix.pc = __FIXED_TO_FIX7_9(highPrecisionPc);
 
-	// bgX + bgWidth - pa * dispX - pb * dispY
+	// BgX + bgWidth - pa * dispX - pb * dispY
 	fixedAffineMatrix.dx =
 		mx
 		+
@@ -287,7 +296,7 @@ static int16 Affine::rotate(uint32 param, int16 paramTableRow, fixed_t targetHal
 			)
 		);
 
-	// bgY + bgHeight - pc * dispX - pd * dispY
+	// BgY + bgHeight - pc * dispX - pd * dispY
 	fixedAffineMatrix.dy =
 		my
 		+
@@ -306,14 +315,12 @@ static int16 Affine::rotate(uint32 param, int16 paramTableRow, fixed_t targetHal
 
 	AffineEntry* affine = (AffineEntry*)param;
 
-
 	int16 i = 0 <= paramTableRow ? paramTableRow : 0;
 	int32 lastRow = __FIXED_TO_I((halfHeight << 1)) + 1;
 
 /*
 	int16 i = 0 <= paramTableRow ? paramTableRow : 0;
 	int32 lastRow = __FIXED_TO_I(__FIXED_MULT((halfHeight << 1), finalScaleY)) + 1;
-	int32 counter = SpriteManager::getMaximumParamTableRowsToComputePerCall(SpriteManager::getInstance());
 */
 //	for(;counter && i <= lastRow; i++, counter--)
 	for(;i <= lastRow; i++, )
@@ -339,5 +346,4 @@ static int16 Affine::rotate(uint32 param, int16 paramTableRow, fixed_t targetHal
 	return -1;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

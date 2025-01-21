@@ -10,17 +10,15 @@
 #ifndef OBJECT_SPRITE_H_
 #define OBJECT_SPRITE_H_
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // INCLUDES
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <Sprite.h>
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' MACROS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #define __OBJECT_SPRITE_CHAR_SHOW_MASK			0xC000
 #define __OBJECT_SPRITE_CHAR_HIDE_MASK			0x0000
@@ -28,10 +26,9 @@
 #define __OBJECT_SPRITE_FLIP_X_DISPLACEMENT		8
 #define __OBJECT_SPRITE_FLIP_Y_DISPLACEMENT		8
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DATA
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 /// A ObjectSprite spec
 /// @memberof ObjectSprite
@@ -40,10 +37,7 @@ typedef struct ObjectSpriteSpec
 	/// it has a Sprite spec at the beginning
 	SpriteSpec spriteSpec;
 
-	/// the display mode (BGMAP, AFFINE, H-BIAS)
-	uint16 bgmapMode;
-
-	/// flag to indicate in which display to show the bg texture
+	/// Flag to indicate in which display to show the texture (__WORLD_ON, __WORLD_LON or __WORLD_RON)
 	uint16 display;
 
 } ObjectSpriteSpec;
@@ -52,12 +46,10 @@ typedef struct ObjectSpriteSpec
 /// @memberof ObjectSprite
 typedef const ObjectSpriteSpec ObjectSpriteROMSpec;
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DECLARATION
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-///
 /// Class ObjectSprite
 ///
 /// Inherits from Sprite
@@ -104,15 +96,17 @@ class ObjectSprite : Sprite
 	/// @publicsection
 
 	/// Class' constructor
-	/// @param owner: GameObject to which the sprite attaches to
+	/// @param owner: Entity to which the sprite attaches to
 	/// @param objectSpriteSpec: Specification that determines how to configure the sprite
-	void constructor(GameObject owner, const ObjectSpriteSpec* objectSpriteSpec);
+	void constructor(Entity owner, const ObjectSpriteSpec* objectSpriteSpec);
 
-	/// Register this sprite with the appropriate sprites manager.
-	override void registerWithManager();
+	/// Retrieve the sprite's manager.
+	/// @return Generic pointer to the manager
+	override void* getManager();
 
-	/// Unegister this sprite with the appropriate sprites manager.	
-	override void unregisterWithManager();
+	/// Retrieve the class of the manager for the sprite.
+	/// @return ClassPointer of the manager
+	override ClassPointer getManagerClass();
 
 	/// Render the sprite by configuring the DRAM assigned to it by means of the provided index.
 	/// @param index: Determines the region of DRAM that this sprite is allowed to configure
@@ -134,6 +128,5 @@ class ObjectSprite : Sprite
 	/// @return Number of OBJECTs that the sprite uses
 	int16 getTotalObjects();
 }
-
 
 #endif

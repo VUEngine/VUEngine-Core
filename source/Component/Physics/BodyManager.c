@@ -7,10 +7,9 @@
  * that was distributed with this source code.
  */
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // INCLUDES
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <Body.h>
 #include <DebugConfig.h>
@@ -20,73 +19,89 @@
 
 #include "BodyManager.h"
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DECLARATIONS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 friend class Body;
 friend class Clock;
 friend class VirtualNode;
 friend class VirtualList;
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' STATIC METHODS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 static fixed_t BodyManager::getElapsedTimeStep()
 {
 	return __PHYSICS_TIME_ELAPSED_STEP;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PUBLIC METHODS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+uint32 BodyManager::getType()
+{
+	return kPhysicsComponent;
+}
 
-Body BodyManager::createComponent(GameObject owner, const BodySpec* bodySpec)
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void BodyManager::enable()
+{
+	Base::enable(this);
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void BodyManager::disable()
+{
+	Base::disable(this);
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+Body BodyManager::instantiateComponent(Entity owner, const BodySpec* bodySpec)
 {
 	if(NULL == bodySpec)
 	{
 		return NULL;
 	}
 
-	Base::createComponent(this, owner, (ComponentSpec*)bodySpec);
+	Base::instantiateComponent(this, owner, (ComponentSpec*)bodySpec);
 
 	return BodyManager::createBody(this, owner, bodySpec);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void BodyManager::destroyComponent(GameObject owner, Body body) 
+void BodyManager::deinstantiateComponent(Entity owner, Body body) 
 {
 	if(isDeleted(body))
 	{
 		return;
 	}
 
-	Base::destroyComponent(this, owner, Component::safeCast(body));
+	Base::deinstantiateComponent(this, owner, Component::safeCast(body));
 
 	BodyManager::destroyBody(this, body);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void BodyManager::reset()
 {
 	this->cycle = 0;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void BodyManager::update()
 {
@@ -128,7 +143,7 @@ void BodyManager::update()
 
 		if(body->deleteMe)
 		{
-			// place in the removed bodies list
+			// Place in the removed bodies list
 			VirtualList::removeNode(this->components, node);
 
 			delete body;
@@ -140,12 +155,18 @@ void BodyManager::update()
 			continue;
 		}
 
-		if(__NO_AXIS != body->axisSubjectToGravity && GameObject::isSubjectToGravity(body->owner, this->gravity))
+		if(__NO_AXIS != body->axisSubjectToGravity && Entity::isSubjectToGravity(body->owner, this->gravity))
 		{
-			// check if necessary to apply gravity
+			// Check if necessary to apply gravity
 			uint16 movingState = Body::getMovementOnAllAxis(body);
 
-			uint16 gravitySensibleAxis = body->axisSubjectToGravity & ((__X_AXIS & ~(__X_AXIS & movingState) ) | (__Y_AXIS & ~(__Y_AXIS & movingState)) | (__Z_AXIS & ~(__Z_AXIS & movingState)));
+			uint16 gravitySensibleAxis = 
+				body->axisSubjectToGravity 
+				& 
+				(
+					(__X_AXIS & ~(__X_AXIS & movingState) ) | (__Y_AXIS & ~(__Y_AXIS & movingState)) | 
+					(__Z_AXIS & ~(__Z_AXIS & movingState))
+				);
 
 			if(__NO_AXIS != gravitySensibleAxis)
 			{
@@ -170,9 +191,9 @@ void BodyManager::update()
 #endif
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-Body BodyManager::createBody(GameObject owner, const BodySpec* bodySpec)
+Body BodyManager::createBody(Entity owner, const BodySpec* bodySpec)
 {
 	if(this->dirty)
 	{
@@ -184,7 +205,7 @@ Body BodyManager::createBody(GameObject owner, const BodySpec* bodySpec)
 
 			if(body->deleteMe)
 			{
-				// place in the removed bodies list
+				// Place in the removed bodies list
 				VirtualList::removeNode(this->components, node);
 
 				delete body;
@@ -192,16 +213,16 @@ Body BodyManager::createBody(GameObject owner, const BodySpec* bodySpec)
 		}
 	}
 
-	// if the entity is already registered
+	// If the actor is already registered
 	Body body = new Body(owner, bodySpec);
 	VirtualList::pushFront(this->components, body);
 	ASSERT(Body::safeCast(VirtualList::front(this->components)), "BodyManager::createBody: bad class body");
 
-	// return created body
+	// Return created body
 	return body;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void BodyManager::destroyBody(Body body)
 {
@@ -215,7 +236,7 @@ void BodyManager::destroyBody(Body body)
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void BodyManager::setTimeScale(fixed_t timeScale)
 {
@@ -250,42 +271,42 @@ void BodyManager::setTimeScale(fixed_t timeScale)
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 uint32 BodyManager::getTimeScale()
 {
 	return this->timeScale;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void BodyManager::setGravity(Vector3D gravity)
 {
 	this->gravity = gravity;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 Vector3D BodyManager::getGravity()
 {
 	return this->gravity;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void BodyManager::setFrictionCoefficient(fixed_t frictionCoefficient)
 {
 	this->frictionCoefficient = frictionCoefficient;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 fixed_t BodyManager::getFrictionCoefficient()
 {
 	return this->frictionCoefficient;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #ifndef __SHIPPING
 /*
@@ -296,31 +317,29 @@ fixed_t BodyManager::getFrictionCoefficient()
  */
 void BodyManager::print(int32 x, int32 y)
 {
-	Printing::resetCoordinates(Printing::getInstance());
+	Printing::resetCoordinates();
 
-	Printing::text(Printing::getInstance(), "PHYSICS STATUS", x, y++, NULL);
-	Printing::text(Printing::getInstance(), "Registered bodies:     ", x, ++y, NULL);
-	Printing::int32(Printing::getInstance(), VirtualList::getCount(this->components), x + 19, y, NULL);
+	Printing::text("PHYSICS STATUS", x, y++, NULL);
+	Printing::text("Registered bodies:     ", x, ++y, NULL);
+	Printing::int32(VirtualList::getCount(this->components), x + 19, y, NULL);
 
 	for(VirtualNode node = this->components->head; y < 28 && NULL != node; y++, node = node->next)
 	{
-		Printing::text(Printing::getInstance(), "                         ", x, y, NULL);
-		Printing::text(Printing::getInstance(), __GET_CLASS_NAME((Body::safeCast(node->data))->owner), x, y, NULL);
+		Printing::text("                         ", x, y, NULL);
+		Printing::text(__GET_CLASS_NAME((Body::safeCast(node->data))->owner), x, y, NULL);
 	}
 
-	Printing::text(Printing::getInstance(), "                         ", x, y, NULL);
+	Printing::text("                         ", x, y, NULL);
 }
 #endif
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PRIVATE METHODS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void BodyManager::constructor()
 {
@@ -342,25 +361,17 @@ void BodyManager::constructor()
 	BodyManager::setTimeScale(this, __1I_FIXED);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void BodyManager::destructor()
 {
-	ASSERT(this->components, "BodyManager::destructor: null bodies");
-
-	if(!isDeleted(this->components))
-	{
-		VirtualList::deleteData(this->components);
-	}
-	
-
 	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-Body BodyManager::getBody(GameObject owner)
+Body BodyManager::getBody(Entity owner)
 {
 	ASSERT(this->components, "BodyManager::getBody: null bodies");
 
@@ -368,11 +379,11 @@ Body BodyManager::getBody(GameObject owner)
 
 	for(; NULL != node; node = node->next)
 	{
-		// current body
+		// Current body
 		Body body = Body::safeCast(node->data);
 		ASSERT(body, "BodyManager::getBody: null body");
 
-		// check if current body's owner is the same as the entity calling this method
+		// Check if current body's owner is the same as the actor calling this method
 		if(owner == body->owner)
 		{
 			return body;
@@ -382,21 +393,21 @@ Body BodyManager::getBody(GameObject owner)
 	return NULL;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-bool BodyManager::isGameObjectRegistered(GameObject owner)
+bool BodyManager::isEntityRegistered(Entity owner)
 {
-	ASSERT(this->components, "BodyManager::isGameObjectRegistered: null bodies");
+	ASSERT(this->components, "BodyManager::isEntityRegistered: null bodies");
 
 	VirtualNode node = this->components->head;
 
 	for(; NULL != node; node = node->next)
 	{
-		// current body
+		// Current body
 		Body body = Body::safeCast(node->data);
 
-		// check if current body's owner is the same as the entity calling this method
-		if(GameObject::safeCast(owner) == body->owner)
+		// Check if current body's owner is the same as the actor calling this method
+		if(Entity::safeCast(owner) == body->owner)
 		{
 			return true;
 		}
@@ -405,5 +416,4 @@ bool BodyManager::isGameObjectRegistered(GameObject owner)
 	return false;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

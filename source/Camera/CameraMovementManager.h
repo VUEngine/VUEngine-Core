@@ -10,27 +10,23 @@
 #ifndef CAMERA_MOVEMENT_MANAGER_H_
 #define CAMERA_MOVEMENT_MANAGER_H_
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // INCLUDES
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <ListenerObject.h>
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // FORWARD DECLARATIONS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 class Camera;
-class Entity;
+class Actor;
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DECLARATION
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-///
 /// Class CameraMovementManager
 ///
 /// Inherits from ListenerObject
@@ -40,24 +36,20 @@ singleton class CameraMovementManager : ListenerObject
 {
 	/// @protectedsection
 
-	/// Displacement to the focus entity's position to focus
+	/// Displacement to the focus actor's position to focus
 	/// the camera on
-	Vector3D focusEntityPositionDisplacement;
+	Vector3D focusActorPositionDisplacement;
 	
-	/// Entity to focus on the camera
-	Entity focusEntity;
+	/// Actor to focus on the camera
+	Actor focusActor;
 
-	/// Cache of the focus entity's position pointer
-	const Vector3D* focusEntityPosition;
+	/// Cache of the focus actor's position pointer
+	const Vector3D* focusActorPosition;
 
-	/// Cache of the focus entity's rotation pointer
-	const Rotation* focusEntityRotation;
+	/// Cache of the focus actor's rotation pointer
+	const Rotation* focusActorRotation;
 	
 	/// @publicsection
-
-	/// Method to retrieve the singleton instance
-	/// @return CameraMovementManager singleton
-	static CameraMovementManager getInstance();
 
 	/// Class' constructor
 	void constructor();
@@ -65,29 +57,29 @@ singleton class CameraMovementManager : ListenerObject
 	/// Reset the manager's state
 	void reset();
 
-	/// Register the entity that the camera must follow.
-	/// @param focusEntity: Entity to follow
-	void setFocusEntity(Entity focusEntity);
+	/// Register the actor that the camera must follow.
+	/// @param focusActor: Actor to follow
+	void setFocusActor(Actor focusActor);
 
-	/// Retrieve the entity that the camera is following.
-	/// @return focusEntity: Entity being followed
-	Entity getFocusEntity();
+	/// Retrieve the actor that the camera is following.
+	/// @return focusActor: Actor being followed
+	Actor getFocusActor();
 
 	/// Register a displacement to be added to the camera's position 
-	/// relative to the focus entity's position.
-	/// @param focusEntityPositionDisplacement: Displacement vector
-	void setFocusEntityPositionDisplacement(const Vector3D* focusEntityPositionDisplacement);
+	/// relative to the focus actor's position.
+	/// @param focusActorPositionDisplacement: Displacement vector
+	void setFocusActorPositionDisplacement(const Vector3D* focusActorPositionDisplacement);
 
 	/// Retrieve the displacement that is added to the camera's position 
-	/// relative to the focus entity's position.
+	/// relative to the focus actor's position.
 	/// @return Displacement vector
-	const Vector3D* getFocusEntityPositionDisplacement();
+	const Vector3D* getFocusActorPositionDisplacement();
 
 	/// Retrieve the camera's change of position in the last game cycle
 	/// @return Camera's change of position in the last game cycle
 	Vector3D getLastCameraDisplacement();
 
-	/// Focus the camera on the focus entity if any.
+	/// Focus the camera on the focus actor if any.
 	/// @param camera: Camera to focus
 	virtual Vector3D focus(Camera camera);
 }

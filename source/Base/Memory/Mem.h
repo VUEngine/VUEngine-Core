@@ -10,26 +10,22 @@
 #ifndef MEM_H_
 #define MEM_H_
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // INCLUDES
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <Object.h>
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' MACROS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #define __NUMBER_OF_COPIES_TO_ENABLE_CACHE		10
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DECLARATION
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-///
 /// Class Mem
 ///
 /// Inherits from ListenerObject
@@ -57,21 +53,24 @@ static class Mem : Object
 	/// @param numberOfWORDS: Total number of WORDs to copy
 	static inline void copyWORD(WORD* destination, const WORD* source, uint32 numberOfWORDS);
 
-	/// Apply a bitwise OR operation to the specified number of BYTEs from the provided source addresses and place the results in the destination address onwards
+	/// Apply a bitwise OR operation to the specified number of BYTEs from the provided source addresses and place the results 
+	/// in the destination address onwards
 	/// @param destination: Starting destination address
 	/// @param source1: Starting first source address
 	/// @param source2: Starting second source address
 	/// @param numberOfBYTES: Total number of BYTEs to combine
 	static inline void combineBYTEs(BYTE* destination, const BYTE* source1, const BYTE* source2, uint32 numberOfBYTES);
 
-	/// Apply a bitwise OR operation to the specified number of HWORDs from the provided source addresses and place the results in the destination address onwards
+	/// Apply a bitwise OR operation to the specified number of HWORDs from the provided source addresses and place the results 
+	/// in the destination address onwards
 	/// @param destination: Starting destination address
 	/// @param source1: Starting first source address
 	/// @param source2: Starting second source address
 	/// @param numberOfWORDS: Total number of HWORDs to combine
 	static inline void combineHWORDs(HWORD* destination, const HWORD* source1, const HWORD* source2, uint32 numberOfWORDS);
 
-	/// Apply a bitwise OR operation to the specified number of WORDs from the provided source addresses and place the results in the destination address onwards
+	/// Apply a bitwise OR operation to the specified number of WORDs from the provided source addresses and place the results 
+	/// in the destination address onwards
 	/// @param destination: Starting destination address
 	/// @param source1: Starting first source address
 	/// @param source2: Starting second source address
@@ -105,13 +104,11 @@ static class Mem : Object
 	static void clear(BYTE* destination, uint32 numberOfBYTES);
 }
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' STATIC METHODS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 static inline void Mem::copyBYTE(BYTE* destination, const BYTE* source, uint32 numberOfBYTES)
 {
@@ -121,7 +118,7 @@ static inline void Mem::copyBYTE(BYTE* destination, const BYTE* source, uint32 n
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 static inline void Mem::copyHWORD(HWORD* destination, const HWORD* source, uint32 numberOfHWORDS)
 {
@@ -131,7 +128,7 @@ static inline void Mem::copyHWORD(HWORD* destination, const HWORD* source, uint3
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 static inline void Mem::copyWORD(WORD* destination, const WORD* source, uint32 numberOfWORDS)
 {
@@ -141,7 +138,7 @@ static inline void Mem::copyWORD(WORD* destination, const WORD* source, uint32 n
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 static inline void Mem::combineBYTEs(BYTE* destination, const BYTE* source1, const BYTE* source2, uint32 numberOfBYTES)
 {
@@ -159,7 +156,7 @@ static inline void Mem::combineHWORDs(HWORD* destination, const HWORD* source1, 
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 static inline void Mem::combineWORDs(WORD* destination, const WORD* source1, const WORD* source2, uint32 numberOfWORDS)
 {
@@ -169,7 +166,7 @@ static inline void Mem::combineWORDs(WORD* destination, const WORD* source1, con
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 static inline void Mem::addOffsetToBYTE(BYTE* destination, const BYTE* source, uint32 numberOfBYTES, uint32 offset)
 {
@@ -179,7 +176,7 @@ static inline void Mem::addOffsetToBYTE(BYTE* destination, const BYTE* source, u
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 static inline void Mem::addOffsetToHWORD(HWORD* destination, const HWORD* source, uint32 numberOfHWORDS, uint32 offset)
 {
@@ -189,7 +186,7 @@ static inline void Mem::addOffsetToHWORD(HWORD* destination, const HWORD* source
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 static inline void Mem::addOffsetToWORD(WORD* destination, const WORD* source, uint32 numberOfWORDS, uint32 offset)
 {

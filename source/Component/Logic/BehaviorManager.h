@@ -10,64 +10,55 @@
 #ifndef BEHAVIOR_MANAGER_H_
 #define BEHAVIOR_MANAGER_H_
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // INCLUDES
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <Clock.h>
 #include <ComponentManager.h>
 #include <Behavior.h>
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-// FORWARD DECLARATIONS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-class VirtualList;
-
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-// CLASS' MACROS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-#define __TOTAL_OBJECT_SEGMENTS 	4
-
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DECLARATION
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-///
 /// Class BehaviorManager
 ///
 /// Inherits from ComponentManager
 ///
 /// Manages all the behavior instances.
-singleton class BehaviorManager : ComponentManager
+class BehaviorManager : ComponentManager
 {
 	/// @protectedsection
 
 	/// @publicsection
 
-	/// Method to retrieve the singleton instance
-	/// @return BehaviorManager singleton
-	static BehaviorManager getInstance();
+	/// Class' constructor
+	void constructor();
+
+	/// Retrieve the compoment type that the manager manages.
+	/// @return Component type
+	override uint32 getType();
+
+	/// Enable the manager.
+	override void enable();
+
+	/// Disable the manager.
+	override void disable();
 
 	/// Create a behavior with the provided spec.
 	/// @param owner: Object to which the behavior will attach to
 	/// @param behaviorSpec: Spec to use to create the behavior
 	/// @return Created behavior
-	override Behavior createComponent(GameObject owner, const BehaviorSpec* behaviorSpec);
+	override Behavior instantiateComponent(Entity owner, const BehaviorSpec* behaviorSpec);
 
 	/// Destroy the provided behavior.
 	/// @param owner: Object to which the sprite will attach to
 	/// @param behavior: Behavior to destroy
-	override void destroyComponent(GameObject owner, Behavior behavior);
+	override void deinstantiateComponent(Entity owner, Behavior behavior);
 
 	/// Reset the manager's state
 	void reset();
 }
-
 
 #endif

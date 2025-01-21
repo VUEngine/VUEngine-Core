@@ -10,17 +10,15 @@
 #ifndef M_BGMAP_SPRITE_H_
 #define M_BGMAP_SPRITE_H_
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // INCLUDES
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <BgmapSprite.h>
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DATA
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 /// A MBgmapSprite spec
 /// @memberof MBgmapSprite
@@ -52,12 +50,10 @@ typedef struct MBgmapSpriteSpec
 /// @memberof MBgmapSprite
 typedef const MBgmapSpriteSpec MBgmapSpriteROMSpec;
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DECLARATION
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-///
 /// Class MBgmapSprite
 ///
 /// Inherits from MBgmapSprite
@@ -79,15 +75,14 @@ class MBgmapSprite : BgmapSprite
 	/// @publicsection
 
 	/// Class' constructor
-	/// @param owner: GameObject to which the sprite attaches to
+	/// @param owner: Entity to which the sprite attaches to
 	/// @param mBgmapSpriteSpec: Specification that determines how to configure the sprite
-	void constructor(GameObject owner, const MBgmapSpriteSpec* mBgmapSpriteSpec);
+	void constructor(Entity owner, const MBgmapSpriteSpec* mBgmapSpriteSpec);
 
 	/// Render the sprite by configuring the DRAM assigned to it by means of the provided index.
 	/// @param index: Determines the region of DRAM that this sprite is allowed to configure
 	/// @return The index that determines the region of DRAM that this sprite manages
 	override int16 doRender(int16 index);
 }
-
 
 #endif

@@ -7,16 +7,15 @@
  * that was distributed with this source code.
  */
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // INCLUDES
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <CollisionTester.h>
 #include <ColliderManager.h>
 #include <DebugConfig.h>
 #include <Printing.h>
-#include <GameObject.h>
+#include <Entity.h>
 #include <Telegram.h>
 #include <VirtualList.h>
 #include <VirtualNode.h>
@@ -25,41 +24,37 @@
 
 #include "Collider.h"
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DECLARATIONS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 friend class VirtualNode;
 friend class VirtualList;
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' MACROS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #define __STILL_COLLIDING_CHECK_SIZE_INCREMENT 		__PIXELS_TO_METERS(1)
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PUBLIC METHODS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void Collider::constructor(GameObject owner, const ColliderSpec* colliderSpec)
+void Collider::constructor(Entity owner, const ColliderSpec* colliderSpec)
 {
 	// Always explicitly call the base's constructor 
 	Base::constructor(owner, (const ComponentSpec*)&colliderSpec->componentSpec);
 
-	// not setup yet
+	// Not setup yet
 	this->deleteMe = false;
 	this->enabled = true;
 
 	this->wireframe = NULL;
 
-	// set flag
+	// Set flag
 	this->checkForCollisions = false;
 	this->layers = colliderSpec->layers;
 	this->layersToIgnore = colliderSpec->layersToIgnore;
@@ -70,7 +65,7 @@ void Collider::constructor(GameObject owner, const ColliderSpec* colliderSpec)
 	this->invalidPosition = true;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Collider::destructor()
 {
@@ -94,8 +89,17 @@ void Collider::destructor()
 
 			if(!isDeleted(otherColliderRegistry->collider))
 			{
-				Collider::removeEventListener(otherColliderRegistry->collider, ListenerObject::safeCast(this), (EventListener)Collider::onOtherColliderChanged, kEventColliderDeleted);
-				Collider::removeEventListener(otherColliderRegistry->collider, ListenerObject::safeCast(this), (EventListener)Collider::onOtherColliderChanged, kEventColliderChanged);
+				Collider::removeEventListener
+				(
+					otherColliderRegistry->collider, ListenerObject::safeCast(this), (EventListener)Collider::onOtherColliderChanged, 
+					kEventColliderDeleted
+				);
+
+				Collider::removeEventListener
+				(
+					otherColliderRegistry->collider, ListenerObject::safeCast(this), (EventListener)Collider::onOtherColliderChanged, 
+					kEventColliderChanged
+				);
 			}
 
 			delete otherColliderRegistry;
@@ -109,7 +113,7 @@ void Collider::destructor()
 	Base::destructor();
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 bool Collider::handleMessage(Telegram telegram)
 {
@@ -129,7 +133,7 @@ bool Collider::handleMessage(Telegram telegram)
 	return false;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Collider::handleCommand(int32 command, va_list args)
 {
@@ -177,7 +181,7 @@ void Collider::handleCommand(int32 command, va_list args)
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Collider::enable()
 {
@@ -189,7 +193,7 @@ void Collider::enable()
 	this->enabled = true;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Collider::disable()
 {
@@ -201,35 +205,35 @@ void Collider::disable()
 	this->enabled = false;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Collider::setLayers(uint32 layers)
 {
 	this->layers = layers;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 uint32 Collider::getLayers()
 {
 	return this->layers;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Collider::setLayersToIgnore(uint32 layersToIgnore)
 {
 	this->layersToIgnore = layersToIgnore;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 uint32 Collider::getLayersToIgnore()
 {
 	return this->layersToIgnore;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Collider::checkCollisions(bool checkCollisions)
 {
@@ -241,14 +245,14 @@ void Collider::checkCollisions(bool checkCollisions)
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Collider::registerCollisions(bool value)
 {
 	this->registerCollisions = value;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 CollisionResult Collider::collides(Collider collider)
 {
@@ -264,30 +268,36 @@ CollisionResult Collider::collides(Collider collider)
 
 	OtherColliderRegistry* otherColliderRegistry = Collider::findOtherColliderRegistry(this, collider);
 
-	// test if new collision
+	// Test if new collision
 	if(NULL == otherColliderRegistry)
 	{
-		// check for new overlap
+		// Check for new overlap
 		CollisionTester::testOverlaping(this, collider, &collision.collisionInformation, 0);
 
 		if(NULL != collision.collisionInformation.collider && 0 != collision.collisionInformation.solutionVector.magnitude)
 		{
-			// new collision
+			// New collision
 			collision.result = kCollisionStarts;
 
 			if(this->registerCollisions)
 			{
-				otherColliderRegistry = Collider::registerOtherCollider(this, collider, collision.collisionInformation.solutionVector, false);
+				otherColliderRegistry = 
+					Collider::registerOtherCollider(this, collider, collision.collisionInformation.solutionVector, false);
 			}
 		}
 	}
 	// Impenetrable registered colliding colliders require another test
-	// to determine if I'm not colliding against them anymore
+	// To determine if I'm not colliding against them anymore
 	else if(otherColliderRegistry->isImpenetrable && otherColliderRegistry->solutionVector.magnitude)
 	{
 		CollisionTester::testOverlaping(this, collider, &collision.collisionInformation, __STILL_COLLIDING_CHECK_SIZE_INCREMENT);
 
-		if(collision.collisionInformation.collider == this && collision.collisionInformation.solutionVector.magnitude >= __STILL_COLLIDING_CHECK_SIZE_INCREMENT)
+		if
+		(
+			collision.collisionInformation.collider == this 
+			&& 
+			collision.collisionInformation.solutionVector.magnitude >= __STILL_COLLIDING_CHECK_SIZE_INCREMENT
+		)
 		{
 			collision.result = kCollisionPersists;
 		}
@@ -300,7 +310,7 @@ CollisionResult Collider::collides(Collider collider)
 	}
 	else
 	{
-		// otherwise make a normal collision test
+		// Otherwise make a normal collision test
 		CollisionTester::testOverlaping(this, collider, &collision.collisionInformation, 0);
 
 		if(collision.collisionInformation.collider == this && 0 != collision.collisionInformation.solutionVector.magnitude)
@@ -339,12 +349,12 @@ CollisionResult Collider::collides(Collider collider)
 	return collision.result;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Collider::resolveCollision(const CollisionInformation* collisionInformation)
 {
 	ASSERT(collisionInformation->collider, "Collider::resolveCollision: null collider");
-	ASSERT(collisionInformation->otherCollider, "Collider::resolveCollision: null collidingEntities");
+	ASSERT(collisionInformation->otherCollider, "Collider::resolveCollision: null collidingActors");
 
 	if(isDeleted(this->owner))
 	{
@@ -357,19 +367,24 @@ void Collider::resolveCollision(const CollisionInformation* collisionInformation
 	{
 		Collider::displaceOwner(this, Vector3D::scalarProduct(solutionVector.direction, solutionVector.magnitude));
 
-		// need to invalidate solution vectors for other colliding colliders
+		// Need to invalidate solution vectors for other colliding colliders
 		//Collider::checkPreviousCollisions(this, collisionInformation->otherCollider);
 
 		if(this->registerCollisions)
 		{
-			OtherColliderRegistry* otherColliderRegistry = Collider::registerOtherCollider(this, collisionInformation->otherCollider, collisionInformation->solutionVector, true);
+			OtherColliderRegistry* otherColliderRegistry = 
+				Collider::registerOtherCollider
+				(
+					this, collisionInformation->otherCollider, collisionInformation->solutionVector, true
+				);
+
 			ASSERT(!isDeleted(otherColliderRegistry), "Collider::resolveCollision: dead otherColliderRegistry");
-			otherColliderRegistry->frictionCoefficient =  GameObject::getFrictionCoefficient(collisionInformation->otherCollider->owner);
+			otherColliderRegistry->frictionCoefficient =  Entity::getFrictionCoefficient(collisionInformation->otherCollider->owner);
 		}
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 bool Collider::canMoveTowards(Vector3D displacement)
 {
@@ -390,7 +405,7 @@ bool Collider::canMoveTowards(Vector3D displacement)
 
 		if(otherColliderRegistry->isImpenetrable)
 		{
-			// check if solution is valid
+			// Check if solution is valid
 			if(otherColliderRegistry->solutionVector.magnitude)
 			{
 				fixed_t cosAngle = Vector3D::dotProduct(otherColliderRegistry->solutionVector.direction, normalizedDisplacement);
@@ -399,11 +414,11 @@ bool Collider::canMoveTowards(Vector3D displacement)
 		}
 	}
 
-	// not colliding anymore
+	// Not colliding anymore
 	return canMove;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Collider::discardCollisions()
 {
@@ -419,8 +434,17 @@ void Collider::discardCollisions()
 
 			if(!isDeleted(otherColliderRegistry->collider))
 			{
-				Collider::removeEventListener(otherColliderRegistry->collider, ListenerObject::safeCast(this), (EventListener)Collider::onOtherColliderChanged, kEventColliderDeleted);
-				Collider::removeEventListener(otherColliderRegistry->collider, ListenerObject::safeCast(this), (EventListener)Collider::onOtherColliderChanged, kEventColliderChanged);
+				Collider::removeEventListener
+				(
+					otherColliderRegistry->collider, ListenerObject::safeCast(this), (EventListener)Collider::onOtherColliderChanged, 
+					kEventColliderDeleted
+				);
+				
+				Collider::removeEventListener
+				(
+					otherColliderRegistry->collider, ListenerObject::safeCast(this), (EventListener)Collider::onOtherColliderChanged, 
+					kEventColliderChanged
+				);
 			}
 
 			delete otherColliderRegistry;
@@ -431,7 +455,7 @@ void Collider::discardCollisions()
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 fixed_t Collider::getCollidingFrictionCoefficient()
 {
@@ -460,7 +484,7 @@ fixed_t Collider::getCollidingFrictionCoefficient()
 	return totalFrictionCoefficient;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Collider::show()
 {
@@ -470,94 +494,94 @@ void Collider::show()
 
 		if(!isDeleted(this->wireframe))
 		{
-			WireframeManager::registerWireframe(WireframeManager::getInstance(), this->wireframe);
+			WireframeManager::registerWireframe(WireframeManager::safeCast(ComponentManager::getManager(kWireframeComponent)), this->wireframe);
 
 			Wireframe::show(this->wireframe);
 		}
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Collider::hide()
 {
 	if(!isDeleted(this->wireframe))
 	{
-		WireframeManager::unregisterWireframe(WireframeManager::getInstance(), this->wireframe);
+		WireframeManager::unregisterWireframe(WireframeManager::safeCast(ComponentManager::getManager(kWireframeComponent)), this->wireframe);
 
 		delete this->wireframe;
 		this->wireframe = NULL;
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Collider::resize(fixed_t sizeDelta __attribute__((unused)))
 {}
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 Vector3D Collider::getNormal()
 {
 	return Vector3D::zero();
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #ifndef __SHIPPING
 void Collider::print(int32 x, int32 y)
 {
-	Printing::text(Printing::getInstance(), "SHAPE ", x, y++, NULL);
-	Printing::text(Printing::getInstance(), "Owner:            ", x, y, NULL);
-	Printing::text(Printing::getInstance(), this->owner ? __GET_CLASS_NAME(this->owner) : "No owner", x + 7, y++, NULL);
-	Printing::hex(Printing::getInstance(), (int32)this->owner, x + 7, y++, 8, NULL);
+	Printing::text("SHAPE ", x, y++, NULL);
+	Printing::text("Owner:            ", x, y, NULL);
+	Printing::text(this->owner ? __GET_CLASS_NAME(this->owner) : "No owner", x + 7, y++, NULL);
+	Printing::hex((int32)this->owner, x + 7, y++, 8, NULL);
 
-	Printing::text(Printing::getInstance(), "Colliding colliders:            ", x, y, NULL);
-	Printing::int32(Printing::getInstance(), this->otherColliders ? VirtualList::getCount(this->otherColliders) : 0, x + 21, y++, NULL);
-	Printing::text(Printing::getInstance(), "Impenetrable colliders:            ", x, y, NULL);
-	Printing::int32(Printing::getInstance(), Collider::getNumberOfImpenetrableOtherColliders(this), x + 21, y++, NULL);
+	Printing::text("Colliding colliders:            ", x, y, NULL);
+	Printing::int32(this->otherColliders ? VirtualList::getCount(this->otherColliders) : 0, x + 21, y++, NULL);
+	Printing::text("Impenetrable colliders:            ", x, y, NULL);
+	Printing::int32(Collider::getNumberOfImpenetrableOtherColliders(this), x + 21, y++, NULL);
 }
 #endif
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PRIVATE METHODS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Collider::collisionStarts(Collision* collision)
 {
-	if(GameObject::collisionStarts(this->owner, &collision->collisionInformation))
+	if(Entity::collisionStarts(this->owner, &collision->collisionInformation))
 	{
-		OtherColliderRegistry* otherColliderRegistry = Collider::findOtherColliderRegistry(this, collision->collisionInformation.otherCollider);
+		OtherColliderRegistry* otherColliderRegistry = 
+			Collider::findOtherColliderRegistry(this, collision->collisionInformation.otherCollider);
 
 		if(otherColliderRegistry)
 		{
-			otherColliderRegistry->frictionCoefficient =  GameObject::getFrictionCoefficient(collision->collisionInformation.otherCollider->owner);
+			otherColliderRegistry->frictionCoefficient = 
+				Entity::getFrictionCoefficient(collision->collisionInformation.otherCollider->owner);
 		}
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Collider::collisionPersists(Collision* collision)
 {
-	GameObject::collisionPersists(this->owner, &collision->collisionInformation);
+	Entity::collisionPersists(this->owner, &collision->collisionInformation);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Collider::collisionEnds(Collision* collision)
 {
-	GameObject::collisionEnds(this->owner, &collision->collisionInformation);
+	Entity::collisionEnds(this->owner, &collision->collisionInformation);
 	Collider::unregisterOtherCollider(this, collision->collisionInformation.otherCollider);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 bool Collider::onOtherColliderChanged(ListenerObject eventFirer)
 {
@@ -582,13 +606,13 @@ bool Collider::onOtherColliderChanged(ListenerObject eventFirer)
 		collisionInformation.collider = this;
 		collisionInformation.otherCollider = otherCollider;
 
-		GameObject::collisionEnds(this->owner, &collisionInformation);
+		Entity::collisionEnds(this->owner, &collisionInformation);
 	}
 
 	return true;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 OtherColliderRegistry* Collider::registerOtherCollider(Collider otherCollider, SolutionVector solutionVector, bool isImpenetrable)
 {
@@ -615,14 +639,21 @@ OtherColliderRegistry* Collider::registerOtherCollider(Collider otherCollider, S
 	{
 		VirtualList::pushBack(this->otherColliders, otherColliderRegistry);
 
-		Collider::addEventListener(otherCollider, ListenerObject::safeCast(this), (EventListener)Collider::onOtherColliderChanged, kEventColliderDeleted);
-		Collider::addEventListener(otherCollider, ListenerObject::safeCast(this), (EventListener)Collider::onOtherColliderChanged, kEventColliderChanged);
+		Collider::addEventListener
+		(
+			otherCollider, ListenerObject::safeCast(this), (EventListener)Collider::onOtherColliderChanged, kEventColliderDeleted
+		);
+		
+		Collider::addEventListener
+		(
+			otherCollider, ListenerObject::safeCast(this), (EventListener)Collider::onOtherColliderChanged, kEventColliderChanged
+		);
 	}
 
 	return otherColliderRegistry;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 bool Collider::unregisterOtherCollider(Collider otherCollider)
 {
@@ -641,14 +672,21 @@ bool Collider::unregisterOtherCollider(Collider otherCollider)
 
 	if(!isDeleted(otherCollider))
 	{
-		Collider::removeEventListener(otherCollider, ListenerObject::safeCast(this), (EventListener)Collider::onOtherColliderChanged, kEventColliderDeleted);
-		Collider::removeEventListener(otherCollider, ListenerObject::safeCast(this), (EventListener)Collider::onOtherColliderChanged, kEventColliderChanged);
+		Collider::removeEventListener
+		(
+			otherCollider, ListenerObject::safeCast(this), (EventListener)Collider::onOtherColliderChanged, kEventColliderDeleted
+		);
+		
+		Collider::removeEventListener
+		(
+			otherCollider, ListenerObject::safeCast(this), (EventListener)Collider::onOtherColliderChanged, kEventColliderChanged
+		);
 	}
 
 	return true;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 OtherColliderRegistry* Collider::findOtherColliderRegistry(Collider collider)
 {
@@ -672,21 +710,21 @@ OtherColliderRegistry* Collider::findOtherColliderRegistry(Collider collider)
 	return NULL;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Collider::displaceOwner(Vector3D displacement)
 {
-	// retrieve the colliding gameObject's position and gap
-	Vector3D ownerPosition = * GameObject::getPosition(this->owner);
+	// Retrieve the colliding entity's position and gap
+	Vector3D ownerPosition = * Entity::getPosition(this->owner);
 
 	ownerPosition.x += displacement.x;
 	ownerPosition.y += displacement.y;
 	ownerPosition.z += displacement.z;
 
-	GameObject::setPosition(this->owner, &ownerPosition);
+	Entity::setPosition(this->owner, &ownerPosition);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 int32 Collider::getNumberOfImpenetrableOtherColliders()
 {
@@ -707,5 +745,4 @@ int32 Collider::getNumberOfImpenetrableOtherColliders()
 	return count;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

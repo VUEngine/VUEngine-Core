@@ -10,17 +10,15 @@
 #ifndef M_BGMAP_ANIMATED_SPRITE_H_
 #define M_BGMAP_ANIMATED_SPRITE_H_
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // INCLUDES
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <MBgmapSprite.h>
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DATA
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 /// A MBgmapAnimatedSprite spec
 /// @memberof MBgmapAnimatedSprite
@@ -34,12 +32,10 @@ typedef struct MBgmapAnimatedSpriteSpec
 /// @memberof MBgmapAnimatedSprite
 typedef const MBgmapAnimatedSpriteSpec MBgmapAnimatedSpriteROMSpec;
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DECLARATION
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-///
 /// Class FrameBlendBgmapSprite
 ///
 /// Inherits from BgmapSprite
@@ -50,9 +46,9 @@ class MBgmapAnimatedSprite : MBgmapSprite
 	/// @publicsection
 
 	/// Class' constructor
-	/// @param owner: GameObject to which the sprite attaches to
+	/// @param owner: Entity to which the sprite attaches to
 	/// @param mBgmapAnimatedSpriteSpec: Specification that determines how to configure the sprite
-	void constructor(GameObject owner, const MBgmapAnimatedSpriteSpec* mBgmapAnimatedSpriteSpec);
+	void constructor(Entity owner, const MBgmapAnimatedSpriteSpec* mBgmapAnimatedSpriteSpec);
 
 	/// Update the animation.
 	override void updateAnimation();
@@ -61,6 +57,5 @@ class MBgmapAnimatedSprite : MBgmapSprite
 	/// @param frame: Current animation frame 
 	override void setMultiframe(uint16 frame);
 }
-
 
 #endif

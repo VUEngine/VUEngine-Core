@@ -7,17 +7,15 @@
  * that was distributed with this source code.
  */
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // INCLUDES
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <Stage.h>
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // DEFINITIONS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 StageROMSpec EmptyStageSpec =
 {
@@ -26,15 +24,18 @@ StageROMSpec EmptyStageSpec =
 
 	// Timer config
 	{
+		// Timer's resolution (__TIMER_100US or __TIMER_20US)
 		__TIMER_100US,
+		// Target elapsed time between timer interrupts
 		1000,
+		// Timer interrupt's target time units
 		kMS
 	},
 
 	// Sound config
 	{
+		// Target refresh rate for PCM playback
 		__DEFAULT_PCM_HZ,
-		false
 	},
 
 	// General stage's attributes
@@ -62,33 +63,33 @@ StageROMSpec EmptyStageSpec =
 		},
 
 		// Camera's frustum
-        {
-        	// x0
-        	0,
-        	// y0
+		{
+			// x0
+			0,
+			// y0
 			0,
 			// z0
 			-10,
-        	// x1
-        	__SCREEN_WIDTH,
-        	// y1
-        	__SCREEN_HEIGHT,
-        	// z1
-        	__SCREEN_WIDTH * 5,
-        }
+			// x1
+			__SCREEN_WIDTH,
+			// y1
+			__SCREEN_HEIGHT,
+			// z1
+			__SCREEN_WIDTH * 5,
+		}
 	},
 
 	// Streaming
 	{
-		// Padding to be added to camera's frustum when checking if a entity spec
-		// describes an entity that is within the camera's range
+		// Padding to be added to camera's frustum when checking if a actor spec
+		// describes an actor that is within the camera's range
 		40,
-		// Padding to be added to camera's frustum when checking if a entity is
+		// Padding to be added to camera's frustum when checking if a actor is
 		// out of the camera's range
 		16,
-		// Amount of entity descriptions to check for streaming in entities
+		// Amount of actor descriptions to check for streaming in actors
 		24,
-		// If true, entity instantiation is done over time
+		// If true, actor instantiation is done over time
 		false,
 	},
 
@@ -217,20 +218,20 @@ StageROMSpec EmptyStageSpec =
 		// Textures to preload
 		(TextureSpec**)NULL,
 
-		// background sounds
+		// Background sounds
 		(SoundSpec**)NULL,
 	},
 
-	// Entities
+	// Actors
 	{
 		// UI configuration
 		{
-			(PositionedEntity*)NULL,
+			(PositionedActor*)NULL,
 			__TYPE(UIContainer),
 		},
 
-		// Stage's children entities
-		(PositionedEntity*)NULL,
+		// Stage's children actors
+		(PositionedActor*)NULL,
 	},
 
 	// Post processing effects

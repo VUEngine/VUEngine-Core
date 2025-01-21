@@ -10,17 +10,15 @@
 #ifndef TEXT_OBJECT_SPRITE_H_
 #define TEXT_OBJECT_SPRITE_H_
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // INCLUDES
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <ObjectSprite.h>
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DATA
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 /// A TextObjectSprite spec
 /// @memberof TextObjectSprite
@@ -44,12 +42,10 @@ typedef struct TextObjectSpriteSpec
 /// @memberof TextObjectSprite
 typedef const TextObjectSpriteSpec TextObjectSpriteROMSpec;
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DECLARATION
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-///
 /// Class TextObjectSprite
 ///
 /// Inherits from Sprite
@@ -74,15 +70,14 @@ class TextObjectSprite : ObjectSprite
 	/// @publicsection
 
 	/// Class' constructor
-	/// @param owner: GameObject to which the sprite attaches to
+	/// @param owner: Entity to which the sprite attaches to
 	/// @param textObjectSpriteSpec: Specification that determines how to configure the sprite
-	void constructor(GameObject owner, const TextObjectSpriteSpec* textObjectSpriteSpec);
+	void constructor(Entity owner, const TextObjectSpriteSpec* textObjectSpriteSpec);
 
 	/// Render the sprite by configuring the DRAM assigned to it by means of the provided index.
 	/// @param index: Determines the region of DRAM that this sprite is allowed to configure
 	/// @return The index that determines the region of DRAM that this sprite manages
 	override int16 doRender(int16 index);
 }
-
 
 #endif

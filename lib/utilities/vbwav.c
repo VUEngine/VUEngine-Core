@@ -57,7 +57,6 @@ unsigned short read_uint8(void)
 	return ret;
 }
 
-
 //Saves some repetition
 void show_requirements(void)
 {
@@ -70,7 +69,6 @@ void show_syntax(void)
 	printf("Correct syntax is vbwav <file.wav> [8/15/32/45]\n");
 	printf("Output file will be file.h\n");
 }
-
 
 //Make sure it is a WAV file in the correct format
 int check_file(void)
@@ -151,7 +149,6 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 
-
 	//copy file to memory, also track how big the biggest byte is
 	for(i = 0; i < length; i++)
 	{
@@ -164,7 +161,6 @@ int main(int argc, char *argv[])
 	}
 	fclose(fptr);
 
-	
 	float scale = (float)levelAmplitude / 0x3F;
 
 	printf("Scale: %f\n", scale);
@@ -202,10 +198,6 @@ int main(int argc, char *argv[])
 //		wave[i] = (float)wave[i] * scale + 0.5f;
 	/*
 
-
-
-
-
 	int temp, min=65536, max=0;
 
 	for (int i=0; i<length; i++) //find min and max in data
@@ -232,7 +224,6 @@ int main(int argc, char *argv[])
 	
 	for (int i=0; i<length; i++) //scale data by scale factor
 		wave[i]=(unsigned char)(((double)(wave[i]-128))*scale_factor)+128;
-
 
 int which_half = 0;
 unsigned char outdata = 0;

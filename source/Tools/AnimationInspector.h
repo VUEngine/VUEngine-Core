@@ -10,34 +10,33 @@
 #ifndef ANIMATION_INSPECTOR_H_
 #define ANIMATION_INSPECTOR_H_
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // INCLUDES
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-#include <AnimatedEntity.h>
+#include <Actor.h>
 #include <Tool.h>
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DATA
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-/// A struct to map an animated entity spec to a name
+/// A struct to map an animated actor spec to a name
 /// @memberof AnimationInspector
-typedef struct UserAnimatedEntity
+typedef struct UserActor
 {
-	/// Specification for an animated entity
-	const AnimatedEntitySpec* animatedEntitySpec;
+	/// Specification for an animated actor
+	const ActorSpec* actorSpec;
 
-	/// Animated entity spec's name
+	/// Animated actor spec's name
 	const char* name;
 
-} UserAnimatedEntity;
+} UserActor;
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DECLARATION
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-///
 /// Class AnimationInspector
 ///
 /// Inherits from Tool
@@ -54,8 +53,8 @@ singleton class AnimationInspector : Tool
 	/// Currently applied animation
 	AnimationFunction animationFunction;
 
-	/// Selector for the animated entities
-	OptionsSelector animatedEntitySelector;
+	/// Selector for the animated actors
+	OptionsSelector actorSelector;
 
 	/// Selector for the animated sprite sprite selector
 	OptionsSelector spriteSelector;
@@ -73,10 +72,6 @@ singleton class AnimationInspector : Tool
 	int32 state;
 
 	/// @publicsection
-
-	/// Method to retrieve the singleton instance
-	/// @return AnimationInspector singleton
-	static AnimationInspector getInstance();
 
 	/// Update the tool's state.
 	override void update();

@@ -10,27 +10,23 @@
 #ifndef SRAM_MANAGER_H_
 #define SRAM_MANAGER_H_
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // INCLUDES
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <Object.h>
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // FORWARD DECLARATIONS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 // Forward declaration of a struct that each game has to define
 struct SaveData;
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DECLARATION
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-///
 /// Class SRAMManager
 ///
 /// Inherits from Object
@@ -44,10 +40,17 @@ singleton class SRAMManager : Object
 	/// SRAM start address
 	uint16* spaceAddress;
 
-	/// @publicsection
-	/// Method to retrieve the singleton instance
-	/// @return SRAMManager singleton
-	static SRAMManager getInstance();
+	/// Save data to SRAM.
+	/// @param source			WRAM address from were data will be copied
+	/// @param memberOffset		WRAM address offset
+	/// @param dataSize			Number of BYTES to read
+	static void save(const BYTE* const source, int32 memberOffset, int32 dataSize);
+
+	/// Retrieve data from SRAM.
+	/// @param destination		WRAM address were data will be loaded
+	/// @param memberOffset		WRAM address offset
+	/// @param dataSize			Number of BYTES to read
+	static void read(BYTE* destination, int32 memberOffset, int32 dataSize);
 
 	/// Reset the manager's state.
 	void reset();
@@ -56,19 +59,6 @@ singleton class SRAMManager : Object
 	/// @param startOffset: Start offset of range to clear
 	/// @param endOffset: End address of range to clear
 	void clear(int32 startOffset, int32 endOffset);
-
-	/// Save data to SRAM.
-	/// @param source			WRAM address from were data will be copied
-	/// @param memberOffset		WRAM address offset
-	/// @param dataSize			Number of BYTES to read
-	void save(const BYTE* const source, int32 memberOffset, int32 dataSize);
-
-	/// Retrieve data from SRAM.
-	/// @param destination		WRAM address were data will be loaded
-	/// @param memberOffset		WRAM address offset
-	/// @param dataSize			Number of BYTES to read
-	void read(BYTE* destination, int32 memberOffset, int32 dataSize);
 }
-
 
 #endif

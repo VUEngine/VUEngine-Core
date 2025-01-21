@@ -7,34 +7,27 @@
  * that was distributed with this source code.
  */
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // INCLUDES
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #ifdef __DEBUG_TOOL
 #include <Debug.h>
 #endif
 #include <DebugConfig.h>
-#include <DirectDraw.h>
 #include <HardwareManager.h>
 #include <Mem.h>
-#include <ObjectSprite.h>
-#include <ObjectSpriteContainer.h>
 #include <Printing.h>
 #include <Profiler.h>
-#include <SpriteManager.h>
 #include <VirtualList.h>
 #include <VirtualNode.h>
 #include <VUEngine.h>
-#include <WireframeManager.h>
 
 #include "VIPManager.h"
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DECLARATIONS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 friend class VirtualNode;
 friend class VirtualList;
@@ -43,25 +36,23 @@ extern ColumnTableROMSpec DefaultColumnTableSpec;
 extern BrightnessRepeatROMSpec DefaultBrightnessRepeatSpec;
 extern uint32 _dramDirtyStart;
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DATA
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 /// Processing Effect Registry
 /// @memberof VIPManager
 typedef struct PostProcessingEffectRegistry
 {
 	PostProcessingEffect postProcessingEffect;
-	GameObject gameObject;
+	Entity entity;
 	bool remove;
 
 } PostProcessingEffectRegistry;
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' ATTRIBUTES
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 WorldAttributes _worldAttributesCache[__TOTAL_LAYERS] __attribute__((section(".dram_bss")));
 ObjectAttributes _objectAttributesCache[__TOTAL_OBJECTS] __attribute__((section(".dram_bss")));
@@ -69,200 +60,196 @@ ObjectAttributes _objectAttributesCache[__TOTAL_OBJECTS] __attribute__((section(
 volatile uint16* _vipRegisters __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE = (uint16*)0x0005F800;
 uint32* _currentDrawingFrameBufferSet __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE = NULL;
 
-static VIPManager _vipManager = NULL;
-static DirectDraw _directDraw = NULL;
-static WireframeManager _wireframeManager = NULL;
-static SpriteManager _spriteManager = NULL;
 static uint16* const _columnTableBaseAddressLeft =	(uint16*)0x0003DC00; // base address of Column Table (Left Eye)
 static uint16* const _columnTableBaseAddressRight =	(uint16*)0x0003DE00; // base address of Column Table (Right Eye)
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' STATIC METHODS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 static void VIPManager::interruptHandler()
 {
-	_vipManager->currrentInterrupt = _vipRegisters[__INTPND];
+	VIPManager vipManager = VIPManager::getInstance();
 
-	// disable interrupts
-	VIPManager::disableInterrupts(_vipManager);
+	vipManager->currrentInterrupt = _vipRegisters[__INTPND];
 
-#ifndef __DEBUG
-	if(kVIPNoMultiplexedInterrupts != _vipManager->enabledMultiplexedInterrupts)
+	// Clear interrupts
+	VIPManager::clearInterrupts(vipManager);
+
+	if(kVIPNoMultiplexedInterrupts != vipManager->enabledMultiplexedInterrupts)
 	{
-		if(kVIPOnlyVIPMultiplexedInterrupts == _vipManager->enabledMultiplexedInterrupts)
+		if(kVIPOnlyVIPMultiplexedInterrupts == vipManager->enabledMultiplexedInterrupts)
 		{
-			HardwareManager::setInterruptLevel(_vipManager->enabledMultiplexedInterrupts);
+			HardwareManager::setInterruptLevel(vipManager->enabledMultiplexedInterrupts);
 		}
 
 		HardwareManager::enableMultiplexedInterrupts();
 	}
-#endif
 
-#ifdef __VIP_MANAGER_FIRE_INTERRUPT_EVENT
-	if(_vipManager->events)
-	{
-		VIPManager::fireEvent(_vipManager, kEventVIPManagerInterrupt);
-	}
-#endif
-
-	// handle the interrupt
-	VIPManager::processInterrupt(_vipManager, _vipManager->currrentInterrupt);
-
-#ifndef __DEBUG
-	if(kVIPNoMultiplexedInterrupts != _vipManager->enabledMultiplexedInterrupts)
+	// Handle the interrupt
+	VIPManager::processInterrupt(vipManager, vipManager->currrentInterrupt);
+	
+	if(kVIPNoMultiplexedInterrupts != vipManager->enabledMultiplexedInterrupts)
 	{
 		HardwareManager::disableMultiplexedInterrupts();
 
-		if(kVIPOnlyVIPMultiplexedInterrupts == _vipManager->enabledMultiplexedInterrupts)
+		if(kVIPOnlyVIPMultiplexedInterrupts == vipManager->enabledMultiplexedInterrupts)
 		{
 			HardwareManager::setInterruptLevel(0);
 		}
 	}
-#endif
 
-	_vipManager->currrentInterrupt = 0;
-
-	VIPManager::enableInterrupts(_vipManager, __GAMESTART | __XPEND);
+	vipManager->currrentInterrupt = 0;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-// CLASS' PUBLIC METHODS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void VIPManager::reset()
+static void VIPManager::pushFrontPostProcessingEffect(PostProcessingEffect postProcessingEffect, Entity entity)
 {
-	this->customInterrupts = 0;
-	this->currrentInterrupt = 0;
-	this->processingGAMESTART = false;
-	this->processingXPEND = false;
-	this->isDrawingAllowed = false;
-	
-#ifndef __ENABLE_PROFILER
-	this->enabledMultiplexedInterrupts = kVIPAllMultiplexedInterrupts;
-#else
-	this->enabledMultiplexedInterrupts = kVIPNoMultiplexedInterrupts;
-#endif
+	VIPManager vipManager = VIPManager::getInstance();
 
-	VIPManager::setFrameCycle(this, __FRAME_CYCLE);
-	VIPManager::setupColumnTable(this, NULL);
+	PostProcessingEffectRegistry* postProcessingEffectRegistry = 
+		VIPManager::isPostProcessingEffectRegistered(vipManager, postProcessingEffect, entity);
 
-	VIPManager::clearDRAM(this);
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void VIPManager::enableCustomInterrupts(uint16 customInterrupts)
-{
-	this->customInterrupts = customInterrupts;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void VIPManager::enableMultiplexedInterrupts(uint32 enabledMultiplexedInterrupts __attribute__((unused)))
-{
-#ifndef __ENABLE_PROFILER
-	this->enabledMultiplexedInterrupts = enabledMultiplexedInterrupts;
-#else
-	this->enabledMultiplexedInterrupts = kVIPNoMultiplexedInterrupts;
-#endif
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void VIPManager::startDrawing()
-{
-	this->isDrawingAllowed = true;
-
-	VIPManager::enableInterrupts(this, __FRAMESTART | __XPEND);
-
-	while(_vipRegisters[__XPSTTS] & __XPBSY);
-	_vipRegisters[__XPCTRL] |= __XPEN;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void VIPManager::resumeDrawing()
-{
-	if(this->isDrawingAllowed)
+	if(!isDeleted(postProcessingEffectRegistry))
 	{
-		while(_vipRegisters[__XPSTTS] & __XPBSY);
-		_vipRegisters[__XPCTRL] |= __XPEN;
+		postProcessingEffectRegistry->remove = false;
+		return;
+	}
+
+	postProcessingEffectRegistry = new PostProcessingEffectRegistry;
+	postProcessingEffectRegistry->postProcessingEffect = postProcessingEffect;
+	postProcessingEffectRegistry->entity = entity;
+	postProcessingEffectRegistry->remove = false;
+
+	VirtualList::pushFront(vipManager->postProcessingEffects, postProcessingEffectRegistry);
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+static void VIPManager::pushBackPostProcessingEffect(PostProcessingEffect postProcessingEffect, Entity entity)
+{
+	VIPManager vipManager = VIPManager::getInstance();
+
+	PostProcessingEffectRegistry* postProcessingEffectRegistry = 
+		VIPManager::isPostProcessingEffectRegistered(vipManager, postProcessingEffect, entity);
+
+	if(!isDeleted(postProcessingEffectRegistry))
+	{
+		postProcessingEffectRegistry->remove = false;
+		return;
+	}
+
+	postProcessingEffectRegistry = new PostProcessingEffectRegistry;
+	postProcessingEffectRegistry->postProcessingEffect = postProcessingEffect;
+	postProcessingEffectRegistry->entity = entity;
+	postProcessingEffectRegistry->remove = false;
+
+	VirtualList::pushBack(vipManager->postProcessingEffects, postProcessingEffectRegistry);
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+static void VIPManager::removePostProcessingEffect(PostProcessingEffect postProcessingEffect, Entity entity)
+{
+	VIPManager vipManager = VIPManager::getInstance();
+
+	for(VirtualNode node = vipManager->postProcessingEffects->head; NULL != node; node = node->next)
+	{
+		PostProcessingEffectRegistry* postProcessingEffectRegistry = (PostProcessingEffectRegistry*)node->data;
+
+		if
+		(
+			postProcessingEffectRegistry->postProcessingEffect == postProcessingEffect 
+			&& 
+			postProcessingEffectRegistry->entity == entity
+		)
+		{
+			postProcessingEffectRegistry->remove = true;
+			return;
+		}
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void VIPManager::suspendDrawing()
+static void VIPManager::removePostProcessingEffects()
 {
-	this->isDrawingAllowed = VIPManager::isDrawingAllowed(this);
-	
-	while(_vipRegisters[__XPSTTS] & __XPBSY);
-	_vipRegisters[__XPCTRL] &= ~__XPEN;
+	VIPManager vipManager = VIPManager::getInstance();
+
+	VirtualList::deleteData(vipManager->postProcessingEffects);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void VIPManager::stopDrawing()
+static void VIPManager::enableCustomInterrupts(uint16 customInterrupts)
 {
-	this->isDrawingAllowed = false;
+	VIPManager vipManager = VIPManager::getInstance();
 
-	VIPManager::disableInterrupts(this);
-
-	while(_vipRegisters[__XPSTTS] & __XPBSY);
-	_vipRegisters[__XPCTRL] &= ~__XPEN;
+	vipManager->customInterrupts = customInterrupts;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void VIPManager::startDisplaying()
+static void VIPManager::enableMultiplexedInterrupts(uint32 enabledMultiplexedInterrupts __attribute__((unused)))
 {
-	_vipRegisters[__REST] = 0;
-	_vipRegisters[__DPCTRL] = (__SYNCE | __RE | __DISP) & ~__LOCK;
-}
+	VIPManager vipManager = VIPManager::getInstance();
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void VIPManager::stopDisplaying()
-{
-	_vipRegisters[__REST] = 0;
-	_vipRegisters[__DPCTRL] = 0;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void VIPManager::setFrameCycle(uint8 frameCycle __attribute__((unused)))
-{
-#ifdef __DEBUG
-	frameCycle = 2;
+#ifndef __ENABLE_PROFILER
+	vipManager->enabledMultiplexedInterrupts = enabledMultiplexedInterrupts;
 #else
+	vipManager->enabledMultiplexedInterrupts = kVIPNoMultiplexedInterrupts;
+#endif
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+static void VIPManager::setDrawingStrategy(uint32 drawingStrategy)
+{
+	VIPManager vipManager = VIPManager::getInstance();
+
+	if(kVIPManagerStrategyLimiter <= drawingStrategy)
+	{
+		drawingStrategy = 0;
+	}
+
+	vipManager->drawingStrategy = drawingStrategy;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+static uint32 VIPManager::getDrawingStrategy()
+{
+	VIPManager vipManager = VIPManager::getInstance();
+
+	return vipManager->drawingStrategy;
+}
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+static void VIPManager::setFrameCycle(uint8 frameCycle __attribute__((unused)))
+{
+	VIPManager vipManager = VIPManager::getInstance();
+
+#ifdef __DEBUG
+	frameCycle++;
+#endif
+
 	if(3 < frameCycle)
 	{
 		frameCycle = 3;
 	}
-#endif
 
-	this->gameFrameDuration = (__MILLISECONDS_PER_SECOND / __MAXIMUM_FPS) << frameCycle;
+	vipManager->gameFrameDuration = (__MILLISECONDS_PER_SECOND / __MAXIMUM_FPS) << frameCycle;
 
 	_vipRegisters[__FRMCYC] = frameCycle;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void VIPManager::configurePalettes(PaletteConfig* paletteConfig)
+static void VIPManager::configurePalettes(PaletteConfig* paletteConfig)
 {
-	while(_vipRegisters[__XPSTTS] & __XPBSY);
-
 	_vipRegisters[__GPLT0] = paletteConfig->bgmap.gplt0;
 	_vipRegisters[__GPLT1] = paletteConfig->bgmap.gplt1;
 	_vipRegisters[__GPLT2] = paletteConfig->bgmap.gplt2;
@@ -274,19 +261,19 @@ void VIPManager::configurePalettes(PaletteConfig* paletteConfig)
 	_vipRegisters[__JPLT3] = paletteConfig->object.jplt3;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void VIPManager::setupColumnTable(ColumnTableSpec* columnTableSpec)
+static void VIPManager::setupColumnTable(ColumnTableSpec* columnTableSpec)
 {
 	int32 i, value;
 
-	// use the default column table as fallback
+	// Use the default column table as fallback
 	if(columnTableSpec == NULL)
 	{
 		columnTableSpec = (ColumnTableSpec*)&DefaultColumnTableSpec;
 	}
 
-	// write column table
+	// Write column table
 	for(i = 0; i < 256; i++)
 	{
 		value = (columnTableSpec->mirror && (i > (__COLUMN_TABLE_ENTRIES / 2 - 1)))
@@ -298,9 +285,9 @@ void VIPManager::setupColumnTable(ColumnTableSpec* columnTableSpec)
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void VIPManager::setupBrightness(Brightness* brightness)
+static void VIPManager::configureBrightness(Brightness* brightness)
 {
 	while(_vipRegisters[__XPSTTS] & __XPBSY);
 	_vipRegisters[__BRTA] = brightness->darkRed;
@@ -308,22 +295,22 @@ void VIPManager::setupBrightness(Brightness* brightness)
 	_vipRegisters[__BRTC] = brightness->brightRed - (brightness->mediumRed + brightness->darkRed);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void VIPManager::setupBrightnessRepeat(BrightnessRepeatSpec* brightnessRepeatSpec)
+static void VIPManager::configureBrightnessRepeat(BrightnessRepeatSpec* brightnessRepeatSpec)
 {
-	// use the default repeat values as fallback
+	// Use the default repeat values as fallback
 	if(brightnessRepeatSpec == NULL)
 	{
 		brightnessRepeatSpec = (BrightnessRepeatSpec*)&DefaultBrightnessRepeatSpec;
 	}
-	// column table offsets
+	// Column table offsets
 	int16 leftCta = _vipRegisters[__CTA] & 0xFF;
 	int16 rightCta = _vipRegisters[__CTA] >> 8;
 
 	CACHE_RESET;
 
-	// write repeat values to column table
+	// Write repeat values to column table
 	for(int16 i = 0; i < 96; i++)
 	{
 		int16 value = (brightnessRepeatSpec->mirror && (i > (__BRIGHTNESS_REPEAT_ENTRIES / 2 - 1)))
@@ -335,18 +322,34 @@ void VIPManager::setupBrightnessRepeat(BrightnessRepeatSpec* brightnessRepeatSpe
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void VIPManager::setBackgroundColor(uint8 color)
+static void VIPManager::configureBackgroundColor(uint8 color)
 {
 	_vipRegisters[__BACKGROUND_COLOR] = (color <= __COLOR_BRIGHT_RED)
 		? color
 		: __COLOR_BRIGHT_RED;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void VIPManager::upBrightness()
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+static void VIPManager::configurePostProcessingEffects(PostProcessingEffect* postProcessingEffects)
+{
+	if(NULL == postProcessingEffects)
+	{
+		return;
+	}
+
+	for(int32 i = 0; NULL != postProcessingEffects[i]; i++)
+	{
+		VIPManager::pushFrontPostProcessingEffect(postProcessingEffects[i], NULL);
+	}
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+static void VIPManager::upBrightness()
 {
 	while(_vipRegisters[__XPSTTS] & __XPBSY);
 	_vipRegisters[__BRTA] = 32;
@@ -354,9 +357,9 @@ void VIPManager::upBrightness()
 	_vipRegisters[__BRTC] = 32;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void VIPManager::lowerBrightness()
+static void VIPManager::lowerBrightness()
 {
 	while(_vipRegisters[__XPSTTS] & __XPBSY);
 	_vipRegisters[__BRTA] = 0;
@@ -364,92 +367,143 @@ void VIPManager::lowerBrightness()
 	_vipRegisters[__BRTC] = 0;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void VIPManager::pushFrontPostProcessingEffect(PostProcessingEffect postProcessingEffect, GameObject gameObject)
-{
-	PostProcessingEffectRegistry* postProcessingEffectRegistry = VIPManager::isPostProcessingEffectRegistered(this, postProcessingEffect, gameObject);
-
-	if(!isDeleted(postProcessingEffectRegistry))
-	{
-		postProcessingEffectRegistry->remove = false;
-		return;
-	}
-
-	postProcessingEffectRegistry = new PostProcessingEffectRegistry;
-	postProcessingEffectRegistry->postProcessingEffect = postProcessingEffect;
-	postProcessingEffectRegistry->gameObject = gameObject;
-	postProcessingEffectRegistry->remove = false;
-
-	VirtualList::pushFront(this->postProcessingEffects, postProcessingEffectRegistry);
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void VIPManager::pushBackPostProcessingEffect(PostProcessingEffect postProcessingEffect, GameObject gameObject)
-{
-	PostProcessingEffectRegistry* postProcessingEffectRegistry = VIPManager::isPostProcessingEffectRegistered(this, postProcessingEffect, gameObject);
-
-	if(!isDeleted(postProcessingEffectRegistry))
-	{
-		postProcessingEffectRegistry->remove = false;
-		return;
-	}
-
-	postProcessingEffectRegistry = new PostProcessingEffectRegistry;
-	postProcessingEffectRegistry->postProcessingEffect = postProcessingEffect;
-	postProcessingEffectRegistry->gameObject = gameObject;
-	postProcessingEffectRegistry->remove = false;
-
-	VirtualList::pushBack(this->postProcessingEffects, postProcessingEffectRegistry);
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void VIPManager::removePostProcessingEffect(PostProcessingEffect postProcessingEffect, GameObject gameObject)
-{
-	for(VirtualNode node = this->postProcessingEffects->head; NULL != node; node = node->next)
-	{
-		PostProcessingEffectRegistry* postProcessingEffectRegistry = (PostProcessingEffectRegistry*)node->data;
-
-		if(postProcessingEffectRegistry->postProcessingEffect == postProcessingEffect && postProcessingEffectRegistry->gameObject == gameObject)
-		{
-			postProcessingEffectRegistry->remove = true;
-			return;
-		}
-	}
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void VIPManager::removePostProcessingEffects()
-{
-	VirtualList::deleteData(this->postProcessingEffects);
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 uint16 VIPManager::getCurrentInterrupt()
 {
-	return this->currrentInterrupt;
+	VIPManager vipManager = VIPManager::getInstance();
+
+	return vipManager->currrentInterrupt;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 uint16 VIPManager::getGameFrameDuration()
 {
-	return this->gameFrameDuration;
+	VIPManager vipManager = VIPManager::getInstance();
+
+	return vipManager->gameFrameDuration;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+// CLASS' PUBLIC METHODS
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+secure void VIPManager::reset()
+{
+	this->customInterrupts = 0;
+	this->currrentInterrupt = 0;
+	this->processingGAMESTART = false;
+	this->processingXPEND = false;
+	this->isDrawingAllowed = false;
+	this->drawingStrategy = kVIPManagerFavorStability;
+	this->enabledMultiplexedInterrupts = kVIPNoMultiplexedInterrupts;
+
+	VIPManager::lowerBrightness();
+	VIPManager::removePostProcessingEffects();
+
+	VIPManager::setFrameCycle(__FRAME_CYCLE);
+	VIPManager::setupColumnTable(NULL);
+
+	VIPManager::clearDRAM(this);
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+secure void VIPManager::configure
+(
+	uint8 backgroundColor, Brightness* brightness, BrightnessRepeatSpec* brightnessRepeat, 
+	PaletteConfig* paletteConfig, PostProcessingEffect* postProcessingEffects
+)
+{
+	VIPManager::configureBackgroundColor(backgroundColor);
+	VIPManager::configureBrightness(brightness);
+	VIPManager::configureBrightnessRepeat(brightnessRepeat);
+	VIPManager::configurePalettes(paletteConfig);
+	VIPManager::configurePostProcessingEffects(postProcessingEffects);
+}
 
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+secure void VIPManager::startDrawing()
+{
+	this->isDrawingAllowed = true;
+
+	VIPManager::enableInterrupts(this, __GAMESTART | __XPEND);
+
+	while(_vipRegisters[__XPSTTS] & __XPBSY);
+	_vipRegisters[__XPCTRL] |= __XPEN;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+secure void VIPManager::resumeDrawing()
+{
+	if(this->isDrawingAllowed)
+	{
+		if(kVIPManagerFavorStability == this->drawingStrategy)
+		{
+			while(_vipRegisters[__XPSTTS] & __XPBSY);
+		}
+
+		_vipRegisters[__XPCTRL] |= __XPEN;
+	}
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+secure void VIPManager::suspendDrawing()
+{
+	this->isDrawingAllowed = VIPManager::isDrawingAllowed(this);
+	
+	if(kVIPManagerFavorStability == this->drawingStrategy)
+	{
+		while(_vipRegisters[__XPSTTS] & __XPBSY);
+	}
+
+	_vipRegisters[__XPCTRL] &= ~__XPEN;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+secure void VIPManager::stopDrawing()
+{
+	this->isDrawingAllowed = false;
+
+	VIPManager::disableInterrupts(this);
+
+	while(_vipRegisters[__XPSTTS] & __XPBSY);
+	_vipRegisters[__XPCTRL] &= ~__XPEN;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+secure void VIPManager::startDisplaying()
+{
+	_vipRegisters[__REST] = 0;
+	_vipRegisters[__DPCTRL] = (__SYNCE | __RE | __DISP) & ~__LOCK;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+secure void VIPManager::stopDisplaying()
+{
+	_vipRegisters[__REST] = 0;
+	_vipRegisters[__DPCTRL] = 0;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PRIVATE METHODS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void VIPManager::constructor()
 {
@@ -463,20 +517,16 @@ void VIPManager::constructor()
 	this->processingGAMESTART = false;
 	this->customInterrupts = 0;
 	this->currrentInterrupt = 0;
-	this->enabledMultiplexedInterrupts = kVIPAllMultiplexedInterrupts;
+	this->enabledMultiplexedInterrupts = kVIPNoMultiplexedInterrupts;
 	this->isDrawingAllowed = false;
+	this->drawingStrategy = kVIPManagerFavorStability;
 
-	VIPManager::setFrameCycle(this, __FRAME_CYCLE);
-
-	_vipManager = this;
-	_spriteManager = SpriteManager::getInstance();
-	_directDraw = DirectDraw::getInstance();
-	_wireframeManager = WireframeManager::getInstance();
+	VIPManager::setFrameCycle(__FRAME_CYCLE);
 
 	_currentDrawingFrameBufferSet = &this->currentDrawingFrameBufferSet;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void VIPManager::destructor()
 {
@@ -484,14 +534,14 @@ void VIPManager::destructor()
 
 	delete this->postProcessingEffects;
 
-	// allow a new construct
+	// Allow a new construct
 	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void VIPManager::processInterrupt(uint16 interrupt)
+secure void VIPManager::processInterrupt(uint16 interrupt)
 {
 	static uint16 interruptTable[] =
 	{
@@ -510,118 +560,64 @@ void VIPManager::processInterrupt(uint16 interrupt)
 		{
 			case __FRAMESTART:
 
-#ifdef __SHOW_PROCESS_NAME_DURING_FRAMESTART
-				PRINT_TEXT("F START:            ", 0, 27);
-				PRINT_TEXT(VUEngine::getProcessName(_vuEngine), 9, 27);
-#endif
-
 				this->FRAMESTARTDuringXPEND = this->processingXPEND;
-				VUEngine::frameStarted(_vuEngine, __MILLISECONDS_PER_SECOND / __MAXIMUM_FPS);
+
+				VIPManager::fireEvent(this, kEventVIPManagerFRAMESTART);
 				break;
 
 			case __GAMESTART:
 
 #ifdef __ENABLE_PROFILER
-				Profiler::lap(Profiler::getInstance(), kProfilerLapTypeStartInterrupt, NULL);
-#endif
-
-#ifdef __SHOW_PROCESS_NAME_DURING_GAMESTART
-				PRINT_TEXT("G START:           ", 0, 26);
-				PRINT_TEXT(VUEngine::getProcessName(_vuEngine), 9, 26);
+				Profiler::lap(kProfilerLapTypeStartInterrupt, NULL);
 #endif
 
 				this->processingGAMESTART = true;
 
-				// Configure the drawing frame buffers
 				VIPManager::registerCurrentDrawingFrameBufferSet(this);
 
-				if(this->processingXPEND)
-				{
-					if(NULL != this->events)
-					{
-						VIPManager::fireEvent(this, kEventVIPManagerGAMESTARTDuringXPEND);
-					}
-				}
-				else
-				{
-					// Listen for the end of drawing operations
-					if(!(__XPEND & interrupt) && 0 != (kVIPAllMultiplexedInterrupts & this->enabledMultiplexedInterrupts))
-					{
-						VIPManager::enableInterrupts(this, __XPEND);
-					}
-				}
-
-				// Process game's logic
-				VUEngine::gameFrameStarted(_vuEngine, this->gameFrameDuration);
-				SpriteManager::render(_spriteManager);
-				WireframeManager::render(_wireframeManager);
+				VIPManager::fireEvent
+				(
+					this, 
+					this->processingXPEND ? 
+						kEventVIPManagerGAMESTARTDuringXPEND 
+						:
+						kEventVIPManagerGAMESTART
+				);
 
 				this->processingGAMESTART = false;
 
 #ifdef __ENABLE_PROFILER
-				Profiler::lap(Profiler::getInstance(), kProfilerLapTypeVIPInterruptGAMESTARTProcess, PROCESS_NAME_RENDER);
-#endif
-
-#ifdef __SHOW_VIP_STATUS
-				VIPManager::print(this, 1, 2);
+				Profiler::lap(kProfilerLapTypeVIPInterruptGAMESTARTProcess, PROCESS_NAME_RENDER);
 #endif
 				break;
 
 			case __XPEND:
 
 #ifdef __ENABLE_PROFILER
-				Profiler::lap(Profiler::getInstance(), kProfilerLapTypeStartInterrupt, NULL);
+				Profiler::lap(kProfilerLapTypeStartInterrupt, NULL);
 #endif
+				VIPManager::suspendDrawing(this);
 
-#ifdef __SHOW_PROCESS_NAME_DURING_XPEND
-				PRINT_TEXT("XPEND:            ", 0, 27);
-				PRINT_TEXT(VUEngine::getProcessName(_vuEngine), 9, 27);
-#endif
+				this->processingXPEND = true;				
 
-				this->processingXPEND = true;
+				VIPManager::fireEvent
+				(
+					this, 
+					this->processingGAMESTART ? 
+						kEventVIPManagerXPENDDuringGAMESTART 
+						:
+						kEventVIPManagerXPEND
+				);
 
-				if(this->processingGAMESTART)
-				{
-					if(NULL != this->events)
-					{
-						VIPManager::fireEvent(this, kEventVIPManagerXPENDDuringGAMESTART);
-					}
-				}
-				else
-				{
-#ifdef __RELEASE
-					_vipRegisters[__XPCTRL] &= ~__XPEN;
-#else
-					VIPManager::suspendDrawing(this);
-#endif
-
-					// Allow game start interrupt because the frame buffers can change mid drawing
-					if(!(__GAMESTART & interrupt) && 0 != (kVIPGameStartMultiplexedInterrupts & this->enabledMultiplexedInterrupts))
-					{
-						VIPManager::enableInterrupts(this, __GAMESTART);
-					}
-				}
-
-				SpriteManager::writeDRAM(_spriteManager);
-				DirectDraw::preparteToDraw(_directDraw);
-				WireframeManager::draw(_wireframeManager);
-				VIPManager::applyPostProcessingEffects(_vipManager);
+				VIPManager::applyPostProcessingEffects(this);
 
 				this->processingXPEND = false;
 
+				VIPManager::resumeDrawing(this);
+
 #ifdef __ENABLE_PROFILER
-				Profiler::lap(Profiler::getInstance(), kProfilerLapTypeVIPInterruptXPENDProcess, PROCESS_NAME_VRAM_WRITE);
+				Profiler::lap(kProfilerLapTypeVIPInterruptXPENDProcess, PROCESS_NAME_VRAM_WRITE);
 #endif
-
-				if(!this->processingGAMESTART)
-				{
-#ifdef __RELEASE
-					_vipRegisters[__XPCTRL] |= __XPEN;
-#else
-					VIPManager::resumeDrawing(this);
-#endif
-				}
-
 				break;
 
 #ifndef __SHIPPING
@@ -641,9 +637,9 @@ void VIPManager::processInterrupt(uint16 interrupt)
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void VIPManager::enableInterrupts(uint16 interruptCode)
+secure void VIPManager::enableInterrupts(uint16 interruptCode)
 {
 	_vipRegisters[__INTCLR] = _vipRegisters[__INTPND];
 
@@ -656,16 +652,30 @@ void VIPManager::enableInterrupts(uint16 interruptCode)
 #endif
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void VIPManager::disableInterrupts()
+secure void VIPManager::disableInterrupts()
 {
-	_vipRegisters[__INTENB]= 0;
+	_vipRegisters[__INTENB] = 0;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+secure void VIPManager::clearInterrupts()
+{
 	_vipRegisters[__INTCLR] = _vipRegisters[__INTPND];
 }
-void VIPManager::applyPostProcessingEffects()
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+secure void VIPManager::applyPostProcessingEffects()
 {
-	for(VirtualNode node = this->postProcessingEffects->tail, previousNode = NULL; !this->FRAMESTARTDuringXPEND && NULL != node; node = previousNode)
+	for
+	(
+		VirtualNode node = this->postProcessingEffects->tail, previousNode = NULL; 
+		!this->FRAMESTARTDuringXPEND && NULL != node; 
+		node = previousNode
+	)
 	{
 		previousNode = node->previous;
 
@@ -682,15 +692,21 @@ void VIPManager::applyPostProcessingEffects()
 		}
 		else
 		{
-			postProcessingEffectRegistry->postProcessingEffect(this->currentDrawingFrameBufferSet, postProcessingEffectRegistry->gameObject);
+			postProcessingEffectRegistry->postProcessingEffect
+			(
+				this->currentDrawingFrameBufferSet, postProcessingEffectRegistry->entity
+			);
 		}
 	}
 }
-void VIPManager::clearDRAM()
-{	
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+secure void VIPManager::clearDRAM()
+{
 	uint8* bgmapStartAddress = (uint8*)__BGMAP_SPACE_BASE_ADDRESS;
 
-	// clear every bgmap segment
+	// Clear every bgmap segment
 	for(bgmapStartAddress = 0; bgmapStartAddress < (uint8*)__PARAM_TABLE_END; bgmapStartAddress++)
 	{
 		*bgmapStartAddress = 0;
@@ -728,37 +744,36 @@ void VIPManager::clearDRAM()
 	for(int32 i = 0; i < __TOTAL_OBJECTS; i++)
 	{
 		_objectAttributesCache[i].jx = 0;
-		_objectAttributesCache[i].head = __OBJECT_SPRITE_CHAR_HIDE_MASK;
+		_objectAttributesCache[i].head = 0;
 		_objectAttributesCache[i].jy = 0;
 		_objectAttributesCache[i].tile = 0;
 
 		_objectAttributesBaseAddress[i].jx = 0;
-		_objectAttributesBaseAddress[i].head = __OBJECT_SPRITE_CHAR_HIDE_MASK;
+		_objectAttributesBaseAddress[i].head = 0;
 		_objectAttributesBaseAddress[i].jy = 0;
 		_objectAttributesBaseAddress[i].tile = 0;
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void VIPManager::useInternalColumnTable(bool useInternal)
 {
-	// TODO: why does this not work?
 	if(useInternal)
 	{
-		// set lock bit
+		// Set lock bit
 		_vipRegisters[__DPCTRL] |= __LOCK;
 	}
 	else
 	{
-		// unset lock bit
+		// Unset lock bit
 		_vipRegisters[__DPCTRL] &= ~__LOCK;
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void VIPManager::registerCurrentDrawingFrameBufferSet()
+secure void VIPManager::registerCurrentDrawingFrameBufferSet()
 {
 	uint16 currentDrawingFrameBufferSet = _vipRegisters[__XPSTTS] & __XPBSY;
 
@@ -772,16 +787,19 @@ void VIPManager::registerCurrentDrawingFrameBufferSet()
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 bool VIPManager::isDrawingAllowed()
 {
 	return 0 != (_vipRegisters[__XPSTTS] & __XPEN);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-PostProcessingEffectRegistry* VIPManager::isPostProcessingEffectRegistered(PostProcessingEffect postProcessingEffect, GameObject gameObject)
+PostProcessingEffectRegistry* VIPManager::isPostProcessingEffectRegistered
+(
+	PostProcessingEffect postProcessingEffect, Entity entity
+)
 {
 	VirtualNode node = this->postProcessingEffects->head;
 
@@ -789,7 +807,12 @@ PostProcessingEffectRegistry* VIPManager::isPostProcessingEffectRegistered(PostP
 	{
 		PostProcessingEffectRegistry* postProcessingEffectRegistry = (PostProcessingEffectRegistry*)node->data;
 
-		if(postProcessingEffectRegistry->postProcessingEffect == postProcessingEffect && postProcessingEffectRegistry->gameObject == gameObject)
+		if
+		(
+			postProcessingEffectRegistry->postProcessingEffect == postProcessingEffect 
+			&& 
+			postProcessingEffectRegistry->entity == entity
+		)
 		{
 			return postProcessingEffectRegistry;
 		}
@@ -798,7 +821,7 @@ PostProcessingEffectRegistry* VIPManager::isPostProcessingEffectRegistered(PostP
 	return NULL;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 int16 VIPManager::getCurrentBlockBeingDrawn()
 {
@@ -817,14 +840,4 @@ int16 VIPManager::getCurrentBlockBeingDrawn()
 	return (_vipRegisters[__XPSTTS] & __SBCOUNT) >> 8;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-#ifndef __SHIPPING
-void VIPManager::print(int32 x, int32 y)
-{
-	Printing::text(Printing::getInstance(), "VIP Status", x, y++, NULL);
-}
-#endif
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

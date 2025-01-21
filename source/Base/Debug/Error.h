@@ -10,31 +10,24 @@
 #ifndef ERROR_H_
 #define ERROR_H_
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // INCLUDES
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <Object.h>
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DECLARATION
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-///
 /// Class Error
 ///
 /// Inherits from Object
 ///
 /// Catches assertions and hardware exceptions.
-singleton class Error : Object
+static class Error : Object
 {
 	/// @publicsection
-
-	/// Method to retrieve the singleton instance
-	/// @return Error singleton
-	static Error getInstance();
 
 	/// Locks the program in a screen with the details of what caused the exception.
 	/// @param message: Pointer to a brief description of the exception
@@ -50,6 +43,5 @@ singleton class Error : Object
 	/// Handles hardware's floating point exception.
 	static void floatingPointException();
 }
-
 
 #endif

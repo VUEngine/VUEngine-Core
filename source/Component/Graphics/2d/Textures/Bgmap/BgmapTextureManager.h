@@ -10,25 +10,16 @@
 #ifndef BGMAP_TEXTURE_MANAGER_H_
 #define BGMAP_TEXTURE_MANAGER_H_
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // INCLUDES
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <Object.h>
 #include <BgmapTexture.h>
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-// CLASS' MACROS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-#define __BGMAP_SEGMENT_SIZE	8192
-
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DATA
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 enum OffsetIndex
 {
@@ -39,12 +30,10 @@ enum OffsetIndex
 	kBgmapSegment
 };
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DECLARATION
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-///
 /// Class BgmapTextureManager
 ///
 /// Inherits from Texture
@@ -75,10 +64,6 @@ singleton class BgmapTextureManager : Object
 
 	/// @publicsection
 
-	/// Method to retrieve the singleton instance
-	/// @return BgmapTextureManager singleton
-	static BgmapTextureManager getInstance();
-
 	/// Reset the manager's state.
 	void reset();
 
@@ -87,7 +72,8 @@ singleton class BgmapTextureManager : Object
 	void clearBgmapSegment(int32 segment);
 
 	/// Compute the number of available BGMAP segments for texture allocation.
-	void calculateAvailableBgmapSegments();
+	/// @param paramTableBase: Displacement in bytes to keep track of the start address of param table space
+	void configure(uint32 paramTableBase);
 
 	/// Retrieve the number of available BGMAP segments to allocate textures.
 	/// @return Number of available BGMAP segments to allocate textures
@@ -99,7 +85,8 @@ singleton class BgmapTextureManager : Object
 
 	/// Load textures in function of the provided array of specs.
 	/// @param textureSpecs: Array of texture specs in function of which to load textures 
-	void loadTextures(const TextureSpec** textureSpecs);
+	/// @param removeOldTextures: If true, previously loaded texturered are first destroyed and deallocated
+	void loadTextures(const TextureSpec** textureSpecs, bool removeOldTextures);
 
 	/// Retrieve a texture initialized with the provided spec.
 	/// @param bgmapTextureSpec: Spec to use to initilize the desired texture
@@ -128,6 +115,5 @@ singleton class BgmapTextureManager : Object
 	/// @param y: Screen y coordinate where to print
 	void print(int32 x, int32 y);
 }
-
 
 #endif

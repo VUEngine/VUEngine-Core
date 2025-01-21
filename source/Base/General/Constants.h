@@ -10,17 +10,15 @@
 #ifndef CONSTANTS_H_
 #define CONSTANTS_H_
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // INCLUDES
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <Globals.h>
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // DATA
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 // messages
 enum MessagesTypes
@@ -29,7 +27,7 @@ enum MessagesTypes
 
 	// General purpose messages
 	kMessageHighFps,
-	kMessageEntityRemoved,
+	kMessageActorRemoved,
 
 	// Keypad massages
 	kMessageKeyPressed,
@@ -50,12 +48,12 @@ enum MessagesTypes
 	kMessageColliderShow,
 	kMessageColliderHide,
 
-	// Entity messages
+	// Actor messages
 	kMessageShow,
 	kMessageHide,
 	kMessageSetTransparency,
 
-	// don't place messages below this
+	// Don't place messages below this
 	kMessageLastEngine
 };
 
@@ -69,15 +67,13 @@ enum DefaulCollisionLayers
 	kLayerNone = 0,
 };
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // MACROS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 // Memory manipulation
 #define __MEMORY_USED_BLOCK_FLAG				((uint16)0xFFFF)
 #define __MEMORY_FREE_BLOCK_FLAG				0x00000000
-
 
 // Graphics
 #define __TRANSPARENCY_NONE						0
@@ -90,7 +86,6 @@ enum DefaulCollisionLayers
 #define	__COLOR_DARK_RED						0x01
 #define	__COLOR_MEDIUM_RED						0x02
 #define	__COLOR_BRIGHT_RED						0x03
-
 
 // Camera half width in pixels
 #define __HALF_SCREEN_WIDTH						(__SCREEN_WIDTH >> 1)
@@ -169,7 +164,6 @@ enum DefaulCollisionLayers
 #define __INHERIT_ROTATION						__INVALIDATE_ROTATION
 #define __INHERIT_SCALE							__INVALIDATE_SCALE
 
-
 #define __MAXIMUM_FPS							50
 
 #define __MILLISECONDS_PER_SECOND				1000
@@ -180,11 +174,9 @@ enum DefaulCollisionLayers
 #define __METERS_PER_PIXEL						__F_TO_FIXED(1.0f/(float)__PIXELS_PER_METER)
 
 #define __PIXELS_PER_METER_2_POWER				4
-//#define __PIXELS_TO_METERS(pixels)				(fixed_t)(__I_TO_FIXED_EXT(pixels) >> __PIXELS_PER_METER_2_POWER)
 #define __PIXELS_TO_METERS(pixels)				(fixed_t)((pixels) << (__FIXED_TO_I_BITS - __PIXELS_PER_METER_2_POWER))
 #define __REAL_PIXELS_TO_METERS(pixels)			(fixed_t)(__F_TO_FIXED_EXT(pixels) >> __PIXELS_PER_METER_2_POWER)
 #define __METERS_TO_PIXELS(meters)				(((fixed_ext_t)(meters)) >> (__FIXED_TO_I_BITS - __PIXELS_PER_METER_2_POWER))
-//#define __METERS_TO_PIXELS(meters)				(__FIXED_INT_PART(__05F_FIXED + ((fixed_ext_t)(meters))) >> (__FIXED_TO_I_BITS - __PIXELS_PER_METER_2_POWER))
 
 #define __SCREEN_WIDTH_METERS					__PIXELS_TO_METERS(__SCREEN_WIDTH)
 #define __SCREEN_HEIGHT_METERS					__PIXELS_TO_METERS(__SCREEN_HEIGHT)
@@ -194,16 +186,13 @@ enum DefaulCollisionLayers
 #define __MINIMUM_Y_VIEW_DISTANCE_POWER			4
 
 #define __HIDE									0
-#define __SHOW_NEXT_FRAME						1
-#define __SHOW									2
-
+#define __SHOW									1
 
 #define __STRINGIFY(a)							__MAKE_STRING(a)
 
 // Optimizations
 #define __LIKELY(expression)					(__builtin_expect(!!(expression), 1))
 #define __UNLIKELY(expression)					(__builtin_expect(!!(expression), 0))
-
 
 #ifndef __RELEASE
 #define __REGISTER_LAST_PROCESS_NAME

@@ -10,17 +10,15 @@
 #ifndef ASTERISK_H_
 #define ASTERISK_H_
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // INCLUDES
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <Wireframe.h>
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DATA
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 /// A Asterisk spec
 /// @memberof Asterisk
@@ -38,12 +36,10 @@ typedef struct AsteriskSpec
 /// @memberof Asterisk
 typedef const AsteriskSpec AsteriskROMSpec;
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DECLARATION
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-///
 /// Class Asterisk
 ///
 /// Inherits from Wireframe
@@ -65,9 +61,9 @@ class Asterisk : Wireframe
 	/// @publicsection
 
 	/// Class' constructor
-	/// @param owner: GameObject to which the wireframe attaches to
+	/// @param owner: Entity to which the wireframe attaches to
 	/// @param asteriskSpec: Specification that determines how to configure the wireframe
-	void constructor(GameObject owner, const AsteriskSpec* asteriskSpec);
+	void constructor(Entity owner, const AsteriskSpec* asteriskSpec);
 
 	/// Prepare the wireframe for drawing.
 	/// @param relativePosition: Position relative to the camera's
@@ -77,6 +73,5 @@ class Asterisk : Wireframe
 	/// @return True if at least one pixel is drawn; false otherwise
 	override bool draw();
 }
-
 
 #endif

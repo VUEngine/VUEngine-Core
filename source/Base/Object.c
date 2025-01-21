@@ -7,10 +7,9 @@
  * that was distributed with this source code.
  */
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // INCLUDES
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <string.h>
 
@@ -19,23 +18,24 @@
 
 #include "Object.h"
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' STATIC METHODS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 static Object Object::getCast(void* object, ClassPointer targetClassGetClassMethod, ClassPointer baseClassGetClassMethod)
 {
-#ifdef __BYPASS_CAST
-	return object;
-#endif
+	__CHECK_STACK_STATUS
 
-#ifndef __DEBUG
+	if(NULL == object)
+	{
+		return NULL;
+	}
+
+	NM_ASSERT(!isDeleted(object), "Object::getCast: call with deleted object");
+
 	HardwareManager::suspendInterrupts();
-#endif
 
 	static int32 lp = -1;
 	static int32 sp = -1;
@@ -58,12 +58,14 @@ static Object Object::getCast(void* object, ClassPointer targetClassGetClassMeth
 #ifdef __DEBUG
 	static int counter = 0;
 
-	if(100 < ++counter)
+	if(20 < ++counter)
 	{
-		Printing::setDebugMode(Printing::getInstance());
-		Printing::text(Printing::getInstance(), "Object's address: ", 1, 15, NULL);
-		Printing::hex(Printing::getInstance(), (uint32)object, 18, 15, 8, NULL);
-	
+		Printing::setDebugMode();
+		Printing::text("Object's class: ", 1, 15, NULL);
+		Printing::text(__GET_CLASS_NAME(object), 18, 15, NULL);
+		Printing::text("Object's address: ", 1, 16, NULL);
+		Printing::hex((uint32)object, 18, 16, 8, NULL);
+
 		_vuengineLinkPointer = lp;
 		_vuengineStackPointer = sp;
 		NM_CAST_ASSERT(false, "Object::getCast: infinite callback");
@@ -76,9 +78,9 @@ static Object Object::getCast(void* object, ClassPointer targetClassGetClassMeth
 		sp = -1;
 #ifdef __DEBUG
 		counter = 0;
-#else
-		HardwareManager::resumeInterrupts();
 #endif
+
+		HardwareManager::resumeInterrupts();
 		return NULL;
 	}
 
@@ -86,9 +88,9 @@ static Object Object::getCast(void* object, ClassPointer targetClassGetClassMeth
 #ifndef __RELEASE
 	if(isDeleted(object))
 	{
-		Printing::setDebugMode(Printing::getInstance());
-		Printing::text(Printing::getInstance(), "Object's address: ", 1, 15, NULL);
-		Printing::hex(Printing::getInstance(), (uint32)object, 18, 15, 8, NULL);
+		Printing::setDebugMode();
+		Printing::text("Object's address: ", 1, 15, NULL);
+		Printing::hex((uint32)object, 18, 15, 8, NULL);
 	
 		_vuengineLinkPointer = lp;
 		_vuengineStackPointer = sp;
@@ -97,9 +99,9 @@ static Object Object::getCast(void* object, ClassPointer targetClassGetClassMeth
 
 	if(NULL == __VIRTUAL_CALL_ADDRESS(Object, getClassName, object))
 	{
-		Printing::setDebugMode(Printing::getInstance());
-		Printing::text(Printing::getInstance(), "Object's address: ", 1, 15, NULL);
-		Printing::hex(Printing::getInstance(), (uint32)object, 18, 15, 8, NULL);
+		Printing::setDebugMode();
+		Printing::text("Object's address: ", 1, 15, NULL);
+		Printing::hex((uint32)object, 18, 15, 8, NULL);
 	
 		_vuengineLinkPointer = lp;
 		_vuengineStackPointer = sp;
@@ -108,9 +110,9 @@ static Object Object::getCast(void* object, ClassPointer targetClassGetClassMeth
 
 	if(NULL == __VIRTUAL_CALL_ADDRESS(Object, getBaseClass, object))
 	{
-		Printing::setDebugMode(Printing::getInstance());
-		Printing::text(Printing::getInstance(), "Object's address: ", 1, 15, NULL);
-		Printing::hex(Printing::getInstance(), (uint32)object, 18, 15, 8, NULL);
+		Printing::setDebugMode();
+		Printing::text("Object's address: ", 1, 15, NULL);
+		Printing::hex((uint32)object, 18, 15, 8, NULL);
 	
 		_vuengineLinkPointer = lp;
 		_vuengineStackPointer = sp;
@@ -127,27 +129,45 @@ static Object Object::getCast(void* object, ClassPointer targetClassGetClassMeth
 			sp = -1;
 #ifdef __DEBUG
 			counter = 0;
-#else
-			HardwareManager::resumeInterrupts();
 #endif
+
+			HardwareManager::resumeInterrupts();
 			return object;
 		}
 
-		// make my own virtual call, otherwise the macro will cause an infinite recursive call because of the
+		// Make my own virtual call, otherwise the macro will cause an infinite recursive call because of the
 		// ObjectClass::getCast check
 		baseClassGetClassMethod = (ClassPointer)__VIRTUAL_CALL_ADDRESS(Object, getBaseClass, object)(object);
 	}
 
-	if(NULL == baseClassGetClassMethod || ((ClassPointer)&Object_getBaseClass == baseClassGetClassMethod && (ClassPointer)&Object_getBaseClass != targetClassGetClassMethod))
+	if
+	(
+		NULL == baseClassGetClassMethod 
+		|| 
+		(
+			(ClassPointer)&Object_getBaseClass == baseClassGetClassMethod 
+			&&
+			(ClassPointer)&Object_getBaseClass != targetClassGetClassMethod
+		)
+	)
 	{
 		lp = -1;
 		sp = -1;
-
+/*
 #ifdef __DEBUG
 		counter = 0;
-#else
-		HardwareManager::resumeInterrupts();
+		Printing::setDebugMode();
+		Printing::text("Object's class: ", 1, 15, NULL);
+		Printing::text(__GET_CLASS_NAME(object), 18, 15, NULL);
+		Printing::text("Target class: ", 1, 16, NULL);
+		Printing::hex((uint32)targetClassGetClassMethod, 18, 16, 8, NULL);
+	
+		_vuengineLinkPointer = lp;
+		_vuengineStackPointer = sp;
+		NM_CAST_ASSERT(false, "Object::getCast: failed cast");
 #endif
+*/
+		HardwareManager::resumeInterrupts();
 		return NULL;
 	}
 
@@ -158,38 +178,34 @@ static Object Object::getCast(void* object, ClassPointer targetClassGetClassMeth
 
 #ifdef __DEBUG
 		counter = 0;
-#else
-		HardwareManager::resumeInterrupts();
 #endif
+
+		HardwareManager::resumeInterrupts();
 		return object;
 	}
 
-#ifndef __DEBUG
 	HardwareManager::resumeInterrupts();
-#endif
 
 	return Object::getCast((Object)object, targetClassGetClassMethod, (ClassPointer)baseClassGetClassMethod(object));
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PUBLIC METHODS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Object::constructor()
 {
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Object::destructor()
 {
-	// free the memory
+	// Free the memory
 #ifndef __BYPASS_MEMORY_MANAGER_WHEN_DELETING
 	MemoryPool::free((void*)((uint32)this - __DYNAMIC_STRUCT_PAD));
 #else
@@ -199,16 +215,16 @@ void Object::destructor()
 	this = NULL;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 const void* Object::getVTable()
 {
 	return this->vTable;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-bool Object::evolveTo(const void* targetClass)
+bool Object::mutateTo(const void* targetClass)
 {
 	const struct Object_vTable* targetClassVTable = (const struct Object_vTable*)targetClass;
 	const struct Object_vTable* thisVTable = (const struct Object_vTable*)this->vTable;
@@ -222,7 +238,12 @@ bool Object::evolveTo(const void* targetClass)
 
 	while((ClassPointer)Object::getBaseClass != (ClassPointer)baseClassGetClassMethod)
 	{
-		if((ClassPointer)thisVTable->getBaseClass == baseClassGetClassMethod)
+		if
+		(
+			(ClassPointer)thisVTable->getBaseClass == baseClassGetClassMethod
+			||
+			(ClassPointer)thisVTable->getBaseClass(NULL) == baseClassGetClassMethod
+		)
 		{
 			this->vTable = (void*)targetClassVTable;
 			return true;
@@ -235,7 +256,12 @@ bool Object::evolveTo(const void* targetClass)
 	
 	while((ClassPointer)Object::getBaseClass != (ClassPointer)baseClassGetClassMethod)
 	{
-		if((ClassPointer)targetClassVTable->getBaseClass == baseClassGetClassMethod)
+		if
+		(
+			(ClassPointer)targetClassVTable->getBaseClass == baseClassGetClassMethod
+			||
+			(ClassPointer)targetClassVTable->getBaseClass(NULL) == baseClassGetClassMethod
+		)
 		{
 			this->vTable = (void*)targetClassVTable;
 			return true;
@@ -256,5 +282,4 @@ bool Object::evolveTo(const void* targetClass)
 	return false;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

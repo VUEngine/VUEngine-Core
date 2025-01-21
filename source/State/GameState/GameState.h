@@ -10,34 +10,29 @@
 #ifndef GAME_STATE_H_
 #define GAME_STATE_H_
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // INCLUDES
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+#include <ComponentManager.h>
 #include <State.h>
 #include <KeypadManager.h>
 #include <Stage.h>
 #include <UIContainer.h>
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // FORWARD DECLARATIONS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+class Actor;
 class Clock;
-class ColliderManager;
-class Entity;
-class BodyManager;
 class Telegram;
 class VirtualList;
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DECLARATION
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-///
 /// Class GameState
 ///
 /// Inherits from State
@@ -45,17 +40,14 @@ class VirtualList;
 /// Implements a state that the VUEngine's state machine can transition into.
 class GameState : State
 {
-	/// A container for entities that componse the UI
+	/// A container for actors that componse the UI
 	UIContainer uiContainer;
 
 	/// A container for the game entites 
 	Stage stage;
 
-	/// A world where physical bodies exist
-	BodyManager bodyManager;
-
-	/// A manager for collisions and colliders
-	ColliderManager colliderManager;
+	/// Array of component managers
+	ComponentManager componentManagers[kComponentTypes];
 	
 	/// A clock for logics
 	Clock logicsClock;
@@ -80,6 +72,10 @@ class GameState : State
 
 	/// Flags to enable or disable the collision detection and processing
 	bool processCollisions;
+
+	/// Each game state needs to keep track of the frame rate that it runs at
+	/// in case it is paused and resumed
+	uint8 framerate;
 
 	/// @publicsection
 
@@ -118,24 +114,21 @@ class GameState : State
 
 	/// Configure the stage with the provided stage spec.
 	/// @param stageSpec: Specification that determines how to configure the stage
-	/// @param positionedEntitiesToIgnore: List of positioned entity structs to register for streaming
-	void configureStage(StageSpec* stageSpec, VirtualList positionedEntitiesToIgnore);
+	/// @param positionedActorsToIgnore: List of positioned actor structs to register for streaming
+	void configureStage(StageSpec* stageSpec, VirtualList positionedActorsToIgnore);
 
 	/// Retrieve the UI container.
 	/// @return UI Container
 	UIContainer getUIContainer();
 
+	/// Retrieve the manager for the provided component type.
+	/// @param componentType: Type of components of the desired manager
+	/// @return Component manager for the provided component type
+	ComponentManager getComponentManager(uint32 componentType);
+
 	/// Retrieve the stage instance.
 	/// @return Game state's stage
 	Stage getStage();
-	
-	/// Retrieve the physical world.
-	/// @return Game state's physical world
-	BodyManager getBodyManager();
-
-	/// Retrieve the collision manager.
-	/// @return Game state's collision manager
-	ColliderManager getColliderManager();
 
 	/// Retrieve the clock that serves to control the game's logic.
 	/// @return Game state's logics clock
@@ -215,25 +208,25 @@ class GameState : State
 
 	/// Propagate an integer message through the whole parenting hierarchy of the stage (children, grand children, etc.).
 	/// @param message: The message to propagate
-	/// @return True if some entity processed the message
+	/// @return True if some actor processed the message
 	bool propagateMessage(int32 message);
 
 	/// Propagate a string through the whole parenting hierarchy of the stage (children, grand children, etc.).
 	/// @param string: The string to propagate
-	/// @return True if some entity processed the string
+	/// @return True if some actor processed the string
 	bool propagateString(const char* string);
 
 	/// Find a stage's child (grand child, etc.) by its name.
-	/// @param entityName: Name to look for
-	Entity getEntityByName(const char* entityName);
+	/// @param actorName: Name to look for
+	Actor getActorByName(const char* actorName);
 
 	/// Show a stage's child (grand child, etc.) with the provided name.
-	/// @param entityName: Name to look for
-	void showEntityWithName(const char* entityName);
+	/// @param actorName: Name to look for
+	void showActorWithName(const char* actorName);
 
 	/// Hide a stage's child (grand child, etc.) with the provided name.
-	/// @param entityName: Name to look for
-	void hideEntityWithName(const char* entityName);
+	/// @param actorName: Name to look for
+	void hideActorWithName(const char* actorName);
 
 	/// Change the target frame rate.
 	/// @param targetFPS: New target frame rate
@@ -242,11 +235,11 @@ class GameState : State
 	/// as the state is active)
 	void changeFramerate(int16 targetFPS, int32 duration);
 
-	/// Force to completely stream in and out entities and to initialize all.
+	/// Force to completely stream in and out actors and to initialize all.
 	void streamAll();
 
-	/// Stream in or out the stage entities within or outside the camera's range.
-	/// @return True if at least some entity was streamed in or out
+	/// Stream in or out the stage actors within or outside the camera's range.
+	/// @return True if at least some actor was streamed in or out
 	virtual bool stream();
 
 	/// Process the provided user input.
@@ -257,6 +250,5 @@ class GameState : State
 	/// @return True if the state is in versus mode; false otherwise
 	virtual bool isVersusMode();
 }
-
 
 #endif

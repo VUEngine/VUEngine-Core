@@ -7,10 +7,9 @@
  * that was distributed with this source code.
  */
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // INCLUDES
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <CharSet.h>
 #include <Printing.h>
@@ -18,24 +17,21 @@
 
 #include "CharSetManager.h"
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // FORWARD DECLARATIONS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 friend class VirtualNode;
 friend class VirtualList;
 friend class CharSet;
 
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+// CLASS' PUBLIC STATIC METHODS
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-// CLASS' PUBLIC METHODS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void CharSetManager::reset()
+secure void CharSetManager::reset()
 {
 	if(this->charSets)
 	{
@@ -45,9 +41,9 @@ void CharSetManager::reset()
 	this->freedOffset = 1;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void CharSetManager::loadCharSets(const CharSetSpec** charSetSpecs)
+secure void CharSetManager::loadCharSets(const CharSetSpec** charSetSpecs)
 {
 	if(NULL != charSetSpecs)
 	{
@@ -61,9 +57,9 @@ void CharSetManager::loadCharSets(const CharSetSpec** charSetSpecs)
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-CharSet CharSetManager::getCharSet(CharSetSpec* charSetSpec)
+CharSet CharSetManager::getCharSet(const CharSetSpec* charSetSpec)
 {
 	if(NULL == charSetSpec)
 	{
@@ -74,12 +70,12 @@ CharSet CharSetManager::getCharSet(CharSetSpec* charSetSpec)
 
 	if(!charSetSpec->shared)
 	{
-		// ask for allocation
+		// Ask for allocation
 		charSet = CharSetManager::allocateCharSet(this, charSetSpec);
 	}
 	else
 	{
-		// first try to find an already created charset
+		// First try to find an already created charset
 		charSet = CharSetManager::findCharSet(this, charSetSpec);
 
 		if(NULL == charSet)
@@ -95,7 +91,7 @@ CharSet CharSetManager::getCharSet(CharSetSpec* charSetSpec)
 	return charSet;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 bool CharSetManager::releaseCharSet(CharSet charSet)
 {
@@ -123,9 +119,9 @@ bool CharSetManager::releaseCharSet(CharSet charSet)
 	return false;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void CharSetManager::defragment(bool deferred)
+secure void CharSetManager::defragment(bool deferred)
 {
 	if(1 < this->freedOffset)
 	{
@@ -166,7 +162,7 @@ void CharSetManager::defragment(bool deferred)
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 int32 CharSetManager::getTotalUsedChars()
 {
@@ -176,75 +172,45 @@ int32 CharSetManager::getTotalUsedChars()
 	return (int32)CharSet::getOffset(lastCharSet) + CharSet::getNumberOfChars(lastCharSet);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 int32 CharSetManager::getTotalFreeChars()
 {
 	return __CHAR_MEMORY_TOTAL_CHARS - CharSetManager::getTotalUsedChars(this);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 int32 CharSetManager::getTotalCharSets()
 {
 	return VirtualList::getCount(this->charSets);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #ifndef __SHIPPING
 void CharSetManager::print(int32 x, int32 y)
 {
-	Printing::text(Printing::getInstance(), "CHAR MEMORY USAGE", x, y++, NULL);
+	Printing::text("CHAR MEMORY USAGE", x, y++, NULL);
 
-	Printing::text(Printing::getInstance(), "Total CharSets:        ", x, ++y, NULL);
-	Printing::int32(Printing::getInstance(), VirtualList::getCount(this->charSets), x + 18, y, NULL);
-	Printing::text(Printing::getInstance(), "Total used chars:      ", x, ++y, NULL);
-	Printing::int32(Printing::getInstance(), CharSetManager::getTotalUsedChars(this), x + 18, y, NULL);
-	Printing::text(Printing::getInstance(), "Total free chars:      ", x, ++y, NULL);
-	Printing::int32(Printing::getInstance(), CharSetManager::getTotalFreeChars(this), x + 18, y, NULL);
+	Printing::text("Total CharSets:        ", x, ++y, NULL);
+	Printing::int32(VirtualList::getCount(this->charSets), x + 18, y, NULL);
+	Printing::text("Total used chars:      ", x, ++y, NULL);
+	Printing::int32(CharSetManager::getTotalUsedChars(this), x + 18, y, NULL);
+	Printing::text("Total free chars:      ", x, ++y, NULL);
+	Printing::int32(CharSetManager::getTotalFreeChars(this), x + 18, y, NULL);
 }
 #endif
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+// CLASS' PRIVATE STATIC METHODS
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-// CLASS' PRIVATE METHODS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void CharSetManager::constructor()
-{
-	// Always explicitly call the base's constructor 
-	Base::constructor();
-
-	this->charSets = new VirtualList();
-	this->freedOffset = 1;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void CharSetManager::destructor()
-{
-	CharSetManager::reset(this);
-
-	delete this->charSets;
-	this->charSets = NULL;
-
-	// allow a new construct
-	// Always explicitly call the base's destructor 
-	Base::destructor();
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-CharSet CharSetManager::findCharSet(CharSetSpec* charSetSpec)
+CharSet CharSetManager::findCharSet(const CharSetSpec* charSetSpec)
 {
 	CACHE_RESET;
 
@@ -261,11 +227,11 @@ CharSet CharSetManager::findCharSet(CharSetSpec* charSetSpec)
 	return NULL;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-CharSet CharSetManager::allocateCharSet(CharSetSpec* charSetSpec)
+CharSet CharSetManager::allocateCharSet(const CharSetSpec* charSetSpec)
 {
-	NM_ASSERT(this->charSets, "CharSetManager::allocateCharSet: null this");
+	NM_ASSERT(!isDeleted(this->charSets), "CharSetManager::allocateCharSet: null charSets");
 	NM_ASSERT(charSetSpec, "CharSetManager::allocateCharSet: null charSetSpec");
 	NM_ASSERT(charSetSpec->numberOfChars > 0, "CharSetManager::allocateCharSet: number of chars < 0");
 	NM_ASSERT(charSetSpec->numberOfChars < __CHAR_MEMORY_TOTAL_CHARS, "CharSetManager::allocateCharSet: too many chars in spec");
@@ -300,19 +266,19 @@ CharSet CharSetManager::allocateCharSet(CharSetSpec* charSetSpec)
 #endif
 
 #ifndef __SHIPPING
-	Printing::setDebugMode(Printing::getInstance());
-	Printing::clear(Printing::getInstance());
+	Printing::setDebugMode();
+	Printing::clear();
 
-	// if there isn't enough memory thrown an exception
+	// If there isn't enough memory thrown an exception
 	NM_ASSERT(false, "CharSetManager::allocateCharSet: CHAR mem depleted");
 #endif
 
 	return NULL;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void CharSetManager::writeCharSets()
+secure void CharSetManager::writeCharSets()
 {
 	CharSetManager::defragment(this, false);
 
@@ -322,5 +288,35 @@ void CharSetManager::writeCharSets()
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+// CLASS' PRIVATE METHODS
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void CharSetManager::constructor()
+{
+	// Always explicitly call the base's constructor 
+	Base::constructor();
+
+	this->charSets = new VirtualList();
+	this->freedOffset = 1;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void CharSetManager::destructor()
+{
+	CharSetManager::reset(this);
+
+	delete this->charSets;
+	this->charSets = NULL;
+
+	// Allow a new construct
+	// Always explicitly call the base's destructor 
+	Base::destructor();
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

@@ -10,18 +10,16 @@
 #ifndef WIREFRAME_MANAGER_H_
 #define WIREFRAME_MANAGER_H_
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // INCLUDES
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <ComponentManager.h>
 #include <Wireframe.h>
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // FORWARD DECLARATIONS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 class VirtualList;
 
@@ -31,29 +29,27 @@ extern Vector3D _previousCameraPositionBuffer __INITIALIZED_GLOBAL_DATA_SECTION_
 extern Rotation _previousCameraInvertedRotation __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE;
 extern Rotation _previousCameraInvertedRotationBuffer __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE;
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DECLARATION
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-///
 /// Class WireframeManager
 ///
 /// Inherits from ComponentManager
 ///
 /// Manages instances of Wireframe.
-singleton class WireframeManager : ComponentManager
+class WireframeManager : ComponentManager
 {
 	/// @protectedsection
+
+	/// Flag used to break the rendering due to high frame time
+	volatile bool stopRendering;
 
 	/// Flag used to break the drawing due to high frame time
 	volatile bool stopDrawing;
 
 	/// Flag to distinguish between even and odd game frames
 	bool evenFrame;
-
-	/// Disabled wireframe drawing
-	bool disabled;
 
 	/// Number of rendered wireframes during the last game cycle
 	uint8 renderedWireframes;
@@ -62,44 +58,41 @@ singleton class WireframeManager : ComponentManager
 	uint8 drawnWireframes;
 
 	/// @publicsection
-	/// Method to retrieve the singleton instance
-	/// @return WireframeManager singleton
-	static WireframeManager getInstance();
 
-	/// Check if at least of the sprites that attach to the provided owner is visible.
-	/// @param owner: Object to which the sprites attach to
-	/// @return True if at least of the sprites that attach to the provided owner is visible
-	override bool isAnyVisible(GameObject owner);
+	/// Class' constructor
+	void constructor();
+
+	/// Retrieve the compoment type that the manager manages.
+	/// @return Component type
+	override uint32 getType();
+
+	/// Enable the manager.
+	override void enable();
+
+	/// Disable the manager.
+	override void disable();
 
 	/// Create a wireframe with the provided spec.
 	/// @param owner: Object to which the wireframe will attach to
 	/// @param wireframeSpec: Spec to use to create the wireframe
 	/// @return Created wireframe
-	override Wireframe createComponent(GameObject owner, const WireframeSpec* wireframeSpec);
+	override Wireframe instantiateComponent(Entity owner, const WireframeSpec* wireframeSpec);
 
 	/// Destroy the provided wireframe.
 	/// @param owner: Object to which the sprite will attach to
 	/// @param wireframe: Wireframe to destroy
-	override void destroyComponent(GameObject owner, Wireframe wireframe);
+	override void deinstantiateComponent(Entity owner, Wireframe wireframe);
 
-	/// Reset the manager's state.
-	void reset();
+	/// Check if at least of the sprites that attach to the provided owner is visible.
+	/// @param owner: Object to which the sprites attach to
+	/// @return True if at least of the sprites that attach to the provided owner is visible
+	override bool isAnyVisible(Entity owner);
 
 	/// Enable wireframe rendering and drawing.
 	void enable();
 
 	/// Disable wireframe rendering and drawing.
 	void disable();
-
-	/// Create a wireframe with the provided spec.
-	/// @param owner: Object to which the wireframe will attach toc
-	/// @param wireframeSpec: Spec to use to create the wireframe
-	/// @return Created wireframe
-	Wireframe createWireframe(GameObject owner, const WireframeSpec* wireframeSpec);
-
-	/// Destroy the provided wireframe.
-	/// @param wireframe: Wireframe to destroy
-	void destroyWireframe(Wireframe wireframe);
 
 	/// Register a wireframe to be managed
 	/// @param wireframe: Wireframe to be managed
@@ -119,11 +112,11 @@ singleton class WireframeManager : ComponentManager
 
 	/// Show all wireframes belonging to the provided owner.
 	/// @param owner: Object to which the wireframe will attach to
-	void showWireframes(GameObject owner);
+	void showWireframes(Entity owner);
 
 	/// Hide all wireframes belonging to the provided owner.
 	/// @param owner: Object to which the wireframe will attach to
-	void hideWireframes(GameObject owner);
+	void hideWireframes(Entity owner);
 
 	/// Show all wireframes.
 	void showAllWireframes();
@@ -140,6 +133,5 @@ singleton class WireframeManager : ComponentManager
 	/// @param y: Screen y coordinate where to print
 	void print(int32 x, int32 y);
 }
-
 
 #endif

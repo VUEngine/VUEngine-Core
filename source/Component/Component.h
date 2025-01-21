@@ -10,23 +10,23 @@
 #ifndef COMPONENT_H_
 #define COMPONENT_H_
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // INCLUDES
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <stdarg.h>
 
 #include <ListenerObject.h>
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // FORWARD DECLARATIONS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-class GameObject;
+class Entity;
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DATA
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 /// Component commands
 /// @memberof Component
@@ -42,11 +42,11 @@ enum ComponentCommands
 /// @memberof Component
 enum ComponentTypes
 {
-	kColliderComponent = 0,
-	kSpriteComponent,
+	kSpriteComponent = 0,
+	kColliderComponent,
+	kPhysicsComponent,
 	kWireframeComponent,
 	kBehaviorComponent,
-	kPhysicsComponent,
 
 	// Limmiter
 	kComponentTypes,
@@ -64,22 +64,21 @@ typedef struct ComponentSpec
 
 } ComponentSpec;
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DECLARATION
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-///
 /// Class Component
 ///
 /// Inherits from ListenerObject
 ///
-/// Serves as the base class for components of entities.
+/// Serves as the base class for components of actors.
 abstract class Component : ListenerObject
 {
 	/// @protectedsection
 
 	/// Object to which this component attaches to
-	GameObject owner;
+	Entity owner;
 
 	/// Pointer to the spec that defines how to initialize the component
 	const ComponentSpec* componentSpec;
@@ -87,12 +86,15 @@ abstract class Component : ListenerObject
 	/// Pointer to the transformation that the component attaches to
 	const Transformation* transformation;
 
+	/// Flag to mark the component as pending deletion
+	bool deleteMe;
+
 	/// @publicsection
 
 	/// Class' constructor
-	/// @param owner: GameObject to which the component attaches to
+	/// @param owner: Entity to which the component attaches to
 	/// @param componentSpec: Pointer to the spec that defines how to initialize the component
-	void constructor(GameObject owner, const ComponentSpec* componentSpec);
+	void constructor(Entity owner, const ComponentSpec* componentSpec);
 
 	/// Class' destructor
 	void destructor();
@@ -102,7 +104,7 @@ abstract class Component : ListenerObject
 	ComponentSpec* getSpec();
 
 	/// Retrieve the collider's owner
-	GameObject getOwner();
+	Entity getOwner();
 
 	/// Retrieve the component's type
 	/// @return Component's type'
@@ -112,6 +114,10 @@ abstract class Component : ListenerObject
 	/// @param command: Command to handle
 	/// @param args: Variable arguments list depending on the command to handle
 	virtual void handleCommand(int32 command, va_list args);
+
+	/// Retrieve the mesh's bounding box.
+	/// @return Bounding box of the mesh
+	virtual RightBox getRightBox();
 }
 
 #endif

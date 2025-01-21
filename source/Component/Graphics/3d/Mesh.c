@@ -7,10 +7,9 @@
  * that was distributed with this source code.
  */
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // INCLUDES
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <DirectDraw.h>
 #include <DebugConfig.h>
@@ -21,21 +20,18 @@
 
 #include "Mesh.h"
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DECLARATIONS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 friend class VirtualNode;
 friend class VirtualList;
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' STATIC METHODS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 static RightBox Mesh::getRightBoxFromSpec(MeshSpec* meshSpec)
 {
@@ -151,17 +147,15 @@ static RightBox Mesh::getRightBoxFromSpec(MeshSpec* meshSpec)
 	return rightBox;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PUBLIC METHODS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void Mesh::constructor(GameObject owner, const MeshSpec* meshSpec)
+void Mesh::constructor(Entity owner, const MeshSpec* meshSpec)
 {
 	// Always explicitly call the base's constructor 
 	Base::constructor(owner, &meshSpec->wireframeSpec);
@@ -175,7 +169,7 @@ void Mesh::constructor(GameObject owner, const MeshSpec* meshSpec)
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Mesh::destructor()
 {
@@ -187,7 +181,7 @@ void Mesh::destructor()
 	Base::destructor();
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 RightBox Mesh::getRightBox()
 {
@@ -233,21 +227,25 @@ RightBox Mesh::getRightBox()
 	return rightBox;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 VirtualList Mesh::getVertices()
 {
 	return this->vertices;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Mesh::render(Vector3D relativePosition)
 {
 	NM_ASSERT(NULL != this->transformation, "Mesh::render: NULL transformation");
 
-	bool scale = (__1I_FIX7_9 != this->transformation->scale.x) + (__1I_FIX7_9 != this->transformation->scale.y) + (__1I_FIX7_9 != this->transformation->scale.z);
-	bool rotate = (0 != this->transformation->rotation.x) + (0 != this->transformation->rotation.y) + (0 != this->transformation->rotation.z);
+	bool scale = 
+		(__1I_FIX7_9 != this->transformation->scale.x) + (__1I_FIX7_9 != this->transformation->scale.y) + 
+		(__1I_FIX7_9 != this->transformation->scale.z);
+	
+	bool rotate = 
+		(0 != this->transformation->rotation.x) + (0 != this->transformation->rotation.y) + (0 != this->transformation->rotation.z);
 
 	if(!scale && !rotate)
 	{
@@ -273,7 +271,12 @@ void Mesh::render(Vector3D relativePosition)
 		{
 			Vertex* vertex = (Vertex*)node->data;
 
-			Vector3D vector = Vector3D::rotate(Vector3D::sum(relativePosition, Vector3D::rotate(Vector3D::scale(vertex->vector, scale), rotation)), _previousCameraInvertedRotation);
+			Vector3D vector = 
+				Vector3D::rotate
+				(
+					Vector3D::sum(relativePosition, Vector3D::rotate(Vector3D::scale(vertex->vector, scale), rotation)), 
+					_previousCameraInvertedRotation
+				);
 
 			vertex->pixelVector = PixelVector::projectVector3D(vector, Optics::calculateParallax(vector.z));
 		}
@@ -288,7 +291,11 @@ void Mesh::render(Vector3D relativePosition)
 		{
 			Vertex* vertex = (Vertex*)node->data;
 
-			Vector3D vector = Vector3D::rotate(Vector3D::sum(relativePosition, Vector3D::rotate(vertex->vector, rotation)), _previousCameraInvertedRotation);
+			Vector3D vector = 
+				Vector3D::rotate
+				(
+					Vector3D::sum(relativePosition, Vector3D::rotate(vertex->vector, rotation)), _previousCameraInvertedRotation
+				);
 
 			vertex->pixelVector = PixelVector::projectVector3D(vector, Optics::calculateParallax(vector.z));
 		}
@@ -303,14 +310,18 @@ void Mesh::render(Vector3D relativePosition)
 		{
 			Vertex* vertex = (Vertex*)node->data;
 
-			Vector3D vector = Vector3D::rotate(Vector3D::sum(relativePosition, Vector3D::scale(vertex->vector, scale)), _previousCameraInvertedRotation);
+			Vector3D vector = 
+				Vector3D::rotate
+				(
+					Vector3D::sum(relativePosition, Vector3D::scale(vertex->vector, scale)), _previousCameraInvertedRotation
+				);
 
 			vertex->pixelVector = PixelVector::projectVector3D(vector, Optics::calculateParallax(vector.z));
 		}
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 bool Mesh::draw()
 {
@@ -322,8 +333,13 @@ bool Mesh::draw()
 	{
 		MeshSegment* meshSegment = (MeshSegment*)node->data;
 
-		// draw the line in both buffers
-		drawn |= DirectDraw::drawLine(meshSegment->fromVertex->pixelVector, meshSegment->toVertex->pixelVector, this->color, this->bufferIndex, this->interlaced);
+		// Draw the line in both buffers
+		drawn |= 
+			DirectDraw::drawLine
+			(
+				meshSegment->fromVertex->pixelVector, meshSegment->toVertex->pixelVector, this->color, 
+				this->bufferIndex, this->interlaced
+			);
 	}
 
 	this->bufferIndex = !this->bufferIndex;
@@ -331,7 +347,7 @@ bool Mesh::draw()
 	return drawn;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Mesh::addSegments(PixelVector (*segments)[2], Vector3D displacement)
 {
@@ -344,7 +360,7 @@ void Mesh::addSegments(PixelVector (*segments)[2], Vector3D displacement)
 	uint16 i = 0;
 
 	// Prevent rendering when modifying the mesh because if segments are added after the initial render
-	// there can be graphical glitches if XPEND kicks in in the mist of adding new vertexes
+	// There can be graphical glitches if XPEND kicks in in the mist of adding new vertexes
 	this->rendered = false;
 
 	do
@@ -364,7 +380,7 @@ void Mesh::addSegments(PixelVector (*segments)[2], Vector3D displacement)
 	while(!isEndSegment);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Mesh::addSegment(Vector3D startVector, Vector3D endVector)
 {
@@ -412,7 +428,7 @@ void Mesh::addSegment(Vector3D startVector, Vector3D endVector)
 	VirtualList::pushBack(this->segments, newMeshSegment);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 bool Mesh::drawInterlaced()
 {
@@ -422,8 +438,14 @@ bool Mesh::drawInterlaced()
 	{
 		MeshSegment* meshSegment = (MeshSegment*)node->data;
 
-		// draw the line in both buffers
-		drawn |= DirectDraw::drawLine(meshSegment->fromVertex->pixelVector, meshSegment->toVertex->pixelVector, this->color, this->bufferIndex, true) || this->drawn;
+		// Draw the line in both buffers
+		drawn |= 
+			DirectDraw::drawLine
+			(
+				meshSegment->fromVertex->pixelVector, meshSegment->toVertex->pixelVector, this->color, this->bufferIndex, true
+			) 
+			|| 
+			this->drawn;
 	}
 
 	this->bufferIndex = !this->bufferIndex;
@@ -431,15 +453,13 @@ bool Mesh::drawInterlaced()
 	return drawn;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PRIVATE METHODS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Mesh::deleteLists()
 {
@@ -458,5 +478,4 @@ void Mesh::deleteLists()
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

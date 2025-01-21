@@ -10,32 +10,32 @@
 #ifndef BODY_H_
 #define BODY_H_
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // INCLUDES
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <Component.h>
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // FORWARD DECLARATIONS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-class GameObject;
+class Entity;
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' MACROS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-#define __NO_MOVEMENT		   0x00
-#define __UNIFORM_MOVEMENT	   0x01
+#define __NO_MOVEMENT			0x00
+#define __UNIFORM_MOVEMENT		0x01
 #define __ACCELERATED_MOVEMENT 0x20
 
-#define __BODY_MIN_MASS		   __F_TO_FIXED(0.01f)
-#define __BODY_MAX_MASS		   __I_TO_FIXED(1)
+#define __BODY_MIN_MASS			__F_TO_FIXED(0.01f)
+#define __BODY_MAX_MASS			__I_TO_FIXED(1)
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DATA
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 /// Struct that specifies the physical properties of bodies
 /// @memberof Body
@@ -65,6 +65,9 @@ typedef struct BodySpec
 	/// Axises on which the body is subject to gravity
 	uint16 axisSubjectToGravity;
 
+	/// Axises around which to rotate the owner when syncronizing with body
+	uint16 axisForSynchronizationWithBody;
+
 } BodySpec;
 
 /// A Body spec that is stored in ROM
@@ -81,11 +84,10 @@ typedef struct Vector3DPlus
 
 } Vector3DPlus;
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DECLARATION
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-///
 /// Class Body
 ///
 /// Inherits from Component
@@ -161,6 +163,9 @@ class Body : Component
 	/// Axises on which the body is subject to gravity
 	uint16 axisSubjectToGravity;
 
+	/// Axises around which to rotate the owner when syncronizing with body
+	uint16 axisForSynchronizationWithBody;
+
 	/// Number of cycles to skip physical simulations to slow down physics
 	int8 skipCycles;
 
@@ -172,9 +177,6 @@ class Body : Component
 
 	/// If true, the body informs its owner of its change in movement state
 	bool sendMessages;
-
-	/// Flag to destroy the body
-	bool deleteMe;
 
 	/// If true, the movement of the body is independent on each axis
 	bool movesIndependentlyOnEachAxis;
@@ -188,14 +190,15 @@ class Body : Component
 	/// @param friction: Friction affecting the mass that will aquire the computed speed
 	/// @param maximumSpeed: Maximum value that the computated speed can reach
 	/// @return The instantaneous speed caused by the provided physical properties
-	static fixed_t computeInstantaneousSpeed(
+	static fixed_t computeInstantaneousSpeed
+	(
 		fixed_t forceMagnitude, fixed_t gravity, fixed_t mass, fixed_t friction, fixed_t maximumSpeed
 	);
 
 	/// Class' constructor
-	/// @param owner: GameObject to which the body attaches to
+	/// @param owner: Entity to which the body attaches to
 	/// @param bodySpec: Struct that specifies the physical properties of bodies
-	void constructor(GameObject owner, const BodySpec* bodySpec);
+	void constructor(Entity owner, const BodySpec* bodySpec);
 
 	/// Handle a command.
 	/// @param command: Command to handle
@@ -223,7 +226,8 @@ class Body : Component
 	/// @param bouncingPlaneNormal: Normal of the plane on which the body has to bounce
 	/// @param frictionCoefficient: Friction coefficient of the bounce referent
 	/// @param bounciness: Bounciness coefficient of the bounce referent
-	void bounce(
+	void bounce
+	(
 		ListenerObject bounceReferent, Vector3D bouncingPlaneNormal, fixed_t frictionCoefficient,
 		fixed_t bounciness
 	);
@@ -256,6 +260,15 @@ class Body : Component
 	/// @return Flag containing the axises on which the body is subject to gravity
 	uint16 getAxisSubjectToGravity();
 
+	/// Set the axises around which the owner's rotation must be synchronized.
+	/// @param axisForSynchronizationWithBody: Flag containing the axises around which the owner must be subject 
+	/// to rotation synchronization
+	void setAxisForSynchronizationWithBody(uint16 axisForSynchronizationWithBody);
+
+	/// Retrieve the axises around which the owner's rotation must be synchronized.
+	/// @return Flag containing the axises around which the owner is subject to rotation synchronization
+	uint16 getAxisForSynchronizationWithBody();
+
 	/// Set the body's bounciness factor.
 	/// @param bounciness: Value to set as the body's bounciness factor (between 0 and 1)
 	void setBounciness(fixed_t bounciness);
@@ -284,7 +297,7 @@ class Body : Component
 	/// Set the body's position.
 	/// @param position: 3D vector defining the body's new position
 	/// @param caller: Must be the body's owner; otherwise the call to this method doesn't have any effect
-	void setPosition(const Vector3D* position, GameObject caller);
+	void setPosition(const Vector3D* position, Entity caller);
 
 	/// Retrieve the body's position.
 	/// @return Pointer to the body's 3D vector defining its position

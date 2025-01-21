@@ -10,33 +10,29 @@
 #ifndef PARAM_TABLE_MANAGER_H_
 #define PARAM_TABLE_MANAGER_H_
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // INCLUDES
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <Affine.h>
 #include <Object.h>
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // FORWARD DECLARATIONS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 class BgmapSprite;
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' MACROS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 // Add at least 8 pixels of headroom
 #define __PARAM_TABLE_PADDING	8
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DATA
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 /// An Affine entry in param table space
 /// @memberof ParamTableManager
@@ -95,13 +91,10 @@ typedef struct ParamTableFreeData
 	uint32 recoveredSize;
 } ParamTableFreeData;
 
-
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DECLARATION
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-///
 /// Class ParamTableManager
 ///
 /// Inherits from Object
@@ -132,16 +125,14 @@ singleton class ParamTableManager : Object
 
 	/// @publicsection
 
-	/// Method to retrieve the singleton instance
-	/// @return AnimationCoordinatorFactory singleton
-	static ParamTableManager getInstance();
-
 	/// Reset the animation coordinator factory's state.
 	void reset();
 
-	/// Configure the param table space
+	/// Retrieve the param table displacement in bytes used to keep track
+	/// of the start address of param table space.
 	/// @param availableBgmapSegmentsForParamTable: Number of available BGMAP segments for the param tables
-	void setup(int32 availableBgmapSegmentsForParamTable);
+	/// @return Displacement in bytes to keep track of the start address of param table space
+	uint32 configure(int32 availableBgmapSegmentsForParamTable);
 
 	/// Allocate a param table for the provided sprite
 	/// @param bgmapSprite: Sprite for which a param table will be allocated
@@ -155,16 +146,10 @@ singleton class ParamTableManager : Object
 	/// @param deferred: Flag to defragment param table memory over time
 	void defragment(bool deferred);
 
-	/// Retrieve the param table displacement in bytes used to keep track
-	/// of the start address of param table space.
-	/// @return Displacement in bytes to keep track of the start address of param table space
-	uint32 getParamTableBase();
-
 	/// Print the information about param table space usage.
 	/// @param x: Screen x coordinate where to print
 	/// @param y: Screen y coordinate where to print
 	void print(int32 x, int32 y);
 }
-
 
 #endif

@@ -10,17 +10,17 @@
 #ifndef SPRITE_H_
 #define SPRITE_H_
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // INCLUDES
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <Texture.h>
 #include <VIPManager.h>
 #include <VisualComponent.h>
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DATA
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 /// A Sprite Spec
 /// @memberof Sprite
@@ -45,11 +45,10 @@ typedef struct SpriteSpec
 /// @memberof Sprite
 typedef const SpriteSpec SpriteROMSpec;
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DECLARATION
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-///
 /// Class Sprite
 ///
 /// Inherits from VisualComponent
@@ -96,9 +95,9 @@ abstract class Sprite : VisualComponent
 	/// @publicsection
 
 	/// Class' constructor
-	/// @param owner: GameObject to which the sprite attaches to
+	/// @param owner: Entity to which the sprite attaches to
 	/// @param spriteSpec: Specification that determines how to configure the sprite
-	void constructor(GameObject owner, const SpriteSpec* spriteSpec);
+	void constructor(Entity owner, const SpriteSpec* spriteSpec);
 
 	/// Retrieve the sprite's bounding box.
 	/// @return Bounding box of the mesh
@@ -238,11 +237,13 @@ abstract class Sprite : VisualComponent
 	/// Invalidate the flags that determine if the sprite requires rendering.
 	void invalidateRendering();
 
-	/// Register this sprite with the appropriate sprites manager.
-	virtual void registerWithManager() = 0;
+	/// Retrieve the sprite's manager.
+	/// @return Generic pointer to the manager
+	virtual void* getManager();
 
-	/// Unegister this sprite with the appropriate sprites manager.
-	virtual void unregisterWithManager() = 0;
+	/// Retrieve the class of the manager for the sprite.
+	/// @return ClassPointer of the manager
+	virtual ClassPointer getManagerClass() = 0;
 
 	/// Check if the sprite has special effects.
 	/// @return True if the sprite has special effects
@@ -257,7 +258,9 @@ abstract class Sprite : VisualComponent
 	virtual void updateAnimation();
 
 	/// Process special effects.
-	virtual void processEffects();
+	/// @param maximumParamTableRowsToComputePerCall: Used to defer param table computations 
+	/// (-1 to compute the whole table)
+	virtual void processEffects(int32 maximumParamTableRowsToComputePerCall);
 
 	/// Set the current multiframe.
 	/// @param frame: Current animation frame

@@ -4,19 +4,20 @@
  * © Jorge Eremiev <jorgech3@gmail.com> and Christian Radke <c.radke@posteo.de>
  *
  * For the full copyright and license information, please view the LICENSE file
- * that was distributed with this source code.
+ * that was distributed with vuEngine source code.
  */
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // INCLUDES
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <string.h>
 
 #include <AnimationCoordinatorFactory.h>
 #include <AnimationInspectorState.h>
+#include <BehaviorManager.h>
 #include <BgmapTextureManager.h>
+#include <BodyManager.h>
 #include <Camera.h>
 #include <CommunicationManager.h>
 #include <CharSetManager.h>
@@ -35,9 +36,9 @@
 #include <MessageDispatcher.h>
 #include <Optics.h>
 #include <ParamTableManager.h>
-#include <BodyManager.h>
 #include <Profiler.h>
 #include <RumbleManager.h>
+#include <Singleton.h>
 #include <SoundManager.h>
 #include <SpriteManager.h>
 #include <SRAMManager.h>
@@ -60,579 +61,977 @@
 
 #include "VUEngine.h"
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' ATTRIBUTES
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 int32 __GAME_ENTRY_POINT(void);
-VUEngine _vuEngine __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE = NULL;
 
 #ifdef __RUN_DELAYED_MESSAGES_DISPATCHING_AT_HALF_FRAME_RATE
 uint32 _dispatchCycle = 0;
 #endif
 
+ClassPointer _authClass = NULL;
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-// CLASS' STATIC METHODS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+// GLOBAL FUNCTIONS
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-static void VUEngine::init()
-{
-	_vuEngine = VUEngine::getInstance();
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 int32 main(void)
 {
 	return __GAME_ENTRY_POINT();
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+// CLASS' STATIC METHODS
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-// CLASS' PUBLIC METHODS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-bool VUEngine::handleMessage(Telegram telegram)
+static void VUEngine::init()
 {
-	ASSERT(this->stateMachine, "VUEngine::handleMessage: NULL stateMachine");
+	HardwareManager::initialize();
 
-	return StateMachine::handleMessage(this->stateMachine, telegram);
+	VUEngine::getInstance();
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void VUEngine::reset(bool resetSounds)
+static void VUEngine::resetClock()
 {
-#ifdef __ENABLE_PROFILER
-	Profiler::reset(Profiler::getInstance());
-#endif
+	VUEngine vuEngine = VUEngine::getInstance();
 
-	HardwareManager::disableInterrupts();
-
-	// Disable timer
-
-	// disable rendering
-	VIPManager::lowerBrightness(this->vipManager);
-	VIPManager::removePostProcessingEffects(this->vipManager);
-
-	// reset managers
-	WireframeManager::reset(this->wireframeManager);
-
-	if(resetSounds)
-	{
-		SoundManager::reset(this->soundManager);
-	}
-
-	TimerManager::reset(this->timerManager);
-	KeypadManager::reset(this->keypadManager);
-	CommunicationManager::reset(this->communicationManager);
-	StopwatchManager::reset(StopwatchManager::getInstance());
-	FrameRate::reset(this->frameRate);
-
-	// the order of reset for the graphics managers must not be changed!
-	VIPManager::reset(this->vipManager);
-	SpriteManager::reset(this->spriteManager);
-	DirectDraw::reset(DirectDraw::getInstance());
-	AnimationCoordinatorFactory::reset(AnimationCoordinatorFactory::getInstance());
-
-	HardwareManager::enableInterrupts();
+	Clock::reset(vuEngine->clock);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void VUEngine::resetClock()
+static void VUEngine::pause(GameState pauseState)
 {
-	Clock::reset(this->clock);
-}
+	VUEngine vuEngine = VUEngine::getInstance();
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+	ASSERT(!isDeleted(pauseState), "VUEngine::pause: null pauseState");
 
-void VUEngine::start(GameState currentGameState)
-{
-	ASSERT(currentGameState, "VUEngine::start: currentGameState is NULL");
-
-	// Initialize VPU and turn off the brightness
-	VIPManager::lowerBrightness(this->vipManager);
-
-	if(NULL == StateMachine::getCurrentState(this->stateMachine))
+	if(!isDeleted(pauseState))
 	{
-		VUEngine::run(this, currentGameState);
-	}
-	else
-	{
-		ASSERT(false, "VUEngine::start: already started");
+		VUEngine::addState(pauseState);
+		vuEngine->isPaused = true;
+		// VUEngine::fireEvent(vuEngine, kEventGamePaused);
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void VUEngine::pause(GameState pauseState)
+static void VUEngine::unpause(GameState pauseState)
 {
-	ASSERT(pauseState, "VUEngine::pause: null pauseState");
+	VUEngine vuEngine = VUEngine::getInstance();
 
-	if(pauseState)
-	{
-		VUEngine::addState(this, pauseState);
-		this->isPaused = true;
-		// VUEngine::fireEvent(this, kEventGamePaused);
-	}
-}
+	ASSERT(!isDeleted(pauseState), "VUEngine::unpause: null pauseState");
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void VUEngine::unpause(GameState pauseState)
-{
-	ASSERT(pauseState, "VUEngine::unpause: null pauseState");
-
-	GameState currentGameState = GameState::safeCast(StateMachine::getCurrentState(this->stateMachine));
+	GameState currentGameState = GameState::safeCast(StateMachine::getCurrentState(vuEngine->stateMachine));
 
 	ASSERT(pauseState == currentGameState, "VUEngine::unpause: pauseState sent is not the current one");
 
 	if(NULL != pauseState && currentGameState == pauseState)
 	{
-		VUEngine::removeState(this, pauseState);
-		this->isPaused = false;
-		// VUEngine::fireEvent(this, kEventGameUnpaused);
+		VUEngine::removeState(pauseState);
+		vuEngine->isPaused = false;
+		VUEngine::fireEvent(vuEngine, kEventGameUnpaused);
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void VUEngine::setState(GameState gameState)
+static void VUEngine::setState(GameState gameState)
 {
+	VUEngine vuEngine = VUEngine::getInstance();
+
 #ifdef __TOOLS
-	this->isInToolStateTransition = false;
+	vuEngine->isInToolStateTransition = false;
 #endif
 
-	StateMachine::removeAllEventListeners(this->stateMachine);
-	StateMachine::addEventListener(this->stateMachine, ListenerObject::safeCast(this), (EventListener)VUEngine::cleaniningStatesStack, kEventStateMachineWillCleanStack);
-	StateMachine::addEventListener(this->stateMachine, ListenerObject::safeCast(this), (EventListener)VUEngine::changedState, kEventStateMachineCleanedStack);
-	StateMachine::transitionTo(this->stateMachine, NULL != gameState ? State::safeCast(gameState) : NULL, kStateMachineCleanStack);
+	StateMachine::removeAllEventListeners(vuEngine->stateMachine);
+	StateMachine::addEventListener
+	(
+		vuEngine->stateMachine, ListenerObject::safeCast(vuEngine), (EventListener)VUEngine::cleaniningStatesStack, 
+		kEventStateMachineWillCleanStack
+	);
+
+	StateMachine::addEventListener
+	(
+		vuEngine->stateMachine, ListenerObject::safeCast(vuEngine), (EventListener)VUEngine::changedState, 
+		kEventStateMachineCleanedStack
+	);
+
+	StateMachine::transitionTo
+	(
+		vuEngine->stateMachine, NULL != gameState ? State::safeCast(gameState) : NULL, kStateMachineCleanStack
+	);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void VUEngine::addState(GameState gameState)
+static void VUEngine::addState(GameState gameState)
 {
+	VUEngine vuEngine = VUEngine::getInstance();
+
 #ifdef __TOOLS
-	this->isInToolStateTransition = false;
+	vuEngine->isInToolStateTransition = false;
 #endif
 
-	StateMachine::removeAllEventListeners(this->stateMachine);
-	StateMachine::addEventListener(this->stateMachine, ListenerObject::safeCast(this), (EventListener)VUEngine::pushingState, kEventStateMachineWillPushState);
-	StateMachine::addEventListener(this->stateMachine, ListenerObject::safeCast(this), (EventListener)VUEngine::changedState, kEventStateMachinePushedState);
-	StateMachine::transitionTo(this->stateMachine, State::safeCast(gameState), kStateMachinePushState);
+	StateMachine::removeAllEventListeners(vuEngine->stateMachine);
+	StateMachine::addEventListener
+	(
+		vuEngine->stateMachine, ListenerObject::safeCast(vuEngine), (EventListener)VUEngine::pushingState, 
+		kEventStateMachineWillPushState
+	);
+
+	StateMachine::addEventListener
+	(
+		vuEngine->stateMachine, ListenerObject::safeCast(vuEngine), (EventListener)VUEngine::changedState, 
+		kEventStateMachinePushedState
+	);
+
+	StateMachine::transitionTo(vuEngine->stateMachine, State::safeCast(gameState), kStateMachinePushState);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void VUEngine::changeState(GameState gameState)
+static void VUEngine::changeState(GameState gameState)
 {
+	VUEngine vuEngine = VUEngine::getInstance();
+
 #ifdef __TOOLS
-	this->isInToolStateTransition = false;
+	vuEngine->isInToolStateTransition = false;
 #endif
 
-	StateMachine::removeAllEventListeners(this->stateMachine);
-	StateMachine::addEventListener(this->stateMachine, ListenerObject::safeCast(this), (EventListener)VUEngine::swappingState, kEventStateMachineWillSwapState);
-	StateMachine::addEventListener(this->stateMachine, ListenerObject::safeCast(this), (EventListener)VUEngine::changedState, kEventStateMachineSwapedState);
-	StateMachine::transitionTo(this->stateMachine, State::safeCast(gameState), kStateMachineSwapState);
+	StateMachine::removeAllEventListeners(vuEngine->stateMachine);
+	StateMachine::addEventListener
+	(
+		vuEngine->stateMachine, ListenerObject::safeCast(vuEngine), (EventListener)VUEngine::swappingState, 
+		kEventStateMachineWillSwapState
+	);
+
+	StateMachine::addEventListener
+	(
+		vuEngine->stateMachine, ListenerObject::safeCast(vuEngine), (EventListener)VUEngine::changedState, 
+		kEventStateMachineSwapedState
+	);
+
+	StateMachine::transitionTo(vuEngine->stateMachine, State::safeCast(gameState), kStateMachineSwapState);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-bool VUEngine::isInToolState()
+static bool VUEngine::isInToolState()
 {
 	int32 isInToolState = false;
 
 #ifdef __TOOLS
-	isInToolState |= VUEngine::isInDebugMode(this);
-	isInToolState |= VUEngine::isInStageEditor(this);
-	isInToolState |= VUEngine::isInAnimationInspector(this);
-	isInToolState |= VUEngine::isInSoundTest(this);
+	isInToolState |= VUEngine::isInDebugMode();
+	isInToolState |= VUEngine::isInStageEditor();
+	isInToolState |= VUEngine::isInAnimationInspector();
+	isInToolState |= VUEngine::isInSoundTest();
 #endif
 
 	return isInToolState;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-bool VUEngine::isInToolStateTransition()
+static bool VUEngine::isInToolStateTransition()
 {
-	return this->isInToolStateTransition;
+	VUEngine vuEngine = VUEngine::getInstance();
+
+	return vuEngine->isInToolStateTransition;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-GameState VUEngine::getCurrentState()
+static GameState VUEngine::getCurrentState()
 {
-	State state = StateMachine::getCurrentState(this->stateMachine);
+	VUEngine vuEngine = VUEngine::getInstance();
+
+	State state = StateMachine::getCurrentState(vuEngine->stateMachine);
 	return isDeleted(state) ? NULL : GameState::safeCast(state);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-GameState VUEngine::getPreviousState()
+static GameState VUEngine::getPreviousState()
 {
-	State state = StateMachine::getPreviousState(this->stateMachine);
+	VUEngine vuEngine = VUEngine::getInstance();
+
+	State state = StateMachine::getPreviousState(vuEngine->stateMachine);
 	return isDeleted(state) ? NULL : GameState::safeCast(state);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-UIContainer VUEngine::getUIContainer()
+static Stage VUEngine::getStage()
 {
+	VUEngine vuEngine = VUEngine::getInstance();
+
 #ifdef __TOOLS
-	if(VUEngine::isInToolState(this))
+	if(VUEngine::isInToolState())
 	{
-		return GameState::getUIContainer(GameState::safeCast(StateMachine::getPreviousState(this->stateMachine)));
+		return GameState::getStage(GameState::safeCast(StateMachine::getPreviousState(vuEngine->stateMachine)));
 	}
 #endif
 
-	State state = StateMachine::getCurrentState(this->stateMachine);
-	return isDeleted(state) ? NULL : GameState::getUIContainer(GameState::safeCast(state));
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-Stage VUEngine::getStage()
-{
-#ifdef __TOOLS
-	if(VUEngine::isInToolState(this))
-	{
-		return GameState::getStage(GameState::safeCast(StateMachine::getPreviousState(this->stateMachine)));
-	}
-#endif
-
-	State state = StateMachine::getCurrentState(this->stateMachine);
+	State state = StateMachine::getCurrentState(vuEngine->stateMachine);
 	return isDeleted(state) ? NULL : GameState::getStage(GameState::safeCast(state));
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-BodyManager VUEngine::getBodyManager()
+static Clock VUEngine::getClock()
 {
-#ifdef __TOOLS
-	if(VUEngine::isInToolState(this))
-	{
-		State state = StateMachine::getPreviousState(this->stateMachine);
-		return isDeleted(state) ? NULL : GameState::getBodyManager(state);
-	}
-#endif
+	VUEngine vuEngine = VUEngine::getInstance();
 
-	State state = StateMachine::getCurrentState(this->stateMachine);
-	return isDeleted(state) ? NULL : GameState::getBodyManager(state);
+	return vuEngine->clock;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-ColliderManager VUEngine::getColliderManager()
+static Clock VUEngine::getLogicsClock()
 {
-#ifdef __TOOLS
-	if(VUEngine::isInToolState(this))
-	{
-		State state = StateMachine::getPreviousState(this->stateMachine);
-		return isDeleted(state) ? NULL : GameState::getColliderManager(state);
-	}
-#endif
+	VUEngine vuEngine = VUEngine::getInstance();
 
-	State state = StateMachine::getCurrentState(this->stateMachine);
-	return isDeleted(state) ? NULL : GameState::getColliderManager(state);
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-StateMachine VUEngine::getStateMachine()
-{
-	return this->stateMachine;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-Clock VUEngine::getClock()
-{
-	return this->clock;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-Clock VUEngine::getLogicsClock()
-{
-	State state = StateMachine::getCurrentState(this->stateMachine);
+	State state = StateMachine::getCurrentState(vuEngine->stateMachine);
 	return isDeleted(state) ? NULL : GameState::getLogicsClock(GameState::safeCast(state));
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-Clock VUEngine::getMessagingClock()
+static Clock VUEngine::getMessagingClock()
 {
-	State state = StateMachine::getCurrentState(this->stateMachine);
+	VUEngine vuEngine = VUEngine::getInstance();
+
+	State state = StateMachine::getCurrentState(vuEngine->stateMachine);
 	return isDeleted(state) ? NULL : GameState::getMessagingClock(GameState::safeCast(state));
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-Clock VUEngine::getPhysicsClock()
+static Clock VUEngine::getPhysicsClock()
 {
-	State state = StateMachine::getCurrentState(this->stateMachine);
+	VUEngine vuEngine = VUEngine::getInstance();
+
+	State state = StateMachine::getCurrentState(vuEngine->stateMachine);
 	return isDeleted(state) ? NULL : GameState::getPhysicsClock(GameState::safeCast(state));
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-char* VUEngine::getProcessName()
+static char* VUEngine::getProcessName()
 {
-	return this->processName;
+	VUEngine vuEngine = VUEngine::getInstance();
+
+	return vuEngine->processName;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-uint16 VUEngine::getGameFrameDuration()
+static uint16 VUEngine::getGameFrameDuration()
 {
-	return VIPManager::getGameFrameDuration(this->vipManager);
+	return VIPManager::getGameFrameDuration(VIPManager::getInstance());
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void VUEngine::setGameFrameRate(uint16 gameFrameRate)
+static void VUEngine::setGameFrameRate(uint16 gameFrameRate)
 {
 	if(__MAXIMUM_FPS < gameFrameRate)
 	{
 		gameFrameRate = __MAXIMUM_FPS;
 	}
 
-	FrameRate::setTarget(this->frameRate, gameFrameRate);
-	VIPManager::setFrameCycle(this->vipManager, __MAXIMUM_FPS / gameFrameRate - 1);
+	FrameRate::setTarget(FrameRate::getInstance(), gameFrameRate);
+	VIPManager::setFrameCycle(__MAXIMUM_FPS / gameFrameRate - 1);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void VUEngine::lockFrameRate()
+static void VUEngine::lockFrameRate()
 {
-	this->syncToVIP = true;
+	VUEngine vuEngine = VUEngine::getInstance();
+
+	vuEngine->syncToVIP = true;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void VUEngine::unlockFrameRate()
+static void VUEngine::unlockFrameRate()
 {
-	this->syncToVIP = false;
+	VUEngine vuEngine = VUEngine::getInstance();
+
+	vuEngine->syncToVIP = false;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void VUEngine::enableKeypad()
+static void VUEngine::setSaveDataManager(ListenerObject saveDataManager)
 {
-	KeypadManager::enable(this->keypadManager);
+	VUEngine vuEngine = VUEngine::getInstance();
+
+	vuEngine->saveDataManager = saveDataManager;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void VUEngine::disableKeypad()
+static ListenerObject VUEngine::getSaveDataManager()
 {
-	KeypadManager::disable(this->keypadManager);
+	VUEngine vuEngine = VUEngine::getInstance();
+
+	return vuEngine->saveDataManager;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void VUEngine::setSaveDataManager(ListenerObject saveDataManager)
+static void VUEngine::frameStarted(uint16 gameFrameDuration)
 {
-	this->saveDataManager = saveDataManager;
-}
+	VUEngine vuEngine = VUEngine::getInstance();
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-ListenerObject VUEngine::getSaveDataManager()
-{
-	return this->saveDataManager;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void VUEngine::pushFrontPostProcessingEffect(PostProcessingEffect postProcessingEffect, GameObject gameObject)
-{
-	VIPManager::pushFrontPostProcessingEffect(this->vipManager, postProcessingEffect, gameObject);
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void VUEngine::pushBackPostProcessingEffect(PostProcessingEffect postProcessingEffect, GameObject gameObject)
-{
-	VIPManager::pushBackPostProcessingEffect(this->vipManager, postProcessingEffect, gameObject);
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void VUEngine::removePostProcessingEffect(PostProcessingEffect postProcessingEffect, GameObject gameObject)
-{
-	VIPManager::removePostProcessingEffect(this->vipManager, postProcessingEffect, gameObject);
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void VUEngine::frameStarted(uint16 gameFrameDuration)
-{
 	static uint16 totalTime = 0;
 
 	totalTime += gameFrameDuration;
 
-	TimerManager::frameStarted(this->timerManager, gameFrameDuration * __MICROSECONDS_PER_MILLISECOND);
+	TimerManager::frameStarted(TimerManager::getInstance(), gameFrameDuration * __MICROSECONDS_PER_MILLISECOND);
 
 	if(__MILLISECONDS_PER_SECOND <= totalTime)
 	{
-		if(NULL != this->events)
+		if(NULL != vuEngine->events)
 		{
-			VUEngine::fireEvent(this, kEventVUEngineNextSecondStarted);
+			VUEngine::fireEvent(vuEngine, kEventVUEngineNextSecondStarted);
 		}
-#ifdef __SHOW_TIMER_MANAGER_STATUS
-		TimerManager::nextSecondStarted(this->timerManager);
-#endif
 
 		totalTime = 0;
 
-#ifdef __SHOW_STREAMING_PROFILING
-
-		if(!VUEngine::isInToolState(this))
-		{
-			Printing::resetCoordinates(Printing::getInstance());
-			Stage::print(VUEngine::getStage(this), 1, 1);
-		}
-#endif
-
-#ifdef __DEBUG
-#ifdef __PRINT_DEBUG_ALERT
-		Printing::text(Printing::getInstance(), "DEBUG MODE", 0, (__SCREEN_HEIGHT_IN_CHARS) - 1, NULL);
-#endif
-#endif
-
-#ifdef __SHOW_CHAR_MEMORY_STATUS
-		CharSetManager::print(CharSetManager::getInstance(), 1, 5);
-#endif
-
-#ifdef __SHOW_BGMAP_MEMORY_STATUS
-		BgmapTextureManager::print(BgmapTextureManager::getInstance(), 1, 5);
-		ParamTableManager::print(ParamTableManager::getInstance(), 1 + 27, 5);
-#endif
-
-#ifdef __SHOW_MEMORY_POOL_STATUS
-		if(!VUEngine::isInToolState(this))
-		{
-#ifdef __SHOW_DETAILED_MEMORY_POOL_STATUS
-			MemoryPool::printDetailedUsage(MemoryPool::getInstance(), 30, 1);
-#else
-			MemoryPool::printResumedUsage(MemoryPool::getInstance(), 35, 1);
-#endif
-		}
-#endif
-
-#ifdef __SHOW_STACK_OVERFLOW_ALERT
-		if(!VUEngine::isInToolState(this))
-		{
-			Printing::resetCoordinates(Printing::getInstance());
-			HardwareManager::printStackStatus((__SCREEN_WIDTH_IN_CHARS) - 25, 0, false);
-		}
+#ifndef __RELEASE
+		VUEngine::printDebug();
 #endif
 	}
-
-#ifdef __TOOLS
-	if(VUEngine::isInSoundTest(this))
-	{
-		SoundManager::printPlaybackTime(this->soundManager, 1, 6);
-	}
-#endif
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void VUEngine::gameFrameStarted(uint16 gameFrameDuration)
+static void VUEngine::gameFrameStarted(uint16 gameFrameDuration)
 {
-	this->gameFrameStarted = true;
+	VUEngine vuEngine = VUEngine::getInstance();
 
-	// focus the camera once collisions are resolved
-	VUEngine::focusCamera(this);
+	vuEngine->gameFrameStarted = true;
 
-	GameState gameState = VUEngine::getCurrentState(this);
+	VUEngine::focusCamera();
+
+	GameState gameState = VUEngine::getCurrentState();
 	
 	if(!isDeleted(gameState))
 	{
 		GameState::transformUI(gameState);
 	}
 
-	ClockManager::update(this->clockManager, gameFrameDuration);
+	ClockManager::update(ClockManager::getInstance(), gameFrameDuration);
 
 #ifdef __PRINT_FRAMERATE
 	bool printFPS = true;
 #else
-	bool printFPS = !this->syncToVIP;
+	bool printFPS = !vuEngine->syncToVIP;
 #endif
 
-	FrameRate::gameFrameStarted(this->frameRate, this->currentGameCycleEnded, printFPS);
+#ifdef __TOOLS
+	printFPS = !VUEngine::isInToolState();
+#endif
+
+	FrameRate::gameFrameStarted(FrameRate::getInstance(), vuEngine->currentGameCycleEnded, printFPS);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-bool VUEngine::isPaused()
+static void VUEngine::drawingStarted()
+{}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+static bool VUEngine::isPaused()
 {
-	return this->isPaused;
+	VUEngine vuEngine = VUEngine::getInstance();
+
+	return vuEngine->isPaused;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void VUEngine::wait(uint32 milliSeconds)
+static void VUEngine::wait(uint32 milliSeconds)
 {
-	TimerManager::wait(this->timerManager, milliSeconds);
+	TimerManager::wait(milliSeconds);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void VUEngine::prepareGraphics()
-{
-	SpriteManager::prepareAll(this->spriteManager);
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #ifdef __ENABLE_PROFILER
-void VUEngine::startProfiling()
+static void VUEngine::startProfiling()
 {
-	Profiler::initialize(Profiler::getInstance());
+	Profiler::initialize();
 }
 #endif
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+// CLASS' PUBLIC METHODS
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+bool VUEngine::handleMessage(Telegram telegram)
+{
+	ASSERT(!isDeleted(this->stateMachine), "VUEngine::handleMessage: NULL stateMachine");
+
+	return StateMachine::handleMessage(this->stateMachine, telegram);
+}
+
+//—————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+secure int32 VUEngine::start(GameState currentGameState)
+{
+	ASSERT(currentGameState, "VUEngine::start: currentGameState is NULL");
+
+#ifndef __RELEASE
+	Singleton::secure();
+#endif
+
+	// Initialize VPU and turn off the brightness
+	VIPManager::lowerBrightness(VIPManager::getInstance());
+
+	if(NULL == StateMachine::getCurrentState(this->stateMachine))
+	{
+		VUEngine::run(currentGameState);
+	}
+	else
+	{
+		ASSERT(false, "VUEngine::start: already started");
+	}
+
+	return 0;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+// CLASS' PRIVATE STATIC METHODS
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+static void VUEngine::removeState(GameState gameState)
+{
+	VUEngine vuEngine = VUEngine::getInstance();
+
+#ifdef __TOOLS
+	vuEngine->isInToolStateTransition = false;
+#endif
+
+	StateMachine::removeAllEventListeners(vuEngine->stateMachine);
+	StateMachine::addEventListener
+	(
+		vuEngine->stateMachine, ListenerObject::safeCast(vuEngine), (EventListener)VUEngine::poppingState, kEventStateMachineWillPopState
+	);
+
+	StateMachine::addEventListener
+	(
+		vuEngine->stateMachine, ListenerObject::safeCast(vuEngine), (EventListener)VUEngine::changedState, kEventStateMachinePoppedState
+	);
+
+	StateMachine::transitionTo(vuEngine->stateMachine, State::safeCast(gameState), kStateMachinePopState);
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+#ifdef __TOOLS
+static void VUEngine::toggleTool(ToolState toolState)
+{
+	if(VUEngine::isInState(GameState::safeCast(toolState)))
+	{
+		VUEngine::removeState(GameState::safeCast(toolState));
+	}
+	else
+	{
+		if(VUEngine::isInToolState())
+		{
+			VUEngine::removeState(GameState::safeCast(toolState));
+		}
+
+		VUEngine::addState(GameState::safeCast(toolState));
+	}
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+static bool VUEngine::checkIfToggleTool(const UserInput* userInput)
+{
+	ToolState engineToolStates[] =
+	{
+#ifdef __TOOLS
+		ToolState::safeCast(DebugState::getInstance()),
+		ToolState::safeCast(StageEditorState::getInstance()),
+		ToolState::safeCast(AnimationInspectorState::getInstance()),
+		ToolState::safeCast(SoundTestState::getInstance()),
+#endif
+		NULL
+	};
+
+	int32 i = 0;
+
+	for(; engineToolStates[i]; i++)
+	{
+		// Check code to access special feature
+		if(ToolState::isKeyCombination(engineToolStates[i], userInput))
+		{
+			VUEngine::toggleTool(engineToolStates[i]);
+			return true;
+		}
+	}
+
+	extern const ToolState _userToolStates[];
+
+	i = 0;
+
+	for(; _userToolStates[i]; i++)
+	{
+		// Check code to access special feature
+		if(ToolState::isKeyCombination(_userToolStates[i], userInput))
+		{
+			VUEngine::toggleTool(_userToolStates[i]);
+			return true;
+		}
+	}
+
+	return false;
+}
+#endif
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+static void VUEngine::updateFrameRate()
+{
+#ifdef __TOOLS
+	if(VUEngine::isInToolState())
+	{
+		return;
+	}
+#endif
+
+	FrameRate::update(FrameRate::getInstance());
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+static void VUEngine::processUserInput(GameState currentGameState)
+{
+	VUEngine vuEngine = VUEngine::getInstance();
+
+	if(!KeypadManager::isEnabled(KeypadManager::getInstance()))
+	{
+#ifdef __ENABLE_PROFILER
+		Profiler::lap(kProfilerLapTypeNormalProcess, PROCESS_NAME_INPUT);
+#endif
+		return;
+	}
+
+#ifdef __REGISTER_LAST_PROCESS_NAME
+	vuEngine->processName = PROCESS_NAME_INPUT;
+#endif
+
+	UserInput userInput = KeypadManager::readUserInput(KeypadManager::getInstance(), vuEngine->syncToVIP);
+	
+#ifdef __TOOLS
+	if(VUEngine::checkIfToggleTool(&userInput))
+	{
+		return;
+	}
+#endif
+
+	if(0 != (userInput.dummyKey | userInput.pressedKey | userInput.holdKey | userInput.releasedKey))
+	{
+		GameState::processUserInput(currentGameState, &userInput);
+	}
+
+#ifdef __ENABLE_PROFILER
+	Profiler::lap(kProfilerLapTypeNormalProcess, PROCESS_NAME_INPUT);
+#endif
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+static void VUEngine::simulatePhysics(GameState gameState)
+{
+#ifdef __REGISTER_LAST_PROCESS_NAME
+	VUEngine vuEngine = VUEngine::getInstance();
+	vuEngine->processName = PROCESS_NAME_PHYSICS;
+#endif
+
+	// Simulate physics
+	GameState::simulatePhysics(gameState);
+
+#ifdef __ENABLE_PROFILER
+	Profiler::lap(kProfilerLapTypeNormalProcess, PROCESS_NAME_PHYSICS);
+#endif
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+static void VUEngine::processTransformations(GameState gameState)
+{
+#ifdef __REGISTER_LAST_PROCESS_NAME
+	VUEngine vuEngine = VUEngine::getInstance();
+	vuEngine->processName = PROCESS_NAME_TRANSFORMS;
+#endif
+
+	// Apply world transformations
+	GameState::transform(gameState);
+
+#ifdef __ENABLE_PROFILER
+	Profiler::lap(kProfilerLapTypeNormalProcess, PROCESS_NAME_TRANSFORMS);
+#endif
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+static void VUEngine::processCollisions(GameState gameState)
+{
+#ifdef __REGISTER_LAST_PROCESS_NAME
+	VUEngine vuEngine = VUEngine::getInstance();
+	vuEngine->processName = PROCESS_NAME_COLLISIONS;
+#endif
+
+	// Process collisions
+	GameState::processCollisions(gameState);
+
+#ifdef __ENABLE_PROFILER
+	Profiler::lap(kProfilerLapTypeNormalProcess, PROCESS_NAME_COLLISIONS);
+#endif
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+static void VUEngine::dispatchDelayedMessages()
+{
+#ifdef __REGISTER_LAST_PROCESS_NAME
+	VUEngine vuEngine = VUEngine::getInstance();
+	vuEngine->processName = PROCESS_NAME_MESSAGES;
+#endif
+
+#ifndef __ENABLE_PROFILER
+#ifdef __RUN_DELAYED_MESSAGES_DISPATCHING_AT_HALF_FRAME_RATE
+	if(_dispatchCycle++ & 1)
+#endif
+#endif
+	{
+		MessageDispatcher::dispatchDelayedMessages(MessageDispatcher::getInstance());
+
+#ifdef __ENABLE_PROFILER
+		Profiler::lap(kProfilerLapTypeNormalProcess, PROCESS_NAME_MESSAGES);
+#endif
+	}
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+static GameState VUEngine::updateLogic(GameState currentGameState)
+{
+	VUEngine vuEngine = VUEngine::getInstance();
+
+#ifdef __REGISTER_LAST_PROCESS_NAME
+	vuEngine->processName = PROCESS_NAME_LOGIC;
+#endif
+
+	// Update the game's logic
+	currentGameState = GameState::safeCast(StateMachine::update(vuEngine->stateMachine));
+
+#ifdef __ENABLE_PROFILER
+	Profiler::lap(kProfilerLapTypeNormalProcess, PROCESS_NAME_LOGIC);
+#endif
+
+	return currentGameState;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+static bool VUEngine::stream(GameState gameState)
+{
+#ifdef __REGISTER_LAST_PROCESS_NAME
+	VUEngine vuEngine = VUEngine::getInstance();
+	vuEngine->processName = PROCESS_NAME_STREAMING;
+#endif
+
+#ifndef __ENABLE_PROFILER
+	bool result = GameState::stream(gameState);
+#else
+	VUEngine vuEngine = VUEngine::getInstance();
+	bool result = false;
+
+	// While we wait for the next game start
+	while(!vuEngine->gameFrameStarted)
+	{
+		// Stream the heck out of the pending actors
+		result = GameState::stream(gameState);
+	}
+
+	Profiler::lap(kProfilerLapTypeNormalProcess, PROCESS_NAME_STREAMING);
+#endif
+
+	return result;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+static void VUEngine::run(GameState currentGameState)
+{
+	VUEngine vuEngine = VUEngine::getInstance();
+
+	// Set state
+	VUEngine::setState(currentGameState);
+
+	while(NULL != currentGameState)
+	{
+#ifdef __SHOW_VSU_MANAGER_STATUS
+		VSUManager::print(1, 1);
+#endif
+		vuEngine->gameFrameStarted = false;
+		vuEngine->currentGameCycleEnded = false;
+
+		VUEngine::updateFrameRate();
+
+#ifdef __ENABLE_PROFILER
+		HardwareManager::disableInterrupts();
+		Profiler::start();
+#endif
+
+		// Generate random seed
+		_gameRandomSeed = Math::randomSeed();
+
+		// Process user's input
+		VUEngine::processUserInput(currentGameState);
+
+		// Simulate physics
+		VUEngine::simulatePhysics(currentGameState);
+
+		// Apply transformations
+		VUEngine::processTransformations(currentGameState);
+
+		// Process collisions
+		VUEngine::processCollisions(currentGameState);
+
+		// Dispatch delayed messages
+		VUEngine::dispatchDelayedMessages();
+
+		currentGameState = VUEngine::updateLogic(currentGameState);
+
+#ifdef __ENABLE_PROFILER
+		HardwareManager::enableInterrupts();
+
+		// Stream actors
+		VUEngine::stream(currentGameState);
+#else
+		if(!vuEngine->syncToVIP)
+		{
+			while(VUEngine::stream(currentGameState));
+		}
+		else
+		{
+			do
+			{
+				// Stream the heck out of the pending actors
+				if(!VUEngine::stream(currentGameState))
+				{
+#ifndef __ENABLE_PROFILER
+					vuEngine->currentGameCycleEnded = true;
+#ifndef __DEBUG
+					if(!vuEngine->gameFrameStarted)
+					{
+						// Don't spin cycle the CPU
+						HardwareManager::halt();
+					}
+#endif
+#endif
+				}
+			}
+			// While we wait for the next game start
+			while(!vuEngine->gameFrameStarted);			
+		}
+#endif
+
+		vuEngine->currentGameCycleEnded = true;
+	}
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+static void VUEngine::focusCamera()
+{
+#ifdef __REGISTER_LAST_PROCESS_NAME
+	VUEngine vuEngine = VUEngine::getInstance();
+	vuEngine->processName = PROCESS_NAME_CAMERA;
+#endif
+
+#ifdef __TOOLS
+	if(!VUEngine::isInToolState())
+	{
+#endif
+		// Position the camera
+		Camera::focus(Camera::getInstance());
+#ifdef __TOOLS
+	}
+#endif
+
+#ifdef __ENABLE_PROFILER
+	Profiler::lap(kProfilerLapTypeNormalProcess, PROCESS_NAME_CAMERA);
+#endif
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+#ifdef __TOOLS
+static bool VUEngine::isInState(GameState gameState)
+{
+	VUEngine vuEngine = VUEngine::getInstance();
+
+	return StateMachine::getCurrentState(vuEngine->stateMachine) == State::safeCast(gameState);
+}
+static bool VUEngine::isInDebugMode()
+{
+	return VUEngine::isInState(GameState::safeCast(DebugState::getInstance()));
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+static bool VUEngine::isInStageEditor()
+{
+	return VUEngine::isInState(GameState::safeCast(StageEditorState::getInstance()));
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+static bool VUEngine::isInAnimationInspector()
+{
+	return VUEngine::isInState(GameState::safeCast(AnimationInspectorState::getInstance()));
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+static bool VUEngine::isInSoundTest()
+{
+	return VUEngine::isInState(GameState::safeCast(SoundTestState::getInstance()));
+}
+#endif
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+static void VUEngine::cleanUp()
+{
+	VUEngine vuEngine = VUEngine::getInstance();
+
+	VIPManager::removeEventListener
+	(
+		VIPManager::getInstance(), ListenerObject::safeCast(vuEngine), (EventListener)VUEngine::onVIPFRAMESTART, 
+		kEventVIPManagerFRAMESTART
+	);
+
+	VIPManager::removeEventListener
+	(
+		VIPManager::getInstance(), ListenerObject::safeCast(vuEngine), (EventListener)VUEngine::onVIPGAMESTART, 
+		kEventVIPManagerGAMESTART
+	);
+
+	VIPManager::removeEventListener
+	(
+		VIPManager::getInstance(), ListenerObject::safeCast(vuEngine), (EventListener)VUEngine::onVIPXPEND, 
+		kEventVIPManagerXPEND
+	);
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+static void VUEngine::printDebug()
+{
+#ifdef __SHOW_TIMER_MANAGER_STATUS
+	TimerManager::printInterruptStats(1, 1);
+#endif
+
+#ifdef __SHOW_STREAMING_PROFILING
+
+	if(!VUEngine::isInToolState())
+	{
+		Printing::resetCoordinates();
+		Stage::print(VUEngine::getStage(), 1, 1);
+	}
+#endif
+
+#ifdef __DEBUG
+#ifdef __PRINT_DEBUG_ALERT
+	Printing::text(EN_HEIGHT_IN_CHARS) - 1, NULL);
+#endif
+#endif
+
+#ifdef __SHOW_CHAR_MEMORY_STATUS
+	CharSetManager::print(CharSetManager::getInstance(), 1, 5);
+#endif
+
+#ifdef __SHOW_BGMAP_MEMORY_STATUS
+	BgmapTextureManager::print(BgmapTextureManager::getInstance(), 1, 5);
+	ParamTableManager::print(ParamTableManager::getInstance(), 1 + 27, 5);
+#endif
+
+#ifdef __SHOW_MEMORY_POOL_STATUS
+	if(!VUEngine::isInToolState())
+	{
+#ifdef __SHOW_DETAILED_MEMORY_POOL_STATUS
+		MemoryPool::printDetailedUsage(30, 1);
+#else
+		MemoryPool::printResumedUsage(35, 1);
+#endif
+	}
+#endif
+
+#ifdef __SHOW_STACK_OVERFLOW_ALERT
+	if(!VUEngine::isInToolState())
+	{
+		Printing::resetCoordinates();
+		HardwareManager::printStackStatus((__SCREEN_WIDTH_IN_CHARS) - 25, 0, false);
+	}
+#endif
+
+#ifdef __TOOLS
+	if(VUEngine::isInSoundTest())
+	{
+		SoundManager::printPlaybackTime(SoundManager::getInstance(), 1, 6);
+	}
+#endif
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PRIVATE METHODS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void VUEngine::constructor()
 {
 	// Always explicitly call the base's constructor 
 	Base::constructor();
 
-	// make sure the memory pool is initialized now
-	MemoryPool::getInstance();
-
-	// force construction now
-	this->clockManager = ClockManager::getInstance();
-
-	// construct the general clock
+	// Construct the general clock
 	this->clock = new Clock();
+	Clock::start(this->clock);
 
-	// construct the game's state machine
+	// Construct the game's state machine
 	this->stateMachine = new StateMachine(this);
 
 	this->gameFrameStarted = false;
@@ -641,35 +1040,40 @@ void VUEngine::constructor()
 	this->isInToolStateTransition = false;
 	this->syncToVIP = true;
 
-	// make sure all managers are initialized now
+	// Make sure all managers are initialized now
 	this->saveDataManager = NULL;
-	this->camera = NULL;
-	this->keypadManager = NULL;
-	this->vipManager = NULL;
-	this->timerManager = NULL;
-	this->communicationManager = NULL;
-	this->frameRate = NULL;
-	this->soundManager = NULL;
 
-#ifdef __TOOLS
-	DebugState::getInstance();
-	StageEditorState::getInstance();
-	AnimationInspectorState::getInstance();
-	SoundTestState::getInstance();
-#endif
-
-	// to make debugging easier
+	// To make debugging easier
 	this->processName = PROCESS_NAME_START_UP;
 
-	// setup engine parameters
-	VUEngine::initialize(this);
+	VIPManager::addEventListener
+	(
+		VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)VUEngine::onVIPFRAMESTART, 
+		kEventVIPManagerFRAMESTART
+	);
+
+	VIPManager::addEventListener
+	(
+		VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)VUEngine::onVIPGAMESTART,
+		kEventVIPManagerGAMESTART
+	);
+
+#ifdef __SHOW_PROCESS_NAME_DURING_XPEND
+	VIPManager::addEventListener
+	(
+		VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)VUEngine::onVIPXPEND, 
+		kEventVIPManagerXPEND
+	);
+#endif
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void VUEngine::destructor()
 {
-	// destroy the clocks
+	VUEngine::cleanUp();
+
+	// Destroy the clocks
 	Clock::destructor(this->clock);
 
 	delete this->stateMachine;
@@ -678,68 +1082,7 @@ void VUEngine::destructor()
 	Base::destructor();
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void VUEngine::initialize()
-{
-	// make sure all managers are initialized now
-	this->camera = Camera::getInstance();
-	this->keypadManager = KeypadManager::getInstance();
-	this->vipManager = VIPManager::getInstance();
-	this->timerManager = TimerManager::getInstance();
-	this->communicationManager = CommunicationManager::getInstance();
-	this->frameRate = FrameRate::getInstance();
-	this->soundManager = SoundManager::getInstance();
-	this->wireframeManager = WireframeManager::getInstance();
-	this->spriteManager = SpriteManager::getInstance();
-
-	SpriteManager::reset(this->spriteManager);
-	DirectDraw::reset(DirectDraw::getInstance());
-	SRAMManager::reset(SRAMManager::getInstance());
-
-	// Initialize hardware registries
-	HardwareManager::initialize();
-
-	// make sure timer interrupts are enable
-	TimerManager::configure(this->timerManager, __TIMER_100US, 10, kMS);
-
-	// Reset sounds
-	SoundManager::reset(this->soundManager);
-
-	// Reset Rumble Pak
-	RumbleManager::reset(RumbleManager::getInstance());
-
-	// start the game's general clock
-	Clock::start(this->clock);
-
-	// Enable interrupts
-	HardwareManager::enableInterrupts();
-
-	// Enable communications
-#ifdef __ENABLE_COMMUNICATIONS
-	CommunicationManager::enableCommunications(this->communicationManager, NULL, NULL);
-#else
-#ifdef __RELEASE
-	VUEngine::wait(VUEngine::getInstance(), 4000);
-#endif
-#endif
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void VUEngine::removeState(GameState gameState)
-{
-#ifdef __TOOLS
-	this->isInToolStateTransition = false;
-#endif
-
-	StateMachine::removeAllEventListeners(this->stateMachine);
-	StateMachine::addEventListener(this->stateMachine, ListenerObject::safeCast(this), (EventListener)VUEngine::poppingState, kEventStateMachineWillPopState);
-	StateMachine::addEventListener(this->stateMachine, ListenerObject::safeCast(this), (EventListener)VUEngine::changedState, kEventStateMachinePoppedState);
-	StateMachine::transitionTo(this->stateMachine, State::safeCast(gameState), kStateMachinePopState);
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 bool VUEngine::cleaniningStatesStack(ListenerObject eventFirer)
 {
@@ -752,12 +1095,13 @@ bool VUEngine::cleaniningStatesStack(ListenerObject eventFirer)
 	this->processName = PROCESS_NAME_STATE_SWAP;
 #endif
 
-	VIPManager::stopDisplaying(this->vipManager);
+	HardwareManager::disableInterrupts();
 
-	VIPManager::stopDrawing(this->vipManager);
+	VIPManager::stopDisplaying(VIPManager::getInstance());
+	VIPManager::stopDrawing(VIPManager::getInstance());
 
 	// Clean the game's stack
-	// pop states until the stack is empty
+	// Pop states until the stack is empty
 	VirtualList stateMachineStack = StateMachine::getStateStack(this->stateMachine);
 
 	// Cancel all messages
@@ -774,7 +1118,7 @@ bool VUEngine::cleaniningStatesStack(ListenerObject eventFirer)
 	return false;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 bool VUEngine::pushingState(ListenerObject eventFirer)
 {
@@ -791,13 +1135,15 @@ bool VUEngine::pushingState(ListenerObject eventFirer)
 	this->isInToolStateTransition = NULL != __GET_CAST(ToolState, StateMachine::getNextState(this->stateMachine));
 #endif
 
-	VIPManager::stopDisplaying(this->vipManager);
-	VIPManager::stopDrawing(this->vipManager);
+	HardwareManager::disableInterrupts();
+
+	VIPManager::stopDisplaying(VIPManager::getInstance());
+	VIPManager::stopDrawing(VIPManager::getInstance());
 
 	return false;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 bool VUEngine::swappingState(ListenerObject eventFirer)
 {
@@ -810,22 +1156,28 @@ bool VUEngine::swappingState(ListenerObject eventFirer)
 	this->processName = PROCESS_NAME_STATE_SWAP;
 #endif
 
-	VIPManager::stopDisplaying(this->vipManager);
-	VIPManager::stopDrawing(this->vipManager);
+	HardwareManager::disableInterrupts();
+	
+	VIPManager::stopDisplaying(VIPManager::getInstance());
+	VIPManager::stopDrawing(VIPManager::getInstance());
 
 	GameState currentGameState = GameState::safeCast(StateMachine::getCurrentState(this->stateMachine));
 
 	if(!isDeleted(currentGameState))
 	{
 		// Discard delayed messages from the current state
-		MessageDispatcher::discardDelayedMessagesWithClock(MessageDispatcher::getInstance(), GameState::getMessagingClock(currentGameState));
+		MessageDispatcher::discardDelayedMessagesWithClock
+		(
+			MessageDispatcher::getInstance(), GameState::getMessagingClock(currentGameState)
+		);
+
 		MessageDispatcher::processDiscardedMessages(MessageDispatcher::getInstance());
 	}
 
 	return false;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 bool VUEngine::poppingState(ListenerObject eventFirer)
 {
@@ -838,15 +1190,21 @@ bool VUEngine::poppingState(ListenerObject eventFirer)
 	this->processName = PROCESS_NAME_STATE_SWAP;
 #endif
 
-	VIPManager::stopDisplaying(this->vipManager);
-	VIPManager::stopDrawing(this->vipManager);
+	HardwareManager::disableInterrupts();
+
+	VIPManager::stopDisplaying(VIPManager::getInstance());
+	VIPManager::stopDrawing(VIPManager::getInstance());
 
 	GameState currentGameState = GameState::safeCast(StateMachine::getCurrentState(this->stateMachine));
 
 	if(!isDeleted(currentGameState))
 	{
 		// Discard delayed messages from the current state
-		MessageDispatcher::discardDelayedMessagesWithClock(MessageDispatcher::getInstance(), GameState::getMessagingClock(currentGameState));
+		MessageDispatcher::discardDelayedMessagesWithClock
+		(
+			MessageDispatcher::getInstance(), GameState::getMessagingClock(currentGameState)
+		);
+
 		MessageDispatcher::processDiscardedMessages(MessageDispatcher::getInstance());
 	}
 
@@ -857,7 +1215,7 @@ bool VUEngine::poppingState(ListenerObject eventFirer)
 	return false;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 bool VUEngine::changedState(ListenerObject eventFirer)
 {
@@ -877,380 +1235,60 @@ bool VUEngine::changedState(ListenerObject eventFirer)
 
 	if(GameState::isVersusMode(currentGameState))
 	{
-		CommunicationManager::startSyncCycle(this->communicationManager);
+		CommunicationManager::startSyncCycle(CommunicationManager::getInstance());
 	}
 
-	// Make sure everything is properly rendered
-	VUEngine::prepareGraphics(this);
-
-	VIPManager::startDrawing(this->vipManager);
-	VIPManager::startDisplaying(this->vipManager);
+	VIPManager::startDrawing(VIPManager::getInstance());
+	VIPManager::startDisplaying(VIPManager::getInstance());
 
 	// Fire event
 	VUEngine::fireEvent(this, kEventNextStateSet);
 
-	StopwatchManager::reset(StopwatchManager::getInstance());
-	FrameRate::reset(this->frameRate);
+	HardwareManager::enableInterrupts();
 
 	return false;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-#ifdef __TOOLS
-void VUEngine::toggleTool(ToolState toolState)
+bool VUEngine::onVIPFRAMESTART(ListenerObject eventFirer __attribute__ ((unused)))
 {
-	if(VUEngine::isInState(this, GameState::safeCast(toolState)))
-	{
-		VUEngine::removeState(this, GameState::safeCast(toolState));
-	}
-	else
-	{
-		if(VUEngine::isInToolState(this))
-		{
-			VUEngine::removeState(this, GameState::safeCast(toolState));
-		}
+#ifdef __SHOW_PROCESS_NAME_DURING_FRAMESTART
+	PRINT_TEXT("F START:            ", 0, 27);
+	PRINT_TEXT(vuEngine->processName, 9, 27);
+#endif
 
-		VUEngine::addState(this, GameState::safeCast(toolState));
-	}
+	VUEngine::frameStarted(__MILLISECONDS_PER_SECOND / __MAXIMUM_FPS);
+
+	return true;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-bool VUEngine::checkIfToggleTool(const UserInput* userInput)
+bool VUEngine::onVIPGAMESTART(ListenerObject eventFirer __attribute__ ((unused)))
 {
-	ToolState engineToolStates[] =
-	{
-#ifdef __TOOLS
-		ToolState::safeCast(DebugState::getInstance()),
-		ToolState::safeCast(StageEditorState::getInstance()),
-		ToolState::safeCast(AnimationInspectorState::getInstance()),
-		ToolState::safeCast(SoundTestState::getInstance()),
-#endif
-		NULL
-	};
-
-	int32 i = 0;
-
-	for(; engineToolStates[i]; i++)
-	{
-		// check code to access special feature
-		if(ToolState::isKeyCombination(engineToolStates[i], userInput))
-		{
-			VUEngine::toggleTool(this, engineToolStates[i]);
-			return true;
-		}
-	}
-
-	extern const ToolState _userToolStates[];
-
-	i = 0;
-
-	for(; _userToolStates[i]; i++)
-	{
-		// check code to access special feature
-		if(ToolState::isKeyCombination(_userToolStates[i], userInput))
-		{
-			VUEngine::toggleTool(this, _userToolStates[i]);
-			return true;
-		}
-	}
-
-	return false;
-}
+#ifdef __SHOW_PROCESS_NAME_DURING_GAMESTART
+	PRINT_TEXT("G START:           ", 0, 26);
+	PRINT_TEXT(vuEngine->processName, 9, 26);
 #endif
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+	VUEngine::gameFrameStarted(VIPManager::getGameFrameDuration(eventFirer));
 
-void VUEngine::updateFrameRate()
-{
-#ifdef __TOOLS
-	if(VUEngine::isInToolState(this))
-	{
-		return;
-	}
-#endif
-
-	FrameRate::update(this->frameRate);
+	return true;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void VUEngine::processUserInput(GameState currentGameState)
+bool VUEngine::onVIPXPEND(ListenerObject eventFirer __attribute__ ((unused)))
 {
-	if(!KeypadManager::isEnabled(this->keypadManager))
-	{
-#ifdef __ENABLE_PROFILER
-		Profiler::lap(Profiler::getInstance(), kProfilerLapTypeNormalProcess, PROCESS_NAME_INPUT);
-#endif
-		return;
-	}
-
-#ifdef __REGISTER_LAST_PROCESS_NAME
-	this->processName = PROCESS_NAME_INPUT;
+#ifdef __SHOW_PROCESS_NAME_DURING_XPEND
+	PRINT_TEXT("XPEND:            ", 0, 27);
+	PRINT_TEXT(vuEngine->processName, 9, 26);
 #endif
 
-	UserInput userInput = KeypadManager::readUserInput(this->keypadManager, this->syncToVIP);
+	VUEngine::drawingStarted();
 	
-#ifdef __TOOLS
-	if(VUEngine::checkIfToggleTool(this, &userInput))
-	{
-		return;
-	}
-#endif
-
-	if(0 != (userInput.dummyKey | userInput.pressedKey | userInput.holdKey | userInput.releasedKey))
-	{
-		GameState::processUserInput(currentGameState, &userInput);
-	}
-
-#ifdef __ENABLE_PROFILER
-	Profiler::lap(Profiler::getInstance(), kProfilerLapTypeNormalProcess, PROCESS_NAME_INPUT);
-#endif
+	return true;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void VUEngine::simulatePhysics(GameState gameState)
-{
-#ifdef __REGISTER_LAST_PROCESS_NAME
-	this->processName = PROCESS_NAME_PHYSICS;
-#endif
-
-	// simulate physics
-	GameState::simulatePhysics(gameState);
-
-#ifdef __ENABLE_PROFILER
-	Profiler::lap(Profiler::getInstance(), kProfilerLapTypeNormalProcess, PROCESS_NAME_PHYSICS);
-#endif
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void VUEngine::processTransformations(GameState gameState)
-{
-#ifdef __REGISTER_LAST_PROCESS_NAME
-	this->processName = PROCESS_NAME_TRANSFORMS;
-#endif
-
-	// apply world transformations
-	GameState::transform(gameState);
-
-#ifdef __ENABLE_PROFILER
-	Profiler::lap(Profiler::getInstance(), kProfilerLapTypeNormalProcess, PROCESS_NAME_TRANSFORMS);
-#endif
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void VUEngine::processCollisions(GameState gameState)
-{
-	// process the collisions after the transformations have taken place
-#ifdef __REGISTER_LAST_PROCESS_NAME
-	this->processName = PROCESS_NAME_COLLISIONS;
-#endif
-
-	// process collisions
-	GameState::processCollisions(gameState);
-
-#ifdef __ENABLE_PROFILER
-	Profiler::lap(Profiler::getInstance(), kProfilerLapTypeNormalProcess, PROCESS_NAME_COLLISIONS);
-#endif
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void VUEngine::dispatchDelayedMessages()
-{
-#ifdef __REGISTER_LAST_PROCESS_NAME
-	this->processName = PROCESS_NAME_MESSAGES;
-#endif
-
-#ifndef __ENABLE_PROFILER
-#ifdef __RUN_DELAYED_MESSAGES_DISPATCHING_AT_HALF_FRAME_RATE
-	if(_dispatchCycle++ & 1)
-#endif
-#endif
-	{
-		MessageDispatcher::dispatchDelayedMessages(MessageDispatcher::getInstance());
-
-#ifdef __ENABLE_PROFILER
-		Profiler::lap(Profiler::getInstance(), kProfilerLapTypeNormalProcess, PROCESS_NAME_MESSAGES);
-#endif
-	}
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-GameState VUEngine::updateLogic(GameState currentGameState)
-{
-#ifdef __REGISTER_LAST_PROCESS_NAME
-	this->processName = PROCESS_NAME_LOGIC;
-#endif
-
-	// update the game's logic
-	currentGameState = GameState::safeCast(StateMachine::update(this->stateMachine));
-
-#ifdef __ENABLE_PROFILER
-	Profiler::lap(Profiler::getInstance(), kProfilerLapTypeNormalProcess, PROCESS_NAME_LOGIC);
-#endif
-
-	return currentGameState;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-bool VUEngine::stream(GameState gameState)
-{
-#ifdef __REGISTER_LAST_PROCESS_NAME
-	this->processName = PROCESS_NAME_STREAMING;
-#endif
-
-#ifndef __ENABLE_PROFILER
-	bool result = GameState::stream(gameState);
-#else
-	bool result = false;
-
-	// While we wait for the next game start
-	while(!this->gameFrameStarted)
-	{
-		// Stream the heck out of the pending entities
-		result = GameState::stream(gameState);
-	}
-
-	Profiler::lap(Profiler::getInstance(), kProfilerLapTypeNormalProcess, PROCESS_NAME_STREAMING);
-#endif
-
-	return result;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void VUEngine::run(GameState currentGameState)
-{
-	// Set state
-	VUEngine::setState(this, currentGameState);
-
-	while(NULL != currentGameState)
-	{
-#ifdef __SHOW_VSU_MANAGER_STATUS
-		VSUManager::print(VSUManager::getInstance(), 1, 1);
-#endif
-		this->gameFrameStarted = false;
-		this->currentGameCycleEnded = false;
-
-		VUEngine::updateFrameRate(this);
-
-#ifdef __ENABLE_PROFILER
-		HardwareManager::disableInterrupts();
-		Profiler::start(Profiler::getInstance());
-#endif
-
-		// Generate random seed
-		_gameRandomSeed = Math::randomSeed();
-
-		// process user's input
-		VUEngine::processUserInput(this, currentGameState);
-
-		// simulate physics
-		VUEngine::simulatePhysics(this, currentGameState);
-
-		// apply transformations
-		VUEngine::processTransformations(this, currentGameState);
-
-		// process collisions
-		VUEngine::processCollisions(this, currentGameState);
-
-		// dispatch delayed messages
-		VUEngine::dispatchDelayedMessages(this);
-
-		currentGameState = VUEngine::updateLogic(this, currentGameState);
-
-#ifdef __ENABLE_PROFILER
-		HardwareManager::enableInterrupts();
-
-		// Stream entities
-		VUEngine::stream(this, currentGameState);
-#else
-		if(!this->syncToVIP)
-		{
-			while(VUEngine::stream(this, currentGameState));
-		}
-		else
-		{
-			do
-			{
-				// Stream the heck out of the pending entities
-				if(!VUEngine::stream(this, currentGameState))
-				{
-					this->currentGameCycleEnded = true;
-				}
-			}
-			// While we wait for the next game start
-			while(!this->gameFrameStarted);			
-		}
-#endif
-
-		this->currentGameCycleEnded = true;
-	}
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void VUEngine::focusCamera()
-{
-#ifdef __REGISTER_LAST_PROCESS_NAME
-	this->processName = PROCESS_NAME_CAMERA;
-#endif
-
-#ifdef __TOOLS
-	if(!VUEngine::isInToolState(this))
-	{
-#endif
-		// position the camera
-		Camera::focus(this->camera);
-#ifdef __TOOLS
-	}
-#endif
-
-#ifdef __ENABLE_PROFILER
-	Profiler::lap(Profiler::getInstance(), kProfilerLapTypeNormalProcess, PROCESS_NAME_CAMERA);
-#endif
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-#ifdef __TOOLS
-bool VUEngine::isInState(GameState gameState)
-{
-	return StateMachine::getCurrentState(this->stateMachine) == State::safeCast(gameState);
-}
-bool VUEngine::isInDebugMode()
-{
-	return VUEngine::isInState(this, GameState::safeCast(DebugState::getInstance()));
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-bool VUEngine::isInStageEditor()
-{
-	return VUEngine::isInState(this, GameState::safeCast(StageEditorState::getInstance()));
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-bool VUEngine::isInAnimationInspector()
-{
-	return VUEngine::isInState(this, GameState::safeCast(AnimationInspectorState::getInstance()));
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-bool VUEngine::isInSoundTest()
-{
-	return VUEngine::isInState(this, GameState::safeCast(SoundTestState::getInstance()));
-}
-#endif
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

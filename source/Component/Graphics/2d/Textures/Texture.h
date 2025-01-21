@@ -10,16 +10,22 @@
 #ifndef TEXTURE_H_
 #define TEXTURE_H_
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // INCLUDES
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <CharSet.h>
 #include <ListenerObject.h>
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+// FORWARD DECLARATIONS
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+class Texture;
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DATA
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 /// @memberof Texture
 enum TextureStatus
@@ -72,11 +78,10 @@ typedef struct TextureSpec
 /// @memberof Texture
 typedef const TextureSpec TextureROMSpec;
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DECLARATION
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-///
 /// Class CharSet
 ///
 /// Inherits from ListenerObject
@@ -91,7 +96,7 @@ abstract class Texture : ListenerObject
 	CharSet charSet;
 
 	/// Spec used to configure the texture
-	TextureSpec* textureSpec;
+	const TextureSpec* textureSpec;
 
 	/// Displacement inside the map array modified according to the frame's value
 	uint32 mapDisplacement;
@@ -117,6 +122,22 @@ abstract class Texture : ListenerObject
 	/// Reset class' state.
 	static void reset();
 
+	/// Get a texture configured with the provided spec.
+	/// @param textureClass: Class of texture to instantiate
+	/// @param textureSpec: Spec used to select or initialize a texture with
+	/// @param minimumSegment: Minimum BGMAP segment where to allocate the texture
+	/// @param mustLiveAtEvenSegment: Required BGMAP segment where to allocate the texture
+	/// @param scValue: SC configuration value for multi segment textures
+	/// @return Texture initialized with the provided spec
+	static Texture get
+	(
+		ClassPointer textureClass, const TextureSpec* textureSpec, int16 minimumSegment, bool mustLiveAtEvenSegment, uint32 scValue
+	);
+
+	/// Release a texture.
+	/// @param texture: Texture to release
+	static void release(Texture texture);
+
 	/// Update texture pending rewriting of data in DRAM.
 	/// @param maximumTextureRowsToWrite: Number of texture rows to write during this call
 	/// @param defer: If true, the texture data is written overtime; otherwise
@@ -138,7 +159,7 @@ abstract class Texture : ListenerObject
 	/// Class' constructor
 	/// @param textureSpec: Specification that determines how to configure the texture
 	/// @param id: Texture's identificator
-	void constructor(TextureSpec* textureSpec, uint16 id);
+	void constructor(const TextureSpec* textureSpec, uint16 id);
 
 	/// Retrieve the texture's identificator.
 	/// @return Texture's identificator
@@ -150,7 +171,7 @@ abstract class Texture : ListenerObject
 
 	/// Retrieve the texture's spec.
 	/// @return Specification that determines how to configure the texture
-	TextureSpec* getSpec();
+	const TextureSpec* getSpec();
 
 	/// Retrieve the texture's char set.
 	/// @param loadIfNeeded: If true and the char set is not loaded, loads it

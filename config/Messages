@@ -4,7 +4,7 @@
 		"cTP9gUwK3IvUA9U9": "KeyPressed",
 		"emBKcP48fmjZ9wiM": "KeyReleased",
 		"GkoBRXRw5Pq70Jyq": "HighFps",
-		"iHAIR7A46isXvCLl": "EntityRemoved",
+		"iHAIR7A46isXvCLl": "ActorRemoved",
 		"o84IKELf08geYv9d": "BodyStopped",
 		"PQhieVBokeMJFlsR": "BodyStartedMoving",
 		"TJUjFLiwan2nD4pz": "CheckIfRemoteIsReady",

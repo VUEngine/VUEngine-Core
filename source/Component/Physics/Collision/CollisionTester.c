@@ -7,10 +7,9 @@
  * that was distributed with this source code.
  */
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // INCLUDES
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <Ball.h>
 #include <Box.h>
@@ -20,11 +19,9 @@
 
 #include "CollisionTester.h"
 
-
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DECLARATIONS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 friend class Collider;
 friend class Box;
@@ -32,13 +29,11 @@ friend class InverseBox;
 friend class Ball;
 friend class LineField;
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' STATIC METHODS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 static void CollisionTester::testOverlaping(Collider requesterCollider, Collider otherCollider, CollisionInformation* collisionInformation, fixed_t sizeDelta)
 {
@@ -65,13 +60,25 @@ static void CollisionTester::testOverlaping(Collider requesterCollider, Collider
 	static CollisionTesterMethod collisionTesterMethods[][4] =
 	{
 		// Ball against others
-		{CollisionTester::testIfBallOverlapsBall, CollisionTester::testIfBallOverlapsBox, CollisionTester::testIfBallOverlapsInverseBox, CollisionTester::testIfBallOverlapsLineField},
+		{
+			CollisionTester::testIfBallOverlapsBall, CollisionTester::testIfBallOverlapsBox, 
+			CollisionTester::testIfBallOverlapsInverseBox, CollisionTester::testIfBallOverlapsLineField
+		},
 		// Box against others
-		{CollisionTester::testIfBoxOverlapsBall, CollisionTester::testIfBoxOverlapsBox, CollisionTester::testIfBoxOverlapsInverseBox, CollisionTester::testIfBoxOverlapsLineField},
+		{
+			CollisionTester::testIfBoxOverlapsBall, CollisionTester::testIfBoxOverlapsBox, 
+			CollisionTester::testIfBoxOverlapsInverseBox, CollisionTester::testIfBoxOverlapsLineField
+		},
 		// InverseBox against others
-		{CollisionTester::testIfInverseBoxOverlapsBall, CollisionTester::testIfInverseBoxOverlapsBox, CollisionTester::testIfInverseBoxOverlapsInverseBox, CollisionTester::testIfInverseBoxOverlapsLineField},
+		{
+			CollisionTester::testIfInverseBoxOverlapsBall, CollisionTester::testIfInverseBoxOverlapsBox, 
+			CollisionTester::testIfInverseBoxOverlapsInverseBox, CollisionTester::testIfInverseBoxOverlapsLineField
+		},
 		// LineField against others
-		{CollisionTester::testIfLineFieldOverlapsBall, CollisionTester::testIfLineFieldOverlapsBox, CollisionTester::checkLineFieldIfOverlapsInverseBox, CollisionTester::testIfLineFieldOverlapsLineField},
+		{
+			CollisionTester::testIfLineFieldOverlapsBall, CollisionTester::testIfLineFieldOverlapsBox, 
+			CollisionTester::checkLineFieldIfOverlapsInverseBox, CollisionTester::testIfLineFieldOverlapsLineField
+		},
 	};
 
 	CollisionTesterMethod collisionTesterMethod = collisionTesterMethods[requesterCollider->classIndex][otherCollider->classIndex];
@@ -93,25 +100,23 @@ static void CollisionTester::testOverlaping(Collider requesterCollider, Collider
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PRIVATE STATIC METHODS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 static void CollisionTester::getSolutionVectorBetweenBoxAndBox(Box boxA, Box boxB, SolutionVector* solutionVector)
 {
-	// get the vertexes of each box
+	// Get the vertexes of each box
 	Vector3D boxAVertexes[__BOX_VERTEXES];
 	Vector3D boxBVertexes[__BOX_VERTEXES];
 	Box::getVertexes(boxA, boxAVertexes);
 	Box::getVertexes(boxB, boxBVertexes);
 
-	// if the normals have not been computed yet do so now
+	// If the normals have not been computed yet do so now
 	if(!boxA->normals)
 	{
 		Box::projectOntoItself(boxA);
@@ -134,12 +139,12 @@ static void CollisionTester::getSolutionVectorBetweenBoxAndBox(Box boxA, Box box
 
 	int32 boxIndex = 0;
 
-	// has to project all points on all the normals of both boxes
+	// Has to project all points on all the normals of both boxes
 	for(; boxIndex < 2; boxIndex++)
 	{
 		int32 normalIndex = 0;
 
-		// test all 3 normals of each box
+		// Test all 3 normals of each box
 		for(; normalIndex < __COLLIDER_NORMALS; normalIndex++)
 		{
 			Vector3D currentNormal = normals[boxIndex][normalIndex];
@@ -193,25 +198,25 @@ static void CollisionTester::getSolutionVectorBetweenBoxAndBox(Box boxA, Box box
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 static void CollisionTester::getSolutionVectorBetweenBoxAndInverseBox(Box boxA __attribute__ ((unused)), InverseBox inverseBoxB __attribute__ ((unused)), SolutionVector* solutionVector __attribute__ ((unused)))
 {
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 static void CollisionTester::getSolutionVectorBetweenInverseBoxAndInverseBox(InverseBox inverseBoxA __attribute__ ((unused)), InverseBox inverseBoxB __attribute__ ((unused)), SolutionVector* solutionVector __attribute__ ((unused)))
 {
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 static void CollisionTester::getSolutionVectorBetweenInverseBoxAndBall(InverseBox inverseBoxA __attribute__ ((unused)), Ball ballB __attribute__ ((unused)), SolutionVector* solutionVector __attribute__ ((unused)))
 {
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 static void CollisionTester::getSolutionVectorBetweenBallAndBall(Ball ballA, Ball ballB, SolutionVector* solutionVector)
 {
@@ -224,7 +229,7 @@ static void CollisionTester::getSolutionVectorBetweenBallAndBall(Ball ballA, Bal
 	{
 		fixed_t distanceVectorLength = Math::squareRootFixed(distanceVectorSquareLength);
 
-		// add padding to prevent rounding problems
+		// Add padding to prevent rounding problems
 		solutionVector->magnitude = radiusesLength - distanceVectorLength;
 		solutionVector->magnitude += 0 == solutionVector->magnitude ? __PIXELS_TO_METERS(1) : 0;
 		solutionVector->direction = Vector3D::scalarDivision(distanceVector, distanceVectorLength);
@@ -259,13 +264,13 @@ static void CollisionTester::getSolutionVectorBetweenBallAndBall(Ball ballA, Bal
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 static void CollisionTester::getSolutionVectorBetweenBallAndLineField(Ball ball, LineField lineField, SolutionVector* solutionVector)
 {
 	// TODO: this misses some cases when the ball's radius is bigger than the line field's length
 	// A first check should compare them and use the bigger's collider axis as the line onto which
-	// project the other collider's points
+	// Project the other collider's points
 
 	Vector3D ballSideToCheck = Vector3D::sum(ball->position, Vector3D::scalarProduct(lineField->normal, ball->radius));
 
@@ -273,7 +278,8 @@ static void CollisionTester::getSolutionVectorBetweenBallAndLineField(Ball ball,
 	Vector3D lineFieldB = Vector3D::sum(lineField->b, lineField->position);
 
 	// Test against the bounding box first to avoid the projection if possible
-	if(
+	if
+	(
 		(
 			lineFieldA.x != lineFieldB.x
 			&&
@@ -298,7 +304,9 @@ static void CollisionTester::getSolutionVectorBetweenBallAndLineField(Ball ball,
 		return;
 	}
 
-	fixed_t position = __FIXED_MULT((lineFieldB.x - lineFieldA.x), (ballSideToCheck.y - lineFieldA.y)) - __FIXED_MULT((lineFieldB.y - lineFieldA.y), (ballSideToCheck.x - lineFieldA.x));
+	fixed_t position = 
+		__FIXED_MULT((lineFieldB.x - lineFieldA.x), (ballSideToCheck.y - lineFieldA.y)) - 
+		__FIXED_MULT((lineFieldB.y - lineFieldA.y), (ballSideToCheck.x - lineFieldA.x));
 
 	if(0 > position)
 	{
@@ -312,7 +320,7 @@ static void CollisionTester::getSolutionVectorBetweenBallAndLineField(Ball ball,
 
 			// Check both sides of the ball
 			// This is a rough approximation since it identifies a collision even if the ball and the line field
-			// are not really overlapping
+			// Are not really overlapping
 			for(bool left = true; !collision && left; left = false)
 			{
 				Vector3D projectionPlusRadio = Vector3D::sum(projection, Vector3D::perpendicularZPlane(ballRadiusVector, left));
@@ -334,11 +342,11 @@ static void CollisionTester::getSolutionVectorBetweenBallAndLineField(Ball ball,
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 static void CollisionTester::getSolutionVectorBetweenBoxAndBall(Box boxA, Ball ballB, SolutionVector* solutionVector)
 {
-	// if the normals have not been computed yet do so now
+	// If the normals have not been computed yet do so now
 	if(NULL == boxA->normals)
 	{
 		Box::projectOntoItself(boxA);
@@ -350,10 +358,10 @@ static void CollisionTester::getSolutionVectorBetweenBoxAndBall(Box boxA, Ball b
 
 	fixed_t minimumIntervalDistance = Math::fixedInfinity();
 
-	// has to project all points on all the normals of the tilted box
+	// Has to project all points on all the normals of the tilted box
 	int32 normalIndex = 0;
 
-	// test all 3 normals of each box
+	// Test all 3 normals of each box
 	for(; normalIndex < __COLLIDER_NORMALS; normalIndex++)
 	{
 		Vector3D currentNormal = normals[normalIndex];
@@ -396,7 +404,7 @@ static void CollisionTester::getSolutionVectorBetweenBoxAndBall(Box boxA, Ball b
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 static void CollisionTester::testIfBallOverlapsBall(Collider colliderA, Collider colliderB, CollisionInformation* collisionInformation)
 {
@@ -415,21 +423,21 @@ static void CollisionTester::testIfBallOverlapsBall(Collider colliderA, Collider
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 static void CollisionTester::testIfBallOverlapsBox(Collider colliderA, Collider colliderB, CollisionInformation* collisionInformation)
 {
 	CollisionTester::testIfBoxOverlapsBall(colliderB, colliderA, collisionInformation);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 static void CollisionTester::testIfBallOverlapsInverseBox(Collider colliderA, Collider colliderB, CollisionInformation* collisionInformation)
 {
 	CollisionTester::testIfInverseBoxOverlapsBall(colliderB, colliderA, collisionInformation);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 static void CollisionTester::testIfBallOverlapsLineField(Collider colliderA, Collider colliderB, CollisionInformation* collisionInformation)
 {
@@ -448,7 +456,7 @@ static void CollisionTester::testIfBallOverlapsLineField(Collider colliderA, Col
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 static void CollisionTester::testIfBoxOverlapsBall(Collider colliderA, Collider colliderB, CollisionInformation* collisionInformation)
 {
@@ -457,23 +465,33 @@ static void CollisionTester::testIfBoxOverlapsBall(Collider colliderA, Collider 
 
 	Vector3D intervalDistance =
 	{
-		boxA->position.x < ballB->position.x ? ((ballB->position.x - ballB->radius) - (boxA->position.x + boxA->rightBox.x1)) : ((boxA->position.x + boxA->rightBox.x0) - (ballB->position.x + ballB->radius)),
-		boxA->position.y < ballB->position.y ? ((ballB->position.y - ballB->radius) - (boxA->position.y + boxA->rightBox.y1)) : ((boxA->position.y + boxA->rightBox.y0) - (ballB->position.y + ballB->radius)),
-		boxA->position.z < ballB->position.z ? ((ballB->position.z - ballB->radius) - (boxA->position.z + boxA->rightBox.z1)) : ((boxA->position.z + boxA->rightBox.z0) - (ballB->position.z + ballB->radius)),
+		boxA->position.x < ballB->position.x ? 
+			((ballB->position.x - ballB->radius) - (boxA->position.x + boxA->rightBox.x1)) 
+			: 
+			((boxA->position.x + boxA->rightBox.x0) - (ballB->position.x + ballB->radius)),
+		boxA->position.y < ballB->position.y ? 
+			((ballB->position.y - ballB->radius) - (boxA->position.y + boxA->rightBox.y1)) 
+			: 
+			((boxA->position.y + boxA->rightBox.y0) - (ballB->position.y + ballB->radius)),
+		boxA->position.z < ballB->position.z ? 
+			((ballB->position.z - ballB->radius) - (boxA->position.z + boxA->rightBox.z1)) 
+			: 
+			((boxA->position.z + boxA->rightBox.z0) - (ballB->position.z + ballB->radius)),
 	};
 
-	// test for collision
+	// Test for collision
 	if(0 > intervalDistance.x && 0 > intervalDistance.y && 0 > intervalDistance.z)
 	{
-		// check if both boxes are axis aligned
-		bool isSATCheckPending = boxA->rotationVertexDisplacement.x | boxA->rotationVertexDisplacement.y | boxA->rotationVertexDisplacement.z ? true : false;
+		// Check if both boxes are axis aligned
+		bool isSATCheckPending = 
+			boxA->rotationVertexDisplacement.x | boxA->rotationVertexDisplacement.y | boxA->rotationVertexDisplacement.z ? true : false;
 
 		SolutionVector solutionVector = (SolutionVector) {{0, 0, 0}, 0};
 		fixed_t minimumIntervalDistance = Math::fixedInfinity();
 
-		// if axis aligned, then SAT check is not needed
-		// and we can calculate the minimum displacement vector
-		// to resolve the collision right now
+		// If axis aligned, then SAT check is not needed
+		// And we can calculate the minimum displacement vector
+		// To resolve the collision right now
 		if(isSATCheckPending)
 		{
 			CollisionTester::getSolutionVectorBetweenBoxAndBall(boxA, ballB, &solutionVector);
@@ -516,7 +534,7 @@ static void CollisionTester::testIfBoxOverlapsBall(Collider colliderA, Collider 
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 static void CollisionTester::testIfBoxOverlapsBox(Collider colliderA, Collider colliderB, CollisionInformation* collisionInformation)
 {
@@ -525,25 +543,36 @@ static void CollisionTester::testIfBoxOverlapsBox(Collider colliderA, Collider c
 
 	Vector3D intervalDistance =
 	{
-		boxA->position.x < boxB->position.x ? ((boxB->position.x + boxB->rightBox.x0) - (boxA->position.x + boxA->rightBox.x1)) : ((boxA->position.x + boxA->rightBox.x0) - (boxB->position.x + boxB->rightBox.x1)),
-		boxA->position.y < boxB->position.y ? ((boxB->position.y + boxB->rightBox.y0) - (boxA->position.y + boxA->rightBox.y1)) : ((boxA->position.y + boxA->rightBox.y0) - (boxB->position.y + boxB->rightBox.y1)),
-		boxA->position.z < boxB->position.z ? ((boxB->position.z + boxB->rightBox.z0) - (boxA->position.z + boxA->rightBox.z1)) : ((boxA->position.z + boxA->rightBox.z0) - (boxB->position.z + boxB->rightBox.z1)),
+		boxA->position.x < boxB->position.x ? 
+			((boxB->position.x + boxB->rightBox.x0) - (boxA->position.x + boxA->rightBox.x1)) 
+			: 
+			((boxA->position.x + boxA->rightBox.x0) - (boxB->position.x + boxB->rightBox.x1)),
+		boxA->position.y < boxB->position.y ? 
+			((boxB->position.y + boxB->rightBox.y0) - (boxA->position.y + boxA->rightBox.y1)) 
+			: 
+			((boxA->position.y + boxA->rightBox.y0) - (boxB->position.y + boxB->rightBox.y1)),
+		boxA->position.z < boxB->position.z ? 
+			((boxB->position.z + boxB->rightBox.z0) - (boxA->position.z + boxA->rightBox.z1)) 
+			: 
+			((boxA->position.z + boxA->rightBox.z0) - (boxB->position.z + boxB->rightBox.z1)),
 	};
 
-	// test for collision
+	// Test for collision
 	if(0 > intervalDistance.x && 0 > intervalDistance.y && 0 > intervalDistance.z)
 	{
-		// check if both boxes are axis aligned
-		bool isBoxARotated = boxA->rotationVertexDisplacement.x | boxA->rotationVertexDisplacement.y | boxA->rotationVertexDisplacement.z ? true : false;
-		bool isBoxBRotated = boxB->rotationVertexDisplacement.x | boxB->rotationVertexDisplacement.y | boxB->rotationVertexDisplacement.z ? true : false;
+		// Check if both boxes are axis aligned
+		bool isBoxARotated = 
+			boxA->rotationVertexDisplacement.x | boxA->rotationVertexDisplacement.y | boxA->rotationVertexDisplacement.z ? true : false;
+		bool isBoxBRotated = 
+			boxB->rotationVertexDisplacement.x | boxB->rotationVertexDisplacement.y | boxB->rotationVertexDisplacement.z ? true : false;
 		bool isSATCheckPending = isBoxARotated || isBoxBRotated;
 
 		SolutionVector solutionVector = (SolutionVector) {{0, 0, 0}, 0};
 		fixed_t minimumIntervalDistance = Math::fixedInfinity();
 
-		// if axis aligned, then SAT check is not needed
-		// and we can calculate the minimum displacement vector
-		// to resolve the collision right now
+		// If axis aligned, then SAT check is not needed
+		// And we can calculate the minimum displacement vector
+		// To resolve the collision right now
 		if(isSATCheckPending)
 		{
 			CollisionTester::getSolutionVectorBetweenBoxAndBox(boxA, boxB, &solutionVector);
@@ -587,14 +616,14 @@ static void CollisionTester::testIfBoxOverlapsBox(Collider colliderA, Collider c
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 static void CollisionTester::testIfBoxOverlapsInverseBox(Collider colliderA, Collider colliderB, CollisionInformation* collisionInformation)
 {
 	Box boxA = Box::safeCast(colliderA); 
 	InverseBox inverseBoxB = InverseBox::safeCast(colliderB);
 
-	// test for collision
+	// Test for collision
 	if
 	(
 		(boxA->rightBox.x0 < inverseBoxB->rightBox.x0) | (boxA->rightBox.x1 > inverseBoxB->rightBox.x1) |
@@ -608,13 +637,13 @@ static void CollisionTester::testIfBoxOverlapsInverseBox(Collider colliderA, Col
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 static void CollisionTester::testIfBoxOverlapsLineField(Collider colliderA __attribute__((unused)), Collider colliderB __attribute__((unused)), CollisionInformation* collisionInformation __attribute__((unused)))
 {
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 static void CollisionTester::testIfInverseBoxOverlapsBall(Collider colliderA, Collider colliderB, CollisionInformation* collisionInformation)
 {
@@ -623,22 +652,31 @@ static void CollisionTester::testIfInverseBoxOverlapsBall(Collider colliderA, Co
 
 	Vector3D intervalDistance =
 	{
-		inverseBoxA->position.x > ballB->position.x ? ((ballB->position.x - ballB->radius) - (inverseBoxA->position.x + inverseBoxA->rightBox.x0)) : ((inverseBoxA->position.x + inverseBoxA->rightBox.x1) - (ballB->position.x + ballB->radius)),
-		inverseBoxA->position.y > ballB->position.y ? ((ballB->position.y - ballB->radius) - (inverseBoxA->position.y + inverseBoxA->rightBox.y0)) : ((inverseBoxA->position.y + inverseBoxA->rightBox.y1) - (ballB->position.y + ballB->radius)),
-		inverseBoxA->position.z > ballB->position.z ? ((ballB->position.z - ballB->radius) - (inverseBoxA->position.z + inverseBoxA->rightBox.z0)) : ((inverseBoxA->position.z + inverseBoxA->rightBox.z1) - (ballB->position.z + ballB->radius)),
+		inverseBoxA->position.x > ballB->position.x ? 
+			((ballB->position.x - ballB->radius) - (inverseBoxA->position.x + inverseBoxA->rightBox.x0)) 
+			: 
+			((inverseBoxA->position.x + inverseBoxA->rightBox.x1) - (ballB->position.x + ballB->radius)),
+		inverseBoxA->position.y > ballB->position.y ? 
+			((ballB->position.y - ballB->radius) - (inverseBoxA->position.y + inverseBoxA->rightBox.y0)) 
+			: 
+			((inverseBoxA->position.y + inverseBoxA->rightBox.y1) - (ballB->position.y + ballB->radius)),
+		inverseBoxA->position.z > ballB->position.z ? 
+			((ballB->position.z - ballB->radius) - (inverseBoxA->position.z + inverseBoxA->rightBox.z0)) 
+			: 
+			((inverseBoxA->position.z + inverseBoxA->rightBox.z1) - (ballB->position.z + ballB->radius)),
 	};
 
-	// test for collision
+	// Test for collision
 	if(0 > intervalDistance.x || 0 > intervalDistance.y || 0 > intervalDistance.z)
 	{
-		// check if both boxes are axis aligned
+		// Check if both boxes are axis aligned
 		SolutionVector solutionVector = (SolutionVector) {{0, 0, 0}, 0};
 		fixed_t minimumIntervalDistance = Math::fixedInfinity();
 
-		// no SAT when checking inverse boxes
-		// if axis aligned, then SAT check is not needed
-		// and we can calculate the minimum displacement vector
-		// to resolve the collision right now
+		// No SAT when checking inverse boxes
+		// If axis aligned, then SAT check is not needed
+		// And we can calculate the minimum displacement vector
+		// To resolve the collision right now
 		Vector3D distanceVector = Vector3D::get(inverseBoxA->position, ballB->position);
 
 		Vector3D normals[__COLLIDER_NORMALS] =
@@ -675,48 +713,47 @@ static void CollisionTester::testIfInverseBoxOverlapsBall(Collider colliderA, Co
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 static void CollisionTester::testIfInverseBoxOverlapsBox(Collider colliderA, Collider colliderB, CollisionInformation* collisionInformation)
 {
 	CollisionTester::testIfBoxOverlapsInverseBox(colliderB, colliderA, collisionInformation);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 static void CollisionTester::testIfInverseBoxOverlapsInverseBox(Collider colliderA __attribute__ ((unused)), Collider colliderB __attribute__ ((unused)), CollisionInformation* collisionInformation __attribute__ ((unused)))
 {
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 static void CollisionTester::testIfInverseBoxOverlapsLineField(Collider colliderA __attribute__ ((unused)), Collider colliderB __attribute__ ((unused)), CollisionInformation* collisionInformation __attribute__ ((unused)))
 {
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 static void CollisionTester::testIfLineFieldOverlapsBall(Collider colliderA __attribute__((unused)), Collider colliderB __attribute__((unused)), CollisionInformation* collisionInformation __attribute__((unused)))
 {
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 static void CollisionTester::testIfLineFieldOverlapsBox(Collider colliderA __attribute__((unused)), Collider colliderB __attribute__((unused)), CollisionInformation* collisionInformation __attribute__((unused)))
 {
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 static void CollisionTester::checkLineFieldIfOverlapsInverseBox(Collider colliderA __attribute__((unused)), Collider colliderB __attribute__((unused)), CollisionInformation* collisionInformation __attribute__((unused)))
 {
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 static void CollisionTester::testIfLineFieldOverlapsLineField(Collider colliderA __attribute__((unused)), Collider colliderB __attribute__((unused)), CollisionInformation* collisionInformation __attribute__((unused)))
 {
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

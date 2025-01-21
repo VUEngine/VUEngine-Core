@@ -7,10 +7,9 @@
  * that was distributed with this source code.
  */
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // INCLUDES
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <AnimationController.h>
 #include <AnimationCoordinatorFactory.h>
@@ -19,16 +18,14 @@
 #include <ObjectSprite.h>
 #include <Optics.h>
 #include <Printing.h>
-#include <SpriteManager.h>
 #include <Texture.h>
 #include <VIPManager.h>
 
 #include "Sprite.h"
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DECLARATIONS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 friend class Texture;
 
@@ -36,28 +33,25 @@ friend class Texture;
 friend class AnimationController;
 #endif
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' MACROS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #define SPRITE_DEPTH						16
 #define SPRITE_HALF_DEPTH					(SPRITE_DEPTH >> 1)
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PUBLIC METHODS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void Sprite::constructor(GameObject owner, const SpriteSpec* spriteSpec)
+void Sprite::constructor(Entity owner, const SpriteSpec* spriteSpec)
 {
 	// Always explicitly call the base's constructor 
 	Base::constructor(owner, (const VisualComponentSpec*)&spriteSpec->visualComponentSpec);
 
-	// clear values
+	// Clear values
 	this->index = __NO_RENDER_INDEX;
 	this->head = 0;
 	this->texture = NULL;
@@ -83,7 +77,7 @@ void Sprite::constructor(GameObject owner, const SpriteSpec* spriteSpec)
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Sprite::destructor()
 {
@@ -91,15 +85,15 @@ void Sprite::destructor()
 	Base::destructor();
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 RightBox Sprite::getRightBox()
 {
 #ifndef __RELEASE
 	if(0 == this->halfWidth || 0 == this->halfHeight)
 	{
-		Printing::setDebugMode(Printing::getInstance());
-		Printing::clear(Printing::getInstance());
+		Printing::setDebugMode();
+		Printing::clear();
 		PRINT_HEX((uint32)this->componentSpec, 1, 27);
 		Error::triggerException("Sprite::getRightBox: 0 size sprite", NULL);
 	}
@@ -116,11 +110,11 @@ RightBox Sprite::getRightBox()
 	};
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Sprite::createAnimationController()
 {
-    this->animationController = new AnimationController();
+	this->animationController = new AnimationController();
 
 	if(isDeleted(this->animationController))
 	{
@@ -144,7 +138,7 @@ void Sprite::createAnimationController()
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Sprite::forceChangeOfFrame(int16 actualFrame)
 {
@@ -154,7 +148,7 @@ void Sprite::forceChangeOfFrame(int16 actualFrame)
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 inline void Sprite::transform()
 {
@@ -166,13 +160,13 @@ inline void Sprite::transform()
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 int16 Sprite::render(int16 index, bool updateAnimation)
 {
 	// If the client code makes these checks before calling this method,
-	// it saves on method calls quite a bit when there are lots of
-	// sprites. Don't uncomment.
+	// It saves on method calls quite a bit when there are lots of
+	// Sprites. Don't uncomment.
 /*
 	if(__HIDE == this->show)
 	{
@@ -235,10 +229,15 @@ int16 Sprite::render(int16 index, bool updateAnimation)
 	}
 
 	// If the client code makes these checks before calling this method,
-	// it saves on method calls quite a bit when there are lots of
-	// sprites. Don't uncomment.
+	// It saves on method calls quite a bit when there are lots of
+	// Sprites. Don't uncomment.
 /*
-	if(!(((this->transparency == __TRANSPARENCY_NONE) || (0x01 & (this->transparency ^ evenFrame))) && Sprite::isWithinScreenSpace(this)))
+	if
+	(
+		!(((this->transparency == __TRANSPARENCY_NONE) || (0x01 & (this->transparency ^ evenFrame))) 
+		&& 
+		Sprite::isWithinScreenSpace(this))
+	)
 	{
 		return this->index;
 	}
@@ -271,42 +270,42 @@ int16 Sprite::render(int16 index, bool updateAnimation)
 	return this->index;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 Texture Sprite::getTexture()
 {
 	return this->texture;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 int16 Sprite::getIndex()
 {
 	return this->index;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 uint16 Sprite::getHead()
 {
 	return this->head;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 int32 Sprite::getHalfWidth()
 {
 	return this->halfWidth;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 int32 Sprite::getHalfHeight()
 {
 	return this->halfHeight;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 uint32 Sprite::getEffectiveHead()
 {
@@ -319,7 +318,7 @@ uint32 Sprite::getEffectiveHead()
 	return worldPointer->head;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 uint16 Sprite::getEffectiveWidth()
 {
@@ -332,7 +331,7 @@ uint16 Sprite::getEffectiveWidth()
 	return 0 > (int16)worldPointer->w ? 0 : worldPointer->w;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 uint16 Sprite::getEffectiveHeight()
 {
@@ -345,7 +344,7 @@ uint16 Sprite::getEffectiveHeight()
 	return 0 > (int16)worldPointer->h ? 0 : worldPointer->h;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 int16 Sprite::getEffectiveX()
 {
@@ -358,7 +357,7 @@ int16 Sprite::getEffectiveX()
 	return worldPointer->gx;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 int16 Sprite::getEffectiveY()
 {
@@ -371,7 +370,7 @@ int16 Sprite::getEffectiveY()
 	return worldPointer->gy;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 int16 Sprite::getEffectiveP()
 {
@@ -384,7 +383,7 @@ int16 Sprite::getEffectiveP()
 	return worldPointer->gp;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 int16 Sprite::getEffectiveMX()
 {
@@ -397,7 +396,7 @@ int16 Sprite::getEffectiveMX()
 	return worldPointer->mx;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 int16 Sprite::getEffectiveMY()
 {
@@ -410,7 +409,7 @@ int16 Sprite::getEffectiveMY()
 	return worldPointer->my;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 int16 Sprite::getEffectiveMP()
 {
@@ -423,49 +422,49 @@ int16 Sprite::getEffectiveMP()
 	return worldPointer->mp;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 bool Sprite::isVisible()
 {
 	return __NO_RENDER_INDEX != this->index && __SHOW == this->show;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 bool Sprite::isHidden()
 {
 	return __HIDE == this->show;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 bool Sprite::isBgmap()
 {
 	return (__WORLD_BGMAP == (this->head & __WORLD_BGMAP)) || Sprite::isAffine(this) || Sprite::isHBias(this);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 bool Sprite::isObject()
 {
 	return NULL != __GET_CAST(ObjectSprite, this);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 bool Sprite::isAffine()
 {
 	return __WORLD_AFFINE == (this->head & __WORLD_AFFINE);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 bool Sprite::isHBias()
 {
 	return __WORLD_HBIAS == (this->head & __WORLD_HBIAS);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Sprite::setPosition(const PixelVector* position)
 {
@@ -478,14 +477,14 @@ void Sprite::setPosition(const PixelVector* position)
 	this->rendered = false;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 const PixelVector* Sprite::getPosition()
 {
 	return (const PixelVector*)&this->position;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Sprite::setDisplacement(const PixelVector* displacement)
 {
@@ -493,14 +492,14 @@ void Sprite::setDisplacement(const PixelVector* displacement)
 	this->rendered = false;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 const PixelVector* Sprite::getDisplacement()
 {
 	return &this->displacement;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 PixelVector Sprite::getDisplacedPosition()
 {
@@ -515,7 +514,7 @@ PixelVector Sprite::getDisplacedPosition()
 	return position;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Sprite::addChar(const Point* texturePoint, const uint32* newChar)
 {
@@ -527,7 +526,7 @@ void Sprite::addChar(const Point* texturePoint, const uint32* newChar)
 	Texture::addChar(this->texture, texturePoint, newChar);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Sprite::putChar(const Point* texturePoint, const uint32* newChar)
 {
@@ -539,7 +538,7 @@ void Sprite::putChar(const Point* texturePoint, const uint32* newChar)
 	Texture::putChar(this->texture, texturePoint, newChar);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Sprite::putPixel(const Point* texturePixel, const Pixel* charSetPixel, BYTE newPixelColor)
 {
@@ -551,7 +550,7 @@ void Sprite::putPixel(const Point* texturePixel, const Pixel* charSetPixel, BYTE
 	Texture::putPixel(this->texture, texturePixel, charSetPixel, newPixelColor);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Sprite::invalidateRendering()
 {
@@ -559,29 +558,36 @@ void Sprite::invalidateRendering()
 	Sprite::transform(this);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void* Sprite::getManager()
+{
+	return NULL;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 bool Sprite::hasSpecialEffects()
 {
 	return false;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Sprite::updateAnimation()
 {}
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void Sprite::processEffects()
+void Sprite::processEffects(int32 maximumParamTableRowsToComputePerCall __attribute__((unused)))
 {}
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Sprite::setMultiframe(uint16 frame __attribute__((unused)))
 {}
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Sprite::forceShow()
 {
@@ -590,7 +596,7 @@ void Sprite::forceShow()
 	Sprite::setPosition(this, &this->position);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Sprite::forceHide()
 {
@@ -599,7 +605,7 @@ void Sprite::forceHide()
 	Sprite::setPosition(this, &this->position);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Sprite::setRotation(const Rotation* rotation __attribute__((unused)))
 {
@@ -612,7 +618,7 @@ void Sprite::setRotation(const Rotation* rotation __attribute__((unused)))
 	this->rendered = false;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Sprite::setScale(const PixelScale* scale __attribute__((unused)))
 {
@@ -625,7 +631,7 @@ void Sprite::setScale(const PixelScale* scale __attribute__((unused)))
 	this->rendered = false;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Sprite::print(int32 x, int32 y)
 {
@@ -633,103 +639,106 @@ void Sprite::print(int32 x, int32 y)
 	uint8 transparency = this->transparency;
 	this->transparency = __TRANSPARENCY_NONE;
 
-	Printing::text(Printing::getInstance(), "SPRITE ", x, y++, NULL);
-	Printing::text(Printing::getInstance(), "Class: ", x, ++y, NULL);
-	Printing::text(Printing::getInstance(), __GET_CLASS_NAME_UNSAFE(this), x + 18, y, NULL);
-	Printing::text(Printing::getInstance(), "Mode:", x, ++y, NULL);
+	Printing::text("SPRITE ", x, y++, NULL);
+	Printing::text("Class: ", x, ++y, NULL);
+	Printing::text(__GET_CLASS_NAME(this), x + 18, y, NULL);
+	Printing::text("Mode:", x, ++y, NULL);
 
 	if(Sprite::isObject(this))
 	{
-		Printing::text(Printing::getInstance(), "OBJECT   ", x + 18, y, NULL);
+		Printing::text("OBJECT   ", x + 18, y, NULL);
 	}
 	else if(Sprite::isAffine(this))
 	{
-		Printing::text(Printing::getInstance(), "AFFINE   ", x + 18, y, NULL);
+		Printing::text("AFFINE   ", x + 18, y, NULL);
 	}
 	else if(Sprite::isHBias(this))
 	{
-		Printing::text(Printing::getInstance(), "H-BIAS   ", x + 18, y, NULL);
+		Printing::text("H-BIAS   ", x + 18, y, NULL);
 	}
 	else if(Sprite::isBgmap(this))
 	{
-		Printing::text(Printing::getInstance(), "BGMAP    ", x + 18, y, NULL);
+		Printing::text("BGMAP    ", x + 18, y, NULL);
 	}
 
-	Printing::text(Printing::getInstance(), "Index: ", x, ++y, NULL);
-	Printing::int32(Printing::getInstance(), this->index, x + 18, y, NULL);
-	Printing::text(Printing::getInstance(), "Head:                         ", x, ++y, NULL);
-	Printing::hex(Printing::getInstance(), Sprite::getEffectiveHead(this), x + 18, y, 8, NULL);
-	Printing::text(Printing::getInstance(), "Transparent:                         ", x, ++y, NULL);
-	Printing::text(Printing::getInstance(), (transparency > 0) ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, x + 18, y, NULL);
-	Printing::text(Printing::getInstance(), (transparency == 1) ? "(Even)" : (transparency == 2) ? "(Odd)" : "", x + 20, y, NULL);
-	Printing::text(Printing::getInstance(), "Shown:                         ", x, ++y, NULL);
-	Printing::text(Printing::getInstance(), (__HIDE != this->show) ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, x + 18, y, NULL);
+	Printing::text("Index: ", x, ++y, NULL);
+	Printing::int32(this->index, x + 18, y, NULL);
+	Printing::text("Head:                         ", x, ++y, NULL);
+	Printing::hex(Sprite::getEffectiveHead(this), x + 18, y, 8, NULL);
+	Printing::text("Transparent:                         ", x, ++y, NULL);
+	Printing::text(transparency > 0 ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, x + 18, y, NULL);
+	Printing::text(transparency == 1 ? "(Even)" : (transparency == 2) ? "(Odd)" : "", x + 20, y, NULL);
+	Printing::text("Shown:                         ", x, ++y, NULL);
+	Printing::text(__HIDE != this->show ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, x + 18, y, NULL);
 
-	Printing::text(Printing::getInstance(), "Pos. (x,y,z,p):                      ", x, ++y, NULL);
-	Printing::int32(Printing::getInstance(), this->position.x, x + 18, y, NULL);
-	Printing::int32(Printing::getInstance(), this->position.y, x + 24, y, NULL);
-	Printing::int32(Printing::getInstance(), this->position.z, x + 30, y, NULL);
-	Printing::int32(Printing::getInstance(), this->position.parallax, x + 36, y, NULL);
-	Printing::text(Printing::getInstance(), "Displ. (x,y,z,p):                    ", x, ++y, NULL);
-	Printing::int32(Printing::getInstance(), this->displacement.x, x + 18, y, NULL);
-	Printing::int32(Printing::getInstance(), this->displacement.y, x + 24, y, NULL);
-	Printing::int32(Printing::getInstance(), this->displacement.z, x + 30, y, NULL);
-	Printing::int32(Printing::getInstance(), this->displacement.parallax, x + 36, y, NULL);
-	Printing::text(Printing::getInstance(), "FPos. (x,y,z,p):                      ", x, ++y, NULL);
-	Printing::int32(Printing::getInstance(), this->position.x + this->displacement.x, x + 18, y, NULL);
-	Printing::int32(Printing::getInstance(), this->position.y + this->displacement.y, x + 24, y, NULL);
-	Printing::int32(Printing::getInstance(), this->position.z + this->displacement.z, x + 30, y, NULL);
-	Printing::int32(Printing::getInstance(), this->position.parallax + this->displacement.parallax, x + 36, y, NULL);
-	Printing::text(Printing::getInstance(), "G (x,y,p):                           ", x, ++y, NULL);
-	Printing::int32(Printing::getInstance(), Sprite::getEffectiveX(this), x + 18, y, NULL);
-	Printing::int32(Printing::getInstance(), Sprite::getEffectiveY(this), x + 24, y, NULL);
-	Printing::int32(Printing::getInstance(), Sprite::getEffectiveP(this), x + 30, y, NULL);
-	Printing::text(Printing::getInstance(), "M (x,y,p):                           ", x, ++y, NULL);
-	Printing::int32(Printing::getInstance(), Sprite::getEffectiveMX(this), x + 18, y, NULL);
-	Printing::int32(Printing::getInstance(), Sprite::getEffectiveMY(this), x + 24, y, NULL);
-	Printing::int32(Printing::getInstance(), Sprite::getEffectiveMP(this), x + 30, y, NULL);
-	Printing::text(Printing::getInstance(), "Size (w,h):                          ", x, ++y, NULL);
-	Printing::int32(Printing::getInstance(), Sprite::getEffectiveWidth(this), x + 18, y, NULL);
-	Printing::int32(Printing::getInstance(), Sprite::getEffectiveHeight(this), x + 24, y++, NULL);
-	Printing::text(Printing::getInstance(), "Pixels:                      ", x, y, NULL);
-	Printing::int32(Printing::getInstance(), Sprite::getTotalPixels(this), x + 18, y++, NULL);
+	Printing::text("Pos. (x,y,z,p):                      ", x, ++y, NULL);
+	Printing::int32(this->position.x, x + 18, y, NULL);
+	Printing::int32(this->position.y, x + 24, y, NULL);
+	Printing::int32(this->position.z, x + 30, y, NULL);
+	Printing::int32(this->position.parallax, x + 36, y, NULL);
+	Printing::text("Displ. (x,y,z,p):                    ", x, ++y, NULL);
+	Printing::int32(this->displacement.x, x + 18, y, NULL);
+	Printing::int32(this->displacement.y, x + 24, y, NULL);
+	Printing::int32(this->displacement.z, x + 30, y, NULL);
+	Printing::int32(this->displacement.parallax, x + 36, y, NULL);
+	Printing::text("FPos. (x,y,z,p):                      ", x, ++y, NULL);
+	Printing::int32(this->position.x + this->displacement.x, x + 18, y, NULL);
+	Printing::int32(this->position.y + this->displacement.y, x + 24, y, NULL);
+	Printing::int32(this->position.z + this->displacement.z, x + 30, y, NULL);
+	Printing::int32(this->position.parallax + this->displacement.parallax, x + 36, y, NULL);
+	Printing::text("G (x,y,p):                           ", x, ++y, NULL);
+	Printing::int32(Sprite::getEffectiveX(this), x + 18, y, NULL);
+	Printing::int32(Sprite::getEffectiveY(this), x + 24, y, NULL);
+	Printing::int32(Sprite::getEffectiveP(this), x + 30, y, NULL);
+	Printing::text("M (x,y,p):                           ", x, ++y, NULL);
+	Printing::int32(Sprite::getEffectiveMX(this), x + 18, y, NULL);
+	Printing::int32(Sprite::getEffectiveMY(this), x + 24, y, NULL);
+	Printing::int32(Sprite::getEffectiveMP(this), x + 30, y, NULL);
+	Printing::text("Size (w,h):                          ", x, ++y, NULL);
+	Printing::int32(Sprite::getEffectiveWidth(this), x + 18, y, NULL);
+	Printing::int32(Sprite::getEffectiveHeight(this), x + 24, y++, NULL);
+	Printing::text("Pixels:                      ", x, y, NULL);
+	Printing::int32(Sprite::getTotalPixels(this), x + 18, y++, NULL);
 
 	if(NULL != Sprite::getTexture(this))
 	{
 		y++;
-		Printing::text(Printing::getInstance(), "TEXTURE                          ", x, ++y, NULL);
+		Printing::text("TEXTURE                          ", x, ++y, NULL);
 		y++;
-		Printing::text(Printing::getInstance(), "Spec:                      ", x, ++y, NULL);
-		Printing::hex(Printing::getInstance(), (int32)Texture::getSpec(Sprite::getTexture(this)), x + 18, y, 8, NULL);
-		Printing::text(Printing::getInstance(), "Size (w,h):                      ", x, ++y, NULL);
-		Printing::int32(Printing::getInstance(), this->halfWidth * 2, x + 18, y, NULL);
-		Printing::int32(Printing::getInstance(), this->halfHeight * 2, x + 24, y, NULL);
+		Printing::text("Spec:                      ", x, ++y, NULL);
+		Printing::hex((int32)Texture::getSpec(Sprite::getTexture(this)), x + 18, y, 8, NULL);
+		Printing::text("Size (w,h):                      ", x, ++y, NULL);
+		Printing::int32(this->halfWidth * 2, x + 18, y, NULL);
+		Printing::int32(this->halfHeight * 2, x + 24, y, NULL);
 
 		if(Sprite::getTexture(this) && __GET_CAST(BgmapTexture, Sprite::getTexture(this)))
 		{
 			BgmapTexture bgmapTexture = __GET_CAST(BgmapTexture, Sprite::getTexture(this));
 
-			Printing::text(Printing::getInstance(), "Segment:                         ", x, ++y, NULL);
-			Printing::int32(Printing::getInstance(), BgmapTexture::getSegment(bgmapTexture), x + 18, y, NULL);
-			Printing::text(Printing::getInstance(), "Written:                         ", x, ++y, NULL);
-			Printing::text(Printing::getInstance(), Texture::isWritten(bgmapTexture) ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, x + 18, y, NULL);
-			Printing::text(Printing::getInstance(), "Rows remaining:                  ", x, ++y, NULL);
-			Printing::int32(Printing::getInstance(), BgmapTexture::getRemainingRowsToBeWritten(bgmapTexture), x + 18, y, NULL);
+			Printing::text("Segment:                         ", x, ++y, NULL);
+			Printing::int32(BgmapTexture::getSegment(bgmapTexture), x + 18, y, NULL);
+			Printing::text("Written:                         ", x, ++y, NULL);
+			Printing::text
+			(
+				
+				Texture::isWritten(bgmapTexture) ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, x + 18, y, NULL
+			);
+
+			Printing::text("Rows remaining:                  ", x, ++y, NULL);
+			Printing::int32(BgmapTexture::getRemainingRowsToBeWritten(bgmapTexture), x + 18, y, NULL);
 		}
 	}
 
 	this->transparency = transparency;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PRIVATE METHODS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Sprite::position()
 {
@@ -742,7 +751,8 @@ void Sprite::position()
 	}
 
 #else
-	PixelVector position = PixelVector::projectVector3D(Vector3D::sub(this->transformation->position, *_cameraPosition), this->position.parallax);
+	PixelVector position = 
+		PixelVector::projectVector3D(Vector3D::sub(this->transformation->position, *_cameraPosition), this->position.parallax);
 
 	if(position.z != this->position.z)
 	{
@@ -755,7 +765,7 @@ void Sprite::position()
 	Sprite::setPosition(this, &position);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Sprite::rotate()
 {
@@ -771,7 +781,7 @@ void Sprite::rotate()
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Sprite::scale()
 {
@@ -793,7 +803,7 @@ void Sprite::scale()
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Sprite::update()
 {
@@ -819,16 +829,30 @@ void Sprite::update()
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 bool Sprite::isWithinScreenSpace()
 {
-	if(!((unsigned)(this->position.x + this->displacement.x - (_cameraFrustum->x0 - this->halfWidth)) < (unsigned)(_cameraFrustum->x1 + this->halfWidth - (_cameraFrustum->x0 - this->halfWidth))))
+	if
+	(
+		!(
+			(unsigned)(this->position.x + this->displacement.x - (_cameraFrustum->x0 - this->halfWidth)) 
+			< 
+			(unsigned)(_cameraFrustum->x1 + this->halfWidth - (_cameraFrustum->x0 - this->halfWidth))
+		)
+	)
 	{
 		return false;
 	}
 
-	if(!((unsigned)(this->position.y + this->displacement.y - (_cameraFrustum->y0 - this->halfHeight)) < (unsigned)(_cameraFrustum->y1 + this->halfHeight - (_cameraFrustum->y0 - this->halfHeight))))
+	if
+	(
+		!(
+			(unsigned)(this->position.y + this->displacement.y - (_cameraFrustum->y0 - this->halfHeight)) 
+			< 
+			(unsigned)(_cameraFrustum->y1 + this->halfHeight - (_cameraFrustum->y0 - this->halfHeight))
+		)
+	)
 	{
 		return false;
 	}
@@ -841,5 +865,4 @@ bool Sprite::isWithinScreenSpace()
 	return true;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

@@ -7,34 +7,33 @@
  * that was distributed with this source code.
  */
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // INCLUDES
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-#include <MessageDispatcher.h>
 #include <Printing.h>
 #include <SoundTrack.h>
 #include <TimerManager.h>
 #include <VirtualList.h>
 #include <Utilities.h>
 #include <VUEngine.h>
+#ifdef __RELEASE
+#include <VSUManager.h>
+#endif
 
 #include "Sound.h"
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DECLARATIONS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 friend class SoundTrack;
 friend class VirtualNode;
 friend class VirtualList;
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' MACROS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 // Must redefine these because they are defined as strings
 #undef __CHAR_DARK_RED_BOX
@@ -45,35 +44,30 @@ friend class VirtualList;
 #define __MIDI_CONVERTER_FREQUENCY_US			20
 #define __SOUND_TARGET_US_PER_TICK				__MIDI_CONVERTER_FREQUENCY_US
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' ATTRIBUTES
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 static Mirror _mirror = {false, false, false};
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' STATIC METHODS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 static void Sound::setMirror(Mirror mirror)
 {
 	_mirror = mirror;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PUBLIC METHODS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Sound::constructor(const SoundSpec* soundSpec, EventListener soundReleaseListener, ListenerObject scope)
 {
@@ -114,13 +108,11 @@ void Sound::constructor(const SoundSpec* soundSpec, EventListener soundReleaseLi
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Sound::destructor()
 {
 	this->soundSpec = NULL;
-
-	MessageDispatcher::discardAllDelayedMessagesFromSender(MessageDispatcher::getInstance(), ListenerObject::safeCast(this));
 
 	if(!isDeleted(this->soundTracks))
 	{
@@ -133,7 +125,7 @@ void Sound::destructor()
 	Base::destructor();
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Sound::play(const Vector3D* position, uint32 playbackType)
 {
@@ -162,7 +154,7 @@ void Sound::play(const Vector3D* position, uint32 playbackType)
 
 			break;
 
-			// intentional fall through
+			// Intentional fall through
 		case kSoundPlaybackNormal:
 			
 			Sound::setVolumeReduction(this, 0);
@@ -199,7 +191,7 @@ void Sound::play(const Vector3D* position, uint32 playbackType)
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Sound::stop()
 {
@@ -223,7 +215,7 @@ void Sound::stop()
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Sound::pause()
 {
@@ -250,7 +242,7 @@ void Sound::pause()
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Sound::unpause()
 {
@@ -277,7 +269,7 @@ void Sound::unpause()
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Sound::suspend()
 {
@@ -304,7 +296,7 @@ void Sound::suspend()
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Sound::resume()
 {
@@ -331,21 +323,21 @@ void Sound::resume()
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Sound::mute()
 {
 	this->unmute = 0x00;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Sound::unmute()
 {
 	this->unmute = 0xFF;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Sound::rewind()
 {
@@ -372,7 +364,7 @@ void Sound::rewind()
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Sound::release()
 {
@@ -399,28 +391,28 @@ void Sound::release()
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Sound::lock()
 {
 	this->locked = true;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Sound::unlock()
 {
 	this->locked = false;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Sound::autoReleaseOnFinish(bool autoReleaseOnFinish)
 {
 	this->autoReleaseOnFinish = autoReleaseOnFinish;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Sound::setSpeed(fix7_9_ext speed)
 {
@@ -431,14 +423,14 @@ void Sound::setSpeed(fix7_9_ext speed)
 	this->tickStep = __FIX7_9_EXT_MULT(this->speed, this->targetTimerResolutionFactor);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 fix7_9_ext Sound::getSpeed()
 {
 	return this->speed;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Sound::setVolumenScalePower(uint8 volumenScalePower)
 {
@@ -450,49 +442,76 @@ void Sound::setVolumenScalePower(uint8 volumenScalePower)
 	this->volumenScalePower = volumenScalePower;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Sound::setFrequencyDelta(uint16 frequencyDelta)
 {
 	this->frequencyDelta = frequencyDelta;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 uint16 Sound::getFrequencyDelta()
 {
 	return this->frequencyDelta;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 bool Sound::isPlaying()
 {
 	return kSoundPlaying == this->state;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 bool Sound::isPaused()
 {
 	return kSoundPaused == this->state;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 bool Sound::isFadingIn()
 {
 	return kSoundPlaybackFadeIn == this->playbackType;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 bool Sound::isFadingOut()
 {
 	return kSoundPlaybackFadeOut == this->playbackType || kSoundPlaybackFadeOutAndRelease == this->playbackType;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void Sound::finishPlayback()
+{
+	if(!this->soundSpec->loop)
+	{
+		if(this->autoReleaseOnFinish)
+		{
+			Sound::release(this);
+		}
+		else
+		{
+			Sound::stop(this);
+		}
+	}
+	else
+	{
+		Sound::rewind(this);
+	}
+
+	if(!isDeleted(this->events))
+	{
+		Sound::fireEvent(this, kEventSoundFinished);
+		NM_ASSERT(!isDeleted(this), "Sound::finishPlayback: deleted this during kEventSoundFinished");
+	}
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Sound::update(uint32 elapsedMicroseconds, uint32 targetPCMUpdates)
 {
@@ -502,7 +521,6 @@ void Sound::update(uint32 elapsedMicroseconds, uint32 targetPCMUpdates)
 	}
 
 	bool finished = true;
-
 	fixed_t leftVolumeFactor = -1;
 	fixed_t rightVolumeFactor = -1;
 
@@ -511,7 +529,17 @@ void Sound::update(uint32 elapsedMicroseconds, uint32 targetPCMUpdates)
 #ifndef __LEGACY_COORDINATE_PROJECTION
 		Vector3D relativePosition = Vector3D::rotate(Vector3D::getRelativeToCamera(*this->position), *_cameraInvertedRotation);
 #else
-		Vector3D relativePosition = Vector3D::rotate(Vector3D::sub(Vector3D::getRelativeToCamera(*this->position), (Vector3D){__HALF_SCREEN_WIDTH_METERS, __HALF_SCREEN_HEIGHT_METERS, 0}), *_cameraInvertedRotation);
+		Vector3D relativePosition = 
+			Vector3D::rotate
+			(
+				Vector3D::sub
+				(
+					Vector3D::getRelativeToCamera
+					(
+						*this->position), (Vector3D){__HALF_SCREEN_WIDTH_METERS, __HALF_SCREEN_HEIGHT_METERS, 0}
+					), 
+					*_cameraInvertedRotation
+			);
 #endif
 		if(_mirror.x)
 		{
@@ -534,8 +562,13 @@ void Sound::update(uint32 elapsedMicroseconds, uint32 targetPCMUpdates)
 		fixed_ext_t squaredDistanceToLeftEar = Vector3D::squareLength(Vector3D::get(leftEar, relativePosition));
 		fixed_ext_t squaredDistanceToRightEar = Vector3D::squareLength(Vector3D::get(rightEar, relativePosition));
 
-		leftVolumeFactor  = __1I_FIXED - __FIXED_EXT_DIV(squaredDistanceToLeftEar, __FIXED_SQUARE(__PIXELS_TO_METERS(__SOUND_STEREO_ATTENUATION_DISTANCE)));
-		rightVolumeFactor = __1I_FIXED - __FIXED_EXT_DIV(squaredDistanceToRightEar, __FIXED_SQUARE(__PIXELS_TO_METERS(__SOUND_STEREO_ATTENUATION_DISTANCE)));
+		leftVolumeFactor  = 
+			__1I_FIXED - 
+			__FIXED_EXT_DIV(squaredDistanceToLeftEar, __FIXED_SQUARE(__PIXELS_TO_METERS(__SOUND_STEREO_ATTENUATION_DISTANCE)));
+		
+		rightVolumeFactor = 
+			__1I_FIXED - 
+			__FIXED_EXT_DIV(squaredDistanceToRightEar, __FIXED_SQUARE(__PIXELS_TO_METERS(__SOUND_STEREO_ATTENUATION_DISTANCE)));
 
 		if(leftVolumeFactor > rightVolumeFactor)
 		{
@@ -554,22 +587,25 @@ void Sound::update(uint32 elapsedMicroseconds, uint32 targetPCMUpdates)
 	{
 		SoundTrack soundTrack = SoundTrack::safeCast(node->data);
 
-		finished = SoundTrack::update(
-										soundTrack, 
-										elapsedMicroseconds, 
-										targetPCMUpdates, 
-										this->tickStep, 
-										this->targetTimerResolutionFactor, 
-										leftVolumeFactor, 
-										rightVolumeFactor, 
-										this->volumeReduction, 
-										this->volumenScalePower, 
-										this->frequencyDelta) && finished;
+		finished = 
+			SoundTrack::update
+			(
+				soundTrack, 
+				elapsedMicroseconds, 
+				targetPCMUpdates, 
+				this->tickStep, 
+				this->targetTimerResolutionFactor, 
+				leftVolumeFactor, 
+				rightVolumeFactor, 
+				this->volumeReduction, 
+				this->volumenScalePower, 
+				this->frequencyDelta
+			) && finished;
 	}
 
 	if(finished)
 	{
-		Sound::completedPlayback(this);
+		Sound::finishPlayback(this);
 	}
 
 	if(kSoundPlaybackNormal != this->playbackType)
@@ -578,7 +614,7 @@ void Sound::update(uint32 elapsedMicroseconds, uint32 targetPCMUpdates)
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Sound::print(int32 x, int32 y)
 {
@@ -613,10 +649,13 @@ void Sound::print(int32 x, int32 y)
 	PRINT_INT(VirtualList::getCount(this->soundTracks), trackInfoXOffset + trackInfoValuesXOffset, y);
 
 	PRINT_TEXT("Loop", trackInfoXOffset, ++y);
-	PRINT_TEXT(this->soundSpec->loop ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, trackInfoXOffset + trackInfoValuesXOffset, y++);
+	PRINT_TEXT
+	(
+		this->soundSpec->loop ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, trackInfoXOffset + trackInfoValuesXOffset, y++
+	);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Sound::printPlaybackTime(int32 x, int32 y)
 {
@@ -644,7 +683,7 @@ void Sound::printPlaybackTime(int32 x, int32 y)
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Sound::printPlaybackProgress(int32 x, int32 y)
 {
@@ -664,10 +703,14 @@ void Sound::printPlaybackProgress(int32 x, int32 y)
 
 	char boxesArray[33] = 
 	{
-		__CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX,
-		__CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX,
-		__CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX,
-		__CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, '\0'
+		__CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, 
+		__CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX,
+		__CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, 
+		__CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX,
+		__CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, 
+		__CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX,
+		__CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, 
+		__CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, '\0'
 	};
 
 	for(uint16 i = 0; i < position && 32 >= i; i++)
@@ -678,29 +721,28 @@ void Sound::printPlaybackProgress(int32 x, int32 y)
 	PRINT_TEXT(boxesArray, x, y);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PRIVATE METHODS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 fix7_9_ext Sound::computeTimerResolutionFactor()
 {
 	uint32 timerCounter = TimerManager::getTimerCounter(TimerManager::getInstance()) + __TIMER_COUNTER_DELTA;
 	uint32 timerUsPerInterrupt = timerCounter * __SOUND_TARGET_US_PER_TICK;
 	uint32 targetTimerResolutionUS = 0 != this->soundSpec->targetTimerResolutionUS ? this->soundSpec->targetTimerResolutionUS : 1000;
-	uint32 soundTargetUsPerInterrupt = (__TIME_US(targetTimerResolutionUS) + __TIMER_COUNTER_DELTA) * __SOUND_TARGET_US_PER_TICK;
+	uint32 soundTargetUsPerInterrupt = 
+		(__TIME_US(targetTimerResolutionUS) + __TIMER_COUNTER_DELTA) * __SOUND_TARGET_US_PER_TICK;
 
 	NM_ASSERT(0 < soundTargetUsPerInterrupt, "Sound::computeTimerResolutionFactor: zero soundTargetUsPerInterrupt");
 
 	return __FIX7_9_EXT_DIV(__I_TO_FIX7_9_EXT(timerUsPerInterrupt), __I_TO_FIX7_9_EXT(soundTargetUsPerInterrupt));
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Sound::setVolumeReduction(int8 volumeReduction)
 {
@@ -712,7 +754,7 @@ void Sound::setVolumeReduction(int8 volumeReduction)
 	this->volumeReduction = volumeReduction;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Sound::configureTracks()
 {
@@ -744,46 +786,22 @@ void Sound::configureTracks()
 	this->mainSoundTrack = longestSoundTrack;
 
 #ifdef __SOUND_TEST
-	this->totalPlaybackMilliseconds = SoundTrack::getTotalPlaybackMilliseconds(this->mainSoundTrack, this->soundSpec->targetTimerResolutionUS);
+	this->totalPlaybackMilliseconds = 
+		SoundTrack::getTotalPlaybackMilliseconds(this->mainSoundTrack, this->soundSpec->targetTimerResolutionUS);
 #endif
 
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void Sound::completedPlayback()
-{
-	if(!this->soundSpec->loop)
-	{
-		if(this->autoReleaseOnFinish)
-		{
-			Sound::release(this);
-		}
-		else
-		{
-			Sound::stop(this);
-		}
-	}
-	else
-	{
-		Sound::rewind(this);
-	}
-
-	if(!isDeleted(this->events))
-	{
-		Sound::fireEvent(this, kEventSoundFinished);
-		NM_ASSERT(!isDeleted(this), "Sound::completedPlayback: deleted this during kEventSoundFinished");
-	}
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 __attribute__((noinline)) 
 void Sound::updateVolumeReduction()
 {
-	uint32 elapsedMilliseconds = this->soundSpec->targetTimerResolutionUS * (this->mainSoundTrack->elapsedTicks - this->previouslyElapsedTicks) / __MICROSECONDS_PER_MILLISECOND;
+	uint32 elapsedMilliseconds = 
+		this->soundSpec->targetTimerResolutionUS * (this->mainSoundTrack->elapsedTicks 
+		- this->previouslyElapsedTicks) / __MICROSECONDS_PER_MILLISECOND;
 
-	if(VUEngine::getGameFrameDuration(_vuEngine) <= elapsedMilliseconds)
+	if(VUEngine::getGameFrameDuration() <= elapsedMilliseconds)
 	{
 		switch(this->playbackType)
 		{
@@ -830,7 +848,7 @@ void Sound::updateVolumeReduction()
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Sound::printTiming(uint32 seconds, int32 x, int32 y)
 {
@@ -857,5 +875,4 @@ void Sound::printTiming(uint32 seconds, int32 x, int32 y)
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

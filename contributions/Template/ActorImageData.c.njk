@@ -24,8 +24,8 @@
 	{% for sprite in item.components.sprites -%}
 		{%- if not sprite._imageData | int and sprite._imageData.images | length -%}
 			{%- for imageData in sprite._imageData.images -%}
-				{%- set tilesName = sanitizedSpecName ~ 'Entity' ~ imageData.tiles.name -%}
-				{%- set customMapPrefix = sanitizedSpecName ~ 'Entity' -%}
+				{%- set tilesName = sanitizedSpecName ~ 'Actor' ~ imageData.tiles.name -%}
+				{%- set customMapPrefix = sanitizedSpecName ~ 'Actor' -%}
 				{#- for some reason, the uncompressJson filter in below partials wouldn't work if we don't call it here once -#}
 				{%- set __whatTheHeck__ = imageData.tiles.data | uncompressJson -%}
 				{%- include('templates/partials/image/tiles.c.njk') -%}

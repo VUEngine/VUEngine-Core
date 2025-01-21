@@ -7,10 +7,9 @@
  * that was distributed with this source code.
  */
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // INCLUDES
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <Camera.h>
 #include <DebugConfig.h>
@@ -19,10 +18,9 @@
 
 #include "DirectDraw.h"
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' MACROS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #define	__DIRECT_DRAW_MAXIMUM_NUMBER_OF_PIXELS				10000
 #define	__DIRECT_DRAW_MINIMUM_NUMBER_OF_PIXELS				1000
@@ -32,10 +30,9 @@
 #define __FRAME_BUFFER_SIDE_BIT								__RIGHT_FRAME_BUFFER_0
 #define __FLIP_FRAME_BUFFER_SIDE_BIT(a)						a ^= __FRAME_BUFFER_SIDE_BIT
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DATA
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 enum DirectDrawLineShrinkingResult
 {
@@ -55,27 +52,23 @@ typedef struct CustomCameraFrustum
 	fixed_ext_t z1;
 } CustomCameraFrustum;
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' ATTRIBUTES
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 static CameraFrustum _frustum __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE;
 CustomCameraFrustum _frustumFixedPoint __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE;
 uint16 _frustumWidth __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE = __SCREEN_WIDTH;
 uint16 _frustumHeight __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE = __SCREEN_HEIGHT;
 uint16 _frustumDepth __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE = __SCREEN_DEPTH;
-DirectDraw _directDraw __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE = NULL;
 uint16 _frustumWidthExtended = __SCREEN_WIDTH << __DIRECT_DRAW_FRUSTUM_EXTENSION_POWER;
 uint16 _frustumHeightExtended = __SCREEN_HEIGHT << __DIRECT_DRAW_FRUSTUM_EXTENSION_POWER;
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' STATIC METHODS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 static inline bool DirectDraw::shrinkLineToScreenSpace(fixed_ext_t* x0, fixed_ext_t* y0, fixed_ext_t* parallax0, fixed_ext_t dx, fixed_ext_t dy, fixed_ext_t dParallax, fixed_ext_t x1, fixed_ext_t y1, fixed_ext_t parallax1)
 {
@@ -85,7 +78,12 @@ static inline bool DirectDraw::shrinkLineToScreenSpace(fixed_ext_t* x0, fixed_ex
 
 	if(0 == dx)
 	{
-		if(((unsigned)(_frustumFixedPoint.x1 - _frustumFixedPoint.x0) < (unsigned)(x - parallax)) && ((unsigned)(_frustumFixedPoint.x1 - _frustumFixedPoint.x0) < (unsigned)(x + parallax)))
+		if
+		(
+			((unsigned)(_frustumFixedPoint.x1 - _frustumFixedPoint.x0) < (unsigned)(x - parallax)) 
+			&& 
+			((unsigned)(_frustumFixedPoint.x1 - _frustumFixedPoint.x0) < (unsigned)(x + parallax))
+		)
 		{
 			return false;
 		}
@@ -177,8 +175,8 @@ static inline bool DirectDraw::shrinkLineToScreenSpace(fixed_ext_t* x0, fixed_ex
 	if(shrinkOnXAxis)
 	{
 		// This will compute the y coordinate at which the line for the relevant display (left or right)
-		// intersects the screen's left or right border and uses the result to compute the x coordinate 
-		// of the actual line
+		// Intersects the screen's left or right border and uses the result to compute the x coordinate 
+		// Of the actual line
 		xHelper += parallaxHelper0;
 
 		fixed_ext_t dxHelper = (x1 + parallaxHelper1) - xHelper;
@@ -213,10 +211,10 @@ static inline bool DirectDraw::shrinkLineToScreenSpace(fixed_ext_t* x0, fixed_ex
 
 	// (x0 - x1) / dx = (y0 - y1) / dy = (parallax0 - parallax1) / dParallax
 	// (x0 - x1) / dx = (y0 - y1) / dy
-	// x0 = (y0 - y1) * (dx / dy) * xySlope / xySlope + x1
-	// x0 = (y0 - y1) * (dx / dy) * (dy / dx) / (dy / dx) + x1
-	// x0 = (y0 - y1) / (dy / dx) + x1
-	// x0 = (y0 - y1) / xySlope + x1
+	// X0 = (y0 - y1) * (dx / dy) * xySlope / xySlope + x1
+	// X0 = (y0 - y1) * (dx / dy) * (dy / dx) / (dy / dx) + x1
+	// X0 = (y0 - y1) / (dy / dx) + x1
+	// X0 = (y0 - y1) / xySlope + x1
 	if(_frustumFixedPoint.y0 > y)
 	{
 		y = _frustumFixedPoint.y0;
@@ -265,7 +263,7 @@ static inline bool DirectDraw::shrinkLineToScreenSpace(fixed_ext_t* x0, fixed_ex
 	return true;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 static bool DirectDraw::drawPoint(PixelVector point, int32 color, uint8 bufferIndex, bool interlaced)
 {
@@ -291,10 +289,12 @@ static bool DirectDraw::drawPoint(PixelVector point, int32 color, uint8 bufferIn
 	return true;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 static bool DirectDraw::drawLine(PixelVector fromPoint, PixelVector toPoint, int32 color, uint8 bufferIndex, bool interlaced)
 {
+	DirectDraw directDraw = DirectDraw::getInstance();
+	
 	uint16 xFromDeltaLeft = (unsigned)(fromPoint.x - fromPoint.parallax - _frustum.x0);
 	uint16 xFromDeltaRight = (unsigned)(fromPoint.x +  fromPoint.parallax - _frustum.x0);
 	uint16 yFromDelta = (unsigned)(fromPoint.y - _frustum.y0);
@@ -339,11 +339,24 @@ static bool DirectDraw::drawLine(PixelVector fromPoint, PixelVector toPoint, int
 		return false;
 	}
 
-	if(_frustumWidth + __DIRECT_DRAW_LINE_SHRINKING_PADDING < xFromDeltaLeft || _frustumWidth + __DIRECT_DRAW_LINE_SHRINKING_PADDING < xFromDeltaRight || _frustumHeight + __DIRECT_DRAW_LINE_SHRINKING_PADDING < yFromDelta)
+	if
+	(
+		_frustumWidth + __DIRECT_DRAW_LINE_SHRINKING_PADDING < xFromDeltaLeft 
+		|| 
+		_frustumWidth + __DIRECT_DRAW_LINE_SHRINKING_PADDING < xFromDeltaRight 
+		|| 
+		_frustumHeight + __DIRECT_DRAW_LINE_SHRINKING_PADDING < yFromDelta
+	)
 	{
 		totalPixelRounding = 0;
 
-		if(!DirectDraw::shrinkLineToScreenSpace(&fromPointX, &fromPointY, &fromPointParallax, dx, dy, dParallax, toPointX, toPointY, toPointParallax))
+		if
+		(
+			!DirectDraw::shrinkLineToScreenSpace
+			(
+				&fromPointX, &fromPointY, &fromPointParallax, dx, dy, dParallax, toPointX, toPointY, toPointParallax
+			)
+		)
 		{
 			return false;
 		}
@@ -352,11 +365,24 @@ static bool DirectDraw::drawLine(PixelVector fromPoint, PixelVector toPoint, int
 		yFromOutside = (unsigned)_frustumFixedPoint.y1 - _frustumFixedPoint.y0 < (unsigned)(fromPointY - _frustumFixedPoint.y0);
 	}
 
-	if(_frustumWidth + __DIRECT_DRAW_LINE_SHRINKING_PADDING < xToDeltaLeft || _frustumWidth + __DIRECT_DRAW_LINE_SHRINKING_PADDING < xToDeltaRight || _frustumHeight + __DIRECT_DRAW_LINE_SHRINKING_PADDING < yToDelta)
+	if
+	(
+		_frustumWidth + __DIRECT_DRAW_LINE_SHRINKING_PADDING < xToDeltaLeft 
+		|| 
+		_frustumWidth + __DIRECT_DRAW_LINE_SHRINKING_PADDING < xToDeltaRight 
+		|| 
+		_frustumHeight + __DIRECT_DRAW_LINE_SHRINKING_PADDING < yToDelta
+	)
 	{
 		totalPixelRounding = 0;
 
-		if(!DirectDraw::shrinkLineToScreenSpace(&toPointX, &toPointY, &toPointParallax, dx, dy, dParallax, fromPointX, fromPointY, fromPointParallax))
+		if
+		(
+			!DirectDraw::shrinkLineToScreenSpace
+			(
+				&toPointX, &toPointY, &toPointParallax, dx, dy, dParallax, fromPointX, fromPointY, fromPointParallax
+			)
+		)
 		{
 			return false;
 		}
@@ -411,12 +437,15 @@ static bool DirectDraw::drawLine(PixelVector fromPoint, PixelVector toPoint, int
 		totalPixels = __ABS(__FIXED_EXT_TO_I(toPointY - fromPointY)) + totalPixelRounding;
 	}
 
-	_directDraw->drawnPixelsCounter += totalPixels;
+	directDraw->drawnPixelsCounter += totalPixels;
 
-	if(_directDraw->drawnPixelsCounter > _directDraw->maximumPixelsToDraw)
+	if(directDraw->drawnPixelsCounter > directDraw->maximumPixelsToDraw)
 	{
 		return false;
 	}
+
+	// Configure the drawing frame buffers
+	//VIPManager::registerCurrentDrawingFrameBufferSet();
 
 	if(interlaced)
 	{
@@ -432,12 +461,18 @@ static bool DirectDraw::drawLine(PixelVector fromPoint, PixelVector toPoint, int
 
 			for(; 1 < totalPixels; totalPixels -=2)
 			{
-				DirectDraw::drawColorPixelInterlaced((BYTE*)leftBuffer, __FIXED_EXT_TO_I(fromPointX), __FIXED_EXT_TO_I(fromPointY), __FIXED_EXT_TO_I(parallaxStart), color);
+				DirectDraw::drawColorPixelInterlaced
+				(
+					(BYTE*)leftBuffer, __FIXED_EXT_TO_I(fromPointX), __FIXED_EXT_TO_I(fromPointY), __FIXED_EXT_TO_I(parallaxStart), color
+				);
 
 				fromPointX += xStep;
 				fromPointY += yStep;
 
-				DirectDraw::drawColorPixelInterlaced((BYTE*)rightBuffer, __FIXED_EXT_TO_I(fromPointX), __FIXED_EXT_TO_I(fromPointY), -__FIXED_EXT_TO_I(parallaxStart), color);
+				DirectDraw::drawColorPixelInterlaced
+				(
+					(BYTE*)rightBuffer, __FIXED_EXT_TO_I(fromPointX), __FIXED_EXT_TO_I(fromPointY), -__FIXED_EXT_TO_I(parallaxStart), color
+				);
 
 				fromPointX += xStep;
 				fromPointY += yStep;
@@ -448,12 +483,18 @@ static bool DirectDraw::drawLine(PixelVector fromPoint, PixelVector toPoint, int
 		{
 			for(; 1 < totalPixels; totalPixels -=2)
 			{
-				DirectDraw::drawColorPixelInterlaced((BYTE*)leftBuffer, __FIXED_EXT_TO_I(fromPointX), __FIXED_EXT_TO_I(fromPointY), __FIXED_EXT_TO_I(parallaxStart), color);
+				DirectDraw::drawColorPixelInterlaced
+				(
+					(BYTE*)leftBuffer, __FIXED_EXT_TO_I(fromPointX), __FIXED_EXT_TO_I(fromPointY), __FIXED_EXT_TO_I(parallaxStart), color
+				);
 
 				fromPointX += xStep;
 				fromPointY += yStep;
 
-				DirectDraw::drawColorPixelInterlaced((BYTE*)rightBuffer, __FIXED_EXT_TO_I(fromPointX), __FIXED_EXT_TO_I(fromPointY), -__FIXED_EXT_TO_I(parallaxStart), color);
+				DirectDraw::drawColorPixelInterlaced
+				(
+					(BYTE*)rightBuffer, __FIXED_EXT_TO_I(fromPointX), __FIXED_EXT_TO_I(fromPointY), -__FIXED_EXT_TO_I(parallaxStart), color
+				);
 
 				fromPointX += xStep;
 				fromPointY += yStep;
@@ -468,7 +509,11 @@ static bool DirectDraw::drawLine(PixelVector fromPoint, PixelVector toPoint, int
 
 		for(; 0 < totalPixels; totalPixels -=1)
 		{
-			DirectDraw::drawColorPixel((BYTE*)leftBuffer, (BYTE*)rightBuffer, __FIXED_EXT_TO_I(fromPointX), __FIXED_EXT_TO_I(fromPointY), __FIXED_EXT_TO_I(parallaxStart), color);
+			DirectDraw::drawColorPixel
+			(
+				(BYTE*)leftBuffer, (BYTE*)rightBuffer, __FIXED_EXT_TO_I(fromPointX), __FIXED_EXT_TO_I(fromPointY), 
+				__FIXED_EXT_TO_I(parallaxStart), color
+			);
 
 			fromPointX += xStep;
 			fromPointY += yStep;
@@ -483,7 +528,7 @@ static bool DirectDraw::drawLine(PixelVector fromPoint, PixelVector toPoint, int
 	return true;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 static bool DirectDraw::drawCircle(PixelVector center, int16 radius, int32 color, uint8 bufferIndex, bool interlaced)
 {
@@ -515,10 +560,9 @@ static bool DirectDraw::drawCircle(PixelVector center, int16 radius, int32 color
 		uint32 leftBuffer = *_currentDrawingFrameBufferSet | (bufferIndex << __FRAME_BUFFER_SIDE_BIT_INDEX);
 		uint32 rightBuffer = leftBuffer ^ __FRAME_BUFFER_SIDE_BIT;
 
-
 		int16 x = radius;
 		int16 y = 0;		
-	    int16 radiusError = 1 - x;
+		int16 radiusError = 1 - x;
 
 		center.parallax /= 2;
 
@@ -530,7 +574,7 @@ static bool DirectDraw::drawCircle(PixelVector center, int16 radius, int32 color
 			center.parallax = -center.parallax;
 		}
 
-	    while (x >= y)
+		while (x >= y)
 		{
 			DirectDraw::drawColorPixelInterlaced((BYTE*)leftBuffer, center.x + x + radius, center.y + y + radius, center.parallax, color);
 			DirectDraw::drawColorPixelInterlaced((BYTE*)leftBuffer, center.x + y + radius, center.y + x + radius, center.parallax, color);
@@ -582,21 +626,52 @@ static bool DirectDraw::drawCircle(PixelVector center, int16 radius, int32 color
 
 		int16 x = radius;
 		int16 y = 0;		
-	    int16 radiusError = 1 - x;
+		int16 radiusError = 1 - x;
 
 		center.x -= radius;
 		center.y -= radius;
 
-	    while (x >= y)
+		while (x >= y)
 		{
-			DirectDraw::drawColorPixel((BYTE*)leftBuffer, (BYTE*)rightBuffer, center.x + x + radius, center.y + y + radius, center.parallax, color);
-			DirectDraw::drawColorPixel((BYTE*)leftBuffer, (BYTE*)rightBuffer, center.x + y + radius, center.y + x + radius, center.parallax, color);
-			DirectDraw::drawColorPixel((BYTE*)leftBuffer, (BYTE*)rightBuffer, center.x - x + radius, center.y + y + radius, center.parallax, color);
-			DirectDraw::drawColorPixel((BYTE*)leftBuffer, (BYTE*)rightBuffer, center.x - y + radius, center.y + x + radius, center.parallax, color);
-			DirectDraw::drawColorPixel((BYTE*)leftBuffer, (BYTE*)rightBuffer, center.x - x + radius, center.y - y + radius, center.parallax, color);
-			DirectDraw::drawColorPixel((BYTE*)leftBuffer, (BYTE*)rightBuffer, center.x - y + radius, center.y - x + radius, center.parallax, color);
-			DirectDraw::drawColorPixel((BYTE*)leftBuffer, (BYTE*)rightBuffer, center.x + x + radius, center.y - y + radius, center.parallax, color);
-			DirectDraw::drawColorPixel((BYTE*)leftBuffer, (BYTE*)rightBuffer, center.x + y + radius, center.y - x + radius, center.parallax, color);
+			DirectDraw::drawColorPixel
+			(
+				(BYTE*)leftBuffer, (BYTE*)rightBuffer, center.x + x + radius, center.y + y + radius, center.parallax, color
+			);
+			
+			DirectDraw::drawColorPixel
+			(
+				(BYTE*)leftBuffer, (BYTE*)rightBuffer, center.x + y + radius, center.y + x + radius, center.parallax, color
+			);
+			
+			DirectDraw::drawColorPixel
+			(
+				(BYTE*)leftBuffer, (BYTE*)rightBuffer, center.x - x + radius, center.y + y + radius, center.parallax, color
+			);
+
+			DirectDraw::drawColorPixel
+			(
+				(BYTE*)leftBuffer, (BYTE*)rightBuffer, center.x - y + radius, center.y + x + radius, center.parallax, color
+			);
+			
+			DirectDraw::drawColorPixel
+			(
+				(BYTE*)leftBuffer, (BYTE*)rightBuffer, center.x - x + radius, center.y - y + radius, center.parallax, color
+			);
+
+			DirectDraw::drawColorPixel
+			(
+				(BYTE*)leftBuffer, (BYTE*)rightBuffer, center.x - y + radius, center.y - x + radius, center.parallax, color
+			);
+			
+			DirectDraw::drawColorPixel
+			(
+				(BYTE*)leftBuffer, (BYTE*)rightBuffer, center.x + x + radius, center.y - y + radius, center.parallax, color
+			);
+			
+			DirectDraw::drawColorPixel
+			(
+				(BYTE*)leftBuffer, (BYTE*)rightBuffer, center.x + y + radius, center.y - x + radius, center.parallax, color
+			);
 
 			y++;
 
@@ -615,7 +690,7 @@ static bool DirectDraw::drawCircle(PixelVector center, int16 radius, int32 color
 	return true;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 static bool DirectDraw::drawX(PixelVector center, int16 length, int32 color, uint8 bufferIndex, bool interlaced)
 {
@@ -660,14 +735,18 @@ static bool DirectDraw::drawX(PixelVector center, int16 length, int32 color, uin
 		for(; lengthHelper <= length; lengthHelper++, x++, y++)
 		{
 			DirectDraw::drawColorPixel((BYTE*)leftBuffer, (BYTE*)rightBuffer, x, y, center.parallax, color);
-			DirectDraw::drawColorPixel((BYTE*)leftBuffer, (BYTE*)rightBuffer, (center.x + halfLength) - lengthHelper, y, center.parallax, color);
+			
+			DirectDraw::drawColorPixel
+			(
+				(BYTE*)leftBuffer, (BYTE*)rightBuffer, (center.x + halfLength) - lengthHelper, y, center.parallax, color
+			);
 		}
 	}
 
 	return true;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 static bool DirectDraw::drawCross(PixelVector center, int16 length, int32 color, uint8 bufferIndex, bool interlaced)
 {
@@ -716,7 +795,7 @@ static bool DirectDraw::drawCross(PixelVector center, int16 length, int32 color,
 	return true;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 static bool DirectDraw::drawSolidCircle(PixelVector center, int16 radius, int32 color, uint8 bufferIndex, bool interlaced)
 {
@@ -748,13 +827,17 @@ static bool DirectDraw::drawSolidCircle(PixelVector center, int16 radius, int32 
 	{
 		int16 y = Math::squareRoot(radiusSquare - x * x);
 
-		DirectDraw::drawLine((PixelVector){center.x + x, center.y - y, center.z, center.parallax}, (PixelVector){center.x + x, center.y + y, center.z, center.parallax}, color, bufferIndex, interlaced);
+		DirectDraw::drawLine
+		(
+			(PixelVector){center.x + x, center.y - y, center.z, center.parallax}, 
+			(PixelVector){center.x + x, center.y + y, center.z, center.parallax}, color, bufferIndex, interlaced
+		);
 	}
 
 	return true;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 static bool DirectDraw::drawSolidRhumbus(PixelVector center, int16 radius, int32 color, uint8 bufferIndex, bool interlaced)
 {
@@ -827,15 +910,13 @@ static bool DirectDraw::drawSolidRhumbus(PixelVector center, int16 radius, int32
 	return true;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PRIVATE STATIC METHODS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 /// Draws a pixel on the screen.
 /// This will yield no result for color = 0, so for drawing a black pixel, use DirectDraw_drawBlackPixel
@@ -846,19 +927,19 @@ static bool DirectDraw::drawSolidRhumbus(PixelVector center, int16 radius, int32
 /// @param color		The color to draw (__COLOR_BRIGHT_RED, __COLOR_MEDIUM_RED or __COLOR_DARK_RED)
 static void DirectDraw::drawPixel(uint32 buffer, uint16 x, uint16 y, int32 color)
 {
-	// a pointer to the buffer
+	// A pointer to the buffer
 	//int32* pointer = (int32*)buffer;
 	BYTE* pointer = (BYTE*)buffer;
 
-	// calculate pixel position
-	// each column has 16 words, so 16 * 4 bytes = 64, each byte represents 4 pixels
+	// Calculate pixel position
+	// Each column has 16 words, so 16 * 4 bytes = 64, each byte represents 4 pixels
 	pointer += ((x << 6) + (y >> 2));
 
-	// draw the pixel
+	// Draw the pixel
 	*pointer |= (color << ((y & 3) << 1));
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 /// Draws a non black pixel on the screen.
 /// This will yield no result for color = 0, so for drawing a black pixel, use DirectDraw_drawBlackPixel
@@ -872,8 +953,8 @@ static void DirectDraw::drawColorPixel(BYTE* leftBuffer, BYTE* rightBuffer, int1
 #ifdef __DIRECT_DRAW_OPTIMIZED_VERTICAL_LINES
 	uint16 pixel = color << ((y & 0x7) << 1);
 
-	// calculate pixel position
-	// each column has 16 words, so 16 * 4 bytes = 64, each byte represents 4 pixels
+	// Calculate pixel position
+	// Each column has 16 words, so 16 * 4 bytes = 64, each byte represents 4 pixels
 	uint16 displacement = ((x - parallax) << 5) + (y >> 3);	
 
 	static uint16 cachedDisplacement = __FRAME_BUFFERS_SIZE;
@@ -904,8 +985,8 @@ static void DirectDraw::drawColorPixel(BYTE* leftBuffer, BYTE* rightBuffer, int1
 #else
 	uint8 pixel = color << ((y & 0x3) << 1);
 
-	// calculate pixel position
-	// each column has 16 words, so 16 * 4 bytes = 64, each byte represents 4 pixels
+	// Calculate pixel position
+	// Each column has 16 words, so 16 * 4 bytes = 64, each byte represents 4 pixels
 	uint16 displacement = ((x - parallax) << 6) + (y >> 2);	
 
 	if(__FRAME_BUFFERS_SIZE > displacement)
@@ -922,12 +1003,12 @@ static void DirectDraw::drawColorPixel(BYTE* leftBuffer, BYTE* rightBuffer, int1
 #endif
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 static void DirectDraw::drawColorPixelInterlaced(BYTE* buffer, int16 x, int16 y, int16 parallax, int32 color)
 {
-	// calculate pixel position
-	// each column has 16 words, so 16 * 4 bytes = 64, each byte represents 4 pixels
+	// Calculate pixel position
+	// Each column has 16 words, so 16 * 4 bytes = 64, each byte represents 4 pixels
 	uint16 displacement = ((x - parallax) << 6) + (y >> 2);
 
 	if(__FRAME_BUFFERS_SIZE <= displacement)
@@ -935,12 +1016,12 @@ static void DirectDraw::drawColorPixelInterlaced(BYTE* buffer, int16 x, int16 y,
 		return;
 	}
 
-	// calculate pixel position
-	// each column has 16 words, so 16 * 4 bytes = 64, each byte represents 4 pixels
+	// Calculate pixel position
+	// Each column has 16 words, so 16 * 4 bytes = 64, each byte represents 4 pixels
 	buffer[displacement] |= color << ((y & 3) << 1);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 /// Draws a black pixel on the screen.
 /// We have a separate function for black pixes since nulling bits requires a slightly different way than
@@ -954,8 +1035,8 @@ static void DirectDraw::drawBlackPixel(BYTE* leftBuffer, BYTE* rightBuffer, int1
 	uint16 yHelper = y >> 2;
 	uint8 pixel = ~(3 << ((y & 3) << 1));
 
-	// calculate pixel position
-	// each column has 16 words, so 16 * 4 bytes = 64, each byte represents 4 pixels
+	// Calculate pixel position
+	// Each column has 16 words, so 16 * 4 bytes = 64, each byte represents 4 pixels
 	int32 displacement = (((x - parallax) << 6) + yHelper);
 
 	if((unsigned)__FRAME_BUFFERS_SIZE <= (unsigned)displacement)
@@ -977,11 +1058,9 @@ static void DirectDraw::drawBlackPixel(BYTE* leftBuffer, BYTE* rightBuffer, int1
 	{
 		rightBuffer[displacement] &= pixel;
 	}
-
-	_directDraw->drawnPixelsCounter++;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 static bool DirectDraw::isPointInsideFrustum(PixelVector point)
 {
@@ -997,17 +1076,9 @@ static bool DirectDraw::isPointInsideFrustum(PixelVector point)
 	return true;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-// CLASS' PUBLIC METHODS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void DirectDraw::reset()
+secure void DirectDraw::reset()
 {
 	this->maximumPixelsToDraw = __DIRECT_DRAW_MAXIMUM_NUMBER_OF_PIXELS;
 
@@ -1017,34 +1088,7 @@ void DirectDraw::reset()
 	});
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void DirectDraw::preparteToDraw()
-{
-#ifdef __SHOW_DIRECT_DRAWING_PROFILING
-	static int counter = 0;
-
-	if(__TARGET_FPS <= counter++)
-	{
-		DirectDraw::print(this, 1, 1);
-		counter = 0;
-	}
-#endif
-
-	if(this->drawnPixelsCounter <= this->maximumPixelsToDraw)
-	{
-		this->maximumPixelsToDraw += __DIRECT_DRAW_MAXIMUM_NUMBER_OF_PIXELS_RECOVERY;
-
-		if(__DIRECT_DRAW_MAXIMUM_NUMBER_OF_PIXELS < this->maximumPixelsToDraw)
-		{
-			this->maximumPixelsToDraw = __DIRECT_DRAW_MAXIMUM_NUMBER_OF_PIXELS;
-		}
-	}
-
-	this->drawnPixelsCounter = 0;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void DirectDraw::setFrustum(CameraFrustum frustum)
 {
@@ -1094,41 +1138,37 @@ void DirectDraw::setFrustum(CameraFrustum frustum)
 	};
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 CameraFrustum DirectDraw::getFrustum()
 {
 	return _frustum;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #ifndef __SHIPPING
 void DirectDraw::print(int16 x, int16 y)
 {
-	Printing::text(Printing::getInstance(), "DIRECT DRAW", x, y++, NULL);
+	Printing::text("DIRECT DRAW", x, y++, NULL);
 	y++;
-	Printing::text(Printing::getInstance(), "Drawn pixels:      ", x, y, NULL);
-	Printing::int32(Printing::getInstance(), this->drawnPixelsCounter, x + 14, y++, NULL);
-	Printing::text(Printing::getInstance(), "Max. pixels:       ", x, y, NULL);
-	Printing::int32(Printing::getInstance(), this->maximumPixelsToDraw, x + 14, y++, NULL);
+	Printing::text("Drawn pixels:      ", x, y, NULL);
+	Printing::int32(this->drawnPixelsCounter, x + 14, y++, NULL);
+	Printing::text("Max. pixels:       ", x, y, NULL);
+	Printing::int32(this->maximumPixelsToDraw, x + 14, y++, NULL);
 }
 #endif
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PRIVATE METHODS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void DirectDraw::constructor()
 {
-	_directDraw = this;
-
 	// Always explicitly call the base's constructor 
 	Base::constructor();
 
@@ -1137,21 +1177,70 @@ void DirectDraw::constructor()
 
 	DirectDraw::reset(this);
 
-	VIPManager::addEventListener(VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)DirectDraw::onVIPManagerGAMESTARTDuringXPEND, kEventVIPManagerGAMESTARTDuringXPEND);
+	VIPManager::addEventListener
+	(
+		VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)DirectDraw::onVIPManagerXPEND, 
+		kEventVIPManagerXPEND
+	);
+
+	VIPManager::addEventListener
+	(
+		VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)DirectDraw::onVIPManagerGAMESTARTDuringXPEND, 
+		kEventVIPManagerGAMESTARTDuringXPEND
+	);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void DirectDraw::destructor()
 {
-	VIPManager::removeEventListener(VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)DirectDraw::onVIPManagerGAMESTARTDuringXPEND, kEventVIPManagerGAMESTARTDuringXPEND);
+	VIPManager::removeEventListener
+	(
+		VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)DirectDraw::onVIPManagerXPEND, 
+		kEventVIPManagerXPEND
+	);
 
-	// allow a new construct
+	VIPManager::removeEventListener
+	(
+		VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)DirectDraw::onVIPManagerGAMESTARTDuringXPEND, 
+		kEventVIPManagerGAMESTARTDuringXPEND
+	);
+
+	// Allow a new construct
 	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+bool DirectDraw::onVIPManagerXPEND(ListenerObject eventFirer __attribute__ ((unused)))
+{
+#ifdef __SHOW_DIRECT_DRAWING_PROFILING
+	static int counter = 0;
+
+	if(__TARGET_FPS <= counter++)
+	{
+		DirectDraw::print(1, 1);
+		counter = 0;
+	}
+#endif
+
+	if(this->drawnPixelsCounter <= this->maximumPixelsToDraw)
+	{
+		this->maximumPixelsToDraw += __DIRECT_DRAW_MAXIMUM_NUMBER_OF_PIXELS_RECOVERY;
+
+		if(__DIRECT_DRAW_MAXIMUM_NUMBER_OF_PIXELS < this->maximumPixelsToDraw)
+		{
+			this->maximumPixelsToDraw = __DIRECT_DRAW_MAXIMUM_NUMBER_OF_PIXELS;
+		}
+	}
+
+	this->drawnPixelsCounter = 0;
+
+	return true;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 bool DirectDraw::onVIPManagerGAMESTARTDuringXPEND(ListenerObject eventFirer __attribute__ ((unused)))
 {
@@ -1165,5 +1254,4 @@ bool DirectDraw::onVIPManagerGAMESTARTDuringXPEND(ListenerObject eventFirer __at
 	return true;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

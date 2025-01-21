@@ -10,25 +10,22 @@
 #ifndef SOUND_H_
 #define SOUND_H_
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // INCLUDES
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <ListenerObject.h>
 #include <SoundTrack.h>
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // FORWARD DECLARATIONS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 class VirtualList;
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DATA
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 /// Sound playback types
 /// @memberof Sound
@@ -49,7 +46,6 @@ enum SoundState
 	kSoundPaused,
 	kSoundPlaying,
 };
-
 
 /// A Sound spec
 /// @memberof Sound
@@ -73,12 +69,10 @@ typedef struct SoundSpec
 /// @memberof Sound
 typedef const SoundSpec SoundROMSpec;
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DECLARATION
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-///
 /// Class Sound
 ///
 /// Inherits from ListenerObject
@@ -189,10 +183,10 @@ class Sound : ListenerObject
 	/// Release this sound.
 	void release();
 
-	/// Prevent other requests to get a sound to steal this sound's channels
+	/// Prevent other requests to get a sound to steal this sound's sources
 	void lock();
 
-	/// Allow other requests to get a sound to steal this sound's channels
+	/// Allow other requests to get a sound to steal this sound's sources
 	void unlock();
 
 	/// Set the flag that allows the sound to auto release itself when playback is complete.
@@ -234,7 +228,10 @@ class Sound : ListenerObject
 	/// @return True if playback fading out
 	bool isFadingOut();
 
-	/// Advance the playback on the sound's MIDI tracks.
+	/// Finish the sound playback.
+	void finishPlayback();
+
+	/// Advance the playback on the sound's native tracks.
 	/// @param elapsedMicroseconds: Elapsed time since the last call
 	/// @param targetPCMUpdates: Ideal Elapsed time since the last call
 	void update(uint32 elapsedMicroseconds, uint32 targetPCMUpdates);
@@ -254,6 +251,5 @@ class Sound : ListenerObject
 	/// @param y: Screen y coordinate where to print
 	void printPlaybackProgress(int32 x, int32 y);
 }
-
 
 #endif

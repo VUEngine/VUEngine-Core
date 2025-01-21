@@ -10,28 +10,27 @@
 #ifndef TYPES_H_
 #define TYPES_H_
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // DATA TYPES DECLARATIONs
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 // Quick, easy types
-typedef unsigned char 		uint8;
-typedef unsigned short 		uint16;
-typedef unsigned int 		uint32;
-typedef unsigned long long	uint64;
+typedef unsigned char									uint8;
+typedef unsigned short 									uint16;
+typedef unsigned int 									uint32;
+typedef unsigned long long								uint64;
 
-typedef signed char 		int8;
-typedef signed short 		int16;
-typedef signed int	 		int32;
-typedef signed long long 	int64;
+typedef signed char 									int8;
+typedef signed short 									int16;
+typedef signed int	 									int32;
+typedef signed long long 								int64;
 
-typedef uint8		 		BYTE;
-typedef uint16		 		HWORD;
-typedef uint32		 		WORD;
+typedef uint8		 									BYTE;
+typedef uint16		 									HWORD;
+typedef uint32		 									WORD;
 
 // Define of boolean type
-typedef uint8				bool;
+typedef uint8											bool;
 enum { false, true };
 
 // Fixed point macros
@@ -43,7 +42,6 @@ enum { false, true };
 #define fix10_6_ext										int32
 #define fix19_13										int32
 #define fix17_15										int32
-
 
 #define fixed_t											fix10_6
 #define fixed_ext_t										fix10_6_ext
@@ -96,7 +94,6 @@ typedef struct PixelSize
 
 } PixelSize;
 
-
 // 3D Spatial position
 typedef struct Vector3D
 {
@@ -133,7 +130,6 @@ typedef struct ScreenPixelVector
 
 } ScreenPixelVector;
 
-
 // General purpose flags for each axis
 typedef struct Vector3DFlag
 {
@@ -155,13 +151,13 @@ typedef struct MovementType
 // 3D Spatial rotation (subject to gimbal lock)
 typedef struct Rotation
 {
-	// rotation around x axis
+	// Rotation around x axis
 	fixed_t x;
 
-	// rotation around y axis
+	// Rotation around y axis
 	fixed_t y;
 
-	// rotation around z axis
+	// Rotation around z axis
 	fixed_t z;
 
 } Rotation;
@@ -294,7 +290,6 @@ typedef struct ObjectTextureSource
 
 } ObjectTextureSource;
 
-
 typedef struct TexturePadding
 {
 	uint8 cols;
@@ -305,16 +300,16 @@ typedef struct TexturePadding
 // A spatial description
 typedef struct Transformation
 {
-	// spatial position
+	// Spatial position
 	Vector3D position;
 
-	// spatial rotation
+	// Spatial rotation
 	Rotation rotation;
 
-	// spatial scale
+	// Spatial scale
 	Scale scale;
 
-	// validity flag
+	// Validity flag
 	uint8 invalid;
 
 } Transformation;
@@ -347,7 +342,6 @@ typedef struct PixelRightBox
 
 } PixelRightBox;
 
-
 /// Camera frustum
 typedef struct CameraFrustum
 {
@@ -373,6 +367,5 @@ typedef struct Mirror
 	bool z;
 
 } Mirror;
-
 
 #endif

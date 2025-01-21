@@ -7,35 +7,30 @@
  * that was distributed with this source code.
  */
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // INCLUDES
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <DebugConfig.h>
 #include <FrameRate.h>
-#include <MessageDispatcher.h>
 #include <BodyManager.h>
 #include <Printing.h>
-#include <GameObject.h>
+#include <Entity.h>
 #include <VirtualList.h>
 #include <VirtualNode.h>
-#include <VUEngine.h>
 
 #include "Body.h"
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DECLARATIONS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 friend class VirtualList;
 friend class VirtualNode;
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' MACROS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #ifndef __MAXIMUM_BOUNCINESS_COEFFICIENT
 #define __MAXIMUM_BOUNCINESS_COEFFICIENT			1
@@ -56,10 +51,9 @@ friend class VirtualNode;
 #define __FRICTION_FORCE_FACTOR_POWER				2
 #endif
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DATA
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 /// Movement result
 /// @memberof Body
@@ -80,57 +74,62 @@ typedef struct NormalRegistry
 
 } NormalRegistry;
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' STATIC METHODS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-static inline fixed_t Body::computeInstantaneousSpeed(fixed_t forceMagnitude, fixed_t gravity, fixed_t mass, fixed_t friction, fixed_t maximumSpeed)
+static inline fixed_t Body::computeInstantaneousSpeed
+(
+	fixed_t forceMagnitude, fixed_t gravity, fixed_t mass, fixed_t friction, fixed_t maximumSpeed
+)
 {
-	fixed_t instantaneousSpeed = __FIX7_9_EXT_TO_FIXED(Body::doComputeInstantaneousSpeed(forceMagnitude, gravity, mass, friction, BodyManager::getElapsedTimeStep()));
+	fixed_t instantaneousSpeed = 
+		__FIX7_9_EXT_TO_FIXED
+		(
+			Body::doComputeInstantaneousSpeed(forceMagnitude, gravity, mass, friction, BodyManager::getElapsedTimeStep())
+		);
 
 	return 0 != maximumSpeed && maximumSpeed < __ABS(instantaneousSpeed) ? maximumSpeed : instantaneousSpeed;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PRIVATE STATIC METHODS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-static inline fix7_9_ext Body::doComputeInstantaneousSpeed(fixed_t forceMagnitude, fixed_t gravity, fixed_t mass, fixed_t friction, fix7_9_ext elapsedTime)
+static inline fix7_9_ext Body::doComputeInstantaneousSpeed
+(
+	fixed_t forceMagnitude, fixed_t gravity, fixed_t mass, fixed_t friction, fix7_9_ext elapsedTime
+)
 {
-	fix7_9_ext acceleration = __FIXED_TO_FIX7_9_EXT(gravity) + __FIX7_9_EXT_DIV(__FIXED_TO_FIX7_9_EXT(forceMagnitude + friction), __FIXED_TO_FIX7_9_EXT(mass));
+	fix7_9_ext acceleration = 
+		__FIXED_TO_FIX7_9_EXT(gravity) + __FIX7_9_EXT_DIV(__FIXED_TO_FIX7_9_EXT(forceMagnitude + friction), __FIXED_TO_FIX7_9_EXT(mass));
 
 	return __FIX7_9_EXT_MULT(acceleration, elapsedTime);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PUBLIC METHODS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void Body::constructor(GameObject owner, const BodySpec* bodySpec)
+void Body::constructor(Entity owner, const BodySpec* bodySpec)
 {
 	// Always explicitly call the base's constructor 
 	Base::constructor(owner, (const ComponentSpec*)&bodySpec->componentSpec);
 
-	this->deleteMe = false;
 	this->owner = owner;
 	this->normals = NULL;
-	this->mass = __BODY_MIN_MASS < bodySpec->mass ? __BODY_MAX_MASS > bodySpec->mass ? bodySpec->mass : __BODY_MAX_MASS : __BODY_MIN_MASS;
+	this->mass = 
+		__BODY_MIN_MASS < bodySpec->mass ? __BODY_MAX_MASS > bodySpec->mass ? bodySpec->mass : __BODY_MAX_MASS : __BODY_MIN_MASS;
 
 	this->bounciness = bodySpec->bounciness;
 	this->frictionCoefficient = 0;
@@ -141,8 +140,9 @@ void Body::constructor(GameObject owner, const BodySpec* bodySpec)
 	this->awake = false;
 	this->sendMessages = true;
 	this->axisSubjectToGravity = bodySpec->axisSubjectToGravity;
+	this->axisForSynchronizationWithBody = bodySpec->axisForSynchronizationWithBody;
 
-	// clear movement type
+	// Clear movement type
 	this->movementType.x = __NO_MOVEMENT;
 	this->movementType.y = __NO_MOVEMENT;
 	this->movementType.z = __NO_MOVEMENT;
@@ -172,10 +172,10 @@ void Body::constructor(GameObject owner, const BodySpec* bodySpec)
 	this->gravity = Body::getGravity(this);
 
 	Body::setFrictionCoefficient(this, bodySpec->frictionCoefficient);
-	Body::computeFrictionForceMagnitude(this, BodyManager::getFrictionCoefficient(VUEngine::getBodyManager(VUEngine::getInstance())));
+	Body::computeFrictionForceMagnitude(this, BodyManager::getFrictionCoefficient(ComponentManager::getManager(kPhysicsComponent)));
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Body::destructor()
 {
@@ -190,7 +190,7 @@ void Body::destructor()
 	Base::destructor();
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Body::handleCommand(int32 command, va_list args __attribute__((unused)))
 {
@@ -203,7 +203,7 @@ void Body::handleCommand(int32 command, va_list args __attribute__((unused)))
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Body::reset()
 {
@@ -225,7 +225,7 @@ void Body::reset()
 	this->gravity 				= Body::getGravity(this);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Body::clearNormal(ListenerObject referent)
 {
@@ -239,8 +239,8 @@ void Body::clearNormal(ListenerObject referent)
 		{
 			NormalRegistry* normalRegistry = (NormalRegistry*)node->data;
 
-			// search if registry exists for the referent
-			// it is Ok if it doesn't exist
+			// Search if registry exists for the referent
+			// It is Ok if it doesn't exist
 			if(normalRegistry->referent == referent)
 			{
 				ASSERT(!isDeleted(normalRegistry), "Body::clearNormal: dead normal registry");
@@ -257,7 +257,7 @@ void Body::clearNormal(ListenerObject referent)
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Body::update(uint16 cycle, fix7_9_ext elapsedTime)
 {
@@ -298,26 +298,26 @@ void Body::update(uint16 cycle, fix7_9_ext elapsedTime)
 
 	if(!isDeleted(this->owner))
 	{
-		GameObject::setPosition(this->owner, &this->position);
-		GameObject::setDirection(this->owner, &this->direction);
+		Entity::setPosition(this->owner, &this->position);
+		Entity::setDirection(this->owner, &this->direction);
 	}
 
-	// if stopped on any axis
+	// If stopped on any axis
 	if(0 != movementResult.axisStoppedMovement)
 	{
 		Body::stopMovement(this, movementResult.axisStoppedMovement);
 
 		if(!isDeleted(this->owner) && 0 != movementResult.axisStoppedMovement && this->sendMessages)
 		{
-			MessageDispatcher::dispatchMessage(0, ListenerObject::safeCast(this), ListenerObject::safeCast(this->owner), kMessageBodyStopped, &movementResult.axisStoppedMovement);
+			Body::sendMessageTo(this, ListenerObject::safeCast(this->owner), kMessageBodyStopped, 0, 0);
 		}
 	}
 
-	// clear any force so the next update does not get influenced
+	// Clear any force so the next update does not get influenced
 	Body::clearExternalForce(this);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 uint8 Body::applyForce(const Vector3D* force)
 {
@@ -357,13 +357,21 @@ uint8 Body::applyForce(const Vector3D* force)
 	return axisOfExternalForce;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Body::bounce(ListenerObject bounceReferent, Vector3D bouncingPlaneNormal, fixed_t frictionCoefficient, fixed_t bounciness)
 {
 	Body::setSurroundingFrictionCoefficient(this, frictionCoefficient);
 
-	fixed_t cosAngle = __I_TO_FIXED(bouncingPlaneNormal.x | bouncingPlaneNormal.y | bouncingPlaneNormal.z) && (this->gravity.x | this->gravity.y | this->gravity.z) ? __ABS(__FIXED_EXT_DIV(Vector3D::dotProduct(this->gravity, bouncingPlaneNormal), Vector3D::lengthProduct(this->gravity, bouncingPlaneNormal))) : __1I_FIXED;
+	fixed_t cosAngle = 
+		__I_TO_FIXED(bouncingPlaneNormal.x | bouncingPlaneNormal.y | bouncingPlaneNormal.z) 
+		&& 
+		(this->gravity.x | this->gravity.y | this->gravity.z) ? 
+			__ABS(__FIXED_EXT_DIV(Vector3D::dotProduct(this->gravity, bouncingPlaneNormal), 
+			Vector3D::lengthProduct(this->gravity, bouncingPlaneNormal))) 
+			: 
+			__1I_FIXED;
+
 	fixed_t normalMagnitude = __FIXED_EXT_MULT(Vector3D::length(Body::getWeight(this)), cosAngle);
 
 	Body::addNormal(this, bounceReferent, bouncingPlaneNormal, normalMagnitude);
@@ -398,7 +406,7 @@ void Body::bounce(ListenerObject bounceReferent, Vector3D bouncingPlaneNormal, f
 
 		// Add bounciness and friction
 		// This is the physically correct computation, but causes
-		// wrong angles of bouncing
+		// Wrong angles of bouncing
 		u = Vector3D::scalarProduct(u, bounciness);
 		w = Vector3D::scalarProduct(w, (__MAXIMUM_FRICTION_COEFFICIENT - frictionCoefficient));
 
@@ -423,19 +431,19 @@ void Body::bounce(ListenerObject bounceReferent, Vector3D bouncingPlaneNormal, f
 			this->movementType.z = __ACCELERATED_MOVEMENT;
 		}
 
-		// determine bouncing result
+		// Determine bouncing result
 		MovementResult movementResult = Body::getBouncingResult(this, velocity, bouncingPlaneNormal);
 
 		Body::clampVelocity(this, false);
 
-		// stop over the axis where there is no bouncing
+		// Stop over the axis where there is no bouncing
 		if(movementResult.axisStoppedMovement)
 		{
 			uint16 axisOfStopping = Body::stopMovement(this, movementResult.axisStoppedMovement);
 
 			if(!isDeleted(this->owner) && __NO_AXIS != axisOfStopping && this->sendMessages)
 			{
-				MessageDispatcher::dispatchMessage(0, ListenerObject::safeCast(this), ListenerObject::safeCast(this->owner), kMessageBodyStopped, &axisOfStopping);
+				Body::sendMessageTo(this, ListenerObject::safeCast(this->owner), kMessageBodyStopped, 0, 0);
 			}
 		}
 
@@ -458,12 +466,12 @@ void Body::bounce(ListenerObject bounceReferent, Vector3D bouncingPlaneNormal, f
 	{
 		if(!isDeleted(this->owner))
 		{
-			GameObject::setDirection(this->owner, &this->direction);
+			Entity::setDirection(this->owner, &this->direction);
 		}
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 uint16 Body::stopMovement(uint16 axis)
 {
@@ -472,7 +480,7 @@ uint16 Body::stopMovement(uint16 axis)
 
 	if(axis & __X_AXIS)
 	{
-		// not moving anymore
+		// Not moving anymore
 		this->velocity.x = 0;
 		this->internalVelocity.x = 0;
 		this->accelerating.x = false;
@@ -482,7 +490,7 @@ uint16 Body::stopMovement(uint16 axis)
 
 	if(axis & __Y_AXIS)
 	{
-		// not moving anymore
+		// Not moving anymore
 		this->velocity.y = 0;
 		this->internalVelocity.y = 0;
 		this->accelerating.y = false;
@@ -492,7 +500,7 @@ uint16 Body::stopMovement(uint16 axis)
 
 	if(axis & __Z_AXIS)
 	{
-		// not moving anymore
+		// Not moving anymore
 		this->velocity.z = 0;
 		this->internalVelocity.z = 0;
 		this->accelerating.z = false;
@@ -510,7 +518,7 @@ uint16 Body::stopMovement(uint16 axis)
 	return axisOfStopping;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Body::setVelocity(const Vector3D* velocity)
 {
@@ -554,14 +562,14 @@ void Body::setVelocity(const Vector3D* velocity)
 	this->internalPosition.z = __FIXED_TO_FIX7_9_EXT(this->position.z);
 }	
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 const Vector3D* Body::getVelocity()
 {
 	return &this->velocity;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Body::setDirection(const Vector3D* direction)
 {
@@ -578,14 +586,14 @@ void Body::setDirection(const Vector3D* direction)
 	this->internalVelocity.z = __FIXED_TO_FIX7_9_EXT(this->velocity.z);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 const Vector3D* Body::getDirection()
 {
 	return &this->direction;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Body::setAxisSubjectToGravity(uint16 axisSubjectToGravity)
 {
@@ -595,14 +603,28 @@ void Body::setAxisSubjectToGravity(uint16 axisSubjectToGravity)
 
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 uint16 Body::getAxisSubjectToGravity()
 {
 	return this->axisSubjectToGravity;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void Body::setAxisForSynchronizationWithBody(uint16 axisForSynchronizationWithBody)
+{
+	this->axisForSynchronizationWithBody = axisForSynchronizationWithBody;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+uint16 Body::getAxisForSynchronizationWithBody()
+{
+	return this->axisForSynchronizationWithBody;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Body::setBounciness(fixed_t bounciness)
 {
@@ -618,14 +640,14 @@ void Body::setBounciness(fixed_t bounciness)
 	this->bounciness = bounciness;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 fixed_t Body::getBounciness()
 {
 	return this->bounciness;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Body::setFrictionCoefficient(fixed_t frictionCoefficient)
 {
@@ -642,30 +664,30 @@ void Body::setFrictionCoefficient(fixed_t frictionCoefficient)
 	Body::computeTotalFrictionCoefficient(this);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 fixed_t Body::getFrictionCoefficient()
 {
 	return this->frictionCoefficient;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Body::setMass(fixed_t mass)
 {
 	this->mass = __BODY_MIN_MASS < mass ? __BODY_MAX_MASS > mass ? mass : __BODY_MAX_MASS : __BODY_MIN_MASS;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 fixed_t Body::getMass()
 {
 	return this->mass;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void Body::setPosition(const Vector3D* position, GameObject caller)
+void Body::setPosition(const Vector3D* position, Entity caller)
 {
 	if(this->owner == caller)
 	{
@@ -677,49 +699,49 @@ void Body::setPosition(const Vector3D* position, GameObject caller)
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 const Vector3D* Body::getPosition()
 {
 	return &this->position;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Body::setMaximumVelocity(Vector3D maximumVelocity)
 {
 	this->maximumVelocity = maximumVelocity;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 Vector3D Body::getMaximumVelocity()
 {
 	return this->maximumVelocity;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Body::setMaximumSpeed(fixed_t maximumSpeed)
 {
 	this->maximumSpeed = maximumSpeed;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 fixed_t Body::getMaximumSpeed()
 {
 	return this->maximumSpeed;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Body::sendMessages(bool value)
 {
 	this->sendMessages = value;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Body::setSkipCycles(int8 skipCycles)
 {
@@ -727,7 +749,7 @@ void Body::setSkipCycles(int8 skipCycles)
 	this->skipedCycles = 0;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Body::setSurroundingFrictionCoefficient(fixed_t surroundingFrictionCoefficient)
 {
@@ -744,14 +766,14 @@ void Body::setSurroundingFrictionCoefficient(fixed_t surroundingFrictionCoeffici
 	Body::computeTotalFrictionCoefficient(this);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 fixed_t Body::getSpeed()
 {
 	return this->speed;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 uint16 Body::getMovementOnAllAxis()
 {
@@ -780,107 +802,149 @@ uint16 Body::getMovementOnAllAxis()
 	return result;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Body::print(int32 x, int32 y)
 {
-	Printing::text(Printing::getInstance(), "BODY", x, y++, NULL);
+	Printing::text("BODY", x, y++, NULL);
 
-	Printing::text(Printing::getInstance(), "Awake:", x, y, NULL);
-	Printing::text(Printing::getInstance(), this->awake ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, x + 8, y++, NULL);
+	Printing::text("Awake:", x, y, NULL);
+	Printing::text(this->awake ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, x + 8, y++, NULL);
 
-	Printing::text(Printing::getInstance(), "                    X       Y       Z", x, y++, NULL);
+	Printing::text("                    X       Y       Z", x, y++, NULL);
 
 	int32 xDisplacement = 20;
 
-	Printing::text(Printing::getInstance(), "Mov. type", x, y, NULL);
-	Printing::text(Printing::getInstance(), "                                ", xDisplacement + x, y, NULL);
-	Printing::text(Printing::getInstance(), __UNIFORM_MOVEMENT == this->movementType.x ? "Uniform" : __UNIFORM_MOVEMENT == this->movementType.x ? "Uniform" : __ACCELERATED_MOVEMENT == this->movementType.x ? "Accel" : "None", xDisplacement + x, y, NULL);
-	Printing::text(Printing::getInstance(), __UNIFORM_MOVEMENT == this->movementType.y ? "Uniform" : __UNIFORM_MOVEMENT == this->movementType.y ? "Uniform" : __ACCELERATED_MOVEMENT == this->movementType.y ? "Accel" : "None", xDisplacement + x + 8, y, NULL);
-	Printing::text(Printing::getInstance(), __UNIFORM_MOVEMENT == this->movementType.y ? "Uniform" : __UNIFORM_MOVEMENT == this->movementType.y ? "Uniform" : __ACCELERATED_MOVEMENT == this->movementType.z ? "Accel" : "None", xDisplacement + x + 8 * 2, y++, NULL);
+	Printing::text("Mov. type", x, y, NULL);
+	Printing::text("                                ", xDisplacement + x, y, NULL);
 
-	Printing::text(Printing::getInstance(), "Position", x, y, NULL);
-	Printing::text(Printing::getInstance(), "                               ", xDisplacement + x, y, NULL);
-	Printing::float(Printing::getInstance(), __FIXED_TO_F(this->position.x), xDisplacement + x, y, 2, NULL);
-	Printing::float(Printing::getInstance(), __FIXED_TO_F(this->position.y), xDisplacement + x + 8, y, 2, NULL);
-	Printing::float(Printing::getInstance(), __FIXED_TO_F(this->position.z), xDisplacement + x + 8 * 2, y++, 2, NULL);
+	Printing::text
+	(
+		__UNIFORM_MOVEMENT == this->movementType.x ? 
+		"Uniform" 
+		: 
+		__UNIFORM_MOVEMENT == this->movementType.x ? 
+			"Uniform" 
+			: 
+			__ACCELERATED_MOVEMENT == this->movementType.x ? 
+				"Accel" 
+				: 
+				"None", 
+		xDisplacement + x, y, NULL
+	);
 
-	Printing::text(Printing::getInstance(), "Velocity", x, y, NULL);
-	Printing::text(Printing::getInstance(), "                                ", xDisplacement + x, y, NULL);
-	Printing::float(Printing::getInstance(), __FIXED_TO_F(this->velocity.x), xDisplacement + x, y, 2, NULL);
-	Printing::float(Printing::getInstance(), __FIXED_TO_F(this->velocity.y), xDisplacement + x + 8, y, 2, NULL);
-	Printing::float(Printing::getInstance(), __FIXED_TO_F(this->velocity.z), xDisplacement + x + 8 * 2, y++, 2, NULL);
+	Printing::text
+	(
+		
+		__UNIFORM_MOVEMENT == this->movementType.y ? 
+		"Uniform" 
+		: 
+		__UNIFORM_MOVEMENT == this->movementType.y ? 
+			"Uniform" 
+			: 
+			__ACCELERATED_MOVEMENT == this->movementType.y ? 
+				"Accel" 
+				: 
+				"None", 
+		xDisplacement + x, y, NULL
+	);
 
-	Printing::text(Printing::getInstance(), "NormalizedDirection", x, y, NULL);
-	Printing::text(Printing::getInstance(), "                                ", xDisplacement + x, y, NULL);
-	Printing::float(Printing::getInstance(), __FIXED_TO_F(this->direction.x), xDisplacement + x, y, 2, NULL);
-	Printing::float(Printing::getInstance(), __FIXED_TO_F(this->direction.y), xDisplacement + x + 8, y, 2, NULL);
-	Printing::float(Printing::getInstance(), __FIXED_TO_F(this->direction.z), xDisplacement + x + 8 * 2, y++, 2, NULL);
+	Printing::text
+	(
+		
+		__UNIFORM_MOVEMENT == this->movementType.z ? 
+		"Uniform" 
+		: 
+		__UNIFORM_MOVEMENT == this->movementType.z ? 
+			"Uniform" 
+			: 
+			__ACCELERATED_MOVEMENT == this->movementType.z ? 
+				"Accel" 
+				: 
+				"None", 
+		xDisplacement + x, y, NULL
+	);
 
-	Printing::text(Printing::getInstance(), "Maximum Speed", x, y, NULL);
-	Printing::text(Printing::getInstance(), "                                ", xDisplacement + x, y, NULL);
-	Printing::float(Printing::getInstance(), __FIXED_TO_F(this->maximumSpeed), xDisplacement + x, y++, 2, NULL);
+	Printing::text("Position", x, y, NULL);
+	Printing::text("                               ", xDisplacement + x, y, NULL);
+	Printing::float(__FIXED_TO_F(this->position.x), xDisplacement + x, y, 2, NULL);
+	Printing::float(__FIXED_TO_F(this->position.y), xDisplacement + x + 8, y, 2, NULL);
+	Printing::float(__FIXED_TO_F(this->position.z), xDisplacement + x + 8 * 2, y++, 2, NULL);
 
-	Printing::text(Printing::getInstance(), "Speed", x, y, NULL);
-	Printing::text(Printing::getInstance(), "                                ", xDisplacement + x, y, NULL);
-	Printing::float(Printing::getInstance(), __FIXED_TO_F(Vector3D::length(this->velocity)), xDisplacement + x, y++, 2, NULL);
+	Printing::text("Velocity", x, y, NULL);
+	Printing::text("                                ", xDisplacement + x, y, NULL);
+	Printing::float(__FIXED_TO_F(this->velocity.x), xDisplacement + x, y, 2, NULL);
+	Printing::float(__FIXED_TO_F(this->velocity.y), xDisplacement + x + 8, y, 2, NULL);
+	Printing::float(__FIXED_TO_F(this->velocity.z), xDisplacement + x + 8 * 2, y++, 2, NULL);
 
-	Printing::text(Printing::getInstance(), "Acceleration", x, y, NULL);
-	Printing::text(Printing::getInstance(), "                               ", xDisplacement + x, y, NULL);
-	Printing::int32(Printing::getInstance(), this->accelerating.x, xDisplacement + x, y, NULL);
-	Printing::int32(Printing::getInstance(), this->accelerating.y, xDisplacement + x + 8, y, NULL);
-	Printing::int32(Printing::getInstance(), this->accelerating.z, xDisplacement + x + 8 * 2, y++, NULL);
+	Printing::text("NormalizedDirection", x, y, NULL);
+	Printing::text("                                ", xDisplacement + x, y, NULL);
+	Printing::float(__FIXED_TO_F(this->direction.x), xDisplacement + x, y, 2, NULL);
+	Printing::float(__FIXED_TO_F(this->direction.y), xDisplacement + x + 8, y, 2, NULL);
+	Printing::float(__FIXED_TO_F(this->direction.z), xDisplacement + x + 8 * 2, y++, 2, NULL);
 
-	Printing::text(Printing::getInstance(), "Gravity", x, y, NULL);
-	Printing::text(Printing::getInstance(), "                               ", xDisplacement + x, y, NULL);
-	Printing::float(Printing::getInstance(), __FIXED_TO_F(this->gravity.x), xDisplacement + x, y, 2, NULL);
-	Printing::float(Printing::getInstance(), __FIXED_TO_F(this->gravity.y), xDisplacement + x + 8, y, 2, NULL);
-	Printing::float(Printing::getInstance(), __FIXED_TO_F(this->gravity.z), xDisplacement + x + 8 * 2, y++, 2, NULL);
+	Printing::text("Maximum Speed", x, y, NULL);
+	Printing::text("                                ", xDisplacement + x, y, NULL);
+	Printing::float(__FIXED_TO_F(this->maximumSpeed), xDisplacement + x, y++, 2, NULL);
 
-	Printing::text(Printing::getInstance(), "External Force", x, y, NULL);
-	Printing::text(Printing::getInstance(), "                              ", xDisplacement + x, y, NULL);
-	Printing::float(Printing::getInstance(), __FIXED_TO_F(this->externalForce.x), xDisplacement + x, y, 2, NULL);
-	Printing::float(Printing::getInstance(), __FIXED_TO_F(this->externalForce.y), xDisplacement + x + 8, y, 2, NULL);
-	Printing::float(Printing::getInstance(), __FIXED_TO_F(this->externalForce.z), xDisplacement + x + 8 * 2, y++, 2, NULL);
+	Printing::text("Speed", x, y, NULL);
+	Printing::text("                                ", xDisplacement + x, y, NULL);
+	Printing::float(__FIXED_TO_F(Vector3D::length(this->velocity)), xDisplacement + x, y++, 2, NULL);
 
-	Printing::text(Printing::getInstance(), "Normal", x, y, NULL);
-	Printing::text(Printing::getInstance(), "                              ", xDisplacement + x, y, NULL);
-	Printing::float(Printing::getInstance(), __FIXED_TO_F(this->totalNormal.x), xDisplacement + x, y, 2, NULL);
-	Printing::float(Printing::getInstance(), __FIXED_TO_F(this->totalNormal.y), xDisplacement + x + 8, y, 2, NULL);
-	Printing::float(Printing::getInstance(), __FIXED_TO_F(this->totalNormal.z), xDisplacement + x + 8 * 2, y++, 2, NULL);
+	Printing::text("Acceleration", x, y, NULL);
+	Printing::text("                               ", xDisplacement + x, y, NULL);
+	Printing::int32(this->accelerating.x, xDisplacement + x, y, NULL);
+	Printing::int32(this->accelerating.y, xDisplacement + x + 8, y, NULL);
+	Printing::int32(this->accelerating.z, xDisplacement + x + 8 * 2, y++, NULL);
 
-	Printing::text(Printing::getInstance(), "Normal Force", x, y, NULL);
-	Printing::text(Printing::getInstance(), "                              ", xDisplacement + x, y, NULL);
-	Printing::float(Printing::getInstance(), __FIXED_TO_F(this->frictionForceMagnitude), xDisplacement + x, y++, 2, NULL);
+	Printing::text("Gravity", x, y, NULL);
+	Printing::text("                               ", xDisplacement + x, y, NULL);
+	Printing::float(__FIXED_TO_F(this->gravity.x), xDisplacement + x, y, 2, NULL);
+	Printing::float(__FIXED_TO_F(this->gravity.y), xDisplacement + x + 8, y, 2, NULL);
+	Printing::float(__FIXED_TO_F(this->gravity.z), xDisplacement + x + 8 * 2, y++, 2, NULL);
 
-	Printing::text(Printing::getInstance(), "Normals", x, y, NULL);
-	Printing::text(Printing::getInstance(), "                              ", xDisplacement + x, y, NULL);
-	Printing::int32(Printing::getInstance(), this->normals ? VirtualList::getCount(this->normals) : 0, xDisplacement + x, y++, NULL);
+	Printing::text("External Force", x, y, NULL);
+	Printing::text("                              ", xDisplacement + x, y, NULL);
+	Printing::float(__FIXED_TO_F(this->externalForce.x), xDisplacement + x, y, 2, NULL);
+	Printing::float(__FIXED_TO_F(this->externalForce.y), xDisplacement + x + 8, y, 2, NULL);
+	Printing::float(__FIXED_TO_F(this->externalForce.z), xDisplacement + x + 8 * 2, y++, 2, NULL);
 
-	Printing::text(Printing::getInstance(), "Friction", x, y, NULL);
-	Printing::text(Printing::getInstance(), "                              ", xDisplacement + x, y, NULL);
-	Printing::float(Printing::getInstance(), __FIXED_TO_F(this->friction.x), xDisplacement + x, y, 2, NULL);
-	Printing::float(Printing::getInstance(), __FIXED_TO_F(this->friction.y), xDisplacement + x + 8, y, 2, NULL);
-	Printing::float(Printing::getInstance(), __FIXED_TO_F(this->friction.z), xDisplacement + x + 8 * 2, y++, 2, NULL);
+	Printing::text("Normal", x, y, NULL);
+	Printing::text("                              ", xDisplacement + x, y, NULL);
+	Printing::float(__FIXED_TO_F(this->totalNormal.x), xDisplacement + x, y, 2, NULL);
+	Printing::float(__FIXED_TO_F(this->totalNormal.y), xDisplacement + x + 8, y, 2, NULL);
+	Printing::float(__FIXED_TO_F(this->totalNormal.z), xDisplacement + x + 8 * 2, y++, 2, NULL);
 
-	Printing::text(Printing::getInstance(), "Total frict. coef.", x, y, NULL);
-	Printing::text(Printing::getInstance(), "                              ", xDisplacement + x, y, NULL);
-	Printing::float(Printing::getInstance(), __FIXED_TO_F(this->totalFrictionCoefficient), xDisplacement + x, y++, 2, NULL);
+	Printing::text("Normal Force", x, y, NULL);
+	Printing::text("                              ", xDisplacement + x, y, NULL);
+	Printing::float(__FIXED_TO_F(this->frictionForceMagnitude), xDisplacement + x, y++, 2, NULL);
 
-	Printing::text(Printing::getInstance(), "Friction magnitude", x, y, NULL);
-	Printing::text(Printing::getInstance(), "                              ", xDisplacement + x, y, NULL);
-	Printing::float(Printing::getInstance(), __FIXED_TO_F(this->frictionForceMagnitude), xDisplacement + x, y++, 2, NULL);
+	Printing::text("Normals", x, y, NULL);
+	Printing::text("                              ", xDisplacement + x, y, NULL);
+	Printing::int32(this->normals ? VirtualList::getCount(this->normals) : 0, xDisplacement + x, y++, NULL);
+
+	Printing::text("Friction", x, y, NULL);
+	Printing::text("                              ", xDisplacement + x, y, NULL);
+	Printing::float(__FIXED_TO_F(this->friction.x), xDisplacement + x, y, 2, NULL);
+	Printing::float(__FIXED_TO_F(this->friction.y), xDisplacement + x + 8, y, 2, NULL);
+	Printing::float(__FIXED_TO_F(this->friction.z), xDisplacement + x + 8 * 2, y++, 2, NULL);
+
+	Printing::text("Total frict. coef.", x, y, NULL);
+	Printing::text("                              ", xDisplacement + x, y, NULL);
+	Printing::float(__FIXED_TO_F(this->totalFrictionCoefficient), xDisplacement + x, y++, 2, NULL);
+
+	Printing::text("Friction magnitude", x, y, NULL);
+	Printing::text("                              ", xDisplacement + x, y, NULL);
+	Printing::float(__FIXED_TO_F(this->frictionForceMagnitude), xDisplacement + x, y++, 2, NULL);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PRIVATE METHODS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Body::setMovementType(int32 movementType, uint16 axis)
 {
@@ -900,7 +964,7 @@ void Body::setMovementType(int32 movementType, uint16 axis)
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Body::clearExternalForce()
 {
@@ -909,14 +973,14 @@ void Body::clearExternalForce()
 	this->externalForce.z = 0;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 MovementResult Body::getMovementResult(Vector3D previousVelocity)
 {
 	MovementResult movementResult = {__NO_AXIS, __NO_AXIS};
 
-	// xor values, if result != 0, there is movement
-	// xor values, if result >= 0, there is no change in direction
+	// Xor values, if result != 0, there is movement
+	// Xor values, if result >= 0, there is no change in direction
 	Vector3D movementChange =
 	{
 		this->velocity.x ^ previousVelocity.x,
@@ -924,9 +988,23 @@ MovementResult Body::getMovementResult(Vector3D previousVelocity)
 		this->velocity.z ^ previousVelocity.z,
 	};
 
-	if(!this->movesIndependentlyOnEachAxis && 0 != (__ACCELERATED_MOVEMENT & (this->movementType.x | this->movementType.y | this->movementType.z)))
+	if
+	(
+		!this->movesIndependentlyOnEachAxis 
+		&& 
+		0 != (__ACCELERATED_MOVEMENT & (this->movementType.x | this->movementType.y | this->movementType.z))
+	)
 	{
-		if(this->speed < __STOP_VELOCITY_THRESHOLD && 0 == (this->externalForce.x | this->externalForce.y | this->externalForce.z | this->gravity.x | this->gravity.y | this->gravity.z))
+		if
+		(
+			this->speed < __STOP_VELOCITY_THRESHOLD 
+			&& 
+			0 == 
+			(
+				this->externalForce.x | this->externalForce.y | this->externalForce.z | 
+				this->gravity.x | this->gravity.y | this->gravity.z
+			)
+		)
 		{
 			movementResult.axisStoppedMovement = __ALL_AXIS;
 		}
@@ -934,11 +1012,18 @@ MovementResult Body::getMovementResult(Vector3D previousVelocity)
 		return movementResult;
 	}
 
-	// stop if no external force or opposing normal force is present
-	// and if the velocity minimum threshold is not reached
+	// Stop if no external force or opposing normal force is present
+	// And if the velocity minimum threshold is not reached
 	if(0 != previousVelocity.x && 0 == this->externalForce.x && 0 == this->gravity.x && __ACCELERATED_MOVEMENT == this->movementType.x)
 	{
-		if(__STOP_VELOCITY_THRESHOLD > __ABS(this->velocity.x) || (0 == this->externalForce.x && 0 == this->accelerating.x) || (0 > movementChange.x))
+		if
+		(
+			__STOP_VELOCITY_THRESHOLD > __ABS(this->velocity.x) 
+			|| 
+			(0 == this->externalForce.x && 0 == this->accelerating.x) 
+			|| 
+			(0 > movementChange.x)
+		)
 		{
 			movementResult.axisStoppedMovement |= __X_AXIS;
 		}
@@ -946,7 +1031,14 @@ MovementResult Body::getMovementResult(Vector3D previousVelocity)
 
 	if(0 != previousVelocity.y && 0 == this->externalForce.y && 0 == this->gravity.y && __ACCELERATED_MOVEMENT == this->movementType.y)
 	{
-		if(__STOP_VELOCITY_THRESHOLD > __ABS(this->velocity.y) || (0 == this->externalForce.y && 0 == this->accelerating.y) || (0 > movementChange.y))
+		if
+		(
+			__STOP_VELOCITY_THRESHOLD > __ABS(this->velocity.y) 
+			|| 
+			(0 == this->externalForce.y && 0 == this->accelerating.y) 
+			||
+			(0 > movementChange.y)
+		)
 		{
 			movementResult.axisStoppedMovement |= __Y_AXIS;
 		}
@@ -954,7 +1046,14 @@ MovementResult Body::getMovementResult(Vector3D previousVelocity)
 
 	if(0 != previousVelocity.z && 0 == this->externalForce.z && 0 == this->gravity.z && __ACCELERATED_MOVEMENT == this->movementType.z)
 	{
-		if(__STOP_VELOCITY_THRESHOLD > __ABS(this->velocity.z) || (0 == this->externalForce.z && 0 == this->accelerating.z) || (0 > movementChange.z))
+		if
+		(
+			__STOP_VELOCITY_THRESHOLD > __ABS(this->velocity.z) 
+			|| 
+			(0 == this->externalForce.z && 0 == this->accelerating.z) 
+			|| 
+			(0 > movementChange.z)
+		)
 		{
 			movementResult.axisStoppedMovement |= __Z_AXIS;
 		}
@@ -963,14 +1062,14 @@ MovementResult Body::getMovementResult(Vector3D previousVelocity)
 	return movementResult;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 MovementResult Body::getBouncingResult(Vector3D previousVelocity, Vector3D bouncingPlaneNormal)
 {
 	MovementResult movementResult = {__NO_AXIS, __NO_AXIS};
 
-	// xor values, if result != 0, there is movement
-	// xor values, if result >= 0, there is no change in direction
+	// Xor values, if result != 0, there is movement
+	// Xor values, if result >= 0, there is no change in direction
 	Vector3D movementChange =
 	{
 		this->velocity.x ^ previousVelocity.x,
@@ -978,8 +1077,8 @@ MovementResult Body::getBouncingResult(Vector3D previousVelocity, Vector3D bounc
 		this->velocity.z ^ previousVelocity.z,
 	};
 
-	// stop if minimum velocity threshold is not reached
-	// and if there is possible movement in the other components
+	// Stop if minimum velocity threshold is not reached
+	// And if there is possible movement in the other components
 	if(__STOP_BOUNCING_VELOCITY_THRESHOLD > __ABS(this->velocity.x) && !__FIXED_INT_PART(bouncingPlaneNormal.y | bouncingPlaneNormal.z))
 	{
 		movementResult.axisStoppedMovement |= __X_AXIS;
@@ -995,7 +1094,7 @@ MovementResult Body::getBouncingResult(Vector3D previousVelocity, Vector3D bounc
 		movementResult.axisStoppedMovement |= __Z_AXIS;
 	}
 
-	// bounce accelerated if movement changed direction and the previous movement was not uniform
+	// Bounce accelerated if movement changed direction and the previous movement was not uniform
 	if(__UNIFORM_MOVEMENT != this->movementType.x && 0 != movementChange.x)
 	{
 		movementResult.axisOfAcceleratedBouncing |= __X_AXIS;
@@ -1011,13 +1110,13 @@ MovementResult Body::getBouncingResult(Vector3D previousVelocity, Vector3D bounc
 		movementResult.axisOfAcceleratedBouncing |= __Z_AXIS;
 	}
 
-	// don't bounce if movement stopped on that axis
+	// Don't bounce if movement stopped on that axis
 	movementResult.axisOfAcceleratedBouncing &= ~movementResult.axisStoppedMovement;
 
 	return movementResult;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Body::computeDirectionAndSpeed(bool useExternalForceForDirection)
 {
@@ -1048,7 +1147,7 @@ void Body::computeDirectionAndSpeed(bool useExternalForceForDirection)
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Body::clampVelocity(bool useExternalForceForDirection)
 {
@@ -1101,7 +1200,7 @@ void Body::clampVelocity(bool useExternalForceForDirection)
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 MovementResult Body::updateMovement(uint16 cycle, fix7_9_ext elapsedTime)
 {
@@ -1111,7 +1210,11 @@ MovementResult Body::updateMovement(uint16 cycle, fix7_9_ext elapsedTime)
 
 	if(__ACCELERATED_MOVEMENT == this->movementType.x)
 	{
-		fix7_9_ext instantaneousSpeed = Body::doComputeInstantaneousSpeed(this->externalForce.x + this->totalNormal.x, this->gravity.x, this->mass, this->friction.x, elapsedTime);
+		fix7_9_ext instantaneousSpeed = 
+			Body::doComputeInstantaneousSpeed
+			(
+				this->externalForce.x + this->totalNormal.x, this->gravity.x, this->mass, this->friction.x, elapsedTime
+			);
 
 		this->accelerating.x = 0 != instantaneousSpeed;
 		this->internalVelocity.x += instantaneousSpeed;
@@ -1120,7 +1223,11 @@ MovementResult Body::updateMovement(uint16 cycle, fix7_9_ext elapsedTime)
 
 	if(__ACCELERATED_MOVEMENT == this->movementType.y)
 	{
-		fix7_9_ext instantaneousSpeed = Body::doComputeInstantaneousSpeed(this->externalForce.y + this->totalNormal.y, this->gravity.y, this->mass, this->friction.y, elapsedTime);
+		fix7_9_ext instantaneousSpeed = 
+			Body::doComputeInstantaneousSpeed
+			(
+				this->externalForce.y + this->totalNormal.y, this->gravity.y, this->mass, this->friction.y, elapsedTime
+			);
 
 		this->accelerating.y = 0 != instantaneousSpeed;
 		this->internalVelocity.y += instantaneousSpeed;
@@ -1129,7 +1236,11 @@ MovementResult Body::updateMovement(uint16 cycle, fix7_9_ext elapsedTime)
 
 	if(__ACCELERATED_MOVEMENT == this->movementType.z)
 	{
-		fix7_9_ext instantaneousSpeed = Body::doComputeInstantaneousSpeed(this->externalForce.z + this->totalNormal.z, this->gravity.z, this->mass, this->friction.z, elapsedTime);
+		fix7_9_ext instantaneousSpeed = 
+			Body::doComputeInstantaneousSpeed
+			(
+				this->externalForce.z + this->totalNormal.z, this->gravity.z, this->mass, this->friction.z, elapsedTime
+			);
 
 		this->accelerating.z = 0 != instantaneousSpeed;
 		this->internalVelocity.z += instantaneousSpeed;
@@ -1192,7 +1303,7 @@ MovementResult Body::updateMovement(uint16 cycle, fix7_9_ext elapsedTime)
 	return Body::getMovementResult(this, previousVelocity);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Body::awake(uint16 axisOfAwakening)
 {
@@ -1219,19 +1330,19 @@ void Body::awake(uint16 axisOfAwakening)
 
 		if(!isDeleted(this->owner) && dispatchMessage)
 		{
-			MessageDispatcher::dispatchMessage(0, ListenerObject::safeCast(this), ListenerObject::safeCast(this->owner), kMessageBodyStartedMoving, &axisOfAwakening);
+			Body::sendMessageTo(this, ListenerObject::safeCast(this->owner), kMessageBodyStartedMoving, 0, 0);
 		}
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Body::sleep()
 {
 	this->awake = false;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Body::computeTotalNormal()
 {
@@ -1259,11 +1370,11 @@ void Body::computeTotalNormal()
 	if(0 != this->totalNormal.x || 0 != this->totalNormal.y || 0 != this->totalNormal.z)
 	{
 		Body::computeTotalFrictionCoefficient(this);
-		Body::computeFrictionForceMagnitude(this, BodyManager::getFrictionCoefficient(VUEngine::getBodyManager(VUEngine::getInstance())));
+		Body::computeFrictionForceMagnitude(this, BodyManager::getFrictionCoefficient(ComponentManager::getManager(kPhysicsComponent)));
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Body::addNormal(ListenerObject referent, Vector3D direction, fixed_t magnitude)
 {
@@ -1291,7 +1402,7 @@ void Body::addNormal(ListenerObject referent, Vector3D direction, fixed_t magnit
 	Body::computeTotalNormal(this);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Body::clearNormalOnAxis(uint16 axis __attribute__ ((unused)))
 {
@@ -1326,7 +1437,7 @@ void Body::clearNormalOnAxis(uint16 axis __attribute__ ((unused)))
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Body::computeFrictionForceMagnitude(fixed_t currentWorldFriction)
 {
@@ -1363,15 +1474,15 @@ void Body::computeFrictionForceMagnitude(fixed_t currentWorldFriction)
 		}
 	}
 
-	// yeah, * 4 (<< 2) is a magical number, but it works well enough with the range of mass and friction coefficient
+	// Yeah, * 4 (<< 2) is a magical number, but it works well enough with the range of mass and friction coefficient
 	this->frictionForceMagnitude = __FIXED_MULT(this->frictionForceMagnitude, __I_TO_FIXED(1 << __FRICTION_FORCE_FACTOR_POWER));
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Body::computeTotalFrictionCoefficient()
 {
-	fixed_t currentWorldFriction = BodyManager::getFrictionCoefficient(VUEngine::getBodyManager(VUEngine::getInstance()));
+	fixed_t currentWorldFriction = BodyManager::getFrictionCoefficient(ComponentManager::getManager(kPhysicsComponent));
 	this->totalFrictionCoefficient = this->frictionCoefficient;
 
 	this->totalFrictionCoefficient += currentWorldFriction + this->surroundingFrictionCoefficient;
@@ -1388,11 +1499,11 @@ void Body::computeTotalFrictionCoefficient()
 	Body::computeFrictionForceMagnitude(this, currentWorldFriction);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 Vector3D Body::getGravity()
 {
-	Vector3D gravity = BodyManager::getGravity(VUEngine::getBodyManager(VUEngine::getInstance()));
+	Vector3D gravity = BodyManager::getGravity(ComponentManager::getManager(kPhysicsComponent));
 	
 	return (Vector3D)
 	{
@@ -1402,14 +1513,14 @@ Vector3D Body::getGravity()
 	};
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 Vector3D Body::getWeight()
 {
 	return Vector3D::scalarProduct(this->gravity, this->mass);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 Vector3D Body::getLastDisplacement()
 {
@@ -1424,7 +1535,7 @@ Vector3D Body::getLastDisplacement()
 	return displacement;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 Vector3D Body::getLastNormalDirection()
 {
@@ -1450,5 +1561,4 @@ Vector3D Body::getLastNormalDirection()
 	return ((NormalRegistry*)VirtualList::back(this->normals))->direction;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

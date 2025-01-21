@@ -1,9 +1,0 @@
-{
-	"targets": [{
-		"path": "Converted/${_filename}EntityImageData.c",
-		"root": "file",
-        "conditions": { ">": [{ "var": "components.sprites.length" }, 0] }
-	}],
-	"template": "contributions/Template/EntityImageData.c.njk",
-	"itemSpecific": "Entity"
-}

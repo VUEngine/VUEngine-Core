@@ -10,24 +10,21 @@
 #ifndef BGMAP_SPRITE_H_
 #define BGMAP_SPRITE_H_
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // INCLUDES
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <Sprite.h>
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // FORWARD DECLARATIONS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 class BgmapSprite;
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' MACROS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #define __WORLD_SIZE_DISPLACEMENT					1
 #define __G_DISPLACEMENT_BECAUSE_WH_0_EQUALS_1		1
@@ -36,13 +33,11 @@ class BgmapSprite;
 #define __MINIMUM_BGMAP_SPRITE_WIDTH				0
 #define __MINIMUM_BGMAP_SPRITE_HEIGHT				7
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DATA
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-typedef int16 (*ParamTableEffectMethod)(BgmapSprite);
-
+typedef int16 (*ParamTableEffectMethod)(BgmapSprite, int32);
 
 /// A BgmapSprite spec
 /// @memberof BgmapSprite
@@ -50,14 +45,14 @@ typedef struct BgmapSpriteSpec
 {
 	SpriteSpec spriteSpec;
 
-	/// The display mode (BGMAP, AFFINE, H-BIAS)
+	/// Flag to indicate in which display to show the bg texture
+	uint16 display;
+
+	// The display mode (__WORLD_BGMAP, __WORLD_AFFINE or __WORLD_HBIAS)
 	uint16 bgmapMode;
 
 	/// Pointer to affine/hbias manipulation function
 	ParamTableEffectMethod applyParamTableEffect;
-
-	/// Flag to indicate in which display to show the bg texture
-	uint16 display;
 
 } BgmapSpriteSpec;
 
@@ -65,12 +60,10 @@ typedef struct BgmapSpriteSpec
 /// @memberof BgmapSprite
 typedef const BgmapSpriteSpec BgmapSpriteROMSpec;
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DECLARATION
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-///
 /// Class BgmapSprite
 ///
 /// Inherits from Sprite
@@ -96,22 +89,22 @@ class BgmapSprite : Sprite
 	/// @publicsection
 
 	/// Class' constructor
-	/// @param owner: GameObject to which the sprite attaches to
+	/// @param owner: Entity to which the sprite attaches to
 	/// @param bgmapSpriteSpec: Specification that determines how to configure the sprite
-	void constructor(GameObject owner, const BgmapSpriteSpec* bgmapSpriteSpec);
-	
-	/// Register this sprite with the appropriate sprites manager.
-	override void registerWithManager();
+	void constructor(Entity owner, const BgmapSpriteSpec* bgmapSpriteSpec);
 
-	/// Unegister this sprite with the appropriate sprites manager.	
-	override void unregisterWithManager();
+	/// Retrieve the class of the manager for the sprite.
+	/// @return ClassPointer of the manager
+	override ClassPointer getManagerClass();
 
 	/// Check if the sprite has affine or hbias effects.
 	/// @return True if the sprite's mode of display is (__WORLD_AFFINE or __WORLD_HBIAS)
 	override bool hasSpecialEffects();
 	
 	/// Process affine and hbias effects
-	override void processEffects();
+	/// @param maximumParamTableRowsToComputePerCall: Used to defer param table computations 
+	/// (-1 to compute the whole table)
+	override void processEffects(int32 maximumParamTableRowsToComputePerCall);
 
 	/// Render the sprite by configuring the DRAM assigned to it by means of the provided index.
 	/// @param index: Determines the region of DRAM that this sprite is allowed to configure
@@ -170,6 +163,5 @@ class BgmapSprite : Sprite
 	/// Start rewriting the sprite's param table for hbias effects.
 	void applyHbiasEffects();
 }
-
 
 #endif

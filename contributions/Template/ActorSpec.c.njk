@@ -16,17 +16,17 @@
 
 {#- DETERMINE ENTITY CLASS -#}
 {%- if item.extraProperties.customAllocator is defined and item.extraProperties.customAllocator != '' -%}
-	{%- set entityClass = item.extraProperties.customAllocator -%}
+	{%- set actorClass = item.extraProperties.customAllocator -%}
 {%- elseif item.physics.enabled -%} {#- TODO: or item.stateMachine enabled -#}
-	{%- set entityClass = 'Actor' -%}
+	{%- set actorClass = 'Actor' -%}
 {%- elseif isAnimated -%}
-	{%- set entityClass = 'AnimatedEntity' -%}
+	{%- set actorClass = 'Actor' -%}
 {%- else %}
-	{%- set entityClass = 'Entity' -%}
+	{%- set actorClass = 'Actor' -%}
 {%- endif %}
 
 {#- DETERMINE INCLUDES -#}
-{%- set includes = [entityClass, 'Texture'] -%}
+{%- set includes = [actorClass, 'Texture'] -%}
 {%- if item.inGameType != '' -%}
 	{%- set includes = (includes.push('InGameTypes'), includes) -%}
 {%- endif -%}
@@ -90,16 +90,16 @@
 		{%- for imageData in sprite._imageData.images -%}
 			{#- Tiles -#}
 			{%- if imageData.tiles.data -%}
-				extern uint32 {{ sanitizedSpecName ~ 'Entity' ~ imageData.tiles.name | sanitizeSpecName }}Tiles[];{{ '\n' }}
+				extern uint32 {{ sanitizedSpecName ~ 'Actor' ~ imageData.tiles.name | sanitizeSpecName }}Tiles[];{{ '\n' }}
 			{%- endif -%}
 			{#- Maps -#}
 			{%- for map in imageData.maps -%}
-				{%- set mapName = sanitizedSpecName ~ 'Entity' ~ map.name | sanitizeSpecName -%}
+				{%- set mapName = sanitizedSpecName ~ 'Actor' ~ map.name | sanitizeSpecName -%}
 				extern uint16 {{ mapName }}Map[];{{ '\n' }}
 			{%- endfor -%}
 			{#- Frame Offsets -#}
 			{%- if imageData.tiles.frameOffsets is defined -%}
-				extern uint32 {{ sanitizedSpecName ~ 'Entity' ~ imageData.tiles.name | sanitizeSpecName }}TilesFrameOffsets[];{{ '\n' }}
+				extern uint32 {{ sanitizedSpecName ~ 'Actor' ~ imageData.tiles.name | sanitizeSpecName }}TilesFrameOffsets[];{{ '\n' }}
 			{%- endif -%}
 		{%- endfor -%}
 	{%- endif -%}
@@ -141,7 +141,7 @@
 	{%- set imageData = spriteImageData.images[loop.index0] -%}
 	{%- set charsetSpecName = charsetSpecName ~ eye -%}
 {%- endif -%}
-{%- set tilesName = sanitizedSpecName ~ 'Entity' ~ imageData.tiles.name -%}
+{%- set tilesName = sanitizedSpecName ~ 'Actor' ~ imageData.tiles.name -%}
 {%- set spriteName = sanitizedSpecName ~ 'Sprite' ~ spriteNumber -%}
 {%- if isStereo -%}
 	{%- set spriteName = spriteName ~ eye -%}
@@ -200,9 +200,9 @@ TextureROMSpec {{ spriteName }}TextureSpec =
 
 	// Pointer to the map array that defines how to use the tiles from the char set
 	{% if isStereo and not isStereoAnimation and eye === 'R' -%}
-	{{ sanitizedSpecName ~ 'Entity' ~ imageData.maps[1].name }}Map,
+	{{ sanitizedSpecName ~ 'Actor' ~ imageData.maps[1].name }}Map,
 	{%- else -%}
-	{{ sanitizedSpecName ~ 'Entity' ~ imageData.maps[0].name }}Map,
+	{{ sanitizedSpecName ~ 'Actor' ~ imageData.maps[0].name }}Map,
 	{%- endif %}
 
 	// Horizontal size in tiles of the texture (max. 64)
@@ -515,7 +515,7 @@ ColliderROMSpec {{ colliderName }}ColliderSpec =
 {% endfor %}
 {% endif -%}
 
-{{- macros.sectionHeader('Entity') -}}
+{{- macros.sectionHeader('Actor') -}}
 
 {#- PRINT PHYSICAL PROPERTIES -#}
 {%- if item.physics.enabled %}
@@ -546,12 +546,12 @@ BodyROMSpec {{ sanitizedSpecName }}BodySpecSpec =
 {#- PRINT CHILDREN -#}
 {%- if item.components.children | length %}
 
-PositionedEntityROMSpec {{ sanitizedSpecName }}Children[] =
+PositionedActorROMSpec {{ sanitizedSpecName }}Children[] =
 {
 	{%- for child in item.components.children -%}
-	{%- set childEntity = project.items.Entity[child.itemId] -%}
-	{%- if childEntity is defined %}
-	{&{{ childEntity._fileUri | basename(false) | sanitizeSpecName }}EntitySpec, { {{ child.onScreenPosition.x }}, {{ child.onScreenPosition.y }}, {{ child.onScreenPosition.z }} }, { {{ child.onScreenRotation.x }}, {{ child.onScreenRotation.y }}, {{ child.onScreenRotation.z }} }, { {{ child.onScreenScale.x }}, {{ child.onScreenScale.y }}, {{ child.onScreenScale.z }} }, 0, {% if child.name != '' %}"{{ child.name }}"{% else %}NULL{% endif %}, NULL, {% if child.extraInfo != '' %}(void*)"{{ child.extraInfo }}"{% else %}NULL{% endif %}, {{ child.loadRegardlessOfPosition }}},
+	{%- set childActor = project.items.Actor[child.itemId] -%}
+	{%- if childActor is defined %}
+	{&{{ childActor._fileUri | basename(false) | sanitizeSpecName }}ActorSpec, { {{ child.onScreenPosition.x }}, {{ child.onScreenPosition.y }}, {{ child.onScreenPosition.z }} }, { {{ child.onScreenRotation.x }}, {{ child.onScreenRotation.y }}, {{ child.onScreenRotation.z }} }, { {{ child.onScreenScale.x }}, {{ child.onScreenScale.y }}, {{ child.onScreenScale.z }} }, 0, {% if child.name != '' %}"{{ child.name }}"{% else %}NULL{% endif %}, NULL, {% if child.extraInfo != '' %}(void*)"{{ child.extraInfo }}"{% else %}NULL{% endif %}, {{ child.loadRegardlessOfPosition }}},
 	{%- endif %}
 	{%- endfor %}
 	{NULL, {0, 0, 0}, {0, 0, 0}, {1, 1, 1},  0, NULL, NULL, NULL, false},
@@ -576,9 +576,9 @@ ComponentSpec* const {{ sanitizedSpecName }}ComponentSpecs[] =
 };
 
 {# PRINT ENTITY SPEC -#}
-{{ entityClass }}ROMSpec {{ sanitizedSpecName }}EntitySpec =
+{{ actorClass }}ROMSpec {{ sanitizedSpecName }}ActorSpec =
 {
-	{%- if entityClass != 'Entity' and entityClass != 'AnimatedEntity' and entityClass != 'Actor' %}
+	{%- if actorClass != 'Actor' and actorClass != 'Actor' and actorClass != 'Actor' %}
 	{
 	{%- endif %}
 	{%- if item.physics.enabled %}
@@ -588,14 +588,14 @@ ComponentSpec* const {{ sanitizedSpecName }}ComponentSpecs[] =
 		{
 		{%- endif %}
 			// Class allocator
-			__TYPE({{ entityClass }}),
+			__TYPE({{ actorClass }}),
 
 			// Component specs
 			(ComponentSpec**){{ sanitizedSpecName }}ComponentSpecs,
 
 			// Children specs
 			{%- if item.components.children | length %}
-			(struct PositionedEntity*){{ sanitizedSpecName }}Children,
+			(struct PositionedActor*){{ sanitizedSpecName }}Children,
 			{%- else %}
 			NULL,
 			{%- endif %}
@@ -611,7 +611,7 @@ ComponentSpec* const {{ sanitizedSpecName }}ComponentSpecs[] =
 			// If 0, it is computed from the visual components if any
 			{{ '{' ~ item.extraProperties.pixelSize.x ~ ', ' ~ item.extraProperties.pixelSize.y ~ ', ' ~ item.extraProperties.pixelSize.z ~ '}' }},
 
-			// Entity's in-game type
+			// Actor's in-game type
 			kType{{ project.items.InGameTypes.project.types[item.inGameType] | sanitizeSpecName }}
 
 		{%- if isAnimated %}
@@ -631,14 +631,14 @@ ComponentSpec* const {{ sanitizedSpecName }}ComponentSpecs[] =
 	{%- if item.physics.enabled %}
 	},
 
-	// Axises around which to rotate the entity when syncronizing with bodyate the entity when syncronizing with body
+	// Axises around which to rotate the actor when syncronizing with bodyate the actor when syncronizing with body
 	{%- if item.physics.rotationAxes is defined and item.physics.rotationAxes is iterable and item.physics.rotationAxes | length %}
 	__{{ item.physics.rotationAxes.join(' | __') }}
 	{%- else %} 
 	__NO_AXIS,
 	{%- endif %}
 	{%- endif %}
-	{%- if entityClass != 'Entity' and entityClass != 'AnimatedEntity' and entityClass != 'Actor' %}
+	{%- if actorClass != 'Actor' and actorClass != 'Actor' and actorClass != 'Actor' %}
 	}
 	{%- endif %}
 };

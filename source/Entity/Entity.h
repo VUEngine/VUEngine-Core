@@ -7,39 +7,35 @@
  * that was distributed with this source code.
  */
 
-#ifndef GAME_OBJECT_H_
-#define GAME_OBJECT_H_
+#ifndef ENTITY_H_
+#define ENTITY_H_
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // INCLUDES
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <Component.h>
 #include <ListenerObject.h>
 #include <Collider.h>
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // FORWARD DECLARATIONS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 class Body;
 class Component;
 class VirtualList;
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DECLARATION
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-///
-/// Class GameObject
+/// Class Entity
 ///
 /// Inherits from ListenerObject
 ///
 /// Defines objects that occupy a place in 3D space.
-abstract class GameObject : ListenerObject
+abstract class Entity : ListenerObject
 {
 	/// @protectedsection
 	
@@ -127,26 +123,26 @@ abstract class GameObject : ListenerObject
 	/// @return Pointer to the object's 3D
 	const Scale* getScale();
 
-	/// Retrieve the actor's physical body.
-	/// @return Actor's physical body
+	/// Retrieve the entity's physical body.
+	/// @return Entity's physical body
 	Body getBody();
 
-	/// Check if the actor is moving.
-	/// @return True if the actor's body is moving; false otherwise
+	/// Check if the entity is moving.
+	/// @return True if the entity's body is moving; false otherwise
 	bool isMoving();
 
-	/// Stop all actor's movement.
+	/// Stop all entity's movement.
 	void stopAllMovement();
 
-	/// Stop the actor's movement in the specified axis.
-	/// @param axis: Axis on which to stop the movement of the actor's body
+	/// Stop the entity's movement in the specified axis.
+	/// @param axis: Axis on which to stop the movement of the entity's body
 	void stopMovement(uint16 axis);
 
-	/// Set the actor's velocity vector.
-	/// @param velocity: Velocity vector to assign to the actor's body
-	/// @param checkIfCanMove: If true, the actor checks that none of its colliders will
+	/// Set the entity's velocity vector.
+	/// @param velocity: Velocity vector to assign to the entity's body
+	/// @param checkIfCanMove: If true, the entity checks that none of its colliders will
 	/// enter a collision if it were to move in the direction of the provided velocity
-	/// @return True if the actor started to move in the direction specified by the
+	/// @return True if the entity started to move in the direction specified by the
 	/// provided velocity vector
 	bool setVelocity(const Vector3D* velocity, bool checkIfCanMove);
 
@@ -158,12 +154,12 @@ abstract class GameObject : ListenerObject
 	/// @return Object's current speed (velocity vector's magnitude)
 	fixed_t getSpeed();
 
-	/// Retrieve the actor's maximum speed.
-	/// @return Maximum speed at which the actor's body is allowed to move
+	/// Retrieve the entity's maximum speed.
+	/// @return Maximum speed at which the entity's body is allowed to move
 	fixed_t getMaximumSpeed();
 
-	/// Retrieve the object's bounciness factor.
-	/// @return Object's bounciness factor
+	/// Retrieve the object's bounciness fentity.
+	/// @return Object's bounciness fentity
 	fixed_t getBounciness();
 
 	/// Retrieve the object's friction coefficient.
@@ -176,8 +172,8 @@ abstract class GameObject : ListenerObject
 	/// Disable collision detection on the entity's colliders.
 	void disableCollisions();
 
-	/// Enable or disable collision detection against other entities' colliders.
-	/// @param activate: If true, this entity's colliders check collision against other entities'
+	/// Enable or disable collision detection against other entitys' colliders.
+	/// @param activate: If true, this entity's colliders check collision against other entitys'
 	void checkCollisions(bool activate);
 
 	/// Enable or disable the register of detected collisions.
@@ -219,11 +215,11 @@ abstract class GameObject : ListenerObject
 	/// Destroy the components that attach to this container. 	
 	virtual void destroyComponents();
 
-	/// A new component has been added to this actor. 
+	/// A new component has been added to this entity. 
 	/// @param component: Added component
 	virtual void addedComponent(Component component);
 
-	/// A component has been removed from this actor. 
+	/// A component has been removed from this entity. 
 	/// @param component: Removed component
 	virtual void removedComponent(Component component);
 
@@ -264,25 +260,25 @@ abstract class GameObject : ListenerObject
 	/// @return Pointer to the direction towards which the object is moving
 	virtual const Vector3D* getDirection();
 
-	/// Apply a force to the actor's body.
+	/// Apply a force to the entity's body.
 	/// @param force: Force to be applied
-	/// @param checkIfCanMove: If true, the actor checks that none of its colliders will
-	/// @return True if the force was succesfully applied to the actor's body
+	/// @param checkIfCanMove: If true, the entity checks that none of its colliders will
+	/// @return True if the force was succesfully applied to the entity's body
 	virtual bool applyForce(const Vector3D* force, bool checkIfCanMove);
 
-	/// Check if the actor will enter a collision if it were to move in the provided direction
+	/// Check if the entity will enter a collision if it were to move in the provided direction
 	/// @param direction: Direction vector to check
 	virtual bool canMoveTowards(Vector3D direction);
 
-	/// Check if when the actor bounces it has to take into account the colliding object's bounciness.
-	/// @return True if the actor has to take into account the colliding object's bounciness when bouncing
-	virtual bool isSensibleToCollidingObjectBouncinessOnCollision(GameObject collidingObject);
+	/// Check if when the entity bounces it has to take into account the colliding object's bounciness.
+	/// @return True if the entity has to take into account the colliding object's bounciness when bouncing
+	virtual bool isSensibleToCollidingObjectBouncinessOnCollision(Entity collidingEntity);
 
-	/// Check if when the actor bounces it has to take into account the colliding object's friction
+	/// Check if when the entity bounces it has to take into account the colliding object's friction
 	/// coefficient.
-	/// @return True if the actor has to take into account the colliding object's friction coefficient when
+	/// @return True if the entity has to take into account the colliding object's friction coefficient when
 	/// bouncing
-	virtual bool isSensibleToCollidingObjectFrictionOnCollision(GameObject collidingObject);
+	virtual bool isSensibleToCollidingObjectFrictionOnCollision(Entity collidingEntity);
 
 	/// Check if the object is subject to provided gravity vector.
 	/// @return True if the provided gravity vector can affect the object; false otherwise
@@ -305,6 +301,5 @@ abstract class GameObject : ListenerObject
 	/// @return The enum that determines the type of game object
 	virtual uint32 getInGameType();
 }
-
 
 #endif

@@ -10,32 +10,28 @@
 #ifndef DIRECT_DRAW_H_
 #define DIRECT_DRAW_H_
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // INCLUDES
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-#include <Object.h>
+#include <ListenerObject.h>
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' MACROS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #define __FRAME_BUFFERS_SIZE								0x6000
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DECLARATION
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-///
 /// Class DirectDraw
 ///
 /// Inherits from Object
 ///
 /// Implements various draw rutines that manipulate the frame buffers.
-singleton class DirectDraw : Object
+singleton class DirectDraw : ListenerObject
 {
 	/// @protectedsection
 
@@ -46,11 +42,6 @@ singleton class DirectDraw : Object
 	uint16 maximumPixelsToDraw;
 
 	/// @publicsection
-
-	/// @publicsection
-	/// Method to retrieve the singleton instance
-	/// @return DirectDraw singleton
-	static DirectDraw getInstance();
 
 	/// Draw a single point.
 	/// @param point: Screen coordinate where to draw the point
@@ -117,9 +108,6 @@ singleton class DirectDraw : Object
 	/// Reset the manager's state
 	void reset();
 
-	/// Prepare the manager to start drawing to the frame buffers.
-	void preparteToDraw();
-	
 	/// Configure the frustum where drawing is allowed.
 	/// @param frustum: 3D boundary when drawing is allowed
 	void setFrustum(CameraFrustum frustum);
@@ -133,6 +121,5 @@ singleton class DirectDraw : Object
 	/// @param y: Screen y coordinate where to print
 	void print(int16 x, int16 y);
 }
-
 
 #endif

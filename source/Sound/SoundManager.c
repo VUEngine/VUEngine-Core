@@ -7,14 +7,11 @@
  * that was distributed with this source code.
  */
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // INCLUDES
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-#include <Camera.h>
 #include <Printing.h>
-#include <Profiler.h>
 #include <Sound.h>
 #include <VirtualList.h>
 #include <VSUManager.h>
@@ -22,54 +19,158 @@
 
 #include "SoundManager.h"
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DECLARATIONS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 friend class Sound;
+friend class SoundTrack;
 friend class VirtualNode;
 friend class VirtualList;
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-// CLASS' ATTRIBUTES
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-static SoundManager _soundManager = NULL;
-static VSUManager _vsuManager = NULL;
-
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' STATIC METHODS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-static void SoundManager::playSounds(uint32 elapsedMicroseconds)
+static bool SoundManager::playSound
+(
+	const SoundSpec* soundSpec, const Vector3D* position, uint32 playbackType, EventListener soundReleaseListener, ListenerObject scope
+)
 {
-	VSUManager::update(_vsuManager);
+	SoundManager soundManager = SoundManager::getInstance();
 
-	for(VirtualNode node = _soundManager->sounds->head; NULL != node; node = node->next)
+	if(soundManager->lock || NULL == soundSpec)
 	{
-		Sound::update(Sound::safeCast(node->data), elapsedMicroseconds, _soundManager->targetPCMUpdates);
+		return false;
+	}
+
+	Sound sound = SoundManager::doGetSound(soundManager, soundSpec, soundReleaseListener, scope);
+
+	if(!isDeleted(sound))
+	{
+		Sound::autoReleaseOnFinish(sound, true);
+		Sound::play(sound, position, playbackType);
+
+		return true;
+	}
+
+	return false;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+static Sound SoundManager::getSound(const SoundSpec* soundSpec, EventListener soundReleaseListener, ListenerObject scope)
+{
+	SoundManager soundManager = SoundManager::getInstance();
+
+	if(soundManager->lock || NULL == soundReleaseListener || NULL == scope)
+	{
+		return NULL;
+	}
+
+	return SoundManager::doGetSound(soundManager, soundSpec, soundReleaseListener, scope);
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+static Sound SoundManager::findSound(const SoundSpec* soundSpec, EventListener soundReleaseListener, ListenerObject scope)
+{
+	SoundManager soundManager = SoundManager::getInstance();
+
+	if(NULL == soundReleaseListener || NULL == scope)
+	{
+		return NULL;
+	}
+
+	for(VirtualNode node = soundManager->sounds->head; NULL != node; node = node->next)
+	{
+		Sound sound = Sound::safeCast(node->data);
+
+		if(!isDeleted(sound))
+		{
+			if(soundSpec == sound->soundSpec)
+			{
+				Sound::addEventListener(sound, scope, soundReleaseListener, kEventSoundReleased);
+				return sound;
+			}
+		}
+	}
+
+	return NULL;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+// CLASS' STATIC PRIVATE METHODS
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+static inline void SoundManager::updatePCM (Sound sound, uint32 elapsedMicroseconds, uint32 targetPCMUpdates)
+{
+	if(kSoundPlaying !=	sound->state)
+	{
+		return;
+	}
+
+	SoundTrack soundTrack = SoundTrack::safeCast(sound->soundTracks->head->data);
+
+	CACHE_ENABLE;
+
+	// Elapsed time during PCM playback is based on the cursor, track's ticks and target Hz
+	soundTrack->elapsedTicks += elapsedMicroseconds;
+
+	soundTrack->cursor = soundTrack->elapsedTicks / targetPCMUpdates;
+
+	VSUManager::applyPCMSampleToSoundSource(soundTrack->soundTrackSpec->SxLRV[soundTrack->cursor]);
+
+	CACHE_DISABLE;
+
+	if(soundTrack->cursor >= soundTrack->samples)
+	{
+		Sound::finishPlayback(sound);
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PUBLIC METHODS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void SoundManager::reset()
+secure void SoundManager::playSounds(uint32 elapsedMicroseconds)
 {
-	VSUManager::reset(_vsuManager);
+#ifdef __RELEASE
+	// This is an aggressive optimization that bypasses the SoundTrack's methods altogether
+	// to keep the PCM playback viable on hardware
+	if(kPlaybackPCM == VSUManager::getMode() && NULL != this->sounds->head)
+	{
+		SoundManager::updatePCM(Sound::safeCast(this->sounds->head->data), elapsedMicroseconds, this->targetPCMUpdates);
+	}
+	else
+	{
+#endif
+		VSUManager::update(VSUManager::getInstance());
+
+		for(VirtualNode node = this->sounds->head; NULL != node; node = node->next)
+		{
+			Sound::update(Sound::safeCast(node->data), elapsedMicroseconds, this->targetPCMUpdates);
+		}
+#ifdef __RELEASE
+	}
+#endif
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+secure void SoundManager::reset()
+{
+	VSUManager::reset(VSUManager::getInstance());
 
 	for(VirtualNode node = this->sounds->head; NULL != node; node = node->next)
 	{
@@ -87,7 +188,7 @@ void SoundManager::reset()
 	SoundManager::unlock(this);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void SoundManager::setPCMTargetPlaybackRefreshRate(uint16 pcmTargetPlaybackRefreshRate)
 {
@@ -101,7 +202,7 @@ void SoundManager::setPCMTargetPlaybackRefreshRate(uint16 pcmTargetPlaybackRefre
 	SoundTrack::setPCMTargetPlaybackRefreshRate(pcmTargetPlaybackRefreshRate);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 bool SoundManager::isPlayingSound(const SoundSpec* soundSpec)
 {
@@ -120,67 +221,7 @@ bool SoundManager::isPlayingSound(const SoundSpec* soundSpec)
 	return false;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-bool SoundManager::playSound(const SoundSpec* soundSpec, const Vector3D* position, uint32 playbackType, EventListener soundReleaseListener, ListenerObject scope)
-{
-	if(this->lock || NULL == soundSpec)
-	{
-		return false;
-	}
-
-	Sound sound = SoundManager::doGetSound(this, soundSpec, soundReleaseListener, scope);
-
-	if(!isDeleted(sound))
-	{
-		Sound::autoReleaseOnFinish(sound, true);
-		Sound::play(sound, position, playbackType);
-
-		return true;
-	}
-
-	return false;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-Sound SoundManager::getSound(const SoundSpec* soundSpec, EventListener soundReleaseListener, ListenerObject scope)
-{
-	if(this->lock || NULL == soundReleaseListener || NULL == scope)
-	{
-		return NULL;
-	}
-
-	return SoundManager::doGetSound(this, soundSpec, soundReleaseListener, scope);
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-Sound SoundManager::findSound(const SoundSpec* soundSpec, EventListener soundReleaseListener, ListenerObject scope)
-{
-	if(NULL == soundReleaseListener || NULL == scope)
-	{
-		return NULL;
-	}
-
-	for(VirtualNode node = this->sounds->head; NULL != node; node = node->next)
-	{
-		Sound sound = Sound::safeCast(node->data);
-
-		if(!isDeleted(sound))
-		{
-			if(soundSpec == sound->soundSpec)
-			{
-				Sound::addEventListener(sound, scope, soundReleaseListener, kEventSoundReleased);
-				return sound;
-			}
-		}
-	}
-
-	return NULL;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void SoundManager::muteAllSounds()
 {
@@ -194,7 +235,7 @@ void SoundManager::muteAllSounds()
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void SoundManager::unmuteAllSounds()
 {
@@ -208,7 +249,7 @@ void SoundManager::unmuteAllSounds()
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void SoundManager::rewindAllSounds()
 {
@@ -222,7 +263,7 @@ void SoundManager::rewindAllSounds()
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void SoundManager::stopAllSounds(bool release, SoundSpec** excludedSounds)
 {
@@ -279,21 +320,21 @@ void SoundManager::stopAllSounds(bool release, SoundSpec** excludedSounds)
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void SoundManager::lock()
 {
 	this->lock = true;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void SoundManager::unlock()
 {
 	this->lock = false;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #ifdef __SOUND_TEST
 void SoundManager::printPlaybackTime(int32 x, int32 y)
@@ -312,18 +353,16 @@ void SoundManager::printPlaybackTime(int32 x, int32 y)
 }
 #endif
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PRIVATE METHODS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void SoundManager::constructor()
-{	
+{
 	// Always explicitly call the base's constructor 
 	Base::constructor();
 
@@ -331,17 +370,12 @@ void SoundManager::constructor()
 
 	this->lock = false;
 	this->targetPCMUpdates = 0;
-
-	_soundManager = this;
-	_vsuManager = VSUManager::getInstance();
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void SoundManager::destructor()
 {
-	_soundManager = NULL;
-
 	if(!isDeleted(this->sounds))
 	{
 		VirtualList::deleteData(this->sounds);
@@ -353,10 +387,25 @@ void SoundManager::destructor()
 	Base::destructor();
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 Sound SoundManager::doGetSound(const SoundSpec* soundSpec, EventListener soundReleaseListener, ListenerObject scope)
 {
+#ifdef __RELEASE
+	// This is an aggressive optimization that bypasses the SoundTrack's methods altogether
+	// to keep the PCM playback viable on hardware
+	if(kPlaybackPCM == VSUManager::getMode() && NULL != this->sounds->head)
+	{
+#ifndef __SHIPPING
+		Printing::setDebugMode();
+		Printing::clear();
+		Error::triggerException("SoundManager::doGetSound: a PCM sound is loaded, unload it first", NULL);		
+#endif
+
+		return NULL;
+	}
+#endif
+	
 	SoundManager::purgeReleasedSounds(this);
 
 	if(NULL == soundSpec)
@@ -371,7 +420,7 @@ Sound SoundManager::doGetSound(const SoundSpec* soundSpec, EventListener soundRe
 	return sound;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void SoundManager::purgeReleasedSounds()
 {
@@ -390,7 +439,7 @@ void SoundManager::purgeReleasedSounds()
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void SoundManager::suspendPlayingSounds()
 {
@@ -407,7 +456,7 @@ void SoundManager::suspendPlayingSounds()
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void SoundManager::resumePlayingSounds()
 {
@@ -424,4 +473,4 @@ void SoundManager::resumePlayingSounds()
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

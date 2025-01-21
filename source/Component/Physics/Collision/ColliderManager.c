@@ -7,41 +7,37 @@
  * that was distributed with this source code.
  */
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // INCLUDES
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <Clock.h>
 #include <DebugConfig.h>
 #include <Printing.h>
-#include <GameObject.h>
+#include <Entity.h>
 #include <Collider.h>
 #include <VirtualList.h>
 
 #include "ColliderManager.h"
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // FORWARD DECLARATIONS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 friend class Collider;
 friend class Clock;
 friend class VirtualNode;
 friend class VirtualList;
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' MACROS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #define __TOTAL_USABLE_SHAPES		128
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' ATTRIBUTES
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #ifdef __SHOW_PHYSICS_PROFILING
 /// Counters for debugging
@@ -53,61 +49,60 @@ static uint16 _collisions;
 static uint16 _checkCycles;
 #endif
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PUBLIC METHODS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+uint32 ColliderManager::getType()
+{
+	return kColliderComponent;
+}
 
-Collider ColliderManager::createComponent(GameObject owner, const ColliderSpec* colliderSpec)
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void ColliderManager::enable()
+{
+	Base::enable(this);
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void ColliderManager::disable()
+{
+	Base::disable(this);
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+Collider ColliderManager::instantiateComponent(Entity owner, const ColliderSpec* colliderSpec)
 {
 	if(NULL == colliderSpec)
 	{
 		return NULL;
 	}
 
-	Base::createComponent(this, owner, (ComponentSpec*)colliderSpec);
+	Base::instantiateComponent(this, owner, (ComponentSpec*)colliderSpec);
 
 	return ColliderManager::createCollider(this, owner, colliderSpec);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void ColliderManager::destroyComponent(GameObject owner, Collider collider) 
+void ColliderManager::deinstantiateComponent(Entity owner, Collider collider) 
 {
 	if(isDeleted(collider))
 	{
 		return;
 	}
 
-	Base::destroyComponent(this, owner, Component::safeCast(collider));
+	Base::deinstantiateComponent(this, owner, Component::safeCast(collider));
 
 	ColliderManager::destroyCollider(this, collider);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void ColliderManager::reset()
-{
-	ASSERT(this->components, "ColliderManager::reset: null colliders");
-
-	VirtualList::deleteData(this->components);
-
-	this->dirty = false;
-
-#ifdef __SHOW_PHYSICS_PROFILING
-	_lastCycleCheckProducts = 0;
-	_lastCycleCollisionChecks = 0;
-	_lastCycleCollisions = 0;
-	_checkCycles = 0;
-	_collisionChecks = 0;
-	_collisions = 0;
-#endif
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void ColliderManager::purgeDestroyedColliders()
 {
@@ -126,7 +121,7 @@ void ColliderManager::purgeDestroyedColliders()
 	}	
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 uint32 ColliderManager::update()
 {
@@ -184,7 +179,12 @@ uint32 ColliderManager::update()
 
 		if(collider->invalidPosition)
 		{
-			Vector3D displacement = Vector3D::rotate(Vector3D::getFromPixelVector(((ColliderSpec*)collider->componentSpec)->displacement), collider->transformation->rotation);
+			Vector3D displacement = 
+			Vector3D::rotate
+			(
+				Vector3D::getFromPixelVector(((ColliderSpec*)collider->componentSpec)->displacement), collider->transformation->rotation
+			);
+
 			collider->position = Vector3D::sum(collider->transformation->position, displacement);
 			collider->invalidPosition = false;
 		}
@@ -214,7 +214,8 @@ uint32 ColliderManager::update()
 				continue;
 			}
 
-			fixed_ext_t distanceVectorSquareLength = Vector3D::squareLength(Vector3D::get(colliderToCheck->transformation->position, colliderPosition));
+			fixed_ext_t distanceVectorSquareLength = 
+				Vector3D::squareLength(Vector3D::get(colliderToCheck->transformation->position, colliderPosition));
 
 			if(__FIXED_SQUARE(__COLLIDER_MAXIMUM_SIZE) < distanceVectorSquareLength)
 			{
@@ -227,7 +228,13 @@ uint32 ColliderManager::update()
 
 			if(colliderToCheck->invalidPosition)
 			{
-				Vector3D displacement = Vector3D::rotate(Vector3D::getFromPixelVector(((ColliderSpec*)colliderToCheck->componentSpec)->displacement), colliderToCheck->transformation->rotation);				
+				Vector3D displacement = 
+					Vector3D::rotate
+					(
+						Vector3D::getFromPixelVector(((ColliderSpec*)colliderToCheck->componentSpec)->displacement), 
+						colliderToCheck->transformation->rotation
+					);	
+				
 				colliderToCheck->position = Vector3D::sum(colliderToCheck->transformation->position, displacement);
 				colliderToCheck->invalidPosition = false;
 			}
@@ -258,9 +265,9 @@ uint32 ColliderManager::update()
 	return returnValue;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-Collider ColliderManager::createCollider(GameObject owner, const ColliderSpec* colliderSpec)
+Collider ColliderManager::createCollider(Entity owner, const ColliderSpec* colliderSpec)
 {
 	if(NULL == colliderSpec)
 	{
@@ -269,7 +276,7 @@ Collider ColliderManager::createCollider(GameObject owner, const ColliderSpec* c
 
 	ColliderManager::purgeDestroyedColliders(this);
 
-	Collider collider = ((Collider (*)(GameObject, const ColliderSpec*)) ((ComponentSpec*)colliderSpec)->allocator)(owner, colliderSpec);
+	Collider collider = ((Collider (*)(Entity, const ColliderSpec*)) ((ComponentSpec*)colliderSpec)->allocator)(owner, colliderSpec);
 
 	this->dirty = true;
 
@@ -278,27 +285,28 @@ Collider ColliderManager::createCollider(GameObject owner, const ColliderSpec* c
 	return collider;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void ColliderManager::destroyCollider(Collider collider)
 {
 	if(!isDeleted(collider))
 	{
 #ifndef __ENABLE_PROFILER
+		NM_ASSERT(NULL != __GET_CAST(Collider, collider), "ColliderManager::destroyCollider: invalide collider");
 		NM_ASSERT(NULL != VirtualList::find(this->components, collider), "ColliderManager::destroyCollider: non registerd collider");
 #endif
 		collider->deleteMe = true;
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void ColliderManager::setCheckCollidersOutOfCameraRange(bool value)
 {
 	this->checkCollidersOutOfCameraRange = value;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void ColliderManager::showColliders()
 {
@@ -308,7 +316,7 @@ void ColliderManager::showColliders()
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void ColliderManager::hideColliders()
 {
@@ -318,51 +326,49 @@ void ColliderManager::hideColliders()
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #ifndef __SHIPPING
 void ColliderManager::print(int32 x, int32 y)
 {
-	Printing::resetCoordinates(Printing::getInstance());
+	Printing::resetCoordinates();
 
-	Printing::text(Printing::getInstance(), "COLLISION MANAGER", x, y++, NULL);
-	Printing::text(Printing::getInstance(), "COLLIDERS", x, ++y, NULL);
+	Printing::text("COLLISION MANAGER", x, y++, NULL);
+	Printing::text("COLLIDERS", x, ++y, NULL);
 	y++;
-	Printing::text(Printing::getInstance(), "REGISTERED:     ", x, ++y, NULL);
-	Printing::int32(Printing::getInstance(), VirtualList::getCount(this->components), x + 12, y, NULL);
-	Printing::text(Printing::getInstance(), "ENABLED:          ", x, ++y, NULL);
-	Printing::int32(Printing::getInstance(), ColliderManager::getNumberOfEnabledColliders(this), x + 12, y, NULL);
-	Printing::text(Printing::getInstance(), "MOVING:          ", x, ++y, NULL);
-	Printing::int32(Printing::getInstance(), ColliderManager::getNumberOfMovingEnabledColliders(this), x + 12, y++, NULL);
+	Printing::text("REGISTERED:     ", x, ++y, NULL);
+	Printing::int32(VirtualList::getCount(this->components), x + 12, y, NULL);
+	Printing::text("ENABLED:          ", x, ++y, NULL);
+	Printing::int32(ColliderManager::getNumberOfEnabledColliders(this), x + 12, y, NULL);
+	Printing::text("MOVING:          ", x, ++y, NULL);
+	Printing::int32(ColliderManager::getNumberOfMovingEnabledColliders(this), x + 12, y++, NULL);
 
 #ifdef __SHOW_PHYSICS_PROFILING
-	Printing::text(Printing::getInstance(), "STATISTICS (PER CYCLE)", x, ++y, NULL);
+	Printing::text("STATISTICS (PER CYCLE)", x, ++y, NULL);
 	y++;
-	Printing::text(Printing::getInstance(), "AVERAGE", x, ++y, NULL);
-	Printing::text(Printing::getInstance(), "CHECKS:          ", x, ++y, NULL);
-	Printing::int32(Printing::getInstance(), _checkCycles ? _collisionChecks / _checkCycles : 0, x + 12, y, NULL);
-	Printing::text(Printing::getInstance(), "COLLISIONS:      ", x, ++y, NULL);
-	Printing::int32(Printing::getInstance(), _checkCycles ? _collisions / _checkCycles : 0, x + 12, y++, NULL);
-	Printing::text(Printing::getInstance(), "LAST CYCLE", x, ++y, NULL);
-	Printing::text(Printing::getInstance(), "PRODUCTS:          ", x, ++y, NULL);
-	Printing::int32(Printing::getInstance(), _lastCycleCheckProducts, x + 12, y, NULL);
-	Printing::text(Printing::getInstance(), "CHECKS:          ", x, ++y, NULL);
-	Printing::int32(Printing::getInstance(), _lastCycleCollisionChecks, x + 12, y, NULL);
-	Printing::text(Printing::getInstance(), "COLLISIONS:      ", x, ++y, NULL);
-	Printing::int32(Printing::getInstance(), _lastCycleCollisions, x + 12, y, NULL);
+	Printing::text("AVERAGE", x, ++y, NULL);
+	Printing::text("CHECKS:          ", x, ++y, NULL);
+	Printing::int32(_checkCycles ? _collisionChecks / _checkCycles : 0, x + 12, y, NULL);
+	Printing::text("COLLISIONS:      ", x, ++y, NULL);
+	Printing::int32(_checkCycles ? _collisions / _checkCycles : 0, x + 12, y++, NULL);
+	Printing::text("LAST CYCLE", x, ++y, NULL);
+	Printing::text("PRODUCTS:          ", x, ++y, NULL);
+	Printing::int32(_lastCycleCheckProducts, x + 12, y, NULL);
+	Printing::text("CHECKS:          ", x, ++y, NULL);
+	Printing::int32(_lastCycleCollisionChecks, x + 12, y, NULL);
+	Printing::text("COLLISIONS:      ", x, ++y, NULL);
+	Printing::int32(_lastCycleCollisions, x + 12, y, NULL);
 #endif
 }
 #endif
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PRIVATE METHODS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void ColliderManager::constructor()
 {
@@ -382,23 +388,15 @@ void ColliderManager::constructor()
 	this->dirty = false;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void ColliderManager::destructor()
 {
-	ASSERT(this->components, "ColliderManager::destructor: null colliders");
-
-	if(!isDeleted(this->components))
-	{
-		VirtualList::deleteData(this->components);
-	}
-	
-
 	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 int32 ColliderManager::getNumberOfEnabledColliders()
 {
@@ -417,7 +415,7 @@ int32 ColliderManager::getNumberOfEnabledColliders()
 	return count;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 int32 ColliderManager::getNumberOfMovingEnabledColliders()
 {
@@ -436,5 +434,4 @@ int32 ColliderManager::getNumberOfMovingEnabledColliders()
 	return count;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

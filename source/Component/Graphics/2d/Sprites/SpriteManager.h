@@ -10,67 +10,43 @@
 #ifndef SPRITE_MANAGER_H_
 #define SPRITE_MANAGER_H_
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // INCLUDES
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <Clock.h>
 #include <ComponentManager.h>
 #include <Sprite.h>
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // FORWARD DECLARATIONS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-class BgmapTextureManager;
-class CharSetManager;
 class ObjectSpriteContainer;
-class ObjectTextureManager;
-class ParamTableManager;
 class Printing;
 class VirtualList;
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' MACROS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #define __TOTAL_OBJECT_SEGMENTS 	4
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DECLARATION
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-///
 /// Class SpriteManager
 ///
 /// Inherits from ComponentManager
 ///
 /// Manages all the sprite instances.
-singleton class SpriteManager : ComponentManager
+class SpriteManager : ComponentManager
 {
 	/// @protectedsection
 
 	/// Clock for the animations
 	Clock animationsClock;
-
-	/// Cache printing manager
-	Printing printing;
-
-	/// Cache param table manager
-	ParamTableManager paramTableManager;
-
-	/// Cache charset manager
-	CharSetManager charSetManager;
-
-	/// Cache BGMAP texture manager
-	BgmapTextureManager bgmapTextureManager;
-
-	/// Cache OBJECT texture manager
-	ObjectTextureManager objectTextureManager;
 
 	/// List of all created sprites
 	VirtualList sprites;
@@ -113,42 +89,50 @@ singleton class SpriteManager : ComponentManager
 
 	/// @publicsection
 
-	/// Method to retrieve the singleton instance
-	/// @return SpriteManager singleton
-	static SpriteManager getInstance();
+	/// Class' constructor
+	void constructor();
+
+	/// Retrieve the compoment type that the manager manages.
+	/// @return Component type
+	override uint32 getType();
+
+	/// Enable the manager.
+	override void enable();
+
+	/// Disable the manager.
+	override void disable();
+
+	/// Create a sprite with the provided spec.
+	/// @param owner: Object to which the sprite will attach to
+	/// @param spriteSpec: Spec to use to create the sprite
+	/// @return Created sprite
+	override Sprite instantiateComponent(Entity owner, const SpriteSpec* spriteSpec);
+
+	/// Destroy the provided sprite.
+	/// @param owner: Object to which the sprite will attach to
+	/// @param sprite: Sprite to destroy
+	override void deinstantiateComponent(Entity owner, Sprite sprite);
 
 	/// Check if at least of the sprites that attach to the provided owner is visible.
 	/// @param owner: Object to which the sprites attach to
 	/// @return True if at least of the sprites that attach to the provided owner is visible
-	override bool isAnyVisible(GameObject owner);
+	override bool isAnyVisible(Entity owner);
 
-	/// Create a sprite with the provided spec.
-	/// @param owner: Object to which the sprite will attach to
-	/// @param spriteSpec: Spec to use to create the sprite
-	/// @return Created sprite
-	override Sprite createComponent(GameObject owner, const SpriteSpec* spriteSpec);
-
-	/// Destroy the provided sprite.
-	/// @param owner: Object to which the sprite will attach to
-	/// @param sprite: Sprite to destroy
-	override void destroyComponent(GameObject owner, Sprite sprite);
-
-	/// Reset the manager's state
-	void reset();
+	/// Configure the manager's state.
+	/// @param texturesMaximumRowsToWrite: Number of texture rows to write during each rendering cycle
+	/// @param maximumParamTableRowsToComputePerCall: Number of param table rows to write during each rendering cycle 
+	/// @param size: Array with the number of OBJECTS for each container
+	/// @param z: Array of Z coordinates for each container
+	/// @param animationsClock: Clock for the animations
+	void configure
+	(
+		uint8 texturesMaximumRowsToWrite, int32 maximumParamTableRowsToComputePerCall,
+		int16 size[__TOTAL_OBJECT_SEGMENTS], int16 z[__TOTAL_OBJECT_SEGMENTS], Clock animationsClock
+	);
 
 	/// Set the clock that determines if the animations must be updated or not.
 	/// @param clock: Clock for the animations
-	void setAnimationsClock(Clock clock);
-
-	/// Create a sprite with the provided spec.
-	/// @param owner: Object to which the sprite will attach to
-	/// @param spriteSpec: Spec to use to create the sprite
-	/// @return Created sprite
-	Sprite createSprite(GameObject owner, const SpriteSpec* spriteSpec);
-
-	/// Destroy the provided sprite.
-	/// @param sprite: Sprite to destroy
-	void destroySprite(Sprite sprite);
+	void setAnimationsClock(Clock animationsClock);
 
 	/// Register a sprite to be managed
 	/// @param sprite: Sprite to be managed
@@ -263,6 +247,5 @@ singleton class SpriteManager : ComponentManager
 	/// @param y: Screen y coordinate where to print
 	void printObjectSpriteContainersStatus(int32 x, int32 y);
 }
-
 
 #endif

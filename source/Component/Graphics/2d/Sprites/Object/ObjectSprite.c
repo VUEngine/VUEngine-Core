@@ -7,36 +7,29 @@
  * that was distributed with this source code.
  */
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // INCLUDES
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <DebugConfig.h>
 #include <ObjectSpriteContainer.h>
 #include <ObjectTexture.h>
-#include <ObjectTextureManager.h>
-#include <SpriteManager.h>
-#include <VIPManager.h>
 
 #include "ObjectSprite.h"
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DECLARATIONS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 friend class Texture;
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PUBLIC METHODS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void ObjectSprite::constructor(GameObject owner, const ObjectSpriteSpec* objectSpriteSpec)
+void ObjectSprite::constructor(Entity owner, const ObjectSpriteSpec* objectSpriteSpec)
 {
 	NM_ASSERT(NULL != objectSpriteSpec, "ObjectSprite::constructor: NULL objectSpriteSpec");
 
@@ -59,10 +52,13 @@ void ObjectSprite::constructor(GameObject owner, const ObjectSpriteSpec* objectS
 
 	if(NULL != objectSpriteSpec->spriteSpec.textureSpec)
 	{
-		this->texture = Texture::safeCast(ObjectTextureManager::getTexture(ObjectTextureManager::getInstance(), (ObjectTextureSpec*)objectSpriteSpec->spriteSpec.textureSpec));
+		this->texture = Texture::get(typeofclass(ObjectTexture), (ObjectTextureSpec*)objectSpriteSpec->spriteSpec.textureSpec, 0, 0, 0);
+
 		NM_ASSERT(this->texture, "ObjectSprite::constructor: null texture");
 
-		Texture::addEventListener(this->texture, ListenerObject::safeCast(this), (EventListener)ObjectSprite::onTextureRewritten, kEventTextureRewritten);
+		Texture::addEventListener
+		(
+			this->texture, ListenerObject::safeCast(this), (EventListener)ObjectSprite::onTextureRewritten, kEventTextureRewritten);
 
 		this->totalObjects = objectSpriteSpec->spriteSpec.textureSpec->cols * objectSpriteSpec->spriteSpec.textureSpec->rows;
 
@@ -79,16 +75,22 @@ void ObjectSprite::constructor(GameObject owner, const ObjectSpriteSpec* objectS
 	this->fourthWordValue = (this->head & 0x3000) | (this->texture->palette << 14);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void ObjectSprite::destructor()
 {
+	this->objectSpriteContainer = NULL;
+
 	ObjectSprite::removeFromCache(this);
 
 	if(!isDeleted(this->texture))
 	{
-		Texture::removeEventListener(this->texture, ListenerObject::safeCast(this), (EventListener)ObjectSprite::onTextureRewritten, kEventTextureRewritten);
-		ObjectTextureManager::releaseTexture(ObjectTextureManager::getInstance(), ObjectTexture::safeCast(this->texture));		
+		Texture::removeEventListener
+		(
+			this->texture, ListenerObject::safeCast(this), (EventListener)ObjectSprite::onTextureRewritten, kEventTextureRewritten
+		);
+		
+		Texture::release(this->texture);		
 	}
 
 	this->texture = NULL;
@@ -97,39 +99,21 @@ void ObjectSprite::destructor()
 	Base::destructor();
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void ObjectSprite::registerWithManager()
+void* ObjectSprite::getManager()
 {
-	if(NULL == this->objectSpriteContainer)
-	{
-		int16 z = 0;
-
-		if(NULL != this->transformation)
-		{
-			z = __METERS_TO_PIXELS(this->transformation->position.z);
-		}
-		
-		this->objectSpriteContainer = SpriteManager::getObjectSpriteContainer(SpriteManager::getInstance(), z + this->displacement.z);
-
-		NM_ASSERT(!isDeleted(this->objectSpriteContainer), "ObjectSprite::registerWithManager: couldn't get a manager");
-		ObjectSpriteContainer::registerSprite(this->objectSpriteContainer, this);
-	}
+	return this->objectSpriteContainer;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void ObjectSprite::unregisterWithManager()
+ClassPointer ObjectSprite::getManagerClass()
 {
-	if(NULL != this->objectSpriteContainer)
-	{
-		ObjectSpriteContainer::unregisterSprite(this->objectSpriteContainer, this);
-	}
-
-	this->objectSpriteContainer = NULL;
+	return typeofclass(ObjectSpriteContainer);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 int16 ObjectSprite::doRender(int16 index)
 {
@@ -140,12 +124,14 @@ int16 ObjectSprite::doRender(int16 index)
 	int16 y = this->position.y - this->halfHeight + this->displacement.y - this->yDisplacementDelta;
 
 	uint16 secondWordValue = this->head | (this->position.parallax + this->displacement.parallax);
-	uint16 fourthWordValue = this->fourthWordValue | (CharSet::getOffset(this->texture->charSet) + this->objectTextureSource.displacement);
+	uint16 fourthWordValue = 
+		this->fourthWordValue | (CharSet::getOffset(this->texture->charSet) + this->objectTextureSource.displacement);
 
 	int16 yDisplacement = 0;
 	int16 jDisplacement = 0;
 
-	uint16* framePointer = (uint16*)(this->texture->textureSpec->map + this->texture->mapDisplacement + this->objectTextureSource.displacement);
+	uint16* framePointer = 
+		(uint16*)(this->texture->textureSpec->map + this->texture->mapDisplacement + this->objectTextureSource.displacement);
 	uint16 result = index;
 
 	ObjectAttributes* objectPointer = NULL;
@@ -176,8 +162,8 @@ int16 ObjectSprite::doRender(int16 index)
 
 			int16 outputX = x + xDisplacement;
 
-			// add 8 to the calculation to avoid char's cut off when scrolling hide the object if outside
-			// screen's bounds
+			// Add 8 to the calculation to avoid char's cut off when scrolling hide the object if outside
+			// Screen's bounds
 			if((unsigned)(outputX - _cameraFrustum->x0 + 4) > (unsigned)(_cameraFrustum->x1 - _cameraFrustum->x0 + 4))
 			{
 				objectPointer->head = __OBJECT_SPRITE_CHAR_HIDE_MASK;
@@ -197,7 +183,7 @@ int16 ObjectSprite::doRender(int16 index)
 	return result;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void ObjectSprite::setRotation(const Rotation* rotation)
 {
@@ -256,7 +242,7 @@ void ObjectSprite::setRotation(const Rotation* rotation)
 	this->fourthWordValue = (this->head & 0x3000) | (this->texture->palette << 14);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 int32 ObjectSprite::getTotalPixels()
 {
@@ -268,16 +254,16 @@ int32 ObjectSprite::getTotalPixels()
 	return 0;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void ObjectSprite::resetTotalObjects()
 {
 	this->totalObjects = Texture::getCols(this->texture) * Texture::getRows(this->texture);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 int16 ObjectSprite::getTotalObjects()
 {
@@ -286,15 +272,13 @@ int16 ObjectSprite::getTotalObjects()
 	return this->totalObjects;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PRIVATE METHODS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void ObjectSprite::removeFromCache()
 {
@@ -317,7 +301,7 @@ void ObjectSprite::removeFromCache()
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void ObjectSprite::rewrite()
 {
@@ -334,11 +318,14 @@ void ObjectSprite::rewrite()
 	NM_ASSERT(!isDeleted(this->texture), "ObjectSprite::rewrite: null texture");
 	NM_ASSERT(!isDeleted(this->texture->charSet), "ObjectSprite::rewrite: null char set");
 
-	uint16 fourthWordValue = (this->head & 0x3000) | (this->texture->palette << 14) | (CharSet::getOffset(this->texture->charSet) +  this->objectTextureSource.displacement);
+	uint16 fourthWordValue = 
+		(this->head & 0x3000) | (this->texture->palette << 14) | 
+		(CharSet::getOffset(this->texture->charSet) +  this->objectTextureSource.displacement);
 
 	int16 jDisplacement = 0;
 
-	uint16* framePointer = (uint16*)(this->texture->textureSpec->map + this->texture->mapDisplacement + this->objectTextureSource.displacement);
+	uint16* framePointer = 
+		(uint16*)(this->texture->textureSpec->map + this->texture->mapDisplacement + this->objectTextureSource.displacement);
 
 	ObjectAttributes* objectPointer = NULL;
 
@@ -356,7 +343,7 @@ void ObjectSprite::rewrite()
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 bool ObjectSprite::onTextureRewritten(ListenerObject eventFirer __attribute__ ((unused)))
 {
@@ -365,5 +352,4 @@ bool ObjectSprite::onTextureRewritten(ListenerObject eventFirer __attribute__ ((
 	return true;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

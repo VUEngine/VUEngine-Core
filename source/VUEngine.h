@@ -10,40 +10,29 @@
 #ifndef VUENGINE_H_
 #define VUENGINE_H_
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // INCLUDES
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <ListenerObject.h>
 #include <VIPManager.h>
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // FORWARD DECLARATIONS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 class Clock;
-class ColliderManager;
-class CommunicationManager;
 class GameState;
-class BodyManager;
-class SoundManager;
-class GameObject;
-class SpriteManager;
+class Entity;
 class StateMachine;
 class Stage;
 class ToolState;
 class UIContainer;
 class VUEngine;
-class WireframeManager;
 
-extern VUEngine _vuEngine __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE;
-
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' MACROS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #define PROCESS_NAME_CAMERA					"CAMERA"
 #define PROCESS_NAME_COLLISIONS				"COLLISIONS"
@@ -66,12 +55,10 @@ extern VUEngine _vuEngine __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE;
 #define PROCESS_NAME_SOUND_PLAY				"SOUND PLAY"
 #define PROCESS_NAME_COMMUNICATIONS			"COMMS"
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DECLARATION
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-///
 /// Class VUEngine
 ///
 /// Inherits from ListenerObject
@@ -87,36 +74,6 @@ singleton class VUEngine : ListenerObject
 	/// Global timer
 	Clock clock;
 
-	/// Clocks manager
-	ClockManager clockManager;
-
-	/// Keypad manager
-	KeypadManager keypadManager;
-
-	/// VIP manager
-	VIPManager vipManager;
-
-	/// Wireframe manager
-	WireframeManager wireframeManager;
-
-	/// Spritems manager
-	SpriteManager spriteManager;
-
-	/// Timer manager
-	TimerManager timerManager;
-
-	/// Communication manager
-	CommunicationManager communicationManager;
-
-	/// Sound manager
-	SoundManager soundManager;
-
-	/// Frame manager
-	FrameRate frameRate;
-
-	/// Game's camera
-	Camera camera;
-	
 	/// Saved data manager
 	ListenerObject saveDataManager;
 
@@ -140,168 +97,111 @@ singleton class VUEngine : ListenerObject
 
 	/// @publicsection
 
-	/// Method to retrieve the singleton instance
-	/// @return VUEngine singleton
-	static VUEngine getInstance();
+	/// Reset the engine's main clock.
+	static void resetClock();
+
+	/// Pause the game by pushing the provided game state into the engine's state machine's stack.
+	/// @param pauseState: Pause game state
+	static void pause(GameState pauseState);
+
+	/// Unpause the game by removing the provided game state from the engine's state machine's stack.
+	/// @param pauseState: Pause game state
+	static void unpause(GameState pauseState);
+
+	/// Ste the current game state at the top of the engine's state machine's stack.
+	/// @param gameState: Game state to set
+	static void setState(GameState gameState);
+
+	/// Add a game state to the top of the engine's state machine's stack.
+	/// @param state: Game state to push
+	static void addState(GameState state);
+
+	/// Swap the game state at the top of the engine's state machine's stack wht the provided one.
+	/// @param state: Game state to swap to
+	static void changeState(GameState state);
+
+	/// Check if the engine's state machine is in a tool state.
+	/// @return True if the engine's state machine is in a tool state
+	static bool isInToolState();
+
+	/// Check if the engine's state machine is entering or exiting a tool state.
+	/// @return True if the engine's state machine is entering or exiting a tool state
+	static bool isInToolStateTransition();
+
+	/// Retrieve the current state.
+	/// @return Current game state
+	static GameState getCurrentState();
+
+	/// Retrieve the previous state.
+	/// @return Previous game state
+	static GameState getPreviousState();
+
+	/// Retrieve the current stage.
+	/// @return Current game state's stage
+	static Stage getStage();
+
+	/// Retrieve the engine's main clock.
+	/// @return Engine's main clock
+	static Clock getClock();
+
+	/// Retrieve the current game state's logics clock.
+	/// @return Current game state's logics clock
+	static Clock getLogicsClock();
+
+	/// Retrieve the current game state's messaging clock.
+	/// @return Current game state's messaging clock
+	static Clock getMessagingClock();
+
+	/// Retrieve the current game state's physics clock.
+	/// @return Current game state's physics clock
+	static Clock getPhysicsClock();
+
+	/// Retrieve the current process' name.
+	/// @return Current process' name
+	static char* getProcessName();
+
+	/// Retrieve the duration of game frames.
+	/// @return Duration in milliseconds of game frames
+	static uint16 getGameFrameDuration();
+	
+	/// Set the target frame rate.
+	/// @param gameFrameRate: New frame rate target
+	static void setGameFrameRate(uint16 gameFrameRate);
+
+	/// Lock the frame rate.
+	static void lockFrameRate();
+
+	/// Unlock the frame rate.
+	static void unlockFrameRate();
+
+	/// Set the saved data manager.
+	/// @param saveDataManager:: Save data manager to use
+	static void setSaveDataManager(ListenerObject saveDataManager);
+
+	/// Retrieve the saved data manager.
+	/// @return Save data manager
+	static ListenerObject getSaveDataManager();
+
+	/// Check if the game is paused.
+	/// @return True if the game is paused; false otherwise
+	static bool isPaused();
+
+	/// Halt the game by the provided time.
+	/// @param milliSeconds: Time to halt the game
+	static void wait(uint32 milliSeconds);
+
+	/// Start profiling the game.
+	static void startProfiling();
 
 	/// Receive and process a Telegram.
 	/// @param telegram: Received telegram to process
 	/// @return True if the telegram was processed
 	override bool handleMessage(Telegram telegram);
 
-	/// Reset the engine's sub components.
-	/// @param resetSounds: If false, any playing sounds will keep playing
-	void reset(bool resetSounds);
-
-	/// Reset the engine's main clock.
-	void resetClock();
-
 	/// Start the game with the provided game state.
-	/// @param state: Game state the engine must enter when starting
-	void start(GameState state);
-
-	/// Pause the game by pushing the provided game state into the engine's state machine's stack.
-	/// @param pauseState: Pause game state
-	void pause(GameState pauseState);
-
-	/// Unpause the game by removing the provided game state from the engine's state machine's stack.
-	/// @param pauseState: Pause game state
-	void unpause(GameState pauseState);
-
-	/// Ste the current game state at the top of the engine's state machine's stack.
-	/// @param gameState: Game state to set
-	void setState(GameState gameState);
-
-	/// Add a game state to the top of the engine's state machine's stack.
-	/// @param state: Game state to push
-	void addState(GameState state);
-
-	/// Swap the game state at the top of the engine's state machine's stack wht the provided one.
-	/// @param state: Game state to swap to
-	void changeState(GameState state);
-
-	/// Check if the engine's state machine is in a tool state.
-	/// @return True if the engine's state machine is in a tool state
-	bool isInToolState();
-
-	/// Check if the engine's state machine is entering or exiting a tool state.
-	/// @return True if the engine's state machine is entering or exiting a tool state
-	bool isInToolStateTransition();
-
-	/// Retrieve the current state.
-	/// @return Current game state
-	GameState getCurrentState();
-
-	/// Retrieve the previous state.
-	/// @return Previous game state
-	GameState getPreviousState();
-
-	/// Retrieve the current UI container.
-	/// @return Current game state's UI container
-	UIContainer getUIContainer();
-
-	/// Retrieve the current stage.
-	/// @return Current game state's stage
-	Stage getStage();
-
-	/// Retrieve the current game state's physical world.
-	/// @return Current game state's physical world
-	BodyManager getBodyManager();
-
-	/// Retrieve the current game state's collision manager.
-	/// @return Current game state's collision manager
-	ColliderManager getColliderManager();
-
-	/// Retrieve the engine's state machine.
-	/// @return Engine's state machine
-	StateMachine getStateMachine();
-
-	/// Retrieve the engine's main clock.
-	/// @return Engine's main clock
-	Clock getClock();
-
-	/// Retrieve the current game state's logics clock.
-	/// @return Current game state's logics clock
-	Clock getLogicsClock();
-
-	/// Retrieve the current game state's messaging clock.
-	/// @return Current game state's messaging clock
-	Clock getMessagingClock();
-
-	/// Retrieve the current game state's physics clock.
-	/// @return Current game state's physics clock
-	Clock getPhysicsClock();
-
-	/// Retrieve the current process' name.
-	/// @return Current process' name
-	char* getProcessName();
-
-	/// Retrieve the duration of game frames.
-	/// @return Duration in milliseconds of game frames
-	uint16 getGameFrameDuration();
-	
-	/// Set the target frame rate.
-	/// @param gameFrameRate: New frame rate target
-	void setGameFrameRate(uint16 gameFrameRate);
-
-	/// Lock the frame rate.
-	void lockFrameRate();
-
-	/// Unlock the frame rate.
-	void unlockFrameRate();
-
-	/// Enable user input.
-	void enableKeypad();
-
-	/// Disable user input.
-	void disableKeypad();
-
-	/// Set the saved data manager.
-	/// @param saveDataManager:: Save data manager to use
-	void setSaveDataManager(ListenerObject saveDataManager);
-
-	/// Retrieve the saved data manager.
-	/// @return Save data manager
-	ListenerObject getSaveDataManager();
-
-	/// Push a post processing effect at the start of the list of effects.
-	/// @param postProcessingEffect: Post-processing effect function
-	/// @param gameObject: Post-processing effect function's scope
-	void pushFrontPostProcessingEffect(PostProcessingEffect postProcessingEffect, GameObject gameObject);
-	
-	/// Push a post processing effect at the end of the list of effects.
-	/// @param postProcessingEffect: Post-processing effect function
-	/// @param gameObject: Post-processing effect function's scope
-	void pushBackPostProcessingEffect(PostProcessingEffect postProcessingEffect, GameObject gameObject);
-
-	/// Remove a post-processing effect from the list of effects.
-	/// @param postProcessingEffect: Post-processing effect function
- 	/// @param gameObject: Post-processing effect function's scope
-	void removePostProcessingEffect(PostProcessingEffect postProcessingEffect, GameObject gameObject);
-
-	/// Called when the VIP reaches FRAMESTART.
-	/// @param gameFrameDuration: Time in milliseconds that each game frame lasts.
-	void frameStarted(uint16 gameFrameDuration);
-
-	/// Called when the VIP reaches GAMESTART.
-	/// @param gameFrameDuration: Time in milliseconds that each game frame lasts.
-	void gameFrameStarted(uint16 gameFrameDuration);
-
-	/// Check if the game is paused.
-	/// @return True if the game is paused; false otherwise
-	bool isPaused();
-
-	/// Halt the game by the provided time.
-	/// @param milliSeconds: Time to halt the game
-	void wait(uint32 milliSeconds);
-
-	/// Force the complete initialization of all graphics.
-	void prepareGraphics();
-
-	/// Start profiling the game.
-	void startProfiling();
-
+	/// @param gameState: Game state the engine must enter when starting
+	/// @return Return code (0)
+	int32 start(GameState gameState);
 }
-
 
 #endif

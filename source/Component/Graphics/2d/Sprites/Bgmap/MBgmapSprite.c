@@ -7,49 +7,41 @@
  * that was distributed with this source code.
  */
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // INCLUDES
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-#include <BgmapTextureManager.h>
-#include <Camera.h>
-#include <Optics.h>
+#include <BgmapTexture.h>
+#include <DebugConfig.h>
 #include <ParamTableManager.h>
 #include <VirtualList.h>
 #include <VirtualNode.h>
-#include <DebugConfig.h>
-#include <VIPManager.h>
 
 #include "MBgmapSprite.h"
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DECLARATIONS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 friend class Texture;
 friend class BgmapTexture;
 friend class VirtualNode;
 friend class VirtualList;
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' MACROS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #define __ACCOUNT_FOR_BGMAP_PLACEMENT		1
 #define __GX_LIMIT							511
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PUBLIC METHODS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void MBgmapSprite::constructor(GameObject owner, const MBgmapSpriteSpec* mBgmapSpriteSpec)
+void MBgmapSprite::constructor(Entity owner, const MBgmapSpriteSpec* mBgmapSpriteSpec)
 {
 	// Always explicitly call the base's constructor 
 	Base::constructor(owner, &mBgmapSpriteSpec->bgmapSpriteSpec);
@@ -58,7 +50,7 @@ void MBgmapSprite::constructor(GameObject owner, const MBgmapSpriteSpec* mBgmapS
 
 	if(!isDeleted(this->texture))
 	{
-		BgmapTextureManager::releaseTexture(BgmapTextureManager::getInstance(), BgmapTexture::safeCast(this->texture));
+		Texture::release(this->texture);
 		this->texture = NULL;
 	}
 
@@ -72,7 +64,7 @@ void MBgmapSprite::constructor(GameObject owner, const MBgmapSpriteSpec* mBgmapS
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void MBgmapSprite::destructor()
 {
@@ -82,7 +74,7 @@ void MBgmapSprite::destructor()
 	Base::destructor();
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 int16 MBgmapSprite::doRender(int16 index)
 {
@@ -114,7 +106,7 @@ int16 MBgmapSprite::doRender(int16 index)
 
 	WorldAttributes* worldPointer = &_worldAttributesCache[index];
 
-	// get coordinates
+	// Get coordinates
 	int16 gx = position.x - this->halfWidth;
 	int16 gy = position.y - this->halfHeight;
 	int16 gp = position.parallax;
@@ -140,10 +132,10 @@ int16 MBgmapSprite::doRender(int16 index)
 	int16 w = 0;
 	int16 h = 0;
 
-	// set the world size
+	// Set the world size
 	if(!((MBgmapSpriteSpec*)this->componentSpec)->xLoop)
 	{
-    	w = (this->halfWidth << 1) - mxDisplacement;
+		w = (this->halfWidth << 1) - mxDisplacement;
 
 		if(w + gx >= _cameraFrustum->x1)
 		{
@@ -165,7 +157,7 @@ int16 MBgmapSprite::doRender(int16 index)
 
 	if(!((MBgmapSpriteSpec*)this->componentSpec)->yLoop)
 	{
-    	h = (this->halfHeight << 1) - myDisplacement;
+		h = (this->halfHeight << 1) - myDisplacement;
 
 		if(h + gy >= _cameraFrustum->y1)
 		{
@@ -220,15 +212,13 @@ int16 MBgmapSprite::doRender(int16 index)
 	return index;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PRIVATE METHODS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void MBgmapSprite::loadTextures()
 {
@@ -253,7 +243,7 @@ void MBgmapSprite::loadTextures()
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void MBgmapSprite::loadTexture(TextureSpec* textureSpec, bool isFirstTextureAndHasMultipleTextures)
 {
@@ -275,15 +265,30 @@ void MBgmapSprite::loadTexture(TextureSpec* textureSpec, bool isFirstTextureAndH
 		}
 	}
 
-	BgmapTexture bgmapTexture = BgmapTextureManager::getTexture(BgmapTextureManager::getInstance(), textureSpec, minimumSegment, isFirstTextureAndHasMultipleTextures, ((MBgmapSpriteSpec*)this->componentSpec)->scValue);
+	BgmapTexture bgmapTexture = 
+		BgmapTexture::safeCast
+		(
+			Texture::get
+			(
+				typeofclass(BgmapTexture), textureSpec, minimumSegment, 
+				isFirstTextureAndHasMultipleTextures, ((MBgmapSpriteSpec*)this->componentSpec)->scValue
+			)
+		);
 
 	NM_ASSERT(!isDeleted(bgmapTexture), "MBgmapSprite::loadTexture: texture not loaded");
 	NM_ASSERT(!isDeleted(this->textures), "MBgmapSprite::loadTexture: null textures list");
-	NM_ASSERT(!isFirstTextureAndHasMultipleTextures || 0 == (BgmapTexture::getSegment(bgmapTexture) % 2), "MBgmapSprite::loadTexture: first texture not loaded in even segment");
+	NM_ASSERT
+	(
+		!isFirstTextureAndHasMultipleTextures || 0 == (BgmapTexture::getSegment(bgmapTexture) % 2), 
+		"MBgmapSprite::loadTexture: first texture not loaded in even segment"
+	);
 
 	if(!isDeleted(bgmapTexture))
 	{
-		BgmapTexture::addEventListener(bgmapTexture, ListenerObject::safeCast(this), (EventListener)BgmapSprite::onTextureRewritten, kEventTextureRewritten);
+		BgmapTexture::addEventListener
+		(
+			bgmapTexture, ListenerObject::safeCast(this), (EventListener)BgmapSprite::onTextureRewritten, kEventTextureRewritten
+		);
 
 		VirtualList::pushBack(this->textures, bgmapTexture);
 
@@ -292,17 +297,17 @@ void MBgmapSprite::loadTexture(TextureSpec* textureSpec, bool isFirstTextureAndH
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void MBgmapSprite::releaseTextures()
 {
-	// free the texture
+	// Free the texture
 	if(!isDeleted(this->texture))
 	{
-		// if affine or bgmap
+		// If affine or bgmap
 		if(((__WORLD_AFFINE | __WORLD_HBIAS) & this->head) && this->param)
 		{
-			// free param table space
+			// Free param table space
 			ParamTableManager::free(ParamTableManager::getInstance(), BgmapSprite::safeCast(this));
 		}
 	}
@@ -319,8 +324,12 @@ void MBgmapSprite::releaseTextures()
 
 			if(!isDeleted(bgmapTexture))
 			{
-				BgmapTexture::removeEventListener(bgmapTexture, ListenerObject::safeCast(this), (EventListener)BgmapSprite::onTextureRewritten, kEventTextureRewritten);
-				BgmapTextureManager::releaseTexture(BgmapTextureManager::getInstance(), bgmapTexture);
+				BgmapTexture::removeEventListener
+				(
+					bgmapTexture, ListenerObject::safeCast(this), (EventListener)BgmapSprite::onTextureRewritten, kEventTextureRewritten
+				);
+				
+				Texture::release(Texture::safeCast(bgmapTexture));
 			}
 		}
 
@@ -329,7 +338,7 @@ void MBgmapSprite::releaseTextures()
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void MBgmapSprite::calculateSize()
 {
@@ -340,7 +349,7 @@ void MBgmapSprite::calculateSize()
 
 	for(; NULL != node; node = node->next)
 	{
-		// free the texture
+		// Free the texture
 		int32 textureCols = (Texture::safeCast(node->data))->textureSpec->cols;
 		int32 textureRows = (Texture::safeCast(node->data))->textureSpec->rows;
 
@@ -369,5 +378,4 @@ void MBgmapSprite::calculateSize()
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

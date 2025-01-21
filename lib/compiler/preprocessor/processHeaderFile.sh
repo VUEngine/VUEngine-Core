@@ -248,7 +248,7 @@ then
 	exit 0
 fi
 
-classDeclaration=`grep -n -e "^[ 	]*[A-z0-9]*[ 	]*class[ 	]\+[A-Z][A-z0-9]*[ 	]*:[ 	]*[A-Z][A-z0-9]*" $INPUT_FILE`
+classDeclaration=`grep -n -e "^[ 	]*[A-z0-9\!]*[ 	]*class[ 	]\+[A-Z][A-z0-9]*[ 	]*:[ 	]*[A-Z][A-z0-9]*" $INPUT_FILE`
 cleanClassDeclaration=`cut -d: -f2,3 <<< "$classDeclaration"`
 className=`sed -e 's#^.*class \([A-z][A-z0-9]*\)[ 	]*\:.*#\1#' <<< "$cleanClassDeclaration"`
 baseClassName=`cut -d: -f2 <<< "$cleanClassDeclaration" | sed -e 's/[^[:alnum:]_-]//g'`
@@ -445,6 +445,38 @@ then
 
 		baseBaseClassNameLine=`grep -e "^$baseBaseClassName:.* | grep -v "extension <<< "$classesHierarchy"`
 
+		isBaseClassSingleton=`echo "$classesHierarchy" | grep -e "^$baseBaseClassName:.*" | grep -e "singleton!"`
+
+		if [ ! -z "$isBaseClassSingleton"];
+		then
+			echo "ERROR: $className inherits from $baseClassName but"
+			echo "	$baseClassName is final because it is a singleton"
+
+			if [ -f $OUTPUT_FILE ];
+			then
+				rm -f $OUTPUT_FILE
+			fi
+
+			exit 0
+		else
+
+			isBaseClassFinal=`echo "$classesHierarchy" | grep -e "^$baseBaseClassName:.*" | grep -e "final "`
+	
+			if [ ! -z "$isBaseClassFinal"];
+			then
+				echo "ERROR: $className inherits from $baseClassName but"
+				echo "	$baseClassName is final"
+
+				if [ -f $OUTPUT_FILE ];
+				then
+					rm -f $OUTPUT_FILE
+				fi
+
+				exit 0
+			fi
+		fi
+
+
 		if (set -f ; IFS=$'\n'; set -- x${baseBaseClassNameLine}x ; [ $# = 1 ]) ; 
 		then
 			baseBaseClassName=`echo $baseBaseClassNameLine | cut -d ":" -f 2`
@@ -478,6 +510,12 @@ classDeclarationBlock=`cat $INPUT_FILE | sed ''"$line"','"$end"'!d' | grep -v -e
 #echo "$classDeclarationBlock"
 
 # Get class' methods
+
+# Remove new lines where ( is the first character
+classDeclarationBlock=`sed -e 's/[	 ]*(/(/'  <<< "$classDeclarationBlock"`
+classDeclarationBlock=`sed -e 's/\n(/(/'  <<< "$classDeclarationBlock"`
+classDeclarationBlock=`sed -e 's/[	 ]*(/(/'  <<< "$classDeclarationBlock"`
+
 methods=`grep -v -e '^[ 	\*A-z0-9]\+[ 	]*([ 	]*\*' <<< "$classDeclarationBlock" | grep -e '(.*)[ 	=0]*;[ 	]*'`
 attributes=`grep -v -e '^[ 	\*A-z0-9]\+[ 	]*([ 	]*[^\*]' <<< "$classDeclarationBlock" | grep -e ';' | sed -e 's#&\\\##' | tr -d "\r\n"`
 
@@ -679,7 +717,8 @@ mv $CLASS_INHERITED_METHODS_DICTIONARY.tmp $CLASS_INHERITED_METHODS_DICTIONARY
 
 #echo methodDeclarations
 #echo "$methodDeclarations"
-echo "Computing class modifiers on caller $CALLER"  >> $CLASS_LOG_FILE
+echo "Computing class modifiers on caller $CALLER" >> $CLASS_LOG_FILE
+echo "Modifiers: $classModifiers"  >> $CLASS_LOG_FILE
 
 while IFS= read -r classModifier;
 do
@@ -700,7 +739,7 @@ do
 		isFinalClass=true;
 	fi
 
-	if [ -z "${classModifier##*singleton *}" ];
+	if [ -z "${classModifier##*singleton*}" ];
 	then
 
 		isSingletonClass=true
@@ -717,6 +756,13 @@ done <<< "$classModifiers"
 # Add destructor declaration
 if [ ! "$isStaticClass" = true ] && [ ! "$isExtensionClass" = true ];
 then
+	if [ "$isSingletonClass" = true ];
+	then
+		methodDeclarations=$methodDeclarations"
+	void "$className"_secure(ClassPointer const (*requesterClasses)[]);
+	"$className" "$className"_getInstance(ClassPointer requesterClass);"
+	fi
+
 	methodDeclarations=$methodDeclarations"
 	void "$className"_destructor(void* _this);"
 fi
@@ -764,20 +810,17 @@ then
 	echo "$virtualMethodOverrides" >> $TEMPORAL_FILE
 #	echo "" >> $TEMPORAL_FILE
 
-	if [ ! "$isFinalClass" = true ];
+	if [ ! -z "$baseClassName" ];
 	then
-		if [ ! -z "$baseClassName" ];
-		then
-			attributes="#define "$className"_ATTRIBUTES "$baseClassName"_ATTRIBUTES $attributes"
+		attributes="#define "$className"_ATTRIBUTES "$baseClassName"_ATTRIBUTES $attributes"
 
-			virtualMethodDeclarations=$virtualMethodDeclarations" "$baseClassName"_METHODS(ClassName) "
-			virtualMethodOverrides=$virtualMethodOverrides" "$baseClassName"_SET_VTABLE(ClassName) "
-		else
-			attributes="#define "$className"_ATTRIBUTES $attributes"
-		fi
-
-		echo "$attributes" >> $TEMPORAL_FILE
+		virtualMethodDeclarations=$virtualMethodDeclarations" "$baseClassName"_METHODS(ClassName) "
+		virtualMethodOverrides=$virtualMethodOverrides" "$baseClassName"_SET_VTABLE(ClassName) "
+	else
+		attributes="#define "$className"_ATTRIBUTES $attributes"
 	fi
+
+	echo "$attributes" >> $TEMPORAL_FILE
 fi
 
 #echo "" >> $TEMPORAL_FILE
@@ -794,6 +837,8 @@ else
 		echo "__FORWARD_CLASS($className);" >> $TEMPORAL_FILE
 		echo "#endif" >> $TEMPORAL_FILE
 		echo "__CLASS($className);" >> $TEMPORAL_FILE
+	else
+		echo "__CLASS_FUNDAMENTAL_METHODS($className);" >> $TEMPORAL_FILE
 	fi
 fi
 

@@ -7,14 +7,11 @@
  * that was distributed with this source code.
  */
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // INCLUDES
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <BgmapSprite.h>
-#include <BgmapTextureManager.h>
 #include <Printing.h>
 #include <VirtualList.h>
 #include <VirtualNode.h>
@@ -22,29 +19,26 @@
 
 #include "ParamTableManager.h"
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DECLARATIONS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 friend class VirtualNode;
 friend class VirtualList;
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PUBLIC METHODS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void ParamTableManager::reset()
+secure void ParamTableManager::reset()
 {
 	VirtualList::clear(this->bgmapSprites);
 
 	this->paramTableBase = __PARAM_TABLE_END;
 
-	// set the size of the param table
+	// Set the size of the param table
 	this->size = __PARAM_TABLE_END - this->paramTableBase;
 
 	NM_ASSERT(__PARAM_TABLE_END >= this->paramTableBase, "ParamTableManager::reset: param table size is negative");
@@ -57,9 +51,9 @@ void ParamTableManager::reset()
 	this->previouslyMovedBgmapSprite = NULL;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void ParamTableManager::setup(int32 availableBgmapSegmentsForParamTable)
+secure uint32 ParamTableManager::configure(int32 availableBgmapSegmentsForParamTable)
 {
 	if(0 == availableBgmapSegmentsForParamTable)
 	{
@@ -70,26 +64,26 @@ void ParamTableManager::setup(int32 availableBgmapSegmentsForParamTable)
 		this->paramTableBase = __PARAM_TABLE_END - __BGMAP_SEGMENT_SIZE * availableBgmapSegmentsForParamTable;
 	}
 
-	// find the next address that is a multiple of 8192
-	// taking into account the printable area
+	// Find the next address that is a multiple of 8192
+	// Taking into account the printable area
 	for(; 0 != (this->paramTableBase % __BGMAP_SEGMENT_SIZE) && this->paramTableBase > __BGMAP_SPACE_BASE_ADDRESS; this->paramTableBase--);
 
 	NM_ASSERT(this->paramTableBase <= __PARAM_TABLE_END, "ParamTableManager::setup: param table size is negative");
 
 	this->size = __PARAM_TABLE_END - this->paramTableBase;
 
-	BgmapTextureManager::calculateAvailableBgmapSegments(BgmapTextureManager::getInstance());
-
 	// Clean param tables memory
 	for(uint8* data = (uint8*)this->paramTableBase; data < (uint8*)__PARAM_TABLE_END; data++)
 	{
 		*data = 0;
 	}
+
+	return this->paramTableBase;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-uint32 ParamTableManager::allocate(BgmapSprite bgmapSprite)
+secure uint32 ParamTableManager::allocate(BgmapSprite bgmapSprite)
 {
 	ASSERT(bgmapSprite, "ParamTableManager::allocate: null sprite");
 
@@ -150,8 +144,8 @@ uint32 ParamTableManager::allocate(BgmapSprite bgmapSprite)
 #ifndef __SHIPPING
 	if(0 == paramAddress)
 	{
-		Printing::text(Printing::getInstance(), "Total size: ", 20, 7, NULL);
-		Printing::int32(Printing::getInstance(), __PARAM_TABLE_END - this->paramTableBase, 20 + 19, 7, NULL);
+		Printing::text("Total size: ", 20, 7, NULL);
+		Printing::int32(__PARAM_TABLE_END - this->paramTableBase, 20 + 19, 7, NULL);
 
 		NM_ASSERT(false, "ParamTableManager::allocate: memory depleted");
 	}
@@ -160,9 +154,9 @@ uint32 ParamTableManager::allocate(BgmapSprite bgmapSprite)
 	return paramAddress;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void ParamTableManager::free(BgmapSprite bgmapSprite)
+secure void ParamTableManager::free(BgmapSprite bgmapSprite)
 {
 	if(VirtualList::removeData(this->bgmapSprites, bgmapSprite))
 	{
@@ -183,10 +177,10 @@ void ParamTableManager::free(BgmapSprite bgmapSprite)
 			this->previouslyMovedBgmapSprite = NULL;
 		}
 
-		// accounted for
+		// Accounted for
 		if(this->paramTableFreeData.param && this->paramTableFreeData.param <= BgmapSprite::getParam(bgmapSprite))
 		{
-			// but increase the space recovered
+			// But increase the space recovered
 			this->paramTableFreeData.recoveredSize += ParamTableManager::calculateSpriteParamTableSize(this, bgmapSprite);
 
 			return;
@@ -197,9 +191,9 @@ void ParamTableManager::free(BgmapSprite bgmapSprite)
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void ParamTableManager::defragment(bool deferred)
+secure void ParamTableManager::defragment(bool deferred)
 {
 	if(0 != this->paramTableFreeData.param)
 	{
@@ -213,12 +207,12 @@ void ParamTableManager::defragment(bool deferred)
 
 				uint32 spriteParam = BgmapSprite::getParam(sprite);
 
-				// retrieve param
+				// Retrieve param
 				if(spriteParam > this->paramTableFreeData.param)
 				{
 					int32 size = ParamTableManager::calculateSpriteParamTableSize(this, sprite);
 
-					// check that the sprite won't override itself
+					// Check that the sprite won't override itself
 					if(this->paramTableFreeData.param + size > spriteParam)
 					{
 						break;
@@ -232,7 +226,7 @@ void ParamTableManager::defragment(bool deferred)
 					//move back paramSize bytes
 					BgmapSprite::setParam(sprite, this->paramTableFreeData.param);
 
-					// set the new param to move on the next cycle
+					// Set the new param to move on the next cycle
 					this->paramTableFreeData.param += size;
 
 					this->previouslyMovedBgmapSprite = sprite;
@@ -257,41 +251,32 @@ void ParamTableManager::defragment(bool deferred)
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-uint32 ParamTableManager::getParamTableBase()
-{
-	return this->paramTableBase;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void ParamTableManager::print(int32 x, int32 y)
 {
 	int32 xDisplacement = 11;
 
-	Printing::text(Printing::getInstance(), "PARAM TABLE STATUS", x, y++, NULL);
-	Printing::text(Printing::getInstance(), "Size:              ", x, ++y, NULL);
-	Printing::int32(Printing::getInstance(), this->size, x + xDisplacement, y, NULL);
+	Printing::text("PARAM TABLE STATUS", x, y++, NULL);
+	Printing::text("Size:              ", x, ++y, NULL);
+	Printing::int32(this->size, x + xDisplacement, y, NULL);
 
-	Printing::text(Printing::getInstance(), "Used:              ", x, ++y, NULL);
-	Printing::int32(Printing::getInstance(), this->usedBytes - 1, x + xDisplacement, y, NULL);
+	Printing::text("Used:              ", x, ++y, NULL);
+	Printing::int32(this->usedBytes - 1, x + xDisplacement, y, NULL);
 
-	Printing::text(Printing::getInstance(), "ParamBase:          ", x, ++y, NULL);
-	Printing::hex(Printing::getInstance(), this->paramTableBase, x + xDisplacement, y, 8, NULL);
-	Printing::text(Printing::getInstance(), "ParamEnd:           ", x, ++y, NULL);
-	Printing::hex(Printing::getInstance(), __PARAM_TABLE_END, x + xDisplacement, y, 8, NULL);
+	Printing::text("ParamBase:          ", x, ++y, NULL);
+	Printing::hex(this->paramTableBase, x + xDisplacement, y, 8, NULL);
+	Printing::text("ParamEnd:           ", x, ++y, NULL);
+	Printing::hex(__PARAM_TABLE_END, x + xDisplacement, y, 8, NULL);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PRIVATE METHODS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void ParamTableManager::constructor()
 {
@@ -304,21 +289,21 @@ void ParamTableManager::constructor()
 	ParamTableManager::reset(this);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void ParamTableManager::destructor()
 {
 	ParamTableManager::reset(this);
 
 	delete this->bgmapSprites;
-	this->bgmapSprites = NULL;
+	this ->bgmapSprites = NULL;
 
-	// allow a new construct
+	// Allow a new construct
 	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 uint32 ParamTableManager::calculateSpriteParamTableSize(BgmapSprite bgmapSprite)
 {
@@ -335,9 +320,9 @@ uint32 ParamTableManager::calculateSpriteParamTableSize(BgmapSprite bgmapSprite)
 			textureRows = 64;
 		}
 
-		// calculate necessary space to allocate
-		// size = sprite's rows * 8 pixels each one * 16 bytes needed by each row = sprite's rows * 2 ^ 7
-		// add one row as padding to make sure not ovewriting take place
+		// Calculate necessary space to allocate
+		// Size = sprite's rows * 8 pixels each one * 16 bytes needed by each row = sprite's rows * 2 ^ 7
+		// Add one row as padding to make sure not ovewriting take place
 		size = (textureRows << 7) * __MAXIMUM_SCALE;
 	}
 	else if(__WORLD_HBIAS & spriteHead)
@@ -347,12 +332,11 @@ uint32 ParamTableManager::calculateSpriteParamTableSize(BgmapSprite bgmapSprite)
 			textureRows = 28;
 		}
 
-		// size = sprite's rows * 8 pixels each one * 4 bytes needed by each row = sprite's rows * 2 ^ 5
+		// Size = sprite's rows * 8 pixels each one * 4 bytes needed by each row = sprite's rows * 2 ^ 5
 		size = textureRows << 5;
 	}
 
 	return size;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

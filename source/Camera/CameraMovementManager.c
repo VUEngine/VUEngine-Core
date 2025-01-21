@@ -7,32 +7,28 @@
  * that was distributed with this source code.
  */
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // INCLUDES
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <Camera.h>
 #include <DebugConfig.h>
-#include <Entity.h>
+#include <Actor.h>
 #include <VIPManager.h>
 
 #include "CameraMovementManager.h"
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DECLARATIONS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 friend class Camera;
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PUBLIC METHODS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void CameraMovementManager::constructor()
 {
@@ -42,68 +38,72 @@ void CameraMovementManager::constructor()
 	CameraMovementManager::reset(this);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void CameraMovementManager::destructor()
 {
-	// destroy base
 	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void CameraMovementManager::reset()
 {
-	this->focusEntity = NULL;
-	this->focusEntityPosition = NULL;
-	this->focusEntityPositionDisplacement = Vector3D::zero();
+	this->focusActor = NULL;
+	this->focusActorPosition = NULL;
+	this->focusActorPositionDisplacement = Vector3D::zero();
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void CameraMovementManager::setFocusEntity(Entity focusEntity)
+void CameraMovementManager::setFocusActor(Actor focusActor)
 {
-	this->focusEntity = focusEntity;
-	this->focusEntityPosition = NULL;
-	this->focusEntityRotation = NULL;
+	this->focusActor = focusActor;
+	this->focusActorPosition = NULL;
+	this->focusActorRotation = NULL;
 
-	if(!isDeleted(this->focusEntity))
+	if(!isDeleted(this->focusActor))
 	{
-		Entity::addEventListener(this->focusEntity, ListenerObject::safeCast(this), (EventListener)CameraMovementManager::onFocusEntityDeleted,  kEventContainerDeleted);
-		this->focusEntityPosition = Entity::getPosition(this->focusEntity);
-		this->focusEntityRotation = Entity::getRotation(this->focusEntity);
+		Actor::addEventListener
+		(
+			this->focusActor, ListenerObject::safeCast(this), (EventListener)CameraMovementManager::onFocusActorDeleted, 
+			kEventContainerDeleted
+		);
+		
+		this->focusActorPosition = Actor::getPosition(this->focusActor);
+		this->focusActorRotation = Actor::getRotation(this->focusActor);
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-Entity CameraMovementManager::getFocusEntity()
+Actor CameraMovementManager::getFocusActor()
 {
-	return this->focusEntity;
+	return this->focusActor;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void CameraMovementManager::setFocusEntityPositionDisplacement(const Vector3D* focusEntityPositionDisplacement)
+void CameraMovementManager::setFocusActorPositionDisplacement(const Vector3D* focusActorPositionDisplacement)
 {
-	if(NULL == focusEntityPositionDisplacement)
+	if(NULL == focusActorPositionDisplacement)
 	{
-		this->focusEntityPositionDisplacement = Vector3D::zero();
+		this->focusActorPositionDisplacement = Vector3D::zero();
 		return;
 	}
 
-	this->focusEntityPositionDisplacement = *focusEntityPositionDisplacement;
+	this->focusActorPositionDisplacement = *focusActorPositionDisplacement;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-const Vector3D* CameraMovementManager::getFocusEntityPositionDisplacement()
+const Vector3D* CameraMovementManager::getFocusActorPositionDisplacement()
 {
-	return &this->focusEntityPositionDisplacement;
+	return &this->focusActorPositionDisplacement;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 Vector3D CameraMovementManager::focus(Camera camera)
 {
@@ -112,43 +112,40 @@ Vector3D CameraMovementManager::focus(Camera camera)
 		return Vector3D::zero();
 	}
 
-	if(isDeleted(this->focusEntity))
+	if(isDeleted(this->focusActor))
 	{
 		return Camera::getPosition(camera);
 	}
 
-	NormalizedDirection normalizedDirection = Entity::getNormalizedDirection(this->focusEntity);
+	NormalizedDirection normalizedDirection = Actor::getNormalizedDirection(this->focusActor);
 
-	// calculate the target position
+	// Calculate the target position
 	Vector3D cameraNewPosition =
 	{
-		this->focusEntityPosition->x + normalizedDirection.x * this->focusEntityPositionDisplacement.x - __HALF_SCREEN_WIDTH_METERS,
-		this->focusEntityPosition->y + normalizedDirection.y * this->focusEntityPositionDisplacement.y - __HALF_SCREEN_HEIGHT_METERS,
-		this->focusEntityPosition->z + normalizedDirection.z * this->focusEntityPositionDisplacement.z - __HALF_SCREEN_DEPTH_METERS,
+		this->focusActorPosition->x + normalizedDirection.x * this->focusActorPositionDisplacement.x - __HALF_SCREEN_WIDTH_METERS,
+		this->focusActorPosition->y + normalizedDirection.y * this->focusActorPositionDisplacement.y - __HALF_SCREEN_HEIGHT_METERS,
+		this->focusActorPosition->z + normalizedDirection.z * this->focusActorPositionDisplacement.z - __HALF_SCREEN_DEPTH_METERS,
 	};
 
 	return cameraNewPosition;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PRIVATE METHODS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-bool CameraMovementManager::onFocusEntityDeleted(ListenerObject eventFirer)
+bool CameraMovementManager::onFocusActorDeleted(ListenerObject eventFirer)
 {
-	if(ListenerObject::safeCast(this->focusEntity) == eventFirer)
+	if(ListenerObject::safeCast(this->focusActor) == eventFirer)
 	{
-		CameraMovementManager::setFocusEntity(this, NULL);
+		CameraMovementManager::setFocusActor(this, NULL);
 	}
 
 	return false;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

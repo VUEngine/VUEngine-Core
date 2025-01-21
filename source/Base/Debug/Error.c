@@ -7,10 +7,9 @@
  * that was distributed with this source code.
  */
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // INCLUDES
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <string.h>
 
@@ -24,31 +23,27 @@
 
 #include "Error.h"
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' MACROS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #define __DIMM_VALUE_1	0x54
 #define __DIMM_VALUE_2	0x50
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' ATTRIBUTES
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 bool _triggeringException = false;
 uint32 _vuengineEIPC = 0;
 uint32 _vuengineFEPC = 0;
 uint32 _vuengineECR = 0;
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' STATIC METHODS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 static void Error::triggerException(char* message __attribute__((unused)), char* detail __attribute__((unused)))
 {
@@ -71,57 +66,60 @@ static void Error::triggerException(char* message __attribute__((unused)), char*
 	int32 x = 0 <= __EXCEPTION_COLUMN && __EXCEPTION_COLUMN <= 24 ? __EXCEPTION_COLUMN : 0;
 	int32 y = 0 <= __EXCEPTION_LINE && __EXCEPTION_LINE <= 28 ? __EXCEPTION_LINE : 0;
 
-	// disable vip interrupts
+	// Disable vip interrupts
 	_vipRegisters[__INTENB]= 0;
 	_vipRegisters[__INTCLR] = _vipRegisters[__INTPND];
 
-	// disable timer
+	// Disable timer
 	_hardwareRegisters[__TCR] &= ~(__TIMER_ENB | __TIMER_INT);
 
-	// turn on the display
+	// Turn on the display
 	_vipRegisters[__REST] = 0;
 	_vipRegisters[__DPCTRL] = _vipRegisters[__DPSTTS] | (__SYNCE | __RE | __DISP);
 	_vipRegisters[__FRMCYC] = 0;
 	_vipRegisters[__XPCTRL] = _vipRegisters[__XPSTTS] | __XPEN;
 
-	// make sure the brightness is ok
+	// Make sure the brightness is ok
 	_vipRegisters[__BRTA] = 32;
 	_vipRegisters[__BRTB] = 64;
 	_vipRegisters[__BRTC] = 32;
 
-	VIPManager::setBackgroundColor(VIPManager::getInstance(), __COLOR_BLACK);
+	VIPManager::configureBackgroundColor(__COLOR_BLACK);
 
-	Printing printing = Printing::getInstance();
-
-	// make sure there are fonts to show the exception
-	Printing::setDebugMode(printing);
+	// Make sure there are fonts to show the exception
+	Printing::setDebugMode();
 
 	//print error message to screen
 	if(0 < y)
 	{
-		Printing::text(printing, "                                             ", x, y - 1, NULL);
+		Printing::text("                                             ", x, y - 1, NULL);
 	}
 
-	Printing::text(printing, "\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08 EXCEPTION \x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08" , x, y++, NULL);
-	Printing::text(printing, "                                                " , x, y++, NULL);
-	Printing::text(printing, " Last process:                                  ", x, y, NULL);
-	Printing::text(printing, VUEngine::getProcessName(VUEngine::getInstance()), x + 15, y++, NULL);
-	Printing::text(printing, " LP:                                  " , x, y, NULL);
-	Printing::hex(printing, lp, x + 8, y, 8, NULL);
-	Printing::text(printing, " SP: 		                         " , x, ++y, NULL);
-	Printing::hex(printing, sp, x + 8, y, 8, NULL);
+	Printing::text
+	(
+		"\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08 EXCEPTION "
+		"\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08" , x, y++, NULL
+	);
 
-	Printing::text(printing, " EIPC:                                  " , x, ++y, NULL);
-	Printing::hex(printing, eipc, x + 8, y, 8, NULL);
-	Printing::text(printing, " FEPC: 		                         " , x, ++y, NULL);
-	Printing::hex(printing, fepc, x + 8, y, 8, NULL);
-	Printing::text(printing, " ECR: 		                         " , x, ++y, NULL);
-	Printing::hex(printing, ecr, x + 8, y, 8, NULL);
+	Printing::text("                                                " , x, y++, NULL);
+	Printing::text(" Last process:                                  ", x, y, NULL);
+	Printing::text(VUEngine::getProcessName(), x + 15, y++, NULL);
+	Printing::text(" LP:                                  " , x, y, NULL);
+	Printing::hex(lp, x + 8, y, 8, NULL);
+	Printing::text(" SP: 		                         " , x, ++y, NULL);
+	Printing::hex(sp, x + 8, y, 8, NULL);
+
+	Printing::text(" EIPC:                                  " , x, ++y, NULL);
+	Printing::hex(eipc, x + 8, y, 8, NULL);
+	Printing::text(" FEPC: 		                         " , x, ++y, NULL);
+	Printing::hex(fepc, x + 8, y, 8, NULL);
+	Printing::text(" ECR: 		                         " , x, ++y, NULL);
+	Printing::hex(ecr, x + 8, y, 8, NULL);
 
 	if(message)
 	{
-		Printing::text(printing, "                                                " , x, ++y + 1, NULL);
-		Printing::text(printing, " Message:                                       " , x, ++y, NULL);
+		Printing::text("                                                " , x, ++y + 1, NULL);
+		Printing::text(" Message:                                       " , x, ++y, NULL);
 
 		int32 stringMaxLength = (__SCREEN_WIDTH_IN_CHARS) - 2;
 		int32 rowsAvailable  = (__SCREEN_HEIGHT_IN_CHARS) - y;
@@ -136,18 +134,18 @@ static void Error::triggerException(char* message __attribute__((unused)), char*
 
 			// TODO: fix me, termination character not working
 			messageLine[stringLength - 1] = (char)0;
-			Printing::text(printing, "                                                " , x, ++y, NULL);
-			Printing::text(printing, messageLine, x + 1, y, NULL);
+			Printing::text("                                                " , x, ++y, NULL);
+			Printing::text(messageLine, x + 1, y, NULL);
 		}
 
 		if(detail)
 		{
-			Printing::text(printing, detail, x + 1, ++y, NULL);
+			Printing::text(detail, x + 1, ++y, NULL);
 		}
 
 		if(y < (__SCREEN_HEIGHT_IN_CHARS) - 1)
 		{
-			Printing::text(printing, "                                             ", x, y + 3, NULL);
+			Printing::text("                                             ", x, y + 3, NULL);
 		}
 	}
 
@@ -158,7 +156,7 @@ static void Error::triggerException(char* message __attribute__((unused)), char*
 	// Prevent VIP's interrupts
 	HardwareManager::disableInterrupts();
 
-	// error display message
+	// Error display message
 	WorldAttributes* worldPointer = &_worldAttributesBaseAddress[__EXCEPTIONS_WORLD];
 
 	worldPointer->mx = __PRINTING_BGMAP_X_OFFSET;
@@ -169,11 +167,12 @@ static void Error::triggerException(char* message __attribute__((unused)), char*
 	worldPointer->gy = 0;
 	worldPointer->w = __SCREEN_WIDTH;
 	worldPointer->h = __SCREEN_HEIGHT;
-	worldPointer->head = __WORLD_ON | __WORLD_BGMAP | __WORLD_OVR | BgmapTextureManager::getPrintingBgmapSegment(BgmapTextureManager::getInstance());
+	worldPointer->head = 
+		__WORLD_ON | __WORLD_BGMAP | __WORLD_OVR | Printing::getPrintingBgmapSegment();
 
 	_worldAttributesBaseAddress[__EXCEPTIONS_WORLD - 1].head = __WORLD_END;
 
-	// dimm game
+	// Dimm game
 	_vipRegisters[__GPLT0] = 0xE4;
 	_vipRegisters[__GPLT1] = __DIMM_VALUE_2;
 	_vipRegisters[__GPLT2] = __DIMM_VALUE_1;
@@ -183,12 +182,12 @@ static void Error::triggerException(char* message __attribute__((unused)), char*
 	_vipRegisters[__JPLT2] = __DIMM_VALUE_1;
 	_vipRegisters[__JPLT3] = __DIMM_VALUE_1;
 
-	// trap the game here
+	// Trap the game here
 	while(true);
 #endif
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 static void Error::zeroDivisionException()
 {
@@ -210,7 +209,7 @@ static void Error::zeroDivisionException()
 #endif
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 static void Error::invalidOpcodeException()
 {
@@ -269,7 +268,7 @@ static void Error::invalidOpcodeException()
 #endif
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 static void Error::floatingPointException()
 {
@@ -328,29 +327,4 @@ static void Error::floatingPointException()
 #endif
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-// CLASS' PRIVATE METHODS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void Error::constructor()
-{
-	// Always explicitly call the base's constructor 
-	Base::constructor();
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void Error::destructor()
-{
-	// Always explicitly call the base's destructor 
-	Base::destructor();
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

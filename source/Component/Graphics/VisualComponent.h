@@ -10,21 +10,21 @@
 #ifndef VISUAL_COMPONENT_H_
 #define VISUAL_COMPONENT_H_
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // INCLUDES
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <Component.h>
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // FORWARD DECLARATIONS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 class AnimationController;
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DATA
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 /// @memberof VisualComponent
 typedef ComponentSpec VisualComponentSpec;
@@ -73,11 +73,10 @@ typedef struct AnimationFunction
 /// @memberof VisualComponent
 typedef const AnimationFunction AnimationFunctionROMSpec;
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DECLARATION
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-///
 /// Class VirtualNode
 ///
 /// Inherits from Object
@@ -93,7 +92,7 @@ abstract class VisualComponent : Component
 	/// Transparecy effect (__TRANSPARENCY_NONE, __TRANSPARENCY_EVEN or __TRANSPARENCY_ODD)
 	uint8 transparency;
 
-	/// Show state flag (__HIDE, __SHOW_NEXT_FRAME, __SHOW)
+	/// Show state flag (__HIDE, __SHOW)
 	uint8 show;
 
 	/// Rendering status flag
@@ -104,27 +103,10 @@ abstract class VisualComponent : Component
 
 	/// @publicsection
 
-	/// Propagate a command to the components.
-	/// @param command: Command to propagate to all the components
-	/// @param owner: Owner of the components to command (all if NULL)
-	/// @param ...: Variable arguments list depending on the command
-	static void propagateCommand(int32 command, GameObject owner, ...);
-
-	/// Compute the rightbox for the owner in base of its visual components.
-	/// @param owner: GameObject that the components attaches to
-	/// @param rightBox: Rightbox to configure
-	/// @return True if the owner has visual components; false otherwise
-	static bool calculateRightBox(GameObject owner, RightBox* rightBox);
-
-	/// Check if at least of the visual components that attach to the provided owner is visible.
-	/// @param owner: Object to which the visual components attach to
-	/// @return True if at least of the visual components that attach to the provided owner is visible
-	static bool isAnyVisible(GameObject owner);
-
 	/// Class' constructor
-	/// @param owner: GameObject that this component attaches to
+	/// @param owner: Entity that this component attaches to
 	/// @param visualComponentSpec: Pointer to the spec that defines how to initialize the visual component
-	void constructor(GameObject owner, const VisualComponentSpec* visualComponentSpec);
+	void constructor(Entity owner, const VisualComponentSpec* visualComponentSpec);
 
 	/// Handle a command.
 	/// @param command: Command to handle
@@ -216,10 +198,6 @@ abstract class VisualComponent : Component
 	/// Force the change of frame according to each child class' implementation.
 	/// @param actualFrame: The frame of the playing animation to skip to
 	virtual void forceChangeOfFrame(int16 actualFrame);
-
-	/// Retrieve the mesh's bounding box.
-	/// @return Bounding box of the mesh
-	virtual RightBox getRightBox();
 }
 
 #endif

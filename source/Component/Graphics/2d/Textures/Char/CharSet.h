@@ -10,17 +10,21 @@
 #ifndef CHARSET_H_
 #define CHARSET_H_
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // INCLUDES
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <ListenerObject.h>
 
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+// FORWARD DECLARATIONS
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+class CharSet;
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' MACROS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 // Bytes per CHAR
 #define __BYTES_PER_CHARS(n)				((n) << 4)
@@ -34,10 +38,9 @@
 // Compression types
 #define __CHAR_SET_COMPRESSION_RLE			0x00000001	
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DATA
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 /// A CharSet spec
 /// @memberof CharSet
@@ -64,12 +67,10 @@ typedef struct CharSetSpec
 /// @memberof CharSet
 typedef const CharSetSpec CharSetROMSpec;
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DECLARATION
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-///
 /// Class CharSet
 ///
 /// Inherits from ListenerObject
@@ -80,7 +81,7 @@ class CharSet : ListenerObject
 	/// @protectedsection
 
 	/// Spec used in the construction of the char set
-	CharSetSpec* charSetSpec;
+	const CharSetSpec* charSetSpec;
 
 	// Offset in the array of graphical data
 	uint32 tilesDisplacement;
@@ -96,10 +97,20 @@ class CharSet : ListenerObject
 
 	/// @publicsection
 
+	/// Get a charSet configured with the provided spec.
+	/// @param charSetSpec: Spec used to select or initialize a texture with
+	/// @return CharSet initialized with the provided spec
+	static CharSet get(const CharSetSpec* charSetSpec);
+
+	/// Release a charSet.
+	/// @param charSet: CharSet to release
+	/// @return True if the char set is successfully deleted; false otherwise
+	static bool release(CharSet charSet);
+
 	/// Class' constructor
 	/// @param charSetSpec: Spec to use in the construction of the char set
 	/// @param offset: Offset in CHAR space where the block allocated for this char set starts
-	void constructor(CharSetSpec* charSetSpec, uint16 offset);
+	void constructor(const CharSetSpec* charSetSpec, uint16 offset);
 
 	/// Increase the usage count.
 	void increaseUsageCount();
@@ -129,7 +140,7 @@ class CharSet : ListenerObject
 
 	/// Retrieve the spec used in the construction of the char set.
 	/// @return Spec used in the construction of the char set
-	CharSetSpec* getSpec();
+	const CharSetSpec* getSpec();
 
 	/// Retrieve the number of CHARs used by the char set.
 	/// @return Number of CHARs used by the char set
@@ -158,6 +169,5 @@ class CharSet : ListenerObject
 	/// Write the tile graphical data to VRAM.
 	void write();
 }
-
 
 #endif

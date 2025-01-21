@@ -7,75 +7,102 @@
  * that was distributed with this source code.
  */
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // INCLUDES
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <Component.h>
 #include <Behavior.h>
 #include <Body.h>
-#include <BehaviorManager.h>
 #include <Collider.h>
-#include <ColliderManager.h>
 #include <Printing.h>
-#include <GameObject.h>
+#include <Entity.h>
 #include <Sprite.h>
-#include <SpriteManager.h>
 #include <VirtualList.h>
-#include <VUEngine.h>
 #include <Wireframe.h>
-#include <WireframeManager.h>
 
 #include "ComponentManager.h"
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DECLARATIONS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 friend class Component;
-friend class GameObject;
+friend class Entity;
 friend class VirtualNode;
 friend class VirtualList;
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' MACROS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #define __MAXIMUM_NUMBER_OF_COMPONENTS		10
 
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+// CLASS' DATA
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+static ComponentManager _activeComponentManagers[kComponentTypes] = {NULL};
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' STATIC METHODS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-static Component ComponentManager::addComponent(GameObject owner, const ComponentSpec* componentSpec)
+static ComponentManager ComponentManager::getManager(uint32 componentType)
 {
-	ComponentManager componentManager = ComponentManager::getManager(componentSpec->componentType);
+	ComponentManager componentManager = ComponentManager::doGetManager(componentType);
+
+	NM_ASSERT(!isDeleted(componentManager), "ComponentManager::getManager: NULL active manager");
+
+	return componentManager;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+static Component ComponentManager::createComponent(Entity owner, const ComponentSpec* componentSpec)
+{
+	if(NULL == componentSpec)
+	{
+		return NULL;
+	}
+
+	ComponentManager componentManager = ComponentManager::doGetManager(componentSpec->componentType);
 
 	if(NULL == componentManager)
 	{
 		return NULL;
 	}
 
-	Component component = ComponentManager::createComponent(componentManager, owner, componentSpec);
+	Component component = ComponentManager::instantiateComponent(componentManager, owner, componentSpec);
 
-	if(!isDeleted(component))
+	if(!isDeleted(component) && !isDeleted(owner))
 	{
-		GameObject::addedComponent(owner, component);
+		Entity::addedComponent(owner, component);
 	}
 
 	return component;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void ComponentManager::removeComponent(GameObject owner, Component component)
+static void ComponentManager::destroyComponent(Entity owner, Component component)
 {
+	NM_ASSERT(!isDeleted(component), "ComponentManager::destroyComponent: NULL component");
+
+	if(isDeleted(component))
+	{
+		return;
+	}
+
+	NM_ASSERT(__GET_CAST(Component, component), "ComponentManager::destroyComponent: trying to destroy a non component");
+
+	if(owner != component->owner)
+	{
+		return;
+	}
+
 	uint32 componentType = ComponentManager::getComponentType(component);
 
 	if(kComponentTypes <= componentType)
@@ -83,24 +110,53 @@ static void ComponentManager::removeComponent(GameObject owner, Component compon
 		return;
 	}
 
-	ComponentManager componentManager = ComponentManager::getManager(componentType);
+	if(!isDeleted(owner))
+	{
+		Entity::removedComponent(owner, component);
+	}
+
+	ComponentManager componentManager = ComponentManager::doGetManager(componentType);
 
 	if(NULL == componentManager)
 	{
 		return;
 	}
 
-	if(!isDeleted(component))
-	{
-		GameObject::removedComponent(owner, component);
-	}
-
-	ComponentManager::destroyComponent(componentManager, owner, component);
+	ComponentManager::deinstantiateComponent(componentManager, owner, component);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void ComponentManager::addComponents(GameObject owner, ComponentSpec** componentSpecs, uint32 componentType)
+static Component ComponentManager::addComponent(Entity owner, const ComponentSpec* componentSpec)
+{
+	if(isDeleted(owner))
+	{
+		return NULL;
+	}
+
+	return ComponentManager::createComponent(owner, componentSpec);
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+static void ComponentManager::removeComponent(Entity owner, Component component)
+{
+	if(isDeleted(component))
+	{
+		return;
+	}
+
+	if(owner != component->owner)
+	{
+		return;
+	}
+
+	ComponentManager::destroyComponent(owner, component);
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+static void ComponentManager::addComponents(Entity owner, ComponentSpec** componentSpecs, uint32 componentType)
 {
 	for(int32 i = 0; NULL != componentSpecs[i] && NULL != componentSpecs[i]->allocator; i++)
 	{
@@ -112,49 +168,86 @@ static void ComponentManager::addComponents(GameObject owner, ComponentSpec** co
 #ifndef __RELEASE
 		if(__MAXIMUM_NUMBER_OF_COMPONENTS < i)
 		{
-			Printing::setDebugMode(Printing::getInstance());
-			Printing::clear(Printing::getInstance());
-			Printing::text(Printing::getInstance(), "Component specs array: ", 1, 26, NULL);
-			Printing::hex(Printing::getInstance(), (uint32)componentSpecs, 1, 27, 8, NULL);
+			Printing::setDebugMode();
+			Printing::clear();
+			Printing::text("Component specs array: ", 1, 26, NULL);
+			Printing::hex((uint32)componentSpecs, 1, 27, 8, NULL);
 			Error::triggerException("ComponentManager::addComponents: Non terminated component specs array", NULL);	
 		}
 #endif
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void ComponentManager::removeComponents(GameObject owner, uint32 componentType)
+static void ComponentManager::removeComponents(Entity owner, uint32 componentType)
 {
+	void removeComponents(ComponentManager componentManager)
+	{
+		if(NULL == componentManager)
+		{
+			return;
+		}
+
+		for(VirtualNode node = componentManager->components->head, nextNode = NULL; NULL != node; node = nextNode)
+		{
+			nextNode = node->next;
+	
+			Component component = Component::safeCast(node->data);
+
+			if(!component->deleteMe && owner == component->owner)
+			{
+				ComponentManager::removeComponent(owner, component);
+			}
+		}	
+	}
+
 	if(kComponentTypes <= componentType)
 	{
 		for(int16 i = 0; i < kComponentTypes; i++)
 		{
-			ComponentManager componentManager = ComponentManager::getManager(i);
-
-			if(NULL == componentManager)
-			{
-				continue;
-			}
-
-			for(VirtualNode node = componentManager->components->head, nextNode = NULL; NULL != node; node = nextNode)
-			{
-				nextNode = node->next;
-		
-				Component component = Component::safeCast(node->data);
-
-				if(owner == component->owner)
-				{
-					GameObject::removedComponent(owner, component);
-
-					ComponentManager::destroyComponent(componentManager, owner, component);
-				}
-			}	
+			removeComponents(ComponentManager::doGetManager(i));
 		}
 	}
 	else
+	{		
+		removeComponents(ComponentManager::doGetManager(componentType));
+	}
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+static void ComponentManager::createComponents(Entity owner, ComponentSpec** componentSpecs)
+{
+	for(int32 i = 0; NULL != componentSpecs[i] && NULL != componentSpecs[i]->allocator; i++)
 	{
-		ComponentManager componentManager = ComponentManager::getManager(componentType);
+		ComponentManager::addComponent(owner, componentSpecs[i]);
+
+#ifndef __RELEASE
+		if(__MAXIMUM_NUMBER_OF_COMPONENTS < i)
+		{
+			Printing::setDebugMode();
+			Printing::clear();
+			Printing::text("Component specs array: ", 1, 26, NULL);
+			Printing::hex((uint32)componentSpecs, 1, 27, 8, NULL);
+			Error::triggerException("ComponentManager::addComponents: Non terminated component specs array", NULL);	
+		}
+#endif
+	}
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+static void ComponentManager::destroyComponents(Entity owner)
+{
+	if(isDeleted(owner))
+	{
+		return;
+	}
+
+	for(int16 i = 0; i < kComponentTypes; i++)
+	{
+		ComponentManager componentManager = ComponentManager::doGetManager(i);
 
 		if(NULL == componentManager)
 		{
@@ -167,26 +260,26 @@ static void ComponentManager::removeComponents(GameObject owner, uint32 componen
 	
 			Component component = Component::safeCast(node->data);
 
-			if(owner == component->owner)
-			{
-				GameObject::removedComponent(owner, component);
+			NM_ASSERT(__GET_CAST(Component, component), "ComponentManager::destroyComponents: trying to destroy a non component");
 
-				ComponentManager::destroyComponent(componentManager, owner, component);
+			if(!component->deleteMe && owner == component->owner)
+			{
+				ComponentManager::deinstantiateComponent(componentManager, owner, component);
 			}
 		}	
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static Component ComponentManager::getComponentAtIndex(GameObject owner, uint32 componentType, int16 componentIndex)
+static Component ComponentManager::getComponentAtIndex(Entity owner, uint32 componentType, int16 componentIndex)
 {
 	if(kComponentTypes <= componentType || 0 > componentIndex)
 	{
 		return NULL;
 	}
 
-	ComponentManager componentManager = ComponentManager::getManager(componentType);
+	ComponentManager componentManager = ComponentManager::doGetManager(componentType);
 
 	if(NULL == componentManager)
 	{
@@ -197,7 +290,7 @@ static Component ComponentManager::getComponentAtIndex(GameObject owner, uint32 
 	{
 		Component component = Component::safeCast(node->data);
 
-		if(owner == component->owner)
+		if(!component->deleteMe && owner == component->owner)
 		{
 			if(0 == componentIndex--)
 			{
@@ -209,14 +302,24 @@ static Component ComponentManager::getComponentAtIndex(GameObject owner, uint32 
 	return NULL;
 }
 
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-static VirtualList ComponentManager::getComponents(GameObject owner, uint32 componentType)
+static VirtualList ComponentManager::getComponents(Entity owner, uint32 componentType)
 {
+	ComponentManager componentManager = ComponentManager::doGetManager(componentType);
+
+	if(NULL == componentManager)
+	{
+		return NULL;
+	}
+
 	if(NULL == owner->components)
 	{
-		owner->components = (VirtualList*)((uint32)MemoryPool::allocate(sizeof(VirtualList) * kComponentTypes + __DYNAMIC_STRUCT_PAD) + __DYNAMIC_STRUCT_PAD);
+		owner->components = 
+			(VirtualList*)
+			(
+				(uint32)MemoryPool::allocate(sizeof(VirtualList) * kComponentTypes + __DYNAMIC_STRUCT_PAD) + __DYNAMIC_STRUCT_PAD
+			);
 
 		for(int16 i = 0; i < kComponentTypes; i++)
 		{
@@ -233,26 +336,29 @@ static VirtualList ComponentManager::getComponents(GameObject owner, uint32 comp
 		return owner->components[componentType];
 	}
 
-	ComponentManager componentManager = ComponentManager::getManager(componentType);
-
-	if(NULL == componentManager)
+	for(VirtualNode node = componentManager->components->head; NULL != node; node = node->next)
 	{
-		return NULL;
+		Component component = Component::safeCast(node->data);
+
+		if(owner == component->owner)
+		{
+			VirtualList::pushBack(owner->components[componentType], component);
+		}
 	}
 
-	return ComponentManager::doGetComponents(componentManager, owner, owner->components[componentType]);
+	return owner->components[componentType];
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static bool ComponentManager::getComponentsOfClass(GameObject owner, ClassPointer classPointer, VirtualList components, uint32 componentType)
+static bool ComponentManager::getComponentsOfClass(Entity owner, ClassPointer classPointer, VirtualList components, uint32 componentType)
 {
 	if(kComponentTypes <= componentType)
 	{
 		return false;
 	}
 
-	ComponentManager componentManager = ComponentManager::getManager(componentType);
+	ComponentManager componentManager = ComponentManager::doGetManager(componentType);
 
 	if(NULL == componentManager)
 	{
@@ -263,7 +369,7 @@ static bool ComponentManager::getComponentsOfClass(GameObject owner, ClassPointe
 	{
 		Component component = Component::safeCast(node->data);
 
-		if(owner != component->owner)
+		if(owner != component->owner || component->deleteMe)
 		{
 			continue;
 		}
@@ -282,42 +388,18 @@ static bool ComponentManager::getComponentsOfClass(GameObject owner, ClassPointe
 	return false;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static uint16 ComponentManager::getComponentsCount(GameObject owner, uint32 componentType)
+static uint16 ComponentManager::getComponentsCount(Entity owner, uint32 componentType)
 {
-	uint16 count = 0;
-
-	if(kComponentTypes <= componentType)
+	uint16 getCount(ComponentManager componentManager)
 	{
-		for(int16 i = 0; i < kComponentTypes; i++)
-		{
-			ComponentManager componentManager = ComponentManager::getManager(i);
-
-			if(NULL == componentManager)
-			{
-				continue;
-			}
-
-			for(VirtualNode node = componentManager->components->head; NULL != node; node = node->next)
-			{
-				Component component = Component::safeCast(node->data);
-
-				if(owner == component->owner)
-				{
-					count++;
-				}
-			}
-		}
-	}
-	else
-	{
-		ComponentManager componentManager = ComponentManager::getManager(componentType);
-
 		if(NULL == componentManager)
 		{
 			return 0;
 		}
+
+		uint16 count = 0;
 
 		for(VirtualNode node = componentManager->components->head, nextNode = NULL; NULL != node; node = nextNode)
 		{
@@ -325,65 +407,235 @@ static uint16 ComponentManager::getComponentsCount(GameObject owner, uint32 comp
 	
 			Component component = Component::safeCast(node->data);
 
-			if(owner == component->owner)
+			if(owner == component->owner && !component->deleteMe)
 			{
 				count++;
 			}
-		}	
+		}
+
+		return count;
+	}
+
+	uint16 count = 0;
+
+	if(kComponentTypes <= componentType)
+	{
+		for(int16 i = 0; i < kComponentTypes; i++)
+		{
+			count += getCount(ComponentManager::doGetManager(i));
+		}
+	}
+	else
+	{
+		count = getCount(ComponentManager::doGetManager(componentType));
 	}
 
 	return count;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+static void ComponentManager::propagateCommand(int32 command, Entity owner, uint32 componentType, ...)
+{
+	void propagateCommand(ComponentManager componentManager, va_list args)
+	{
+		if(NULL == componentManager)
+		{
+			return;
+		}
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-// CLASS' PRIVATE STATIC METHODS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+		for(VirtualNode node = componentManager->components->head; NULL != node; node = node->next)
+		{
+			Component component = Component::safeCast(node->data);
 
+			if(NULL != owner && owner != component->owner)
+			{
+				continue;
+			}
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+			Component::handleCommand(component, command, args);
+		}
+	}
 
-static ComponentManager ComponentManager::getManager(uint32 componentType)
+	if(kComponentTypes <= componentType)
+	{
+		for(int16 i = 0; i < kComponentTypes; i++)
+		{
+			va_list args;
+			va_start(args, componentType);
+
+			propagateCommand(ComponentManager::doGetManager(i), args);
+
+			va_end(args);
+		}
+	}
+	else
+	{		
+		va_list args;
+		va_start(args, componentType);
+	
+		propagateCommand(ComponentManager::doGetManager(componentType), args);
+
+		va_end(args);
+	}
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+static uint16 ComponentManager::getCount(Entity owner, uint32 componentType)
 {
 	if(kComponentTypes <= componentType)
 	{
-		return NULL;
+		return 0;
 	}
 
-	switch (componentType)
+	int16 count = 0;
+
+	ComponentManager componentManager = ComponentManager::doGetManager(componentType);
+
+	if(NULL == componentManager)
 	{
-		case kColliderComponent:
-
-			return ComponentManager::safeCast(VUEngine::getColliderManager(VUEngine::getInstance()));	
-			break;
-
-		case kSpriteComponent:
-
-			return ComponentManager::safeCast(SpriteManager::getInstance());
-			break;
-
-		case kWireframeComponent:
-
-			return ComponentManager::safeCast(WireframeManager::getInstance());
-			break;
-
-		case kBehaviorComponent:
-
-			return ComponentManager::safeCast(BehaviorManager::getInstance());
-			break;
-
-		case kPhysicsComponent:
-
-			return ComponentManager::safeCast(VUEngine::getBodyManager(VUEngine::getInstance()));	
-			break;
+		return 0;
 	}
 
-	return NULL;
+	for(VirtualNode node = componentManager->components->head; NULL != node; node = node->next)
+	{
+		Component component = Component::safeCast(node->data);
+
+		if(NULL != owner && owner != component->owner)
+		{
+			continue;
+		}
+		
+		count++;
+	}
+
+	return count;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+static bool ComponentManager::calculateRightBox(Entity owner, RightBox* rightBox)
+{
+	bool modified = false;
+
+	if(NULL == owner)
+	{
+		return false;
+	}
+
+	for(int16 i = 0; i < kComponentTypes; i++)
+	{
+		ComponentManager componentManager = ComponentManager::doGetManager(i);
+
+		if(NULL == componentManager || !ComponentManager::overrides(componentManager, isAnyVisible))
+		{
+			continue;
+		}
+
+		modified |= ComponentManager::getRightBoxFromComponents(componentManager, owner, rightBox);
+	}
+
+	return modified;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+static bool ComponentManager::isAnyCompomentVisible(Entity owner)
+{
+	if(NULL == owner)
+	{
+		return false;
+	}
+
+	for(int16 i = 0; i < kComponentTypes; i++)
+	{
+		ComponentManager componentManager = ComponentManager::doGetManager(i);
+
+		if(NULL == componentManager || !ComponentManager::overrides(componentManager, isAnyVisible))
+		{
+			continue;
+		}
+
+		if(ComponentManager::isAnyVisible(componentManager, owner))
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+// CLASS' PRIVATE STATIC METHODS
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+static ComponentManager ComponentManager::doGetManager(uint32 componentType)
+{
+	if(kComponentTypes <= componentType)
+	{
+		NM_ASSERT(false, "ComponentManager::doGetManager: invalid type");
+		return NULL;
+	}
+	
+	return _activeComponentManagers[componentType];
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+static void ComponentManager::useManager(ComponentManager componentManager)
+{
+	NM_ASSERT(!isDeleted(componentManager), "ComponentManager::useManager: NULL componentManager");
+
+	if(NULL == componentManager)
+	{
+		return;
+	}
+
+	uint32 componentType = ComponentManager::getType(componentManager);
+
+	if(kComponentTypes <= componentType)
+	{
+		return;
+	}
+
+	if(NULL != _activeComponentManagers[componentType])
+	{
+		ComponentManager::disable(_activeComponentManagers[componentType]);
+	}
+
+	_activeComponentManagers[componentType] = componentManager;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+static void ComponentManager::dontUseManager(ComponentManager componentManager)
+{
+	NM_ASSERT(!isDeleted(componentManager), "ComponentManager::dontUseManager: NULL componentManager");
+
+	if(NULL == componentManager)
+	{
+		return;
+	}
+
+	uint32 componentType = ComponentManager::getType(componentManager);
+
+	if(kComponentTypes <= componentType)
+	{
+		return;
+	}
+
+	if(componentManager == _activeComponentManagers[componentType])
+	{
+		_activeComponentManagers[componentType] = NULL;
+	}
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 static uint32 ComponentManager::getComponentType(Component component)
 {
@@ -423,10 +675,15 @@ static uint32 ComponentManager::getComponentType(Component component)
 	return component->componentSpec->componentType;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void ComponentManager::cleanOwnerComponentLists(GameObject owner, uint32 componentType)
+static void ComponentManager::cleanOwnerComponentLists(Entity owner, uint32 componentType)
 {
+	if(NULL == owner)
+	{
+		return;
+	}
+	
 	if(NULL != owner->components && NULL != owner->components[componentType])
 	{
 		delete owner->components[componentType];
@@ -434,16 +691,75 @@ static void ComponentManager::cleanOwnerComponentLists(GameObject owner, uint32 
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+static bool ComponentManager::getRightBoxFromComponents(ComponentManager componentMananager, Entity owner, RightBox* rightBox)
+{
+	if(NULL == rightBox)
+	{
+		return false;
+	}
 
+	bool modified = false;
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+	for(VirtualNode node = componentMananager->components->head; node; node = node->next)
+	{
+		Component component = Component::safeCast(node->data);
+
+		if(owner != component->owner)
+		{
+			continue;
+		}
+
+		modified = true;
+
+		RightBox componentRightBox = Component::getRightBox(component);
+
+		NM_ASSERT(componentRightBox.x0 < componentRightBox.x1, "ComponentManager::getRightBoxFromComponents: 0 width");
+		NM_ASSERT(componentRightBox.y0 < componentRightBox.y1, "ComponentManager::getRightBoxFromComponents: 0 height");
+		NM_ASSERT(componentRightBox.z0 < componentRightBox.z1, "ComponentManager::getRightBoxFromComponents: 0 depth");
+
+		if(rightBox->x0 > componentRightBox.x0)
+		{
+			rightBox->x0 = componentRightBox.x0;
+		}
+
+		if(rightBox->x1 < componentRightBox.x1)
+		{
+			rightBox->x1 = componentRightBox.x1;
+		}
+
+		if(rightBox->y0 > componentRightBox.y0)
+		{
+			rightBox->y0 = componentRightBox.y0;
+		}
+
+		if(rightBox->y1 < componentRightBox.y1)
+		{
+			rightBox->y1 = componentRightBox.y1;
+		}
+
+		if(rightBox->z0 > componentRightBox.z0)
+		{
+			rightBox->z0 = componentRightBox.z0;
+		}
+
+		if(rightBox->z1 < componentRightBox.z1)
+		{
+			rightBox->z1 = componentRightBox.z1;
+		}
+	}
+
+	return modified;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PUBLIC METHODS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void ComponentManager::constructor()
 {
@@ -453,67 +769,80 @@ void ComponentManager::constructor()
 	this->components = new VirtualList();
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void ComponentManager::destructor()
 {
-	if(!isDeleted(this->components))
+	HardwareManager::suspendInterrupts();
+
+	ComponentManager::destroyAllComponents(this);
+
+	if(NULL != this->components)
 	{
-		VirtualList::deleteData(this->components);
 		delete this->components;
 		this->components = NULL;
 	}
+
+	ComponentManager::dontUseManager(this);
+
+	HardwareManager::resumeInterrupts();
 
 	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void ComponentManager::propagateCommand(int32 command, GameObject owner, ...)
+void ComponentManager::destroyAllComponents()
 {
-	for(VirtualNode node = this->components->head; NULL != node; node = node->next)
+	if(NULL == this->components)
 	{
-		Component component = Component::safeCast(node->data);
-
-		if(NULL != owner && owner != component->owner)
-		{
-			continue;
-		}
-
-		va_list args;
-		va_start(args, owner);
-
-		Component::handleCommand(component, command, args);
-
-		va_end(args);
-	}
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-uint16 ComponentManager::getCount(GameObject owner)
-{
-	uint16 count = 0;
-
-	for(VirtualNode node = this->components->head; NULL != node; node = node->next)
-	{
-		Component component = Component::safeCast(node->data);
-
-		if(NULL != owner && owner != component->owner)
-		{
-			continue;
-		}
-		
-		count++;
+		return;
 	}
 
-	return count;
+	HardwareManager::suspendInterrupts();
+
+	VirtualList componentsHelper = new VirtualList();
+	VirtualList::copy(componentsHelper, this->components);
+
+	for(VirtualNode node = componentsHelper->head, nextNode = NULL; NULL != node; node = nextNode)
+	{
+		nextNode = node->next;
+
+		Component component = Component::safeCast(node->data);
+
+		NM_ASSERT(__GET_CAST(Component, component), "ComponentManager::destroyAllComponents: trying to destroy a non component");
+
+		ComponentManager::deinstantiateComponent(this, component->owner, component);
+	}
+
+	delete componentsHelper;
+
+	if(!isDeleted(this->components))
+	{
+		VirtualList::deleteData(this->components);
+	}
+
+	HardwareManager::resumeInterrupts();
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-Component ComponentManager::createComponent(GameObject owner, const ComponentSpec* componentSpec)
+void ComponentManager::enable()
+{
+	ComponentManager::useManager(this);
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void ComponentManager::disable()
+{
+	ComponentManager::dontUseManager(this);
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+Component ComponentManager::instantiateComponent(Entity owner, const ComponentSpec* componentSpec)
 {
 	if(kComponentTypes <= componentSpec->componentType)
 	{
@@ -525,9 +854,9 @@ Component ComponentManager::createComponent(GameObject owner, const ComponentSpe
 	return NULL;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void ComponentManager::destroyComponent(GameObject owner, Component component) 
+void ComponentManager::deinstantiateComponent(Entity owner, Component component) 
 {
 	if(isDeleted(component))
 	{
@@ -542,29 +871,11 @@ void ComponentManager::destroyComponent(GameObject owner, Component component)
 	ComponentManager::cleanOwnerComponentLists(owner, component->componentSpec->componentType);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-VirtualList ComponentManager::doGetComponents(GameObject owner, VirtualList components)
-{
-	for(VirtualNode node = this->components->head; NULL != node; node = node->next)
-	{
-		Component component = Component::safeCast(node->data);
-
-		if(owner == component->owner)
-		{
-			VirtualList::pushBack(components, component);
-		}
-	}
-
-	return components;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-bool ComponentManager::isAnyVisible(GameObject owner __attribute((unused)))
+bool ComponentManager::isAnyVisible(Entity owner __attribute((unused)))
 {
 	return false;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

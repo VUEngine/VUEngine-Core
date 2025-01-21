@@ -10,28 +10,28 @@
 #ifndef VSU_MANAGER_H_
 #define VSU_MANAGER_H_
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // INCLUDES
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <Object.h>
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' MACROS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-#define __DEFAULT_PCM_HZ			8000
-#define __TOTAL_WAVEFORMS			5
-#define __TOTAL_SOUND_SOURCES		6
-#define __TOTAL_MODULATION_CHANNELS 1
-#define __TOTAL_NOISE_CHANNELS		1
-#define __TOTAL_NORMAL_CHANNELS                                                                            \
-	(__TOTAL_SOUND_SOURCES - __TOTAL_MODULATION_CHANNELS - __TOTAL_NOISE_CHANNELS)
-#define __TOTAL_POTENTIAL_NORMAL_CHANNELS (__TOTAL_NORMAL_CHANNELS + __TOTAL_MODULATION_CHANNELS)
+#define __DEFAULT_PCM_HZ						8000
+#define __TOTAL_WAVEFORMS						5
+#define __TOTAL_SOUND_SOURCES					6
+#define __TOTAL_MODULATION_CHANNELS 			1
+#define __TOTAL_NOISE_CHANNELS					1
+#define __TOTAL_NORMAL_CHANNELS					(__TOTAL_SOUND_SOURCES - __TOTAL_MODULATION_CHANNELS - __TOTAL_NOISE_CHANNELS)
+#define __TOTAL_POTENTIAL_NORMAL_CHANNELS 		(__TOTAL_NORMAL_CHANNELS + __TOTAL_MODULATION_CHANNELS)
+#define __MAXIMUM_VOLUME						0xF
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DATA
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 /// Sound source types
 /// @memberof VSUManager
@@ -113,28 +113,28 @@ typedef struct VSUSoundSourceConfiguration
 	uint32 type;
 
 	/// SxINT values
-	int16 SxINT;
+	uint8 SxINT;
 
 	/// SxLRV values
-	int16 SxLRV;
+	uint8 SxLRV;
 
 	/// SxFQL values
-	int16 SxFQL;
+	uint8 SxFQL;
 
 	/// SxFQH values
-	int16 SxFQH;
+	uint8 SxFQH;
 
 	/// SxEV0 values
-	int16 SxEV0;
+	uint8 SxEV0;
 
 	/// SxEV1 values
-	int16 SxEV1;
+	uint8 SxEV1;
 
 	/// SxRAM pointer
 	const int8* SxRAM;
 
 	/// SxSWP values
-	int16 SxSWP;
+	uint8 SxSWP;
 
 	/// SxMOD pointer
 	const int8* SxMOD;
@@ -144,11 +144,10 @@ typedef struct VSUSoundSourceConfiguration
 
 } VSUSoundSourceConfiguration;
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DECLARATION
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-///
 /// Class VSUManager
 ///
 /// Inherits from Object
@@ -188,21 +187,25 @@ singleton class VSUManager : Object
 
 	/// @publicsection
 
-	/// Method to retrieve the singleton instance
-	/// @return VSUManager singleton
-	static VSUManager getInstance();
-
 	/// Play the allocated sounds.
 	/// @param elapsedMicroseconds: Elapsed time between call
-	static void playSounds(uint32 elapsedMicroseconds);
+	void playSounds(uint32 elapsedMicroseconds);
 
 	/// Apply a sound source configuration to a VSU sound source with the provided data.
 	/// @param vsuSoundSourceConfiguration: VSU sound source configuration
-	void applySoundSourceConfiguration(const VSUSoundSourceConfiguration* vsuSoundSourceConfiguration);
+	static void applySoundSourceConfiguration(const VSUSoundSourceConfiguration* vsuSoundSourceConfiguration);
 
 	/// Apply a sound source configuration to a VSU sound source with the provided data for PCM playback.
 	/// @param sample: PCM sample data
-	void applyPCMSampleToSoundSource(int8 sample);
+	static inline void applyPCMSampleToSoundSource(int8 sample);
+
+	/// Stop sound output in the sound sources in use by the requester object.
+	/// @param requester: Object using a sound source
+	static void stopSoundSourcesUsedBy(Object requester);
+
+	/// Retriev the playback mode (stops any playing sound).
+	/// @return kPlaybackNative or kPlaybackPCM
+	static uint32 getMode();
 
 	/// Reset the manager's state.
 	void reset();
@@ -233,3 +236,34 @@ singleton class VSUManager : Object
 }
 
 #endif
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+// CLASS' STATIC METHODS
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+static inline void VSUManager::applyPCMSampleToSoundSource(int8 sample)
+{
+	extern VSUSoundSource* const _vsuSoundSources;
+
+	int16 vsuSoundSourceIndex = 0;
+	
+	while(true)
+	{
+		if(__MAXIMUM_VOLUME <= sample)
+		{
+			_vsuSoundSources[vsuSoundSourceIndex].SxLRV = 0xFF;
+			sample -= __MAXIMUM_VOLUME;
+		}
+		else
+		{
+			_vsuSoundSources[vsuSoundSourceIndex].SxLRV = ((sample << 4) | sample);
+			break;
+		}
+
+		vsuSoundSourceIndex++;
+	}
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

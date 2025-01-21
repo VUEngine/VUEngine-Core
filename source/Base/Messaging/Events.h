@@ -10,24 +10,23 @@
 #ifndef EVENTS_H_
 #define EVENTS_H_
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // DATA
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 enum Events
 {
-	// do not remove me
+	// Do not remove me
 	kEventEngineFirst = 0,
 
-	// add events here
+	// Add events here
 	kEventFramerateReady,
 	kEventFramerateDipped,
 
-	kEventGameObjectDeleted,
+	kEventEntityDeleted,
 	kEventContainerDeleted,
 	kEventContainerAllChildrenDeleted,
-	kEventEntityLoaded,
+	kEventActorLoaded,
 	kEventStageChildStreamedOut,
 	kEventColliderDeleted,
 	kEventColliderChanged,
@@ -62,12 +61,14 @@ enum Events
 	kEventSoundFinished,
 	kEventSoundReleased,
 
-	kEventVIPManagerInterrupt,
 	kEventVIPManagerTimeError,
 	kEventVIPManagerScanError,
+	kEventVIPManagerFRAMESTART,
+	kEventVIPManagerGAMESTART,
 	kEventVIPManagerGAMESTARTDuringGAMESTART,
-	kEventVIPManagerXPENDDuringXPEND,
 	kEventVIPManagerGAMESTARTDuringXPEND,
+	kEventVIPManagerXPEND,
+	kEventVIPManagerXPENDDuringXPEND,
 	kEventVIPManagerXPENDDuringGAMESTART,
 
 	kEventKeypadManagerRaisedPowerFlag,
@@ -83,9 +84,8 @@ enum Events
 
 	kEventVUEngineNextSecondStarted,
 
-	// do not remove me
+	// Do not remove me
 	kEventEngineLast
 };
-
 
 #endif

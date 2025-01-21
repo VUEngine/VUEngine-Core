@@ -10,26 +10,22 @@
 #ifndef OBJECT_SPRITE_CONTAINER_H_
 #define OBJECT_SPRITE_CONTAINER_H_
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // INCLUDES
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <Sprite.h>
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // FORWARD DECLARATIONS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 class ObjectSprite;
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DECLARATION
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-///
 /// Class ObjectSpriteContainer
 ///
 /// Inherits from Sprite
@@ -54,9 +50,6 @@ class ObjectSpriteContainer : Sprite
 	/// SPT index that this container manages
 	int32 spt;
 
-	/// Flag to control the behavior of renderSprites
-	bool hideSprites;
-
 	/// @publicsection
 
 	/// Reset the state of the class's attributes.
@@ -74,11 +67,9 @@ class ObjectSpriteContainer : Sprite
 	/// Class' constructor
 	void constructor();
 
-	/// Register this sprite with the appropriate sprites manager.
-	override void registerWithManager();
-
-	/// Unegister this sprite with the appropriate sprites manager.	
-	override void unregisterWithManager();
+	/// Retrieve the class of the manager for the sprite.
+	/// @return ClassPointer of the manager
+	override ClassPointer getManagerClass();
 
 	/// Render the sprite by configuring the DRAM assigned to it by means of the provided index.
 	/// @param index: Determines the region of DRAM that this sprite is allowed to configure
@@ -123,6 +114,5 @@ class ObjectSpriteContainer : Sprite
 	/// @return Total number of OBJECTs used by all the managed sprites
 	int32 getTotalUsedObjects();
 }
-
 
 #endif

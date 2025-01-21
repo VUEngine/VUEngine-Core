@@ -10,17 +10,15 @@
 #ifndef FRAME_BLEND_BGMAP_SPRITE_H_
 #define FRAME_BLEND_BGMAP_SPRITE_H_
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // INCLUDES
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <BgmapSprite.h>
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DATA
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 /// A FrameBlendBgmapSprite spec
 /// @memberof FrameBlendBgmapSprite
@@ -35,12 +33,10 @@ typedef struct FrameBlendBgmapSpriteSpec
 /// @memberof FrameBlendBgmapSprite
 typedef const FrameBlendBgmapSpriteSpec FrameBlendBgmapSpriteROMSpec;
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DECLARATION
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-///
 /// Class FrameBlendBgmapSprite
 ///
 /// Inherits from BgmapSprite
@@ -54,15 +50,14 @@ class FrameBlendBgmapSprite : BgmapSprite
 	/// @publicsection
 
 	/// Class' constructor
-	/// @param owner: GameObject to which the sprite attaches to
+	/// @param owner: Entity to which the sprite attaches to
 	/// @param frameBlendBgmapSpriteSpec: Specification that determines how to configure the sprite
-	void constructor(GameObject owner, const FrameBlendBgmapSpriteSpec* frameBlendBgmapSpriteSpec);
+	void constructor(Entity owner, const FrameBlendBgmapSpriteSpec* frameBlendBgmapSpriteSpec);
 
 	/// Render the sprite by configuring the DRAM assigned to it by means of the provided index.
 	/// @param index: Determines the region of DRAM that this sprite is allowed to configure
 	/// @return The index that determines the region of DRAM that this sprite manages
 	override int16 doRender(int16 index);
 }
-
 
 #endif

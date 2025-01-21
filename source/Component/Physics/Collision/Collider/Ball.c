@@ -7,10 +7,9 @@
  * that was distributed with this source code.
  */
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // INCLUDES
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <DebugConfig.h>
 #include <Optics.h>
@@ -19,13 +18,11 @@
 
 #include "Ball.h"
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' STATIC METHODS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 static void Ball::project(Vector3D center, fixed_t radius, Vector3D vector, fixed_t* min, fixed_t* max)
 {
@@ -43,17 +40,15 @@ static void Ball::project(Vector3D center, fixed_t radius, Vector3D vector, fixe
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PUBLIC METHODS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void Ball::constructor(GameObject owner, const ColliderSpec* colliderSpec)
+void Ball::constructor(Entity owner, const ColliderSpec* colliderSpec)
 {
 	// Always explicitly call the base's constructor 
 	Base::constructor(owner, colliderSpec);
@@ -64,7 +59,7 @@ void Ball::constructor(GameObject owner, const ColliderSpec* colliderSpec)
 	Ball::computeRadius(this);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Ball::destructor()
 {
@@ -72,14 +67,14 @@ void Ball::destructor()
 	Base::destructor();
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Ball::resize(fixed_t sizeDelta __attribute__((unused)))
 {
 	this->radius += sizeDelta;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Ball::configureWireframe()
 {
@@ -88,7 +83,7 @@ void Ball::configureWireframe()
 		return;
 	}
 
-	// create a wireframe
+	// Create a wireframe
 	this->wireframe = Wireframe::safeCast(new Sphere(this->owner, NULL));
 
 	if(!isDeleted(this->wireframe))
@@ -102,46 +97,44 @@ void Ball::configureWireframe()
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #ifndef __SHIPPING
 void Ball::print(int32 x, int32 y)
 {
 	Base::print(this, x, y);
 	
-	Printing::text(Printing::getInstance(), "R:             " , x, y, NULL);
-	Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(this->radius), x + 2, y++, NULL);
-	Printing::text(Printing::getInstance(), "C:         " , x, y, NULL);
-	Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(this->transformation->position.x), x + 2, y, NULL);
-	Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(this->transformation->position.y), x + 8, y, NULL);
-	Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(this->transformation->position.z), x + 14, y++, NULL);
+	Printing::text("R:             " , x, y, NULL);
+	Printing::int32(__METERS_TO_PIXELS(this->radius), x + 2, y++, NULL);
+	Printing::text("C:         " , x, y, NULL);
+	Printing::int32(__METERS_TO_PIXELS(this->transformation->position.x), x + 2, y, NULL);
+	Printing::int32(__METERS_TO_PIXELS(this->transformation->position.y), x + 8, y, NULL);
+	Printing::int32(__METERS_TO_PIXELS(this->transformation->position.z), x + 14, y++, NULL);
 
-	Printing::text(Printing::getInstance(), "X:              " , x, y, NULL);
-	Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(this->transformation->position.x - this->radius), x + 2, y, NULL);
-	Printing::text(Printing::getInstance(), "-" , x + 6, y, NULL);
-	Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(this->transformation->position.x + this->radius), x + 8, y++, NULL);
+	Printing::text("X:              " , x, y, NULL);
+	Printing::int32(__METERS_TO_PIXELS(this->transformation->position.x - this->radius), x + 2, y, NULL);
+	Printing::text("-" , x + 6, y, NULL);
+	Printing::int32(__METERS_TO_PIXELS(this->transformation->position.x + this->radius), x + 8, y++, NULL);
 
-	Printing::text(Printing::getInstance(), "Y:               " , x, y, NULL);
-	Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(this->transformation->position.y - this->radius), x + 2, y, NULL);
-	Printing::text(Printing::getInstance(), "-" , x + 6, y, NULL);
-	Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(this->transformation->position.y + this->radius), x + 8, y++, NULL);
+	Printing::text("Y:               " , x, y, NULL);
+	Printing::int32(__METERS_TO_PIXELS(this->transformation->position.y - this->radius), x + 2, y, NULL);
+	Printing::text("-" , x + 6, y, NULL);
+	Printing::int32(__METERS_TO_PIXELS(this->transformation->position.y + this->radius), x + 8, y++, NULL);
 
-	Printing::text(Printing::getInstance(), "Z:               " , x, y, NULL);
-	Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(this->transformation->position.z - this->radius), x + 2, y, NULL);
-	Printing::text(Printing::getInstance(), "-" , x + 6, y, NULL);
-	Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(this->transformation->position.z + this->radius), x + 8, y++, NULL);
+	Printing::text("Z:               " , x, y, NULL);
+	Printing::int32(__METERS_TO_PIXELS(this->transformation->position.z - this->radius), x + 2, y, NULL);
+	Printing::text("-" , x + 6, y, NULL);
+	Printing::int32(__METERS_TO_PIXELS(this->transformation->position.z + this->radius), x + 8, y++, NULL);
 }
 #endif
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PRIVATE METHODS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Ball::computeRadius()
 {
@@ -169,5 +162,4 @@ void Ball::computeRadius()
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

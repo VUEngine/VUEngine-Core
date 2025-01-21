@@ -7,42 +7,38 @@
  * that was distributed with this source code.
  */
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // INCLUDES
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <CharSetManager.h>
+#include <BgmapTextureManager.h>
+#include <ObjectTextureManager.h>
 #include <Optics.h>
-#include <SpriteManager.h>
 #include <VirtualList.h>
 #include <VirtualNode.h>
 
 #include "Texture.h"
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DECLARATIONS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 friend class CharSet;
 friend class VirtualList;
 friend class VirtualNode;
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' ATTRIBUTES
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 static VirtualList _texturesToUpdate = NULL;
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' STATIC METHODS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 static void Texture::reset()
 {
@@ -57,7 +53,57 @@ static void Texture::reset()
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+static Texture Texture::get
+(
+	ClassPointer textureClass, const TextureSpec* textureSpec, int16 minimumSegment, bool mustLiveAtEvenSegment, uint32 scValue
+)
+{
+	if(NULL == textureSpec)
+	{
+		return NULL;
+	}
+
+	if(typeofclass(BgmapTexture) == textureClass)
+	{
+		return 
+			Texture::safeCast
+			(
+				BgmapTextureManager::getTexture
+				(
+					BgmapTextureManager::getInstance(), (BgmapTextureSpec*)textureSpec, minimumSegment, mustLiveAtEvenSegment, scValue
+				)
+			);
+	}
+	else if(typeofclass(ObjectTexture) == textureClass)
+	{
+		return Texture::safeCast(ObjectTextureManager::getTexture(ObjectTextureManager::getInstance(), (ObjectTextureSpec*)textureSpec));
+	}
+
+	return NULL;	
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+static void Texture::release(Texture texture)
+{
+	if(isDeleted(texture))
+	{
+		return;
+	}
+
+	if(__IS_INSTANCE_OF(BgmapTexture, texture))
+	{
+		BgmapTextureManager::releaseTexture(BgmapTextureManager::getInstance(), BgmapTexture::safeCast(texture));
+	}
+	else if(__IS_INSTANCE_OF(ObjectTexture, texture))
+	{
+		ObjectTextureManager::releaseTexture(ObjectTextureManager::getInstance(), ObjectTexture::safeCast(texture));
+	}
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 static void Texture::updateTextures(int16 maximumTextureRowsToWrite, bool defer)
 {
@@ -71,7 +117,7 @@ static void Texture::updateTextures(int16 maximumTextureRowsToWrite, bool defer)
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 static uint32 Texture::getTotalCols(TextureSpec* textureSpec)
 {
@@ -95,7 +141,7 @@ static uint32 Texture::getTotalCols(TextureSpec* textureSpec)
 	return textureSpec->cols;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 static uint32 Texture::getTotalRows(TextureSpec* textureSpec)
 {
@@ -107,16 +153,17 @@ static uint32 Texture::getTotalRows(TextureSpec* textureSpec)
 	if(!Texture::isSpecSingleFrame(textureSpec))
 	{
 		int16 allocableFrames = 64 / textureSpec->cols;
-		int16 neededRows = __FIXED_TO_I(__FIXED_DIV(__I_TO_FIXED(textureSpec->numberOfFrames), __I_TO_FIXED(allocableFrames)) + __05F_FIXED) - 1;
+		int16 neededRows = 
+			__FIXED_TO_I(__FIXED_DIV(__I_TO_FIXED(textureSpec->numberOfFrames), __I_TO_FIXED(allocableFrames)) + __05F_FIXED) - 1;
 
-		// return the total number of chars
+		// Return the total number of chars
 		return textureSpec->rows + textureSpec->rows * (0 < neededRows ? neededRows : 0);
 	}
 
 	return textureSpec->rows;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 static void Texture::doUpdateTextures(int16 maximumTextureRowsToWrite)
 {
@@ -144,7 +191,7 @@ static void Texture::doUpdateTextures(int16 maximumTextureRowsToWrite)
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 static void Texture::doUpdateTexturesDeferred()
 {
@@ -180,7 +227,7 @@ static void Texture::doUpdateTexturesDeferred()
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 static bool Texture::isSpecSingleFrame(const TextureSpec* textureSpec)
 {
@@ -192,14 +239,14 @@ static bool Texture::isSpecSingleFrame(const TextureSpec* textureSpec)
 	return 1 == textureSpec->numberOfFrames;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 static void Texture::updateOptimized(Texture texture, int16 maximumTextureRowsToWrite)
 {
 	Texture::write(texture, maximumTextureRowsToWrite);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 static void Texture::updateDefault(Texture texture, int16 maximumTextureRowsToWrite __attribute__((unused)))
 {
@@ -213,24 +260,22 @@ static void Texture::updateDefault(Texture texture, int16 maximumTextureRowsToWr
 	texture->status = kTextureWritten;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 static void Texture::updateMulti(Texture texture, int16 maximumTextureRowsToWrite __attribute__((unused)))
 {
 	texture->status = kTextureWritten;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PUBLIC METHODS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void Texture::constructor(TextureSpec* textureSpec, uint16 id)
+void Texture::constructor(const TextureSpec* textureSpec, uint16 id)
 {
 	if(NULL == _texturesToUpdate)
 	{
@@ -240,7 +285,7 @@ void Texture::constructor(TextureSpec* textureSpec, uint16 id)
 	// Always explicitly call the base's constructor 
 	Base::constructor();
 
-	// set id
+	// Set id
 	this->id = id;
 
 	this->doUpdate = NULL;
@@ -248,17 +293,17 @@ void Texture::constructor(TextureSpec* textureSpec, uint16 id)
 	this->mapDisplacement = 0;
 	this->usageCount = 1;
 
-	// save the bgmap spec's address
+	// Save the bgmap spec's address
 	this->textureSpec = textureSpec;
 	this->charSet = NULL;
-	// set the palette
+	// Set the palette
 	this->palette = textureSpec->palette;
 	this->status = kTextureInvalid;
 	this->frame = 0;
 	this->update = false;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Texture::destructor()
 {
@@ -268,7 +313,7 @@ void Texture::destructor()
 		VirtualList::removeData(_texturesToUpdate, this);
 	}
 
-	// make sure that I'm not destroyed again
+	// Make sure that I'm not destroyed again
 	this->usageCount = 0;
 
 	Texture::releaseCharSet(this);
@@ -277,14 +322,14 @@ void Texture::destructor()
 	Base::destructor();
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 uint16 Texture::getId()
 {
 	return this->id;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Texture::setSpec(TextureSpec* textureSpec)
 {
@@ -311,14 +356,14 @@ void Texture::setSpec(TextureSpec* textureSpec)
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-TextureSpec* Texture::getSpec()
+const TextureSpec* Texture::getSpec()
 {
 	return this->textureSpec;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 CharSet Texture::getCharSet(uint32 loadIfNeeded)
 {
@@ -330,14 +375,14 @@ CharSet Texture::getCharSet(uint32 loadIfNeeded)
 	return this->charSet;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Texture::increaseUsageCount()
 {
 	this->usageCount++;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 bool Texture::decreaseUsageCount()
 {
@@ -354,14 +399,14 @@ bool Texture::decreaseUsageCount()
 	return 0 == this->usageCount;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 uint8 Texture::getUsageCount()
 {
 	return this->usageCount;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Texture::setPalette(uint8 palette)
 {
@@ -370,21 +415,21 @@ void Texture::setPalette(uint8 palette)
 	Texture::rewrite(this);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 uint8 Texture::getPalette()
 {
 	return this->palette;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 uint32 Texture::getNumberOfFrames()
 {
 	return this->textureSpec->numberOfFrames;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Texture::setFrame(uint16 frame)
 {
@@ -400,35 +445,35 @@ void Texture::setFrame(uint16 frame)
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 uint16 Texture::getFrame()
 {
 	return this->frame;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 uint32 Texture::getCols()
 {
 	return this->textureSpec->cols;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 uint32 Texture::getRows()
 {
 	return this->textureSpec->rows;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 bool Texture::isWritten()
 {
 	return kTextureWritten == this->status;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 bool Texture::isShared()
 {
@@ -445,25 +490,29 @@ bool Texture::isShared()
 	return true;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 bool Texture::isSingleFrame()
 {
 	return Texture::isSpecSingleFrame(this->textureSpec);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 bool Texture::isMultiframe()
 {
 	return !Texture::isSpecSingleFrame(this->textureSpec);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Texture::addChar(const Point* textureChar, const uint32* newChar)
 {
-	if(NULL != this->charSet && NULL != textureChar && ((unsigned)textureChar->x) < this->textureSpec->cols && ((unsigned)textureChar->y) < this->textureSpec->rows)
+	if
+	(
+		NULL != this->charSet && NULL != textureChar && ((unsigned)textureChar->x) < this->textureSpec->cols && 
+		((unsigned)textureChar->y) < this->textureSpec->rows
+	)
 	{
 		uint32 displacement = this->textureSpec->cols * textureChar->y + textureChar->x;
 		uint32 charToReplace = this->textureSpec->map[displacement] & 0x7FF;
@@ -472,11 +521,15 @@ void Texture::addChar(const Point* textureChar, const uint32* newChar)
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Texture::putChar(const Point* textureChar, const uint32* newChar)
 {
-	if(NULL != this->charSet && NULL != textureChar && ((unsigned)textureChar->x) < this->textureSpec->cols && ((unsigned)textureChar->y) < this->textureSpec->rows)
+	if
+	(
+		NULL != this->charSet && NULL != textureChar && ((unsigned)textureChar->x) < this->textureSpec->cols && 
+		((unsigned)textureChar->y) < this->textureSpec->rows
+	)
 	{
 		uint32 displacement = this->textureSpec->cols * textureChar->y + textureChar->x;
 		uint32 charToReplace = this->textureSpec->map[displacement] & 0x7FF;
@@ -485,11 +538,15 @@ void Texture::putChar(const Point* textureChar, const uint32* newChar)
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Texture::putPixel(const Point* texturePixel, const Pixel* charSetPixel, BYTE newPixelColor)
 {
-	if(this->charSet && texturePixel && ((unsigned)texturePixel->x) < this->textureSpec->cols && ((unsigned)texturePixel->y) < this->textureSpec->rows)
+	if
+	(
+		this->charSet && texturePixel && ((unsigned)texturePixel->x) < this->textureSpec->cols && 
+		((unsigned)texturePixel->y) < this->textureSpec->rows
+	)
 	{
 		uint32 displacement = this->textureSpec->cols * texturePixel->y + texturePixel->x;
 		uint32 charToReplace = this->textureSpec->map[displacement] & 0x7FF;
@@ -497,7 +554,7 @@ void Texture::putPixel(const Point* texturePixel, const Pixel* charSetPixel, BYT
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Texture::prepare()
 {
@@ -508,7 +565,7 @@ void Texture::prepare()
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 bool Texture::write(int16 maximumTextureRowsToWrite __attribute__((unused)))
 {
@@ -537,7 +594,7 @@ bool Texture::write(int16 maximumTextureRowsToWrite __attribute__((unused)))
 	return true;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Texture::rewrite()
 {
@@ -548,20 +605,18 @@ void Texture::rewrite()
 	if(!this->update || (statusChanged && kTexturePendingRewriting == this->status))
 	{
 		// Prepare the texture right away just in case the call initiates
-		// at a defragmentation process
+		// At a defragmentation process
 		Texture::prepare(this);
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PRIVATE METHODS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Texture::loadCharSet()
 {
@@ -575,7 +630,7 @@ void Texture::loadCharSet()
 		return;
 	}
 
-	this->charSet = CharSetManager::getCharSet(CharSetManager::getInstance(), this->textureSpec->charSetSpec);
+	this->charSet = CharSet::get(this->textureSpec->charSetSpec);
 
 	if(isDeleted(this->charSet))
 	{
@@ -586,11 +641,18 @@ void Texture::loadCharSet()
 
 	Texture::setupUpdateFunction(this);
 
-	CharSet::addEventListener(this->charSet, ListenerObject::safeCast(this), (EventListener)Texture::onCharSetChangedOffset, kEventCharSetChangedOffset);
-	CharSet::addEventListener(this->charSet, ListenerObject::safeCast(this), (EventListener)Texture::onCharSetDeleted, kEventCharSetDeleted);
+	CharSet::addEventListener
+	(
+		this->charSet, ListenerObject::safeCast(this), (EventListener)Texture::onCharSetChangedOffset, kEventCharSetChangedOffset
+	);
+	
+	CharSet::addEventListener
+	(
+		this->charSet, ListenerObject::safeCast(this), (EventListener)Texture::onCharSetDeleted, kEventCharSetDeleted
+	);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Texture::releaseCharSet()
 {
@@ -604,16 +666,23 @@ void Texture::releaseCharSet()
 
 	if(!isDeleted(this->charSet))
 	{
-		CharSet::removeEventListener(this->charSet, ListenerObject::safeCast(this), (EventListener)Texture::onCharSetChangedOffset, kEventCharSetChangedOffset);
-		CharSet::removeEventListener(this->charSet, ListenerObject::safeCast(this), (EventListener)Texture::onCharSetDeleted, kEventCharSetDeleted);
+		CharSet::removeEventListener
+		(
+			this->charSet, ListenerObject::safeCast(this), (EventListener)Texture::onCharSetChangedOffset, kEventCharSetChangedOffset
+		);
+		
+		CharSet::removeEventListener
+		(
+			this->charSet, ListenerObject::safeCast(this), (EventListener)Texture::onCharSetDeleted, kEventCharSetDeleted
+		);
 
-		CharSetManager::releaseCharSet(CharSetManager::getInstance(), this->charSet);
+		CharSet::release(this->charSet);
 
 		this->charSet = NULL;
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 bool Texture::update(int16 maximumTextureRowsToWrite)
 {
@@ -672,12 +741,15 @@ bool Texture::update(int16 maximumTextureRowsToWrite)
 	return kTextureWritten == this->status;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Texture::setMapDisplacement(uint32 mapDisplacement)
 {
 	bool statusChanged = kTextureMapDisplacementChanged != this->status;
-	this->status = this->mapDisplacement != mapDisplacement && this->status > kTextureMapDisplacementChanged ? kTextureMapDisplacementChanged : this->status;
+	this->status = 
+		this->mapDisplacement != mapDisplacement 
+		&& 
+		this->status > kTextureMapDisplacementChanged ? kTextureMapDisplacementChanged : this->status;
 
 	bool valueChanged = this->mapDisplacement != mapDisplacement;
 	this->mapDisplacement = mapDisplacement;
@@ -688,7 +760,7 @@ void Texture::setMapDisplacement(uint32 mapDisplacement)
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Texture::setupUpdateFunction()
 {
@@ -707,7 +779,7 @@ void Texture::setupUpdateFunction()
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 bool Texture::onCharSetChangedOffset(ListenerObject eventFirer __attribute__ ((unused)))
 {
@@ -716,7 +788,7 @@ bool Texture::onCharSetChangedOffset(ListenerObject eventFirer __attribute__ ((u
 	return true;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 bool Texture::onCharSetDeleted(ListenerObject eventFirer)
 {
@@ -725,5 +797,4 @@ bool Texture::onCharSetDeleted(ListenerObject eventFirer)
 	return false;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

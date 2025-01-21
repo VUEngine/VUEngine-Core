@@ -10,24 +10,15 @@
 #ifndef PROFILER_H_
 #define PROFILER_H_
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // INCLUDES
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <ListenerObject.h>
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-// FORWARD DECLARATIONS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-class TimerManager;
-
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DATA
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 enum ProfilerLapTypes
 {
@@ -40,12 +31,10 @@ enum ProfilerLapTypes
 	kProfilerLapTypeCommunicationsInterruptProcess				= 0x00000001 << 6,
 };
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DECLARATION
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-///
 /// Class SoundTest
 ///
 /// Inherits from ListenerObject
@@ -56,8 +45,6 @@ singleton class Profiler : ListenerObject
 	/// Laps during the current profiling cycle
 	VirtualList laps;
 
-	/// 
-	TimerManager timerManager;
 	float timeProportion;
 	float lastCycleTotalTime;
 	float totalTime;
@@ -77,26 +64,23 @@ singleton class Profiler : ListenerObject
 	bool processedCommunications;
 
 	/// @publicsection
-	/// Method to retrieve the singleton instance
-	/// @return Profiler singleton
-	static Profiler getInstance();
 
 	/// Initialize the profiler.
-	void initialize();
+	static void initialize();
 
 	/// Reset the profiler's state.
-	void reset();
+	static void reset();
 
 	/// Start a new cycle of profiling.
-	void start();
+	static void start();
 
 	/// End the current profiling cycle.
-	void end();
+	static void end();
 
 	/// Register a lap during the current profiling cycle.
 	/// @param lapType: Type of lap to record
 	/// @param processName: Name of the process during the lap
-	void lap(uint32 lapType, const char* processName);
+	static void lap(uint32 lapType, const char* processName);
 }
 
 #endif

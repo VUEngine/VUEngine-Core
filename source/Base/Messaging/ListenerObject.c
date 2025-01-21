@@ -7,10 +7,9 @@
  * that was distributed with this source code.
  */
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // INCLUDES
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <DebugConfig.h>
 #include <MessageDispatcher.h>
@@ -22,21 +21,18 @@
 
 #include "ListenerObject.h"
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DECLARATIONS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 friend class VirtualNode;
 friend class VirtualList;
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PUBLIC METHODS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void ListenerObject::constructor()
 {
@@ -49,21 +45,21 @@ void ListenerObject::constructor()
 	this->eventFirings = 0;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void ListenerObject::destructor()
 {	
 	ASSERT(!isDeleted(this), "ListenerObject::destructor: already deleted this");
 	NM_ASSERT(0 == this->eventFirings, "ListenerObject::destructor: called during event firing");
 
-	MessageDispatcher::discardAllDelayedMessages(MessageDispatcher::getInstance(), ListenerObject::safeCast(this));
+	MessageDispatcher::discardAllDelayedMessages(ListenerObject::safeCast(this));
 	ListenerObject::removeAllEventListeners(this);
 
 	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void ListenerObject::addEventListener(ListenerObject listener, uint16 eventCode)
 {
@@ -98,7 +94,7 @@ void ListenerObject::addEventListener(ListenerObject listener, uint16 eventCode)
 	VirtualList::pushBack(this->events, event);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void ListenerObject::removeEventListener(ListenerObject listener, uint16 eventCode)
 {
@@ -147,7 +143,7 @@ void ListenerObject::removeEventListener(ListenerObject listener, uint16 eventCo
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void ListenerObject::removeEventListeners(uint16 eventCode)
 {
@@ -196,7 +192,7 @@ void ListenerObject::removeEventListeners(uint16 eventCode)
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void ListenerObject::removeEventListenerScopes(ListenerObject listener, uint16 eventCode)
 {
@@ -244,7 +240,7 @@ void ListenerObject::removeEventListenerScopes(ListenerObject listener, uint16 e
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void ListenerObject::removeAllEventListeners()
 {
@@ -277,14 +273,14 @@ void ListenerObject::removeAllEventListeners()
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 bool ListenerObject::hasActiveEventListeners()
 {
 	return !isDeleted(this->events) ? NULL != VirtualList::begin(this->events) : false;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void ListenerObject::fireEvent(uint16 eventCode)
 {
@@ -300,14 +296,14 @@ void ListenerObject::fireEvent(uint16 eventCode)
 
 			Event* event = (Event*)node->data;
 
-			// safety check in case that the there is a stacking up of firings within firings
+			// Safety check in case that the there is a stacking up of firings within firings
 			if(isDeleted(event) || isDeleted(event->listener) || event->remove)
 			{
 				if(1 == this->eventFirings)
 				{
 					VirtualList::removeNode(this->events, node);
 
-					// safety check in case that the there is a stacking up of firings within firings
+					// Safety check in case that the there is a stacking up of firings within firings
 					if(!isDeleted(event))
 					{
 						delete event;
@@ -318,7 +314,7 @@ void ListenerObject::fireEvent(uint16 eventCode)
 			{
 				event->remove = !ListenerObject::onEvent(event->listener, event->code, this);
 
-				// safe check in case that I have been deleted during the previous event
+				// Safe check in case that I have been deleted during the previous event
 				if(isDeleted(this))
 				{
 #ifndef __RELEASE
@@ -349,7 +345,7 @@ void ListenerObject::fireEvent(uint16 eventCode)
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void ListenerObject::sendMessageTo(ListenerObject receiver, uint32 message, uint32 delay, uint32 randomDelay)
 {
@@ -363,30 +359,30 @@ void ListenerObject::sendMessageTo(ListenerObject receiver, uint32 message, uint
 	);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void ListenerObject::sendMessageToSelf(uint32 message, uint32 delay, uint32 randomDelay)
 {
 	ListenerObject::sendMessageTo(this, this, message, delay, randomDelay);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void ListenerObject::discardAllMessages()
 {
-	MessageDispatcher::discardAllDelayedMessagesFromSender(MessageDispatcher::getInstance(), ListenerObject::safeCast(this));
-	MessageDispatcher::discardAllDelayedMessagesForReceiver(MessageDispatcher::getInstance(), ListenerObject::safeCast(this));
+	MessageDispatcher::discardAllDelayedMessagesFromSender(ListenerObject::safeCast(this));
+	MessageDispatcher::discardAllDelayedMessagesForReceiver(ListenerObject::safeCast(this));
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void ListenerObject::discardMessages(uint32 message)
 {
-	MessageDispatcher::discardDelayedMessagesFromSender(MessageDispatcher::getInstance(), ListenerObject::safeCast(this), message);
-	MessageDispatcher::discardDelayedMessagesForReceiver(MessageDispatcher::getInstance(), ListenerObject::safeCast(this), message);
+	MessageDispatcher::discardDelayedMessagesFromSender(ListenerObject::safeCast(this), message);
+	MessageDispatcher::discardDelayedMessagesForReceiver(ListenerObject::safeCast(this), message);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 bool ListenerObject::handleMessage(Telegram telegram __attribute__ ((unused)))
 {
@@ -399,5 +395,4 @@ bool ListenerObject::onEvent(uint16 event __attribute__ ((unused)), ListenerObje
 	return false;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

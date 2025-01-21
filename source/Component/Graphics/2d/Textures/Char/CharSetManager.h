@@ -10,26 +10,23 @@
 #ifndef CHARSET_MANAGER_H_
 #define CHARSET_MANAGER_H_
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // INCLUDES
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <Object.h>
 #include <CharSet.h>
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // FORWARD DECLARATIONS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 class VirtualList;
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DECLARATION
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-///
 /// Class CharSetManager
 ///
 /// Inherits from Object
@@ -47,10 +44,6 @@ singleton class CharSetManager : Object
 
 	/// @publicsection
 
-	/// Method to retrieve the singleton instance
-	/// @return CharSetManager singleton
-	static CharSetManager getInstance();
-
 	/// Empties internal virtual list of registered fonts
 	void reset();
 
@@ -61,7 +54,7 @@ singleton class CharSetManager : Object
 	/// Retrieve a char set initialized with the provided spec.
 	/// @param charSetSpec: Spec to use to initilize the desired char set
 	/// @return Char set initialized with the provided spec
-	CharSet getCharSet(CharSetSpec* charSetSpec);
+	CharSet getCharSet(const CharSetSpec* charSetSpec);
 
 	/// Release a char set.
 	/// @param charSet: Char set to release
@@ -92,6 +85,5 @@ singleton class CharSetManager : Object
 	/// @param y: Screen y coordinate where to print
 	void print(int32 x, int32 y);
 }
-
 
 #endif

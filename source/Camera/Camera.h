@@ -10,19 +10,17 @@
 #ifndef CAMERA_H_
 #define CAMERA_H_
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // INCLUDES
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <ListenerObject.h>
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // FORWARD DECLARATIONS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-class Entity;
+class Actor;
 class CameraMovementManager;
 class CameraEffectManager;
 
@@ -33,19 +31,16 @@ extern const Rotation* _cameraRotation __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBU
 extern const Rotation* _cameraInvertedRotation __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE;
 extern const Optical* _optical __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE;
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' MACROS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #define __CAMERA_VIEWING_ANGLE									(56)
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DECLARATION
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-///
 /// Class Camera
 ///
 /// Inherits from ListenerObject
@@ -56,17 +51,14 @@ singleton class Camera : ListenerObject
 	/// Optical configuration values used for projections
 	Optical optical;
 
-	/// Camera's position
-	Vector3D position;
+	/// Camera's transformation
+	Transformation transformation;
 
 	/// Displacement applied to the position when it changes
 	Vector3D displacement;
 
 	/// Saves the camera's change of position in the last game cycle
 	Vector3D lastDisplacement;
-
-	/// Camera's rotation
-	Rotation rotation;
 
 	/// Camera's rotation's complement
 	Rotation invertedRotation;
@@ -88,10 +80,6 @@ singleton class Camera : ListenerObject
 	uint8 transformationFlags;
 
 	/// @publicsection
-
-	/// Method to retrieve the singleton instance
-	/// @return Camera singleton
-	static Camera getInstance();
 	
 	/// Reset the camera's state.
 	void reset();
@@ -126,26 +114,26 @@ singleton class Camera : ListenerObject
 	/// @return Stage's size
 	Size getStageSize();
 
-	/// Register the entity that the camera must follow.
-	/// @param focusEntity: Entity to follow
-	void setFocusEntity(Entity focusEntity);
+	/// Register the actor that the camera must follow.
+	/// @param focusActor: Actor to follow
+	void setFocusActor(Actor focusActor);
 
-	/// Retrieve the entity that the camera is following.
-	/// @return focusEntity: Entity being followed
-	Entity getFocusEntity();
+	/// Retrieve the actor that the camera is following.
+	/// @return focusActor: Actor being followed
+	Actor getFocusActor();
 
-	/// Stop following any entity.
-	void unsetFocusEntity();
+	/// Stop following any actor.
+	void unsetFocusActor();
 
 	/// Register a displacement to be added to the camera's position 
-	/// relative to the focus entity's position.
-	/// @param focusEntityPositionDisplacement: Displacement vector
-	void setFocusEntityPositionDisplacement(Vector3D focusEntityPositionDisplacement);
+	/// relative to the focus actor's position.
+	/// @param focusActorPositionDisplacement: Displacement vector
+	void setFocusActorPositionDisplacement(Vector3D focusActorPositionDisplacement);
 
 	/// Retrieve the displacement that is added to the camera's position 
-	/// relative to the focus entity's position.
+	/// relative to the focus actor's position.
 	/// @return Displacement vector
-	Vector3D getFocusEntityPositionDisplacement();
+	Vector3D getFocusActorPositionDisplacement();
 	
 	/// Set a constant displacement to be added to the camera's position.
 	/// @param displacement: Displacement vector
@@ -162,6 +150,14 @@ singleton class Camera : ListenerObject
 	/// Retrieve the optical configuration values used for projections.
 	/// @return Optical struct with the configuration values used for projections
 	Optical getOptical();
+
+	/// Set the camera's transformation.
+	/// @param transformation: New transformation
+	void setTransformation(Transformation transformation, bool cap);
+
+	/// Retrieve the camera's transformation.
+	/// @return Camera's transformation
+	Transformation getTransformation();
 
 	/// Set the camera's position.
 	/// @param position: 3D vector
@@ -202,7 +198,7 @@ singleton class Camera : ListenerObject
 	/// @return Transformation flags
 	uint8 getTransformationFlags();
 
-	/// Focus the camera on the focus entity if any.
+	/// Focus the camera on the focus actor if any.
 	void focus();
 
 	/// Start a camera effect.
@@ -220,6 +216,5 @@ singleton class Camera : ListenerObject
 	/// @param inPixels: If true, the spatial data is printed in pixel units; in meter, otherwise
 	void print(int32 x, int32 y, bool inPixels);
 }
-
 
 #endif

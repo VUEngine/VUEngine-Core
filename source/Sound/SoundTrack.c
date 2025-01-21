@@ -7,54 +7,42 @@
  * that was distributed with this source code.
  */
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // INCLUDES
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-#include <MessageDispatcher.h>
 #include <Printing.h>
-#include <SoundManager.h>
-#include <TimerManager.h>
 #include <Utilities.h>
 #include <VirtualList.h>
 #include <VSUManager.h>
-#include <VUEngine.h>
 #include <WaveForms.h>
 
 #include "SoundTrack.h"
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' ATTRIBUTES
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 static uint16 _pcmTargetPlaybackRefreshRate = 4000;
-static VSUManager _vsuManager = NULL;
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' STATIC METHODS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 static void SoundTrack::setPCMTargetPlaybackRefreshRate(uint16 pcmTargetPlaybackRefreshRate)
 {
 	_pcmTargetPlaybackRefreshRate = pcmTargetPlaybackRefreshRate;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PUBLIC METHODS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void SoundTrack::start(bool wasPaused)
 {
@@ -65,41 +53,43 @@ void SoundTrack::start(bool wasPaused)
 
 	if(kTrackPCM == this->soundTrackSpec->trackType)
 	{
-		VSUManager::setMode(_vsuManager, kPlaybackPCM);
+		VSUManager::setMode(VSUManager::getInstance(), kPlaybackPCM);
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void SoundTrack::stop()
 {
 	if(kTrackPCM == this->soundTrackSpec->trackType)
 	{
-		VSUManager::setMode(_vsuManager, kPlaybackNative);
+		VSUManager::setMode(VSUManager::getInstance(), kPlaybackNative);
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void SoundTrack::pause()
-{}
+{
+	VSUManager::stopSoundSourcesUsedBy(Object::safeCast(this));
+}
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void SoundTrack::unpause()
 {}
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void SoundTrack::suspend()
 {}
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void SoundTrack::resume()
 {}
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void SoundTrack::rewind()
 {
@@ -123,9 +113,13 @@ void SoundTrack::rewind()
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-bool SoundTrack::update(uint32 elapsedMicroseconds, uint32 targetPCMUpdates, fix7_9_ext tickStep, fix7_9_ext targetTimerResolutionFactor, fixed_t leftVolumeFactor, fixed_t rightVolumeFactor, int8 volumeReduction, uint8 volumenScalePower, uint16 frequencyDelta)
+bool SoundTrack::update
+(
+	uint32 elapsedMicroseconds, uint32 targetPCMUpdates, fix7_9_ext tickStep, fix7_9_ext targetTimerResolutionFactor, 
+	fixed_t leftVolumeFactor, fixed_t rightVolumeFactor, int8 volumeReduction, uint8 volumenScalePower, uint16 frequencyDelta
+)
 {
 	if(this->finished)
 	{
@@ -136,22 +130,27 @@ bool SoundTrack::update(uint32 elapsedMicroseconds, uint32 targetPCMUpdates, fix
 	{
 		this->finished = SoundTrack::updatePCM(this, elapsedMicroseconds, targetPCMUpdates, volumeReduction);
 	}
-	else if(kTrackNative == this->soundTrackSpec->trackType)
+	else /*if(kTrackNative == this->soundTrackSpec->trackType)*/
 	{
-		this->finished = SoundTrack::updateNative(this, tickStep, targetTimerResolutionFactor, leftVolumeFactor, rightVolumeFactor, volumeReduction, volumenScalePower, frequencyDelta);
+		this->finished = 
+			SoundTrack::updateNative
+			(
+				this, tickStep, targetTimerResolutionFactor, leftVolumeFactor, rightVolumeFactor, volumeReduction, 
+				volumenScalePower, frequencyDelta
+			);
 	}
 
 	return this->finished;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 uint32 SoundTrack::getTicks()
 {
 	return this->ticks;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 float SoundTrack::getElapsedTicksPercentaje()
 {
@@ -163,7 +162,7 @@ float SoundTrack::getElapsedTicksPercentaje()
 	return (float)this->cursor / this->samples;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 uint32 SoundTrack::getTotalPlaybackMilliseconds(uint16 targetTimerResolutionUS)
 {
@@ -181,16 +180,13 @@ uint32 SoundTrack::getTotalPlaybackMilliseconds(uint16 targetTimerResolutionUS)
 	return totalPlaybackMilliseconds;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PRIVATE METHODS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void SoundTrack::constructor(const SoundTrackSpec* soundTrackSpec)
 {
@@ -210,19 +206,19 @@ void SoundTrack::constructor(const SoundTrackSpec* soundTrackSpec)
 	{
 		this->ticks = this->samples = this->soundTrackSpec->samples;
 	}
-
-	_vsuManager = VSUManager::getInstance();
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void SoundTrack::destructor()
 {
+	SoundTrack::stop(this);
+	
 	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void SoundTrack::reset()
 {
@@ -241,7 +237,7 @@ void SoundTrack::reset()
 	this->nextElapsedTicksTarget = 0;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void SoundTrack::computeLength()
 {
@@ -265,7 +261,7 @@ void SoundTrack::computeLength()
 	this->ticks += this->soundTrackSpec->trackKeyframes[keyframe].tick;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 bool SoundTrack::updatePCM(uint32 elapsedMicroseconds, uint32 targetPCMUpdates, int8 volumeReduction)
 {
@@ -276,16 +272,20 @@ bool SoundTrack::updatePCM(uint32 elapsedMicroseconds, uint32 targetPCMUpdates, 
 
 	this->cursor = this->elapsedTicks / targetPCMUpdates;
 
-	VSUManager::applyPCMSampleToSoundSource(_vsuManager, this->soundTrackSpec->SxLRV[this->cursor] - volumeReduction);
+	VSUManager::applyPCMSampleToSoundSource(this->soundTrackSpec->SxLRV[this->cursor] - volumeReduction);
 
 	CACHE_DISABLE;
 
 	return this->cursor >= this->samples;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-bool SoundTrack::updateNative(fix7_9_ext tickStep, fix7_9_ext targetTimerResolutionFactor, fixed_t leftVolumeFactor, fixed_t rightVolumeFactor, int8 volumeReduction, uint8 volumenScalePower, uint16 frequencyDelta)
+bool SoundTrack::updateNative
+(
+	fix7_9_ext tickStep, fix7_9_ext targetTimerResolutionFactor, fixed_t leftVolumeFactor, fixed_t rightVolumeFactor, 
+	int8 volumeReduction, uint8 volumenScalePower, uint16 frequencyDelta
+)
 {
 	this->elapsedTicks += tickStep;
 
@@ -424,10 +424,9 @@ bool SoundTrack::updateNative(fix7_9_ext tickStep, fix7_9_ext targetTimerResolut
 		this->soundTrackSpec->skippable
 	};
 
-	VSUManager::applySoundSourceConfiguration(_vsuManager, &vsuChannelConfiguration);
+	VSUManager::applySoundSourceConfiguration(&vsuChannelConfiguration);
 
 	return ++this->cursor >= this->samples;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

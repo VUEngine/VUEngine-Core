@@ -12,21 +12,15 @@
 #ifndef __RUMBLE_PAK_MANAGER_H_
 #define __RUMBLE_PAK_MANAGER_H_
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // INCLUDES
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <Object.h>
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-// FORWARD DECLARATIONS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-class CommunicationManager;
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' MACROS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #define __RUMBLE_MAX_EFFECTS_IN_CHAIN		  8
 #define __RUMBLE_MAX_OVERDRIVE				  126
@@ -67,9 +61,9 @@ class CommunicationManager;
 #define __RUMBLE_EFFECT_CHAIN_END			  0xFF
 #define __RUMBLE_TOTAL_COMMANDS				  10
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DATA
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 /// A rumble effect spec
 /// @memberof RumbleManager
@@ -102,11 +96,10 @@ typedef struct RumbleEffectSpec
 /// @memberof RumbleManager
 typedef const RumbleEffectSpec RumbleEffectROMSpec;
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DECLARATION
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-///
 /// Class RumbleManager
 ///
 /// Inherits from Object
@@ -115,9 +108,6 @@ typedef const RumbleEffectSpec RumbleEffectROMSpec;
 singleton class RumbleManager : Object
 {
 	/// @protectedsection
-
-	/// Used to broadcast the rumble commands over the EXT port
-	CommunicationManager communicationManager;
 
 	/// Queue of commands to broadcast
 	uint8 rumbleCommands[__RUMBLE_TOTAL_COMMANDS];
@@ -141,10 +131,6 @@ singleton class RumbleManager : Object
 
 	/// @publicsection
 
-	/// Method to retrieve the singleton instance
-	/// @return RumbleManager singleton
-	static RumbleManager getInstance();
-
 	/// Start a rumble effect configured with the provided spec.
 	/// @param rumbleEffectSpec: Specification of the rumble effect to play
 	static void startEffect(const RumbleEffectSpec* rumbleEffectSpec);
@@ -154,18 +140,18 @@ singleton class RumbleManager : Object
 	/// any playing effect is stoped
 	static void stopEffect(const RumbleEffectSpec* rumbleEffectSpec);
 
-	/// Reset the manager's state.
-	void reset();
-
 	/// Set the async flag.
 	/// @param async: If true, rumble commands are broadcasted asynchronously
-	void setAsync(bool async);
+	static void setAsync(bool async);
 
 	/// Set the flag to broadcast new effects regardless of if there is a previous queue effect pending
 	/// broadcasted
 	/// @param overridePreviousEffect: If true, new effects are broadcasted regardless of if there is a
 	/// queued effect pending broadcasting
-	void setOverridePreviousEffect(bool overridePreviousEffect);
+	static void setOverridePreviousEffect(bool overridePreviousEffect);
+
+	/// Reset the manager's state.
+	void reset();
 }
 
 #endif

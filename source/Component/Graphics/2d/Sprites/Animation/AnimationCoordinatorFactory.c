@@ -7,10 +7,9 @@
  * that was distributed with this source code.
  */
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // INCLUDES
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <AnimationController.h>
 #include <AnimationCoordinator.h>
@@ -20,53 +19,18 @@
 
 #include "AnimationCoordinatorFactory.h"
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DECLARATIONS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 friend class VirtualList;
 friend class VirtualNode;
 
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+// CLASS' STATIC METHODS
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-// CLASS' PUBLIC METHODS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void AnimationCoordinatorFactory::constructor()
-{
-	// Always explicitly call the base's constructor 
-	Base::constructor();
-
-	this->animationCoordinators = new VirtualList();
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void AnimationCoordinatorFactory::destructor()
-{
-	ASSERT(this->animationCoordinators, "AnimationCoordinatorFactory::destructor: null animationCoordinators");
-
-	AnimationCoordinatorFactory::reset(this);
-	delete this->animationCoordinators;
-	this->animationCoordinators = NULL;
-
-	// allow a new construct
-	// Always explicitly call the base's destructor 
-	Base::destructor();
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void AnimationCoordinatorFactory::reset()
-{
-	VirtualList::deleteData(this->animationCoordinators);
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 AnimationCoordinator AnimationCoordinatorFactory::getCoordinator(AnimationController animationController, ListenerObject scope, const CharSetSpec* charSetSpec)
 {
@@ -74,7 +38,7 @@ AnimationCoordinator AnimationCoordinatorFactory::getCoordinator(AnimationContro
 
 	if(NULL != charSetSpec && charSetSpec->shared)
 	{
-		// try to find an already created coordinator
+		// Try to find an already created coordinator
 		for(VirtualNode node = this->animationCoordinators->head; NULL != node; node = node->next)
 		{
 			AnimationCoordinator animationCoordinator = AnimationCoordinator::safeCast(node->data);
@@ -88,7 +52,7 @@ AnimationCoordinator AnimationCoordinatorFactory::getCoordinator(AnimationContro
 
 		AnimationCoordinator animationCoordinator = new AnimationCoordinator(charSetSpec, scope);
 
-		// create a new coordinator
+		// Create a new coordinator
 		AnimationCoordinator::addAnimationController(animationCoordinator, animationController);
 
 		VirtualList::pushBack(this->animationCoordinators, animationCoordinator);
@@ -99,5 +63,38 @@ AnimationCoordinator AnimationCoordinatorFactory::getCoordinator(AnimationContro
 	return NULL;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+// CLASS' PRIVATE METHODS
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void AnimationCoordinatorFactory::constructor()
+{
+	// Always explicitly call the base's constructor 
+	Base::constructor();
+
+	this->animationCoordinators = new VirtualList();
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void AnimationCoordinatorFactory::destructor()
+{
+	ASSERT(this->animationCoordinators, "AnimationCoordinatorFactory::destructor: null animationCoordinators");
+
+	if(NULL != this->animationCoordinators)
+	{
+		VirtualList::deleteData(this->animationCoordinators);
+		delete this->animationCoordinators;
+		this->animationCoordinators = NULL;
+	}
+
+	// Allow a new construct
+	// Always explicitly call the base's destructor 
+	Base::destructor();
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

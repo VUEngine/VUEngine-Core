@@ -10,29 +10,26 @@
 #ifndef BODY_WORLD_H_
 #define BODY_WORLD_H_
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // INCLUDES
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <Body.h>
 #include <ComponentManager.h>
-#include <GameObject.h>
+#include <Entity.h>
 #include <Clock.h>
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' MACROS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-#define __PHYSICS_TIME_ELAPSED_STEP			__FIX7_9_EXT_DIV(__1I_FIX7_9_EXT, __FIX7_9_EXT_DIV(__I_TO_FIX7_9_EXT(__TARGET_FPS), __I_TO_FIX7_9_EXT(__PHYSICS_TIME_ELAPSED_DIVISOR)))
+#define __PHYSICS_TIME_ELAPSED_STEP			__FIX7_9_EXT_DIV(__1I_FIX7_9_EXT, __FIX7_9_EXT_DIV(__I_TO_FIX7_9_EXT(__TARGET_FPS), \
+											__I_TO_FIX7_9_EXT(__PHYSICS_TIME_ELAPSED_DIVISOR)))
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DECLARATION
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-///
 /// Class BodyManager
 ///
 /// Inherits from ComponentManager
@@ -72,32 +69,32 @@ class BodyManager : ComponentManager
 	/// Class' constructor
 	void constructor();
 
+	/// Retrieve the compoment type that the manager manages.
+	/// @return Component type
+	override uint32 getType();
+
+	/// Enable the manager.
+	override void enable();
+
+	/// Disable the manager.
+	override void disable();
+
 	/// Create a body with the provided spec.
 	/// @param owner: Object to which the body will attach to
 	/// @param bodySpec: Spec to use to create the body
 	/// @return Created body
-	override Body createComponent(GameObject owner, const BodySpec* bodySpec);
+	override Body instantiateComponent(Entity owner, const BodySpec* bodySpec);
 
 	/// Destroy the provided behavior.
 	/// @param owner: Object to which the sprite will attach to
 	/// @param body: Body to destroy
-	override void destroyComponent(GameObject owner, Body body);
+	override void deinstantiateComponent(Entity owner, Body body);
 
 	/// Reset the manager's state.
 	void reset();
 
 	/// Update the registered bodies by advancing the physics simulations.
 	void update();
-
-	/// Create a body with the provided spec.
-	/// @param owner: Object to which the body will attach to
-	/// @param bodySpec: Spec to use to create the body
-	/// @return Created body
-	Body createBody(GameObject owner, const BodySpec* bodySpec);
-
-	/// Destroy the provided body.
-	/// @param body: Body to destroy
-	void destroyBody(Body body);
 
 	/// Set the time scale for time step on each call to update.
 	/// @param timeScale: Time scale for time step on each call to update
@@ -128,6 +125,5 @@ class BodyManager : ComponentManager
 	/// @param y: Screen y coordinate where to print
 	void print(int32 x, int32 y);
 }
-
 
 #endif

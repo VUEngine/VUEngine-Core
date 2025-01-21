@@ -10,35 +10,30 @@
 #ifndef COLLIDER_MANAGER_H_
 #define COLLIDER_MANAGER_H_
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // INCLUDES
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <Collider.h>
 #include <ComponentManager.h>
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // FORWARD DECLARATIONS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #define __COLLISION_ALL_LAYERS		0x7FFFFFFF
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' MACROS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-class GameObject;
+class Entity;
 class Clock;
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DECLARATION
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-///
 /// Class ColliderManager
 ///
 /// Inherits from ComponentManager
@@ -59,35 +54,32 @@ class ColliderManager : ComponentManager
 	/// Class' constructor
 	void constructor();
 
+	/// Retrieve the compoment type that the manager manages.
+	/// @return Component type
+	override uint32 getType();
+
+	/// Enable the manager.
+	override void enable();
+
+	/// Disable the manager.
+	override void disable();
+
 	/// Create a collider with the provided spec.
 	/// @param owner: Object to which the collider will attach to
 	/// @param colliderSpec: Spec to use to create the collider
 	/// @return Created collider
-	override Collider createComponent(GameObject owner, const ColliderSpec* colliderSpec);
+	override Collider instantiateComponent(Entity owner, const ColliderSpec* colliderSpec);
 
 	/// Destroy the provided collider.
 	/// @param owner: Object to which the sprite will attach to
 	/// @param collider: Collider to destroy
-	override void destroyComponent(GameObject owner, Collider collider);
-
-	/// Reset the manager's state.
-	void reset();
+	override void deinstantiateComponent(Entity owner, Collider collider);
 
 	/// Purge destroyed colliders.
 	void purgeDestroyedColliders();
 
 	/// Update colliders and test collisions.
 	uint32 update();
-
-	/// Create a collider with the provided spec.
-	/// @param owner: Object to which the collider will attach to
-	/// @param colliderSpec: Spec to use to create the collider
-	/// @return Created collider
-	Collider createCollider(GameObject owner, const ColliderSpec* colliderSpec);
-
-	/// Destroy the provided collider.
-	/// @param collider: Collider to destroy
-	void destroyCollider(Collider collider);
 
 	/// Set if the colliders out of camera's range are culled of from collision testing.
 	/// @param value: If false, colliders out of camera's range are culled of from collision testing
@@ -104,6 +96,5 @@ class ColliderManager : ComponentManager
 	/// @param y: Screen y coordinate where to print
 	void print(int32 x, int32 y);
 }
-
 
 #endif

@@ -7,57 +7,53 @@
  * that was distributed with this source code.
  */
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // INCLUDES
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <Affine.h>
 #include <BgmapTexture.h>
 #include <BgmapTextureManager.h>
-#include <Camera.h>
 #include <DebugConfig.h>
 #include <Optics.h>
 #include <ParamTableManager.h>
 #include <SpriteManager.h>
-#include <VIPManager.h>
 
 #include "BgmapSprite.h"
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DECLARATIONS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 friend class Texture;
 friend class BgmapTexture;
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' STATIC METHODS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-static int16 BgmapSprite::doApplyAffineTransformations(BgmapSprite bgmapSprite)
+static int16 BgmapSprite::doApplyAffineTransformations(BgmapSprite bgmapSprite, int32 maximumParamTableRowsToComputePerCall)
 {
 	ASSERT(bgmapSprite->texture, "BgmapSprite::doApplyAffineTransformations: null texture");
 
 	if(0 < bgmapSprite->param)
 	{
-		return Affine::transform(
+		return Affine::transform
+		(
+			maximumParamTableRowsToComputePerCall,
 			bgmapSprite->param,
 			bgmapSprite->paramTableRow,
-			// geometrically accurate, but kills the CPU
+			// Geometrically accurate, but kills the CPU
 			// (0 > bgmapSprite->position.x? bgmapSprite->position.x : 0) + bgmapSprite->halfWidth,
 			// (0 > bgmapSprite->position.y? bgmapSprite->position.y : 0) + bgmapSprite->halfHeight,
-			// don't do translations
+			// Don't do translations
 			// Provide a little bit of performance gain by only calculation transformation equations
-			// for the visible rows, but causes that some sprites not be rendered completely when the
-			// camera moves vertically
-			// int32 lastRow = height + worldPointer->gy >= _cameraFrustum->y1 ? _cameraFrustum->y1 - worldPointer->gy + myDisplacement: height;
-			// this->paramTableRow = this->paramTableRow ? this->paramTableRow : myDisplacement;
+			// For the visible rows, but causes that some sprites not be rendered completely when the
+			// Camera moves vertically
+			// Int32 lastRow = height + worldPointer->gy >= _cameraFrustum->y1 ? _cameraFrustum->y1 - worldPointer->gy + myDisplacement: height;
+			// This->paramTableRow = this->paramTableRow ? this->paramTableRow : myDisplacement;
 			__I_TO_FIXED(bgmapSprite->halfWidth),
 			__I_TO_FIXED(bgmapSprite->halfHeight),
 			__I_TO_FIX13_3(bgmapSprite->bgmapTextureSource.mx),
@@ -71,17 +67,15 @@ static int16 BgmapSprite::doApplyAffineTransformations(BgmapSprite bgmapSprite)
 	return bgmapSprite->paramTableRow;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PUBLIC METHODS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void BgmapSprite::constructor(GameObject owner, const BgmapSpriteSpec* bgmapSpriteSpec)
+void BgmapSprite::constructor(Entity owner, const BgmapSpriteSpec* bgmapSpriteSpec)
 {
 	NM_ASSERT(NULL != bgmapSpriteSpec, "BgmapSprite::constructor: NULL bgmapSpriteSpec");
 
@@ -102,7 +96,7 @@ void BgmapSprite::constructor(GameObject owner, const BgmapSpriteSpec* bgmapSpri
 	BgmapSprite::configureTexture(this);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void BgmapSprite::destructor()
 {
@@ -119,40 +113,33 @@ void BgmapSprite::destructor()
 	Base::destructor();
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void BgmapSprite::registerWithManager()
+ClassPointer BgmapSprite::getManagerClass()
 {
-	SpriteManager::registerSprite(SpriteManager::getInstance(), Sprite::safeCast(this));
+	return typeofclass(SpriteManager);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void BgmapSprite::unregisterWithManager()
-{
-	SpriteManager::unregisterSprite(SpriteManager::getInstance(), Sprite::safeCast(this));
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 bool BgmapSprite::hasSpecialEffects()
 {
 	return NULL != this->applyParamTableEffect && 0 != ((__WORLD_HBIAS | __WORLD_AFFINE ) & this->head);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void BgmapSprite::processEffects()
+void BgmapSprite::processEffects(int32 maximumParamTableRowsToComputePerCall)
 {
-	// set the world size according to the zoom
+	// Set the world size according to the zoom
 	if(0 < this->param && (uint8)__NO_RENDER_INDEX != this->index)
 	{
 		if(0 != ((__WORLD_AFFINE | __WORLD_HBIAS) & this->head) && NULL != this->applyParamTableEffect)
 		{
 			if(0 <= this->paramTableRow)
 			{
-				// apply affine transformation
-				this->paramTableRow = this->applyParamTableEffect(this);
+				// Apply affine transformation
+				this->paramTableRow = this->applyParamTableEffect(this, maximumParamTableRowsToComputePerCall);
 
 				if(0 > this->paramTableRow)
 				{
@@ -163,7 +150,7 @@ void BgmapSprite::processEffects()
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 int16 BgmapSprite::doRender(int16 index)
 {
@@ -178,23 +165,23 @@ int16 BgmapSprite::doRender(int16 index)
 
 	WorldAttributes* worldPointer = &_worldAttributesCache[index];
 
-	// get coordinates
+	// Get coordinates
 	int16 gx = this->position.x + this->displacement.x - this->halfWidth;
 	int16 gy = this->position.y + this->displacement.y - this->halfHeight;
 	int16 gp = this->position.parallax + this->displacement.parallax;
 
 	int16 auxGp = __ABS(gp);
 
-	// get sprite's size
+	// Get sprite's size
 	int16 w = this->halfWidth << 1;
 	int16 h = this->halfHeight << 1;
 
-	// set the head
+	// Set the head
 	int32 mx = this->bgmapTextureSource.mx;
 	int32 my = this->bgmapTextureSource.my;
 	int32 mp = this->bgmapTextureSource.mp;
 
-	// cap coordinates to camera space
+	// Cap coordinates to camera space
 	if(_cameraFrustum->x0 - auxGp > gx)
 	{
 		if(0 == this->param)
@@ -279,7 +266,7 @@ int16 BgmapSprite::doRender(int16 index)
 	return index;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void BgmapSprite::setMultiframe(uint16 frame)
 {
@@ -300,7 +287,7 @@ void BgmapSprite::setMultiframe(uint16 frame)
 	this->rendered = false;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void BgmapSprite::setRotation(const Rotation* rotation)
 {
@@ -315,7 +302,7 @@ void BgmapSprite::setRotation(const Rotation* rotation)
 	{
 		this->paramTableRow = -1 == this->paramTableRow ? 0 : this->paramTableRow;
 
-		// scale the texture in the next render cycle
+		// Scale the texture in the next render cycle
 		BgmapSprite::invalidateParamTable(this);
 	}
 	else if(!isDeleted(this->texture))
@@ -347,7 +334,7 @@ void BgmapSprite::setRotation(const Rotation* rotation)
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void BgmapSprite::setScale(const PixelScale* scale)
 {
@@ -382,31 +369,49 @@ void BgmapSprite::setScale(const PixelScale* scale)
 		if(!isDeleted(this->texture))
 		{
 			// Add 1 pixel to the width and 7 to the height to avoid cutting off the graphics
-			this->halfWidth = __FIXED_TO_I(__ABS(__FIXED_MULT(
-				__FIX7_9_TO_FIXED(__COS(__FIXED_TO_I(this->transformation->rotation.y))),
-				__FIXED_MULT(
-					__I_TO_FIXED((int32)this->texture->textureSpec->cols << 2),
-					__FIX7_9_TO_FIXED(scaleHelper.x)
-				)
-			))) + 1;
+			this->halfWidth = 
+				__FIXED_TO_I
+				(
+					__ABS
+					(
+						__FIXED_MULT
+						(
+							__FIX7_9_TO_FIXED(__COS(__FIXED_TO_I(this->transformation->rotation.y))),
+							__FIXED_MULT
+							(
+							__I_TO_FIXED((int32)this->texture->textureSpec->cols << 2),
+							__FIX7_9_TO_FIXED(scaleHelper.x)
+							)
+						)
+					)
+				) + 1;
 
-			this->halfHeight = __FIXED_TO_I(__ABS(__FIXED_MULT(
-				__FIX7_9_TO_FIXED(__COS(__FIXED_TO_I(this->transformation->rotation.x))),
-				__FIXED_MULT(
-					__I_TO_FIXED((int32)this->texture->textureSpec->rows << 2),
-					__FIX7_9_TO_FIXED(scaleHelper.y)
-				)
-			))) + 1;
+			this->halfHeight = 
+				__FIXED_TO_I
+				(
+					__ABS
+					(
+						__FIXED_MULT
+						(
+							__FIX7_9_TO_FIXED(__COS(__FIXED_TO_I(this->transformation->rotation.x))),
+							__FIXED_MULT
+							(
+							__I_TO_FIXED((int32)this->texture->textureSpec->rows << 2),
+							__FIX7_9_TO_FIXED(scaleHelper.y)
+							)
+						)
+					)
+				) + 1;
 		}
 
 		if(0 < this->param)
-    	{
+		{
 			this->paramTableRow = -1 == this->paramTableRow ? 0 : this->paramTableRow;
 		}
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 int32 BgmapSprite::getTotalPixels()
 {
@@ -418,7 +423,7 @@ int32 BgmapSprite::getTotalPixels()
 	return 0;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void BgmapSprite::configureTexture()
 {
@@ -434,8 +439,8 @@ void BgmapSprite::configureTexture()
 		return;
 	}
 
-	this->texture = Texture::safeCast(BgmapTextureManager::getTexture(BgmapTextureManager::getInstance(), textureSpec, 0, false, __WORLD_1x1));
-
+	this->texture = Texture::get(typeofclass(BgmapTexture), textureSpec, 0, false, __WORLD_1x1);
+	
 	if(isDeleted(this->texture))
 	{
 		return;
@@ -449,11 +454,14 @@ void BgmapSprite::configureTexture()
 
 	if(0 != this->param && !isDeleted(this->texture))
 	{
-		Texture::addEventListener(this->texture, ListenerObject::safeCast(this), (EventListener)BgmapSprite::onTextureRewritten, kEventTextureRewritten);
+		Texture::addEventListener
+		(
+			this->texture, ListenerObject::safeCast(this), (EventListener)BgmapSprite::onTextureRewritten, kEventTextureRewritten
+		);
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void BgmapSprite::setMode(uint16 display, uint16 mode)
 {
@@ -461,7 +469,7 @@ void BgmapSprite::setMode(uint16 display, uint16 mode)
 
 	if(((__WORLD_AFFINE | __WORLD_HBIAS) & this->head) && 0 != this->param)
 	{
-		// free param table space
+		// Free param table space
 		ParamTableManager::free(ParamTableManager::getInstance(), this);
 
 		this->param = 0;
@@ -473,7 +481,7 @@ void BgmapSprite::setMode(uint16 display, uint16 mode)
 		{
 			case __WORLD_BGMAP:
 
-				// set map head
+				// Set map head
 				this->head = display | __WORLD_BGMAP;
 				break;
 
@@ -481,12 +489,13 @@ void BgmapSprite::setMode(uint16 display, uint16 mode)
 
 				this->head = display | __WORLD_AFFINE;
 				this->param = ParamTableManager::allocate(ParamTableManager::getInstance(), this);
-				this->applyParamTableEffect = NULL != this->applyParamTableEffect ? this->applyParamTableEffect : BgmapSprite::doApplyAffineTransformations;
+				this->applyParamTableEffect = 
+					NULL != this->applyParamTableEffect ? this->applyParamTableEffect : BgmapSprite::doApplyAffineTransformations;
 				break;
 
 			case __WORLD_HBIAS:
 
-				// set map head
+				// Set map head
 				this->head = display | __WORLD_HBIAS;
 
 				if(NULL != this->applyParamTableEffect)
@@ -501,31 +510,31 @@ void BgmapSprite::setMode(uint16 display, uint16 mode)
 	this->head &= ~__WORLD_END;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void BgmapSprite::setParam(uint32 param)
 {
 	this->param = param;
 
-	// set flag to rewrite texture's param table
+	// Set flag to rewrite texture's param table
 	BgmapSprite::invalidateParamTable(this);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 uint32 BgmapSprite::getParam()
 {
 	return this->param;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 int16 BgmapSprite::getParamTableRow()
 {
 	return this->paramTableRow;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void BgmapSprite::invalidateParamTable()
 {
@@ -539,16 +548,23 @@ void BgmapSprite::invalidateParamTable()
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 bool BgmapSprite::onTextureRewritten(ListenerObject eventFirer __attribute__ ((unused)))
 {
-	BgmapSprite::processEffects(this);
+	BgmapSprite::processEffects
+	(
+		this, 
+		SpriteManager::getMaximumParamTableRowsToComputePerCall
+		(
+			SpriteManager::safeCast(ComponentManager::getManager(kSpriteComponent))
+		)
+	);
 
 	return true;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void BgmapSprite::applyAffineTransformations()
 {
@@ -557,7 +573,7 @@ void BgmapSprite::applyAffineTransformations()
 	this->paramTableRow = 0;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void BgmapSprite::applyHbiasEffects()
 {
@@ -566,15 +582,13 @@ void BgmapSprite::applyHbiasEffects()
 	this->paramTableRow = 0;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PRIVATE METHODS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void BgmapSprite::removeFromCache()
 {	
@@ -585,30 +599,32 @@ void BgmapSprite::removeFromCache()
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void BgmapSprite::releaseTexture()
 {
-	// free the texture
+	// Free the texture
 	if(!isDeleted(this->texture))
 	{
-		// if affine or bgmap
+		// If affine or bgmap
 		if(((__WORLD_AFFINE | __WORLD_HBIAS) & this->head) && 0 != this->param)
 		{
-			// free param table space
+			// Free param table space
 			ParamTableManager::free(ParamTableManager::getInstance(), this);
 		}
 
 		if(0 != this->param)
 		{
-			Texture::removeEventListener(this->texture, ListenerObject::safeCast(this), (EventListener)BgmapSprite::onTextureRewritten, kEventTextureRewritten);
+			Texture::removeEventListener
+			(
+				this->texture, ListenerObject::safeCast(this), (EventListener)BgmapSprite::onTextureRewritten, kEventTextureRewritten
+			);
 		}
 		
-		BgmapTextureManager::releaseTexture(BgmapTextureManager::getInstance(), BgmapTexture::safeCast(this->texture));
+		Texture::release(this->texture);
 	}
 
 	this->texture = NULL;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

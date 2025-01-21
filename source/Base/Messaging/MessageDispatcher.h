@@ -10,23 +10,23 @@
 #ifndef MESSAGE_DISPATCHER_H_
 #define MESSAGE_DISPATCHER_H_
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // INCLUDES
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <Object.h>
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // FORWARD DECLARATIONS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 class Clock;
 class ListenerObject;
 class Telegram;
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DATA
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 /// @memberof MessageDispatcher
 typedef struct DelayedMessage
@@ -45,11 +45,10 @@ typedef struct DelayedMessage
 
 } DelayedMessage;
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DECLARATION
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-///
 /// Class MessageDispatcher
 ///
 /// Inherits from Object
@@ -69,7 +68,6 @@ singleton class MessageDispatcher : Object
 	bool helperTelegramIsInUse;
 
 	/// @publicsection
-	static MessageDispatcher getInstance();
 
 	/// Dispatch a message
 	/// @param delay: Milliseconds to wait before dispatching the message
@@ -78,7 +76,8 @@ singleton class MessageDispatcher : Object
 	/// @param message: Message's code
 	/// @param extraInfo: Pointer to any extra data that must accompany the message
 	/// @return	Boolean indicating the status of the processing of the message if immediately dispatched
-	static bool dispatchMessage(
+	static bool dispatchMessage
+	(
 		uint32 delay, ListenerObject sender, ListenerObject receiver, int32 message, void* extraInfo
 	);
 
@@ -89,10 +88,48 @@ singleton class MessageDispatcher : Object
 	/// @param receiver: Object that receives the message
 	/// @param message: Message's code
 	/// @param extraInfo: Pointer to any extra data that must accompany the message
-	void dispatchDelayedMessage(
+	static void dispatchDelayedMessage
+	(
 		Clock clock, uint32 delay, ListenerObject sender, ListenerObject receiver, int32 message,
 		void* extraInfo
 	);
+
+	/// Discard delayed messages sent by an object.
+	/// @param sender: Object that originally sent the message
+	/// @param message: Message's code
+	/// @return True if any messages is discarded
+	static bool discardDelayedMessagesFromSender(ListenerObject sender, int32 message);
+
+	/// Discard delayed messages sent to an object.
+	/// @param receiver: Object that was the target of the message
+	/// @param message: Message's code
+	/// @return True if any messages is discarded
+	static bool discardDelayedMessagesForReceiver(ListenerObject receiver, int32 message);
+
+	/// Discard all delayed messages sent by an object.
+	/// @param sender: Object that was the target of the message
+	/// @return True if any messages is discarded
+	static bool discardAllDelayedMessagesFromSender(ListenerObject sender);
+
+	/// Discard all delayed messages sent to an object.
+	/// @param receiver: Object that was the target of the message
+	/// @return True if any messages is discarded
+	static bool discardAllDelayedMessagesForReceiver(ListenerObject receiver);
+
+	/// Discard all delayed messages sent to an object.
+	/// @param listenerObject: Object that the messages were originally sent to or sent by
+	static bool discardAllDelayedMessages(ListenerObject listenerObject);
+
+	/// Print all delayed messages sent by an object.
+	/// @param x: Screen x coordinate where to print
+	/// @param y: Screen y coordinate where to print
+	static void print(int32 x, int32 y);
+
+	/// Print all delayed messages sent by an object.
+	/// @param sender: Object that originally sent the message
+	/// @param x: Screen x coordinate where to print
+	/// @param y: Screen y coordinate where to print
+	static void printAllDelayedMessagesFromSender(ListenerObject sender, int16 x, int16 y);
 
 	/// Dispatch the delayed messages whose delay has expired.
 	bool dispatchDelayedMessages();
@@ -104,43 +141,6 @@ singleton class MessageDispatcher : Object
 	/// @param clock: Clock to search in delayed messages to discard
 	/// @return True if any messages is discarded
 	bool discardDelayedMessagesWithClock(Clock clock);
-
-	/// Discard delayed messages sent by an object.
-	/// @param sender: Object that originally sent the message
-	/// @param message: Message's code
-	/// @return True if any messages is discarded
-	bool discardDelayedMessagesFromSender(ListenerObject sender, int32 message);
-
-	/// Discard delayed messages sent to an object.
-	/// @param receiver: Object that was the target of the message
-	/// @param message: Message's code
-	/// @return True if any messages is discarded
-	bool discardDelayedMessagesForReceiver(ListenerObject receiver, int32 message);
-
-	/// Discard all delayed messages sent by an object.
-	/// @param sender: Object that was the target of the message
-	/// @return True if any messages is discarded
-	bool discardAllDelayedMessagesFromSender(ListenerObject sender);
-
-	/// Discard all delayed messages sent to an object.
-	/// @param receiver: Object that was the target of the message
-	/// @return True if any messages is discarded
-	bool discardAllDelayedMessagesForReceiver(ListenerObject receiver);
-
-	/// Discard all delayed messages sent to an object.
-	/// @param listenerObject: Object that the messages were originally sent to or sent by
-	bool discardAllDelayedMessages(ListenerObject listenerObject);
-
-	/// Print all delayed messages sent by an object.
-	/// @param x: Screen x coordinate where to print
-	/// @param y: Screen y coordinate where to print
-	void print(int32 x, int32 y);
-
-	/// Print all delayed messages sent by an object.
-	/// @param sender: Object that originally sent the message
-	/// @param x: Screen x coordinate where to print
-	/// @param y: Screen y coordinate where to print
-	void printAllDelayedMessagesFromSender(ListenerObject sender, int16 x, int16 y);
 }
 
 #endif

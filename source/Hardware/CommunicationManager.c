@@ -7,29 +7,26 @@
  * that was distributed with this source code.
  */
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // INCLUDES
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #ifdef __DEBUG_TOOL
 #include <Debug.h>
 #endif
 #include <DebugConfig.h>
 #include <Mem.h>
-#include <MessageDispatcher.h>
 #include <Printing.h>
 #include <Profiler.h>
 #include <Telegram.h>
-#include <TimerManager.h>
+#include <VIPManager.h>
 #include <VUEngine.h>
 
 #include "CommunicationManager.h"
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DATA
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 enum CommunicationsBroadcastStates
 {
@@ -48,18 +45,15 @@ enum CommunicationsStatus
 	kCommunicationsStatusSendingAndReceivingPayload,
 };
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' ATTRIBUTES
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static volatile BYTE* _communicationRegisters =			(uint8*)0x02000000;
-static CommunicationManager _communicationManager;
+volatile BYTE* _communicationRegisters =			(uint8*)0x02000000;
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' MACROS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #define	__CCR							0x00	// Communication Control Register	(0x0200 0000)
 #define	__CCSR							0x04	// COMCNT Control Register			(0x0200 0004)
@@ -88,45 +82,67 @@ static CommunicationManager _communicationManager;
 #define __REMOTE_READY_MESSAGE			0x43873AD1
 #define __MASTER_FRMCYC_SET_MESSAGE		0x5DC289F4
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' STATIC METHODS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 static void CommunicationManager::interruptHandler()
 {
+	CommunicationManager communicationManager = CommunicationManager::getInstance();
+
 #ifdef __ENABLE_PROFILER
-	Profiler::lap(Profiler::getInstance(), kProfilerLapTypeStartInterrupt, NULL);
+	Profiler::lap(kProfilerLapTypeStartInterrupt, NULL);
 #endif
 
-	if(kCommunicationsBroadcastNone == _communicationManager->broadcast && CommunicationManager::isMaster(_communicationManager))
+	if(kCommunicationsBroadcastNone == communicationManager->broadcast && CommunicationManager::isMaster(communicationManager))
 	{
-		_communicationManager->communicationMode = __COM_AS_REMOTE;
+		communicationManager->communicationMode = __COM_AS_REMOTE;
 	}
 	else
 	{
-		_communicationManager->communicationMode = __COM_AS_MASTER;
+		communicationManager->communicationMode = __COM_AS_MASTER;
 	}
 
-	CommunicationManager::endCommunications(_communicationManager);
+	CommunicationManager::endCommunications(communicationManager);
 
-	CommunicationManager::processInterrupt(_communicationManager);
+	CommunicationManager::processInterrupt(communicationManager);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PUBLIC METHODS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+bool CommunicationManager::handleMessage(Telegram telegram)
+{
+	switch(Telegram::getMessage(telegram))
+	{
+		case kMessageCheckIfRemoteIsReady:
 
-void CommunicationManager::reset()
+			if(CommunicationManager::isRemoteReady(this))
+			{
+				CommunicationManager::startClockSignal(this);
+			}
+			else
+			{
+				CommunicationManager::waitForRemote(this);
+			}
+
+			return true;
+			break;
+	}
+
+	return false;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+secure void CommunicationManager::reset()
 {
 	switch(this->status)
 	{
@@ -158,7 +174,7 @@ void CommunicationManager::reset()
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void CommunicationManager::enableCommunications(EventListener eventLister, ListenerObject scope)
 {
@@ -174,37 +190,28 @@ void CommunicationManager::enableCommunications(EventListener eventLister, Liste
 		CommunicationManager::addEventListener(this, scope, eventLister, kEventCommunicationsConnected);
 	}
 
-#ifdef __RELEASE
-	uint32 wait = 2000;
-#else
-	uint32 wait = 500;
-#endif
-
-	// Wait a little bit for channel to stabilize
-	VUEngine::wait(VUEngine::getInstance(), wait);
-
 	// If handshake is taking place
-    if(CommunicationManager::isHandshakeIncoming(this))
-    {
+	if(CommunicationManager::isHandshakeIncoming(this))
+	{
 		// There is another system attached already managing
-		// the channel
+		// The channel
 		this->communicationMode = __COM_AS_MASTER;
 
-		// send dummy payload to verify communication
+		// Send dummy payload to verify communication
 		CommunicationManager::sendHandshake(this);
 	}
 	else
 	{
 		// I'm alone since a previously turned on
-		// system would had already closed the channel
+		// System would had already closed the channel
 		this->communicationMode = __COM_AS_REMOTE;
 
 		// Wait for incoming clock
 		CommunicationManager::sendHandshake(this);
-    }
+	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void CommunicationManager::disableCommunications()
 {
@@ -215,7 +222,7 @@ void CommunicationManager::disableCommunications()
 	CommunicationManager::reset(this);	
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 bool CommunicationManager::cancelCommunications()
 {
@@ -242,13 +249,12 @@ bool CommunicationManager::cancelCommunications()
 
 	CommunicationManager::removeEventListeners(this, NULL, kEventCommunicationsConnected);
 	CommunicationManager::removeEventListeners(this, NULL, kEventCommunicationsTransmissionCompleted);
-
-	MessageDispatcher::discardAllDelayedMessagesForReceiver(MessageDispatcher::getInstance(), ListenerObject::safeCast(this));
+	CommunicationManager::discardAllMessages(this);
 
 	return true;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void CommunicationManager::startSyncCycle()
 {
@@ -290,23 +296,23 @@ void CommunicationManager::startSyncCycle()
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 bool CommunicationManager::isConnected()
 {
 	return this->connected;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 bool CommunicationManager::isMaster()
 {
 	return __COM_AS_MASTER == this->communicationMode;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-bool CommunicationManager::broadcastData(BYTE* data, int32 numberOfBytes)
+secure bool CommunicationManager::broadcastData(BYTE* data, int32 numberOfBytes)
 {
 	if(CommunicationManager::isConnected(this))
 	{
@@ -343,15 +349,15 @@ bool CommunicationManager::broadcastData(BYTE* data, int32 numberOfBytes)
 		numberOfBytes--;
 	}
 
-    
+	
 	this->broadcast = kCommunicationsBroadcastNone;
 
 	return true;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void CommunicationManager::broadcastDataAsync(BYTE* data, int32 numberOfBytes, EventListener eventLister, ListenerObject scope)
+secure void CommunicationManager::broadcastDataAsync(BYTE* data, int32 numberOfBytes, EventListener eventLister, ListenerObject scope)
 {
 	if(CommunicationManager::isConnected(this))
 	{
@@ -380,49 +386,52 @@ void CommunicationManager::broadcastDataAsync(BYTE* data, int32 numberOfBytes, E
 	return;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 bool CommunicationManager::sendAndReceiveData(WORD message, BYTE* data, int32 numberOfBytes)
 {
 	return CommunicationManager::startBidirectionalDataTransmission(this, message, data, numberOfBytes);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-bool CommunicationManager::sendAndReceiveDataAsync(WORD message, BYTE* data, int32 numberOfBytes, EventListener eventLister, ListenerObject scope)
+bool CommunicationManager::sendAndReceiveDataAsync
+(
+	WORD message, BYTE* data, int32 numberOfBytes, EventListener eventLister, ListenerObject scope
+)
 {
 	return CommunicationManager::startBidirectionalDataTransmissionAsync(this, message, data, numberOfBytes, eventLister, scope);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 WORD CommunicationManager::getSentMessage()
 {
 	return *(WORD*)this->sentData;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 WORD CommunicationManager::getReceivedMessage()
 {
 	return *(WORD*)this->receivedData;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 const BYTE* CommunicationManager::getSentData()
 {
 	return (const BYTE*)this->sentData + __MESSAGE_SIZE;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 const BYTE* CommunicationManager::getReceivedData()
 {
 	return (const BYTE*)this->receivedData + __MESSAGE_SIZE;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #ifndef __SHIPPING
 void CommunicationManager::print(int32 x, int32 y)
@@ -487,108 +496,60 @@ void CommunicationManager::print(int32 x, int32 y)
 }
 #endif
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-bool CommunicationManager::handleMessage(Telegram telegram)
-{
-	switch(Telegram::getMessage(telegram))
-	{
-		case kMessageCheckIfRemoteIsReady:
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+// CLASS' PRIVATE STATIC METHODS
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-			if(CommunicationManager::isRemoteReady(this))
-			{
-				CommunicationManager::startClockSignal(this);
-			}
-			else
-			{
-				CommunicationManager::waitForRemote(this);
-			}
-
-			return true;
-			break;
-	}
-
-	return false;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-// CLASS' PRIVATE METHODS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void CommunicationManager::constructor()
-{
-	// Always explicitly call the base's constructor 
-	Base::constructor();
-
-	this->status = 	kCommunicationsStatusNone;
-
-	CommunicationManager::reset(this);
-
-	_communicationManager = this;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void CommunicationManager::destructor()
-{
-	// allow a new construct
-	// Always explicitly call the base's destructor 
-	Base::destructor();
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 bool CommunicationManager::isTransmitting()
 {
 	return _communicationRegisters[__CCR] & __COM_PENDING ? true : false;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 bool CommunicationManager::managesChannel()
 {
 	return !CommunicationManager::isMaster(this);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 bool CommunicationManager::isHandshakeIncoming()
 {
 	// Try to close the communication channel
 	CommunicationManager::setReady(this, false);
+
 	// If channel was unsuccessfully closed,
-	// then there is a handshake taking place
+	// Then there is a handshake taking place
 	return CommunicationManager::isRemoteReady(this);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 bool CommunicationManager::isRemoteReady()
 {
 	return 0 == (_communicationRegisters[__CCSR] & 0x01) ? true : false;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 bool CommunicationManager::isCommunicationControlInterrupt()
 {
 	return 0 == (_communicationRegisters[__CCSR] & __COM_DISABLE_INTERRUPT);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 bool CommunicationManager::isAuxChannelOpen()
 {
 	return _communicationRegisters[__CCSR] & 0x01 ? true : false;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 bool CommunicationManager::isFreeForTransmissions()
 {
@@ -602,7 +563,7 @@ bool CommunicationManager::isFreeForTransmissions()
 	);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void CommunicationManager::endCommunications()
 {
@@ -612,14 +573,14 @@ void CommunicationManager::endCommunications()
 	_communicationRegisters[__CDTR] = 0;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void CommunicationManager::waitForRemote()
 {
-	MessageDispatcher::dispatchMessage(1, ListenerObject::safeCast(this), ListenerObject::safeCast(this), kMessageCheckIfRemoteIsReady, NULL);
+	CommunicationManager::sendMessageToSelf(this, kMessageCheckIfRemoteIsReady, 1, 0);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 bool CommunicationManager::sendHandshake()
 {
@@ -633,7 +594,7 @@ bool CommunicationManager::sendHandshake()
 	return false;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void CommunicationManager::startClockSignal()
 {
@@ -665,7 +626,7 @@ void CommunicationManager::startClockSignal()
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void CommunicationManager::startTransmissions(uint8 payload, bool async)
 {
@@ -713,7 +674,7 @@ void CommunicationManager::startTransmissions(uint8 payload, bool async)
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void CommunicationManager::setReady(bool ready)
 {
@@ -741,7 +702,7 @@ void CommunicationManager::setReady(bool ready)
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 bool CommunicationManager::sendPayload(uint8 payload, bool async)
 {
@@ -755,7 +716,7 @@ bool CommunicationManager::sendPayload(uint8 payload, bool async)
 	return false;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 bool CommunicationManager::receivePayload(bool async)
 {
@@ -769,7 +730,7 @@ bool CommunicationManager::receivePayload(bool async)
 	return false;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 bool CommunicationManager::sendAndReceivePayload(uint8 payload, bool async)
 {
@@ -783,7 +744,7 @@ bool CommunicationManager::sendAndReceivePayload(uint8 payload, bool async)
 	return false;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 bool CommunicationManager::startDataTransmission(BYTE* data, int32 numberOfBytes, bool sendingData)
 {
@@ -840,7 +801,7 @@ bool CommunicationManager::startDataTransmission(BYTE* data, int32 numberOfBytes
 	return true;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 bool CommunicationManager::sendDataAsync(BYTE* data, int32 numberOfBytes, EventListener eventLister, ListenerObject scope)
 {
@@ -863,7 +824,6 @@ bool CommunicationManager::sendDataAsync(BYTE* data, int32 numberOfBytes, EventL
 			this->sentData = NULL;
 		}
 	}
-
 
 	if(isDeleted(this->sentData))
 	{
@@ -891,21 +851,21 @@ bool CommunicationManager::sendDataAsync(BYTE* data, int32 numberOfBytes, EventL
 	return true;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 bool CommunicationManager::sendData(BYTE* data, int32 numberOfBytes)
 {
 	return CommunicationManager::startDataTransmission(this, data, numberOfBytes, true);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 bool CommunicationManager::receiveData(BYTE* data, int32 numberOfBytes)
 {
 	return CommunicationManager::startDataTransmission(this, data, numberOfBytes, false);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 bool CommunicationManager::startBidirectionalDataTransmission(WORD message, BYTE* data, int32 numberOfBytes)
 {
@@ -931,12 +891,14 @@ bool CommunicationManager::startBidirectionalDataTransmission(WORD message, BYTE
 
 	if(isDeleted(this->sentData))
 	{
-		this->sentData = (BYTE*)((uint32)MemoryPool::allocate(numberOfBytes + __DYNAMIC_STRUCT_PAD + __MESSAGE_SIZE) + __DYNAMIC_STRUCT_PAD);
+		this->sentData = 
+			(BYTE*)((uint32)MemoryPool::allocate(numberOfBytes + __DYNAMIC_STRUCT_PAD + __MESSAGE_SIZE) + __DYNAMIC_STRUCT_PAD);
 	}
 
 	if(isDeleted(this->receivedData))
 	{
-		this->receivedData = (BYTE*)((uint32)MemoryPool::allocate(numberOfBytes + __DYNAMIC_STRUCT_PAD + __MESSAGE_SIZE) + __DYNAMIC_STRUCT_PAD);
+		this->receivedData = 
+			(BYTE*)((uint32)MemoryPool::allocate(numberOfBytes + __DYNAMIC_STRUCT_PAD + __MESSAGE_SIZE) + __DYNAMIC_STRUCT_PAD);
 	}
 
 	this->asyncSentByte = this->asyncReceivedByte = NULL;
@@ -967,9 +929,12 @@ bool CommunicationManager::startBidirectionalDataTransmission(WORD message, BYTE
 	return true;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-bool CommunicationManager::startBidirectionalDataTransmissionAsync(WORD message, BYTE* data, int32 numberOfBytes, EventListener eventLister, ListenerObject scope)
+bool CommunicationManager::startBidirectionalDataTransmissionAsync
+(
+	WORD message, BYTE* data, int32 numberOfBytes, EventListener eventLister, ListenerObject scope
+)
 {
 	if(NULL == data || 0 >= numberOfBytes || !CommunicationManager::isFreeForTransmissions(this))
 	{
@@ -1000,12 +965,14 @@ bool CommunicationManager::startBidirectionalDataTransmissionAsync(WORD message,
 	if(isDeleted(this->sentData))
 	{
 		// Allocate memory to hold both the message and the data
-		this->sentData = (BYTE*)((uint32)MemoryPool::allocate(numberOfBytes + __DYNAMIC_STRUCT_PAD + __MESSAGE_SIZE) + __DYNAMIC_STRUCT_PAD);
+		this->sentData = 
+			(BYTE*)((uint32)MemoryPool::allocate(numberOfBytes + __DYNAMIC_STRUCT_PAD + __MESSAGE_SIZE) + __DYNAMIC_STRUCT_PAD);
 	}
 
 	if(isDeleted(this->receivedData))
 	{
-		this->receivedData = (BYTE*)((uint32)MemoryPool::allocate(numberOfBytes + __DYNAMIC_STRUCT_PAD + __MESSAGE_SIZE) + __DYNAMIC_STRUCT_PAD);
+		this->receivedData = 
+			(BYTE*)((uint32)MemoryPool::allocate(numberOfBytes + __DYNAMIC_STRUCT_PAD + __MESSAGE_SIZE) + __DYNAMIC_STRUCT_PAD);
 	}
 
 	this->syncSentByte = this->syncReceivedByte = NULL;
@@ -1024,7 +991,7 @@ bool CommunicationManager::startBidirectionalDataTransmissionAsync(WORD message,
 	return true;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void CommunicationManager::processInterrupt()
 {
@@ -1074,11 +1041,17 @@ void CommunicationManager::processInterrupt()
 				else
 				{
 					CommunicationManager::fireEvent(this, kEventCommunicationsTransmissionCompleted);
-					NM_ASSERT(!isDeleted(this), "CommunicationManager::processInterrupt: deleted this during kEventCommunicationsTransmissionCompleted");
+
+					NM_ASSERT
+					(
+						!isDeleted(this), 
+						"CommunicationManager::processInterrupt: deleted this during kEventCommunicationsTransmissionCompleted"
+					);
+
 					CommunicationManager::removeEventListeners(this, NULL, kEventCommunicationsTransmissionCompleted);
 					this->asyncReceivedByte = NULL;
 #ifdef __ENABLE_PROFILER
-					Profiler::lap(Profiler::getInstance(), kProfilerLapTypeCommunicationsInterruptProcess, PROCESS_NAME_COMMUNICATIONS);
+					Profiler::lap(kProfilerLapTypeCommunicationsInterruptProcess, PROCESS_NAME_COMMUNICATIONS);
 #endif
 				}
 			}
@@ -1103,12 +1076,18 @@ void CommunicationManager::processInterrupt()
 				else
 				{
 					CommunicationManager::fireEvent(this, kEventCommunicationsTransmissionCompleted);
-					NM_ASSERT(!isDeleted(this), "CommunicationManager::processInterrupt: deleted this during kEventCommunicationsTransmissionCompleted");
+					
+					NM_ASSERT
+					(
+						!isDeleted(this), 
+						"CommunicationManager::processInterrupt: deleted this during kEventCommunicationsTransmissionCompleted"
+					);
+
 					CommunicationManager::removeEventListeners(this, NULL, kEventCommunicationsTransmissionCompleted);
 					this->asyncSentByte = NULL;
 					this->broadcast = kCommunicationsBroadcastNone;
 #ifdef __ENABLE_PROFILER
-					Profiler::lap(Profiler::getInstance(), kProfilerLapTypeCommunicationsInterruptProcess, PROCESS_NAME_COMMUNICATIONS);
+					Profiler::lap(kProfilerLapTypeCommunicationsInterruptProcess, PROCESS_NAME_COMMUNICATIONS);
 #endif
 				}
 			}
@@ -1137,13 +1116,19 @@ void CommunicationManager::processInterrupt()
 				else
 				{
 					CommunicationManager::fireEvent(this, kEventCommunicationsTransmissionCompleted);
-					NM_ASSERT(!isDeleted(this), "CommunicationManager::processInterrupt: deleted this during kEventCommunicationsTransmissionCompleted");
+					
+					NM_ASSERT
+					(
+						!isDeleted(this), 
+						"CommunicationManager::processInterrupt: deleted this during kEventCommunicationsTransmissionCompleted"
+					);
+
 					CommunicationManager::removeEventListeners(this, NULL, kEventCommunicationsTransmissionCompleted);
 					this->asyncSentByte = NULL;
 					this->asyncReceivedByte = NULL;
 
 #ifdef __ENABLE_PROFILER
-					Profiler::lap(Profiler::getInstance(), kProfilerLapTypeCommunicationsInterruptProcess, PROCESS_NAME_COMMUNICATIONS);
+					Profiler::lap(kProfilerLapTypeCommunicationsInterruptProcess, PROCESS_NAME_COMMUNICATIONS);
 #endif
 				}
 			}
@@ -1152,5 +1137,31 @@ void CommunicationManager::processInterrupt()
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+// CLASS' PRIVATE METHODS
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void CommunicationManager::constructor()
+{
+	// Always explicitly call the base's constructor 
+	Base::constructor();
+
+	this->status = 	kCommunicationsStatusNone;
+
+	CommunicationManager::reset(this);
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void CommunicationManager::destructor()
+{
+	// Allow a new construct
+	// Always explicitly call the base's destructor 
+	Base::destructor();
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

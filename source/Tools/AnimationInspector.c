@@ -9,10 +9,9 @@
 
 #ifdef __TOOLS
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // INCLUDES
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <string.h>
 
@@ -32,19 +31,17 @@
 
 #include "AnimationInspector.h"
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DECLARATIONS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 friend class Sprite;
 
-extern UserAnimatedEntity _userAnimatedEntities[];
+extern UserActor _userAnimatedActors[];
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DATA
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 /// @memberof AnimationInspector
 enum AnimationInspectorStates
@@ -66,31 +63,35 @@ enum AnimationProperties
 	kFrames
 };
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PUBLIC METHODS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void AnimationInspector::update()
 {}
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void AnimationInspector::show()
 {
-	Printing::clear(Printing::getInstance());
+	Printing::clear();
 
-	if(NULL == _userAnimatedEntities[0].animatedEntitySpec)
+	if(NULL == _userAnimatedActors[0].actorSpec)
 	{
-		Printing::text(Printing::getInstance(), "\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08", 0, 0, NULL);
-		Printing::text(Printing::getInstance(), " ANIMATION INSPECTOR ", 1, 0, NULL);
-		Printing::text(Printing::getInstance(), "             ", 39, 2, NULL);
-		Printing::text(Printing::getInstance(), "             ", 39, 3, NULL);
-		Printing::text(Printing::getInstance(), "No animations found", 1, 4, NULL);
-		Printing::text(Printing::getInstance(), "Define some in _userAnimatedEntities global variable", 1, 6, NULL);
+		Printing::text
+		(
+			
+			"\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08"
+			"\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08", 0, 0, NULL
+		);
+
+		Printing::text(" ANIMATION INSPECTOR ", 1, 0, NULL);
+		Printing::text("             ", 39, 2, NULL);
+		Printing::text("             ", 39, 3, NULL);
+		Printing::text("No animations found", 1, 4, NULL);
+		Printing::text("Define some in _userAnimatedActors global variable", 1, 6, NULL);
 		return;
 	}
 
@@ -100,55 +101,55 @@ void AnimationInspector::show()
 	this->animationEditionSelector = NULL;
 	this->frameEditionSelector = NULL;
 
-	this->animatedEntitySelector = new OptionsSelector(2, 16, NULL, NULL, NULL);
+	this->actorSelector = new OptionsSelector(2, 16, NULL, NULL, NULL);
 
-	VirtualList animatedEntitiesNames = new VirtualList();
+	VirtualList animatedActorsNames = new VirtualList();
 
 	int32 i = 0;
-	for(; _userAnimatedEntities[i].animatedEntitySpec; i++)
+	for(; _userAnimatedActors[i].actorSpec; i++)
 	{
-		ASSERT(_userAnimatedEntities[i].name, "AnimationInspector::start: push null name");
+		ASSERT(_userAnimatedActors[i].name, "AnimationInspector::start: push null name");
 
 		Option* option = new Option;
-		option->value = (char*)(_userAnimatedEntities[i].name);
+		option->value = (char*)(_userAnimatedActors[i].name);
 		option->type = kString;
-		VirtualList::pushBack(animatedEntitiesNames, option);
+		VirtualList::pushBack(animatedActorsNames, option);
 	}
 
-	ASSERT(animatedEntitiesNames, "AnimationInspector::start: null animatedEntitiesNames");
-	ASSERT(VirtualList::getCount(animatedEntitiesNames), "AnimationInspector::start: empty animatedEntitiesNames");
+	ASSERT(animatedActorsNames, "AnimationInspector::start: null animatedActorsNames");
+	ASSERT(VirtualList::getCount(animatedActorsNames), "AnimationInspector::start: empty animatedActorsNames");
 
-	OptionsSelector::setOptions(this->animatedEntitySelector, animatedEntitiesNames);
-	delete animatedEntitiesNames;
+	OptionsSelector::setOptions(this->actorSelector, animatedActorsNames);
+	delete animatedActorsNames;
 
 	this->state = kFirstState + 1;
 	AnimationInspector::configureState(this);
-	SpriteManager::hideAllSprites(SpriteManager::getInstance(), NULL, false);
+	SpriteManager::hideAllSprites(SpriteManager::safeCast(ComponentManager::getManager(kSpriteComponent)), NULL, false);
 	
-	// make sure all textures are written right now
-	SpriteManager::writeTextures(SpriteManager::getInstance());
-	SpriteManager::deferParamTableEffects(SpriteManager::getInstance(), false);
+	// Make sure all textures are written right now
+	SpriteManager::writeTextures(SpriteManager::safeCast(ComponentManager::getManager(kSpriteComponent)));
+	SpriteManager::deferParamTableEffects(SpriteManager::safeCast(ComponentManager::getManager(kSpriteComponent)), false);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void AnimationInspector::hide()
 {
-	if(NULL == _userAnimatedEntities[0].animatedEntitySpec)
+	if(NULL == _userAnimatedActors[0].actorSpec)
 	{
-		Printing::text(Printing::getInstance(), "No animations found", 1, 4, NULL);
-		Printing::text(Printing::getInstance(), "Define some in _userAnimatedEntities global variable", 1, 6, NULL);
+		Printing::text("No animations found", 1, 4, NULL);
+		Printing::text("Define some in _userAnimatedActors global variable", 1, 6, NULL);
 		return;
 	}
 
-	Printing::clear(Printing::getInstance());
+	Printing::clear();
 
 	AnimationInspector::removePreviousSprite(this);
 
-	if(this->animatedEntitySelector)
+	if(this->actorSelector)
 	{
-		delete this->animatedEntitySelector;
-		this->animatedEntitySelector = NULL;
+		delete this->actorSelector;
+		this->actorSelector = NULL;
 	}
 
 	if(this->animationsSelector)
@@ -169,17 +170,17 @@ void AnimationInspector::hide()
 		this->frameEditionSelector = NULL;
 	}
 
-	// make sure all textures are written right now
-	SpriteManager::writeTextures(SpriteManager::getInstance());
-	SpriteManager::showAllSprites(SpriteManager::getInstance(), NULL, true);
-	SpriteManager::deferParamTableEffects(SpriteManager::getInstance(), true);
+	// Make sure all textures are written right now
+	SpriteManager::writeTextures(SpriteManager::safeCast(ComponentManager::getManager(kSpriteComponent)));
+	SpriteManager::showAllSprites(SpriteManager::safeCast(ComponentManager::getManager(kSpriteComponent)), NULL, true);
+	SpriteManager::deferParamTableEffects(SpriteManager::safeCast(ComponentManager::getManager(kSpriteComponent)), true);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void AnimationInspector::processUserInput(uint16 pressedKey)
 {
-	if(NULL == _userAnimatedEntities[0].animatedEntitySpec)
+	if(NULL == _userAnimatedActors[0].actorSpec)
 	{
 		return;
 	}
@@ -204,7 +205,7 @@ void AnimationInspector::processUserInput(uint16 pressedKey)
 	{
 		case kSelectActor:
 
-			AnimationInspector::selectAnimatedEntity(this, pressedKey);
+			AnimationInspector::selectActor(this, pressedKey);
 			break;
 
 		case kSelectSprite:
@@ -224,15 +225,13 @@ void AnimationInspector::processUserInput(uint16 pressedKey)
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PRIVATE METHODS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void AnimationInspector::constructor()
 {
@@ -240,7 +239,7 @@ void AnimationInspector::constructor()
 	Base::constructor();
 
 	this->sprite = NULL;
-	this->animatedEntitySelector = NULL;
+	this->actorSelector = NULL;
 	this->spriteSelector = NULL;
 	this->animationsSelector = NULL;
 	this->animationEditionSelector = NULL;
@@ -255,16 +254,16 @@ void AnimationInspector::constructor()
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void AnimationInspector::destructor()
 {
-	if(this->animatedEntitySelector)
+	if(this->actorSelector)
 	{
-		delete this->animatedEntitySelector;
+		delete this->actorSelector;
 	}
 
-	if(this->animatedEntitySelector)
+	if(this->actorSelector)
 	{
 		delete this->spriteSelector;
 	}
@@ -284,36 +283,39 @@ void AnimationInspector::destructor()
 		delete this->frameEditionSelector;
 	}
 
-	// allow a new construct
+	// Allow a new construct
 	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void AnimationInspector::configureState()
 {
-	Printing printing = Printing::getInstance();
+	Printing::clear();
+	Printing::text
+	(
+		"\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08"
+		"\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08", 0, 0, NULL
+	);
 
-	Printing::clear(Printing::getInstance());
-	Printing::text(printing, "\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08", 0, 0, NULL);
-	Printing::text(printing, " ANIMATION INSPECTOR ", 1, 0, NULL);
-	Printing::text(printing, "             ", 39, 2, NULL);
-	Printing::text(printing, "             ", 39, 3, NULL);
+	Printing::text(" ANIMATION INSPECTOR ", 1, 0, NULL);
+	Printing::text("             ", 39, 2, NULL);
+	Printing::text("             ", 39, 3, NULL);
 
 	switch(this->state)
 	{
 		case kSelectActor:
 
 			AnimationInspector::removePreviousSprite(this);
-			Printing::text(printing, "Select \x13  ", 39, 2, NULL);
-			AnimationInspector::printUserAnimatedEntities(this);
+			Printing::text("Select \x13  ", 39, 2, NULL);
+			AnimationInspector::printUserAnimatedActors(this);
 			break;
 
 		case kSelectSprite:
 
-			Printing::text(printing, "Select \x13  ", 39, 2, NULL);
-			Printing::text(printing, "Back   \x14  ", 39, 3, NULL);
+			Printing::text("Select \x13  ", 39, 2, NULL);
+			Printing::text("Back   \x14  ", 39, 3, NULL);
 			AnimationInspector::createSpriteSelector(this);
 			AnimationInspector::printSprites(this);
 			AnimationInspector::createSprite(this);
@@ -322,11 +324,11 @@ void AnimationInspector::configureState()
 
 		case kSelectAnimation:
 
-			Printing::text(printing, "Select \x13  ", 39, 2, NULL);
-			Printing::text(printing, "Back   \x14  ", 39, 3, NULL);
+			Printing::text("Select \x13  ", 39, 2, NULL);
+			Printing::text("Back   \x14  ", 39, 3, NULL);
 			AnimationInspector::createAnimationsSelector(this);
 			Sprite::pause(this->sprite, true);
-			AnimationInspector::printAnimatedEntityAnimations(this);
+			AnimationInspector::printActorAnimations(this);
 			break;
 
 		case kEditAnimation:
@@ -343,37 +345,37 @@ void AnimationInspector::configureState()
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void AnimationInspector::selectAnimatedEntity(uint32 pressedKey)
+void AnimationInspector::selectActor(uint32 pressedKey)
 {
-	int32 userAnimatedEntitiesCount = 0;
+	int32 userAnimatedActorsCount = 0;
 
-	for(; NULL != _userAnimatedEntities[userAnimatedEntitiesCount].animatedEntitySpec; userAnimatedEntitiesCount++);
+	for(; NULL != _userAnimatedActors[userAnimatedActorsCount].actorSpec; userAnimatedActorsCount++);
 
 	if(pressedKey & K_LU)
 	{
-		OptionsSelector::selectPrevious(this->animatedEntitySelector);
+		OptionsSelector::selectPrevious(this->actorSelector);
 	}
 	else if(pressedKey & K_LD)
 	{
-		OptionsSelector::selectNext(this->animatedEntitySelector);
+		OptionsSelector::selectNext(this->actorSelector);
 	}
 	else if(pressedKey & K_A)
 	{
-		// select the added entity
+		// Select the added actor
 		this->state = kSelectSprite;
 		AnimationInspector::configureState(this);
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void AnimationInspector::selectSprite(uint32 pressedKey)
 {
-	int32 userAnimatedEntitiesCount = 0;
+	int32 userAnimatedActorsCount = 0;
 
-	for(; NULL != _userAnimatedEntities[userAnimatedEntitiesCount].animatedEntitySpec; userAnimatedEntitiesCount++);
+	for(; NULL != _userAnimatedActors[userAnimatedActorsCount].actorSpec; userAnimatedActorsCount++);
 
 	if(pressedKey & K_LU)
 	{
@@ -387,28 +389,29 @@ void AnimationInspector::selectSprite(uint32 pressedKey)
 	}
 	else if(pressedKey & K_A)
 	{
-		// select the added entity
+		// Select the added actor
 		this->state = kSelectAnimation;
 		AnimationInspector::configureState(this);
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void AnimationInspector::removePreviousSprite()
 {
 	if(!isDeleted(this->sprite))
 	{
-		SpriteManager::destroySprite(SpriteManager::getInstance(), this->sprite);
+		ComponentManager::destroyComponent(NULL, Component::safeCast(this->sprite));
 		this->sprite = NULL;
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void AnimationInspector::selectAnimation(uint32 pressedKey)
 {
-	this->animationFunctions = _userAnimatedEntities[OptionsSelector::getSelectedOption(this->animatedEntitySelector)].animatedEntitySpec->animationFunctions;
+	this->animationFunctions = 
+		_userAnimatedActors[OptionsSelector::getSelectedOption(this->actorSelector)].actorSpec->animationFunctions;
 
 	int32 animationsCount = 0;
 	for(; this->animationFunctions[animationsCount]; animationsCount++);
@@ -428,7 +431,7 @@ void AnimationInspector::selectAnimation(uint32 pressedKey)
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void AnimationInspector::editAnimation(uint32 pressedKey)
 {
@@ -570,10 +573,15 @@ void AnimationInspector::editAnimation(uint32 pressedKey)
 					Texture texture = Sprite::getTexture(this->sprite);
 					NM_ASSERT(texture, "AnimationInspector::selectAnimation: null texture");
 
-					TextureSpec* textureSpec = Texture::getSpec(texture);
+					const TextureSpec* textureSpec = Texture::getSpec(texture);
 					NM_ASSERT(textureSpec, "AnimationInspector::selectAnimation: null textureSpec");
 
-					if(++this->animationFunction.frames[selectedFrame] >= textureSpec->numberOfFrames && 1 < textureSpec->numberOfFrames)
+					if
+					(
+						++this->animationFunction.frames[selectedFrame] >= textureSpec->numberOfFrames 
+						&& 
+						1 < textureSpec->numberOfFrames
+					)
 					{
 						this->animationFunction.frames[selectedFrame] = textureSpec->numberOfFrames - 1;
 					}
@@ -585,65 +593,61 @@ void AnimationInspector::editAnimation(uint32 pressedKey)
 	AnimationInspector::printAnimationConfig(this);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void AnimationInspector::printUserAnimatedEntities()
+void AnimationInspector::printUserAnimatedActors()
 {
-	Printing printing = Printing::getInstance();
-	Printing::text(printing, "OBJECTS", 1, 2, NULL);
-	Printing::text(printing, "                       ", 1, 3, NULL);
-	OptionsSelector::print(this->animatedEntitySelector, 1, 4, kOptionsAlignLeft, 0);
+	Printing::text("OBJECTS", 1, 2, NULL);
+	Printing::text("                       ", 1, 3, NULL);
+	OptionsSelector::print(this->actorSelector, 1, 4, kOptionsAlignLeft, 0);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void AnimationInspector::printSprites()
 {
-	Printing printing = Printing::getInstance();
-	Printing::text(printing, "SPRITES", 1, 2, NULL);
-	Printing::text(printing, "                       ", 1, 3, NULL);
+	Printing::text("SPRITES", 1, 2, NULL);
+	Printing::text("                       ", 1, 3, NULL);
 	OptionsSelector::print(this->spriteSelector, 1, 4, kOptionsAlignLeft, 0);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void AnimationInspector::printAnimatedEntityAnimations()
+void AnimationInspector::printActorAnimations()
 {
-	Printing printing = Printing::getInstance();
-	Printing::text(printing, "AVAILABLE ANIMATIONS", 1, 2, NULL);
-	Printing::text(printing, "                       ", 1, 3, NULL);
+	Printing::text("AVAILABLE ANIMATIONS", 1, 2, NULL);
+	Printing::text("                       ", 1, 3, NULL);
 	OptionsSelector::print(this->animationsSelector, 1, 4, kOptionsAlignLeft, 0);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void AnimationInspector::printAnimationConfig()
 {
 	int32 x = 1;
 	int32 y = 2;
-	Printing printing = Printing::getInstance();
 
-	Printing::text(printing, "Animation: ", x, y, NULL);
-	Printing::text(printing, this->animationFunction.name, x + 11, y++, NULL);
+	Printing::text("Animation: ", x, y, NULL);
+	Printing::text(this->animationFunction.name, x + 11, y++, NULL);
 	OptionsSelector::print(this->animationEditionSelector, x, ++y, kOptionsAlignLeft, 0);
 
-	Printing::int32(printing, this->animationFunction.numberOfFrames, x + 19, y++, NULL);
-	Printing::int32(printing, this->animationFunction.delay, x + 19, y++, NULL);
-	Printing::text(printing, this->animationFunction.loop ? "true" : "false", x + 19, y++, NULL);
+	Printing::int32(this->animationFunction.numberOfFrames, x + 19, y++, NULL);
+	Printing::int32(this->animationFunction.delay, x + 19, y++, NULL);
+	Printing::text(this->animationFunction.loop ? "true" : "false", x + 19, y++, NULL);
 
 	OptionsSelector::print(this->frameEditionSelector, x, ++y + 1, kOptionsAlignLeft, 0);
 
-	Printing::text(printing, "Back     \x14 ", 37, 2, NULL);
+	Printing::text("Back     \x14 ", 37, 2, NULL);
 	if(!Sprite::isPlaying(this->sprite))
 	{
-		Printing::text(printing, "Play     \x13 ", 37, 3, NULL);
+		Printing::text("Play     \x13 ", 37, 3, NULL);
 	}
 	else
 	{
-		Printing::text(printing, "Pause    \x13 ", 37, 3, NULL);
+		Printing::text("Pause    \x13 ", 37, 3, NULL);
 	}
-	Printing::text(printing, "Select \x1E\x1A\x1B", 37, 4, NULL);
-	Printing::text(printing, "Modify \x1E\x1C\x1D", 37, 5, NULL);
+	Printing::text("Select \x1E\x1A\x1B", 37, 4, NULL);
+	Printing::text("Modify \x1E\x1C\x1D", 37, 5, NULL);
 
 	int32 selectedProperty = OptionsSelector::getSelectedOption(this->animationEditionSelector);
 
@@ -651,30 +655,32 @@ void AnimationInspector::printAnimationConfig()
 	{
 		case kFrames:
 
-			Printing::text(printing, "Select \x1F\x1A\x1B", 37, 7, NULL);
-			Printing::text(printing, "Modify \x1F\x1C\x1D", 37, 8, NULL);
+			Printing::text("Select \x1F\x1A\x1B", 37, 7, NULL);
+			Printing::text("Modify \x1F\x1C\x1D", 37, 8, NULL);
 			break;
 
 		default:
 
-			Printing::text(printing, "                   ", 37, 7, NULL);
-			Printing::text(printing, "                   ", 37, 8, NULL);
+			Printing::text("                   ", 37, 7, NULL);
+			Printing::text("                   ", 37, 8, NULL);
 			break;
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void AnimationInspector::loadAnimationFunction()
 {
-	if(NULL == _userAnimatedEntities[0].animatedEntitySpec)
+	if(NULL == _userAnimatedActors[0].actorSpec)
 	{
 		return;
 	}
 
-	this->animationFunctions = _userAnimatedEntities[OptionsSelector::getSelectedOption(this->animatedEntitySelector)].animatedEntitySpec->animationFunctions;
+	this->animationFunctions = 
+		_userAnimatedActors[OptionsSelector::getSelectedOption(this->actorSelector)].actorSpec->animationFunctions;
 
-	const AnimationFunction* animationFunction = this->animationFunctions[OptionsSelector::getSelectedOption(this->animationsSelector)];
+	const AnimationFunction* animationFunction = 
+		this->animationFunctions[OptionsSelector::getSelectedOption(this->animationsSelector)];
 
 	int32 i = 0;
 	for(; i < __MAX_FRAMES_PER_ANIMATION_FUNCTION; i++)
@@ -689,11 +695,11 @@ void AnimationInspector::loadAnimationFunction()
 	this->animationFunction.onAnimationComplete = (EventListener)&AnimationInspector_onAnimationComplete;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void AnimationInspector::createSprite()
 {
-	if(NULL == _userAnimatedEntities[0].animatedEntitySpec)
+	if(NULL == _userAnimatedActors[0].actorSpec)
 	{
 		return;
 	}
@@ -706,11 +712,13 @@ void AnimationInspector::createSprite()
 	position.y += __I_TO_FIXED(__HALF_SCREEN_HEIGHT);
 	position.z -= 10;
 
-	SpriteSpec* spriteSpec = (SpriteSpec*)_userAnimatedEntities[OptionsSelector::getSelectedOption(this->animatedEntitySelector)].animatedEntitySpec->entitySpec.componentSpecs[OptionsSelector::getSelectedOption(this->spriteSelector)];
+	SpriteSpec* spriteSpec = 
+		(SpriteSpec*)_userAnimatedActors[OptionsSelector::getSelectedOption(this->actorSelector)].
+			actorSpec->componentSpecs[OptionsSelector::getSelectedOption(this->spriteSelector)];
 
 	NM_ASSERT(spriteSpec, "AnimationInspector::createSprite: null spriteSpec");
 
-	this->sprite = Sprite::safeCast(SpriteManager::createSprite(SpriteManager::getInstance(), NULL, (SpriteSpec*)spriteSpec));
+	this->sprite = Sprite::safeCast(ComponentManager::createComponent(NULL, (ComponentSpec*)spriteSpec));
 	ASSERT(this->sprite, "AnimationInspector::createSprite: null sprite");
 	ASSERT(Sprite::getTexture(this->sprite), "AnimationInspector::createSprite: null texture");
 
@@ -721,15 +729,15 @@ void AnimationInspector::createSprite()
 	Sprite::setPosition(this->sprite, &spritePosition);
 	Sprite::setRotation(this->sprite, &spriteRotation);
 	Sprite::setScale(this->sprite, &spriteScale);
-	Sprite::processEffects(this->sprite);
+	Sprite::processEffects(this->sprite, -1);
 
 	this->sprite->updateAnimationFrame = true;
 
-	SpriteManager::hideAllSprites(SpriteManager::getInstance(), this->sprite, false);
-	SpriteManager::prepareAll(SpriteManager::getInstance());
+	SpriteManager::hideAllSprites(SpriteManager::safeCast(ComponentManager::getManager(kSpriteComponent)), this->sprite, false);
+	SpriteManager::prepareAll(SpriteManager::safeCast(ComponentManager::getManager(kSpriteComponent)));
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void AnimationInspector::createSpriteSelector()
 {
@@ -738,13 +746,20 @@ void AnimationInspector::createSpriteSelector()
 		delete this->spriteSelector;
 	}
 
-	this->spriteSelector = new OptionsSelector((__SCREEN_WIDTH_IN_CHARS) / 3, __MAX_FRAMES_PER_ANIMATION_FUNCTION >> 1, NULL, NULL, NULL);
+	this->spriteSelector = 
+		new OptionsSelector((__SCREEN_WIDTH_IN_CHARS) / 3, __MAX_FRAMES_PER_ANIMATION_FUNCTION >> 1, NULL, NULL, NULL);
 
 	VirtualList spriteIndexes = new VirtualList();
 
 	int32 i = 0;
 	
-	while(NULL != _userAnimatedEntities[OptionsSelector::getSelectedOption(this->animatedEntitySelector)].animatedEntitySpec->entitySpec.componentSpecs[i])
+	while
+	(
+		NULL 
+		!= 
+		_userAnimatedActors[OptionsSelector::getSelectedOption(this->actorSelector)].
+			actorSpec->componentSpecs[i]
+	)
 	{
 		Option* option = new Option;
 		option->value = NULL;
@@ -758,16 +773,17 @@ void AnimationInspector::createSpriteSelector()
 	delete spriteIndexes;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void AnimationInspector::createAnimationsSelector()
 {
-	if(NULL == _userAnimatedEntities[0].animatedEntitySpec)
+	if(NULL == _userAnimatedActors[0].actorSpec)
 	{
 		return;
 	}
 
-	this->animationFunctions = _userAnimatedEntities[OptionsSelector::getSelectedOption(this->animatedEntitySelector)].animatedEntitySpec->animationFunctions;
+	this->animationFunctions = 
+		_userAnimatedActors[OptionsSelector::getSelectedOption(this->actorSelector)].actorSpec->animationFunctions;
 
 	if(this->animationFunctions)
 	{
@@ -798,7 +814,7 @@ void AnimationInspector::createAnimationsSelector()
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void AnimationInspector::createAnimationEditionSelector()
 {
@@ -838,7 +854,7 @@ void AnimationInspector::createAnimationEditionSelector()
 	this->state = kEditAnimation;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void AnimationInspector::createFrameEditionSelector()
 {
@@ -865,19 +881,18 @@ void AnimationInspector::createFrameEditionSelector()
 	delete framesIndexes;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 bool AnimationInspector::onAnimationComplete(ListenerObject eventFirer __attribute__ ((unused)))
 {
 	if(!this->animationFunction.loop)
 	{
-		Printing::text(Printing::getInstance(), "Play     \x13 ", 37, 3, NULL);
+		Printing::text("Play     \x13 ", 37, 3, NULL);
 	}
 
 	return true;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #endif

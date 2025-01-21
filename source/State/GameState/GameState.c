@@ -7,43 +7,35 @@
  * that was distributed with this source code.
  */
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // INCLUDES
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+#include <BehaviorManager.h>
+#include <BodyManager.h>
 #include <Camera.h>
 #include <Clock.h>
 #include <ColliderManager.h>
-#include <BodyManager.h>
+#include <FrameRate.h>
+#include <MessageDispatcher.h>
 #include <Printing.h>
-#include <Stage.h>
 #include <SpriteManager.h>
+#include <StopwatchManager.h>
+#include <Stage.h>
 #include <Telegram.h>
-#include <VIPManager.h>
 #include <VUEngine.h>
+#include <WireframeManager.h>
 
 #include "GameState.h"
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-// CLASS' ATTRIBUTES
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-static Camera _camera = NULL;
-
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PUBLIC METHODS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void GameState::constructor()
 {
-	_camera = Camera::getInstance();
-
 	// Always explicitly call the base's constructor 
 	Base::constructor();
 
@@ -55,17 +47,20 @@ void GameState::constructor()
 	this->animationsClock = new Clock();
 	this->physicsClock = new Clock();
 
-	// construct the physical world and collision manager
-	this->bodyManager = NULL;
-	this->colliderManager = NULL;
-
 	this->stream = true;
 	this->transform = true;
 	this->updatePhysics = true;
 	this->processCollisions = true;
+
+	this->framerate = __TARGET_FPS;
+
+	for(int16 i = 0; i < kComponentTypes; i++)
+	{
+		this->componentManagers[i] = NULL;
+	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void GameState::destructor()
 {
@@ -74,39 +69,15 @@ void GameState::destructor()
 	delete this->animationsClock;
 	delete this->physicsClock;
 
-	// destroy the stage
-	if(!isDeleted(this->stage))
-	{
-		// destroy the stage
-		delete this->stage;
-
-		this->stage = NULL;
-	}
-
-	if(!isDeleted(this->uiContainer))
-	{
-		delete this->uiContainer;
-		this->uiContainer = NULL;
-	}
-
-	// must delete these after deleting the stage
-	if(!isDeleted(this->bodyManager))
-	{
-		delete this->bodyManager;
-		this->bodyManager = NULL;
-	}
-
-	if(!isDeleted(this->colliderManager))
-	{
-		delete this->colliderManager;
-		this->colliderManager = NULL;
-	}
+	MessageDispatcher::discardDelayedMessagesWithClock(MessageDispatcher::getInstance(), this->messagingClock);
+	GameState::destroyContainers(this);
+	GameState::destroyManagers(this);
 
 	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 bool GameState::handleMessage(Telegram telegram)
 {
@@ -114,27 +85,23 @@ bool GameState::handleMessage(Telegram telegram)
 	{
 		case kMessageRestoreFPS:
 
-			VUEngine::setGameFrameRate(VUEngine::getInstance(), __TARGET_FPS);
+			VUEngine::setGameFrameRate(this->framerate);
 			break;
 	}
 
 	return false;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void GameState::enter(void* owner __attribute__ ((unused)))
 {
-	VIPManager::removePostProcessingEffects(VIPManager::getInstance());
-	Printing::resetCoordinates(Printing::getInstance());
-
+	Printing::resetCoordinates();
 	GameState::pauseClocks(this);
-	SpriteManager::setAnimationsClock(SpriteManager::getInstance(), this->animationsClock);
-
 	Clock::start(this->messagingClock);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void GameState::execute(void* owner __attribute__ ((unused)))
 {
@@ -147,7 +114,7 @@ void GameState::execute(void* owner __attribute__ ((unused)))
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void GameState::exit(void* owner __attribute__ ((unused)))
 {
@@ -158,50 +125,34 @@ void GameState::exit(void* owner __attribute__ ((unused)))
 	this->updatePhysics = true;
 	this->processCollisions = true;
 
-	if(!isDeleted(this->stage))
-	{
-		delete this->stage;
-		this->stage = NULL;
-	}
+	MessageDispatcher::discardDelayedMessagesWithClock(MessageDispatcher::getInstance(), this->messagingClock);
 
-	if(!isDeleted(this->uiContainer))
-	{
-		delete this->uiContainer;
-		this->uiContainer = NULL;
-	}
+	GameState::destroyContainers(this);
+	GameState::destroyManagers(this);
 
-	if(!isDeleted(this->bodyManager))
-	{
-		delete this->bodyManager;
-		this->bodyManager = NULL;
-	}
-
-	if(!isDeleted(this->colliderManager))
-	{
-		delete this->colliderManager;
-		this->colliderManager = NULL;
-	}
-
-	this->stage = NULL;
-
-	// stop my clocks
+	// Stop my clocks
 	GameState::stopClocks(this);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void GameState::suspend(void* owner __attribute__ ((unused)))
 {
 	Clock::pause(this->messagingClock, true);
 
 #ifdef __TOOLS
-	if(!VUEngine::isInToolStateTransition(VUEngine::getInstance()))
+	if(!VUEngine::isInToolStateTransition())
 #endif
 	{
+		// Force all streaming right now of any pending entity
+		// to make sure that their components are fully created
+		// This must happen before the managers are disabled
+		GameState::streamAll(this);
+		
 		// Make sure collision colliders are not drawn while suspended
-		if(this->colliderManager)
+		if(!isDeleted(this->componentManagers[kColliderComponent]))
 		{
-			ColliderManager::hideColliders(this->colliderManager);
+			ColliderManager::hideColliders(this->componentManagers[kColliderComponent]);
 		}
 
 		if(!isDeleted(this->stage))
@@ -214,26 +165,23 @@ void GameState::suspend(void* owner __attribute__ ((unused)))
 			UIContainer::suspend(this->uiContainer);
 		}
 
-		// Make sure that all graphical resources are released.
-		SpriteManager::reset(SpriteManager::getInstance());
-		SpriteManager::setAnimationsClock(SpriteManager::getInstance(), this->animationsClock);
+		// Disable the managers
+		GameState::disableManagers(this);
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void GameState::resume(void* owner __attribute__ ((unused)))
 {
 	NM_ASSERT(this->stage, "GameState::resume: null stage");
 
-	HardwareManager::suspendInterrupts();
-
 #ifdef __TOOLS
-	if(!VUEngine::isInToolStateTransition(VUEngine::getInstance()))
+	if(!VUEngine::isInToolStateTransition())
 #endif
 	{
 		// Reset the engine state
-		VUEngine::reset(VUEngine::getInstance(), NULL == Stage::getSpec(this->stage)->assets.sounds);
+		GameState::reset(this, NULL == Stage::getSpec(this->stage)->assets.sounds);
 
 		// Resume the stage
 		Stage::resume(this->stage);
@@ -251,24 +199,29 @@ void GameState::resume(void* owner __attribute__ ((unused)))
 		GameState::streamAll(this);
 	}
 
-	// unpause clock
+	// Unpause clock
 	Clock::pause(this->messagingClock, false);
 
-	HardwareManager::resumeInterrupts();
+	// Restore the frame rate
+	GameState::changeFramerate(this, this->framerate, -1);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 bool GameState::processMessage(void* owner __attribute__ ((unused)), Telegram telegram __attribute__ ((unused)))
 {
 	return false;
 	// Not sure if necessary, but this can cause problems if no unified messages list is used and can cause unintended performance issues	
-//	return Stage::propagateMessage(this->stage, Container::onPropagatedMessage, Telegram::getMessage(telegram)) || UIContainer::propagateMessage(this->uiContainer, Container::onPropagatedMessage, Telegram::getMessage(telegram));
+	// Return Stage::propagateMessage
+	// (
+	//	this->stage, Container::onPropagatedMessage, Telegram::getMessage(telegram)) || UIContainer::propagateMessage(this->uiContainer, 
+	//	Container::onPropagatedMessage, Telegram::getMessage(telegram)
+	// );
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void GameState::configureStage(StageSpec* stageSpec, VirtualList positionedEntitiesToIgnore)
+void GameState::configureStage(StageSpec* stageSpec, VirtualList positionedActorsToIgnore)
 {
 	if(NULL == stageSpec)
 	{
@@ -278,103 +231,88 @@ void GameState::configureStage(StageSpec* stageSpec, VirtualList positionedEntit
 	}
 
 	// Reset the engine state
-	VUEngine::reset(VUEngine::getInstance(), NULL == stageSpec->assets.sounds);
+	GameState::reset(this, NULL == stageSpec->assets.sounds);
 
-	HardwareManager::suspendInterrupts();
+	// Make sure no actor is set as focus for the camera
+	Camera::setFocusActor(Camera::getInstance(), NULL);
 
-	// make sure no entity is set as focus for the camera
-	Camera::setFocusEntity(Camera::getInstance(), NULL);
+	// Setup the stage
+	GameState::createStage(this, stageSpec, positionedActorsToIgnore);
 
-	// setup the stage
-	GameState::createStage(this, stageSpec, positionedEntitiesToIgnore);
-
-	// load the UI
+	// Load the UI
 	GameState::configureUI(this, stageSpec);
 
-	// move the camera to its previous position
+	// Move the camera to its previous position
 	Camera::focus(Camera::getInstance());
 
-	// transformation everything
+	// Transformation everything
 	GameState::transform(this);
 
 	// Transform everything definitively
 	GameState::transform(this);
 
-	// Make sure all graphics are ready
-	VUEngine::prepareGraphics(VUEngine::getInstance());
-
-	HardwareManager::resumeInterrupts();
-
+	// Slow down the frame rate briefly to give the CPU a chance to
+	// setup everything without the VIP commint into its way
 	GameState::changeFramerate(this, __TARGET_FPS >> 1, 100);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+ComponentManager GameState::getComponentManager(uint32 componentType)
+{
+	if(kComponentTypes <= componentType)
+	{
+		NM_ASSERT(false, "GameState::getComponentManager: invalid type");
+		return NULL;
+	}
+	
+	return this->componentManagers[componentType];	
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 UIContainer GameState::getUIContainer()
 {
 	return this->uiContainer;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 Stage GameState::getStage()
 {
 	return this->stage;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-BodyManager GameState::getBodyManager()
-{
-	if(NULL == this->bodyManager)
-	{
-		this->bodyManager = new BodyManager();
-	}
-
-	return this->bodyManager;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-ColliderManager GameState::getColliderManager()
-{
-	if(NULL == this->colliderManager)
-	{
-		this->colliderManager = new ColliderManager();
-	}
-
-	return this->colliderManager;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 Clock GameState::getLogicsClock()
 {
 	return this->logicsClock;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 Clock GameState::getMessagingClock()
 {
 	return this->messagingClock;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 Clock GameState::getAnimationsClock()
 {
 	return this->animationsClock;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 Clock GameState::getPhysicsClock()
 {
 	return this->physicsClock;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void GameState::startClocks()
 {
@@ -384,7 +322,7 @@ void GameState::startClocks()
 	Clock::start(this->physicsClock);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void GameState::pauseClocks()
 {
@@ -394,7 +332,7 @@ void GameState::pauseClocks()
 	Clock::pause(this->physicsClock, true);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void GameState::unpauseClocks()
 {
@@ -404,7 +342,7 @@ void GameState::unpauseClocks()
 	Clock::pause(this->physicsClock, false);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void GameState::stopClocks()
 {
@@ -414,91 +352,91 @@ void GameState::stopClocks()
 	Clock::stop(this->physicsClock);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void GameState::startLogics()
 {
 	Clock::start(this->logicsClock);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void GameState::pauseLogics()
 {
 	Clock::pause(this->logicsClock, true);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void GameState::unpauseLogics()
 {
 	Clock::pause(this->logicsClock, false);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void GameState::startMessaging()
 {
 	Clock::start(this->messagingClock);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void GameState::pauseMessaging()
 {
 	Clock::pause(this->messagingClock, true);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void GameState::unpauseMessaging()
 {
 	Clock::pause(this->messagingClock, false);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void GameState::startAnimations()
 {
 	Clock::start(this->logicsClock);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void GameState::pauseAnimations()
 {
 	Clock::pause(this->animationsClock, true);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void GameState::unpauseAnimations()
 {
 	Clock::pause(this->animationsClock, false);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void GameState::startPhysics()
 {
 	Clock::start(this->physicsClock);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void GameState::pausePhysics()
 {
 	Clock::pause(this->physicsClock, true);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void GameState::unpausePhysics()
 {
 	Clock::pause(this->physicsClock, false);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void GameState::transform()
 {
@@ -511,10 +449,10 @@ void GameState::transform()
 
 	extern Transformation _neutralEnvironmentTransformation;
 
-	Stage::transform(this->stage, &_neutralEnvironmentTransformation, Camera::getTransformationFlags(_camera));
+	Stage::transform(this->stage, &_neutralEnvironmentTransformation, Camera::getTransformationFlags(Camera::getInstance()));
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void GameState::transformUI()
 {
@@ -530,11 +468,11 @@ void GameState::transformUI()
 	UIContainer::transform(this->uiContainer, NULL, __INVALIDATE_TRANSFORMATION);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void GameState::simulatePhysics()
 {
-	if(!this->updatePhysics || isDeleted(this->bodyManager))
+	if(!this->updatePhysics || isDeleted(this->componentManagers[kPhysicsComponent]))
 	{
 		return;
 	}
@@ -544,14 +482,14 @@ void GameState::simulatePhysics()
 		return;
 	}
 
-	BodyManager::update(this->bodyManager);
+	BodyManager::update(this->componentManagers[kPhysicsComponent]);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void GameState::processCollisions()
 {
-	if(!this->processCollisions || isDeleted(this->colliderManager))
+	if(!this->processCollisions || isDeleted(this->componentManagers[kColliderComponent]))
 	{
 		return;
 	}
@@ -561,84 +499,98 @@ void GameState::processCollisions()
 		return;
 	}
 
-	ColliderManager::update(this->colliderManager);
+	ColliderManager::update(this->componentManagers[kColliderComponent]);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 bool GameState::propagateMessage(int32 message)
 {	
-	return Stage::propagateMessage(this->stage, Container::onPropagatedMessage, message) || UIContainer::propagateMessage(this->uiContainer, Container::onPropagatedMessage, message);
+	return 
+		Stage::propagateMessage
+		(
+			this->stage, Container::onPropagatedMessage, message) || UIContainer::propagateMessage(this->uiContainer, 
+			Container::onPropagatedMessage, message
+		);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 bool GameState::propagateString(const char* string)
 {
-	return Stage::propagateString(this->stage, Container::onPropagatedString, string) || Container::propagateString(this->uiContainer, Container::onPropagatedString, string);
+	return 
+		Stage::propagateString
+		(
+			this->stage, Container::onPropagatedString, string) || Container::propagateString(this->uiContainer, 
+			Container::onPropagatedString, string
+		);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-Entity GameState::getEntityByName(const char* entityName)
+Actor GameState::getActorByName(const char* actorName)
 {
 	if(isDeleted(this->stage))
 	{
 		return NULL;
 	}
 	
-	return Entity::safeCast(Stage::getChildByName(this->stage, entityName, false));
+	return Actor::safeCast(Stage::getChildByName(this->stage, actorName, false));
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void GameState::showEntityWithName(const char* entityName)
+void GameState::showActorWithName(const char* actorName)
 {
 	if(isDeleted(this->stage))
 	{
 		return;
 	}
 	
-	Entity entity = Entity::safeCast(Stage::getChildByName(this->stage, entityName, false));
+	Actor actor = Actor::safeCast(Stage::getChildByName(this->stage, actorName, false));
 
-	if(!isDeleted(entity))
+	if(!isDeleted(actor))
 	{
-		Entity::show(entity);
+		Actor::show(actor);
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void GameState::hideEntityWithName(const char* entityName)
+void GameState::hideActorWithName(const char* actorName)
 {
 	if(isDeleted(this->stage))
 	{
 		return;
 	}
 	
-	Entity entity = Entity::safeCast(Stage::getChildByName(this->stage, entityName, false));
+	Actor actor = Actor::safeCast(Stage::getChildByName(this->stage, actorName, false));
 
-	if(!isDeleted(entity))
+	if(!isDeleted(actor))
 	{
-		Entity::hide(entity);
+		Actor::hide(actor);
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void GameState::changeFramerate(int16 targetFPS, int32 duration)
 {
 	GameState::discardMessages(this, kMessageRestoreFPS);
 	
-	VUEngine::setGameFrameRate(VUEngine::getInstance(), targetFPS);
+	VUEngine::setGameFrameRate(targetFPS);
 
 	if(0 < duration)
 	{
 		GameState::sendMessageToSelf(this, kMessageRestoreFPS, duration + 1, 0);
 	}
+	else
+	{
+		this->framerate = targetFPS;
+	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 bool GameState::stream()
 {
@@ -652,29 +604,49 @@ bool GameState::stream()
 	return Stage::stream(this->stage);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void GameState::processUserInput(const UserInput* userInput __attribute__ ((unused)))
 {}
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 bool GameState::isVersusMode()
 {
 	return false;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PRIVATE METHODS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+//—————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+void GameState::reset(bool resetSounds)
+{
+	HardwareManager::reset();
 
-void GameState::createStage(StageSpec* stageSpec, VirtualList positionedEntitiesToIgnore)
+	FrameRate::reset(FrameRate::getInstance());
+	StopwatchManager::reset(StopwatchManager::getInstance());
+
+	if(resetSounds)
+	{
+		SoundManager::reset(SoundManager::getInstance());
+	}
+
+#ifdef __ENABLE_PROFILER
+	Profiler::reset();
+#endif
+
+	GameState::createManagers(this);
+	GameState::enableManagers(this);
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void GameState::destroyContainers()
 {
 	if(!isDeleted(this->stage))
 	{
@@ -682,16 +654,97 @@ void GameState::createStage(StageSpec* stageSpec, VirtualList positionedEntities
 		this->stage = NULL;
 	}
 
-	this->stage = ((Stage (*)(StageSpec*)) stageSpec->allocator)((StageSpec*)stageSpec);
+	if(!isDeleted(this->uiContainer))
+	{
+		delete this->uiContainer;
+		this->uiContainer = NULL;
+	}
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void GameState::createManagers()
+{
+	for(int16 i = 0; i < kComponentTypes; i++)
+	{
+		if(NULL == this->componentManagers[i])
+		{
+			AllocatorPointer _componentManagerAllocators[kComponentTypes];
+			_componentManagerAllocators[kBehaviorComponent] = __TYPE(BehaviorManager);
+			_componentManagerAllocators[kPhysicsComponent] = __TYPE(BodyManager);
+			_componentManagerAllocators[kColliderComponent] = __TYPE(ColliderManager);
+			_componentManagerAllocators[kSpriteComponent] = __TYPE(SpriteManager);
+			_componentManagerAllocators[kWireframeComponent] = __TYPE(WireframeManager);
+
+			this->componentManagers[i] = ComponentManager::safeCast(_componentManagerAllocators[i]());
+		}
+	}
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void GameState::destroyManagers()
+{
+	for(int16 i = 0; i < kComponentTypes; i++)
+	{
+		if(isDeleted(this->componentManagers[i]))
+		{
+			continue;
+		}
+
+		delete this->componentManagers[i];
+		this->componentManagers[i] = NULL;
+	}
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void GameState::enableManagers()
+{
+	for(int16 i = 0; i < kComponentTypes; i++)
+	{
+		if(NULL == this->componentManagers[i])
+		{
+			return;
+		}
+
+		ComponentManager::enable(this->componentManagers[i]);
+	}
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void GameState::disableManagers()
+{
+	for(int16 i = 0; i < kComponentTypes; i++)
+	{
+		if(NULL == this->componentManagers[i])
+		{
+			return;
+		}
+
+		ComponentManager::disable(this->componentManagers[i]);
+	}
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void GameState::createStage(StageSpec* stageSpec, VirtualList positionedActorsToIgnore)
+{
+	if(!isDeleted(this->stage))
+	{
+		delete this->stage;
+		this->stage = NULL;
+	}
+
+	this->stage = ((Stage (*)(StageSpec*, GameState)) stageSpec->allocator)((StageSpec*)stageSpec, this);
 	
 	NM_ASSERT(!isDeleted(this->stage), "GameState::configureStage: null stage");
 
-	Stage::configure(this->stage, positionedEntitiesToIgnore);
-
-	SpriteManager::setAnimationsClock(SpriteManager::getInstance(), this->animationsClock);
+	Stage::configure(this->stage, positionedActorsToIgnore);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void GameState::configureUI(StageSpec* stageSpec)
 {
@@ -701,9 +754,10 @@ void GameState::configureUI(StageSpec* stageSpec)
 		this->uiContainer = NULL;
 	}
 
-	if(NULL != stageSpec->entities.UI.allocator)
+	if(NULL != stageSpec->actors.UI.allocator)
 	{
-		this->uiContainer = ((UIContainer (*)(PositionedEntity*)) stageSpec->entities.UI.allocator)(stageSpec->entities.UI.childrenSpecs);
+		this->uiContainer = 
+			((UIContainer (*)(PositionedActor*)) stageSpec->actors.UI.allocator)(stageSpec->actors.UI.childrenSpecs);
 	}
 	else
 	{
@@ -712,45 +766,40 @@ void GameState::configureUI(StageSpec* stageSpec)
 
 	NM_ASSERT(!isDeleted(this->uiContainer), "GameState::configureUI: null UIContainer");
 
-	// setup ui if allocated and constructed
+	// Setup ui if allocated and constructed
 	if(!isDeleted(this->uiContainer))
 	{
 		extern Transformation _neutralEnvironmentTransformation;
 	
-		// apply transformations
-		UIContainer::transform(this->uiContainer, &_neutralEnvironmentTransformation, Camera::getTransformationFlags(_camera));
+		// Apply transformations
+		UIContainer::transform(this->uiContainer, &_neutralEnvironmentTransformation, Camera::getTransformationFlags(Camera::getInstance()));
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void GameState::streamAll()
 {
-	HardwareManager::suspendInterrupts();
-
-	// Make sure that the focus entity is transformed before focusing the camera
+	// Make sure that the focus actor is transformed before focusing the camera
 	GameState::transform(this);
 
 	// Move the camera to its initial position
 	Camera::focus(Camera::getInstance());
 
-	// invalidate transformations
+	// Invalidate transformations
 	Stage::invalidateTransformation(this->stage);
 
 	// Transformation everything
 	GameState::transform(this);
 
-	// Stream in and out all relevant entities
+	// Stream in and out all relevant actors
 	Stage::streamAll(this->stage);
 
 	// Force collision purging
-	if(!isDeleted(this->colliderManager))
+	if(!isDeleted(this->componentManagers[kColliderComponent]))
 	{
-		ColliderManager::purgeDestroyedColliders(this->colliderManager);
+		ColliderManager::purgeDestroyedColliders(this->componentManagers[kColliderComponent]);
 	}
-
-	HardwareManager::resumeInterrupts();
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

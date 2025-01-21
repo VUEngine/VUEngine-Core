@@ -7,172 +7,37 @@
  * that was distributed with this source code.
  */
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // INCLUDES
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <AnimationController.h>
 #include <ComponentManager.h>
 #include <DebugConfig.h>
 #include <Printing.h>
-#include <GameObject.h>
+#include <Entity.h>
 #include <SpriteManager.h>
 #include <VirtualList.h>
 #include <WireframeManager.h>
 
 #include "VisualComponent.h"
 
-
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DECLARATIONS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 friend class VirtualList;
 friend class VirtualNode;
 
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PUBLIC METHODS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-static void VisualComponent::propagateCommand(int32 command, GameObject owner, ...)
-{
-	va_list args;
-	va_start(args, owner);
-	int32 value = va_arg(args, int32);
-	va_end(args);
-
-	SpriteManager::propagateCommand(SpriteManager::getInstance(), command, owner, value);
-	WireframeManager::propagateCommand(WireframeManager::getInstance(), command, owner, value);
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-static bool VisualComponent::calculateRightBox(GameObject owner, RightBox* rightBox)
-{
-	bool modified = false;
-
-	if(0 < SpriteManager::getCount(SpriteManager::getInstance(), owner))
-	{
-		VirtualList sprites = new VirtualList();
-
-		SpriteManager::doGetComponents(SpriteManager::getInstance(), owner, sprites);
-
-		VisualComponent::getRightBoxFromVisualComponents(sprites, rightBox);
-
-		delete sprites;
-
-		modified = true;
-	}
-
-	if(0 < WireframeManager::getCount(WireframeManager::getInstance(), owner))
-	{
-		VirtualList wireframes = new VirtualList();
-
-		WireframeManager::doGetComponents(WireframeManager::getInstance(), owner, wireframes);
-
-		VisualComponent::getRightBoxFromVisualComponents(wireframes, rightBox);
-
-		delete wireframes;
-
-		modified = true;
-	}
-
-	return modified;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-static bool VisualComponent::isAnyVisible(GameObject owner)
-{
-	if(SpriteManager::isAnyVisible(SpriteManager::getInstance(), owner))
-	{
-		return true;
-	}
-
-	if(WireframeManager::isAnyVisible(WireframeManager::getInstance(), owner))
-	{
-		return true;
-	}	
-
-	return false;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-// CLASS' PRIVATE METHODS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-static void VisualComponent::getRightBoxFromVisualComponents(VirtualList visualComponents, RightBox* rightBox)
-{
-	if(isDeleted(visualComponents) || NULL == rightBox)
-	{
-		return;
-	}
-
-	for(VirtualNode node = visualComponents->head; node; node = node->next)
-	{
-		VisualComponent visualComponent = VisualComponent::safeCast(node->data);
-
-		RightBox visualComponentRightBox = VisualComponent::getRightBox(visualComponent);
-
-		NM_ASSERT(visualComponentRightBox.x0 < visualComponentRightBox.x1, "VisualComponent::getRightBoxFromVisualComponents: 0 width");
-		NM_ASSERT(visualComponentRightBox.y0 < visualComponentRightBox.y1, "VisualComponent::getRightBoxFromVisualComponents: 0 height");
-		NM_ASSERT(visualComponentRightBox.z0 < visualComponentRightBox.z1, "VisualComponent::getRightBoxFromVisualComponents: 0 depth");
-
-		if(rightBox->x0 > visualComponentRightBox.x0)
-		{
-			rightBox->x0 = visualComponentRightBox.x0;
-		}
-
-		if(rightBox->x1 < visualComponentRightBox.x1)
-		{
-			rightBox->x1 = visualComponentRightBox.x1;
-		}
-
-		if(rightBox->y0 > visualComponentRightBox.y0)
-		{
-			rightBox->y0 = visualComponentRightBox.y0;
-		}
-
-		if(rightBox->y1 < visualComponentRightBox.y1)
-		{
-			rightBox->y1 = visualComponentRightBox.y1;
-		}
-
-		if(rightBox->z0 > visualComponentRightBox.z0)
-		{
-			rightBox->z0 = visualComponentRightBox.z0;
-		}
-
-		if(rightBox->z1 < visualComponentRightBox.z1)
-		{
-			rightBox->z1 = visualComponentRightBox.z1;
-		}
-	}
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-// CLASS' PUBLIC METHODS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void VisualComponent::constructor(GameObject owner, const VisualComponentSpec* visualComponentSpec)
+void VisualComponent::constructor(Entity owner, const VisualComponentSpec* visualComponentSpec)
 {
 	// Always explicitly call the base's constructor 
 	Base::constructor(owner, (const ComponentSpec*)visualComponentSpec);
@@ -183,7 +48,7 @@ void VisualComponent::constructor(GameObject owner, const VisualComponentSpec* v
 	this->updateAnimationFrame = false;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void VisualComponent::destructor()
 {	
@@ -197,7 +62,7 @@ void VisualComponent::destructor()
 	Base::destructor();
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void VisualComponent::handleCommand(int32 command, va_list args)
 {
@@ -220,7 +85,11 @@ void VisualComponent::handleCommand(int32 command, va_list args)
 
 		case cVisualComponentCommandPlay:
 
-			VisualComponent::play(this, (const AnimationFunction**)va_arg(args, AnimationFunction**), (const char*)va_arg(args, char*), va_arg(args, ListenerObject), (EventListener)va_arg(args, EventListener));
+			VisualComponent::play
+			(
+				this, (const AnimationFunction**)va_arg(args, AnimationFunction**), (const char*)va_arg(args, char*), 
+				va_arg(args, ListenerObject), (EventListener)va_arg(args, EventListener)
+			);
 			break;
 
 		case cVisualComponentCommandPause:
@@ -255,27 +124,35 @@ void VisualComponent::handleCommand(int32 command, va_list args)
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 AnimationController VisualComponent::getAnimationController()
 {
 	return this->animationController;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void VisualComponent::createAnimationController()
 {}
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void VisualComponent::forceChangeOfFrame(int16 actualFrame __attribute__((unused)))
 {}
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-bool VisualComponent::play(const AnimationFunction* animationFunctions[], const char* animationName, ListenerObject scope, EventListener callback)
+bool VisualComponent::play
+(
+	const AnimationFunction* animationFunctions[], const char* animationName, ListenerObject scope, EventListener callback
+)
 {
+	if(NULL == animationFunctions || NULL == animationName)
+	{
+		return false;
+	}
+
 	ASSERT(NULL != animationFunctions, "VisualComponent::play: null animationFunctions");
 	ASSERT(NULL != animationName, "VisualComponent::play: null animationName");
 
@@ -290,7 +167,7 @@ bool VisualComponent::play(const AnimationFunction* animationFunctions[], const 
 	return playBackStarted;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 bool VisualComponent::replay(const AnimationFunction* animationFunctions[])
 {
@@ -305,18 +182,18 @@ bool VisualComponent::replay(const AnimationFunction* animationFunctions[])
 	return false;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void VisualComponent::pause(bool pause)
 {
 	if(!isDeleted(this->animationController))
 	{
-		// first animate the frame
+		// First animate the frame
 		AnimationController::pause(this->animationController, pause);
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void VisualComponent::stop()
 {
@@ -326,20 +203,20 @@ void VisualComponent::stop()
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 bool VisualComponent::isPlaying()
 {
 	if(!isDeleted(this->animationController))
 	{
-		// first animate the frame
+		// First animate the frame
 		return AnimationController::isPlaying(this->animationController);
 	}
 
 	return false;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 bool VisualComponent::isPlayingAnimation(char* animationName)
 {
@@ -351,7 +228,7 @@ bool VisualComponent::isPlayingAnimation(char* animationName)
 	return false;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void VisualComponent::nextFrame()
 {
@@ -362,7 +239,7 @@ void VisualComponent::nextFrame()
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void VisualComponent::previousFrame()
 {
@@ -373,13 +250,14 @@ void VisualComponent::previousFrame()
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void VisualComponent::setActualFrame(int16 actualFrame)
 {
 	if(!isDeleted(this->animationController))
 	{
-		this->updateAnimationFrame = this->updateAnimationFrame || AnimationController::setActualFrame(this->animationController, actualFrame);
+		this->updateAnimationFrame = 
+			this->updateAnimationFrame || AnimationController::setActualFrame(this->animationController, actualFrame);
 	}
 	else
 	{
@@ -387,7 +265,7 @@ void VisualComponent::setActualFrame(int16 actualFrame)
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 int16 VisualComponent::getActualFrame()
 {
@@ -399,7 +277,7 @@ int16 VisualComponent::getActualFrame()
 	return -1;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void VisualComponent::setFrameDuration(uint8 frameDuration)
 {
@@ -409,7 +287,7 @@ void VisualComponent::setFrameDuration(uint8 frameDuration)
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 uint8 VisualComponent::getFrameDuration()
 {
@@ -421,7 +299,7 @@ uint8 VisualComponent::getFrameDuration()
 	return -1;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void VisualComponent::setFrameDurationDecrement(uint8 frameDurationDecrement)
 {
@@ -431,7 +309,7 @@ void VisualComponent::setFrameDurationDecrement(uint8 frameDurationDecrement)
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 const char* VisualComponent::getPlayingAnimationName()
 {
@@ -443,7 +321,7 @@ const char* VisualComponent::getPlayingAnimationName()
 	return "None";
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void VisualComponent::show()
 {
@@ -451,7 +329,7 @@ void VisualComponent::show()
 	this->show = __SHOW;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void VisualComponent::hide()
 {
@@ -459,26 +337,18 @@ void VisualComponent::hide()
 	this->show = __HIDE;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 uint8 VisualComponent::getTransparent()
 {
 	return this->transparency;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void VisualComponent::setTransparency(uint8 transparency)
 {
 	this->transparency = transparency;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-RightBox VisualComponent::getRightBox()
-{
-	return (RightBox){-1, -1, -1, 1, 1, 1};
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

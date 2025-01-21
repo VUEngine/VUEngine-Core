@@ -7,90 +7,85 @@
  * that was distributed with this source code.
  */
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // INCLUDES
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <VirtualNode.h>
 
 #include "VirtualList.h"
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' MACROS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 // define a limit to prevent, and detect looped lists
 #define LIST_MAX_SIZE 1000
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DECLARATIONS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 friend class VirtualNode;
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PUBLIC METHODS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void VirtualList::constructor()
 {
 	// Always explicitly call the base's constructor 
 	Base::constructor();
 
-	// set members' default values
+	// Set members' default values
 	this->head = NULL;
 	this->tail = NULL;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void VirtualList::destructor()
 {
-	// make sure we remove all nodes
+	// Make sure we remove all nodes
 	VirtualList::clear(this);
 
-	// destroy super object
+	// Destroy super object
 
 	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void* VirtualList::front()
 {
 	return NULL != this->head ? this->head->data : NULL;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void* VirtualList::back()
 {
 	return NULL != this->tail ? this->tail->data : NULL;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 VirtualNode VirtualList::begin()
 {
 	return this->head;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 VirtualNode VirtualList::end()
 {
 	return this->tail;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 VirtualNode VirtualList::find(const void* const data)
 {
@@ -101,7 +96,7 @@ VirtualNode VirtualList::find(const void* const data)
 	return node;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 VirtualNode VirtualList::getNode(int32 item)
 {
@@ -111,34 +106,34 @@ VirtualNode VirtualList::getNode(int32 item)
 
 	VirtualNode node = this->head;
 
-	// if not null head
+	// If not null head
 	if(NULL != node)
 	{
-		// if item hasn't reached list's size
+		// If item hasn't reached list's size
 		if(item < listSize)
 		{
-			// increase counter while node hasn't reached list's end
-			// and counter hasn't reached the item requested
+			// Increase counter while node hasn't reached list's end
+			// And counter hasn't reached the item requested
 			while(NULL != node && counter < item)
 			{
-				// increase counter
+				// Increase counter
 				counter++;
 
-				// load next node
+				// Load next node
 				node = node->next;
 
-				// if item reached
+				// If item reached
 				if(counter == item)
 				{
-					// return node's data
+					// Return node's data
 					return node;
 				}
 			}
 
-			// if item reached
+			// If item reached
 			if(counter == item)
 			{
-				// return node's data
+				// Return node's data
 				return node;
 			}
 
@@ -149,7 +144,7 @@ VirtualNode VirtualList::getNode(int32 item)
 	return NULL;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 int32 VirtualList::getDataIndex(const void* const data)
 {
@@ -161,7 +156,7 @@ int32 VirtualList::getDataIndex(const void* const data)
 	return !node ? -1 : position;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 int32 VirtualList::getNodeIndex(VirtualNode node)
 {
@@ -173,7 +168,7 @@ int32 VirtualList::getNodeIndex(VirtualNode node)
 	return !node || !currentNode ? -1 : position;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void* VirtualList::getDataAtIndex(int32 position)
 {
@@ -186,7 +181,7 @@ void* VirtualList::getDataAtIndex(int32 position)
 		return NULL;
 	}
 
-	// locate node
+	// Locate node
 	for(; NULL != node && counter < position; node = node->next, counter++);
 
 	if(NULL != node)
@@ -197,7 +192,7 @@ void* VirtualList::getDataAtIndex(int32 position)
 	return NULL;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 int32 VirtualList::getCount()
 {
@@ -207,19 +202,19 @@ int32 VirtualList::getCount()
 
 	while(NULL != node)
 	{
-		// load next node
+		// Load next node
 		node = node->next;
 
 		++counter;
 
-		// increment counter
+		// Increment counter
 		ASSERT(counter < LIST_MAX_SIZE, "VirtualList::getCount: endless list getting size");
 	}
 
 	return counter;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 VirtualNode VirtualList::pushFront(const void* const data)
 {
@@ -229,20 +224,20 @@ VirtualNode VirtualList::pushFront(const void* const data)
 
 	HardwareManager::suspendInterrupts();
 
-	// set the tail
+	// Set the tail
 	if(NULL == this->tail)
 	{
 		this->tail = this->head = newNode;
 	}
 	else
 	{
-		// link new node to the head
+		// Link new node to the head
 		newNode->next = this->head;
 
-		// link the head to the new node
+		// Link the head to the new node
 		this->head->previous = newNode;
 		
-		// move the head
+		// Move the head
 		this->head = newNode;
 	}
 
@@ -251,7 +246,7 @@ VirtualNode VirtualList::pushFront(const void* const data)
 	return newNode;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 VirtualNode VirtualList::pushBack(const void* const data)
 {
@@ -261,20 +256,20 @@ VirtualNode VirtualList::pushBack(const void* const data)
 
 	HardwareManager::suspendInterrupts();
 
-	// set the tail
+	// Set the tail
 	if(NULL == this->head)
 	{
 		this->head = this->tail = newNode;
 	}
 	else
 	{
-		// link new node to the tail
+		// Link new node to the tail
 		newNode->previous = this->tail;
 
-		// link the tail to the new node
+		// Link the tail to the new node
 		this->tail->next = newNode;
 
-		// move the tail
+		// Move the tail
 		this->tail = newNode;
 	}
 
@@ -283,7 +278,7 @@ VirtualNode VirtualList::pushBack(const void* const data)
 	return newNode;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 VirtualNode VirtualList::insertAfter(VirtualNode node, const void* const data)
 {
@@ -330,7 +325,7 @@ VirtualNode VirtualList::insertAfter(VirtualNode node, const void* const data)
 	return newNode;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 VirtualNode VirtualList::insertBefore(VirtualNode node, const void* const data)
 {
@@ -376,13 +371,13 @@ VirtualNode VirtualList::insertBefore(VirtualNode node, const void* const data)
 	return newNode;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void* VirtualList::popFront()
 {
 	HardwareManager::suspendInterrupts();
 
-	// if head isn't null
+	// If head isn't null
 	if(NULL != this->head)
 	{
 		VirtualNode node = this->head;
@@ -395,12 +390,12 @@ void* VirtualList::popFront()
 		}
 		else
 		{
-			// set head
+			// Set head
 			this->head = NULL;
 			this->tail = NULL;
 		}
 
-		// free dynamic memory
+		// Free dynamic memory
 		delete node;
 
 		HardwareManager::resumeInterrupts();
@@ -413,13 +408,13 @@ void* VirtualList::popFront()
 	return NULL;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void* VirtualList::popBack()
 {
 	HardwareManager::suspendInterrupts();
 
-	// if tail isn't null
+	// If tail isn't null
 	if(NULL != this->tail)
 	{
 		VirtualNode node = this->tail;
@@ -432,12 +427,12 @@ void* VirtualList::popBack()
 		}
 		else
 		{
-			// set tail
+			// Set tail
 			this->tail = NULL;
 			this->head = NULL;
 		}
 
-		// free dynamic memory
+		// Free dynamic memory
 		delete node;
 
 		HardwareManager::resumeInterrupts();
@@ -450,13 +445,13 @@ void* VirtualList::popBack()
 	return NULL;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 bool VirtualList::removeNode(VirtualNode node)
 {
 #ifndef __ENABLE_PROFILER
 #ifndef __RELEASE
-	// if node isn't null
+	// If node isn't null
 	if(VirtualList::checkThatNodeIsPresent(this, node))
 	{
 		return VirtualList::doRemoveNode(this, node);
@@ -471,14 +466,14 @@ bool VirtualList::removeNode(VirtualNode node)
 #endif
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 bool VirtualList::removeData(const void* const data)
 {
 	return VirtualList::doRemoveNode(this, VirtualList::find(this, data));
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void VirtualList::reverse()
 {
@@ -512,7 +507,7 @@ void VirtualList::reverse()
 	HardwareManager::resumeInterrupts();
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void VirtualList::copy(VirtualList sourceList)
 {
@@ -526,16 +521,16 @@ void VirtualList::copy(VirtualList sourceList)
 
 	while(NULL != node)
 	{
-		// add next node
+		// Add next node
 		VirtualList::pushBack(this, node->data);
-		// move to next node
+		// Move to next node
 		node = node->next;
 
 		ASSERT(++counter < LIST_MAX_SIZE, "VirtualList::copy: endless list copying");
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void VirtualList::clear()
 {
@@ -558,7 +553,7 @@ void VirtualList::clear()
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void VirtualList::deleteData()
 {
@@ -590,15 +585,13 @@ void VirtualList::deleteData()
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PRIVATE METHODS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 bool VirtualList::doRemoveNode(VirtualNode node)
 {
@@ -609,36 +602,36 @@ bool VirtualList::doRemoveNode(VirtualNode node)
 
 	HardwareManager::suspendInterrupts();
 
-	// if the node is the head of the list
+	// If the node is the head of the list
 	if(node == this->head)
 	{
 		if(NULL != node->next)
 		{
-			// move head to next element
+			// Move head to next element
 			this->head = node->next;
 
-			// move head's previous pointer
+			// Move head's previous pointer
 			this->head->previous = NULL;
 		}
 		else
 		{
-			// set head
+			// Set head
 			this->head = this->tail = NULL;
 		}
 	}
 	else
 	{
-		// if node is the last in the list
+		// If node is the last in the list
 		if(node == this->tail)
 		{
 			this->tail->previous->next = NULL;
 
-			// set the tail
+			// Set the tail
 			this->tail = this->tail->previous;
 		}
 		else
 		{
-			// join the previous and next nodes
+			// Join the previous and next nodes
 			node->previous->next = node->next;
 
 			node->next->previous = node->previous;
@@ -647,13 +640,13 @@ bool VirtualList::doRemoveNode(VirtualNode node)
 
 	HardwareManager::resumeInterrupts();
 
-	// free dynamic memory
+	// Free dynamic memory
 	delete node;
 
 	return true;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 bool VirtualList::checkThatNodeIsPresent(VirtualNode node)
 {
@@ -675,5 +668,4 @@ bool VirtualList::checkThatNodeIsPresent(VirtualNode node)
 	return false;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

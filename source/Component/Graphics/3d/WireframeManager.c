@@ -7,10 +7,9 @@
  * that was distributed with this source code.
  */
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // INCLUDES
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <Camera.h>
 #include <DebugConfig.h>
@@ -21,19 +20,17 @@
 
 #include "WireframeManager.h"
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DECLARATIONS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 friend class VirtualNode;
 friend class VirtualList;
 friend class Wireframe;
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' ATTRIBUTES
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 Vector3D _cameraDirection __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE = {0, 0, 0};
 Vector3D _previousCameraPosition __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE = {0, 0, 0};
@@ -41,15 +38,72 @@ Vector3D _previousCameraPositionBuffer __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBU
 Rotation _previousCameraInvertedRotation __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE = {0, 0, 0};
 Rotation _previousCameraInvertedRotationBuffer __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE = {0, 0, 0};
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PUBLIC METHODS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+uint32 WireframeManager::getType()
+{
+	return kWireframeComponent;
+}
 
-bool WireframeManager::isAnyVisible(GameObject owner)
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void WireframeManager::enable()
+{
+	Base::enable(this);
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void WireframeManager::disable()
+{
+	WireframeManager::stopListeningForVIP(this);
+
+	Base::disable(this);
+
+	WireframeManager::destroyAllComponents(this);
+
+	_previousCameraPosition = *_cameraPosition;
+	_previousCameraPositionBuffer = _previousCameraPosition;
+
+	_previousCameraInvertedRotation = *_cameraInvertedRotation;
+	_previousCameraInvertedRotationBuffer = _previousCameraInvertedRotation;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+Wireframe WireframeManager::instantiateComponent(Entity owner, const WireframeSpec* wireframeSpec)
+{
+	if(NULL == wireframeSpec)
+	{
+		return NULL;
+	}
+
+	Base::instantiateComponent(this, owner, (ComponentSpec*)wireframeSpec);
+
+	return WireframeManager::createWireframe(this, owner, wireframeSpec);
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void WireframeManager::deinstantiateComponent(Entity owner, Wireframe wireframe) 
+{
+	if(isDeleted(wireframe))
+	{
+		return;
+	}
+
+	Base::deinstantiateComponent(this, owner, Component::safeCast(wireframe));
+
+	WireframeManager::destroyWireframe(this, wireframe);
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+bool WireframeManager::isAnyVisible(Entity owner)
 {
 	for(VirtualNode node = this->components->head; NULL != node; node = node->next)
 	{
@@ -64,75 +118,18 @@ bool WireframeManager::isAnyVisible(GameObject owner)
 	return false;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-Wireframe WireframeManager::createComponent(GameObject owner, const WireframeSpec* wireframeSpec)
+Wireframe WireframeManager::createWireframe(Entity owner, const WireframeSpec* wireframeSpec)
 {
 	if(NULL == wireframeSpec)
 	{
 		return NULL;
 	}
 
-	Base::createComponent(this, owner, (ComponentSpec*)wireframeSpec);
-
-	return WireframeManager::createWireframe(this, owner, wireframeSpec);
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void WireframeManager::destroyComponent(GameObject owner, Wireframe wireframe) 
-{
-	if(isDeleted(wireframe))
-	{
-		return;
-	}
-
-	Base::destroyComponent(this, owner, Component::safeCast(wireframe));
-
-	WireframeManager::destroyWireframe(this, wireframe);
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void WireframeManager::reset()
-{
-	WireframeManager::enable(this);
+	Wireframe wireframe = 
+		((Wireframe (*)(Entity, const WireframeSpec*))((ComponentSpec*)wireframeSpec)->allocator)(owner, wireframeSpec);
 	
-	VirtualList::clear(this->components);
-	this->disabled = false;
-
-	_previousCameraPosition = *_cameraPosition;
-	_previousCameraPositionBuffer = _previousCameraPosition;
-
-	_previousCameraInvertedRotation = *_cameraInvertedRotation;
-	_previousCameraInvertedRotationBuffer = _previousCameraInvertedRotation;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void WireframeManager::enable()
-{
-	this->disabled = false;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void WireframeManager::disable()
-{
-	this->disabled = true;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-Wireframe WireframeManager::createWireframe(GameObject owner, const WireframeSpec* wireframeSpec)
-{
-	if(NULL == wireframeSpec)
-	{
-		return NULL;
-	}
-
-	Wireframe wireframe = ((Wireframe (*)(GameObject, const WireframeSpec*))((ComponentSpec*)wireframeSpec)->allocator)(owner, wireframeSpec);
-
 	if(!isDeleted(wireframe) && WireframeManager::registerWireframe(this, wireframe))
 	{
 		return wireframe;
@@ -141,7 +138,7 @@ Wireframe WireframeManager::createWireframe(GameObject owner, const WireframeSpe
 	return NULL;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void WireframeManager::destroyWireframe(Wireframe wireframe)
 {
@@ -164,7 +161,7 @@ void WireframeManager::destroyWireframe(Wireframe wireframe)
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 bool WireframeManager::registerWireframe(Wireframe wireframe)
 {
@@ -177,6 +174,11 @@ bool WireframeManager::registerWireframe(Wireframe wireframe)
 
 	if(!VirtualList::find(this->components, wireframe))
 	{
+		if(NULL == this->components->head)
+		{
+			WireframeManager::startListeningForVIP(this);			
+		}
+
 		VirtualList::pushBack(this->components, wireframe);
 	}
 	else
@@ -187,7 +189,7 @@ bool WireframeManager::registerWireframe(Wireframe wireframe)
 	return true;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 bool WireframeManager::unregisterWireframe(Wireframe wireframe)
 {
@@ -198,11 +200,18 @@ bool WireframeManager::unregisterWireframe(Wireframe wireframe)
 		return false;
 	}
 
-	return VirtualList::removeData(this->components, wireframe);
+	bool removed = VirtualList::removeData(this->components, wireframe);
+
+	if(NULL == this->components->head)
+	{
+		WireframeManager::stopListeningForVIP(this);			
+	}
+
+	return removed;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+// secure
 void WireframeManager::render()
 {
 	if(NULL == this->components->head)
@@ -216,13 +225,15 @@ void WireframeManager::render()
 	this->renderedWireframes = 0;
 #endif
 
-	for(VirtualNode node = this->components->head; NULL != node; node = node->next)
+	for(VirtualNode node = this->components->head; !this->stopRendering &&  NULL != node; node = node->next)
 	{
 		Wireframe wireframe = Wireframe::safeCast(node->data);
 
-		wireframe->rendered = false;
-
-		if((__HIDE == wireframe->show) || (wireframe->transparency & this->evenFrame) || __NON_TRANSFORMED == wireframe->transformation->invalid)
+		if
+		(
+			__HIDE == wireframe->show || (wireframe->transparency & this->evenFrame) || 
+			__NON_TRANSFORMED == wireframe->transformation->invalid
+		)
 		{
 #ifdef __WIREFRAME_MANAGER_SORT_FOR_DRAWING
 			wireframe->squaredDistanceToCamera = __WIREFRAME_MAXIMUM_SQUARE_DISTANCE_TO_CAMERA;
@@ -232,7 +243,6 @@ void WireframeManager::render()
 		}
 
 		Vector3D relativePosition = Vector3D::zero();
-		wireframe->rendered = false;
 
 		if(!Wireframe::prepareForRender(wireframe, &relativePosition))
 		{
@@ -262,29 +272,26 @@ void WireframeManager::render()
 	_previousCameraInvertedRotationBuffer = *_cameraInvertedRotation;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+// secure
 void WireframeManager::draw()
 {
-	if(this->disabled || NULL == this->components->head)
+	if(NULL == this->components->head)
 	{
 		return;
 	}
-
-	this->stopDrawing = false;
 
 #ifdef __PROFILE_WIREFRAMES
 	this->drawnWireframes = 0;
 #endif
 
-	// check the colliders
 	for(VirtualNode node = this->components->head; !this->stopDrawing && NULL != node; node = node->next)
 	{
 		Wireframe wireframe = Wireframe::safeCast(node->data);
 
 		wireframe->drawn = false;
 
-		if(!wireframe->rendered || __COLOR_BLACK == wireframe->color)
+		if(__COLOR_BLACK == wireframe->color)
 		{
 			continue;
 		}
@@ -304,9 +311,9 @@ void WireframeManager::draw()
 	this->evenFrame = __TRANSPARENCY_EVEN == this->evenFrame ? __TRANSPARENCY_ODD : __TRANSPARENCY_EVEN;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void WireframeManager::showWireframes(GameObject owner)
+void WireframeManager::showWireframes(Entity owner)
 {
 	for(VirtualNode node = this->components->head; NULL != node; node = node->next)
 	{
@@ -319,9 +326,9 @@ void WireframeManager::showWireframes(GameObject owner)
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void WireframeManager::hideWireframes(GameObject owner)
+void WireframeManager::hideWireframes(Entity owner)
 {
 	for(VirtualNode node = this->components->head; NULL != node; node = node->next)
 	{
@@ -334,7 +341,7 @@ void WireframeManager::hideWireframes(GameObject owner)
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void WireframeManager::showAllWireframes()
 {
@@ -346,7 +353,7 @@ void WireframeManager::showAllWireframes()
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void WireframeManager::hideAllWireframes()
 {
@@ -358,79 +365,173 @@ void WireframeManager::hideAllWireframes()
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 bool WireframeManager::hasWireframes()
 {
 	return NULL != this->components && NULL != this->components->head;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #ifndef __SHIPPING
 void WireframeManager::print(int32 x, int32 y)
 {
-	Printing::text(Printing::getInstance(), "WIREFRAME MANAGER", x, y++, NULL);
+	Printing::text("WIREFRAME MANAGER", x, y++, NULL);
 	y++;
-	Printing::text(Printing::getInstance(), "Wireframes:   ", x, y, NULL);
-	Printing::int32(Printing::getInstance(), VirtualList::getCount(this->components), x + 12, y++, NULL);
-	Printing::text(Printing::getInstance(), "Rendered:     ", x, y, NULL);
-	Printing::int32(Printing::getInstance(), this->renderedWireframes, x + 12, y++, NULL);
-	Printing::text(Printing::getInstance(), "Drawn:        ", x, y, NULL);
-	Printing::int32(Printing::getInstance(), this->drawnWireframes, x + 12, y++, NULL);
+	Printing::text("Wireframes:   ", x, y, NULL);
+	Printing::int32(VirtualList::getCount(this->components), x + 12, y++, NULL);
+	Printing::text("Rendered:     ", x, y, NULL);
+	Printing::int32(this->renderedWireframes, x + 12, y++, NULL);
+	Printing::text("Drawn:        ", x, y, NULL);
+	Printing::int32(this->drawnWireframes, x + 12, y++, NULL);
 }
 #endif
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PRIVATE METHODS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void WireframeManager::constructor()
 {
 	// Always explicitly call the base's constructor 
 	Base::constructor();
 
+	this->stopRendering = false;
 	this->stopDrawing = false;
 	this->evenFrame = __TRANSPARENCY_EVEN;
-	this->disabled = false;
 	this->renderedWireframes = 0;
 	this->drawnWireframes = 00;
-
-	VIPManager::addEventListener(VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)WireframeManager::onVIPManagerGAMESTARTDuringXPEND, kEventVIPManagerGAMESTARTDuringXPEND);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void WireframeManager::destructor()
 {
-	ASSERT(this->components, "WireframeManager::destructor: null wireframes");
+	WireframeManager::stopListeningForVIP(this);
 
-	if(!isDeleted(this->components))
-	{
-		VirtualList::deleteData(this->components);
-	}
-
-	VIPManager::removeEventListener(VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)WireframeManager::onVIPManagerGAMESTARTDuringXPEND, kEventVIPManagerGAMESTARTDuringXPEND);
-
-	// allow a new construct
+	// Allow a new construct
 	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void WireframeManager::sort()
+void WireframeManager::startListeningForVIP()
 {
-	while(WireframeManager::sortProgressively(this));
+	HardwareManager::suspendInterrupts();
+
+	VIPManager::addEventListener
+	(
+		VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)WireframeManager::onVIPGAMESTART, 
+		kEventVIPManagerGAMESTART
+	);
+
+	VIPManager::addEventListener
+	(
+		VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)WireframeManager::onVIPXPEND, 
+		kEventVIPManagerXPEND
+	);
+
+	VIPManager::addEventListener
+	(
+		VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)WireframeManager::onVIPManagerGAMESTARTDuringXPEND, 
+		kEventVIPManagerGAMESTARTDuringXPEND
+	);
+
+	VIPManager::addEventListener
+	(
+		VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)WireframeManager::onVIPManagerXPENDDuringGAMESTART, 
+		kEventVIPManagerXPENDDuringGAMESTART
+	);
+
+	HardwareManager::resumeInterrupts();
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void WireframeManager::stopListeningForVIP()
+{
+	HardwareManager::suspendInterrupts();
+
+	VIPManager::removeEventListener
+	(
+		VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)WireframeManager::onVIPGAMESTART, 
+		kEventVIPManagerGAMESTART
+	);
+
+	VIPManager::removeEventListener
+	(
+		VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)WireframeManager::onVIPXPEND, 
+		kEventVIPManagerXPEND
+	);
+
+	VIPManager::removeEventListener
+	(
+		VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)WireframeManager::onVIPManagerGAMESTARTDuringXPEND, 
+		kEventVIPManagerGAMESTARTDuringXPEND
+	);
+
+	VIPManager::removeEventListener
+	(
+		VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)WireframeManager::onVIPManagerXPENDDuringGAMESTART, 
+		kEventVIPManagerXPENDDuringGAMESTART
+	);
+
+	HardwareManager::resumeInterrupts();
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+bool WireframeManager::onVIPGAMESTART(ListenerObject eventFirer __attribute__ ((unused)))
+{
+	this->stopRendering = false;
+	this->stopDrawing = kVIPManagerFavorPerformance == VIPManager::getDrawingStrategy(eventFirer);
+
+	WireframeManager::render(this);
+
+	this->stopDrawing = false;
+
+	return true;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+bool WireframeManager::onVIPXPEND(ListenerObject eventFirer __attribute__ ((unused)))
+{
+	this->stopDrawing = false;
+	this->stopRendering = kVIPManagerFavorPerformance == VIPManager::getDrawingStrategy(eventFirer);
+
+	WireframeManager::draw(this);
+
+	return true;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+bool WireframeManager::onVIPManagerGAMESTARTDuringXPEND(ListenerObject eventFirer __attribute__ ((unused)))
+{
+	this->stopDrawing = kVIPManagerFavorPerformance == VIPManager::getDrawingStrategy(eventFirer);
+
+	return true;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+bool WireframeManager::onVIPManagerXPENDDuringGAMESTART(ListenerObject eventFirer __attribute__ ((unused)))
+{
+	this->stopRendering = kVIPManagerFavorPerformance == VIPManager::getDrawingStrategy(eventFirer);
+
+	WireframeManager::draw(this);
+
+	return true;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 bool WireframeManager::sortProgressively()
 {
@@ -450,10 +551,10 @@ bool WireframeManager::sortProgressively()
 
 		Wireframe nextWireframe = Wireframe::safeCast(nextNode->data);
 
-		// check if z positions are swapped
+		// Check if z positions are swapped
 		if(nextWireframe->squaredDistanceToCamera < wireframe->squaredDistanceToCamera)
 		{
-			// swap nodes' data
+			// Swap nodes' data
 			node->data = nextWireframe;
 			nextNode->data = wireframe;
 
@@ -467,14 +568,4 @@ bool WireframeManager::sortProgressively()
 	return swapped;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-bool WireframeManager::onVIPManagerGAMESTARTDuringXPEND(ListenerObject eventFirer __attribute__ ((unused)))
-{
-	this->stopDrawing = true;
-
-	return true;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

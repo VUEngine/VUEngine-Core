@@ -10,17 +10,15 @@
 #ifndef OBJECT_ANIMATED_SPRITE_H_
 #define OBJECT_ANIMATED_SPRITE_H_
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // INCLUDES
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <ObjectSprite.h>
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DATA
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 /// A ObjectSprite spec
 /// @memberof ObjectSprite
@@ -35,12 +33,10 @@ typedef struct ObjectAnimatedSpriteSpec
 /// @memberof ObjectAnimatedSprite
 typedef const ObjectAnimatedSpriteSpec ObjectAnimatedSpriteROMSpec;
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DECLARATION
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-///
 /// Class BgmapAnimatedSprite
 ///
 /// Inherits from BgmapSprite
@@ -51,13 +47,12 @@ class ObjectAnimatedSprite : ObjectSprite
 	/// @publicsection
 
 	/// Class' constructor
-	/// @param owner: GameObject to which the sprite attaches to
+	/// @param owner: Entity to which the sprite attaches to
 	/// @param objectAnimatedSpriteSpec: Specification that determines how to configure the sprite
-	void constructor(GameObject owner, const ObjectAnimatedSpriteSpec* objectAnimatedSpriteSpec);
+	void constructor(Entity owner, const ObjectAnimatedSpriteSpec* objectAnimatedSpriteSpec);
 
 	/// Update the animation.
 	override void updateAnimation();
 }
-
 
 #endif

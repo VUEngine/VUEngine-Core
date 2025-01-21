@@ -7,16 +7,15 @@
  * that was distributed with this source code.
  */
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // INCLUDES
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <string.h>
 
 #include <Actor.h>
 #include <AnimationCoordinatorFactory.h>
-#include <AnimatedEntity.h>
+#include <Actor.h>
 #include <Ball.h>
 #include <BgmapTextureManager.h>
 #include <Body.h>
@@ -31,7 +30,7 @@
 #include <Container.h>
 #include <DebugState.h>
 #include <DirectDraw.h>
-#include <Entity.h>
+#include <Actor.h>
 #include <ColliderManager.h>
 #include <FrameRate.h>
 #include <GameState.h>
@@ -42,7 +41,6 @@
 #include <MBgmapSprite.h>
 #include <Mem.h>
 #include <MemoryPool.h>
-#include <MessageDispatcher.h>
 #include <ObjectTexture.h>
 #include <Optics.h>
 #include <ParamTableManager.h>
@@ -74,22 +72,19 @@
 
 #include "OptionsSelector.h"
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DECLARATIONS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 friend class VirtualList;
 friend class VirtualNode;
 friend class Printing;
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PUBLIC METHODS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void OptionsSelector::constructor(uint16 cols, uint16 rows, char* font, char* leftMark, char* rightMark)
 {
@@ -115,25 +110,25 @@ void OptionsSelector::constructor(uint16 cols, uint16 rows, char* font, char* le
 	this->columnWidth = (__SCREEN_WIDTH_IN_CHARS) / this->cols;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void OptionsSelector::destructor()
 {
 	OptionsSelector::flushPages(this);
 
-	// allow a new construct
+	// Allow a new construct
 
 	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void OptionsSelector::setColumnWidth(uint8 width)
 {
-	FontData* fontData = Printing::getFontByName(Printing::getInstance(), this->font);
+	FontData* fontData = Printing::getFontByName(this->font);
 
-	// add space for selection mark, consider font width
+	// Add space for selection mark, consider font width
 	width = ((width + 1) * fontData->fontSpec->fontSize.x);
 
 	if((0 < width) && (width <= (__SCREEN_WIDTH_IN_CHARS)))
@@ -142,7 +137,7 @@ void OptionsSelector::setColumnWidth(uint8 width)
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void OptionsSelector::setMarkCharacters(char* leftMark, char* rightMark)
 {
@@ -150,7 +145,7 @@ void OptionsSelector::setMarkCharacters(char* leftMark, char* rightMark)
 	this->rightMark = rightMark;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void OptionsSelector::setOptions(VirtualList options)
 {
@@ -197,18 +192,18 @@ void OptionsSelector::setOptions(VirtualList options)
 	this->currentOptionIndex = 0;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 bool OptionsSelector::setSelectedOption(int32 optionIndex)
 {
 	bool changed = false;
 
-	// check if desired option index is within bounds
+	// Check if desired option index is within bounds
 	if(optionIndex >= 0 && optionIndex <= this->totalOptions)
 	{
 		if(optionIndex < this->currentOptionIndex)
 		{
-			// if desired option index is smaller than the current one, select previous until desired option is set
+			// If desired option index is smaller than the current one, select previous until desired option is set
 			while(this->currentOptionIndex != optionIndex)
 			{
 				OptionsSelector::selectNext(this);
@@ -217,7 +212,7 @@ bool OptionsSelector::setSelectedOption(int32 optionIndex)
 		}
 		else if(optionIndex > this->currentOptionIndex)
 		{
-			// if desired option index is larger than the current one, select next until desired option is set
+			// If desired option index is larger than the current one, select next until desired option is set
 			while(this->currentOptionIndex != optionIndex)
 			{
 				OptionsSelector::selectPrevious(this);
@@ -229,31 +224,31 @@ bool OptionsSelector::setSelectedOption(int32 optionIndex)
 	return changed;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void OptionsSelector::selectNext()
 {
 	if(this->currentOption)
 	{
-		// remove previous selection mark
+		// Remove previous selection mark
 		OptionsSelector::printSelectorMark(this, " ", -this->optionsLength);
 		OptionsSelector::printSelectorMark(this, " ", this->optionsLength);
 
-		// get next option
+		// Get next option
 		this->currentOption = this->currentOption->next;
 		this->currentOptionIndex++;
 
-		// if there's no next option on the current page
+		// If there's no next option on the current page
 		if(!this->currentOption)
 		{
-			// if there's more than 1 page, go to next page
+			// If there's more than 1 page, go to next page
 			if(VirtualList::getCount(this->pages) > 1)
 			{
-				// select next page
+				// Select next page
 				this->currentPage = this->currentPage->next;
 				this->currentPageIndex++;
 
-				// if next page does not exist
+				// If next page does not exist
 				if(!this->currentPage)
 				{
 					this->currentPage = this->pages->head;
@@ -261,52 +256,52 @@ void OptionsSelector::selectNext()
 					this->currentOptionIndex = 0;
 				}
 
-				// get new option
+				// Get new option
 				this->currentOption = (VirtualList::safeCast(VirtualNode::getData(this->currentPage)))->head;
 				ASSERT(this->currentOption, "selectNext: null current option");
 
-				// render new page
+				// Render new page
 				OptionsSelector::print(this, this->x, this->y, this->alignment, this->spacing - 1);
 			}
 			else
 			{
-				// wrap around and select first option
+				// Wrap around and select first option
 				this->currentOption = (VirtualList::safeCast(VirtualNode::getData(this->currentPage)))->head;
 				this->currentOptionIndex = 0;
 			}
 		}
 
-		// print new selection mark
+		// Print new selection mark
 		OptionsSelector::printSelectorMark(this, this->leftMark, -this->optionsLength);
 		OptionsSelector::printSelectorMark(this, this->rightMark, this->optionsLength);
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void OptionsSelector::selectPrevious()
 {
 	if(this->currentOption)
 	{
-		// remove previous selection mark
+		// Remove previous selection mark
 		OptionsSelector::printSelectorMark(this, " ", -this->optionsLength);
 		OptionsSelector::printSelectorMark(this, " ", this->optionsLength);
 
-		// get previous option
+		// Get previous option
 		this->currentOption = VirtualNode::getPrevious(this->currentOption);
 		this->currentOptionIndex--;
 
-		// if there's no previous option on the current page
+		// If there's no previous option on the current page
 		if(!this->currentOption)
 		{
-			// if there's more than 1 page
+			// If there's more than 1 page
 			if(VirtualList::getCount(this->pages) > 1)
 			{
-				// select previous page
+				// Select previous page
 				this->currentPage = VirtualNode::getPrevious(this->currentPage);
 				this->currentPageIndex--;
 
-				// if previous page does not exist, go to last page
+				// If previous page does not exist, go to last page
 				if(!this->currentPage)
 				{
 					this->currentPage = this->pages->tail;
@@ -314,52 +309,50 @@ void OptionsSelector::selectPrevious()
 					this->currentOptionIndex = this->totalOptions - 1;
 				}
 
-				// get new option
+				// Get new option
 				this->currentOption = (VirtualList::safeCast(VirtualNode::getData(this->currentPage)))->tail;
 				ASSERT(this->currentOption, "selectPrevious: current option data");
 
-				// render new page
+				// Render new page
 				OptionsSelector::print(this, this->x, this->y, this->alignment, this->spacing - 1);
 			}
 			else
 			{
-				// wrap around and select last option
+				// Wrap around and select last option
 				this->currentOption = (VirtualList::safeCast(VirtualNode::getData(this->currentPage)))->tail;
 				this->currentOptionIndex = this->totalOptions - 1;
 			}
 		}
 
-		// print new selection mark
+		// Print new selection mark
 		OptionsSelector::printSelectorMark(this, this->leftMark, -this->optionsLength);
 		OptionsSelector::printSelectorMark(this, this->rightMark, this->optionsLength);
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 int32 OptionsSelector::getSelectedOption()
 {
 	return this->currentOptionIndex;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 int32 OptionsSelector::getNumberOfOptions()
 {
 	return this->totalOptions;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void OptionsSelector::print(uint8 x, uint8 y, uint32 alignment, uint8 spacing)
 {
-	Printing printing = Printing::getInstance();
-
 	spacing++;
 
 	if(this->currentPage && 0 < VirtualList::getCount(VirtualList::safeCast(VirtualNode::getData(this->currentPage))))
 	{
-		FontData* fontData = Printing::getFontByName(printing, this->font);
+		FontData* fontData = Printing::getFontByName(this->font);
 
 		this->x = (x < (__SCREEN_WIDTH_IN_CHARS)) ? x : 0;
 		this->y = (y < (__SCREEN_HEIGHT_IN_CHARS)) ? y : 0;
@@ -388,7 +381,7 @@ void OptionsSelector::print(uint8 x, uint8 y, uint32 alignment, uint8 spacing)
 		{
 			for(int32 j = 0; (this->columnWidth * this->cols) > j && x + j < __SCREEN_WIDTH_IN_CHARS; j++)
 			{
-				Printing::text(printing, " ", x + j + jStart, y + i * spacing, this->font);
+				Printing::text(" ", x + j + jStart, y + i * spacing, this->font);
 			}
 		}
 
@@ -411,7 +404,7 @@ void OptionsSelector::print(uint8 x, uint8 y, uint32 alignment, uint8 spacing)
 
 			if(NULL == option->value)
 			{
-				Printing::int32(printing, counter, x + fontData->fontSpec->fontSize.x, y, this->font);
+				Printing::int32(counter, x + fontData->fontSpec->fontSize.x, y, this->font);
 			}
 			else
 			{
@@ -420,31 +413,51 @@ void OptionsSelector::print(uint8 x, uint8 y, uint32 alignment, uint8 spacing)
 					case kString:
 
 						optionsLength = alignment == kOptionsAlignLeft ? 0 : strnlen((char*)option->value, this->columnWidth);
-						Printing::text(printing, (char*)option->value, x + fontData->fontSpec->fontSize.x - optionsLength / optionsLengthDivisor, y, this->font);
+						Printing::text
+						(
+							(char*)option->value, x + fontData->fontSpec->fontSize.x - optionsLength / optionsLengthDivisor,
+							y, this->font
+						);
 						break;
 
 					case kFloat:
 
 						optionsLength = alignment == kOptionsAlignLeft ? 0 : Math::getDigitsCount(*((int32*)option->value)) - 3;
-						Printing::float(printing, *((float*)option->value), x + fontData->fontSpec->fontSize.x - optionsLength / optionsLengthDivisor, y, 2, this->font);
+						Printing::float
+						(
+							*((float*)option->value), x + fontData->fontSpec->fontSize.x - optionsLength / optionsLengthDivisor, 
+							y, 2, this->font
+						);
 						break;
 
 					case kInt:
 
 						optionsLength = alignment == kOptionsAlignLeft ? 0 : Math::getDigitsCount(*((int32*)option->value));
-						Printing::int32(printing, *((int32*)option->value), x + fontData->fontSpec->fontSize.x - optionsLength / optionsLengthDivisor, y, this->font);
+						Printing::int32
+						(
+							*((int32*)option->value), x + fontData->fontSpec->fontSize.x - optionsLength / optionsLengthDivisor, 
+							y, this->font
+						);
 						break;
 
 					case kShortInt:
 
 						optionsLength = alignment == kOptionsAlignLeft ? 0 : Math::getDigitsCount(*((int32*)option->value));
-						Printing::int32(printing, *((int16*)option->value), x + fontData->fontSpec->fontSize.x - optionsLength / optionsLengthDivisor, y, this->font);
+						Printing::int32
+						(
+							*((int16*)option->value), x + fontData->fontSpec->fontSize.x - optionsLength / optionsLengthDivisor, 
+							y, this->font
+						);
 						break;
 
 					case kChar:
 
 						optionsLength = alignment == kOptionsAlignLeft ? 0 : Math::getDigitsCount(*((int32*)option->value));
-						Printing::int32(printing, *((int8*)option->value), x + fontData->fontSpec->fontSize.x - optionsLength / optionsLengthDivisor, y, this->font);
+						Printing::int32
+						(
+							*((int8*)option->value), x + fontData->fontSpec->fontSize.x - optionsLength / optionsLengthDivisor, 
+							y, this->font
+						);
 						break;				
 				}
 			}
@@ -468,15 +481,13 @@ void OptionsSelector::print(uint8 x, uint8 y, uint32 alignment, uint8 spacing)
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PRIVATE METHODS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void OptionsSelector::flushPages()
 {
@@ -504,18 +515,20 @@ void OptionsSelector::flushPages()
 	this->pages = NULL;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void OptionsSelector::printSelectorMark(char* mark, int8 optionsLength)
 {
 	if(this->currentPage && NULL != mark)
 	{
-		FontData* fontData = Printing::getFontByName(Printing::getInstance(), this->font);
+		FontData* fontData = Printing::getFontByName(this->font);
 
 		ASSERT(this->currentPage, "printSelectorMark: current page");
 		ASSERT(VirtualNode::getData(this->currentPage), "printSelectorMark: null current data");
 
-		int32 indexOption = this->currentOptionIndex - this->currentPageIndex * VirtualList::getCount(VirtualList::safeCast(VirtualList::front(this->pages)));
+		int32 indexOption = 
+			this->currentOptionIndex - 
+			this->currentPageIndex * VirtualList::getCount(VirtualList::safeCast(VirtualList::front(this->pages)));
 		int32 optionColumn = (int32)(indexOption / this->rows);
 		int32 optionRow = indexOption - optionColumn * this->rows;
 		optionColumn = this->columnWidth * optionColumn;
@@ -537,8 +550,8 @@ void OptionsSelector::printSelectorMark(char* mark, int8 optionsLength)
 				break;
 		}
 
-		Printing::text(
-			Printing::getInstance(),
+		Printing::text
+		(
 			mark,
 			this->x + optionColumn + optionsLength,
 			this->y + (optionRow * this->spacing * fontData->fontSpec->fontSize.y),
@@ -547,7 +560,7 @@ void OptionsSelector::printSelectorMark(char* mark, int8 optionsLength)
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void OptionsSelector::doCurrentSelectionCallback()
 {
@@ -559,5 +572,4 @@ void OptionsSelector::doCurrentSelectionCallback()
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

@@ -1,7 +1,7 @@
 {
-	"file": ".entity",
+	"file": ".actor",
 	"schema": {
-		"title": "Entity",
+		"title": "Actor",
 		"properties": {
 			"extraProperties": {
 				"type": "object",
@@ -647,12 +647,12 @@
 		"required": []
 	},
 	"uiSchema": {
-		"type": "EntityEditor",
+		"type": "ActorEditor",
 		"scope": "#"
 	},
 	"icon": "codicon codicon-smiley",
 	"templates": [
-		"EntityImageData",
-		"EntitySpec"
+		"ActorImageData",
+		"ActorSpec"
 	]
 }

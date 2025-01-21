@@ -71,9 +71,9 @@ Features:
 	- Real time animation inspector
 - Useful classes to speed up the content creation process:
 	- Container: for transformation propagation (translation/rotation/scaling)
-	- Entity: a container with a list of sprites (a "visual object")
-	- AnimatedEntity: an entity with animated sprites
-	- Actor: animated entity that has a physical body and can resolve collisions
+	- Actor: a container with a list of sprites (a "visual object")
+	- Actor: an actor with animated sprites
+	- Actor: animated actor that has a physical body and can resolve collisions
 
 
 LICENSE

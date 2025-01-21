@@ -25,10 +25,10 @@ const uint8 {{ sanitizedSpecName }}SoundTrack1SxLRV[]
 {%- if item.section == 'exp' %} __attribute((section(".expdata"))){% endif %} =
 {
 #ifndef REDUCE_PCM_DATA
-    {% for soundDataValue in soundData -%}
-    {{  soundDataValue | intToHex(2) }},
-    {%- if loop.index % 16 == 0 and not loop.last %}{{ "\n    " }}{% endif -%}
-    {%- endfor %}
+	{% for soundDataValue in soundData -%}
+	{{  soundDataValue | intToHex(2) }},
+	{%- if loop.index % 16 == 0 and not loop.last %}{{ "\n	" }}{% endif -%}
+	{%- endfor %}
 #endif
 };
 

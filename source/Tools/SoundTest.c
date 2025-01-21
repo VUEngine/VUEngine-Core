@@ -9,10 +9,9 @@
 
 #ifdef __SOUND_TEST
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // INCLUDES
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <BgmapTextureManager.h>
 #include <HardwareManager.h>
@@ -26,20 +25,17 @@
 
 #include "SoundTest.h"
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DECLARATIONS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 extern SoundROMSpec* _userSounds[];
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PUBLIC METHODS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void SoundTest::update()
 {
@@ -56,7 +52,7 @@ void SoundTest::update()
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void SoundTest::show()
 {
@@ -64,31 +60,31 @@ void SoundTest::show()
 
 	SoundManager::reset(SoundManager::getInstance());
 
-	Printing::clear(Printing::getInstance());
-	SpriteManager::hideAllSprites(SpriteManager::getInstance(), NULL, false);
-	Printing::resetCoordinates(Printing::getInstance());
+	Printing::clear();
+	SpriteManager::hideAllSprites(SpriteManager::safeCast(ComponentManager::getManager(kSpriteComponent)), NULL, false);
+	Printing::resetCoordinates();
 	Printing::show(Printing::getInstance());
 
-	TimerManager::setResolution(TimerManager::getInstance(), __TIMER_100US);
-	TimerManager::setTargetTimePerInterruptUnits(TimerManager::getInstance(), kMS);
-	TimerManager::setTargetTimePerInterrupt(TimerManager::getInstance(), 10);
+	TimerManager::setResolution(__TIMER_100US);
+	TimerManager::setTargetTimePerInterruptUnits(kMS);
+	TimerManager::setTargetTimePerInterrupt(10);
 
 	SoundTest::applyTimerSettings(this);
 	SoundTest::loadSound(this);
 	SoundTest::dimmGame(this);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void SoundTest::hide()
 {
 	SoundTest::releaseSound(this);
-	Printing::clear(Printing::getInstance());
-	SpriteManager::showAllSprites(SpriteManager::getInstance(), NULL, true);
+	Printing::clear();
+	SpriteManager::showAllSprites(SpriteManager::safeCast(ComponentManager::getManager(kSpriteComponent)), NULL, true);
 	SoundTest::lightUpGame(this);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void SoundTest::processUserInput(uint16 pressedKey)
 {
@@ -177,7 +173,7 @@ void SoundTest::processUserInput(uint16 pressedKey)
 				break;
 		}
 
-		TimerManager::setResolution(TimerManager::getInstance(), timerResolution);
+		TimerManager::setResolution(timerResolution);
 		timerChanged = true;
 	}
 	else if(K_RD & pressedKey)
@@ -205,8 +201,8 @@ void SoundTest::processUserInput(uint16 pressedKey)
 				break;
 		}
 
-		TimerManager::setTargetTimePerInterruptUnits(TimerManager::getInstance(), targetTimePerInterrupttUnits);
-		TimerManager::setTargetTimePerInterrupt(TimerManager::getInstance(), targetTimePerInterrupt);
+		TimerManager::setTargetTimePerInterruptUnits(targetTimePerInterrupttUnits);
+		TimerManager::setTargetTimePerInterrupt(targetTimePerInterrupt);
 		timerChanged = true;
 	}
 	else if(K_RL & pressedKey)
@@ -215,7 +211,7 @@ void SoundTest::processUserInput(uint16 pressedKey)
 
 		targetTimePerInterrupt -= TimerManager::getMinimumTimePerInterruptStep(TimerManager::getInstance());
 
-		TimerManager::setTargetTimePerInterrupt(TimerManager::getInstance(), targetTimePerInterrupt);
+		TimerManager::setTargetTimePerInterrupt(targetTimePerInterrupt);
 		timerChanged = true;
 	}
 	else if(K_RR & pressedKey)
@@ -224,7 +220,7 @@ void SoundTest::processUserInput(uint16 pressedKey)
 
 		targetTimePerInterrupt += TimerManager::getMinimumTimePerInterruptStep(TimerManager::getInstance());
 
-		TimerManager::setTargetTimePerInterrupt(TimerManager::getInstance(), targetTimePerInterrupt);
+		TimerManager::setTargetTimePerInterrupt(targetTimePerInterrupt);
 		timerChanged = true;
 	}
 
@@ -252,15 +248,13 @@ void SoundTest::processUserInput(uint16 pressedKey)
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PRIVATE METHODS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void SoundTest::constructor()
 {
@@ -271,7 +265,7 @@ void SoundTest::constructor()
 	this->soundIndex = 0;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void SoundTest::destructor()
 {
@@ -279,12 +273,12 @@ void SoundTest::destructor()
 
 	this->sound = NULL;
 
-	// allow a new construct
+	// Allow a new construct
 	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void SoundTest::releaseSound()
 {
@@ -296,7 +290,7 @@ void SoundTest::releaseSound()
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 uint16 SoundTest::getTotalSounds()
 {
@@ -307,7 +301,7 @@ uint16 SoundTest::getTotalSounds()
 	return totalSounds;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void SoundTest::loadPreviousSound()
 {
@@ -325,7 +319,7 @@ void SoundTest::loadPreviousSound()
 	SoundTest::loadSound(this);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void SoundTest::loadNextSound()
 {
@@ -343,7 +337,7 @@ void SoundTest::loadNextSound()
 	SoundTest::loadSound(this);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void SoundTest::loadSound()
 {
@@ -353,21 +347,26 @@ void SoundTest::loadSound()
 		return;
 	}
 
-	VUEngine::disableKeypad(VUEngine::getInstance());
+	KeypadManager::disable();
 
 #ifdef __SOUND_TEST
-	Printing::clear(Printing::getInstance());
+	Printing::clear();
 	PRINT_TEXT("Loading...", 1, 4);
 #endif
 
 	SoundTest::releaseSound(this);
 
 	TimerManager::reset(TimerManager::getInstance());
-	TimerManager::setResolution(TimerManager::getInstance(), __TIMER_20US);
-	TimerManager::setTargetTimePerInterruptUnits(TimerManager::getInstance(), kUS);
-	TimerManager::setTargetTimePerInterrupt(TimerManager::getInstance(), _userSounds[this->soundIndex]->targetTimerResolutionUS);
+	TimerManager::setResolution(__TIMER_20US);
+	TimerManager::setTargetTimePerInterruptUnits(kUS);
+	TimerManager::setTargetTimePerInterrupt(_userSounds[this->soundIndex]->targetTimerResolutionUS);
 
-	this->sound = SoundManager::getSound(SoundManager::getInstance(), (SoundSpec*)_userSounds[this->soundIndex], (EventListener)SoundTest::onSoundReleased, ListenerObject::safeCast(this));
+	this->sound = 
+		SoundManager::getSound
+		(
+			(SoundSpec*)_userSounds[this->soundIndex], (EventListener)SoundTest::onSoundReleased, 
+			ListenerObject::safeCast(this)
+		);
 
 	NM_ASSERT(!isDeleted(this->sound), "SoundTest::loadSound: no sound");
 
@@ -381,12 +380,12 @@ void SoundTest::loadSound()
 #endif
 	}
 
-	VUEngine::enableKeypad(VUEngine::getInstance());
+	KeypadManager::enable();
 
 	SoundTest::printGUI(this, false);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 bool SoundTest::onSoundFinish(ListenerObject eventFirer __attribute__((unused)))
 {
@@ -399,7 +398,7 @@ bool SoundTest::onSoundFinish(ListenerObject eventFirer __attribute__((unused)))
 	return true;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 bool SoundTest::onSoundReleased(ListenerObject eventFirer __attribute__((unused)))
 {
@@ -411,16 +410,16 @@ bool SoundTest::onSoundReleased(ListenerObject eventFirer __attribute__((unused)
 	return false;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void SoundTest::applyTimerSettings()
 {
-	TimerManager::applySettings(TimerManager::getInstance(), true);
+	TimerManager::applySettings(true);
 
 	SoundTest::printTimer(this);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void SoundTest::printTimer()
 {
@@ -429,39 +428,41 @@ void SoundTest::printTimer()
 		return;
 	}
 
-	TimerManager::print(TimerManager::getInstance(), 1, 11);
+	TimerManager::print(1, 11);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void SoundTest::printGUI(bool clearScreen)
 {
-	Printing printing = Printing::getInstance();
-
 	if(clearScreen)
 	{
-		Printing::clear(printing);
+		Printing::clear();
 	}
 
-	Printing::text(printing, "\x08 SOUND TEST \x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08", 0, 0, NULL);
+	Printing::text
+	(
+		"\x08 SOUND TEST \x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08"
+		"\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08", 0, 0, NULL
+	);
 
 	if(NULL == _userSounds[this->soundIndex])
 	{
-		Printing::text(printing, "No sounds found", 1, 4, NULL);
-		Printing::text(printing, "Define some in _userSounds global variable", 1, 6, NULL);
+		Printing::text("No sounds found", 1, 4, NULL);
+		Printing::text("Define some in _userSounds global variable", 1, 6, NULL);
 		return;
 	}
 
-	Printing::text(printing, __CHAR_SELECTOR_LEFT, 1, 2, NULL);
+	Printing::text(__CHAR_SELECTOR_LEFT, 1, 2, NULL);
 
 	uint16 totalSounds = SoundTest::getTotalSounds(this);
 
 	int32 selectedSoundDigits = Math::getDigitsCount(this->soundIndex + 1);
 	int32 totalSoundsDigits = Math::getDigitsCount(totalSounds);
-	Printing::int32(printing, this->soundIndex + 1, 1 + 1, 2, NULL);
-	Printing::text(printing, "/" , 1 + 1 + selectedSoundDigits, 2, NULL);
-	Printing::int32(printing, SoundTest::getTotalSounds(this), 1 + 1 + selectedSoundDigits + 1, 2, NULL);
-	Printing::text(printing, __CHAR_SELECTOR, 1 + 1 + selectedSoundDigits + 1 + totalSoundsDigits, 2, NULL);
+	Printing::int32(this->soundIndex + 1, 1 + 1, 2, NULL);
+	Printing::text("/" , 1 + 1 + selectedSoundDigits, 2, NULL);
+	Printing::int32(SoundTest::getTotalSounds(this), 1 + 1 + selectedSoundDigits + 1, 2, NULL);
+	Printing::text(__CHAR_SELECTOR, 1 + 1 + selectedSoundDigits + 1 + totalSoundsDigits, 2, NULL);
 
 	if(isDeleted(this->sound))
 	{
@@ -474,23 +475,22 @@ void SoundTest::printGUI(bool clearScreen)
 	// Controls
 	if(!Sound::isPlaying(this->sound))
 	{
-		Printing::text(printing, "Play     \x13", xControls, yControls++, NULL);
+		Printing::text("Play     \x13", xControls, yControls++, NULL);
 	}
 	else
 	{
-		Printing::text(printing, "Pause    \x13", xControls, yControls++, NULL);
+		Printing::text("Pause    \x13", xControls, yControls++, NULL);
 	}
-	Printing::text(printing, "Rewind   \x14", xControls, yControls++, NULL);
+	Printing::text("Rewind   \x14", xControls, yControls++, NULL);
 	yControls++;
-	Printing::text(printing, "T.Freq. \x1F\x1A", xControls, yControls++, NULL);
-	Printing::text(printing, "T.Scale \x1F\x1B", xControls, yControls++, NULL);
-	Printing::text(printing, "T.Res. \x1F\x1C\x1D", xControls, yControls++, NULL);
+	Printing::text("T.Freq. \x1F\x1A", xControls, yControls++, NULL);
+	Printing::text("T.Scale \x1F\x1B", xControls, yControls++, NULL);
+	Printing::text("T.Res. \x1F\x1C\x1D", xControls, yControls++, NULL);
 
 	SoundTest::printTimer(this);
 	Sound::print(this->sound, 1, 4);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #endif

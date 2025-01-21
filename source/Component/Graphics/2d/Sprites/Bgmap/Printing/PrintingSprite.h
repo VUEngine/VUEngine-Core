@@ -10,17 +10,15 @@
 #ifndef PRINTING_SPRITE_H_
 #define PRINTING_SPRITE_H_
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // INCLUDES
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <BgmapSprite.h>
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DATA
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 /// A PrintingSprite spec
 /// @memberof PrintingSprite
@@ -35,12 +33,10 @@ typedef struct PrintingSpriteSpec
 /// @memberof PrintingSprite
 typedef const PrintingSpriteSpec PrintingSpriteROMSpec;
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DECLARATION
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-///
 /// Class BgmapTexture
 ///
 /// Inherits from Texture
@@ -52,7 +48,7 @@ class PrintingSprite : BgmapSprite
 	int8 printingBgmapSegment;
 	
 	/// @publicsection
-	void constructor(GameObject owner, const PrintingSpriteSpec* printingSpriteSpec);
+	void constructor(Entity owner, const PrintingSpriteSpec* printingSpriteSpec);
 	
 	/// Render the sprite by configuring the DRAM assigned to it by means of the provided index.
 	/// @param index: Determines the region of DRAM that this sprite is allowed to configure
@@ -83,6 +79,5 @@ class PrintingSprite : BgmapSprite
 	/// @param height: Height of the WORLD to by used to display the text
 	void setSize(uint16 width, uint16 height);
 }
-
 
 #endif

@@ -7,38 +7,31 @@
  * that was distributed with this source code.
  */
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // INCLUDES
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <BgmapTextureManager.h>
 #include <CharSet.h>
 #include <DebugConfig.h>
 #include <Mem.h>
-#include <SpriteManager.h>
 #include <VIPManager.h>
 
 #include "BgmapTexture.h"
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' ATTRIBUTES
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static BgmapTextureManager _bgmapTextureManager = NULL;
-static SpriteManager _spriteManager = NULL;
 static const uint16 _emptyTextureRow[64] = {0};
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PUBLIC METHODS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void BgmapTexture::constructor(BgmapTextureSpec* bgmapTextureSpec, uint16 id)
+void BgmapTexture::constructor(const BgmapTextureSpec* bgmapTextureSpec, uint16 id)
 {
 	// Always explicitly call the base's constructor 
 	Base::constructor((TextureSpec*)bgmapTextureSpec, id);
@@ -51,19 +44,9 @@ void BgmapTexture::constructor(BgmapTextureSpec* bgmapTextureSpec, uint16 id)
 
 	this->xOffset = 0;
 	this->yOffset = 0;
-
-	if(NULL == _bgmapTextureManager)
-	{
-		_bgmapTextureManager = BgmapTextureManager::getInstance();
-	}
-
-	if(NULL == _spriteManager)
-	{
-		_spriteManager = SpriteManager::getInstance();
-	}
 }	
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void BgmapTexture::destructor()
 {
@@ -71,13 +54,13 @@ void BgmapTexture::destructor()
 	Base::destructor();
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 bool BgmapTexture::write(int16 maximumTextureRowsToWrite)
 {
 	if(isDeleted(this->charSet))
 	{
-		// make sure to force full writing if no char set
+		// Make sure to force full writing if no char set
 		this->remainingRowsToBeWritten = this->textureSpec->rows;
 	}
 	
@@ -101,7 +84,11 @@ bool BgmapTexture::write(int16 maximumTextureRowsToWrite)
 	}
 	else
 	{
-		BgmapTexture::writeFrame(this, maximumTextureRowsToWrite, kTexturePendingWriting < status && kTextureFrameChanged >= status, this->xOffset, this->yOffset, charSetOffset, 0);
+		BgmapTexture::writeFrame
+		(
+			this, maximumTextureRowsToWrite, kTexturePendingWriting < status && kTextureFrameChanged >= status, 
+			this->xOffset, this->yOffset, charSetOffset, 0
+		);
 	}
 
 	if(kTexturePendingRewriting == status)
@@ -116,7 +103,7 @@ bool BgmapTexture::write(int16 maximumTextureRowsToWrite)
 	return true;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void BgmapTexture::rewrite()
 {
@@ -125,21 +112,21 @@ void BgmapTexture::rewrite()
 	this->remainingRowsToBeWritten = this->textureSpec->rows;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void BgmapTexture::setSegment(int8 segment)
 {
 	this->segment = segment;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 int8 BgmapTexture::getSegment()
 {
 	return this->segment;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void BgmapTexture::setOffsets(int16 xOffset, int16 yOffset)
 {
@@ -147,26 +134,26 @@ void BgmapTexture::setOffsets(int16 xOffset, int16 yOffset)
 	this->yOffset = yOffset;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 int16 BgmapTexture::getXOffset()
 {
 	return this->xOffset;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 int16 BgmapTexture::getYOffset()
 {
 	return this->yOffset;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void BgmapTexture::setHorizontalFlip(bool value)
 {	
-	// TODO: this is a hack, positioned entities should have a complete transformation
-	// and the flip flags should be removed from the texture spec
+	// TODO: this is a hack, positioned actors should have a complete transformation
+	// And the flip flags should be removed from the texture spec
 	if(this->textureSpec->horizontalFlip)
 	{
 		value = !value;
@@ -180,12 +167,12 @@ void BgmapTexture::setHorizontalFlip(bool value)
 	this->horizontalFlip = value;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void BgmapTexture::setVerticalFlip(bool value)
 {
-	// TODO: this is a hack, positioned entities should have a complete transformation
-	// and the flip flags should be removed from the texture spec
+	// TODO: this is a hack, positioned actors should have a complete transformation
+	// And the flip flags should be removed from the texture spec
 	if(this->textureSpec->verticalFlip)
 	{
 		value = !value;
@@ -199,22 +186,20 @@ void BgmapTexture::setVerticalFlip(bool value)
 	this->verticalFlip = value;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 int8 BgmapTexture::getRemainingRowsToBeWritten()
 {
 	return this->remainingRowsToBeWritten;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PRIVATE METHODS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void BgmapTexture::writeAllFrames(int16 maximumTextureRowsToWrite, int16 xOffset, int16 yOffset, uint16 charSetOffset)
 {
@@ -235,7 +220,10 @@ void BgmapTexture::writeAllFrames(int16 maximumTextureRowsToWrite, int16 xOffset
 	{
 		this->remainingRowsToBeWritten = this->textureSpec->rows;
 
-		BgmapTexture::writeFrame(this, maximumTextureRowsToWrite, true, currentXOffset, currentYOffset, charSetOffset, isCharSetOptimized ? frame : 0);
+		BgmapTexture::writeFrame
+		(
+			this, maximumTextureRowsToWrite, true, currentXOffset, currentYOffset, charSetOffset, isCharSetOptimized ? frame : 0
+		);
 
 		charSetOffset += charSetOffsetDelta;
 
@@ -255,10 +243,13 @@ void BgmapTexture::writeAllFrames(int16 maximumTextureRowsToWrite, int16 xOffset
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 // TODO: inlining this causes trouble with ANIMATED_MULTI animations
-static inline void BgmapTexture::addHWORD(HWORD* destination, const HWORD* source, uint32 numberOfHWORDS, uint32 offset, uint16 flip, int16 increment)
+static inline void BgmapTexture::addHWORD
+(
+	HWORD* destination, const HWORD* source, uint32 numberOfHWORDS, uint32 offset, uint16 flip, int16 increment
+)
 {
 #ifdef __SHOW_SPRITES_PROFILING
 	extern int32 _writtenTextureTiles;
@@ -267,52 +258,58 @@ static inline void BgmapTexture::addHWORD(HWORD* destination, const HWORD* sourc
 
 	const HWORD* finalSource = source + numberOfHWORDS;
 
-    asm
+	asm
 	(
-		"jr		end%=			\n\t"      \
-		"loop%=:				\n\t"      \
-		"ld.h	0[%1], r10		\n\t"      \
-		"xor	%4, r10			\n\t"      \
-		"add	%3, r10			\n\t"      \
-		"st.h	r10, 0[%0]		\n\t"      \
-		"add	%5, %0			\n\t"      \
-		"add	2, %1			\n\t"      \
-		"end%=:					\n\t"      \
-		"cmp	%1, %2			\n\t"      \
+		"jr		end%=			\n\t"	  \
+		"loop%=:				\n\t"	  \
+		"ld.h	0[%1], r10		\n\t"	  \
+		"xor	%4, r10			\n\t"	  \
+		"add	%3, r10			\n\t"	  \
+		"st.h	r10, 0[%0]		\n\t"	  \
+		"add	%5, %0			\n\t"	  \
+		"add	2, %1			\n\t"	  \
+		"end%=:					\n\t"	  \
+		"cmp	%1, %2			\n\t"	  \
 		"bgt	loop%=			\n\t"
 		: /*"+r" (destination), "+r" (source)*/ // <- causes the graphics not to be writen
 		:  "r" (destination), "r" (source), "r" (finalSource), "r" (offset), "r" (flip), "r" (increment)
 		: "r10"
-    );
+	);
 }
 
 // TODO: inlining this causes trouble with ANIMATED_MULTI animations
-static inline void BgmapTexture::addHWORDCompressed(HWORD* destination, const HWORD* source, uint32 numberOfHWORDS, uint32 offset, uint16 flip, int16 increment)
+static inline void BgmapTexture::addHWORDCompressed
+(
+	HWORD* destination, const HWORD* source, uint32 numberOfHWORDS, uint32 offset, uint16 flip, int16 increment
+)
 {
 	const HWORD* finalSource = source + numberOfHWORDS;
 
-    asm
+	asm
 	(
-		"jr 	end%=			\n\t"      \
-		"loop%=:				\n\t"      \
-		"ld.h 	0[%1], r10		\n\t"      \
-		"xor	%4, r10			\n\t"      \
-		"add	%3, r10			\n\t"      \
-		"st.h	r10, 0[%0]		\n\t"      \
-		"add	%5, %0			\n\t"      \
-		"add	2, %1			\n\t"      \
-		"end%=:					\n\t"      \
-		"cmp	%1, %2			\n\t"      \
+		"jr 	end%=			\n\t"	  \
+		"loop%=:				\n\t"	  \
+		"ld.h 	0[%1], r10		\n\t"	  \
+		"xor	%4, r10			\n\t"	  \
+		"add	%3, r10			\n\t"	  \
+		"st.h	r10, 0[%0]		\n\t"	  \
+		"add	%5, %0			\n\t"	  \
+		"add	2, %1			\n\t"	  \
+		"end%=:					\n\t"	  \
+		"cmp	%1, %2			\n\t"	  \
 		"bgt	loop%=			\n\t"
 		: /*"+r" (destination), "+r" (source)*/ // <- causes the graphics not to be writen
 		: "r" (destination), "r" (source), "r" (finalSource), "r" (offset), "r" (flip), "r" (increment)
 		: "r10" // regs used
-    );
+	);
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void BgmapTexture::writeFrame(int16 maximumTextureRowsToWrite, bool forceFullRewrite, int16 xOffset, int16 yOffset, uint16 charSetOffset, uint16 frame)
+void BgmapTexture::writeFrame
+(
+	int16 maximumTextureRowsToWrite, bool forceFullRewrite, int16 xOffset, int16 yOffset, uint16 charSetOffset, uint16 frame
+)
 {
 	if((0 > xOffset) || (0 > yOffset))
 	{
@@ -420,5 +417,4 @@ void BgmapTexture::writeFrame(int16 maximumTextureRowsToWrite, bool forceFullRew
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————
-
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
