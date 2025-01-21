@@ -14,14 +14,10 @@
 	{%- set isSpritesheetAnimation = true -%}
 {%- endif -%}
 
-{#- DETERMINE ENTITY CLASS -#}
+{#- DETERMINE ACTOR CLASS -#}
 {%- if item.extraProperties.customAllocator is defined and item.extraProperties.customAllocator != '' -%}
 	{%- set actorClass = item.extraProperties.customAllocator -%}
-{%- elseif item.physics.enabled -%} {#- TODO: or item.stateMachine enabled -#}
-	{%- set actorClass = 'Actor' -%}
-{%- elseif isAnimated -%}
-	{%- set actorClass = 'Actor' -%}
-{%- else %}
+{%- else -%}
 	{%- set actorClass = 'Actor' -%}
 {%- endif %}
 
@@ -387,7 +383,7 @@ AnimationFunctionROMSpec* const {{ sanitizedSpecName }}AnimationSpecs[] =
 {#- PRINT WIREFRAMES -#}
 {%- if item.components.wireframes | length -%}
 
-{{- '\n' ~ macros.sectionHeader('Wireframes') ~ '\n' -}}
+{{- '\n' ~ macros.sectionHeader('Wireframes') ~ '\n\n' -}}
 
 {%- set wireframeNames = [] -%}
 {%- for wireframe in item.components.wireframes -%}
@@ -572,70 +568,53 @@ ComponentSpec* const {{ sanitizedSpecName }}ComponentSpecs[] =
 	NULL
 };
 
-{# PRINT ENTITY SPEC -#}
+{# PRINT ACTOR SPEC -#}
 {{ actorClass }}ROMSpec {{ sanitizedSpecName }}ActorSpec =
 {
-	{%- if actorClass != 'Actor' and actorClass != 'Actor' and actorClass != 'Actor' %}
-	{
+	// Class allocator
+	__TYPE({{ actorClass }}),
+
+	// Component specs
+	(ComponentSpec**){{ sanitizedSpecName }}ComponentSpecs,
+
+	// Children specs
+	{%- if item.components.children | length %}
+	(struct PositionedActor*){{ sanitizedSpecName }}Children,
+	{%- else %}
+	NULL,
 	{%- endif %}
-	{%- if item.physics.enabled %}
-	{
+
+	// Extra info
+	{%- if item.extraProperties.extraInfo != '' %}
+	(void*)"{{ item.extraProperties.extraInfo }}",
+	{%- else %}
+	NULL,
 	{%- endif %}
-		{%- if isAnimated %}
-		{
-		{%- endif %}
-			// Class allocator
-			__TYPE({{ actorClass }}),
 
-			// Component specs
-			(ComponentSpec**){{ sanitizedSpecName }}ComponentSpecs,
+	// Size
+	// If 0, it is computed from the visual components if any
+	{{ '{' ~ item.extraProperties.pixelSize.x ~ ', ' ~ item.extraProperties.pixelSize.y ~ ', ' ~ item.extraProperties.pixelSize.z ~ '}' }},
 
-			// Children specs
-			{%- if item.components.children | length %}
-			(struct PositionedActor*){{ sanitizedSpecName }}Children,
-			{%- else %}
-			NULL,
-			{%- endif %}
-
-			// Extra info
-			{%- if item.extraProperties.extraInfo != '' %}
-			(void*)"{{ item.extraProperties.extraInfo }}",
-			{%- else %}
-			NULL,
-			{%- endif %}
-
-			// Size
-			// If 0, it is computed from the visual components if any
-			{{ '{' ~ item.extraProperties.pixelSize.x ~ ', ' ~ item.extraProperties.pixelSize.y ~ ', ' ~ item.extraProperties.pixelSize.z ~ '}' }},
-
-			// Actor's in-game type
-			kType{{ project.items.InGameTypes.project.types[item.inGameType] | sanitizeSpecName }}
-
-		{%- if isAnimated %}
-		},
-
-		// Pointer to animation functions array
-		(const AnimationFunction**)&{{ sanitizedSpecName }}AnimationSpecs,
-
-		// Animation to play automatically
-		"{%- if item.components.animations[item.animations.default].name != '' -%}
-			{{ item.components.animations[item.animations.default].name | sanitizeSpecName }}
-		{%- else -%} 
-			{{ item.animations.default + 1 }}
-		{%- endif -%}",
-		{%- endif -%}
-
-	{%- if item.physics.enabled %}
-	},
-
-	// Axises around which to rotate the actor when syncronizing with bodyate the actor when syncronizing with body
-	{%- if item.physics.rotationAxes is defined and item.physics.rotationAxes is iterable and item.physics.rotationAxes | length %}
-	__{{ item.physics.rotationAxes.join(' | __') }}
-	{%- else %} 
-	__NO_AXIS,
+	// Actor's in-game type
+	{%- if item.inGameType == 'None' %}
+	kTypeNone,
+	{%- else %}
+	kType{{ project.items.InGameTypes.project.types[item.inGameType] | sanitizeSpecName }},
 	{%- endif %}
+
+	// Pointer to animation functions array
+	{%- if isAnimated %}
+	(const AnimationFunction**)&{{ sanitizedSpecName }}AnimationSpecs,
+	{%- else %}
+	NULL,
 	{%- endif %}
-	{%- if actorClass != 'Actor' and actorClass != 'Actor' and actorClass != 'Actor' %}
-	}
+
+	// Animation to play automatically
+	{%- if isAnimated and item.components.animations[item.animations.default].name != '' %}
+	"{{ item.components.animations[item.animations.default].name | sanitizeSpecName }}"
+	{%- elseif isAnimated %} 
+	"{{ item.animations.default + 1 }}"
+	{%- else %}
+	NULL
 	{%- endif %}
 };
