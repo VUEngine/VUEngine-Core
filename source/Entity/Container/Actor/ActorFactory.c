@@ -44,9 +44,6 @@ typedef struct PositionedActorDescription
 	int16 internalId;
 	uint8 componentIndex;
 	bool componentsCreated;
-	bool wireframesCreated;
-	bool collidersCreated;
-	bool behaviorsCreated;
 	bool transformed;
 	bool graphicsSynchronized;
 
