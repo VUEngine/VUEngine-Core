@@ -647,6 +647,8 @@ void Actor::addChildActorsDeferred(const PositionedActor* childrenSpecs)
 	if(isDeleted(this->actorFactory))
 	{
 		this->actorFactory = new ActorFactory();
+
+		Actor::addEventListener(this, ListenerObject::safeCast(this), kEventActorLoaded);
 	}
 
 	for(int32 i = 0; NULL != childrenSpecs[i].actorSpec; i++)
