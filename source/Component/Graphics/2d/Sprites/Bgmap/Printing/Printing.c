@@ -1006,7 +1006,7 @@ bool Printing::onEvent(ListenerObject eventFirer __attribute__((unused)), uint32
 {
 	switch(eventCode)
 	{
-		case kEventFontRewritten:
+		case kEventCharSetChangedOffset:
 		{
 			CharSet charSet = CharSet::safeCast(eventFirer);
 
