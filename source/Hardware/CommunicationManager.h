@@ -80,7 +80,7 @@ singleton class CommunicationManager : ListenerObject
 	void reset();
 
 	/// Enable communications on the EXT port.
-	/// @param scope: Object on which to perform the callback
+	/// @param scope: Object that will be notified of communication events
 	void enableCommunications(ListenerObject scope);
 
 	/// Disable communication on the EXT port.
@@ -109,7 +109,7 @@ singleton class CommunicationManager : ListenerObject
 	/// Send data asynchronously over the EXT port if there is nothing detectable attached to it.
 	/// @param data: Data to broadcast
 	/// @param numberOfBytes: Number of bytes to broadcast
-	/// @param scope: Object on which to perform the callback
+	/// @param scope: Object that will be notified of communication events
 	void broadcastDataAsync(BYTE* data, int32 numberOfBytes, ListenerObject scope);
 
 	/// Send and receive data synchronously over the EXT port if there is something detectable attached to it.
@@ -122,7 +122,7 @@ singleton class CommunicationManager : ListenerObject
 	/// @param message: Control message for the receiving partner
 	/// @param data: Data to broadcast
 	/// @param numberOfBytes: Number of bytes to broadcast
-	/// @param scope: Object on which to perform the callback
+	/// @param scope: Object that will be notified of communication events
 	bool sendAndReceiveDataAsync(WORD message, BYTE* data, int32 numberOfBytes, ListenerObject scope);
 
 	/// Retrieve the last sent message on the EXT port.

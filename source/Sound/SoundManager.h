@@ -64,13 +64,13 @@ singleton class SoundManager : ListenerObject
 	/// Allocate sound defined by the provided spec.
 	/// @param soundSpec: Spec that defines the sound to play
 	/// @param soundReleaseListener: Callback method for when the sound is released
-	/// @param scope: Object on which to perform the callback
+	/// @param scope: Object that will be notified of communication events
 	static Sound getSound(const SoundSpec* soundSpec, ListenerObject scope);
 
 	/// Retrieve a previously allocated sound defined by the provided spec.
 	/// @param soundSpec: Spec that defines the sound to play
 	/// @param soundReleaseListener: Callback method for when the sound is released
-	/// @param scope: Object on which to perform the callback
+	/// @param scope: Object that will be notified of communication events
 	static Sound findSound(const SoundSpec* soundSpec, ListenerObject scope);
 
 	/// Play the allocated sounds.
