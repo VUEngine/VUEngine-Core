@@ -42,7 +42,7 @@ friend class VirtualList;
 VSUSoundSource* const _vsuSoundSources = (VSUSoundSource*)0x01000400;
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-// CLASS' STATIC METHODS
+// CLASS' PUBLIC STATIC METHODS
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -314,8 +314,80 @@ void VSUManager::printWaveFormStatus(int32 x, int32 y)
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-// CLASS' PRIVATE STATIC METHODS
+// CLASS' PRIVATE METHODS
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void VSUManager::constructor()
+{
+	// Always explicitly call the base's constructor 
+	Base::constructor();
+
+	this->queuedVSUSoundSourceConfigurations = new VirtualList();
+	this->allowQueueingSoundRequests = true;
+	this->targetPCMUpdates = 0;
+	this->playbackMode = kPlaybackNative;
+	this->haveUsedSoundSources = false;
+	this->haveQueuedRequests = false;
+
+	VSUManager::reset(this);
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void VSUManager::destructor()
+{
+	if(!isDeleted(this->queuedVSUSoundSourceConfigurations))
+	{
+		VirtualList::deleteData(this->queuedVSUSoundSourceConfigurations);
+		delete this->queuedVSUSoundSourceConfigurations;
+		this->queuedVSUSoundSourceConfigurations = NULL;
+	}
+
+	// Always explicitly call the base's destructor 
+	Base::destructor();
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void VSUManager::printVSUSoundSourceConfiguration
+(
+	const VSUSoundSourceConfiguration* vsuSoundSourceConfiguration, int16 x, int y
+)
+{
+	if(NULL == vsuSoundSourceConfiguration)
+	{
+		return;
+	}
+
+	PRINT_TEXT("TIMEO:         ", x, ++y);
+	PRINT_INT(vsuSoundSourceConfiguration->timeout, x + 7, y);
+
+	PRINT_TEXT("SXINT:         ", x, ++y);
+	PRINT_HEX_EXT(vsuSoundSourceConfiguration->SxINT, x + 7, y, 2);
+
+	PRINT_TEXT("SXLRV:         ", x, ++y);
+	PRINT_HEX_EXT(vsuSoundSourceConfiguration->SxLRV, x + 7, y, 2);
+
+	PRINT_TEXT("SXFQL:         ", x, ++y);
+	PRINT_HEX_EXT(vsuSoundSourceConfiguration->SxFQL, x + 7, y, 2);
+
+	PRINT_TEXT("SXFQH:         ", x, ++y);
+	PRINT_HEX_EXT(vsuSoundSourceConfiguration->SxFQH, x + 7, y, 2);
+
+	PRINT_TEXT("SXEV0:         ", x, ++y);
+	PRINT_HEX_EXT(vsuSoundSourceConfiguration->SxEV0, x + 7, y, 2);
+
+	PRINT_TEXT("SXEV1:         ", x, ++y);
+	PRINT_HEX_EXT(vsuSoundSourceConfiguration->SxEV1, x + 7, y, 2);
+
+	PRINT_TEXT("SXRAM:         ", x, ++y);
+	PRINT_HEX_EXT(0x0000FFFF & (uint32)vsuSoundSourceConfiguration->SxRAM, x + 7, y, 2);
+
+	PRINT_TEXT("SXSWP:         ", x, ++y);
+	PRINT_HEX_EXT(vsuSoundSourceConfiguration->SxSWP, x + 7, y, 2);
+}
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
@@ -592,84 +664,6 @@ void VSUManager::setWaveform(Waveform* waveform, const int8* data)
 		}
 		*/
 	}
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-// CLASS' PRIVATE METHODS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void VSUManager::constructor()
-{
-	// Always explicitly call the base's constructor 
-	Base::constructor();
-
-	this->queuedVSUSoundSourceConfigurations = new VirtualList();
-	this->allowQueueingSoundRequests = true;
-	this->targetPCMUpdates = 0;
-	this->playbackMode = kPlaybackNative;
-	this->haveUsedSoundSources = false;
-	this->haveQueuedRequests = false;
-
-	VSUManager::reset(this);
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void VSUManager::destructor()
-{
-	if(!isDeleted(this->queuedVSUSoundSourceConfigurations))
-	{
-		VirtualList::deleteData(this->queuedVSUSoundSourceConfigurations);
-		delete this->queuedVSUSoundSourceConfigurations;
-		this->queuedVSUSoundSourceConfigurations = NULL;
-	}
-
-	// Always explicitly call the base's destructor 
-	Base::destructor();
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void VSUManager::printVSUSoundSourceConfiguration
-(
-	const VSUSoundSourceConfiguration* vsuSoundSourceConfiguration, int16 x, int y
-)
-{
-	if(NULL == vsuSoundSourceConfiguration)
-	{
-		return;
-	}
-
-	PRINT_TEXT("TIMEO:         ", x, ++y);
-	PRINT_INT(vsuSoundSourceConfiguration->timeout, x + 7, y);
-
-	PRINT_TEXT("SXINT:         ", x, ++y);
-	PRINT_HEX_EXT(vsuSoundSourceConfiguration->SxINT, x + 7, y, 2);
-
-	PRINT_TEXT("SXLRV:         ", x, ++y);
-	PRINT_HEX_EXT(vsuSoundSourceConfiguration->SxLRV, x + 7, y, 2);
-
-	PRINT_TEXT("SXFQL:         ", x, ++y);
-	PRINT_HEX_EXT(vsuSoundSourceConfiguration->SxFQL, x + 7, y, 2);
-
-	PRINT_TEXT("SXFQH:         ", x, ++y);
-	PRINT_HEX_EXT(vsuSoundSourceConfiguration->SxFQH, x + 7, y, 2);
-
-	PRINT_TEXT("SXEV0:         ", x, ++y);
-	PRINT_HEX_EXT(vsuSoundSourceConfiguration->SxEV0, x + 7, y, 2);
-
-	PRINT_TEXT("SXEV1:         ", x, ++y);
-	PRINT_HEX_EXT(vsuSoundSourceConfiguration->SxEV1, x + 7, y, 2);
-
-	PRINT_TEXT("SXRAM:         ", x, ++y);
-	PRINT_HEX_EXT(0x0000FFFF & (uint32)vsuSoundSourceConfiguration->SxRAM, x + 7, y, 2);
-
-	PRINT_TEXT("SXSWP:         ", x, ++y);
-	PRINT_HEX_EXT(vsuSoundSourceConfiguration->SxSWP, x + 7, y, 2);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

@@ -408,6 +408,61 @@ void Camera::print(int32 x, int32 y, bool inPixels)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+void Camera::constructor()
+{	
+	// Always explicitly call the base's constructor 
+	Base::constructor();
+
+	this->transformation.position = Vector3D::zero();
+	this->cameraMovementManager = CameraMovementManager::getInstance();
+	this->cameraEffectManager = CameraEffectManager::getInstance();
+
+	this->transformation.position = Vector3D::zero();
+	this->displacement = Vector3D::zero();
+	this->transformation.rotation = Rotation::zero();
+	this->invertedRotation = Rotation::invert(this->transformation.rotation);
+	this->lastDisplacement = Vector3D::zero();
+
+	this->cameraFrustum.x0 = 0;
+	this->cameraFrustum.y0 = 0;
+	this->cameraFrustum.z0 = 0;
+	this->cameraFrustum.x1 = __SCREEN_WIDTH;
+	this->cameraFrustum.y1 = __SCREEN_HEIGHT;
+	this->cameraFrustum.z1 = __SCREEN_DEPTH;
+
+	this->transformationFlags = __VALID_TRANSFORMATION;
+
+	PixelOptical pixelOptical =
+	{
+		__MAXIMUM_X_VIEW_DISTANCE,				// maximum distance from the screen to the infinite
+		__MAXIMUM_Y_VIEW_DISTANCE,				// maximum distance from the screen to the infinite
+		__CAMERA_NEAR_PLANE,					// distance from player's eyes to the virtual screen
+		__BASE_FACTOR,							// distance from left to right eye (depth perception)
+		__HORIZONTAL_VIEW_POINT_CENTER,			// horizontal View point center
+		__VERTICAL_VIEW_POINT_CENTER,			// vertical View point center
+		__SCALING_MODIFIER_FACTOR,				// scaling factor for sprite resizing
+	};
+
+	Camera::setup(this, pixelOptical, this->cameraFrustum);
+
+	// Set global pointer to improve access to critical values
+	_optical = &this->optical;
+	_cameraPosition = &this->transformation.position;
+	_cameraFrustum = &this->cameraFrustum;
+	_cameraRotation = &this->transformation.rotation;
+	_cameraInvertedRotation = &this->invertedRotation;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void Camera::destructor()
+{
+	// Always explicitly call the base's destructor 
+	Base::destructor();
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void Camera::resetCameraFrustum()
 {	
 	this->cameraFrustum.x0 = 0;
@@ -522,67 +577,6 @@ void Camera::updateRotationFlags(Rotation rotation)
 	{
 		this->transformationFlags |= __INVALIDATE_ROTATION;
 	}
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-// CLASS' PRIVATE METHODS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void Camera::constructor()
-{	
-	// Always explicitly call the base's constructor 
-	Base::constructor();
-
-	this->transformation.position = Vector3D::zero();
-	this->cameraMovementManager = CameraMovementManager::getInstance();
-	this->cameraEffectManager = CameraEffectManager::getInstance();
-
-	this->transformation.position = Vector3D::zero();
-	this->displacement = Vector3D::zero();
-	this->transformation.rotation = Rotation::zero();
-	this->invertedRotation = Rotation::invert(this->transformation.rotation);
-	this->lastDisplacement = Vector3D::zero();
-
-	this->cameraFrustum.x0 = 0;
-	this->cameraFrustum.y0 = 0;
-	this->cameraFrustum.z0 = 0;
-	this->cameraFrustum.x1 = __SCREEN_WIDTH;
-	this->cameraFrustum.y1 = __SCREEN_HEIGHT;
-	this->cameraFrustum.z1 = __SCREEN_DEPTH;
-
-	this->transformationFlags = __VALID_TRANSFORMATION;
-
-	PixelOptical pixelOptical =
-	{
-		__MAXIMUM_X_VIEW_DISTANCE,				// maximum distance from the screen to the infinite
-		__MAXIMUM_Y_VIEW_DISTANCE,				// maximum distance from the screen to the infinite
-		__CAMERA_NEAR_PLANE,					// distance from player's eyes to the virtual screen
-		__BASE_FACTOR,							// distance from left to right eye (depth perception)
-		__HORIZONTAL_VIEW_POINT_CENTER,			// horizontal View point center
-		__VERTICAL_VIEW_POINT_CENTER,			// vertical View point center
-		__SCALING_MODIFIER_FACTOR,				// scaling factor for sprite resizing
-	};
-
-	Camera::setup(this, pixelOptical, this->cameraFrustum);
-
-	// Set global pointer to improve access to critical values
-	_optical = &this->optical;
-	_cameraPosition = &this->transformation.position;
-	_cameraFrustum = &this->cameraFrustum;
-	_cameraRotation = &this->transformation.rotation;
-	_cameraInvertedRotation = &this->invertedRotation;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void Camera::destructor()
-{
-	// Always explicitly call the base's destructor 
-	Base::destructor();
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

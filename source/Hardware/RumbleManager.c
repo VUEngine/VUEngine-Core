@@ -20,9 +20,8 @@
 #include "RumbleManager.h"
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-// CLASS' STATIC METHODS
+// CLASS' PUBLIC STATIC METHODS
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
@@ -148,8 +147,39 @@ secure void RumbleManager::reset()
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-// CLASS' PRIVATE STATIC METHODS
+// CLASS' PRIVATE METHODS
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void RumbleManager::constructor()
+{
+	
+	// Always explicitly call the base's constructor 
+	Base::constructor();
+
+	this->async = true;
+	this->overridePreviousEffect = true;
+	this->rumbleEffectSpec = NULL;
+	this->rumbleCommandIndex = 0;
+	this->cachedRumbleEffect.frequency = 0;
+	this->cachedRumbleEffect.sustainPositive = 0;
+	this->cachedRumbleEffect.sustainNegative = 0;
+	this->cachedRumbleEffect.overdrive = 0;
+	this->cachedRumbleEffect.breaking = 0;
+
+	RumbleManager::reset(this);
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void RumbleManager::destructor()
+{
+	// Allow a new construct
+	// Always explicitly call the base's destructor 
+	Base::destructor();
+}
+
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
@@ -361,42 +391,6 @@ void RumbleManager::stopAllEffects()
 {
 	RumbleManager::stop(this);
 	RumbleManager::execute(this);
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-// CLASS' PRIVATE METHODS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void RumbleManager::constructor()
-{
-	
-	// Always explicitly call the base's constructor 
-	Base::constructor();
-
-	this->async = true;
-	this->overridePreviousEffect = true;
-	this->rumbleEffectSpec = NULL;
-	this->rumbleCommandIndex = 0;
-	this->cachedRumbleEffect.frequency = 0;
-	this->cachedRumbleEffect.sustainPositive = 0;
-	this->cachedRumbleEffect.sustainNegative = 0;
-	this->cachedRumbleEffect.overdrive = 0;
-	this->cachedRumbleEffect.breaking = 0;
-
-	RumbleManager::reset(this);
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void RumbleManager::destructor()
-{
-	// Allow a new construct
-	// Always explicitly call the base's destructor 
-	Base::destructor();
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
