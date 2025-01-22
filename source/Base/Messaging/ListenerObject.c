@@ -71,6 +71,8 @@ void ListenerObject::addEventListener(ListenerObject listener, uint16 eventCode)
 		return;
 	}
 
+	NM_ASSERT(NULL != __GET_CAST(ListenerObject, listener), "ListenerObject::addEventListener: wrong listener object type");
+
 	if(NULL == this->events)
 	{
 		this->events = new VirtualList();

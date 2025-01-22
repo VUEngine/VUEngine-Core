@@ -404,7 +404,6 @@ void CameraEffectManager::fxFadeAsync()
 		CameraEffectManager::fireEvent(this, kEventEffectFadeInComplete);
 		CameraEffectManager::fireEvent(this, kEventEffectFadeOutComplete);
 
-
 #ifdef __DIMM_FOR_PROFILING
 
 		_vipRegisters[__GPLT0] = 0x50;
