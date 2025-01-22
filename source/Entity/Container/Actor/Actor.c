@@ -438,7 +438,6 @@ bool Actor::onEvent(ListenerObject eventFirer __attribute__((unused)), uint32 ev
 
 			return true;
 		}
-
 	}
 
 	return Base::onEvent(this, eventFirer, eventCode);
