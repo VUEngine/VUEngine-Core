@@ -41,7 +41,7 @@ singleton class SoundTest : Tool
 	/// @param eventFirer: ListenerObject that signals the event
 	/// @param eventCode: Code of the firing event
 	/// @return False if the listener has to be removed; true to keep it
-	override bool onEvent(ListenerObject eventFirer __attribute__((unused)), uint32 eventCode);
+	override bool onEvent(ListenerObject eventFirer, uint16 eventCode);
 
 	/// Update the tool's state.
 	override void update();

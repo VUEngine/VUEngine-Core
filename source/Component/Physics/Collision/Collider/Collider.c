@@ -106,7 +106,7 @@ void Collider::destructor()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-bool Collider::onEvent(ListenerObject eventFirer __attribute__((unused)), uint32 eventCode)
+bool Collider::onEvent(ListenerObject eventFirer __attribute__((unused)), uint16 eventCode)
 {
 	switch(eventCode)
 	{

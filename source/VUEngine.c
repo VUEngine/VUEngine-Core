@@ -461,7 +461,7 @@ static void VUEngine::startProfiling()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-bool VUEngine::onEvent(ListenerObject eventFirer, uint32 eventCode)
+bool VUEngine::onEvent(ListenerObject eventFirer, uint16 eventCode)
 {
 	switch(eventCode)
 	{

@@ -197,7 +197,7 @@ singleton class VUEngine : ListenerObject
 	/// @param eventFirer: ListenerObject that signals the event
 	/// @param eventCode: Code of the firing event
 	/// @return False if the listener has to be removed; true to keep it
-	override bool onEvent(ListenerObject eventFirer, uint32 eventCode);
+	override bool onEvent(ListenerObject eventFirer, uint16 eventCode);
 
 	/// Receive and process a Telegram.
 	/// @param telegram: Received telegram to process

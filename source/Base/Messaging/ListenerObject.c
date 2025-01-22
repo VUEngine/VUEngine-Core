@@ -338,7 +338,7 @@ void ListenerObject::discardMessages(uint32 message)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-bool ListenerObject::onEvent(ListenerObject eventFirer __attribute__((unused)), uint32 eventCode __attribute__((unused)))
+bool ListenerObject::onEvent(ListenerObject eventFirer __attribute__((unused)), uint16 eventCode __attribute__((unused)))
 {
 	return false;
 }

@@ -324,7 +324,7 @@ void Texture::destructor()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-bool Texture::onEvent(ListenerObject eventFirer __attribute__((unused)), uint32 eventCode)
+bool Texture::onEvent(ListenerObject eventFirer __attribute__((unused)), uint16 eventCode)
 {
 	switch(eventCode)
 	{

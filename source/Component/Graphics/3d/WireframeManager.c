@@ -69,7 +69,7 @@ void WireframeManager::destructor()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-bool WireframeManager::onEvent(ListenerObject eventFirer __attribute__((unused)), uint32 eventCode)
+bool WireframeManager::onEvent(ListenerObject eventFirer __attribute__((unused)), uint16 eventCode)
 {
 	switch(eventCode)
 	{

@@ -110,7 +110,7 @@ static void RumbleManager::setOverridePreviousEffect(bool overridePreviousEffect
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-bool RumbleManager::onEvent(ListenerObject eventFirer __attribute__((unused)), uint32 eventCode)
+bool RumbleManager::onEvent(ListenerObject eventFirer __attribute__((unused)), uint16 eventCode)
 {
 	switch(eventCode)
 	{

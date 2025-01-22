@@ -119,7 +119,7 @@ abstract class ListenerObject : Object
 	/// @param eventFirer: ListenerObject that signals the event
 	/// @param eventCode: Code of the firing event
 	/// @return False if the listener has to be removed; true to keep it
-	virtual bool onEvent(ListenerObject eventFirer, uint32 eventCode);
+	virtual bool onEvent(ListenerObject eventFirer, uint16 eventCode);
 
 	/// Receive and process a Telegram.
 	/// @param telegram: Received telegram to process
