@@ -39,7 +39,7 @@ void CameraEffectManager::constructor()
 	// Init class variables
 	this->fxFadeTargetBrightness = (Brightness){0, 0, 0};
 	this->fxFadeDelay = 0;
-	this->fxFadeCallbackScope = NULL;
+	this->fxFadeScope = NULL;
 	this->fadeEffectIncrement = __CAMERA_EFFECT_FADE_INCREMENT;
 	this->startingANewEffect = false;
 	
@@ -211,7 +211,7 @@ void CameraEffectManager::fxFadeStart(int32 effect, int32 delay)
 
 void CameraEffectManager::fxFadeAsyncStart
 (
-	int32 initialDelay, const Brightness* targetBrightness, int32 delayBetweenSteps, ListenerObject callbackScope
+	int32 initialDelay, const Brightness* targetBrightness, int32 delayBetweenSteps, ListenerObject scope
 )
 {
 	// Stop previous effect
@@ -234,9 +234,9 @@ void CameraEffectManager::fxFadeAsyncStart
 	// Set effect parameters
 	this->fxFadeDelay = (0 >= delayBetweenSteps) ? 1 : (uint8)(delayBetweenSteps);
 
-	if(callbackScope != NULL)
+	if(scope != NULL)
 	{
-		this->fxFadeCallbackScope = callbackScope;
+		this->fxFadeScope = scope;
 
 		if
 		(
@@ -247,11 +247,11 @@ void CameraEffectManager::fxFadeAsyncStart
 			0 == _vipRegisters[__BRTC]
 		)
 		{		
-			CameraEffectManager::addEventListener(this, callbackScope, kEventEffectFadeInComplete);
+			CameraEffectManager::addEventListener(this, scope, kEventEffectFadeInComplete);
 		}
 		else
 		{		
-			CameraEffectManager::addEventListener(this, callbackScope, kEventEffectFadeOutComplete);
+			CameraEffectManager::addEventListener(this, scope, kEventEffectFadeOutComplete);
 		}
 	}
 
@@ -278,7 +278,7 @@ void CameraEffectManager::fxFadeAsyncStop()
 	// Reset effect variables
 	this->fxFadeTargetBrightness = (Brightness){0, 0, 0};
 	this->fxFadeDelay = 0;
-	this->fxFadeCallbackScope = NULL;
+	this->fxFadeScope = NULL;
 
 	// Fire effect stopped event
 	CameraEffectManager::fireEvent(this, kEventEffectFadeStop);
