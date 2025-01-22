@@ -46,6 +46,8 @@ abstract class Container : Entity
 	Container parent;
 
 	/// Linked list of child containers
+	/// The VB's CPU doesn't have data cache, so there
+	/// is not a good reason to loose generality
 	VirtualList children;
 
 	/// 3D local transformation

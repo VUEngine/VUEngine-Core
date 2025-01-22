@@ -83,7 +83,8 @@ abstract class Component : ListenerObject
 	/// Pointer to the spec that defines how to initialize the component
 	const ComponentSpec* componentSpec;
 
-	/// Pointer to the transformation that the component attaches to
+	/// Cache the transformation of the Entity that the component attaches to
+	/// to avoid having to retrieve it all the time
 	const Transformation* transformation;
 
 	/// Flag to mark the component as pending deletion

@@ -45,7 +45,8 @@ abstract class Entity : ListenerObject
 	/// 3D transformation
 	Transformation transformation;
 
-	/// Body for physics simulations
+	/// Cache the Body component for physics simulations to avoid 
+	/// having constantly grabing it from the ComponentManager
 	Body body;
 
 	/// @publicsection
