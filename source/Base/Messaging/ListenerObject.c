@@ -168,7 +168,6 @@ void ListenerObject::removeEventListeners(uint16 eventCode)
 
 					continue;
 				}
-
 			}
 
 			if(eventCode == event->code)
