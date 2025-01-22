@@ -127,6 +127,13 @@ void Sound::destructor()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+const SoundSpec* Sound::getSpec()
+{
+	return this->soundSpec;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void Sound::play(const Vector3D* position, uint32 playbackType)
 {
 	if(NULL == this->soundSpec)
@@ -375,8 +382,6 @@ void Sound::release()
 
 	Sound::stop(this);
 
-	this->soundSpec = NULL;
-
 	if(!isDeleted(this->soundTracks))
 	{
 		VirtualList::deleteData(this->soundTracks);
@@ -389,6 +394,8 @@ void Sound::release()
 		Sound::fireEvent(this, kEventSoundReleased);
 		NM_ASSERT(!isDeleted(this), "Sound::release: deleted this during kEventSoundReleased");
 	}
+
+	this->soundSpec = NULL;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

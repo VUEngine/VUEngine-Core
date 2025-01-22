@@ -14,6 +14,7 @@
 #include <string.h>
 
 #include <ActorFactory.h>
+#include <AnimationController.h>
 #include <ComponentManager.h>
 #include <DebugConfig.h>
 #include <Mesh.h>
