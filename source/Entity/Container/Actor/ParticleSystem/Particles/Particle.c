@@ -143,7 +143,7 @@ void Particle::setup
 	{
 		if(0 != force->x || 0 != force->y || 0 != force->z)
 		{
-			Particle::applyForce(this, force, movementType);
+			Particle::move(this, force, movementType);
 		}
 	}
 
@@ -267,7 +267,7 @@ bool Particle::update(uint32 elapsedTime, void (* behavior)(Particle particle))
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void Particle::applyForce(const Vector3D* force __attribute__ ((unused)), uint32 movementType __attribute__ ((unused)))
+void Particle::move(const Vector3D* force, uint32 movementType)
 {
 	if(isDeleted(this->body))
 	{
