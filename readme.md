@@ -1,79 +1,77 @@
 VUEngine
 ========
 
-VUEngine ("Virtual Utopia Engine", based on the Virtual Boy's code name, "Virtual Utopia Experience")
-is an attempt to provide other indie developers the base functionality to facilitate the creation of
-content for the Nintendo Virtual Boy by taking care of most hardware management tasks to create 3D games
-with 2D graphics.
+[VUEngine](https://github.com/VUEngine/VUEngine-Core) ("Virtual Utopia Engine", based on the Virtual Boy's code name, "Virtual Utopia Experience") is a high-level, object oriented game engine for the Nintendo Virtual Boy. It is written in [Virtual C](../../language/introduction), a custom C-dialect that resembles some of C++’ syntax that is converted by our custom transpiler to plain C with macros.
+
+[VUEngine](https://github.com/VUEngine/VUEngine-Core) aims to facilitate the creation of games for the Virtual Boy without having to worry about nor master its underlying hardware unless you want to. Instead, it provides higher level abstractions that are relevant for general game development.
 
 Features:
 
-- General features:
-	- Automatic frame rate control
-	- Generic clocks based on hardware interrupts
-	- Memory Pool to allocate memory dynamically
-	- Generic state machines
-	- Generic parenting system
-	- Generic messaging system
-	- Generic event listening/firing system
-	- Easy to use printing functions to facilitate debug
+- General:
+	- Object Oriented
+	- Composite and composition architecture
+	- Decoupling through message sending and propagation, and event firing
+	- State machines
+	- Separation of concers through *Spec* recipes to instantiate
+	game actors
+	- Restricted singletons
+	- Dinaymic memory allocation through custom memory pools
+	- Runtime debugging tools
 	- User data saving support
-	- Program's memory layout management
-		- Use DRAM as WRAM
-		- Use SRAM as WRAM
-		- Variables' in-program-section allocation control
-- Object Oriented support through the use of Metaprogramming (C MACROS):
-	- Simple inheritance
-	- Polymorphism
-	- Encapsulation
-	- Friend classes support
-	- Runtime type checking
+	- Assets preloading
+
+- Stages:
+	- 3D stages
+	- Automatic streaming
+	- Parenting
+
+- Components:
+	- Behaviors
+	- Physics
+	- Colliders
+	- Sprites
+	-Wireframes
+
+- Particles:
+	- Physically capable
+	- Recyclable
+
 - Rendering:
-	- Automatic CHAR memory allocation
-	- Real time CHAR memory defragmentation
-	- Automatic BGMAP memory allocation
-	- Automatic OBJECT memory allocation
-	- Automatic WORLD layer assignment based on the objects' z position
-	- Texture preloading & recycling
-	- Scaling/rotation effects
+	- CHAR memory management
+	- BGAMP memory management
+	- OBJECT memory management
+	- WORLD memory management
+	- Direct frame buffer manipulation
+	- Affine/H-Bias effects
 	- Transparency
-	- Automatic projection/parallax/scale calculations and rendering
-	- Customizable perspective/deep effects in real time
-	- Automatic memory allocation for param tables (used in affine and h-bias modes)
-- Animation:
-	- Multiple memory allocation schemas to improve efficiency
-	- Frame based animation system with callback support
-- Sound:
-	- Chiptune and PCM playback
+	- Event driven frame based animation
+
 - Physics:
 	- Basic accelerated/uniform movement
 	- Gravity
 	- Friction
 	- Bouncing
-	- Automatic collision detection and notification
-- Particles:
-	- Physically based particles
-	- Recyclable particles
-- Stages:
-	- 3D stages
-	- Level streaming
-- Debugging / Development:
-	- Memory usage
-	- Profiling data
-	- Streaming status
-	- Hardware registers' usage
-	- Real time tools to check:
-		- CHAR memory status
-		- BGMAP memory status
-		- WORLD layer status
-	- Collision boxes
-	- Real time stage editor
-	- Real time animation inspector
-- Useful classes to speed up the content creation process:
-	- Container: for transformation propagation (translation/rotation/scaling)
-	- Actor: a container with a list of sprites (a "visual object")
-	- Actor: an actor with animated sprites
-	- Actor: animated actor that has a physical body and can resolve collisions
+	- Collision detection and notification
+
+- Sound:
+	- Fully flexible VSU-native soundtrack format
+	- PCM playback
+
+- Development tools:
+	- Debug
+		- Memory usage
+		- Profiling data
+		- Streaming
+		- Hardware registers' usage
+		- VIP inspector:
+			- CHAR memory
+			- BGMAP memory
+			- OBJECT memory
+			- WORLD memory
+		- Colliders
+	- Stage editor
+	- Animations inspector
+	- Sound test
 
 
 LICENSE
