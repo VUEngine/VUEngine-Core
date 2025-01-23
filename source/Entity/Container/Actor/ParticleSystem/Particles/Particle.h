@@ -42,9 +42,6 @@ typedef struct ParticleSpec
 	/// Life span delta in milliseconds
 	uint16 lifeSpanDelta;
 
-	/// Function pointer to control particle's behavior
-	void (* behavior)(Particle particle);
-
 	/// Array of available animations
 	const AnimationFunction** animationFunctions;
 
@@ -146,8 +143,7 @@ class Particle : Entity
 
 	/// Update the particle's state.
 	/// @param elapsedTime: Elapsed time since the last call
-	/// @param behavior: Function pointer to control particle's behavior
-	virtual bool update(uint32 elapsedTime, void (* behavior)(Particle particle));
+	virtual bool update(uint32 elapsedTime);
 }
 
 #endif

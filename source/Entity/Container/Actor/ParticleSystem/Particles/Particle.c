@@ -134,7 +134,7 @@ void Particle::setup
 	}
 	else
 	{
-		Particle::setPosition(this, position);
+		this->transformation.position = *position;
 	}
 
 	this->transformation.position = *position;
@@ -232,7 +232,7 @@ void Particle::playAnimation(const AnimationFunction** animationFunctions, const
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-bool Particle::update(uint32 elapsedTime, void (* behavior)(Particle particle))
+bool Particle::update(uint32 elapsedTime)
 {
 	if(0 <= this->lifeSpan)
 	{
@@ -248,11 +248,6 @@ bool Particle::update(uint32 elapsedTime, void (* behavior)(Particle particle))
 			}
 
 			return true;
-		}
-
-		if(NULL != behavior)
-		{
-			behavior(this);
 		}
 	}
 

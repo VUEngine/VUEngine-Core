@@ -154,8 +154,6 @@ void ParticleSystem::update()
 		return;
 	}
 
-	void (* behavior)(Particle particle) = ((ParticleSystemSpec*)this->actorSpec)->particleSpec->behavior;
-
 	for(; NULL != node; node = node->next)
 	{
 		Particle particle = Particle::safeCast(node->data);
@@ -165,7 +163,7 @@ void ParticleSystem::update()
 			continue;
 		}
 
-		if(Particle::update(particle, this->elapsedTime, behavior))
+		if(Particle::update(particle, this->elapsedTime))
 		{
 			this->aliveParticlesCount--;
 		}
