@@ -203,11 +203,6 @@ singleton class VUEngine : ListenerObject
 	/// @param telegram: Received telegram to process
 	/// @return True if the telegram was processed
 	override bool handleMessage(Telegram telegram);
-
-	/// Start the game with the provided game state.
-	/// @param gameState: Game state the engine must enter when starting
-	/// @return Return code (0)
-	int32 start(GameState gameState);
 }
 
 #endif
