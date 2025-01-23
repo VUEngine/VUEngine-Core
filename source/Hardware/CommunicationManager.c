@@ -142,7 +142,7 @@ bool CommunicationManager::handleMessage(Telegram telegram)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-secure void CommunicationManager::reset()
+void CommunicationManager::reset()
 {
 	switch(this->status)
 	{

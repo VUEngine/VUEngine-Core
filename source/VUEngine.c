@@ -740,7 +740,7 @@ void VUEngine::frameStarted(uint16 gameFrameDuration)
 		totalTime = 0;
 
 #ifndef __RELEASE
-		VUEngine::printDebug();
+		VUEngine::printDebug(this);
 #endif
 	}
 

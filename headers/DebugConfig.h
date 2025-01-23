@@ -15,7 +15,6 @@
 // define / undefine as you see fit
 //#define __PRINT_FRAMERATE
 //#define __PRINT_FRAME_TIMES
-//#define __PRINT_DEBUG_ALERT
 //#define __PROFILE_STREAMING
 //#define __SHOW_STREAMING_PROFILING
 //#define __SHOW_VIP_STATUS
