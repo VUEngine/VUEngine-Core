@@ -132,6 +132,10 @@ void Particle::setup
 	{
 		Body::setPosition(this->body, position, Entity::safeCast(this));
 	}
+	else
+	{
+		Particle::setPosition(this, position);
+	}
 
 	this->transformation.position = *position;
 
