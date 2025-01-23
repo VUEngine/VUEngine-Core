@@ -65,7 +65,7 @@
 // CLASS' ATTRIBUTES
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-int32 __GAME_ENTRY_POINT(void);
+GameState __GAME_ENTRY_POINT();
 
 #ifdef __RUN_DELAYED_MESSAGES_DISPATCHING_AT_HALF_FRAME_RATE
 uint32 _dispatchCycle = 0;
@@ -81,7 +81,7 @@ ClassPointer _authClass = NULL;
 
 int32 main(void)
 {
-	return __GAME_ENTRY_POINT();
+	return VUEngine::start(VUEngine::getInstance(), __GAME_ENTRY_POINT());
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -516,11 +516,15 @@ bool VUEngine::handleMessage(Telegram telegram)
 
 secure int32 VUEngine::start(GameState currentGameState)
 {
-	ASSERT(!isDeleted(currentGameState), "VUEngine::start: currentGameState is invalid");
-
 #ifndef __RELEASE
 	Singleton::secure();
 #endif
+
+	if(isDeleted(currentGameState))
+	{
+		NM_ASSERT(false, "VUEngine::start: currentGameState is invalid");
+		return 0;
+	}
 
 	if(NULL == StateMachine::getCurrentState(this->stateMachine))
 	{
