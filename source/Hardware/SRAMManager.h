@@ -54,11 +54,6 @@ singleton class SRAMManager : Object
 
 	/// Reset the manager's state.
 	void reset();
-
-	/// Delete all data in SRAM in the provided range.
-	/// @param startOffset: Start offset of range to clear
-	/// @param endOffset: End address of range to clear
-	void clear(int32 startOffset, int32 endOffset);
 }
 
 #endif
