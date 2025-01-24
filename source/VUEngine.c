@@ -46,8 +46,6 @@ GameState __GAME_ENTRY_POINT();
 uint32 _dispatchCycle = 0;
 #endif
 
-ClassPointer _authClass = NULL;
-
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PUBLIC STATIC METHODS
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -1069,6 +1067,7 @@ void VUEngine::cleanUp()
 
 int32 main(void)
 {
+	// This function is created by the transpiler
 	extern void setupClasses();
 
 	// Setup the classes' virtual tables
