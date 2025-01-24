@@ -50,6 +50,10 @@ void FrameRate::setTarget(uint8 targetFPS)
 {
 	FrameRate::reset(this);
 	this->targetFPS = targetFPS;
+
+#ifdef __DEBUG
+	this->targetFPS >>= 1;
+#endif
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
