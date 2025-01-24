@@ -778,11 +778,11 @@ void GameState::configureUI(StageSpec* stageSpec)
 
 	NM_ASSERT(!isDeleted(this->uiContainer), "GameState::configureUI: null UIContainer");
 
-=	if(!isDeleted(this->uiContainer))
+	if(!isDeleted(this->uiContainer))
 	{
 		extern Transformation _neutralEnvironmentTransformation;
 	
-=		UIContainer::transform(this->uiContainer, &_neutralEnvironmentTransformation, Camera::getTransformationFlags(Camera::getInstance()));
+		UIContainer::transform(this->uiContainer, &_neutralEnvironmentTransformation, Camera::getTransformationFlags(Camera::getInstance()));
 	}
 }
 
