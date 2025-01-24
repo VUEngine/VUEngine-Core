@@ -214,6 +214,18 @@ int16 MBgmapSprite::doRender(int16 index)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+void MBgmapSprite::setMultiframe(uint16 frame)
+{
+	int16 mx = BgmapTexture::getXOffset(this->texture);
+	int16 my = BgmapTexture::getYOffset(this->texture);
+	int32 totalColumns = 64 - mx;
+	int32 frameColumn = Texture::getCols(this->texture) * frame;
+	this->bgmapTextureSource.mx = (mx + (frameColumn % totalColumns)) << 3;
+	this->bgmapTextureSource.my = (my + (frameColumn % totalColumns)) << 3;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PRIVATE METHODS
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

@@ -11,6 +11,7 @@
 // INCLUDES
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+#include <AnimationController.h>
 #include <DebugConfig.h>
 #include <ObjectSpriteContainer.h>
 #include <ObjectTexture.h>
@@ -193,6 +194,27 @@ int16 ObjectSprite::doRender(int16 index)
 	}
 
 	return result;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void ObjectSprite::updateAnimation()
+{
+	NM_ASSERT(!isDeleted(this->animationController), "ObjectSprite::updateAnimation: null animation controller");
+
+	if(isDeleted(this->animationController))
+	{
+		return;
+	}
+
+	if(Texture::isMultiframe(this->texture))
+	{
+		this->objectTextureSource.displacement = AnimationController::getActualFrameIndex(this->animationController) * this->rows * this->cols;
+	}
+	else
+	{
+		Texture::setFrame(this->texture, AnimationController::getActualFrameIndex(this->animationController));
+	}
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

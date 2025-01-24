@@ -50,9 +50,6 @@ class ObjectAnimatedSprite : ObjectSprite
 	/// @param owner: Entity to which the sprite attaches to
 	/// @param objectAnimatedSpriteSpec: Specification that determines how to configure the sprite
 	void constructor(Entity owner, const ObjectAnimatedSpriteSpec* objectAnimatedSpriteSpec);
-
-	/// Update the animation.
-	override void updateAnimation();
 }
 
 #endif

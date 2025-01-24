@@ -12,6 +12,7 @@
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <Affine.h>
+#include <AnimationController.h>
 #include <BgmapTexture.h>
 #include <BgmapTextureManager.h>
 #include <DebugConfig.h>
@@ -288,6 +289,28 @@ int16 BgmapSprite::doRender(int16 index)
 	}
 
 	return index;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void BgmapSprite::updateAnimation()
+{
+	NM_ASSERT(!isDeleted(this->animationController), "BgmapSprite::updateAnimation: null animation controller");
+
+	if(isDeleted(this->animationController))
+	{
+		return;
+	}
+
+	if(Texture::isMultiframe(this->texture))
+	{
+		BgmapSprite::setMultiframe(this, AnimationController::getActualFrameIndex(this->animationController));
+		BgmapSprite::invalidateParamTable(this);
+	}
+	else
+	{
+		Texture::setFrame(this->texture, AnimationController::getActualFrameIndex(this->animationController));
+	}
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
