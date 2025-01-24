@@ -57,24 +57,24 @@
 /// @return Method definitions of the provided class
 #define __CLASS_NEW_DEFINITION(ClassName, ...)																							\
 																																		\
-		/* Define the method */																											\
-		ClassName ClassName ## _new(__VA_ARGS__)																						\
-		{																																\
-			/* make sure that the class is properly set */																				\
-			__CALL_CHECK_VTABLE(ClassName);																								\
+	/* Define the method */																												\
+	ClassName ClassName ## _new(__VA_ARGS__)																							\
+	{																																	\
+		/* make sure that the class is properly set */																					\
+		__CALL_CHECK_VTABLE(ClassName);																									\
 																																		\
-			/* allocate object */																										\
-			uint16* memoryBlock = (uint16*)MemoryPool_allocate(				 															\
-							sizeof(ClassName ## _str) + __DYNAMIC_STRUCT_PAD);															\
+		/* allocate object */																											\
+		uint16* memoryBlock = (uint16*)MemoryPool_allocate(				 																\
+						sizeof(ClassName ## _str) + __DYNAMIC_STRUCT_PAD);																\
 																																		\
-			/* mark memory block as used by an object */																				\
-			*memoryBlock = __OBJECT_MEMORY_FOOT_PRINT;																					\
+		/* mark memory block as used by an object */																					\
+		*memoryBlock = __OBJECT_MEMORY_FOOT_PRINT;																						\
 																																		\
-			/* this pointer lives __DYNAMIC_STRUCT_PAD ahead */																			\
-			ClassName this = (ClassName)((uint32)memoryBlock + __DYNAMIC_STRUCT_PAD);													\
+		/* this pointer lives __DYNAMIC_STRUCT_PAD ahead */																				\
+		ClassName this = (ClassName)((uint32)memoryBlock + __DYNAMIC_STRUCT_PAD);														\
 																																		\
-			/* check if properly created */																								\
-			ASSERT(this, __MAKE_STRING(ClassName) "::new: not allocated");																\
+		/* check if properly created */																									\
+		ASSERT(this, __MAKE_STRING(ClassName) "::new: not allocated");																	\
 
 /// End class's new method's definition
 /// @param ClassName: Name of the class to define
@@ -82,21 +82,21 @@
 /// @return Method definitions of the provided class
 #define __CLASS_NEW_END(ClassName, ...)																									\
 																																		\
-			/* set the vtable pointer */																								\
-			this->vTable = (void*)&ClassName ## _vTable;																				\
+		/* set the vtable pointer */																									\
+		this->vTable = (void*)&ClassName ## _vTable;																					\
 																																		\
-			/* construct the object */																									\
-			ClassName ## _constructor(__VA_ARGS__);																						\
+		/* construct the object */																										\
+		ClassName ## _constructor(__VA_ARGS__);																							\
 																																		\
-			ASSERT(this->vTable == &ClassName ## _vTable,																				\
-				__MAKE_STRING(ClassName) "::new: vTable not set properly");																\
+		ASSERT(this->vTable == &ClassName ## _vTable,																					\
+			__MAKE_STRING(ClassName) "::new: vTable not set properly");																	\
 																																		\
-			/* return the created object */																								\
-			return this;																												\
-		}																																\
+		/* return the created object */																									\
+		return this;																													\
+	}																																	\
 																																		\
-		/* dummy redeclaration to avoid warning when compiling with -pedantic */														\
-		void ClassName ## dummyMethodClassNew()
+	/* dummy redeclaration to avoid warning when compiling with -pedantic */															\
+	void ClassName ## dummyMethodClassNew()
 
 /// Padding to be adding to dynamic memory allocation requests
 #define	__DYNAMIC_STRUCT_PAD	sizeof(uint32)
@@ -107,8 +107,8 @@
 /// @return Call to ClassName::new 
 #define __NEW(ClassName, ...)																											\
 																																		\
-		/* call class's new implementation */																							\
-		ClassName ## _new(__VA_ARGS__)																									\
+	/* call class's new implementation */																								\
+	ClassName ## _new(__VA_ARGS__)																										\
 
 /// Our version of C++' new for dynamic struct allocation
 /// @param StructName: Name of the struct to define
@@ -116,9 +116,9 @@
 /// @return Call to allocation request to the MemoryPool 
 #define __NEW_BASIC(StructName)																											\
 																																		\
-		/* allocate data */																												\
-		(StructName*)((uint32)MemoryPool_allocate(																						\
-			sizeof(StructName) + __DYNAMIC_STRUCT_PAD) + __DYNAMIC_STRUCT_PAD);															\
+	/* allocate data */																													\
+	(StructName*)((uint32)MemoryPool_allocate(																							\
+		sizeof(StructName) + __DYNAMIC_STRUCT_PAD) + __DYNAMIC_STRUCT_PAD);																\
 
 /// Our version of C++' delete (calls virtual destructor)
 /// @param objectToDelete: Object to delete
@@ -181,13 +181,13 @@
 /// @return Call to the base class' constructor
 #define __CONSTRUCT_BASE(BaseClass, ...)																								\
 																																		\
-		BaseClass ## _constructor((BaseClass)__VA_ARGS__);																				\
+	BaseClass ## _constructor((BaseClass)__VA_ARGS__);																					\
 
 /// Call the base class' destructor.
 /// @return Call to the class' destructor
 #define __DESTROY_BASE																													\
 																																		\
-		_baseDestructor(__SAFE_CAST(Object, this));																						\
+	_baseDestructor(__SAFE_CAST(Object, this));																							\
 
 /// Retrieve the virtual method's address of a method according to the provided object.
 /// @param ClassName: Class' name
@@ -196,8 +196,8 @@
 /// @return Address of the virtual method
 #define __VIRTUAL_CALL_ADDRESS(ClassName, MethodName, object)																			\
 																																		\
-		/* call derived implementation */																								\
-		(((struct ClassName ## _vTable*)((*((void**)object))))->MethodName)																\
+	/* call derived implementation */																									\
+	(((struct ClassName ## _vTable*)((*((void**)object))))->MethodName)																	\
 
 /// Helper macros to work around the extra comma in variadic macros
 /// @param object: Object to rewrite
@@ -213,10 +213,10 @@
 /// @return Call to virtual method
 #define __VIRTUAL_CALL(ClassName, MethodName, ...)																						\
 																																		\
-		((((struct ClassName ## _vTable*)((*((void**)__VIRTUAL_CALL_OBJECT(__VA_ARGS__)))))->MethodName))								\
-		(																																\
-			(ClassName)__VA_ARGS__																										\
-		)
+	((((struct ClassName ## _vTable*)((*((void**)__VIRTUAL_CALL_OBJECT(__VA_ARGS__)))))->MethodName))									\
+	(																																	\
+		(ClassName)__VA_ARGS__																											\
+	)
 
 /// Call the method's base implementation.
 /// @param BaseClassName: Base class' name
@@ -225,10 +225,10 @@
 /// @return Call to the method's base implementation
 #define __CALL_BASE_METHOD(BaseClassName, MethodName, ...)																				\
 																																		\
-		BaseClassName ## _vTable.MethodName																								\
-		(																																\
-			(BaseClassName)__VA_ARGS__																									\
-		)
+	BaseClassName ## _vTable.MethodName																									\
+	(																																	\
+		(BaseClassName)__VA_ARGS__																										\
+	)
 
 /// Cast an object to the provided class. It decays to an usafe C cast in non debug build modes.
 /// @param ClassName: Class to cast to
@@ -237,7 +237,7 @@
 #ifdef __DEBUG
 #define __SAFE_CAST(ClassName, object)																									\
 																																		\
-		(ClassName)Object_getCast((Object)object, (ClassPointer)&ClassName ## _getBaseClass, NULL)
+	(ClassName)Object_getCast((Object)object, (ClassPointer)&ClassName ## _getBaseClass, NULL)
 #else
 #define __SAFE_CAST(ClassName, object) (ClassName)object
 #endif
@@ -250,15 +250,15 @@
 /// @return True if the object's class overrides the provided method; false otherwise
 #define __OVERRIDES_METHOD(ClassName, object, MethodName) 																				\
 																																		\
-		((void (*)())&ClassName ## _ ## MethodName != 																					\
-			(void (*)())__VIRTUAL_CALL_ADDRESS(ClassName, MethodName, object))
+	((void (*)())&ClassName ## _ ## MethodName != 																						\
+		(void (*)())__VIRTUAL_CALL_ADDRESS(ClassName, MethodName, object))
 
 /// Check if an object is not destroyed.
 /// @param object: Oject to check
 /// @return True if the object is not NULL nor destroyed; false otherwise
 #define __IS_OBJECT_ALIVE(object)																										\
 																																		\
-		(object && (__MEMORY_FREE_BLOCK_FLAG != *(uint32*)((uint32)object - __DYNAMIC_STRUCT_PAD)))										\
+	(object && (__MEMORY_FREE_BLOCK_FLAG != *(uint32*)((uint32)object - __DYNAMIC_STRUCT_PAD)))											\
 
 /// Check if an object is not destroyed.
 /// @param object: Oject to check
@@ -276,8 +276,8 @@
 /// @return Cast result: NULL or valid pointer
 #define __GET_CAST(ClassName, object)																									\
 																																		\
-		(ClassName)Object_getCast((Object)object,																						\
-			(ClassPointer)&ClassName ## _getBaseClass, NULL)																			\
+	(ClassName)Object_getCast((Object)object,																							\
+		(ClassPointer)&ClassName ## _getBaseClass, NULL)																				\
 
 /// Check if an object is an instance of the provided class by comparing virtual table pointers.
 /// @param ClassName: Class to check
@@ -285,7 +285,7 @@
 /// @return True if the object is an instance of the provided class
 #define __IS_INSTANCE_OF(ClassName, object)																								\
 																																		\
-		(void*)&ClassName ## _vTable == (void*)*((void**)object)																		\
+	(void*)&ClassName ## _vTable == (void*)*((void**)object)																			\
 
 /// Declare a method as virtual.
 /// @param ClassName: Class that owns the method
@@ -295,7 +295,7 @@
 /// @return Virtual method declaration
 #define __VIRTUAL_DEC(ClassName, ReturnType, MethodName, ...)																			\
 																																		\
-		ReturnType (*MethodName)(__VA_ARGS__)																							\
+	ReturnType (*MethodName)(__VA_ARGS__)																								\
 
 /// Override a virtual method
 /// @param ClassVTable: Class' virtual table's pointer
@@ -303,42 +303,42 @@
 /// @param MethodName: Method to override
 /// @return Virtual method override
 #define __VIRTUAL_SET(ClassVTable, ClassName, MethodName)																				\
-		{																																\
-			/* Use a temporary pointer to avoid illegal cast between pointers to data and functions */									\
-			void (*(*tempPointer))() = (void (*(*))())&ClassVTable ## _vTable.MethodName;												\
-			*(tempPointer) = (void (*)())&ClassName ## _ ## MethodName;																	\
-		}
+	{																																	\
+		/* Use a temporary pointer to avoid illegal cast between pointers to data and functions */										\
+		void (*(*tempPointer))() = (void (*(*))())&ClassVTable ## _vTable.MethodName;													\
+		*(tempPointer) = (void (*)())&ClassName ## _ ## MethodName;																		\
+	}
 
 /// Mutate a class' method.
 /// @param ClassName: Class that owns the method
 /// @param MethodName: Method to mutate
 /// @param NewMethod: Method's new implementation
 #define __CLASS_MUTATE_METHOD(ClassName, MethodName, NewMethod)																			\
-		{																																\
-			/* Use a temporary pointer to avoid illegal cast between pointers to data and functions */									\
-			void (*(*tempPointer))() = (void (*(*))())&ClassName ## _vTable.MethodName;													\
-			*(tempPointer) = (void (*)())NewMethod;																						\
-		}
+	{																																	\
+		/* Use a temporary pointer to avoid illegal cast between pointers to data and functions */										\
+		void (*(*tempPointer))() = (void (*(*))())&ClassName ## _vTable.MethodName;														\
+		*(tempPointer) = (void (*)())NewMethod;																							\
+	}
 
 /// Check a class's vtable's integrity.
 /// @param ClassName: Class whose virtual table is to being checked
 /// @return Implementation for the class' virtual table's check
 #define __CHECK_VTABLE_DEFINITION(ClassName)																							\
 																																		\
-		void __attribute__ ((noinline)) ClassName ## _checkVTable()																		\
-		{																																\
-			/* setup the class's vtable only if destructor is NULL */																	\
-			NM_ASSERT(ClassName ## _vTable.destructor, ClassName ## vTable not properly set. 											\
-			Delete the GAME/build/working/setupClasses.c file);																			\
+	void __attribute__ ((noinline)) ClassName ## _checkVTable()																			\
+	{																																	\
+		/* setup the class's vtable only if destructor is NULL */																		\
+		NM_ASSERT(ClassName ## _vTable.destructor, ClassName ## vTable not properly set. 												\
+		Delete the GAME/build/working/setupClasses.c file);																				\
 																																		\
-			/* check that no method is null */																							\
-			uint32 i = 0;																												\
-			for(; i < sizeof(ClassName ## _vTable) / sizeof(void (*(*))()); i++)														\
-			{																															\
-				NM_ASSERT(((void (*(*))())&ClassName ## _vTable)[i], 																	\
-					__MAKE_STRING(ClassName) " is abstract");																			\
-			}																															\
-		}
+		/* check that no method is null */																								\
+		uint32 i = 0;																													\
+		for(; i < sizeof(ClassName ## _vTable) / sizeof(void (*(*))()); i++)															\
+		{																																\
+			NM_ASSERT(((void (*(*))())&ClassName ## _vTable)[i], 																		\
+				__MAKE_STRING(ClassName) " is abstract");																				\
+		}																																\
+	}
 #ifndef __RELEASE
 #define __CALL_CHECK_VTABLE(ClassName)		ClassName ## _checkVTable()
 #else
@@ -351,65 +351,66 @@
 /// @return Implementation of the class' virtual table's configuration method
 #define __SET_VTABLE_DEFINITION(ClassName, BaseClassName)																				\
 																																		\
-		/* Define the static method */																									\
-		void __attribute__ ((noinline)) ClassName ## _setVTable(bool force)																\
+	/* Define the static method */																										\
+	void __attribute__ ((noinline)) ClassName ## _setVTable(bool force)																	\
+	{																																	\
+		/* setup the class's vtable only if destructor is NULL */																		\
+		if(!force && ClassName ## _vTable.destructor)																					\
 		{																																\
-			/* setup the class's vtable only if destructor is NULL */																	\
-			if(!force && ClassName ## _vTable.destructor)																				\
-			{																															\
-				return;																													\
-			}																															\
-																																		\
-			/* clean up the vtable */																									\
-			uint32 i = 0;																												\
-			for(; i < sizeof(ClassName ## _vTable) / sizeof(void (*(*))()); i++)														\
-			{																															\
-				((void (*(*))())&ClassName ## _vTable)[i] = NULL;																		\
-			}																															\
-																																		\
-			/* set the class's virtual methods */																						\
-			ClassName ## _SET_VTABLE(ClassName)																							\
-																																		\
-			/* set the destructor */																									\
-			__VIRTUAL_SET(ClassName, ClassName, destructor);																			\
-																																		\
-			/* set the getBaseClass method */																							\
-			__VIRTUAL_SET(ClassName, ClassName, getBaseClass);																			\
-																																		\
-			/* set the getClassName method */																							\
-			__VIRTUAL_SET(ClassName, ClassName, getClassName);																			\
+			return;																														\
 		}																																\
+																																		\
+		/* clean up the vtable */																										\
+		uint32 i = 0;																													\
+		for(; i < sizeof(ClassName ## _vTable) / sizeof(void (*(*))()); i++)															\
+		{																																\
+			((void (*(*))())&ClassName ## _vTable)[i] = NULL;																			\
+		}																																\
+																																		\
+		/* set the class's virtual methods */																							\
+		ClassName ## _SET_VTABLE(ClassName)																								\
+																																		\
+		/* set the destructor */																										\
+		__VIRTUAL_SET(ClassName, ClassName, destructor);																				\
+																																		\
+		/* set the getBaseClass method */																								\
+		__VIRTUAL_SET(ClassName, ClassName, getBaseClass);																				\
+																																		\
+		/* set the getClassName method */																								\
+		__VIRTUAL_SET(ClassName, ClassName, getClassName);																				\
+	}																																	\
 
 /// Declare a class's vtable.
 /// @param ClassName: Class whose virtual table is to being declared
 /// @return Class' virtual table's declaration
 #define __VTABLE(ClassName)																												\
 																																		\
-		/* declare the vtable struct */																									\
-		struct ClassName ## _vTable 																									\
-		{																																\
-			/* all destructors are virtual */																							\
-			__VIRTUAL_DEC(ClassName, void, destructor, ClassName);																		\
+	/* declare the vtable struct */																										\
+	struct ClassName ## _vTable 																										\
+	{																																	\
+		/* all destructors are virtual */																								\
+		__VIRTUAL_DEC(ClassName, void, destructor, ClassName);																			\
 																																		\
-			/* get super class method */																								\
-			__VIRTUAL_DEC(ClassName, ClassPointer, getBaseClass, ClassName);															\
+		/* get super class method */																									\
+		__VIRTUAL_DEC(ClassName, ClassPointer, getBaseClass, ClassName);																\
 																																		\
-			/* all destructors are virtual */																							\
-			__VIRTUAL_DEC(ClassName, const char*, getClassName, ClassName);																\
+		/* all destructors are virtual */																								\
+		__VIRTUAL_DEC(ClassName, const char*, getClassName, ClassName);																	\
 																																		\
-			/* insert class's virtual methods names */																					\
-			ClassName ## _METHODS(ClassName)																							\
-		};																																\
+		/* insert class's virtual methods names */																						\
+		ClassName ## _METHODS(ClassName)																								\
+	};																																	\
 																																		\
-		/* declare virtual table for external reference */																				\
-		extern struct ClassName ## _vTable ClassName ## _vTable																			\
+	/* declare virtual table for external reference */																					\
+	extern struct ClassName ## _vTable ClassName ## _vTable																				\
 
 /// Forward declare a class.
 /// @param ClassName: Class being forward declared
 /// @return Class' forward declaration
 #define __FORWARD_CLASS(ClassName)																										\
-		/* declare a pointer */																											\
-		typedef struct ClassName ## _str* ClassName																						\
+																																		\
+	/* declare a pointer */																												\
+	typedef struct ClassName ## _str* ClassName																							\
 
 /// typedef for RTTI
 typedef void* (*(*ClassPointer)(void*))(void*);
@@ -419,46 +420,46 @@ typedef void* (*(*ClassPointer)(void*))(void*);
 /// @return Declaration of methods that all classes must have
 #define __CLASS_FUNDAMENTAL_METHODS(ClassName)																							\
 																																		\
-		/* declare getBaseClass method */																								\
-		ClassPointer ClassName ## _getBaseClass(void*)
+	/* declare getBaseClass method */																									\
+	ClassPointer ClassName ## _getBaseClass(void*)
 
 /// Declare a class.
 /// @param ClassName: Class being declared
 /// @return Class' declaration
 #define __CLASS(ClassName)																												\
 																																		\
-		/* Declare vtable */																											\
-		__VTABLE(ClassName);																											\
+	/* Declare vtable */																												\
+	__VTABLE(ClassName);																												\
 																																		\
-		/* Declare vtable */																											\
-		void ClassName ## _setVTable(bool force);																						\
+	/* Declare vtable */																												\
+	void ClassName ## _setVTable(bool force);																							\
 																																		\
-		/* get class */																													\
-		const void* ClassName ## _getClass();																							\
+	/* get class */																														\
+	const void* ClassName ## _getClass();																								\
 																																		\
-		/* Declare restoreMethods name method */																						\
-		void ClassName ## _restoreMethods();																							\
+	/* Declare restoreMethods name method */																							\
+	void ClassName ## _restoreMethods();																								\
 																																		\
-		/* Declare getSize method */																									\
-		int32 ClassName ## _getObjectSize();																							\
+	/* Declare getSize method */																										\
+	int32 ClassName ## _getObjectSize();																								\
 																																		\
-		/* declare getClass name method */																								\
-		const char* ClassName ## _getClassName(ClassName);																				\
+	/* declare getClass name method */																									\
+	const char* ClassName ## _getClassName(ClassName);																					\
 																																		\
-		/* Declare fundamental class methods */																							\
-		__CLASS_FUNDAMENTAL_METHODS(ClassName)
+	/* Declare fundamental class methods */																								\
+	__CLASS_FUNDAMENTAL_METHODS(ClassName)
 
 /// Copy a class' declaration to make its member accessible to a compilation unit.
 /// @param ClassName: Class being friended
 /// @return Class' struct declaration
 #define __CLASS_FRIEND_DEFINITION(ClassName)																							\
-		typedef struct ClassName ## _str																								\
-		{																																\
-			/* class attributes */																										\
-			ClassName ## _ATTRIBUTES																									\
+	typedef struct ClassName ## _str																									\
+	{																																	\
+		/* class attributes */																											\
+		ClassName ## _ATTRIBUTES																										\
 																																		\
-			/* end spec */																												\
-		} ClassName ## _str 																											\
+		/* end spec */																													\
+	} ClassName ## _str 																												\
 
 /// Retrieve the memory footprint of a give class' instances.
 /// @param ClassName: Class whose instances' size is to be retrieved
@@ -466,10 +467,10 @@ typedef void* (*(*ClassPointer)(void*))(void*);
 #ifndef __RELEASE
 #define __GET_INSTANCE_SIZE_DEFINITION(ClassName)																						\
 																																		\
-		int32 ClassName ## _getObjectSize()																								\
-		{																																\
-			return sizeof(ClassName ## _str);																							\
-		}
+	int32 ClassName ## _getObjectSize()																									\
+	{																																	\
+		return sizeof(ClassName ## _str);																								\
+	}
 #else
 #define __GET_INSTANCE_SIZE_DEFINITION(ClassName)
 #endif
@@ -480,14 +481,14 @@ typedef void* (*(*ClassPointer)(void*))(void*);
 /// @return Class' fundamental method's definition
 #define __CLASS_FUNDAMENTAL_DEFINITION(ClassName, BaseClassName)																		\
 																																		\
-		/* Define class's getBaseClass method */																						\
-		ClassPointer ClassName ## _getBaseClass(void* this __attribute__ ((unused)))													\
-		{																																\
-			ASSERT(&BaseClassName ## _getBaseClass != &ClassName ## _getBaseClass,														\
-					"Wrong class spec: __CLASS_DEFINITION(" __MAKE_STRING(ClassName) ", "												\
-					__MAKE_STRING(BaseClassName) ")");																					\
-			return (ClassPointer)&BaseClassName ## _getBaseClass;																		\
-		}
+	/* Define class's getBaseClass method */																							\
+	ClassPointer ClassName ## _getBaseClass(void* this __attribute__ ((unused)))														\
+	{																																	\
+		ASSERT(&BaseClassName ## _getBaseClass != &ClassName ## _getBaseClass,															\
+				"Wrong class spec: __CLASS_DEFINITION(" __MAKE_STRING(ClassName) ", "													\
+				__MAKE_STRING(BaseClassName) ")");																						\
+		return (ClassPointer)&BaseClassName ## _getBaseClass;																			\
+	}
 
 /// Define the methods of a class.
 /// @param ClassName: Class whose methods are defined
@@ -495,64 +496,64 @@ typedef void* (*(*ClassPointer)(void*))(void*);
 /// @return Class' fundamental method's definition
 #define __CLASS_DEFINITION(ClassName, BaseClassName)																					\
 																																		\
-		typedef struct ClassName ## _str																								\
-		{																																\
-			/* class attributes */																										\
-			ClassName ## _ATTRIBUTES																									\
+	typedef struct ClassName ## _str																									\
+	{																																	\
+		/* class attributes */																											\
+		ClassName ## _ATTRIBUTES																										\
 																																		\
-			/* end spec */																												\
-		} ClassName ## _str;																											\
+		/* end spec */																													\
+	} ClassName ## _str;																												\
 																																		\
-		/* class' vtable's spec */																										\
-		struct ClassName ## _vTable ClassName ## _vTable __VIRTUAL_TABLES_DATA_SECTION_ATTRIBUTE;										\
+	/* class' vtable's spec */																											\
+	struct ClassName ## _vTable ClassName ## _vTable __VIRTUAL_TABLES_DATA_SECTION_ATTRIBUTE;											\
 																																		\
-		static void (* const _baseDestructor)(Object) =																					\
-		/* class' base's destructor */																									\
-			(void (*)(Object))&BaseClassName ## _destructor;																			\
+	static void (* const _baseDestructor)(Object) =																						\
+	/* class' base's destructor */																										\
+		(void (*)(Object))&BaseClassName ## _destructor;																				\
 																																		\
-		/* Define class's getSize method */																								\
-		const void* ClassName ## _getClass()																							\
-		{																																\
-			return (const void*)&ClassName ## _vTable;																					\
-		}																																\
+	/* Define class's getSize method */																									\
+	const void* ClassName ## _getClass()																								\
+	{																																	\
+		return (const void*)&ClassName ## _vTable;																						\
+	}																																	\
 																																		\
-		/* Define class's getSize method */																								\
-		const char* ClassName ## _getClassName(ClassName this __attribute__ ((unused)))													\
-		{																																\
-			ASSERT(&BaseClassName ## _getBaseClass != &ClassName ## _getBaseClass,														\
-					"Wrong class spec: __CLASS_DEFINITION(" __MAKE_STRING(ClassName) ", "												\
-					__MAKE_STRING(BaseClassName) ")");																					\
-			return (char*)__OBFUSCATE_NAME(ClassName);																					\
-		}																																\
+	/* Define class's getSize method */																									\
+	const char* ClassName ## _getClassName(ClassName this __attribute__ ((unused)))														\
+	{																																	\
+		ASSERT(&BaseClassName ## _getBaseClass != &ClassName ## _getBaseClass,															\
+				"Wrong class spec: __CLASS_DEFINITION(" __MAKE_STRING(ClassName) ", "													\
+				__MAKE_STRING(BaseClassName) ")");																						\
+		return (char*)__OBFUSCATE_NAME(ClassName);																						\
+	}																																	\
 																																		\
-		/* Define class's fundamental methods */																						\
-		__CLASS_FUNDAMENTAL_DEFINITION(ClassName, BaseClassName)																		\
+	/* Define class's fundamental methods */																							\
+	__CLASS_FUNDAMENTAL_DEFINITION(ClassName, BaseClassName)																			\
 																																		\
-		/* Define class's getSize method */																								\
-		__GET_INSTANCE_SIZE_DEFINITION(ClassName)																						\
+	/* Define class's getSize method */																									\
+	__GET_INSTANCE_SIZE_DEFINITION(ClassName)																							\
 																																		\
-		/* restore class vTable */																										\
-		void ClassName ## _restoreMethods()																								\
-		{																																\
-			/* must prevent any interrupt from calling methods on unstable vtables */													\
-			HardwareManager_suspendInterrupts();																						\
+	/* restore class vTable */																											\
+	void ClassName ## _restoreMethods()																									\
+	{																																	\
+		/* must prevent any interrupt from calling methods on unstable vtables */														\
+		HardwareManager_suspendInterrupts();																							\
 																																		\
-			ClassName ## _setVTable(true);																								\
+		ClassName ## _setVTable(true);																									\
 																																		\
-			/* resume interrupts */																										\
-			HardwareManager_resumeInterrupts();																							\
-		}																																\
+		/* resume interrupts */																											\
+		HardwareManager_resumeInterrupts();																								\
+	}																																	\
 																																		\
-		/* now add the function which will handle the vtable */																			\
-		__SET_VTABLE_DEFINITION(ClassName, BaseClassName)																				\
-		__CHECK_VTABLE_DEFINITION(ClassName)																							\
+	/* now add the function which will handle the vtable */																				\
+	__SET_VTABLE_DEFINITION(ClassName, BaseClassName)																					\
+	__CHECK_VTABLE_DEFINITION(ClassName)																								\
 
 /// Retrieve the name of the class of an object.
 /// @param object: Object from which to retrieve its class' name
 /// @return Call to the method to retrieve the object's class' name
 #define __GET_CLASS_NAME(object)																										\
 																																		\
-		__VIRTUAL_CALL(Object, getClassName, (Object)object)
+	__VIRTUAL_CALL(Object, getClassName, (Object)object)
 
 /// Replace a class name by the pointer of its instances allocator.
 /// @param ClassName: Class from which to retrieve its allocator's address
@@ -608,173 +609,173 @@ typedef void* (*(*ClassPointer)(void*))(void*);
 
 #define __SINGLETON_ACCESS(ClassName)																									\
 																																		\
-		/* Array of authorized callers */																								\
-		static ClassPointer const (*_authorizedRequesters)[] = NULL;																	\
+	/* Array of authorized callers */																									\
+	static ClassPointer const (*_authorizedRequesters)[] = NULL;																		\
 																																		\
-		/* Flag to authorize access to secure methods */																				\
-		static bool _authorized __attribute__((unused)) = true;																			\
+	/* Flag to authorize access to secure methods */																					\
+	static bool _authorized __attribute__((unused)) = true;																				\
 																																		\
-		/* Define get instance method */																								\
-		bool ClassName ## _authorize(ClassPointer requesterClass)																		\
+	/* Define get instance method */																									\
+	bool ClassName ## _authorize(ClassPointer requesterClass)																			\
+	{																																	\
+		for(int16 i = 0; NULL != (*_authorizedRequesters)[i]; i++)																		\
 		{																																\
-			for(int16 i = 0; NULL != (*_authorizedRequesters)[i]; i++)																	\
+			if(requesterClass == (*_authorizedRequesters)[i])																			\
 			{																															\
-				if(requesterClass == (*_authorizedRequesters)[i])																		\
-				{																														\
-					return true;																										\
-				}																														\
+				return true;																											\
 			}																															\
-																																		\
-			return typeofclass(ClassName) == requesterClass;																			\
 		}																																\
 																																		\
-		/* Define secure */																												\
-		void ClassName ## _secure (ClassPointer const (*requesterClasses)[])															\
+		return typeofclass(ClassName) == requesterClass;																				\
+	}																																	\
+																																		\
+	/* Define secure */																													\
+	void ClassName ## _secure (ClassPointer const (*requesterClasses)[])																\
+	{																																	\
+		/* Check the validity of the provided array */																					\
+		__SINGLETON_SECURITY_CHECKER(ClassName)																							\
+																																		\
+		if(NULL != _authorizedRequesters)																								\
 		{																																\
-			/* Check the validity of the provided array */																				\
-			__SINGLETON_SECURITY_CHECKER(ClassName)																						\
-																																		\
-			if(NULL != _authorizedRequesters)																							\
-			{																															\
-				return;																													\
-			}																															\
-																																		\
-			/* Register the provided array */																							\
-			_authorizedRequesters = requesterClasses;																					\
+			return;																														\
 		}																																\
-
+																																		\
+		/* Register the provided array */																								\
+		_authorizedRequesters = requesterClasses;																						\
+	}
+	
 /// Defines a singleton class' fundamental methods.
 /// @param ClassName: Singleton class' name to define
 /// @return Implementation of a singleton class' fundamental methods
 #define __SINGLETON(ClassName, MemorySection)																							\
 																																		\
+	/* declare the static instance */																									\
+	typedef struct SingletonWrapper ## ClassName																						\
+	{																																	\
+		/* footprint to differentiate between objects and structs */																	\
+		uint32 objectMemoryFootprint;																									\
 		/* declare the static instance */																								\
-		typedef struct SingletonWrapper ## ClassName																					\
+		ClassName ## _str instance;																										\
+	} SingletonWrapper ## ClassName;																									\
+																																		\
+	static SingletonWrapper ## ClassName _singletonWrapper ## ClassName 																\
+			MemorySection;																												\
+																																		\
+	/* a flag to know when to allow construction */																						\
+	static int8 _singletonConstructed __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE														\
+									= __SINGLETON_NOT_CONSTRUCTED;																		\
+																																		\
+	/* Define get instance method */																									\
+	static void __attribute__ ((noinline)) ClassName ## _instantiate()																	\
+	{																																	\
+		NM_ASSERT(__SINGLETON_BEING_CONSTRUCTED != _singletonConstructed,																\
+			ClassName get instance during construction);																				\
+																																		\
+		_singletonConstructed = __SINGLETON_BEING_CONSTRUCTED;																			\
+																																		\
+		/* make sure that the class is properly set */																					\
+		__CALL_CHECK_VTABLE(ClassName);																									\
+																																		\
+		/*  */																															\
+		ClassName instance = &_singletonWrapper ## ClassName.instance;																	\
+		_singletonWrapper ## ClassName.objectMemoryFootprint = 																			\
+			(__OBJECT_MEMORY_FOOT_PRINT << 16) | -1;																					\
+																																		\
+		/* set the vtable pointer */																									\
+		instance->vTable = &ClassName ## _vTable;																						\
+																																		\
+		/* call constructor */																											\
+		ClassName ## _constructor(instance);																							\
+																																		\
+		/* set the vtable pointer */																									\
+		instance->vTable = &ClassName ## _vTable;																						\
+																																		\
+		/* don't allow more constructs */																								\
+		_singletonConstructed = __SINGLETON_CONSTRUCTED;																				\
+	}																																	\
+																																		\
+	__SINGLETON_ACCESS(ClassName)																										\
+																																		\
+	/* Define get instance method */																									\
+	__attribute__((unused)) ClassName ClassName ## _getInstance (ClassPointer requesterClass __attribute__((unused)))					\
+	{																																	\
+		/* Check if the call has higher privileges */																					\
+		__SINGLETON_AUTHORIZATION_CHECK(ClassName)																						\
+																																		\
+		/* first check if not constructed yet */																						\
+		if(__SINGLETON_NOT_CONSTRUCTED == _singletonConstructed)																		\
 		{																																\
-			/* footprint to differentiate between objects and structs */																\
-			uint32 objectMemoryFootprint;																								\
-			/* declare the static instance */																							\
-			ClassName ## _str instance;																									\
-		} SingletonWrapper ## ClassName;																								\
-																																		\
-		static SingletonWrapper ## ClassName _singletonWrapper ## ClassName 															\
-				MemorySection;																											\
-																																		\
-		/* a flag to know when to allow construction */																					\
-		static int8 _singletonConstructed __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE													\
-										= __SINGLETON_NOT_CONSTRUCTED;																	\
-																																		\
-		/* Define get instance method */																								\
-		static void __attribute__ ((noinline)) ClassName ## _instantiate()																\
-		{																																\
-			NM_ASSERT(__SINGLETON_BEING_CONSTRUCTED != _singletonConstructed,															\
-				ClassName get instance during construction);																			\
-																																		\
-			_singletonConstructed = __SINGLETON_BEING_CONSTRUCTED;																		\
-																																		\
-			/* make sure that the class is properly set */																				\
-			__CALL_CHECK_VTABLE(ClassName);																								\
-																																		\
-			/*  */																														\
-			ClassName instance = &_singletonWrapper ## ClassName.instance;																\
-			_singletonWrapper ## ClassName.objectMemoryFootprint = 																		\
-				(__OBJECT_MEMORY_FOOT_PRINT << 16) | -1;																				\
-																																		\
-			/* set the vtable pointer */																								\
-			instance->vTable = &ClassName ## _vTable;																					\
-																																		\
-			/* call constructor */																										\
-			ClassName ## _constructor(instance);																						\
-																																		\
-			/* set the vtable pointer */																								\
-			instance->vTable = &ClassName ## _vTable;																					\
-																																		\
-			/* don't allow more constructs */																							\
-			_singletonConstructed = __SINGLETON_CONSTRUCTED;																			\
+			ClassName ## _instantiate();																								\
 		}																																\
 																																		\
-		__SINGLETON_ACCESS(ClassName)																									\
+		/* return the created singleton */																								\
+		return &_singletonWrapper ## ClassName.instance;																				\
+	}																																	\
 																																		\
-		/* Define get instance method */																								\
-		__attribute__((unused)) ClassName ClassName ## _getInstance (ClassPointer requesterClass __attribute__((unused)))				\
-		{																																\
-			/* Check if the call has higher privileges */																															\
-			__SINGLETON_AUTHORIZATION_CHECK(ClassName)																					\
-																																		\
-			/* first check if not constructed yet */																					\
-			if(__SINGLETON_NOT_CONSTRUCTED == _singletonConstructed)																	\
-			{																															\
-				ClassName ## _instantiate();																							\
-			}																															\
-																																		\
-			/* return the created singleton */																							\
-			return &_singletonWrapper ## ClassName.instance;																			\
-		}																																\
-																																		\
-		/* dummy redeclaration to avoid warning when compiling with -pedantic */														\
-		void ClassName ## dummyMethodSingleton()
+	/* dummy redeclaration to avoid warning when compiling with -pedantic */															\
+	void ClassName ## dummyMethodSingleton()
 
 /// Call's the singleton's base class' destructor and allows a new instantiation.
 /// @return Code to call the singleton class' base's destructor and to pull down the flag that prevents
 /// a new instance being created
 #define __SINGLETON_DESTROY																												\
 																																		\
-		/* destroy super object */																										\
-		__DESTROY_BASE;																													\
+	/* destroy super object */																											\
+	__DESTROY_BASE;																														\
 																																		\
-		/* allow new constructs */																										\
-		_singletonConstructed = __SINGLETON_NOT_CONSTRUCTED;																			\
+	/* allow new constructs */																											\
+	_singletonConstructed = __SINGLETON_NOT_CONSTRUCTED;																				\
 
 /// Defines a dynamically allocated singleton class' fundamental methods.
 /// @param ClassName: Singleton class' name to define
 /// @return Implementation of a singleton class' fundamental methods
 #define __SINGLETON_DYNAMIC(ClassName)																									\
 																																		\
-		/* declare the static pointer to instance */																					\
-		static ClassName _instance ## ClassName __NON_INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE;										\
+	/* declare the static pointer to instance */																						\
+	static ClassName _instance ## ClassName __NON_INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE;											\
 																																		\
-		/* Define allocator */																											\
-		__CLASS_NEW_DEFINITION(ClassName, void)																							\
-		__CLASS_NEW_END(ClassName, this);																								\
+	/* Define allocator */																												\
+	__CLASS_NEW_DEFINITION(ClassName, void)																								\
+	__CLASS_NEW_END(ClassName, this);																									\
 																																		\
-		/* a flag to know when to allow construction */																					\
-		static int8 _singletonConstructed __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE													\
-										= __SINGLETON_NOT_CONSTRUCTED;																	\
+	/* a flag to know when to allow construction */																						\
+	static int8 _singletonConstructed __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE														\
+									= __SINGLETON_NOT_CONSTRUCTED;																		\
 																																		\
-		/* Define get instance method */																								\
-		static void __attribute__ ((noinline)) ClassName ## _instantiate()																\
+	/* Define get instance method */																									\
+	static void __attribute__ ((noinline)) ClassName ## _instantiate()																	\
+	{																																	\
+		NM_ASSERT(__SINGLETON_BEING_CONSTRUCTED != _singletonConstructed,																\
+			ClassName get instance during construction);																				\
+																																		\
+		_singletonConstructed = __SINGLETON_BEING_CONSTRUCTED;																			\
+																																		\
+		/* allocate */																													\
+		_instance ## ClassName = ClassName ## _new();																					\
+																																		\
+		/* don't allow more constructs */																								\
+		_singletonConstructed = __SINGLETON_CONSTRUCTED;																				\
+	}																																	\
+																																		\
+	__SINGLETON_ACCESS(ClassName)																										\
+																																		\
+	/* Define get instance method */																									\
+	__attribute__((unused)) ClassName ClassName ## _getInstance (ClassPointer requesterClass __attribute__((unused)))					\
+	{																																	\
+		/* Check if the call has higher privileges */																					\
+		__SINGLETON_AUTHORIZATION_CHECK(ClassName)																						\
+																																		\
+		/* first check if not constructed yet */																						\
+		if(__SINGLETON_NOT_CONSTRUCTED == _singletonConstructed)																		\
 		{																																\
-			NM_ASSERT(__SINGLETON_BEING_CONSTRUCTED != _singletonConstructed,															\
-				ClassName get instance during construction);																			\
-																																		\
-			_singletonConstructed = __SINGLETON_BEING_CONSTRUCTED;																		\
-																																		\
-			/* allocate */																												\
-			_instance ## ClassName = ClassName ## _new();																				\
-																																		\
-			/* don't allow more constructs */																							\
-			_singletonConstructed = __SINGLETON_CONSTRUCTED;																			\
+			ClassName ## _instantiate();																								\
 		}																																\
 																																		\
-		__SINGLETON_ACCESS(ClassName)																									\
+		/* return the created singleton */																								\
+		return _instance ## ClassName;																									\
+	}																																	\
 																																		\
-		/* Define get instance method */																								\
-		__attribute__((unused)) ClassName ClassName ## _getInstance (ClassPointer requesterClass __attribute__((unused)))				\
-		{																																\
-			/* Check if the call has higher privileges */																															\
-			__SINGLETON_AUTHORIZATION_CHECK(ClassName)																					\
-																																		\
-			/* first check if not constructed yet */																					\
-			if(__SINGLETON_NOT_CONSTRUCTED == _singletonConstructed)																	\
-			{																															\
-				ClassName ## _instantiate();																							\
-			}																															\
-																																		\
-			/* return the created singleton */																							\
-			return _instance ## ClassName;																								\
-		}																																\
-																																		\
-		/* dummy redeclaration to avoid warning when compiling with -pedantic */														\
-		void ClassName ## dummyMethodSingletonNew()
+	/* dummy redeclaration to avoid warning when compiling with -pedantic */															\
+	void ClassName ## dummyMethodSingletonNew()
 
 #endif
