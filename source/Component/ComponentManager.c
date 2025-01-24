@@ -12,14 +12,9 @@
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <Component.h>
-#include <Behavior.h>
-#include <Body.h>
-#include <Collider.h>
 #include <Printing.h>
 #include <Entity.h>
-#include <Sprite.h>
 #include <VirtualList.h>
-#include <Wireframe.h>
 
 #include "ComponentManager.h"
 
@@ -646,30 +641,8 @@ static uint32 ComponentManager::getComponentType(Component component)
 
 	if(NULL == component->componentSpec)
 	{
-		if(__GET_CAST(Collider, component))
-		{
-			return kColliderComponent;
-		}
-		
-		if(__GET_CAST(Sprite, component))
-		{
-			return kSpriteComponent;
-		}
-		
-		if(__GET_CAST(Wireframe, component))
-		{
-			return kWireframeComponent;
-		}
-		
-		if(__GET_CAST(Behavior, component))
-		{
-			return kBehaviorComponent;
-		}
-
-		if(__GET_CAST(Body, component))
-		{
-			return kPhysicsComponent;
-		}
+		NM_ASSERT(false, "ComponentManager::getComponentType: NULL component spec");
+		return kComponentTypes;
 	}
 
 	return component->componentSpec->componentType;
