@@ -56,9 +56,6 @@ class BgmapAnimatedSprite : BgmapSprite
 	/// @param owner: Entity to which the sprite attaches to
 	/// @param bgmapAnimatedSpriteSpec: Specification that determines how to configure the sprite
 	void constructor(Entity owner, const BgmapAnimatedSpriteSpec* bgmapAnimatedSpriteSpec);
-
-	/// Update the animation.
-	override void updateAnimation();
 }
 
 #endif

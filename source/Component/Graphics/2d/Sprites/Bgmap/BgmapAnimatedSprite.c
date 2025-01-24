@@ -47,25 +47,3 @@ void BgmapAnimatedSprite::destructor()
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void BgmapAnimatedSprite::updateAnimation()
-{
-	NM_ASSERT(!isDeleted(this->animationController), "BgmapAnimatedSprite::updateAnimation: null animation controller");
-
-	if(isDeleted(this->animationController))
-	{
-		return;
-	}
-
-	if(Texture::isMultiframe(this->texture))
-	{
-		BgmapAnimatedSprite::setMultiframe(this, AnimationController::getActualFrameIndex(this->animationController));
-		BgmapAnimatedSprite::invalidateParamTable(this);
-	}
-	else
-	{
-		Texture::setFrame(this->texture, AnimationController::getActualFrameIndex(this->animationController));
-	}
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
