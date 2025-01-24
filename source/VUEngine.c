@@ -54,6 +54,9 @@ uint32 _dispatchCycle = 0;
 
 static void VUEngine::resetClock()
 {
+	// This is strictly not necessary, since the singleton instance could be
+	// directly accessed by setting a static global in the constructor that points to it.
+	// But this looks subjectively better and is inlined by the compiler anyway.
 	VUEngine vuEngine = VUEngine::getInstance();
 
 	Clock::reset(vuEngine->clock);
