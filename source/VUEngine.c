@@ -54,15 +54,6 @@ ClassPointer _authClass = NULL;
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void VUEngine::init()
-{
-	HardwareManager::initialize();
-
-	VUEngine::getInstance();
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
 static void VUEngine::resetClock()
 {
 	VUEngine vuEngine = VUEngine::getInstance();
@@ -524,7 +515,6 @@ void VUEngine::destructor()
 	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
-
 
 //—————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
@@ -1079,10 +1069,20 @@ void VUEngine::cleanUp()
 
 int32 main(void)
 {
+	extern void setupClasses();
+
+	// Setup the classes' virtual tables
+	setupClasses();
+
 #ifndef __RELEASE
+	// Restrict singleton access
 	Singleton::secure();
 #endif
 
+	// Initialize hardware related stuff
+	HardwareManager::initialize();
+
+	// Start the game
 	return VUEngine::start(VUEngine::getInstance(), __GAME_ENTRY_POINT());
 }
 
