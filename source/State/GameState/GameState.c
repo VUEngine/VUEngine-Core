@@ -164,8 +164,7 @@ void GameState::suspend(void* owner __attribute__ ((unused)))
 	if(!VUEngine::isInToolStateTransition())
 #endif
 	{
-		// Force all streaming right now of any pending entity
-		// to make sure that their components are fully created
+		// Force all streaming right now of any pending entity to make sure that their components are fully created
 		// This must happen before the managers are disabled
 		GameState::streamAll(this);
 		
@@ -185,7 +184,6 @@ void GameState::suspend(void* owner __attribute__ ((unused)))
 			UIContainer::suspend(this->uiContainer);
 		}
 
-		// Disable the managers
 		GameState::disableManagers(this);
 	}
 }
