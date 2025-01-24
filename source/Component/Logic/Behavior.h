@@ -44,7 +44,8 @@ typedef const BehaviorSpec BehaviorROMSpec;
 ///
 /// Inherits from Component
 ///
-/// Implements a container whose children are always fixed to the camera
+/// Right now, this is only used by the Vehicle class in the plugins.
+/// Eventually, this will serve to avoid the need to inherit from Actor.
 abstract class Behavior : Component
 {
 	/// @protectedsection
