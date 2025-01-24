@@ -248,11 +248,8 @@ void GameState::configureStage(StageSpec* stageSpec, VirtualList positionedActor
 	// Transformation everything
 	GameState::transform(this);
 
-	// Transform everything definitively
-	GameState::transform(this);
-
-	// Slow down the frame rate briefly to give the CPU a chance to
-	// setup everything without the VIP commint into its way
+	// Slow down the frame rate briefly to give the CPU a chance to setup everything
+	// without the VIP getting in its way
 	GameState::changeFramerate(this, __TARGET_FPS >> 1, 100);
 }
 
