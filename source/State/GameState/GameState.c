@@ -150,7 +150,6 @@ void GameState::exit(void* owner __attribute__ ((unused)))
 	GameState::destroyContainers(this);
 	GameState::destroyManagers(this);
 
-	// Stop my clocks
 	GameState::stopClocks(this);
 }
 
@@ -217,10 +216,8 @@ void GameState::resume(void* owner __attribute__ ((unused)))
 		GameState::streamAll(this);
 	}
 
-	// Unpause clock
 	Clock::pause(this->messagingClock, false);
 
-	// Restore the frame rate
 	GameState::changeFramerate(this, this->framerate, -1);
 }
 
@@ -803,7 +800,7 @@ void GameState::streamAll()
 	// Stream in and out all relevant actors
 	Stage::streamAll(this->stage);
 
-	// Force collision purging
+	// Force colliders' purging
 	if(!isDeleted(this->componentManagers[kColliderComponent]))
 	{
 		ColliderManager::purgeDestroyedColliders(this->componentManagers[kColliderComponent]);
