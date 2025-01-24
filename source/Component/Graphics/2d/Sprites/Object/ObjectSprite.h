@@ -113,8 +113,9 @@ class ObjectSprite : Sprite
 	/// @return The index that determines the region of DRAM that this sprite manages
 	override int16 doRender(int16 index);
 
-	/// Update the animation.
-	override void updateAnimation();
+	/// Set the current multiframe.
+	/// @param frame: Current animation frame 
+	override void setMultiframe(uint16 frame);
 
 	/// Set the sprite's rotation.
 	/// @param rotation: Rotation to apply to the sprite 

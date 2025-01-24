@@ -198,23 +198,9 @@ int16 ObjectSprite::doRender(int16 index)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void ObjectSprite::updateAnimation()
+void ObjectSprite::setMultiframe(uint16 frame)
 {
-	NM_ASSERT(!isDeleted(this->animationController), "ObjectSprite::updateAnimation: null animation controller");
-
-	if(isDeleted(this->animationController))
-	{
-		return;
-	}
-
-	if(Texture::isMultiframe(this->texture))
-	{
-		this->objectTextureSource.displacement = AnimationController::getActualFrameIndex(this->animationController) * this->rows * this->cols;
-	}
-	else
-	{
-		Texture::setFrame(this->texture, AnimationController::getActualFrameIndex(this->animationController));
-	}
+	this->objectTextureSource.displacement = frame * this->rows * this->cols;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

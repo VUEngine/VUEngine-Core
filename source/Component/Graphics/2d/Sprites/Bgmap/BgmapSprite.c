@@ -293,28 +293,6 @@ int16 BgmapSprite::doRender(int16 index)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void BgmapSprite::updateAnimation()
-{
-	NM_ASSERT(!isDeleted(this->animationController), "BgmapSprite::updateAnimation: null animation controller");
-
-	if(isDeleted(this->animationController))
-	{
-		return;
-	}
-
-	if(Texture::isMultiframe(this->texture))
-	{
-		BgmapSprite::setMultiframe(this, AnimationController::getActualFrameIndex(this->animationController));
-		BgmapSprite::invalidateParamTable(this);
-	}
-	else
-	{
-		Texture::setFrame(this->texture, AnimationController::getActualFrameIndex(this->animationController));
-	}
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
 void BgmapSprite::setMultiframe(uint16 frame)
 {
 	int16 mx = BgmapTexture::getXOffset(this->texture);
@@ -332,6 +310,8 @@ void BgmapSprite::setMultiframe(uint16 frame)
 	this->bgmapTextureSource.mx = mx + (col << 3);
 	this->bgmapTextureSource.my = my + (row << 3);
 	this->rendered = false;
+
+	BgmapSprite::invalidateParamTable(this);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

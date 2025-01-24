@@ -114,6 +114,11 @@ RightBox Sprite::getRightBox()
 
 void Sprite::createAnimationController()
 {
+	if(!isDeleted(this->animationController))
+	{
+		return;
+	}
+
 	this->animationController = new AnimationController();
 
 	if(isDeleted(this->animationController))
@@ -575,7 +580,16 @@ bool Sprite::hasSpecialEffects()
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Sprite::updateAnimation()
-{}
+{
+	if(Texture::isMultiframe(this->texture))
+	{
+		Sprite::setMultiframe(this, AnimationController::getActualFrameIndex(this->animationController));
+	}
+	else
+	{
+		Texture::setFrame(this->texture, AnimationController::getActualFrameIndex(this->animationController));
+	}
+}
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
