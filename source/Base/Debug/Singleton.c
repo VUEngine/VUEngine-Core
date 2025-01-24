@@ -174,6 +174,9 @@ const ClassPointer RumbleManagerAuthorizedClasses[] =
 const ClassPointer SoundManagerAuthorizedClasses[] =
 {
 	typeofclass(GameState),
+#ifdef __TOOLS
+	typeofclass(SoundTest),
+#endif
 	typeofclass(TimerManager),
 	typeofclass(VUEngine),
 	NULL

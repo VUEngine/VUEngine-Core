@@ -440,12 +440,10 @@ void GameState::unpausePhysics()
 
 void GameState::transform()
 {
-	if(!this->transform)
+	if(!this->transform || NULL == this->stage)
 	{
 		return;
 	}
-
-	NM_ASSERT(this->stage, "GameState::transform: null stage");
 
 	extern Transformation _neutralEnvironmentTransformation;
 
@@ -456,12 +454,10 @@ void GameState::transform()
 
 void GameState::transformUI()
 {
-	if(!this->transform && __VALID_TRANSFORMATION == Camera::getTransformationFlags(Camera::getInstance()))
+	if((!this->transform && __VALID_TRANSFORMATION == Camera::getTransformationFlags(Camera::getInstance())) || NULL == this->uiContainer)
 	{
 		return;
 	}
-
-	NM_ASSERT(this->uiContainer, "GameState::transform: null uiContainer");
 
 	extern Transformation _neutralEnvironmentTransformation;
 

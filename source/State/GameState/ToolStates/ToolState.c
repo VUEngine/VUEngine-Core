@@ -11,11 +11,64 @@
 // INCLUDES
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+#include <AnimationInspectorState.h>
+#include <DebugState.h>
+#include <StageEditor.h>
+#include <StageEditorState.h>
 #include <StateMachine.h>
+#include <SoundTestState.h>
 #include <Tool.h>
 #include <VUEngine.h>
 
 #include "ToolState.h"
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+// CLASS' PUBLIC STATIC METHODS
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+static ToolState ToolState::get(const UserInput* userInput __attribute__((unused)))
+{
+#ifdef __TOOLS
+	ToolState engineToolStates[] =
+	{
+		ToolState::safeCast(DebugState::getInstance()),
+		ToolState::safeCast(StageEditorState::getInstance()),
+		ToolState::safeCast(AnimationInspectorState::getInstance()),
+		ToolState::safeCast(SoundTestState::getInstance()),
+		NULL
+	};
+
+	int32 i = 0;
+
+	for(; engineToolStates[i]; i++)
+	{
+		// Check code to access special feature
+		if(ToolState::isKeyCombination(engineToolStates[i], userInput))
+		{
+			return engineToolStates[i];
+		}
+	}
+
+	extern const ToolState _userToolStates[];
+
+	i = 0;
+
+	for(; _userToolStates[i]; i++)
+	{
+		// Check code to access special feature
+		if(ToolState::isKeyCombination(_userToolStates[i], userInput))
+		{
+			return _userToolStates[i];
+		}
+	}
+#endif
+
+	return NULL;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PUBLIC METHODS

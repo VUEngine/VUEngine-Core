@@ -17,12 +17,11 @@
 #include <GameState.h>
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-//											CLASS'S DECLARATION
-
+// CLASS'S DECLARATION
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 class Tool;
+class ToolState;
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DECLARATION
@@ -39,6 +38,11 @@ abstract class ToolState : GameState
 	Tool tool;
 
 	/// @publicsection
+
+	/// Retrive the tool state that is unlocked by the provided user input.
+	/// @param userInput: User's keypad intpu
+	/// @return The ToolState that is unlocked if any
+	static ToolState get(const UserInput* userInput);
 
 	/// Class' constructor
 	void constructor();

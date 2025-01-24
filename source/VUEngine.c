@@ -13,51 +13,26 @@
 
 #include <string.h>
 
-#include <AnimationCoordinatorFactory.h>
-#include <AnimationInspectorState.h>
-#include <BehaviorManager.h>
-#include <BgmapTextureManager.h>
-#include <BodyManager.h>
 #include <Camera.h>
 #include <CommunicationManager.h>
-#include <CharSetManager.h>
 #include <Clock.h>
 #include <ClockManager.h>
-#include <ColliderManager.h>
 #include <DebugConfig.h>
-#include <DebugState.h>
-#include <DirectDraw.h>
-#include <ColliderManager.h>
 #include <FrameRate.h>
 #include <GameState.h>
 #include <HardwareManager.h>
 #include <KeypadManager.h>
-#include <MemoryPool.h>
 #include <MessageDispatcher.h>
-#include <Optics.h>
-#include <ParamTableManager.h>
 #include <Profiler.h>
-#include <RumbleManager.h>
 #include <Singleton.h>
-#include <SoundManager.h>
-#include <SpriteManager.h>
-#include <SRAMManager.h>
 #include <Stage.h>
-#include <StageEditor.h>
-#include <StageEditorState.h>
-#include <State.h>
 #include <StateMachine.h>
-#include <StopwatchManager.h>
 #include <SoundTestState.h>
 #include <Telegram.h>
 #include <ToolState.h>
 #include <TimerManager.h>
-#include <UIContainer.h>
-#include <Utilities.h>
 #include <VirtualList.h>
 #include <VIPManager.h>
-#include <VUEngine.h>
-#include <WireframeManager.h>
 
 #include "VUEngine.h"
 
@@ -192,10 +167,7 @@ static bool VUEngine::isInToolState()
 	int32 isInToolState = false;
 
 #ifdef __TOOLS
-	isInToolState |= VUEngine::isInDebugMode();
-	isInToolState |= VUEngine::isInStageEditor();
-	isInToolState |= VUEngine::isInAnimationInspector();
-	isInToolState |= VUEngine::isInSoundTest();
+	isInToolState = NULL != __GET_CAST(ToolState, VUEngine::getCurrentState());
 #endif
 
 	return isInToolState;
@@ -726,10 +698,6 @@ void VUEngine::frameStarted(uint16 gameFrameDuration)
 		}
 
 		totalTime = 0;
-
-#ifndef __RELEASE
-		VUEngine::printDebug(this);
-#endif
 	}
 
 	// Update random seed
@@ -803,54 +771,28 @@ void VUEngine::toggleTool(ToolState toolState)
 			VUEngine::removeState(this, GameState::safeCast(toolState));
 		}
 
-		VUEngine::addState(this, GameState::safeCast(toolState));
+		VUEngine::addState(GameState::safeCast(toolState));
 	}
 }
+#endif
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-bool VUEngine::checkIfToggleTool(const UserInput* userInput)
+bool VUEngine::checkIfToggleTool(const UserInput* userInput __attribute__((unused)))
 {
-	ToolState engineToolStates[] =
-	{
 #ifdef __TOOLS
-		ToolState::safeCast(DebugState::getInstance()),
-		ToolState::safeCast(StageEditorState::getInstance()),
-		ToolState::safeCast(AnimationInspectorState::getInstance()),
-		ToolState::safeCast(SoundTestState::getInstance()),
+	ToolState toolState = ToolState::get(userInput);
+
+	if(NULL != toolState)
+	{
+		VUEngine::toggleTool(this, toolState);
+		return true;
+	}
 #endif
-		NULL
-	};
-
-	int32 i = 0;
-
-	for(; engineToolStates[i]; i++)
-	{
-		// Check code to access special feature
-		if(ToolState::isKeyCombination(engineToolStates[i], userInput))
-		{
-			VUEngine::toggleTool(this, engineToolStates[i]);
-			return true;
-		}
-	}
-
-	extern const ToolState _userToolStates[];
-
-	i = 0;
-
-	for(; _userToolStates[i]; i++)
-	{
-		// Check code to access special feature
-		if(ToolState::isKeyCombination(_userToolStates[i], userInput))
-		{
-			VUEngine::toggleTool(this, _userToolStates[i]);
-			return true;
-		}
-	}
 
 	return false;
+
 }
-#endif
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
@@ -1113,37 +1055,10 @@ void VUEngine::focusCamera()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-#ifdef __TOOLS
 bool VUEngine::isInState(GameState gameState)
 {
 	return StateMachine::getCurrentState(this->stateMachine) == State::safeCast(gameState);
 }
-bool VUEngine::isInDebugMode()
-{
-	return VUEngine::isInState(this, GameState::safeCast(DebugState::getInstance()));
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-bool VUEngine::isInStageEditor()
-{
-	return VUEngine::isInState(this, GameState::safeCast(StageEditorState::getInstance()));
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-bool VUEngine::isInAnimationInspector()
-{
-	return VUEngine::isInState(this, GameState::safeCast(AnimationInspectorState::getInstance()));
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-bool VUEngine::isInSoundTest()
-{
-	return VUEngine::isInState(this, GameState::safeCast(SoundTestState::getInstance()));
-}
-#endif
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
@@ -1152,54 +1067,6 @@ void VUEngine::cleanUp()
 	VIPManager::removeEventListener(VIPManager::getInstance(), ListenerObject::safeCast(this), kEventVIPManagerFRAMESTART);
 	VIPManager::removeEventListener(VIPManager::getInstance(), ListenerObject::safeCast(this), kEventVIPManagerGAMESTART);
 	VIPManager::removeEventListener(VIPManager::getInstance(), ListenerObject::safeCast(this), kEventVIPManagerXPEND);
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void VUEngine::printDebug()
-{
-#ifdef __TOOLS
-	if(!VUEngine::isInToolState())
-#endif
-	{
-#ifdef __SHOW_STACK_OVERFLOW_ALERT
-		HardwareManager::printStackStatus((__SCREEN_WIDTH_IN_CHARS) - 25, 0, false);
-#endif
-
-#ifdef __SHOW_MEMORY_POOL_STATUS
-#ifdef __SHOW_DETAILED_MEMORY_POOL_STATUS
-		MemoryPool::printDetailedUsage(30, 1);
-#else
-		MemoryPool::printResumedUsage(35, 1);
-#endif
-#endif
-#ifdef __SHOW_TIMER_MANAGER_STATUS
-		TimerManager::printInterruptStats(1, 1);
-#endif
-
-#ifdef __SHOW_STREAMING_PROFILING
-		Stage::print(VUEngine::getStage(this), 1, 1);
-#endif
-
-#ifdef __SHOW_CHAR_MEMORY_STATUS
-		CharSetManager::print(CharSetManager::getInstance(), 1, 5);
-#endif
-
-#ifdef __SHOW_BGMAP_MEMORY_STATUS
-		BgmapTextureManager::print(BgmapTextureManager::getInstance(), 1, 5);
-		ParamTableManager::print(ParamTableManager::getInstance(), 1 + 27, 5);
-#endif
-
-#ifdef __SHOW_VSU_MANAGER_STATUS
-		VSUManager::print(1, 1);
-#endif
-	}
-#ifdef __TOOLS
-	else if(VUEngine::isInSoundTest())
-	{
-		SoundManager::printPlaybackTime(SoundManager::getInstance(), 1, 6);
-	}
-#endif
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
