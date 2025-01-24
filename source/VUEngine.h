@@ -97,6 +97,8 @@ singleton class VUEngine : ListenerObject
 
 	/// @publicsection
 
+	/// Public methods are static mainly to save the tedium of calling VUEngine::getInstance()
+
 	/// Reset the engine's main clock.
 	static void resetClock();
 
