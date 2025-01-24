@@ -64,12 +64,32 @@ void GameState::constructor()
 
 void GameState::destructor()
 {
-	delete this->logicsClock;
-	delete this->messagingClock;
-	delete this->animationsClock;
-	delete this->physicsClock;
-
 	MessageDispatcher::discardDelayedMessagesWithClock(MessageDispatcher::getInstance(), this->messagingClock);
+
+	if(!isDeleted(this->messagingClock))
+	{
+		delete this->messagingClock;
+		this->messagingClock = NULL;
+	}
+
+	if(!isDeleted(this->logicsClock))
+	{
+		delete this->logicsClock;
+		this->logicsClock = NULL;
+	}
+
+	if(!isDeleted(this->animationsClock))
+	{
+		delete this->animationsClock;
+		this->animationsClock = NULL;
+	}
+
+	if(!isDeleted(this->physicsClock))
+	{
+		delete this->physicsClock;
+		this->physicsClock = NULL;
+	}
+
 	GameState::destroyContainers(this);
 	GameState::destroyManagers(this);
 
@@ -252,7 +272,6 @@ void GameState::configureStage(StageSpec* stageSpec, VirtualList positionedActor
 	// without the VIP getting in its way
 	GameState::changeFramerate(this, __TARGET_FPS >> 1, 100);
 }
-
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
