@@ -476,11 +476,9 @@ void VUEngine::constructor()
 	// Always explicitly call the base's constructor 
 	Base::constructor();
 
-	// Construct the general clock
 	this->clock = new Clock();
 	Clock::start(this->clock);
 
-	// Construct the game's state machine
 	this->stateMachine = new StateMachine(this);
 
 	this->gameFrameStarted = false;
@@ -489,7 +487,6 @@ void VUEngine::constructor()
 	this->isInToolStateTransition = false;
 	this->syncToVIP = true;
 
-	// Make sure all managers are initialized now
 	this->saveDataManager = NULL;
 
 	// To make debugging easier
@@ -552,14 +549,9 @@ void VUEngine::cleaniningStatesStack()
 	VIPManager::stopDisplaying(VIPManager::getInstance());
 	VIPManager::stopDrawing(VIPManager::getInstance());
 
-	// Clean the game's stack
-	// Pop states until the stack is empty
 	VirtualList stateMachineStack = StateMachine::getStateStack(this->stateMachine);
 
-	// Cancel all messages
-	VirtualNode node = VirtualList::begin(stateMachineStack);
-
-	for(; NULL != node; node = VirtualNode::getNext(node))
+	for(VirtualNode node = VirtualList::begin(stateMachineStack); NULL != node; node = VirtualNode::getNext(node))
 	{
 		GameState gameState = GameState::safeCast(VirtualNode::getData(node));
 
@@ -603,7 +595,6 @@ void VUEngine::swappingState()
 
 	if(!isDeleted(currentGameState))
 	{
-		// Discard delayed messages from the current state
 		MessageDispatcher::discardDelayedMessagesWithClock
 		(
 			MessageDispatcher::getInstance(), GameState::getMessagingClock(currentGameState)
@@ -630,7 +621,6 @@ void VUEngine::poppingState()
 
 	if(!isDeleted(currentGameState))
 	{
-		// Discard delayed messages from the current state
 		MessageDispatcher::discardDelayedMessagesWithClock
 		(
 			MessageDispatcher::getInstance(), GameState::getMessagingClock(currentGameState)
@@ -650,11 +640,9 @@ void VUEngine::changedState()
 {
 	StateMachine::removeAllEventListeners(this->stateMachine);
 
-	// Reset flags
 	this->currentGameCycleEnded = true;
 	this->gameFrameStarted = true;
 
-	// Save current state
 	GameState currentGameState = GameState::safeCast(StateMachine::getCurrentState(this->stateMachine));
 
 	if(GameState::isVersusMode(currentGameState))
@@ -665,7 +653,6 @@ void VUEngine::changedState()
 	VIPManager::startDrawing(VIPManager::getInstance());
 	VIPManager::startDisplaying(VIPManager::getInstance());
 
-	// Fire event
 	VUEngine::fireEvent(this, kEventNextStateSet);
 
 	HardwareManager::enableInterrupts();
@@ -691,7 +678,6 @@ void VUEngine::frameStarted(uint16 gameFrameDuration)
 		totalTime = 0;
 	}
 
-	// Update random seed
 	_gameRandomSeed = Math::randomSeed();
 }
 
@@ -842,7 +828,6 @@ void VUEngine::simulatePhysics(GameState gameState)
 	this->processName = PROCESS_NAME_PHYSICS;
 #endif
 
-	// Simulate physics
 	GameState::simulatePhysics(gameState);
 
 #ifdef __ENABLE_PROFILER
@@ -858,7 +843,6 @@ void VUEngine::processTransformations(GameState gameState)
 	this->processName = PROCESS_NAME_TRANSFORMS;
 #endif
 
-	// Apply world transformations
 	GameState::transform(gameState);
 
 #ifdef __ENABLE_PROFILER
@@ -874,7 +858,6 @@ void VUEngine::processCollisions(GameState gameState)
 	this->processName = PROCESS_NAME_COLLISIONS;
 #endif
 
-	// Process collisions
 	GameState::processCollisions(gameState);
 
 #ifdef __ENABLE_PROFILER
@@ -912,7 +895,6 @@ GameState VUEngine::updateLogic(GameState currentGameState)
 	this->processName = PROCESS_NAME_LOGIC;
 #endif
 
-	// Update the game's logic
 	currentGameState = GameState::safeCast(StateMachine::update(this->stateMachine));
 
 #ifdef __ENABLE_PROFILER
@@ -935,12 +917,8 @@ bool VUEngine::stream(GameState gameState)
 #else
 	bool result = false;
 
-	// While we wait for the next game start
-	while(!this->gameFrameStarted)
-	{
-		// Stream the heck out of the pending actors
-		result = GameState::stream(gameState);
-	}
+	// Stream the heck out of the pending actors
+	result = GameState::stream(gameState);
 
 	Profiler::lap(kProfilerLapTypeNormalProcess, PROCESS_NAME_STREAMING);
 #endif
@@ -966,19 +944,14 @@ void VUEngine::run(GameState currentGameState)
 		Profiler::start();
 #endif
 
-		// Process user's input
 		VUEngine::processUserInput(this, currentGameState);
 
-		// Simulate physics
 		VUEngine::simulatePhysics(this, currentGameState);
 
-		// Apply transformations
 		VUEngine::processTransformations(this, currentGameState);
 
-		// Process collisions
 		VUEngine::processCollisions(this, currentGameState);
 
-		// Dispatch delayed messages
 		VUEngine::dispatchDelayedMessages(this);
 
 		currentGameState = VUEngine::updateLogic(this, currentGameState);
@@ -986,7 +959,6 @@ void VUEngine::run(GameState currentGameState)
 #ifdef __ENABLE_PROFILER
 		HardwareManager::enableInterrupts();
 
-		// Stream actors
 		VUEngine::stream(this, currentGameState);
 #else
 		if(!this->syncToVIP)
@@ -1005,14 +977,14 @@ void VUEngine::run(GameState currentGameState)
 #ifndef __DEBUG
 					if(!this->gameFrameStarted)
 					{
-						// Don't spin cycle the CPU
+						// Don't spin cycle the CPU...
 						HardwareManager::halt();
 					}
 #endif
 #endif
 				}
 			}
-			// While we wait for the next game start
+			// ... while we wait for the next game start
 			while(!this->gameFrameStarted);			
 		}
 #endif
@@ -1033,7 +1005,6 @@ void VUEngine::focusCamera()
 	if(!VUEngine::isInToolState())
 	{
 #endif
-		// Position the camera
 		Camera::focus(Camera::getInstance());
 #ifdef __TOOLS
 	}
