@@ -473,6 +473,20 @@ bool VUEngine::handleMessage(Telegram telegram)
 
 void VUEngine::constructor()
 {
+	// This function is created by the transpiler
+	extern void setupClasses();
+
+	// Setup the classes' virtual tables
+	setupClasses();
+
+#ifndef __RELEASE
+	// Restrict singleton access
+	Singleton::secure();
+#endif
+
+	// Initialize hardware related stuff
+	HardwareManager::initialize();
+
 	// Always explicitly call the base's constructor 
 	Base::constructor();
 
@@ -1025,21 +1039,7 @@ void VUEngine::cleanUp()
 
 int32 main(void)
 {
-	// This function is created by the transpiler
-	extern void setupClasses();
-
-	// Setup the classes' virtual tables
-	setupClasses();
-
-#ifndef __RELEASE
-	// Restrict singleton access
-	Singleton::secure();
-#endif
-
-	// Initialize hardware related stuff
-	HardwareManager::initialize();
-
-	// Run the game
+	// Run the game with the GameState returned by its entry point
 	VUEngine::run(VUEngine::getInstance(), __GAME_ENTRY_POINT());
 
 	return 0;
