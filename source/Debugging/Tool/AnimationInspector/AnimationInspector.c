@@ -23,6 +23,7 @@
 #include <Optics.h>
 #include <OptionsSelector.h>
 #include <Printer.h>
+#include <Singleton.h>
 #include <Stage.h>
 #include <SpriteManager.h>
 #include <Texture.h>

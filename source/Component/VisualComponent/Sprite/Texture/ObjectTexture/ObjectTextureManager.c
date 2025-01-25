@@ -12,6 +12,7 @@
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <ObjectTexture.h>
+#include <Singleton.h>
 #include <VirtualList.h>
 
 #include "ObjectTextureManager.h"

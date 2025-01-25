@@ -19,6 +19,7 @@
 #include <Printer.h>
 #include <Profiler.h>
 #include <Telegram.h>
+#include <Singleton.h>
 #include <VIPManager.h>
 #include <VUEngine.h>
 

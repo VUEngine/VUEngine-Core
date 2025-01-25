@@ -21,6 +21,7 @@
 #include <Mem.h>
 #include <ParamTableManager.h>
 #include <PrintingSprite.h>
+#include <Singleton.h>
 #include <Utilities.h>
 #include <VirtualList.h>
 #include <VIPManager.h>

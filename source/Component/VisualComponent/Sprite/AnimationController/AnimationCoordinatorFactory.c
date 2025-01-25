@@ -14,6 +14,7 @@
 #include <AnimationController.h>
 #include <AnimationCoordinator.h>
 #include <ListenerObject.h>
+#include <Singleton.h>
 #include <VirtualList.h>
 #include <VirtualNode.h>
 

@@ -13,6 +13,7 @@
 
 #include <DebugConfig.h>
 #include <Printer.h>
+#include <Singleton.h>
 
 #include "FrameRate.h"
 

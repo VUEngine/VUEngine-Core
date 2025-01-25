@@ -13,6 +13,7 @@
 
 #include <CharSet.h>
 #include <Printer.h>
+#include <Singleton.h>
 #include <VirtualList.h>
 
 #include "CharSetManager.h"

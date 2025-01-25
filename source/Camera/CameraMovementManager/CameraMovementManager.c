@@ -11,9 +11,10 @@
 // INCLUDES
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+#include <Actor.h>
 #include <Camera.h>
 #include <DebugConfig.h>
-#include <Actor.h>
+#include <Singleton.h>
 #include <VIPManager.h>
 
 #include "CameraMovementManager.h"

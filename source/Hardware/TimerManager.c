@@ -16,6 +16,7 @@
 #include <ListenerObject.h>
 #include <Printer.h>
 #include <Profiler.h>
+#include <Singleton.h>
 #include <SoundManager.h>
 #include <StopwatchManager.h>
 #include <VUEngine.h>

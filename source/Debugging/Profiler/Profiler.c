@@ -16,6 +16,7 @@
 #include <DebugConfig.h>
 #include <HardwareManager.h>
 #include <Printer.h>
+#include <Singleton.h>
 #include <TimerManager.h>
 #include <Utilities.h>
 #include <VirtualList.h>

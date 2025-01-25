@@ -13,6 +13,7 @@
 
 #include <Clock.h>
 #include <DebugConfig.h>
+#include <Singleton.h>
 #include <VirtualList.h>
 
 #include "ClockManager.h"

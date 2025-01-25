@@ -19,6 +19,7 @@
 #include <Mem.h>
 #include <Printer.h>
 #include <Profiler.h>
+#include <Singleton.h>
 #include <VirtualList.h>
 #include <VirtualNode.h>
 #include <VUEngine.h>

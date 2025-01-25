@@ -11,13 +11,14 @@
 // INCLUDES
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+#include <Actor.h>
 #include <CameraEffectManager.h>
 #include <CameraMovementManager.h>
 #include <DebugConfig.h>
 #include <FrameBufferManager.h>
-#include <Actor.h>
 #include <Optics.h>
 #include <Printer.h>
+#include <Singleton.h>
 
 #include "Camera.h"
 

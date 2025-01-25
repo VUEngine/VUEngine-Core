@@ -14,6 +14,7 @@
 #include <DebugConfig.h>
 #include <HardwareManager.h>
 #include <Printer.h>
+#include <Singleton.h>
 #include <Utilities.h>
 
 #include "MemoryPool.h"

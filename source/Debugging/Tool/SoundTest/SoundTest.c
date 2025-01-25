@@ -17,6 +17,7 @@
 #include <HardwareManager.h>
 #include <KeypadManager.h>
 #include <Printer.h>
+#include <Singleton.h>
 #include <SpriteManager.h>
 #include <TimerManager.h>
 #include <Utilities.h>

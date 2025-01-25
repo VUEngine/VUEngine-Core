@@ -14,6 +14,7 @@
 #include <Camera.h>
 #include <DebugConfig.h>
 #include <Printer.h>
+#include <Singleton.h>
 #include <VIPManager.h>
 
 #include "FrameBufferManager.h"

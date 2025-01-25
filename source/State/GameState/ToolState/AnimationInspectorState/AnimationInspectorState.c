@@ -14,6 +14,7 @@
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <AnimationInspector.h>
+#include <Singleton.h>
 
 #include "AnimationInspectorState.h"
 

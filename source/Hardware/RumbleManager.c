@@ -16,6 +16,7 @@
 #include <Debug.h>
 #endif
 #include <DebugConfig.h>
+#include <Singleton.h>
 
 #include "RumbleManager.h"
 

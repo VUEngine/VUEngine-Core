@@ -12,6 +12,7 @@
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <Printer.h>
+#include <Singleton.h>
 #include <Sound.h>
 #include <VirtualList.h>
 #include <VSUManager.h>

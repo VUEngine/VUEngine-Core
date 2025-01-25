@@ -12,6 +12,7 @@
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <DebugConfig.h>
+#include <Singleton.h>
 #include <Stopwatch.h>
 #include <VirtualList.h>
 #include <VirtualNode.h>

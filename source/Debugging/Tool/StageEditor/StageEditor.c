@@ -13,19 +13,20 @@
 // INCLUDES
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+#include <Actor.h>
 #include <BgmapTextureManager.h>
+#include <BodyManager.h>
 #include <Box.h>
 #include <Camera.h>
 #include <ColliderManager.h>
 #include <Debug.h>
-#include <Actor.h>
 #include <GameState.h>
 #include <KeypadManager.h>
 #include <Mesh.h>
 #include <Optics.h>
 #include <OptionsSelector.h>
-#include <BodyManager.h>
 #include <Printer.h>
+#include <Singleton.h>
 #include <SpriteManager.h>
 #include <Collider.h>
 #include <Stage.h>

@@ -14,6 +14,7 @@
 #include <Clock.h>
 #include <Printer.h>
 #include <Telegram.h>
+#include <Singleton.h>
 #include <VirtualList.h>
 #include <VirtualNode.h>
 #include <VUEngine.h>

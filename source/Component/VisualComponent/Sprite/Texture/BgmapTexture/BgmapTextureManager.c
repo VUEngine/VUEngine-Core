@@ -14,6 +14,7 @@
 #include <BgmapTexture.h>
 #include <Mem.h>
 #include <Printer.h>
+#include <Singleton.h>
 #include <VirtualList.h>
 #include <VIPManager.h>
 

@@ -15,6 +15,7 @@
 #include <DebugConfig.h>
 #include <Actor.h>
 #include <GameState.h>
+#include <Singleton.h>
 #include <Telegram.h>
 #include <TimerManager.h>
 #include <VIPManager.h>
