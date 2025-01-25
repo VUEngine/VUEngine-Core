@@ -1042,8 +1042,11 @@ void VUEngine::cleanUp()
 
 int32 main(void)
 {
+	// Make sure that everything is properly intialized before giving control to the game
+	volatile VUEngine vuEngine = VUEngine::getInstance();
+
 	// Run the game with the GameState returned by its entry point
-	VUEngine::run(VUEngine::getInstance(), __GAME_ENTRY_POINT());
+	VUEngine::run(vuEngine, __GAME_ENTRY_POINT());
 
 	return 0;
 }
