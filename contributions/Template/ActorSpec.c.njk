@@ -37,13 +37,13 @@
 			{%- set spriteClass = 'FrameBlendBgmapSprite' -%}
 			{%- set spriteAllocatorClass = 'FrameBlendBgmapSprite' -%}
 		{%- elseif item.sprites.type == 'Bgmap' and (sprite.texture.repeat.x or sprite.texture.repeat.y) and isAnimated -%}
-			{%- set spriteClass = 'MBgmapAnimatedSprite' -%}
-			{%- set spriteAllocatorClass = 'MBgmapAnimatedSprite' -%}
+			{%- set spriteClass = 'MBgmapSprite' -%}
+			{%- set spriteAllocatorClass = 'MBgmapSprite' -%}
 		{%- elseif item.sprites.type == 'Bgmap' and (sprite.texture.repeat.x or sprite.texture.repeat.y) and not isAnimated -%}
 			{%- set spriteClass = 'MBgmapSprite' -%}
 			{%- set spriteAllocatorClass = 'MBgmapSprite' -%}
 		{%- elseif isAnimated -%}
-			{%- set spriteAllocatorClass = item.sprites.type ~ 'AnimatedSprite' -%}
+			{%- set spriteAllocatorClass = item.sprites.type ~ 'Sprite' -%}
 		{%- endif -%}
 		{%- set includes = (includes.push(spriteClass), includes) -%}
 		{%- set includes = (includes.push(spriteAllocatorClass), includes) -%}
@@ -113,13 +113,13 @@
 	{%- set spriteClass = 'FrameBlendBgmapSprite' -%}
 	{%- set spriteAllocatorClass = 'FrameBlendBgmapSprite' -%}
 {%- elseif item.sprites.type == 'Bgmap' and (sprite.texture.repeat.x or sprite.texture.repeat.y) and isAnimated -%}
-	{%- set spriteClass = 'MBgmapAnimatedSprite' -%}
-	{%- set spriteAllocatorClass = 'MBgmapAnimatedSprite' -%}
+	{%- set spriteClass = 'MBgmapSprite' -%}
+	{%- set spriteAllocatorClass = 'MBgmapSprite' -%}
 {%- elseif item.sprites.type == 'Bgmap' and (sprite.texture.repeat.x or sprite.texture.repeat.y) and not isAnimated -%}
 	{%- set spriteClass = 'MBgmapSprite' -%}
 	{%- set spriteAllocatorClass = 'MBgmapSprite' -%}
 {%- elseif isAnimated -%}
-	{%- set spriteAllocatorClass = item.sprites.type ~ 'AnimatedSprite' -%}
+	{%- set spriteAllocatorClass = item.sprites.type ~ 'Sprite' -%}
 {%- endif -%}
 
 {%- set isStereo = sprite.texture.files2 is defined and sprite.texture.files2 | length > 0 -%}
@@ -239,7 +239,7 @@ TextureROMSpec {{ spriteName }}TextureSpec =
 	{{ sprite.texture.flip.y | default(false) }},
 };
 
-{%- if spriteAllocatorClass == 'MBgmapAnimatedSprite' or spriteAllocatorClass == 'MBgmapSprite' %}
+{%- if spriteAllocatorClass == 'MBgmapSprite' or spriteAllocatorClass == 'MBgmapSprite' %}
 
 TextureROMSpec* const {{ spriteName }}TextureSpecs[] =
 {
@@ -256,7 +256,7 @@ TextureROMSpec* const {{ spriteName }}TextureSpecs[] =
 	{%- if spriteAllocatorClass == 'MBgmapSprite' %}
 	{
 	{%- endif %}
-	{%- if spriteAllocatorClass == 'MBgmapAnimatedSprite' %}
+	{%- if spriteAllocatorClass == 'MBgmapSprite' %}
 	{
 	{%- endif %}
 	{
@@ -269,7 +269,7 @@ TextureROMSpec* const {{ spriteName }}TextureSpecs[] =
 		},
 
 		// Spec for the texture to display
-		{%- if spriteAllocatorClass == 'MBgmapAnimatedSprite' or spriteAllocatorClass == 'MBgmapSprite' %}
+		{%- if spriteAllocatorClass == 'MBgmapSprite' or spriteAllocatorClass == 'MBgmapSprite' %}
 		NULL,
 		{%- else %}
 		(TextureSpec*)&{{ spriteName }}TextureSpec,
@@ -305,10 +305,10 @@ TextureROMSpec* const {{ spriteName }}TextureSpecs[] =
 	{%- if spriteClass == 'FrameBlendBgmapSprite' %}
 	}
 	{%- endif %}
-	{%- if spriteAllocatorClass == 'MBgmapAnimatedSprite' %}
+	{%- if spriteAllocatorClass == 'MBgmapSprite' %}
 	}
 	{%- endif %}
-	{%- if spriteAllocatorClass == 'MBgmapAnimatedSprite' or spriteAllocatorClass == 'MBgmapSprite' %}
+	{%- if spriteAllocatorClass == 'MBgmapSprite' or spriteAllocatorClass == 'MBgmapSprite' %}
 	},
 
 	// Texture to use with the sprite

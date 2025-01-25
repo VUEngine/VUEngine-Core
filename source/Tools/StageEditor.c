@@ -761,7 +761,7 @@ void StageEditor::showSelectedUserObject()
 	if(spriteSpec)
 	{
 		this->userActorSprite = Sprite::safeCast(ComponentManager::createComponent(NULL, (ComponentSpec*)spriteSpec));
-		ASSERT(this->userActorSprite, "AnimationInspector::createSprite: null animatedSprite");
+		ASSERT(this->userActorSprite, "AnimationInspector::createSprite: null Sprite");
 		ASSERT(Sprite::getTexture(this->userActorSprite), "AnimationInspector::createSprite: null texture");
 
 		PixelVector spritePosition = Sprite::getDisplacedPosition(this->userActorSprite);

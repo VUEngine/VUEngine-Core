@@ -122,6 +122,10 @@ class CharSet : ListenerObject
 	/// @return Usage count
 	uint8 getUsageCount();
 
+	/// Check if the CharSet has a non NULL array of frame offests.
+	/// @return True if the CharSet has an array of animation frames
+	bool hasMultipleFrames();
+
 	/// Check if the char set is shared.
 	/// @return True if the char set is share; false otherwise
 	bool isShared();

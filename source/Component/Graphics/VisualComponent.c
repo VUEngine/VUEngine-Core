@@ -156,6 +156,11 @@ bool VisualComponent::play
 	ASSERT(NULL != animationFunctions, "VisualComponent::play: null animationFunctions");
 	ASSERT(NULL != animationName, "VisualComponent::play: null animationName");
 
+	if(NULL == this->animationController)
+	{
+		VisualComponent::createAnimationController(this);
+	}
+
 	bool playBackStarted = false;
 
 	if(!isDeleted(this->animationController))

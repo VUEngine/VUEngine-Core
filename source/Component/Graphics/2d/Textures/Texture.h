@@ -230,6 +230,10 @@ abstract class Texture : ListenerObject
 	/// @return True if the texture is shared; false otherwise
 	bool isShared();
 
+	/// Check if the texture is an animation or not.
+	/// @return True if the CharSet has an array of animation frames
+	bool isAnimated();
+
 	/// Check if the texture has only one frame.
 	/// @return True if the texture has only one frame; false otherwise
 	bool isSingleFrame();

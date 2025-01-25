@@ -67,8 +67,11 @@ const PrintingSpriteSpec DefaultPrintingSpriteSpec =
 				kSpriteComponent
 			},
 
+			// Is animated?
+			false,
+
 			// Spec for the texture to display
-			NULL,
+			(TextureSpec*)NULL,
 
 			// Transparency mode (__TRANSPARENCY_NONE, __TRANSPARENCY_EVEN or __TRANSPARENCY_ODD)
 			__TRANSPARENCY_NONE,

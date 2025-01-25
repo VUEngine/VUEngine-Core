@@ -516,6 +516,13 @@ bool Texture::isShared()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+bool Texture::isAnimated()
+{
+	return !isDeleted(this->charSet) && CharSet::hasMultipleFrames(this->charSet);
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 bool Texture::isSingleFrame()
 {
 	return Texture::isSpecSingleFrame(this->textureSpec);

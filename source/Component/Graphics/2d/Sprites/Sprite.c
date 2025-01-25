@@ -118,6 +118,16 @@ void Sprite::createAnimationController()
 	{
 		return;
 	}
+/*
+	if(isDeleted(this->texture) || !Texture::isAnimated(this->texture))
+	{
+		return;
+	}
+*/
+	if(!((SpriteSpec*)this->componentSpec)->animated)
+	{
+		return;
+	}
 
 	this->animationController = new AnimationController();
 

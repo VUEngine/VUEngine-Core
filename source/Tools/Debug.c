@@ -19,7 +19,7 @@
 #include <AnimationCoordinatorFactory.h>
 #include <Actor.h>
 #include <Ball.h>
-#include <BgmapAnimatedSprite.h>
+#include <BgmapSprite.h>
 #include <BgmapTextureManager.h>
 #include <Body.h>
 #include <Box.h>
@@ -45,7 +45,7 @@
 #include <Mem.h>
 #include <MemoryPool.h>
 #include <MessageDispatcher.h>
-#include <ObjectAnimatedSprite.h>
+#include <ObjectSprite.h>
 #include <ObjectSpriteContainer.h>
 #include <ObjectTexture.h>
 #include <Optics.h>
@@ -580,12 +580,12 @@ void Debug::memoryStatusShowThirdPage(int32 increment __attribute__ ((unused)), 
 		{&AnimationController_getObjectSize, 			"AnimationController"},
 		{&AnimationCoordinator_getObjectSize, 			"AnimationCoordinat."},
 		{&AnimationCoordinatorFactory_getObjectSize,	"AnimationCoor.Fact."},
-		{&BgmapAnimatedSprite_getObjectSize,			"BgmapAnim. Sprite"},
+		{&BgmapSprite_getObjectSize,			"BgmapAnim. Sprite"},
 		{&BgmapSprite_getObjectSize, 					"BgmapSprite"},
 		{&BgmapTexture_getObjectSize, 					"BgmapTexture"},
 		{&CharSet_getObjectSize, 						"CharSet"},
 		{&MBgmapSprite_getObjectSize, 					"MBgmapSprite"},
-		{&ObjectAnimatedSprite_getObjectSize,			"ObjectAnim. Sprite"},
+		{&ObjectSprite_getObjectSize,			"ObjectAnim. Sprite"},
 		{&ObjectSprite_getObjectSize,					"ObjectSprite"},
 		{&ObjectSpriteContainer_getObjectSize,			"ObjectSpriteCont."},
 		{&ObjectTexture_getObjectSize,					"ObjectTexture"},
