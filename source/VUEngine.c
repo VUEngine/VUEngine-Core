@@ -989,6 +989,9 @@ secure void VUEngine::run(GameState currentGameState)
 
 		this->currentGameCycleEnded = true;
 	}
+
+	// Being a program running in an embedded system, there is no point in trying to 
+	// shut down things, I'm the operative system!
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
