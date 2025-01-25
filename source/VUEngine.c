@@ -57,6 +57,8 @@ static void VUEngine::resetClock()
 	// This is strictly not necessary, since the singleton instance could be
 	// directly accessed by setting a static global in the constructor that points to it.
 	// But this looks subjectively better and is inlined by the compiler anyway.
+	// This and other methods being static is not necessary either, but it makes less tedious the 
+	// writing the calls to them.
 	VUEngine vuEngine = VUEngine::getInstance();
 
 	Clock::reset(vuEngine->clock);
