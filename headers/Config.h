@@ -247,7 +247,7 @@
 // Number of BGMAP specs in each BGMAP segment
 #define __NUM_BGMAPS_PER_SEGMENT 				16
 
-// Printing area
+// Printer area
 #define __PRINTING_BGMAP_X_OFFSET				0
 #define __PRINTING_BGMAP_Y_OFFSET				0
 #define __PRINTING_BGMAP_PARALLAX_OFFSET		0

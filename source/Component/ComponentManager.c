@@ -12,7 +12,7 @@
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <Component.h>
-#include <Printing.h>
+#include <Printer.h>
 #include <Entity.h>
 #include <VirtualList.h>
 
@@ -163,10 +163,10 @@ static void ComponentManager::addComponents(Entity owner, ComponentSpec** compon
 #ifndef __RELEASE
 		if(__MAXIMUM_NUMBER_OF_COMPONENTS < i)
 		{
-			Printing::setDebugMode();
-			Printing::clear();
-			Printing::text("Component specs array: ", 1, 26, NULL);
-			Printing::hex((uint32)componentSpecs, 1, 27, 8, NULL);
+			Printer::setDebugMode();
+			Printer::clear();
+			Printer::text("Component specs array: ", 1, 26, NULL);
+			Printer::hex((uint32)componentSpecs, 1, 27, 8, NULL);
 			Error::triggerException("ComponentManager::addComponents: Non terminated component specs array", NULL);	
 		}
 #endif
@@ -221,10 +221,10 @@ static void ComponentManager::createComponents(Entity owner, ComponentSpec** com
 #ifndef __RELEASE
 		if(__MAXIMUM_NUMBER_OF_COMPONENTS < i)
 		{
-			Printing::setDebugMode();
-			Printing::clear();
-			Printing::text("Component specs array: ", 1, 26, NULL);
-			Printing::hex((uint32)componentSpecs, 1, 27, 8, NULL);
+			Printer::setDebugMode();
+			Printer::clear();
+			Printer::text("Component specs array: ", 1, 26, NULL);
+			Printer::hex((uint32)componentSpecs, 1, 27, 8, NULL);
 			Error::triggerException("ComponentManager::addComponents: Non terminated component specs array", NULL);	
 		}
 #endif

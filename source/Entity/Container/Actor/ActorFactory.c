@@ -14,7 +14,7 @@
 #include <ColliderManager.h>
 #include <DebugConfig.h>
 #include <Actor.h>
-#include <Printing.h>
+#include <Printer.h>
 #include <SpriteManager.h>
 #include <VirtualList.h>
 #include <VUEngine.h>
@@ -228,25 +228,25 @@ bool ActorFactory::hasActorsPending()
 void ActorFactory::print(int32 x, int32 y)
 {	int32 xDisplacement = 18;
 
-	Printing::text("Factory's status", x, y++, NULL);
-	Printing::text("", x, y++, NULL);
+	Printer::text("Factory's status", x, y++, NULL);
+	Printer::text("", x, y++, NULL);
 
-	Printing::text("Phase: ", x, y, NULL);
-	Printing::int32(this->instantiationPhase, x + xDisplacement, y++, NULL);
+	Printer::text("Phase: ", x, y, NULL);
+	Printer::int32(this->instantiationPhase, x + xDisplacement, y++, NULL);
 
-	Printing::text("Actors pending...", x, y++, NULL);
+	Printer::text("Actors pending...", x, y++, NULL);
 
-	Printing::text("1 Instantiation:			", x, y, NULL);
-	Printing::int32(VirtualList::getCount(this->actorsToInstantiate), x + xDisplacement, y++, NULL);
+	Printer::text("1 Instantiation:			", x, y, NULL);
+	Printer::int32(VirtualList::getCount(this->actorsToInstantiate), x + xDisplacement, y++, NULL);
 
-	Printing::text("2 Transformation:			", x, y, NULL);
-	Printing::int32(VirtualList::getCount(this->actorsToTransform), x + xDisplacement, y++, NULL);
+	Printer::text("2 Transformation:			", x, y, NULL);
+	Printer::int32(VirtualList::getCount(this->actorsToTransform), x + xDisplacement, y++, NULL);
 
-	Printing::text("3 Make ready:			", x, y, NULL);
-	Printing::int32(VirtualList::getCount(this->actorsToAddAsChildren), x + xDisplacement, y++, NULL);
+	Printer::text("3 Make ready:			", x, y, NULL);
+	Printer::int32(VirtualList::getCount(this->actorsToAddAsChildren), x + xDisplacement, y++, NULL);
 
-	Printing::text("4 Call listeners:			", x, y, NULL);
-	Printing::int32(VirtualList::getCount(this->spawnedActors), x + xDisplacement, y++, NULL);
+	Printer::text("4 Call listeners:			", x, y, NULL);
+	Printer::int32(VirtualList::getCount(this->spawnedActors), x + xDisplacement, y++, NULL);
 }
 #endif
 #endif

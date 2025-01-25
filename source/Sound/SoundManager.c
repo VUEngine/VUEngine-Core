@@ -11,7 +11,7 @@
 // INCLUDES
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-#include <Printing.h>
+#include <Printer.h>
 #include <Sound.h>
 #include <VirtualList.h>
 #include <VSUManager.h>
@@ -397,8 +397,8 @@ Sound SoundManager::doGetSound(const SoundSpec* soundSpec, ListenerObject scope)
 	if(kPlaybackPCM == VSUManager::getMode() && NULL != this->sounds->head)
 	{
 #ifndef __SHIPPING
-		Printing::setDebugMode();
-		Printing::clear();
+		Printer::setDebugMode();
+		Printer::clear();
 		Error::triggerException("SoundManager::doGetSound: a PCM sound is loaded, unload it first", NULL);		
 #endif
 

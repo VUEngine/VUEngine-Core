@@ -18,7 +18,7 @@
 #include <ComponentManager.h>
 #include <DebugConfig.h>
 #include <Mesh.h>
-#include <Printing.h>
+#include <Printer.h>
 #include <Sprite.h>
 #include <Telegram.h>
 #include <VirtualList.h>
@@ -368,10 +368,10 @@ void Actor::constructor(const ActorSpec* actorSpec, int16 internalId, const char
 
 	if(!(&_textStart < (uint32*)actorSpec && (uint32*)actorSpec < &_dataLma))
 	{
-		Printing::setDebugMode();
-		Printing::clear();
-		Printing::text(__GET_CLASS_NAME(this), 1, 25, NULL);
-		Printing::hex((WORD)actorSpec, 1, 26, 8, NULL);
+		Printer::setDebugMode();
+		Printer::clear();
+		Printer::text(__GET_CLASS_NAME(this), 1, 25, NULL);
+		Printer::hex((WORD)actorSpec, 1, 26, 8, NULL);
 		NM_ASSERT(false, "Actor::constructor: the provided spec lives in WRAM");
 	}
 #endif

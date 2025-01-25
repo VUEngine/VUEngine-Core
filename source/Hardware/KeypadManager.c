@@ -11,7 +11,7 @@
 // INCLUDES
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-#include <Printing.h>
+#include <Printer.h>
 
 #include "KeypadManager.h"
 
@@ -31,9 +31,9 @@ static void KeypadManager::interruptHandler()
 {
 	KeypadManager::disableInterrupt(KeypadManager::getInstance());
 #ifndef __RELEASE
-	Printing::resetCoordinates();
-	Printing::text("KYP interrupt", 48 - 13, 26, NULL);
-	Printing::hex((((_hardwareRegisters[__SDHR] << 8)) | _hardwareRegisters[__SDLR]), 48 - 13, 27, 8, NULL);
+	Printer::resetCoordinates();
+	Printer::text("KYP interrupt", 48 - 13, 26, NULL);
+	Printer::hex((((_hardwareRegisters[__SDHR] << 8)) | _hardwareRegisters[__SDLR]), 48 - 13, 27, 8, NULL);
 #endif
 }
 

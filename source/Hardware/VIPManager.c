@@ -17,7 +17,7 @@
 #include <DebugConfig.h>
 #include <HardwareManager.h>
 #include <Mem.h>
-#include <Printing.h>
+#include <Printer.h>
 #include <Profiler.h>
 #include <VirtualList.h>
 #include <VirtualNode.h>

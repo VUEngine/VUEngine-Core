@@ -14,10 +14,10 @@
 #include <CameraEffectManager.h>
 #include <CameraMovementManager.h>
 #include <DebugConfig.h>
-#include <DirectDraw.h>
+#include <FrameBufferManager.h>
 #include <Actor.h>
 #include <Optics.h>
-#include <Printing.h>
+#include <Printer.h>
 
 #include "Camera.h"
 
@@ -68,7 +68,7 @@ void Camera::setup(PixelOptical pixelOptical, CameraFrustum cameraFrustum)
 	this->optical = Optical::getFromPixelOptical(pixelOptical, this->cameraFrustum);
 	this->transformationFlags |= __INVALIDATE_TRANSFORMATION;
 
-	DirectDraw::setFrustum(DirectDraw::getInstance(), this->cameraFrustum);
+	FrameBufferManager::setFrustum(FrameBufferManager::getInstance(), this->cameraFrustum);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -382,8 +382,8 @@ void Camera::print(int32 x, int32 y, bool inPixels)
 {	
 	
 	
-	Printing::text("CAMERA ", x, y++, NULL);
-	Printing::text("Position: ", x, ++y, NULL);
+	Printer::text("CAMERA ", x, y++, NULL);
+	Printer::text("Position: ", x, ++y, NULL);
 
 	if(inPixels)
 	{
@@ -395,7 +395,7 @@ void Camera::print(int32 x, int32 y, bool inPixels)
 	}
 
 	y += 3;
-	Printing::text("Rotation: ", x, ++y, NULL);
+	Printer::text("Rotation: ", x, ++y, NULL);
 	Rotation::print(Camera::getRotation(this), x, ++y);
 }
 #endif

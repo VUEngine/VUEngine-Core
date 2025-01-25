@@ -13,7 +13,7 @@
 
 #include <DebugConfig.h>
 #include <Entity.h>
-#include <Printing.h>
+#include <Printer.h>
 
 #include "Component.h"
 
@@ -50,10 +50,10 @@ void Component::constructor(Entity owner, const ComponentSpec* componentSpec)
 
 	if(NULL != componentSpec && !(&_textStart < (uint32*)componentSpec && (uint32*)componentSpec < &_dataLma))
 	{
-		Printing::setDebugMode();
-		Printing::clear();
-		Printing::text(__GET_CLASS_NAME(this), 1, 25, NULL);
-		Printing::hex((WORD)componentSpec, 1, 26, 8, NULL);
+		Printer::setDebugMode();
+		Printer::clear();
+		Printer::text(__GET_CLASS_NAME(this), 1, 25, NULL);
+		Printer::hex((WORD)componentSpec, 1, 26, 8, NULL);
 		NM_ASSERT(false, "Component::constructor: the provided spec lives in WRAM");
 	}
 #endif

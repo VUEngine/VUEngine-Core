@@ -18,7 +18,7 @@
 #include <ColliderManager.h>
 #include <FrameRate.h>
 #include <MessageDispatcher.h>
-#include <Printing.h>
+#include <Printer.h>
 #include <SpriteManager.h>
 #include <StopwatchManager.h>
 #include <Stage.h>
@@ -116,7 +116,7 @@ bool GameState::handleMessage(Telegram telegram)
 
 void GameState::enter(void* owner __attribute__ ((unused)))
 {
-	Printing::resetCoordinates();
+	Printer::resetCoordinates();
 	GameState::pauseClocks(this);
 	Clock::start(this->messagingClock);
 }

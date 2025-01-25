@@ -14,7 +14,7 @@
 #include <DebugConfig.h>
 #include <HardwareManager.h>
 #include <ListenerObject.h>
-#include <Printing.h>
+#include <Printer.h>
 #include <Profiler.h>
 #include <SoundManager.h>
 #include <StopwatchManager.h>
@@ -495,24 +495,24 @@ static void TimerManager::print(int32 x, int32 y)
 {
 	TimerManager timerManager = TimerManager::getInstance();
 
-	Printing::text("TIMER CONFIG", x, y++, NULL);
+	Printer::text("TIMER CONFIG", x, y++, NULL);
 	y++;
 
 	switch(timerManager->resolution)
 	{
 		case __TIMER_20US:
 
-			Printing::text("Resolution    20 US ", x, y++, NULL);
+			Printer::text("Resolution    20 US ", x, y++, NULL);
 			break;
 
 		case __TIMER_100US:
 
-			Printing::text("Resolution    100 US ", x, y++, NULL);
+			Printer::text("Resolution    100 US ", x, y++, NULL);
 			break;
 
 		default:
 
-			Printing::text("Resolution    ?      ", x, y++, NULL);
+			Printer::text("Resolution    ?      ", x, y++, NULL);
 			break;
 	}
 
@@ -520,24 +520,24 @@ static void TimerManager::print(int32 x, int32 y)
 	{
 		case kUS:
 
-			Printing::text("US/interrupt        ", x, y, NULL);
+			Printer::text("US/interrupt        ", x, y, NULL);
 			break;
 
 		case kMS:
 
-			Printing::text("MS/interrupt        ", x, y, NULL);
+			Printer::text("MS/interrupt        ", x, y, NULL);
 			break;
 
 		default:
 
-			Printing::text(" ?/interrupt        ", x, y, NULL);
+			Printer::text(" ?/interrupt        ", x, y, NULL);
 			break;
 	}
 
-	Printing::int32(timerManager->targetTimePerInterrupt, x + 14, y++, NULL);
+	Printer::int32(timerManager->targetTimePerInterrupt, x + 14, y++, NULL);
 
-	Printing::text("Timer counter        ", x, y, NULL);
-	Printing::int32(TimerManager::getTimerCounter(timerManager), x + 14, y++, NULL);
+	Printer::text("Timer counter        ", x, y, NULL);
+	Printer::int32(TimerManager::getTimerCounter(timerManager), x + 14, y++, NULL);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

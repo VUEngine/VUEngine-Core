@@ -24,7 +24,7 @@
 #include <GameState.h>
 #include <HardwareManager.h>
 #include <ParamTableManager.h>
-#include <Printing.h>
+#include <Printer.h>
 #include <SpriteManager.h>
 #include <SoundManager.h>
 #include <TimerManager.h>
@@ -516,37 +516,37 @@ void Stage::fadeSounds(uint32 playbackType)
 #ifndef __SHIPPING
 void Stage::print(int32 x, int32 y)
 {
-	Printing::text("STREAMING STATUS", x, y++, NULL);
+	Printer::text("STREAMING STATUS", x, y++, NULL);
 
-	Printing::text("Stage's status", x, ++y, NULL);
+	Printer::text("Stage's status", x, ++y, NULL);
 
 	int32 originalY __attribute__ ((unused)) = y;
 	int32 xDisplacement = 21;
 	y++;
 
-	Printing::text("Registered actors:            ", x, ++y, NULL);
-	Printing::int32(VirtualList::getCount(this->stageActorDescriptions), x + xDisplacement, y++, NULL);
-	Printing::text("Child actors:                 ", x, y, NULL);
-	Printing::int32(VirtualList::getCount(this->children), x + xDisplacement, y++, NULL);
+	Printer::text("Registered actors:            ", x, ++y, NULL);
+	Printer::int32(VirtualList::getCount(this->stageActorDescriptions), x + xDisplacement, y++, NULL);
+	Printer::text("Child actors:                 ", x, y, NULL);
+	Printer::int32(VirtualList::getCount(this->children), x + xDisplacement, y++, NULL);
 
 #ifdef __PROFILE_STREAMING
 
 	xDisplacement = 10;
 
-	Printing::text("Process duration (ms)", x, ++y, NULL);
+	Printer::text("Process duration (ms)", x, ++y, NULL);
 	y++;
 
-	Printing::text("Unload:           ", x, ++y, NULL);
-	Printing::int32(unloadOutOfRangeActorsHighestTime, x + xDisplacement, y, NULL);
+	Printer::text("Unload:           ", x, ++y, NULL);
+	Printer::int32(unloadOutOfRangeActorsHighestTime, x + xDisplacement, y, NULL);
 
-	Printing::text("Load:             ", x, ++y, NULL);
-	Printing::int32(loadInRangeActorsHighestTime, x + xDisplacement, y, NULL);
+	Printer::text("Load:             ", x, ++y, NULL);
+	Printer::int32(loadInRangeActorsHighestTime, x + xDisplacement, y, NULL);
 
-	Printing::text("Removing:         ", x, ++y, NULL);
-	Printing::int32(processRemovedActorsHighestTime, x + xDisplacement, y, NULL);
+	Printer::text("Removing:         ", x, ++y, NULL);
+	Printer::int32(processRemovedActorsHighestTime, x + xDisplacement, y, NULL);
 
-	Printing::text("Factory:          ", x, ++y, NULL);
-	Printing::int32(actorFactoryHighestTime, x + xDisplacement, y++, NULL);
+	Printer::text("Factory:          ", x, ++y, NULL);
+	Printer::int32(actorFactoryHighestTime, x + xDisplacement, y++, NULL);
 
 	unloadOutOfRangeActorsHighestTime = 0;
 	loadInRangeActorsHighestTime = 0;
@@ -1123,7 +1123,7 @@ void Stage::configureGraphics()
 		BgmapTextureManager::getInstance(), ParamTableManager::configure(ParamTableManager::getInstance(), this->stageSpec->rendering.paramTableSegments)
 	);
 	
-	Printing::loadFonts(this->stageSpec->assets.fontSpecs);
+	Printer::loadFonts(this->stageSpec->assets.fontSpecs);
 	CharSetManager::loadCharSets(CharSetManager::getInstance(), (const CharSetSpec**)this->stageSpec->assets.charSetSpecs);
 
 	BgmapTextureManager::loadTextures

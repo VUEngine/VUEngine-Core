@@ -14,7 +14,7 @@
 #include <string.h>
 
 #include <Body.h>
-#include <Printing.h>
+#include <Printer.h>
 #include <VirtualList.h>
 
 #include "Container.h"
@@ -70,12 +70,12 @@ void Container::destructor()
 #ifndef __RELEASE
 	if(!this->deleteMe || NULL != this->parent)
 	{
-		Printing::setDebugMode();
-		Printing::clear();
-		Printing::text("Me: ", 20, 12, NULL);
-		Printing::text(__GET_CLASS_NAME(this), 24, 12, NULL);
-		Printing::text("Parent: ", 20, 15, NULL);
-		Printing::hex((uint32)this->parent, 29, 15, 8, NULL);
+		Printer::setDebugMode();
+		Printer::clear();
+		Printer::text("Me: ", 20, 12, NULL);
+		Printer::text(__GET_CLASS_NAME(this), 24, 12, NULL);
+		Printer::text("Parent: ", 20, 15, NULL);
+		Printer::hex((uint32)this->parent, 29, 15, 8, NULL);
 
 		NM_ASSERT(false, "Container::destructor: illegal destruction of a Container");
 	}
@@ -91,15 +91,15 @@ void Container::destructor()
 #ifndef __RELEASE
 			if(NULL != child->parent && child->parent != this)
 			{
-				Printing::setDebugMode();
-				Printing::clear();
-				Printing::text("Me: ", 20, 12, NULL);
-				Printing::text(__GET_CLASS_NAME(this), 24, 12, NULL);
-				Printing::text("It: ", 20, 13, NULL);
-				Printing::text(child ? __GET_CLASS_NAME(child) : "NULL", 24, 13, NULL);
-				Printing::hex((uint32)child, 29, 14, 8, NULL);
-				Printing::text("Parent: ", 20, 15, NULL);
-				Printing::hex((uint32)child->parent, 29, 15, 8, NULL);
+				Printer::setDebugMode();
+				Printer::clear();
+				Printer::text("Me: ", 20, 12, NULL);
+				Printer::text(__GET_CLASS_NAME(this), 24, 12, NULL);
+				Printer::text("It: ", 20, 13, NULL);
+				Printer::text(child ? __GET_CLASS_NAME(child) : "NULL", 24, 13, NULL);
+				Printer::hex((uint32)child, 29, 14, 8, NULL);
+				Printer::text("Parent: ", 20, 15, NULL);
+				Printer::hex((uint32)child->parent, 29, 15, 8, NULL);
 
 				NM_ASSERT(false, "Container::destructor: deleting a child of not mine");
 			}
@@ -507,11 +507,11 @@ void Container::removeChild(Container child, bool deleteChild)
 #ifndef __RELEASE
 	else
 	{
-		Printing::setDebugMode();
-		Printing::text("Container's address: ", 1, 15, NULL);
-		Printing::hex((uint32)this, 18, 15, 8, NULL);
-		Printing::text("Container's type: ", 1, 16, NULL);
-		Printing::text(__GET_CLASS_NAME(this), 18, 16, NULL);
+		Printer::setDebugMode();
+		Printer::text("Container's address: ", 1, 15, NULL);
+		Printer::hex((uint32)this, 18, 15, 8, NULL);
+		Printer::text("Container's type: ", 1, 16, NULL);
+		Printer::text(__GET_CLASS_NAME(this), 18, 16, NULL);
 
 		NM_ASSERT(false, "Container::removeChild: not my child");
 	}
@@ -536,11 +536,11 @@ void Container::purgeChildren()
 #ifndef __RELEASE
 		if(isDeleted(child))
 		{
-			Printing::setDebugMode();
-			Printing::text("ListenerObject's address: ", 1, 15, NULL);
-			Printing::hex((uint32)this, 18, 15, 8, NULL);
-			Printing::text("ListenerObject's type: ", 1, 16, NULL);
-			Printing::text(__GET_CLASS_NAME(this), 18, 16, NULL);
+			Printer::setDebugMode();
+			Printer::text("ListenerObject's address: ", 1, 15, NULL);
+			Printer::hex((uint32)this, 18, 15, 8, NULL);
+			Printer::text("ListenerObject's type: ", 1, 16, NULL);
+			Printer::text(__GET_CLASS_NAME(this), 18, 16, NULL);
 
 			NM_ASSERT(false, "Container::purgeChildren: deleted children");
 		}
@@ -663,11 +663,11 @@ void Container::updateChildren()
 #ifndef __RELEASE
 		if(isDeleted(child))
 		{
-			Printing::setDebugMode();
-			Printing::text("ListenerObject's address: ", 1, 15, NULL);
-			Printing::hex((uint32)this, 18, 15, 8, NULL);
-			Printing::text("ListenerObject's type: ", 1, 16, NULL);
-			Printing::text(__GET_CLASS_NAME(this), 18, 16, NULL);
+			Printer::setDebugMode();
+			Printer::text("ListenerObject's address: ", 1, 15, NULL);
+			Printer::hex((uint32)this, 18, 15, 8, NULL);
+			Printer::text("ListenerObject's type: ", 1, 16, NULL);
+			Printer::text(__GET_CLASS_NAME(this), 18, 16, NULL);
 
 			NM_ASSERT(false, "Container::updateChildren: deleted children");
 		}

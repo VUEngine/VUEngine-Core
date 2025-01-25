@@ -12,7 +12,7 @@
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <Particle.h>
-#include <Printing.h>
+#include <Printer.h>
 #include <Utilities.h>
 #include <VirtualList.h>
 #include <VUEngine.h>
@@ -394,14 +394,14 @@ void ParticleSystem::setElapsedTime(uint32 elapsedTime)
 
 void ParticleSystem::print(int16 x, int16 y)
 {
-	Printing::text("PARTICLE SYSTEM ", x, y++, NULL);
-	Printing::text("Particles", x, ++y, NULL);
-	Printing::text("Maximum:    ", x + 1, ++y, NULL);
-	Printing::int32(this->maximumNumberOfAliveParticles, x + 10, y, NULL);
-	Printing::text("Spawned:    ", x + 1, ++y, NULL);
-	Printing::int32(VirtualList::getCount(this->particles), x + 10, y, NULL);
-	Printing::text("Alive:      ", x + 1, ++y, NULL);
-	Printing::int32(this->aliveParticlesCount, x + 10, y, NULL);
+	Printer::text("PARTICLE SYSTEM ", x, y++, NULL);
+	Printer::text("Particles", x, ++y, NULL);
+	Printer::text("Maximum:    ", x + 1, ++y, NULL);
+	Printer::int32(this->maximumNumberOfAliveParticles, x + 10, y, NULL);
+	Printer::text("Spawned:    ", x + 1, ++y, NULL);
+	Printer::int32(VirtualList::getCount(this->particles), x + 10, y, NULL);
+	Printer::text("Alive:      ", x + 1, ++y, NULL);
+	Printer::int32(this->aliveParticlesCount, x + 10, y, NULL);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

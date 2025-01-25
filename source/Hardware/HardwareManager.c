@@ -12,10 +12,10 @@
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <CommunicationManager.h>
-#include <DirectDraw.h>
+#include <FrameBufferManager.h>
 #include <DebugConfig.h>
 #include <KeypadManager.h>
-#include <Printing.h>
+#include <Printer.h>
 #include <RumbleManager.h>
 #include <SoundManager.h>
 #include <SRAMManager.h>
@@ -120,7 +120,7 @@ static void HardwareManager::reset()
 
 	// Reset hardware managers
 	CommunicationManager::reset(CommunicationManager::getInstance());
-	DirectDraw::reset(DirectDraw::getInstance());
+	FrameBufferManager::reset(FrameBufferManager::getInstance());
 	KeypadManager::reset(KeypadManager::getInstance());
 	RumbleManager::reset(RumbleManager::getInstance());
 	VSUManager::reset(VSUManager::getInstance());
@@ -135,90 +135,90 @@ static void HardwareManager::reset()
 
 static void HardwareManager::print(int32 x, int32 y)
 {
-	Printing::text("HARDWARE STATUS", x, y++, NULL);
+	Printer::text("HARDWARE STATUS", x, y++, NULL);
 
 	int32 auxY = y;
 	int32 xDisplacement = 5;
 
 	// Print registries' status to know the call source
-	Printing::text("PSW:" , x, ++auxY, NULL);
-	Printing::hex(HardwareManager::getPSW(), x + xDisplacement, auxY, 4, NULL);
-	Printing::text("SP:" , x, ++auxY, NULL);
-	Printing::hex(HardwareManager::getStackPointer(), x + xDisplacement, auxY, 4, NULL);
-	Printing::text("LP:" , x, ++auxY, NULL);
-	Printing::hex(HardwareManager::getLinkPointer(), x + xDisplacement, auxY++, 4, NULL);
+	Printer::text("PSW:" , x, ++auxY, NULL);
+	Printer::hex(HardwareManager::getPSW(), x + xDisplacement, auxY, 4, NULL);
+	Printer::text("SP:" , x, ++auxY, NULL);
+	Printer::hex(HardwareManager::getStackPointer(), x + xDisplacement, auxY, 4, NULL);
+	Printer::text("LP:" , x, ++auxY, NULL);
+	Printer::hex(HardwareManager::getLinkPointer(), x + xDisplacement, auxY++, 4, NULL);
 
-	Printing::text("Hardware\nRegisters", x, ++auxY, NULL);
+	Printer::text("Hardware\nRegisters", x, ++auxY, NULL);
 	auxY+=2;
-	Printing::text("WCR:", x, ++auxY, NULL);
-	Printing::hex(_hardwareRegisters[__WCR], x + xDisplacement, auxY, 4, NULL);
-	Printing::text("CCR:", x, ++auxY, NULL);
-	Printing::hex(_hardwareRegisters[__CCR], x + xDisplacement, auxY, 4, NULL);
-	Printing::text("CCSR:", x, ++auxY, NULL);
-	Printing::hex(_hardwareRegisters[__CCSR], x + xDisplacement, auxY, 4, NULL);
-	Printing::text("CDTR:", x, ++auxY, NULL);
-	Printing::hex(_hardwareRegisters[__CDTR], x + xDisplacement, auxY, 4, NULL);
-	Printing::text("CDRR:", x, ++auxY, NULL);
-	Printing::hex(_hardwareRegisters[__CDRR], x + xDisplacement, auxY, 4, NULL);
-	Printing::text("SDLR:", x, ++auxY, NULL);
-	Printing::hex(_hardwareRegisters[__SDLR], x + xDisplacement, auxY, 4, NULL);
-	Printing::text("SDHR:", x, ++auxY, NULL);
-	Printing::hex(_hardwareRegisters[__SDHR], x + xDisplacement, auxY, 4, NULL);
-	Printing::text("TLR:", x, ++auxY, NULL);
-	Printing::hex(_hardwareRegisters[__TLR], x + xDisplacement, auxY, 4, NULL);
-	Printing::text("THR:", x, ++auxY, NULL);
-	Printing::hex(_hardwareRegisters[__THR], x + xDisplacement, auxY, 4, NULL);
-	Printing::text("TCR:", x, ++auxY, NULL);
-	Printing::hex(_hardwareRegisters[__TCR], x + xDisplacement, auxY, 4, NULL);
-	Printing::text("WCR:", x, ++auxY, NULL);
-	Printing::hex(_hardwareRegisters[__WCR], x + xDisplacement, auxY, 4, NULL);
-	Printing::text("SCR:", x, ++auxY, NULL);
-	Printing::hex(_hardwareRegisters[__SCR], x + xDisplacement, auxY, 4, NULL);
+	Printer::text("WCR:", x, ++auxY, NULL);
+	Printer::hex(_hardwareRegisters[__WCR], x + xDisplacement, auxY, 4, NULL);
+	Printer::text("CCR:", x, ++auxY, NULL);
+	Printer::hex(_hardwareRegisters[__CCR], x + xDisplacement, auxY, 4, NULL);
+	Printer::text("CCSR:", x, ++auxY, NULL);
+	Printer::hex(_hardwareRegisters[__CCSR], x + xDisplacement, auxY, 4, NULL);
+	Printer::text("CDTR:", x, ++auxY, NULL);
+	Printer::hex(_hardwareRegisters[__CDTR], x + xDisplacement, auxY, 4, NULL);
+	Printer::text("CDRR:", x, ++auxY, NULL);
+	Printer::hex(_hardwareRegisters[__CDRR], x + xDisplacement, auxY, 4, NULL);
+	Printer::text("SDLR:", x, ++auxY, NULL);
+	Printer::hex(_hardwareRegisters[__SDLR], x + xDisplacement, auxY, 4, NULL);
+	Printer::text("SDHR:", x, ++auxY, NULL);
+	Printer::hex(_hardwareRegisters[__SDHR], x + xDisplacement, auxY, 4, NULL);
+	Printer::text("TLR:", x, ++auxY, NULL);
+	Printer::hex(_hardwareRegisters[__TLR], x + xDisplacement, auxY, 4, NULL);
+	Printer::text("THR:", x, ++auxY, NULL);
+	Printer::hex(_hardwareRegisters[__THR], x + xDisplacement, auxY, 4, NULL);
+	Printer::text("TCR:", x, ++auxY, NULL);
+	Printer::hex(_hardwareRegisters[__TCR], x + xDisplacement, auxY, 4, NULL);
+	Printer::text("WCR:", x, ++auxY, NULL);
+	Printer::hex(_hardwareRegisters[__WCR], x + xDisplacement, auxY, 4, NULL);
+	Printer::text("SCR:", x, ++auxY, NULL);
+	Printer::hex(_hardwareRegisters[__SCR], x + xDisplacement, auxY, 4, NULL);
 
 	auxY = y + 4;
 	x += 11;
 	xDisplacement = 8;
 
-	Printing::text("VIP\nRegisters", x, ++auxY, NULL);
+	Printer::text("VIP\nRegisters", x, ++auxY, NULL);
 	auxY+=2;
-	Printing::text("INTPND:", x, ++auxY, NULL);
-	Printing::hex(_vipRegisters[__INTPND], x + xDisplacement, auxY, 4, NULL);
-	Printing::text("INTENB:", x, ++auxY, NULL);
-	Printing::hex(_vipRegisters[__INTENB], x + xDisplacement, auxY, 4, NULL);
-	Printing::text("INTCLR:", x, ++auxY, NULL);
-	Printing::hex(_vipRegisters[__INTCLR], x + xDisplacement, auxY, 4, NULL);
-	Printing::text("DPSTTS:", x, ++auxY, NULL);
-	Printing::hex(_vipRegisters[__DPSTTS], x + xDisplacement, auxY, 4, NULL);
-	Printing::text("DPCTRL:", x, ++auxY, NULL);
-	Printing::hex(_vipRegisters[__DPCTRL], x + xDisplacement, auxY, 4, NULL);
-	Printing::text("BRTA:", x, ++auxY, NULL);
-	Printing::hex((uint8)_vipRegisters[__BRTA], x + xDisplacement, auxY, 4, NULL);
-	Printing::text("BRTB:", x, ++auxY, NULL);
-	Printing::hex((uint8)_vipRegisters[__BRTB], x + xDisplacement, auxY, 4, NULL);
-	Printing::text("BRTC:", x, ++auxY, NULL);
-	Printing::hex((uint8)_vipRegisters[__BRTC], x + xDisplacement, auxY, 4, NULL);
-	Printing::text("REST:", x, ++auxY, NULL);
-	Printing::hex(_vipRegisters[__REST], x + xDisplacement, auxY, 4, NULL);
-	Printing::text("FRMCYC:", x, ++auxY, NULL);
-	Printing::hex(_vipRegisters[__FRMCYC], x + xDisplacement, auxY, 4, NULL);
-	Printing::text("CTA:", x, ++auxY, NULL);
-	Printing::hex(_vipRegisters[__CTA], x + xDisplacement, auxY, 4, NULL);
-	Printing::text("XPSTTS:", x, ++auxY, NULL);
-	Printing::hex(_vipRegisters[__XPSTTS], x + xDisplacement, auxY, 4, NULL);
-	Printing::text("XPCTRL:", x, ++auxY, NULL);
-	Printing::hex(_vipRegisters[__XPCTRL], x + xDisplacement, auxY, 4, NULL);
-	Printing::text("VER:", x, ++auxY, NULL);
-	Printing::hex(_vipRegisters[__VER], x + xDisplacement, auxY, 4, NULL);
+	Printer::text("INTPND:", x, ++auxY, NULL);
+	Printer::hex(_vipRegisters[__INTPND], x + xDisplacement, auxY, 4, NULL);
+	Printer::text("INTENB:", x, ++auxY, NULL);
+	Printer::hex(_vipRegisters[__INTENB], x + xDisplacement, auxY, 4, NULL);
+	Printer::text("INTCLR:", x, ++auxY, NULL);
+	Printer::hex(_vipRegisters[__INTCLR], x + xDisplacement, auxY, 4, NULL);
+	Printer::text("DPSTTS:", x, ++auxY, NULL);
+	Printer::hex(_vipRegisters[__DPSTTS], x + xDisplacement, auxY, 4, NULL);
+	Printer::text("DPCTRL:", x, ++auxY, NULL);
+	Printer::hex(_vipRegisters[__DPCTRL], x + xDisplacement, auxY, 4, NULL);
+	Printer::text("BRTA:", x, ++auxY, NULL);
+	Printer::hex((uint8)_vipRegisters[__BRTA], x + xDisplacement, auxY, 4, NULL);
+	Printer::text("BRTB:", x, ++auxY, NULL);
+	Printer::hex((uint8)_vipRegisters[__BRTB], x + xDisplacement, auxY, 4, NULL);
+	Printer::text("BRTC:", x, ++auxY, NULL);
+	Printer::hex((uint8)_vipRegisters[__BRTC], x + xDisplacement, auxY, 4, NULL);
+	Printer::text("REST:", x, ++auxY, NULL);
+	Printer::hex(_vipRegisters[__REST], x + xDisplacement, auxY, 4, NULL);
+	Printer::text("FRMCYC:", x, ++auxY, NULL);
+	Printer::hex(_vipRegisters[__FRMCYC], x + xDisplacement, auxY, 4, NULL);
+	Printer::text("CTA:", x, ++auxY, NULL);
+	Printer::hex(_vipRegisters[__CTA], x + xDisplacement, auxY, 4, NULL);
+	Printer::text("XPSTTS:", x, ++auxY, NULL);
+	Printer::hex(_vipRegisters[__XPSTTS], x + xDisplacement, auxY, 4, NULL);
+	Printer::text("XPCTRL:", x, ++auxY, NULL);
+	Printer::hex(_vipRegisters[__XPCTRL], x + xDisplacement, auxY, 4, NULL);
+	Printer::text("VER:", x, ++auxY, NULL);
+	Printer::hex(_vipRegisters[__VER], x + xDisplacement, auxY, 4, NULL);
 
-//	Printing::hex(HardwareManager::readKeypad(HardwareManager::getInstance()), 38, 5, 4, NULL);
+//	Printer::hex(HardwareManager::readKeypad(HardwareManager::getInstance()), 38, 5, 4, NULL);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 static void HardwareManager::printStackStatus(int32 x, int32 y, bool resumed)
 {
-	Printing::setDebugMode();
-	Printing::clear();
+	Printer::setDebugMode();
+	Printer::clear();
 	
 	int32 sp;
 	asm
@@ -236,8 +236,8 @@ static void HardwareManager::printStackStatus(int32 x, int32 y, bool resumed)
 			x = (__SCREEN_WIDTH_IN_CHARS) - Math::getDigitsCount(room) - 13;
 		}
 
-		Printing::text("   STACK'S ROOM		" , x - 3, y, NULL);
-		Printing::int32(room, x + 13, y, NULL);
+		Printer::text("   STACK'S ROOM		" , x - 3, y, NULL);
+		Printer::int32(room, x + 13, y, NULL);
 	}
 	else
 	{
@@ -246,17 +246,17 @@ static void HardwareManager::printStackStatus(int32 x, int32 y, bool resumed)
 			x = (__SCREEN_WIDTH_IN_CHARS) - 1 - Math::getDigitsCount(room) - 11;
 		}
 
-		Printing::text("   STACK'S STATUS" , x - 3, y, NULL);
-		Printing::text("Bss' end:" , x, ++y, NULL);
-		Printing::hex((int32)&_bssEnd, x + 15, y, 4, NULL);
-		Printing::text("Stack Pointer:" , x, ++y, NULL);
-		Printing::hex(sp, x + 15, y, 4, NULL);
-		Printing::text("Minimum Room:		   " , x, ++y, NULL);
-		Printing::int32(__STACK_HEADROOM, x + 15, y, NULL);
-		Printing::text("Actual Room:		   " , x, ++y, NULL);
-		Printing::int32(room, x + 15, y, NULL);
-		Printing::text("Overflow:		   " , x, ++y, NULL);
-		Printing::int32(__STACK_HEADROOM - room, x + 15, y, NULL);
+		Printer::text("   STACK'S STATUS" , x - 3, y, NULL);
+		Printer::text("Bss' end:" , x, ++y, NULL);
+		Printer::hex((int32)&_bssEnd, x + 15, y, 4, NULL);
+		Printer::text("Stack Pointer:" , x, ++y, NULL);
+		Printer::hex(sp, x + 15, y, 4, NULL);
+		Printer::text("Minimum Room:		   " , x, ++y, NULL);
+		Printer::int32(__STACK_HEADROOM, x + 15, y, NULL);
+		Printer::text("Actual Room:		   " , x, ++y, NULL);
+		Printer::int32(room, x + 15, y, NULL);
+		Printer::text("Overflow:		   " , x, ++y, NULL);
+		Printer::int32(__STACK_HEADROOM - room, x + 15, y, NULL);
 	}
 }
 
@@ -273,30 +273,30 @@ static void HardwareManager::checkMemoryMap()
 {
 	if((uint32)&_dramDataStart < __WORLD_SPACE_BASE_ADDRESS && (uint32)&_dramBssEnd >= __WORLD_SPACE_BASE_ADDRESS)
 	{
-		Printing::setDebugMode();
+		Printer::setDebugMode();
 		int32 y = 15;
 		uint32 missingSpace = (uint32)&_dramBssEnd - __WORLD_SPACE_BASE_ADDRESS;
 		uint32 recommendedDramStart = (uint32)&_dramDataStart - missingSpace;
 		uint32 recommendedDramSize = (__WORLD_SPACE_BASE_ADDRESS - recommendedDramStart);
 		uint32 recommendedBgmapSegments = (recommendedDramStart - __BGMAP_SPACE_BASE_ADDRESS) / 8192;
 
-		Printing::text("Increase the dram section in the vb.ld file", 1, y++, NULL);
-		Printing::text("Missing space: ", 1, ++y, NULL);
-		Printing::int32(missingSpace, 17, y, NULL);
-		Printing::text("Bytes ", 17 + Math::getDigitsCount(missingSpace) + 1, y++, NULL);
-		Printing::text("WORLD space: ", 1, ++y, NULL);
-		Printing::hex((uint32)__WORLD_SPACE_BASE_ADDRESS, 17, y, 4, NULL);
-		Printing::text("DRAM start: ", 1, ++y, NULL);
-		Printing::hex((uint32)&_dramDataStart, 17, y, 4, NULL);
-		Printing::text("DRAM end: ", 1, ++y, NULL);
-		Printing::hex((uint32)&_dramBssEnd, 17, y++, 4, NULL);
-		Printing::text("Suggested DRAM start: ", 1, ++y, NULL);
-		Printing::hex(recommendedDramStart, 25, y, 4, NULL);
-		Printing::text("Suggested DRAM size: ", 1, ++y, NULL);
-		Printing::int32(recommendedDramSize, 25, y, NULL);
-		Printing::text("Bytes ", 25 + Math::getDigitsCount(recommendedDramSize) + 1, y++, NULL);
-		Printing::text("Maximum BGMAP segments: ", 1, ++y, NULL);
-		Printing::int32(recommendedBgmapSegments, 25, y, NULL);
+		Printer::text("Increase the dram section in the vb.ld file", 1, y++, NULL);
+		Printer::text("Missing space: ", 1, ++y, NULL);
+		Printer::int32(missingSpace, 17, y, NULL);
+		Printer::text("Bytes ", 17 + Math::getDigitsCount(missingSpace) + 1, y++, NULL);
+		Printer::text("WORLD space: ", 1, ++y, NULL);
+		Printer::hex((uint32)__WORLD_SPACE_BASE_ADDRESS, 17, y, 4, NULL);
+		Printer::text("DRAM start: ", 1, ++y, NULL);
+		Printer::hex((uint32)&_dramDataStart, 17, y, 4, NULL);
+		Printer::text("DRAM end: ", 1, ++y, NULL);
+		Printer::hex((uint32)&_dramBssEnd, 17, y++, 4, NULL);
+		Printer::text("Suggested DRAM start: ", 1, ++y, NULL);
+		Printer::hex(recommendedDramStart, 25, y, 4, NULL);
+		Printer::text("Suggested DRAM size: ", 1, ++y, NULL);
+		Printer::int32(recommendedDramSize, 25, y, NULL);
+		Printer::text("Bytes ", 25 + Math::getDigitsCount(recommendedDramSize) + 1, y++, NULL);
+		Printer::text("Maximum BGMAP segments: ", 1, ++y, NULL);
+		Printer::int32(recommendedBgmapSegments, 25, y, NULL);
 
 		NM_ASSERT(false, "HardwareManager::checkMemoryMap: DRAM section overflow");
 	}
@@ -306,8 +306,8 @@ static void HardwareManager::checkMemoryMap()
 
 static void HardwareManager::croInterruptHandler()
 {
-	Printing::resetCoordinates();
-	Printing::text("EXP cron", 48 - 13, 0, NULL);
+	Printer::resetCoordinates();
+	Printer::text("EXP cron", 48 - 13, 0, NULL);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

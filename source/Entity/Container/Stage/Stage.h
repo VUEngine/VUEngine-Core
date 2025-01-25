@@ -18,7 +18,7 @@
 #include <CharSet.h>
 #include <Actor.h>
 #include <ActorFactory.h>
-#include <Printing.h>
+#include <Printer.h>
 #include <SoundManager.h>
 #include <SpriteManager.h>
 #include <Texture.h>
