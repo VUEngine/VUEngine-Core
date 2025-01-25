@@ -514,28 +514,6 @@ void VUEngine::destructor()
 	Base::destructor();
 }
 
-//—————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-secure int32 VUEngine::start(GameState currentGameState)
-{
-	if(isDeleted(currentGameState))
-	{
-		NM_ASSERT(false, "VUEngine::start: currentGameState is invalid");
-		return 0;
-	}
-
-	if(NULL == StateMachine::getCurrentState(this->stateMachine))
-	{
-		VUEngine::run(this, currentGameState);
-	}
-	else
-	{
-		NM_ASSERT(false, "VUEngine::start: already started");
-	}
-
-	return 0;
-}
-
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void VUEngine::cleaniningStatesStack()
@@ -928,8 +906,14 @@ bool VUEngine::stream(GameState gameState)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void VUEngine::run(GameState currentGameState)
+secure void VUEngine::run(GameState currentGameState)
 {
+	if(isDeleted(currentGameState))
+	{
+		NM_ASSERT(false, "VUEngine::run: currentGameState is invalid");
+		return;
+	}
+
 	VUEngine::setState(currentGameState);
 
 	while(NULL != currentGameState)
@@ -1055,8 +1039,10 @@ int32 main(void)
 	// Initialize hardware related stuff
 	HardwareManager::initialize();
 
-	// Start the game
-	return VUEngine::start(VUEngine::getInstance(), __GAME_ENTRY_POINT());
+	// Run the game
+	VUEngine::run(VUEngine::getInstance(), __GAME_ENTRY_POINT());
+
+	return 0;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
