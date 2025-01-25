@@ -350,7 +350,7 @@ static void Profiler::printValue(Lap* lap)
 		Printer::text("<", lap->column, 27, "Profiler");
 
 		Printer::setOrientation(kPrintingOrientationVertical);
-		Printer::setDirection(kPrintingDirectionRTL);
+		Printer::setTextDirection(kPrintingDirectionRTL);
 		
 		Printer::text(/*Utilities::toUppercase(*/lap->processName/*)*/, lap->column, 26, "Profiler");
 		Printer::float(lap->elapsedTime, lap->column, 13 + (10 < lap->elapsedTime ? 1 : 0), 2, "Profiler");
@@ -389,7 +389,7 @@ static void Profiler::printValue(Lap* lap)
 		}
 
 		Printer::setOrientation(kPrintingOrientationHorizontal);
-		Printer::setDirection(kPrintingDirectionLTR);
+		Printer::setTextDirection(kPrintingDirectionLTR);
 	}
 }
 

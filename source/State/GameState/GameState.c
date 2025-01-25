@@ -19,6 +19,7 @@
 #include <FrameRate.h>
 #include <MessageDispatcher.h>
 #include <Printer.h>
+#include <Profiler.h>
 #include <SpriteManager.h>
 #include <StopwatchManager.h>
 #include <Stage.h>
