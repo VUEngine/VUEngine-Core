@@ -154,7 +154,32 @@ Component Entity::getComponentAtIndex(uint32 componentType, int16 componentIndex
 
 VirtualList Entity::getComponents(uint32 componentType)
 {
-	return ComponentManager::getComponents(this, componentType);
+	if(NULL == this->components)
+	{
+		this->components = 
+			(VirtualList*)
+			(
+				(uint32)MemoryPool::allocate(sizeof(VirtualList) * kComponentTypes + __DYNAMIC_STRUCT_PAD) + __DYNAMIC_STRUCT_PAD
+			);
+
+		for(int16 i = 0; i < kComponentTypes; i++)
+		{
+			this->components[i] = NULL;
+		}
+	}
+
+	if(NULL == this->components[componentType])
+	{
+		this->components[componentType] = new VirtualList();
+
+		ComponentManager::getComponents(this, componentType, this->components[componentType]);
+	}
+	else
+	{
+		return this->components[componentType];
+	}
+
+	return this->components[componentType];
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

@@ -23,7 +23,6 @@
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 friend class Component;
-friend class Entity;
 friend class VirtualNode;
 friend class VirtualList;
 
@@ -299,36 +298,18 @@ static Component ComponentManager::getComponentAtIndex(Entity owner, uint32 comp
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static VirtualList ComponentManager::getComponents(Entity owner, uint32 componentType)
+static void ComponentManager::getComponents(Entity owner, uint32 componentType, VirtualList components)
 {
+	if(NULL == components || NULL == components)
+	{
+		return;
+	}
+
 	ComponentManager componentManager = ComponentManager::doGetManager(componentType);
 
 	if(NULL == componentManager)
 	{
-		return NULL;
-	}
-
-	if(NULL == owner->components)
-	{
-		owner->components = 
-			(VirtualList*)
-			(
-				(uint32)MemoryPool::allocate(sizeof(VirtualList) * kComponentTypes + __DYNAMIC_STRUCT_PAD) + __DYNAMIC_STRUCT_PAD
-			);
-
-		for(int16 i = 0; i < kComponentTypes; i++)
-		{
-			owner->components[i] = NULL;
-		}
-	}
-
-	if(NULL == owner->components[componentType])
-	{
-		owner->components[componentType] = new VirtualList();
-	}
-	else
-	{
-		return owner->components[componentType];
+		return;
 	}
 
 	for(VirtualNode node = componentManager->components->head; NULL != node; node = node->next)
@@ -337,11 +318,9 @@ static VirtualList ComponentManager::getComponents(Entity owner, uint32 componen
 
 		if(owner == component->owner)
 		{
-			VirtualList::pushBack(owner->components[componentType], component);
+			VirtualList::pushBack(components, component);
 		}
 	}
-
-	return owner->components[componentType];
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -650,22 +629,6 @@ static uint32 ComponentManager::getComponentType(Component component)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void ComponentManager::cleanOwnerComponentLists(Entity owner, uint32 componentType)
-{
-	if(NULL == owner)
-	{
-		return;
-	}
-	
-	if(NULL != owner->components && NULL != owner->components[componentType])
-	{
-		delete owner->components[componentType];
-		owner->components[componentType] = NULL;
-	}
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
 static bool ComponentManager::getRightBoxFromComponents(ComponentManager componentMananager, Entity owner, RightBox* rightBox)
 {
 	if(NULL == rightBox)
@@ -822,7 +785,7 @@ Component ComponentManager::instantiateComponent(Entity owner, const ComponentSp
 		return NULL;
 	}
 
-	ComponentManager::cleanOwnerComponentLists(owner, componentSpec->componentType);
+	Entity::clearComponentLists(owner, componentSpec->componentType);
 
 	return NULL;
 }
@@ -841,7 +804,7 @@ void ComponentManager::deinstantiateComponent(Entity owner, Component component)
 		return;
 	}
 
-	ComponentManager::cleanOwnerComponentLists(owner, component->componentSpec->componentType);
+	Entity::clearComponentLists(owner, component->componentSpec->componentType);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

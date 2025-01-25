@@ -100,8 +100,8 @@ abstract class ComponentManager : ListenerObject
 	/// Retrieve a list with the components of the provided type belonging to the provided owner.
 	/// @param owner: Object to which the components attach to
 	/// @param componentType: Type of components to add
-	/// @return Linked list of components of the type provided that attach to the provided owner
-	static VirtualList getComponents(Entity owner, uint32 componentType);
+	/// @param components: List to populate with the owner's compontents
+	static void getComponents(Entity owner, uint32 componentType, VirtualList components);
 
 	/// Retrieve the linked list of components that are instances of the provided class.
 	/// @param owner: Object to which the components attach to
