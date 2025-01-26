@@ -780,7 +780,7 @@ void ComponentManager::disable()
 
 Component ComponentManager::instantiateComponent(Entity owner, const ComponentSpec* componentSpec)
 {
-	if(kComponentTypes <= componentSpec->componentType)
+	if(NULL == owner || kComponentTypes <= componentSpec->componentType)
 	{
 		return NULL;
 	}
@@ -794,7 +794,7 @@ Component ComponentManager::instantiateComponent(Entity owner, const ComponentSp
 
 void ComponentManager::deinstantiateComponent(Entity owner, Component component) 
 {
-	if(isDeleted(component))
+	if(NULL == owner || isDeleted(component))
 	{
 		return;
 	}
