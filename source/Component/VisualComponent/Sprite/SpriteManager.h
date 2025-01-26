@@ -206,12 +206,12 @@ class SpriteManager : ComponentManager
 	/// @param hidePrinting: Flag to allow/prohibit the display of the printing sprite
 	void hideAllSprites(Sprite spareSprite, bool hidePrinting);
 
-	/// Show all sprites except the provided one.
+	/// Show all sprites except the provided one (available only when __TOOLS is defined).
 	/// @param spareSprite: Sprite to not show
 	/// @param showPrinting: Flag to allow/prohibit the display of the printing sprite
 	void showAllSprites(Sprite spareSprite, bool showPrinting);
 
-	/// Hide all sprites except the provided one.
+	/// Hide all sprites except the provided one (available only when __TOOLS is defined).
 	/// @param spareSprite: Sprite to not hide
 	/// @param hidePrinting: Flag to allow/prohibit the display of the printing sprite
 	void hideAllSprites(Sprite spareSprite, bool hidePrinting);

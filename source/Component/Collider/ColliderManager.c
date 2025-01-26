@@ -101,8 +101,6 @@ uint32 ColliderManager::update()
 	_checkCycles++;
 #endif
 
-	this->dirty = false;
-
 	for(VirtualNode auxNode = this->components->head, auxNextNode = NULL; NULL != auxNode; auxNode = auxNextNode)
 	{
 		auxNextNode = auxNode->next;
@@ -121,7 +119,7 @@ uint32 ColliderManager::update()
 			continue;
 		}
 
-			collider->invalidPosition = true;
+		collider->invalidPosition = true;
 	}
 
 	for(VirtualNode auxNode = this->components->head; NULL != auxNode; auxNode = auxNode->next)
@@ -214,11 +212,6 @@ uint32 ColliderManager::update()
 #else
 			Collider::collides(collider, colliderToCheck);
 #endif
-			if(this->dirty)
-			{
-				NM_ASSERT(false, "ColliderManager::update: added a collider as a response to a collision");
-				node = this->components->head;
-			}
 		}
 	}
 
@@ -243,8 +236,6 @@ Collider ColliderManager::createCollider(Entity owner, const ColliderSpec* colli
 
 	Collider collider = ((Collider (*)(Entity, const ColliderSpec*)) ((ComponentSpec*)colliderSpec)->allocator)(owner, colliderSpec);
 
-	this->dirty = true;
-
 	VirtualList::pushFront(this->components, collider);
 
 	return collider;
@@ -259,6 +250,8 @@ void ColliderManager::setCheckCollidersOutOfCameraRange(bool value)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+// This is unsafe since it calls external methods that could trigger modifications of the list of components
+#ifdef __TOOLS
 void ColliderManager::showColliders()
 {
 	for(VirtualNode node = this->components->head; NULL != node; node = node->next)
@@ -266,9 +259,12 @@ void ColliderManager::showColliders()
 		Collider::show(node->data);
 	}
 }
+#endif
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+// This is unsafe since it calls external methods that could trigger modifications of the list of components
+#ifdef __TOOLS
 void ColliderManager::hideColliders()
 {
 	for(VirtualNode node = this->components->head; NULL != node; node = node->next)
@@ -276,6 +272,7 @@ void ColliderManager::hideColliders()
 		Collider::hide(node->data);
 	}
 }
+#endif
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
@@ -336,7 +333,6 @@ void ColliderManager::constructor()
 	Base::constructor();
 
 	this->checkCollidersOutOfCameraRange = false;
-	this->dirty = false;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

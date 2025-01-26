@@ -162,20 +162,6 @@ Wireframe WireframeManager::instantiateComponent(Entity owner, const WireframeSp
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void WireframeManager::deinstantiateComponent(Entity owner, Wireframe wireframe) 
-{
-	if(isDeleted(wireframe))
-	{
-		return;
-	}
-
-	Base::deinstantiateComponent(this, owner, Component::safeCast(wireframe));
-
-	WireframeManager::destroyWireframe(this, wireframe);
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
 bool WireframeManager::isAnyVisible(Entity owner)
 {
 	for(VirtualNode node = this->components->head; NULL != node; node = node->next)
@@ -209,29 +195,6 @@ Wireframe WireframeManager::createWireframe(Entity owner, const WireframeSpec* w
 	}
 
 	return NULL;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void WireframeManager::destroyWireframe(Wireframe wireframe)
-{
-	NM_ASSERT(!isDeleted(wireframe), "WireframeManager::destroyWireframe: trying to dispose dead wireframe");
-	ASSERT(__GET_CAST(Wireframe, wireframe), "WireframeManager::destroyWireframe: trying to dispose non wireframe");
-
-	if(isDeleted(wireframe))
-	{
-		return;
-	}
-
-	if(WireframeManager::unregisterWireframe(this, wireframe))
-	{
-		Wireframe::hide(wireframe);
-		delete wireframe;
-	}
-	else
-	{
-		NM_ASSERT(false, "WireframeManager::destroyWireframe: destroying a wireframe that I don't manage");
-	}
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -298,9 +261,22 @@ void WireframeManager::render()
 	this->renderedWireframes = 0;
 #endif
 
-	for(VirtualNode node = this->components->head; !this->stopRendering &&  NULL != node; node = node->next)
+	for(VirtualNode node = this->components->head, nextNode = NULL; NULL != node; node = nextNode)
 	{
+		nextNode = node->next;
+
 		Wireframe wireframe = Wireframe::safeCast(node->data);
+
+		NM_ASSERT(!isDeleted(wireframe), "BodyManager::update: deleted body");
+
+		if(wireframe->deleteMe)
+		{
+			// Place in the removed bodies list
+			VirtualList::removeNode(this->components, node);
+
+			delete wireframe;
+			continue;
+		}
 
 		if
 		(
@@ -358,9 +334,22 @@ void WireframeManager::draw()
 	this->drawnWireframes = 0;
 #endif
 
-	for(VirtualNode node = this->components->head; !this->stopDrawing && NULL != node; node = node->next)
+	for(VirtualNode node = this->components->head, nextNode = NULL; NULL != node; node = nextNode)
 	{
+		nextNode = node->next;
+
 		Wireframe wireframe = Wireframe::safeCast(node->data);
+
+		NM_ASSERT(!isDeleted(wireframe), "BodyManager::update: deleted body");
+
+		if(wireframe->deleteMe)
+		{
+			// Place in the removed bodies list
+			VirtualList::removeNode(this->components, node);
+
+			delete wireframe;
+			continue;
+		}
 
 		wireframe->drawn = false;
 
@@ -386,36 +375,8 @@ void WireframeManager::draw()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void WireframeManager::showWireframes(Entity owner)
-{
-	for(VirtualNode node = this->components->head; NULL != node; node = node->next)
-	{
-		Wireframe wireframe = Wireframe::safeCast(node->data);
-
-		if(owner == wireframe->owner)
-		{
-			Wireframe::show(wireframe);
-		}
-	}
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void WireframeManager::hideWireframes(Entity owner)
-{
-	for(VirtualNode node = this->components->head; NULL != node; node = node->next)
-	{
-		Wireframe wireframe = Wireframe::safeCast(node->data);
-
-		if(owner == wireframe->owner)
-		{
-			Wireframe::hide(wireframe);
-		}
-	}
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
+// This is unsafe since it calls external methods that could trigger modifications of the list of components
+#ifdef __TOOLS
 void WireframeManager::showAllWireframes()
 {
 	for(VirtualNode node = this->components->head; NULL != node; node = node->next)
@@ -425,9 +386,12 @@ void WireframeManager::showAllWireframes()
 		Wireframe::show(wireframe);
 	}
 }
+#endif
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+// This is unsafe since it calls external methods that could trigger modifications of the list of components
+#ifdef __TOOLS
 void WireframeManager::hideAllWireframes()
 {
 	for(VirtualNode node = this->components->head; NULL != node; node = node->next)
@@ -437,6 +401,7 @@ void WireframeManager::hideAllWireframes()
 		Wireframe::hide(wireframe);
 	}
 }
+#endif
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 

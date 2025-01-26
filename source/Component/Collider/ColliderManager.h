@@ -46,9 +46,6 @@ class ColliderManager : ComponentManager
 	/// If false, colliders out of camera's range are culled of from collision testing
 	bool checkCollidersOutOfCameraRange;
 
-	/// If true, the list of registered colliders was modified in the mist of processing collisions
-	bool dirty;
-
 	/// @publicsection
 
 	/// Class' constructor

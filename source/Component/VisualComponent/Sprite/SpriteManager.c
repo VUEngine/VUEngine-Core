@@ -703,6 +703,8 @@ void SpriteManager::writeTextures()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+// This is unsafe since it calls external methods that could trigger modifications of the list of components
+#ifdef __TOOLS
 void SpriteManager::showAllSprites(Sprite spareSprite, bool showPrinting)
 {
 	for(VirtualNode node = this->components->tail; NULL != node; node = node->previous)
@@ -735,9 +737,12 @@ void SpriteManager::showAllSprites(Sprite spareSprite, bool showPrinting)
 
 	SpriteManager::stopRendering(this);
 }
+#endif
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+// This is unsafe since it calls external methods that could trigger modifications of the list of components
+#ifdef __TOOLS
 void SpriteManager::hideAllSprites(Sprite spareSprite, bool hidePrinting)
 {
 	for(VirtualNode node = this->components->head; NULL != node; node = node->next)
@@ -764,6 +769,7 @@ void SpriteManager::hideAllSprites(Sprite spareSprite, bool hidePrinting)
 		Printer::show(Printer::getInstance());
 	}
 }
+#endif
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 

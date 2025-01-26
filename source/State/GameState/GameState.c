@@ -270,7 +270,7 @@ void GameState::configureStage(StageSpec* stageSpec, VirtualList positionedActor
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-#ifdef __TOOLS
+
 ComponentManager GameState::getComponentManager(uint32 componentType)
 {
 	if(kComponentTypes <= componentType)
@@ -281,7 +281,6 @@ ComponentManager GameState::getComponentManager(uint32 componentType)
 	
 	return this->componentManagers[componentType];	
 }
-#endif
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 

@@ -84,11 +84,6 @@ class WireframeManager : ComponentManager
 	/// @return Created wireframe
 	override Wireframe instantiateComponent(Entity owner, const WireframeSpec* wireframeSpec);
 
-	/// Destroy the provided wireframe.
-	/// @param owner: Object to which the sprite will attach to
-	/// @param wireframe: Wireframe to destroy
-	override void deinstantiateComponent(Entity owner, Wireframe wireframe);
-
 	/// Check if at least of the sprites that attach to the provided owner is visible.
 	/// @param owner: Object to which the sprites attach to
 	/// @return True if at least of the sprites that attach to the provided owner is visible
@@ -116,18 +111,10 @@ class WireframeManager : ComponentManager
 	/// Draw wireframes to the frame buffers
 	void draw();
 
-	/// Show all wireframes belonging to the provided owner.
-	/// @param owner: Object to which the wireframe will attach to
-	void showWireframes(Entity owner);
-
-	/// Hide all wireframes belonging to the provided owner.
-	/// @param owner: Object to which the wireframe will attach to
-	void hideWireframes(Entity owner);
-
-	/// Show all wireframes.
+	/// Show all wireframes (available only when __TOOLS is defined).
 	void showAllWireframes();
 	
-	/// Hide all wireframes.
+	/// Hide all wireframes (available only when __TOOLS is defined).
 	void hideAllWireframes();
 
 	/// Check if there are any registered wireframes.
