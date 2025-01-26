@@ -72,6 +72,11 @@ void ColliderManager::enable()
 void ColliderManager::disable()
 {
 	Base::disable(this);
+
+#ifdef __TOOLS
+	// Make sure collision colliders are not drawn while suspended
+	ColliderManager::hideColliders(this);
+#endif
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
