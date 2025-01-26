@@ -173,7 +173,7 @@ void AnimationInspector::hide()
 
 	// Make sure all textures are written right now
 	SpriteManager::writeTextures(SpriteManager::safeCast(ComponentManager::getManager(kSpriteComponent)));
-	SpriteManager::showAllSprites(SpriteManager::safeCast(ComponentManager::getManager(kSpriteComponent)), NULL, true);
+	//SpriteManager::showAllSprites(SpriteManager::safeCast(ComponentManager::getManager(kSpriteComponent)), NULL, true);
 	SpriteManager::deferParamTableEffects(SpriteManager::safeCast(ComponentManager::getManager(kSpriteComponent)), true);
 }
 
@@ -733,7 +733,7 @@ void AnimationInspector::createSprite()
 
 	this->sprite->updateAnimationFrame = true;
 
-	SpriteManager::hideAllSprites(SpriteManager::safeCast(ComponentManager::getManager(kSpriteComponent)), this->sprite, false);
+	//SpriteManager::hideAllSprites(SpriteManager::safeCast(ComponentManager::getManager(kSpriteComponent)), this->sprite, false);
 	SpriteManager::prepareAll(SpriteManager::safeCast(ComponentManager::getManager(kSpriteComponent)));
 }
 
