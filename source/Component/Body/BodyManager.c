@@ -82,20 +82,6 @@ Body BodyManager::instantiateComponent(Entity owner, const BodySpec* bodySpec)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void BodyManager::deinstantiateComponent(Entity owner, Body body) 
-{
-	if(isDeleted(body))
-	{
-		return;
-	}
-
-	Base::deinstantiateComponent(this, owner, Component::safeCast(body));
-
-	BodyManager::destroyBody(this, body);
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
 void BodyManager::reset()
 {
 	this->cycle = 0;
@@ -130,8 +116,6 @@ void BodyManager::update()
 			this->remainingSkipCycles = 0;
 		}
 	}
-
-	this->dirty = false;
 
 	for(VirtualNode node = this->components->head, nextNode = NULL; NULL != node; node = nextNode)
 	{
@@ -195,24 +179,6 @@ void BodyManager::update()
 
 Body BodyManager::createBody(Entity owner, const BodySpec* bodySpec)
 {
-	if(this->dirty)
-	{
-		for(VirtualNode node = this->components->head, nextNode = NULL; NULL != node; node = nextNode)
-		{
-			nextNode = node->next;
-
-			Body body = Body::safeCast(node->data);
-
-			if(body->deleteMe)
-			{
-				// Place in the removed bodies list
-				VirtualList::removeNode(this->components, node);
-
-				delete body;
-			}
-		}
-	}
-
 	// If the actor is already registered
 	Body body = new Body(owner, bodySpec);
 	VirtualList::pushFront(this->components, body);
@@ -220,20 +186,6 @@ Body BodyManager::createBody(Entity owner, const BodySpec* bodySpec)
 
 	// Return created body
 	return body;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void BodyManager::destroyBody(Body body)
-{
-	ASSERT(!isDeleted(body), "BodyManager::destroyBody: dead body");
-	ASSERT(VirtualList::find(this->components, body), "BodyManager::destroyBody: body not registered");
-
-	if(!isDeleted(body))
-	{
-		body->deleteMe = true;
-		this->dirty = true;
-	}
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -355,7 +307,6 @@ void BodyManager::constructor()
 
 	this->frictionCoefficient = 0;
 	this->timeScale = __1I_FIXED;
-	this->dirty = false;
 	this->cycle = 0;
 
 	BodyManager::setTimeScale(this, __1I_FIXED);

@@ -70,11 +70,6 @@ class ColliderManager : ComponentManager
 	/// @return Created collider
 	override Collider instantiateComponent(Entity owner, const ColliderSpec* colliderSpec);
 
-	/// Destroy the provided collider.
-	/// @param owner: Object to which the sprite will attach to
-	/// @param collider: Collider to destroy
-	override void deinstantiateComponent(Entity owner, Collider collider);
-
 	/// Update colliders and test collisions.
 	uint32 update();
 

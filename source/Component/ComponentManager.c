@@ -801,6 +801,8 @@ void ComponentManager::deinstantiateComponent(Entity owner, Component component)
 		return;
 	}
 
+	component->deleteMe = true;
+
 	NM_ASSERT(!isDeleted(owner), "ComponentManager::deinstantiateComponent: deleted owner");
 
 	if(NULL == component->componentSpec || kComponentTypes <= component->componentSpec->componentType)

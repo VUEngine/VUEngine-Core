@@ -57,9 +57,6 @@ class BodyManager : ComponentManager
 	/// Number of pending cycles to skip until the next physical simulation cycle
 	uint8 remainingSkipCycles;
 
-	/// If true, a body is pending destruction
-	bool dirty;
-
 	/// @publicsection
 
 	/// Retrieve the time that passes between each physical simulation step.
@@ -84,11 +81,6 @@ class BodyManager : ComponentManager
 	/// @param bodySpec: Spec to use to create the body
 	/// @return Created body
 	override Body instantiateComponent(Entity owner, const BodySpec* bodySpec);
-
-	/// Destroy the provided behavior.
-	/// @param owner: Object to which the sprite will attach to
-	/// @param body: Body to destroy
-	override void deinstantiateComponent(Entity owner, Body body);
 
 	/// Reset the manager's state.
 	void reset();
