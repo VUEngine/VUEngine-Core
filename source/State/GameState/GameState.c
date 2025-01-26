@@ -134,6 +134,10 @@ void GameState::execute(void* owner __attribute__ ((unused)))
 		UIContainer::update(this->uiContainer);
 	}
 
+#ifdef __ENABLE_PROFILER
+	Profiler::lap(kProfilerLapTypeNormalProcess, PROCESS_NAME_EXECUTE_STATE);
+#endif
+
 	GameState::update(this);	
 }
 
@@ -472,6 +476,10 @@ void GameState::applyTransformations()
 	extern Transformation _neutralEnvironmentTransformation;
 
 	Stage::transform(this->stage, &_neutralEnvironmentTransformation, Camera::getTransformationFlags(Camera::getInstance()));
+
+#ifdef __ENABLE_PROFILER
+	Profiler::lap(kProfilerLapTypeNormalProcess, PROCESS_NAME_TRANSFORMS);
+#endif
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -504,7 +512,7 @@ void GameState::update()
 
 	GameState::dispatchDelayedMessages(this);
 
-	while(!VUEngine::hasGameFrameStarted() && GameState::stream(this));
+	GameState::stream(this);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -521,6 +529,10 @@ void GameState::readUserInput()
 	if(0 != (userInput.dummyKey | userInput.pressedKey | userInput.holdKey | userInput.releasedKey))
 	{
 		GameState::processUserInput(this, &userInput);
+
+#ifdef __ENABLE_PROFILER
+		Profiler::lap(kProfilerLapTypeNormalProcess, PROCESS_NAME_INPUT);
+#endif
 	}
 }
 
@@ -528,8 +540,11 @@ void GameState::readUserInput()
 
 void GameState::dispatchDelayedMessages()
 {
-
 	MessageDispatcher::dispatchDelayedMessages(MessageDispatcher::getInstance());
+
+#ifdef __ENABLE_PROFILER
+	Profiler::lap(kProfilerLapTypeNormalProcess, PROCESS_NAME_MESSAGES);
+#endif
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -547,6 +562,10 @@ void GameState::simulatePhysics()
 	}
 
 	BodyManager::update(this->componentManagers[kPhysicsComponent]);
+
+#ifdef __ENABLE_PROFILER
+	Profiler::lap(kProfilerLapTypeNormalProcess, PROCESS_NAME_PHYSICS);
+#endif
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -564,6 +583,10 @@ void GameState::processCollisions()
 	}
 
 	ColliderManager::update(this->componentManagers[kColliderComponent]);
+
+#ifdef __ENABLE_PROFILER
+	Profiler::lap(kProfilerLapTypeNormalProcess, PROCESS_NAME_COLLISIONS);
+#endif
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -581,6 +604,10 @@ void GameState::processBehaviors()
 	}
 
 	BehaviorManager::update(this->componentManagers[kBehaviorComponent]);
+
+#ifdef __ENABLE_PROFILER
+	Profiler::lap(kProfilerLapTypeNormalProcess, PROCESS_NAME_BEHAVIORS);
+#endif
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -673,16 +700,18 @@ void GameState::changeFramerate(int16 targetFPS, int32 duration)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-bool GameState::stream()
+void GameState::stream()
 {
 	if(!this->stream)
 	{
-		return false;
+		return;
 	}
 
-	NM_ASSERT(this->stage, "GameState::stream: null stage");
+	while(!VUEngine::hasGameFrameStarted() && Stage::stream(this->stage));
 
-	return Stage::stream(this->stage);
+#ifdef __ENABLE_PROFILER
+	Profiler::lap(kProfilerLapTypeNormalProcess, PROCESS_NAME_STREAMING);
+#endif
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

@@ -235,10 +235,6 @@ class GameState : State
 	/// Force to completely stream in and out actors and to initialize all.
 	void streamAll();
 
-	/// Stream in or out the stage actors within or outside the camera's range.
-	/// @return True if at least some actor was streamed in or out
-	virtual bool stream();
-
 	/// Process the provided user input.
 	/// @param userInput: Struct with the current user input information
 	virtual void processUserInput(const UserInput*  userInput);

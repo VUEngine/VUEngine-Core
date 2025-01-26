@@ -195,7 +195,6 @@ enum DefaulCollisionLayers
 #define __UNLIKELY(expression)					(__builtin_expect(!!(expression), 0))
 
 #ifndef __RELEASE
-#define __REGISTER_LAST_PROCESS_NAME
 
 void HardwareManager_printStackStatus(int32 x, int32 y, bool resumed);
 void Error_triggerException(char* message, char* detail);

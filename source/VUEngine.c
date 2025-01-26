@@ -184,15 +184,6 @@ static Clock VUEngine::getMessagingClock()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static char* VUEngine::getProcessName()
-{
-	VUEngine vuEngine = VUEngine::getInstance();
-
-	return vuEngine->processName;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
 static uint16 VUEngine::getGameFrameDuration()
 {
 	return VIPManager::getGameFrameDuration(VIPManager::getInstance());
@@ -285,11 +276,6 @@ bool VUEngine::onEvent(ListenerObject eventFirer, uint16 eventCode)
 	{
 		case kEventVIPManagerFRAMESTART:
 		{
-#ifdef __SHOW_PROCESS_NAME_DURING_FRAMESTART
-			PRINT_TEXT("F START:            ", 0, 27);
-			PRINT_TEXT(vuEngine->processName, 9, 27);
-#endif
-
 			VUEngine::frameStarted(this, __MILLISECONDS_PER_SECOND / __MAXIMUM_FPS);
 
 			return true;
@@ -297,11 +283,6 @@ bool VUEngine::onEvent(ListenerObject eventFirer, uint16 eventCode)
 
 		case kEventVIPManagerGAMESTART:
 		{
-#ifdef __SHOW_PROCESS_NAME_DURING_GAMESTART
-			PRINT_TEXT("G START:           ", 0, 26);
-			PRINT_TEXT(vuEngine->processName, 9, 26);
-#endif
-
 			VUEngine::gameFrameStarted(this, VIPManager::getGameFrameDuration(eventFirer));
 
 			return true;
@@ -309,11 +290,6 @@ bool VUEngine::onEvent(ListenerObject eventFirer, uint16 eventCode)
 
 		case kEventVIPManagerXPEND:
 		{
-#ifdef __SHOW_PROCESS_NAME_DURING_XPEND
-			PRINT_TEXT("XPEND:            ", 0, 27);
-			PRINT_TEXT(vuEngine->processName, 9, 26);
-#endif
-
 			VUEngine::drawingStarted(this);
 			
 			return true;
@@ -426,9 +402,6 @@ void VUEngine::constructor()
 
 	this->saveDataManager = NULL;
 
-	// To make debugging easier
-	this->processName = PROCESS_NAME_START_UP;
-
 	VIPManager::addEventListener(VIPManager::getInstance(), ListenerObject::safeCast(this), kEventVIPManagerFRAMESTART);
 	VIPManager::addEventListener(VIPManager::getInstance(), ListenerObject::safeCast(this), kEventVIPManagerGAMESTART);
 #ifdef __SHOW_PROCESS_NAME_DURING_XPEND
@@ -452,10 +425,6 @@ void VUEngine::destructor()
 
 void VUEngine::cleaniningStatesStack()
 {
-#ifdef __REGISTER_LAST_PROCESS_NAME
-	this->processName = PROCESS_NAME_STATE_SWAP;
-#endif
-
 	HardwareManager::disableInterrupts();
 
 	VIPManager::stopDisplaying(VIPManager::getInstance());
@@ -475,10 +444,6 @@ void VUEngine::cleaniningStatesStack()
 
 void VUEngine::pushingState()
 {
-#ifdef __REGISTER_LAST_PROCESS_NAME
-	this->processName = PROCESS_NAME_STATE_SWAP;
-#endif
-
 #ifdef __TOOLS
 	this->isInToolStateTransition = NULL != __GET_CAST(ToolState, StateMachine::getNextState(this->stateMachine));
 #endif
@@ -493,10 +458,6 @@ void VUEngine::pushingState()
 
 void VUEngine::swappingState()
 {
-#ifdef __REGISTER_LAST_PROCESS_NAME
-	this->processName = PROCESS_NAME_STATE_SWAP;
-#endif
-
 	HardwareManager::disableInterrupts();
 	
 	VIPManager::stopDisplaying(VIPManager::getInstance());
@@ -515,10 +476,6 @@ void VUEngine::swappingState()
 
 void VUEngine::poppingState()
 {
-#ifdef __REGISTER_LAST_PROCESS_NAME
-	this->processName = PROCESS_NAME_STATE_SWAP;
-#endif
-
 	HardwareManager::disableInterrupts();
 
 	VIPManager::stopDisplaying(VIPManager::getInstance());
@@ -708,7 +665,6 @@ secure void VUEngine::run(GameState currentGameState)
 		VUEngine::updateFrameRate(this);
 
 #ifdef __ENABLE_PROFILER
-		HardwareManager::disableInterrupts();
 		Profiler::start();
 #endif
 
@@ -719,7 +675,7 @@ secure void VUEngine::run(GameState currentGameState)
 
 		if(VUEngine::checkIfToggleTool(this, &userInput))
 		{
-			return;
+			continue;
 		}
 #endif
 
@@ -732,10 +688,6 @@ secure void VUEngine::run(GameState currentGameState)
 			//  Wait for the next game start
 			while(!this->gameFrameStarted);			
 		}
-
-#ifdef __ENABLE_PROFILER
-		HardwareManager::enableInterrupts();
-#endif
 	}
 
 	// Being a program running in an embedded system, there is no point in trying to 
@@ -746,10 +698,6 @@ secure void VUEngine::run(GameState currentGameState)
 
 void VUEngine::focusCamera()
 {
-#ifdef __REGISTER_LAST_PROCESS_NAME
-	this->processName = PROCESS_NAME_CAMERA;
-#endif
-
 #ifdef __TOOLS
 	if(!VUEngine::isInToolState())
 	{

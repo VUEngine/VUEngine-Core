@@ -161,13 +161,6 @@ void ToolState::processUserInput(const UserInput* userInput)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-bool ToolState::stream()
-{
-	return false;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
 void ToolState::setCurrentGameState(GameState currentGameState)
 {
 	this->currentGameState = currentGameState;

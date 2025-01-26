@@ -78,9 +78,6 @@ singleton class VUEngine : ListenerObject
 	/// Saved data manager
 	ListenerObject saveDataManager;
 
-	/// Current process' name
-	char* processName;
-
 	/// Flag raised when the game loop is completed
 	volatile bool currentGameCycleEnded;
 
@@ -129,10 +126,6 @@ singleton class VUEngine : ListenerObject
 	/// Retrieve the current game state's messaging clock.
 	/// @return Current game state's messaging clock
 	static Clock getMessagingClock();
-
-	/// Retrieve the current process' name.
-	/// @return Current process' name
-	static char* getProcessName();
 
 	/// Retrieve the duration of game frames.
 	/// @return Duration in milliseconds of game frames

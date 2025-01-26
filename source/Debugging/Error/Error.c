@@ -102,8 +102,6 @@ static void Error::triggerException(char* message __attribute__((unused)), char*
 	);
 
 	Printer::text("                                                " , x, y++, NULL);
-	Printer::text(" Last process:                                  ", x, y, NULL);
-	Printer::text(VUEngine::getProcessName(), x + 15, y++, NULL);
 	Printer::text(" LP:                                  " , x, y, NULL);
 	Printer::hex(lp, x + 8, y, 8, NULL);
 	Printer::text(" SP: 		                         " , x, ++y, NULL);
