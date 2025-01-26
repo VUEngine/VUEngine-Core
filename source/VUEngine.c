@@ -460,7 +460,6 @@ void VUEngine::cleaniningStatesStack()
 		GameState gameState = GameState::safeCast(VirtualNode::getData(node));
 
 		MessageDispatcher::discardDelayedMessagesWithClock(MessageDispatcher::getInstance(), GameState::getMessagingClock(gameState));
-		MessageDispatcher::processDiscardedMessages(MessageDispatcher::getInstance());
 	}
 }
 
@@ -501,8 +500,6 @@ void VUEngine::swappingState()
 		(
 			MessageDispatcher::getInstance(), GameState::getMessagingClock(this->currentGameState)
 		);
-
-		MessageDispatcher::processDiscardedMessages(MessageDispatcher::getInstance());
 	}
 }
 
@@ -525,8 +522,6 @@ void VUEngine::poppingState()
 		(
 			MessageDispatcher::getInstance(), GameState::getMessagingClock(this->currentGameState)
 		);
-
-		MessageDispatcher::processDiscardedMessages(MessageDispatcher::getInstance());
 	}
 
 #ifdef __TOOLS

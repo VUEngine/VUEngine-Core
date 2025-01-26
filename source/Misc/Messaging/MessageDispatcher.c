@@ -393,39 +393,6 @@ secure bool MessageDispatcher::dispatchDelayedMessages()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-secure void MessageDispatcher::processDiscardedMessages()
-{
-	for(VirtualNode node = this->delayedMessages->head, nextNode = NULL; NULL != node; node = nextNode)
-	{
-		nextNode = node->next;
-
-		DelayedMessage* delayedMessage = (DelayedMessage*)node->data;
-
-		if(!delayedMessage->discarded)
-		{
-			continue;
-		}
-
-		Telegram telegram = delayedMessage->telegram;
-		ASSERT(telegram, "MessageDispatcher::processDiscardedMessages: null telegram");
-		ASSERT(delayedMessage, "MessageDispatcher::processDiscardedMessages: null delayedMessage");
-
-		VirtualList::removeNode(this->delayedMessages, node);
-
-		if(!isDeleted(delayedMessage))
-		{
-			delete delayedMessage;
-		}
-
-		if(!isDeleted(telegram))
-		{
-			delete telegram;
-		}
-	}
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
 secure bool MessageDispatcher::discardDelayedMessagesWithClock(Clock clock)
 {	
 	bool messagesWereDiscarded = false;

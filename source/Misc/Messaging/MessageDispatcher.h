@@ -134,9 +134,6 @@ singleton class MessageDispatcher : Object
 	/// Dispatch the delayed messages whose delay has expired.
 	bool dispatchDelayedMessages();
 
-	/// Force the destruction of discarded messages.
-	void processDiscardedMessages();
-
 	/// Discarde delayed messages associated to the given clock.
 	/// @param clock: Clock to search in delayed messages to discard
 	/// @return True if any messages is discarded
