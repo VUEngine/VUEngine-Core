@@ -146,6 +146,10 @@ singleton class KeypadManager : ListenerObject
 	/// @param inputToRegister: Flags to select which inputs to register and which to ignore
 	static void registerInput(uint16 inputToRegister);
 
+	/// Retrieve the user input during the last game frame
+	/// @return User input struct with the key presses of the last game frame
+	static UserInput getUserInput();
+
 	/// Retrieve the accumulated sum of user inputs since the start of the program.
 	/// @return The mathematical sum of all user's presses.
 	static long getAccumulatedUserInput();
@@ -158,10 +162,9 @@ singleton class KeypadManager : ListenerObject
 	/// Reset the manager's state.
 	void reset();
 
-	/// Retrieve the user input during the last game frame
+	/// Reat the user input during the last game frame
 	/// @param waitForStableReading: If true, wait for reading to be stable (__S_STAT)
-	/// @return User input struct with the key presses of the last game frame
-	UserInput readUserInput(bool waitForStableReading);
+	void readUserInput(bool waitForStableReading);
 }
 
 #endif

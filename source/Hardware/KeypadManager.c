@@ -102,6 +102,16 @@ static void KeypadManager::registerInput(uint16 inputToRegister)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+static UserInput KeypadManager::getUserInput()
+{
+	KeypadManager keypadManager = KeypadManager::getInstance();
+
+	return keypadManager->userInput;
+}
+
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 static long KeypadManager::getAccumulatedUserInput()
 {
 	KeypadManager keypadManager = KeypadManager::getInstance();
@@ -163,7 +173,7 @@ secure void KeypadManager::reset()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-secure UserInput KeypadManager::readUserInput(bool waitForStableReading)
+secure void KeypadManager::readUserInput(bool waitForStableReading)
 {	
 	if(!waitForStableReading)
 	{
@@ -217,9 +227,9 @@ secure UserInput KeypadManager::readUserInput(bool waitForStableReading)
 	this->accumulatedUserInput += this->userInput.allKeys;
 
 	this->reseted = false;
-
-	return this->userInput;
 }
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
