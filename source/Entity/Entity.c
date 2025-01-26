@@ -54,7 +54,6 @@ void Entity::destructor()
 {
 	this->body = NULL;
 
-	Entity::clearComponentLists(this, kComponentTypes);
 	Entity::destroyComponents(this);
 
 	// Always explicitly call the base's destructor 
@@ -453,6 +452,7 @@ void Entity::createComponents(ComponentSpec** componentSpecs)
 
 void Entity::destroyComponents()
 {
+	Entity::clearComponentLists(this, kComponentTypes);
 	ComponentManager::destroyComponents(this);
 }
 

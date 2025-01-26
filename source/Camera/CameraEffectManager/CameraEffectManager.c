@@ -101,6 +101,7 @@ Brightness CameraEffectManager::getDefaultBrightness()
 		__BRIGHTNESS_BRIGHT_RED,
 	};
 
+/*
 	// If exists, get brightness settings from stage spec
 	Stage stage = VUEngine::getStage();
 	
@@ -109,7 +110,7 @@ Brightness CameraEffectManager::getDefaultBrightness()
 		StageSpec* stageSpec = Stage::getSpec(stage);
 		brightness = stageSpec->rendering.colorConfig.brightness;
 	}
-
+*/
 	return brightness;
 }
 

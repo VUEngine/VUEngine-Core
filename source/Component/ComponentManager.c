@@ -794,7 +794,7 @@ Component ComponentManager::instantiateComponent(Entity owner, const ComponentSp
 
 void ComponentManager::deinstantiateComponent(Entity owner, Component component) 
 {
-	if(NULL == owner || isDeleted(component))
+	if(isDeleted(owner) || isDeleted(component))
 	{
 		return;
 	}

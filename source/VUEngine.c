@@ -144,10 +144,10 @@ static void VUEngine::changeState(GameState gameState)
 
 static bool VUEngine::isInToolState()
 {
-	VUEngine vuEngine = VUEngine::getInstance();
 	int32 isInToolState = false;
 
 #ifdef __TOOLS
+	VUEngine vuEngine = VUEngine::getInstance();
 	isInToolState = NULL != __GET_CAST(ToolState, vuEngine->currentGameState);
 #endif
 
@@ -161,23 +161,6 @@ static bool VUEngine::isInToolStateTransition()
 	VUEngine vuEngine = VUEngine::getInstance();
 
 	return vuEngine->isInToolStateTransition;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-static Stage VUEngine::getStage()
-{
-	VUEngine vuEngine = VUEngine::getInstance();
-
-#ifdef __TOOLS
-	if(VUEngine::isInToolState())
-	{
-		return GameState::getStage(GameState::safeCast(StateMachine::getPreviousState(vuEngine->stateMachine)));
-	}
-#endif
-
-	State state = StateMachine::getCurrentState(vuEngine->stateMachine);
-	return isDeleted(state) ? NULL : GameState::getStage(GameState::safeCast(state));
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -512,13 +495,11 @@ void VUEngine::swappingState()
 	VIPManager::stopDisplaying(VIPManager::getInstance());
 	VIPManager::stopDrawing(VIPManager::getInstance());
 
-	GameState currentGameState = GameState::safeCast(StateMachine::getCurrentState(this->stateMachine));
-
-	if(!isDeleted(currentGameState))
+	if(!isDeleted(this->currentGameState))
 	{
 		MessageDispatcher::discardDelayedMessagesWithClock
 		(
-			MessageDispatcher::getInstance(), GameState::getMessagingClock(currentGameState)
+			MessageDispatcher::getInstance(), GameState::getMessagingClock(this->currentGameState)
 		);
 
 		MessageDispatcher::processDiscardedMessages(MessageDispatcher::getInstance());
@@ -538,20 +519,18 @@ void VUEngine::poppingState()
 	VIPManager::stopDisplaying(VIPManager::getInstance());
 	VIPManager::stopDrawing(VIPManager::getInstance());
 
-	GameState currentGameState = GameState::safeCast(StateMachine::getCurrentState(this->stateMachine));
-
-	if(!isDeleted(currentGameState))
+	if(!isDeleted(this->currentGameState))
 	{
 		MessageDispatcher::discardDelayedMessagesWithClock
 		(
-			MessageDispatcher::getInstance(), GameState::getMessagingClock(currentGameState)
+			MessageDispatcher::getInstance(), GameState::getMessagingClock(this->currentGameState)
 		);
 
 		MessageDispatcher::processDiscardedMessages(MessageDispatcher::getInstance());
 	}
 
 #ifdef __TOOLS
-	this->isInToolStateTransition = NULL != __GET_CAST(ToolState, currentGameState);
+	this->isInToolStateTransition = NULL != __GET_CAST(ToolState, this->currentGameState);
 #endif
 }
 
@@ -564,9 +543,9 @@ void VUEngine::changedState()
 	this->currentGameCycleEnded = true;
 	this->gameFrameStarted = true;
 
-	GameState currentGameState = GameState::safeCast(StateMachine::getCurrentState(this->stateMachine));
+	this->currentGameState = GameState::safeCast(StateMachine::getCurrentState(this->stateMachine));
 
-	if(GameState::isVersusMode(currentGameState))
+	if(GameState::isVersusMode(this->currentGameState))
 	{
 		CommunicationManager::startSyncCycle(CommunicationManager::getInstance());
 	}
@@ -609,12 +588,10 @@ void VUEngine::gameFrameStarted(uint16 gameFrameDuration)
 	this->gameFrameStarted = true;
 
 	VUEngine::focusCamera(this);
-
-	GameState gameState = this->currentGameState;
 	
-	if(!isDeleted(gameState))
+	if(!isDeleted(this->currentGameState))
 	{
-		GameState::transformUI(gameState);
+		GameState::transformUI(this->currentGameState);
 	}
 
 	ClockManager::update(ClockManager::getInstance(), gameFrameDuration);
@@ -710,7 +687,7 @@ void VUEngine::updateFrameRate()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void VUEngine::processUserInput(GameState currentGameState)
+void VUEngine::processUserInput()
 {
 	if(!KeypadManager::isEnabled(KeypadManager::getInstance()))
 	{
@@ -735,7 +712,7 @@ void VUEngine::processUserInput(GameState currentGameState)
 
 	if(0 != (userInput.dummyKey | userInput.pressedKey | userInput.holdKey | userInput.releasedKey))
 	{
-		GameState::processUserInput(currentGameState, &userInput);
+		GameState::processUserInput(this->currentGameState, &userInput);
 	}
 
 #ifdef __ENABLE_PROFILER
@@ -745,13 +722,13 @@ void VUEngine::processUserInput(GameState currentGameState)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void VUEngine::simulatePhysics(GameState gameState)
+void VUEngine::simulatePhysics()
 {
 #ifdef __REGISTER_LAST_PROCESS_NAME
 	this->processName = PROCESS_NAME_PHYSICS;
 #endif
 
-	GameState::simulatePhysics(gameState);
+	GameState::simulatePhysics(this->currentGameState);
 
 #ifdef __ENABLE_PROFILER
 	Profiler::lap(kProfilerLapTypeNormalProcess, PROCESS_NAME_PHYSICS);
@@ -760,13 +737,13 @@ void VUEngine::simulatePhysics(GameState gameState)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void VUEngine::processTransformations(GameState gameState)
+void VUEngine::processTransformations()
 {
 #ifdef __REGISTER_LAST_PROCESS_NAME
 	this->processName = PROCESS_NAME_TRANSFORMS;
 #endif
 
-	GameState::transform(gameState);
+	GameState::transform(this->currentGameState);
 
 #ifdef __ENABLE_PROFILER
 	Profiler::lap(kProfilerLapTypeNormalProcess, PROCESS_NAME_TRANSFORMS);
@@ -775,13 +752,13 @@ void VUEngine::processTransformations(GameState gameState)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void VUEngine::processCollisions(GameState gameState)
+void VUEngine::processCollisions()
 {
 #ifdef __REGISTER_LAST_PROCESS_NAME
 	this->processName = PROCESS_NAME_COLLISIONS;
 #endif
 
-	GameState::processCollisions(gameState);
+	GameState::processCollisions(this->currentGameState);
 
 #ifdef __ENABLE_PROFILER
 	Profiler::lap(kProfilerLapTypeNormalProcess, PROCESS_NAME_COLLISIONS);
@@ -812,36 +789,34 @@ void VUEngine::dispatchDelayedMessages()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-GameState VUEngine::updateLogic(GameState currentGameState)
+void VUEngine::updateLogic()
 {
 #ifdef __REGISTER_LAST_PROCESS_NAME
 	this->processName = PROCESS_NAME_LOGIC;
 #endif
 
-	currentGameState = GameState::safeCast(StateMachine::update(this->stateMachine));
+	StateMachine::update(this->stateMachine);
 
 #ifdef __ENABLE_PROFILER
 	Profiler::lap(kProfilerLapTypeNormalProcess, PROCESS_NAME_LOGIC);
 #endif
-
-	return currentGameState;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-bool VUEngine::stream(GameState gameState)
+bool VUEngine::stream()
 {
 #ifdef __REGISTER_LAST_PROCESS_NAME
 	this->processName = PROCESS_NAME_STREAMING;
 #endif
 
 #ifndef __ENABLE_PROFILER
-	bool result = GameState::stream(gameState);
+	bool result = GameState::stream(this->currentGameState);
 #else
 	bool result = false;
 
 	// Stream the heck out of the pending actors
-	result = GameState::stream(gameState);
+	result = GameState::stream(this->currentGameState);
 
 	Profiler::lap(kProfilerLapTypeNormalProcess, PROCESS_NAME_STREAMING);
 #endif
@@ -859,9 +834,7 @@ secure void VUEngine::run(GameState currentGameState)
 		return;
 	}
 
-	this->currentGameState = currentGameState;
-
-	VUEngine::setState(this->currentGameState);
+	VUEngine::setState(currentGameState);
 
 	while(NULL != this->currentGameState)
 	{
@@ -875,33 +848,33 @@ secure void VUEngine::run(GameState currentGameState)
 		Profiler::start();
 #endif
 
-		VUEngine::processUserInput(this, this->currentGameState);
+		VUEngine::processUserInput(this);
 
-		VUEngine::simulatePhysics(this, this->currentGameState);
+		VUEngine::simulatePhysics(this);
 
-		VUEngine::processTransformations(this, this->currentGameState);
+		VUEngine::processTransformations(this);
 
-		VUEngine::processCollisions(this, this->currentGameState);
+		VUEngine::processCollisions(this);
 
 		VUEngine::dispatchDelayedMessages(this);
 
-		this->currentGameState = VUEngine::updateLogic(this, this->currentGameState);
+		VUEngine::updateLogic(this);
 
 #ifdef __ENABLE_PROFILER
 		HardwareManager::enableInterrupts();
 
-		VUEngine::stream(this, this->currentGameState);
+		VUEngine::stream(this);
 #else
 		if(!this->lockFrameRate)
 		{
-			while(VUEngine::stream(this, this->currentGameState));
+			while(VUEngine::stream(this));
 		}
 		else
 		{
 			do
 			{
 				// Stream the heck out of the pending actors
-				if(!VUEngine::stream(this, this->currentGameState))
+				if(!VUEngine::stream(this))
 				{
 #ifndef __ENABLE_PROFILER
 					this->currentGameCycleEnded = true;
