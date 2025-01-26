@@ -399,6 +399,12 @@ void Actor::destructor()
 		delete this->centerDisplacement;
 	}
 
+	if(!isDeleted(this->events))
+	{
+		Actor::fireEvent(this, kEventActorDeleted);
+		NM_ASSERT(!isDeleted(this), "Actor::destructor: deleted this during kEventActorDeleted");
+	}
+
 	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
@@ -409,7 +415,7 @@ bool Actor::onEvent(ListenerObject eventFirer __attribute__((unused)), uint16 ev
 {
 	switch(eventCode)
 	{
-		case kEventActorLoaded:
+		case kEventActorCreated:
 		{
 			if(ListenerObject::safeCast(this) != eventFirer)
 			{
@@ -648,7 +654,7 @@ void Actor::addChildActorsDeferred(const PositionedActor* childrenSpecs)
 	{
 		this->actorFactory = new ActorFactory();
 
-		Actor::addEventListener(this, ListenerObject::safeCast(this), kEventActorLoaded);
+		Actor::addEventListener(this, ListenerObject::safeCast(this), kEventActorCreated);
 	}
 
 	for(int32 i = 0; NULL != childrenSpecs[i].actorSpec; i++)

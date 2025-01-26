@@ -305,7 +305,7 @@ uint32 ActorFactory::instantiateActors()
 			{
 				Actor::addEventListener
 				(
-					positionedActorDescription->actor, ListenerObject::safeCast(positionedActorDescription->parent), kEventActorLoaded
+					positionedActorDescription->actor, ListenerObject::safeCast(positionedActorDescription->parent), kEventActorCreated
 				);
 			}
 		}
@@ -465,9 +465,9 @@ uint32 ActorFactory::cleanUp()
 
 	if(!isDeleted(positionedActorDescription->parent) && !isDeleted(positionedActorDescription->actor))
 	{
-		Actor::fireEvent(positionedActorDescription->actor, kEventActorLoaded);
-		NM_ASSERT(!isDeleted(positionedActorDescription->actor), "ActorFactory::cleanUp: deleted actor during kEventActorLoaded");
-		Actor::removeEventListeners(positionedActorDescription->actor, kEventActorLoaded);
+		Actor::fireEvent(positionedActorDescription->actor, kEventActorCreated);
+		NM_ASSERT(!isDeleted(positionedActorDescription->actor), "ActorFactory::cleanUp: deleted actor during kEventActorCreated");
+		Actor::removeEventListeners(positionedActorDescription->actor, kEventActorCreated);
 
 		VirtualList::removeData(this->spawnedActors, positionedActorDescription);
 		delete positionedActorDescription;

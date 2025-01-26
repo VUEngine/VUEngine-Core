@@ -130,12 +130,6 @@ void Container::destructor()
 		delete this->name;
 	}
 
-	if(!isDeleted(this->events))
-	{
-		Container::fireEvent(this, kEventContainerDeleted);
-		NM_ASSERT(!isDeleted(this), "Container::destructor: deleted this during kEventContainerDeleted");
-	}
-
 	// Always explicitly call the base's destructor 
 	Base::destructor();
 }

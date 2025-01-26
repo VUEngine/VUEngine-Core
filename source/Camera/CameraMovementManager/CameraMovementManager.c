@@ -53,7 +53,7 @@ bool CameraMovementManager::onEvent(ListenerObject eventFirer __attribute__((unu
 {
 	switch(eventCode)
 	{
-		case kEventContainerDeleted:
+		case kEventActorDeleted:
 		{
 			if(ListenerObject::safeCast(this->focusActor) == eventFirer)
 			{
@@ -82,7 +82,7 @@ void CameraMovementManager::setFocusActor(Actor focusActor)
 {
 	if(!isDeleted(this->focusActor))
 	{
-		Actor::removeEventListener(this->focusActor, ListenerObject::safeCast(this), kEventContainerDeleted);
+		Actor::removeEventListener(this->focusActor, ListenerObject::safeCast(this), kEventActorDeleted);
 	}
 
 	this->focusActor = focusActor;
@@ -91,7 +91,7 @@ void CameraMovementManager::setFocusActor(Actor focusActor)
 
 	if(!isDeleted(this->focusActor))
 	{
-		Actor::addEventListener(this->focusActor, ListenerObject::safeCast(this), kEventContainerDeleted);
+		Actor::addEventListener(this->focusActor, ListenerObject::safeCast(this), kEventActorDeleted);
 		
 		this->focusActorPosition = Actor::getPosition(this->focusActor);
 		this->focusActorRotation = Actor::getRotation(this->focusActor);

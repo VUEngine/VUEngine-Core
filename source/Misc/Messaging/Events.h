@@ -23,10 +23,7 @@ enum Events
 	kEventFramerateReady,
 	kEventFramerateDipped,
 
-	kEventEntityDeleted,
-	kEventContainerDeleted,
 	kEventContainerAllChildrenDeleted,
-	kEventActorLoaded,
 	kEventStageChildStreamedOut,
 	kEventColliderDeleted,
 	kEventColliderChanged,
@@ -56,6 +53,8 @@ enum Events
 	kEventCommunicationsConnected,
 	kEventCommunicationsTransmissionCompleted,
 
+	kEventActorDeleted,
+	kEventActorCreated,
 	kEventActorBounced,
 	kEventActorCannotMove,
 

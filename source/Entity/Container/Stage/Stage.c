@@ -396,6 +396,16 @@ void Stage::addActorLoadingListener(ListenerObject listener)
 		this->actorLoadingListeners = new VirtualList();
 	}
 
+	for(VirtualNode node = this->actorLoadingListeners->head; NULL != node; node = node->next)
+	{
+		ActorLoadingListener* actorLoadingListener = (ActorLoadingListener*)node->data;
+
+		if(listener == actorLoadingListener->listener)
+		{
+			return;
+		}
+	}
+
 	ActorLoadingListener* actorLoadingListener = new ActorLoadingListener;
 	actorLoadingListener->listener = listener;
 
@@ -921,7 +931,7 @@ bool Stage::onEvent(ListenerObject eventFirer __attribute__((unused)), uint16 ev
 {
 	switch(eventCode)
 	{
-		case kEventActorLoaded:
+		case kEventActorCreated:
 		{
 			Actor actor = Actor::safeCast(eventFirer);
 
@@ -942,7 +952,7 @@ bool Stage::onEvent(ListenerObject eventFirer __attribute__((unused)), uint16 ev
 			return false;
 		}
 
-		case kEventContainerDeleted:
+		case kEventActorDeleted:
 		{
 			if(!isDeleted(this->focusActor) && ListenerObject::safeCast(this->focusActor) == eventFirer)
 			{
@@ -976,13 +986,13 @@ void Stage::alertOfLoadedActor(Actor actor)
 
 		if(!isDeleted(actorLoadingListener->listener))
 		{
-			Actor::addEventListener(actor, actorLoadingListener->listener, kEventActorLoaded);
+			Actor::addEventListener(actor, actorLoadingListener->listener, kEventActorCreated);
 		}
 	}
 
-	Actor::fireEvent(actor, kEventActorLoaded);
-	NM_ASSERT(!isDeleted(actor), "Stage::alertOfLoadedActor: deleted actor during kEventActorLoaded");
-	Actor::removeEventListeners(actor, kEventActorLoaded);
+	Actor::fireEvent(actor, kEventActorCreated);
+	NM_ASSERT(!isDeleted(actor), "Stage::alertOfLoadedActor: deleted actor during kEventActorCreated");
+	Actor::removeEventListeners(actor, kEventActorCreated);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -1249,14 +1259,14 @@ void Stage::setFocusActor(Actor focusActor)
 {
 	if(!isDeleted(this->focusActor))
 	{
-		Actor::removeEventListener(this->focusActor, ListenerObject::safeCast(this), kEventContainerDeleted);
+		Actor::removeEventListener(this->focusActor, ListenerObject::safeCast(this), kEventActorDeleted);
 	}
 
 	this->focusActor = focusActor;
 
 	if(!isDeleted(this->focusActor))
 	{
-		Actor::addEventListener(this->focusActor, ListenerObject::safeCast(this), kEventContainerDeleted);
+		Actor::addEventListener(this->focusActor, ListenerObject::safeCast(this), kEventActorDeleted);
 
 		Vector3D focusActorPosition = *Container::getPosition(this->focusActor);
 		focusActorPosition.x = __METERS_TO_PIXELS(focusActorPosition.x);
