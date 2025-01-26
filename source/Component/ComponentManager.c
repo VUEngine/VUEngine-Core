@@ -738,6 +738,8 @@ void ComponentManager::destroyAllComponents()
 
 	HardwareManager::suspendInterrupts();
 
+	ComponentManager::purgeComponents(this);
+
 	VirtualList componentsHelper = new VirtualList();
 	VirtualList::copy(componentsHelper, this->components);
 
@@ -785,6 +787,8 @@ Component ComponentManager::instantiateComponent(Entity owner, const ComponentSp
 		return NULL;
 	}
 
+	ComponentManager::purgeComponents(this);
+
 	Entity::clearComponentLists(owner, componentSpec->componentType);
 
 	return NULL;
@@ -805,6 +809,32 @@ void ComponentManager::deinstantiateComponent(Entity owner, Component component)
 	}
 
 	Entity::clearComponentLists(owner, component->componentSpec->componentType);
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void ComponentManager::purgeComponents()
+{
+	if(NULL == this->components)
+	{
+		return;
+	}
+
+	for(VirtualNode node = this->components->head, nextNode = NULL; NULL != node; node = nextNode)
+	{
+		nextNode = node->next;
+
+		Component component = Component::safeCast(node->data);
+
+		NM_ASSERT(!isDeleted(component), "ComponentManager::purgeComponents: deleted component");
+
+		if(component->deleteMe)
+		{
+			VirtualList::removeNode(this->components, node);
+
+			delete component;
+		}
+	}
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

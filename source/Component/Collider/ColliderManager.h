@@ -75,9 +75,6 @@ class ColliderManager : ComponentManager
 	/// @param collider: Collider to destroy
 	override void deinstantiateComponent(Entity owner, Collider collider);
 
-	/// Purge destroyed colliders.
-	void purgeDestroyedColliders();
-
 	/// Update colliders and test collisions.
 	uint32 update();
 

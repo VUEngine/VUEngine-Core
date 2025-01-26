@@ -169,11 +169,6 @@ abstract class ComponentManager : ListenerObject
 	/// @param component: Comoponent to destroy
 	virtual void deinstantiateComponent(Entity owner, Component component) ;
 
-	/// Retrieve a list with the components of the provided type belonging to the provided owner.
-	/// @param owner: Object to which the components attach to
-	/// @return Linked list of components of the type provided that attach to the provided owner
-	VirtualList doGetComponents(Entity owner, VirtualList components);
-
 	/// Check if at least of the components that attach to the provided owner is visible.
 	/// @param owner: Object to which the components attach to
 	/// @return True if at least of the components that attach to the provided owner is visible

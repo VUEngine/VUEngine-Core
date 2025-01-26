@@ -104,25 +104,6 @@ void ColliderManager::deinstantiateComponent(Entity owner, Collider collider)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void ColliderManager::purgeDestroyedColliders()
-{
-	for(VirtualNode auxNode = this->components->head, auxNextNode = NULL; auxNode; auxNode = auxNextNode)
-	{
-		auxNextNode = auxNode->next;
-
-		Collider collider = Collider::safeCast(auxNode->data);
-
-		if(collider->deleteMe)
-		{
-			VirtualList::removeNode(this->components, auxNode);
-
-			delete collider;
-		}
-	}	
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
 uint32 ColliderManager::update()
 {
 	uint32 returnValue = false;
@@ -273,8 +254,6 @@ Collider ColliderManager::createCollider(Entity owner, const ColliderSpec* colli
 	{
 		return NULL;
 	}
-
-	ColliderManager::purgeDestroyedColliders(this);
 
 	Collider collider = ((Collider (*)(Entity, const ColliderSpec*)) ((ComponentSpec*)colliderSpec)->allocator)(owner, colliderSpec);
 

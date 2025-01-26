@@ -800,12 +800,6 @@ void GameState::streamAll()
 
 	// Stream in and out all relevant actors
 	Stage::streamAll(this->stage);
-
-	// Force colliders' purging
-	if(!isDeleted(this->componentManagers[kColliderComponent]))
-	{
-		ColliderManager::purgeDestroyedColliders(this->componentManagers[kColliderComponent]);
-	}
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
