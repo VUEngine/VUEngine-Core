@@ -158,8 +158,22 @@ secure void SoundManager::playSounds(uint32 elapsedMicroseconds)
 #endif
 		VSUManager::update(VSUManager::getInstance());
 
-		for(VirtualNode node = this->sounds->head; NULL != node; node = node->next)
+		for(VirtualNode node = this->sounds->head, nextNode = NULL; NULL != node; node = nextNode)
 		{
+			nextNode = node->next;
+
+			nextNode = node->next;
+
+			Sound sound = Sound::safeCast(node->data);
+
+			if(NULL == sound->soundSpec)
+			{
+				VirtualList::removeNode(this->sounds, node);
+
+				delete sound;
+				continue;
+			}
+
 			Sound::update(Sound::safeCast(node->data), elapsedMicroseconds, this->targetPCMUpdates);
 		}
 #ifdef __RELEASE
@@ -310,11 +324,6 @@ void SoundManager::stopAllSounds(bool release, SoundSpec** excludedSounds)
 		}
 	}
 
-	if(release)
-	{
-		SoundManager::purgeReleasedSounds(this);
-	}
-
 	if(NULL == excludedSounds)
 	{
 		VSUManager::stopAllSounds(VSUManager::getInstance());
@@ -406,8 +415,6 @@ Sound SoundManager::doGetSound(const SoundSpec* soundSpec, ListenerObject scope)
 		return NULL;
 	}
 #endif
-	
-	SoundManager::purgeReleasedSounds(this);
 
 	if(NULL == soundSpec)
 	{
@@ -419,25 +426,6 @@ Sound SoundManager::doGetSound(const SoundSpec* soundSpec, ListenerObject scope)
 	VirtualList::pushBack(this->sounds, sound);
 
 	return sound;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void SoundManager::purgeReleasedSounds()
-{
-	for(VirtualNode node = this->sounds->head, nextNode = NULL; NULL != node; node = nextNode)
-	{
-		nextNode = node->next;
-
-		Sound sound = Sound::safeCast(node->data);
-
-		if(NULL == sound->soundSpec)
-		{
-			VirtualList::removeNode(this->sounds, node);
-
-			delete sound;
-		}
-	}
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
