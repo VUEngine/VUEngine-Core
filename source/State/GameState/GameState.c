@@ -17,6 +17,7 @@
 #include <Clock.h>
 #include <ColliderManager.h>
 #include <FrameRate.h>
+#include <KeypadManager.h>
 #include <MessageDispatcher.h>
 #include <Printer.h>
 #include <Profiler.h>
@@ -127,13 +128,13 @@ void GameState::enter(void* owner __attribute__ ((unused)))
 
 void GameState::execute(void* owner __attribute__ ((unused)))
 {
-	NM_ASSERT(this->stage, "GameState::execute: null stage");
-
 	if(!Clock::isPaused(this->logicsClock))
 	{
 		Stage::update(this->stage);
 		UIContainer::update(this->uiContainer);
 	}
+
+	GameState::update(this);	
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -170,12 +171,6 @@ void GameState::suspend(void* owner __attribute__ ((unused)))
 		// This must happen before the managers are disabled
 		GameState::streamAll(this);
 		
-		// Make sure collision colliders are not drawn while suspended
-		if(!isDeleted(this->componentManagers[kColliderComponent]))
-		{
-			ColliderManager::hideColliders(this->componentManagers[kColliderComponent]);
-		}
-
 		if(!isDeleted(this->stage))
 		{
 			Stage::suspend(this->stage);
@@ -213,7 +208,7 @@ void GameState::resume(void* owner __attribute__ ((unused)))
 		Camera::focus(Camera::getInstance());
 
 		// Force all transformations to take place again
-		GameState::transform(this);
+		GameState::applyTransformations(this);
 
 		// Force all streaming right now
 		GameState::streamAll(this);
@@ -264,7 +259,7 @@ void GameState::configureStage(StageSpec* stageSpec, VirtualList positionedActor
 	Camera::focus(Camera::getInstance());
 
 	// Transformation everything
-	GameState::transform(this);
+	GameState::applyTransformations(this);
 
 	// Slow down the frame rate briefly to give the CPU a chance to setup everything
 	// without the VIP getting in its way
@@ -467,7 +462,7 @@ void GameState::unpausePhysics()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void GameState::transform()
+void GameState::applyTransformations()
 {
 	if(!this->transform || NULL == this->stage)
 	{
@@ -481,7 +476,7 @@ void GameState::transform()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void GameState::transformUI()
+void GameState::applyTransformationsUI()
 {
 	if((!this->transform && __VALID_TRANSFORMATION == Camera::getTransformationFlags(Camera::getInstance())) || NULL == this->uiContainer)
 	{
@@ -491,6 +486,50 @@ void GameState::transformUI()
 	extern Transformation _neutralEnvironmentTransformation;
 
 	UIContainer::transform(this->uiContainer, NULL, __INVALIDATE_TRANSFORMATION);
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void GameState::update()
+{
+	GameState::readUserInput(this);
+
+	GameState::processBehaviors(this);
+
+	GameState::simulatePhysics(this);
+
+	GameState::applyTransformations(this);
+
+	GameState::processCollisions(this);
+
+	GameState::dispatchDelayedMessages(this);
+
+	while(!VUEngine::hasGameFrameStarted() && GameState::stream(this));
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void GameState::readUserInput()
+{
+	if(!KeypadManager::isEnabled(KeypadManager::getInstance()))
+	{
+		return;
+	}
+
+	UserInput userInput = KeypadManager::getUserInput();
+
+	if(0 != (userInput.dummyKey | userInput.pressedKey | userInput.holdKey | userInput.releasedKey))
+	{
+		GameState::processUserInput(this, &userInput);
+	}
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void GameState::dispatchDelayedMessages()
+{
+
+	MessageDispatcher::dispatchDelayedMessages(MessageDispatcher::getInstance());
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -821,7 +860,7 @@ void GameState::configureUI(StageSpec* stageSpec)
 void GameState::streamAll()
 {
 	// Make sure that the focus actor is transformed before focusing the camera
-	GameState::transform(this);
+	GameState::applyTransformations(this);
 
 	// Move the camera to its initial position
 	Camera::focus(Camera::getInstance());
@@ -830,7 +869,7 @@ void GameState::streamAll()
 	Stage::invalidateTransformation(this->stage);
 
 	// Transformation everything
-	GameState::transform(this);
+	GameState::applyTransformations(this);
 
 	// Stream in and out all relevant actors
 	Stage::streamAll(this->stage);

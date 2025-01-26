@@ -179,7 +179,8 @@ secure void KeypadManager::readUserInput(bool waitForStableReading)
 	{
 		if(*_readingStatus & __S_STAT)
 		{
-			return (UserInput){K_NON, K_NON, K_NON, K_NON, K_NON, K_NON, K_NON, K_NON};
+			this->userInput = (UserInput){K_NON, K_NON, K_NON, K_NON, K_NON, K_NON, K_NON, K_NON};
+			return;
 		}
 	}
 	else

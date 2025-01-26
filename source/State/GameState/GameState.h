@@ -200,20 +200,8 @@ class GameState : State
 	/// Unpause the clock used for physics simulations.
 	void unpausePhysics();
 
-	/// Update the stage's children' global transformations.
-	void transform();
-
 	/// Update the UI's children' global transformations.
-	void transformUI();
-
-	/// Process behaviors.
-	void processBehaviors();
-
-	/// Continue physics simulations.
-	void simulatePhysics();
-	
-	/// Test and process collisions./
-	void processCollisions();
+	void applyTransformationsUI();
 
 	/// Propagate an integer message through the whole parenting hierarchy of the stage (children, grand children, etc.).
 	/// @param message: The message to propagate

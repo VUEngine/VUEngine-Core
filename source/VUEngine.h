@@ -41,7 +41,7 @@ class VUEngine;
 #define PROCESS_NAME_GRAPHICS				"GRAPHICS"
 #define PROCESS_NAME_UI_GRAPHICS			"UI GRAPHICS"
 #define PROCESS_NAME_INPUT					"INPUT"
-#define PROCESS_NAME_LOGIC					"LOGIC"
+#define PROCESS_NAME_EXECUTE_STATE			"EXECUTE"
 #define PROCESS_NAME_MESSAGES				"MESSAGES"
 #define PROCESS_NAME_NEW_STATE				"NEW STATE"
 #define PROCESS_NAME_PHYSICS				"PHYSICS"
@@ -97,6 +97,10 @@ singleton class VUEngine : ListenerObject
 	bool lockFrameRate;
 
 	/// @publicsection
+
+	/// Check if the next game frame has started.
+	/// @return True if the game frame has started
+	static bool hasGameFrameStarted();
 
 	/// Pause the game by pushing the provided game state into the engine's state machine's stack.
 	/// @param pauseState: Pause game state
