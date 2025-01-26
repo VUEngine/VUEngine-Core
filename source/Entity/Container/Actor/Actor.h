@@ -322,7 +322,22 @@ static inline bool
 Actor::isInsideFrustrum(Vector3D vector3D, RightBox rightBox)
 {
 	extern const CameraFrustum* _cameraFrustum;
+
 	vector3D = Vector3D::rotate(Vector3D::getRelativeToCamera(vector3D), *_cameraInvertedRotation);
+
+#ifndef __LEGACY_COORDINATE_PROJECTION
+	vector3D = 
+		Vector3D::sum
+		(
+			vector3D, 
+			(Vector3D)
+			{
+				__PIXELS_TO_METERS(_cameraFrustum->x1 - _cameraFrustum->x0) >> 1,
+				__PIXELS_TO_METERS(_cameraFrustum->y1 - _cameraFrustum->y0) >> 1,
+				__PIXELS_TO_METERS(_cameraFrustum->z1 - _cameraFrustum->z0) >> 1,
+			}
+		);
+#endif
 
 	if
 	(

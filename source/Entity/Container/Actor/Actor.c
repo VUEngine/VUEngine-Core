@@ -754,7 +754,7 @@ bool Actor::isInCameraRange(int16 padding, bool recursive)
 
 	fixed_t paddingHelper = __PIXELS_TO_METERS(padding);
 
-	RightBox rightBox	=
+	RightBox rightBox = 
 	{
 		// The center of displacement has to be added to the bounding box and not to the 
 		// Position because this has to be rotated
