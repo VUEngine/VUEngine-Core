@@ -332,7 +332,6 @@ static void VIPManager::configureBackgroundColor(uint8 color)
 		: __COLOR_BRIGHT_RED;
 }
 
-
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 static void VIPManager::configurePostProcessingEffects(PostProcessingEffect* postProcessingEffects)
@@ -427,7 +426,6 @@ secure void VIPManager::configure
 	VIPManager::configurePalettes(paletteConfig);
 	VIPManager::configurePostProcessingEffects(postProcessingEffects);
 }
-
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 

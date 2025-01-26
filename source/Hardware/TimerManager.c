@@ -83,7 +83,6 @@ static void TimerManager::interruptHandler()
 #endif
 }
 
-
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 static void TimerManager::configure(uint16 timerResolution, uint16 targetTimePerInterrupt, uint16 targetTimePerInterrupttUnits)

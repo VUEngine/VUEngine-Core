@@ -109,7 +109,6 @@ static UserInput KeypadManager::getUserInput()
 	return keypadManager->userInput;
 }
 
-
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 static long KeypadManager::getAccumulatedUserInput()
@@ -169,7 +168,6 @@ secure void KeypadManager::reset()
 	this->accumulatedUserInput = 0;
 	this->userInputToRegister = (UserInput){0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF};
 }
-
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 

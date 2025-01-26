@@ -569,7 +569,6 @@ void VUEngine::drawingStarted()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-
 void VUEngine::removeState(GameState gameState)
 {
 #ifdef __TOOLS

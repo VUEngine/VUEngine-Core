@@ -181,7 +181,6 @@ void RumbleManager::destructor()
 	Base::destructor();
 }
 
-
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void RumbleManager::sendCode(uint8 code __attribute__((unused)))

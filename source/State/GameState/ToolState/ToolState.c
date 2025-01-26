@@ -111,7 +111,6 @@ void ToolState::enter(void* owner __attribute__ ((unused)))
 		GameState::pauseClocks(this->currentGameState);
 		GameState::startClocks(this);
 
-
 		if(!isDeleted(this->tool))
 		{
 			Tool::setToolState(this->tool, this);
