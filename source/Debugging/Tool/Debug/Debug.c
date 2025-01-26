@@ -460,8 +460,6 @@ void Debug::generalStatusPage(int32 increment __attribute__ ((unused)), int32 x 
 
 	Printer::text("CLOCKS STATUS", 1, y++, NULL);
 	Printer::text("General clock time: ", 1, ++y, NULL);
-	Clock::print(VUEngine::getClock(), 26, y, NULL);
-	Printer::text("In game clock's time: ", 1, ++y, NULL);
 	Clock::print(GameState::getMessagingClock(VUEngine::getPreviousState()), 26, y, NULL);
 	Printer::text("Animations clock's time: ", 1, ++y, NULL);
 	Clock::print(GameState::getLogicsClock(VUEngine::getPreviousState()), 26, y, NULL);

@@ -71,9 +71,6 @@ singleton class VUEngine : ListenerObject
 	/// Engine's main state machine
 	StateMachine stateMachine;
 
-	/// Global timer
-	Clock clock;
-
 	/// Saved data manager
 	ListenerObject saveDataManager;
 
@@ -141,10 +138,6 @@ singleton class VUEngine : ListenerObject
 	/// Retrieve the current stage.
 	/// @return Current game state's stage
 	static Stage getStage();
-
-	/// Retrieve the engine's main clock.
-	/// @return Engine's main clock
-	static Clock getClock();
 
 	/// Retrieve the current game state's logics clock.
 	/// @return Current game state's logics clock

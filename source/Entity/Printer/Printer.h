@@ -41,14 +41,6 @@ class PrintingSprite;
 		y,																									\
 		NULL																								\
 	);
-#define PRINT_IN_GAME_TIME(x, y)																			\
-	Printer::int32																							\
-	(																										\
-		Clock::getMilliseconds(VUEngine::getClock()),														\
-		x,																									\
-		y,																									\
-		NULL																								\
-	);
 
 #define __TAB_SIZE				  4
 #define __MAX_FONT_NAME_LENGTH	  16

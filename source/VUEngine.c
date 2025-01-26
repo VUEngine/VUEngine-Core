@@ -52,20 +52,6 @@ uint32 _dispatchCycle = 0;
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void VUEngine::resetClock()
-{
-	// This is strictly not necessary, since the singleton instance could be
-	// directly accessed by setting a static global in the constructor that points to it.
-	// But this looks subjectively better and is inlined by the compiler anyway.
-	// This and other methods being static is not necessary either, but it makes less tedious the 
-	// writing the calls to them.
-	VUEngine vuEngine = VUEngine::getInstance();
-
-	Clock::reset(vuEngine->clock);
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
 static void VUEngine::pause(GameState pauseState)
 {
 	VUEngine vuEngine = VUEngine::getInstance();
@@ -211,15 +197,6 @@ static Stage VUEngine::getStage()
 
 	State state = StateMachine::getCurrentState(vuEngine->stateMachine);
 	return isDeleted(state) ? NULL : GameState::getStage(GameState::safeCast(state));
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-static Clock VUEngine::getClock()
-{
-	VUEngine vuEngine = VUEngine::getInstance();
-
-	return vuEngine->clock;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -492,9 +469,6 @@ void VUEngine::constructor()
 	// Always explicitly call the base's constructor 
 	Base::constructor();
 
-	this->clock = new Clock();
-	Clock::start(this->clock);
-
 	this->stateMachine = new StateMachine(this);
 
 	this->gameFrameStarted = false;
@@ -520,9 +494,6 @@ void VUEngine::constructor()
 void VUEngine::destructor()
 {
 	VUEngine::cleanUp(this);
-
-	// Destroy the clocks
-	Clock::destructor(this->clock);
 
 	delete this->stateMachine;
 
