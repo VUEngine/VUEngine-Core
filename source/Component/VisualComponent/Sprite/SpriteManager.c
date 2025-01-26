@@ -549,7 +549,8 @@ void SpriteManager::prepareAll()
 	SpriteManager::sortSprites(this);
 
 	// Render and draw sprites as soon as possible
-	SpriteManager::renderAndDraw(this);
+	SpriteManager::render(this);
+	SpriteManager::writeDRAM(this);
 
 	// Sort all sprites' layers again
 	// Don't remove me, some custom sprites depend on others
@@ -557,7 +558,8 @@ void SpriteManager::prepareAll()
 	SpriteManager::sortSprites(this);
 
 	// Render and draw sprites as soon as possible again
-	SpriteManager::renderAndDraw(this);
+	SpriteManager::render(this);
+	SpriteManager::writeDRAM(this);
 
 	// Defer rendering again
 	SpriteManager::deferParamTableEffects(this, true);
