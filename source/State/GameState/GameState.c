@@ -132,6 +132,10 @@ void GameState::start(void* owner)
 
 void GameState::update(void* owner)
 {
+	GameState::focusCamera(this);
+	
+	GameState::applyTransformationsUI(this);
+
 	GameState::updateStage(this);
 
 	GameState::readUserInput(this);
@@ -789,6 +793,27 @@ void GameState::configureUI(StageSpec* stageSpec)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+void GameState::focusCamera()
+{
+	Camera::focus(Camera::getInstance());
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void GameState::applyTransformationsUI()
+{
+	if((!this->transform && __VALID_TRANSFORMATION == Camera::getTransformationFlags(Camera::getInstance())) || NULL == this->uiContainer)
+	{
+		return;
+	}
+
+	extern Transformation _neutralEnvironmentTransformation;
+
+	UIContainer::transform(this->uiContainer, NULL, __INVALIDATE_TRANSFORMATION);
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void GameState::updateStage()
 {
 	if(!Clock::isPaused(this->logicsClock))
@@ -928,20 +953,6 @@ void GameState::stream()
 #ifdef __ENABLE_PROFILER
 	Profiler::lap(kProfilerLapTypeNormalProcess, PROCESS_NAME_STREAMING);
 #endif
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void GameState::applyTransformationsUI()
-{
-	if((!this->transform && __VALID_TRANSFORMATION == Camera::getTransformationFlags(Camera::getInstance())) || NULL == this->uiContainer)
-	{
-		return;
-	}
-
-	extern Transformation _neutralEnvironmentTransformation;
-
-	UIContainer::transform(this->uiContainer, NULL, __INVALIDATE_TRANSFORMATION);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

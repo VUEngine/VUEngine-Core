@@ -547,13 +547,6 @@ void VUEngine::gameFrameStarted(uint16 gameFrameDuration)
 {
 	this->gameFrameStarted = true;
 
-	VUEngine::focusCamera(this);
-	
-	if(!isDeleted(this->currentGameState))
-	{
-		GameState::applyTransformationsUI(this->currentGameState);
-	}
-
 	ClockManager::update(ClockManager::getInstance(), gameFrameDuration);
 
 #ifdef __PRINT_FRAMERATE
@@ -692,24 +685,6 @@ secure void VUEngine::run(GameState currentGameState)
 
 	// Being a program running in an embedded system, there is no point in trying to 
 	// shut down things, I'm the operative system!
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void VUEngine::focusCamera()
-{
-#ifdef __TOOLS
-	if(!VUEngine::isInToolState())
-	{
-#endif
-		Camera::focus(Camera::getInstance());
-#ifdef __TOOLS
-	}
-#endif
-
-#ifdef __ENABLE_PROFILER
-	Profiler::lap(kProfilerLapTypeNormalProcess, PROCESS_NAME_CAMERA);
-#endif
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
