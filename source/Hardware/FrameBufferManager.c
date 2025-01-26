@@ -530,16 +530,16 @@ static bool FrameBufferManager::drawCircle(PixelVector center, int16 radius, int
 		return false;
 	}
 
-	bool xFromOutside = _frustumWidth < (unsigned)(center.x - _frustum.x0);
-	bool yFromOutside = _frustumHeight < (unsigned)(center.y - _frustum.y0);
-	bool zFromOutside = _frustumDepth < (unsigned)(center.z - _frustum.z0);
+	bool xFromOutside = _frustumWidth < center.x - radius;
+	bool yFromOutside = _frustumHeight < center.y - radius;
+	bool zFromOutside = _frustumDepth < center.z - radius;
+	
+	bool xToOutside = 0 > center.x + radius;
+	bool yToOutside = 0 > center.y + radius;
+	bool zToOutside = 0 > center.z + radius;
 
-	bool xToOutside = _frustumWidth < (unsigned)(center.x - _frustum.x0);
-	bool yToOutside = _frustumHeight < (unsigned)(center.y - _frustum.y0);
-	bool zToOutside = _frustumDepth < (unsigned)(center.z - _frustum.z0);
-
-	bool xOutside = (xFromOutside && xToOutside);
-	bool yOutside = (yFromOutside && yToOutside); 
+	bool xOutside = (xFromOutside || xToOutside);
+	bool yOutside = (yFromOutside || yToOutside); 
 	bool zOutside = (zFromOutside || zToOutside);
 
 	if(xOutside || yOutside || zOutside)
