@@ -101,7 +101,7 @@ void StageEditor::hide()
 {
 	ColliderManager::hideColliders
 	(
-		ColliderManager::safeCast(GameState::getComponentManager(VUEngine::getPreviousState(), kColliderComponent))
+		ColliderManager::safeCast(GameState::getComponentManager(ToolState::getCurrentGameState(this->toolState), kColliderComponent))
 	);
 
 	Printer::clear();
@@ -116,7 +116,7 @@ void StageEditor::hide()
 
 void StageEditor::processUserInput(uint16 pressedKey)
 {
-	if(isDeleted(this->stage))
+	if(isDeleted(GameState::getStage(ToolState::getCurrentGameState(this->toolState))))
 	{
 		return;
 	}
@@ -376,14 +376,14 @@ void StageEditor::highLightActor()
 
 void StageEditor::selectPreviousActor()
 {
-	if(isDeleted(this->stage))
+	if(isDeleted(GameState::getStage(ToolState::getCurrentGameState(this->toolState))))
 	{
 		return;
 	}
 
 	StageEditor::releaseWireframe(this);
 
-	VirtualList stageActors = (Container::safeCast(this->stage))->children;
+	VirtualList stageActors = (Container::safeCast(GameState::getStage(ToolState::getCurrentGameState(this->toolState))))->children;
 
 	if(!this->actorNode)
 	{
@@ -409,14 +409,14 @@ void StageEditor::selectPreviousActor()
 
 void StageEditor::selectNextActor()
 {
-	if(isDeleted(this->stage))
+	if(isDeleted(GameState::getStage(ToolState::getCurrentGameState(this->toolState))))
 	{
 		return;
 	}
 
 	StageEditor::releaseWireframe(this);
 
-	VirtualList stageActors = (Container::safeCast(this->stage))->children;
+	VirtualList stageActors = (Container::safeCast(GameState::getStage(ToolState::getCurrentGameState(this->toolState))))->children;
 
 	if(!this->actorNode)
 	{
@@ -532,7 +532,7 @@ void StageEditor::moveCamera(uint32 pressedKey)
 
 void StageEditor::changeProjection(uint32 pressedKey)
 {
-	if(isDeleted(this->stage))
+	if(isDeleted(GameState::getStage(ToolState::getCurrentGameState(this->toolState))))
 	{
 		return;
 	}
@@ -606,7 +606,7 @@ void StageEditor::changeProjection(uint32 pressedKey)
 
 	StageEditor::printProjectionValues(this);
 
-	Stage::transform(this->stage, &_neutralEnvironmentTransformation, Camera::getTransformationFlags(Camera::getInstance()));
+	Stage::transform(GameState::getStage(ToolState::getCurrentGameState(this->toolState)), &_neutralEnvironmentTransformation, Camera::getTransformationFlags(Camera::getInstance()));
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -711,7 +711,7 @@ void StageEditor::translateActor(uint32 pressedKey)
 
 void StageEditor::applyTranslationToActor(Vector3D translation)
 {
-	if(isDeleted(this->stage))
+	if(isDeleted(GameState::getStage(ToolState::getCurrentGameState(this->toolState))))
 	{
 		return;
 	}
@@ -727,7 +727,7 @@ void StageEditor::applyTranslationToActor(Vector3D translation)
 
 		Container::setLocalPosition(container, &localPosition);
 
-		Stage::transform(this->stage, &_neutralEnvironmentTransformation, Camera::getTransformationFlags(Camera::getInstance()));
+		Stage::transform(GameState::getStage(ToolState::getCurrentGameState(this->toolState)), &_neutralEnvironmentTransformation, Camera::getTransformationFlags(Camera::getInstance()));
 
 		StageEditor::printActorPosition(this);
 
@@ -789,7 +789,7 @@ void StageEditor::showSelectedUserObject()
 
 void StageEditor::selectUserObject(uint32 pressedKey)
 {
-	if(isDeleted(this->stage))
+	if(isDeleted(GameState::getStage(ToolState::getCurrentGameState(this->toolState))))
 	{
 		return;
 	}
@@ -832,10 +832,10 @@ void StageEditor::selectUserObject(uint32 pressedKey)
 			false
 		};
 
-		Stage::spawnChildActor(this->stage, &DUMMY_ENTITY, false);
+		Stage::spawnChildActor(GameState::getStage(ToolState::getCurrentGameState(this->toolState)), &DUMMY_ENTITY, false);
 		SpriteManager::sortSprites(SpriteManager::safeCast(ComponentManager::getManager(kSpriteComponent)));
 
-		VirtualList stageActors = (Container::safeCast(this->stage))->children;
+		VirtualList stageActors = (Container::safeCast(GameState::getStage(ToolState::getCurrentGameState(this->toolState))))->children;
 		this->actorNode = stageActors ? stageActors->tail : NULL;
 
 		// Select the added actor
@@ -908,15 +908,15 @@ void StageEditor::printActorPosition()
 
 void StageEditor::applyTranslationToCamera(Vector3D translation)
 {
-	if(isDeleted(this->stage))
+	if(isDeleted(GameState::getStage(ToolState::getCurrentGameState(this->toolState))))
 	{
 		return;
 	}
 
 	Camera::translate(Camera::getInstance(), translation, true);
-	Stage::transform(this->stage, &_neutralEnvironmentTransformation, Camera::getTransformationFlags(Camera::getInstance()));
+	Stage::transform(GameState::getStage(ToolState::getCurrentGameState(this->toolState)), &_neutralEnvironmentTransformation, Camera::getTransformationFlags(Camera::getInstance()));
 	StageEditor::printCameraPosition(this);
-	Stage::streamAll(this->stage);
+	Stage::streamAll(GameState::getStage(ToolState::getCurrentGameState(this->toolState)));
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

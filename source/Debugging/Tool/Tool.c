@@ -12,6 +12,7 @@
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <Printer.h>
+#include <ToolState.h>
 
 #include "Tool.h"
 
@@ -52,7 +53,7 @@ void Tool::constructor()
 	// Always explicitly call the base's constructor 
 	Base::constructor();
 
-	this->stage = NULL;
+	this->toolState = NULL;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -62,13 +63,6 @@ void Tool::destructor()
 	// Allow a new construct
 	// Always explicitly call the base's destructor 
 	Base::destructor();
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void Tool::setStage(Stage stage)
-{
-	this->stage = stage;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -94,10 +88,17 @@ void Tool::dimmGame()
 
 void Tool::lightUpGame()
 {
-	if(!isDeleted(this->stage))
+	if(!isDeleted(GameState::getStage(ToolState::getCurrentGameState(this->toolState))))
 	{
-		Stage::configurePalettes(this->stage);
+		Stage::configurePalettes(GameState::getStage(ToolState::getCurrentGameState(this->toolState)));
 	}
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void Tool::setToolState(ToolState toolState)
+{
+	this->toolState = toolState;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

@@ -68,6 +68,9 @@ singleton class VUEngine : ListenerObject
 {
 	/// @protectedsection
 
+	/// Current game state that the engine is in
+	GameState currentGameState;
+
 	/// Engine's main state machine
 	StateMachine stateMachine;
 
@@ -94,11 +97,6 @@ singleton class VUEngine : ListenerObject
 
 	/// @publicsection
 
-	/// Public methods are static mainly to save the tedium of calling VUEngine::getInstance()
-
-	/// Reset the engine's main clock.
-	static void resetClock();
-
 	/// Pause the game by pushing the provided game state into the engine's state machine's stack.
 	/// @param pauseState: Pause game state
 	static void pause(GameState pauseState);
@@ -119,37 +117,17 @@ singleton class VUEngine : ListenerObject
 	/// @param state: Game state to swap to
 	static void changeState(GameState state);
 
-	/// Check if the engine's state machine is in a tool state.
-	/// @return True if the engine's state machine is in a tool state
-	static bool isInToolState();
-
 	/// Check if the engine's state machine is entering or exiting a tool state.
 	/// @return True if the engine's state machine is entering or exiting a tool state
 	static bool isInToolStateTransition();
-
-	/// Retrieve the current state.
-	/// @return Current game state
-	static GameState getCurrentState();
-
-	/// Retrieve the previous state.
-	/// @return Previous game state
-	static GameState getPreviousState();
 
 	/// Retrieve the current stage.
 	/// @return Current game state's stage
 	static Stage getStage();
 
-	/// Retrieve the current game state's logics clock.
-	/// @return Current game state's logics clock
-	static Clock getLogicsClock();
-
 	/// Retrieve the current game state's messaging clock.
 	/// @return Current game state's messaging clock
 	static Clock getMessagingClock();
-
-	/// Retrieve the current game state's physics clock.
-	/// @return Current game state's physics clock
-	static Clock getPhysicsClock();
 
 	/// Retrieve the current process' name.
 	/// @return Current process' name

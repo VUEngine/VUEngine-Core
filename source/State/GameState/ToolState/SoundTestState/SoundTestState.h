@@ -27,6 +27,7 @@
 /// Implements a tool state to test sounds.
 singleton class SoundTestState : ToolState
 {
+	/// @publicsection
 
 	/// Prepares the object to enter this state.
 	/// @param owner: Object that is entering in this state

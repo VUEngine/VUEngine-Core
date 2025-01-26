@@ -15,7 +15,13 @@
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <ListenerObject.h>
-#include <Stage.h>
+#include <ToolState.h>
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+// CLASS'S DECLARATION
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+class ToolState;
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DECLARATION
@@ -30,17 +36,16 @@ abstract class Tool : ListenerObject
 {
 	/// @protectedsection
 
-	/// The stage to work with
-	Stage stage;
+	ToolState toolState;
 
 	/// @publicsection
 
 	/// Class' constructor
 	void constructor();
 
-	/// Set the stage to work with.
-	/// @param stage: Stage to work with
-	void setStage(Stage stage);
+	/// Set the VUEngine's current game state.
+	/// @param currentGameState: Game's current game state
+	void setToolState(ToolState toolState);
 
 	/// Process the provided user pressed key.
 	/// @param pressedKey: User pressed key

@@ -144,10 +144,11 @@ static void VUEngine::changeState(GameState gameState)
 
 static bool VUEngine::isInToolState()
 {
+	VUEngine vuEngine = VUEngine::getInstance();
 	int32 isInToolState = false;
 
 #ifdef __TOOLS
-	isInToolState = NULL != __GET_CAST(ToolState, VUEngine::getCurrentState());
+	isInToolState = NULL != __GET_CAST(ToolState, vuEngine->currentGameState);
 #endif
 
 	return isInToolState;
@@ -160,26 +161,6 @@ static bool VUEngine::isInToolStateTransition()
 	VUEngine vuEngine = VUEngine::getInstance();
 
 	return vuEngine->isInToolStateTransition;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-static GameState VUEngine::getCurrentState()
-{
-	VUEngine vuEngine = VUEngine::getInstance();
-
-	State state = StateMachine::getCurrentState(vuEngine->stateMachine);
-	return isDeleted(state) ? NULL : GameState::safeCast(state);
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-static GameState VUEngine::getPreviousState()
-{
-	VUEngine vuEngine = VUEngine::getInstance();
-
-	State state = StateMachine::getPreviousState(vuEngine->stateMachine);
-	return isDeleted(state) ? NULL : GameState::safeCast(state);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -201,32 +182,12 @@ static Stage VUEngine::getStage()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static Clock VUEngine::getLogicsClock()
-{
-	VUEngine vuEngine = VUEngine::getInstance();
-
-	State state = StateMachine::getCurrentState(vuEngine->stateMachine);
-	return isDeleted(state) ? NULL : GameState::getLogicsClock(GameState::safeCast(state));
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
 static Clock VUEngine::getMessagingClock()
 {
 	VUEngine vuEngine = VUEngine::getInstance();
 
 	State state = StateMachine::getCurrentState(vuEngine->stateMachine);
 	return isDeleted(state) ? NULL : GameState::getMessagingClock(GameState::safeCast(state));
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-static Clock VUEngine::getPhysicsClock()
-{
-	VUEngine vuEngine = VUEngine::getInstance();
-
-	State state = StateMachine::getCurrentState(vuEngine->stateMachine);
-	return isDeleted(state) ? NULL : GameState::getPhysicsClock(GameState::safeCast(state));
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -452,12 +413,6 @@ bool VUEngine::handleMessage(Telegram telegram)
 
 void VUEngine::constructor()
 {
-	// This function is created by the transpiler
-	extern void setupClasses();
-
-	// Setup the classes' virtual tables
-	setupClasses();
-
 #ifndef __RELEASE
 	// Restrict singleton access
 	Singleton::secure();
@@ -470,6 +425,7 @@ void VUEngine::constructor()
 	Base::constructor();
 
 	this->stateMachine = new StateMachine(this);
+	this->currentGameState = NULL;
 
 	this->gameFrameStarted = false;
 	this->currentGameCycleEnded = false;
@@ -654,7 +610,7 @@ void VUEngine::gameFrameStarted(uint16 gameFrameDuration)
 
 	VUEngine::focusCamera(this);
 
-	GameState gameState = VUEngine::getCurrentState();
+	GameState gameState = this->currentGameState;
 	
 	if(!isDeleted(gameState))
 	{
@@ -712,6 +668,8 @@ void VUEngine::toggleTool(ToolState toolState)
 		{
 			VUEngine::removeState(this, GameState::safeCast(toolState));
 		}
+
+		ToolState::setCurrentGameState(toolState, this->currentGameState);
 
 		VUEngine::addState(GameState::safeCast(toolState));
 	}
@@ -901,9 +859,11 @@ secure void VUEngine::run(GameState currentGameState)
 		return;
 	}
 
-	VUEngine::setState(currentGameState);
+	this->currentGameState = currentGameState;
 
-	while(NULL != currentGameState)
+	VUEngine::setState(this->currentGameState);
+
+	while(NULL != this->currentGameState)
 	{
 		this->gameFrameStarted = false;
 		this->currentGameCycleEnded = false;
@@ -915,33 +875,33 @@ secure void VUEngine::run(GameState currentGameState)
 		Profiler::start();
 #endif
 
-		VUEngine::processUserInput(this, currentGameState);
+		VUEngine::processUserInput(this, this->currentGameState);
 
-		VUEngine::simulatePhysics(this, currentGameState);
+		VUEngine::simulatePhysics(this, this->currentGameState);
 
-		VUEngine::processTransformations(this, currentGameState);
+		VUEngine::processTransformations(this, this->currentGameState);
 
-		VUEngine::processCollisions(this, currentGameState);
+		VUEngine::processCollisions(this, this->currentGameState);
 
 		VUEngine::dispatchDelayedMessages(this);
 
-		currentGameState = VUEngine::updateLogic(this, currentGameState);
+		this->currentGameState = VUEngine::updateLogic(this, this->currentGameState);
 
 #ifdef __ENABLE_PROFILER
 		HardwareManager::enableInterrupts();
 
-		VUEngine::stream(this, currentGameState);
+		VUEngine::stream(this, this->currentGameState);
 #else
 		if(!this->lockFrameRate)
 		{
-			while(VUEngine::stream(this, currentGameState));
+			while(VUEngine::stream(this, this->currentGameState));
 		}
 		else
 		{
 			do
 			{
 				// Stream the heck out of the pending actors
-				if(!VUEngine::stream(this, currentGameState))
+				if(!VUEngine::stream(this, this->currentGameState))
 				{
 #ifndef __ENABLE_PROFILER
 					this->currentGameCycleEnded = true;
@@ -1015,6 +975,12 @@ void VUEngine::cleanUp()
 
 int32 main(void)
 {
+	// This function is created by the transpiler
+	extern void setupClasses();
+
+	// Setup the classes' virtual tables
+	setupClasses();
+
 	// Make sure that everything is properly intialized before giving control to the game
 	volatile VUEngine vuEngine = VUEngine::getInstance();
 

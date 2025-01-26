@@ -213,7 +213,7 @@ void Debug::destructor()
 
 ColliderManager Debug::getColliderManager()
 {
-	return ColliderManager::safeCast(GameState::getComponentManager(VUEngine::getPreviousState(), kColliderComponent));
+	return ColliderManager::safeCast(GameState::getComponentManager(ToolState::getCurrentGameState(this->toolState), kColliderComponent));
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -438,7 +438,7 @@ void Debug::generalStatusPage(int32 increment __attribute__ ((unused)), int32 x 
 
 	Printer::text("GAME STATUS", 1, y++, NULL);
 	Printer::text("Current State:", 1, ++y, NULL);
-	Printer::text(__GET_CLASS_NAME(VUEngine::getPreviousState()), 20, y, NULL);
+	Printer::text(__GET_CLASS_NAME(ToolState::getCurrentGameState(this->toolState)), 20, y, NULL);
 
 	Printer::text("Save Data Manager:", 1, ++y, NULL);
 	if(VUEngine::getSaveDataManager())
@@ -460,11 +460,11 @@ void Debug::generalStatusPage(int32 increment __attribute__ ((unused)), int32 x 
 
 	Printer::text("CLOCKS STATUS", 1, y++, NULL);
 	Printer::text("General clock time: ", 1, ++y, NULL);
-	Clock::print(GameState::getMessagingClock(VUEngine::getPreviousState()), 26, y, NULL);
+	Clock::print(GameState::getMessagingClock(ToolState::getCurrentGameState(this->toolState)), 26, y, NULL);
 	Printer::text("Animations clock's time: ", 1, ++y, NULL);
-	Clock::print(GameState::getLogicsClock(VUEngine::getPreviousState()), 26, y, NULL);
+	Clock::print(GameState::getLogicsClock(ToolState::getCurrentGameState(this->toolState)), 26, y, NULL);
 	Printer::text("Physics clock's time: ", 1, ++y, NULL);
-	Clock::print(GameState::getPhysicsClock(VUEngine::getPreviousState()), 26, y, NULL);
+	Clock::print(GameState::getPhysicsClock(ToolState::getCurrentGameState(this->toolState)), 26, y, NULL);
 	y+=3;
 }
 
@@ -512,7 +512,7 @@ void Debug::memoryStatusShowZeroPage(int32 increment __attribute__ ((unused)), i
 		//{&I18n_getObjectSize, 						"I18n"},
 		{&MemoryPool_getObjectSize, 					"MemoryPool"},
 		{&MessageDispatcher_getObjectSize, 				"MessageDispatcher"},
-		{&Printing_getObjectSize, 						"Printer"},
+		{&Printer_getObjectSize, 						"Printer"},
 		{&Camera_getObjectSize, 						"Camera"},
 	};
 
@@ -739,7 +739,7 @@ void Debug::streamingShowStatus
 	int32 increment __attribute__ ((unused)), int32 x __attribute__ ((unused)), int32 y __attribute__ ((unused))
 )
 {
-	Stage::print(GameState::getStage(VUEngine::getPreviousState()), x, y);
+	Stage::print(GameState::getStage(ToolState::getCurrentGameState(this->toolState)), x, y);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -1232,7 +1232,7 @@ void Debug::physicsPage(int32 increment __attribute__ ((unused)), int32 x __attr
 
 void Debug::physicStatusShowStatistics(int32 increment __attribute__ ((unused)), int32 x, int32 y)
 {
-	BodyManager::print(BodyManager::safeCast(GameState::getComponentManager(VUEngine::getPreviousState(), kPhysicsComponent)), x, y);
+	BodyManager::print(BodyManager::safeCast(GameState::getComponentManager(ToolState::getCurrentGameState(this->toolState), kPhysicsComponent)), x, y);
 	ColliderManager::print(Debug::getColliderManager(this), x, y + 6);
 	ColliderManager::hideColliders(Debug::getColliderManager(this));
 

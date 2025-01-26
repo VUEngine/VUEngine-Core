@@ -37,6 +37,9 @@ abstract class ToolState : GameState
 	/// The tool that the state uses
 	Tool tool;
 
+	/// Game's current state
+	GameState currentGameState;
+
 	/// @publicsection
 
 	/// Retrive the tool state that is unlocked by the provided user input.
@@ -66,6 +69,14 @@ abstract class ToolState : GameState
 	/// Stream in or out the stage actors within or outside the camera's range.
 	/// @return True if at least some actor was streamed in or out
 	override bool stream();
+
+	/// Set the VUEngine's current game state.
+	/// @param currentGameState: Game's current game state
+	void setCurrentGameState(GameState currentGameState);
+
+	/// Set the VUEngine's current game state.
+	/// @return Game's current game state
+	GameState getCurrentGameState();
 
 	/// Check if the provided user input unlocks the tool managed by this state.
 	/// @return True if the input matches the combination defined by the state

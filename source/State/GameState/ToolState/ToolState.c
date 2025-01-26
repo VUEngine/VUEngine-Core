@@ -81,7 +81,13 @@ void ToolState::constructor()
 	// Always explicitly call the base's constructor 
 	Base::constructor();
 
+	this->stream = false;
+	this->transform = false;
+	this->updatePhysics = false;
+	this->processCollisions = false;
+
 	this->tool = NULL;
+	this->currentGameState = NULL;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -99,18 +105,18 @@ void ToolState::destructor()
 void ToolState::enter(void* owner __attribute__ ((unused)))
 {
 	Base::enter(this, owner);
-	GameState::pauseClocks(GameState::safeCast(VUEngine::getPreviousState()));
-	GameState::startClocks(this);
 
-	this->stream = false;
-	this->transform = false;
-	this->updatePhysics = false;
-	this->processCollisions = false;
-
-	if(!isDeleted(this->tool))
+	if(NULL != this->currentGameState)
 	{
-		Tool::setStage(this->tool, GameState::getStage(GameState::safeCast(VUEngine::getPreviousState())));
-		Tool::show(this->tool);
+		GameState::pauseClocks(this->currentGameState);
+		GameState::startClocks(this);
+
+
+		if(!isDeleted(this->tool))
+		{
+			Tool::setToolState(this->tool, this);
+			Tool::show(this->tool);
+		}
 	}
 }
 
@@ -133,7 +139,13 @@ void ToolState::exit(void* owner __attribute__ ((unused)))
 		Tool::hide(this->tool);
 	}
 
-	GameState::unpauseClocks(GameState::safeCast(VUEngine::getPreviousState()));
+	if(NULL != this->currentGameState)
+	{
+		GameState::unpauseClocks(GameState::safeCast(this->currentGameState));
+	}
+
+	this->currentGameState = NULL;
+
 	Base::exit(this, owner);
 }
 
@@ -154,4 +166,17 @@ bool ToolState::stream()
 	return false;
 }
 
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void ToolState::setCurrentGameState(GameState currentGameState)
+{
+	this->currentGameState = currentGameState;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+GameState ToolState::getCurrentGameState()
+{
+	return this->currentGameState;	
+}
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
