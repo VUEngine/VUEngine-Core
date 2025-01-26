@@ -787,8 +787,6 @@ Component ComponentManager::instantiateComponent(Entity owner, const ComponentSp
 		return NULL;
 	}
 
-	ComponentManager::purgeComponents(this);
-
 	Entity::clearComponentLists(owner, componentSpec->componentType);
 
 	return NULL;
