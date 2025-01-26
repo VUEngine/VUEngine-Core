@@ -80,10 +80,10 @@ singleton class VUEngine : ListenerObject
 	/// Current process' name
 	char* processName;
 
-	/// Flag used to measure the FPS
+	/// Flag raised when the game loop is completed
 	volatile bool currentGameCycleEnded;
 
-	/// Flag used to lock the frame rate
+	/// Flag raised upon VIP's GAMESTART
 	volatile bool gameFrameStarted;
 	
 	/// If true, the game is paused
@@ -93,7 +93,7 @@ singleton class VUEngine : ListenerObject
 	bool isInToolStateTransition;
 
 	/// If false, the game loop runs unlocked
-	bool syncToVIP;
+	bool lockFrameRate;
 
 	/// @publicsection
 

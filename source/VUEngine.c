@@ -287,7 +287,7 @@ static void VUEngine::lockFrameRate()
 {
 	VUEngine vuEngine = VUEngine::getInstance();
 
-	vuEngine->syncToVIP = true;
+	vuEngine->lockFrameRate = true;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -296,7 +296,7 @@ static void VUEngine::unlockFrameRate()
 {
 	VUEngine vuEngine = VUEngine::getInstance();
 
-	vuEngine->syncToVIP = false;
+	vuEngine->lockFrameRate = false;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -501,7 +501,7 @@ void VUEngine::constructor()
 	this->currentGameCycleEnded = false;
 	this->isPaused = false;
 	this->isInToolStateTransition = false;
-	this->syncToVIP = true;
+	this->lockFrameRate = true;
 
 	this->saveDataManager = NULL;
 
@@ -695,7 +695,7 @@ void VUEngine::gameFrameStarted(uint16 gameFrameDuration)
 #ifdef __PRINT_FRAMERATE
 	bool printFPS = true;
 #else
-	bool printFPS = !this->syncToVIP;
+	bool printFPS = !this->lockFrameRate;
 #endif
 
 #ifdef __TOOLS
@@ -795,7 +795,7 @@ void VUEngine::processUserInput(GameState currentGameState)
 	this->processName = PROCESS_NAME_INPUT;
 #endif
 
-	UserInput userInput = KeypadManager::readUserInput(KeypadManager::getInstance(), this->syncToVIP);
+	UserInput userInput = KeypadManager::readUserInput(KeypadManager::getInstance(), this->lockFrameRate);
 	
 #ifdef __TOOLS
 	if(VUEngine::checkIfToggleTool(this, &userInput))
@@ -961,7 +961,7 @@ secure void VUEngine::run(GameState currentGameState)
 
 		VUEngine::stream(this, currentGameState);
 #else
-		if(!this->syncToVIP)
+		if(!this->lockFrameRate)
 		{
 			while(VUEngine::stream(this, currentGameState));
 		}
