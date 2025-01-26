@@ -126,6 +126,9 @@ class GameState : State
 	/// @return Component manager for the provided component type
 	ComponentManager getComponentManager(uint32 componentType);
 
+	/// Force the purging of deleted components.
+	void purgeComponentManagers();
+
 	/// Retrieve the stage instance.
 	/// @return Game state's stage
 	Stage getStage();

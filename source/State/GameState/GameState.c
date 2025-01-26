@@ -92,7 +92,7 @@ void GameState::destructor()
 	}
 
 	GameState::destroyContainers(this);
-	GameState::destroyManagers(this);
+	GameState::destroyComponentManagers(this);
 
 	// Always explicitly call the base's destructor 
 	Base::destructor();
@@ -149,7 +149,7 @@ void GameState::exit(void* owner __attribute__ ((unused)))
 	MessageDispatcher::discardDelayedMessagesWithClock(MessageDispatcher::getInstance(), this->messagingClock);
 
 	GameState::destroyContainers(this);
-	GameState::destroyManagers(this);
+	GameState::destroyComponentManagers(this);
 
 	GameState::stopClocks(this);
 }
@@ -280,6 +280,19 @@ ComponentManager GameState::getComponentManager(uint32 componentType)
 	}
 	
 	return this->componentManagers[componentType];	
+}
+
+void GameState::purgeComponentManagers()
+{
+	for(int16 i = 0; i < kComponentTypes; i++)
+	{
+		if(isDeleted(this->componentManagers[i]))
+		{
+			continue;
+		}
+
+		ComponentManager::purgeComponents(this->componentManagers[i]);
+	}
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -691,7 +704,7 @@ void GameState::createManagers()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void GameState::destroyManagers()
+void GameState::destroyComponentManagers()
 {
 	for(int16 i = 0; i < kComponentTypes; i++)
 	{
