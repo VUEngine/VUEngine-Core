@@ -189,10 +189,7 @@ class SpriteManager : ComponentManager
 	/// Render sprites.
 	void render();
 
-	/// Force the rendering of all sprites.
-	void forceRendering();
-
-	/// Force the rendering and drawing of all sprites.
+	/// Force the rendering and drawing of all sprites (available only when __TOOLS is defined).
 	void renderAndDraw();
 
 	/// Copy DRAM cache data to real DRAM space.

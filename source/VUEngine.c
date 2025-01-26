@@ -722,6 +722,21 @@ void VUEngine::processUserInput()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+void VUEngine::processBehaviors()
+{
+#ifdef __REGISTER_LAST_PROCESS_NAME
+	this->processName = PROCESS_NAME_BEHAVIORS;
+#endif
+
+	GameState::processBehaviors(this->currentGameState);
+
+#ifdef __ENABLE_PROFILER
+	Profiler::lap(kProfilerLapTypeNormalProcess, PROCESS_NAME_BEHAVIORS);
+#endif
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void VUEngine::simulatePhysics()
 {
 #ifdef __REGISTER_LAST_PROCESS_NAME
@@ -849,6 +864,8 @@ secure void VUEngine::run(GameState currentGameState)
 #endif
 
 		VUEngine::processUserInput(this);
+
+		VUEngine::processBehaviors(this);
 
 		VUEngine::simulatePhysics(this);
 

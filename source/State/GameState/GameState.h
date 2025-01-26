@@ -66,7 +66,10 @@ class GameState : State
 
 	/// Flags to enable or disable the transformations
 	bool transform;
-	
+
+	/// Flags to enable or disable the behavior processing
+	bool processBehaviors;
+
 	/// Flags to enable or disable the physical simulations
 	bool updatePhysics;
 
@@ -202,6 +205,9 @@ class GameState : State
 
 	/// Update the UI's children' global transformations.
 	void transformUI();
+
+	/// Process behaviors.
+	void processBehaviors();
 
 	/// Continue physics simulations.
 	void simulatePhysics();

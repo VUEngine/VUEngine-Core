@@ -50,6 +50,7 @@ void GameState::constructor()
 
 	this->stream = true;
 	this->transform = true;
+	this->processBehaviors = true;
 	this->updatePhysics = true;
 	this->processCollisions = true;
 
@@ -144,6 +145,7 @@ void GameState::exit(void* owner __attribute__ ((unused)))
 	this->stream = true;
 	this->transform = true;
 	this->updatePhysics = true;
+	this->processBehaviors = true;
 	this->processCollisions = true;
 
 	MessageDispatcher::discardDelayedMessagesWithClock(MessageDispatcher::getInstance(), this->messagingClock);
@@ -523,6 +525,23 @@ void GameState::processCollisions()
 	}
 
 	ColliderManager::update(this->componentManagers[kColliderComponent]);
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void GameState::processBehaviors()
+{
+	if(!this->processBehaviors || isDeleted(this->componentManagers[kBehaviorComponent]))
+	{
+		return;
+	}
+
+	if(Clock::isPaused(this->logicsClock))
+	{
+		return;
+	}
+
+	BehaviorManager::update(this->componentManagers[kBehaviorComponent]);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

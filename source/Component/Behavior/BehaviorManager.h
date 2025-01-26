@@ -52,13 +52,12 @@ class BehaviorManager : ComponentManager
 	/// @return Created behavior
 	override Behavior instantiateComponent(Entity owner, const BehaviorSpec* behaviorSpec);
 
-	/// Destroy the provided behavior.
-	/// @param owner: Object to which the sprite will attach to
-	/// @param behavior: Behavior to destroy
-	override void deinstantiateComponent(Entity owner, Behavior behavior);
-
+	/// Destroy the provided behavior
 	/// Reset the manager's state
 	void reset();
+
+	/// Update the registered bodies by advancing the physics simulations.
+	void update();
 }
 
 #endif

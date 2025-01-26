@@ -634,16 +634,8 @@ void SpriteManager::render()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void SpriteManager::forceRendering()
-{
-	for(VirtualNode node = this->components->tail; NULL != node; node = node->previous)
-	{
-		Sprite::invalidateRendering(Sprite::safeCast(node->data));
-	}
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
+// This is unsafe since it calls external methods that could trigger modifications of the list of components
+#ifdef __TOOLS
 void SpriteManager::renderAndDraw()
 {
 	SpriteManager::render(this);
@@ -651,6 +643,7 @@ void SpriteManager::renderAndDraw()
 	// Write render data
 	SpriteManager::writeDRAM(this);
 }
+#endif
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 

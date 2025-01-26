@@ -34,6 +34,7 @@ class VUEngine;
 // CLASS' MACROS
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+#define PROCESS_NAME_BEHAVIORS				"BEHAVIORS"
 #define PROCESS_NAME_CAMERA					"CAMERA"
 #define PROCESS_NAME_COLLISIONS				"COLLISIONS"
 #define PROCESS_NAME_END_FRAME				"END FRAME"

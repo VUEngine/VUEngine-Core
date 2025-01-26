@@ -21,6 +21,8 @@
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 friend class Behavior;
+friend class VirtualList;
+friend class VirtualNode;
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PUBLIC METHODS
@@ -67,18 +69,25 @@ Behavior BehaviorManager::instantiateComponent(Entity owner, const BehaviorSpec*
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void BehaviorManager::deinstantiateComponent(Entity owner, Behavior behavior) 
+void BehaviorManager::update()
 {
-	if(isDeleted(behavior))
+	for(VirtualNode node = this->components->head, nextNode = NULL; NULL != node; node = nextNode)
 	{
-		return;
+		nextNode = node->next;
+
+		Behavior behavior = Behavior::safeCast(node->data);
+
+		NM_ASSERT(!isDeleted(behavior), "BehaviorManager::update: deleted behavior");
+
+		if(behavior->deleteMe)
+		{
+			// Place in the removed bodies list
+			VirtualList::removeNode(this->components, node);
+
+			delete behavior;
+			continue;
+		}
 	}
-
-	Base::deinstantiateComponent(this, owner, Component::safeCast(behavior));
-
-	VirtualList::removeData(this->components, behavior);
-
-	delete behavior;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
