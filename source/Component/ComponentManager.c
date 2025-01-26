@@ -798,10 +798,12 @@ Component ComponentManager::instantiateComponent(Entity owner, const ComponentSp
 
 void ComponentManager::deinstantiateComponent(Entity owner, Component component) 
 {
-	if(isDeleted(owner) || isDeleted(component))
+	if(NULL == owner || isDeleted(component))
 	{
 		return;
 	}
+
+	NM_ASSERT(!isDeleted(owner), "ComponentManager::deinstantiateComponent: deleted owner");
 
 	if(NULL == component->componentSpec || kComponentTypes <= component->componentSpec->componentType)
 	{
@@ -828,7 +830,7 @@ void ComponentManager::purgeComponents()
 
 		NM_ASSERT(!isDeleted(component), "ComponentManager::purgeComponents: deleted component");
 
-		if(component->deleteMe)
+		if(component->deleteMe || (NULL != component->owner && isDeleted(component->owner)))
 		{
 			VirtualList::removeNode(this->components, node);
 
