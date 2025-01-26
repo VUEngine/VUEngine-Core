@@ -117,33 +117,43 @@ bool GameState::handleMessage(Telegram telegram)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void GameState::enter(void* owner __attribute__ ((unused)))
+void GameState::start(void* owner)
 {
-	Printer::resetCoordinates();
 	GameState::pauseClocks(this);
+
+	// Make sure that messsaging is not paused
 	Clock::start(this->messagingClock);
+
+	// Call custom code implementation
+	GameState::enter(this, owner);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void GameState::execute(void* owner __attribute__ ((unused)))
+void GameState::update(void* owner)
 {
-	if(!Clock::isPaused(this->logicsClock))
-	{
-		Stage::update(this->stage);
-		UIContainer::update(this->uiContainer);
-	}
+	GameState::updateStage(this);
 
-#ifdef __ENABLE_PROFILER
-	Profiler::lap(kProfilerLapTypeNormalProcess, PROCESS_NAME_EXECUTE_STATE);
-#endif
+	GameState::readUserInput(this);
 
-	GameState::update(this);	
+	GameState::execute(this, owner);
+
+	GameState::processBehaviors(this);
+
+	GameState::simulatePhysics(this);
+
+	GameState::applyTransformations(this);
+
+	GameState::processCollisions(this);
+
+	GameState::dispatchDelayedMessages(this);
+
+	GameState::stream(this);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void GameState::exit(void* owner __attribute__ ((unused)))
+void GameState::stop(void* owner)
 {
 	GameState::discardMessages(this, kMessageRestoreFPS); 
 
@@ -159,11 +169,14 @@ void GameState::exit(void* owner __attribute__ ((unused)))
 	GameState::destroyComponentManagers(this);
 
 	GameState::stopClocks(this);
+
+	// Call custom code implementation
+	GameState::exit(this, owner);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void GameState::suspend(void* owner __attribute__ ((unused)))
+void GameState::pause(void* owner)
 {
 	Clock::pause(this->messagingClock, true);
 
@@ -186,12 +199,15 @@ void GameState::suspend(void* owner __attribute__ ((unused)))
 		}
 
 		GameState::disableManagers(this);
+
+		// Call custom code implementation
+		GameState::suspend(this, owner);
 	}
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void GameState::resume(void* owner __attribute__ ((unused)))
+void GameState::unpause(void* owner)
 {
 	NM_ASSERT(this->stage, "GameState::resume: null stage");
 
@@ -216,6 +232,9 @@ void GameState::resume(void* owner __attribute__ ((unused)))
 
 		// Force all streaming right now
 		GameState::streamAll(this);
+
+		// Call custom code implementation
+		GameState::resume(this, owner);
 	}
 
 	Clock::pause(this->messagingClock, false);
@@ -466,152 +485,6 @@ void GameState::unpausePhysics()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void GameState::applyTransformations()
-{
-	if(!this->transform || NULL == this->stage)
-	{
-		return;
-	}
-
-	extern Transformation _neutralEnvironmentTransformation;
-
-	Stage::transform(this->stage, &_neutralEnvironmentTransformation, Camera::getTransformationFlags(Camera::getInstance()));
-
-#ifdef __ENABLE_PROFILER
-	Profiler::lap(kProfilerLapTypeNormalProcess, PROCESS_NAME_TRANSFORMS);
-#endif
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void GameState::applyTransformationsUI()
-{
-	if((!this->transform && __VALID_TRANSFORMATION == Camera::getTransformationFlags(Camera::getInstance())) || NULL == this->uiContainer)
-	{
-		return;
-	}
-
-	extern Transformation _neutralEnvironmentTransformation;
-
-	UIContainer::transform(this->uiContainer, NULL, __INVALIDATE_TRANSFORMATION);
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void GameState::update()
-{
-	GameState::readUserInput(this);
-
-	GameState::processBehaviors(this);
-
-	GameState::simulatePhysics(this);
-
-	GameState::applyTransformations(this);
-
-	GameState::processCollisions(this);
-
-	GameState::dispatchDelayedMessages(this);
-
-	GameState::stream(this);
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void GameState::readUserInput()
-{
-	if(!KeypadManager::isEnabled(KeypadManager::getInstance()))
-	{
-		return;
-	}
-
-	UserInput userInput = KeypadManager::getUserInput();
-
-	if(0 != (userInput.dummyKey | userInput.pressedKey | userInput.holdKey | userInput.releasedKey))
-	{
-		GameState::processUserInput(this, &userInput);
-
-#ifdef __ENABLE_PROFILER
-		Profiler::lap(kProfilerLapTypeNormalProcess, PROCESS_NAME_INPUT);
-#endif
-	}
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void GameState::dispatchDelayedMessages()
-{
-	MessageDispatcher::dispatchDelayedMessages(MessageDispatcher::getInstance());
-
-#ifdef __ENABLE_PROFILER
-	Profiler::lap(kProfilerLapTypeNormalProcess, PROCESS_NAME_MESSAGES);
-#endif
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void GameState::simulatePhysics()
-{
-	if(!this->updatePhysics || isDeleted(this->componentManagers[kPhysicsComponent]))
-	{
-		return;
-	}
-
-	if(Clock::isPaused(this->physicsClock))
-	{
-		return;
-	}
-
-	BodyManager::update(this->componentManagers[kPhysicsComponent]);
-
-#ifdef __ENABLE_PROFILER
-	Profiler::lap(kProfilerLapTypeNormalProcess, PROCESS_NAME_PHYSICS);
-#endif
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void GameState::processCollisions()
-{
-	if(!this->processCollisions || isDeleted(this->componentManagers[kColliderComponent]))
-	{
-		return;
-	}
-
-	if(Clock::isPaused(this->physicsClock))
-	{
-		return;
-	}
-
-	ColliderManager::update(this->componentManagers[kColliderComponent]);
-
-#ifdef __ENABLE_PROFILER
-	Profiler::lap(kProfilerLapTypeNormalProcess, PROCESS_NAME_COLLISIONS);
-#endif
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void GameState::processBehaviors()
-{
-	if(!this->processBehaviors || isDeleted(this->componentManagers[kBehaviorComponent]))
-	{
-		return;
-	}
-
-	if(Clock::isPaused(this->logicsClock))
-	{
-		return;
-	}
-
-	BehaviorManager::update(this->componentManagers[kBehaviorComponent]);
-
-#ifdef __ENABLE_PROFILER
-	Profiler::lap(kProfilerLapTypeNormalProcess, PROCESS_NAME_BEHAVIORS);
-#endif
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
 bool GameState::propagateMessage(int32 message)
 {	
 	return 
@@ -698,21 +571,51 @@ void GameState::changeFramerate(int16 targetFPS, int32 duration)
 	}
 }
 
+
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void GameState::stream()
+void GameState::streamAll()
 {
-	if(!this->stream)
-	{
-		return;
-	}
+	// Make sure that the focus actor is transformed before focusing the camera
+	GameState::applyTransformations(this);
 
-	while(!VUEngine::hasGameFrameStarted() && Stage::stream(this->stage));
+	// Move the camera to its initial position
+	Camera::focus(Camera::getInstance());
 
-#ifdef __ENABLE_PROFILER
-	Profiler::lap(kProfilerLapTypeNormalProcess, PROCESS_NAME_STREAMING);
-#endif
+	// Invalidate transformations
+	Stage::invalidateTransformation(this->stage);
+
+	// Transformation everything
+	GameState::applyTransformations(this);
+
+	// Stream in and out all relevant actors
+	Stage::streamAll(this->stage);
 }
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void GameState::enter(void* owner __attribute__ ((unused)))
+{}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void GameState::execute(void* owner __attribute__ ((unused)))
+{}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void GameState::exit(void* owner __attribute__ ((unused)))
+{}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void GameState::suspend(void* owner __attribute__ ((unused)))
+{}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void GameState::resume(void* owner __attribute__ ((unused)))
+{}
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
@@ -886,22 +789,160 @@ void GameState::configureUI(StageSpec* stageSpec)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void GameState::streamAll()
+void GameState::updateStage()
 {
-	// Make sure that the focus actor is transformed before focusing the camera
-	GameState::applyTransformations(this);
+	if(!Clock::isPaused(this->logicsClock))
+	{
+		Stage::update(this->stage);
+		UIContainer::update(this->uiContainer);
+	}
 
-	// Move the camera to its initial position
-	Camera::focus(Camera::getInstance());
-
-	// Invalidate transformations
-	Stage::invalidateTransformation(this->stage);
-
-	// Transformation everything
-	GameState::applyTransformations(this);
-
-	// Stream in and out all relevant actors
-	Stage::streamAll(this->stage);
+#ifdef __ENABLE_PROFILER
+	Profiler::lap(kProfilerLapTypeNormalProcess, PROCESS_NAME_EXECUTE_STATE);
+#endif
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void GameState::readUserInput()
+{
+	if(!KeypadManager::isEnabled(KeypadManager::getInstance()))
+	{
+		return;
+	}
+
+	UserInput userInput = KeypadManager::getUserInput();
+
+	if(0 != (userInput.dummyKey | userInput.pressedKey | userInput.holdKey | userInput.releasedKey))
+	{
+		GameState::processUserInput(this, &userInput);
+
+#ifdef __ENABLE_PROFILER
+		Profiler::lap(kProfilerLapTypeNormalProcess, PROCESS_NAME_INPUT);
+#endif
+	}
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void GameState::processBehaviors()
+{
+	if(!this->processBehaviors || isDeleted(this->componentManagers[kBehaviorComponent]))
+	{
+		return;
+	}
+
+	if(Clock::isPaused(this->logicsClock))
+	{
+		return;
+	}
+
+	BehaviorManager::update(this->componentManagers[kBehaviorComponent]);
+
+#ifdef __ENABLE_PROFILER
+	Profiler::lap(kProfilerLapTypeNormalProcess, PROCESS_NAME_BEHAVIORS);
+#endif
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void GameState::simulatePhysics()
+{
+	if(!this->updatePhysics || isDeleted(this->componentManagers[kPhysicsComponent]))
+	{
+		return;
+	}
+
+	if(Clock::isPaused(this->physicsClock))
+	{
+		return;
+	}
+
+	BodyManager::update(this->componentManagers[kPhysicsComponent]);
+
+#ifdef __ENABLE_PROFILER
+	Profiler::lap(kProfilerLapTypeNormalProcess, PROCESS_NAME_PHYSICS);
+#endif
+}
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void GameState::applyTransformations()
+{
+	if(!this->transform || NULL == this->stage)
+	{
+		return;
+	}
+
+	extern Transformation _neutralEnvironmentTransformation;
+
+	Stage::transform(this->stage, &_neutralEnvironmentTransformation, Camera::getTransformationFlags(Camera::getInstance()));
+
+#ifdef __ENABLE_PROFILER
+	Profiler::lap(kProfilerLapTypeNormalProcess, PROCESS_NAME_TRANSFORMS);
+#endif
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void GameState::processCollisions()
+{
+	if(!this->processCollisions || isDeleted(this->componentManagers[kColliderComponent]))
+	{
+		return;
+	}
+
+	if(Clock::isPaused(this->physicsClock))
+	{
+		return;
+	}
+
+	ColliderManager::update(this->componentManagers[kColliderComponent]);
+
+#ifdef __ENABLE_PROFILER
+	Profiler::lap(kProfilerLapTypeNormalProcess, PROCESS_NAME_COLLISIONS);
+#endif
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void GameState::dispatchDelayedMessages()
+{
+	MessageDispatcher::dispatchDelayedMessages(MessageDispatcher::getInstance());
+
+#ifdef __ENABLE_PROFILER
+	Profiler::lap(kProfilerLapTypeNormalProcess, PROCESS_NAME_MESSAGES);
+#endif
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void GameState::stream()
+{
+	if(!this->stream)
+	{
+		return;
+	}
+
+	while(!VUEngine::hasGameFrameStarted() && Stage::stream(this->stage));
+
+#ifdef __ENABLE_PROFILER
+	Profiler::lap(kProfilerLapTypeNormalProcess, PROCESS_NAME_STREAMING);
+#endif
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void GameState::applyTransformationsUI()
+{
+	if((!this->transform && __VALID_TRANSFORMATION == Camera::getTransformationFlags(Camera::getInstance())) || NULL == this->uiContainer)
+	{
+		return;
+	}
+
+	extern Transformation _neutralEnvironmentTransformation;
+
+	UIContainer::transform(this->uiContainer, NULL, __INVALIDATE_TRANSFORMATION);
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+

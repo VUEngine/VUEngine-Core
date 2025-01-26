@@ -92,24 +92,24 @@ class GameState : State
 
 	/// Prepares the object to enter this state.
 	/// @param owner: Object that is entering in this state
-	override void enter(void* owner);
+	override void start(void* owner);
 
 	/// Updates the object in this state.
 	/// @param owner: Object that is in this state
-	override void execute(void* owner);
+	override void update(void* owner);
 	
 	/// Prepares the object to exit this state.
 	/// @param owner: Object that is exiting this state
-	override void exit(void* owner);
+	override void stop(void* owner);
 
 	/// Prepares the object to become inactive in this state.
 	/// @param owner: Object that is in this state
-	override void suspend(void* owner);
+	override void pause(void* owner);
 
 	/// Prepares the object to become active in this state.
 	/// @param owner: Object that is in this state
-	override void resume(void* owner);
-
+	override void unpause(void* owner);
+	
 	/// Process a Telegram sent to an object that is in this state.
 	/// @param owner: Object that is in this state
 	/// @param telegram: Telegram to process
@@ -234,6 +234,26 @@ class GameState : State
 
 	/// Force to completely stream in and out actors and to initialize all.
 	void streamAll();
+
+	/// Prepares the object to enter this state.
+	/// @param owner: Object that is entering in this state
+	virtual void enter(void* owner);
+
+	/// Updates the object in this state.
+	/// @param owner: Object that is in this state
+	virtual void execute(void* owner);
+	
+	/// Prepares the object to exit this state.
+	/// @param owner: Object that is exiting this state
+	virtual void exit(void* owner);
+
+	/// Prepares the object to become inactive in this state.
+	/// @param owner: Object that is in this state
+	virtual void suspend(void* owner);
+
+	/// Prepares the object to become active in this state.
+	/// @param owner: Object that is in this state
+	virtual void resume(void* owner);
 
 	/// Process the provided user input.
 	/// @param userInput: Struct with the current user input information

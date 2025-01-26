@@ -118,7 +118,7 @@ void StateMachine::swapState(State newState)
 		this->previousState = this->currentState;
 
 		// Call the exit method from current state
-		State::exit(this->currentState, this->owner);
+		State::stop(this->currentState, this->owner);
 	}
 
 	NM_ASSERT(!isDeleted(newState), "StateMachine::swapState: newState deleted during exit of previous state");
@@ -130,7 +130,7 @@ void StateMachine::swapState(State newState)
 	VirtualList::pushFront(this->stateStack, (BYTE*)this->currentState);
 
 	// Call enter method from new state
-	State::enter(this->currentState, this->owner);
+	State::start(this->currentState, this->owner);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -146,7 +146,7 @@ void StateMachine::pushState(State newState)
 	if(NULL != this->currentState)
 	{
 		// Call the pause method from current state
-		State::suspend(this->currentState, this->owner);
+		State::pause(this->currentState, this->owner);
 	}
 
 	// Set new state
@@ -158,7 +158,7 @@ void StateMachine::pushState(State newState)
 	VirtualList::pushFront(this->stateStack, (BYTE*)this->currentState);
 
 	// Call enter method from new state
-	State::enter(this->currentState, this->owner);
+	State::start(this->currentState, this->owner);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -175,7 +175,7 @@ void StateMachine::popState()
 	if(NULL != this->currentState)
 	{
 		// Call the exit method from current state
-		State::exit(this->currentState, this->owner);
+		State::stop(this->currentState, this->owner);
 	}
 
 	// Update the stack
@@ -188,7 +188,7 @@ void StateMachine::popState()
 	// Call resume method from new state
 	if(NULL != this->currentState)
 	{
-		State::resume(this->currentState, this->owner);
+		State::unpause(this->currentState, this->owner);
 	}
 }
 
@@ -209,7 +209,7 @@ State StateMachine::update()
 	}
 	else if(!isDeleted(this->currentState))
 	{
-		State::execute(this->currentState, this->owner);
+		State::update(this->currentState, this->owner);
 	}
 
 	return this->currentState;
@@ -293,7 +293,7 @@ uint32 StateMachine::popStateWithoutResume()
 	if(NULL != this->currentState)
 	{
 		// Call the exit method from current state
-		State::exit(this->currentState, this->owner);
+		State::stop(this->currentState, this->owner);
 	}
 
 	// Remove the state in the top of the stack

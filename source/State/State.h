@@ -43,23 +43,23 @@ abstract class State : ListenerObject
 
 	/// Prepares the object to enter this state.
 	/// @param owner: Object that is entering in this state
-	virtual void enter(void* owner);
+	virtual void start(void* owner);
 
 	/// Updates the object in this state.
 	/// @param owner: Object that is in this state
-	virtual void execute(void* owner);
+	virtual void update(void* owner);
 	
 	/// Prepares the object to exit this state.
 	/// @param owner: Object that is exiting this state
-	virtual void exit(void* owner);
+	virtual void stop(void* owner);
 
 	/// Prepares the object to become inactive in this state.
 	/// @param owner: Object that is in this state
-	virtual void suspend(void* owner);
+	virtual void pause(void* owner);
 
 	/// Prepares the object to become active in this state.
 	/// @param owner: Object that is in this state
-	virtual void resume(void* owner);
+	virtual void unpause(void* owner);
 
 	/// Process a Telegram sent to an object that is in this state.
 	/// @param owner: Object that is in this state
