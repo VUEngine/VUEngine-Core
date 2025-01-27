@@ -40,6 +40,9 @@ abstract class ToolState : GameState
 	/// Game's current state
 	GameState currentGameState;
 
+	/// Game's current stage
+	Stage currentStage;
+
 	/// @publicsection
 
 	/// Retrive the tool state that is unlocked by the provided user input.
@@ -66,13 +69,18 @@ abstract class ToolState : GameState
 	/// @param userInput: Struct with the current user input information
 	override void processUserInput(const UserInput*  userInput);
 
-	/// Set the VUEngine's current game state.
+	/// Set the VUEngine's current game state and stage.
 	/// @param currentGameState: Game's current game state
-	void setCurrentGameState(GameState currentGameState);
+	/// @param currentStage: Game's current stage
+	void configure(GameState currentGameState, Stage currentStage);
 
-	/// Set the VUEngine's current game state.
+	/// Retrieve the VUEngine's current game state.
 	/// @return Game's current game state
 	GameState getCurrentGameState();
+
+	/// Retrieve the VUEngine's current game state.
+	/// @return Game's current game state
+	Stage getCurrentStage();
 
 	/// Check if the provided user input unlocks the tool managed by this state.
 	/// @return True if the input matches the combination defined by the state

@@ -27,6 +27,7 @@
 #include <StopwatchManager.h>
 #include <Stage.h>
 #include <Telegram.h>
+#include <ToolState.h>
 #include <VUEngine.h>
 #include <WireframeManager.h>
 
@@ -209,6 +210,12 @@ void GameState::pause(void* owner)
 		// Call custom code implementation
 		GameState::suspend(this, owner);
 	}
+#ifdef __TOOLS
+	else
+	{
+		ToolState::configure(NULL, this, this->stage);		
+	}
+#endif
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -331,41 +338,6 @@ void GameState::purgeComponentManagers()
 UIContainer GameState::getUIContainer()
 {
 	return this->uiContainer;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-Stage GameState::getStage()
-{
-	return this->stage;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-Clock GameState::getLogicsClock()
-{
-	return this->logicsClock;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-Clock GameState::getMessagingClock()
-{
-	return this->messagingClock;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-Clock GameState::getAnimationsClock()
-{
-	return this->animationsClock;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-Clock GameState::getPhysicsClock()
-{
-	return this->physicsClock;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -598,6 +570,20 @@ void GameState::streamAll()
 
 	// Stream in and out all relevant actors
 	Stage::streamAll(this->stage);
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void GameState::printClocks(int16 x, int16 y)
+{
+	Printer::text("Logics clock time: ", x, ++y, NULL);
+	Clock::print(this->logicsClock, x + 26, y, NULL);
+	Printer::text("Messagging clock time: ", x, ++y, NULL);
+	Clock::print(this->messagingClock, x + 26, y, NULL);
+	Printer::text("Animations clock's time: ", x, ++y, NULL);
+	Clock::print(this->animationsClock, x + 26, y, NULL);
+	Printer::text("Physics clock's time: ", x, ++y, NULL);
+	Clock::print(this->physicsClock, x + 26, y, NULL);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -970,9 +956,17 @@ void GameState::configure()
 		return;
 	}
 
+	GameState::configureMessaging(this);
 	GameState::configureTimer(this);
 	GameState::configureGraphics(this);
 	GameState::configurePhysics(this);
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void GameState::configureMessaging()
+{
+	MessageDispatcher::setClock(MessageDispatcher::getInstance(), this->messagingClock);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

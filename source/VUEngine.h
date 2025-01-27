@@ -123,10 +123,6 @@ singleton class VUEngine : ListenerObject
 	/// @return True if the engine's state machine is entering or exiting a tool state
 	static bool isInToolStateTransition();
 
-	/// Retrieve the current game state's messaging clock.
-	/// @return Current game state's messaging clock
-	static Clock getMessagingClock();
-
 	/// Retrieve the duration of game frames.
 	/// @return Duration in milliseconds of game frames
 	static uint16 getGameFrameDuration();

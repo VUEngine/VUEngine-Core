@@ -139,7 +139,6 @@ const ClassPointer KeypadManagerAuthorizedClasses[] =
 const ClassPointer MessageDispatcherAuthorizedClasses[] =
 {
 	typeofclass(GameState),
-	typeofclass(VUEngine),
 	NULL
 };
 

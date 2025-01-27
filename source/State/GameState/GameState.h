@@ -132,26 +132,6 @@ class GameState : State
 	/// Force the purging of deleted components.
 	void purgeComponentManagers();
 
-	/// Retrieve the stage instance.
-	/// @return Game state's stage
-	Stage getStage();
-
-	/// Retrieve the clock that serves to control the game's logic.
-	/// @return Game state's logics clock
-	Clock getLogicsClock();
-
-	/// Retrieve the clock that is used for the timing of messaging.
-	/// @return Game state's messaging clock
-	Clock getMessagingClock();
-
-	/// Retrieve the clock that serves to control the animations.
-	/// @return Game state's animations clocks
-	Clock getAnimationsClock();
-
-	/// Retrieve the clock that serves to control the game's physics.
-	/// @return Game state's physics clock
-	Clock getPhysicsClock();
-
 	/// Start all the clocks.
 	void startClocks();
 
@@ -234,6 +214,11 @@ class GameState : State
 
 	/// Force to completely stream in and out actors and to initialize all.
 	void streamAll();
+
+	/// Print the clocks.
+	/// @param x: Screen x coordinate where to print
+	/// @param y: Screen y coordinate where to print
+	void printClocks(int16 x, int16 y);
 
 	/// Prepares the object to enter this state.
 	/// @param owner: Object that is entering in this state

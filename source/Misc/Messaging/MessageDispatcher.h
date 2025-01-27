@@ -34,7 +34,7 @@ typedef struct DelayedMessage
 	/// Telegram to dispatch
 	Telegram telegram;
 
-	/// Telegram's time of arrival
+	/// Telegram's time of arrivalClock 
 	uint32 timeOfArrival;
 
 	/// Reference to clock for the time of arrival
@@ -58,6 +58,9 @@ singleton class MessageDispatcher : Object
 {
 	/// @protectedsection
 
+	/// Clock to use for delayed messages
+	Clock clock;
+
 	/// Linked list of queued messages to be dispatched
 	VirtualList delayedMessages;
 
@@ -79,19 +82,6 @@ singleton class MessageDispatcher : Object
 	static bool dispatchMessage
 	(
 		uint32 delay, ListenerObject sender, ListenerObject receiver, int32 message, void* extraInfo
-	);
-
-	/// Dispatch delayed message
-	/// @param clock: Clock on which to check for the delay timeout
-	/// @param delay: Milliseconds to wait before dispatching the message
-	/// @param sender: Object that sends the message
-	/// @param receiver: Object that receives the message
-	/// @param message: Message's code
-	/// @param extraInfo: Pointer to any extra data that must accompany the message
-	static void dispatchDelayedMessage
-	(
-		Clock clock, uint32 delay, ListenerObject sender, ListenerObject receiver, int32 message,
-		void* extraInfo
 	);
 
 	/// Discard delayed messages sent by an object.
@@ -130,6 +120,10 @@ singleton class MessageDispatcher : Object
 	/// @param x: Screen x coordinate where to print
 	/// @param y: Screen y coordinate where to print
 	static void printAllDelayedMessagesFromSender(ListenerObject sender, int16 x, int16 y);
+
+	/// Set the clock to use for new delayed messages.
+	/// @param clock: Clock to use
+	void setClock(Clock clock);
 
 	/// Dispatch the delayed messages whose delay has expired.
 	bool dispatchDelayedMessages();

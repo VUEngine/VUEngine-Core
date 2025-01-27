@@ -160,9 +160,10 @@ void ToolState::processUserInput(const UserInput* userInput)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void ToolState::setCurrentGameState(GameState currentGameState)
+void ToolState::configure(GameState currentGameState, Stage currentStage)
 {
 	this->currentGameState = currentGameState;
+	this->currentStage = currentStage;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -171,4 +172,12 @@ GameState ToolState::getCurrentGameState()
 {
 	return this->currentGameState;	
 }
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+Stage ToolState::getCurrentStage()
+{
+	return this->currentStage;	
+}
+
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

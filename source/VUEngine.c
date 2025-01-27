@@ -22,7 +22,6 @@
 #include <GameState.h>
 #include <HardwareManager.h>
 #include <KeypadManager.h>
-#include <MessageDispatcher.h>
 #include <Profiler.h>
 #include <Singleton.h>
 #include <Stage.h>
@@ -170,16 +169,6 @@ static bool VUEngine::isInToolStateTransition()
 	VUEngine vuEngine = VUEngine::getInstance();
 
 	return vuEngine->isInToolStateTransition;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-static Clock VUEngine::getMessagingClock()
-{
-	VUEngine vuEngine = VUEngine::getInstance();
-
-	State state = StateMachine::getCurrentState(vuEngine->stateMachine);
-	return isDeleted(state) ? NULL : GameState::getMessagingClock(GameState::safeCast(state));
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -429,15 +418,6 @@ void VUEngine::cleaniningStatesStack()
 
 	VIPManager::stopDisplaying(VIPManager::getInstance());
 	VIPManager::stopDrawing(VIPManager::getInstance());
-
-	VirtualList stateMachineStack = StateMachine::getStateStack(this->stateMachine);
-
-	for(VirtualNode node = VirtualList::begin(stateMachineStack); NULL != node; node = VirtualNode::getNext(node))
-	{
-		GameState gameState = GameState::safeCast(VirtualNode::getData(node));
-
-		MessageDispatcher::discardDelayedMessagesWithClock(MessageDispatcher::getInstance(), GameState::getMessagingClock(gameState));
-	}
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -462,14 +442,6 @@ void VUEngine::swappingState()
 	
 	VIPManager::stopDisplaying(VIPManager::getInstance());
 	VIPManager::stopDrawing(VIPManager::getInstance());
-
-	if(!isDeleted(this->currentGameState))
-	{
-		MessageDispatcher::discardDelayedMessagesWithClock
-		(
-			MessageDispatcher::getInstance(), GameState::getMessagingClock(this->currentGameState)
-		);
-	}
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -480,14 +452,6 @@ void VUEngine::poppingState()
 
 	VIPManager::stopDisplaying(VIPManager::getInstance());
 	VIPManager::stopDrawing(VIPManager::getInstance());
-
-	if(!isDeleted(this->currentGameState))
-	{
-		MessageDispatcher::discardDelayedMessagesWithClock
-		(
-			MessageDispatcher::getInstance(), GameState::getMessagingClock(this->currentGameState)
-		);
-	}
 
 #ifdef __TOOLS
 	this->isInToolStateTransition = NULL != __GET_CAST(ToolState, this->currentGameState);
@@ -597,8 +561,6 @@ void VUEngine::toggleTool(ToolState toolState)
 		{
 			VUEngine::removeState(this, GameState::safeCast(toolState));
 		}
-
-		ToolState::setCurrentGameState(toolState, this->currentGameState);
 
 		VUEngine::addState(GameState::safeCast(toolState));
 	}

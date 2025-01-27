@@ -50,7 +50,7 @@ static bool MessageDispatcher::dispatchMessage
 		return false;
 	}
 
-	if(0 >= delay)
+	if(0 >= delay || NULL == messageDispatcher->clock)
 	{
 		// Create the telegram
 		bool result = false;
@@ -86,31 +86,11 @@ static bool MessageDispatcher::dispatchMessage
 	{
 		MessageDispatcher::dispatchDelayedMessage
 		(
-			VUEngine::getMessagingClock(), delay, sender, receiver, message, extraInfo
+			messageDispatcher, delay, sender, receiver, message, extraInfo
 		);
 	}
 
 	return false;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-static void MessageDispatcher::dispatchDelayedMessage
-(
-	Clock clock, uint32 delay, ListenerObject sender, ListenerObject receiver, int32 message, void* extraInfo
-)
-{
-	MessageDispatcher messageDispatcher = MessageDispatcher::getInstance();
-
-	// Create the telegram
-	DelayedMessage* delayedMessage = new DelayedMessage;
-
-	delayedMessage->telegram = new Telegram(sender, receiver, message, extraInfo);
-	delayedMessage->clock = clock ? clock : VUEngine::getMessagingClock();
-	delayedMessage->timeOfArrival = Clock::getMilliseconds(delayedMessage->clock) + delay;
-	delayedMessage->discarded = false;
-
-	VirtualList::pushBack(messageDispatcher->delayedMessages, delayedMessage);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -304,6 +284,11 @@ static void MessageDispatcher::printAllDelayedMessagesFromSender(ListenerObject 
 // CLASS' PUBLIC METHODS
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+secure void MessageDispatcher::setClock(Clock clock)
+{
+	this->clock = clock;
+}
+
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 secure bool MessageDispatcher::dispatchDelayedMessages()
@@ -428,6 +413,7 @@ void MessageDispatcher::constructor()
 	this->delayedMessages = new VirtualList();
 	this->helperTelegram = new Telegram(NULL, NULL, 0, NULL);
 	this->helperTelegramIsInUse = false;
+	this->clock = NULL;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -441,3 +427,23 @@ void MessageDispatcher::destructor()
 	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void MessageDispatcher::dispatchDelayedMessage
+(
+	uint32 delay, ListenerObject sender, ListenerObject receiver, int32 message, void* extraInfo
+)
+{
+	// Create the telegram
+	DelayedMessage* delayedMessage = new DelayedMessage;
+
+	delayedMessage->telegram = new Telegram(sender, receiver, message, extraInfo);
+	delayedMessage->clock = this->clock;
+	delayedMessage->timeOfArrival = Clock::getMilliseconds(delayedMessage->clock) + delay;
+	delayedMessage->discarded = false;
+
+	VirtualList::pushBack(this->delayedMessages, delayedMessage);
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

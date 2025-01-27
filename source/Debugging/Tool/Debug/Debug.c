@@ -459,12 +459,7 @@ void Debug::generalStatusPage(int32 increment __attribute__ ((unused)), int32 x 
 	y += 3;
 
 	Printer::text("CLOCKS STATUS", 1, y++, NULL);
-	Printer::text("General clock time: ", 1, ++y, NULL);
-	Clock::print(GameState::getMessagingClock(ToolState::getCurrentGameState(this->toolState)), 26, y, NULL);
-	Printer::text("Animations clock's time: ", 1, ++y, NULL);
-	Clock::print(GameState::getLogicsClock(ToolState::getCurrentGameState(this->toolState)), 26, y, NULL);
-	Printer::text("Physics clock's time: ", 1, ++y, NULL);
-	Clock::print(GameState::getPhysicsClock(ToolState::getCurrentGameState(this->toolState)), 26, y, NULL);
+	GameState::printClocks(ToolState::getCurrentGameState(this->toolState), 1, y);
 	y+=3;
 }
 
@@ -739,7 +734,7 @@ void Debug::streamingShowStatus
 	int32 increment __attribute__ ((unused)), int32 x __attribute__ ((unused)), int32 y __attribute__ ((unused))
 )
 {
-	Stage::print(GameState::getStage(ToolState::getCurrentGameState(this->toolState)), x, y);
+	Stage::print(ToolState::getCurrentStage(this->toolState), x, y);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
