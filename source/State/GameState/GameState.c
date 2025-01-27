@@ -12,6 +12,7 @@
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <BehaviorManager.h>
+#include <BgmapTextureManager.h>
 #include <BodyManager.h>
 #include <Camera.h>
 #include <Clock.h>
@@ -19,6 +20,7 @@
 #include <FrameRate.h>
 #include <KeypadManager.h>
 #include <MessageDispatcher.h>
+#include <ParamTableManager.h>
 #include <Printer.h>
 #include <Profiler.h>
 #include <SpriteManager.h>
@@ -236,6 +238,9 @@ void GameState::unpause(void* owner)
 
 		// Force all streaming right now
 		GameState::streamAll(this);
+
+		// Configure the game state
+		GameState::configure(this);
 
 		// Call custom code implementation
 		GameState::resume(this, owner);
@@ -757,6 +762,8 @@ void GameState::createStage(StageSpec* stageSpec, VirtualList positionedActorsTo
 	
 	NM_ASSERT(!isDeleted(this->stage), "GameState::configureStage: null stage");
 
+	GameState::configure(this);
+
 	Stage::configure(this->stage, positionedActorsToIgnore);
 }
 
@@ -956,3 +963,90 @@ void GameState::stream()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+void GameState::configure()
+{
+	if(isDeleted(this->stage))
+	{
+		return;
+	}
+
+	GameState::configureTimer(this);
+	GameState::configureGraphics(this);
+	GameState::configurePhysics(this);
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void GameState::configureTimer()
+{
+	if(isDeleted(this->stage))
+	{
+		return;
+	}
+
+	const StageSpec* stageSpec = Stage::getSpec(this->stage);
+
+	TimerManager::configure
+	(
+		stageSpec->timer.resolution, stageSpec->timer.targetTimePerInterrupt, 
+		stageSpec->timer.targetTimePerInterrupttUnits
+	);
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void GameState::configureGraphics()
+{
+	if(isDeleted(this->stage))
+	{
+		return;
+	}
+
+	const StageSpec* stageSpec = Stage::getSpec(this->stage);
+
+	SpriteManager::configure
+	(
+		this->componentManagers[kSpriteComponent],
+		stageSpec->rendering.texturesMaximumRowsToWrite,
+		stageSpec->rendering.maximumAffineRowsToComputePerCall,
+		stageSpec->rendering.objectSpritesContainersSize,
+		stageSpec->rendering.objectSpritesContainersZPosition,
+		this->animationsClock
+	);
+
+	VIPManager::configure
+	(
+		VIPManager::getInstance(), 
+		stageSpec->rendering.colorConfig.backgroundColor,
+		&stageSpec->rendering.colorConfig.brightness,
+		stageSpec->rendering.colorConfig.brightnessRepeat,
+		&stageSpec->rendering.paletteConfig,
+		stageSpec->postProcessingEffects
+	);
+
+	BgmapTextureManager::configure
+	(
+		BgmapTextureManager::getInstance(), 
+		ParamTableManager::configure
+		(
+			ParamTableManager::getInstance(), stageSpec->rendering.paramTableSegments
+		)
+	);
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void GameState::configurePhysics()
+{
+	if(isDeleted(this->stage))
+	{
+		return;
+	}
+
+	const StageSpec* stageSpec = Stage::getSpec(this->stage);
+
+	BodyManager::setFrictionCoefficient(this->componentManagers[kPhysicsComponent], stageSpec->physics.frictionCoefficient);
+	BodyManager::setGravity(this->componentManagers[kPhysicsComponent], stageSpec->physics.gravity);
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

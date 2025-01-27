@@ -249,7 +249,7 @@ static void VIPManager::setFrameCycle(uint8 frameCycle __attribute__((unused)))
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void VIPManager::configurePalettes(PaletteConfig* paletteConfig)
+static void VIPManager::configurePalettes(const PaletteConfig* paletteConfig)
 {
 	_vipRegisters[__GPLT0] = paletteConfig->bgmap.gplt0;
 	_vipRegisters[__GPLT1] = paletteConfig->bgmap.gplt1;
@@ -264,7 +264,7 @@ static void VIPManager::configurePalettes(PaletteConfig* paletteConfig)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void VIPManager::setupColumnTable(ColumnTableSpec* columnTableSpec)
+static void VIPManager::setupColumnTable(const ColumnTableSpec* columnTableSpec)
 {
 	int32 i, value;
 
@@ -288,7 +288,7 @@ static void VIPManager::setupColumnTable(ColumnTableSpec* columnTableSpec)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void VIPManager::configureBrightness(Brightness* brightness)
+static void VIPManager::configureBrightness(const Brightness* brightness)
 {
 	while(_vipRegisters[__XPSTTS] & __XPBSY);
 	_vipRegisters[__BRTA] = brightness->darkRed;
@@ -298,7 +298,7 @@ static void VIPManager::configureBrightness(Brightness* brightness)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void VIPManager::configureBrightnessRepeat(BrightnessRepeatSpec* brightnessRepeatSpec)
+static void VIPManager::configureBrightnessRepeat(const BrightnessRepeatSpec* brightnessRepeatSpec)
 {
 	// Use the default repeat values as fallback
 	if(brightnessRepeatSpec == NULL)
@@ -416,8 +416,8 @@ secure void VIPManager::reset()
 
 secure void VIPManager::configure
 (
-	uint8 backgroundColor, Brightness* brightness, BrightnessRepeatSpec* brightnessRepeat, 
-	PaletteConfig* paletteConfig, PostProcessingEffect* postProcessingEffects
+	uint8 backgroundColor, const Brightness* brightness, const BrightnessRepeatSpec* brightnessRepeat, 
+	const PaletteConfig* paletteConfig, PostProcessingEffect* postProcessingEffects
 )
 {
 	VIPManager::configureBackgroundColor(backgroundColor);

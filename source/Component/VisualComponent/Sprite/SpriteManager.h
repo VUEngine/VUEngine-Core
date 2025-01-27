@@ -133,7 +133,7 @@ class SpriteManager : ComponentManager
 	void configure
 	(
 		uint8 texturesMaximumRowsToWrite, int32 maximumParamTableRowsToComputePerCall,
-		int16 size[__TOTAL_OBJECT_SEGMENTS], int16 z[__TOTAL_OBJECT_SEGMENTS], Clock animationsClock
+		const int16 size[__TOTAL_OBJECT_SEGMENTS], const int16 z[__TOTAL_OBJECT_SEGMENTS], Clock animationsClock
 	);
 
 	/// Set the clock that determines if the animations must be updated or not.

@@ -21,11 +21,8 @@
 #include <Camera.h>
 #include <CharSetManager.h>
 #include <DebugConfig.h>
-#include <GameState.h>
 #include <HardwareManager.h>
-#include <ParamTableManager.h>
 #include <Printer.h>
-#include <SpriteManager.h>
 #include <SoundManager.h>
 #include <TimerManager.h>
 #include <UIContainer.h>
@@ -128,12 +125,11 @@ static uint32 Stage::computeDistanceToOrigin(StageActorDescription* stageActorDe
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void Stage::constructor(StageSpec *stageSpec, GameState gameState)
+void Stage::constructor(StageSpec *stageSpec)
 {
 	// Always explicitly call the base's constructor 
 	Base::constructor(0, NULL);
 
-	this->gameState = gameState;
 	this->actorFactory = new ActorFactory();
 	this->children = new VirtualList();
 	this->actorLoadingListeners = NULL;
@@ -233,11 +229,9 @@ void Stage::suspend()
 
 void Stage::resume()
 {
-	Stage::configureTimer(this);
 	Stage::configureCamera(this, true);
 	Stage::configureGraphics(this);
 	Stage::configureSounds(this);
-	Stage::configurePhysics(this);
 
 	if(!isDeleted(this->focusActor))
 	{
@@ -254,7 +248,7 @@ void Stage::resume()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-StageSpec* Stage::getSpec()
+const StageSpec* Stage::getSpec()
 {
 	return this->stageSpec;
 }
@@ -598,11 +592,9 @@ bool Stage::stream()
 
 void Stage::configure(VirtualList positionedActorsToIgnore)
 {
-	Stage::configureTimer(this);
 	Stage::configureCamera(this, true);
 	Stage::configureGraphics(this);
 	Stage::configureSounds(this);
-	Stage::configurePhysics(this);
 
 	// Register all the actors in the stage's spec
 	Stage::registerActors(this, positionedActorsToIgnore);
@@ -1077,17 +1069,6 @@ StageActorDescription* Stage::registerActor(PositionedActor* positionedActor)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void Stage::configureTimer()
-{
-	TimerManager::configure
-	(
-		this->stageSpec->timer.resolution, this->stageSpec->timer.targetTimePerInterrupt, 
-		this->stageSpec->timer.targetTimePerInterrupttUnits
-	);
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
 void Stage::configureCamera(bool reset)
 {
 	if(reset)
@@ -1104,35 +1085,6 @@ void Stage::configureCamera(bool reset)
 
 void Stage::configureGraphics()
 {
-	SpriteManager spriteManager = SpriteManager::safeCast(ComponentManager::getManager(kSpriteComponent));
-
-	NM_ASSERT(!isDeleted(spriteManager), "Stage::configureGraphics: NULL spriteManager");
-
-	SpriteManager::configure
-	(
-		spriteManager,
-		this->stageSpec->rendering.texturesMaximumRowsToWrite,
-		this->stageSpec->rendering.maximumAffineRowsToComputePerCall,
-		this->stageSpec->rendering.objectSpritesContainersSize,
-		this->stageSpec->rendering.objectSpritesContainersZPosition,
-		GameState::getAnimationsClock(this->gameState)
-	);
-
-	VIPManager::configure
-	(
-		VIPManager::getInstance(), 
-		this->stageSpec->rendering.colorConfig.backgroundColor,
-		&this->stageSpec->rendering.colorConfig.brightness,
-		this->stageSpec->rendering.colorConfig.brightnessRepeat,
-		&this->stageSpec->rendering.paletteConfig,
-		this->stageSpec->postProcessingEffects
-	);
-
-	BgmapTextureManager::configure
-	(
-		BgmapTextureManager::getInstance(), ParamTableManager::configure(ParamTableManager::getInstance(), this->stageSpec->rendering.paramTableSegments)
-	);
-	
 	Printer::loadFonts(this->stageSpec->assets.fontSpecs);
 	CharSetManager::loadCharSets(CharSetManager::getInstance(), (const CharSetSpec**)this->stageSpec->assets.charSetSpecs);
 
@@ -1178,18 +1130,6 @@ void Stage::configureSounds()
 			}
 		}
 	}
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void Stage::configurePhysics()
-{
-	NM_ASSERT(!isDeleted(this->gameState), "Stage::configurePhysics: invalid game state");
-
-	BodyManager bodyManager = BodyManager::safeCast(GameState::getComponentManager(this->gameState, kPhysicsComponent));
-
-	BodyManager::setFrictionCoefficient(bodyManager, this->stageSpec->physics.frictionCoefficient);
-	BodyManager::setGravity(bodyManager, this->stageSpec->physics.gravity);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

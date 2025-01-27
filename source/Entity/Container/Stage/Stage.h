@@ -30,7 +30,6 @@
 // FORWARD DECLARATIONS
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-class GameState;
 class VirtualList;
 class VirtualNode;
 
@@ -222,9 +221,6 @@ class Stage : Container
 	/// Pointer to the spec that defines how to initialize the stage 
 	StageSpec* stageSpec;
 
-	/// GameState that owns the Stage
-	GameState gameState;
-
 	/// Factory to create this actor's children
 	ActorFactory actorFactory;
 
@@ -264,8 +260,7 @@ class Stage : Container
 
 	/// Class' constructor
 	/// @param stageSpec: Specification that determines how to configure the stage
-	/// @param gameState: The GameState that owns the stage
-	void constructor(StageSpec* stageSpec, GameState gameState);
+	void constructor(StageSpec* stageSpec);
 	
 	/// Prepare to suspend this instance's logic.
 	override void suspend();
@@ -275,7 +270,7 @@ class Stage : Container
 
 	/// Retrieve the stage's spec.
 	/// @return Specification that determines how the stage was configured
-	StageSpec* getSpec();
+	const StageSpec* getSpec();
 
 	/// Configure the timer.
 	void configureTimer();

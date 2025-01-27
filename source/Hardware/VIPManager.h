@@ -366,19 +366,19 @@ singleton class VIPManager : ListenerObject
 
 	/// Configure the VIP's palettes with the provided configuration.
 	/// @param paletteConfig: Palettes configuration
-	static void configurePalettes(PaletteConfig* paletteConfig);
+	static void configurePalettes(const PaletteConfig* paletteConfig);
 
 	/// Setup the column table with the provided spec.
 	/// @param columnTableSpec: Specification for the configuration of the column table
-	static void setupColumnTable(ColumnTableSpec* columnTableSpec);
+	static void setupColumnTable(const ColumnTableSpec* columnTableSpec);
 
 	/// Configure the brightness registers with the provided configuration.
 	/// @param brightness: Brightness configuration
-	static void configureBrightness(Brightness* brightness);
+	static void configureBrightness(const Brightness* brightness);
 
 	/// Configure the column table brightness repeat values.
 	/// @param brightnessRepeat: Brightness configuration
-	static void configureBrightnessRepeat(BrightnessRepeatSpec* brightnessRepeat);
+	static void configureBrightnessRepeat(const BrightnessRepeatSpec* brightnessRepeat);
 
 	/// Configure the background color.
 	/// @param color: Color to apply to the background
@@ -415,8 +415,8 @@ singleton class VIPManager : ListenerObject
 	/// Configure the brightness registers with the provided configuration.
 	void configure
 	(
-		uint8 backgroundColor, Brightness* brightness, BrightnessRepeatSpec* brightnessRepeat,
-		PaletteConfig* paletteConfig, PostProcessingEffect* postProcessingEffects
+		uint8 backgroundColor, const Brightness* brightness, const BrightnessRepeatSpec* brightnessRepeat,
+		const PaletteConfig* paletteConfig, PostProcessingEffect* postProcessingEffects
 	);
 
 	/// Start VIP drawing operations.

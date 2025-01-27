@@ -83,6 +83,7 @@ const ClassPointer AnimationCoordinatorFactoryAuthorizedClasses[] =
 
 const ClassPointer BgmapTextureManagerAuthorizedClasses[] =
 {
+	typeofclass(GameState),
 	typeofclass(Printer),
 	typeofclass(SpriteManager),
 	typeofclass(Stage),
@@ -151,10 +152,10 @@ const ClassPointer ObjectTextureManagerAuthorizedClasses[] =
 const ClassPointer ParamTableManagerAuthorizedClasses[] =
 {
 	typeofclass(BgmapSprite),
+	typeofclass(GameState),
 	typeofclass(MBgmapSprite),
 	typeofclass(Printer),
 	typeofclass(SpriteManager),
-	typeofclass(Stage),
 	NULL
 };
 
@@ -209,8 +210,8 @@ const ClassPointer TimerManagerAuthorizedClasses[] =
 
 const ClassPointer VIPManagerAuthorizedClasses[] =
 {
+	typeofclass(GameState),
 	typeofclass(HardwareManager),
-	typeofclass(Stage),
 	typeofclass(VUEngine),
 	NULL
 };

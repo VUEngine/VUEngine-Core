@@ -257,7 +257,7 @@ bool SpriteManager::isAnyVisible(Entity owner)
 void SpriteManager::configure
 (
 	uint8 texturesMaximumRowsToWrite, int32 maximumParamTableRowsToComputePerCall,
-	int16 size[__TOTAL_OBJECT_SEGMENTS], int16 z[__TOTAL_OBJECT_SEGMENTS], Clock animationsClock
+	const int16 size[__TOTAL_OBJECT_SEGMENTS], const int16 z[__TOTAL_OBJECT_SEGMENTS], Clock animationsClock
 )
 {
 	SpriteManager::setTexturesMaximumRowsToWrite(this, texturesMaximumRowsToWrite);
@@ -439,7 +439,7 @@ void SpriteManager::unregisterSprite(Sprite sprite)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void SpriteManager::configureObjectSpriteContainers(int16 size[__TOTAL_OBJECT_SEGMENTS], int16 z[__TOTAL_OBJECT_SEGMENTS])
+void SpriteManager::configureObjectSpriteContainers(const int16 size[__TOTAL_OBJECT_SEGMENTS], const int16 z[__TOTAL_OBJECT_SEGMENTS])
 {
 #ifndef __RELEASE
 	int16 previousZ = z[__TOTAL_OBJECT_SEGMENTS - 1];
