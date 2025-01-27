@@ -76,7 +76,14 @@ class SpriteManager : ComponentManager
 	bool evenFrame;
 
 	/// Free WORLD layer during the last rendering cycle
-	int16 freeLayer;
+	int16 bgmapIndex;
+
+	/// Free OBJECT during the last rendering cycle
+	int16 objectIndex;
+
+	/// Previous free OBJECT during the last rendering cycle, used to avoid
+	/// writing the whole address space
+	int16 previousObjectIndex;
 
 	/// Number of texture rows to write during each rendering cycle
 	int8 texturesMaximumRowsToWrite;
@@ -89,6 +96,12 @@ class SpriteManager : ComponentManager
 
 	// Flag to forze a complete Z sorting of sprites
 	bool completeSort;
+
+	/// SPT index that for OBJECT memory management
+	int8 spt;
+
+	/// Cache for the VIP SPT registers
+	uint16 vipSPTRegistersCache[__TOTAL_OBJECT_SEGMENTS];
 
 	/// @publicsection
 

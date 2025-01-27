@@ -41,11 +41,6 @@ friend class Texture;
 friend class VirtualNode;
 friend class VirtualList;
 
-int32 _spt = __TOTAL_OBJECT_SEGMENTS - 1;
-int16 _objectIndex = __TOTAL_OBJECTS - 1;
-int16 _previousObjectIndex = __TOTAL_OBJECTS - 1;
-uint16 _vipRegistersCache[__TOTAL_OBJECT_SEGMENTS];
-
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' MACROS
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -86,12 +81,16 @@ void SpriteManager::constructor()
 	this->maximumParamTableRowsToComputePerCall = -1;
 	this->deferParamTableEffects = false;
 	this->animationsClock = NULL;
-	this->freeLayer = __TOTAL_LAYERS - 1;
+	this->bgmapIndex = __TOTAL_LAYERS - 1;
 	this->deferTextureUpdating = false;
 	this->texturesMaximumRowsToWrite = -1;
 	this->sortingSpriteNode = NULL;
 	this->completeSort = true;
 	this->evenFrame = __TRANSPARENCY_EVEN;
+	this->spt = __TOTAL_OBJECT_SEGMENTS - 1;
+	this->objectIndex = __TOTAL_OBJECTS - 1;
+	this->previousObjectIndex = __TOTAL_OBJECTS - 1;
+	this->vipSPTRegistersCache[__TOTAL_OBJECT_SEGMENTS];
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -183,12 +182,12 @@ void SpriteManager::enable()
 		_objectAttributesCache[i].head = __OBJECT_SPRITE_CHAR_HIDE_MASK;
 	}
 
-	_spt = __TOTAL_OBJECT_SEGMENTS - 1;
-	_objectIndex = __TOTAL_OBJECTS - 1;
+	this->spt = __TOTAL_OBJECT_SEGMENTS - 1;
+	this->objectIndex = __TOTAL_OBJECTS - 1;
 
 	for(int32 i = __TOTAL_OBJECT_SEGMENTS; i--;)
 	{
-		_vipRegistersCache[i] = _objectIndex;
+		this->vipSPTRegistersCache[i] = this->objectIndex;
 	}
 
 	for(int32 i = 0; i < __TOTAL_OBJECTS; i++)
@@ -200,7 +199,7 @@ void SpriteManager::enable()
 		_objectAttributesCache[i].tile = 0;
 	}
 
-	this->freeLayer = __TOTAL_LAYERS - 1;
+	this->bgmapIndex = __TOTAL_LAYERS - 1;
 	this->sortingSpriteNode = NULL;
 	this->completeSort = true;
 	this->evenFrame = __TRANSPARENCY_EVEN;
@@ -611,7 +610,7 @@ void SpriteManager::render()
 	// Switch between even and odd frame
 	this->evenFrame = __TRANSPARENCY_EVEN == this->evenFrame ? __TRANSPARENCY_ODD : __TRANSPARENCY_EVEN;
 
-	this->freeLayer = __TOTAL_LAYERS - 1;
+	this->bgmapIndex = __TOTAL_LAYERS - 1;
 
 	bool updateAnimations = true;
 	
@@ -651,22 +650,22 @@ void SpriteManager::render()
 			continue;
 		}
 
-		if(Sprite::render(sprite, this->freeLayer, updateAnimations) == this->freeLayer)
+		if(Sprite::render(sprite, this->bgmapIndex, updateAnimations) == this->bgmapIndex)
 		{
-			this->freeLayer--;
+			this->bgmapIndex--;
 		}
 	}
 
-	NM_ASSERT(0 <= this->freeLayer, "SpriteManager::render: more sprites than WORLDs");
+	NM_ASSERT(0 <= this->bgmapIndex, "SpriteManager::render: more sprites than WORLDs");
 
 	for(int16 i = 0; i < __TOTAL_OBJECT_SEGMENTS; i++)
 	{
 		ObjectSpriteContainer objectSpriteContainer = ObjectSpriteContainer::safeCast(VirtualList::getDataAtIndex(this->objectSpriteContainers, i));
 
 		// Setup spt
-		objectSpriteContainer->spt = _spt;
+		objectSpriteContainer->spt = this->spt;
 
-		objectSpriteContainer->firstObjectIndex = _objectIndex;
+		objectSpriteContainer->firstObjectIndex = this->objectIndex;
 
 		if(__SHOW == objectSpriteContainer->show)
 		{
@@ -688,9 +687,9 @@ void SpriteManager::render()
 */
 				// Saves on method calls quite a bit when there are lots of
 				// Sprites. Don't remove.
-				if(__HIDE == objectSprite->show || (objectSprite->transparency & this->evenFrame) || (0 > _objectIndex - objectSprite->totalObjects))
+				if(__HIDE == objectSprite->show || (objectSprite->transparency & this->evenFrame) || (0 > this->objectIndex - objectSprite->totalObjects))
 				{
-					NM_ASSERT(0 < _objectIndex - objectSprite->totalObjects, "ObjectSpriteContainer::renderSprites: OBJECTS depleted");
+					NM_ASSERT(0 < this->objectIndex - objectSprite->totalObjects, "ObjectSpriteContainer::renderSprites: OBJECTS depleted");
 					objectSprite->index = __NO_RENDER_INDEX;
 					continue;
 				}
@@ -699,20 +698,20 @@ void SpriteManager::render()
 				// But calling ObjectSprite::getTotalObjects is too costly
 				if
 				(
-					ObjectSprite::render(objectSprite, _objectIndex - (objectSprite->totalObjects - 1), updateAnimations) 
+					ObjectSprite::render(objectSprite, this->objectIndex - (objectSprite->totalObjects - 1), updateAnimations) 
 					== 
-					_objectIndex - (objectSprite->totalObjects - 1)
+					this->objectIndex - (objectSprite->totalObjects - 1)
 				)
 				{
-					_objectIndex -= objectSprite->totalObjects;
+					this->objectIndex -= objectSprite->totalObjects;
 				}
 			}
 		}
 
-		if(objectSpriteContainer->firstObjectIndex == _objectIndex)
+		if(objectSpriteContainer->firstObjectIndex == this->objectIndex)
 		{
-			_objectAttributesCache[_objectIndex].head = __OBJECT_SPRITE_CHAR_HIDE_MASK;
-			_objectIndex--;
+			_objectAttributesCache[this->objectIndex].head = __OBJECT_SPRITE_CHAR_HIDE_MASK;
+			this->objectIndex--;
 
 			_worldAttributesCache[objectSpriteContainer->index].head = __WORLD_OFF;
 		}
@@ -722,13 +721,13 @@ void SpriteManager::render()
 
 			// Make sure that the rest of spt segments only run up to the last
 			// Used object index
-			for(int32 i = _spt--; i--;)
+			for(int32 i = this->spt--; i--;)
 			{
-				_vipRegistersCache[i] = _objectIndex;
+				this->vipSPTRegistersCache[i] = this->objectIndex;
 			}
 		}
 
-		objectSpriteContainer->lastObjectIndex = _objectIndex;
+		objectSpriteContainer->lastObjectIndex = this->objectIndex;
 	}
 
 	SpriteManager::stopRendering(this);
@@ -876,9 +875,9 @@ void SpriteManager::computeTotalPixelsDrawn()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-int8 SpriteManager::getFreeLayer()
+int8 SpriteManager::getbgmapIndex()
 {
-	return this->freeLayer;
+	return this->bgmapIndex;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -993,7 +992,7 @@ void SpriteManager::print(int32 x, int32 y, bool resumed)
 	Printer::text("Total pixels:                ", x, ++y, NULL);
 	Printer::int32(this->totalPixelsDrawn, x + 22, y, NULL);
 	Printer::text("Used layers:                ", x, ++y, NULL);
-	Printer::int32(__TOTAL_LAYERS - this->freeLayer, x + 22, y, NULL);
+	Printer::int32(__TOTAL_LAYERS - this->bgmapIndex, x + 22, y, NULL);
 	Printer::text("Sprites count:              ", x, ++y, NULL);
 	Printer::int32(VirtualList::getCount(this->bgmapSprites), x + 22, y, NULL);
 #ifdef __SHOW_SPRITES_PROFILING
@@ -1167,28 +1166,28 @@ int32 SpriteManager::getTotalPixelsDrawn()
 
 void SpriteManager::startRendering()
 {
-	_spt = __TOTAL_OBJECT_SEGMENTS - 1;
-	_objectIndex = __TOTAL_OBJECTS - 1;
+	this->spt = __TOTAL_OBJECT_SEGMENTS - 1;
+	this->objectIndex = __TOTAL_OBJECTS - 1;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void SpriteManager::stopRendering()
 {
-	NM_ASSERT(0 <= (int8)this->freeLayer, "SpriteManager::stopRendering: no more layers");
+	NM_ASSERT(0 <= (int8)this->bgmapIndex, "SpriteManager::stopRendering: no more layers");
 
-	if(0 <= this->freeLayer)
+	if(0 <= this->bgmapIndex)
 	{
-		_worldAttributesCache[this->freeLayer].head = __WORLD_END;
+		_worldAttributesCache[this->bgmapIndex].head = __WORLD_END;
 	}
 
 	// Clear OBJ memory
-	for(int32 i = _objectIndex; _previousObjectIndex <= i; i--)
+	for(int32 i = this->objectIndex; this->previousObjectIndex <= i; i--)
 	{
 		_objectAttributesCache[i].head = __OBJECT_SPRITE_CHAR_HIDE_MASK;
 	}
 
-	_previousObjectIndex = _objectIndex;}
+	this->previousObjectIndex = this->objectIndex;}
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
@@ -1216,26 +1215,26 @@ void SpriteManager::applySpecialEffects()
 void SpriteManager::writeAttributesToDRAM()
 {
 #ifdef __SHOW_SPRITES_PROFILING
-	_writtenObjectTiles = __TOTAL_OBJECTS - _objectIndex;
+	_writtenObjectTiles = __TOTAL_OBJECTS - this->objectIndex;
 #endif
 
 	for(int32 i = __TOTAL_OBJECT_SEGMENTS; i--;)
 	{
-		_vipRegisters[__SPT0 + i] = _vipRegistersCache[i] - _objectIndex;
+		_vipRegisters[__SPT0 + i] = this->vipSPTRegistersCache[i] - this->objectIndex;
 	}
 
 	CACHE_RESET;
 
 	Mem::copyWORD
 	(
-		(WORD*)(_objectAttributesBaseAddress), (WORD*)(_objectAttributesCache + _objectIndex), 
-		sizeof(ObjectAttributes) * (__TOTAL_OBJECTS - _objectIndex) >> 2
+		(WORD*)(_objectAttributesBaseAddress), (WORD*)(_objectAttributesCache + this->objectIndex), 
+		sizeof(ObjectAttributes) * (__TOTAL_OBJECTS - this->objectIndex) >> 2
 	);
 
 	Mem::copyWORD
 	(
-		(WORD*)(_worldAttributesBaseAddress + this->freeLayer), (WORD*)(_worldAttributesCache + this->freeLayer), 
-		sizeof(WorldAttributes) * (__TOTAL_LAYERS - (this->freeLayer)) >> 2
+		(WORD*)(_worldAttributesBaseAddress + this->bgmapIndex), (WORD*)(_worldAttributesCache + this->bgmapIndex), 
+		sizeof(WorldAttributes) * (__TOTAL_LAYERS - (this->bgmapIndex)) >> 2
 	);
 }
 
