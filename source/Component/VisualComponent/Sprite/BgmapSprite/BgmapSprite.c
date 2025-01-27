@@ -18,7 +18,6 @@
 #include <DebugConfig.h>
 #include <Optics.h>
 #include <ParamTableManager.h>
-#include <SpriteManager.h>
 
 #include "BgmapSprite.h"
 
@@ -133,9 +132,9 @@ bool BgmapSprite::onEvent(ListenerObject eventFirer __attribute__((unused)), uin
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-ClassPointer BgmapSprite::getManagerClass()
+ClassPointer BgmapSprite::getBasicType()
 {
-	return typeofclass(SpriteManager);
+	return typeofclass(BgmapSprite);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

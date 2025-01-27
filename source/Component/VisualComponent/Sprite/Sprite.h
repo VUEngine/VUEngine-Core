@@ -244,9 +244,9 @@ abstract class Sprite : VisualComponent
 	/// @return Generic pointer to the manager
 	virtual void* getManager();
 
-	/// Retrieve the class of the manager for the sprite.
-	/// @return ClassPointer of the manager
-	virtual ClassPointer getManagerClass() = 0;
+	/// Retrieve the basic class of this kind of sprite.
+	/// @return ClassPointer the basic class
+	virtual ClassPointer getBasicType() = 0;
 
 	/// Check if the sprite has special effects.
 	/// @return True if the sprite has special effects

@@ -104,9 +104,9 @@ class ObjectSprite : Sprite
 	/// @return Generic pointer to the manager
 	override void* getManager();
 
-	/// Retrieve the class of the manager for the sprite.
-	/// @return ClassPointer of the manager
-	override ClassPointer getManagerClass();
+	/// Retrieve the basic class of this kind of sprite.
+	/// @return ClassPointer the basic class
+	override ClassPointer getBasicType();
 
 	/// Render the sprite by configuring the DRAM assigned to it by means of the provided index.
 	/// @param index: Determines the region of DRAM that this sprite is allowed to configure

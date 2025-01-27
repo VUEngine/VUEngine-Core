@@ -99,9 +99,9 @@ class BgmapSprite : Sprite
 	/// @return False if the listener has to be removed; true to keep it
 	override bool onEvent(ListenerObject eventFirer, uint16 eventCode);
 
-	/// Retrieve the class of the manager for the sprite.
-	/// @return ClassPointer of the manager
-	override ClassPointer getManagerClass();
+	/// Retrieve the basic class of this kind of sprite.
+	/// @return ClassPointer the basic class
+	override ClassPointer getBasicType();
 
 	/// Check if the sprite has affine or hbias effects.
 	/// @return True if the sprite's mode of display is (__WORLD_AFFINE or __WORLD_HBIAS)

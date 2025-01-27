@@ -121,9 +121,9 @@ void* ObjectSprite::getManager()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-ClassPointer ObjectSprite::getManagerClass()
+ClassPointer ObjectSprite::getBasicType()
 {
-	return typeofclass(ObjectSpriteContainer);
+	return typeofclass(ObjectSprite);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

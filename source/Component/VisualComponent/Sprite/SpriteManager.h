@@ -54,6 +54,9 @@ class SpriteManager : ComponentManager
 	/// List of sprites to render
 	VirtualList bgmapSprites;
 
+	/// Arrays for object sprites
+	VirtualList objectSprites[__TOTAL_OBJECT_SEGMENTS];
+
 	/// List of object sprite containers
 	VirtualList objectSpriteContainers;
 
@@ -140,15 +143,6 @@ class SpriteManager : ComponentManager
 	/// @param clock: Clock for the animations
 	void setAnimationsClock(Clock animationsClock);
 
-	/// Register a sprite to be managed
-	/// @param sprite: Sprite to be managed
-	/// @return True if the sprite was successfully registered; false otherwise
-	bool registerSprite(Sprite sprite);
-
-	/// Unregister a sprite to be managed
-	/// @param sprite: Sprite to no longer manage
-	void unregisterSprite(Sprite sprite);
-
 	/// Configure the object sprite containers.
 	/// @param size: Array with the number of OBJECTS for each container
 	/// @param z: Array of Z coordinates for each container
@@ -225,16 +219,6 @@ class SpriteManager : ComponentManager
 	/// @param index: Index of the node in the list of sprites
 	/// @return Sprite at the provided position in the list of sprites
 	Sprite getSpriteAtIndex(int16 index);
-	
-	/// Retrieve the object sprite container closer to the provided position.
-	/// @param z: Z coordinate
-	/// @return Object sprite container closer to the provided position
-	ObjectSpriteContainer getObjectSpriteContainer(fixed_t z);
-
-	/// Retrieve the object sprite container that manages the provided STP.
-	/// @param spt: OBJECT space SPT
-	/// @return Object sprite container that manages the provided STP
-	ObjectSpriteContainer getObjectSpriteContainerBySPT(int32 spt);
 
 	/// Print sprites statistics.
 	/// @param x: Screen x coordinate where to print
