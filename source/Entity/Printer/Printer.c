@@ -183,7 +183,7 @@ static void Printer::releaseFonts()
 	for(int16 i = 0; NULL != _fontData[i].fontSpec; i++)
 	{
 		// Preload charset and save charset reference, if font was found
-		if(NULL != _fontData[i].charSet)
+		if(!isDeleted(_fontData[i].charSet))
 		{
 			CharSet::removeEventListener(_fontData[i].charSet, ListenerObject::safeCast(printing), kEventCharSetChangedOffset);
 

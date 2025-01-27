@@ -607,7 +607,7 @@ void Collider::collisionEnds(Collision* collision)
 
 OtherColliderRegistry* Collider::registerOtherCollider(Collider otherCollider, SolutionVector solutionVector, bool isImpenetrable)
 {
-	if(!this->otherColliders)
+	if(NULL == this->otherColliders)
 	{
 		this->otherColliders = new VirtualList();
 	}

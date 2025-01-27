@@ -11,11 +11,10 @@
 // INCLUDES
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+#include <Stopwatch.h>
 #include <DebugConfig.h>
 #include <Singleton.h>
-#include <Stopwatch.h>
 #include <VirtualList.h>
-#include <VirtualNode.h>
 
 #include "StopwatchManager.h"
 
@@ -23,8 +22,8 @@
 // CLASS' DECLARATIONS
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-friend class VirtualList;
 friend class VirtualNode;
+friend class VirtualList;
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PUBLIC METHODS
@@ -34,10 +33,12 @@ friend class VirtualNode;
 
 secure void StopwatchManager::reset()
 {
-	VirtualNode node = this->stopwatchs->head;
+	if(isDeleted(this->stopwatches))
+	{
+		return;
+	}
 
-	// Update all registered stopwatchs
-	for(; node ; node = node->next)
+	for(VirtualNode node = this->stopwatches->head; node ; node = node->next)
 	{
 		Stopwatch::reset(node->data);
 	}
@@ -45,29 +46,41 @@ secure void StopwatchManager::reset()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-secure void StopwatchManager::register(Stopwatch clock)
+secure void StopwatchManager::register(Stopwatch stopwatch)
 {
-	if(!VirtualList::find(this->stopwatchs, clock))
+	if(isDeleted(this->stopwatches))
 	{
-		VirtualList::pushFront(this->stopwatchs, clock);
+		return;
+	}
+
+	if(!VirtualList::find(this->stopwatches, stopwatch))
+	{
+		VirtualList::pushFront(this->stopwatches, stopwatch);
 	}
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-secure void StopwatchManager::unregister(Stopwatch clock)
+secure void StopwatchManager::unregister(Stopwatch stopwatch)
 {
-	VirtualList::removeData(this->stopwatchs, clock);
+	if(isDeleted(this->stopwatches))
+	{
+		return;
+	}
+
+	VirtualList::removeData(this->stopwatches, stopwatch);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 secure void StopwatchManager::update()
 {
-	VirtualNode node = this->stopwatchs->head;
+	if(isDeleted(this->stopwatches))
+	{
+		return;
+	}
 
-	// Update all registered stopwatchs
-	for(; node ; node = node->next)
+	for(VirtualNode node = this->stopwatches->head; node ; node = node->next)
 	{
 		Stopwatch::update(node->data);
 	}
@@ -86,24 +99,24 @@ void StopwatchManager::constructor()
 	// Always explicitly call the base's constructor 
 	Base::constructor();
 
-	// Create the clock list
-	this->stopwatchs = new VirtualList();
+	// Create the stopwatch list
+	this->stopwatches = new VirtualList();
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void StopwatchManager::destructor()
 {
-	VirtualNode node = this->stopwatchs->head;
-
-	// Destroy all registered stopwatchs
-	for(; node ; node = node->next)
+	if(!isDeleted(this->stopwatches))
 	{
-		Stopwatch::destructor(node->data);
-	}
+		VirtualList stopwatches = this->stopwatches;
+		this->stopwatches = NULL;
 
-	// Clear my list
-	delete this->stopwatchs;
+		VirtualList::deleteData(stopwatches);
+		delete stopwatches;
+
+		delete this->stopwatches;
+	}
 
 	// Allow a new construct
 	// Always explicitly call the base's destructor 

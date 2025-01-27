@@ -33,12 +33,12 @@ friend class VirtualList;
 
 secure void ClockManager::reset()
 {
-	ASSERT(this->clocks, "ClockManager::reset: null clocks list");
+	if(isDeleted(this->clocks))
+	{
+		return;
+	}
 
-	VirtualNode node = this->clocks->head;
-
-	// Update all registered clocks
-	for(; node ; node = node->next)
+	for(VirtualNode node = this->clocks->head; node ; node = node->next)
 	{
 		Clock::reset(node->data);
 	}
@@ -48,6 +48,11 @@ secure void ClockManager::reset()
 
 secure void ClockManager::register(Clock clock)
 {
+	if(isDeleted(this->clocks))
+	{
+		return;
+	}
+
 	if(!VirtualList::find(this->clocks, clock))
 	{
 		VirtualList::pushFront(this->clocks, clock);
@@ -58,6 +63,11 @@ secure void ClockManager::register(Clock clock)
 
 secure void ClockManager::unregister(Clock clock)
 {
+	if(isDeleted(this->clocks))
+	{
+		return;
+	}
+
 	VirtualList::removeData(this->clocks, clock);
 }
 
@@ -65,12 +75,12 @@ secure void ClockManager::unregister(Clock clock)
 
 secure void ClockManager::update(uint32 elapsedMilliseconds)
 {
-	ASSERT(this->clocks, "ClockManager::update: null clocks list");
+	if(isDeleted(this->clocks))
+	{
+		return;
+	}
 
-	VirtualNode node = this->clocks->head;
-
-	// Update all registered clocks
-	for(; node ; node = node->next)
+	for(VirtualNode node = this->clocks->head; node ; node = node->next)
 	{
 		Clock::update(node->data, elapsedMilliseconds);
 	}
@@ -97,16 +107,16 @@ void ClockManager::constructor()
 
 void ClockManager::destructor()
 {
-	VirtualNode node = this->clocks->head;
-
-	// Destroy all registered clocks
-	for(; node ; node = node->next)
+	if(!isDeleted(this->clocks))
 	{
-		Clock::destructor(node->data);
-	}
+		VirtualList clocks = this->clocks;
+		this->clocks = NULL;
 
-	// Clear my list
-	delete this->clocks;
+		VirtualList::deleteData(clocks);
+		delete clocks;
+
+		delete this->clocks;
+	}
 
 	// Allow a new construct
 	// Always explicitly call the base's destructor 

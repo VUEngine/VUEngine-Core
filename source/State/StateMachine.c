@@ -49,9 +49,12 @@ void StateMachine::destructor()
 {
 	NM_ASSERT(!isDeleted(this->stateStack), "StateMachine::destructor: null stateStack");
 
-	// Deallocate the list
-	delete this->stateStack;
+	if(!isDeleted(this->stateStack))
+	{
+		delete this->stateStack;
+	}
 
+	this->stateStack = NULL;
 	this->owner = NULL;
 	this->currentState = NULL;
 	this->previousState = NULL;

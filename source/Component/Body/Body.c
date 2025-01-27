@@ -179,7 +179,7 @@ void Body::constructor(Entity owner, const BodySpec* bodySpec)
 
 void Body::destructor()
 {
-	if(this->normals)
+	if(NULL != this->normals)
 	{
 		VirtualList::deleteData(this->normals);
 		delete this->normals;
@@ -1380,7 +1380,7 @@ void Body::addNormal(ListenerObject referent, Vector3D direction, fixed_t magnit
 {
 	ASSERT(referent, "Body::addNormal: null referent");
 
-	if(!this->normals)
+	if(NULL == this->normals)
 	{
 		this->normals = new VirtualList();
 	}

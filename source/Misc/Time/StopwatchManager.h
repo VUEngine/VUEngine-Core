@@ -36,7 +36,7 @@ singleton class StopwatchManager : Object
 	/// @protectedsection
 
 	// Linked list of Stopwatches
-	VirtualList stopwatchs;
+	VirtualList stopwatches;
 
 	/// @publicsection
 

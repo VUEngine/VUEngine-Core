@@ -420,8 +420,19 @@ void MessageDispatcher::constructor()
 
 void MessageDispatcher::destructor()
 {
-	delete this->delayedMessages;
-	delete this->helperTelegram;
+	if(!isDeleted(this->delayedMessages))
+	{
+		delete this->delayedMessages;
+	}
+
+	this->delayedMessages = NULL;
+
+	if(!isDeleted(this->helperTelegram))
+	{
+		delete this->helperTelegram;
+	}
+
+	this->helperTelegram = NULL;
 
 	// Allow a new construct
 	// Always explicitly call the base's destructor 
