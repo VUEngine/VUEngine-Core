@@ -175,9 +175,6 @@ singleton class Printer : Entity
 	/// Active sprite that is manipulated by this class' interface
 	PrintingSprite activePrintingSprite;
 
-	/// A list of loaded fonts and their respective CharSets
-	VirtualList fonts;
-
 	/// Cache the last used font to speed up searches
 	const char* lastUsedFont;
 

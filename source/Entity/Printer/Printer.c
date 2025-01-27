@@ -153,7 +153,6 @@ static void Printer::loadFonts(FontSpec** fontSpecs)
 				// Preload charset and save charset reference, if font was found
 				if(fontSpecs[i] == _fontData[j].fontSpec)
 				{
-					// Instance and initialize a new fontdata instance
 					_fontData[j].charSet = CharSet::get(_fontData[j].fontSpec->charSetSpec);
 
 					CharSet::addEventListener(_fontData[j].charSet, ListenerObject::safeCast(printing), kEventCharSetChangedOffset);
@@ -183,6 +182,8 @@ static void Printer::releaseFonts()
 		// Preload charset and save charset reference, if font was found
 		if(NULL != _fontData[i].charSet)
 		{
+			CharSet::removeEventListener(_fontData[i].charSet, ListenerObject::safeCast(printing), kEventCharSetChangedOffset);
+
 			while(!CharSet::release(_fontData[i].charSet));
 		}
 
@@ -1039,7 +1040,6 @@ void Printer::constructor()
 	Base::constructor();
 
 	// Initialize members
-	this->fonts = new VirtualList();
 	this->mode = __PRINTING_MODE_DEFAULT;
 	this->palette = __PRINTING_PALETTE;
 	this->orientation = kPrintingOrientationHorizontal;
@@ -1054,13 +1054,6 @@ void Printer::constructor()
 
 void Printer::destructor()
 {
-	if(!isDeleted(this->fonts))
-	{
-		delete this->fonts;
-	}
-
-	this->fonts = NULL;
-
 	// Allow a new construct
 	// Always explicitly call the base's destructor 
 	Base::destructor();
