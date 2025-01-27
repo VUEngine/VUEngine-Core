@@ -110,6 +110,8 @@ void ToolState::start(void* owner __attribute__ ((unused)))
 	if(NULL != this->currentGameState)
 	{
 		GameState::pauseClocks(this->currentGameState);
+		GameState::unpauseAnimations(this->currentGameState);
+
 		GameState::startClocks(this);
 
 		if(!isDeleted(this->tool))

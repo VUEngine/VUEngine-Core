@@ -732,6 +732,7 @@ void AnimationInspector::createSprite()
 	Rotation spriteRotation = {0, 0, 0};
 	PixelScale spriteScale = {__F_TO_FIX7_9(1.0f), __F_TO_FIX7_9(1.0f)};
 
+	Sprite::createAnimationController(this->sprite);
 	Sprite::setPosition(this->sprite, &spritePosition);
 	Sprite::setRotation(this->sprite, &spriteRotation);
 	Sprite::setScale(this->sprite, &spriteScale);
