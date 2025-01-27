@@ -662,10 +662,7 @@ void SpriteManager::render()
 	{
 		ObjectSpriteContainer objectSpriteContainer = ObjectSpriteContainer::safeCast(VirtualList::getDataAtIndex(this->objectSpriteContainers, i));
 
-		// Setup spt
-		objectSpriteContainer->spt = this->spt;
-
-		objectSpriteContainer->firstObjectIndex = this->objectIndex;
+		int16 firstObjectIndex = this->objectIndex;
 
 		if(__SHOW == objectSpriteContainer->show)
 		{
@@ -708,7 +705,7 @@ void SpriteManager::render()
 			}
 		}
 
-		if(objectSpriteContainer->firstObjectIndex == this->objectIndex)
+		if(firstObjectIndex == this->objectIndex)
 		{
 			_objectAttributesCache[this->objectIndex].head = __OBJECT_SPRITE_CHAR_HIDE_MASK;
 			this->objectIndex--;
@@ -726,8 +723,6 @@ void SpriteManager::render()
 				this->vipSPTRegistersCache[i] = this->objectIndex;
 			}
 		}
-
-		objectSpriteContainer->lastObjectIndex = this->objectIndex;
 	}
 
 	SpriteManager::stopRendering(this);
@@ -963,20 +958,7 @@ ObjectSpriteContainer SpriteManager::getObjectSpriteContainerBySPT(int32 spt)
 		return NULL;
 	}
 
-	ObjectSpriteContainer objectSpriteContainer = NULL;
-	VirtualNode node = this->objectSpriteContainers->head;
-
-	for(; NULL != node; node = node->next)
-	{
-		objectSpriteContainer = ObjectSpriteContainer::safeCast(node->data);
-
-		if(objectSpriteContainer->spt == spt)
-		{
-			return objectSpriteContainer;
-		}
-	}
-
-	return NULL;
+	return ObjectSpriteContainer::safeCast(VirtualList::getDataAtIndex(this->objectSpriteContainers, spt));
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -1052,7 +1034,7 @@ void SpriteManager::printObjectSpriteContainersStatus(int32 x, int32 y)
 
 	for(; NULL != node; node = node->next)
 	{
-		totalUsedObjects += ObjectSpriteContainer::getTotalUsedObjects(ObjectSpriteContainer::safeCast(node->data));
+	//	totalUsedObjects += ObjectSpriteContainer::getTotalUsedObjects(ObjectSpriteContainer::safeCast(node->data));
 	}
 
 	Printer::text("Total used objects: ", x, ++y, NULL);

@@ -52,11 +52,7 @@ void ObjectSpriteContainer::constructor()
 	this->hasTextures = false;
 	this->head = __WORLD_ON | __WORLD_OBJECT | __WORLD_OVR;
 	this->head &= ~__WORLD_END;
-	this->spt = 0;
-	this->firstObjectIndex = 0;
-	this->lastObjectIndex = 0;
 	this->transparency = __TRANSPARENCY_NONE;
-	this->sortingSpriteNode = NULL;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -87,27 +83,7 @@ int16 ObjectSpriteContainer::doRender(int16 index)
 
 int32 ObjectSpriteContainer::getTotalPixels()
 {
-	if(__NO_RENDER_INDEX != this->index)
-	{
-		return (this->firstObjectIndex - this->lastObjectIndex) * 8 * 8;
-	}
-
 	return 0;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void ObjectSpriteContainer::forceShow()
-{
-	Base::forceShow(this);
-	this->show = __HIDE;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void ObjectSpriteContainer::forceHide()
-{
-	this->show = __SHOW;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -176,13 +152,6 @@ bool ObjectSpriteContainer::sortProgressively(bool complete)
 	}
 */
 	return swapped;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-int32 ObjectSpriteContainer::getTotalUsedObjects()
-{
-	return this->firstObjectIndex - this->lastObjectIndex;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

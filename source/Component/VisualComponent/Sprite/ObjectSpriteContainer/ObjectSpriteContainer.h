@@ -35,17 +35,6 @@ class ObjectSpriteContainer : Sprite
 {
 	/// @protectedsection
 
-	/// List node used to Z sort object sprites over time
-	VirtualNode sortingSpriteNode;
-
-	/// Index of the first OBJECT
-	int32 firstObjectIndex;
-
-	/// Index of the last OBJECT
-	int32 lastObjectIndex;
-
-	/// SPT index that this container manages
-	int32 spt;
 
 	/// @publicsection
 
@@ -64,21 +53,6 @@ class ObjectSpriteContainer : Sprite
 	/// Retrieve the total number of pixels actually displayed by all the managed sprites.
 	/// @return Total number of pixels displayed by all the managed sprites
 	override int32 getTotalPixels();
-	
-	/// Forcefully show the sprites
-	override void forceShow();
-
-	/// Forcefully hide the sprites
-	override void forceHide();
-
-	/// Z sort over time the managed sprites.
-	/// @param complete: Flag to indicate if the sorting must be complete or deferred
-	/// @return True if some sprites was moved to another position in the list
-	bool sortProgressively(bool complete);
-
-	/// Retrieve the total number of OBJECTs used by all the managed sprites.
-	/// @return Total number of OBJECTs used by all the managed sprites
-	int32 getTotalUsedObjects();
 }
 
 #endif
