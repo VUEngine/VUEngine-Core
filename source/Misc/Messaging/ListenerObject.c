@@ -53,14 +53,19 @@ void ListenerObject::destructor()
 	NM_ASSERT(0 == this->eventFirings, "ListenerObject::destructor: called during event firing");
 
 	MessageDispatcher::discardAllDelayedMessages(ListenerObject::safeCast(this));
-	ListenerObject::removeAllEventListeners(this);
+
+	if(!isDeleted(this->events))
+	{
+		VirtualList::deleteData(this->events);
+		delete this->events;
+		this->events = NULL;
+	}
 
 	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
 void ListenerObject::addEventListener(ListenerObject listener, uint16 eventCode)
 {
 	// Don't remove these asserts!
@@ -113,7 +118,7 @@ void ListenerObject::removeEventListener(ListenerObject listener, uint16 eventCo
 
 			Event* event = (Event*)node->data;
 
-			if(isDeleted(event))
+			if(isDeleted(event) || event->remove)
 			{
 				if(0 == this->eventFirings)
 				{
@@ -162,7 +167,7 @@ void ListenerObject::removeEventListeners(uint16 eventCode)
 
 			Event* event = (Event*)node->data;
 
-			if(isDeleted(event))
+			if(isDeleted(event) || event->remove)
 			{
 				if(0 == this->eventFirings)
 				{
