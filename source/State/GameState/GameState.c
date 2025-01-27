@@ -231,6 +231,9 @@ void GameState::unpause(void* owner)
 		// Reset the engine state
 		GameState::reset(this, NULL == Stage::getSpec(this->stage)->assets.sounds);
 
+		// Configure the game state
+		GameState::configure(this);
+
 		// Resume the stage
 		Stage::resume(this->stage);
 
@@ -245,10 +248,7 @@ void GameState::unpause(void* owner)
 
 		// Force all streaming right now
 		GameState::streamAll(this);
-
-		// Configure the game state
-		GameState::configure(this);
-
+		
 		// Call custom code implementation
 		GameState::resume(this, owner);
 	}
