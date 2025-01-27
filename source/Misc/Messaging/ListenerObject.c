@@ -84,9 +84,21 @@ void ListenerObject::addEventListener(ListenerObject listener, uint16 eventCode)
 	}
 	else
 	{
-		for(VirtualNode node = this->events->head; NULL != node; node = node->next)
+		for(VirtualNode node = this->events->head, nextNode = NULL; NULL != node; node = nextNode)
 		{
+			nextNode = node->next;
+
 			Event* event = (Event*)node->data;
+
+			if(isDeleted(event) || event->remove)
+			{
+				if(0 == this->eventFirings)
+				{
+					VirtualList::removeNode(this->events, node);
+
+					continue;
+				}
+			}
 
 			if(listener == event->listener && eventCode == event->code)
 			{
@@ -274,6 +286,20 @@ void ListenerObject::fireEvent(uint16 eventCode)
 			else if(eventCode == event->code)
 			{
 				event->remove = !ListenerObject::onEvent(event->listener, this, event->code);
+
+				if(1 == this->eventFirings)
+				{
+					if(isDeleted(event) || isDeleted(event->listener) || event->remove)
+					{
+						VirtualList::removeNode(this->events, node);
+
+						// Safety check in case that the there is a stacking up of firings within firings
+						if(!isDeleted(event))
+						{
+							delete event;
+						}
+					}
+				}
 
 				// Safe check in case that I have been deleted during the previous event
 				if(isDeleted(this))
