@@ -63,7 +63,10 @@ void SoundTest::show()
 
 	Printer::clear();
 #ifdef __TOOLS
-	SpriteManager::hideAllSprites(SpriteManager::safeCast(ComponentManager::getManager(kSpriteComponent)), NULL, false);
+	SpriteManager spriteManager = 
+		SpriteManager::safeCast(ToolState::getComponentManager(ToolState::getCurrentGameState(this->toolState), kSpriteComponent));
+
+	SpriteManager::hideAllSprites(spriteManager, NULL, false);
 #endif
 	Printer::resetCoordinates();
 	Printer::show(Printer::getInstance());
@@ -84,7 +87,10 @@ void SoundTest::hide()
 	SoundTest::releaseSound(this);
 	Printer::clear();
 #ifdef __TOOLS
-	SpriteManager::showAllSprites(SpriteManager::safeCast(ComponentManager::getManager(kSpriteComponent)), NULL, true);
+	SpriteManager spriteManager = 
+		SpriteManager::safeCast(ToolState::getComponentManager(ToolState::getCurrentGameState(this->toolState), kSpriteComponent));
+
+	SpriteManager::showAllSprites(spriteManager, NULL, true);
 #endif
 	SoundTest::lightUpGame(this);
 }

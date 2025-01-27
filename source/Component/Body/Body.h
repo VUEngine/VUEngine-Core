@@ -26,12 +26,15 @@ class Entity;
 // CLASS' MACROS
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-#define __NO_MOVEMENT			0x00
-#define __UNIFORM_MOVEMENT		0x01
-#define __ACCELERATED_MOVEMENT 0x20
+#define __NO_MOVEMENT						0x00
+#define __UNIFORM_MOVEMENT					0x01
+#define __ACCELERATED_MOVEMENT 				0x20
 
-#define __BODY_MIN_MASS			__F_TO_FIXED(0.01f)
-#define __BODY_MAX_MASS			__I_TO_FIXED(1)
+#define __BODY_MIN_MASS						__F_TO_FIXED(0.01f)
+#define __BODY_MAX_MASS						__I_TO_FIXED(1)
+
+#define __PHYSICS_TIME_ELAPSED_STEP			__FIX7_9_EXT_DIV(__1I_FIX7_9_EXT, __FIX7_9_EXT_DIV(__I_TO_FIX7_9_EXT(__TARGET_FPS), \
+											__I_TO_FIX7_9_EXT(__PHYSICS_TIME_ELAPSED_DIVISOR)))
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DATA
@@ -182,6 +185,19 @@ class Body : Component
 	bool movesIndependentlyOnEachAxis;
 
 	/// @publicsection
+
+	/// Set the current global gravity.
+	/// @param gravity: Gravity to set in the current physical world
+	static void setGlobalGravity(Vector3D gravity);
+
+	/// Set the current global gravity.
+	/// @param frictionCoefficient: Value to set as the body's friction coefficient (between 0 and
+	/// __MAXIMUM_FRICTION_COEFFICIENT)
+	static void setGlobalFrictionCoefficient(fixed_t frictionCoefficient);
+
+	/// Retrieve the time that passes between each physical simulation step.
+	/// @return The time that passes between each physical simulation step
+	static fixed_t getElapsedTimeStep();
 
 	/// Compute the instantaneous speed caused by the provided physical properties.
 	/// @param forceMagnitude: Magnitude of the applied force

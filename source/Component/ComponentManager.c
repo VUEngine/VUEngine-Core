@@ -44,17 +44,6 @@ static ComponentManager _activeComponentManagers[kComponentTypes] = {NULL};
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static ComponentManager ComponentManager::getManager(uint32 componentType)
-{
-	ComponentManager componentManager = ComponentManager::doGetManager(componentType);
-
-	NM_ASSERT(!isDeleted(componentManager), "ComponentManager::getManager: NULL active manager");
-
-	return componentManager;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
 static Component ComponentManager::createComponent(Entity owner, const ComponentSpec* componentSpec)
 {
 	if(NULL == componentSpec)

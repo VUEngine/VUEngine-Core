@@ -82,6 +82,11 @@ abstract class ToolState : GameState
 	/// @return Game's current game state
 	Stage getCurrentStage();
 
+	/// Retrieve the manager for the provided component type.
+	/// @param componentType: Type of components of the desired manager
+	/// @return Component manager for the provided component type
+	ComponentManager getComponentManager(uint32 componentType);
+
 	/// Check if the provided user input unlocks the tool managed by this state.
 	/// @return True if the input matches the combination defined by the state
 	virtual bool isKeyCombination(const UserInput* userInput) = 0;

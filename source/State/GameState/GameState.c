@@ -307,19 +307,6 @@ void GameState::configureStage(StageSpec* stageSpec, VirtualList positionedActor
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-ComponentManager GameState::getComponentManager(uint32 componentType)
-{
-	if(kComponentTypes <= componentType)
-	{
-		NM_ASSERT(false, "GameState::getComponentManager: invalid type");
-		return NULL;
-	}
-	
-	return this->componentManagers[componentType];	
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
 void GameState::purgeComponentManagers()
 {
 	for(int16 i = 0; i < kComponentTypes; i++)

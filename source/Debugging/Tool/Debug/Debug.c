@@ -115,8 +115,12 @@ void Debug::show()
 {
 	Printer::clear();
 	Printer::setCoordinates(0, 0, -64, -2);
-	SpriteManager::showAllSprites(SpriteManager::safeCast(ComponentManager::getManager(kSpriteComponent)), NULL, true);
-	SpriteManager::computeTotalPixelsDrawn(SpriteManager::safeCast(ComponentManager::getManager(kSpriteComponent)), );
+
+	SpriteManager spriteManager = 
+		SpriteManager::safeCast(ToolState::getComponentManager(ToolState::getCurrentGameState(this->toolState), kSpriteComponent));
+
+	SpriteManager::showAllSprites(spriteManager, NULL, true);
+	SpriteManager::computeTotalPixelsDrawn(spriteManager, );
 
 	Debug::showPage(this, 0);
 }
@@ -131,7 +135,11 @@ void Debug::hide()
 	);
 
 	Printer::clear();
-	SpriteManager::showAllSprites(SpriteManager::safeCast(ComponentManager::getManager(kSpriteComponent)), NULL, true);
+
+	SpriteManager spriteManager = 
+		SpriteManager::safeCast(ToolState::getComponentManager(ToolState::getCurrentGameState(this->toolState), kSpriteComponent));
+
+	SpriteManager::showAllSprites(spriteManager, NULL, true);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -213,7 +221,7 @@ void Debug::destructor()
 
 ColliderManager Debug::getColliderManager()
 {
-	return ColliderManager::safeCast(GameState::getComponentManager(ToolState::getCurrentGameState(this->toolState), kColliderComponent));
+	return ColliderManager::safeCast(ToolState::getComponentManager(ToolState::getCurrentGameState(this->toolState), kColliderComponent));
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -246,14 +254,20 @@ uint8 Debug::getCurrentPageNumber()
 
 void Debug::setBlackBackground()
 {
-	SpriteManager::hideAllSprites(SpriteManager::safeCast(ComponentManager::getManager(kSpriteComponent)), NULL, false);
+	SpriteManager spriteManager = 
+		SpriteManager::safeCast(ToolState::getComponentManager(ToolState::getCurrentGameState(this->toolState), kSpriteComponent));
+
+	SpriteManager::hideAllSprites(spriteManager, NULL, false);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Debug::showPreviousPage()
 {
-	SpriteManager::showAllSprites(SpriteManager::safeCast(ComponentManager::getManager(kSpriteComponent)), NULL, true);
+	SpriteManager spriteManager = 
+		SpriteManager::safeCast(ToolState::getComponentManager(ToolState::getCurrentGameState(this->toolState), kSpriteComponent));
+
+	SpriteManager::showAllSprites(spriteManager, NULL, true);
 
 	this->currentPage = VirtualNode::getPrevious(this->currentPage);
 
@@ -269,7 +283,10 @@ void Debug::showPreviousPage()
 
 void Debug::showNextPage()
 {
-	SpriteManager::showAllSprites(SpriteManager::safeCast(ComponentManager::getManager(kSpriteComponent)), NULL, true);
+	SpriteManager spriteManager = 
+		SpriteManager::safeCast(ToolState::getComponentManager(ToolState::getCurrentGameState(this->toolState), kSpriteComponent));
+
+	SpriteManager::showAllSprites(spriteManager, NULL, true);
 
 	this->currentPage = this->currentPage->next;
 
@@ -346,7 +363,11 @@ void Debug::showPage(int32 increment)
 	if(this->currentPage && this->currentPage->data)
 	{
 		Printer::clear();
-		SpriteManager::showAllSprites(SpriteManager::safeCast(ComponentManager::getManager(kSpriteComponent)), NULL, true);
+
+		SpriteManager spriteManager = 
+			SpriteManager::safeCast(ToolState::getComponentManager(ToolState::getCurrentGameState(this->toolState), kSpriteComponent));
+
+		SpriteManager::showAllSprites(spriteManager, NULL, true);
 
 		Debug::printHeader(this);
 		Printer::text(" \x1E\x1C\x1D ", 42, 0, NULL);
@@ -1116,21 +1137,25 @@ void Debug::objectsShowStatus(int32 increment, int32 x, int32 y)
 		this->objectSegment = __TOTAL_OBJECT_SEGMENTS - 1;
 	}
 
+	SpriteManager spriteManager = 
+		SpriteManager::safeCast(ToolState::getComponentManager(ToolState::getCurrentGameState(this->toolState), kSpriteComponent));
+
 	if(-1 == this->objectSegment)
 	{
 		Debug::setBlackBackground(this);
-		SpriteManager::printObjectSpriteContainersStatus(SpriteManager::safeCast(ComponentManager::getManager(kSpriteComponent)), x, y);
+
+		SpriteManager::printObjectSpriteContainersStatus(spriteManager, x, y);
 	}
 	else if(__TOTAL_OBJECT_SEGMENTS > this->objectSegment)
 	{
 		Printer::text("OBJECTS INSPECTOR", x, y++, NULL);
 
 		ObjectSpriteContainer objectSpriteContainer = 
-			SpriteManager::getObjectSpriteContainerBySPT(SpriteManager::safeCast(ComponentManager::getManager(kSpriteComponent)), this->objectSegment);
+			SpriteManager::getObjectSpriteContainerBySPT(spriteManager, this->objectSegment);
 
 		while(NULL == objectSpriteContainer && (this->objectSegment >= 0 && __TOTAL_OBJECT_SEGMENTS > this->objectSegment))
 		{
-			objectSpriteContainer = SpriteManager::getObjectSpriteContainerBySPT(SpriteManager::safeCast(ComponentManager::getManager(kSpriteComponent)), this->objectSegment);
+			objectSpriteContainer = SpriteManager::getObjectSpriteContainerBySPT(spriteManager, this->objectSegment);
 
 			if(!objectSpriteContainer)
 			{
@@ -1140,21 +1165,21 @@ void Debug::objectsShowStatus(int32 increment, int32 x, int32 y)
 
 		if(objectSpriteContainer)
 		{
-			SpriteManager::hideAllSprites(SpriteManager::safeCast(ComponentManager::getManager(kSpriteComponent)), Sprite::safeCast(objectSpriteContainer), false);
+			SpriteManager::hideAllSprites(spriteManager, Sprite::safeCast(objectSpriteContainer), false);
 			ObjectSpriteContainer::print(objectSpriteContainer, x, ++y);
 		}
 		else
 		{
 			this->objectSegment = -1;
 			Debug::setBlackBackground(this);
-			SpriteManager::printObjectSpriteContainersStatus(SpriteManager::safeCast(ComponentManager::getManager(kSpriteComponent)), x, y);
+			SpriteManager::printObjectSpriteContainersStatus(spriteManager, x, y);
 		}
 	}
 	else
 	{
 		this->objectSegment = -1;
 		Debug::setBlackBackground(this);
-		SpriteManager::printObjectSpriteContainersStatus(SpriteManager::safeCast(ComponentManager::getManager(kSpriteComponent)), x, y);
+		SpriteManager::printObjectSpriteContainersStatus(spriteManager, x, y);
 	}
 }
 
@@ -1181,7 +1206,10 @@ void Debug::spritesShowStatus(int32 increment, int32 x, int32 y)
 
 	Debug::dimmGame(this);
 
-	int32 numberOfSprites = SpriteManager::getNumberOfSprites(SpriteManager::safeCast(ComponentManager::getManager(kSpriteComponent)));
+	SpriteManager spriteManager = 
+		SpriteManager::safeCast(ToolState::getComponentManager(ToolState::getCurrentGameState(this->toolState), kSpriteComponent));
+
+	int32 numberOfSprites = SpriteManager::getNumberOfSprites(spriteManager);
 
 	if(this->spriteIndex > numberOfSprites)
 	{
@@ -1191,13 +1219,13 @@ void Debug::spritesShowStatus(int32 increment, int32 x, int32 y)
 	if(numberOfSprites == this->spriteIndex)
 	{
 		Debug::setBlackBackground(this);
-		SpriteManager::print(SpriteManager::safeCast(ComponentManager::getManager(kSpriteComponent)), x, y, false);
+		SpriteManager::print(spriteManager, x, y, false);
 	}
 	else if(0 <= this->spriteIndex && this->spriteIndex < numberOfSprites)
 	{
-		Sprite sprite = SpriteManager::getSpriteAtIndex(SpriteManager::safeCast(ComponentManager::getManager(kSpriteComponent)), this->spriteIndex);
-		SpriteManager::hideAllSprites(SpriteManager::safeCast(ComponentManager::getManager(kSpriteComponent)), sprite, false);
-		SpriteManager::renderAndDraw(SpriteManager::safeCast(ComponentManager::getManager(kSpriteComponent)));
+		Sprite sprite = SpriteManager::getSpriteAtIndex(spriteManager, this->spriteIndex);
+		SpriteManager::hideAllSprites(spriteManager, sprite, false);
+		SpriteManager::renderAndDraw(spriteManager);
 		Printer::text("SPRITES INSPECTOR", x, y++, NULL);
 		Sprite::print(sprite, x, ++y);
 	}
@@ -1206,7 +1234,7 @@ void Debug::spritesShowStatus(int32 increment, int32 x, int32 y)
 		this->spriteIndex = numberOfSprites;
 
 		Debug::setBlackBackground(this);
-		SpriteManager::print(SpriteManager::safeCast(ComponentManager::getManager(kSpriteComponent)), x, y, false);
+		SpriteManager::print(spriteManager, x, y, false);
 	}
 }
 
@@ -1227,7 +1255,7 @@ void Debug::physicsPage(int32 increment __attribute__ ((unused)), int32 x __attr
 
 void Debug::physicStatusShowStatistics(int32 increment __attribute__ ((unused)), int32 x, int32 y)
 {
-	BodyManager::print(BodyManager::safeCast(GameState::getComponentManager(ToolState::getCurrentGameState(this->toolState), kPhysicsComponent)), x, y);
+	BodyManager::print(BodyManager::safeCast(ToolState::getComponentManager(ToolState::getCurrentGameState(this->toolState), kPhysicsComponent)), x, y);
 	ColliderManager::print(Debug::getColliderManager(this), x, y + 6);
 	ColliderManager::hideColliders(Debug::getColliderManager(this));
 
@@ -1240,7 +1268,10 @@ void Debug::physicStatusShowColliders(int32 increment __attribute__ ((unused)), 
 {
 	Printer::text("COLLISION SHAPES", x, y++, NULL);
 
-	SpriteManager::showAllSprites(SpriteManager::safeCast(ComponentManager::getManager(kSpriteComponent)), NULL, true);
+	SpriteManager spriteManager = 
+		SpriteManager::safeCast(ToolState::getComponentManager(ToolState::getCurrentGameState(this->toolState), kSpriteComponent));
+
+	SpriteManager::showAllSprites(spriteManager, NULL, true);
 	Debug::dimmGame(this);
 	ColliderManager::showColliders(Debug::getColliderManager(this));
 }

@@ -181,3 +181,16 @@ Stage ToolState::getCurrentStage()
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+ComponentManager ToolState::getComponentManager(uint32 componentType)
+{
+	if(kComponentTypes <= componentType)
+	{
+		NM_ASSERT(false, "ToolState::getComponentManager: invalid type");
+		return NULL;
+	}
+	
+	return this->componentManagers[componentType];	
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

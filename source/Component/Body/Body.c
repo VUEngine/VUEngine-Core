@@ -13,7 +13,6 @@
 
 #include <DebugConfig.h>
 #include <FrameRate.h>
-#include <BodyManager.h>
 #include <Printer.h>
 #include <Entity.h>
 #include <VirtualList.h>
@@ -74,9 +73,33 @@ typedef struct NormalRegistry
 
 } NormalRegistry;
 
+static Vector3D _gravity = {0, 0, 0};
+static fixed_t _frictionCoefficient = 0;
+
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PUBLIC STATIC METHODS
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+static void Body::setGlobalGravity(Vector3D gravity)
+{
+	_gravity = gravity;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+static void Body::setGlobalFrictionCoefficient(fixed_t frictionCoefficient)
+{
+	_frictionCoefficient = frictionCoefficient;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+static fixed_t Body::getElapsedTimeStep()
+{
+	return __PHYSICS_TIME_ELAPSED_STEP;
+}
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
@@ -88,7 +111,7 @@ static inline fixed_t Body::computeInstantaneousSpeed
 	fixed_t instantaneousSpeed = 
 		__FIX7_9_EXT_TO_FIXED
 		(
-			Body::doComputeInstantaneousSpeed(forceMagnitude, gravity, mass, friction, BodyManager::getElapsedTimeStep())
+			Body::doComputeInstantaneousSpeed(forceMagnitude, gravity, mass, friction, Body::getElapsedTimeStep())
 		);
 
 	return 0 != maximumSpeed && maximumSpeed < __ABS(instantaneousSpeed) ? maximumSpeed : instantaneousSpeed;
@@ -172,7 +195,7 @@ void Body::constructor(Entity owner, const BodySpec* bodySpec)
 	this->gravity = Body::getGravity(this);
 
 	Body::setFrictionCoefficient(this, bodySpec->frictionCoefficient);
-	Body::computeFrictionForceMagnitude(this, BodyManager::getFrictionCoefficient(ComponentManager::getManager(kPhysicsComponent)));
+	Body::computeFrictionForceMagnitude(this, _frictionCoefficient);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -1370,7 +1393,7 @@ void Body::computeTotalNormal()
 	if(0 != this->totalNormal.x || 0 != this->totalNormal.y || 0 != this->totalNormal.z)
 	{
 		Body::computeTotalFrictionCoefficient(this);
-		Body::computeFrictionForceMagnitude(this, BodyManager::getFrictionCoefficient(ComponentManager::getManager(kPhysicsComponent)));
+		Body::computeFrictionForceMagnitude(this, _frictionCoefficient);
 	}
 }
 
@@ -1482,7 +1505,7 @@ void Body::computeFrictionForceMagnitude(fixed_t currentWorldFriction)
 
 void Body::computeTotalFrictionCoefficient()
 {
-	fixed_t currentWorldFriction = BodyManager::getFrictionCoefficient(ComponentManager::getManager(kPhysicsComponent));
+	fixed_t currentWorldFriction = _frictionCoefficient;
 	this->totalFrictionCoefficient = this->frictionCoefficient;
 
 	this->totalFrictionCoefficient += currentWorldFriction + this->surroundingFrictionCoefficient;
@@ -1503,7 +1526,7 @@ void Body::computeTotalFrictionCoefficient()
 
 Vector3D Body::getGravity()
 {
-	Vector3D gravity = BodyManager::getGravity(ComponentManager::getManager(kPhysicsComponent));
+	Vector3D gravity = _gravity;
 	
 	return (Vector3D)
 	{
@@ -1526,7 +1549,7 @@ Vector3D Body::getLastDisplacement()
 {
 	Vector3D displacement = {0, 0, 0};
 
-	fixed_t elapsedTime = BodyManager::getElapsedTimeStep();
+	fixed_t elapsedTime = Body::getElapsedTimeStep();
 
 	displacement.x = __STOP_VELOCITY_THRESHOLD < __ABS(this->velocity.x) ? __FIXED_MULT(this->velocity.x, elapsedTime) : 0;
 	displacement.y = __STOP_VELOCITY_THRESHOLD < __ABS(this->velocity.y) ? __FIXED_MULT(this->velocity.y, elapsedTime) : 0;

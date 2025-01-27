@@ -125,11 +125,14 @@ void AnimationInspector::show()
 
 	this->state = kFirstState + 1;
 	AnimationInspector::configureState(this);
-	SpriteManager::hideAllSprites(SpriteManager::safeCast(ComponentManager::getManager(kSpriteComponent)), NULL, false);
+	SpriteManager spriteManager = 
+		SpriteManager::safeCast(ToolState::getComponentManager(ToolState::getCurrentGameState(this->toolState), kSpriteComponent));
+
+	SpriteManager::hideAllSprites(spriteManager, NULL, false);
 	
 	// Make sure all textures are written right now
-	SpriteManager::writeTextures(SpriteManager::safeCast(ComponentManager::getManager(kSpriteComponent)));
-	SpriteManager::deferParamTableEffects(SpriteManager::safeCast(ComponentManager::getManager(kSpriteComponent)), false);
+	SpriteManager::writeTextures(spriteManager);
+	SpriteManager::deferParamTableEffects(spriteManager, false);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -172,9 +175,12 @@ void AnimationInspector::hide()
 	}
 
 	// Make sure all textures are written right now
-	SpriteManager::writeTextures(SpriteManager::safeCast(ComponentManager::getManager(kSpriteComponent)));
-	//SpriteManager::showAllSprites(SpriteManager::safeCast(ComponentManager::getManager(kSpriteComponent)), NULL, true);
-	SpriteManager::deferParamTableEffects(SpriteManager::safeCast(ComponentManager::getManager(kSpriteComponent)), true);
+	SpriteManager spriteManager = 
+		SpriteManager::safeCast(ToolState::getComponentManager(ToolState::getCurrentGameState(this->toolState), kSpriteComponent));
+
+	SpriteManager::writeTextures(spriteManager);
+	//SpriteManager::showAllSprites(spriteManager, NULL, true);
+	SpriteManager::deferParamTableEffects(spriteManager, true);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -733,8 +739,11 @@ void AnimationInspector::createSprite()
 
 	this->sprite->updateAnimationFrame = true;
 
-	//SpriteManager::hideAllSprites(SpriteManager::safeCast(ComponentManager::getManager(kSpriteComponent)), this->sprite, false);
-	SpriteManager::prepareAll(SpriteManager::safeCast(ComponentManager::getManager(kSpriteComponent)));
+	SpriteManager spriteManager = 
+		SpriteManager::safeCast(ToolState::getComponentManager(ToolState::getCurrentGameState(this->toolState), kSpriteComponent));
+
+	//SpriteManager::hideAllSprites(spriteManager, this->sprite, false);
+	SpriteManager::prepareAll(spriteManager);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

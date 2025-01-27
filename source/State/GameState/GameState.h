@@ -124,11 +124,6 @@ class GameState : State
 	/// @return UI Container
 	UIContainer getUIContainer();
 
-	/// Retrieve the manager for the provided component type.
-	/// @param componentType: Type of components of the desired manager
-	/// @return Component manager for the provided component type
-	ComponentManager getComponentManager(uint32 componentType);
-
 	/// Force the purging of deleted components.
 	void purgeComponentManagers();
 

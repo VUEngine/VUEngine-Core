@@ -44,10 +44,6 @@ abstract class ComponentManager : ListenerObject
 
 	/// @publicsection
 
-	/// Retrieve the active manager for the component type.
-	/// @param componentType: Type of components of the desired manager
-	static ComponentManager getManager(uint32 componentType);
-
 	/// Create a component with the specified owner.
 	/// @param owner: Owner of the component (can be NULL)
 	/// @param componentSpec: Spec to initialize the new component

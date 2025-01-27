@@ -516,8 +516,6 @@ void Collider::show()
 
 		if(!isDeleted(this->wireframe))
 		{
-			WireframeManager::registerWireframe(WireframeManager::safeCast(ComponentManager::getManager(kWireframeComponent)), this->wireframe);
-
 			Wireframe::show(this->wireframe);
 		}
 	}
@@ -529,8 +527,6 @@ void Collider::hide()
 {
 	if(!isDeleted(this->wireframe))
 	{
-		WireframeManager::unregisterWireframe(WireframeManager::safeCast(ComponentManager::getManager(kWireframeComponent)), this->wireframe);
-
 		delete this->wireframe;
 		this->wireframe = NULL;
 	}
