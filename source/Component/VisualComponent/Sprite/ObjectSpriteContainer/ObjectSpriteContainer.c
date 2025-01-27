@@ -67,7 +67,7 @@ void ObjectSpriteContainer::destructor()
 
 ClassPointer ObjectSpriteContainer::getBasicType()
 {
-	return typeofclass(BgmapSprite);
+	return typeofclass(Sprite);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

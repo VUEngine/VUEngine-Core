@@ -62,9 +62,6 @@ class ObjectSprite : Sprite
 	/// The number of OBJECTs that the sprite uses
 	int16 totalObjects;
 
-	/// Container that manages this sprite
-	ObjectSpriteContainer objectSpriteContainer;
-
 	/// Texture's displacement in the map array
 	ObjectTextureSource objectTextureSource;
 
@@ -99,10 +96,6 @@ class ObjectSprite : Sprite
 	/// @param owner: Entity to which the sprite attaches to
 	/// @param objectSpriteSpec: Specification that determines how to configure the sprite
 	void constructor(Entity owner, const ObjectSpriteSpec* objectSpriteSpec);
-
-	/// Retrieve the sprite's manager.
-	/// @return Generic pointer to the manager
-	override void* getManager();
 
 	/// Retrieve the basic class of this kind of sprite.
 	/// @return ClassPointer the basic class

@@ -13,7 +13,6 @@
 
 #include <AnimationController.h>
 #include <DebugConfig.h>
-#include <ObjectSpriteContainer.h>
 #include <ObjectTexture.h>
 
 #include "ObjectSprite.h"
@@ -38,7 +37,6 @@ void ObjectSprite::constructor(Entity owner, const ObjectSpriteSpec* objectSprit
 	Base::constructor(owner, (SpriteSpec*)objectSpriteSpec);
 
 	this->head = objectSpriteSpec->display & __OBJECT_SPRITE_CHAR_SHOW_MASK;
-	this->objectSpriteContainer = NULL;
 	this->totalObjects = 0;
 
 	this->displacement = objectSpriteSpec->spriteSpec.displacement;
@@ -78,8 +76,6 @@ void ObjectSprite::constructor(Entity owner, const ObjectSpriteSpec* objectSprit
 
 void ObjectSprite::destructor()
 {
-	this->objectSpriteContainer = NULL;
-
 	ObjectSprite::removeFromCache(this);
 
 	if(!isDeleted(this->texture))
@@ -110,13 +106,6 @@ bool ObjectSprite::onEvent(ListenerObject eventFirer __attribute__((unused)), ui
 	}
 
 	return Base::onEvent(this, eventFirer, eventCode);
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void* ObjectSprite::getManager()
-{
-	return this->objectSpriteContainer;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

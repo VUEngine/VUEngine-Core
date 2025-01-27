@@ -72,6 +72,7 @@ void SpriteManager::constructor()
 	for(int16 i = 0; i < __TOTAL_OBJECT_SEGMENTS; i++)
 	{
 		this->objectSprites[i] = new VirtualList();
+		this->vipSPTRegistersCache[i] = 0;
 	}
 
 	this->bgmapSprites = new VirtualList();
@@ -90,7 +91,6 @@ void SpriteManager::constructor()
 	this->spt = __TOTAL_OBJECT_SEGMENTS - 1;
 	this->objectIndex = __TOTAL_OBJECTS - 1;
 	this->previousObjectIndex = __TOTAL_OBJECTS - 1;
-	this->vipSPTRegistersCache[__TOTAL_OBJECT_SEGMENTS];
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -330,12 +330,7 @@ Sprite SpriteManager::createSprite(Entity owner, const SpriteSpec* spriteSpec)
 
 	ClassPointer classPointer = Sprite::getBasicType(sprite);
 
-	if(typeofclass(BgmapSprite) == classPointer)
-	{
-		this->sortingSpriteNode = NULL;
-		SpriteManager::registerSprite(this, sprite, this->bgmapSprites);
-	}
-	else if(typeofclass(ObjectSprite) == classPointer)
+	if(typeofclass(ObjectSprite) == classPointer)
 	{
 		int16 z = 0;
 
@@ -347,6 +342,16 @@ Sprite SpriteManager::createSprite(Entity owner, const SpriteSpec* spriteSpec)
 		int16 objectSpriteContainerIndex = SpriteManager::getObjectSpriteContainer(this, z + sprite->displacement.z);
 
 		SpriteManager::registerSprite(this, sprite, this->objectSprites[objectSpriteContainerIndex]);
+	}
+	else if(typeofclass(BgmapSprite) == classPointer)
+	{
+		this->sortingSpriteNode = NULL;
+		SpriteManager::registerSprite(this, sprite, this->bgmapSprites);
+	}
+	else if(typeofclass(Sprite) == classPointer)
+	{
+		this->sortingSpriteNode = NULL;
+		SpriteManager::registerSprite(this, sprite, this->bgmapSprites);
 	}
 
 	return sprite;
@@ -376,17 +381,22 @@ void SpriteManager::destroySprite(Sprite sprite)
 
 	ClassPointer classPointer = Sprite::getBasicType(sprite);
 
-	if(typeofclass(BgmapSprite) == classPointer)
-	{
-		this->sortingSpriteNode = NULL;
-		SpriteManager::unregisterSprite(this, sprite, this->bgmapSprites);
-	}
-	else if(typeofclass(ObjectSprite) == classPointer && NULL != this->objectSpriteContainers)
+	if(typeofclass(ObjectSprite) == classPointer)
 	{
 		for(int16 i = 0; i < __TOTAL_OBJECT_SEGMENTS; i++)
 		{
 			SpriteManager::unregisterSprite(this, sprite, this->objectSprites[i]);
 		}
+	}
+	else if(typeofclass(BgmapSprite) == classPointer)
+	{
+		this->sortingSpriteNode = NULL;
+		SpriteManager::unregisterSprite(this, sprite, this->bgmapSprites);
+	}
+	else if(typeofclass(Sprite) == classPointer)
+	{
+		this->sortingSpriteNode = NULL;
+		SpriteManager::unregisterSprite(this, sprite, this->bgmapSprites);
 	}
 
 	delete sprite;

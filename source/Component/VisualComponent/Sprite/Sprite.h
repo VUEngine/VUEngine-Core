@@ -240,10 +240,6 @@ abstract class Sprite : VisualComponent
 	/// Invalidate the flags that determine if the sprite requires rendering.
 	void invalidateRendering();
 
-	/// Retrieve the sprite's manager.
-	/// @return Generic pointer to the manager
-	virtual void* getManager();
-
 	/// Retrieve the basic class of this kind of sprite.
 	/// @return ClassPointer the basic class
 	virtual ClassPointer getBasicType() = 0;
