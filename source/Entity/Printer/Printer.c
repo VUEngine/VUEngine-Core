@@ -32,7 +32,7 @@
 // CLASS' DECLARATIONS
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-extern FontROMSpec* const _fonts[];
+extern FontData _fontData[];
 extern FontROMSpec DefaultFontSpec;
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -142,32 +142,24 @@ static void Printer::loadFonts(FontSpec** fontSpecs)
 	CharSetManager::writeCharSets(CharSetManager::getInstance());
 
 	// Iterate over all defined fonts and add to internal list
-	uint32 i = 0, j = 0;
-	for(i = 0; _fonts[i]; i++)
+	// Preload charset for font if in list of fonts to preload
+	if(NULL != fontSpecs)
 	{
-		// Instance and initialize a new fontdata instance
-		FontData* fontData = new FontData;
-		fontData->fontSpec = _fonts[i];
-		fontData->charSet = NULL;
-
-		// Preload charset for font if in list of fonts to preload
-		if(fontSpecs)
+		for(int16 i = 0; NULL != fontSpecs[i]; i++)
 		{
 			// Find defined font in list of fonts to preload
-			for(j = 0; fontSpecs[j]; j++)
+			for(int16 j = 0; NULL != _fontData[j].fontSpec; j++)
 			{
 				// Preload charset and save charset reference, if font was found
-				if(_fonts[i]->charSetSpec == fontSpecs[j]->charSetSpec)
+				if(fontSpecs[i] == _fontData[j].fontSpec)
 				{
-					fontData->charSet = CharSet::get(fontSpecs[j]->charSetSpec);
+					// Instance and initialize a new fontdata instance
+					_fontData[j].charSet = CharSet::get(_fontData[j].fontSpec->charSetSpec);
 
-					CharSet::addEventListener(fontData->charSet, ListenerObject::safeCast(printing), kEventCharSetChangedOffset);
+					CharSet::addEventListener(_fontData[j].charSet, ListenerObject::safeCast(printing), kEventCharSetChangedOffset);
 				}
 			}
 		}
-
-		// Add fontdata to internal list
-		VirtualList::pushBack(printing->fonts, fontData);
 	}
 
 	if(NULL == printing->activePrintingSprite)
@@ -186,29 +178,16 @@ static void Printer::releaseFonts()
 
 	Printer::removeEventListeners(printing, kEventFontRewritten);
 
-	VirtualNode node = VirtualList::begin(printing->fonts);
-
-	for(; NULL != node; node = VirtualNode::getNext(node))
+	for(int16 i = 0; NULL != _fontData[i].fontSpec; i++)
 	{
-		FontData* fontData = VirtualNode::getData(node);
-
-		if(!isDeleted(fontData))
+		// Preload charset and save charset reference, if font was found
+		if(NULL != _fontData[i].charSet)
 		{
-			if(!isDeleted(fontData->charSet))
-			{
-				CharSet::removeEventListener
-				(
-					fontData->charSet, ListenerObject::safeCast(printing), kEventCharSetChangedOffset
-				);
-
-				while(!CharSet::release(fontData->charSet));
-			}
-
-			delete fontData;
+			while(!CharSet::release(_fontData[i].charSet));
 		}
-	}
 
-	VirtualList::clear(printing->fonts);
+		_fontData[i].charSet = NULL;
+	}
 
 	printing->lastUsedFont = NULL;
 	printing->lastUsedFontData = NULL;
@@ -708,37 +687,33 @@ static FontData* Printer::getFontByName(const char* font)
 	{
 		result = (FontData*)&VUENGINE_DEBUG_FONT_DATA;
 	}
-	else if(NULL != printing->fonts)
+	else
 	{
 		// Set first defined font as default
-		result = VirtualList::front(printing->fonts);
+		result = &_fontData[0];
 
 		if(NULL != result)
 		{
 			if(NULL != font)
 			{
-				// Iterate over registered fonts to find spec of font to use
-				VirtualNode node = VirtualList::begin(printing->fonts);
-				
-				for(; NULL != node; node = VirtualNode::getNext(node))
+				for(int16 i = 0; NULL != _fontData[i].fontSpec; i++)
 				{
-					FontData* fontData = VirtualNode::getData(node);
-					
-					if(!strcmp(fontData->fontSpec->name, font))
+					if(!strcmp(_fontData[i].fontSpec->name, font))
 					{
-						result = fontData;
+						// If font's charset has not been preloaded, load it now
+						if(NULL == _fontData[i].charSet)
+						{
+							_fontData[i].charSet = CharSet::get(_fontData[i].fontSpec->charSetSpec);
+
+							CharSet::addEventListener(_fontData[i].charSet, ListenerObject::safeCast(printing), kEventCharSetChangedOffset);
+						}
+
+						result = &_fontData[i];
 						break;
 					}
 				}
 			}
 
-			// If font's charset has not been preloaded, load it now
-			if(NULL == result->charSet)
-			{
-				result->charSet = CharSet::get(result->fontSpec->charSetSpec);
-
-				CharSet::addEventListener(result->charSet, ListenerObject::safeCast(printing), kEventCharSetChangedOffset);
-			}
 		}
 	}
 	

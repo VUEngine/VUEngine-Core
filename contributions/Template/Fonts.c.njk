@@ -14,15 +14,15 @@
 
 {{ macros.sectionHeader('Definitions') }}
 
-FontSpec* const _fonts[] =
+FontData _fontData[] =
 {
-	(FontSpec*)&DefaultFontSpec,
-	(FontSpec*)&ProfilerFontSpec,
-	(FontSpec*)&DebugFontSpec,
+	{(FontSpec*)&DefaultFontSpec, NULL},
+	{(FontSpec*)&ProfilerFontSpec, NULL},
+	{(FontSpec*)&DebugFontSpec, NULL},
 	{% if itemNames %}
 	{%- for itemName in itemNames | sort -%}
-	(FontSpec*)&{{ itemName }}FontSpec,
+	{(FontSpec*)&{{ itemName }}FontSpec, NULL},
 	{% endfor -%}
 	{% endif %}
-	NULL
+	{NULL, NULL}
 };
