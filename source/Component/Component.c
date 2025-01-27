@@ -45,6 +45,7 @@ void Component::constructor(Entity owner, const ComponentSpec* componentSpec)
 	Base::constructor();
 	
 #ifndef __SHIPPING
+#ifndef __TOOLS
 	extern uint32 _textStart __attribute__((unused));
 	extern uint32 _dataLma __attribute__((unused));
 
@@ -56,6 +57,7 @@ void Component::constructor(Entity owner, const ComponentSpec* componentSpec)
 		Printer::hex((WORD)componentSpec, 1, 26, 8, NULL);
 		NM_ASSERT(false, "Component::constructor: the provided spec lives in WRAM");
 	}
+#endif
 #endif
 
 	this->componentSpec = componentSpec;
