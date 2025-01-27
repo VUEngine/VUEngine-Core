@@ -49,18 +49,6 @@ class ObjectSpriteContainer : Sprite
 
 	/// @publicsection
 
-	/// Reset the state of the class's attributes.
-	static void reset();
-
-	/// Prepare the class' global state for rendering.
-	static void prepareForRendering();
-
-	/// Finish rendering.
-	static void finishRendering();
-
-	/// Write cached OBJECT settings to DRAM
-	static void writeDRAM();
-
 	/// Class' constructor
 	void constructor();
 

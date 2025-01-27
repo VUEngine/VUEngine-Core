@@ -39,82 +39,6 @@ friend class VirtualList;
 friend class VirtualNode;
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-// CLASS' ATTRIBUTES
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-int32 _spt = __TOTAL_OBJECT_SEGMENTS - 1;
-int16 _objectIndex = __TOTAL_OBJECTS - 1;
-int16 _previousObjectIndex = __TOTAL_OBJECTS - 1;
-uint16 _vipRegistersCache[__TOTAL_OBJECT_SEGMENTS];
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-// CLASS' PUBLIC STATIC METHODS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-static void ObjectSpriteContainer::reset()
-{
-	for(int32 i = __TOTAL_OBJECTS - 1; 0 <= i; i--)
-	{
-		_objectAttributesCache[i].head = __OBJECT_SPRITE_CHAR_HIDE_MASK;
-	}
-
-	_spt = __TOTAL_OBJECT_SEGMENTS - 1;
-	_objectIndex = __TOTAL_OBJECTS - 1;
-
-	for(int32 i = __TOTAL_OBJECT_SEGMENTS; i--;)
-	{
-		_vipRegistersCache[i] = _objectIndex;
-	}
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-static void ObjectSpriteContainer::prepareForRendering()
-{
-	_spt = __TOTAL_OBJECT_SEGMENTS - 1;
-	_objectIndex = __TOTAL_OBJECTS - 1;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-static void ObjectSpriteContainer::finishRendering()
-{
-	// Clear OBJ memory
-	for(int32 i = _objectIndex; _previousObjectIndex <= i; i--)
-	{
-		_objectAttributesCache[i].head = __OBJECT_SPRITE_CHAR_HIDE_MASK;
-	}
-
-	_previousObjectIndex = _objectIndex;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-static void ObjectSpriteContainer::writeDRAM()
-{
-	for(int32 i = __TOTAL_OBJECT_SEGMENTS; i--;)
-	{
-		_vipRegisters[__SPT0 + i] = _vipRegistersCache[i] - _objectIndex;
-	}
-
-	CACHE_RESET;
-	Mem::copyWORD
-	(
-		(WORD*)(_objectAttributesBaseAddress), (WORD*)(_objectAttributesCache + _objectIndex), 
-		sizeof(ObjectAttributes) * (__TOTAL_OBJECTS - _objectIndex) >> 2
-	);
-
-#ifdef __SHOW_SPRITES_PROFILING
-	extern int32 _writtenObjectTiles;
-	_writtenObjectTiles = __TOTAL_OBJECTS - _objectIndex;
-#endif
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PUBLIC METHODS
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
@@ -185,7 +109,6 @@ void ObjectSpriteContainer::forceHide()
 {
 	this->show = __SHOW;
 }
-
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 

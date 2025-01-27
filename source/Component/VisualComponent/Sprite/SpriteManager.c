@@ -41,10 +41,10 @@ friend class Texture;
 friend class VirtualNode;
 friend class VirtualList;
 
-extern int32 _spt;
-extern int16 _objectIndex;
-extern int16 _previousObjectIndex;
-extern uint16 _vipRegistersCache[__TOTAL_OBJECT_SEGMENTS];
+int32 _spt = __TOTAL_OBJECT_SEGMENTS - 1;
+int16 _objectIndex = __TOTAL_OBJECTS - 1;
+int16 _previousObjectIndex = __TOTAL_OBJECTS - 1;
+uint16 _vipRegistersCache[__TOTAL_OBJECT_SEGMENTS];
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' MACROS
@@ -177,7 +177,19 @@ void SpriteManager::enable()
 	CharSetManager::reset(CharSetManager::getInstance());
 	BgmapTextureManager::reset(BgmapTextureManager::getInstance());
 	ParamTableManager::reset(ParamTableManager::getInstance());
-	ObjectSpriteContainer::reset();
+
+	for(int32 i = __TOTAL_OBJECTS - 1; 0 <= i; i--)
+	{
+		_objectAttributesCache[i].head = __OBJECT_SPRITE_CHAR_HIDE_MASK;
+	}
+
+	_spt = __TOTAL_OBJECT_SEGMENTS - 1;
+	_objectIndex = __TOTAL_OBJECTS - 1;
+
+	for(int32 i = __TOTAL_OBJECT_SEGMENTS; i--;)
+	{
+		_vipRegistersCache[i] = _objectIndex;
+	}
 
 	for(int32 i = 0; i < __TOTAL_OBJECTS; i++)
 	{
@@ -608,6 +620,8 @@ void SpriteManager::render()
 		updateAnimations = !Clock::isPaused(this->animationsClock);
 	}
 
+	SpriteManager::startRendering(this);
+
 	for(VirtualNode node = this->bgmapSprites->tail, previousNode = NULL; NULL != node; node = previousNode)
 	{
 		previousNode = node->previous;
@@ -644,8 +658,6 @@ void SpriteManager::render()
 	}
 
 	NM_ASSERT(0 <= this->freeLayer, "SpriteManager::render: more sprites than WORLDs");
-
-	ObjectSpriteContainer::prepareForRendering();
 
 	for(int16 i = 0; i < __TOTAL_OBJECT_SEGMENTS; i++)
 	{
@@ -719,8 +731,6 @@ void SpriteManager::render()
 		objectSpriteContainer->lastObjectIndex = _objectIndex;
 	}
 
-	ObjectSpriteContainer::finishRendering();
-
 	SpriteManager::stopRendering(this);
 
 #ifdef __SHOW_SPRITES_PROFILING
@@ -763,10 +773,7 @@ void SpriteManager::writeDRAM()
 	SpriteManager::applySpecialEffects(this);
 
 	// Finally, write OBJ and WORLD attributes to DRAM
-	ObjectSpriteContainer::writeDRAM();
-
-	// Finally, write OBJ and WORLD attributes to DRAM
-	SpriteManager::writeWORLDAttributesToDRAM(this);
+	SpriteManager::writeAttributesToDRAM(this);
 
 #ifdef __SHOW_SPRITES_PROFILING
 	int32 counter = __TARGET_FPS / 5;
@@ -1158,6 +1165,14 @@ int32 SpriteManager::getTotalPixelsDrawn()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+void SpriteManager::startRendering()
+{
+	_spt = __TOTAL_OBJECT_SEGMENTS - 1;
+	_objectIndex = __TOTAL_OBJECTS - 1;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void SpriteManager::stopRendering()
 {
 	NM_ASSERT(0 <= (int8)this->freeLayer, "SpriteManager::stopRendering: no more layers");
@@ -1166,7 +1181,14 @@ void SpriteManager::stopRendering()
 	{
 		_worldAttributesCache[this->freeLayer].head = __WORLD_END;
 	}
-}
+
+	// Clear OBJ memory
+	for(int32 i = _objectIndex; _previousObjectIndex <= i; i--)
+	{
+		_objectAttributesCache[i].head = __OBJECT_SPRITE_CHAR_HIDE_MASK;
+	}
+
+	_previousObjectIndex = _objectIndex;}
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
@@ -1191,9 +1213,25 @@ void SpriteManager::applySpecialEffects()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void SpriteManager::writeWORLDAttributesToDRAM()
+void SpriteManager::writeAttributesToDRAM()
 {
+#ifdef __SHOW_SPRITES_PROFILING
+	_writtenObjectTiles = __TOTAL_OBJECTS - _objectIndex;
+#endif
+
+	for(int32 i = __TOTAL_OBJECT_SEGMENTS; i--;)
+	{
+		_vipRegisters[__SPT0 + i] = _vipRegistersCache[i] - _objectIndex;
+	}
+
 	CACHE_RESET;
+
+	Mem::copyWORD
+	(
+		(WORD*)(_objectAttributesBaseAddress), (WORD*)(_objectAttributesCache + _objectIndex), 
+		sizeof(ObjectAttributes) * (__TOTAL_OBJECTS - _objectIndex) >> 2
+	);
+
 	Mem::copyWORD
 	(
 		(WORD*)(_worldAttributesBaseAddress + this->freeLayer), (WORD*)(_worldAttributesCache + this->freeLayer), 
