@@ -287,9 +287,9 @@ void StageEditor::releaseWireframe()
 {
 	if(!isDeleted(this->wireframe))
 	{
-		Actor actor = Actor::safeCast(VirtualNode::getData(this->actorNode));
+		Entity entity = Entity::safeCast(VirtualNode::getData(this->actorNode));
 
-		ComponentManager::destroyComponent(actor, Component::safeCast(this->wireframe));
+		ComponentManager::destroyComponent(entity, Component::safeCast(this->wireframe));
 
 		this->wireframe = NULL;
 	}
