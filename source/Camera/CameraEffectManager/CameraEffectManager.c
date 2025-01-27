@@ -261,6 +261,7 @@ void CameraEffectManager::fxFadeAsyncStart
 
 	// Fire effect started event
 	CameraEffectManager::fireEvent(this, kEventEffectFadeStart);
+	CameraEffectManager::removeEventListeners(this, kEventEffectFadeStart);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -281,6 +282,7 @@ void CameraEffectManager::fxFadeAsyncStop()
 
 	// Fire effect stopped event
 	CameraEffectManager::fireEvent(this, kEventEffectFadeStop);
+	CameraEffectManager::removeEventListeners(this, kEventEffectFadeStop);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -403,6 +405,12 @@ void CameraEffectManager::fxFadeAsync()
 		CameraEffectManager::fireEvent(this, kEventEffectFadeInComplete);
 		CameraEffectManager::fireEvent(this, kEventEffectFadeOutComplete);
 
+		if(!this->startingANewEffect)
+		{
+			CameraEffectManager::removeEventListeners(this, kEventEffectFadeInComplete);
+			CameraEffectManager::removeEventListeners(this, kEventEffectFadeOutComplete);
+		}
+
 #ifdef __DIMM_FOR_PROFILING
 
 		_vipRegisters[__GPLT0] = 0x50;
@@ -417,11 +425,6 @@ void CameraEffectManager::fxFadeAsync()
 		_vipRegisters[0x30 | __PRINTING_PALETTE] = 0xE4;
 #endif
 
-		if(!this->startingANewEffect)
-		{
-			CameraEffectManager::removeEventListeners(this, kEventEffectFadeInComplete);
-			CameraEffectManager::removeEventListeners(this, kEventEffectFadeOutComplete);
-		}
 	}
 	else
 	{
