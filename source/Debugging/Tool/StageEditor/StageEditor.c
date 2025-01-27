@@ -287,7 +287,9 @@ void StageEditor::releaseWireframe()
 {
 	if(!isDeleted(this->wireframe))
 	{
-		ComponentManager::destroyComponent(NULL, Component::safeCast(this->wireframe));
+		Actor actor = Actor::safeCast(VirtualNode::getData(this->actorNode));
+
+		ComponentManager::destroyComponent(actor, Component::safeCast(this->wireframe));
 
 		this->wireframe = NULL;
 	}
@@ -335,7 +337,9 @@ void StageEditor::highLightActor()
 				},
 			};
 
-			MeshSpec meshSpec =
+			static MeshSpec meshSpec;
+			
+			meshSpec = (MeshSpec)
 			{
 				{
 					{
@@ -363,7 +367,7 @@ void StageEditor::highLightActor()
 				(PixelVector(*)[2])MeshesSegments
 			};
 
-			this->wireframe = Wireframe::safeCast(ComponentManager::createComponent(NULL, (ComponentSpec*)&meshSpec));
+			this->wireframe = Wireframe::safeCast(Actor::addComponent(actor, (ComponentSpec*)&meshSpec));
 		}
 	}
 	else
