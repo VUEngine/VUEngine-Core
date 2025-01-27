@@ -13,6 +13,7 @@
 
 #include <AnimationInspectorState.h>
 #include <DebugState.h>
+#include <KeypadManager.h>
 #include <StageEditor.h>
 #include <StageEditorState.h>
 #include <StateMachine.h>
@@ -102,7 +103,7 @@ void ToolState::destructor()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void ToolState::enter(void* owner __attribute__ ((unused)))
+void ToolState::start(void* owner __attribute__ ((unused)))
 {
 	Base::enter(this, owner);
 
@@ -121,8 +122,15 @@ void ToolState::enter(void* owner __attribute__ ((unused)))
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void ToolState::execute(void* owner __attribute__ ((unused)))
+void ToolState::update(void* owner __attribute__ ((unused)))
 {
+	UserInput userInput = KeypadManager::getUserInput();
+
+	if(0 != (userInput.dummyKey | userInput.pressedKey | userInput.holdKey | userInput.releasedKey))
+	{
+		ToolState::processUserInput(this, &userInput);
+	}
+
 	if(!isDeleted(this->tool))
 	{
 		Tool::update(this->tool);
@@ -131,7 +139,7 @@ void ToolState::execute(void* owner __attribute__ ((unused)))
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void ToolState::exit(void* owner __attribute__ ((unused)))
+void ToolState::stop(void* owner __attribute__ ((unused)))
 {
 	if(!isDeleted(this->tool))
 	{

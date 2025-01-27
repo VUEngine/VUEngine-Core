@@ -87,8 +87,8 @@ singleton class VUEngine : ListenerObject
 	/// If true, the game is paused
 	bool isPaused;
 	
-	/// Flag raised when entering or exiting a tool state
-	bool isInToolStateTransition;
+	/// Currently active tool state
+	ToolState activeToolState;
 
 	/// If false, the game loop runs unlocked
 	bool lockFrameRate;
@@ -119,9 +119,9 @@ singleton class VUEngine : ListenerObject
 	/// @param state: Game state to swap to
 	static void changeState(GameState state);
 
-	/// Check if the engine's state machine is entering or exiting a tool state.
-	/// @return True if the engine's state machine is entering or exiting a tool state
-	static bool isInToolStateTransition();
+	/// Retrieve the active tool state if any.
+	/// @return Currently active tool state
+	static ToolState getActiveToolState();
 
 	/// Retrieve the duration of game frames.
 	/// @return Duration in milliseconds of game frames

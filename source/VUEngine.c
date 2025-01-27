@@ -101,7 +101,7 @@ static void VUEngine::setState(GameState gameState)
 	VUEngine vuEngine = VUEngine::getInstance();
 
 #ifdef __TOOLS
-	vuEngine->isInToolStateTransition = false;
+	vuEngine->activeToolState = NULL;
 #endif
 
 	StateMachine::removeAllEventListeners(vuEngine->stateMachine);
@@ -121,7 +121,7 @@ static void VUEngine::addState(GameState gameState)
 	VUEngine vuEngine = VUEngine::getInstance();
 
 #ifdef __TOOLS
-	vuEngine->isInToolStateTransition = false;
+	vuEngine->activeToolState = NULL;
 #endif
 
 	StateMachine::removeAllEventListeners(vuEngine->stateMachine);
@@ -138,7 +138,7 @@ static void VUEngine::changeState(GameState gameState)
 	VUEngine vuEngine = VUEngine::getInstance();
 
 #ifdef __TOOLS
-	vuEngine->isInToolStateTransition = false;
+	vuEngine->activeToolState = NULL;
 #endif
 
 	StateMachine::removeAllEventListeners(vuEngine->stateMachine);
@@ -164,11 +164,11 @@ static bool VUEngine::isInToolState()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static bool VUEngine::isInToolStateTransition()
+static ToolState VUEngine::getActiveToolState()
 {
 	VUEngine vuEngine = VUEngine::getInstance();
 
-	return vuEngine->isInToolStateTransition;
+	return vuEngine->activeToolState;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -386,7 +386,7 @@ void VUEngine::constructor()
 	this->gameFrameStarted = false;
 	this->currentGameCycleEnded = false;
 	this->isPaused = false;
-	this->isInToolStateTransition = false;
+	this->activeToolState = NULL;
 	this->lockFrameRate = true;
 
 	this->saveDataManager = NULL;
@@ -425,7 +425,7 @@ void VUEngine::cleaniningStatesStack()
 void VUEngine::pushingState()
 {
 #ifdef __TOOLS
-	this->isInToolStateTransition = NULL != __GET_CAST(ToolState, StateMachine::getNextState(this->stateMachine));
+	this->activeToolState = __GET_CAST(ToolState, StateMachine::getNextState(this->stateMachine));
 #endif
 
 	HardwareManager::disableInterrupts();
@@ -454,7 +454,7 @@ void VUEngine::poppingState()
 	VIPManager::stopDrawing(VIPManager::getInstance());
 
 #ifdef __TOOLS
-	this->isInToolStateTransition = NULL != __GET_CAST(ToolState, this->currentGameState);
+	this->activeToolState = __GET_CAST(ToolState, this->currentGameState);
 #endif
 }
 
@@ -536,7 +536,7 @@ void VUEngine::drawingStarted()
 void VUEngine::removeState(GameState gameState)
 {
 #ifdef __TOOLS
-	this->isInToolStateTransition = false;
+	this->activeToolState = NULL;
 #endif
 
 	StateMachine::removeAllEventListeners(this->stateMachine);
@@ -561,8 +561,10 @@ void VUEngine::toggleTool(ToolState toolState)
 		{
 			VUEngine::removeState(this, GameState::safeCast(toolState));
 		}
-
-		VUEngine::addState(GameState::safeCast(toolState));
+		else
+		{		
+			VUEngine::addState(GameState::safeCast(toolState));
+		}
 	}
 }
 #endif

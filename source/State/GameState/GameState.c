@@ -188,7 +188,9 @@ void GameState::pause(void* owner)
 	Clock::pause(this->messagingClock, true);
 
 #ifdef __TOOLS
-	if(!VUEngine::isInToolStateTransition())
+	ToolState toolState = VUEngine::getActiveToolState();
+
+	if(NULL == toolState)
 #endif
 	{
 		// Force all streaming right now of any pending entity to make sure that their components are fully created
@@ -213,7 +215,7 @@ void GameState::pause(void* owner)
 #ifdef __TOOLS
 	else
 	{
-		ToolState::configure(NULL, this, this->stage);		
+		ToolState::configure(toolState, this, this->stage);		
 	}
 #endif
 }
@@ -225,7 +227,9 @@ void GameState::unpause(void* owner)
 	NM_ASSERT(this->stage, "GameState::resume: null stage");
 
 #ifdef __TOOLS
-	if(!VUEngine::isInToolStateTransition())
+	ToolState toolState = VUEngine::getActiveToolState();
+
+	if(NULL == toolState)
 #endif
 	{
 		// Reset the engine state

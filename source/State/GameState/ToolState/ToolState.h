@@ -55,15 +55,15 @@ abstract class ToolState : GameState
 
 	/// Prepares the object to enter this state.
 	/// @param owner: Object that is entering in this state
-	override void enter(void* owner);
+	override void start(void* owner);
 
 	/// Updates the object in this state.
 	/// @param owner: Object that is in this state
-	override void execute(void* owner);
+	override void update(void* owner);
 	
 	/// Prepares the object to exit this state.
 	/// @param owner: Object that is exiting this state
-	override void exit(void* owner);
+	override void stop(void* owner);
 
 	/// Process the provided user input.
 	/// @param userInput: Struct with the current user input information
