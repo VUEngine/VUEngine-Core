@@ -557,6 +557,9 @@ void GameState::streamAll()
 
 	// Stream in and out all relevant actors
 	Stage::streamAll(this->stage);
+
+	// Be sure that the manager's removed components are deleted
+	GameState::purgeComponentManagers(this);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
