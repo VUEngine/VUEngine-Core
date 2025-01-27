@@ -122,14 +122,7 @@ bool BgmapSprite::onEvent(ListenerObject eventFirer __attribute__((unused)), uin
 	{
 		case kEventTextureRewritten:
 		{
-			BgmapSprite::processEffects
-			(
-				this, 
-				SpriteManager::getMaximumParamTableRowsToComputePerCall
-				(
-					SpriteManager::safeCast(ComponentManager::getManager(kSpriteComponent))
-				)
-			);
+			BgmapSprite::processEffects(this, -1);
 
 			return true;
 		}

@@ -1056,6 +1056,11 @@ void Printer::constructor()
 	this->lastUsedFontData = NULL;
 	this->activePrintingSprite = NULL;
 	this->printingBgmapSegment = -1;
+
+	for(int16 i = 0; NULL != _fontData[i].fontSpec; i++)
+	{
+		_fontData[i].charSet = NULL;
+	}
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

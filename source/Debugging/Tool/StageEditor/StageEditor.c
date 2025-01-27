@@ -731,8 +731,6 @@ void StageEditor::applyTranslationToActor(Vector3D translation)
 
 		StageEditor::printActorPosition(this);
 
-		SpriteManager::sortSprites(SpriteManager::safeCast(ComponentManager::getManager(kSpriteComponent)));
-
 		StageEditor::printTranslationStepSize(this, 38, 8);
 	}
 }
@@ -746,8 +744,6 @@ void StageEditor::removePreviousSprite()
 		ComponentManager::destroyComponent(NULL, Component::safeCast(this->userActorSprite));
 		this->userActorSprite = NULL;
 	}
-
-	SpriteManager::sortSprites(SpriteManager::safeCast(ComponentManager::getManager(kSpriteComponent)));
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -777,11 +773,6 @@ void StageEditor::showSelectedUserObject()
 		Sprite::setScale(this->userActorSprite, &spriteScale);
 
 		this->userActorSprite->updateAnimationFrame = true;
-		SpriteManager::writeTextures(SpriteManager::safeCast(ComponentManager::getManager(kSpriteComponent)));
-		SpriteManager::sortSprites(SpriteManager::safeCast(ComponentManager::getManager(kSpriteComponent)));
-		SpriteManager::deferParamTableEffects(SpriteManager::safeCast(ComponentManager::getManager(kSpriteComponent)), false);
-		SpriteManager::render(SpriteManager::safeCast(ComponentManager::getManager(kSpriteComponent)));
-		SpriteManager::deferParamTableEffects(SpriteManager::safeCast(ComponentManager::getManager(kSpriteComponent)), true);
 	}
 }
 
@@ -806,13 +797,6 @@ void StageEditor::selectUserObject(uint32 pressedKey)
 	}
 	else if(pressedKey & K_A)
 	{
-		if(1 >= SpriteManager::getFreeLayer(SpriteManager::safeCast(ComponentManager::getManager(kSpriteComponent))))
-		{
-			Printer::text("No more WORLDs", 48 - 15, 5, NULL);
-			Printer::text("available     ", 48 - 15, 6, NULL);
-			return;
-		}
-
 		Vector3D cameraPosition = Camera::getPosition(Camera::getInstance());
 
 		PositionedActor DUMMY_ENTITY =
@@ -833,7 +817,6 @@ void StageEditor::selectUserObject(uint32 pressedKey)
 		};
 
 		Stage::spawnChildActor(ToolState::getCurrentStage(this->toolState), &DUMMY_ENTITY, false);
-		SpriteManager::sortSprites(SpriteManager::safeCast(ComponentManager::getManager(kSpriteComponent)));
 
 		VirtualList stageActors = (Container::safeCast(ToolState::getCurrentStage(this->toolState)))->children;
 		this->actorNode = stageActors ? stageActors->tail : NULL;
@@ -843,11 +826,6 @@ void StageEditor::selectUserObject(uint32 pressedKey)
 		StageEditor::configureState(this);
 
 		StageEditor::removePreviousSprite(this);
-		SpriteManager::sortSprites(SpriteManager::safeCast(ComponentManager::getManager(kSpriteComponent)));
-		SpriteManager::writeTextures(SpriteManager::safeCast(ComponentManager::getManager(kSpriteComponent)));
-		SpriteManager::deferParamTableEffects(SpriteManager::safeCast(ComponentManager::getManager(kSpriteComponent)), false);
-		SpriteManager::render(SpriteManager::safeCast(ComponentManager::getManager(kSpriteComponent)));
-		SpriteManager::deferParamTableEffects(SpriteManager::safeCast(ComponentManager::getManager(kSpriteComponent)), true);
 	}
 }
 

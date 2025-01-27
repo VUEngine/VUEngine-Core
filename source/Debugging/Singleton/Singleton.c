@@ -211,6 +211,7 @@ const ClassPointer VIPManagerAuthorizedClasses[] =
 {
 	typeofclass(GameState),
 	typeofclass(HardwareManager),
+	typeofclass(SpriteManager),
 	typeofclass(VUEngine),
 	NULL
 };

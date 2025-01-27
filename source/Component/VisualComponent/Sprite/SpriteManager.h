@@ -180,9 +180,6 @@ class SpriteManager : ComponentManager
 	/// they are written in a single pass
 	void deferParamTableEffects(bool deferAffineTransformations);
 
-	/// Force the Z sorting of all sprites.
-	void sortSprites();
-
 	/// Force the rendering and drawing of all sprites.
 	void prepareAll();
 
