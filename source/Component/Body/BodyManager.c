@@ -114,7 +114,6 @@ void BodyManager::update()
 
 		if(body->deleteMe)
 		{
-			// Place in the removed bodies list
 			VirtualList::removeNode(this->components, node);
 
 			delete body;

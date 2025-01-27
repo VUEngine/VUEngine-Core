@@ -81,7 +81,6 @@ void BehaviorManager::update()
 
 		if(behavior->deleteMe)
 		{
-			// Place in the removed bodies list
 			VirtualList::removeNode(this->components, node);
 
 			delete behavior;

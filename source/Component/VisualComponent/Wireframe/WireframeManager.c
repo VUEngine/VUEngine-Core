@@ -271,7 +271,6 @@ void WireframeManager::render()
 
 		if(wireframe->deleteMe)
 		{
-			// Place in the removed bodies list
 			VirtualList::removeNode(this->components, node);
 
 			delete wireframe;
@@ -344,7 +343,6 @@ void WireframeManager::draw()
 
 		if(wireframe->deleteMe)
 		{
-			// Place in the removed bodies list
 			VirtualList::removeNode(this->components, node);
 
 			delete wireframe;
