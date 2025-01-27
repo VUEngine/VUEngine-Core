@@ -15,6 +15,7 @@
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <Collider.h>
+#include <Mesh.h>
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' MACROS
@@ -37,6 +38,9 @@ class Box : Collider
 
 	/// The normals of the box
 	VertexProjection vertexProjections[__COLLIDER_NORMALS];
+
+	/// Mesh used to draw the collider
+	MeshSpec* meshSpec;
 
 	/// Bounding box
 	RightBox rightBox;

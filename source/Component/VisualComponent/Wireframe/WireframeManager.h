@@ -95,16 +95,6 @@ class WireframeManager : ComponentManager
 	/// Disable wireframe rendering and drawing.
 	void disable();
 
-	/// Register a wireframe to be managed
-	/// @param wireframe: Wireframe to be managed
-	/// @return True if the wireframe was successfully registered; false otherwise
-	bool registerWireframe(Wireframe wireframe);
-
-	/// Unregister a wireframe to be managed
-	/// @param wireframe: Wireframe to no longer manage
-	/// @return True if the wireframe was successfully unregistered; false otherwise
-	bool unregisterWireframe(Wireframe wireframe);
-
 	/// Prepare wireframe's graphical data for drawing
 	void render();
 

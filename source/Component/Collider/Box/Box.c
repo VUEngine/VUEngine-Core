@@ -11,6 +11,7 @@
 // INCLUDES
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+#include <ComponentManager.h>
 #include <DebugConfig.h>
 #include <Mesh.h>
 #include <Printer.h>
@@ -65,14 +66,12 @@ void Box::constructor(Entity owner, const ColliderSpec* colliderSpec)
 	// Always explicitly call the base's constructor 
 	Base::constructor(owner, colliderSpec);
 
+	this->meshSpec = NULL;
 	this->classIndex = kColliderBoxIndex;
-
 	this->rotationVertexDisplacement = Vector3D::zero();
-
 	this->normals = NULL;
 
-	int32 normalIndex = 0;
-	for(; normalIndex < __COLLIDER_NORMALS; normalIndex++)
+	for(int32 normalIndex = 0; normalIndex < __COLLIDER_NORMALS; normalIndex++)
 	{
 		this->vertexProjections[normalIndex].min = 0;
 		this->vertexProjections[normalIndex].max = 0;
@@ -86,6 +85,13 @@ void Box::constructor(Entity owner, const ColliderSpec* colliderSpec)
 
 void Box::destructor()
 {
+	if(NULL != this->meshSpec)
+	{
+		delete this->meshSpec;
+	}
+
+	this->meshSpec = NULL;
+
 	if(this->normals)
 	{
 		delete this->normals;
@@ -122,6 +128,8 @@ void Box::configureWireframe()
 		return;
 	}
 
+	this->meshSpec = new MeshSpec;
+
 	const PixelVector MeshesSegments[][2]=
 	{
 		{
@@ -148,7 +156,7 @@ void Box::configureWireframe()
 		},
 	};
 
-	MeshSpec meshSpec =
+	*this->meshSpec = (MeshSpec)
 	{
 		{
 			// Component
@@ -178,7 +186,7 @@ void Box::configureWireframe()
 	};
 
 	// Create a wireframe
-	this->wireframe = Wireframe::safeCast(new Mesh(this->owner, &meshSpec));
+	this->wireframe = Wireframe::safeCast(ComponentManager::createComponent(this->owner, (const ComponentSpec*)this->meshSpec));
 
 	Mesh::setDisplacement(this->wireframe, Vector3D::getFromPixelVector(((ColliderSpec*)this->componentSpec)->displacement));
 }

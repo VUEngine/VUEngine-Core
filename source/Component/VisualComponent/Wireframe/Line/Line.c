@@ -43,6 +43,11 @@ void Line::destructor()
 
 void Line::render(Vector3D relativePosition)
 {
+	if(NULL == this->componentSpec)
+	{
+		return;
+	}
+	
 	Vector3D a = Vector3D::sum(relativePosition, ((LineSpec*)this->componentSpec)->a);
 	a = Vector3D::rotate(a, _previousCameraInvertedRotation);
 	this->a = PixelVector::projectVector3D(a, Optics::calculateParallax(a.z));

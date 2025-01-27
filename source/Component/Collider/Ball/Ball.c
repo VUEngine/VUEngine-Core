@@ -11,6 +11,7 @@
 // INCLUDES
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+#include <ComponentManager.h>
 #include <DebugConfig.h>
 #include <Optics.h>
 #include <Printer.h>
@@ -55,6 +56,7 @@ void Ball::constructor(Entity owner, const ColliderSpec* colliderSpec)
 
 	this->classIndex = kColliderBallIndex;
 	this->radius = 0;
+	this->sphereSpec = NULL;
 
 	Ball::computeRadius(this);
 }
@@ -63,6 +65,13 @@ void Ball::constructor(Entity owner, const ColliderSpec* colliderSpec)
 
 void Ball::destructor()
 {
+	if(NULL != this->sphereSpec)
+	{
+		delete this->sphereSpec;
+	}
+
+	this->sphereSpec = NULL;
+
 	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
@@ -83,8 +92,42 @@ void Ball::configureWireframe()
 		return;
 	}
 
+	this->sphereSpec = new SphereSpec;
+
+	*this->sphereSpec = (SphereSpec)
+	{
+		{
+			// Component
+			{
+				// Allocator
+				__TYPE(Sphere),
+
+				// Component type
+				kWireframeComponent
+			},
+
+			// Displacement
+			{0, 0, 0},
+
+			/// color
+			__COLOR_BRIGHT_RED,
+
+			/// Transparency mode (__TRANSPARENCY_NONE, __TRANSPARENCY_EVEN or __TRANSPARENCY_ODD)
+			__TRANSPARENCY_NONE,
+		
+			/// Flag to render the wireframe in interlaced mode
+			true
+		},
+
+		/// Radius
+		this->radius,
+
+		/// Flag to control the drawing of the sphere's center point
+		false
+	};
+
 	// Create a wireframe
-	this->wireframe = Wireframe::safeCast(new Sphere(this->owner, NULL));
+	this->wireframe = Wireframe::safeCast(ComponentManager::createComponent(this->owner, (const ComponentSpec*)this->sphereSpec));
 
 	if(!isDeleted(this->wireframe))
 	{		

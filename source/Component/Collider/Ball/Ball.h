@@ -15,6 +15,7 @@
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <Collider.h>
+#include <Sphere.h>
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DECLARATION
@@ -28,6 +29,9 @@
 class Ball : Collider
 {
 	/// @protectedsection
+
+	/// Mesh used to draw the collider
+	SphereSpec* sphereSpec;
 
 	/// The radius of the ball
 	fixed_t radius;

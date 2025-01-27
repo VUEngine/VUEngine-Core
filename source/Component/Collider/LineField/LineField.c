@@ -11,6 +11,7 @@
 // INCLUDES
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+#include <ComponentManager.h>
 #include <DebugConfig.h>
 #include <Line.h>
 #include <Printer.h>
@@ -151,7 +152,7 @@ void LineField::configureWireframe()
 	};
 
 	// Create a wireframe
-	this->wireframe = Wireframe::safeCast(new Mesh(this->owner, this->meshSpec));
+	this->wireframe = Wireframe::safeCast(ComponentManager::createComponent(this->owner, (const ComponentSpec*)this->meshSpec));
 
 	if(!isDeleted(this->wireframe))
 	{

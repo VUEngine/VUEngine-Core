@@ -124,7 +124,7 @@ void Sprite::createAnimationController()
 		return;
 	}
 */
-	if(!((SpriteSpec*)this->componentSpec)->animated)
+	if(NULL == this->componentSpec || !((SpriteSpec*)this->componentSpec)->animated)
 	{
 		return;
 	}
