@@ -26,6 +26,8 @@
 
 static CharSet CharSet::get(const CharSetSpec* charSetSpec)
 {
+	NM_ASSERT(NULL != charSetSpec, "CharSet::get: NULL charSetSpec");
+
 	if(NULL == charSetSpec)
 	{
 		return NULL;

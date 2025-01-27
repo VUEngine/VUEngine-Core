@@ -713,7 +713,7 @@ static FontData* Printer::getFontByName(const char* font)
 			}
 		}
 
-		if(NULL == result->charSet)
+		if(NULL == result->charSet && NULL != result->fontSpec->charSetSpec)
 		{
 			result->charSet = CharSet::get(result->fontSpec->charSetSpec);
 

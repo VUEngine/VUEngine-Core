@@ -62,6 +62,8 @@ secure void CharSetManager::loadCharSets(const CharSetSpec** charSetSpecs)
 
 CharSet CharSetManager::getCharSet(const CharSetSpec* charSetSpec)
 {
+	NM_ASSERT(NULL != charSetSpec, "CharSetManager::getCharSet: NULL charSetSpec");
+
 	if(NULL == charSetSpec)
 	{
 		return NULL;
