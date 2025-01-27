@@ -1245,17 +1245,3 @@ void FrameBufferManager::destructor()
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-bool FrameBufferManager::onVIPManagerGAMESTARTDuringXPEND(ListenerObject eventFirer __attribute__ ((unused)))
-{
-	this->maximumPixelsToDraw = this->drawnPixelsCounter - __DIRECT_DRAW_MAXIMUM_NUMBER_OF_PIXELS_OVERHEAD;
-
-	if(__DIRECT_DRAW_MINIMUM_NUMBER_OF_PIXELS > this->maximumPixelsToDraw)
-	{
-		this->maximumPixelsToDraw = __DIRECT_DRAW_MINIMUM_NUMBER_OF_PIXELS;
-	}
-
-	return true;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
