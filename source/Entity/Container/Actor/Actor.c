@@ -397,6 +397,7 @@ void Actor::destructor()
 	if(NULL != this->centerDisplacement)
 	{
 		delete this->centerDisplacement;
+		this->centerDisplacement = NULL;
 	}
 
 	if(!isDeleted(this->events))
