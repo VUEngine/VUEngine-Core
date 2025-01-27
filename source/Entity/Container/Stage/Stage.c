@@ -370,13 +370,6 @@ void Stage::registerActors(VirtualList positionedActorsToIgnore)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-VirtualList Stage::getStageActorDescriptions()
-{
-	return this->stageActorDescriptions;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
 void Stage::addActorLoadingListener(ListenerObject listener)
 {
 	if(isDeleted(listener))

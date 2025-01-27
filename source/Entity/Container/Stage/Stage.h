@@ -285,10 +285,6 @@ class Stage : Container
 	/// Register the stage's spec actors in the streaming list
 	void registerActors(VirtualList positionedActorsToIgnore);
 
-	/// Retrieve the list of stage actor descriptions.
-	/// @return List of stage actor descriptions used to initialize the actors that populate the stage
-	VirtualList getStageActorDescriptions();
-
 	/// Register an event listener for the event when a new actor is instantiated.
 	/// @param listener: Object that will be notified of event
 	void addActorLoadingListener(ListenerObject listener);
@@ -331,7 +327,7 @@ class Stage : Container
 	/// because of the preprocessor's limitations for forward declarations
 	/// in source files. Don't call these.
 	bool unloadOutOfRangeActors(int32 defer);
-	 bool loadInRangeActors(int32 defer);
+	bool loadInRangeActors(int32 defer);
 }
 
 #endif
