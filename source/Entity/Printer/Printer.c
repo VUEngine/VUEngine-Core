@@ -46,7 +46,7 @@ extern FontROMSpec DefaultFontSpec;
 // CLASS' DATA
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-FontROMData VUENGINE_DEBUG_FONT_DATA =
+FontData VUENGINE_DEBUG_FONT_DATA =
 {
 	// Font spec
 	(FontSpec*)&DefaultFontSpec,
@@ -690,41 +690,39 @@ static FontData* Printer::getFontByName(const char* font)
 	if(printing->mode == __PRINTING_MODE_DEBUG)
 	{
 		result = (FontData*)&VUENGINE_DEBUG_FONT_DATA;
+
+		if(NULL == result->charSet)
+		{
+			result->charSet = CharSet::get(result->fontSpec->charSetSpec);
+		}
 	}
 	else
 	{
 		// Set first defined font as default
 		result = &_fontData[0];
 
-		if(NULL != result)
+		if(NULL != font)
 		{
-			if(NULL != font)
+			for(int16 i = 0; NULL != _fontData[i].fontSpec; i++)
 			{
-				for(int16 i = 0; NULL != _fontData[i].fontSpec; i++)
+				if(0 == strcmp(_fontData[i].fontSpec->name, font))
 				{
-					if(!strcmp(_fontData[i].fontSpec->name, font))
-					{
-						// If font's charset has not been preloaded, load it now
-						if(NULL == _fontData[i].charSet)
-						{
-							_fontData[i].charSet = CharSet::get(_fontData[i].fontSpec->charSetSpec);
-
-							if(NULL != _fontData[i].charSet)
-							{							
-								CharSet::addEventListener(_fontData[i].charSet, ListenerObject::safeCast(printing), kEventCharSetChangedOffset);
-							}
-							else
-							{
-								return NULL;
-							}
-						}
-
-						result = &_fontData[i];
-						break;
-					}
+					result = &_fontData[i];
+					break;
 				}
 			}
+		}
 
+		if(NULL == result->charSet)
+		{
+			result->charSet = CharSet::get(result->fontSpec->charSetSpec);
+
+			NM_ASSERT(!isDeleted(result->charSet), "Printer::getFontByName: cannot load charset");
+
+			if(NULL != result->charSet)
+			{
+				CharSet::addEventListener(result->charSet, ListenerObject::safeCast(printing), kEventCharSetChangedOffset);
+			}
 		}
 	}
 	
