@@ -155,7 +155,10 @@ static void Printer::loadFonts(FontSpec** fontSpecs)
 				{
 					_fontData[j].charSet = CharSet::get(_fontData[j].fontSpec->charSetSpec);
 
-					CharSet::addEventListener(_fontData[j].charSet, ListenerObject::safeCast(printing), kEventCharSetChangedOffset);
+					if(NULL != _fontData[i].charSet)
+					{							
+						CharSet::addEventListener(_fontData[j].charSet, ListenerObject::safeCast(printing), kEventCharSetChangedOffset);
+					}
 				}
 			}
 		}
@@ -706,7 +709,14 @@ static FontData* Printer::getFontByName(const char* font)
 						{
 							_fontData[i].charSet = CharSet::get(_fontData[i].fontSpec->charSetSpec);
 
-							CharSet::addEventListener(_fontData[i].charSet, ListenerObject::safeCast(printing), kEventCharSetChangedOffset);
+							if(NULL != _fontData[i].charSet)
+							{							
+								CharSet::addEventListener(_fontData[i].charSet, ListenerObject::safeCast(printing), kEventCharSetChangedOffset);
+							}
+							else
+							{
+								return NULL;
+							}
 						}
 
 						result = &_fontData[i];
