@@ -112,6 +112,15 @@ void SpriteManager::destructor()
 		this->spriteRegistry[i].sortingNode = NULL;
 	}
 
+	for(int16 i = 0; i < __TOTAL_OBJECT_SEGMENTS; i++)
+	{
+		if(!isDeleted(this->objectSpriteContainers[i]))
+		{
+			delete this->objectSpriteContainers[i];
+			this->objectSpriteContainers[i] = NULL;
+		}
+	}
+
 	// Allow a new construct
 	// Always explicitly call the base's destructor 
 	Base::destructor();
@@ -173,7 +182,6 @@ void SpriteManager::enable()
 	for(int16 i = 0; i < __TOTAL_OBJECT_SEGMENTS; i++)
 	{
 		this->vipSPTRegistersCache[i] = this->objectIndex;
-		this->objectSpriteContainers[i] = NULL;
 	}
 
 	for(int32 i = 0; i < __TOTAL_OBJECTS; i++)
@@ -214,6 +222,17 @@ void SpriteManager::disable()
 		}
 
 		this->spriteRegistry[i].sortingNode = NULL;
+	}
+
+	for(int16 i = 0; i < __TOTAL_OBJECT_SEGMENTS; i++)
+	{
+		this->vipSPTRegistersCache[i] = this->objectIndex;
+
+		if(!isDeleted(this->objectSpriteContainers[i]))
+		{
+			delete this->objectSpriteContainers[i];
+			this->objectSpriteContainers[i] = NULL;
+		}
 	}
 
 	HardwareManager::resumeInterrupts();
@@ -407,6 +426,8 @@ void SpriteManager::destroySprite(Sprite sprite)
 void SpriteManager::registerSprite(Sprite sprite, SpriteRegistry* spriteRegistry)
 {
 	NM_ASSERT(sprite, "SpriteManager::registerSprite: null sprite");
+	NM_ASSERT(NULL != spriteRegistry, "SpriteManager::registerSprite: null spriteRegistry");
+	NM_ASSERT(NULL != spriteRegistry->sprites, "SpriteManager::registerSprite: null sprites list");
 
 	if(!isDeleted(sprite) && NULL != spriteRegistry && NULL != spriteRegistry->sprites)
 	{
@@ -652,6 +673,11 @@ void SpriteManager::render()
 	for(int16 i = kSpriteListObject1; i < kSpriteListObject1 + __TOTAL_OBJECT_SEGMENTS; i++)
 	{
 		ObjectSpriteContainer objectSpriteContainer = this->objectSpriteContainers[i];
+
+		if(NULL == objectSpriteContainer)
+		{
+			continue;
+		}
 		
 		int16 firstObjectIndex = this->objectIndex;
 
@@ -705,7 +731,7 @@ void SpriteManager::render()
 		}
 		else
 		{
-			_worldAttributesCache[objectSpriteContainer->index].head = objectSpriteContainer->head;
+			_worldAttributesCache[objectSpriteContainer->index].head = (__WORLD_ON | __WORLD_OBJECT | __WORLD_OVR) & (~__WORLD_END);
 
 			// Make sure that the rest of spt segments only run up to the last
 			// Used object index
@@ -1037,6 +1063,11 @@ bool SpriteManager::sortProgressively(bool complete)
 
 	for(int16 i = kSpriteListBgmap1; i < kSpriteListEnd; i++)
 	{
+		if(NULL == this->spriteRegistry[i].sprites)
+		{
+			continue;
+		}
+
 		if(NULL == this->spriteRegistry[i].sortingNode)
 		{
 			this->spriteRegistry[i].sortingNode = this->spriteRegistry[i].sprites->head;
@@ -1049,9 +1080,10 @@ bool SpriteManager::sortProgressively(bool complete)
 
 		do
 		{
+			swapped = false;
+
 			for
 			(
-
 				VirtualNode node = complete ? this->spriteRegistry[i].sprites->head : this->spriteRegistry[i].sortingNode; 
 				NULL != node && NULL != node->next; 
 				node = node->next
@@ -1083,18 +1115,17 @@ bool SpriteManager::sortProgressively(bool complete)
 
 				if(!complete)
 				{
+					this->spriteRegistry[i].sortingNode = this->spriteRegistry[i].sortingNode->next;
 					break;
 				}
 			}
 		}
-		while(complete && swapped);
+		while(swapped);
 
-		if(!complete)
+		if(swapped)
 		{
-			this->spriteRegistry[i].sortingNode = this->spriteRegistry[i].sortingNode->next;
+			break;
 		}
-
-		break;
 	}
 
 	return swapped;
