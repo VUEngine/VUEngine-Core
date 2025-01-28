@@ -600,6 +600,30 @@ void Sprite::putPixel(const Point* texturePixel, const Pixel* charSetPixel, BYTE
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+void Sprite::loadTexture(ClassPointer textureClass, bool listenForRewriting)
+{
+	if(this->deleteMe || NULL == textureClass)
+	{
+		return;
+	}
+
+	if(!isDeleted(this->texture) || NULL == ((SpriteSpec*)this->componentSpec)->textureSpec)
+	{
+		return;
+	}
+
+	this->texture = Texture::get(textureClass, ((SpriteSpec*)this->componentSpec)->textureSpec, 0, false, __WORLD_1x1);
+
+	NM_ASSERT(NULL != this->texture, "Sprite::constructor: could not load texture");
+
+	if(!isDeleted(this->texture) && listenForRewriting)
+	{
+		Texture::addEventListener(this->texture, ListenerObject::safeCast(this), kEventTextureRewritten);
+	}
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void Sprite::invalidateRendering()
 {
 	this->rendered = false;

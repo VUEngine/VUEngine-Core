@@ -243,6 +243,11 @@ abstract class Sprite : VisualComponent
 	/// Invalidate the flags that determine if the sprite requires rendering.
 	void invalidateRendering();
 
+	/// Load a texture.
+	/// @param textureClass: Class of the texture to load
+	/// @param listenForRewriting: If true, a listener is added for the texture's rewriting event
+	void loadTexture(ClassPointer textureClass, bool listenForRewriting);
+
 	/// Retrieve the basic class of this kind of sprite.
 	/// @return ClassPointer the basic class
 	virtual ClassPointer getBasicType() = 0;

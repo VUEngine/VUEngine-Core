@@ -44,32 +44,19 @@ void ObjectSprite::constructor(Entity owner, const ObjectSpriteSpec* objectSprit
 	this->yDisplacementIncrement = 8;
 	this->xDisplacementDelta = 0;
 	this->yDisplacementDelta = 0;
-
 	this->objectTextureSource.displacement = 0;
-
-	ASSERT(objectSpriteSpec->spriteSpec.textureSpec, "ObjectSprite::constructor: null textureSpec");
-
-	if(NULL != objectSpriteSpec->spriteSpec.textureSpec)
-	{
-		this->texture = Texture::get(typeofclass(ObjectTexture), (ObjectTextureSpec*)objectSpriteSpec->spriteSpec.textureSpec, 0, 0, 0);
-
-		NM_ASSERT(this->texture, "ObjectSprite::constructor: null texture");
-
-		Texture::addEventListener(this->texture, ListenerObject::safeCast(this), kEventTextureRewritten);
-
-		this->totalObjects = objectSpriteSpec->spriteSpec.textureSpec->cols * objectSpriteSpec->spriteSpec.textureSpec->rows;
-
-		NM_ASSERT(this->texture, "ObjectSprite::constructor: null texture");
-	}
-	else
-	{
-		NM_ASSERT(this->texture, "ObjectSprite::constructor: null texture spec");
-	}
-
 	this->cols = this->halfWidth >> 2;
 	this->rows = this->halfHeight >> 2;
 
 	this->fourthWordValue = (this->head & 0x3000) | (this->texture->palette << 14);
+
+	ObjectSprite::loadTexture(this, typeofclass(ObjectTexture), true);
+
+	if(NULL != this->texture)
+	{
+		this->totalObjects = this->cols * this->rows;
+	}
+
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

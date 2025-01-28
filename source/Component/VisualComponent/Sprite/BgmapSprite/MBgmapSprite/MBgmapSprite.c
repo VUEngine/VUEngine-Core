@@ -283,7 +283,7 @@ void MBgmapSprite::loadTextures()
 
 			for(int32 i = 0; NULL != ((MBgmapSpriteSpec*)this->componentSpec)->textureSpecs[i]; i++)
 			{
-				MBgmapSprite::loadTexture(this, ((MBgmapSpriteSpec*)this->componentSpec)->textureSpecs[i], 0 == i && ((MBgmapSpriteSpec*)this->componentSpec)->textureSpecs[i + 1]);
+				MBgmapSprite::loadMapTexture(this, ((MBgmapSpriteSpec*)this->componentSpec)->textureSpecs[i], 0 == i && ((MBgmapSpriteSpec*)this->componentSpec)->textureSpecs[i + 1]);
 			}
 
 			this->textureXOffset = BgmapTexture::getXOffset(this->texture) << 3;
@@ -298,7 +298,7 @@ void MBgmapSprite::loadTextures()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void MBgmapSprite::loadTexture(TextureSpec* textureSpec, bool isFirstTextureAndHasMultipleTextures)
+void MBgmapSprite::loadMapTexture(TextureSpec* textureSpec, bool isFirstTextureAndHasMultipleTextures)
 {
 	ASSERT(textureSpec, "MBgmapSprite::loadTexture: null textureSpec");
 

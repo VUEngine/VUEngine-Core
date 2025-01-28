@@ -93,6 +93,7 @@ void BgmapSprite::constructor(Entity owner, const BgmapSpriteSpec* bgmapSpriteSp
 
 	this->applyParamTableEffect = bgmapSpriteSpec->applyParamTableEffect;
 
+	BgmapSprite::loadTexture(this, typeofclass(BgmapTexture), false);		
 	BgmapSprite::configureTexture(this);
 }
 
@@ -179,8 +180,9 @@ void BgmapSprite::processEffects(int32 maximumParamTableRowsToComputePerCall)
 
 int16 BgmapSprite::doRender(int16 index)
 {
-	if(isDeleted(this->texture))
+	if(NULL == this->texture)
 	{
+		BgmapSprite::loadTexture(this, typeofclass(BgmapTexture), false);		
 		BgmapSprite::configureTexture(this);
 
 		return __NO_RENDER_INDEX;
@@ -459,34 +461,19 @@ int32 BgmapSprite::getTotalPixels()
 
 void BgmapSprite::configureTexture()
 {
-	if(!isDeleted(this->texture))
+
+	if(NULL != this->texture)
 	{
-		return;
-	}
+		this->bgmapTextureSource.mx = BgmapTexture::getXOffset(this->texture) << 3;
+		this->bgmapTextureSource.my = BgmapTexture::getYOffset(this->texture) << 3;
+		this->bgmapTextureSource.mp = 0;
 
-	TextureSpec* textureSpec =((BgmapSpriteSpec*)this->componentSpec)->spriteSpec.textureSpec;
+		BgmapSprite::setMode(this, ((BgmapSpriteSpec*)this->componentSpec)->display, ((BgmapSpriteSpec*)this->componentSpec)->bgmapMode);
 
-	if(NULL == textureSpec)
-	{
-		return;
-	}
-
-	this->texture = Texture::get(typeofclass(BgmapTexture), textureSpec, 0, false, __WORLD_1x1);
-	
-	if(isDeleted(this->texture))
-	{
-		return;
-	}
-
-	this->bgmapTextureSource.mx = BgmapTexture::getXOffset(this->texture) << 3;
-	this->bgmapTextureSource.my = BgmapTexture::getYOffset(this->texture) << 3;
-	this->bgmapTextureSource.mp = 0;
-
-	BgmapSprite::setMode(this, ((BgmapSpriteSpec*)this->componentSpec)->display, ((BgmapSpriteSpec*)this->componentSpec)->bgmapMode);
-
-	if(0 != this->param && !isDeleted(this->texture))
-	{
-		Texture::addEventListener(this->texture, ListenerObject::safeCast(this), kEventTextureRewritten);
+		if(0 != this->param && !isDeleted(this->texture))
+		{
+			Texture::addEventListener(this->texture, ListenerObject::safeCast(this), kEventTextureRewritten);
+		}
 	}
 }
 
