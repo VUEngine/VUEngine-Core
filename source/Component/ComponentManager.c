@@ -237,6 +237,8 @@ static void ComponentManager::destroyComponents(Entity owner)
 			return;
 		}
 
+		HardwareManager::suspendInterrupts();
+
 		for(VirtualNode node = componentManager->components->head, nextNode = NULL; NULL != node; node = nextNode)
 		{
 			nextNode = node->next;
@@ -250,6 +252,8 @@ static void ComponentManager::destroyComponents(Entity owner)
 				ComponentManager::deinstantiateComponent(componentManager, owner, component);
 			}
 		}	
+
+		HardwareManager::resumeInterrupts();
 	}
 }
 
@@ -782,6 +786,8 @@ void ComponentManager::purgeComponents()
 		return;
 	}
 
+	HardwareManager::suspendInterrupts();
+
 	for(VirtualNode node = this->components->head, nextNode = NULL; NULL != node; node = nextNode)
 	{
 		nextNode = node->next;
@@ -797,6 +803,8 @@ void ComponentManager::purgeComponents()
 			delete component;
 		}
 	}
+
+	HardwareManager::resumeInterrupts();
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
