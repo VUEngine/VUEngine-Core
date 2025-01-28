@@ -21,7 +21,7 @@
 		"type": "WaveFormEditor",
 		"scope": "#"
 	},
-	"icon": "fa fa-bar-chart-o",
+	"icon": "codicon codicon-graph",
 	"templates": [
 		"WaveFormSpec",
 		"WaveForms"

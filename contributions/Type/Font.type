@@ -96,7 +96,7 @@
 		"type": "FontEditor",
 		"scope": "#"
 	},
-	"icon": "fa fa-font",
+	"icon": "codicon codicon-case-sensitive",
 	"templates": [
 		"FontsC",
 		"FontsH",

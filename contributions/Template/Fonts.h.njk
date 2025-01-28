@@ -13,7 +13,7 @@
 
 {{ macros.sectionHeader('Includes') }}
 
-#include <Printing.h>
+#include <Printer.h>
 #include <CharSet.h>
 
 {{ macros.sectionHeader('Declarations') }}
@@ -26,5 +26,4 @@ extern FontSpec DebugFontSpec;
 extern FontSpec {{ itemName }}FontSpec;
 {% endfor -%}
 {% endif %}
-
 #endif

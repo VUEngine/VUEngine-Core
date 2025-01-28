@@ -48,7 +48,7 @@
 		"type": "RumbleEffectEditor",
 		"scope": "#"
 	},
-	"icon": "codicon codicon-screen-full codicon-rotate-90",
+	"icon": "codicon codicon-screen-full",
 	"templates": [
 		"RumbleEffectSpec",
 		"RumbleEffects"

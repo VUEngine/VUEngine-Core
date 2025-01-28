@@ -129,7 +129,7 @@
 		"type": "CompilerConfigEditor",
 		"scope": "#"
 	},
-	"icon": "fa fa-cogs",
+	"icon": "codicon codicon-terminal",
 	"templates": [
 		"Config",
 		"configMake",
