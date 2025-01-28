@@ -319,7 +319,7 @@
 		"type": "MusicEditor",
 		"scope": "#"
 	},
-	"icon": "codicon codicon-piano",
+	"icon": "codicon codicon-music",
 	"templates": [
 		"SoundSpec"
 	]

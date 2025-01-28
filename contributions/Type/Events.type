@@ -17,7 +17,7 @@
 		"type": "SimpleListEditor",
 		"scope": "#/properties/events"
 	},
-	"icon": "codicon codicon-bell",
+	"icon": "codicon codicon-symbol-event",
 	"templates": [
 		"GameEvents"
 	]
