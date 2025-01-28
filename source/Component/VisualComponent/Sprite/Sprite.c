@@ -262,21 +262,28 @@ int16 Sprite::render(int16 index, bool updateAnimation)
 #endif		
 		this->rendered = true;
 
+		int16 previousIndex = this->index;
+
  		this->index = Sprite::doRender(this, index);
 
-		if(NULL != this->owner && __NO_RENDER_INDEX != this->index)
+		if(__NO_RENDER_INDEX != this->index)
 		{
-			Entity::setVisible(this->owner);
+			if(NULL != this->owner)
+			{
+				Entity::setVisible(this->owner);
+			}
+
+			this->updateAnimationFrame = this->updateAnimationFrame || __NO_RENDER_INDEX == previousIndex;
+		}
+
+		if(updateAnimation)	
+		{
+			Sprite::update(this);
 		}
 	}
 	else
 	{
 		this->index = __NO_RENDER_INDEX;
-	}
-
-	if(updateAnimation)	
-	{
-		Sprite::update(this);
 	}
 
 	return this->index;
