@@ -96,6 +96,11 @@ void ListenerObject::addEventListener(ListenerObject listener, uint16 eventCode)
 				{
 					VirtualList::removeNode(this->events, node);
 
+					if(!isDeleted(event))
+					{
+						delete event;
+					}
+
 					continue;
 				}
 			}
@@ -135,6 +140,11 @@ void ListenerObject::removeEventListener(ListenerObject listener, uint16 eventCo
 				if(0 == this->eventFirings)
 				{
 					VirtualList::removeNode(this->events, node);
+
+					if(!isDeleted(event))
+					{
+						delete event;
+					}
 
 					continue;
 				}
@@ -184,6 +194,11 @@ void ListenerObject::removeEventListeners(uint16 eventCode)
 				if(0 == this->eventFirings)
 				{
 					VirtualList::removeNode(this->events, node);
+
+					if(!isDeleted(event))
+					{
+						delete event;
+					}
 
 					continue;
 				}
@@ -276,7 +291,6 @@ void ListenerObject::fireEvent(uint16 eventCode)
 				{
 					VirtualList::removeNode(this->events, node);
 
-					// Safety check in case that the there is a stacking up of firings within firings
 					if(!isDeleted(event))
 					{
 						delete event;
