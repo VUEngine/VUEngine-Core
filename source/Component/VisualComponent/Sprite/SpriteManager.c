@@ -698,9 +698,16 @@ void SpriteManager::render()
 */
 				// Saves on method calls quite a bit when there are lots of
 				// Sprites. Don't remove.
-				if(__HIDE == objectSprite->show || (objectSprite->transparency & this->evenFrame) || (0 > this->objectIndex - objectSprite->totalObjects))
+				if
+				(
+					__HIDE == objectSprite->show 
+					|| 
+					(objectSprite->transparency & this->evenFrame) 
+					|| 
+					(0 > this->objectIndex - objectSprite->totalObjects)
+				)
 				{
-					NM_ASSERT(0 < this->objectIndex - objectSprite->totalObjects, "ObjectSpriteContainer::renderSprites: OBJECTS depleted");
+					NM_ASSERT(0 < this->objectIndex - objectSprite->totalObjects, "SpriteManager::renderSprites: OBJECTS depleted");
 					objectSprite->index = __NO_RENDER_INDEX;
 					continue;
 				}
