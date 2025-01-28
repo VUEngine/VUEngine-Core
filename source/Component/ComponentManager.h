@@ -136,11 +136,6 @@ abstract class ComponentManager : ListenerObject
 	/// @return True if the owner has visual components; false otherwise
 	static bool calculateRightBox(Entity owner, RightBox* rightBox);
 
-	/// Check if at least of the visual components that attach to the provided owner is visible.
-	/// @param owner: Object to which the visual components attach to
-	/// @return True if at least of the visual components that attach to the provided owner is visible
-	static bool isAnyCompomentVisible(Entity owner);
-
 	/// Class' constructor
 	void constructor();
 
@@ -166,10 +161,9 @@ abstract class ComponentManager : ListenerObject
 	/// Force the purging of deleted components.
 	virtual void purgeComponents();
 
-	/// Check if at least of the components that attach to the provided owner is visible.
-	/// @param owner: Object to which the components attach to
-	/// @return True if at least of the components that attach to the provided owner is visible
-	virtual bool isAnyVisible(Entity owner);
+	/// Retrieve information regarding if the components are visile.
+	/// @return True if the components managed are visual; false otherwise
+	virtual bool areComponentsVisual();
 }
 
 #endif

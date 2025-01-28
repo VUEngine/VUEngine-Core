@@ -49,6 +49,9 @@ abstract class Entity : ListenerObject
 	/// having constantly grabing it from the ComponentManager
 	Body body;
 
+	/// Flag used for streaming purposes
+	bool isVisible;
+
 	/// @publicsection
 
 	/// Class' constructor
@@ -107,6 +110,9 @@ abstract class Entity : ListenerObject
 
 	/// Reset components.
 	void resetComponents();
+
+	/// Set this instance's visibility flag up.
+	void setVisible();
 
 	/// Retrieve the object's transformation.
 	/// @return Pointer to the object's 3D transformation

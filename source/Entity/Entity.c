@@ -46,6 +46,7 @@ void Entity::constructor()
 	this->transformation.rotation = Rotation::zero();
 	this->transformation.scale = Scale::unit();
 	this->body = NULL;
+	this->isVisible = true;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -200,6 +201,14 @@ uint16 Entity::getComponentsCount(uint32 componentType)
 void Entity::resetComponents()
 {
 	ComponentManager::propagateCommand(cComponentCommandReset, this, kComponentTypes);
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void Entity::setVisible()
+{
+	// Only I can put down this flag
+	this->isVisible = true;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

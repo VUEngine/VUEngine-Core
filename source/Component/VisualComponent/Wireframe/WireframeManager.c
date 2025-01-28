@@ -165,19 +165,9 @@ Wireframe WireframeManager::create(Entity owner, const WireframeSpec* wireframeS
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-bool WireframeManager::isAnyVisible(Entity owner)
+bool WireframeManager::areComponentsVisual()
 {
-	for(VirtualNode node = this->components->head; NULL != node; node = node->next)
-	{
-		Wireframe wireframe = Wireframe::safeCast(node->data);
-
-		if(owner == wireframe->owner && Wireframe::isVisible(wireframe))
-		{
-			return true;
-		}
-	}
-
-	return false;
+	return true;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

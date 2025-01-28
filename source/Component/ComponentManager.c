@@ -495,7 +495,7 @@ static bool ComponentManager::calculateRightBox(Entity owner, RightBox* rightBox
 	{
 		ComponentManager componentManager = ComponentManager::getManager(i);
 
-		if(NULL == componentManager || !ComponentManager::overrides(componentManager, isAnyVisible))
+		if(NULL == componentManager || !ComponentManager::overrides(componentManager, areComponentsVisual))
 		{
 			continue;
 		}
@@ -506,32 +506,6 @@ static bool ComponentManager::calculateRightBox(Entity owner, RightBox* rightBox
 	return modified;
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-static bool ComponentManager::isAnyCompomentVisible(Entity owner)
-{
-	if(NULL == owner)
-	{
-		return false;
-	}
-
-	for(int16 i = 0; i < kComponentTypes; i++)
-	{
-		ComponentManager componentManager = ComponentManager::getManager(i);
-
-		if(NULL == componentManager || !ComponentManager::overrides(componentManager, isAnyVisible))
-		{
-			continue;
-		}
-
-		if(ComponentManager::isAnyVisible(componentManager, owner))
-		{
-			return true;
-		}
-	}
-
-	return false;
-}
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
@@ -809,7 +783,7 @@ void ComponentManager::purgeComponents()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-bool ComponentManager::isAnyVisible(Entity owner __attribute((unused)))
+bool ComponentManager::areComponentsVisual()
 {
 	return false;
 }

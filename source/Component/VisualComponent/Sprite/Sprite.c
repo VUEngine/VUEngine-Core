@@ -15,6 +15,7 @@
 #include <AnimationCoordinatorFactory.h>
 #include <BgmapTexture.h>
 #include <Clock.h>
+#include <Entity.h>
 #include <ObjectSprite.h>
 #include <Optics.h>
 #include <Printer.h>
@@ -177,7 +178,7 @@ inline void Sprite::transform()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-int16 Sprite::render(int16 index, bool updateAnimation)
+bool Sprite::prepareToRender(int16 index)
 {
 	// If the client code makes these checks before calling this method,
 	// It saves on method calls quite a bit when there are lots of
@@ -191,31 +192,28 @@ int16 Sprite::render(int16 index, bool updateAnimation)
 
 	if(!this->hasTextures)
 	{
-		this->index = Sprite::doRender(this, index);
-		return this->index;
+		return true;
 	}
 
 	if(kTextureInvalid == this->texture->status || isDeleted(this->texture->charSet))
 	{
-		this->index = __NO_RENDER_INDEX;
-		return this->index;
+		return false;
 	}
 
 	if(kTexturePendingWriting == this->texture->status)
 	{
-		this->index = __NO_RENDER_INDEX;
-		return this->index;
+		return false;
 	}
 
 	if(NULL != this->owner)
 	{
 		if(NULL == this->transformation)
 		{
-			return __NO_RENDER_INDEX;
+			return false;
 		}
 		else if(__NON_TRANSFORMED == this->transformation->invalid)
 		{
-			return __NO_RENDER_INDEX;
+			return false;
 		}
 
 		Sprite::position(this);
@@ -243,43 +241,42 @@ int16 Sprite::render(int16 index, bool updateAnimation)
 		}
 	}
 
-	// If the client code makes these checks before calling this method,
-	// It saves on method calls quite a bit when there are lots of
-	// Sprites. Don't uncomment.
-/*
-	if
-	(
-		!(((this->transparency == __TRANSPARENCY_NONE) || (0x01 & (this->transparency ^ evenFrame))) 
-		&& 
-		Sprite::isWithinScreenSpace(this))
-	)
-	{
-		return this->index;
-	}
-*/
-
 	// Do not remove this check, it prevents sprites from looping
 	if(this->checkIfWithinScreenSpace && !Sprite::isWithinScreenSpace(this))
 	{
-		this->index = __NO_RENDER_INDEX;
-		return this->index;
+		return false;
 	}
 
-	if(updateAnimation)	
+	return !this->rendered || this->index != index;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+int16 Sprite::render(int16 index, bool updateAnimation)
+{
+	if(Sprite::prepareToRender(this, index))
 	{
-		Sprite::update(this);
-	}
-
-	if(!this->rendered || this->index != index)
-	{
-		this->rendered = true;
-
- 		this->index = Sprite::doRender(this, index);
-
 #ifdef __SHOW_SPRITES_PROFILING
 		extern int32 _renderedSprites;
 		_renderedSprites++;
 #endif		
+		this->rendered = true;
+
+ 		this->index = Sprite::doRender(this, index);
+
+		if(updateAnimation)	
+		{
+			Sprite::update(this);
+		}
+
+		if(NULL != this->owner && __NO_RENDER_INDEX != this->index)
+		{
+			Entity::setVisible(this->owner);
+		}
+	}
+	else
+	{
+		this->index = __NO_RENDER_INDEX;
 	}
 
 	return this->index;

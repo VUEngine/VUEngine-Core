@@ -745,6 +745,12 @@ fixed_t Actor::getDepth()
 
 bool Actor::isInCameraRange(int16 padding, bool recursive)
 {
+	if(this->isVisible)
+	{
+		this->isVisible = false;
+		return true;
+	}
+
 	Vector3D position3D = this->transformation.position;
 	Vector3D centerDisplacement = Vector3D::zero();
 
@@ -769,11 +775,6 @@ bool Actor::isInCameraRange(int16 padding, bool recursive)
 	};
 
 	if(Actor::isInsideFrustrum(position3D, rightBox))
-	{
-		return true;
-	}
-
-	if(ComponentManager::isAnyCompomentVisible(Entity::safeCast(this)))
 	{
 		return true;
 	}

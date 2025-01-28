@@ -325,22 +325,11 @@ void SpriteManager::purgeComponents()
 
 	Base::purgeComponents(this);
 }
-
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-bool SpriteManager::isAnyVisible(Entity owner)
+bool SpriteManager::areComponentsVisual()
 {
-	for(VirtualNode node = this->components->head; NULL != node; node = node->next)
-	{
-		Sprite sprite = Sprite::safeCast(node->data);
-
-		if(owner == sprite->owner && Sprite::isVisible(sprite))
-		{
-			return true;
-		}
-	}
-
-	return false;
+	return true;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
