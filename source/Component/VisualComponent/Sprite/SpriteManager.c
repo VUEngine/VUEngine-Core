@@ -504,10 +504,7 @@ void SpriteManager::configureObjectSpriteContainers(const int16 size[__TOTAL_OBJ
 				0, 0, z[i], 0
 			};
 
-			if(size[i])
-			{
-				ObjectSpriteContainer::setPosition(this->objectSpriteContainers[i], &position);
-			}
+			ObjectSpriteContainer::setPosition(this->objectSpriteContainers[i], &position);
 
 #ifndef __RELEASE
 			previousZ = z[i];
@@ -672,7 +669,7 @@ void SpriteManager::render()
 
 	for(int16 i = kSpriteListObject1; i < kSpriteListObject1 + __TOTAL_OBJECT_SEGMENTS; i++)
 	{
-		ObjectSpriteContainer objectSpriteContainer = this->objectSpriteContainers[i];
+		ObjectSpriteContainer objectSpriteContainer = this->objectSpriteContainers[i - kSpriteListObject1];
 
 		if(NULL == objectSpriteContainer)
 		{
