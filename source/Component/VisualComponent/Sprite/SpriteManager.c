@@ -917,20 +917,6 @@ int16 SpriteManager::getObjectSpriteContainer(fixed_t z)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-ObjectSpriteContainer SpriteManager::getObjectSpriteContainerBySPT(int32 spt)
-{
-	ASSERT((unsigned)spt < __TOTAL_OBJECT_SEGMENTS, "SpriteManager::getObjectSpriteContainerBySPT: invalid segment");
-
-	if((unsigned)spt > __TOTAL_OBJECT_SEGMENTS)
-	{
-		return NULL;
-	}
-
-	return this->objectSpriteContainers[spt];
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
 void SpriteManager::print(int32 x, int32 y, bool resumed)
 {
 	Printer::setWorldCoordinates(0, 0, Printer::getActiveSpritePosition().z, 0);
@@ -994,16 +980,109 @@ void SpriteManager::print(int32 x, int32 y, bool resumed)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void SpriteManager::printObjectSpriteContainersStatus(int32 x, int32 y)
+void SpriteManager::printSPTInfo(int16 spt, int32 x, int32 y)
 {
-	Printer::text("OBJECTS USAGE", x, y++, NULL);
 	int32 totalUsedObjects = 0;
+	int32 totalPixels = 0;
 
-	// TODO
-	//	totalUsedObjects += ObjectSpriteContainer::getTotalUsedObjects(ObjectSpriteContainer::safeCast(node->data));
+	for(int16 i = kSpriteListObject1; i < kSpriteListObject1 + __TOTAL_OBJECT_SEGMENTS; i++)
+	{
+		for(VirtualNode node = this->spriteRegistry[i].sprites->head; NULL != node; node = node->next)
+		{
+			ObjectSprite objectSprite = ObjectSprite::safeCast(node->data);
 
+			if(objectSprite->deleteMe)
+			{
+				continue;
+			}
+
+			totalUsedObjects += objectSprite->totalObjects;
+		}
+	}
+	
 	Printer::text("Total used objects: ", x, ++y, NULL);
-	Printer::int32(totalUsedObjects, x + 20, y, NULL);
+	Printer::int32(totalUsedObjects, x + 20, y++, NULL);
+
+	if(__TOTAL_OBJECT_SEGMENTS <= (unsigned)spt)
+	{
+		return;
+	}
+
+	ObjectSpriteContainer objectSpriteContainer = this->objectSpriteContainers[spt];
+
+	y++;
+
+	Printer::text("OBJECT ", x, y++, NULL);
+
+	if(NULL != objectSpriteContainer)
+	{
+		SpriteManager::hideAllSprites(this, Sprite::safeCast(objectSpriteContainer), false);
+
+		for(VirtualNode node = this->spriteRegistry[spt + kSpriteListObject1].sprites->head; NULL != node; node = node->next)
+		{
+			ObjectSprite objectSprite = ObjectSprite::safeCast(node->data);
+
+			if(objectSprite->deleteMe)
+			{
+				continue;
+			}
+
+			ObjectSprite::show(objectSprite);
+		}
+
+		TimerManager::wait(40);
+	}
+
+	totalUsedObjects = 0;
+	totalPixels = 0;
+
+	int16 firstObjectIndex = -1;
+	int16 lastObjectIndex = -1;
+
+	for(VirtualNode node = this->spriteRegistry[spt + kSpriteListObject1].sprites->head; NULL != node; node = node->next)
+	{
+		ObjectSprite objectSprite = ObjectSprite::safeCast(node->data);
+
+		if(objectSprite->deleteMe || __NO_RENDER_INDEX == objectSprite->index)
+		{
+			continue;
+		}
+
+		totalUsedObjects += objectSprite->totalObjects;
+		totalPixels += ObjectSprite::getTotalPixels(objectSprite);
+
+		if(0 > firstObjectIndex)
+		{
+			firstObjectIndex = objectSprite->index;
+		}
+
+		lastObjectIndex = objectSprite->index - objectSprite->totalObjects;
+	}
+
+	Printer::text("Index: ", x, ++y, NULL);
+	Printer::int32(NULL != objectSpriteContainer ? objectSpriteContainer->index : -1, x + 18, y, NULL);
+	Printer::text("Class: ", x, ++y, NULL);
+	Printer::text(NULL != objectSpriteContainer ? __GET_CLASS_NAME(objectSpriteContainer) : "N/A", x + 18, y, NULL);
+	Printer::text("Head:                         ", x, ++y, NULL);
+	Printer::hex(NULL != objectSpriteContainer ? Sprite::getEffectiveHead(objectSpriteContainer) : 0, x + 18, y, 8, NULL);
+	Printer::text("Mode:", x, ++y, NULL);
+	Printer::text("OBJECT   ", x + 18, y, NULL);
+	Printer::text("Segment:                ", x, ++y, NULL);
+	Printer::int32(spt, x + 18, y++, NULL);
+	Printer::text("SPT value:                ", x, y, NULL);
+	Printer::int32(NULL != objectSpriteContainer ? _vipRegisters[__SPT0 + spt] : 0, x + 18, y, NULL);
+	Printer::text("HEAD:                   ", x, ++y, NULL);
+	Printer::hex(_worldAttributesBaseAddress[objectSpriteContainer->index].head, x + 18, y, 4, NULL);
+	Printer::text("Total OBJs:            ", x, ++y, NULL);
+	Printer::int32(totalUsedObjects, x + 18, y, NULL);
+	Printer::text("OBJ index range:      ", x, ++y, NULL);
+	Printer::int32(lastObjectIndex, x + 18, y, NULL);
+	Printer::text("-", x  + 18 + 0 <= firstObjectIndex ? Math::getDigitsCount(firstObjectIndex) : 0, y, NULL);
+	Printer::int32(firstObjectIndex, x  + 18 + Math::getDigitsCount(firstObjectIndex) + 1, y, NULL);
+	Printer::text("Z Position: ", x, ++y, NULL);
+	Printer::int32(NULL != objectSpriteContainer ? objectSpriteContainer->position.z : 0, x + 18, y, NULL);
+	Printer::text("Pixels: ", x, ++y, NULL);
+	Printer::int32(totalPixels, x + 18, y, NULL);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

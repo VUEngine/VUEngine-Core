@@ -247,10 +247,10 @@ class SpriteManager : ComponentManager
 	/// @param resumed: If true it only prints the most important statistics
 	void print(int32 x, int32 y, bool resumed);
 
-	/// Print object sprite containers statistics.
+	/// Print OBJECT related stats.
 	/// @param x: Screen x coordinate where to print
 	/// @param y: Screen y coordinate where to print
-	void printObjectSpriteContainersStatus(int32 x, int32 y);
+	void printSPTInfo(int16 spt, int32 x, int32 y);
 }
 
 #endif

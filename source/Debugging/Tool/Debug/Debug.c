@@ -233,8 +233,8 @@ void Debug::setupPages()
 	VirtualList::pushBack(this->pages, &Debug::gameProfilingPage);
 	VirtualList::pushBack(this->pages, &Debug::streamingPage);
 	VirtualList::pushBack(this->pages, &Debug::spritesPage);
-	VirtualList::pushBack(this->pages, &Debug::texturesPage);
 	VirtualList::pushBack(this->pages, &Debug::objectsPage);
+	VirtualList::pushBack(this->pages, &Debug::texturesPage);
 	VirtualList::pushBack(this->pages, &Debug::charMemoryPage);
 	VirtualList::pushBack(this->pages, &Debug::physicsPage);
 	VirtualList::pushBack(this->pages, &Debug::hardwareRegistersPage);
@@ -1119,7 +1119,7 @@ void Debug::objectsPage(int32 increment __attribute__ ((unused)), int32 x __attr
 	VirtualList::pushBack(this->subPages, &Debug::objectsShowStatus);
 	this->currentSubPage = this->subPages->head;
 
-	this->objectSegment = -1;
+	this->objectSegment = 0;
 
 	Debug::showSubPage(this, 0);
 }
@@ -1132,55 +1132,21 @@ void Debug::objectsShowStatus(int32 increment, int32 x, int32 y)
 
 	Debug::dimmGame(this);
 
-	if(-1 > this->objectSegment)
+	if(0 > this->objectSegment)
 	{
 		this->objectSegment = __TOTAL_OBJECT_SEGMENTS - 1;
+	}
+	else if(__TOTAL_OBJECT_SEGMENTS <= this->objectSegment)
+	{
+		this->objectSegment = 0;
 	}
 
 	SpriteManager spriteManager = 
 		SpriteManager::safeCast(ToolState::getComponentManager(ToolState::getCurrentGameState(this->toolState), kSpriteComponent));
 
-	if(-1 == this->objectSegment)
-	{
-		Debug::setBlackBackground(this);
-
-		SpriteManager::printObjectSpriteContainersStatus(spriteManager, x, y);
-	}
-	else if(__TOTAL_OBJECT_SEGMENTS > this->objectSegment)
-	{
-		Printer::text("OBJECTS INSPECTOR", x, y++, NULL);
-
-		ObjectSpriteContainer objectSpriteContainer = 
-			SpriteManager::getObjectSpriteContainerBySPT(spriteManager, this->objectSegment);
-
-		while(NULL == objectSpriteContainer && (this->objectSegment >= 0 && __TOTAL_OBJECT_SEGMENTS > this->objectSegment))
-		{
-			objectSpriteContainer = SpriteManager::getObjectSpriteContainerBySPT(spriteManager, this->objectSegment);
-
-			if(!objectSpriteContainer)
-			{
-				this->objectSegment += increment;
-			}
-		}
-
-		if(objectSpriteContainer)
-		{
-			SpriteManager::hideAllSprites(spriteManager, Sprite::safeCast(objectSpriteContainer), false);
-			ObjectSpriteContainer::print(objectSpriteContainer, x, ++y);
-		}
-		else
-		{
-			this->objectSegment = -1;
-			Debug::setBlackBackground(this);
-			SpriteManager::printObjectSpriteContainersStatus(spriteManager, x, y);
-		}
-	}
-	else
-	{
-		this->objectSegment = -1;
-		Debug::setBlackBackground(this);
-		SpriteManager::printObjectSpriteContainersStatus(spriteManager, x, y);
-	}
+	Printer::text("OBJECTS INSPECTOR", x, y++, NULL);
+	Debug::setBlackBackground(this);
+	SpriteManager::printSPTInfo(spriteManager, this->objectSegment, x, ++y);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
