@@ -12,6 +12,7 @@
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <Camera.h>
+#include <Entity.h>
 #include <DebugConfig.h>
 #include <Printer.h>
 #include <VirtualList.h>
@@ -286,6 +287,14 @@ void WireframeManager::draw()
 		}
 
 		wireframe->drawn = Wireframe::draw(wireframe);
+
+		// This should be done in the Wireframe class, but in order to reduce the
+		// number of callbacks, Wireframe::draw is virtual, hence it would require
+		// each class to remember to call this
+		if(wireframe->drawn && NULL != wireframe->owner)
+		{
+			Entity::setVisible(wireframe->owner);
+		}
 
 #ifdef __PROFILE_WIREFRAMES
 		this->drawnWireframes++;
