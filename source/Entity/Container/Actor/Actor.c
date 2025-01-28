@@ -858,7 +858,22 @@ void Actor::previousFrame()
 
 bool Actor::isPlaying()
 {
-	return NULL != this->playingAnimationName;
+	if(NULL == this->playingAnimationName)
+	{
+		return false;
+	}
+
+	VirtualList sprites = Entity::getComponents(this, kSpriteComponent);
+
+	for(VirtualNode node = sprites->head; NULL != node; node = node->next)
+	{
+		if(Sprite::isPlaying(node->data))
+		{
+			return true;
+		}
+	}
+
+	return false;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
