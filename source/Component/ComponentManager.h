@@ -42,6 +42,9 @@ abstract class ComponentManager : ListenerObject
 	/// List of components
 	VirtualList components;
 
+	/// Flag to prevent the manipulation of the components list
+	bool locked;
+
 	/// @publicsection
 
 	/// Create a component with the specified owner.
@@ -160,13 +163,8 @@ abstract class ComponentManager : ListenerObject
 	/// @return Created component
 	virtual Component instantiateComponent(Entity owner, const ComponentSpec* componentSpec);
 
-	/// Destroy the provided component.
-	/// @param owner: Object to which the component will attach to
-	/// @param component: Comoponent to destroy
-	virtual void deinstantiateComponent(Entity owner, Component component);
-
 	/// Force the purging of deleted components.
-	void purgeComponents();
+	virtual void purgeComponents();
 
 	/// Check if at least of the components that attach to the provided owner is visible.
 	/// @param owner: Object to which the components attach to

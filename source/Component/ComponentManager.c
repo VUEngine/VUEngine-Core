@@ -692,6 +692,7 @@ void ComponentManager::constructor()
 	Base::constructor();
 
 	this->components = new VirtualList();
+	this->locked = false;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -783,30 +784,14 @@ Component ComponentManager::instantiateComponent(Entity owner, const ComponentSp
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void ComponentManager::deinstantiateComponent(Entity owner, Component component) 
-{
-	if(NULL == owner || isDeleted(component))
-	{
-		return;
-	}
-
-	component->deleteMe = true;
-
-	NM_ASSERT(!isDeleted(owner), "ComponentManager::deinstantiateComponent: deleted owner");
-
-	if(NULL == component->componentSpec || kComponentTypes <= component->componentSpec->componentType)
-	{
-		return;
-	}
-
-	Entity::clearComponentLists(owner, component->componentSpec->componentType);
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
 void ComponentManager::purgeComponents()
 {
 	if(NULL == this->components)
+	{
+		return;
+	}
+
+	if(this->locked)
 	{
 		return;
 	}
@@ -833,6 +818,33 @@ void ComponentManager::purgeComponents()
 bool ComponentManager::isAnyVisible(Entity owner __attribute((unused)))
 {
 	return false;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+// CLASS' PRIVATE METHODS
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void ComponentManager::deinstantiateComponent(Entity owner, Component component) 
+{
+	if(NULL == owner || isDeleted(component))
+	{
+		return;
+	}
+
+	component->deleteMe = true;
+
+	NM_ASSERT(!isDeleted(owner), "ComponentManager::deinstantiateComponent: deleted owner");
+
+	if(NULL == component->componentSpec || kComponentTypes <= component->componentSpec->componentType)
+	{
+		return;
+	}
+
+	Entity::clearComponentLists(owner, component->componentSpec->componentType);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

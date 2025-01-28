@@ -143,10 +143,8 @@ class SpriteManager : ComponentManager
 	/// @return Created sprite
 	override Sprite instantiateComponent(Entity owner, const SpriteSpec* spriteSpec);
 
-	/// Destroy the provided sprite.
-	/// @param owner: Object to which the sprite will attach to
-	/// @param sprite: Sprite to destroy
-	override void deinstantiateComponent(Entity owner, Sprite sprite);
+	/// Force the purging of deleted components.
+	override void purgeComponents();
 
 	/// Check if at least of the sprites that attach to the provided owner is visible.
 	/// @param owner: Object to which the sprites attach to
