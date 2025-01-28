@@ -50,7 +50,7 @@ class BehaviorManager : ComponentManager
 	/// @param owner: Object to which the behavior will attach to
 	/// @param behaviorSpec: Spec to use to create the behavior
 	/// @return Created behavior
-	override Behavior instantiateComponent(Entity owner, const BehaviorSpec* behaviorSpec);
+	override Behavior create(Entity owner, const BehaviorSpec* behaviorSpec);
 
 	/// Destroy the provided behavior
 	/// Reset the manager's state

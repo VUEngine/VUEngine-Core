@@ -69,7 +69,7 @@ class BodyManager : ComponentManager
 	/// @param owner: Object to which the body will attach to
 	/// @param bodySpec: Spec to use to create the body
 	/// @return Created body
-	override Body instantiateComponent(Entity owner, const BodySpec* bodySpec);
+	override Body create(Entity owner, const BodySpec* bodySpec);
 
 	/// Reset the manager's state.
 	void reset();

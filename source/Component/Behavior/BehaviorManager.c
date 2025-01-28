@@ -51,20 +51,14 @@ void BehaviorManager::disable()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-Behavior BehaviorManager::instantiateComponent(Entity owner, const BehaviorSpec* behaviorSpec)
+Behavior BehaviorManager::create(Entity owner, const BehaviorSpec* behaviorSpec)
 {
 	if(NULL == behaviorSpec)
 	{
 		return NULL;
 	}
 
-	Base::instantiateComponent(this, owner, (ComponentSpec*)behaviorSpec);
-
-	Behavior behavior = ((Behavior (*)(Entity, const BehaviorSpec*)) ((ComponentSpec*)behaviorSpec)->allocator)(owner, behaviorSpec);
-
-	VirtualList::pushBack(this->components, behavior);
-
-	return behavior;
+	return ((Behavior (*)(Entity, const BehaviorSpec*)) ((ComponentSpec*)behaviorSpec)->allocator)(owner, behaviorSpec);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

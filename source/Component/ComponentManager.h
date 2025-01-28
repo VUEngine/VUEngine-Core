@@ -161,7 +161,7 @@ abstract class ComponentManager : ListenerObject
 	/// @param owner: Object to which the component will attach to
 	/// @param componentSpec: Spec to use to initialize the component
 	/// @return Created component
-	virtual Component instantiateComponent(Entity owner, const ComponentSpec* componentSpec);
+	virtual Component create(Entity owner, const ComponentSpec* componentSpec) = 0;
 
 	/// Force the purging of deleted components.
 	virtual void purgeComponents();

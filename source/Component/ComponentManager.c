@@ -51,7 +51,7 @@ static Component ComponentManager::createComponent(Entity owner, const Component
 		return NULL;
 	}
 
-	ComponentManager componentManager = ComponentManager::doGetManager(componentSpec->componentType);
+	ComponentManager componentManager = ComponentManager::getManager(componentSpec->componentType);
 
 	if(NULL == componentManager)
 	{
@@ -98,7 +98,7 @@ static void ComponentManager::destroyComponent(Entity owner, Component component
 		Entity::removedComponent(owner, component);
 	}
 
-	ComponentManager componentManager = ComponentManager::doGetManager(componentType);
+	ComponentManager componentManager = ComponentManager::getManager(componentType);
 
 	if(NULL == componentManager)
 	{
@@ -189,12 +189,12 @@ static void ComponentManager::removeComponents(Entity owner, uint32 componentTyp
 	{
 		for(int16 i = 0; i < kComponentTypes; i++)
 		{
-			removeComponents(ComponentManager::doGetManager(i));
+			removeComponents(ComponentManager::getManager(i));
 		}
 	}
 	else
 	{		
-		removeComponents(ComponentManager::doGetManager(componentType));
+		removeComponents(ComponentManager::getManager(componentType));
 	}
 }
 
@@ -230,7 +230,7 @@ static void ComponentManager::destroyComponents(Entity owner)
 
 	for(int16 i = 0; i < kComponentTypes; i++)
 	{
-		ComponentManager componentManager = ComponentManager::doGetManager(i);
+		ComponentManager componentManager = ComponentManager::getManager(i);
 
 		if(NULL == componentManager)
 		{
@@ -262,7 +262,7 @@ static Component ComponentManager::getComponentAtIndex(Entity owner, uint32 comp
 		return NULL;
 	}
 
-	ComponentManager componentManager = ComponentManager::doGetManager(componentType);
+	ComponentManager componentManager = ComponentManager::getManager(componentType);
 
 	if(NULL == componentManager)
 	{
@@ -294,7 +294,7 @@ static void ComponentManager::getComponents(Entity owner, uint32 componentType, 
 		return;
 	}
 
-	ComponentManager componentManager = ComponentManager::doGetManager(componentType);
+	ComponentManager componentManager = ComponentManager::getManager(componentType);
 
 	if(NULL == componentManager)
 	{
@@ -321,7 +321,7 @@ static bool ComponentManager::getComponentsOfClass(Entity owner, ClassPointer cl
 		return false;
 	}
 
-	ComponentManager componentManager = ComponentManager::doGetManager(componentType);
+	ComponentManager componentManager = ComponentManager::getManager(componentType);
 
 	if(NULL == componentManager)
 	{
@@ -385,12 +385,12 @@ static uint16 ComponentManager::getComponentsCount(Entity owner, uint32 componen
 	{
 		for(int16 i = 0; i < kComponentTypes; i++)
 		{
-			count += getCount(ComponentManager::doGetManager(i));
+			count += getCount(ComponentManager::getManager(i));
 		}
 	}
 	else
 	{
-		count = getCount(ComponentManager::doGetManager(componentType));
+		count = getCount(ComponentManager::getManager(componentType));
 	}
 
 	return count;
@@ -427,7 +427,7 @@ static void ComponentManager::propagateCommand(int32 command, Entity owner, uint
 			va_list args;
 			va_start(args, componentType);
 
-			propagateCommand(ComponentManager::doGetManager(i), args);
+			propagateCommand(ComponentManager::getManager(i), args);
 
 			va_end(args);
 		}
@@ -437,7 +437,7 @@ static void ComponentManager::propagateCommand(int32 command, Entity owner, uint
 		va_list args;
 		va_start(args, componentType);
 	
-		propagateCommand(ComponentManager::doGetManager(componentType), args);
+		propagateCommand(ComponentManager::getManager(componentType), args);
 
 		va_end(args);
 	}
@@ -454,7 +454,7 @@ static uint16 ComponentManager::getCount(Entity owner, uint32 componentType)
 
 	int16 count = 0;
 
-	ComponentManager componentManager = ComponentManager::doGetManager(componentType);
+	ComponentManager componentManager = ComponentManager::getManager(componentType);
 
 	if(NULL == componentManager)
 	{
@@ -489,7 +489,7 @@ static bool ComponentManager::calculateRightBox(Entity owner, RightBox* rightBox
 
 	for(int16 i = 0; i < kComponentTypes; i++)
 	{
-		ComponentManager componentManager = ComponentManager::doGetManager(i);
+		ComponentManager componentManager = ComponentManager::getManager(i);
 
 		if(NULL == componentManager || !ComponentManager::overrides(componentManager, isAnyVisible))
 		{
@@ -513,7 +513,7 @@ static bool ComponentManager::isAnyCompomentVisible(Entity owner)
 
 	for(int16 i = 0; i < kComponentTypes; i++)
 	{
-		ComponentManager componentManager = ComponentManager::doGetManager(i);
+		ComponentManager componentManager = ComponentManager::getManager(i);
 
 		if(NULL == componentManager || !ComponentManager::overrides(componentManager, isAnyVisible))
 		{
@@ -537,11 +537,11 @@ static bool ComponentManager::isAnyCompomentVisible(Entity owner)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static ComponentManager ComponentManager::doGetManager(uint32 componentType)
+static ComponentManager ComponentManager::getManager(uint32 componentType)
 {
 	if(kComponentTypes <= componentType)
 	{
-		NM_ASSERT(false, "ComponentManager::doGetManager: invalid type");
+		NM_ASSERT(false, "ComponentManager::getManager: invalid type");
 		return NULL;
 	}
 	
@@ -770,20 +770,6 @@ void ComponentManager::disable()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-Component ComponentManager::instantiateComponent(Entity owner, const ComponentSpec* componentSpec)
-{
-	if(NULL == owner || kComponentTypes <= componentSpec->componentType)
-	{
-		return NULL;
-	}
-
-	Entity::clearComponentLists(owner, componentSpec->componentType);
-
-	return NULL;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
 void ComponentManager::purgeComponents()
 {
 	if(NULL == this->components)
@@ -825,6 +811,33 @@ bool ComponentManager::isAnyVisible(Entity owner __attribute((unused)))
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PRIVATE METHODS
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+Component ComponentManager::instantiateComponent(Entity owner, const ComponentSpec* componentSpec)
+{
+	if(kComponentTypes <= componentSpec->componentType)
+	{
+		return NULL;
+	}
+
+	if(!isDeleted(owner))
+	{
+		Entity::clearComponentLists(owner, componentSpec->componentType);
+	}
+
+	Component component = ComponentManager::create(this, owner, componentSpec);
+
+	if(!isDeleted(component))
+	{
+		if(!VirtualList::find(this->components, component))
+		{
+			VirtualList::pushBack(this->components, component);
+		}
+	}
+
+	return component;
+}
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 

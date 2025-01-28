@@ -82,7 +82,7 @@ class WireframeManager : ComponentManager
 	/// @param owner: Object to which the wireframe will attach to
 	/// @param wireframeSpec: Spec to use to create the wireframe
 	/// @return Created wireframe
-	override Wireframe instantiateComponent(Entity owner, const WireframeSpec* wireframeSpec);
+	override Wireframe create(Entity owner, const WireframeSpec* wireframeSpec);
 
 	/// Check if at least of the sprites that attach to the provided owner is visible.
 	/// @param owner: Object to which the sprites attach to

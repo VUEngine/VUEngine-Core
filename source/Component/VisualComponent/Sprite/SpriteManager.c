@@ -240,16 +240,61 @@ void SpriteManager::disable()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-Sprite SpriteManager::instantiateComponent(Entity owner, const SpriteSpec* spriteSpec)
+Sprite SpriteManager::create(Entity owner, const SpriteSpec* spriteSpec)
 {
 	if(NULL == spriteSpec)
 	{
 		return NULL;
 	}
 
-	Base::instantiateComponent(this, owner, (ComponentSpec*)spriteSpec);
+	if(NULL == this->components->head)
+	{
+		SpriteManager::startListeningForVIP(this);			
+	}
 
-	return SpriteManager::createSprite(this, owner, spriteSpec);
+	Sprite sprite = ((Sprite (*)(Entity, const SpriteSpec*)) ((ComponentSpec*)spriteSpec)->allocator)(owner, spriteSpec);
+
+	Sprite::transform(sprite);
+
+	ClassPointer classPointer = Sprite::getBasicType(sprite);
+
+	if(typeofclass(ObjectSprite) == classPointer)
+	{
+		int16 z = 0;
+
+		if(NULL != sprite->transformation)
+		{
+			z = __METERS_TO_PIXELS(sprite->transformation->position.z);
+		}
+		
+		int16 spriteListObjectIndex = SpriteManager::getObjectSpriteContainer(this, z + sprite->displacement.z);
+
+		NM_ASSERT(0 <= spriteListObjectIndex, "SpriteManager::create: invalid object list index");
+
+		if(0 <= spriteListObjectIndex)
+		{
+			SpriteManager::registerSprite(this, sprite, &this->spriteRegistry[spriteListObjectIndex + kSpriteListObject1]);
+		}
+
+	}
+	else if(typeofclass(BgmapSprite) == classPointer)
+	{
+		SpriteManager::registerSprite(this, sprite, &this->spriteRegistry[kSpriteListBgmap1]);
+	}
+	else if(typeofclass(Sprite) == classPointer)
+	{
+		SpriteManager::registerSprite(this, sprite, &this->spriteRegistry[kSpriteListBgmap1]);
+	}
+
+	if(Sprite::hasSpecialEffects(sprite))
+	{
+		if(!isDeleted(this->spriteRegistry[kSpriteListSpecial].sprites))
+		{
+			VirtualList::pushBack(this->spriteRegistry[kSpriteListSpecial].sprites, sprite);
+		}
+	}
+
+	return sprite;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -317,70 +362,6 @@ void SpriteManager::configure
 void SpriteManager::setAnimationsClock(Clock clock)
 {
 	this->animationsClock = clock;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-Sprite SpriteManager::createSprite(Entity owner, const SpriteSpec* spriteSpec)
-{
-	NM_ASSERT(NULL != spriteSpec, "SpriteManager::createSprite: null spriteSpec");
-
-	if(NULL == spriteSpec)
-	{
-		return NULL;
-	}
-
-	Sprite sprite = ((Sprite (*)(Entity, const SpriteSpec*)) ((ComponentSpec*)spriteSpec)->allocator)(owner, spriteSpec);
-	ASSERT(!isDeleted(sprite), "SpriteManager::createSprite: failed creating sprite");
-
-	if(NULL == this->components->head)
-	{
-		SpriteManager::startListeningForVIP(this);			
-	}
-
-	VirtualList::pushBack(this->components, sprite);
-
-	Sprite::transform(sprite);
-
-	ClassPointer classPointer = Sprite::getBasicType(sprite);
-
-	if(typeofclass(ObjectSprite) == classPointer)
-	{
-		int16 z = 0;
-
-		if(NULL != sprite->transformation)
-		{
-			z = __METERS_TO_PIXELS(sprite->transformation->position.z);
-		}
-		
-		int16 spriteListObjectIndex = SpriteManager::getObjectSpriteContainer(this, z + sprite->displacement.z);
-
-		NM_ASSERT(0 <= spriteListObjectIndex, "SpriteManager::createSprite: invalid object list index");
-
-		if(0 <= spriteListObjectIndex)
-		{
-			SpriteManager::registerSprite(this, sprite, &this->spriteRegistry[spriteListObjectIndex + kSpriteListObject1]);
-		}
-
-	}
-	else if(typeofclass(BgmapSprite) == classPointer)
-	{
-		SpriteManager::registerSprite(this, sprite, &this->spriteRegistry[kSpriteListBgmap1]);
-	}
-	else if(typeofclass(Sprite) == classPointer)
-	{
-		SpriteManager::registerSprite(this, sprite, &this->spriteRegistry[kSpriteListBgmap1]);
-	}
-
-	if(Sprite::hasSpecialEffects(sprite))
-	{
-		if(!isDeleted(this->spriteRegistry[kSpriteListSpecial].sprites))
-		{
-			VirtualList::pushBack(this->spriteRegistry[kSpriteListSpecial].sprites, sprite);
-		}
-	}
-
-	return sprite;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

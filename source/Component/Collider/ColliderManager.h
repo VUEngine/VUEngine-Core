@@ -65,7 +65,7 @@ class ColliderManager : ComponentManager
 	/// @param owner: Object to which the collider will attach to
 	/// @param colliderSpec: Spec to use to create the collider
 	/// @return Created collider
-	override Collider instantiateComponent(Entity owner, const ColliderSpec* colliderSpec);
+	override Collider create(Entity owner, const ColliderSpec* colliderSpec);
 
 	/// Update colliders and test collisions.
 	uint32 update();

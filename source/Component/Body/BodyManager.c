@@ -55,16 +55,14 @@ void BodyManager::disable()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-Body BodyManager::instantiateComponent(Entity owner, const BodySpec* bodySpec)
+Body BodyManager::create(Entity owner, const BodySpec* bodySpec)
 {
 	if(NULL == bodySpec)
 	{
 		return NULL;
 	}
 
-	Base::instantiateComponent(this, owner, (ComponentSpec*)bodySpec);
-
-	return BodyManager::createBody(this, owner, bodySpec);
+	return new Body(owner, bodySpec);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -159,19 +157,6 @@ void BodyManager::update()
 #ifdef __SHOW_PHYSICS_PROFILING
 	BodyManager::print(this, 1, 1);
 #endif
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-Body BodyManager::createBody(Entity owner, const BodySpec* bodySpec)
-{
-	// If the actor is already registered
-	Body body = new Body(owner, bodySpec);
-	VirtualList::pushFront(this->components, body);
-	ASSERT(Body::safeCast(VirtualList::front(this->components)), "BodyManager::createBody: bad class body");
-
-	// Return created body
-	return body;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

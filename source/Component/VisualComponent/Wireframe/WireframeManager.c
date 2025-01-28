@@ -148,16 +148,19 @@ void WireframeManager::disable()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-Wireframe WireframeManager::instantiateComponent(Entity owner, const WireframeSpec* wireframeSpec)
+Wireframe WireframeManager::create(Entity owner, const WireframeSpec* wireframeSpec)
 {
 	if(NULL == wireframeSpec)
 	{
 		return NULL;
 	}
 
-	Base::instantiateComponent(this, owner, (ComponentSpec*)wireframeSpec);
+	if(NULL == this->components->head)
+	{
+		WireframeManager::startListeningForVIP(this);			
+	}
 
-	return WireframeManager::createWireframe(this, owner, wireframeSpec);
+	return  ((Wireframe (*)(Entity, const WireframeSpec*))((ComponentSpec*)wireframeSpec)->allocator)(owner, wireframeSpec);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -175,75 +178,6 @@ bool WireframeManager::isAnyVisible(Entity owner)
 	}
 
 	return false;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-Wireframe WireframeManager::createWireframe(Entity owner, const WireframeSpec* wireframeSpec)
-{
-	if(NULL == wireframeSpec)
-	{
-		return NULL;
-	}
-
-	Wireframe wireframe = 
-		((Wireframe (*)(Entity, const WireframeSpec*))((ComponentSpec*)wireframeSpec)->allocator)(owner, wireframeSpec);
-	
-	if(!isDeleted(wireframe) && WireframeManager::registerWireframe(this, wireframe))
-	{
-		return wireframe;
-	}
-
-	return NULL;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-bool WireframeManager::registerWireframe(Wireframe wireframe)
-{
-	NM_ASSERT(!isDeleted(wireframe), "WireframeManager::registerWireframe: coudln't create wireframe");
-
-	if(isDeleted(wireframe))
-	{
-		return false;
-	}
-
-	if(!VirtualList::find(this->components, wireframe))
-	{
-		if(NULL == this->components->head)
-		{
-			WireframeManager::startListeningForVIP(this);			
-		}
-
-		VirtualList::pushBack(this->components, wireframe);
-	}
-	else
-	{
-		NM_ASSERT(false, "WireframeManager::registerWireframe: already wireframe");
-	}
-
-	return true;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-bool WireframeManager::unregisterWireframe(Wireframe wireframe)
-{
-	NM_ASSERT(!isDeleted(wireframe), "WireframeManager::createWireframe: coudln't create wireframe");
-
-	if(isDeleted(wireframe))
-	{
-		return false;
-	}
-
-	bool removed = VirtualList::removeData(this->components, wireframe);
-
-	if(NULL == this->components->head)
-	{
-		WireframeManager::stopListeningForVIP(this);			
-	}
-
-	return removed;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

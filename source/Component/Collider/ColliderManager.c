@@ -81,16 +81,14 @@ void ColliderManager::disable()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-Collider ColliderManager::instantiateComponent(Entity owner, const ColliderSpec* colliderSpec)
+Collider ColliderManager::create(Entity owner, const ColliderSpec* colliderSpec)
 {
 	if(NULL == colliderSpec)
 	{
 		return NULL;
 	}
 
-	Base::instantiateComponent(this, owner, (ComponentSpec*)colliderSpec);
-
-	return ColliderManager::createCollider(this, owner, colliderSpec);
+	return ((Collider (*)(Entity, const ColliderSpec*)) ((ComponentSpec*)colliderSpec)->allocator)(owner, colliderSpec);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -228,22 +226,6 @@ uint32 ColliderManager::update()
 #endif
 
 	return returnValue;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-Collider ColliderManager::createCollider(Entity owner, const ColliderSpec* colliderSpec)
-{
-	if(NULL == colliderSpec)
-	{
-		return NULL;
-	}
-
-	Collider collider = ((Collider (*)(Entity, const ColliderSpec*)) ((ComponentSpec*)colliderSpec)->allocator)(owner, colliderSpec);
-
-	VirtualList::pushFront(this->components, collider);
-
-	return collider;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
