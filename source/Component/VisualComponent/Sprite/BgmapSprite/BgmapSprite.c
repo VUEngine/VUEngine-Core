@@ -121,13 +121,23 @@ bool BgmapSprite::onEvent(ListenerObject eventFirer __attribute__((unused)), uin
 	{
 		case kEventTextureRewritten:
 		{
-			BgmapSprite::processEffects(this, -1);
+			if(NULL != this->texture)
+			{
+				BgmapSprite::processEffects(this, -1);
+			}
 
 			return true;
 		}
 	}
 
 	return Base::onEvent(this, eventFirer, eventCode);
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void BgmapSprite::releaseResources()
+{
+	BgmapSprite::releaseTexture(this);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

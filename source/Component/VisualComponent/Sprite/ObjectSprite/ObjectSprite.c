@@ -78,14 +78,7 @@ void ObjectSprite::destructor()
 {
 	ObjectSprite::removeFromCache(this);
 
-	if(!isDeleted(this->texture))
-	{
-		Texture::removeEventListener(this->texture, ListenerObject::safeCast(this), kEventTextureRewritten);
-		
-		Texture::release(this->texture);		
-	}
-
-	this->texture = NULL;
+	ObjectSprite::releaseTexture(this);
 
 	// Always explicitly call the base's destructor 
 	Base::destructor();
@@ -106,6 +99,13 @@ bool ObjectSprite::onEvent(ListenerObject eventFirer __attribute__((unused)), ui
 	}
 
 	return Base::onEvent(this, eventFirer, eventCode);
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void ObjectSprite::releaseResources()
+{
+	ObjectSprite::releaseTexture(this);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -306,6 +306,20 @@ void ObjectSprite::removeFromCache()
 			}
 		}
 	}
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void ObjectSprite::releaseTexture()
+{
+	if(!isDeleted(this->texture))
+	{
+		Texture::removeEventListener(this->texture, ListenerObject::safeCast(this), kEventTextureRewritten);
+		
+		Texture::release(this->texture);		
+	}
+
+	this->texture = NULL;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

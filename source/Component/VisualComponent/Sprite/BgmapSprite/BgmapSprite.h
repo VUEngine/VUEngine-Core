@@ -99,6 +99,9 @@ class BgmapSprite : Sprite
 	/// @return False if the listener has to be removed; true to keep it
 	override bool onEvent(ListenerObject eventFirer, uint16 eventCode);
 
+	/// Called to release the component's resources.
+	override void releaseResources();
+
 	/// Retrieve the basic class of this kind of sprite.
 	/// @return ClassPointer the basic class
 	override ClassPointer getBasicType();

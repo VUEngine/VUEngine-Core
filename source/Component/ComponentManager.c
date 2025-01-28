@@ -831,6 +831,11 @@ void ComponentManager::deinstantiateComponent(Entity owner, Component component)
 	}
 
 	component->deleteMe = true;
+	
+	if(Component::overrides(component, releaseResources))
+	{
+		Component::releaseResources(component);
+	}
 
 	NM_ASSERT(!isDeleted(owner), "ComponentManager::deinstantiateComponent: deleted owner");
 

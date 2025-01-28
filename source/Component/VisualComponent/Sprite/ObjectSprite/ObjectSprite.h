@@ -97,6 +97,9 @@ class ObjectSprite : Sprite
 	/// @param objectSpriteSpec: Specification that determines how to configure the sprite
 	void constructor(Entity owner, const ObjectSpriteSpec* objectSpriteSpec);
 
+	/// Called to release the component's resources.
+	override void releaseResources();
+
 	/// Retrieve the basic class of this kind of sprite.
 	/// @return ClassPointer the basic class
 	override ClassPointer getBasicType();

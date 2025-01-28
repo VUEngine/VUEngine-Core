@@ -76,6 +76,13 @@ void MBgmapSprite::destructor()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+void MBgmapSprite::releaseResources()
+{
+	MBgmapSprite::releaseTextures(this);
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 int16 MBgmapSprite::doRender(int16 index)
 {
 	NM_ASSERT(!isDeleted(this->texture), "MBgmapSprite::doRender: null texture");

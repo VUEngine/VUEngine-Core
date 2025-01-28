@@ -104,12 +104,15 @@ abstract class Component : ListenerObject
 	/// @return Component spec pointer
 	ComponentSpec* getSpec();
 
-	/// Retrieve the collider's owner
+	/// Retrieve the collider's owner.
 	Entity getOwner();
 
-	/// Retrieve the component's type
+	/// Retrieve the component's type.
 	/// @return Component's type'
 	uint32 getType();
+
+	/// Called to release the component.
+	virtual void releaseResources();
 
 	/// Handle a command.
 	/// @param command: Command to handle
