@@ -1016,7 +1016,9 @@ void SpriteManager::printSPTInfo(int16 spt, int32 x, int32 y)
 
 	if(NULL != objectSpriteContainer)
 	{
+#ifdef __TOOLS
 		SpriteManager::hideAllSprites(this, Sprite::safeCast(objectSpriteContainer), false);
+#endif
 
 		for(VirtualNode node = this->spriteRegistry[spt + kSpriteListObject1].sprites->head; NULL != node; node = node->next)
 		{
