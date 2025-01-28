@@ -264,11 +264,6 @@ int16 Sprite::render(int16 index, bool updateAnimation)
 
  		this->index = Sprite::doRender(this, index);
 
-		if(updateAnimation)	
-		{
-			Sprite::update(this);
-		}
-
 		if(NULL != this->owner && __NO_RENDER_INDEX != this->index)
 		{
 			Entity::setVisible(this->owner);
@@ -277,6 +272,11 @@ int16 Sprite::render(int16 index, bool updateAnimation)
 	else
 	{
 		this->index = __NO_RENDER_INDEX;
+	}
+
+	if(updateAnimation)	
+	{
+		Sprite::update(this);
 	}
 
 	return this->index;
