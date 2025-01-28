@@ -1112,7 +1112,7 @@ bool SpriteManager::sortProgressively(bool complete)
 
 				if(!complete)
 				{
-					this->spriteRegistry[i].sortingNode = this->spriteRegistry[i].sortingNode->next;
+					this->spriteRegistry[i].sortingNode = nextNode;//this->spriteRegistry[i].sortingNode->next;
 					break;
 				}
 			}
