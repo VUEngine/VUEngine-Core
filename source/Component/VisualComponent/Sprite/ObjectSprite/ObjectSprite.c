@@ -78,8 +78,6 @@ void ObjectSprite::destructor()
 {
 	ObjectSprite::removeFromCache(this);
 
-	ObjectSprite::releaseTexture(this);
-
 	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
@@ -267,6 +265,11 @@ int32 ObjectSprite::getTotalPixels()
 
 void ObjectSprite::resetTotalObjects()
 {
+	if(NULL == this->texture)
+	{
+		return;
+	}
+
 	this->totalObjects = Texture::getCols(this->texture) * Texture::getRows(this->texture);
 }
 
@@ -306,20 +309,6 @@ void ObjectSprite::removeFromCache()
 			}
 		}
 	}
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void ObjectSprite::releaseTexture()
-{
-	if(!isDeleted(this->texture))
-	{
-		Texture::removeEventListener(this->texture, ListenerObject::safeCast(this), kEventTextureRewritten);
-		
-		Texture::release(this->texture);		
-	}
-
-	this->texture = NULL;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

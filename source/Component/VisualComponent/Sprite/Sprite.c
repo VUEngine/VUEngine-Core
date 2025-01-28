@@ -82,8 +82,37 @@ void Sprite::constructor(Entity owner, const SpriteSpec* spriteSpec)
 
 void Sprite::destructor()
 {
+	if(NULL != this->texture)
+	{
+		Sprite::releaseTexture(this);
+	}
+
 	// Always explicitly call the base's destructor 
 	Base::destructor();
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void Sprite::releaseResources()
+{
+	if(NULL != this->texture)
+	{
+		Sprite::releaseTexture(this);
+	}
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void Sprite::releaseTexture()
+{
+	if(!isDeleted(this->texture))
+	{
+		Texture::removeEventListener(this->texture, ListenerObject::safeCast(this), kEventTextureRewritten);
+		
+		Texture::release(this->texture);
+	}
+
+	this->texture = NULL;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

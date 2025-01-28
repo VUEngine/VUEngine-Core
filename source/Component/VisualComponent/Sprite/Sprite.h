@@ -102,6 +102,9 @@ abstract class Sprite : VisualComponent
 	/// @param spriteSpec: Specification that determines how to configure the sprite
 	void constructor(Entity owner, const SpriteSpec* spriteSpec);
 
+	/// Called to release the component's resources.
+	override void releaseResources();
+
 	/// Retrieve the sprite's bounding box.
 	/// @return Bounding box of the mesh
 	override RightBox getRightBox();
@@ -243,6 +246,9 @@ abstract class Sprite : VisualComponent
 	/// Retrieve the basic class of this kind of sprite.
 	/// @return ClassPointer the basic class
 	virtual ClassPointer getBasicType() = 0;
+
+	/// Release the sprite's texture(s)
+	virtual void releaseTexture();
 
 	/// Check if the sprite has special effects.
 	/// @return True if the sprite has special effects

@@ -79,8 +79,8 @@ class MBgmapSprite : BgmapSprite
 	/// @param mBgmapSpriteSpec: Specification that determines how to configure the sprite
 	void constructor(Entity owner, const MBgmapSpriteSpec* mBgmapSpriteSpec);
 
-	/// Called to release the component's resources.
-	override void releaseResources();
+	/// Release the sprite's texture(s)
+	override void releaseTexture();
 
 	/// Render the sprite by configuring the DRAM assigned to it by means of the provided index.
 	/// @param index: Determines the region of DRAM that this sprite is allowed to configure

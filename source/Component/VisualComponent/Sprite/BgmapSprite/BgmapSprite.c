@@ -107,7 +107,12 @@ void BgmapSprite::destructor()
 
 	ASSERT(this, "BgmapSprite::destructor: null cast");
 
-	BgmapSprite::releaseTexture(this);
+	// If affine or bgmap
+	if(((__WORLD_AFFINE | __WORLD_HBIAS) & this->head) && 0 != this->param)
+	{
+		// Free param table space
+		ParamTableManager::free(ParamTableManager::getInstance(), this);
+	}
 
 	// Always explicitly call the base's destructor 
 	Base::destructor();
@@ -131,13 +136,6 @@ bool BgmapSprite::onEvent(ListenerObject eventFirer __attribute__((unused)), uin
 	}
 
 	return Base::onEvent(this, eventFirer, eventCode);
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void BgmapSprite::releaseResources()
-{
-	BgmapSprite::releaseTexture(this);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -297,6 +295,11 @@ int16 BgmapSprite::doRender(int16 index)
 
 void BgmapSprite::setMultiframe(uint16 frame)
 {
+	if(NULL == this->texture)
+	{
+		return;
+	}
+
 	int16 mx = BgmapTexture::getXOffset(this->texture);
 	int16 my = BgmapTexture::getYOffset(this->texture);
 	
@@ -607,31 +610,6 @@ void BgmapSprite::removeFromCache()
 		WorldAttributes* worldPointer = &_worldAttributesCache[this->index];
 		worldPointer->head = __WORLD_OFF;
 	}
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void BgmapSprite::releaseTexture()
-{
-	// Free the texture
-	if(!isDeleted(this->texture))
-	{
-		// If affine or bgmap
-		if(((__WORLD_AFFINE | __WORLD_HBIAS) & this->head) && 0 != this->param)
-		{
-			// Free param table space
-			ParamTableManager::free(ParamTableManager::getInstance(), this);
-		}
-
-		if(0 != this->param)
-		{
-			Texture::removeEventListener(this->texture, ListenerObject::safeCast(this), kEventTextureRewritten);
-		}
-		
-		Texture::release(this->texture);
-	}
-
-	this->texture = NULL;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

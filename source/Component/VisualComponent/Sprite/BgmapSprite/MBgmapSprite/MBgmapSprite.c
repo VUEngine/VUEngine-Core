@@ -68,17 +68,46 @@ void MBgmapSprite::constructor(Entity owner, const MBgmapSpriteSpec* mBgmapSprit
 
 void MBgmapSprite::destructor()
 {
-	MBgmapSprite::releaseTextures(this);
-
 	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void MBgmapSprite::releaseResources()
+void MBgmapSprite::releaseTexture()
 {
-	MBgmapSprite::releaseTextures(this);
+	// Free the texture
+	if(!isDeleted(this->texture))
+	{
+		// If affine or bgmap
+		if(((__WORLD_AFFINE | __WORLD_HBIAS) & this->head) && this->param)
+		{
+			// Free param table space
+			ParamTableManager::free(ParamTableManager::getInstance(), BgmapSprite::safeCast(this));
+		}
+	}
+
+	this->texture = NULL;
+
+	if(!isDeleted(this->textures))
+	{
+		VirtualNode node = this->textures->head;
+
+		for(; NULL != node; node = node->next)
+		{
+			BgmapTexture bgmapTexture = BgmapTexture::safeCast(node->data);
+
+			if(!isDeleted(bgmapTexture))
+			{
+				BgmapTexture::removeEventListener(bgmapTexture, ListenerObject::safeCast(this), kEventTextureRewritten);
+				
+				Texture::release(Texture::safeCast(bgmapTexture));
+			}
+		}
+
+		delete this->textures;
+		this->textures = NULL;
+	}
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -223,6 +252,11 @@ int16 MBgmapSprite::doRender(int16 index)
 
 void MBgmapSprite::setMultiframe(uint16 frame)
 {
+	if(NULL == this->texture)
+	{
+		return;
+	}
+
 	int16 mx = BgmapTexture::getXOffset(this->texture);
 	int16 my = BgmapTexture::getYOffset(this->texture);
 	int32 totalColumns = 64 - mx;
@@ -310,44 +344,6 @@ void MBgmapSprite::loadTexture(TextureSpec* textureSpec, bool isFirstTextureAndH
 
 		this->texture = Texture::safeCast(bgmapTexture);
 		NM_ASSERT(this->texture, "MBgmapSprite::loadTexture: null texture");
-	}
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void MBgmapSprite::releaseTextures()
-{
-	// Free the texture
-	if(!isDeleted(this->texture))
-	{
-		// If affine or bgmap
-		if(((__WORLD_AFFINE | __WORLD_HBIAS) & this->head) && this->param)
-		{
-			// Free param table space
-			ParamTableManager::free(ParamTableManager::getInstance(), BgmapSprite::safeCast(this));
-		}
-	}
-
-	this->texture = NULL;
-
-	if(!isDeleted(this->textures))
-	{
-		VirtualNode node = this->textures->head;
-
-		for(; NULL != node; node = node->next)
-		{
-			BgmapTexture bgmapTexture = BgmapTexture::safeCast(node->data);
-
-			if(!isDeleted(bgmapTexture))
-			{
-				BgmapTexture::removeEventListener(bgmapTexture, ListenerObject::safeCast(this), kEventTextureRewritten);
-				
-				Texture::release(Texture::safeCast(bgmapTexture));
-			}
-		}
-
-		delete this->textures;
-		this->textures = NULL;
 	}
 }
 
