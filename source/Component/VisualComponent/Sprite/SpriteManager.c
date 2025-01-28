@@ -69,15 +69,6 @@ void SpriteManager::constructor()
 	// Always explicitly call the base's constructor 
 	Base::constructor();
 
-	for(int16 i = 0; i < __TOTAL_OBJECT_SEGMENTS; i++)
-	{
-		this->objectSprites[i] = new VirtualList();
-		this->vipSPTRegistersCache[i] = 0;
-	}
-
-	this->bgmapSprites = new VirtualList();
-	this->objectSpriteContainers = new VirtualList();
-	this->specialSprites = new VirtualList();
 	this->totalPixelsDrawn = 0;
 	this->maximumParamTableRowsToComputePerCall = -1;
 	this->deferParamTableEffects = false;
@@ -85,12 +76,23 @@ void SpriteManager::constructor()
 	this->bgmapIndex = __TOTAL_LAYERS - 1;
 	this->deferTextureUpdating = false;
 	this->texturesMaximumRowsToWrite = -1;
-	this->sortingSpriteNode = NULL;
 	this->completeSort = true;
 	this->evenFrame = __TRANSPARENCY_EVEN;
 	this->spt = __TOTAL_OBJECT_SEGMENTS - 1;
 	this->objectIndex = __TOTAL_OBJECTS - 1;
 	this->previousObjectIndex = __TOTAL_OBJECTS - 1;
+
+	for(int16 i = 0; i < kSpriteListEnd; i++)
+	{
+		this->spriteRegistry[i].sprites = new VirtualList();
+		this->spriteRegistry[i].sortingNode = NULL;
+	}
+	
+	for(int16 i = 0; i < __TOTAL_OBJECT_SEGMENTS; i++)
+	{
+		this->vipSPTRegistersCache[i] = this->objectIndex;
+		this->objectSpriteContainers[i] = NULL;
+	}
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -99,32 +101,15 @@ void SpriteManager::destructor()
 {
 	SpriteManager::stopListeningForVIP(this);
 
-	for(int16 i = 0; i < __TOTAL_OBJECT_SEGMENTS; i++)
+	for(int16 i = 0; i < kSpriteListEnd; i++)
 	{
-		if(!isDeleted(this->objectSprites[i]))
+		if(!isDeleted(this->spriteRegistry[i].sprites))
 		{
-			delete this->objectSprites[i];
-			this->objectSprites[i] = NULL;
+			delete this->spriteRegistry[i].sprites;
+			this->spriteRegistry[i].sprites = NULL;
 		}
-	}
 
-	if(!isDeleted(this->bgmapSprites))
-	{
-		delete this->bgmapSprites;
-		this->bgmapSprites = NULL;
-	}
-
-	if(!isDeleted(this->specialSprites))
-	{
-		delete this->specialSprites;
-		this->specialSprites = NULL;
-	}
-
-	if(!isDeleted(this->objectSpriteContainers))
-	{
-		VirtualList::deleteData(this->objectSpriteContainers);
-		delete this->objectSpriteContainers;
-		this->objectSpriteContainers = NULL;
+		this->spriteRegistry[i].sortingNode = NULL;
 	}
 
 	// Allow a new construct
@@ -185,9 +170,10 @@ void SpriteManager::enable()
 	this->spt = __TOTAL_OBJECT_SEGMENTS - 1;
 	this->objectIndex = __TOTAL_OBJECTS - 1;
 
-	for(int32 i = __TOTAL_OBJECT_SEGMENTS; i--;)
+	for(int16 i = 0; i < __TOTAL_OBJECT_SEGMENTS; i++)
 	{
 		this->vipSPTRegistersCache[i] = this->objectIndex;
+		this->objectSpriteContainers[i] = NULL;
 	}
 
 	for(int32 i = 0; i < __TOTAL_OBJECTS; i++)
@@ -200,7 +186,6 @@ void SpriteManager::enable()
 	}
 
 	this->bgmapIndex = __TOTAL_LAYERS - 1;
-	this->sortingSpriteNode = NULL;
 	this->completeSort = true;
 	this->evenFrame = __TRANSPARENCY_EVEN;
 
@@ -221,19 +206,14 @@ void SpriteManager::disable()
 
 	SpriteManager::destroyAllComponents(this);
 
-	if(!isDeleted(this->bgmapSprites))
+	for(int16 i = 0; i < kSpriteListEnd; i++)
 	{
-		VirtualList::clear(this->bgmapSprites);
-	}
+		if(!isDeleted(this->spriteRegistry[i].sprites))
+		{
+			VirtualList::clear(this->spriteRegistry[i].sprites);
+		}
 
-	if(!isDeleted(this->objectSpriteContainers))
-	{
-		VirtualList::deleteData(this->objectSpriteContainers);
-	}
-
-	if(!isDeleted(this->specialSprites))
-	{
-		VirtualList::clear(this->specialSprites);
+		this->spriteRegistry[i].sortingNode = NULL;
 	}
 
 	HardwareManager::resumeInterrupts();
@@ -339,19 +319,31 @@ Sprite SpriteManager::createSprite(Entity owner, const SpriteSpec* spriteSpec)
 			z = __METERS_TO_PIXELS(sprite->transformation->position.z);
 		}
 		
-		int16 objectSpriteContainerIndex = SpriteManager::getObjectSpriteContainer(this, z + sprite->displacement.z);
+		int16 spriteListObjectIndex = SpriteManager::getObjectSpriteContainer(this, z + sprite->displacement.z);
 
-		SpriteManager::registerSprite(this, sprite, this->objectSprites[objectSpriteContainerIndex]);
+		NM_ASSERT(0 <= spriteListObjectIndex, "SpriteManager::createSprite: invalid object list index");
+
+		if(0 <= spriteListObjectIndex)
+		{
+			SpriteManager::registerSprite(this, sprite, &this->spriteRegistry[spriteListObjectIndex + kSpriteListObject1]);
+		}
+
 	}
 	else if(typeofclass(BgmapSprite) == classPointer)
 	{
-		this->sortingSpriteNode = NULL;
-		SpriteManager::registerSprite(this, sprite, this->bgmapSprites);
+		SpriteManager::registerSprite(this, sprite, &this->spriteRegistry[kSpriteListBgmap1]);
 	}
 	else if(typeofclass(Sprite) == classPointer)
 	{
-		this->sortingSpriteNode = NULL;
-		SpriteManager::registerSprite(this, sprite, this->bgmapSprites);
+		SpriteManager::registerSprite(this, sprite, &this->spriteRegistry[kSpriteListBgmap1]);
+	}
+
+	if(Sprite::hasSpecialEffects(sprite))
+	{
+		if(!isDeleted(this->spriteRegistry[kSpriteListSpecial].sprites))
+		{
+			VirtualList::pushBack(this->spriteRegistry[kSpriteListSpecial].sprites, sprite);
+		}
 	}
 
 	return sprite;
@@ -383,20 +375,28 @@ void SpriteManager::destroySprite(Sprite sprite)
 
 	if(typeofclass(ObjectSprite) == classPointer)
 	{
-		for(int16 i = 0; i < __TOTAL_OBJECT_SEGMENTS; i++)
+		for(int16 i = kSpriteListObject1; i < kSpriteListObject1 + __TOTAL_OBJECT_SEGMENTS; i++)
 		{
-			SpriteManager::unregisterSprite(this, sprite, this->objectSprites[i]);
+			SpriteManager::unregisterSprite(this, sprite, &this->spriteRegistry[i]);
 		}
 	}
 	else if(typeofclass(BgmapSprite) == classPointer)
 	{
-		this->sortingSpriteNode = NULL;
-		SpriteManager::unregisterSprite(this, sprite, this->bgmapSprites);
+		SpriteManager::unregisterSprite(this, sprite, &this->spriteRegistry[kSpriteListBgmap1]);
 	}
 	else if(typeofclass(Sprite) == classPointer)
 	{
-		this->sortingSpriteNode = NULL;
-		SpriteManager::unregisterSprite(this, sprite, this->bgmapSprites);
+		SpriteManager::unregisterSprite(this, sprite, &this->spriteRegistry[kSpriteListBgmap1]);
+	}
+
+#ifdef __RELEASE
+	if(Sprite::hasSpecialEffects(sprite))
+#endif
+	{
+		if(!isDeleted(this->spriteRegistry[kSpriteListSpecial].sprites))
+		{
+			VirtualList::removeData(this->spriteRegistry[kSpriteListSpecial].sprites, sprite);
+		}
 	}
 
 	delete sprite;
@@ -404,13 +404,13 @@ void SpriteManager::destroySprite(Sprite sprite)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void SpriteManager::registerSprite(Sprite sprite, VirtualList sprites)
+void SpriteManager::registerSprite(Sprite sprite, SpriteRegistry* spriteRegistry)
 {
 	NM_ASSERT(sprite, "SpriteManager::registerSprite: null sprite");
 
-	if(!isDeleted(sprite) && !isDeleted(sprites))
+	if(!isDeleted(sprite) && NULL != spriteRegistry && NULL != spriteRegistry->sprites)
 	{
-		for(VirtualNode node = sprites->head; NULL != node; node = node->next)
+		for(VirtualNode node = spriteRegistry->sprites->head; NULL != node; node = node->next)
 		{
 			NM_ASSERT(!isDeleted(node->data), "SpriteManager::registerSprite: NULL node's data");
 
@@ -425,50 +425,30 @@ void SpriteManager::registerSprite(Sprite sprite, VirtualList sprites)
 
 			if(sprite->position.z + sprite->displacement.z <= otherSprite->position.z + otherSprite->displacement.z)
 			{
-//				this->sortingSpriteNode = 
-				VirtualList::insertBefore(sprites, node, sprite);
-
-				if(Sprite::hasSpecialEffects(sprite))
-				{
-					VirtualList::pushBack(this->specialSprites, sprite);
-				}
-
+				spriteRegistry->sortingNode = NULL;
+				VirtualList::insertBefore(spriteRegistry->sprites, node, sprite);
 				return;
 			}
 		}
 
-		//this->sortingSpriteNode = 
-		VirtualList::pushBack(sprites, sprite);
-
-		if(Sprite::hasSpecialEffects(sprite))
-		{
-			VirtualList::pushBack(this->specialSprites, sprite);
-		}
+		spriteRegistry->sortingNode = NULL;
+		VirtualList::pushBack(spriteRegistry->sprites, sprite);
 	}
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void SpriteManager::unregisterSprite(Sprite sprite, VirtualList sprites)
+void SpriteManager::unregisterSprite(Sprite sprite, SpriteRegistry* spriteRegistry)
 {
-	if(NULL != sprites)
+	if(!isDeleted(sprite) && NULL != spriteRegistry && NULL != spriteRegistry->sprites)
 	{
 		NM_ASSERT(Sprite::safeCast(sprite), "SpriteManager::unregisterSprite: removing no sprite");
 
 #ifndef __ENABLE_PROFILER
 //		NM_ASSERT(!isDeleted(VirtualList::find(sprites, sprite)), "SpriteManager::unregisterSprite: sprite not found");
 #endif
-		VirtualList::removeData(sprites, sprite);		
-	}
-
-#ifdef __RELEASE
-	if(Sprite::hasSpecialEffects(sprite))
-#endif
-	{
-		if(!isDeleted(this->specialSprites))
-		{
-			VirtualList::removeData(this->specialSprites, sprite);
-		}
+		spriteRegistry->sortingNode = NULL;
+		VirtualList::removeData(spriteRegistry->sprites, sprite);		
 	}
 }
 
@@ -480,22 +460,23 @@ void SpriteManager::configureObjectSpriteContainers(const int16 size[__TOTAL_OBJ
 	int16 previousZ = z[__TOTAL_OBJECT_SEGMENTS - 1];
 #endif
 
-	if(isDeleted(this->objectSpriteContainers) ||  0 < VirtualList::getCount(this->objectSpriteContainers))
-	{
-		return;
-	}
-	
 	for(int32 i = __TOTAL_OBJECT_SEGMENTS; i--; )
 	{
 		NM_ASSERT(z[i] <= previousZ, "SpriteManager::configureObjectSpriteContainers: wrong z");
 
 		if(0 < size[i])
 		{
-			ObjectSpriteContainer objectSpriteContainer = new ObjectSpriteContainer();
+			NM_ASSERT(isDeleted(this->objectSpriteContainers[i]), "SpriteManager::configureObjectSpriteContainers: error creating container");
+
+			if(!isDeleted(this->objectSpriteContainers[i]))
+			{
+				delete this->objectSpriteContainers[i];
+				this->objectSpriteContainers[i] = NULL;
+			}
 			
-			this->sortingSpriteNode = NULL;
-			SpriteManager::registerSprite(this, Sprite::safeCast(objectSpriteContainer), this->bgmapSprites);
-			VirtualList::pushBack(this->objectSpriteContainers, objectSpriteContainer);
+			this->objectSpriteContainers[i] = new ObjectSpriteContainer();
+			
+			SpriteManager::registerSprite(this, Sprite::safeCast(this->objectSpriteContainers[i]), &this->spriteRegistry[kSpriteListBgmap1]);
 
 			PixelVector position =
 			{
@@ -504,7 +485,7 @@ void SpriteManager::configureObjectSpriteContainers(const int16 size[__TOTAL_OBJ
 
 			if(size[i])
 			{
-				ObjectSpriteContainer::setPosition(objectSpriteContainer, &position);
+				ObjectSpriteContainer::setPosition(this->objectSpriteContainers[i], &position);
 			}
 
 #ifndef __RELEASE
@@ -631,7 +612,7 @@ void SpriteManager::render()
 
 	SpriteManager::startRendering(this);
 
-	for(VirtualNode node = this->bgmapSprites->tail, previousNode = NULL; NULL != node; node = previousNode)
+	for(VirtualNode node = this->spriteRegistry[kSpriteListBgmap1].sprites->tail, previousNode = NULL; NULL != node; node = previousNode)
 	{
 		previousNode = node->previous;
 
@@ -639,13 +620,13 @@ void SpriteManager::render()
 /*
 		if(sprite->deleteMe)
 		{
-			VirtualList::removeNode(this->bgmapSprites, node);
+			VirtualList::removeNode(this->spriteRegistry[kSpriteListBgmap1].sprites, node);
 
 			this->sortingSpriteNode = NULL;
 
 			if(Sprite::hasSpecialEffects(sprite))
 			{
-				VirtualList::removeData(this->specialSprites, sprite);
+				VirtualList::removeData(this->spriteRegistry[kSpriteListSpecial].sprites, sprite);
 			}
 
 			SpriteManager::destroySprite(this, sprite);
@@ -668,15 +649,15 @@ void SpriteManager::render()
 
 	NM_ASSERT(0 <= this->bgmapIndex, "SpriteManager::render: more sprites than WORLDs");
 
-	for(int16 i = 0; i < __TOTAL_OBJECT_SEGMENTS; i++)
+	for(int16 i = kSpriteListObject1; i < kSpriteListObject1 + __TOTAL_OBJECT_SEGMENTS; i++)
 	{
-		ObjectSpriteContainer objectSpriteContainer = ObjectSpriteContainer::safeCast(VirtualList::getDataAtIndex(this->objectSpriteContainers, i));
-
+		ObjectSpriteContainer objectSpriteContainer = this->objectSpriteContainers[i];
+		
 		int16 firstObjectIndex = this->objectIndex;
 
 		if(__SHOW == objectSpriteContainer->show)
 		{
-			for(VirtualNode node = this->objectSprites[i]->head, nextNode = NULL; NULL != node; node = nextNode)
+			for(VirtualNode node = this->spriteRegistry[i].sprites->head, nextNode = NULL; NULL != node; node = nextNode)
 			{
 				nextNode = node->next;
 
@@ -889,21 +870,21 @@ int8 SpriteManager::getbgmapIndex()
 
 int32 SpriteManager::getNumberOfSprites()
 {
-	return VirtualList::getCount(this->bgmapSprites);
+	return VirtualList::getCount(this->spriteRegistry[kSpriteListBgmap1].sprites);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 Sprite SpriteManager::getSpriteAtIndex(int16 position)
 {
-	if(0 > position || position >= VirtualList::getCount(this->bgmapSprites))
+	if(0 > position || position >= VirtualList::getCount(this->spriteRegistry[kSpriteListBgmap1].sprites))
 	{
 		return NULL;
 	}
 
 	int32 counter = 0;
 
-	for(VirtualNode node = this->bgmapSprites->head; NULL != node; node = node->next, counter++)
+	for(VirtualNode node = this->spriteRegistry[kSpriteListBgmap1].sprites->head; NULL != node; node = node->next, counter++)
 	{
 		if(counter == position)
 		{
@@ -918,43 +899,37 @@ Sprite SpriteManager::getSpriteAtIndex(int16 position)
 
 int16 SpriteManager::getObjectSpriteContainer(fixed_t z)
 {
-	ObjectSpriteContainer suitableObjectSpriteContainer = NULL;
+	int16 index = -1;
 
-	NM_ASSERT
-	(
-		!isDeleted(this->objectSpriteContainers), 
-		"SpriteManager::getObjectSpriteContainer: no ObjectSpriteContainers created"
-	);
-
-	NM_ASSERT
-	(
-		0 < VirtualList::getCount(this->objectSpriteContainers), 
-		"SpriteManager::getObjectSpriteContainer: no ObjectSpriteContainers available"
-	);
-
-	if(isDeleted(this->objectSpriteContainers))
+	for(int16 i = 0; i < __TOTAL_OBJECT_SEGMENTS; i++)
 	{
-		return 0;
-	}
-
-	for(VirtualNode node = this->objectSpriteContainers->head; NULL != node; node = node->next)
-	{
-		ObjectSpriteContainer objectSpriteContainer = ObjectSpriteContainer::safeCast(node->data);
-
-		if(NULL == suitableObjectSpriteContainer)
+		if(NULL == this->objectSpriteContainers[i])
 		{
-			suitableObjectSpriteContainer = objectSpriteContainer;
+			continue;
+		}
+
+		if(0 > index)
+		{
+			index = i;
 		}
 		else
 		{
-			if(__ABS(Sprite::getPosition(objectSpriteContainer)->z - z) < __ABS(Sprite::getPosition(suitableObjectSpriteContainer)->z - z))
+			if
+			(
+				__ABS
+				(
+					Sprite::getPosition(this->objectSpriteContainers[i])->z - z) 
+					< 
+					__ABS(Sprite::getPosition(this->objectSpriteContainers[index])->z - z
+				)
+			)
 			{
-				suitableObjectSpriteContainer = objectSpriteContainer;
+				index = i;
 			}
 		}
 	}
 
-	return VirtualList::getDataIndex(this->objectSpriteContainers, suitableObjectSpriteContainer);
+	return index;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -968,7 +943,7 @@ ObjectSpriteContainer SpriteManager::getObjectSpriteContainerBySPT(int32 spt)
 		return NULL;
 	}
 
-	return ObjectSpriteContainer::safeCast(VirtualList::getDataAtIndex(this->objectSpriteContainers, spt));
+	return this->objectSpriteContainers[spt];
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -986,7 +961,7 @@ void SpriteManager::print(int32 x, int32 y, bool resumed)
 	Printer::text("Used layers:                ", x, ++y, NULL);
 	Printer::int32(__TOTAL_LAYERS - this->bgmapIndex, x + 22, y, NULL);
 	Printer::text("Sprites count:              ", x, ++y, NULL);
-	Printer::int32(VirtualList::getCount(this->bgmapSprites), x + 22, y, NULL);
+	Printer::int32(VirtualList::getCount(this->spriteRegistry[kSpriteListBgmap1].sprites), x + 22, y, NULL);
 #ifdef __SHOW_SPRITES_PROFILING
 	Printer::text("Rendered sprites:              ", x, ++y, NULL);
 	Printer::int32(_renderedSprites, x + 22, y, NULL);
@@ -1008,7 +983,7 @@ void SpriteManager::print(int32 x, int32 y, bool resumed)
 
 	int32 counter = __TOTAL_LAYERS - 1;
 	
-	for(VirtualNode node = this->bgmapSprites->tail; NULL != node; node = node->previous, counter--)
+	for(VirtualNode node = this->spriteRegistry[kSpriteListBgmap1].sprites->tail; NULL != node; node = node->previous, counter--)
 	{
 		char spriteClassName[__MAX_SPRITE_CLASS_NAME_SIZE];
 		Sprite sprite = Sprite::safeCast(node->data);
@@ -1040,12 +1015,9 @@ void SpriteManager::printObjectSpriteContainersStatus(int32 x, int32 y)
 {
 	Printer::text("OBJECTS USAGE", x, y++, NULL);
 	int32 totalUsedObjects = 0;
-	VirtualNode node = this->objectSpriteContainers->head;
 
-	for(; NULL != node; node = node->next)
-	{
+	// TODO
 	//	totalUsedObjects += ObjectSpriteContainer::getTotalUsedObjects(ObjectSpriteContainer::safeCast(node->data));
-	}
 
 	Printer::text("Total used objects: ", x, ++y, NULL);
 	Printer::int32(totalUsedObjects, x + 20, y, NULL);
@@ -1061,73 +1033,68 @@ void SpriteManager::printObjectSpriteContainersStatus(int32 x, int32 y)
 
 bool SpriteManager::sortProgressively(bool complete)
 {
-	if(NULL == this->sortingSpriteNode)
-	{
-		this->sortingSpriteNode = this->bgmapSprites->head;
-
-		if(NULL == this->sortingSpriteNode)
-		{
-			return false;
-		}
-	}
-
 	bool swapped = false;
 
-	do
+	for(int16 i = kSpriteListBgmap1; i < kSpriteListEnd; i++)
 	{
-		swapped = false;
-
-		for
-		(
-			VirtualNode node = complete ? this->bgmapSprites->head : this->sortingSpriteNode; NULL != node && NULL != node->next; 
-			node = node->next
-		)
+		if(NULL == this->spriteRegistry[i].sortingNode)
 		{
-			VirtualNode nextNode = node->next;
+			this->spriteRegistry[i].sortingNode = this->spriteRegistry[i].sprites->head;
 
-			NM_ASSERT(!isDeleted(node->data), "SpriteManager::sortProgressively: NULL node's data");
-			ASSERT(__GET_CAST(Sprite, nextNode->data), "SpriteManager::sortProgressively: node's data isn't a sprite");
-
-			Sprite sprite = Sprite::safeCast(node->data);
-
-			NM_ASSERT(!isDeleted(nextNode->data), "SpriteManager::sortProgressively: NULL nextNode's data");
-			ASSERT(__GET_CAST(Sprite, nextNode->data), "SpriteManager::sortProgressively: NULL nextNode's data cast");
-
-			Sprite nextSprite = Sprite::safeCast(nextNode->data);
-
-			// Check if z positions are swapped
-			if(nextSprite->position.z + nextSprite->displacement.z < sprite->position.z + sprite->displacement.z)
+			if(NULL == this->spriteRegistry[i].sortingNode)
 			{
-				// Swap nodes' data
-				node->data = nextSprite;
-				nextNode->data = sprite;
-
-				node = nextNode;
-
-				swapped = true;
-			}
-
-			if(!complete)
-			{
-				break;
+				continue;
 			}
 		}
-	}
-	while(complete && swapped);
 
-	if(!complete)
-	{
-		this->sortingSpriteNode = this->sortingSpriteNode->next;
-	}
-
-	if(!isDeleted(this->objectSpriteContainers))
-	{
-		for(VirtualNode node = this->objectSpriteContainers->head; NULL != node; node = node->next)
+		do
 		{
-			ObjectSpriteContainer objectSpriteContainer = ObjectSpriteContainer::safeCast(node->data);
+			for
+			(
 
-			swapped = swapped || ObjectSpriteContainer::sortProgressively(objectSpriteContainer, complete);
+				VirtualNode node = complete ? this->spriteRegistry[i].sprites->head : this->spriteRegistry[i].sortingNode; 
+				NULL != node && NULL != node->next; 
+				node = node->next
+			)
+			{
+				VirtualNode nextNode = node->next;
+
+				NM_ASSERT(!isDeleted(node->data), "SpriteManager::sortProgressively: NULL node's data");
+				ASSERT(__GET_CAST(Sprite, nextNode->data), "SpriteManager::sortProgressively: node's data isn't a sprite");
+
+				Sprite sprite = Sprite::safeCast(node->data);
+
+				NM_ASSERT(!isDeleted(nextNode->data), "SpriteManager::sortProgressively: NULL nextNode's data");
+				ASSERT(__GET_CAST(Sprite, nextNode->data), "SpriteManager::sortProgressively: NULL nextNode's data cast");
+
+				Sprite nextSprite = Sprite::safeCast(nextNode->data);
+
+				// Check if z positions are swapped
+				if(nextSprite->position.z + nextSprite->displacement.z < sprite->position.z + sprite->displacement.z)
+				{
+					// Swap nodes' data
+					node->data = nextSprite;
+					nextNode->data = sprite;
+
+					node = nextNode;
+
+					swapped = true;
+				}
+
+				if(!complete)
+				{
+					break;
+				}
+			}
 		}
+		while(complete && swapped);
+
+		if(!complete)
+		{
+			this->spriteRegistry[i].sortingNode = this->spriteRegistry[i].sortingNode->next;
+		}
+
+		break;
 	}
 
 	return swapped;
@@ -1139,7 +1106,7 @@ int32 SpriteManager::getTotalPixelsDrawn()
 {
 	int32 totalPixelsToDraw = 0;
 	
-	for(VirtualNode node = this->bgmapSprites->head; NULL != node; node = node->next)
+	for(VirtualNode node = this->spriteRegistry[kSpriteListBgmap1].sprites->head; NULL != node; node = node->next)
 	{
 		NM_ASSERT(!isDeleted(node->data), "SpriteManager::getTotalPixelsDrawn: NULL node's data");
 
@@ -1187,7 +1154,7 @@ void SpriteManager::applySpecialEffects()
 {
 	int32 maximumParamTableRowsToComputePerCall = SpriteManager::getMaximumParamTableRowsToComputePerCall(this);
 
-	for(VirtualNode node = this->specialSprites->head; NULL != node; node = node->next)
+	for(VirtualNode node = this->spriteRegistry[kSpriteListSpecial].sprites->head; NULL != node; node = node->next)
 	{
 		NM_ASSERT(!isDeleted(node->data), "SpriteManager::writeGraphicsToDRAM: NULL node's data");
 

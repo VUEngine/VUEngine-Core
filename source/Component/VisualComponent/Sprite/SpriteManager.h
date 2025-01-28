@@ -25,12 +25,37 @@
 class ObjectSpriteContainer;
 class Printer;
 class VirtualList;
+class VirtualNode;
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' MACROS
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #define __TOTAL_OBJECT_SEGMENTS 	4
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+// CLASS' DATA
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+enum SpriteListTypes
+{
+	kSpriteListSpecial = 0,
+	kSpriteListBgmap1,
+	kSpriteListObject1,
+	kSpriteListObject2,
+	kSpriteListObject3,
+	kSpriteListObject4,
+
+	kSpriteListEnd
+};
+
+typedef struct SpriteRegistry
+{
+	VirtualList sprites;
+
+	VirtualNode sortingNode;
+
+} SpriteRegistry;
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DECLARATION
@@ -49,22 +74,10 @@ class SpriteManager : ComponentManager
 	Clock animationsClock;
 
 	/// List of all created sprites
-	VirtualList sprites;
-
-	/// List of sprites to render
-	VirtualList bgmapSprites;
-
-	/// Arrays for object sprites
-	VirtualList objectSprites[__TOTAL_OBJECT_SEGMENTS];
+	SpriteRegistry spriteRegistry[kSpriteListEnd];
 
 	/// List of object sprite containers
-	VirtualList objectSpriteContainers;
-
-	/// List of sprites with special effects
-	VirtualList specialSprites;
-
-	/// List node used for for z sorting over time
-	VirtualNode sortingSpriteNode;
+	ObjectSpriteContainer objectSpriteContainers[__TOTAL_OBJECT_SEGMENTS];
 
 	/// Total pixels currently drawn
 	int32 totalPixelsDrawn;
