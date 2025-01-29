@@ -36,41 +36,6 @@
 // CLASS' PUBLIC STATIC METHODS
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-#undef __MEMORY_POOLS
-#define __MEMORY_POOLS												13
-
-#undef __MEMORY_POOL_ARRAYS
-#define __MEMORY_POOL_ARRAYS \
-	__BLOCK_DEFINITION(356, 1) \
-	__BLOCK_DEFINITION(332, 8) \
-	__BLOCK_DEFINITION(188, 1) \
-	__BLOCK_DEFINITION(168, 20) \
-	__BLOCK_DEFINITION(144, 20) \
-	__BLOCK_DEFINITION(112, 25) \
-	__BLOCK_DEFINITION(100, 50) \
-	__BLOCK_DEFINITION(84, 65) \
-	__BLOCK_DEFINITION(48, 85) \
-	__BLOCK_DEFINITION(32, 175) \
-	__BLOCK_DEFINITION(20, 960) \
-	__BLOCK_DEFINITION(16, 265) \
-	__BLOCK_DEFINITION(12, 265) \
-
-#undef __SET_MEMORY_POOL_ARRAYS
-#define __SET_MEMORY_POOL_ARRAYS \
-	__SET_MEMORY_POOL_ARRAY(356) \
-	__SET_MEMORY_POOL_ARRAY(332) \
-	__SET_MEMORY_POOL_ARRAY(188) \
-	__SET_MEMORY_POOL_ARRAY(168) \
-	__SET_MEMORY_POOL_ARRAY(144) \
-	__SET_MEMORY_POOL_ARRAY(112) \
-	__SET_MEMORY_POOL_ARRAY(100) \
-	__SET_MEMORY_POOL_ARRAY(84) \
-	__SET_MEMORY_POOL_ARRAY(48) \
-	__SET_MEMORY_POOL_ARRAY(32) \
-	__SET_MEMORY_POOL_ARRAY(20) \
-	__SET_MEMORY_POOL_ARRAY(16) \
-	__SET_MEMORY_POOL_ARRAY(12) \
-
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 static BYTE* MemoryPool::allocate(int32 numberOfBytes)
