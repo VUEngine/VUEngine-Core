@@ -547,12 +547,12 @@ void SpriteManager::render()
 #endif
 
 	SpriteManager::startRendering(this);
-	// Update CHAR memory
+
+	// Deframent video RAM
 	CharSetManager::defragment(CharSetManager::getInstance(), true);
+	ParamTableManager::defragment(ParamTableManager::getInstance(), true);
 
 	this->completeSort = SpriteManager::sortProgressively(this, this->completeSort);
-
-	ParamTableManager::defragment(ParamTableManager::getInstance(), true);
 
 	// Switch between even and odd frame
 	this->evenFrame = __TRANSPARENCY_EVEN == this->evenFrame ? __TRANSPARENCY_ODD : __TRANSPARENCY_EVEN;
