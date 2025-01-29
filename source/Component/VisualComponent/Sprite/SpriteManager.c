@@ -135,7 +135,7 @@ bool SpriteManager::onEvent(ListenerObject eventFirer __attribute__((unused)), u
 		case kEventVIPManagerXPEND:
 		{
 			SpriteManager::writeDRAM(this);
-
+		
 			return true;
 		}
 	}
@@ -546,13 +546,9 @@ void SpriteManager::render()
 	_renderedSprites = 0;
 #endif
 
-	HardwareManager::suspendInterrupts();
-
+	SpriteManager::startRendering(this);
 	// Update CHAR memory
 	CharSetManager::defragment(CharSetManager::getInstance(), true);
-
-	// Update DRAM memory
-	Texture::updateTextures(this->texturesMaximumRowsToWrite, this->deferTextureUpdating);
 
 	this->completeSort = SpriteManager::sortProgressively(this, this->completeSort);
 
@@ -569,8 +565,6 @@ void SpriteManager::render()
 	{
 		updateAnimations = !Clock::isPaused(this->animationsClock);
 	}
-
-	SpriteManager::startRendering(this);
 
 	for(VirtualNode node = this->spriteRegistry[kSpriteListBgmap1].sprites->tail, previousNode = NULL; NULL != node; node = previousNode)
 	{
@@ -683,8 +677,6 @@ void SpriteManager::render()
 
 	SpriteManager::stopRendering(this);
 
-	HardwareManager::resumeInterrupts();
-
 #ifdef __SHOW_SPRITES_PROFILING
 	SpriteManager::computeTotalPixelsDrawn(this);
 #endif
@@ -714,6 +706,9 @@ void SpriteManager::writeDRAM()
 #endif
 
 	// Update all graphical data
+
+	// Update DRAM memory
+	Texture::updateTextures(this->texturesMaximumRowsToWrite, this->deferTextureUpdating);
 
 	// Update param tables
 	SpriteManager::applySpecialEffects(this);
@@ -1172,6 +1167,8 @@ int32 SpriteManager::getTotalPixelsDrawn()
 
 void SpriteManager::startRendering()
 {
+	HardwareManager::suspendInterrupts();
+
 	this->spt = __TOTAL_OBJECT_SEGMENTS - 1;
 	this->objectIndex = __TOTAL_OBJECTS - 1;
 	this->locked = true;
@@ -1196,6 +1193,8 @@ void SpriteManager::stopRendering()
 
 	this->previousObjectIndex = this->objectIndex;
 	this->locked = false;
+
+	HardwareManager::resumeInterrupts();
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
