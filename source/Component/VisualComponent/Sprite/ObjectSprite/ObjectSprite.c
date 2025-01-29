@@ -52,6 +52,8 @@ void ObjectSprite::constructor(Entity owner, const ObjectSpriteSpec* objectSprit
 
 	ObjectSprite::loadTexture(this, typeofclass(ObjectTexture), true);
 
+	NM_ASSERT(NULL != this->texture, "ObjectSprite::constructor: could not load texture");
+
 	if(NULL != this->texture)
 	{
 		this->totalObjects = this->cols * this->rows;

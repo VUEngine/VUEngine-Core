@@ -614,8 +614,6 @@ void Sprite::loadTexture(ClassPointer textureClass, bool listenForRewriting)
 
 	this->texture = Texture::get(textureClass, ((SpriteSpec*)this->componentSpec)->textureSpec, 0, false, __WORLD_1x1);
 
-	NM_ASSERT(NULL != this->texture, "Sprite::constructor: could not load texture");
-
 	if(!isDeleted(this->texture) && listenForRewriting)
 	{
 		Texture::addEventListener(this->texture, ListenerObject::safeCast(this), kEventTextureRewritten);
