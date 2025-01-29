@@ -132,13 +132,6 @@ bool SpriteManager::onEvent(ListenerObject eventFirer __attribute__((unused)), u
 {
 	switch(eventCode)
 	{
-		case kEventVIPManagerGAMESTART:
-		{
-			SpriteManager::render(this);
-
-			return true;
-		}
-
 		case kEventVIPManagerXPEND:
 		{
 			SpriteManager::writeDRAM(this);

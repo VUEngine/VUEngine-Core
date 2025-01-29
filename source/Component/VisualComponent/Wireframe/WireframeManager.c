@@ -74,31 +74,12 @@ bool WireframeManager::onEvent(ListenerObject eventFirer __attribute__((unused))
 {
 	switch(eventCode)
 	{
-		case kEventVIPManagerGAMESTART:
-		{
-			this->stopRendering = false;
-			this->stopDrawing = kVIPManagerFavorPerformance == VIPManager::getDrawingStrategy(eventFirer);
-
-			WireframeManager::render(this);
-
-			this->stopDrawing = false;
-
-			return true;
-		}
-
 		case kEventVIPManagerXPEND:
 		{
 			this->stopDrawing = false;
 			this->stopRendering = kVIPManagerFavorPerformance == VIPManager::getDrawingStrategy(eventFirer);
 
 			WireframeManager::draw(this);
-
-			return true;
-		}
-
-		case kEventVIPManagerGAMESTARTDuringXPEND:
-		{
-			this->stopDrawing = kVIPManagerFavorPerformance == VIPManager::getDrawingStrategy(eventFirer);
 
 			return true;
 		}

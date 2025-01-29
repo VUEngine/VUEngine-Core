@@ -54,6 +54,7 @@ class VUEngine;
 #define PROCESS_NAME_RENDER					"RENDER"
 #define PROCESS_NAME_VRAM_WRITE				"VRAM WRITE"
 #define PROCESS_NAME_SOUND_PLAY				"SOUND PLAY"
+#define PROCESS_NAME_SOUND_PURGE			"SOUND PURGE"
 #define PROCESS_NAME_COMMUNICATIONS			"COMMS"
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

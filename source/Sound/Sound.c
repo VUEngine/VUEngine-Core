@@ -121,6 +121,8 @@ void Sound::destructor()
 		this->soundTracks = NULL;
 	}
 
+	Sound::fireEvent(this, kEventSoundReleased);
+
 	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
@@ -358,6 +360,7 @@ void Sound::rewind()
 		return;
 	}
 
+	this->state = kSoundPlaying;
 	this->targetTimerResolutionFactor = Sound::computeTimerResolutionFactor(this);
 	this->tickStep = __FIX7_9_EXT_MULT(this->speed, this->targetTimerResolutionFactor);
 
@@ -382,19 +385,7 @@ void Sound::release()
 
 	Sound::stop(this);
 
-	if(!isDeleted(this->soundTracks))
-	{
-		VirtualList::deleteData(this->soundTracks);
-		delete this->soundTracks;
-		this->soundTracks = NULL;
-	}
-
-	if(!isDeleted(this->events))
-	{
-		Sound::fireEvent(this, kEventSoundReleased);
-		NM_ASSERT(!isDeleted(this), "Sound::release: deleted this during kEventSoundReleased");
-	}
-
+	this->state = kSoundRelease;
 	this->soundSpec = NULL;
 }
 
@@ -493,8 +484,20 @@ bool Sound::isFadingOut()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void Sound::finishPlayback()
+bool Sound::updatePlaybackState()
 {
+	if(kSoundRelease == this->state)
+	{
+		return false;
+	}
+
+	if(kSoundFinished != this->state)
+	{
+		return true;
+	}
+
+	Sound::fireEvent(this, kEventSoundFinished);
+
 	if(!this->soundSpec->loop)
 	{
 		if(this->autoReleaseOnFinish)
@@ -511,11 +514,7 @@ void Sound::finishPlayback()
 		Sound::rewind(this);
 	}
 
-	if(!isDeleted(this->events))
-	{
-		Sound::fireEvent(this, kEventSoundFinished);
-		NM_ASSERT(!isDeleted(this), "Sound::finishPlayback: deleted this during kEventSoundFinished");
-	}
+	return kSoundRelease != this->state;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -612,7 +611,7 @@ void Sound::update(uint32 elapsedMicroseconds, uint32 targetPCMUpdates)
 
 	if(finished)
 	{
-		Sound::finishPlayback(this);
+		this->state = kSoundFinished;
 	}
 
 	if(kSoundPlaybackNormal != this->playbackType)
@@ -845,7 +844,8 @@ void Sound::updateVolumeReduction()
 				{
 					this->volumeReduction = __MAXIMUM_VOLUME * this->volumeReductionMultiplier;
 					this->playbackType = kSoundPlaybackNone;
-					Sound::release(this);
+					this->state = kSoundFinished;
+					this->autoReleaseOnFinish = true;
 				}
 
 				break;

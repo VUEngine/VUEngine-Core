@@ -110,7 +110,7 @@ static Sound SoundManager::findSound(const SoundSpec* soundSpec, ListenerObject 
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static inline void SoundManager::updatePCM (Sound sound, uint32 elapsedMicroseconds, uint32 targetPCMUpdates)
+static inline void SoundManager::updatePCM(Sound sound, uint32 elapsedMicroseconds, uint32 targetPCMUpdates)
 {
 	if(kSoundPlaying !=	sound->state)
 	{
@@ -130,10 +130,7 @@ static inline void SoundManager::updatePCM (Sound sound, uint32 elapsedMicroseco
 
 	CACHE_DISABLE;
 
-	if(soundTrack->cursor >= soundTrack->samples)
-	{
-		Sound::finishPlayback(sound);
-	}
+	sound->state = soundTrack->cursor >= soundTrack->samples ? kSoundFinished : sound->state;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -141,6 +138,30 @@ static inline void SoundManager::updatePCM (Sound sound, uint32 elapsedMicroseco
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PUBLIC METHODS
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+secure void SoundManager::updateSounds()
+{
+	HardwareManager::suspendInterrupts();
+
+	for(VirtualNode node = this->sounds->head, nextNode = NULL; NULL != node; node = nextNode)
+	{
+		nextNode = node->next;
+
+		Sound sound = Sound::safeCast(node->data);
+
+		if(!Sound::updatePlaybackState(sound))
+		{
+			VirtualList::removeNode(this->sounds, node);
+			
+			delete sound;
+			continue;
+		}
+	}
+
+	HardwareManager::resumeInterrupts();
+}
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
@@ -158,23 +179,11 @@ secure void SoundManager::playSounds(uint32 elapsedMicroseconds)
 #endif
 		VSUManager::update(VSUManager::getInstance());
 
-		for(VirtualNode node = this->sounds->head, nextNode = NULL; NULL != node; node = nextNode)
+		for(VirtualNode node = this->sounds->head; NULL != node; node = node->next)
 		{
-			nextNode = node->next;
-
-			nextNode = node->next;
-
 			Sound sound = Sound::safeCast(node->data);
 
-			if(NULL == sound->soundSpec)
-			{
-				VirtualList::removeNode(this->sounds, node);
-
-				delete sound;
-				continue;
-			}
-
-			Sound::update(Sound::safeCast(node->data), elapsedMicroseconds, this->targetPCMUpdates);
+			Sound::update(sound, elapsedMicroseconds, this->targetPCMUpdates);
 		}
 #ifdef __RELEASE
 	}

@@ -45,6 +45,8 @@ enum SoundState
 	kSoundOff = 0,
 	kSoundPaused,
 	kSoundPlaying,
+	kSoundFinished,
+	kSoundRelease,
 };
 
 /// A Sound spec
@@ -232,8 +234,9 @@ class Sound : ListenerObject
 	/// @return True if playback fading out
 	bool isFadingOut();
 
-	/// Finish the sound playback.
-	void finishPlayback();
+	/// Update the sound playback state.
+	/// @return False if the sound has been released
+	bool updatePlaybackState();
 
 	/// Advance the playback on the sound's native tracks.
 	/// @param elapsedMicroseconds: Elapsed time since the last call

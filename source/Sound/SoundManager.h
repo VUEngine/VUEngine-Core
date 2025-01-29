@@ -73,6 +73,9 @@ singleton class SoundManager : ListenerObject
 	/// @param scope: Object that will be notified of communication events
 	static Sound findSound(const SoundSpec* soundSpec, ListenerObject scope);
 
+	/// Update the sounds lists.
+	void updateSounds();
+
 	/// Play the allocated sounds.
 	/// @param elapsedMicroseconds: Elapsed time between call
 	void playSounds(uint32 elapsedMicroseconds);

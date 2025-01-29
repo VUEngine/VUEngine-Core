@@ -156,6 +156,8 @@ void GameState::update(void* owner)
 
 	GameState::dispatchDelayedMessages(this);
 
+	GameState::updateSounds(this);
+
 	GameState::stream(this);
 }
 
@@ -901,6 +903,17 @@ void GameState::dispatchDelayedMessages()
 
 #ifdef __ENABLE_PROFILER
 	Profiler::lap(kProfilerLapTypeNormalProcess, PROCESS_NAME_MESSAGES);
+#endif
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void GameState::updateSounds()
+{
+	SoundManager::updateSounds(SoundManager::getInstance());
+
+#ifdef __ENABLE_PROFILER
+	Profiler::lap(kProfilerLapTypeNormalProcess, PROCESS_NAME_SOUND_PURGE);
 #endif
 }
 
