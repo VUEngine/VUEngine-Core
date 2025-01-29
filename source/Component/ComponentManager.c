@@ -320,7 +320,7 @@ static void ComponentManager::getComponents(Entity owner, uint32 componentType, 
 	{
 		Component component = Component::safeCast(node->data);
 
-		if(owner == component->owner)
+		if(!component->deleteMe && owner == component->owner)
 		{
 			VirtualList::pushBack(components, component);
 		}
@@ -443,6 +443,11 @@ static void ComponentManager::propagateCommand(int32 command, Entity owner, uint
 				continue;
 			}
 
+			if(component->deleteMe)
+			{
+				continue;
+			}
+
 			Component::handleCommand(component, command, args);
 		}
 
@@ -497,6 +502,11 @@ static uint16 ComponentManager::getCount(Entity owner, uint32 componentType)
 		Component component = Component::safeCast(node->data);
 
 		if(NULL != owner && owner != component->owner)
+		{
+			continue;
+		}
+
+		if(component->deleteMe)
 		{
 			continue;
 		}
@@ -641,6 +651,11 @@ static bool ComponentManager::getRightBoxFromComponents(ComponentManager compone
 		Component component = Component::safeCast(node->data);
 
 		if(owner != component->owner)
+		{
+			continue;
+		}
+
+		if(component->deleteMe)
 		{
 			continue;
 		}
