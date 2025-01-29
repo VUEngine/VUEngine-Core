@@ -91,6 +91,10 @@ static class HardwareManager : Object
 	/// Disable multiplexed interrupts.
 	static inline void disableMultiplexedInterrupts();
 
+	/// Check the status of the interrupts.
+	/// @return True if interrupts are not disabled nor suspended
+	static inline bool areInterruptsSuspended();
+
 	/// Retrieve the Stack Pointer's value.
 	/// @return Stack pointer
 	static inline int32 getStackPointer();
@@ -240,6 +244,13 @@ static inline void HardwareManager::disableMultiplexedInterrupts()
 		: // Input
 		: // Clobber
 	);
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+static inline bool HardwareManager::areInterruptsSuspended()
+{
+	return !_enabledInterrupts || 0 < _suspendInterruptRequest;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
