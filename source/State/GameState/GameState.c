@@ -927,7 +927,7 @@ void GameState::stream()
 	}
 
 #ifndef __DEBUG
-	while(!VUEngine::hasGameFrameStarted() && Stage::stream(this->stage));
+	while(Stage::stream(this->stage) && !VUEngine::hasGameFrameStarted());
 #else
 	while(Stage::stream(this->stage));
 #endif
