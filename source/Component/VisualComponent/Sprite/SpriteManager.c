@@ -396,14 +396,12 @@ void SpriteManager::registerSprite(Sprite sprite, SpriteRegistry* spriteRegistry
 
 			if(sprite->position.z + sprite->displacement.z <= otherSprite->position.z + otherSprite->displacement.z)
 			{
-				spriteRegistry->sortingNode = NULL;
-				VirtualList::insertBefore(spriteRegistry->sprites, node, sprite);
+				spriteRegistry->sortingNode = VirtualList::insertBefore(spriteRegistry->sprites, node, sprite);
 				return;
 			}
 		}
 
-		spriteRegistry->sortingNode = NULL;
-		VirtualList::pushBack(spriteRegistry->sprites, sprite);
+		spriteRegistry->sortingNode = VirtualList::pushBack(spriteRegistry->sprites, sprite);
 	}
 }
 
@@ -1126,7 +1124,7 @@ bool SpriteManager::sortProgressively(bool complete)
 
 				if(!complete)
 				{
-					this->spriteRegistry[i].sortingNode = nextNode;//this->spriteRegistry[i].sortingNode->next;
+					this->spriteRegistry[i].sortingNode = this->spriteRegistry[i].sortingNode->next;
 					break;
 				}
 			}
