@@ -135,7 +135,9 @@ void GameState::start(void* owner)
 void GameState::update(void* owner)
 {
 	GameState::focusCamera(this);
-	
+
+	GameState::render(this);
+
 	GameState::applyTransformationsUI(this);
 
 	GameState::updateStage(this);
@@ -750,6 +752,15 @@ void GameState::configureUI(StageSpec* stageSpec)
 void GameState::focusCamera()
 {
 	Camera::focus(Camera::getInstance());
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void GameState::render()
+{
+	SpriteManager::render(this->componentManagers[kSpriteComponent]);
+	
+	WireframeManager::render(this->componentManagers[kWireframeComponent]);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

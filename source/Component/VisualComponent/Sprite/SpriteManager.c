@@ -163,8 +163,6 @@ void SpriteManager::enable()
 {
 	Base::enable(this);
 
-	HardwareManager::suspendInterrupts();
-
 	Texture::reset();
 	Printer::reset(Printer::getInstance());
 	CharSetManager::reset(CharSetManager::getInstance());
@@ -198,8 +196,6 @@ void SpriteManager::enable()
 	this->evenFrame = __TRANSPARENCY_EVEN;
 
 	SpriteManager::stopRendering(this);
-
-	HardwareManager::resumeInterrupts();
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -209,8 +205,6 @@ void SpriteManager::disable()
 	SpriteManager::stopListeningForVIP(this);
 
 	Base::disable(this);
-
-	HardwareManager::suspendInterrupts();
 
 	SpriteManager::destroyAllComponents(this);
 
@@ -234,8 +228,6 @@ void SpriteManager::disable()
 			this->objectSpriteContainers[i] = NULL;
 		}
 	}
-
-	HardwareManager::resumeInterrupts();
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -561,6 +553,14 @@ void SpriteManager::render()
 	_renderedSprites = 0;
 #endif
 
+	HardwareManager::suspendInterrupts();
+
+	// Update CHAR memory
+	CharSetManager::defragment(CharSetManager::getInstance(), true);
+
+	// Update DRAM memory
+	Texture::updateTextures(this->texturesMaximumRowsToWrite, this->deferTextureUpdating);
+
 	this->completeSort = SpriteManager::sortProgressively(this, this->completeSort);
 
 	ParamTableManager::defragment(ParamTableManager::getInstance(), true);
@@ -690,6 +690,8 @@ void SpriteManager::render()
 
 	SpriteManager::stopRendering(this);
 
+	HardwareManager::resumeInterrupts();
+
 #ifdef __SHOW_SPRITES_PROFILING
 	SpriteManager::computeTotalPixelsDrawn(this);
 #endif
@@ -719,12 +721,6 @@ void SpriteManager::writeDRAM()
 #endif
 
 	// Update all graphical data
-
-	// Update CHAR memory
-	CharSetManager::defragment(CharSetManager::getInstance(), true);
-
-	// Update DRAM memory
-	Texture::updateTextures(this->texturesMaximumRowsToWrite, this->deferTextureUpdating);
 
 	// Update param tables
 	SpriteManager::applySpecialEffects(this);
@@ -1262,26 +1258,14 @@ void SpriteManager::writeAttributesToDRAM()
 
 void SpriteManager::startListeningForVIP()
 {
-	HardwareManager::suspendInterrupts();
-
-	VIPManager::addEventListener(VIPManager::getInstance(), ListenerObject::safeCast(this), kEventVIPManagerGAMESTART);
-
 	VIPManager::addEventListener(VIPManager::getInstance(), ListenerObject::safeCast(this), kEventVIPManagerXPEND);
-
-	HardwareManager::resumeInterrupts();
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void SpriteManager::stopListeningForVIP()
 {
-	HardwareManager::suspendInterrupts();
-
-	VIPManager::removeEventListener(VIPManager::getInstance(), ListenerObject::safeCast(this), kEventVIPManagerGAMESTART);
-
 	VIPManager::removeEventListener(VIPManager::getInstance(), ListenerObject::safeCast(this), kEventVIPManagerXPEND);
-
-	HardwareManager::resumeInterrupts();
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

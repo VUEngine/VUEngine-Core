@@ -186,6 +186,8 @@ void WireframeManager::render()
 	this->renderedWireframes = 0;
 #endif
 
+	HardwareManager::suspendInterrupts();
+
 	for(VirtualNode node = this->components->head, nextNode = NULL; NULL != node; node = nextNode)
 	{
 		nextNode = node->next;
@@ -230,6 +232,8 @@ void WireframeManager::render()
 #endif
 	}
 
+	HardwareManager::resumeInterrupts();
+
 #ifdef __PROFILE_WIREFRAMES
 	WireframeManager::print(this, 1, 1);
 #endif
@@ -258,21 +262,11 @@ void WireframeManager::draw()
 	this->drawnWireframes = 0;
 #endif
 
-	for(VirtualNode node = this->components->head, nextNode = NULL; NULL != node; node = nextNode)
+	for(VirtualNode node = this->components->head; NULL != node; node = node->next)
 	{
-		nextNode = node->next;
-
 		Wireframe wireframe = Wireframe::safeCast(node->data);
 
 		NM_ASSERT(!isDeleted(wireframe), "BodyManager::update: deleted body");
-
-		if(wireframe->deleteMe)
-		{
-			VirtualList::removeNode(this->components, node);
-
-			delete wireframe;
-			continue;
-		}
 
 		wireframe->drawn = false;
 
@@ -369,9 +363,7 @@ void WireframeManager::startListeningForVIP()
 {
 	HardwareManager::suspendInterrupts();
 
-	VIPManager::addEventListener(VIPManager::getInstance(), ListenerObject::safeCast(this), kEventVIPManagerGAMESTART);
 	VIPManager::addEventListener(VIPManager::getInstance(), ListenerObject::safeCast(this), kEventVIPManagerXPEND);
-	VIPManager::addEventListener(VIPManager::getInstance(), ListenerObject::safeCast(this), kEventVIPManagerGAMESTARTDuringXPEND);
 	VIPManager::addEventListener(VIPManager::getInstance(), ListenerObject::safeCast(this), kEventVIPManagerXPENDDuringGAMESTART);
 
 	HardwareManager::resumeInterrupts();
@@ -383,9 +375,7 @@ void WireframeManager::stopListeningForVIP()
 {
 	HardwareManager::suspendInterrupts();
 
-	VIPManager::removeEventListener(VIPManager::getInstance(), ListenerObject::safeCast(this), kEventVIPManagerGAMESTART);
 	VIPManager::removeEventListener(VIPManager::getInstance(), ListenerObject::safeCast(this), kEventVIPManagerXPEND);
-	VIPManager::removeEventListener(VIPManager::getInstance(), ListenerObject::safeCast(this), kEventVIPManagerGAMESTARTDuringXPEND);
 	VIPManager::removeEventListener(VIPManager::getInstance(), ListenerObject::safeCast(this), kEventVIPManagerXPENDDuringGAMESTART);
 
 	HardwareManager::resumeInterrupts();

@@ -127,8 +127,6 @@ void ListenerObject::removeEventListener(ListenerObject listener, uint16 eventCo
 {
 	if(NULL != this->events)
 	{
-		HardwareManager::suspendInterrupts();
-
 		for(VirtualNode node = this->events->head, nextNode = NULL; NULL != node; node = nextNode)
 		{
 			nextNode = node->next;
@@ -170,8 +168,6 @@ void ListenerObject::removeEventListener(ListenerObject listener, uint16 eventCo
 			delete this->events;
 			this->events = NULL;
 		}
-
-		HardwareManager::resumeInterrupts();
 	}
 }
 
@@ -181,8 +177,6 @@ void ListenerObject::removeEventListeners(uint16 eventCode)
 {
 	if(NULL != this->events)
 	{
-		HardwareManager::suspendInterrupts();
-
 		for(VirtualNode node = this->events->head, nextNode = NULL; NULL != node; node = nextNode)
 		{
 			nextNode = node->next;
@@ -223,8 +217,6 @@ void ListenerObject::removeEventListeners(uint16 eventCode)
 			delete this->events;
 			this->events = NULL;
 		}
-
-		HardwareManager::resumeInterrupts();
 	}
 }
 
@@ -234,8 +226,6 @@ void ListenerObject::removeAllEventListeners()
 {
 	if(NULL != this->events)
 	{
-		HardwareManager::suspendInterrupts();
-
 		if(0 == this->eventFirings)
 		{
 			VirtualList::deleteData(this->events);
@@ -256,8 +246,6 @@ void ListenerObject::removeAllEventListeners()
 				}
 			}			
 		}
-
-		HardwareManager::resumeInterrupts();
 	}
 }
 
@@ -275,8 +263,6 @@ void ListenerObject::fireEvent(uint16 eventCode)
 	if(NULL != this->events)
 	{
 		this->eventFirings++;
-
-		HardwareManager::suspendInterrupts();
 
 		for(VirtualNode node = this->events->head, nextNode; NULL != node; node = nextNode)
 		{
@@ -337,8 +323,6 @@ void ListenerObject::fireEvent(uint16 eventCode)
 			delete this->events;
 			this->events = NULL;
 		}
-
-		HardwareManager::resumeInterrupts();
 
 		this->eventFirings--;
 	}

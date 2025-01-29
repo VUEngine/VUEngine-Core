@@ -177,6 +177,7 @@ static BYTE* MemoryPool::allocate(int32 numberOfBytes)
 			*((uint16*)poolLocation + 1) = (uint16)pool;
 #endif
 			memoryPool->poolLastFreeBlock[pool] = poolLocation;
+			
 			HardwareManager::resumeInterrupts();
 			return poolLocation;
 		}
@@ -242,6 +243,7 @@ static void MemoryPool::free(BYTE* object)
 		{
 			// Free the block
 			*(uint32*)((uint32)object) = __MEMORY_FREE_BLOCK_FLAG;
+			
 			HardwareManager::resumeInterrupts();
 			return;
 		}

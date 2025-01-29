@@ -550,8 +550,6 @@ void VirtualCircularList::deleteData()
 {
 	if(!isDeleted(this->head))
 	{
-		HardwareManager::suspendInterrupts();
-
 		// Point to the head
 		VirtualNode node = this->head;
 
@@ -577,8 +575,6 @@ void VirtualCircularList::deleteData()
 
 		this->head = NULL;
 		this->tail = NULL;
-
-		HardwareManager::resumeInterrupts();
 	}
 }
 

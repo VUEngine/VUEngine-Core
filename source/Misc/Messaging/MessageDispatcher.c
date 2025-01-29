@@ -327,9 +327,8 @@ secure bool MessageDispatcher::dispatchDelayedMessages()
 				if(!isDeleted(sender) && !isDeleted(receiver))
 				{
 					messagesDispatched |= true;
-					HardwareManager::suspendInterrupts();
+
 					ListenerObject::handleMessage(receiver, telegram);
-					HardwareManager::resumeInterrupts();
 				}
 #ifndef __RELEASE
 				else if(isDeleted(sender) || isDeleted(receiver))
