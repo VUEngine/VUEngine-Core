@@ -90,13 +90,6 @@ bool ObjectSprite::onEvent(ListenerObject eventFirer __attribute__((unused)), ui
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void ObjectSprite::releaseResources()
-{
-	ObjectSprite::releaseTexture(this);
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
 ClassPointer ObjectSprite::getBasicType()
 {
 	return typeofclass(ObjectSprite);

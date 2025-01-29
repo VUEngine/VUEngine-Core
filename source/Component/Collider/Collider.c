@@ -49,7 +49,6 @@ void Collider::constructor(Entity owner, const ColliderSpec* colliderSpec)
 	Base::constructor(owner, (const ComponentSpec*)&colliderSpec->componentSpec);
 
 	// Not setup yet
-	this->deleteMe = false;
 	this->enabled = true;
 
 	this->wireframe = NULL;

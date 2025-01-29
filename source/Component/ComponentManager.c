@@ -786,7 +786,7 @@ Component ComponentManager::instantiateComponent(Entity owner, const ComponentSp
 
 void ComponentManager::deinstantiateComponent(Entity owner, Component component) 
 {
-	if(NULL == owner || isDeleted(component))
+	if(isDeleted(component))
 	{
 		return;
 	}
@@ -798,9 +798,7 @@ void ComponentManager::deinstantiateComponent(Entity owner, Component component)
 		Component::releaseResources(component);
 	}
 
-	NM_ASSERT(!isDeleted(owner), "ComponentManager::deinstantiateComponent: deleted owner");
-
-	if(NULL == component->componentSpec || kComponentTypes <= component->componentSpec->componentType)
+	if(NULL == owner || NULL == component->componentSpec || kComponentTypes <= component->componentSpec->componentType)
 	{
 		return;
 	}
