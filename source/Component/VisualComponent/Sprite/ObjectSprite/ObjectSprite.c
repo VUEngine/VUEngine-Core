@@ -48,7 +48,7 @@ void ObjectSprite::constructor(Entity owner, const ObjectSpriteSpec* objectSprit
 	this->cols = this->halfWidth >> 2;
 	this->rows = this->halfHeight >> 2;
 
-	this->fourthWordValue = (this->head & 0x3000) | (this->texture->palette << 14);
+	this->fourthWordValue = (this->head & 0x3000) | (((SpriteSpec*)objectSpriteSpec)->textureSpec->palette << 14);
 
 	ObjectSprite::loadTexture(this, typeofclass(ObjectTexture), true);
 
