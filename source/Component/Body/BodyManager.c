@@ -34,6 +34,35 @@ friend class VirtualList;
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+void BodyManager::constructor()
+{
+	// Always explicitly call the base's constructor 
+	Base::constructor();
+
+	this->gravity.x = 0;
+	this->gravity.y = 0;
+	this->gravity.z = 0;
+
+	this->remainingSkipCycles = 0;
+	this->skipCycles = 0;
+
+	this->frictionCoefficient = 0;
+	this->timeScale = __1I_FIXED;
+	this->cycle = 0;
+
+	BodyManager::setTimeScale(this, __1I_FIXED);
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void BodyManager::destructor()
+{
+	// Always explicitly call the base's destructor 
+	Base::destructor();
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 uint32 BodyManager::getType()
 {
 	return kPhysicsComponent;
@@ -259,87 +288,5 @@ void BodyManager::print(int32 x, int32 y)
 	Printer::text("                         ", x, y, NULL);
 }
 #endif
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-// CLASS' PRIVATE METHODS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void BodyManager::constructor()
-{
-	// Always explicitly call the base's constructor 
-	Base::constructor();
-
-	this->gravity.x = 0;
-	this->gravity.y = 0;
-	this->gravity.z = 0;
-
-	this->remainingSkipCycles = 0;
-	this->skipCycles = 0;
-
-	this->frictionCoefficient = 0;
-	this->timeScale = __1I_FIXED;
-	this->cycle = 0;
-
-	BodyManager::setTimeScale(this, __1I_FIXED);
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void BodyManager::destructor()
-{
-	// Always explicitly call the base's destructor 
-	Base::destructor();
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-Body BodyManager::getBody(Entity owner)
-{
-	ASSERT(this->components, "BodyManager::getBody: null bodies");
-
-	VirtualNode node = this->components->head;
-
-	for(; NULL != node; node = node->next)
-	{
-		// Current body
-		Body body = Body::safeCast(node->data);
-		ASSERT(body, "BodyManager::getBody: null body");
-
-		// Check if current body's owner is the same as the actor calling this method
-		if(owner == body->owner)
-		{
-			return body;
-		}
-	}
-
-	return NULL;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-bool BodyManager::isEntityRegistered(Entity owner)
-{
-	ASSERT(this->components, "BodyManager::isEntityRegistered: null bodies");
-
-	VirtualNode node = this->components->head;
-
-	for(; NULL != node; node = node->next)
-	{
-		// Current body
-		Body body = Body::safeCast(node->data);
-
-		// Check if current body's owner is the same as the actor calling this method
-		if(Entity::safeCast(owner) == body->owner)
-		{
-			return true;
-		}
-	}
-
-	return false;
-}
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
