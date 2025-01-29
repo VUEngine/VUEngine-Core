@@ -134,9 +134,9 @@ void GameState::start(void* owner)
 
 void GameState::update(void* owner)
 {
-	GameState::focusCamera(this);
-
 	GameState::render(this);
+	
+	GameState::focusCamera(this);
 
 	GameState::applyTransformationsUI(this);
 
