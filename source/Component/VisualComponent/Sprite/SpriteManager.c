@@ -595,7 +595,7 @@ void SpriteManager::render()
 
 	NM_ASSERT(0 <= this->bgmapIndex, "SpriteManager::render: more sprites than WORLDs");
 
-	for(int16 i = kSpriteListObject1; i < kSpriteListObject1 + __TOTAL_OBJECT_SEGMENTS; i++)
+	for(int16 i = kSpriteListObject1 + __TOTAL_OBJECT_SEGMENTS - 1; kSpriteListObject1 <= i ; i--)
 	{
 		ObjectSpriteContainer objectSpriteContainer = this->objectSpriteContainers[i - kSpriteListObject1];
 
@@ -608,9 +608,9 @@ void SpriteManager::render()
 
 		if(__SHOW == objectSpriteContainer->show)
 		{
-			for(VirtualNode node = this->spriteRegistry[i].sprites->head, nextNode = NULL; NULL != node; node = nextNode)
+			for(VirtualNode node = this->spriteRegistry[i].sprites->tail, nextPervious = NULL; NULL != node; node = nextPervious)
 			{
-				nextNode = node->next;
+				nextPervious = node->previous;
 
 				ObjectSprite objectSprite = ObjectSprite::safeCast(node->data);
 
