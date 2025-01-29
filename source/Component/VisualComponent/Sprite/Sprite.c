@@ -207,7 +207,7 @@ inline void Sprite::transform()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-bool Sprite::prepareToRender(int16 index)
+bool Sprite::prepareToRender()
 {
 	// If the client code makes these checks before calling this method,
 	// It saves on method calls quite a bit when there are lots of
@@ -276,33 +276,36 @@ bool Sprite::prepareToRender(int16 index)
 		return false;
 	}
 
-	return !this->rendered || this->index != index;
+	return true;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 int16 Sprite::render(int16 index, bool updateAnimation)
 {
-	if(Sprite::prepareToRender(this, index))
+	if(Sprite::prepareToRender(this))
 	{
 #ifdef __SHOW_SPRITES_PROFILING
 		extern int32 _renderedSprites;
 		_renderedSprites++;
-#endif		
-		this->rendered = true;
-
-		int16 previousIndex = this->index;
-
- 		this->index = Sprite::doRender(this, index);
-
-		if(__NO_RENDER_INDEX != this->index)
+#endif
+		if(!this->rendered || this->index != index)
 		{
-			if(NULL != this->owner)
-			{
-				Entity::setVisible(this->owner);
-			}
+			this->rendered = true;
 
-			this->updateAnimationFrame = this->updateAnimationFrame || __NO_RENDER_INDEX == previousIndex;
+			int16 previousIndex = this->index;
+
+			this->index = Sprite::doRender(this, index);
+
+			if(__NO_RENDER_INDEX != this->index)
+			{
+				if(NULL != this->owner)
+				{
+					Entity::setVisible(this->owner);
+				}
+
+				this->updateAnimationFrame = this->updateAnimationFrame || __NO_RENDER_INDEX == previousIndex;
+			}
 		}
 
 		if(updateAnimation)	
@@ -310,7 +313,7 @@ int16 Sprite::render(int16 index, bool updateAnimation)
 			Sprite::update(this);
 		}
 	}
-	else
+	else 
 	{
 		this->index = __NO_RENDER_INDEX;
 	}
