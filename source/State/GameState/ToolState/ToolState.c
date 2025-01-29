@@ -110,7 +110,7 @@ void ToolState::start(void* owner __attribute__ ((unused)))
 	if(NULL != this->currentGameState)
 	{
 		GameState::pauseClocks(this->currentGameState);
-		GameState::unpauseAnimations(this->currentGameState);
+		GameState::unpauseClock(this->currentGameState, kGameStateAnimationsClock);
 
 		GameState::startClocks(this);
 

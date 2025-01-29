@@ -124,8 +124,7 @@ void GameState::start(void* owner)
 {
 	GameState::pauseClocks(this);
 
-	// Make sure that messsaging is not paused
-	Clock::start(this->messagingClock);
+	GameState::startClock(this, kGameStateMessagingClock);
 
 	// Call custom code implementation
 	GameState::enter(this, owner);
@@ -185,7 +184,7 @@ void GameState::stop(void* owner)
 
 void GameState::pause(void* owner)
 {
-	Clock::pause(this->messagingClock, true);
+	GameState::pauseClock(this, kGameStateMessagingClock);
 
 #ifdef __TOOLS
 	ToolState toolState = VUEngine::getActiveToolState();
@@ -257,7 +256,7 @@ void GameState::unpause(void* owner)
 		GameState::resume(this, owner);
 	}
 
-	Clock::pause(this->messagingClock, false);
+	GameState::unpauseClock(this, kGameStateMessagingClock);
 
 	GameState::changeFramerate(this, this->framerate, -1);
 }
@@ -335,130 +334,99 @@ UIContainer GameState::getUIContainer()
 
 void GameState::startClocks()
 {
-	Clock::start(this->logicsClock);
-	Clock::start(this->messagingClock);
-	Clock::start(this->animationsClock);
-	Clock::start(this->physicsClock);
+	for(uint32 i = 0; i < kGameStateNoClock; i++)
+	{
+		GameState::startClock(this, i);
+	}
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void GameState::pauseClocks()
 {
-	Clock::pause(this->logicsClock, true);
-	Clock::pause(this->messagingClock, true);
-	Clock::pause(this->animationsClock, true);
-	Clock::pause(this->physicsClock, true);
+	for(uint32 i = 0; i < kGameStateNoClock; i++)
+	{
+		GameState::pauseClock(this, i);
+	}
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void GameState::unpauseClocks()
 {
-	Clock::pause(this->logicsClock, false);
-	Clock::pause(this->messagingClock, false);
-	Clock::pause(this->animationsClock, false);
-	Clock::pause(this->physicsClock, false);
+	for(uint32 i = 0; i < kGameStateNoClock; i++)
+	{
+		GameState::unpauseClock(this, i);
+	}
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void GameState::stopClocks()
 {
-	Clock::stop(this->logicsClock);
-	Clock::stop(this->messagingClock);
-	Clock::stop(this->animationsClock);
-	Clock::stop(this->physicsClock);
+	for(uint32 i = 0; i < kGameStateNoClock; i++)
+	{
+		GameState::stopClock(this, i);
+	}
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void GameState::startLogics()
+void GameState::startClock(uint32 clockEnum)
 {
-	Clock::start(this->logicsClock);
+	Clock clock = GameState::getClock(this, clockEnum);
+
+	if(!isDeleted(clock))
+	{
+		Clock::start(clock);
+	}
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void GameState::pauseLogics()
+void GameState::pauseClock(uint32 clockEnum)
 {
-	Clock::pause(this->logicsClock, true);
+	Clock clock = GameState::getClock(this, clockEnum);
+
+	if(!isDeleted(clock))
+	{
+		Clock::pause(clock, true);
+	}
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void GameState::unpauseLogics()
+void GameState::unpauseClock(uint32 clockEnum)
 {
-	Clock::pause(this->logicsClock, false);
+	Clock clock = GameState::getClock(this, clockEnum);
+
+	if(!isDeleted(clock))
+	{
+		Clock::pause(clock, false);
+	}
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void GameState::startMessaging()
+void GameState::stopClock(uint32 clockEnum)
 {
-	Clock::start(this->messagingClock);
-}
+	Clock clock = GameState::getClock(this, clockEnum);
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void GameState::pauseMessaging()
-{
-	Clock::pause(this->messagingClock, true);
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void GameState::unpauseMessaging()
-{
-	Clock::pause(this->messagingClock, false);
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void GameState::startAnimations()
-{
-	Clock::start(this->logicsClock);
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void GameState::pauseAnimations()
-{
-	Clock::pause(this->animationsClock, true);
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void GameState::unpauseAnimations()
-{
-	Clock::pause(this->animationsClock, false);
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void GameState::startPhysics()
-{
-	Clock::start(this->physicsClock);
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void GameState::pausePhysics()
-{
-	Clock::pause(this->physicsClock, true);
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void GameState::unpausePhysics()
-{
-	Clock::pause(this->physicsClock, false);
+	if(!isDeleted(clock))
+	{
+		Clock::stop(clock);
+	}
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 bool GameState::propagateMessage(int32 message)
-{	
+{
+	if(NULL == this->stage)
+	{
+		return false;
+	}
+
 	return 
 		Stage::propagateMessage
 		(
@@ -1035,6 +1003,36 @@ void GameState::configurePhysics()
 
 	BodyManager::setFrictionCoefficient(this->componentManagers[kPhysicsComponent], stageSpec->physics.frictionCoefficient);
 	BodyManager::setGravity(this->componentManagers[kPhysicsComponent], stageSpec->physics.gravity);
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+Clock GameState::getClock(uint32 clockEnum)
+{
+	switch(clockEnum)
+	{
+		case kGameStateAnimationsClock:
+		{
+			return this->animationsClock;
+		}
+
+		case kGameStateLogicsClock:
+		{
+			return this->logicsClock;
+		}
+
+		case kGameStateMessagingClock:
+		{
+			return this->messagingClock;
+		}
+
+		case kGameStatePhysicsClock:
+		{
+			return this->physicsClock;
+		}
+	}
+
+	return NULL;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

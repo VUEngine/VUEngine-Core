@@ -30,6 +30,20 @@ class Telegram;
 class VirtualList;
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+// CLASS' DATA
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+enum GameState::stopClocks
+{
+	kGameStateAnimationsClock = 0,
+	kGameStateLogicsClock,
+	kGameStateMessagingClock,
+	kGameStatePhysicsClock,
+
+	kGameStateNoClock,
+};
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DECLARATION
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
@@ -140,40 +154,20 @@ class GameState : State
 	void stopClocks();
 
 	/// Start the clock used for logics.
-	void startLogics();
+	/// @param clockEnum: Enum that identifies the clock to start
+	void startClock(uint32 clockEnum);
 
 	/// Pause the clock used for logics.
-	void pauseLogics();
+	/// @param clockEnum: Enum that identifies the clock to pause
+	void pauseClock(uint32 clockEnum);
 
 	/// Unpause the clock used for logics.
-	void unpauseLogics();
+	/// @param clockEnum: Enum that identifies the clock to unpause
+	void unpauseClock(uint32 clockEnum);
 
-	/// Start the clock used for delayed messages.
-	void startMessaging();
-
-	/// Pause the clock used for delayed messages.
-	void pauseMessaging();
-
-	/// Unpause the clock used for delayed messages.
-	void unpauseMessaging();
-
-	/// Start the clock used for animations.
-	void startAnimations();
-
-	/// Pause the clock used for animations.
-	void pauseAnimations();
-
-	/// Unpause the clock used for animations.
-	void unpauseAnimations();
-
-	/// Start the clock used for physics simulations.
-	void startPhysics();
-
-	/// Pause the clock used for physics simulations.
-	void pausePhysics();
-
-	/// Unpause the clock used for physics simulations.
-	void unpausePhysics();
+	/// Stop the clock used for logics.
+	/// @param clockEnum: Enum that identifies the clock to stop
+	void stopClock(uint32 clockEnum);
 
 	/// Update the UI's children' global transformations.
 	void applyTransformationsUI();
