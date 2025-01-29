@@ -172,6 +172,8 @@ static void ComponentManager::removeComponents(Entity owner, uint32 componentTyp
 			return;
 		}
 
+		HardwareManager::suspendInterrupts();
+
 		for(VirtualNode node = componentManager->components->head, nextNode = NULL; NULL != node; node = nextNode)
 		{
 			nextNode = node->next;
@@ -182,7 +184,9 @@ static void ComponentManager::removeComponents(Entity owner, uint32 componentTyp
 			{
 				ComponentManager::removeComponent(owner, component);
 			}
-		}	
+		}
+	
+		HardwareManager::resumeInterrupts();
 	}
 
 	if(kComponentTypes <= componentType)
@@ -273,6 +277,8 @@ static Component ComponentManager::getComponentAtIndex(Entity owner, uint32 comp
 		return NULL;
 	}
 
+	HardwareManager::suspendInterrupts();
+
 	for(VirtualNode node = componentManager->components->head; NULL != node; node = node->next)
 	{
 		Component component = Component::safeCast(node->data);
@@ -281,10 +287,13 @@ static Component ComponentManager::getComponentAtIndex(Entity owner, uint32 comp
 		{
 			if(0 == componentIndex--)
 			{
+				HardwareManager::resumeInterrupts();
 				return component;
 			}
 		}
 	}
+
+	HardwareManager::resumeInterrupts();
 
 	return NULL;
 }
@@ -305,6 +314,8 @@ static void ComponentManager::getComponents(Entity owner, uint32 componentType, 
 		return;
 	}
 
+	HardwareManager::suspendInterrupts();
+
 	for(VirtualNode node = componentManager->components->head; NULL != node; node = node->next)
 	{
 		Component component = Component::safeCast(node->data);
@@ -314,6 +325,8 @@ static void ComponentManager::getComponents(Entity owner, uint32 componentType, 
 			VirtualList::pushBack(components, component);
 		}
 	}
+
+	HardwareManager::resumeInterrupts();
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -332,6 +345,8 @@ static bool ComponentManager::getComponentsOfClass(Entity owner, ClassPointer cl
 		return false;
 	}
 
+	HardwareManager::suspendInterrupts();
+
 	for(VirtualNode node = componentManager->components->head; NULL != node; node = node->next)
 	{
 		Component component = Component::safeCast(node->data);
@@ -346,6 +361,8 @@ static bool ComponentManager::getComponentsOfClass(Entity owner, ClassPointer cl
 			VirtualList::pushBack(components, component);
 		}
 	}
+
+	HardwareManager::resumeInterrupts();
 
 	if(NULL != components->head)
 	{
@@ -368,6 +385,8 @@ static uint16 ComponentManager::getComponentsCount(Entity owner, uint32 componen
 
 		uint16 count = 0;
 
+		HardwareManager::suspendInterrupts();
+
 		for(VirtualNode node = componentManager->components->head, nextNode = NULL; NULL != node; node = nextNode)
 		{
 			nextNode = node->next;
@@ -379,6 +398,8 @@ static uint16 ComponentManager::getComponentsCount(Entity owner, uint32 componen
 				count++;
 			}
 		}
+
+		HardwareManager::resumeInterrupts();
 
 		return count;
 	}
@@ -411,6 +432,8 @@ static void ComponentManager::propagateCommand(int32 command, Entity owner, uint
 			return;
 		}
 
+		HardwareManager::suspendInterrupts();
+
 		for(VirtualNode node = componentManager->components->head; NULL != node; node = node->next)
 		{
 			Component component = Component::safeCast(node->data);
@@ -422,6 +445,8 @@ static void ComponentManager::propagateCommand(int32 command, Entity owner, uint
 
 			Component::handleCommand(component, command, args);
 		}
+
+		HardwareManager::resumeInterrupts();
 	}
 
 	if(kComponentTypes <= componentType)
@@ -465,6 +490,8 @@ static uint16 ComponentManager::getCount(Entity owner, uint32 componentType)
 		return 0;
 	}
 
+	HardwareManager::suspendInterrupts();
+
 	for(VirtualNode node = componentManager->components->head; NULL != node; node = node->next)
 	{
 		Component component = Component::safeCast(node->data);
@@ -476,6 +503,8 @@ static uint16 ComponentManager::getCount(Entity owner, uint32 componentType)
 		
 		count++;
 	}
+
+	HardwareManager::resumeInterrupts();
 
 	return count;
 }
@@ -605,6 +634,8 @@ static bool ComponentManager::getRightBoxFromComponents(ComponentManager compone
 
 	bool modified = false;
 
+	HardwareManager::suspendInterrupts();
+
 	for(VirtualNode node = componentMananager->components->head; node; node = node->next)
 	{
 		Component component = Component::safeCast(node->data);
@@ -653,6 +684,8 @@ static bool ComponentManager::getRightBoxFromComponents(ComponentManager compone
 		}
 	}
 
+	HardwareManager::resumeInterrupts();
+
 	return modified;
 }
 
@@ -677,8 +710,6 @@ void ComponentManager::constructor()
 
 void ComponentManager::destructor()
 {
-	HardwareManager::suspendInterrupts();
-
 	ComponentManager::destroyAllComponents(this);
 
 	if(NULL != this->components)
@@ -688,8 +719,6 @@ void ComponentManager::destructor()
 	}
 
 	ComponentManager::dontUseManager(this);
-
-	HardwareManager::resumeInterrupts();
 
 	// Always explicitly call the base's destructor 
 	Base::destructor();
@@ -704,9 +733,9 @@ void ComponentManager::destroyAllComponents()
 		return;
 	}
 
-	HardwareManager::suspendInterrupts();
-
 	ComponentManager::purgeComponents(this);
+
+	HardwareManager::suspendInterrupts();
 
 	VirtualList componentsHelper = new VirtualList();
 	VirtualList::copy(componentsHelper, this->components);
