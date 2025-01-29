@@ -291,7 +291,7 @@ static void TimerManager::setTargetTimePerInterrupt(uint16 targetTimePerInterrup
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-uint16 TimerManager::getTargetTimePerInterrupt()
+static uint16 TimerManager::getTargetTimePerInterrupt()
 {
 	TimerManager timerManager = TimerManager::getInstance();
 
@@ -327,7 +327,7 @@ static float TimerManager::getTargetTimePerInterruptInMS()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-uint32 TimerManager::getTargetTimePerInterruptInUS()
+static uint32 TimerManager::getTargetTimePerInterruptInUS()
 {
 	TimerManager timerManager = TimerManager::getInstance();
 
@@ -377,7 +377,7 @@ static void TimerManager::setTargetTimePerInterruptUnits(uint16 targetTimePerInt
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-uint16 TimerManager::getTargetTimePerInterruptUnits()
+static uint16 TimerManager::getTargetTimePerInterruptUnits()
 {
 	TimerManager timerManager = TimerManager::getInstance();
 
@@ -386,7 +386,7 @@ uint16 TimerManager::getTargetTimePerInterruptUnits()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-uint16 TimerManager::getTimerCounter()
+static uint16 TimerManager::getTimerCounter()
 {
 	TimerManager timerManager = TimerManager::getInstance();
 
@@ -395,14 +395,14 @@ uint16 TimerManager::getTimerCounter()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-uint16 TimerManager::getCurrentTimerCounter()
+static uint16 TimerManager::getCurrentTimerCounter()
 {
 	return (_hardwareRegisters[__THR] << 8 ) | _hardwareRegisters[__TLR];
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-uint16 TimerManager::getMinimumTimePerInterruptStep()
+static uint16 TimerManager::getMinimumTimePerInterruptStep()
 {
 	TimerManager timerManager = TimerManager::getInstance();
 
@@ -423,7 +423,7 @@ uint16 TimerManager::getMinimumTimePerInterruptStep()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-uint32 TimerManager::getElapsedMilliseconds()
+static uint32 TimerManager::getElapsedMilliseconds()
 {
 	TimerManager timerManager = TimerManager::getInstance();
 
@@ -432,7 +432,7 @@ uint32 TimerManager::getElapsedMilliseconds()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-uint32 TimerManager::getTotalElapsedMilliseconds()
+static uint32 TimerManager::getTotalElapsedMilliseconds()
 {
 	TimerManager timerManager = TimerManager::getInstance();
 

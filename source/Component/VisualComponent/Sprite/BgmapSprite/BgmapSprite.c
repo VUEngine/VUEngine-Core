@@ -101,19 +101,16 @@ void BgmapSprite::constructor(Entity owner, const BgmapSpriteSpec* bgmapSpriteSp
 
 void BgmapSprite::destructor()
 {
-	// Make sure that the texture is not loaded again
-	this->componentSpec = NULL;
-
-	BgmapSprite::removeFromCache(this);
-
-	ASSERT(this, "BgmapSprite::destructor: null cast");
-
 	// If affine or bgmap
 	if(((__WORLD_AFFINE | __WORLD_HBIAS) & this->head) && 0 != this->param)
 	{
 		// Free param table space
 		ParamTableManager::free(ParamTableManager::getInstance(), this);
 	}
+
+	BgmapSprite::removeFromCache(this);
+
+	ASSERT(this, "BgmapSprite::destructor: null cast");
 
 	// Always explicitly call the base's destructor 
 	Base::destructor();
@@ -461,7 +458,6 @@ int32 BgmapSprite::getTotalPixels()
 
 void BgmapSprite::configureTexture()
 {
-
 	if(NULL != this->texture)
 	{
 		this->bgmapTextureSource.mx = BgmapTexture::getXOffset(this->texture) << 3;
