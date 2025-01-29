@@ -124,12 +124,6 @@ abstract class ComponentManager : ListenerObject
 	/// @param ...: Variable arguments list depending on the command
 	static void propagateCommand(int32 command, Entity owner, uint32 componentType, ...);
 
-	/// Retrieve the number of components of the a type belonging to the provided owner.
-	/// @param owner: Object to which the components attach to
-	/// @param componentType: Type of components to count
-	/// @return Number of components belonging to the provided owner
-	static uint16 getCount(Entity owner, uint32 componentType);
-
 	/// Compute the rightbox for the owner in base of its visual components.
 	/// @param owner: Entity that the components attaches to
 	/// @param rightBox: Rightbox to configure

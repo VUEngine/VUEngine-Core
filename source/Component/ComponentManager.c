@@ -479,48 +479,6 @@ static void ComponentManager::propagateCommand(int32 command, Entity owner, uint
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static uint16 ComponentManager::getCount(Entity owner, uint32 componentType)
-{
-	if(kComponentTypes <= componentType)
-	{
-		return 0;
-	}
-
-	int16 count = 0;
-
-	ComponentManager componentManager = ComponentManager::getManager(componentType);
-
-	if(NULL == componentManager)
-	{
-		return 0;
-	}
-
-	HardwareManager::suspendInterrupts();
-
-	for(VirtualNode node = componentManager->components->head; NULL != node; node = node->next)
-	{
-		Component component = Component::safeCast(node->data);
-
-		if(NULL != owner && owner != component->owner)
-		{
-			continue;
-		}
-
-		if(component->deleteMe)
-		{
-			continue;
-		}
-		
-		count++;
-	}
-
-	HardwareManager::resumeInterrupts();
-
-	return count;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
 static bool ComponentManager::calculateRightBox(Entity owner, RightBox* rightBox)
 {
 	bool modified = false;
