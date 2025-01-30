@@ -102,6 +102,7 @@ const ClassPointer CameraAuthorizedClasses[] =
 
 const ClassPointer CharSetManagerAuthorizedClasses[] =
 {
+	typeofclass(CharSet),
 	typeofclass(Printer),
 	typeofclass(Stage),
 	typeofclass(SpriteManager),

@@ -91,9 +91,9 @@ void CharSet::increaseUsageCount()
 
 bool CharSet::decreaseUsageCount()
 {
-	if(0 < this->usageCount)
+	if(0 > (unsigned)--this->usageCount)
 	{
-		this->usageCount--;
+		this->usageCount = 0;
 	}
 
 	return 0 == this->usageCount;

@@ -96,7 +96,7 @@ CharSet CharSetManager::getCharSet(const CharSetSpec* charSetSpec)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-bool CharSetManager::releaseCharSet(CharSet charSet)
+secure bool CharSetManager::releaseCharSet(CharSet charSet)
 {
 	if(isDeleted(charSet))
 	{
@@ -136,18 +136,14 @@ secure void CharSetManager::defragment(bool deferred)
 			{
 				CharSet charSet = CharSet::safeCast(node->data);
 
-				if(isDeleted(charSet))
-				{
-					continue;
-				}
+				NM_ASSERT(!isDeleted(charSet), "CharSetManager::defragment: deleted charset");
 
 				uint32 offset = CharSet::getOffset(charSet);
 
 				if(this->freedOffset < offset)
 				{
-					uint16 newOffset = this->freedOffset;
+					CharSet::setOffset(charSet, this->freedOffset);
 					this->freedOffset += CharSet::getNumberOfChars(charSet);
-					CharSet::setOffset(charSet, newOffset);
 					break;
 				}
 				else if(this->freedOffset == offset)
