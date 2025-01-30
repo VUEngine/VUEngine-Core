@@ -421,7 +421,9 @@ bool Texture::decreaseUsageCount()
 		this->usageCount = 0;
 	}
 
-	if(0 == this->usageCount && !this->textureSpec->recyclable)
+	// The commented code saves on lookups for a charset in Texture::setSpec, but can cause
+	// heavy char memory defragmentation
+	if(0 == this->usageCount)// && !this->textureSpec->recyclable)
 	{
 		Texture::releaseCharSet(this);
 	}
