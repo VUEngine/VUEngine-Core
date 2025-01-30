@@ -74,6 +74,28 @@ secure void BgmapTextureManager::reset()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+secure void BgmapTextureManager::updateTextures(int16 maximumTextureRowsToWrite, bool defer)
+{
+	for(VirtualNode node = this->bgmapTextures->head; NULL != node; node = node->next)
+	{
+		Texture texture = Texture::safeCast(node->data);
+
+		if(!texture->update)
+		{
+			continue;
+		}
+
+		texture->update = Texture::update(texture, maximumTextureRowsToWrite);
+
+		if(!texture->update && defer)
+		{
+			break;
+		}
+	}
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void BgmapTextureManager::clearBgmapSegment(int32 segment)
 {
 	Mem::clear((BYTE*)__BGMAP_SEGMENT(segment), 64 * 64 * 2);
@@ -357,6 +379,7 @@ void BgmapTextureManager::constructor()
 	Base::constructor();
 
 	this->bgmapTextures = new VirtualList();
+
 	BgmapTextureManager::reset(this);
 }
 
@@ -364,9 +387,12 @@ void BgmapTextureManager::constructor()
 
 void BgmapTextureManager::destructor()
 {
-	VirtualList::deleteData(this->bgmapTextures);
-	delete this->bgmapTextures;
-	this->bgmapTextures = NULL;
+	if(!isDeleted(this->bgmapTextures))
+	{
+		VirtualList::deleteData(this->bgmapTextures);
+		delete this->bgmapTextures;
+		this->bgmapTextures = NULL;
+	}
 
 	// Allow a new construct
 	// Always explicitly call the base's destructor 

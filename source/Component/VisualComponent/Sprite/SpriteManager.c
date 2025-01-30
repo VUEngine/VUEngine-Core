@@ -14,14 +14,12 @@
 #include <string.h>
 
 #include <BgmapSprite.h>
-#include <BgmapTextureManager.h>
 #include <CharSetManager.h>
 #include <Clock.h>
 #include <DebugConfig.h>
 #include <Mem.h>
 #include <ObjectSprite.h>
 #include <ObjectSpriteContainer.h>
-#include <ObjectTextureManager.h>
 #include <ParamTableManager.h>
 #include <Printer.h>
 #include <Sprite.h>
@@ -156,10 +154,8 @@ void SpriteManager::enable()
 {
 	Base::enable(this);
 
-	Texture::reset();
 	Printer::reset(Printer::getInstance());
 	CharSetManager::reset(CharSetManager::getInstance());
-	BgmapTextureManager::reset(BgmapTextureManager::getInstance());
 	ParamTableManager::reset(ParamTableManager::getInstance());
 
 	for(int32 i = __TOTAL_OBJECTS - 1; 0 <= i; i--)

@@ -28,10 +28,19 @@
 /// Manages textures for OBJECT space.
 singleton class ObjectTextureManager : Object
 {
+	// List of textures with BGMAP space allocated for them
+	VirtualList objectTextures;
+
 	/// @publicsection
 
 	/// Reset the manager's state.
 	void reset();
+
+	/// Update texture pending rewriting of data in DRAM.
+	/// @param maximumTextureRowsToWrite: Number of texture rows to write during this call
+	/// @param defer: If true, the texture data is written overtime; otherwise
+	/// all is written in a single pass
+	void updateTextures(int16 maximumTextureRowsToWrite, bool defer);
 
 	/// Retrieve a texture initialized with the provided spec.
 	/// @param objectTextureSpec: Spec to use to initilize the desired texture

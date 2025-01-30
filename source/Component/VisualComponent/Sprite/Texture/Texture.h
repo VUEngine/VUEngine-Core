@@ -119,9 +119,6 @@ abstract class Texture : ListenerObject
 	/// Flag to signal that the texture needs to update DRAM in the next render cycle
 	bool update;
 
-	/// Reset class' state.
-	static void reset();
-
 	/// Get a texture configured with the provided spec.
 	/// @param textureClass: Class of texture to instantiate
 	/// @param textureSpec: Spec used to select or initialize a texture with
@@ -261,6 +258,10 @@ abstract class Texture : ListenerObject
 	/// Prepare the texture to write its graphical data to DRAM during
 	/// the next render cycle.
 	void prepare();
+
+	/// Update the texture's underlying graphics.
+	/// @param maximumTextureRowsToWrite: Number of texture rows to write during this call
+	bool update(int16 maximumTextureRowsToWrite);
 
 	/// Write graphical data to the allocated DRAM space.
 	/// @param maximumTextureRowsToWrite: Number of texture rows to write during this call

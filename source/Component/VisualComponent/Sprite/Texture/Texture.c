@@ -29,12 +29,6 @@ friend class VirtualList;
 friend class VirtualNode;
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-// CLASS' ATTRIBUTES
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-static VirtualList _texturesToUpdate = NULL;
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PUBLIC STATIC METHODS
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
@@ -42,15 +36,8 @@ static VirtualList _texturesToUpdate = NULL;
 
 static void Texture::reset()
 {
-	if(NULL == _texturesToUpdate)
-	{
-		_texturesToUpdate = new VirtualList();
-	}
-
-	if(!isDeleted(_texturesToUpdate))
-	{
-		VirtualList::clear(_texturesToUpdate);
-	}
+	BgmapTextureManager::reset(BgmapTextureManager::getInstance());
+	ObjectTextureManager::reset(ObjectTextureManager::getInstance());
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -107,14 +94,8 @@ static void Texture::release(Texture texture)
 
 static void Texture::updateTextures(int16 maximumTextureRowsToWrite, bool defer)
 {
-	if(defer)
-	{
-		Texture::doUpdateTexturesDeferred();
-	}
-	else
-	{
-		Texture::doUpdateTextures(maximumTextureRowsToWrite);
-	}
+	BgmapTextureManager::updateTextures(BgmapTextureManager::getInstance(), maximumTextureRowsToWrite, defer);
+	ObjectTextureManager::updateTextures(ObjectTextureManager::getInstance(), maximumTextureRowsToWrite, defer);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -171,70 +152,6 @@ static uint32 Texture::getTotalRows(TextureSpec* textureSpec)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void Texture::doUpdateTextures(int16 maximumTextureRowsToWrite)
-{
-	if(NULL == _texturesToUpdate)
-	{
-		return;
-	}
-
-	for(VirtualNode node = _texturesToUpdate->head, nextNode = NULL; NULL != node; node = nextNode)
-	{
-		nextNode = node->next;
-
-		Texture texture = Texture::safeCast(node->data);
-
-		NM_ASSERT(__GET_CAST(Texture, texture), "Texture::updateTextures: invalid texture");
-		NM_ASSERT(NULL != texture->textureSpec, "Texture::updateTextures: invalid texture spec");
-
-		bool remove = NULL == texture->textureSpec || (texture->update && Texture::update(texture, maximumTextureRowsToWrite));
-		
-		if(remove)
-		{
-			VirtualList::removeNode(_texturesToUpdate, node);
-			texture->update = false;
-		}
-	}
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-static void Texture::doUpdateTexturesDeferred()
-{
-	if(NULL == _texturesToUpdate)
-	{
-		return;
-	}
-
-	for(VirtualNode node = _texturesToUpdate->head, nextNode = NULL; NULL != node; node = nextNode)
-	{
-		nextNode = node->next;
-
-		Texture texture = Texture::safeCast(node->data);
-
-		NM_ASSERT(__GET_CAST(Texture, texture), "Texture::updateTextures: invalid texture");
-
-		bool remove = NULL == texture->textureSpec || (texture->update && Texture::update(texture, -1));
-		
-		if(remove)
-		{
-			texture->update = false;
-			VirtualList::removeNode(_texturesToUpdate, node);
-
-			if(NULL != texture->textureSpec)
-			{
-				break;
-			}
-		}
-		else if(texture->update)
-		{
-			break;
-		}
-	}
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
 static bool Texture::isSpecSingleFrame(const TextureSpec* textureSpec)
 {
 	if(NULL == textureSpec)
@@ -283,11 +200,6 @@ static void Texture::updateMulti(Texture texture, int16 maximumTextureRowsToWrit
 
 void Texture::constructor(const TextureSpec* textureSpec, uint16 id)
 {
-	if(NULL == _texturesToUpdate)
-	{
-		_texturesToUpdate = new VirtualList();
-	}
-
 	// Always explicitly call the base's constructor 
 	Base::constructor();
 
@@ -316,7 +228,6 @@ void Texture::destructor()
 	if(this->update)
 	{
 		this->update = false;
-		VirtualList::removeData(_texturesToUpdate, this);
 	}
 
 	// Make sure that I'm not destroyed again
@@ -597,11 +508,60 @@ void Texture::putPixel(const Point* texturePixel, const Pixel* charSetPixel, BYT
 
 void Texture::prepare()
 {
-	if(!this->update)
+	if(isDeleted(this->charSet))
 	{
-		VirtualList::pushBack(_texturesToUpdate, this);
-		this->update = true;
+		Texture::loadCharSet(this);
+
+		if(isDeleted(this->charSet))
+		{
+			this->status = kTextureInvalid;
+		}
 	}
+
+	this->update = true;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+bool Texture::update(int16 maximumTextureRowsToWrite)
+{
+	switch(this->status)
+	{
+		case kTexturePendingWriting:
+
+			Texture::write(this, maximumTextureRowsToWrite);
+			break;
+
+		case kTexturePendingRewriting:
+
+			Texture::write(this, maximumTextureRowsToWrite);
+			break;
+
+		case kTextureMapDisplacementChanged:
+
+			Texture::write(this, maximumTextureRowsToWrite);
+
+			// Intended fall through
+
+		default:
+
+			if(isDeleted(this->charSet))
+			{
+				Texture::write(this, maximumTextureRowsToWrite);
+			}
+			else if(NULL != this->doUpdate)
+			{
+				this->doUpdate(this, maximumTextureRowsToWrite);
+			}
+			else
+			{
+				this->status = kTextureWritten;
+			}
+
+			break;
+	}
+
+	return kTextureWritten != this->status;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -610,17 +570,6 @@ bool Texture::write(int16 maximumTextureRowsToWrite __attribute__((unused)))
 {
 	ASSERT(this->textureSpec, "Texture::write: null textureSpec");
 	ASSERT(this->textureSpec->charSetSpec, "Texture::write: null charSetSpec");
-
-	if(isDeleted(this->charSet))
-	{
-		Texture::loadCharSet(this);
-
-		if(isDeleted(this->charSet))
-		{
-			this->status = kTextureInvalid;
-			return false;
-		}
-	}
 
 	CharSet::setFrame(this->charSet, this->frame);
 
@@ -692,7 +641,6 @@ void Texture::releaseCharSet()
 	if(this->update)
 	{
 		this->update = false;
-		VirtualList::removeData(_texturesToUpdate, this);
 	}
 
 	this->status = kTextureInvalid;
@@ -707,65 +655,6 @@ void Texture::releaseCharSet()
 
 		this->charSet = NULL;
 	}
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-bool Texture::update(int16 maximumTextureRowsToWrite)
-{
-	switch(this->status)
-	{
-		case kTexturePendingWriting:
-
-			Texture::write(this, maximumTextureRowsToWrite);
-			break;
-
-		case kTexturePendingRewriting:
-
-			Texture::write(this, maximumTextureRowsToWrite);
-
-			if(kTextureWritten == this->status)
-			{
-				Texture::fireEvent(this, kEventTextureRewritten);
-			
-				NM_ASSERT(!isDeleted(this), "Texture::prepare: deleted this during kEventTextureRewritten");
-			}
-
-			break;
-
-		case kTextureMapDisplacementChanged:
-
-			Texture::write(this, maximumTextureRowsToWrite);
-
-			if(kTextureWritten != this->status)
-			{
-				break;
-			}
-
-			Texture::fireEvent(this, kEventTextureRewritten);			
-			NM_ASSERT(!isDeleted(this), "Texture::prepare: deleted this during kEventTextureRewritten");
-
-			// Intended fall through
-
-		default:
-
-			if(isDeleted(this->charSet))
-			{
-				Texture::write(this, maximumTextureRowsToWrite);
-			}
-			else if(NULL != this->doUpdate)
-			{
-				this->doUpdate(this, maximumTextureRowsToWrite);
-			}
-			else
-			{
-				this->status = kTextureWritten;
-			}
-
-			break;
-	}
-
-	return kTextureWritten == this->status;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
