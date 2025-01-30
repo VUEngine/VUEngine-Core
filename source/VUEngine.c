@@ -603,6 +603,20 @@ void VUEngine::updateFrameRate()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+void VUEngine::waitForGameframe()
+{
+	if(this->lockFrameRate)
+	{
+		// Make sure that interrupts are enabled, otherwise we will be locked here
+		HardwareManager::enableInterrupts();
+
+		//  Wait for the next game start
+		while(!VUEngine::hasGameFrameStarted());			
+	}
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 secure void VUEngine::run(GameState currentGameState)
 {
 	if(isDeleted(currentGameState))
@@ -639,11 +653,7 @@ secure void VUEngine::run(GameState currentGameState)
 
 		this->currentGameCycleEnded = true;
 
-		if(this->lockFrameRate)
-		{
-			//  Wait for the next game start
-			while(!this->gameFrameStarted);			
-		}
+		VUEngine::waitForGameframe(this);
 	}
 
 	// Being a program running in an embedded system, there is no point in trying to 
