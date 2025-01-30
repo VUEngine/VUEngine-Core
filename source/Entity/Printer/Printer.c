@@ -155,7 +155,7 @@ static void Printer::loadFonts(FontSpec** fontSpecs)
 				{
 					_fontData[j].charSet = CharSet::get(_fontData[j].fontSpec->charSetSpec);
 
-					if(NULL != _fontData[i].charSet)
+					if(NULL != _fontData[j].charSet)
 					{
 						CharSet::addEventListener(_fontData[j].charSet, ListenerObject::safeCast(printing), kEventCharSetChangedOffset);
 					}

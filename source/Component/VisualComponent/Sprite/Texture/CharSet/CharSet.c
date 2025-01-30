@@ -241,6 +241,8 @@ void CharSet::setFrame(uint16 frame)
 	{
 		this->tilesDisplacement = tilesDisplacement;
 
+		NM_ASSERT(0 <= this->tilesDisplacement, "CharSet::setFrame: negative tilesDisplacement");
+
 		CharSet::write(this);
 	}
 }
