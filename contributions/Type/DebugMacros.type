@@ -8,24 +8,24 @@
 				"items": {
 					"type": "object",
 					"properties": {
+						"_id": {
+							"type": "string"
+						},
+						"enabled": {
+							"type": "boolean",
+							"default": true
+						},
 						"name": {
 							"type": "string",
 							"default": ""
 						},
+						"type": {
+							"type": "string",
+							"default": "define"
+						},
 						"value": {
 							"type": "string",
 							"default": ""
-						},
-						"define": {
-							"type": "boolean",
-							"default": false
-						},
-						"dependent": {
-							"type": "array",
-							"items": {
-								"type": "string",
-								"default": ""
-							}
 						}
 					},
 					"additionalProperties": false
@@ -33,6 +33,11 @@
 			}
 		},
 		"required": []
+	},
+
+	"uiSchema": {
+		"type": "DebugMacrosEditor",
+		"scope": "#"
 	},
 	"icon": "codicon codicon-debug",
 	"templates": [
