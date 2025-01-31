@@ -139,6 +139,13 @@ void ToolState::update(void* owner __attribute__ ((unused)))
 	{
 		Tool::update(this->tool);
 	}
+
+	if(NULL != this->currentGameState)
+	{
+		SpriteManager::render(this->currentGameState->componentManagers[kSpriteComponent]);
+		
+		WireframeManager::render(this->currentGameState->componentManagers[kWireframeComponent]);
+	}
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
