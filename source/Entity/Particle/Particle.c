@@ -106,6 +106,8 @@ void Particle::setup
 	// Is this needed? It can be quite heavy.
 	// Particle::resetComponents(this);
 
+	this->transformation.position = *position;
+
 	if(NULL != visualComponentSpec)
 	{
 		Particle::removeComponents(this, kSpriteComponent);
@@ -132,8 +134,6 @@ void Particle::setup
 	{
 		Body::setPosition(this->body, position, Entity::safeCast(this));
 	}
-
-	this->transformation.position = *position;
 
 	if(NULL != force)
 	{
