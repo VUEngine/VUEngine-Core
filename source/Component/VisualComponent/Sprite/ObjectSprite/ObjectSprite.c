@@ -119,7 +119,7 @@ int16 ObjectSprite::doRender(int16 index)
 	int16 jDisplacement = 0;
 
 	uint16* framePointer = 
-		(uint16*)(this->texture->textureSpec->map + this->texture->mapDisplacement + this->objectTextureSource.displacement);
+		(uint16*)(this->texture->textureSpec->map + this->texture->mapDisplacement);
 	uint16 result = index;
 
 	ObjectAttributes* objectPointer = NULL;
