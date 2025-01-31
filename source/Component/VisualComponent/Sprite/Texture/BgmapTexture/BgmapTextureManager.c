@@ -13,15 +13,17 @@
 
 #include <BgmapTexture.h>
 #include <Mem.h>
+#include <ParamTableManager.h>
 #include <Printer.h>
 #include <Singleton.h>
+#include <Sprite.h>
 #include <VirtualList.h>
 #include <VIPManager.h>
 
 #include "BgmapTextureManager.h"
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-// FORWARD DECLARATIONS
+// CLASS' DECLARATIONS
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 friend class Texture;
@@ -69,6 +71,19 @@ secure void BgmapTextureManager::reset()
 		this->offset[i][kYOffset] = -1;
 		this->offset[i][kCols] = 0;
 		this->offset[i][kRows] = 0;
+	}
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+secure void BgmapTextureManager::clearDRAM()
+{
+	uint8* bgmapStartAddress = (uint8*)__BGMAP_SPACE_BASE_ADDRESS;
+
+	// Clear every bgmap segment
+	for(bgmapStartAddress = 0; bgmapStartAddress < (uint8*)__PARAM_TABLE_END; bgmapStartAddress++)
+	{
+		*bgmapStartAddress = 0;
 	}
 }
 

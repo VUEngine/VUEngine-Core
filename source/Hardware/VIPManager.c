@@ -11,6 +11,7 @@
 // INCLUDES
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+#include <CharSet.h>
 #ifdef __DEBUG_TOOL
 #include <Debug.h>
 #endif
@@ -38,6 +39,68 @@ extern BrightnessRepeatROMSpec DefaultBrightnessRepeatSpec;
 extern uint32 _dramDirtyStart;
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+// CLASS' MACROS
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+#define __TIMEERR					0x8000
+#define __XPEND						0x4000
+#define __SBHIT						0x2000
+#define __FRAMESTART				0x0010
+#define __GAMESTART					0x0008
+#define __RFBEND					0x0004
+#define __LFBEND					0x0002
+#define __SCANERR					0x0001
+
+#define __LOCK						0x0400	// VPU SELECT __CTA
+#define __SYNCE						0x0200	// L,R_SYNC TO VPU
+#define __RE						0x0100	// MEMORY REFLASH CYCLE ON
+#define __FCLK						0x0080
+#define __SCANRDY					0x0040
+#define __DISP						0x0002	// DISPLAY ON
+#define __DPRST						0x0001	// RESET VPU COUNTER AND WAIT __FCLK
+#define __DPBSY						0x003C	// In the midst of displaying
+
+#define __SBOUT						0x8000					// In FrameBuffer drawing included
+#define __SBCOUNT					0x1F00					// Current bloc being drawn
+#define __OVERTIME					0x0010					// Processing
+#define __XPBSY1					0x0008					// In the midst of FrameBuffer 1 picture editing
+#define __XPBSY0					0x0004					// In the midst of FrameBuffer 0 picture editing
+#define __XPBSY						(__XPBSY0 | __XPBSY1)  // In the midst of drawing
+#define __XPEN						0x0002					// Start of drawing
+#define __XPRST						0x0001					// Forcing idling
+
+// VIP Register Mnemonics
+#define __INTPND					0x00  // Interrupt Pending
+#define __INTENB					0x01  // Interrupt Enable
+#define __INTCLR					0x02  // Interrupt Clear
+
+#define __DPSTTS					0x10  // Display Status
+#define __DPCTRL					0x11  // Display Control
+#define __BRTA						0x12  // Brightness A
+#define __BRTB						0x13  // Brightness B
+#define __BRTC						0x14  // Brightness C
+#define __REST						0x15  // Brightness Idle
+
+#define __FRMCYC					0x17  // Frame Repeat
+#define __CTA						0x18  // Column Table Pointer
+
+#define __XPSTTS					0x20  // Drawing Status
+#define __XPCTRL					0x21  // Drawing Control
+#define __VER						0x22  // VIP Version
+
+#define __GPLT0						0x30  // BGMap Palette 0
+#define __GPLT1						0x31  // BGMap Palette 1
+#define __GPLT2						0x32  // BGMap Palette 2
+#define __GPLT3						0x33  // BGMap Palette 3
+
+#define __JPLT0						0x34  // OBJ Palette 0
+#define __JPLT1						0x35  // OBJ Palette 1
+#define __JPLT2						0x36  // OBJ Palette 2
+#define __JPLT3						0x37  // OBJ Palette 3
+
+#define __BACKGROUND_COLOR			0x38  // Background Color
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DATA
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
@@ -54,9 +117,6 @@ typedef struct PostProcessingEffectRegistry
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' ATTRIBUTES
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-WorldAttributes _worldAttributesCache[__TOTAL_LAYERS] __attribute__((section(".dram_bss")));
-ObjectAttributes _objectAttributesCache[__TOTAL_OBJECTS] __attribute__((section(".dram_bss")));
 
 volatile uint16* _vipRegisters __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE = (uint16*)0x0005F800;
 uint32* _currentDrawingFrameBufferSet __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE = NULL;
@@ -291,6 +351,7 @@ static void VIPManager::setupColumnTable(const ColumnTableSpec* columnTableSpec)
 static void VIPManager::configureBrightness(const Brightness* brightness)
 {
 	while(_vipRegisters[__XPSTTS] & __XPBSY);
+	
 	_vipRegisters[__BRTA] = brightness->darkRed;
 	_vipRegisters[__BRTB] = brightness->mediumRed;
 	_vipRegisters[__BRTC] = brightness->brightRed - (brightness->mediumRed + brightness->darkRed);
@@ -408,8 +469,6 @@ secure void VIPManager::reset()
 
 	VIPManager::setFrameCycle(__FRAME_CYCLE);
 	VIPManager::setupColumnTable(NULL);
-
-	VIPManager::clearDRAM(this);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -425,6 +484,21 @@ secure void VIPManager::configure
 	VIPManager::configureBrightnessRepeat(brightnessRepeat);
 	VIPManager::configurePalettes(paletteConfig);
 	VIPManager::configurePostProcessingEffects(postProcessingEffects);
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+secure void VIPManager::startMemoryRefresh()
+{
+	_vipRegisters[__FRMCYC] = 0;
+	_vipRegisters[__DPCTRL] = _vipRegisters[__DPSTTS] | (__SYNCE | __RE);
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+secure void VIPManager::waitForFRAMESTART()
+{
+	while(!(_vipRegisters[__DPSTTS] & __FCLK));
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -497,6 +571,42 @@ secure void VIPManager::stopDisplaying()
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+static void VIPManager::print(int16 x, int16 y)
+{
+	int16 xDisplacement = 8;
+
+	Printer::text("VIP\nRegisters", x, ++y, NULL);
+	y += 2;
+	Printer::text("INTPND:", x, ++y, NULL);
+	Printer::hex(_vipRegisters[__INTPND], x + xDisplacement, y, 4, NULL);
+	Printer::text("INTENB:", x, ++y, NULL);
+	Printer::hex(_vipRegisters[__INTENB], x + xDisplacement, y, 4, NULL);
+	Printer::text("INTCLR:", x, ++y, NULL);
+	Printer::hex(_vipRegisters[__INTCLR], x + xDisplacement, y, 4, NULL);
+	Printer::text("DPSTTS:", x, ++y, NULL);
+	Printer::hex(_vipRegisters[__DPSTTS], x + xDisplacement, y, 4, NULL);
+	Printer::text("DPCTRL:", x, ++y, NULL);
+	Printer::hex(_vipRegisters[__DPCTRL], x + xDisplacement, y, 4, NULL);
+	Printer::text("BRTA:", x, ++y, NULL);
+	Printer::hex((uint8)_vipRegisters[__BRTA], x + xDisplacement, y, 4, NULL);
+	Printer::text("BRTB:", x, ++y, NULL);
+	Printer::hex((uint8)_vipRegisters[__BRTB], x + xDisplacement, y, 4, NULL);
+	Printer::text("BRTC:", x, ++y, NULL);
+	Printer::hex((uint8)_vipRegisters[__BRTC], x + xDisplacement, y, 4, NULL);
+	Printer::text("REST:", x, ++y, NULL);
+	Printer::hex(_vipRegisters[__REST], x + xDisplacement, y, 4, NULL);
+	Printer::text("FRMCYC:", x, ++y, NULL);
+	Printer::hex(_vipRegisters[__FRMCYC], x + xDisplacement, y, 4, NULL);
+	Printer::text("CTA:", x, ++y, NULL);
+	Printer::hex(_vipRegisters[__CTA], x + xDisplacement, y, 4, NULL);
+	Printer::text("XPSTTS:", x, ++y, NULL);
+	Printer::hex(_vipRegisters[__XPSTTS], x + xDisplacement, y, 4, NULL);
+	Printer::text("XPCTRL:", x, ++y, NULL);
+	Printer::hex(_vipRegisters[__XPCTRL], x + xDisplacement, y, 4, NULL);
+	Printer::text("VER:", x, ++y, NULL);
+	Printer::hex(_vipRegisters[__VER], x + xDisplacement, y, 4, NULL);
+}
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PRIVATE METHODS
@@ -696,61 +806,6 @@ secure void VIPManager::applyPostProcessingEffects()
 				this->currentDrawingFrameBufferSet, postProcessingEffectRegistry->entity
 			);
 		}
-	}
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-secure void VIPManager::clearDRAM()
-{
-	uint8* bgmapStartAddress = (uint8*)__BGMAP_SPACE_BASE_ADDRESS;
-
-	// Clear every bgmap segment
-	for(bgmapStartAddress = 0; bgmapStartAddress < (uint8*)__PARAM_TABLE_END; bgmapStartAddress++)
-	{
-		*bgmapStartAddress = 0;
-	}
-
-	Mem::clear((BYTE*) __CHAR_SPACE_BASE_ADDRESS, 8192 * 4);
-
-	for(int32 i = 0; i < __TOTAL_LAYERS; i++)
-	{
-		_worldAttributesCache[i].head = 0;
-		_worldAttributesCache[i].gx = 0;
-		_worldAttributesCache[i].gp = 0;
-		_worldAttributesCache[i].gy = 0;
-		_worldAttributesCache[i].mx = 0;
-		_worldAttributesCache[i].mp = 0;
-		_worldAttributesCache[i].my = 0;
-		_worldAttributesCache[i].w = 0;
-		_worldAttributesCache[i].h = 0;
-		_worldAttributesCache[i].param = 0;
-		_worldAttributesCache[i].ovr = 0;
-
-		_worldAttributesBaseAddress[i].head = 0;
-		_worldAttributesBaseAddress[i].gx = 0;
-		_worldAttributesBaseAddress[i].gp = 0;
-		_worldAttributesBaseAddress[i].gy = 0;
-		_worldAttributesBaseAddress[i].mx = 0;
-		_worldAttributesBaseAddress[i].mp = 0;
-		_worldAttributesBaseAddress[i].my = 0;
-		_worldAttributesBaseAddress[i].w = 0;
-		_worldAttributesBaseAddress[i].h = 0;
-		_worldAttributesBaseAddress[i].param = 0;
-		_worldAttributesBaseAddress[i].ovr = 0;
-	}
-
-	for(int32 i = 0; i < __TOTAL_OBJECTS; i++)
-	{
-		_objectAttributesCache[i].jx = 0;
-		_objectAttributesCache[i].head = 0;
-		_objectAttributesCache[i].jy = 0;
-		_objectAttributesCache[i].tile = 0;
-
-		_objectAttributesBaseAddress[i].jx = 0;
-		_objectAttributesBaseAddress[i].head = 0;
-		_objectAttributesBaseAddress[i].jy = 0;
-		_objectAttributesBaseAddress[i].tile = 0;
 	}
 }
 

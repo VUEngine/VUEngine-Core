@@ -30,13 +30,16 @@ class CharSet;
 #define __BYTES_PER_CHARS(n)				((n) << 4)
 
 // CHARS PER BYTE
-#define __CHARS_PER_BYTE(n)				((n) >> 4)
+#define __CHARS_PER_BYTE(n)					((n) >> 4)
 
 // uint32s per CHAR
 #define __UINT32S_PER_CHARS(n)				((n) << 2)
 
 // Compression types
 #define __CHAR_SET_COMPRESSION_RLE			0x00000001	
+
+// Start address for CHAR memory
+#define __CHAR_SPACE_BASE_ADDRESS			0x00078000
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DATA

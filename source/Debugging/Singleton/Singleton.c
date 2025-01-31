@@ -210,6 +210,7 @@ const ClassPointer TimerManagerAuthorizedClasses[] =
 
 const ClassPointer VIPManagerAuthorizedClasses[] =
 {
+	typeofclass(CommunicationManager),
 	typeofclass(GameState),
 	typeofclass(HardwareManager),
 	typeofclass(SpriteManager),

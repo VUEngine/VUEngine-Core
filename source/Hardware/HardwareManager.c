@@ -11,6 +11,7 @@
 // INCLUDES
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+#include <BgmapTexture.h>
 #include <CommunicationManager.h>
 #include <FrameBufferManager.h>
 #include <DebugConfig.h>
@@ -18,6 +19,7 @@
 #include <Printer.h>
 #include <RumbleManager.h>
 #include <SoundManager.h>
+#include <Sprite.h>
 #include <SRAMManager.h>
 #include <TimerManager.h>
 #include <Utilities.h>
@@ -27,7 +29,7 @@
 #include "HardwareManager.h"
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-// FORWARD DECLARATIONS
+// CLASS' DECLARATIONS
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 extern uint32 keyVector;
@@ -179,36 +181,7 @@ static void HardwareManager::print(int32 x, int32 y)
 	x += 11;
 	xDisplacement = 8;
 
-	Printer::text("VIP\nRegisters", x, ++auxY, NULL);
-	auxY+=2;
-	Printer::text("INTPND:", x, ++auxY, NULL);
-	Printer::hex(_vipRegisters[__INTPND], x + xDisplacement, auxY, 4, NULL);
-	Printer::text("INTENB:", x, ++auxY, NULL);
-	Printer::hex(_vipRegisters[__INTENB], x + xDisplacement, auxY, 4, NULL);
-	Printer::text("INTCLR:", x, ++auxY, NULL);
-	Printer::hex(_vipRegisters[__INTCLR], x + xDisplacement, auxY, 4, NULL);
-	Printer::text("DPSTTS:", x, ++auxY, NULL);
-	Printer::hex(_vipRegisters[__DPSTTS], x + xDisplacement, auxY, 4, NULL);
-	Printer::text("DPCTRL:", x, ++auxY, NULL);
-	Printer::hex(_vipRegisters[__DPCTRL], x + xDisplacement, auxY, 4, NULL);
-	Printer::text("BRTA:", x, ++auxY, NULL);
-	Printer::hex((uint8)_vipRegisters[__BRTA], x + xDisplacement, auxY, 4, NULL);
-	Printer::text("BRTB:", x, ++auxY, NULL);
-	Printer::hex((uint8)_vipRegisters[__BRTB], x + xDisplacement, auxY, 4, NULL);
-	Printer::text("BRTC:", x, ++auxY, NULL);
-	Printer::hex((uint8)_vipRegisters[__BRTC], x + xDisplacement, auxY, 4, NULL);
-	Printer::text("REST:", x, ++auxY, NULL);
-	Printer::hex(_vipRegisters[__REST], x + xDisplacement, auxY, 4, NULL);
-	Printer::text("FRMCYC:", x, ++auxY, NULL);
-	Printer::hex(_vipRegisters[__FRMCYC], x + xDisplacement, auxY, 4, NULL);
-	Printer::text("CTA:", x, ++auxY, NULL);
-	Printer::hex(_vipRegisters[__CTA], x + xDisplacement, auxY, 4, NULL);
-	Printer::text("XPSTTS:", x, ++auxY, NULL);
-	Printer::hex(_vipRegisters[__XPSTTS], x + xDisplacement, auxY, 4, NULL);
-	Printer::text("XPCTRL:", x, ++auxY, NULL);
-	Printer::hex(_vipRegisters[__XPCTRL], x + xDisplacement, auxY, 4, NULL);
-	Printer::text("VER:", x, ++auxY, NULL);
-	Printer::hex(_vipRegisters[__VER], x + xDisplacement, auxY, 4, NULL);
+	VIPManager::print(x, y);
 
 //	Printer::hex(HardwareManager::readKeypad(HardwareManager::getInstance()), 38, 5, 4, NULL);
 }

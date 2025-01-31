@@ -18,6 +18,13 @@
 #include <BgmapTexture.h>
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+// CLASS' MACROS
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+// Size of each BGMAP segment in BGMAP space
+#define __BGMAP_SEGMENT_SIZE		8192
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DATA
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
@@ -66,6 +73,9 @@ singleton class BgmapTextureManager : Object
 
 	/// Reset the manager's state.
 	void reset();
+
+	/// Erase the contents of BGMAP memory space.
+	void clearDRAM();
 
 	/// Update texture pending rewriting of data in DRAM.
 	/// @param maximumTextureRowsToWrite: Number of texture rows to write during this call

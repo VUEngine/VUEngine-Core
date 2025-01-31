@@ -14,17 +14,21 @@
 #include <string.h>
 
 #include <BgmapSprite.h>
+#include <BgmapTexture.h>
 #include <CharSetManager.h>
+#include <BgmapTextureManager.h>
 #include <Clock.h>
 #include <DebugConfig.h>
 #include <Mem.h>
 #include <ObjectSprite.h>
+#include <ObjectTexture.h>
 #include <ObjectSpriteContainer.h>
 #include <ParamTableManager.h>
 #include <Printer.h>
 #include <Sprite.h>
 #include <VirtualList.h>
 #include <VirtualNode.h>
+#include <VIPManager.h>
 
 #include "SpriteManager.h"
 
@@ -39,9 +43,16 @@ friend class Texture;
 friend class VirtualNode;
 friend class VirtualList;
 
+extern volatile uint16* _vipRegisters __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE;
+
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' MACROS
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+#define __SPT0									0x24  // OBJ Group 0 Pointer
+#define __SPT1									0x25  // OBJ Group 1 Pointer
+#define __SPT2									0x26  // OBJ Group 2 Pointer
+#define __SPT3									0x27  // OBJ Group 3 Pointer
 
 #define __MAX_SPRITE_CLASS_NAME_SIZE			14
 
@@ -55,6 +66,10 @@ int32 _writtenTiles = 0;
 int32 _writtenTextureTiles = 0;
 int32 _writtenObjectTiles = 0;
 #endif
+
+// Pointers to access the DRAM space
+WorldAttributes* const _worldAttributesBaseAddress = (WorldAttributes*)__WORLD_SPACE_BASE_ADDRESS;
+ObjectAttributes* const _objectAttributesBaseAddress = (ObjectAttributes*)__OBJECT_SPACE_BASE_ADDRESS;
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PUBLIC METHODS
@@ -154,6 +169,7 @@ void SpriteManager::enable()
 {
 	Base::enable(this);
 
+	SpriteManager::clearDRAM(this);
 	Printer::reset(Printer::getInstance());
 	CharSetManager::reset(CharSetManager::getInstance());
 	ParamTableManager::reset(ParamTableManager::getInstance());
@@ -1252,6 +1268,54 @@ void SpriteManager::startListeningForVIP()
 void SpriteManager::stopListeningForVIP()
 {
 	VIPManager::removeEventListener(VIPManager::getInstance(), ListenerObject::safeCast(this), kEventVIPManagerXPEND);
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void SpriteManager::clearDRAM()
+{
+	CharSetManager::clearDRAM(CharSetManager::getInstance());
+	BgmapTextureManager::clearDRAM(BgmapTextureManager::getInstance());
+
+	for(int32 i = 0; i < __TOTAL_LAYERS; i++)
+	{
+		_worldAttributesCache[i].head = 0;
+		_worldAttributesCache[i].gx = 0;
+		_worldAttributesCache[i].gp = 0;
+		_worldAttributesCache[i].gy = 0;
+		_worldAttributesCache[i].mx = 0;
+		_worldAttributesCache[i].mp = 0;
+		_worldAttributesCache[i].my = 0;
+		_worldAttributesCache[i].w = 0;
+		_worldAttributesCache[i].h = 0;
+		_worldAttributesCache[i].param = 0;
+		_worldAttributesCache[i].ovr = 0;
+
+		_worldAttributesBaseAddress[i].head = 0;
+		_worldAttributesBaseAddress[i].gx = 0;
+		_worldAttributesBaseAddress[i].gp = 0;
+		_worldAttributesBaseAddress[i].gy = 0;
+		_worldAttributesBaseAddress[i].mx = 0;
+		_worldAttributesBaseAddress[i].mp = 0;
+		_worldAttributesBaseAddress[i].my = 0;
+		_worldAttributesBaseAddress[i].w = 0;
+		_worldAttributesBaseAddress[i].h = 0;
+		_worldAttributesBaseAddress[i].param = 0;
+		_worldAttributesBaseAddress[i].ovr = 0;
+	}
+
+	for(int32 i = 0; i < __TOTAL_OBJECTS; i++)
+	{
+		_objectAttributesCache[i].jx = 0;
+		_objectAttributesCache[i].head = 0;
+		_objectAttributesCache[i].jy = 0;
+		_objectAttributesCache[i].tile = 0;
+
+		_objectAttributesBaseAddress[i].jx = 0;
+		_objectAttributesBaseAddress[i].head = 0;
+		_objectAttributesBaseAddress[i].jy = 0;
+		_objectAttributesBaseAddress[i].tile = 0;
+	}
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

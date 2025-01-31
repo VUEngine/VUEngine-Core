@@ -24,10 +24,33 @@
 #include "CameraEffectManager.h"
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+// CLASS' MACROS
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+// These are redefintions that shouldn't exist here. The manager should not access the registers directly
+// but should read and write to the through the VIPManager's interface.
+
+#define __BRTA						0x12  // Brightness A
+#define __BRTB						0x13  // Brightness B
+#define __BRTC						0x14  // Brightness C
+
+#define __GPLT0						0x30  // BGMap Palette 0
+#define __GPLT1						0x31  // BGMap Palette 1
+#define __GPLT2						0x32  // BGMap Palette 2
+#define __GPLT3						0x33  // BGMap Palette 3
+
+#define __JPLT0						0x34  // OBJ Palette 0
+#define __JPLT1						0x35  // OBJ Palette 1
+#define __JPLT2						0x36  // OBJ Palette 2
+#define __JPLT3						0x37  // OBJ Palette 3
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DECLARATIONS
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 friend class Camera;
+
+extern volatile uint16* _vipRegisters __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE;
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PUBLIC METHODS

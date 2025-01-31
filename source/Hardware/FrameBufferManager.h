@@ -20,7 +20,12 @@
 // CLASS' MACROS
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-#define __FRAME_BUFFERS_SIZE								0x6000
+#define __FRAME_BUFFERS_SIZE			0x6000
+
+#define __LEFT_FRAME_BUFFER_0			0x00000000	// Left Frame Buffer 0
+#define __LEFT_FRAME_BUFFER_1			0x00008000	// Left Frame Buffer 1
+#define __RIGHT_FRAME_BUFFER_0			0x00010000	// Right Frame Buffer 0
+#define __RIGHT_FRAME_BUFFER_1			0x00018000	// Right Frame Buffer 1
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DECLARATION

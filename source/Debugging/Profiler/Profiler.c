@@ -26,6 +26,12 @@
 #include "Profiler.h"
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+// CLASS' DECLARATIONS
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+extern volatile uint16* _vipRegisters __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE;
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' MACROS
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
@@ -79,16 +85,18 @@ static void Profiler::initialize()
 
 	profiler->initialized = true;
 
-	_vipRegisters[__GPLT0] = 0x50;
-	_vipRegisters[__GPLT1] = 0x50;
-	_vipRegisters[__GPLT2] = 0x50;
-	_vipRegisters[__GPLT3] = 0x50;
-	_vipRegisters[__JPLT0] = 0x50;
-	_vipRegisters[__JPLT1] = 0x50;
-	_vipRegisters[__JPLT2] = 0x50;
-	_vipRegisters[__JPLT3] = 0x50;
+	PaletteConfig paletteConfig =
+	{
+		{0x50, 0x50, 0x50, 0x50},
+		{0x50, 0x50, 0x50, 0x50}
+	};
 
-	_vipRegisters[0x30 | __PRINTING_PALETTE] = 0xE0;
+	if(4 > (unsigned)__PRINTING_PALETTE)
+	{
+		((uint8*)&paletteConfig.bgmap)[__PRINTING_PALETTE] = 0xE0;
+	}
+
+	VIPManager::configurePalettes(&paletteConfig);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

@@ -69,19 +69,18 @@ void Tool::destructor()
 
 void Tool::dimmGame()
 {
-	// Doens't work that well
-	/*
-	_vipRegisters[__GPLT0] = 0x50;
-	_vipRegisters[__GPLT1] = 0x50;
-	_vipRegisters[__GPLT2] = 0x50;
-	_vipRegisters[__GPLT3] = 0x50;
-	_vipRegisters[__JPLT0] = 0x50;
-	_vipRegisters[__JPLT1] = 0x50;
-	_vipRegisters[__JPLT2] = 0x50;
-	_vipRegisters[__JPLT3] = 0x50;
+	PaletteConfig paletteConfig =
+	{
+		{0x50, 0x50, 0x50, 0x50},
+		{0x50, 0x50, 0x50, 0x50}
+	};
 
-	_vipRegisters[0x30 | __PRINTING_PALETTE] = 0x90;
-	*/
+	if(4 > (unsigned)__PRINTING_PALETTE)
+	{
+		((uint8*)&paletteConfig.bgmap)[__PRINTING_PALETTE] = 0x90;
+	}
+
+	VIPManager::configurePalettes(&paletteConfig);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

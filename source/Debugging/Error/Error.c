@@ -17,11 +17,17 @@
 #include <DebugConfig.h>
 #include <HardwareManager.h>
 #include <Printer.h>
+#include <Sprite.h>
 #include <TimerManager.h>
 #include <VIPManager.h>
-#include <VUEngine.h>
 
 #include "Error.h"
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+// CLASS' DECLARATIONS
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+extern WorldAttributes* const _worldAttributesBaseAddress;
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' MACROS
@@ -66,23 +72,25 @@ static void Error::triggerException(char* message __attribute__((unused)), char*
 	int32 x = 0 <= __EXCEPTION_COLUMN && __EXCEPTION_COLUMN <= 24 ? __EXCEPTION_COLUMN : 0;
 	int32 y = 0 <= __EXCEPTION_LINE && __EXCEPTION_LINE <= 28 ? __EXCEPTION_LINE : 0;
 
-	// Disable vip interrupts
-	_vipRegisters[__INTENB]= 0;
-	_vipRegisters[__INTCLR] = _vipRegisters[__INTPND];
-
 	// Disable timer
-	_hardwareRegisters[__TCR] &= ~(__TIMER_ENB | __TIMER_INT);
+	TimerManager::disable();
 
 	// Turn on the display
-	_vipRegisters[__REST] = 0;
-	_vipRegisters[__DPCTRL] = _vipRegisters[__DPSTTS] | (__SYNCE | __RE | __DISP);
-	_vipRegisters[__FRMCYC] = 0;
-	_vipRegisters[__XPCTRL] = _vipRegisters[__XPSTTS] | __XPEN;
+	VIPManager::startDisplaying(VIPManager::getInstance());
+	VIPManager::startDrawing(VIPManager::getInstance());
+
+	// Disable interrupts
+	HardwareManager::disableInterrupts();
 
 	// Make sure the brightness is ok
-	_vipRegisters[__BRTA] = 32;
-	_vipRegisters[__BRTB] = 64;
-	_vipRegisters[__BRTC] = 32;
+	Brightness brightness =
+	{
+		32,
+		64,
+		32
+	};
+	
+	VIPManager::configureBrightness(&brightness);
 
 	VIPManager::configureBackgroundColor(__COLOR_BLACK);
 
@@ -171,14 +179,13 @@ static void Error::triggerException(char* message __attribute__((unused)), char*
 	_worldAttributesBaseAddress[__EXCEPTIONS_WORLD - 1].head = __WORLD_END;
 
 	// Dimm game
-	_vipRegisters[__GPLT0] = 0xE4;
-	_vipRegisters[__GPLT1] = __DIMM_VALUE_2;
-	_vipRegisters[__GPLT2] = __DIMM_VALUE_1;
-	_vipRegisters[__GPLT3] = __DIMM_VALUE_1;
-	_vipRegisters[__JPLT0] = __DIMM_VALUE_1;
-	_vipRegisters[__JPLT1] = __DIMM_VALUE_1;
-	_vipRegisters[__JPLT2] = __DIMM_VALUE_1;
-	_vipRegisters[__JPLT3] = __DIMM_VALUE_1;
+	PaletteConfig paletteConfig =
+	{
+		{0xE4, __DIMM_VALUE_2, __DIMM_VALUE_2, __DIMM_VALUE_2},
+		{__DIMM_VALUE_2, __DIMM_VALUE_2, __DIMM_VALUE_2, __DIMM_VALUE_2}
+	};
+	
+	VIPManager::configurePalettes(&paletteConfig);
 
 	// Trap the game here
 	while(true);

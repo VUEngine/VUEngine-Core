@@ -264,10 +264,7 @@ void CommunicationManager::startSyncCycle()
 		return;
 	}
 
-	extern volatile uint16* _vipRegisters;
-
-	_vipRegisters[__FRMCYC] = 0;
-	_vipRegisters[__DPCTRL] = _vipRegisters[__DPSTTS] | (__SYNCE | __RE);
+	VIPManager::startMemoryRefresh(VIPManager::getInstance());
 
 	CommunicationManager::cancelCommunications(this);
 
@@ -281,7 +278,9 @@ void CommunicationManager::startSyncCycle()
 		while(__REMOTE_READY_MESSAGE != message);
 
 		message = __MASTER_FRMCYC_SET_MESSAGE;
-		while(!(_vipRegisters[__DPSTTS] & __FCLK));
+
+		VIPManager::waitForFRAMESTART(VIPManager::getInstance());
+
 		CommunicationManager::sendData(this, (BYTE*)&message, sizeof(message));
 	}
 	else

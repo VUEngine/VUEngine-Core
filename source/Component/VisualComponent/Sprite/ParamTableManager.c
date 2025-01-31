@@ -12,6 +12,8 @@
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <BgmapSprite.h>
+#include <BgmapTexture.h>
+#include <BgmapTextureManager.h>
 #include <Printer.h>
 #include <Singleton.h>
 #include <VirtualList.h>

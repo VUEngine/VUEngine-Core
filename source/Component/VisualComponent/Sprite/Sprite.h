@@ -15,12 +15,71 @@
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <Texture.h>
-#include <VIPManager.h>
 #include <VisualComponent.h>
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+// CLASS' MACROS
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+// Start address of WORLD space
+#define __WORLD_SPACE_BASE_ADDRESS				0x0003D800	
+
+#define __WORLD_OFF								0x0000
+#define __WORLD_ON								0xC000
+#define __WORLD_LON								0x8000
+#define __WORLD_RON								0x4000
+#define __WORLD_OBJECT							0x3000
+#define __WORLD_AFFINE							0x2000
+#define __WORLD_HBIAS							0x1000
+#define __WORLD_BGMAP							0x0000
+
+#define __WORLD_1x1								0x0000
+#define __WORLD_1x2								0x0100
+#define __WORLD_1x4								0x0200
+#define __WORLD_1x8								0x0300
+#define __WORLD_2x1								0x0400
+#define __WORLD_2x2								0x0500
+#define __WORLD_2x4								0x0600
+#define __WORLD_4x1								0x0800
+#define __WORLD_4x2								0x0900
+#define __WORLD_8x1								0x0C00
+
+#define __WORLD_OVR								0x0080
+#define __WORLD_END								0x0040
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DATA
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+/// Represents an entry in WORLD space in DRAM
+/// @memberof VIPManager
+typedef struct WorldAttributes
+{
+	uint16 head;
+	int16 gx;
+	int16 gp;
+	int16 gy;
+	uint16 mx;
+	int16 mp;
+	uint16 my;
+	uint16 w;
+	uint16 h;
+	uint16 param;
+	uint16 ovr;
+	uint16 spacer[5];
+
+} WorldAttributes;
+
+/// Represents an entry in OBJECT space in DRAM
+/// @memberof VIPManager
+typedef struct ObjectAttributes
+{
+	int16 jx;
+	int16 head;
+	int16 jy;
+	int16 tile;
+
+} ObjectAttributes;
 
 /// A Sprite Spec
 /// @memberof Sprite
@@ -47,6 +106,14 @@ typedef struct SpriteSpec
 /// A Sprite spec that is stored in ROM
 /// @memberof Sprite
 typedef const SpriteSpec SpriteROMSpec;
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+// FORWARD DECLARATIONS
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+// Pointers to access DRAM caches
+extern WorldAttributes _worldAttributesCache[__TOTAL_LAYERS];
+extern ObjectAttributes _objectAttributesCache[__TOTAL_OBJECTS];
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DECLARATION

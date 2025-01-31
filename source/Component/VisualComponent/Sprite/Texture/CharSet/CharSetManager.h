@@ -47,6 +47,9 @@ singleton class CharSetManager : Object
 	/// Empties internal virtual list of registered fonts
 	void reset();
 
+	/// Erase the contents of CHAR memory space.
+	void clearDRAM();
+
 	/// Load char sets in function of the provided array of specs.
 	/// @param charSetSpecs: Array of char set specs in function of which to load char sets 
 	void loadCharSets(const CharSetSpec** charSetSpecs);

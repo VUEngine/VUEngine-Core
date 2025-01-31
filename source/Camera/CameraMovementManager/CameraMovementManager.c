@@ -15,7 +15,6 @@
 #include <Camera.h>
 #include <DebugConfig.h>
 #include <Singleton.h>
-#include <VIPManager.h>
 
 #include "CameraMovementManager.h"
 
