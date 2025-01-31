@@ -30,6 +30,7 @@ enum MessagesTypes
 	kMessageActorRemoved,
 
 	// Keypad massages
+	kMessageEnableKeypad,
 	kMessageKeyPressed,
 	kMessageKeyReleased,
 	kMessageKeyHold,

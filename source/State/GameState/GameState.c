@@ -113,6 +113,12 @@ bool GameState::handleMessage(Telegram telegram)
 
 			VUEngine::setGameFrameRate(this->framerate);
 			break;
+
+		case kMessageEnableKeypad:
+
+			KeypadManager::enable();
+			break;
+
 	}
 
 	return false;
@@ -259,6 +265,13 @@ void GameState::unpause(void* owner)
 		// Call custom code implementation
 		GameState::resume(this, owner);
 	}
+#ifdef __TOOLS
+	else
+	{
+		KeypadManager::disable();
+		GameState::sendMessageToSelf(this, kMessageEnableKeypad, 500, 0);
+	}
+#endif
 
 	GameState::unpauseClock(this, kGameStateMessagingClock);
 

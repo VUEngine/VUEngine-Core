@@ -20,6 +20,7 @@
 #include <SoundTestState.h>
 #include <Tool.h>
 #include <VUEngine.h>
+#include <WireframeManager.h>
 
 #include "ToolState.h"
 
