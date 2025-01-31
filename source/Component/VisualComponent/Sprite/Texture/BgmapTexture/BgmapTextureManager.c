@@ -85,6 +85,12 @@ secure void BgmapTextureManager::clearDRAM()
 	{
 		*bgmapStartAddress = 0;
 	}
+
+	Mem::clear
+	(
+		(BYTE*)__BGMAP_SEGMENT(this->printingBgmapSegment + 1) - 
+		__PRINTABLE_BGMAP_AREA * 2, __PRINTABLE_BGMAP_AREA * 2
+	);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
