@@ -64,7 +64,7 @@ void SoundTest::show()
 	Printer::clear();
 #ifdef __TOOLS
 	SpriteManager spriteManager = 
-		SpriteManager::safeCast(ToolState::getComponentManager(ToolState::getCurrentGameState(this->toolState), kSpriteComponent));
+		SpriteManager::safeCast(ToolState::getComponentManager(this->toolState, kSpriteComponent));
 
 	SpriteManager::hideAllSprites(spriteManager, NULL, false);
 #endif
@@ -88,7 +88,7 @@ void SoundTest::hide()
 	Printer::clear();
 #ifdef __TOOLS
 	SpriteManager spriteManager = 
-		SpriteManager::safeCast(ToolState::getComponentManager(ToolState::getCurrentGameState(this->toolState), kSpriteComponent));
+		SpriteManager::safeCast(ToolState::getComponentManager(this->toolState, kSpriteComponent));
 
 	SpriteManager::showAllSprites(spriteManager, NULL, true);
 #endif

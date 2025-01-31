@@ -117,7 +117,7 @@ void Debug::show()
 	Printer::setCoordinates(0, 0, -64, -2);
 
 	SpriteManager spriteManager = 
-		SpriteManager::safeCast(ToolState::getComponentManager(ToolState::getCurrentGameState(this->toolState), kSpriteComponent));
+		SpriteManager::safeCast(ToolState::getComponentManager(this->toolState, kSpriteComponent));
 
 	SpriteManager::showAllSprites(spriteManager, NULL, true);
 	SpriteManager::computeTotalPixelsDrawn(spriteManager, );
@@ -137,7 +137,7 @@ void Debug::hide()
 	Printer::clear();
 
 	SpriteManager spriteManager = 
-		SpriteManager::safeCast(ToolState::getComponentManager(ToolState::getCurrentGameState(this->toolState), kSpriteComponent));
+		SpriteManager::safeCast(ToolState::getComponentManager(this->toolState, kSpriteComponent));
 
 	SpriteManager::showAllSprites(spriteManager, NULL, true);
 }
@@ -221,7 +221,7 @@ void Debug::destructor()
 
 ColliderManager Debug::getColliderManager()
 {
-	return ColliderManager::safeCast(ToolState::getComponentManager(ToolState::getCurrentGameState(this->toolState), kColliderComponent));
+	return ColliderManager::safeCast(ToolState::getComponentManager(this->toolState, kColliderComponent));
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -255,7 +255,7 @@ uint8 Debug::getCurrentPageNumber()
 void Debug::setBlackBackground()
 {
 	SpriteManager spriteManager = 
-		SpriteManager::safeCast(ToolState::getComponentManager(ToolState::getCurrentGameState(this->toolState), kSpriteComponent));
+		SpriteManager::safeCast(ToolState::getComponentManager(this->toolState, kSpriteComponent));
 
 	SpriteManager::hideAllSprites(spriteManager, NULL, false);
 }
@@ -265,7 +265,7 @@ void Debug::setBlackBackground()
 void Debug::showPreviousPage()
 {
 	SpriteManager spriteManager = 
-		SpriteManager::safeCast(ToolState::getComponentManager(ToolState::getCurrentGameState(this->toolState), kSpriteComponent));
+		SpriteManager::safeCast(ToolState::getComponentManager(this->toolState, kSpriteComponent));
 
 	SpriteManager::showAllSprites(spriteManager, NULL, true);
 
@@ -284,7 +284,7 @@ void Debug::showPreviousPage()
 void Debug::showNextPage()
 {
 	SpriteManager spriteManager = 
-		SpriteManager::safeCast(ToolState::getComponentManager(ToolState::getCurrentGameState(this->toolState), kSpriteComponent));
+		SpriteManager::safeCast(ToolState::getComponentManager(this->toolState, kSpriteComponent));
 
 	SpriteManager::showAllSprites(spriteManager, NULL, true);
 
@@ -365,7 +365,7 @@ void Debug::showPage(int32 increment)
 		Printer::clear();
 
 		SpriteManager spriteManager = 
-			SpriteManager::safeCast(ToolState::getComponentManager(ToolState::getCurrentGameState(this->toolState), kSpriteComponent));
+			SpriteManager::safeCast(ToolState::getComponentManager(this->toolState, kSpriteComponent));
 
 		SpriteManager::showAllSprites(spriteManager, NULL, true);
 
@@ -1142,7 +1142,7 @@ void Debug::objectsShowStatus(int32 increment, int32 x, int32 y)
 	}
 
 	SpriteManager spriteManager = 
-		SpriteManager::safeCast(ToolState::getComponentManager(ToolState::getCurrentGameState(this->toolState), kSpriteComponent));
+		SpriteManager::safeCast(ToolState::getComponentManager(this->toolState, kSpriteComponent));
 
 	Printer::text("OBJECTS INSPECTOR", x, y++, NULL);
 	Debug::setBlackBackground(this);
@@ -1173,7 +1173,7 @@ void Debug::spritesShowStatus(int32 increment, int32 x, int32 y)
 	Debug::dimmGame(this);
 
 	SpriteManager spriteManager = 
-		SpriteManager::safeCast(ToolState::getComponentManager(ToolState::getCurrentGameState(this->toolState), kSpriteComponent));
+		SpriteManager::safeCast(ToolState::getComponentManager(this->toolState, kSpriteComponent));
 
 	int32 numberOfSprites = SpriteManager::getNumberOfSprites(spriteManager);
 
@@ -1221,7 +1221,7 @@ void Debug::physicsPage(int32 increment __attribute__ ((unused)), int32 x __attr
 
 void Debug::physicStatusShowStatistics(int32 increment __attribute__ ((unused)), int32 x, int32 y)
 {
-	BodyManager::print(BodyManager::safeCast(ToolState::getComponentManager(ToolState::getCurrentGameState(this->toolState), kPhysicsComponent)), x, y);
+	BodyManager::print(BodyManager::safeCast(ToolState::getComponentManager(this->toolState, kPhysicsComponent)), x, y);
 	ColliderManager::print(Debug::getColliderManager(this), x, y + 6);
 	ColliderManager::hideColliders(Debug::getColliderManager(this));
 
@@ -1235,7 +1235,7 @@ void Debug::physicStatusShowColliders(int32 increment __attribute__ ((unused)), 
 	Printer::text("COLLISION SHAPES", x, y++, NULL);
 
 	SpriteManager spriteManager = 
-		SpriteManager::safeCast(ToolState::getComponentManager(ToolState::getCurrentGameState(this->toolState), kSpriteComponent));
+		SpriteManager::safeCast(ToolState::getComponentManager(this->toolState, kSpriteComponent));
 
 	SpriteManager::showAllSprites(spriteManager, NULL, true);
 	Debug::dimmGame(this);

@@ -23,6 +23,8 @@
 
 #include "ToolState.h"
 
+friend class GameState;
+
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PUBLIC STATIC METHODS
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -194,13 +196,12 @@ Stage ToolState::getCurrentStage()
 
 ComponentManager ToolState::getComponentManager(uint32 componentType)
 {
-	if(kComponentTypes <= componentType)
+	if(kComponentTypes <= componentType || NULL == this->currentGameState)
 	{
-		NM_ASSERT(false, "ToolState::getComponentManager: invalid type");
 		return NULL;
 	}
 	
-	return this->componentManagers[componentType];	
+	return this->currentGameState->componentManagers[componentType];	
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

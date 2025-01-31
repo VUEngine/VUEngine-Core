@@ -101,7 +101,7 @@ void StageEditor::hide()
 {
 	ColliderManager::hideColliders
 	(
-		ColliderManager::safeCast(ToolState::getComponentManager(ToolState::getCurrentGameState(this->toolState), kColliderComponent))
+		ColliderManager::safeCast(ToolState::getComponentManager(this->toolState, kColliderComponent))
 	);
 
 	Printer::clear();

@@ -126,7 +126,7 @@ void AnimationInspector::show()
 	this->state = kFirstState + 1;
 	AnimationInspector::configureState(this);
 	SpriteManager spriteManager = 
-		SpriteManager::safeCast(ToolState::getComponentManager(ToolState::getCurrentGameState(this->toolState), kSpriteComponent));
+		SpriteManager::safeCast(ToolState::getComponentManager(this->toolState, kSpriteComponent));
 
 	SpriteManager::hideAllSprites(spriteManager, NULL, false);
 	
@@ -176,7 +176,7 @@ void AnimationInspector::hide()
 
 	// Make sure all textures are written right now
 	SpriteManager spriteManager = 
-		SpriteManager::safeCast(ToolState::getComponentManager(ToolState::getCurrentGameState(this->toolState), kSpriteComponent));
+		SpriteManager::safeCast(ToolState::getComponentManager(this->toolState, kSpriteComponent));
 
 	SpriteManager::writeTextures(spriteManager);
 	//SpriteManager::showAllSprites(spriteManager, NULL, true);
@@ -741,7 +741,7 @@ void AnimationInspector::createSprite()
 	this->sprite->updateAnimationFrame = true;
 
 	SpriteManager spriteManager = 
-		SpriteManager::safeCast(ToolState::getComponentManager(ToolState::getCurrentGameState(this->toolState), kSpriteComponent));
+		SpriteManager::safeCast(ToolState::getComponentManager(this->toolState, kSpriteComponent));
 
 	//SpriteManager::hideAllSprites(spriteManager, this->sprite, false);
 	SpriteManager::prepareAll(spriteManager);
