@@ -103,6 +103,11 @@ class BgmapSprite : Sprite
 	/// @return ClassPointer the basic class
 	override ClassPointer getBasicType();
 
+	/// Load a texture.
+	/// @param textureClass: Class of the texture to load
+	/// @param listenForRewriting: If true, a listener is added for the texture's rewriting event
+	override void loadTexture(ClassPointer textureClass, bool listenForRewriting);
+
 	/// Check if the sprite has affine or hbias effects.
 	/// @return True if the sprite's mode of display is (__WORLD_AFFINE or __WORLD_HBIAS)
 	override bool hasSpecialEffects();

@@ -101,6 +101,11 @@ class ObjectSprite : Sprite
 	/// @return ClassPointer the basic class
 	override ClassPointer getBasicType();
 
+	/// Load a texture.
+	/// @param textureClass: Class of the texture to load
+	/// @param listenForRewriting: If true, a listener is added for the texture's rewriting event
+	override void loadTexture(ClassPointer textureClass, bool listenForRewriting);
+
 	/// Render the sprite by configuring the DRAM assigned to it by means of the provided index.
 	/// @param index: Determines the region of DRAM that this sprite is allowed to configure
 	/// @return The index that determines the region of DRAM that this sprite manages

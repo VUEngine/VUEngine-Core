@@ -94,7 +94,6 @@ void BgmapSprite::constructor(Entity owner, const BgmapSpriteSpec* bgmapSpriteSp
 	this->applyParamTableEffect = bgmapSpriteSpec->applyParamTableEffect;
 
 	BgmapSprite::loadTexture(this, typeofclass(BgmapTexture), false);		
-	BgmapSprite::configureTexture(this);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -145,6 +144,15 @@ ClassPointer BgmapSprite::getBasicType()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+void BgmapSprite::loadTexture(ClassPointer textureClass __attribute__((unused)), bool listenForRewriting __attribute__((unused)))
+{
+	Base::loadTexture(this, typeofclass(BgmapTexture), false);
+
+	BgmapSprite::configureTexture(this);
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 bool BgmapSprite::hasSpecialEffects()
 {
 	return NULL != this->applyParamTableEffect && 0 != ((__WORLD_HBIAS | __WORLD_AFFINE ) & this->head);
@@ -178,14 +186,6 @@ void BgmapSprite::processEffects(int32 maximumParamTableRowsToComputePerCall)
 
 int16 BgmapSprite::doRender(int16 index)
 {
-	if(NULL == this->texture)
-	{
-		BgmapSprite::loadTexture(this, typeofclass(BgmapTexture), false);		
-		BgmapSprite::configureTexture(this);
-
-		return __NO_RENDER_INDEX;
-	}
-
 	NM_ASSERT(!isDeleted(this->texture), "BgmapSprite::doRender: null texture");
 
 	WorldAttributes* worldPointer = &_worldAttributesCache[index];

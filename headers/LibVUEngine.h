@@ -21,6 +21,9 @@
 #include <HardwareManager.h>
 #include <Constants.h>
 #include <Math.h>
+#ifndef __SHIPPING
+#include <Printer.h>
+#endif
 #include <Optical.h>
 #include <Rotation.h>
 #include <Scale.h>

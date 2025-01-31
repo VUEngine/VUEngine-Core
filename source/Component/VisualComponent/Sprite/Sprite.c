@@ -224,6 +224,13 @@ bool Sprite::prepareToRender()
 		return true;
 	}
 
+	if(NULL == this->texture)
+	{
+		Sprite::loadTexture(this, NULL, true);
+
+		return NULL != this->texture;
+	}
+
 	if(kTextureInvalid == this->texture->status || isDeleted(this->texture->charSet))
 	{
 		return false;
@@ -615,7 +622,7 @@ void Sprite::loadTexture(ClassPointer textureClass, bool listenForRewriting)
 		return;
 	}
 
-	this->texture = Texture::get(textureClass, ((SpriteSpec*)this->componentSpec)->textureSpec, 0, false, __WORLD_1x1);
+	this->texture = Texture::get(textureClass, ((SpriteSpec*)this->componentSpec)->textureSpec, 0, false, 0);
 
 	if(!isDeleted(this->texture) && listenForRewriting)
 	{
