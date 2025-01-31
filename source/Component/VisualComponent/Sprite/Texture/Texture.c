@@ -344,7 +344,7 @@ bool Texture::decreaseUsageCount()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-uint8 Texture::getUsageCount()
+int8 Texture::getUsageCount()
 {
 	return this->usageCount;
 }

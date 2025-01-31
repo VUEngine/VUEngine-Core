@@ -114,7 +114,7 @@ abstract class Texture : ListenerObject
 	uint8 status;
 
 	/// Number of references to this texture instance
-	uint8 usageCount;
+	int8 usageCount;
 
 	/// Flag to signal that the texture needs to update DRAM in the next render cycle
 	bool update;
@@ -189,7 +189,7 @@ abstract class Texture : ListenerObject
 
 	/// Retrieve the usage count.
 	/// @return Usage count
-	uint8 getUsageCount();
+	int8 getUsageCount();
 
 	/// Set the palette index to use by the graphical data.
 	/// @param palette: Palette index to use by the graphical data

@@ -91,7 +91,7 @@ void CharSet::increaseUsageCount()
 
 bool CharSet::decreaseUsageCount()
 {
-	if(0 > (unsigned)--this->usageCount)
+	if(0 > --this->usageCount)
 	{
 		this->usageCount = 0;
 	}
@@ -101,7 +101,7 @@ bool CharSet::decreaseUsageCount()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-uint8 CharSet::getUsageCount()
+int8 CharSet::getUsageCount()
 {
 	return this->usageCount;
 }
@@ -240,8 +240,6 @@ void CharSet::setFrame(uint16 frame)
 	if(!this->written || this->tilesDisplacement != tilesDisplacement)
 	{
 		this->tilesDisplacement = tilesDisplacement;
-
-		NM_ASSERT(0 <= this->tilesDisplacement, "CharSet::setFrame: negative tilesDisplacement");
 
 		CharSet::write(this);
 	}

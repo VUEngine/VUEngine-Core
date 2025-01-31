@@ -93,7 +93,7 @@ class CharSet : ListenerObject
 	bool written;
 
 	/// Number of references to this char set instance
-	uint8 usageCount;
+	int8 usageCount;
 
 	/// @publicsection
 
@@ -120,7 +120,7 @@ class CharSet : ListenerObject
 
 	/// Retrieve the usage count.
 	/// @return Usage count
-	uint8 getUsageCount();
+	int8 getUsageCount();
 
 	/// Check if the CharSet has a non NULL array of frame offests.
 	/// @return True if the CharSet has an array of animation frames
