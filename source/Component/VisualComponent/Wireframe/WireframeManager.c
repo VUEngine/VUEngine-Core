@@ -167,7 +167,6 @@ void WireframeManager::render()
 	this->renderedWireframes = 0;
 #endif
 
-	HardwareManager::suspendInterrupts();
 
 	for(VirtualNode node = this->components->head, nextNode = NULL; NULL != node; node = nextNode)
 	{
@@ -205,7 +204,12 @@ void WireframeManager::render()
 			continue;
 		}
 
+		HardwareManager::suspendInterrupts();
+	
 		Wireframe::render(wireframe, relativePosition);
+
+		HardwareManager::resumeInterrupts();
+
 		wireframe->rendered = true;
 
 #ifdef __PROFILE_WIREFRAMES
@@ -213,7 +217,6 @@ void WireframeManager::render()
 #endif
 	}
 
-	HardwareManager::resumeInterrupts();
 
 #ifdef __PROFILE_WIREFRAMES
 	WireframeManager::print(this, 1, 1);
