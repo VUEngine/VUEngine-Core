@@ -268,6 +268,9 @@ TextureROMSpec* const {{ spriteName }}TextureSpecs[] =
 			kSpriteComponent
 		},
 
+		// Is animated?
+		false,
+
 		// Spec for the texture to display
 		{%- if spriteAllocatorClass == 'MBgmapSprite' or spriteAllocatorClass == 'MBgmapSprite' %}
 		NULL,
@@ -282,6 +285,13 @@ TextureROMSpec* const {{ spriteName }}TextureSpecs[] =
 		{{ '{' ~ sprite.displacement.x ~ ', ' ~ sprite.displacement.y ~ ', ' ~ sprite.displacement.z ~ ', ' ~ sprite.displacement.parallax ~ '}' }},
 	},
 
+	// Flag to indicate in which display to show the texture (__WORLD_ON, __WORLD_LON or __WORLD_RON)
+	{% if isStereo -%}
+	__WORLD_{{ eye }}ON,
+	{%- else -%}
+	__WORLD_{{ sprite.displays }},
+	{%- endif %}
+
 	// The display mode (__WORLD_BGMAP, __WORLD_AFFINE, __WORLD_OBJECT or __WORLD_HBIAS)
 	// make sure to use the proper corresponding sprite type throughout the spec (BgmapSprite or ObjectSprite)
 	{%- if item.sprites.type == 'Object' %}
@@ -293,13 +303,6 @@ TextureROMSpec* const {{ spriteName }}TextureSpecs[] =
 	{%- if item.sprites.type != 'Object' %}
 	// Pointer to affine/hbias manipulation function
 	{% if sprite.manipulationFunction %}(ParamTableEffectMethod){{ sprite.manipulationFunction }}{% else %}NULL{% endif %},
-	{%- endif %}
-
-	// Flag to indicate in which display to show the texture (__WORLD_ON, __WORLD_LON or __WORLD_RON)
-	{% if isStereo -%}
-	__WORLD_{{ eye }}ON,
-	{%- else -%}
-	__WORLD_{{ sprite.displays }},
 	{%- endif %}
 
 	{%- if spriteClass == 'FrameBlendBgmapSprite' %}
