@@ -25,6 +25,11 @@ void Behavior::constructor(Entity owner, const BehaviorSpec* behaviorSpec)
 	Base::constructor(owner, (const ComponentSpec*)&behaviorSpec->componentSpec);
 
 	this->enabled = behaviorSpec->enabled;
+
+	if(NULL != behaviorSpec->targetClass)
+	{
+		Entity::mutateTo(owner, behaviorSpec->targetClass);
+	}
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

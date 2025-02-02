@@ -265,6 +265,11 @@
 /// @return True if the object is not NULL nor destroyed; false otherwise
 #define isDeleted(object)					(!__IS_OBJECT_ALIVE(object))
 
+/// Retrieve the class' virtual table pointer.
+/// @param ClassName: Class name to retrieve its virtual table pointer
+/// @return Pointer to the class' virtual table
+#define class(ClassName)			((const void*)&ClassName ## _vTable)
+
 /// Retrieve the class pointer of the class that he provided object is an instance of. 
 /// @param ClassName: Class name to retrieve its type
 /// @return Pointer to the class' identifying function pointer

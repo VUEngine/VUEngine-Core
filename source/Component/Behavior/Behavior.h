@@ -27,7 +27,10 @@ typedef struct BehaviorSpec
 	/// Component spec
 	ComponentSpec componentSpec;
 
-	/// enabled
+	/// Behavioral class
+	void* (*targetClass)();
+
+	/// Enabled?
 	bool enabled;
 
 } BehaviorSpec;
@@ -46,7 +49,7 @@ typedef const BehaviorSpec BehaviorROMSpec;
 ///
 /// Right now, this is only used by the Vehicle class in the plugins.
 /// Eventually, this will serve to avoid the need to inherit from Actor.
-abstract class Behavior : Component
+class Behavior : Component
 {
 	/// @protectedsection
 
