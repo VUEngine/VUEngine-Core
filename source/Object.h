@@ -378,6 +378,9 @@
 																																		\
 		/* set the getClassName method */																								\
 		__VIRTUAL_SET(ClassName, ClassName, getClassName);																				\
+																																		\
+		/* set the getSize method */																									\
+		__VIRTUAL_SET(ClassName, ClassName, getSize);																					\
 	}																																	\
 
 /// Declare a class's vtable.
@@ -394,8 +397,11 @@
 		/* get super class method */																									\
 		__VIRTUAL_DEC(ClassName, ClassPointer, getBaseClass, ClassName);																\
 																																		\
-		/* all destructors are virtual */																								\
+		/* get class name method */																										\
 		__VIRTUAL_DEC(ClassName, const char*, getClassName, ClassName);																	\
+																																		\
+		/* get class size method */																										\
+		__VIRTUAL_DEC(ClassName, uint32, getSize, ClassName);																			\
 																																		\
 		/* insert class's virtual methods names */																						\
 		ClassName ## _METHODS(ClassName)																								\
@@ -511,13 +517,19 @@ typedef void* (*(*ClassPointer)(void*))(void*);
 	/* class' base's destructor */																										\
 		(void (*)(Object))&BaseClassName ## _destructor;																				\
 																																		\
-	/* Define class's getSize method */																									\
+	/* Define class's getClass method */																								\
 	const void* ClassName ## _getClass()																								\
 	{																																	\
 		return (const void*)&ClassName ## _vTable;																						\
 	}																																	\
 																																		\
 	/* Define class's getSize method */																									\
+	uint32 ClassName ## _getSize(ClassName this __attribute__ ((unused)))																\
+	{																																	\
+		return sizeof(ClassName ## _str) + __DYNAMIC_STRUCT_PAD;																		\
+	}																																	\
+																																		\
+	/* Define class's getClassName method */																							\
 	const char* ClassName ## _getClassName(ClassName this __attribute__ ((unused)))														\
 	{																																	\
 		ASSERT(&BaseClassName ## _getBaseClass != &ClassName ## _getBaseClass,															\
@@ -529,7 +541,7 @@ typedef void* (*(*ClassPointer)(void*))(void*);
 	/* Define class's fundamental methods */																							\
 	__CLASS_FUNDAMENTAL_DEFINITION(ClassName, BaseClassName)																			\
 																																		\
-	/* Define class's getSize method */																									\
+	/* Define class's getObjectSize method */																							\
 	__GET_INSTANCE_SIZE_DEFINITION(ClassName)																							\
 																																		\
 	/* restore class vTable */																											\
