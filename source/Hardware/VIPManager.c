@@ -463,6 +463,7 @@ secure void VIPManager::reset()
 	this->isDrawingAllowed = false;
 	this->drawingStrategy = kVIPManagerFavorStability;
 	this->enabledMultiplexedInterrupts = kVIPNoMultiplexedInterrupts;
+	this->allowInterrupts = true;
 
 	VIPManager::lowerBrightness();
 	VIPManager::removePostProcessingEffects();
@@ -572,6 +573,13 @@ secure void VIPManager::stopDisplaying()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+secure void VIPManager::allowInterrupts(bool allowInterrupts)
+{
+	this->allowInterrupts = allowInterrupts;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 static void VIPManager::print(int16 x, int16 y)
 {
 	int16 xDisplacement = 8;
@@ -629,6 +637,7 @@ void VIPManager::constructor()
 	this->enabledMultiplexedInterrupts = kVIPNoMultiplexedInterrupts;
 	this->isDrawingAllowed = false;
 	this->drawingStrategy = kVIPManagerFavorStability;
+	this->allowInterrupts = true;
 
 	VIPManager::setFrameCycle(__FRAME_CYCLE);
 
@@ -750,6 +759,11 @@ secure void VIPManager::processInterrupt(uint16 interrupt)
 
 secure void VIPManager::enableInterrupts(uint16 interruptCode)
 {
+	if(!this->allowInterrupts)
+	{
+		return;
+	}
+
 	_vipRegisters[__INTCLR] = _vipRegisters[__INTPND];
 
 	interruptCode |= this->customInterrupts;

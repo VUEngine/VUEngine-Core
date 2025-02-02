@@ -168,6 +168,9 @@ singleton class VIPManager : ListenerObject
 	/// If true, XPEN is raised
 	bool isDrawingAllowed;
 
+	/// If false, no interrupts are enable
+	bool allowInterrupts;
+
 	/// If true, a VIP interrupt happened while in the midst of GAMESTART
 	volatile bool processingGAMESTART;
 
@@ -297,6 +300,10 @@ singleton class VIPManager : ListenerObject
 
 	/// Stop VIP displaying operations.
 	void stopDisplaying();
+
+	/// Set the enabling of interrupts.
+	/// @param allowInterrupts: If true, interrupts are enabled when drawing starts
+	void allowInterrupts(bool allowInterrupts);
 }
 
 #endif

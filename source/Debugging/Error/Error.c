@@ -76,6 +76,7 @@ static void Error::triggerException(char* message __attribute__((unused)), char*
 	TimerManager::disable();
 
 	// Turn on the display
+	VIPManager::allowInterrupts(VIPManager::getInstance(), false);
 	VIPManager::startDisplaying(VIPManager::getInstance());
 	VIPManager::startDrawing(VIPManager::getInstance());
 
