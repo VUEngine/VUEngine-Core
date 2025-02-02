@@ -155,12 +155,7 @@ void Sprite::createAnimationController()
 	{
 		return;
 	}
-/*
-	if(isDeleted(this->texture) || !Texture::isAnimated(this->texture))
-	{
-		return;
-	}
-*/
+
 	if(NULL == this->componentSpec || !((SpriteSpec*)this->componentSpec)->animated)
 	{
 		return;
@@ -902,7 +897,7 @@ void Sprite::update()
 	}
 
 #ifdef __RELEASE
-	if(!this->updateAnimationFrame && this->animationController->playing)
+	if(!this->updateAnimationFrame && this->animationController->p:laying)
 #else
 	if(!this->updateAnimationFrame)
 #endif
