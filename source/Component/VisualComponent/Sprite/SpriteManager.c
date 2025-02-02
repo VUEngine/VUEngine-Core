@@ -320,6 +320,9 @@ void SpriteManager::purgeComponents()
 		}
 	}
 
+	// Make sure that graphics pending updating are so now
+	SpriteManager::writeTextures(this);
+
 	Base::purgeComponents(this);
 }
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
