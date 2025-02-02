@@ -159,13 +159,19 @@ void Box::configureWireframe()
 	*this->meshSpec = (MeshSpec)
 	{
 		{
-			// Component
+			// VisualComponent
 			{
-				// Allocator
-				__TYPE(Mesh),
+				// Component
+				{
+					// Allocator
+					__TYPE(Mesh),
 
-				// Component type
-				kWireframeComponent
+					// Component type
+					kWireframeComponent
+				},
+
+				// Array of function animations
+				(const AnimationFunction**)NULL
 			},
 
 			/// Displacement

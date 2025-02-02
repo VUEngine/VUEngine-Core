@@ -40,7 +40,7 @@ friend class VirtualNode;
 void VisualComponent::constructor(Entity owner, const VisualComponentSpec* visualComponentSpec)
 {
 	// Always explicitly call the base's constructor 
-	Base::constructor(owner, (const ComponentSpec*)visualComponentSpec);
+	Base::constructor(owner, (const ComponentSpec*)&visualComponentSpec->componentSpec);
 
 	this->show = __SHOW;
 	this->rendered = false;
@@ -85,11 +85,7 @@ void VisualComponent::handleCommand(int32 command, va_list args)
 
 		case cVisualComponentCommandPlay:
 
-			VisualComponent::play
-			(
-				this, (const AnimationFunction**)va_arg(args, AnimationFunction**), (const char*)va_arg(args, char*), 
-				va_arg(args, ListenerObject)
-			);
+			VisualComponent::play(this, (const char*)va_arg(args, char*),va_arg(args, ListenerObject));
 			break;
 
 		case cVisualComponentCommandPause:
@@ -143,12 +139,9 @@ void VisualComponent::forceChangeOfFrame(int16 actualFrame __attribute__((unused
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-bool VisualComponent::play
-(
-	const AnimationFunction* animationFunctions[], const char* animationName, ListenerObject scope
-)
+bool VisualComponent::play(const char* animationName, ListenerObject scope)
 {
-	if(NULL == animationFunctions || NULL == animationName)
+	if(NULL == animationName)
 	{
 		return false;
 	}
@@ -165,7 +158,12 @@ bool VisualComponent::play
 
 	if(!isDeleted(this->animationController))
 	{
-		playBackStarted = AnimationController::play(this->animationController, animationFunctions, animationName, scope);
+		playBackStarted = 
+			AnimationController::play
+			(
+				this->animationController, ((VisualComponentSpec*)this->componentSpec)->animationFunctions, animationName, scope
+			);
+
 		this->rendered = this->rendered && !this->updateAnimationFrame;
 	}
 
@@ -174,11 +172,11 @@ bool VisualComponent::play
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-bool VisualComponent::replay(const AnimationFunction* animationFunctions[])
+bool VisualComponent::replay()
 {
 	if(!isDeleted(this->animationController))
 	{
-		AnimationController::replay(this->animationController, animationFunctions);
+		AnimationController::replay(this->animationController, ((VisualComponentSpec*)this->componentSpec)->animationFunctions);
 		this->rendered = this->rendered && !this->updateAnimationFrame;
 
 		return this->updateAnimationFrame;

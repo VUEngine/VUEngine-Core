@@ -97,13 +97,19 @@ void Ball::configureWireframe()
 	*this->sphereSpec = (SphereSpec)
 	{
 		{
-			// Component
+			// VisualComponent
 			{
-				// Allocator
-				__TYPE(Sphere),
+				// Component
+				{
+					// Allocator
+					__TYPE(Sphere),
 
-				// Component type
-				kWireframeComponent
+					// Component type
+					kWireframeComponent
+				},
+
+				// Array of function animations
+				(const AnimationFunction**)NULL
 			},
 
 			// Displacement

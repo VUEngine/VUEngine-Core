@@ -42,9 +42,6 @@ typedef struct ParticleSpec
 	/// Life span delta in milliseconds
 	uint16 lifeSpanDelta;
 
-	/// Array of available animations
-	const AnimationFunction** animationFunctions;
-
 	/// Animation to play automatically
 	const char* initialAnimation;
 
@@ -110,21 +107,17 @@ class Particle : Entity
 	/// @param position: Starting position
 	/// @param force: Force to apply
 	/// @param movementType: Movement type on each axis
-	/// @param animationFunctions: Array of animations
 	/// @param animationName: Animation to play
 	void setup
 	(
 		const ComponentSpec* visualComponentSpec, const ComponentSpec* physicsComponentSpec, const ComponentSpec* colliderComponentSpec, 
-		int16 lifeSpan, const Vector3D* position, const Vector3D* force, uint32 movementType, const AnimationFunction** animationFunctions, 
-		const char* animationName
+		int16 lifeSpan, const Vector3D* position, const Vector3D* force, uint32 movementType
 	);
 
 	/// Configure the particle with the provided arguments after unpausing the game.
 	/// @param visualComponentSpec: Specification for a sprite to add to the particle
 	/// @param wireframeSpec: Specification for a wireframe to add to the particle
-	/// @param animationFunctions: Array of animations
-	/// @param animationName: Animation to play
-	void resume(const VisualComponentSpec* visualComponentSpec, const AnimationFunction** animationFunctions, const char* animationName);
+	void resume(const ComponentSpec* visualComponentSpec);
 
 	/// Prepares the particle to become inactive in this state.
 	void suspend();
@@ -137,9 +130,8 @@ class Particle : Entity
 	bool isVisible();
 
 	/// Play an animation.
-	/// @param animationFunctions: Array of animations
 	/// @param animationName: Animation to play
-	void playAnimation(const AnimationFunction** animationFunctions, const char* animationName);
+	void playAnimation(const char* animationName);
 
 	/// Update the particle's state.
 	/// @param elapsedTime: Elapsed time since the last call

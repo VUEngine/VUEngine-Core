@@ -81,10 +81,7 @@ bool Particle::collisionStarts(const CollisionInformation* collisionInformation)
 	{
 		if(NULL != this->particleSpec->onCollisionAnimation)
 		{
-			Particle::playAnimation
-			(
-				this, ((ParticleSpec*)this->particleSpec)->animationFunctions, this->particleSpec->onCollisionAnimation
-			);
+			Particle::playAnimation(this, this->particleSpec->onCollisionAnimation);
 		}
 	}
 
@@ -96,8 +93,7 @@ bool Particle::collisionStarts(const CollisionInformation* collisionInformation)
 void Particle::setup
 (
 	const ComponentSpec* visualComponentSpec, const ComponentSpec* physicsComponentSpec, const ComponentSpec* colliderComponentSpec, 
-	int16 lifeSpan, const Vector3D* position, const Vector3D* force, uint32 movementType, const AnimationFunction** animationFunctions, 
-	const char* animationName
+	int16 lifeSpan, const Vector3D* position, const Vector3D* force, uint32 movementType
 )
 {
 	this->expired = false;
@@ -128,7 +124,7 @@ void Particle::setup
 		Particle::registerCollisions(this, false);
 	}
 
-	Particle::playAnimation(this, animationFunctions, animationName);
+	Particle::playAnimation(this, this->particleSpec->initialAnimation);
 
 	if(!isDeleted(this->body))
 	{
@@ -151,10 +147,9 @@ void Particle::setup
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void Particle::resume(const VisualComponentSpec* visualComponentSpec, const AnimationFunction** animationFunctions, const char* animationName)
+void Particle::resume(const ComponentSpec* visualComponentSpec)
 {
-	Particle::addComponent(this, (ComponentSpec*)visualComponentSpec);
-	Particle::playAnimation(this, animationFunctions, animationName);
+	Particle::addComponent(this, visualComponentSpec);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -216,14 +211,14 @@ bool Particle::isVisible()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void Particle::playAnimation(const AnimationFunction** animationFunctions, const char* animationName)
+void Particle::playAnimation(const char* animationName)
 {
 	if(isDeleted(this->visualComponent))
 	{
 		return;
 	}
 
-	VisualComponent::play(this->visualComponent, animationFunctions, animationName, NULL);
+	VisualComponent::play(this->visualComponent, animationName, NULL);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

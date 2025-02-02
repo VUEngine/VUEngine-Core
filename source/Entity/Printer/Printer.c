@@ -59,17 +59,20 @@ const PrintingSpriteSpec DefaultPrintingSpriteSpec =
 {
 	{
 		{
-			// Component
+			// VisualComponent
 			{
-				// Allocator
-				__TYPE(PrintingSprite),
+				// Component
+				{
+					// Allocator
+					__TYPE(PrintingSprite),
 
-				// Component type
-				kSpriteComponent
+					// Component type
+					kSpriteComponent
+				},
+
+				// Array of function animations
+				(const AnimationFunction**)NULL
 			},
-
-			// Is animated?
-			false,
 
 			// Spec for the texture to display
 			(TextureSpec*)NULL,

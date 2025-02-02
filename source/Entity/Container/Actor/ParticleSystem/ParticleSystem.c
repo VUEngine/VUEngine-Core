@@ -266,12 +266,7 @@ void ParticleSystem::resume()
 	{
 		Particle particle = Particle::safeCast(node->data);
 
-		Particle::resume
-		(
-			particle, ParticleSystem::getVisualComponentSpec(this), 
-			((ParticleSystemSpec*)this->actorSpec)->particleSpec->animationFunctions, 
-			((ParticleSystemSpec*)this->actorSpec)->particleSpec->initialAnimation
-		);
+		Particle::resume(particle, ParticleSystem::getVisualComponentSpec(this));
 	}
 
 	this->nextSpawnTime = ParticleSystem::computeNextSpawnTime(this);
@@ -532,9 +527,7 @@ Particle ParticleSystem::spawnParticle()
 		lifeSpan, 
 		&position, 
 		&force, 
-		((ParticleSystemSpec*)this->actorSpec)->movementType, 
-		((ParticleSystemSpec*)this->actorSpec)->particleSpec->animationFunctions, 
-		((ParticleSystemSpec*)this->actorSpec)->particleSpec->initialAnimation
+		((ParticleSystemSpec*)this->actorSpec)->movementType
 	);
 
 	if(ParticleSystem::overrides(this, particleSpawned))
@@ -569,18 +562,14 @@ bool ParticleSystem::recycleParticle()
 				Vector3D force = ParticleSystem::getParticleSpawnForce(this);
 				Particle::setup
 				(
-					particle, NULL, NULL, NULL, lifeSpan, &position, &force, ((ParticleSystemSpec*)this->actorSpec)->movementType, 
-					((ParticleSystemSpec*)this->actorSpec)->particleSpec->animationFunctions, 
-					((ParticleSystemSpec*)this->actorSpec)->particleSpec->initialAnimation
+					particle, NULL, NULL, NULL, lifeSpan, &position, &force, ((ParticleSystemSpec*)this->actorSpec)->movementType
 				);
 			}
 			else
 			{
 				Particle::setup
 				(
-					particle, NULL, NULL, NULL, lifeSpan, &position, NULL, ((ParticleSystemSpec*)this->actorSpec)->movementType, 
-					((ParticleSystemSpec*)this->actorSpec)->particleSpec->animationFunctions, 
-					((ParticleSystemSpec*)this->actorSpec)->particleSpec->initialAnimation
+					particle, NULL, NULL, NULL, lifeSpan, &position, NULL, ((ParticleSystemSpec*)this->actorSpec)->movementType
 				);
 			}
 

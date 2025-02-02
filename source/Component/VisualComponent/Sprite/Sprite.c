@@ -156,7 +156,7 @@ void Sprite::createAnimationController()
 		return;
 	}
 
-	if(NULL == this->componentSpec || !((SpriteSpec*)this->componentSpec)->animated)
+	if(NULL == this->componentSpec || NULL == ((SpriteSpec*)this->componentSpec)->visualComponentSpec.animationFunctions)
 	{
 		return;
 	}

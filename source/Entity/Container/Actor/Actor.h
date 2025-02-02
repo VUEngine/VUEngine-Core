@@ -53,9 +53,6 @@ typedef struct ActorSpec
 	// Actor's in-game type
 	uint8 inGameType;
 
-	/// Array of function animations
-	const AnimationFunction** animationFunctions;
-
 	/// Animation to play automatically
 	char* initialAnimation;
 

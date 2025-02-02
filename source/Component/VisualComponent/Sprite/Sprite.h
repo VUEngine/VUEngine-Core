@@ -88,9 +88,6 @@ typedef struct SpriteSpec
 	/// VisualComponent spec
 	VisualComponentSpec visualComponentSpec;
 
-	/// Is animated?
-	bool animated;
-
 	/// Spec for the texture to display
 	TextureSpec* textureSpec;
 

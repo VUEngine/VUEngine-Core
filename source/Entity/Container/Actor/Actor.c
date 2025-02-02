@@ -813,8 +813,7 @@ void Actor::playAnimation(const char* animationName)
 
 	ComponentManager::propagateCommand
 	(
-		cVisualComponentCommandPlay, Entity::safeCast(this), kSpriteComponent,
-		((ActorSpec*)this->actorSpec)->animationFunctions, animationName, ListenerObject::safeCast(this)
+		cVisualComponentCommandPlay, Entity::safeCast(this), kSpriteComponent, animationName, ListenerObject::safeCast(this)
 	);
 }
 

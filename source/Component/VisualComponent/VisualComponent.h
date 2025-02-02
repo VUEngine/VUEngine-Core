@@ -26,9 +26,6 @@ class AnimationController;
 // CLASS' DATA
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-/// @memberof VisualComponent
-typedef ComponentSpec VisualComponentSpec;
-
 /// VisualComponent commands
 /// @memberof VisualComponent
 enum VisualComponentCommands
@@ -69,6 +66,18 @@ typedef struct AnimationFunction
 /// An AnimationFunction that is stored in ROM
 /// @memberof VisualComponent
 typedef const AnimationFunction AnimationFunctionROMSpec;
+
+/// A VisualComponent Spec
+/// @memberof VisualComponent
+typedef struct VisualComponentSpec
+{
+	/// VisualComponent spec
+	ComponentSpec componentSpec;
+
+	/// Array of function animations
+	const AnimationFunction** animationFunctions;
+
+} VisualComponentSpec;
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DECLARATION
@@ -126,16 +135,14 @@ abstract class VisualComponent : Component
 	void setTransparency(uint8 transparency);
 
 	/// Play the animation with the provided name from the provided array of animation functions.
-	/// @param animationFunctions: Array of animation functions to look for the animation function to replay
 	/// @param animationName: Name of the animation to play
 	/// @param scope: Object that will be notified of playback events
 	/// @return True if the animation started playing; false otherwise
-	bool play(const AnimationFunction* animationFunctions[], const char* animationName, ListenerObject scope);
+	bool play(const char* animationName, ListenerObject scope);
 
 	/// Replay the last playing animation, if any, from the provided array of animation functions.
-	/// @param animationFunctions: Array of animation functions to look for the animation function to replay
 	/// @return True if the animation started playing again; false otherwise
-	bool replay(const AnimationFunction* animationFunctions[]);
+	bool replay();
 
 	/// Pause or unpause the currently playing animation if any.
 	/// @param pause: Flag that signals if the animation must be paused or unpaused
