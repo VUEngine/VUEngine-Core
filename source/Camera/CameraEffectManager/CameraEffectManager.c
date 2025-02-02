@@ -242,7 +242,7 @@ void CameraEffectManager::fxFadeAsyncStart
 	this->startingANewEffect = true;	
 
 	// Set target brightness
-	if(targetBrightness == NULL)
+	if(NULL == targetBrightness)
 	{
 		this->fxFadeTargetBrightness = CameraEffectManager::getDefaultBrightness(this);
 	}
