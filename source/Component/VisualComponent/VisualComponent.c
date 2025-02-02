@@ -146,7 +146,6 @@ bool VisualComponent::play(const char* animationName, ListenerObject scope)
 		return false;
 	}
 
-	ASSERT(NULL != animationFunctions, "VisualComponent::play: null animationFunctions");
 	ASSERT(NULL != animationName, "VisualComponent::play: null animationName");
 
 	if(NULL == this->animationController)

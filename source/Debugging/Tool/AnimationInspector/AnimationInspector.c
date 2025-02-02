@@ -417,8 +417,12 @@ void AnimationInspector::removePreviousSprite()
 
 void AnimationInspector::selectAnimation(uint32 pressedKey)
 {
-	this->animationFunctions = 
-		_userAnimatedActors[OptionsSelector::getSelectedOption(this->actorSelector)].actorSpec->animationFunctions;
+	this->animationFunctions = ((VisualComponentSpec*)Sprite::getSpec(this->sprite))->animationFunctions;
+
+	if(NULL == this->animationFunctions)
+	{
+		return;
+	}
 
 	int32 animationsCount = 0;
 	for(; this->animationFunctions[animationsCount]; animationsCount++);
@@ -678,13 +682,12 @@ void AnimationInspector::printAnimationConfig()
 
 void AnimationInspector::loadAnimationFunction()
 {
-	if(NULL == _userAnimatedActors[0].actorSpec)
+	this->animationFunctions = ((VisualComponentSpec*)Sprite::getSpec(this->sprite))->animationFunctions;
+
+	if(NULL == this->animationFunctions)
 	{
 		return;
 	}
-
-	this->animationFunctions = 
-		_userAnimatedActors[OptionsSelector::getSelectedOption(this->actorSelector)].actorSpec->animationFunctions;
 
 	const AnimationFunction* animationFunction = 
 		this->animationFunctions[OptionsSelector::getSelectedOption(this->animationsSelector)];
@@ -787,13 +790,12 @@ void AnimationInspector::createSpriteSelector()
 
 void AnimationInspector::createAnimationsSelector()
 {
-	if(NULL == _userAnimatedActors[0].actorSpec)
+	this->animationFunctions = ((VisualComponentSpec*)Sprite::getSpec(this->sprite))->animationFunctions;
+
+	if(NULL == this->animationFunctions)
 	{
 		return;
 	}
-
-	this->animationFunctions = 
-		_userAnimatedActors[OptionsSelector::getSelectedOption(this->actorSelector)].actorSpec->animationFunctions;
 
 	if(this->animationFunctions)
 	{

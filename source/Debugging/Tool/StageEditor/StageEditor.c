@@ -343,11 +343,16 @@ void StageEditor::highLightActor()
 			{
 				{
 					{
-						// Allocator
-						__TYPE(Mesh),
+						{
+							// Allocator
+							__TYPE(Mesh),
 
-						// Component type
-						kWireframeComponent
+							// Component type
+							kWireframeComponent
+						},
+
+						// Array of function animations
+						NULL
 					},
 
 					/// Displacement
