@@ -260,16 +260,20 @@ TextureROMSpec* const {{ spriteName }}TextureSpecs[] =
 	{
 	{%- endif %}
 	{
+		// VisualComponent
 		{
-			// Allocator
-			__TYPE({{ spriteAllocatorClass }}),
+			// Component
+			{
+				// Allocator
+				__TYPE({{ spriteAllocatorClass }}),
 
-			// Component type
-			kSpriteComponent
+				// Component type
+				kSpriteComponent
+			},
+
+			// Array of function animations
+			NULL,
 		},
-
-		// Is animated?
-		false,
 
 		// Spec for the texture to display
 		{%- if spriteAllocatorClass == 'MBgmapSprite' or spriteAllocatorClass == 'MBgmapSprite' %}
@@ -603,13 +607,6 @@ ComponentSpec* const {{ sanitizedSpecName }}ComponentSpecs[] =
 	kTypeNone,
 	{%- else %}
 	kType{{ project.items.InGameTypes.project.types[item.inGameType] | sanitizeSpecName }},
-	{%- endif %}
-
-	// Pointer to animation functions array
-	{%- if isAnimated %}
-	(const AnimationFunction**)&{{ sanitizedSpecName }}AnimationSpecs,
-	{%- else %}
-	NULL,
 	{%- endif %}
 
 	// Animation to play automatically
