@@ -237,7 +237,7 @@ bool Object::mutateTo(const void* targetClass)
 	if(targetClassVTable->getSize(NULL) != thisVTable->getSize(NULL))
 	{
 		NM_ASSERT(false, "Object::mutateTo: trying to mutate between classes of different sizes");
-		return NULL;
+		return false;
 	}
 
 	ClassPointer baseClassGetClassMethod = (ClassPointer)targetClassVTable->getBaseClass(NULL);
