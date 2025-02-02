@@ -111,12 +111,20 @@ isExtensionClass=false
 
 if [ -z "$className" ];
 then
-	# Maybe it is an extension class
+	# Maybe it is an extension or mutation class
 	className=`grep -m 1 -e '^extension[ 	][ 	]*class[ 	][ 	]*' $OUTPUT_FILE | sed -e 's/^extension[ 	][ 	]*class[ 	][ 	]*\([A-Z][A-z0-9]*\)[ 	]*;/\1/'`
 
 	if [ ! -z "$className" ];
 	then
 		isExtensionClass=true
+	else
+
+		className=`grep -m 1 -e '^mutation[ 	][ 	]*class[ 	][ 	]*' $OUTPUT_FILE | sed -e 's/^mutation[ 	][ 	]*class[ 	][ 	]*\([A-Z][A-z0-9]*\)[ 	]*;/\1/'`
+
+		if [ ! -z "$className" ];
+		then
+			isMutationClass=true
+		fi
 	fi
 fi
 
@@ -242,7 +250,7 @@ then
 	exit 0
 fi
 
-if [ "$isExtensionClass" = true ];
+if [ "$isExtensionClass" = true ] || [ "$isMutationClass" = true ];
 then
 	classesHierarchyFiles=`find $WORKING_FOLDER/classes/hierarchies/ -name classesHierarchy.txt`
 
@@ -397,10 +405,15 @@ then
 	if [ ! -z "${classModifiers##*static *}" ] ;
 	then
 
-		classDefinition="__CLASS_DEFINITION($className, $baseClassName) $prototypes"
+		if [ "$isMutationClass" = true ];
+		then
+			classDefinition="__MUTATION_CLASS_DEFINITION($className, $baseClassName) $prototypes"
+		else
+			classDefinition="__CLASS_DEFINITION($className, $baseClassName) $prototypes"
+		fi
 
 		# Add allocator if it is not abstract nor a singletonclass
-		if [ ! -z "${classModifiers##*singleton*}" ] && [ ! -z "${classModifiers##*static *}" ] && [ ! -z "${classModifiers##*abstract *}" ];
+		if [ ! -z "${classModifiers##*singleton*}" ] && [ ! -z "${classModifiers##*static *}" ] && [ ! -z "${classModifiers##*abstract *}" ] && [ ! -z "${classModifiers##*mutation *}" ];
 		then
 			#echo "Adding allocator"
 			constructor=`grep -m 1 -e $className"!DECLARATION_MIDDLE!_constructor[ 	]*(.*)" $OUTPUT_FILE`
@@ -448,7 +461,6 @@ then
 				fi
 
 				sed -i.b "s/Base_destructor();/_singletonConstructed = __SINGLETON_NOT_CONSTRUCTED; Base_destructor();/" $OUTPUT_FILE 
-
 			fi
 		fi
 	else
@@ -494,7 +506,7 @@ sed -i.b "s#[ 	]*friend[ 	][ 	]*class[ 	][ 	]*\([A-z0-9][A-z0-9]*\)#__CLASS_FRIE
 
 sed -i.b "s#\([A-z][A-z0-0][A-z0-0]*\)_mutateMethod(\(.*\), \(.*\))#__CLASS_MUTATE_METHOD(\1, \2, \3)#g" $OUTPUT_FILE
 
-sed -i.b "s#[ 	]*extension[ 	][ 	]*class[ 	][ 	]*\([A-z0-9][A-z0-9]*\)#__CLASS_FRIEND_DEFINITION(\1)#; s#Base_\([A-z][A-z0-0][A-z0-0]*\)(#__CALL_BASE_METHOD($baseClassName,\1, #g" $OUTPUT_FILE 
+sed -i.b "s#[ 	]*\(extension\|mutation\)[ 	][ 	]*class[ 	][ 	]*\([A-z0-9][A-z0-9]*\)#__CLASS_FRIEND_DEFINITION(\2)#; s#Base_\([A-z][A-z0-0][A-z0-0]*\)(#__CALL_BASE_METHOD($baseClassName,\1, #g" $OUTPUT_FILE 
 
 clean_up
 

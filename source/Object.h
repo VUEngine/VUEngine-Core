@@ -348,8 +348,9 @@
 /// Configure a class's vtable
 /// @param ClassName: Class whose virtual table is to being configured
 /// @param BaseClassName: Base class' from which the class inherits
+/// @param DestructorClass: Class for the destructor
 /// @return Implementation of the class' virtual table's configuration method
-#define __SET_VTABLE_DEFINITION(ClassName, BaseClassName)																				\
+#define __SET_VTABLE_DEFINITION(ClassName, BaseClassName, DestructorClass)																\
 																																		\
 	/* Define the static method */																										\
 	void __attribute__ ((noinline)) ClassName ## _setVTable(bool force)																	\
@@ -371,7 +372,7 @@
 		ClassName ## _SET_VTABLE(ClassName)																								\
 																																		\
 		/* set the destructor */																										\
-		__VIRTUAL_SET(ClassName, ClassName, destructor);																				\
+		__VIRTUAL_SET(ClassName, DestructorClass, destructor);																			\
 																																		\
 		/* set the getBaseClass method */																								\
 		__VIRTUAL_SET(ClassName, ClassName, getBaseClass);																				\
@@ -557,7 +558,63 @@ typedef void* (*(*ClassPointer)(void*))(void*);
 	}																																	\
 																																		\
 	/* now add the function which will handle the vtable */																				\
-	__SET_VTABLE_DEFINITION(ClassName, BaseClassName)																					\
+	__SET_VTABLE_DEFINITION(ClassName, BaseClassName, ClassName)																		\
+	__CHECK_VTABLE_DEFINITION(ClassName)																								\
+
+/// Define the methods of a class.
+/// @param ClassName: Class whose methods are defined
+/// @param BaseClassName: Base class' from which the class inherits
+/// @return Class' fundamental method's definition
+#define __MUTATION_CLASS_DEFINITION(ClassName, BaseClassName)																			\
+																																		\
+	/* class' vtable's spec */																											\
+	struct ClassName ## _vTable ClassName ## _vTable __VIRTUAL_TABLES_DATA_SECTION_ATTRIBUTE;											\
+																																		\
+	static void (* const _baseDestructor)(Object) =																						\
+	/* class' base's destructor */																										\
+		(void (*)(Object))&BaseClassName ## _destructor;																				\
+																																		\
+	/* Define class's getClass method */																								\
+	const void* ClassName ## _getClass()																								\
+	{																																	\
+		return (const void*)&ClassName ## _vTable;																						\
+	}																																	\
+																																		\
+	/* Define class's getSize method */																									\
+	uint32 ClassName ## _getSize(ClassName this __attribute__ ((unused)))																\
+	{																																	\
+		return sizeof(ClassName ## _str) + __DYNAMIC_STRUCT_PAD;																		\
+	}																																	\
+																																		\
+	/* Define class's getClassName method */																							\
+	const char* ClassName ## _getClassName(ClassName this __attribute__ ((unused)))														\
+	{																																	\
+		ASSERT(&BaseClassName ## _getBaseClass != &ClassName ## _getBaseClass,															\
+				"Wrong class spec: __CLASS_DEFINITION(" __MAKE_STRING(ClassName) ", "													\
+				__MAKE_STRING(BaseClassName) ")");																						\
+		return (char*)__OBFUSCATE_NAME(ClassName);																						\
+	}																																	\
+																																		\
+	/* Define class's fundamental methods */																							\
+	__CLASS_FUNDAMENTAL_DEFINITION(ClassName, BaseClassName)																			\
+																																		\
+	/* Define class's getObjectSize method */																							\
+	__GET_INSTANCE_SIZE_DEFINITION(ClassName)																							\
+																																		\
+	/* restore class vTable */																											\
+	void ClassName ## _restoreMethods()																									\
+	{																																	\
+		/* must prevent any interrupt from calling methods on unstable vtables */														\
+		HardwareManager_suspendInterrupts();																							\
+																																		\
+		ClassName ## _setVTable(true);																									\
+																																		\
+		/* resume interrupts */																											\
+		HardwareManager_resumeInterrupts();																								\
+	}																																	\
+																																		\
+	/* now add the function which will handle the vtable */																				\
+	__SET_VTABLE_DEFINITION(ClassName, BaseClassName, BaseClassName)																	\
 	__CHECK_VTABLE_DEFINITION(ClassName)																								\
 
 /// Retrieve the name of the class of an object.

@@ -534,10 +534,16 @@ isAbstractClass=false
 isStaticClass=false
 isFinalClass=false
 isExtensionClass=false
+isMutationClass=false
 
 if [ ! -z "$classModifiers" ] && [ -z "${classModifiers##*extension *}" ];
 then
 	isExtensionClass=true
+fi
+
+if [ ! -z "$classModifiers" ] && [ -z "${classModifiers##*mutation *}" ];
+then
+	isMutationClass=true
 fi
 
 virtualMethodDeclarations="#define "$className"_METHODS(ClassName)"
@@ -754,7 +760,7 @@ do
 done <<< "$classModifiers"
 
 # Add destructor declaration
-if [ ! "$isStaticClass" = true ] && [ ! "$isExtensionClass" = true ];
+if [ ! "$isStaticClass" = true ] && [ ! "$isExtensionClass" = true ] && [ ! "$isMutationClass" = true ];
 then
 	if [ "$isSingletonClass" = true ];
 	then
@@ -770,7 +776,7 @@ fi
 echo "Computing constructor/destructor/allocators on caller $CALLER"  >> $CLASS_LOG_FILE
 
 # Add allocator if it is not abstract nor a singleton class
-if [ ! "$isAbstractClass" = true ] && [ ! "$isSingletonClass" = true ] && [ ! "$isStaticClass" = true ] && [ ! "$isExtensionClass" = true ] ;
+if [ ! "$isAbstractClass" = true ] && [ ! "$isSingletonClass" = true ] && [ ! "$isStaticClass" = true ] && [ ! "$isExtensionClass" = true ] && [ ! "$isMutationClass" = true ];
 then
 
 	constructor=`grep -m 1 -e "void[ 	]\+"$className"_constructor[ 	]*(.*);" <<< "$methodDeclarations"`
