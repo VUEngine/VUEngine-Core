@@ -662,6 +662,7 @@ void GameState::createManagers()
 		{
 			AllocatorPointer _componentManagerAllocators[kComponentTypes];
 			_componentManagerAllocators[kMutatorComponent] = __TYPE(MutatorManager);
+			_componentManagerAllocators[kBehaviorComponent] = __TYPE(BehaviorManager);
 			_componentManagerAllocators[kPhysicsComponent] = __TYPE(BodyManager);
 			_componentManagerAllocators[kColliderComponent] = __TYPE(ColliderManager);
 			_componentManagerAllocators[kSpriteComponent] = __TYPE(SpriteManager);
