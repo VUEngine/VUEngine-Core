@@ -8,12 +8,14 @@
 
 {{ macros.sectionHeader('Debug Macros') }}
 {% for macro in debug.macros | sort(false, false, "name") -%}
+{% if macro.enabled -%}
 {% set macroName = ['__', macro.name | toUpperSnakeCase] | join %}
 #undef {{ macroName }}
 {% if macro.type == 'define' -%}
 #define {{ macroName }} 
 {% elseif macro.type != 'undefine' -%}
 #define {{ macroName }} {{ macro.value | formatValue | safe }}
+{% endif -%}
 {% endif -%}
 
 {%- endfor %}

@@ -8,12 +8,10 @@
 				"properties": {
 					"maxRowsPerCall": {
 						"type": "integer",
-						"description": "The maximum number of rows to write on each call to affine calculation functions.",
 						"default": 16
 					},
 					"maxScale": {
 						"type": "integer",
-						"description": "The maximum possible scale. Affects param table allocation space.",
 						"default": 2
 					}
 				},
@@ -24,12 +22,10 @@
 				"properties": {
 					"maxAnimationFunctionNameLength": {
 						"type": "integer",
-						"description": "The maximum length of an animation function name.",
 						"default": 16
 					},
 					"maxFramesPerAnimationFunction": {
 						"type": "integer",
-						"description": "The maximum number of frames per animation function.",
 						"default": 16
 					}
 				},
@@ -66,7 +62,6 @@
 				"properties": {
 					"totalChars": {
 						"type": "integer",
-						"description": "The total number of available chars in char memory",
 						"default": 2048
 					}
 				},
@@ -77,7 +72,6 @@
 				"properties": {
 					"enable": {
 						"type": "boolean",
-						"description": "Enable communications at the start of the game, e.g. for link play.",
 						"default": false
 					}
 				},
@@ -134,7 +128,6 @@
 				"properties": {
 					"position": {
 						"type": "object",
-						"description": "The camera coordinates for the output of exceptions.",
 						"properties": {
 							"x": {
 								"type": "integer",
@@ -162,7 +155,6 @@
 					},
 					"runDelayedMessagesAtHalfFrameRate": {
 						"type": "boolean",
-						"description": "Define to dispatch the delayed messages every other game frame cycle.",
 						"default": false
 					},
 					"timerResolution": {
@@ -177,31 +169,20 @@
 				"items": {
 					"type": "object",
 					"properties": {
-						"key": {
+						"_id": {
+							"type": "string"
+						},
+						"enabled": {
+							"type": "boolean",
+							"default": true
+						},
+						"name": {
 							"type": "string",
 							"default": ""
 						},
 						"type": {
 							"type": "string",
-							"oneOf": [
-								{
-									"const": "text",
-									"title": "Text"
-								},
-								{
-									"const": "number",
-									"title": "Number"
-								},
-								{
-									"const": "boolean",
-									"title": "Boolean"
-								},
-								{
-									"const": "constant",
-									"title": "Constant"
-								}
-							],
-							"default": "text"
+							"default": "define"
 						},
 						"value": {
 							"type": "string",
@@ -226,12 +207,10 @@
 				"properties": {
 					"cleanUp": {
 						"type": "boolean",
-						"description": "Enabling clean-up will reset each byte of each free block to 0 on resetting the game. Use only for debugging! Proper object's initialization must make this macro unnecessary.",
 						"default": false
 					},
 					"warningThreshold": {
 						"type": "integer",
-						"description": "Percentage above which the memory pool's status shows the pool usage.",
 						"default": 85,
 						"minimum": 1,
 						"maximum": 100
@@ -396,7 +375,6 @@
 					},
 					"printingPalette": {
 						"type": "integer",
-						"description": "The BGMap palette that shall be used for text on the printing layer.",
 						"default": 0,
 						"maximum": 3,
 						"minimum": 0
@@ -409,7 +387,6 @@
 				"properties": {
 					"angleToPreventColliderDisplacement": {
 						"type": "integer",
-						"description": "Minimum angle to allow movement when colliding against another object.",
 						"default": 10,
 						"minimum": 0,
 						"maximum": 128
@@ -427,18 +404,15 @@
 					},
 					"highPrecision": {
 						"type": "boolean",
-						"description": "Use bigger data type to perform physics simulations.",
 						"default": false
 					},
 					"maximumBouncinessCoefficient": {
 						"type": "integer",
-						"description": "The maximum allowed bounciness coefficient.",
 						"default": 1,
 						"minimum": 0
 					},
 					"maximumFrictionCoefficient": {
 						"type": "integer",
-						"description": "The maximum allowed friction coefficient.",
 						"default": 1,
 						"minimum": 0,
 						"maximum": 256
@@ -455,8 +429,12 @@
 					},
 					"timeElapsedDivisor": {
 						"type": "integer",
-						"description": "Divisor to speed up physics simulations. Bigger number equals faster computations.",
 						"default": 2,
+						"minimum": 0
+					},
+					"collidersMaximumSize": {
+						"type": "integer",
+						"default": 256,
 						"minimum": 0
 					}
 				},
@@ -524,7 +502,6 @@
 				"properties": {
 					"totalSram": {
 						"type": "integer",
-						"description": "The amount of available SRAM space, in bytes. The Virtual Boy allows up to 16 MB, but most cartridges support only 8 kb of SRAM.",
 						"default": 8192,
 						"minimum": 0
 					}
@@ -536,7 +513,6 @@
 				"properties": {
 					"bgmapsPerSegments": {
 						"type": "integer",
-						"description": "Number of BGMap specs in each BGMap segment.",
 						"default": 14,
 						"minimum": 0
 					},
@@ -574,7 +550,6 @@
 					},
 					"paramTableSegments": {
 						"type": "integer",
-						"description": "Number of segments for param tables.",
 						"default": 1,
 						"minimum": 0
 					}
@@ -590,28 +565,24 @@
 					},
 					"interlacedThreshold": {
 						"type": "integer",
-						"description": "The distance to start interlacing wireframe graphics.",
 						"default": 4096,
 						"maximum": 8191,
 						"minimum": 512
 					},
 					"lineShrinkingPadding": {
 						"type": "integer",
-						"description": "Threshold before shriking lines.",
 						"default": 0,
 						"maximum": 256,
 						"minimum": 0
 					},
 					"frustumExtensionPower": {
 						"type": "integer",
-						"description": "Frustum extension power for line shriking checks.",
 						"default": 0,
 						"maximum": 4,
 						"minimum": 0
 					},
 					"verticalLineOptimization": {
 						"type": "boolean",
-						"description": "Optimize drawing of vertical lines.",
 						"default": false
 					}
 				},
@@ -621,643 +592,8 @@
 		"required": []
 	},
 	"uiSchema": {
-		"type": "Categorization",
-		"elements": [
-			{
-				"type": "Category",
-				"label": "Affine",
-				"elements": [
-					{
-						"type": "VerticalLayout",
-						"elements": [
-							{
-								"type": "Control",
-								"scope": "#/properties/affine/properties/maxRowsPerCall"
-							},
-							{
-								"type": "Control",
-								"scope": "#/properties/affine/properties/maxScale"
-							}
-						]
-					}
-				]
-			},
-			{
-				"type": "Category",
-				"label": "Animation",
-				"elements": [
-					{
-						"type": "VerticalLayout",
-						"elements": [
-							{
-								"type": "Control",
-								"scope": "#/properties/animation/properties/maxAnimationFunctionNameLength"
-							},
-							{
-								"type": "Control",
-								"scope": "#/properties/animation/properties/maxFramesPerAnimationFunction"
-							}
-						]
-					}
-				]
-			},
-			{
-				"type": "Category",
-				"label": "Brightness",
-				"elements": [
-					{
-						"type": "VerticalLayout",
-						"elements": [
-							{
-								"type": "HorizontalLayout",
-								"elements": [
-									{
-										"type": "Control",
-										"scope": "#/properties/brightness/properties/brightRed"
-									},
-									{
-										"type": "Control",
-										"scope": "#/properties/brightness/properties/mediumRed"
-									},
-									{
-										"type": "Control",
-										"scope": "#/properties/brightness/properties/darkRed"
-									}
-								]
-							},
-							{
-								"type": "HorizontalLayout",
-								"elements": [
-									{
-										"type": "Control",
-										"scope": "#/properties/brightness/properties/fadeDelay"
-									},
-									{
-										"type": "Control",
-										"scope": "#/properties/brightness/properties/fadeIncrement"
-									}
-								]
-							}
-						]
-					}
-				]
-			},
-			{
-				"type": "Category",
-				"label": "Chars",
-				"elements": [
-					{
-						"type": "VerticalLayout",
-						"elements": [
-							{
-								"type": "Control",
-								"scope": "#/properties/chars/properties/totalChars"
-							}
-						]
-					}
-				]
-			},
-			{
-				"type": "Category",
-				"label": "Communications",
-				"elements": [
-					{
-						"type": "VerticalLayout",
-						"elements": [
-							{
-								"type": "Control",
-								"scope": "#/properties/communications/properties/enable"
-							}
-						]
-					}
-				]
-			},
-			{
-				"type": "Category",
-				"label": "Debug",
-				"elements": [
-					{
-						"type": "VerticalLayout",
-						"elements": [
-							{
-								"type": "Control",
-								"scope": "#/properties/debug/properties/alertVipOvertime"
-							},
-							{
-								"type": "HorizontalLayout",
-								"elements": [
-									{
-										"type": "Control",
-										"scope": "#/properties/debug/properties/enableProfiler"
-									},
-									{
-										"type": "Control",
-										"scope": "#/properties/debug/properties/dimmForProfiling"
-									},
-									{
-										"type": "Control",
-										"scope": "#/properties/debug/properties/profileStreaming"
-									},
-									{
-										"type": "Control",
-										"scope": "#/properties/debug/properties/showStreamingProfiling"
-									}
-								]
-							},
-							{
-								"type": "Control",
-								"scope": "#/properties/debug/properties/printFramerate"
-							},
-							{
-								"type": "HorizontalLayout",
-								"elements": [
-									{
-										"type": "Control",
-										"scope": "#/properties/debug/properties/showMemoryPoolStatus"
-									},
-									{
-										"type": "Control",
-										"scope": "#/properties/debug/properties/showDetailedMemoryPoolStatus"
-									}
-								]
-							},
-							{
-								"type": "HorizontalLayout",
-								"elements": [
-									{
-										"type": "Control",
-										"scope": "#/properties/debug/properties/stackHeadroom"
-									},
-									{
-										"type": "Control",
-										"scope": "#/properties/debug/properties/showStackOverflowAlert"
-									}
-								]
-							}
-						]
-					}
-				]
-			},
-			{
-				"type": "Category",
-				"label": "Exceptions",
-				"elements": [
-					{
-						"type": "Group",
-						"label": "Position",
-						"elements": [
-							{
-								"type": "HorizontalLayout",
-								"elements": [
-									{
-										"type": "Control",
-										"label": false,
-										"scope": "#/properties/exceptions/properties/position/properties/x"
-									},
-									{
-										"type": "Control",
-										"label": false,
-										"scope": "#/properties/exceptions/properties/position/properties/y"
-									}
-								]
-							}
-						]
-					}
-				]
-			},
-			{
-				"type": "Category",
-				"label": "FrameRate",
-				"elements": [
-					{
-						"type": "VerticalLayout",
-						"elements": [
-							{
-								"type": "Control",
-								"scope": "#/properties/frameRate/properties/frameCycle"
-							},
-							{
-								"type": "Control",
-								"scope": "#/properties/frameRate/properties/runDelayedMessagesAtHalfFrameRate"
-							},
-							{
-								"type": "Control",
-								"scope": "#/properties/frameRate/properties/timerResolution"
-							}
-						]
-					}
-				]
-			},
-			{
-				"type": "Category",
-				"label": "Game specific Macros",
-				"elements": [
-					{
-						"type": "Control",
-						"scope": "#/properties/game"
-					}
-				]
-			},
-			{
-				"type": "Category",
-				"label": "Math",
-				"elements": [
-					{
-						"type": "VerticalLayout",
-						"elements": [
-							{
-								"type": "Control",
-								"scope": "#/properties/math/properties/fixedPointPrecision"
-							}
-						]
-					}
-				]
-			},
-			{
-				"type": "Category",
-				"label": "MemoryPools",
-				"elements": [
-					{
-						"type": "VerticalLayout",
-						"elements": [
-							{
-								"type": "Control",
-								"scope": "#/properties/memoryPools/properties/cleanUp"
-							},
-							{
-								"type": "Control",
-								"scope": "#/properties/memoryPools/properties/warningThreshold"
-							},
-							{
-								"type": "Control",
-								"scope": "#/properties/memoryPools/properties/pools"
-							}
-						]
-					}
-				]
-			},
-			{
-				"type": "Category",
-				"label": "Optics",
-				"elements": [
-					{
-						"type": "VerticalLayout",
-						"elements": [
-							{
-								"type": "Control",
-								"scope": "#/properties/optics/properties/baseFactor"
-							},
-							{
-								"type": "Control",
-								"scope": "#/properties/optics/properties/cameraNearPlane"
-							},
-							{
-								"type": "Group",
-								"elements": [
-									{
-										"type": "HorizontalLayout",
-										"elements": [
-											{
-												"type": "Control",
-												"scope": "#/properties/optics/properties/maximumXViewDistance",
-												"label": "X"
-											},
-											{
-												"type": "Control",
-												"scope": "#/properties/optics/properties/maximumYViewDistance",
-												"label": "Y"
-											}
-										]
-									}
-								],
-								"label": "Maximum View Distance"
-							},
-							{
-								"type": "Control",
-								"scope": "#/properties/optics/properties/scalingModifierFactor"
-							},
-							{
-								"type": "Group",
-								"elements": [
-									{
-										"type": "HorizontalLayout",
-										"elements": [
-											{
-												"type": "Control",
-												"scope": "#/properties/optics/properties/horizontalViewPointCenter",
-												"label": "Horizontal"
-											},
-											{
-												"type": "Control",
-												"scope": "#/properties/optics/properties/verticalViewPointCenter",
-												"label": "Vertical"
-											}
-										]
-									}
-								],
-								"label": "View Point Center"
-							},
-							{
-								"type": "Group",
-								"elements": [
-									{
-										"type": "HorizontalLayout",
-										"elements": [
-											{
-												"type": "Control",
-												"scope": "#/properties/optics/properties/screenWidth",
-												"label": "Width"
-											},
-											{
-												"type": "Control",
-												"scope": "#/properties/optics/properties/screenHeight",
-												"label": "Height"
-											},
-											{
-												"type": "Control",
-												"scope": "#/properties/optics/properties/screenDepth",
-												"label": "Depth"
-											}
-										]
-									}
-								],
-								"label": "Screen Size"
-							},
-							{
-								"type": "Control",
-								"scope": "#/properties/optics/properties/useLegacyCoordinateProjection"
-							}
-						]
-					}
-				]
-			},
-			{
-				"type": "Category",
-				"label": "Palettes",
-				"elements": [
-					{
-						"type": "VerticalLayout",
-						"elements": [
-							{
-								"type": "Control",
-								"scope": "#/properties/palettes/properties/bgMapPalette0",
-								"label": "BGMap Palette 0"
-							},
-							{
-								"type": "Control",
-								"scope": "#/properties/palettes/properties/bgMapPalette1",
-								"label": "BGMap Palette 1"
-							},
-							{
-								"type": "Control",
-								"scope": "#/properties/palettes/properties/bgMapPalette2",
-								"label": "BGMap Palette 2"
-							},
-							{
-								"type": "Control",
-								"scope": "#/properties/palettes/properties/bgMapPalette3",
-								"label": "BGMap Palette 3"
-							},
-							{
-								"type": "Control",
-								"scope": "#/properties/palettes/properties/objectPalette0",
-								"label": "Object Palette 0"
-							},
-							{
-								"type": "Control",
-								"scope": "#/properties/palettes/properties/objectPalette1",
-								"label": "Object Palette 1"
-							},
-							{
-								"type": "Control",
-								"scope": "#/properties/palettes/properties/objectPalette2",
-								"label": "Object Palette 2"
-							},
-							{
-								"type": "Control",
-								"scope": "#/properties/palettes/properties/objectPalette3",
-								"label": "Object Palette 3"
-							},
-							{
-								"type": "Control",
-								"scope": "#/properties/palettes/properties/printingPalette",
-								"label": "Printing Palette"
-							}
-						]
-					}
-				]
-			},
-			{
-				"type": "Category",
-				"label": "Physics",
-				"elements": [
-					{
-						"type": "VerticalLayout",
-						"elements": [
-							{
-								"type": "Control",
-								"scope": "#/properties/physics/properties/angleToPreventColliderDisplacement"
-							},
-							{
-								"type": "Control",
-								"scope": "#/properties/physics/properties/frictionForceFactorPower"
-							},
-							{
-								"type": "Control",
-								"scope": "#/properties/physics/properties/gravity"
-							},
-							{
-								"type": "Control",
-								"scope": "#/properties/physics/properties/highPrecision"
-							},
-							{
-								"type": "Control",
-								"scope": "#/properties/physics/properties/maximumBouncinessCoefficient"
-							},
-							{
-								"type": "Control",
-								"scope": "#/properties/physics/properties/maximumFrictionCoefficient"
-							},
-							{
-								"type": "Control",
-								"scope": "#/properties/physics/properties/stopBouncingVelocityThreshold"
-							},
-							{
-								"type": "Control",
-								"scope": "#/properties/physics/properties/stopVelocityThreshold"
-							},
-							{
-								"type": "Control",
-								"scope": "#/properties/physics/properties/timeElapsedDivisor"
-							}
-						]
-					}
-				]
-			},
-			{
-				"type": "Category",
-				"label": "Random",
-				"elements": [
-					{
-						"type": "VerticalLayout",
-						"elements": [
-							{
-								"type": "Control",
-								"scope": "#/properties/random/properties/addUserInputAndTimeToRandomSeed"
-							},
-							{
-								"type": "Control",
-								"scope": "#/properties/random/properties/seedCycles"
-							}
-						]
-					}
-				]
-			},
-			{
-				"type": "Category",
-				"label": "Sound",
-				"elements": [
-					{
-						"type": "VerticalLayout",
-						"elements": [
-							{
-								"type": "Control",
-								"scope": "#/properties/sound/properties/earDisplacement",
-								"label": "Ear Displacement"
-							},
-							{
-								"type": "Control",
-								"scope": "#/properties/sound/properties/stereoAttenuationDistance",
-								"label": "Stereo Atenuation"
-							}
-						]
-					}
-				]
-			},
-			{
-				"type": "Category",
-				"label": "Sprite",
-				"elements": [
-					{
-						"type": "VerticalLayout",
-						"elements": [
-							{
-								"type": "Control",
-								"scope": "#/properties/sprite/properties/totalLayers"
-							},
-							{
-								"type": "Control",
-								"scope": "#/properties/sprite/properties/totalObjects"
-							},
-							{
-								"type": "Control",
-								"scope": "#/properties/sprite/properties/spritesRotateIn3D"
-							},
-							{
-								"type": "Control",
-								"scope": "#/properties/sprite/properties/hackBgmapSpriteHeight"
-							}
-						]
-					}
-				]
-			},
-			{
-				"type": "Category",
-				"label": "SRAM",
-				"elements": [
-					{
-						"type": "VerticalLayout",
-						"elements": [
-							{
-								"type": "Control",
-								"scope": "#/properties/sram/properties/totalSram",
-								"label": "Total SRAM"
-							}
-						]
-					}
-				]
-			},
-			{
-				"type": "Category",
-				"label": "Texture",
-				"elements": [
-					{
-						"type": "VerticalLayout",
-						"elements": [
-							{
-								"type": "Control",
-								"scope": "#/properties/texture/properties/bgmapsPerSegments"
-							},
-							{
-								"type": "Control",
-								"scope": "#/properties/texture/properties/paramTableSegments"
-							},
-							{
-								"type": "Group",
-								"label": "Printing Area Offset (x, y, parallax)",
-								"elements": [
-									{
-										"type": "HorizontalLayout",
-										"elements": [
-											{
-												"type": "Control",
-												"label": false,
-												"scope": "#/properties/texture/properties/printing/properties/offset/properties/x"
-											},
-											{
-												"type": "Control",
-												"label": false,
-												"scope": "#/properties/texture/properties/printing/properties/offset/properties/y"
-											},
-											{
-												"type": "Control",
-												"label": false,
-												"scope": "#/properties/texture/properties/printing/properties/offset/properties/parallax"
-											}
-										]
-									}
-								]
-							},
-							{
-								"type": "Control",
-								"scope": "#/properties/texture/properties/printing/properties/printableArea"
-							}
-						]
-					}
-				]
-			},
-			{
-				"type": "Category",
-				"label": "Wireframes",
-				"elements": [
-					{
-						"type": "VerticalLayout",
-						"elements": [
-							{
-								"type": "Control",
-								"scope": "#/properties/wireframes/properties/sort"
-							},
-							{
-								"type": "Control",
-								"scope": "#/properties/wireframes/properties/interlacedThreshold"
-							},
-							{
-								"type": "Control",
-								"scope": "#/properties/wireframes/properties/lineShrinkingPadding"
-							},
-							{
-								"type": "Control",
-								"scope": "#/properties/wireframes/properties/frustumExtensionPower"
-							},
-							{
-								"type": "Control",
-								"scope": "#/properties/wireframes/properties/verticalLineOptimization"
-							}
-						]
-					}
-				]
-			}
-		]
+		"type": "EngineConfigEditor",
+		"scope": "#"
 	},
 	"icon": "codicon codicon-settings",
 	"templates": [
