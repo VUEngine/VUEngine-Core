@@ -27,9 +27,6 @@ typedef struct BehaviorSpec
 	/// Component spec
 	ComponentSpec componentSpec;
 
-	/// Behavioral class
-	void* (*targetClass)();
-
 	/// Enabled?
 	bool enabled;
 
