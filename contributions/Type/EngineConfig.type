@@ -164,7 +164,7 @@
 				},
 				"additionalProperties": false
 			},
-			"game": {
+			"macros": {
 				"type": "array",
 				"items": {
 					"type": "object",

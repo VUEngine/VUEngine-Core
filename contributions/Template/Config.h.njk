@@ -19,17 +19,21 @@
 #include "PluginsConfig.h"
 #include "RomInfo.h"
 
-{% if config.game | length -%}
-{{ macros.sectionHeader('Game specific macros') }}
+{% if config.macros | length -%}
+{{ macros.sectionHeader('Macros') }}
 
-{% for macro in config.game | sort(false, false, "name") -%}
+{% for macro in config.macros | sort(false, false, "name") -%}
 {% if macro.enabled -%}
-{% set macroName = ['__', macro.name | toUpperSnakeCase] | join -%}
+{% set macroName = macro.name | toUpperSnakeCase -%}
 {% if macro.type == 'define' -%}
 #define {{ macroName }} 
 {% elseif macro.type == 'undefine' -%}
 #undef {{ macroName }} 
-{% elseif macro.type != 'undefine' -%}
+{% elseif macro.type == 'macro' or macro.type == 'symbol' -%}
+#define {{ macroName }} {{ macro.value | formatValue | safe |replace('"', '') }}
+{% elseif macro.type == 'text' -%}
+#define {{ macroName }} "{{ macro.value | formatValue | safe |replace('"', '') }}"
+{% elseif macro.type == 'boolean' or macro.type == 'number' -%}
 #define {{ macroName }} {{ macro.value | formatValue | safe }}
 {% endif -%}
 {% endif -%}
