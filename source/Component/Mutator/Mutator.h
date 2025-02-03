@@ -27,7 +27,7 @@ typedef struct MutatorSpec
 	/// Component spec
 	ComponentSpec componentSpec;
 
-	/// Mutatoral class
+	/// Mutation target class
 	void* (*targetClass)();
 
 	/// Enabled?
