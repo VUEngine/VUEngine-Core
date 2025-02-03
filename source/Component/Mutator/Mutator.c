@@ -11,18 +11,7 @@
 // INCLUDES
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-#include <string.h>
-#include <VirtualList.h>
-
-#include "BehaviorManager.h"
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-// CLASS' DECLARATIONS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-friend class Behavior;
-friend class VirtualList;
-friend class VirtualNode;
+#include "Mutator.h"
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PUBLIC METHODS
@@ -30,80 +19,46 @@ friend class VirtualNode;
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-uint32 BehaviorManager::getType()
-{
-	return kBehaviorComponent;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void BehaviorManager::enable()
-{
-	Base::enable(this);
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void BehaviorManager::disable()
-{
-	Base::disable(this);
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-Behavior BehaviorManager::create(Entity owner, const BehaviorSpec* behaviorSpec)
-{
-	if(NULL == behaviorSpec)
-	{
-		return NULL;
-	}
-
-	return ((Behavior (*)(Entity, const BehaviorSpec*)) ((ComponentSpec*)behaviorSpec)->allocator)(owner, behaviorSpec);
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void BehaviorManager::update()
-{
-	for(VirtualNode node = this->components->head, nextNode = NULL; NULL != node; node = nextNode)
-	{
-		nextNode = node->next;
-
-		Behavior behavior = Behavior::safeCast(node->data);
-
-		NM_ASSERT(!isDeleted(behavior), "BehaviorManager::update: deleted behavior");
-
-		if(behavior->deleteMe)
-		{
-			VirtualList::removeNode(this->components, node);
-
-			delete behavior;
-			continue;
-		}
-	}
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-// CLASS' PRIVATE METHODS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void BehaviorManager::constructor()
+void Mutator::constructor(Entity owner, const MutatorSpec* mutatorSpec)
 {
 	// Always explicitly call the base's constructor 
-	Base::constructor();
+	Base::constructor(owner, (const ComponentSpec*)&mutatorSpec->componentSpec);
+
+	this->enabled = mutatorSpec->enabled;
+
+	if(NULL != mutatorSpec->targetClass)
+	{
+		Entity::mutateTo(owner, mutatorSpec->targetClass);
+	}
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void BehaviorManager::destructor()
+void Mutator::destructor()
 {
-	// Allow a new construct
 	// Always explicitly call the base's destructor 
 	Base::destructor();
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void Mutator::enable()
+{
+	this->enabled = true;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void Mutator::disable()
+{
+	this->enabled = false;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+bool Mutator::isEnabled()
+{
+	return this->enabled;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

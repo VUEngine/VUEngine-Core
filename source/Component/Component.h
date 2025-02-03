@@ -46,7 +46,7 @@ enum ComponentTypes
 	kColliderComponent,
 	kPhysicsComponent,
 	kWireframeComponent,
-	kBehaviorComponent,
+	kMutatorComponent,
 
 	// Limmiter
 	kComponentTypes,

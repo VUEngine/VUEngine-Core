@@ -13,7 +13,7 @@
 
 #include <AnimationCoordinatorFactory.h>
 #include <AnimationInspectorState.h>
-#include <BehaviorManager.h>
+#include <MutatorManager.h>
 #include <BgmapSprite.h>
 #include <BgmapTextureManager.h>
 #include <Body.h>

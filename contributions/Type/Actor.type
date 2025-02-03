@@ -90,7 +90,7 @@
 							"additionalProperties": false
 						}
 					},
-					"behaviors": {
+					"mutators": {
 						"type": "array",
 						"items": {
 							"type": "object",

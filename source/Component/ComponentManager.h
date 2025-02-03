@@ -105,10 +105,10 @@ abstract class ComponentManager : ListenerObject
 	/// Retrieve the linked list of components that are instances of the provided class.
 	/// @param owner: Object to which the components attach to
 	/// @param classPointer: Pointer to the class to use as search criteria. Usage: typeofclass(ClassName)
-	/// @param components: Linked list to be filled with the behaviors that meed the search criteria 
+	/// @param components: Linked list to be filled with the components that meed the search criteria 
 	/// (it is externally allocated and must be externally deleted)
 	/// @param componentType: Type of components to retrieve
-	/// @return True if one or more behaviors met the search criteria; false otherwise
+	/// @return True if one or more components met the search criteria; false otherwise
 	static bool getComponentsOfClass(Entity owner, ClassPointer classPointer, VirtualList components, uint32 componentType);
 
 	/// Retrieve the number of components belonging to the provided owner.

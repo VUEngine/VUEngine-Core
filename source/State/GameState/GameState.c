@@ -11,7 +11,7 @@
 // INCLUDES
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-#include <BehaviorManager.h>
+#include <MutatorManager.h>
 #include <BgmapTextureManager.h>
 #include <BodyManager.h>
 #include <Camera.h>
@@ -54,7 +54,7 @@ void GameState::constructor()
 
 	this->stream = true;
 	this->transform = true;
-	this->processBehaviors = true;
+	this->processMutators = true;
 	this->updatePhysics = true;
 	this->processCollisions = true;
 
@@ -152,7 +152,7 @@ void GameState::update(void* owner)
 
 	GameState::execute(this, owner);
 
-	GameState::processBehaviors(this);
+	GameState::processMutators(this);
 
 	GameState::simulatePhysics(this);
 
@@ -176,7 +176,7 @@ void GameState::stop(void* owner)
 	this->stream = true;
 	this->transform = true;
 	this->updatePhysics = true;
-	this->processBehaviors = true;
+	this->processMutators = true;
 	this->processCollisions = true;
 
 	MessageDispatcher::discardDelayedMessagesWithClock(MessageDispatcher::getInstance(), this->messagingClock);
@@ -656,7 +656,7 @@ void GameState::createManagers()
 		if(NULL == this->componentManagers[i])
 		{
 			AllocatorPointer _componentManagerAllocators[kComponentTypes];
-			_componentManagerAllocators[kBehaviorComponent] = __TYPE(BehaviorManager);
+			_componentManagerAllocators[kMutatorComponent] = __TYPE(MutatorManager);
 			_componentManagerAllocators[kPhysicsComponent] = __TYPE(BodyManager);
 			_componentManagerAllocators[kColliderComponent] = __TYPE(ColliderManager);
 			_componentManagerAllocators[kSpriteComponent] = __TYPE(SpriteManager);
@@ -830,9 +830,9 @@ void GameState::readUserInput()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void GameState::processBehaviors()
+void GameState::processMutators()
 {
-	if(!this->processBehaviors || isDeleted(this->componentManagers[kBehaviorComponent]))
+	if(!this->processMutators || isDeleted(this->componentManagers[kMutatorComponent]))
 	{
 		return;
 	}
@@ -842,10 +842,10 @@ void GameState::processBehaviors()
 		return;
 	}
 
-	BehaviorManager::update(this->componentManagers[kBehaviorComponent]);
+	MutatorManager::update(this->componentManagers[kMutatorComponent]);
 
 #ifdef __ENABLE_PROFILER
-	Profiler::lap(kProfilerLapTypeNormalProcess, PROCESS_NAME_BEHAVIORS);
+	Profiler::lap(kProfilerLapTypeNormalProcess, PROCESS_NAME_MUTATORS);
 #endif
 }
 

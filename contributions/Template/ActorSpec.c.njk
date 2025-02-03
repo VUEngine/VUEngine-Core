@@ -569,8 +569,8 @@ ComponentSpec* const {{ sanitizedSpecName }}ComponentSpecs[] =
 	{% for colliderName in colliderNames -%}
 	(ComponentSpec*)&{{ colliderName }}ColliderSpec,
 	{% endfor -%}
-	{% for behavior in item.components.behaviors -%}
-	(ComponentSpec*)&{{ behavior.name }},
+	{% for mutator in item.components.mutators -%}
+	(ComponentSpec*)&{{ mutator.name }},
 	{% endfor -%}
 	NULL
 };

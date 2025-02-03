@@ -26,7 +26,7 @@ Features:
 	- Parenting
 
 - Components:
-	- Behaviors
+	- Mutators
 	- Physics
 	- Colliders
 	- Sprites

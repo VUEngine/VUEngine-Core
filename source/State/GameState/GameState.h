@@ -81,8 +81,8 @@ class GameState : State
 	/// Flags to enable or disable the transformations
 	bool transform;
 
-	/// Flags to enable or disable the behavior processing
-	bool processBehaviors;
+	/// Flags to enable or disable the mutator processing
+	bool processMutators;
 
 	/// Flags to enable or disable the physical simulations
 	bool updatePhysics;
