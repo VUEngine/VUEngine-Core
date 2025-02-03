@@ -360,7 +360,6 @@ void Sound::rewind()
 		return;
 	}
 
-	this->state = kSoundPlaying;
 	this->targetTimerResolutionFactor = Sound::computeTimerResolutionFactor(this);
 	this->tickStep = __FIX7_9_EXT_MULT(this->speed, this->targetTimerResolutionFactor);
 
