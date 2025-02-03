@@ -11,7 +11,7 @@
 // INCLUDES
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-#include <MutatorManager.h>
+#include <BehaviorManager.h>
 #include <BgmapTextureManager.h>
 #include <BodyManager.h>
 #include <Camera.h>
@@ -20,6 +20,7 @@
 #include <FrameRate.h>
 #include <KeypadManager.h>
 #include <MessageDispatcher.h>
+#include <MutatorManager.h>
 #include <ParamTableManager.h>
 #include <Printer.h>
 #include <Profiler.h>
@@ -55,6 +56,7 @@ void GameState::constructor()
 	this->stream = true;
 	this->transform = true;
 	this->processMutators = true;
+	this->processBehaviors = true;
 	this->updatePhysics = true;
 	this->processCollisions = true;
 
@@ -152,6 +154,8 @@ void GameState::update(void* owner)
 
 	GameState::execute(this, owner);
 
+	GameState::processBehaviors(this);
+
 	GameState::processMutators(this);
 
 	GameState::simulatePhysics(this);
@@ -177,6 +181,7 @@ void GameState::stop(void* owner)
 	this->transform = true;
 	this->updatePhysics = true;
 	this->processMutators = true;
+	this->processBehaviors = true;
 	this->processCollisions = true;
 
 	MessageDispatcher::discardDelayedMessagesWithClock(MessageDispatcher::getInstance(), this->messagingClock);
@@ -837,15 +842,31 @@ void GameState::processMutators()
 		return;
 	}
 
+	MutatorManager::update(this->componentManagers[kMutatorComponent]);
+
+#ifdef __ENABLE_PROFILER
+	Profiler::lap(kProfilerLapTypeNormalProcess, PROCESS_NAME_MUTATORS);
+#endif
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void GameState::processBehaviors()
+{
+	if(!this->processBehaviors || isDeleted(this->componentManagers[kBehaviorComponent]))
+	{
+		return;
+	}
+
 	if(Clock::isPaused(this->logicsClock))
 	{
 		return;
 	}
 
-	MutatorManager::update(this->componentManagers[kMutatorComponent]);
+	BehaviorManager::update(this->componentManagers[kBehaviorComponent]);
 
 #ifdef __ENABLE_PROFILER
-	Profiler::lap(kProfilerLapTypeNormalProcess, PROCESS_NAME_MUTATORS);
+	Profiler::lap(kProfilerLapTypeNormalProcess, PROCESS_NAME_BEHAVIORS);
 #endif
 }
 
