@@ -26,7 +26,7 @@
 {%- if item.inGameType != '' -%}
 	{%- set includes = (includes.push('InGameTypes'), includes) -%}
 {%- endif -%}
-{%- if item.physics.enabled -%}
+{%- if item.body.enabled -%}
 	{%- set includes = (includes.push('Body'), includes) -%}
 {%- endif -%}
 {%- if item.components.sprites | length -%}
@@ -63,6 +63,12 @@
 {%- if item.components.wireframes | length -%}
 	{%- for wireframe in item.components.wireframes -%}
 		{%- set includes = (includes.push(wireframe.type), includes) -%}
+	{%- endfor -%}
+{%- endif -%}
+{%- if item.components.mutators | length -%}
+	{%- set includes = (includes.push('Mutator'), includes) -%}
+	{%- for mutator in item.components.mutators -%}
+		{%- set includes = (includes.push(mutator.name), includes) -%}
 	{%- endfor -%}
 {%- endif -%}
 
@@ -181,9 +187,9 @@ CharSetROMSpec {{ charsetSpecName }}CharsetSpec =
 
 	// Frame offsets array
 	{%- if imageData.tiles.frameOffsets is defined and imageData.tiles.frameOffsets | length %}
-	{{ tilesName }}TilesFrameOffsets,
+	{{ tilesName }}TilesFrameOffsets
 	{%- else %}
-	NULL,
+	NULL
 	{%- endif %}
 };
 
@@ -236,7 +242,7 @@ TextureROMSpec {{ spriteName }}TextureSpec =
 	{{ sprite.texture.flip.x | default(false) }},
 
 	// Flag to horizontally flip the image
-	{{ sprite.texture.flip.y | default(false) }},
+	{{ sprite.texture.flip.y | default(false) }}
 };
 
 {%- if spriteAllocatorClass == 'MBgmapSprite' or spriteAllocatorClass == 'MBgmapSprite' %}
@@ -271,8 +277,12 @@ TextureROMSpec* const {{ spriteName }}TextureSpecs[] =
 				kSpriteComponent
 			},
 
-			// Array of function animations
-			NULL,
+			// Array of animation functions
+			{%- if isAnimated %}
+			(const AnimationFunction**)&{{ sanitizedSpecName }}AnimationSpecs
+			{%- else %}
+			(const AnimationFunction**)NULL
+			{%- endif %}
 		},
 
 		// Spec for the texture to display
@@ -286,7 +296,7 @@ TextureROMSpec* const {{ spriteName }}TextureSpecs[] =
 		__TRANSPARENCY_{{ sprite.transparency | upper }},
 
 		// Displacement added to the sprite's position
-		{{ '{' ~ sprite.displacement.x ~ ', ' ~ sprite.displacement.y ~ ', ' ~ sprite.displacement.z ~ ', ' ~ sprite.displacement.parallax ~ '}' }},
+		{{ '{' ~ sprite.displacement.x ~ ', ' ~ sprite.displacement.y ~ ', ' ~ sprite.displacement.z ~ ', ' ~ sprite.displacement.parallax ~ '}' }}
 	},
 
 	// Flag to indicate in which display to show the texture (__WORLD_ON, __WORLD_LON or __WORLD_RON)
@@ -306,7 +316,7 @@ TextureROMSpec* const {{ spriteName }}TextureSpecs[] =
 
 	{%- if item.sprites.type != 'Object' %}
 	// Pointer to affine/hbias manipulation function
-	{% if sprite.manipulationFunction %}(ParamTableEffectMethod){{ sprite.manipulationFunction }}{% else %}NULL{% endif %},
+	{% if sprite.manipulationFunction %}(ParamTableEffectMethod){{ sprite.manipulationFunction }}{% else %}NULL{% endif %}
 	{%- endif %}
 
 	{%- if spriteClass == 'FrameBlendBgmapSprite' %}
@@ -334,7 +344,7 @@ TextureROMSpec* const {{ spriteName }}TextureSpecs[] =
 	{{ sprite.texture.repeat.size.x | default(0) }},
 
 	// Bounds the sprite's height to provide culling; if 0, the value is inferred from the texture
-	{{ sprite.texture.repeat.size.y | default(0) }},
+	{{ sprite.texture.repeat.size.y | default(0) }}
 	{%- endif %}
 };
 
@@ -390,7 +400,7 @@ AnimationFunctionROMSpec* const {{ sanitizedSpecName }}AnimationSpecs[] =
 {#- PRINT WIREFRAMES -#}
 {%- if item.components.wireframes | length -%}
 
-{{- '\n' ~ macros.sectionHeader('Wireframes') ~ '\n\n' -}}
+{{- macros.sectionHeader('Wireframes') ~ '\n\n' -}}
 
 {%- set wireframeNames = [] -%}
 {%- for wireframe in item.components.wireframes -%}
@@ -415,9 +425,22 @@ const PixelVector {{ wireframeName }}WireframeSegments[][2]=
 
 {{ wireframe.type }}ROMSpec {{ wireframeName }}WireframeSpec =
 {
+	// Wireframe
 	{
-		// class allocator
-		__TYPE({{ wireframe.type }}),
+		// VisualComponent
+		{
+			// Component
+			{
+				// Allocator
+				__TYPE({{ wireframe.type }}),
+
+				// Component type
+				kWireframeComponent
+			},
+
+			// Array of function animations
+			(const AnimationFunction**)NULL
+		},
 
 		// Displacement
 		{{ '{' ~ wireframe.displacement.x ~ ', ' ~ wireframe.displacement.y ~ ', ' ~ wireframe.displacement.z ~ '}' }},
@@ -437,13 +460,13 @@ const PixelVector {{ wireframeName }}WireframeSegments[][2]=
 	__PIXELS_TO_METERS({{ wireframe.radius }}),
 
 	// draw center
-	{{ wireframe.drawCenter }},
+	{{ wireframe.drawCenter }}
 	{%- elseif wireframe.type == 'Mesh' -%}
 	// segments
-	(PixelVector (*)[2]){{ wireframeName }}WireframeSegments,
+	(PixelVector (*)[2]){{ wireframeName }}WireframeSegments
 	{%- elseif wireframe.type == 'Asterisk' -%}
 	// length
-	{{ wireframe | length }},
+	{{ wireframe | length }}
 	{%- endif %}
 };
 
@@ -478,10 +501,10 @@ ColliderROMSpec {{ colliderName }}ColliderSpec =
 	{{ '{' ~ collider.displacement.x ~ ', ' ~ collider.displacement.y ~ ', ' ~ collider.displacement.z ~ ', ' ~ collider.displacement.parallax ~ '}' }},
 
 	// Rotation (x, y, z)
-	{__F_TO_FIX7_9({{ collider.rotation.x }}), __F_TO_FIX7_9({{ collider.rotation.y }}), __F_TO_FIX7_9({{ collider.rotation.z }})},
+	{ __F_TO_FIX7_9({{ (collider.rotation.x | float).toFixed(3) }}f), __F_TO_FIX7_9({{ (collider.rotation.y | float).toFixed(3) }}f), __F_TO_FIX7_9({{ (collider.rotation.z | float).toFixed(3) }}f) },
 
 	// Scale (x, y, z)
-	{__F_TO_FIX7_9({{ collider.scale.x }}), __F_TO_FIX7_9({{ collider.scale.y }}), __F_TO_FIX7_9({{ collider.scale.z }})},
+	{ __F_TO_FIX7_9({{ (collider.scale.x | float).toFixed(3) }}f), __F_TO_FIX7_9({{ (collider.scale.y | float).toFixed(3) }}f), __F_TO_FIX7_9({{ (collider.scale.z | float).toFixed(3) }}f) },
 
 	// If true this collider checks for collisions against other colliders
 	{{ collider.checkForCollisions }},
@@ -507,44 +530,95 @@ ColliderROMSpec {{ colliderName }}ColliderSpec =
 			{%- if not loop.last -%}
 				{{- " | kLayer" -}}
 			{%- endif -%}
-		{%- endfor -%}),
+		{%- endfor -%})
 	{%- else %}
-	kLayerAll,
+	kLayerAll
 	{%- endif %}
-},
+};
 {% endfor %}
 {% endif -%}
 
-{{- macros.sectionHeader('Actor') -}}
+{#- PRINT BODY -#}
+{% if item.body.enabled -%}
+{{ macros.sectionHeader('Body') }}
 
-{#- PRINT PHYSICAL PROPERTIES -#}
-{%- if item.physics.enabled %}
-
-BodyROMSpec {{ sanitizedSpecName }}BodySpecSpec =
+BodyROMSpec {{ sanitizedSpecName }}BodySpec =
 {
-	// mass
-	__F_TO_FIX10_6({{ item.physics.mass }}),
-
-	// friction
-	__F_TO_FIX10_6({{ item.physics.friction }}),
-
-	// bounciness
-	__F_TO_FIX10_6({{ item.physics.bounciness }}),
-
-	// maximum velocity
+	// Component
 	{
-		__I_TO_FIXED({{ item.physics.maximumVelocity.x }}), 
-		__I_TO_FIXED({{ item.physics.maximumVelocity.y }}), 
-		__I_TO_FIXED({{ item.physics.maximumVelocity.z }}),
+		// Allocator
+		__TYPE(Body),
+
+		// Component type
+		kPhysicsComponent
 	},
 
-	// maximum speed
-	__I_TO_FIXED({{ item.physics.maximumSpeed }})
+	// Create body
+	true,
+
+	// Mass
+	__F_TO_FIX10_6({{ (item.body.mass | float).toFixed(3) }}f),
+
+	// Friction
+	__F_TO_FIX10_6({{ (item.body.friction | float).toFixed(3) }}f),
+
+	// Bounciness
+	__F_TO_FIX10_6({{ (item.body.bounciness | float).toFixed(3) }}f),
+
+	// Maximum velocity
+	{ __I_TO_FIXED({{ item.body.maximumVelocity.x }}), __I_TO_FIXED({{ item.body.maximumVelocity.y }}), __I_TO_FIXED({{ item.body.maximumVelocity.z }}) },
+
+	// Maximum speed
+	__I_TO_FIX10_6({{ item.body.maximumSpeed }}),
+
+	// Axises on which the body is subject to gravity
+	{% if item.body.gravityAxes.length -%}
+	{{- item.body.gravityAxes | join(' | ') -}}
+	{%- else -%}
+	__NO_AXIS
+	{%- endif -%},
+
+	// Axises around which to rotate the owner when syncronizing with body
+	{% if item.body.rotationAxes.length -%}
+	{{- item.body.rotationAxes | join(' | ') -}}
+	{%- else -%}
+	__NO_AXIS
+	{%- endif %}
 };
+{% endif -%}
+
+{# PRINT MUTATORS -#}
+{% set mutatorNames = [] -%}
+{% if item.components.mutators | length %}
+{{ macros.sectionHeader('Mutators') }}
+
+{% for mutator in item.components.mutators -%}
+{% set mutatorName = sanitizedSpecName ~ 'Mutator' ~ loop.index -%}
+{% set mutatorNames = (mutatorNames.push(mutatorName), mutatorNames) -%}
+
+MutatorROMSpec {{ mutatorName }}MutatorSpec =
+{
+	{
+		// Allocator
+		__TYPE(Mutator),
+
+		// Component type
+		kMutatorComponent
+	},
+
+	// Mutation target class
+	class({{ mutator.name }}),
+
+	// Enabled
+	true
+};
+{%- endfor -%}
 {%- endif %}
 
 {#- PRINT CHILDREN -#}
 {%- if item.components.children | length %}
+
+{{ macros.sectionHeader('Children') -}}
 
 PositionedActorROMSpec {{ sanitizedSpecName }}Children[] =
 {
@@ -558,6 +632,9 @@ PositionedActorROMSpec {{ sanitizedSpecName }}Children[] =
 };
 {%- endif %}
 
+{{ macros.sectionHeader('Actor') }}
+
+{# PRINT COMPONENT LIST -#}
 ComponentSpec* const {{ sanitizedSpecName }}ComponentSpecs[] = 
 {
 	{% for spriteName in spriteNames -%}
@@ -569,8 +646,11 @@ ComponentSpec* const {{ sanitizedSpecName }}ComponentSpecs[] =
 	{% for colliderName in colliderNames -%}
 	(ComponentSpec*)&{{ colliderName }}ColliderSpec,
 	{% endfor -%}
-	{% for mutator in item.components.mutators -%}
-	(ComponentSpec*)&{{ mutator.name }},
+	{% if item.body.enabled -%}
+	(ComponentSpec*)&{{ sanitizedSpecName }}BodySpec,
+	{% endif -%}
+	{% for mutatorName in mutatorNames -%}
+	(ComponentSpec*)&{{ mutatorName }}MutatorSpec,
 	{% endfor -%}
 	NULL
 };
