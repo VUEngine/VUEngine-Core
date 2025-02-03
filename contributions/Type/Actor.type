@@ -279,18 +279,6 @@
 							"additionalProperties": false
 						}
 					},
-					"scripts": {
-						"type": "array",
-						"items": {
-							"type": "object",
-							"properties": {
-								"function": {
-									"type": "string"
-								}
-							},
-							"additionalProperties": false
-						}
-					},
 					"sprites": {
 						"type": "array",
 						"items": {
@@ -584,7 +572,7 @@
 				"type": "string",
 				"default": "None"
 			},
-			"physics": {
+			"body": {
 				"type": "object",
 				"properties": {
 					"enabled": {
