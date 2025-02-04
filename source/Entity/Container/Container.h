@@ -184,7 +184,12 @@ abstract class Container : Entity
 	/// Retrieve the amount of children of this container.
 	/// @return Amount of children of this container
 	int32 getChildrenCount();
-	
+
+	/// Find a relative in the whole hierarchy of containers with the provided name.
+	/// @param relativeName: Name to look for
+	/// @return The first container whose name equals the provided one 
+	Container getRelativeByName(const char* relativeName);
+
 	/// Update the children of this container.
 	void updateChildren();
 
