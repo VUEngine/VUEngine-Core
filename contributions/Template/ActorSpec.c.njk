@@ -485,7 +485,7 @@ const PixelVector {{ wireframeName }}WireframeSegments[][2]=
 
 ColliderROMSpec {{ colliderName }}ColliderSpec = 
 {
-	// Collider
+	// Component
 	{
 		// Allocator
 		__TYPE({{ collider.type }}),
@@ -612,7 +612,8 @@ MutatorROMSpec {{ mutatorName }}MutatorSpec =
 	// Enabled
 	true
 };
-{%- endfor -%}
+
+{% endfor %}
 {%- endif %}
 
 {#- PRINT CHILDREN -#}
@@ -632,7 +633,7 @@ PositionedActorROMSpec {{ sanitizedSpecName }}Children[] =
 };
 {%- endif %}
 
-{{ macros.sectionHeader('Actor') }}
+{{- macros.sectionHeader('Actor') ~ '\n\n' -}}
 
 {# PRINT COMPONENT LIST -#}
 ComponentSpec* const {{ sanitizedSpecName }}ComponentSpecs[] = 
