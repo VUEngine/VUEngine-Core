@@ -897,7 +897,7 @@ void Sprite::update()
 	}
 
 #ifdef __RELEASE
-	if(!this->updateAnimationFrame && this->animationController->p:laying)
+	if(!this->updateAnimationFrame && this->animationController->playing)
 #else
 	if(!this->updateAnimationFrame)
 #endif
