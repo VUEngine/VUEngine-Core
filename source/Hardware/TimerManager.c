@@ -620,7 +620,6 @@ void TimerManager::constructor()
 
 void TimerManager::destructor()
 {
-	// Allow a new construct
 	// Always explicitly call the base's destructor 
 	Base::destructor();
 }

@@ -60,7 +60,6 @@ void Tool::constructor()
 
 void Tool::destructor()
 {
-	// Allow a new construct
 	// Always explicitly call the base's destructor 
 	Base::destructor();
 }

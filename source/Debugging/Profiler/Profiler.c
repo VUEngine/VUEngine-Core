@@ -428,7 +428,7 @@ void Profiler::destructor()
 	delete this->laps;
 	this->laps = NULL;
 
-	// Allow a new construct
+
 	// Always explicitly call the base's destructor 
 	Base::destructor();
 }

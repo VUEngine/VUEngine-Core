@@ -301,7 +301,7 @@ void ParamTableManager::destructor()
 	delete this->bgmapSprites;
 	this ->bgmapSprites = NULL;
 
-	// Allow a new construct
+
 	// Always explicitly call the base's destructor 
 	Base::destructor();
 }

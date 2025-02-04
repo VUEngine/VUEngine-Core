@@ -1240,12 +1240,10 @@ void FrameBufferManager::constructor()
 
 void FrameBufferManager::destructor()
 {
-
 	VIPManager::removeEventListener(VIPManager::getInstance(), ListenerObject::safeCast(this), kEventVIPManagerXPEND);
 
 	VIPManager::removeEventListener(VIPManager::getInstance(), ListenerObject::safeCast(this), kEventVIPManagerGAMESTARTDuringXPEND);
 
-	// Allow a new construct
 	// Always explicitly call the base's destructor 
 	Base::destructor();
 }

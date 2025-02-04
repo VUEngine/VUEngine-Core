@@ -63,7 +63,7 @@ void WireframeManager::destructor()
 {
 	WireframeManager::stopListeningForVIP(this);
 
-	// Allow a new construct
+
 	// Always explicitly call the base's destructor 
 	Base::destructor();
 }

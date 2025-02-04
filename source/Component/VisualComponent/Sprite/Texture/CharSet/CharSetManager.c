@@ -235,7 +235,7 @@ void CharSetManager::destructor()
 	delete this->charSets;
 	this->charSets = NULL;
 
-	// Allow a new construct
+
 	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
