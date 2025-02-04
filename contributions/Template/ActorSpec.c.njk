@@ -15,8 +15,8 @@
 {%- endif -%}
 
 {#- DETERMINE ACTOR CLASS -#}
-{%- if item.extraProperties.customAllocator is defined and item.extraProperties.customAllocator != '' -%}
-	{%- set actorClass = item.extraProperties.customAllocator -%}
+{%- if item.logic.customAllocator is defined and item.logic.customAllocator != '' -%}
+	{%- set actorClass = item.logic.customAllocator -%}
 {%- else -%}
 	{%- set actorClass = 'Actor' -%}
 {%- endif %}
@@ -669,6 +669,9 @@ ComponentSpec* const {{ sanitizedSpecName }}ComponentSpecs[] =
 {# PRINT ACTOR SPEC -#}
 {{ actorClass }}ROMSpec {{ sanitizedSpecName }}ActorSpec =
 {
+	{% if actorClass != 'Actor' -%}
+	{
+	{% endif -%}
 	// Class allocator
 	__TYPE({{ actorClass }}),
 
@@ -707,5 +710,11 @@ ComponentSpec* const {{ sanitizedSpecName }}ComponentSpecs[] =
 	"{{ item.animations.default + 1 }}"
 	{%- else %}
 	NULL
+	{%- endif %}
+	{% if actorClass != 'Actor' -%}
+	},
+	{%- for configuration in item.logic.configuration | values | removeEmpty %}
+	{{ configuration | safe }},
+	{%- endfor %}
 	{%- endif %}
 };
