@@ -697,6 +697,7 @@ static FontData* Printer::getFontByName(const char* font)
 		if(NULL == result->charSet)
 		{
 			result->charSet = CharSet::get(result->fontSpec->charSetSpec);
+			CharSet::write(result->charSet);
 		}
 	}
 	else

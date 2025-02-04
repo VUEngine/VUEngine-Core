@@ -315,11 +315,9 @@ TextureROMSpec* const {{ spriteName }}TextureSpecs[] =
 	__WORLD_{{ sprite.displays }},
 	{%- endif %}
 
+	{%- if item.sprites.type != 'Object' %}
 	// The display mode (__WORLD_BGMAP, __WORLD_AFFINE, __WORLD_OBJECT or __WORLD_HBIAS)
 	// make sure to use the proper corresponding sprite type throughout the spec (BgmapSprite or ObjectSprite)
-	{%- if item.sprites.type == 'Object' %}
-	__WORLD_OBJECT,
-	{%- else %}
 	__WORLD_{{ sprite.bgmapMode | upper }},
 	{% endif %}
 
@@ -511,7 +509,7 @@ ColliderROMSpec {{ colliderName }}ColliderSpec =
 	{{ '{' ~ collider.displacement.x ~ ', ' ~ collider.displacement.y ~ ', ' ~ collider.displacement.z ~ ', ' ~ collider.displacement.parallax ~ '}' }},
 
 	// Rotation (x, y, z)
-	{ __F_TO_FIX7_9({{ (collider.rotation.x | float).toFixed(3) }}f), __F_TO_FIX7_9({{ (collider.rotation.y | float).toFixed(3) }}f), __F_TO_FIX7_9({{ (collider.rotation.z | float).toFixed(3) }}f) },
+	{ {{ (collider.rotation.x | float).toFixed(0) }}, {{ (collider.rotation.y | float).toFixed(0) }}, {{ (collider.rotation.z | float).toFixed(0) }} },
 
 	// Scale (x, y, z)
 	{ __F_TO_FIX7_9({{ (collider.scale.x | float).toFixed(3) }}f), __F_TO_FIX7_9({{ (collider.scale.y | float).toFixed(3) }}f), __F_TO_FIX7_9({{ (collider.scale.z | float).toFixed(3) }}f) },
