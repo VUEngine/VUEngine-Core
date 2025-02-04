@@ -150,7 +150,6 @@ void ParticleSystem::update()
 
 	if(NULL == node && this->paused)
 	{
-		this->update = ParticleSystem::overrides(this, update);
 		return;
 	}
 
@@ -309,7 +308,6 @@ void ParticleSystem::setSpec(void* particleSystemSpec)
 
 void ParticleSystem::start()
 {
-	this->update = true;
 	this->nextSpawnTime = 0;
 	this->totalSpawnedParticles = 0;
 	this->paused = false;
@@ -327,8 +325,6 @@ void ParticleSystem::pause()
 
 void ParticleSystem::unpause()
 {
-	this->update = true;
-
 	if(this->paused)
 	{
 		this->paused = false;
@@ -441,7 +437,6 @@ void ParticleSystem::setup()
 
 	ParticleSystem::configure(this);
 
-	this->update = ((ParticleSystemSpec*)this->actorSpec)->autoStart;
 	this->applyForceToParticles = ParticleSystem::appliesForceToParticles(this);
 }
 

@@ -62,12 +62,6 @@ abstract class Container : Entity
 	/// If true, the parent will delete this container when appropriate
 	bool deleteMe;
 
-	/// Flag to allow/prohibit calls to the update method
-	bool update;
-
-	/// Flag to allow/prohibit calls to the transform method
-	bool transform;
-
 	// Flag to prevent the same container from making ready multiple times
 	bool ready;
 

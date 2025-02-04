@@ -39,10 +39,6 @@ void Container::constructor(int16 internalId, const char* const name)
 
 	this->internalId = internalId;
 
-	// By default, save on calls to main methods.
-	this->update = Container::overrides(this, update);
-	this->transform = Container::overrides(this, transform);
-
 	this->localTransformation.position = Vector3D::zero();
 	this->localTransformation.rotation = Rotation::zero();
 	this->localTransformation.scale = Scale::unit();
@@ -339,9 +335,6 @@ void Container::deleteMyself()
 {
 	ASSERT(!isDeleted(this), "Container::deleteMyself: deleted this");
 
-	this->update = false;
-	this->transform = false;
-
 	if(!isDeleted(this->parent))
 	{
 		Container::removeChild(this->parent, this, true);
@@ -443,9 +436,6 @@ void Container::addChild(Container child)
 
 		// Add to the children list
 		VirtualList::pushBack(this->children, (void*)child);
-
-		this->update = this->update || Container::overrides(child, update);
-		this->transform = this->transform || Container::overrides(child, transform);
 
 		if(__NON_TRANSFORMED == child->transformation.invalid || __INVALIDATE_TRANSFORMATION == child->transformation.invalid)
 		{
@@ -688,7 +678,7 @@ void Container::updateChildren()
 			continue;
 		}
 
-		if(!child->update && NULL == child->children)
+		if(!Container::overrides(child, update) && NULL == child->children)
 		{
 			continue;
 		}
@@ -736,7 +726,7 @@ void Container::transformChildren(uint8 invalidateTransformationFlag)
 
 		if(__VALID_TRANSFORMATION == invalidateTransformationFlag)
 		{
-			if(!child->transform && NULL == child->children && __VALID_TRANSFORMATION == child->transformation.invalid)
+			if(!Container::overrides(child, transform) && NULL == child->children && __VALID_TRANSFORMATION == child->transformation.invalid)
 			{
 				continue;
 			}
