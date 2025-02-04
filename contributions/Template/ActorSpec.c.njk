@@ -4,13 +4,13 @@
 
 {%- set sanitizedSpecName = itemUri | basename(false) | sanitizeSpecName -%}
 
-{%- set isAnimated = false -%}
+{%- set hasAnimations = false -%}
 {%- if item.components.animations | length -%}
-	{%- set isAnimated = true -%}
+	{%- set hasAnimations = true -%}
 {%- endif -%}
 
 {%- set isSpritesheetAnimation = false -%}
-{%- if isAnimated and not item.animations.multiframe -%}
+{%- if hasAnimations and not item.animations.multiframe -%}
 	{%- set isSpritesheetAnimation = true -%}
 {%- endif -%}
 
@@ -31,6 +31,10 @@
 {%- endif -%}
 {%- if item.components.sprites | length -%}
 	{%- for sprite in item.components.sprites -%}
+		{%- set isAnimated = false -%}
+		{%- if hasAnimations and sprite.isAnimated -%}
+			{%- set isAnimated = true -%}
+		{%- endif -%}
 		{%- set spriteClass = item.sprites.type ~ 'Sprite' -%}
 		{%- set spriteAllocatorClass = item.sprites.type ~ 'Sprite' -%}
 		{%- if item.sprites.type == 'Bgmap' and not sprite.texture.repeat.x and not sprite.texture.repeat.y and sprite.colorMode == 1 and not isAnimated -%}
@@ -111,6 +115,11 @@
 
 {%- set spriteNames = [] -%}
 {%- for sprite in item.components.sprites -%}
+
+{%- set isAnimated = false -%}
+{%- if hasAnimations and sprite.isAnimated -%}
+	{%- set isAnimated = true -%}
+{%- endif -%}
 {%- set spriteNumber = loop.index -%}
 
 {%- set spriteClass = item.sprites.type ~ 'Sprite' -%}
@@ -354,7 +363,7 @@ TextureROMSpec* const {{ spriteName }}TextureSpecs[] =
 {% endif -%}
 
 {#- PRINT ANIMATIONS -#}
-{%- if isAnimated -%}
+{%- if hasAnimations -%}
 
 {{- macros.sectionHeader('Animations') ~ '\n\n' -}}
 
@@ -395,6 +404,7 @@ AnimationFunctionROMSpec* const {{ sanitizedSpecName }}AnimationSpecs[] =
 	{% endfor -%}
 	NULL,
 };
+
 {% endif %}
 
 {#- PRINT WIREFRAMES -#}
@@ -691,9 +701,9 @@ ComponentSpec* const {{ sanitizedSpecName }}ComponentSpecs[] =
 	{%- endif %}
 
 	// Animation to play automatically
-	{%- if isAnimated and item.components.animations[item.animations.default].name != '' %}
+	{%- if hasAnimations and item.components.animations[item.animations.default].name != '' %}
 	"{{ item.components.animations[item.animations.default].name | sanitizeSpecName }}"
-	{%- elseif isAnimated %} 
+	{%- elseif hasAnimations %} 
 	"{{ item.animations.default + 1 }}"
 	{%- else %}
 	NULL

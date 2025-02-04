@@ -335,6 +335,10 @@
 									"type": "string",
 									"default": "ON"
 								},
+								"isAnimated": {
+									"type": "boolean",
+									"default": true
+								},
 								"transparency": {
 									"type": "string",
 									"default": "None"
