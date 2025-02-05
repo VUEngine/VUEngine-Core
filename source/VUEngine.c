@@ -574,8 +574,11 @@ bool VUEngine::checkIfToggleTool()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void VUEngine::updateFrameRate()
+void VUEngine::startGameFrame()
 {
+	this->gameFrameStarted = false;
+	this->currentGameCycleEnded = false;
+
 #ifdef __TOOLS
 	if(VUEngine::isInToolState())
 	{
@@ -583,13 +586,28 @@ void VUEngine::updateFrameRate()
 	}
 #endif
 
-	FrameRate::update(FrameRate::getInstance());
+#ifdef __ENABLE_PROFILER
+	Profiler::start();
+#endif
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void VUEngine::waitForGameframe()
+void VUEngine::updateGameFrame()
 {
+#ifdef __TOOLS
+	VUEngine::checkIfToggleTool(this);
+#endif
+
+	StateMachine::update(this->stateMachine);
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void VUEngine::endGameFrame()
+{
+	this->currentGameCycleEnded = true;
+
 	if(NULL != this->currentGameState && GameState::lockFrameRate(this->currentGameState))
 	{
 		// Make sure that interrupts are enabled, otherwise we will be locked here
@@ -598,6 +616,8 @@ void VUEngine::waitForGameframe()
 		//  Wait for the next game start
 		while(!VUEngine::hasGameFrameStarted());			
 	}
+
+	FrameRate::update(FrameRate::getInstance());
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -614,27 +634,11 @@ secure void VUEngine::run(GameState currentGameState)
 
 	while(NULL != this->currentGameState)
 	{
-		this->gameFrameStarted = false;
-		this->currentGameCycleEnded = false;
+		VUEngine::startGameFrame(this);
 
-		VUEngine::updateFrameRate(this);
+		VUEngine::updateGameFrame(this);
 
-#ifdef __ENABLE_PROFILER
-		Profiler::start();
-#endif
-
-#ifdef __TOOLS
-		if(VUEngine::checkIfToggleTool(this))
-		{
-			continue;
-		}
-#endif
-
-		StateMachine::update(this->stateMachine);
-
-		this->currentGameCycleEnded = true;
-
-		VUEngine::waitForGameframe(this);
+		VUEngine::endGameFrame(this);
 	}
 
 	// Being a program running in an embedded system, there is no point in trying to 
