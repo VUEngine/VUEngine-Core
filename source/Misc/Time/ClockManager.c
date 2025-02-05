@@ -118,7 +118,6 @@ void ClockManager::destructor()
 		delete this->clocks;
 	}
 
-
 	// Always explicitly call the base's destructor 
 	Base::destructor();
 }

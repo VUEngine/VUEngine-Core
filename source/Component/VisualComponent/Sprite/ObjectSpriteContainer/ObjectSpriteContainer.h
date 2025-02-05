@@ -33,9 +33,6 @@ class ObjectSprite;
 /// Manages ObjectSprites that are displayed in the same SPT.
 class ObjectSpriteContainer : Sprite
 {
-	/// @protectedsection
-
-
 	/// @publicsection
 
 	/// Class' constructor

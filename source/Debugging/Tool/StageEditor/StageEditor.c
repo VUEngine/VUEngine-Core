@@ -207,7 +207,6 @@ void StageEditor::destructor()
 		delete this->userActorSelector;
 	}
 
-
 	// Always explicitly call the base's destructor 
 	Base::destructor();
 }

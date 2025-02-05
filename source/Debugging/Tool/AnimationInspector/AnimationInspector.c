@@ -290,7 +290,6 @@ void AnimationInspector::destructor()
 		delete this->frameEditionSelector;
 	}
 
-
 	// Always explicitly call the base's destructor 
 	Base::destructor();
 }

@@ -116,8 +116,6 @@ void OptionsSelector::destructor()
 {
 	OptionsSelector::flushPages(this);
 
-
-
 	// Always explicitly call the base's destructor 
 	Base::destructor();
 }

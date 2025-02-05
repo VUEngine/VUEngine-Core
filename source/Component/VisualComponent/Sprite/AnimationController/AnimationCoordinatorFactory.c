@@ -93,7 +93,6 @@ void AnimationCoordinatorFactory::destructor()
 		this->animationCoordinators = NULL;
 	}
 
-
 	// Always explicitly call the base's destructor 
 	Base::destructor();
 }

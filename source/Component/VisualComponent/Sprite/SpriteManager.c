@@ -134,7 +134,6 @@ void SpriteManager::destructor()
 		}
 	}
 
-
 	// Always explicitly call the base's destructor 
 	Base::destructor();
 }

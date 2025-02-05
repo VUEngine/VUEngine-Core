@@ -63,7 +63,6 @@ void WireframeManager::destructor()
 {
 	WireframeManager::stopListeningForVIP(this);
 
-
 	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
@@ -167,7 +166,6 @@ void WireframeManager::render()
 	this->renderedWireframes = 0;
 #endif
 
-
 	for(VirtualNode node = this->components->head, nextNode = NULL; NULL != node; node = nextNode)
 	{
 		nextNode = node->next;
@@ -216,7 +214,6 @@ void WireframeManager::render()
 		this->renderedWireframes++;
 #endif
 	}
-
 
 #ifdef __PROFILE_WIREFRAMES
 	WireframeManager::print(this, 1, 1);

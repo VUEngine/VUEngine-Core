@@ -428,7 +428,6 @@ void Profiler::destructor()
 	delete this->laps;
 	this->laps = NULL;
 
-
 	// Always explicitly call the base's destructor 
 	Base::destructor();
 }

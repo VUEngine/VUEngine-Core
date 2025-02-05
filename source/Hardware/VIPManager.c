@@ -652,7 +652,6 @@ void VIPManager::destructor()
 
 	delete this->postProcessingEffects;
 
-
 	// Always explicitly call the base's destructor 
 	Base::destructor();
 }

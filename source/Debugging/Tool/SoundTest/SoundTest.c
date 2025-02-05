@@ -284,7 +284,6 @@ void SoundTest::destructor()
 
 	this->sound = NULL;
 
-
 	// Always explicitly call the base's destructor 
 	Base::destructor();
 }

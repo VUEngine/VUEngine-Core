@@ -214,7 +214,6 @@ void Debug::destructor()
 	delete this->pages;
 	delete this->subPages;
 
-
 	// Always explicitly call the base's destructor 
 	Base::destructor();
 }

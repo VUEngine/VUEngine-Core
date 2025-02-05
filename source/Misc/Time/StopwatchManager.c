@@ -118,7 +118,6 @@ void StopwatchManager::destructor()
 		delete this->stopwatches;
 	}
 
-
 	// Always explicitly call the base's destructor 
 	Base::destructor();
 }

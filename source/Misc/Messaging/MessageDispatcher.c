@@ -433,7 +433,6 @@ void MessageDispatcher::destructor()
 
 	this->helperTelegram = NULL;
 
-
 	// Always explicitly call the base's destructor 
 	Base::destructor();
 }

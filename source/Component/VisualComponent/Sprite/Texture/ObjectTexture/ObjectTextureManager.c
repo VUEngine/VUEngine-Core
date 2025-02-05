@@ -121,7 +121,6 @@ void ObjectTextureManager::destructor()
 		this->objectTextures = NULL;
 	}
 
-
 	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
