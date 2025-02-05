@@ -174,7 +174,7 @@ void WireframeManager::render()
 
 		Wireframe wireframe = Wireframe::safeCast(node->data);
 
-		NM_ASSERT(!isDeleted(wireframe), "BodyManager::update: deleted body");
+		NM_ASSERT(!isDeleted(wireframe), "WireframeManager::render: deleted wireframe");
 
 		if(wireframe->deleteMe)
 		{
@@ -250,7 +250,7 @@ void WireframeManager::draw()
 	{
 		Wireframe wireframe = Wireframe::safeCast(node->data);
 
-		NM_ASSERT(!isDeleted(wireframe), "BodyManager::update: deleted body");
+		NM_ASSERT(!isDeleted(wireframe), "WireframeManager::draw: deleted wireframe");
 
 		wireframe->drawn = false;
 
