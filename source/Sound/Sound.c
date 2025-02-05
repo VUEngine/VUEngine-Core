@@ -511,6 +511,7 @@ bool Sound::updatePlaybackState()
 	else
 	{
 		Sound::rewind(this);
+		this->state = kSoundPlaying;
 	}
 
 	return kSoundRelease != this->state;
