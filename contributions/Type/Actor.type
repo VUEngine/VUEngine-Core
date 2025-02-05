@@ -94,6 +94,9 @@
 							"properties": {
 								"name": {
 									"type": "string"
+								},
+								"mutationClass": {
+									"type": "string"
 								}
 							},
 							"additionalProperties": false

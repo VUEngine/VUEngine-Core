@@ -72,7 +72,7 @@
 {%- if item.components.mutators | length -%}
 	{%- set includes = (includes.push('Mutator'), includes) -%}
 	{%- for mutator in item.components.mutators -%}
-		{%- set includes = (includes.push(mutator.name), includes) -%}
+		{%- set includes = (includes.push(mutator.mutationClass), includes) -%}
 	{%- endfor -%}
 {%- endif -%}
 
@@ -610,7 +610,7 @@ MutatorROMSpec {{ mutatorName }}MutatorSpec =
 	},
 
 	// Mutation target class
-	class({{ mutator.name }}),
+	class({{ mutator.mutationClass }}),
 
 	// Enabled
 	true
