@@ -97,6 +97,9 @@ class GameState : State
 	/// in case it is paused and resumed
 	uint8 framerate;
 
+	/// If false, the game loop runs unlocked
+	bool lockFrameRate;
+
 	/// @publicsection
 
 	/// Class' constructor
@@ -206,6 +209,10 @@ class GameState : State
 
 	/// Force to completely stream in and out actors and to initialize all.
 	void streamAll();
+
+	/// Check if the framerate is locked or not
+	/// @return True if the framerate is locked; false otherwise
+	bool lockFrameRate();
 
 	/// Print the clocks.
 	/// @param x: Screen x coordinate where to print

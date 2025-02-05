@@ -132,7 +132,9 @@ const ClassPointer FrameBufferManagerAuthorizedClasses[] =
 
 const ClassPointer KeypadManagerAuthorizedClasses[] =
 {
+	typeofclass(GameState),
 	typeofclass(HardwareManager),
+	typeofclass(ToolState),
 	typeofclass(VUEngine),
 	NULL
 };

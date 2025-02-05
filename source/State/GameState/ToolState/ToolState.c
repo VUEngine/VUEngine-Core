@@ -129,6 +129,8 @@ void ToolState::start(void* owner __attribute__ ((unused)))
 
 void ToolState::update(void* owner __attribute__ ((unused)))
 {
+	KeypadManager::readUserInput(KeypadManager::getInstance(), this->lockFrameRate);
+
 	UserInput userInput = KeypadManager::getUserInput();
 
 	if(0 != (userInput.dummyKey | userInput.pressedKey | userInput.holdKey | userInput.releasedKey))

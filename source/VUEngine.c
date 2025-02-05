@@ -190,23 +190,6 @@ static void VUEngine::setGameFrameRate(uint16 gameFrameRate)
 	FrameRate::setTarget(FrameRate::getInstance(), gameFrameRate);
 	VIPManager::setFrameCycle(__MAXIMUM_FPS / gameFrameRate - 1);
 }
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-static void VUEngine::lockFrameRate()
-{
-	VUEngine vuEngine = VUEngine::getInstance();
-
-	vuEngine->lockFrameRate = true;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-static void VUEngine::unlockFrameRate()
-{
-	VUEngine vuEngine = VUEngine::getInstance();
-
-	vuEngine->lockFrameRate = false;
-}
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
@@ -387,7 +370,6 @@ void VUEngine::constructor()
 	this->currentGameCycleEnded = false;
 	this->isPaused = false;
 	this->activeToolState = NULL;
-	this->lockFrameRate = true;
 
 	this->saveDataManager = NULL;
 
@@ -516,7 +498,7 @@ void VUEngine::gameFrameStarted(uint16 gameFrameDuration)
 #ifdef __PRINT_FRAMERATE
 	bool printFPS = true;
 #else
-	bool printFPS = !this->lockFrameRate;
+	bool printFPS = NULL != this->currentGameState ? !GameState::lockFrameRate(this->currentGameState) : false;
 #endif
 
 #ifdef __TOOLS
@@ -571,13 +553,16 @@ void VUEngine::toggleTool(ToolState toolState)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-bool VUEngine::checkIfToggleTool(const UserInput* userInput __attribute__((unused)))
+bool VUEngine::checkIfToggleTool()
 {
 #ifdef __TOOLS
-	ToolState toolState = ToolState::get(userInput);
+	UserInput userInput = KeypadManager::getUserInput();
+
+	ToolState toolState = ToolState::get(&userInput);
 
 	if(NULL != toolState)
 	{
+		KeypadManager::reset(KeypadManager::getInstance());
 		VUEngine::toggleTool(this, toolState);
 		return true;
 	}
@@ -605,7 +590,7 @@ void VUEngine::updateFrameRate()
 
 void VUEngine::waitForGameframe()
 {
-	if(this->lockFrameRate)
+	if(NULL != this->currentGameState && GameState::lockFrameRate(this->currentGameState))
 	{
 		// Make sure that interrupts are enabled, otherwise we will be locked here
 		HardwareManager::enableInterrupts();
@@ -638,12 +623,8 @@ secure void VUEngine::run(GameState currentGameState)
 		Profiler::start();
 #endif
 
-		KeypadManager::readUserInput(KeypadManager::getInstance(), this->lockFrameRate);
-
 #ifdef __TOOLS
-		UserInput userInput = KeypadManager::getUserInput();
-
-		if(VUEngine::checkIfToggleTool(this, &userInput))
+		if(VUEngine::checkIfToggleTool(this))
 		{
 			continue;
 		}

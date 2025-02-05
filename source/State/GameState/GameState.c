@@ -45,6 +45,7 @@ void GameState::constructor()
 	// Always explicitly call the base's constructor 
 	Base::constructor();
 
+	this->lockFrameRate = true;
 	this->stage = NULL;
 	this->uiContainer = NULL;
 
@@ -558,6 +559,13 @@ void GameState::streamAll()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+bool GameState::lockFrameRate()
+{
+	return this->lockFrameRate;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void GameState::printClocks(int16 x, int16 y)
 {
 	Printer::text("Logics clock time: ", x, ++y, NULL);
@@ -821,6 +829,8 @@ void GameState::readUserInput()
 	{
 		return;
 	}
+
+	KeypadManager::readUserInput(KeypadManager::getInstance(), this->lockFrameRate);
 
 	UserInput userInput = KeypadManager::getUserInput();
 

@@ -92,9 +92,6 @@ singleton class VUEngine : ListenerObject
 	/// Currently active tool state
 	ToolState activeToolState;
 
-	/// If false, the game loop runs unlocked
-	bool lockFrameRate;
-
 	/// @publicsection
 
 	/// Check if the next game frame has started.
@@ -132,12 +129,6 @@ singleton class VUEngine : ListenerObject
 	/// Set the target frame rate.
 	/// @param gameFrameRate: New frame rate target
 	static void setGameFrameRate(uint16 gameFrameRate);
-
-	/// Lock the frame rate.
-	static void lockFrameRate();
-
-	/// Unlock the frame rate.
-	static void unlockFrameRate();
 
 	/// Set the saved data manager.
 	/// @param saveDataManager:: Save data manager to use
