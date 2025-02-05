@@ -271,9 +271,6 @@ TextureROMSpec* const {{ spriteName }}TextureSpecs[] =
 	{%- if spriteAllocatorClass == 'MBgmapSprite' %}
 	{
 	{%- endif %}
-	{%- if spriteAllocatorClass == 'MBgmapSprite' %}
-	{
-	{%- endif %}
 	{
 		// VisualComponent
 		{
@@ -316,6 +313,7 @@ TextureROMSpec* const {{ spriteName }}TextureSpecs[] =
 	{%- endif %}
 
 	{%- if item.sprites.type != 'Object' %}
+
 	// The display mode (__WORLD_BGMAP, __WORLD_AFFINE, __WORLD_OBJECT or __WORLD_HBIAS)
 	// make sure to use the proper corresponding sprite type throughout the spec (BgmapSprite or ObjectSprite)
 	__WORLD_{{ sprite.bgmapMode | upper }},
@@ -327,9 +325,6 @@ TextureROMSpec* const {{ spriteName }}TextureSpecs[] =
 	{%- endif %}
 
 	{%- if spriteClass == 'FrameBlendBgmapSprite' %}
-	}
-	{%- endif %}
-	{%- if spriteAllocatorClass == 'MBgmapSprite' %}
 	}
 	{%- endif %}
 	{%- if spriteAllocatorClass == 'MBgmapSprite' or spriteAllocatorClass == 'MBgmapSprite' %}
