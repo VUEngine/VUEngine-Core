@@ -68,6 +68,7 @@ void Tool::destructor()
 
 void Tool::dimmGame()
 {
+/*
 	PaletteConfig paletteConfig =
 	{
 		{0x50, 0x50, 0x50, 0x50},
@@ -80,6 +81,7 @@ void Tool::dimmGame()
 	}
 
 	VIPManager::configurePalettes(&paletteConfig);
+*/
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
