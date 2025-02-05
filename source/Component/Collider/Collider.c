@@ -526,7 +526,7 @@ void Collider::hide()
 {
 	if(!isDeleted(this->wireframe))
 	{
-		delete this->wireframe;
+		ComponentManager::destroyComponent(this->owner, this->wireframe);
 		this->wireframe = NULL;
 	}
 }
