@@ -504,10 +504,10 @@ ColliderROMSpec {{ colliderName }}ColliderSpec =
 	{{ '{' ~ collider.displacement.x ~ ', ' ~ collider.displacement.y ~ ', ' ~ collider.displacement.z ~ ', ' ~ collider.displacement.parallax ~ '}' }},
 
 	// Rotation (x, y, z)
-	{ {{ (collider.rotation.x | float).toFixed(0) }}, {{ (collider.rotation.y | float).toFixed(0) }}, {{ (collider.rotation.z | float).toFixed(0) }} },
+	{{ '{' ~ collider.rotation.x ~ ', ' ~ collider.rotation.y ~ ', ' ~ collider.rotation.z ~ '}' }},
 
 	// Scale (x, y, z)
-	{ __F_TO_FIX7_9({{ (collider.scale.x | float).toFixed(3) }}f), __F_TO_FIX7_9({{ (collider.scale.y | float).toFixed(3) }}f), __F_TO_FIX7_9({{ (collider.scale.z | float).toFixed(3) }}f) },
+	{__F_TO_FIX7_9({{ (collider.scale.x | float).toFixed(3) }}f), __F_TO_FIX7_9({{ (collider.scale.y | float).toFixed(3) }}f), __F_TO_FIX7_9({{ (collider.scale.z | float).toFixed(3) }}f)},
 
 	// If true this collider checks for collisions against other colliders
 	{{ collider.checkForCollisions }},
