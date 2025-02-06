@@ -43,6 +43,11 @@ singleton class CharSetManager : Object
 	uint16 freedOffset;
 
 	/// @publicsection
+	
+	/// Print the manager's status.
+	/// @param x: Screen x coordinate where to print
+	/// @param y: Screen y coordinate where to print
+	static void print(int32 x, int32 y);
 
 	/// Empties internal virtual list of registered fonts
 	void reset();
@@ -82,11 +87,6 @@ singleton class CharSetManager : Object
 	/// Return the total number of char sets.
 	/// @return Total number of char sets
 	int32 getTotalCharSets();
-	
-	/// Print the manager's status.
-	/// @param x: Screen x coordinate where to print
-	/// @param y: Screen y coordinate where to print
-	void print(int32 x, int32 y);
 }
 
 #endif

@@ -60,7 +60,7 @@ extern volatile uint16* _vipRegisters __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUT
 // CLASS' ATTRIBUTES
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-#ifdef __SHOW_SPRITES_PROFILING
+#ifdef __DEBUGGING_SPRITES
 int32 _renderedSprites = 0; 
 int32 _writtenTiles = 0;
 int32 _writtenTextureTiles = 0;
@@ -554,7 +554,7 @@ void SpriteManager::prepareAll()
 
 void SpriteManager::render()
 {
-#ifdef __SHOW_SPRITES_PROFILING
+#ifdef __DEBUGGING_SPRITES
 	_renderedSprites = 0;
 #endif
 
@@ -689,7 +689,7 @@ void SpriteManager::render()
 
 	SpriteManager::stopRendering(this);
 
-#ifdef __SHOW_SPRITES_PROFILING
+#ifdef __DEBUGGING_SPRITES
 	SpriteManager::computeTotalPixelsDrawn(this);
 #endif
 }
@@ -711,7 +711,7 @@ void SpriteManager::renderAndDraw()
 
 void SpriteManager::writeDRAM()
 {
-#ifdef __SHOW_SPRITES_PROFILING
+#ifdef __DEBUGGING_SPRITES
 	_writtenTiles = 0;
 	_writtenTextureTiles = 0;
 	_writtenObjectTiles = 0;
@@ -727,16 +727,6 @@ void SpriteManager::writeDRAM()
 
 	// Finally, write OBJ and WORLD attributes to DRAM
 	SpriteManager::writeAttributesToDRAM(this);
-
-#ifdef __SHOW_SPRITES_PROFILING
-	int32 counter = __TARGET_FPS / 5;
-
-	if(0 >= --counter)
-	{
-		counter = __TARGET_FPS / 10;
-		SpriteManager::print(this, 1, 15, true);
-	}
-#endif
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -924,7 +914,8 @@ int16 SpriteManager::getObjectSpriteContainer(fixed_t z)
 void SpriteManager::print(int32 x, int32 y, bool resumed)
 {
 	Printer::setWorldCoordinates(0, 0, Printer::getActiveSpritePosition().z, 0);
-#ifndef __SHOW_SPRITES_PROFILING
+
+#ifndef __DEBUGGING_SPRITES
 	SpriteManager::computeTotalPixelsDrawn(this);
 #endif
 
@@ -935,7 +926,7 @@ void SpriteManager::print(int32 x, int32 y, bool resumed)
 	Printer::int32(__TOTAL_LAYERS - this->bgmapIndex, x + 22, y, NULL);
 	Printer::text("Sprites count:              ", x, ++y, NULL);
 	Printer::int32(VirtualList::getCount(this->spriteRegistry[kSpriteListBgmap1].sprites), x + 22, y, NULL);
-#ifdef __SHOW_SPRITES_PROFILING
+#ifdef __DEBUGGING_SPRITES
 	Printer::text("Rendered sprites:              ", x, ++y, NULL);
 	Printer::int32(_renderedSprites, x + 22, y, NULL);
 	Printer::text("Written chars:              ", x, ++y, NULL);
@@ -1253,7 +1244,7 @@ void SpriteManager::applySpecialEffects()
 
 void SpriteManager::writeAttributesToDRAM()
 {
-#ifdef __SHOW_SPRITES_PROFILING
+#ifdef __DEBUGGING_SPRITES
 	_writtenObjectTiles = __TOTAL_OBJECTS - this->objectIndex;
 #endif
 

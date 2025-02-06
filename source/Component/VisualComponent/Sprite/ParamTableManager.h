@@ -134,6 +134,11 @@ singleton class ParamTableManager : Object
 
 	/// @publicsection
 
+	/// Print the information about param table space usage.
+	/// @param x: Screen x coordinate where to print
+	/// @param y: Screen y coordinate where to print
+	static void print(int32 x, int32 y);
+
 	/// Reset the animation coordinator factory's state.
 	void reset();
 
@@ -154,11 +159,6 @@ singleton class ParamTableManager : Object
 	/// Defragment param table space.
 	/// @param deferred: Flag to defragment param table memory over time
 	void defragment(bool deferred);
-
-	/// Print the information about param table space usage.
-	/// @param x: Screen x coordinate where to print
-	/// @param y: Screen y coordinate where to print
-	void print(int32 x, int32 y);
 }
 
 #endif

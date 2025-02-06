@@ -190,9 +190,6 @@ static void HardwareManager::print(int32 x, int32 y)
 
 static void HardwareManager::printStackStatus(int32 x, int32 y, bool resumed)
 {
-	Printer::setDebugMode();
-	Printer::clear();
-	
 	int32 sp;
 	asm
 	(
@@ -278,7 +275,6 @@ static void HardwareManager::checkMemoryMap()
 
 static void HardwareManager::croInterruptHandler()
 {
-	Printer::resetCoordinates();
 	Printer::text("EXP cron", 48 - 13, 0, NULL);
 }
 

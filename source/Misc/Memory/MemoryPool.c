@@ -272,14 +272,10 @@ static void MemoryPool::printResumedUsage(int32 x, int32 y)
 	uint32 pool;
 	uint32 displacement = 0;
 
-	
-
-	Printer::resetCoordinates();
-
 	Printer::text("MEMORY:", x, y, NULL);
 	uint32 poolSize = MemoryPool::getPoolSize(memoryPool);
 	Printer::text("Total: ", x, ++y, NULL);
-	Printer::int32(poolSize, x + 12 - Math::getDigitsCount(poolSize), y, NULL);
+	Printer::int32(poolSize, x + 12 - Math::getDigitsCount(poolSize), y++, NULL);
 
 	for(y += 2, pool = 0; pool < __MEMORY_POOLS; pool++)
 	{
@@ -301,8 +297,8 @@ static void MemoryPool::printResumedUsage(int32 x, int32 y)
 		if(__MEMORY_POOL_WARNING_THRESHOLD < usedBlocksPercentage)
 		{
 			Printer::int32(memoryPool->poolSizes[pool][eBlockSize], x, y, NULL);
-			Printer::int32(usedBlocksPercentage, x + 7 - Math::getDigitsCount(usedBlocksPercentage), y, NULL);
-			Printer::text("% ", x + 7, y++, NULL);
+			Printer::int32(usedBlocksPercentage, x + 11 - Math::getDigitsCount(usedBlocksPercentage), y, NULL);
+			Printer::text("% ", x + 11, y++, NULL);
 		}
 
 		totalUsedBlocks = 0 ;
@@ -329,10 +325,6 @@ static void MemoryPool::printDetailedUsage(int32 x, int32 y)
 	uint32 totalUsedBytes = 0;
 	uint32 pool;
 	uint32 displacement = 0;
-
-	
-
-	Printer::resetCoordinates();
 
 	Printer::text("MEMORY POOLS STATUS", x, y++, NULL);
 

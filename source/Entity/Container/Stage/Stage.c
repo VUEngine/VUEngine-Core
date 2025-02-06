@@ -83,13 +83,12 @@ static const StreamingPhase _streamingPhases[] =
 	&Stage::loadInRangeActors
 };
 
-#ifdef __PROFILE_STREAMING
-extern int16 _renderingProcessTimeHelper;
+#define __DEBUGGING_STREAMING
+#ifdef __DEBUGGING_STREAMING
 static uint32 unloadOutOfRangeActorsHighestTime = 0;
 static uint32 loadInRangeActorsHighestTime = 0;
 static uint32 processRemovedActorsHighestTime = 0;
 static uint32 actorFactoryHighestTime = 0;
-static uint32 timeBeforeProcess = 0;
 #endif
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -522,10 +521,12 @@ void Stage::print(int32 x, int32 y)
 
 	Printer::text("Registered actors:            ", x, ++y, NULL);
 	Printer::int32(VirtualList::getCount(this->stageActorDescriptions), x + xDisplacement, y++, NULL);
-	Printer::text("Child actors:                 ", x, y, NULL);
-	Printer::int32(VirtualList::getCount(this->children), x + xDisplacement, y++, NULL);
 
-#ifdef __PROFILE_STREAMING
+	if(NULL != this->children)
+	{
+		Printer::text("Child actors:                 ", x, y, NULL);
+		Printer::int32(VirtualList::getCount(this->children), x + xDisplacement, y++, NULL);
+	}
 
 	xDisplacement = 10;
 
@@ -548,11 +549,11 @@ void Stage::print(int32 x, int32 y)
 	loadInRangeActorsHighestTime = 0;
 	processRemovedActorsHighestTime = 0;
 	actorFactoryHighestTime = 0;
-#endif
 
-#ifdef __SHOW_STREAMING_PROFILING
-	ActorFactory::print(this->actorFactory, x, y);
-#endif
+	if(NULL != this->actorFactory)
+	{
+		ActorFactory::print(this->actorFactory, x, y);
+	}
 }
 #endif
 
@@ -614,11 +615,6 @@ bool Stage::unloadOutOfRangeActors(int32 defer __attribute__((unused)))
 	{
 		return false;
 	}
-
-#ifdef __PROFILE_STREAMING
-	_renderingProcessTimeHelper = 0;
-	timeBeforeProcess = TimerManager::getElapsedMilliseconds();
-#endif
 
 	bool unloadedActors = false;
 
@@ -683,14 +679,6 @@ bool Stage::unloadOutOfRangeActors(int32 defer __attribute__((unused)))
 		}
 	}
 
-#ifdef __PROFILE_STREAMING
-		uint32 processTime = 
-			-_renderingProcessTimeHelper + TimerManager::getElapsedMilliseconds() - timeBeforeProcess;
-		
-		unloadOutOfRangeActorsHighestTime = 
-			processTime > unloadOutOfRangeActorsHighestTime ? processTime : unloadOutOfRangeActorsHighestTime;
-#endif
-
 	return unloadedActors;
 }
 
@@ -698,11 +686,6 @@ bool Stage::unloadOutOfRangeActors(int32 defer __attribute__((unused)))
 
 bool Stage::loadInRangeActors(int32 defer)
 {
-#ifdef __PROFILE_STREAMING
-	_renderingProcessTimeHelper = 0;
-	timeBeforeProcess = TimerManager::getElapsedMilliseconds();
-#endif
-
 	bool loadedActors = false;
 
 	CACHE_RESET;
@@ -831,12 +814,6 @@ bool Stage::loadInRangeActors(int32 defer)
 			}
 		}
 	}
-
-#ifdef __PROFILE_STREAMING
-	uint32 processTime = 
-		-_renderingProcessTimeHelper + TimerManager::getElapsedMilliseconds() - timeBeforeProcess;
-	loadInRangeActorsHighestTime = processTime > loadInRangeActorsHighestTime ? processTime : loadInRangeActorsHighestTime;
-#endif
 
 	return loadedActors;
 }
@@ -1008,18 +985,7 @@ int32 Stage::isActorInLoadRange(ScreenPixelVector onScreenPosition, const RightB
 
 bool Stage::updateActorFactory()
 {
-#ifdef __PROFILE_STREAMING
-	_renderingProcessTimeHelper = 0;
-	timeBeforeProcess = TimerManager::getElapsedMilliseconds();
-#endif
-
 	bool preparingActors = ActorFactory::createNextActor(this->actorFactory);
-
-#ifdef __PROFILE_STREAMING
-	uint32 processTime = 
-		-_renderingProcessTimeHelper + TimerManager::getElapsedMilliseconds() - timeBeforeProcess;
-	actorFactoryHighestTime = processTime > actorFactoryHighestTime ? processTime : actorFactoryHighestTime;
-#endif
 
 	return preparingActors;
 }

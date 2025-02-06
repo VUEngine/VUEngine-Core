@@ -30,6 +30,29 @@ friend class VirtualNode;
 friend class VirtualList;
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+static void ParamTableManager::print(int32 x, int32 y)
+{
+	ParamTableManager paramTableManager = ParamTableManager::getInstance();
+
+	int32 xDisplacement = 11;
+
+	Printer::text("PARAM TABLE STATUS", x, y++, NULL);
+	Printer::text("Size:              ", x, ++y, NULL);
+	Printer::int32(paramTableManager->size, x + xDisplacement, y, NULL);
+
+	Printer::text("Used:              ", x, ++y, NULL);
+	Printer::int32(paramTableManager->usedBytes - 1, x + xDisplacement, y, NULL);
+
+	Printer::text("ParamBase:          ", x, ++y, NULL);
+	Printer::hex(paramTableManager->paramTableBase, x + xDisplacement, y, 8, NULL);
+	Printer::text("ParamEnd:           ", x, ++y, NULL);
+	Printer::hex(__PARAM_TABLE_END, x + xDisplacement, y, 8, NULL);
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PUBLIC METHODS
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
@@ -252,25 +275,6 @@ secure void ParamTableManager::defragment(bool deferred)
 		}
 		while(!deferred && 0 != this->paramTableFreeData.param);
 	}
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void ParamTableManager::print(int32 x, int32 y)
-{
-	int32 xDisplacement = 11;
-
-	Printer::text("PARAM TABLE STATUS", x, y++, NULL);
-	Printer::text("Size:              ", x, ++y, NULL);
-	Printer::int32(this->size, x + xDisplacement, y, NULL);
-
-	Printer::text("Used:              ", x, ++y, NULL);
-	Printer::int32(this->usedBytes - 1, x + xDisplacement, y, NULL);
-
-	Printer::text("ParamBase:          ", x, ++y, NULL);
-	Printer::hex(this->paramTableBase, x + xDisplacement, y, 8, NULL);
-	Printer::text("ParamEnd:           ", x, ++y, NULL);
-	Printer::hex(__PARAM_TABLE_END, x + xDisplacement, y, 8, NULL);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

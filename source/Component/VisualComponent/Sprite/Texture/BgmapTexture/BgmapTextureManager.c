@@ -32,6 +32,79 @@ friend class VirtualList;
 friend class VirtualNode;
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+// CLASS' PUBLIC STATIC METHODS
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+#ifndef __SHIPPING
+static void BgmapTextureManager::print(int32 x, int32 y)
+{
+	BgmapTextureManager bgmapTextureManager = BgmapTextureManager::getInstance();
+
+	Printer::text("BGMAP TEXTURES USAGE", x, y++, NULL);
+	Printer::text("Segments for textures: ", x, ++y, NULL);
+	Printer::int32(BgmapTextureManager::getAvailableBgmapSegmentsForTextures(bgmapTextureManager), x + 23, y, NULL);
+	Printer::text("Printer segment: ", x, ++y, NULL);
+	Printer::int32(BgmapTextureManager::getPrintingBgmapSegment(bgmapTextureManager), x + 23, y, NULL);
+	Printer::text("Textures count: ", x, ++y, NULL);
+	Printer::int32(VirtualList::getCount(bgmapTextureManager->bgmapTextures), x + 23, y, NULL);
+
+	y++;
+	y++;
+	Printer::text("Recyclable textures", x, y++, NULL);
+	y++;
+	Printer::text("Total: ", x, y++, NULL);
+	Printer::text("Free: ", x, y++, NULL);
+
+	y++;
+	Printer::text("ROM", x, y++, NULL);
+	y++;
+	Printer::text("Address   Refs", x, y++, NULL);
+	Printer::text("\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08", x, y++, NULL);
+
+	int32 i = 0;
+	int32 j = 0;
+	int32 recyclableTextures = 0;
+	int32 freeEntries = 0;
+
+	// Try to find a texture with the same bgmap spec
+	for(VirtualNode node = bgmapTextureManager->bgmapTextures->head; NULL != node; node = node->next)
+	{
+		BgmapTexture bgmapTexture = BgmapTexture::safeCast(node->data);
+
+		const TextureSpec* allocatedTextureSpec = Texture::getSpec(bgmapTexture);
+
+		if(allocatedTextureSpec->recyclable)
+		{
+			recyclableTextures++;
+			freeEntries += !BgmapTexture::getUsageCount(bgmapTexture)? 1 : 0;
+
+			Printer::hex((int32)Texture::getSpec(bgmapTexture), x + j, y + i, 8, NULL);
+			Printer::int32(BgmapTexture::getUsageCount(bgmapTexture), x + j + 9, y + i, NULL);
+
+			if(++i + y > __SCREEN_HEIGHT / 8)
+			{
+				i = 0;
+				j += 11;
+
+				if(j + x > __SCREEN_WIDTH / 8)
+				{
+					i = 0;
+					j = 0;
+				}
+			}
+		}
+	}
+
+	Printer::int32(recyclableTextures, x + 7, y - 7, NULL);
+	Printer::int32(freeEntries, x + 7, y - 6, NULL);
+}
+#endif
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PUBLIC METHODS
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
@@ -320,71 +393,6 @@ int16 BgmapTextureManager::getYOffset(int32 id)
 {
 	return this->offset[id][kYOffset];
 }
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-#ifndef __SHIPPING
-void BgmapTextureManager::print(int32 x, int32 y)
-{
-	Printer::text("BGMAP TEXTURES USAGE", x, y++, NULL);
-	Printer::text("Segments for textures: ", x, ++y, NULL);
-	Printer::int32(BgmapTextureManager::getAvailableBgmapSegmentsForTextures(this), x + 23, y, NULL);
-	Printer::text("Printer segment: ", x, ++y, NULL);
-	Printer::int32(BgmapTextureManager::getPrintingBgmapSegment(this), x + 23, y, NULL);
-	Printer::text("Textures count: ", x, ++y, NULL);
-	Printer::int32(VirtualList::getCount(this->bgmapTextures), x + 23, y, NULL);
-
-	y++;
-	y++;
-	Printer::text("Recyclable textures", x, y++, NULL);
-	y++;
-	Printer::text("Total: ", x, y++, NULL);
-	Printer::text("Free: ", x, y++, NULL);
-
-	y++;
-	Printer::text("ROM", x, y++, NULL);
-	y++;
-	Printer::text("Address   Refs", x, y++, NULL);
-	Printer::text("\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08", x, y++, NULL);
-
-	int32 i = 0;
-	int32 j = 0;
-	int32 recyclableTextures = 0;
-	int32 freeEntries = 0;
-
-	// Try to find a texture with the same bgmap spec
-	for(VirtualNode node = this->bgmapTextures->head; NULL != node; node = node->next)
-	{
-		BgmapTexture bgmapTexture = BgmapTexture::safeCast(node->data);
-
-		const TextureSpec* allocatedTextureSpec = Texture::getSpec(bgmapTexture);
-
-		if(allocatedTextureSpec->recyclable)
-		{
-			recyclableTextures++;
-			freeEntries += !BgmapTexture::getUsageCount(bgmapTexture)? 1 : 0;
-
-			Printer::hex((int32)Texture::getSpec(bgmapTexture), x + j, y + i, 8, NULL);
-			Printer::int32(BgmapTexture::getUsageCount(bgmapTexture), x + j + 9, y + i, NULL);
-
-			if(++i + y > __SCREEN_HEIGHT / 8)
-			{
-				i = 0;
-				j += 11;
-
-				if(j + x > __SCREEN_WIDTH / 8)
-				{
-					i = 0;
-					j = 0;
-				}
-			}
-		}
-	}
-
-	Printer::int32(recyclableTextures, x + 7, y - 7, NULL);
-	Printer::int32(freeEntries, x + 7, y - 6, NULL);
-}
-#endif
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 

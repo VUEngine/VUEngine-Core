@@ -100,6 +100,95 @@ static uint32 VSUManager::getMode()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+
+#ifndef __SHIPPING
+static void VSUManager::print(int32 x, int32 y)
+{
+	VSUManager vsuManager = VSUManager::getInstance();
+
+	int32 xDisplacement = 15;
+	int32 yDisplacement = y;
+
+	int32 i = 0;
+
+	// Reset all sounds and channels
+	for(i = 0; i < __TOTAL_SOUND_SOURCES; i++)
+	{
+		int32 y = yDisplacement;
+
+		VSUManager::printVSUSoundSourceConfiguration(&vsuManager->vsuSoundSourceConfigurations[i], x, y);
+		
+		x += xDisplacement;
+		if(x > 47 - xDisplacement)
+		{
+			x = 1;
+			yDisplacement += 15;
+		}
+	}
+}
+#endif
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+#ifndef __SHIPPING
+static void VSUManager::printWaveFormStatus(int32 x, int32 y)
+{
+	VSUManager vsuManager = VSUManager::getInstance();
+
+	for(uint32 i = 0; i < __TOTAL_WAVEFORMS; i++)
+	{
+		PRINT_TEXT("           ", x, y + vsuManager->waveforms[i].index);
+		PRINT_INT(vsuManager->waveforms[i].index, x, y + vsuManager->waveforms[i].index);
+		PRINT_INT(vsuManager->waveforms[i].usageCount, x + 4, y + vsuManager->waveforms[i].index);
+		PRINT_HEX((uint32)vsuManager->waveforms[i].data, x + 8, y + vsuManager->waveforms[i].index);
+	}
+}
+#endif
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+#ifndef __SHIPPING
+static void VSUManager::printVSUSoundSourceConfiguration
+(
+	const VSUSoundSourceConfiguration* vsuSoundSourceConfiguration, int16 x, int y
+)
+{
+	if(NULL == vsuSoundSourceConfiguration)
+	{
+		return;
+	}
+
+	PRINT_TEXT("TIMEO:         ", x, ++y);
+	PRINT_INT(vsuSoundSourceConfiguration->timeout, x + 7, y);
+
+	PRINT_TEXT("SXINT:         ", x, ++y);
+	PRINT_HEX_EXT(vsuSoundSourceConfiguration->SxINT, x + 7, y, 2);
+
+	PRINT_TEXT("SXLRV:         ", x, ++y);
+	PRINT_HEX_EXT(vsuSoundSourceConfiguration->SxLRV, x + 7, y, 2);
+
+	PRINT_TEXT("SXFQL:         ", x, ++y);
+	PRINT_HEX_EXT(vsuSoundSourceConfiguration->SxFQL, x + 7, y, 2);
+
+	PRINT_TEXT("SXFQH:         ", x, ++y);
+	PRINT_HEX_EXT(vsuSoundSourceConfiguration->SxFQH, x + 7, y, 2);
+
+	PRINT_TEXT("SXEV0:         ", x, ++y);
+	PRINT_HEX_EXT(vsuSoundSourceConfiguration->SxEV0, x + 7, y, 2);
+
+	PRINT_TEXT("SXEV1:         ", x, ++y);
+	PRINT_HEX_EXT(vsuSoundSourceConfiguration->SxEV1, x + 7, y, 2);
+
+	PRINT_TEXT("SXRAM:         ", x, ++y);
+	PRINT_HEX_EXT(0x0000FFFF & (uint32)vsuSoundSourceConfiguration->SxRAM, x + 7, y, 2);
+
+	PRINT_TEXT("SXSWP:         ", x, ++y);
+	PRINT_HEX_EXT(vsuSoundSourceConfiguration->SxSWP, x + 7, y, 2);
+}
+#endif
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PUBLIC METHODS
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -272,48 +361,6 @@ void VSUManager::flushQueuedSounds()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-#ifndef __SHIPPING
-void VSUManager::print(int32 x, int32 y)
-{
-	int32 xDisplacement = 15;
-	int32 yDisplacement = y;
-
-	int32 i = 0;
-
-	// Reset all sounds and channels
-	for(i = 0; i < __TOTAL_SOUND_SOURCES; i++)
-	{
-		int32 y = yDisplacement;
-
-		VSUManager::printVSUSoundSourceConfiguration(this, &this->vsuSoundSourceConfigurations[i], x, y);
-		
-		x += xDisplacement;
-		if(x > 47 - xDisplacement)
-		{
-			x = 1;
-			yDisplacement += 15;
-		}
-	}
-}
-#endif
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-#ifndef __RELEASE
-void VSUManager::printWaveFormStatus(int32 x, int32 y)
-{
-	for(uint32 i = 0; i < __TOTAL_WAVEFORMS; i++)
-	{
-		PRINT_TEXT("           ", x, y + this->waveforms[i].index);
-		PRINT_INT(this->waveforms[i].index, x, y + this->waveforms[i].index);
-		PRINT_INT(this->waveforms[i].usageCount, x + 4, y + this->waveforms[i].index);
-		PRINT_HEX((uint32)this->waveforms[i].data, x + 8, y + this->waveforms[i].index);
-	}
-}
-#endif
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PRIVATE METHODS
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -348,46 +395,6 @@ void VSUManager::destructor()
 
 	// Always explicitly call the base's destructor 
 	Base::destructor();
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void VSUManager::printVSUSoundSourceConfiguration
-(
-	const VSUSoundSourceConfiguration* vsuSoundSourceConfiguration, int16 x, int y
-)
-{
-	if(NULL == vsuSoundSourceConfiguration)
-	{
-		return;
-	}
-
-	PRINT_TEXT("TIMEO:         ", x, ++y);
-	PRINT_INT(vsuSoundSourceConfiguration->timeout, x + 7, y);
-
-	PRINT_TEXT("SXINT:         ", x, ++y);
-	PRINT_HEX_EXT(vsuSoundSourceConfiguration->SxINT, x + 7, y, 2);
-
-	PRINT_TEXT("SXLRV:         ", x, ++y);
-	PRINT_HEX_EXT(vsuSoundSourceConfiguration->SxLRV, x + 7, y, 2);
-
-	PRINT_TEXT("SXFQL:         ", x, ++y);
-	PRINT_HEX_EXT(vsuSoundSourceConfiguration->SxFQL, x + 7, y, 2);
-
-	PRINT_TEXT("SXFQH:         ", x, ++y);
-	PRINT_HEX_EXT(vsuSoundSourceConfiguration->SxFQH, x + 7, y, 2);
-
-	PRINT_TEXT("SXEV0:         ", x, ++y);
-	PRINT_HEX_EXT(vsuSoundSourceConfiguration->SxEV0, x + 7, y, 2);
-
-	PRINT_TEXT("SXEV1:         ", x, ++y);
-	PRINT_HEX_EXT(vsuSoundSourceConfiguration->SxEV1, x + 7, y, 2);
-
-	PRINT_TEXT("SXRAM:         ", x, ++y);
-	PRINT_HEX_EXT(0x0000FFFF & (uint32)vsuSoundSourceConfiguration->SxRAM, x + 7, y, 2);
-
-	PRINT_TEXT("SXSWP:         ", x, ++y);
-	PRINT_HEX_EXT(vsuSoundSourceConfiguration->SxSWP, x + 7, y, 2);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

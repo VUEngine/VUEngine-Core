@@ -207,6 +207,12 @@ singleton class VSUManager : Object
 	/// @return kPlaybackNative or kPlaybackPCM
 	static uint32 getMode();
 
+	/// Print the manager's status.
+	static void print(int32 x, int32 y);
+
+	/// Print waveforms.
+	static void printWaveFormStatus(int32 x, int32 y);
+
 	/// Reset the manager's state.
 	void reset();
 
@@ -227,12 +233,6 @@ singleton class VSUManager : Object
 	/// sound sources availables at the time of request, the petition
 	/// is ignored).
 	void disableQueue();
-
-	/// Print the manager's status.
-	void print(int32 x, int32 y);
-
-	/// Print waveforms.
-	void printWaveFormStatus(int32 x, int32 y);
 }
 
 #endif

@@ -182,10 +182,6 @@ void BodyManager::update()
 
 		Body::update(body, this->cycle, __PHYSICS_TIME_ELAPSED_STEP);
 	}
-
-#ifdef __SHOW_PHYSICS_PROFILING
-	BodyManager::print(this, 1, 1);
-#endif
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -273,15 +269,14 @@ fixed_t BodyManager::getFrictionCoefficient()
  */
 void BodyManager::print(int32 x, int32 y)
 {
-	Printer::resetCoordinates();
-
 	Printer::text("PHYSICS STATUS", x, y++, NULL);
 	Printer::text("Registered bodies:     ", x, ++y, NULL);
-	Printer::int32(VirtualList::getCount(this->components), x + 19, y, NULL);
+
+	Printer::int32(VirtualList::getCount(this->components), x + 19, y++, NULL);
 
 	for(VirtualNode node = this->components->head; y < 28 && NULL != node; y++, node = node->next)
 	{
-		Printer::text("                         ", x, y, NULL);
+		Printer::text("                         ", x, ++y, NULL);
 		Printer::text(__GET_CLASS_NAME((Body::safeCast(node->data))->owner), x, y, NULL);
 	}
 

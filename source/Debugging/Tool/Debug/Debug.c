@@ -788,7 +788,7 @@ void Debug::charMemoryShowStatus(int32 increment __attribute__ ((unused)), int32
 	if(-1 == this->charSegment)
 	{
 		Debug::setBlackBackground(this);
-		CharSetManager::print(CharSetManager::getInstance(), x, y);
+		CharSetManager::print(x, y);
 	}
 	else if(charSegments > this->charSegment)
 	{
@@ -809,7 +809,7 @@ void Debug::charMemoryShowStatus(int32 increment __attribute__ ((unused)), int32
 	{
 		this->charSegment = -1;
 		Debug::setBlackBackground(this);
-		CharSetManager::print(CharSetManager::getInstance(), x, y);
+		CharSetManager::print(x, y);
 	}
 }
 
@@ -1086,8 +1086,8 @@ void Debug::texturesShowStatus(int32 increment, int32 x, int32 y)
 	if(-1 == this->bgmapSegment)
 	{
 		Debug::setBlackBackground(this);
-		BgmapTextureManager::print(BgmapTextureManager::getInstance(), x, y);
-		ParamTableManager::print(ParamTableManager::getInstance(), x + 27, y);
+		BgmapTextureManager::print(x, y);
+		ParamTableManager::print(x + 27, y);
 	}
 	else if(BgmapTextureManager::getAvailableBgmapSegmentsForTextures(BgmapTextureManager::getInstance()) > this->bgmapSegment)
 	{
@@ -1103,8 +1103,8 @@ void Debug::texturesShowStatus(int32 increment, int32 x, int32 y)
 	{
 		this->bgmapSegment = -1;
 		Debug::setBlackBackground(this);
-		BgmapTextureManager::print(BgmapTextureManager::getInstance(), x, y);
-		ParamTableManager::print(ParamTableManager::getInstance(), x + 27, y);
+		BgmapTextureManager::print(x, y);
+		ParamTableManager::print(x + 27, y);
 	}
 }
 

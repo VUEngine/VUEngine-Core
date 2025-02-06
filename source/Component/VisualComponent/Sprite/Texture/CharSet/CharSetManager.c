@@ -28,6 +28,27 @@ friend class VirtualList;
 friend class CharSet;
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+// CLASS' PUBLIC STATIC METHODS
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+#ifndef __SHIPPING
+static void CharSetManager::print(int32 x, int32 y)
+{
+	CharSetManager charSetManager = CharSetManager::getInstance();
+	Printer::text("CHAR MEMORY USAGE", x, y++, NULL);
+
+	Printer::text("Total CharSets:        ", x, ++y, NULL);
+	Printer::int32(VirtualList::getCount(charSetManager->charSets), x + 18, y, NULL);
+	Printer::text("Total used chars:      ", x, ++y, NULL);
+	Printer::int32(CharSetManager::getTotalUsedChars(charSetManager), x + 18, y, NULL);
+	Printer::text("Total free chars:      ", x, ++y, NULL);
+	Printer::int32(CharSetManager::getTotalFreeChars(charSetManager), x + 18, y, NULL);
+}
+#endif
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PUBLIC METHODS
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
@@ -192,22 +213,6 @@ int32 CharSetManager::getTotalCharSets()
 {
 	return VirtualList::getCount(this->charSets);
 }
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-#ifndef __SHIPPING
-void CharSetManager::print(int32 x, int32 y)
-{
-	Printer::text("CHAR MEMORY USAGE", x, y++, NULL);
-
-	Printer::text("Total CharSets:        ", x, ++y, NULL);
-	Printer::int32(VirtualList::getCount(this->charSets), x + 18, y, NULL);
-	Printer::text("Total used chars:      ", x, ++y, NULL);
-	Printer::int32(CharSetManager::getTotalUsedChars(this), x + 18, y, NULL);
-	Printer::text("Total free chars:      ", x, ++y, NULL);
-	Printer::int32(CharSetManager::getTotalFreeChars(this), x + 18, y, NULL);
-}
-#endif
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 

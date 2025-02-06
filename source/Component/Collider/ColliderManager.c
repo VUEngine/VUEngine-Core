@@ -39,7 +39,7 @@ friend class VirtualList;
 // CLASS' ATTRIBUTES
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-#ifdef __SHOW_PHYSICS_PROFILING
+#ifdef __DEBUGGING_COLLISIONS
 /// Counters for debugging
 static uint16 _lastCycleCheckProducts;
 static uint16 _lastCycleCollisionChecks;
@@ -97,7 +97,7 @@ uint32 ColliderManager::update()
 {
 	uint32 returnValue = false;
 
-#ifdef __SHOW_PHYSICS_PROFILING
+#ifdef __DEBUGGING_COLLISIONS
 	_lastCycleCheckProducts = 0;
 	_lastCycleCollisionChecks = 0;
 	_lastCycleCollisions = 0;
@@ -168,7 +168,7 @@ uint32 ColliderManager::update()
 				continue;
 			}
 
-#ifdef __SHOW_PHYSICS_PROFILING
+#ifdef __DEBUGGING_COLLISIONS
 			_lastCycleCheckProducts++;
 #endif
 
@@ -190,7 +190,7 @@ uint32 ColliderManager::update()
 				continue;
 			}
 
-#ifdef __SHOW_PHYSICS_PROFILING
+#ifdef __DEBUGGING_COLLISIONS
 			_lastCycleCollisionChecks++;
 #endif
 
@@ -207,7 +207,7 @@ uint32 ColliderManager::update()
 				colliderToCheck->invalidPosition = false;
 			}
 
-#ifdef __SHOW_PHYSICS_PROFILING
+#ifdef __DEBUGGING_COLLISIONS
 			if(kNoCollision != Collider::collides(collider, colliderToCheck))
 			{
 				_lastCycleCollisions++;
@@ -218,7 +218,7 @@ uint32 ColliderManager::update()
 		}
 	}
 
-#ifdef __SHOW_PHYSICS_PROFILING
+#ifdef __DEBUGGING_COLLISIONS
 	_collisionChecks += _lastCycleCollisionChecks;
 	_collisions += _lastCycleCollisions;
 
@@ -266,8 +266,6 @@ void ColliderManager::hideColliders()
 #ifndef __SHIPPING
 void ColliderManager::print(int32 x, int32 y)
 {
-	Printer::resetCoordinates();
-
 	Printer::text("COLLISION MANAGER", x, y++, NULL);
 	Printer::text("COLLIDERS", x, ++y, NULL);
 	y++;
@@ -278,7 +276,7 @@ void ColliderManager::print(int32 x, int32 y)
 	Printer::text("MOVING:          ", x, ++y, NULL);
 	Printer::int32(ColliderManager::getNumberOfMovingEnabledColliders(this), x + 12, y++, NULL);
 
-#ifdef __SHOW_PHYSICS_PROFILING
+#ifdef __DEBUGGING_COLLISIONS
 	Printer::text("STATISTICS (PER CYCLE)", x, ++y, NULL);
 	y++;
 	Printer::text("AVERAGE", x, ++y, NULL);
@@ -307,7 +305,7 @@ void ColliderManager::print(int32 x, int32 y)
 
 void ColliderManager::constructor()
 {
-#ifdef __SHOW_PHYSICS_PROFILING
+#ifdef __DEBUGGING_COLLISIONS
 	_lastCycleCheckProducts = 0;
 	_lastCycleCollisionChecks = 0;
 	_lastCycleCollisions = 0;

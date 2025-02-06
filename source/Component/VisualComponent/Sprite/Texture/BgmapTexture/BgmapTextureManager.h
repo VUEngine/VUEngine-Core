@@ -71,6 +71,11 @@ singleton class BgmapTextureManager : Object
 
 	/// @publicsection
 
+	/// Print the manager's status.
+	/// @param x: Screen x coordinate where to print
+	/// @param y: Screen y coordinate where to print
+	static void print(int32 x, int32 y);
+
 	/// Reset the manager's state.
 	void reset();
 
@@ -125,11 +130,6 @@ singleton class BgmapTextureManager : Object
 	/// @param id: Texture's id
 	/// @return Y coordinate in BGMAP space for the texture ID provided
 	int16 getYOffset(int32 id);
-
-	/// Print the manager's status.
-	/// @param x: Screen x coordinate where to print
-	/// @param y: Screen y coordinate where to print
-	void print(int32 x, int32 y);
 }
 
 #endif

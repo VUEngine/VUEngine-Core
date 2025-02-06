@@ -224,7 +224,6 @@ bool ActorFactory::hasActorsPending()
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #ifndef __SHIPPING
-#ifdef __PROFILE_STREAMING
 void ActorFactory::print(int32 x, int32 y)
 {	int32 xDisplacement = 18;
 
@@ -237,18 +236,17 @@ void ActorFactory::print(int32 x, int32 y)
 	Printer::text("Actors pending...", x, y++, NULL);
 
 	Printer::text("1 Instantiation:			", x, y, NULL);
-	Printer::int32(VirtualList::getCount(this->actorsToInstantiate), x + xDisplacement, y++, NULL);
+	Printer::int32(NULL != this->actorsToInstantiate ? VirtualList::getCount(this->actorsToInstantiate) : 0, x + xDisplacement, y++, NULL);
 
 	Printer::text("2 Transformation:			", x, y, NULL);
-	Printer::int32(VirtualList::getCount(this->actorsToTransform), x + xDisplacement, y++, NULL);
+	Printer::int32(NULL != this->actorsToInstantiate ? VirtualList::getCount(this->actorsToTransform) : 0, x + xDisplacement, y++, NULL);
 
 	Printer::text("3 Make ready:			", x, y, NULL);
-	Printer::int32(VirtualList::getCount(this->actorsToAddAsChildren), x + xDisplacement, y++, NULL);
+	Printer::int32(NULL != this->actorsToInstantiate ? VirtualList::getCount(this->actorsToAddAsChildren) : 0, x + xDisplacement, y++, NULL);
 
 	Printer::text("4 Call listeners:			", x, y, NULL);
-	Printer::int32(VirtualList::getCount(this->spawnedActors), x + xDisplacement, y++, NULL);
+	Printer::int32(NULL != this->actorsToInstantiate ? VirtualList::getCount(this->spawnedActors) : 0, x + xDisplacement, y++, NULL);
 }
-#endif
 #endif
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

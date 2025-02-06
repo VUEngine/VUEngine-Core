@@ -15,8 +15,10 @@
 #include <BgmapTextureManager.h>
 #include <BodyManager.h>
 #include <Camera.h>
+#include <CharSetManager.h>
 #include <Clock.h>
 #include <ColliderManager.h>
+#include <FrameBufferManager.h>
 #include <FrameRate.h>
 #include <KeypadManager.h>
 #include <MessageDispatcher.h>
@@ -30,6 +32,7 @@
 #include <Telegram.h>
 #include <ToolState.h>
 #include <VUEngine.h>
+#include <VSUManager.h>
 #include <WireframeManager.h>
 
 #include "GameState.h"
@@ -178,6 +181,12 @@ void GameState::update(void* owner)
 	GameState::updateSounds(this);
 
 	GameState::stream(this);
+
+#define __DEBUGGING
+
+#ifdef __DEBUGGING
+	GameState::debugging(this);
+#endif
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -1130,3 +1139,66 @@ Clock GameState::getClock(uint32 clockEnum)
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+#ifndef __SHIPPING
+#ifdef __DEBUGGING
+void GameState::debugging()
+{
+	Printer::resetCoordinates();
+	Printer::setWorldCoordinates(0, 0, -256, 0);
+
+#ifdef __DEBUGGING_STACK_STATUS
+	HardwareManager::printStackStatus(1, 1, false);
+#endif	
+
+#ifdef __DEBUGGING_MEMORY_POOL
+#ifdef __DEBUGGING_MEMORY_POOL_DETAILED
+	MemoryPool::printDetailedUsage(1, 1);
+#else
+	MemoryPool::printResumedUsage(1, 1);
+#endif
+#endif
+
+#ifdef __DEBUGGING_CHAR_MEMORY
+	CharSetManager::print(1, 1);
+#endif
+
+#ifdef __DEBUGGING_BGMAP_MEMORY
+	BgmapTextureManager::print(1, 1);
+	ParamTableManager::print(26, 1);
+#endif
+
+#ifdef __DEBUGGING_VIP
+	VIPManager::print(1, 1);
+#endif
+
+#ifdef __DEBUGGING_VSU
+	VSUManager::print(1, 1);
+#endif
+
+#ifdef __DEBUGGING_FRAME_BUFFERS
+	FrameBufferManager::print(FrameBufferManager::getInstance(), 1, 1);
+#endif
+
+#ifdef __DEBUGGING_SPRITES
+	SpriteManager::print(this->componentManagers[kSpriteComponent], 1, 1, true);
+#endif
+	
+#ifdef __DEBUGGING_WIREFRAMES
+	WireframeManager::print(this->componentManagers[kWireframeComponent], 1, 1);
+#endif
+
+#ifdef __DEBUGGING_PHYSICS
+	BodyManager::print(this->componentManagers[kPhysicsComponent], 1, 1);
+#endif
+	
+#ifdef __DEBUGGING_COLLISIONS
+	ColliderManager::print(this->componentManagers[kColliderComponent], 1, 1);
+#endif
+
+#ifdef __DEBUGGING_STREAMING
+	Stage::print(this->stage, 1, 1);
+#endif
+}
+#endif	
+#endif	
