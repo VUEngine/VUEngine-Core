@@ -58,7 +58,7 @@ static Component ComponentManager::createComponent(Entity owner, const Component
 		return NULL;
 	}
 
-	Component component = ComponentManager::instantiateComponent(componentManager, owner, componentSpec);
+	Component component = ComponentManager::allocateComponent(componentManager, owner, componentSpec);
 
 	if(!isDeleted(component) && !isDeleted(owner))
 	{
@@ -105,7 +105,7 @@ static void ComponentManager::destroyComponent(Entity owner, Component component
 		return;
 	}
 
-	ComponentManager::deinstantiateComponent(componentManager, owner, component);
+	ComponentManager::releaseComponent(componentManager, owner, component);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -247,7 +247,7 @@ static void ComponentManager::destroyComponents(Entity owner)
 
 			if(!component->deleteMe && owner == component->owner)
 			{
-				ComponentManager::deinstantiateComponent(componentManager, owner, component);
+				ComponentManager::releaseComponent(componentManager, owner, component);
 			}
 		}	
 	}
@@ -672,28 +672,22 @@ void ComponentManager::destroyAllComponents()
 		return;
 	}
 
+	HardwareManager::suspendInterrupts();
+
 	ComponentManager::purgeComponents(this);
 
-	VirtualList componentsHelper = new VirtualList();
-	VirtualList::copy(componentsHelper, this->components);
-
-	for(VirtualNode node = componentsHelper->head, nextNode = NULL; NULL != node; node = nextNode)
+	for(VirtualNode node = this->components->head; NULL != node; node = node->next)
 	{
-		nextNode = node->next;
-
 		Component component = Component::safeCast(node->data);
 
 		NM_ASSERT(__GET_CAST(Component, component), "ComponentManager::destroyAllComponents: trying to destroy a non component");
 
-		ComponentManager::deinstantiateComponent(this, component->owner, component);
+		ComponentManager::releaseComponent(this, component->owner, component);
 	}
 
-	delete componentsHelper;
+	VirtualList::deleteData(this->components);
 
-	if(!isDeleted(this->components))
-	{
-		VirtualList::deleteData(this->components);
-	}
+	HardwareManager::resumeInterrupts();
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -756,7 +750,7 @@ bool ComponentManager::areComponentsVisual()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-Component ComponentManager::instantiateComponent(Entity owner, const ComponentSpec* componentSpec)
+Component ComponentManager::allocateComponent(Entity owner, const ComponentSpec* componentSpec)
 {
 	if(kComponentTypes <= componentSpec->componentType)
 	{
@@ -783,7 +777,7 @@ Component ComponentManager::instantiateComponent(Entity owner, const ComponentSp
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void ComponentManager::deinstantiateComponent(Entity owner, Component component) 
+void ComponentManager::releaseComponent(Entity owner, Component component) 
 {
 	if(isDeleted(component))
 	{
