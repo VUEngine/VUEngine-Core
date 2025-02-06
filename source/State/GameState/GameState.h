@@ -54,6 +54,8 @@ enum GameState::stopClocks
 /// Implements a state that the VUEngine's state machine can transition into.
 class GameState : State
 {
+	/// @protectedsection
+
 	/// A container for actors that componse the UI
 	UIContainer uiContainer;
 
