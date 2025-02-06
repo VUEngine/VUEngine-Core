@@ -131,6 +131,10 @@ bool GameState::handleMessage(Telegram telegram)
 
 void GameState::start(void* owner)
 {
+	// Setup managers
+	GameState::createManagers(this);
+	GameState::enableManagers(this);
+
 	GameState::pauseClocks(this);
 
 	GameState::startClock(this, kGameStateMessagingClock);
@@ -247,6 +251,10 @@ void GameState::unpause(void* owner)
 	if(NULL == toolState)
 #endif
 	{
+		// Setup managers
+		GameState::createManagers(this);
+		GameState::enableManagers(this);
+
 		// Reset the engine state
 		GameState::reset(this, NULL == Stage::getSpec(this->stage)->assets.sounds);
 
@@ -638,9 +646,6 @@ void GameState::reset(bool resetSounds)
 #ifdef __ENABLE_PROFILER
 	Profiler::reset();
 #endif
-
-	GameState::createManagers(this);
-	GameState::enableManagers(this);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
