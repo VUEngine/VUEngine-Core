@@ -200,7 +200,7 @@ void Sprite::forceChangeOfFrame(int16 actualFrame)
 
 inline void Sprite::transform()
 {
-	if(NULL != this->owner)
+	if(NULL != this->owner && NULL != this->transformation)
 	{
 		Sprite::position(this);
 		Sprite::rotate(this);

@@ -32,6 +32,9 @@ void PrintingSprite::constructor(Entity owner, const PrintingSpriteSpec* printin
 
 	this->hasTextures = false;
 
+	// Ignore the owner's transfomation
+	this->transformation = NULL;
+
 	PrintingSprite::reset(this);
 }
 
