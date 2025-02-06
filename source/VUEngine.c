@@ -352,32 +352,16 @@ bool VUEngine::handleMessage(Telegram telegram)
 
 void VUEngine::constructor()
 {
-#ifndef __RELEASE
-	// Restrict singleton access
-	Singleton::secure();
-#endif
-
-	// Initialize hardware related stuff
-	HardwareManager::initialize();
-
 	// Always explicitly call the base's constructor 
 	Base::constructor();
 
 	this->stateMachine = new StateMachine(this);
 	this->currentGameState = NULL;
-
 	this->gameFrameStarted = false;
 	this->currentGameCycleEnded = false;
 	this->isPaused = false;
 	this->activeToolState = NULL;
-
 	this->saveDataManager = NULL;
-
-	VIPManager::addEventListener(VIPManager::getInstance(), ListenerObject::safeCast(this), kEventVIPManagerFRAMESTART);
-	VIPManager::addEventListener(VIPManager::getInstance(), ListenerObject::safeCast(this), kEventVIPManagerGAMESTART);
-#ifdef __SHOW_PROCESS_NAME_DURING_XPEND
-	VIPManager::addEventListener(VIPManager::getInstance(), ListenerObject::safeCast(this), kEventVIPManagerXPEND);
-#endif
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -630,6 +614,13 @@ secure void VUEngine::run(GameState currentGameState)
 		return;
 	}
 
+	VIPManager::addEventListener(VIPManager::getInstance(), ListenerObject::safeCast(this), kEventVIPManagerFRAMESTART);
+	VIPManager::addEventListener(VIPManager::getInstance(), ListenerObject::safeCast(this), kEventVIPManagerGAMESTART);
+
+#ifdef __SHOW_PROCESS_NAME_DURING_XPEND
+	VIPManager::addEventListener(VIPManager::getInstance(), ListenerObject::safeCast(this), kEventVIPManagerXPEND);
+#endif
+
 	VUEngine::setState(currentGameState);
 
 	while(NULL != this->currentGameState)
@@ -679,6 +670,14 @@ int32 main(void)
 
 	// Make sure that everything is properly intialized before giving control to the game
 	volatile VUEngine vuEngine = VUEngine::getInstance();
+
+	// Initialize hardware related stuff
+	HardwareManager::initialize();
+
+#ifndef __RELEASE
+	// Restrict the access to the engine's singletons
+	Singleton::secure();
+#endif
 
 	// Run the game with the GameState returned by its entry point
 	VUEngine::run(vuEngine, __GAME_ENTRY_POINT());
