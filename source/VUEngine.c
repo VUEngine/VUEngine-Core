@@ -668,9 +668,6 @@ int32 main(void)
 	// Setup the classes' virtual tables
 	setupClasses();
 
-	// Make sure that everything is properly intialized before giving control to the game
-	volatile VUEngine vuEngine = VUEngine::getInstance();
-
 	// Initialize hardware related stuff
 	HardwareManager::initialize();
 
@@ -680,7 +677,7 @@ int32 main(void)
 #endif
 
 	// Run the game with the GameState returned by its entry point
-	VUEngine::run(vuEngine, __GAME_ENTRY_POINT());
+	VUEngine::run(VUEngine::getInstance(), __GAME_ENTRY_POINT());
 
 	return 0;
 }
