@@ -191,6 +191,7 @@ void Sprite::forceChangeOfFrame(int16 actualFrame)
 {
 	if(!isDeleted(this->texture))
 	{
+		this->rendered = false;
 		Texture::setFrame(this->texture, actualFrame);
 	}
 }

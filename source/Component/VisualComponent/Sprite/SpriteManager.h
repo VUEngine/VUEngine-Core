@@ -209,6 +209,9 @@ class SpriteManager : ComponentManager
 	/// Force the writing of graphical data to DRAM space.
 	void writeTextures();
 
+	/// Invalidate the rendering status of all sprites so they re-render again in the next cycle.
+	void invalidateRendering();
+
 	/// Hide all sprites except the provided one.
 	/// @param spareSprite: Sprite to not hide
 	/// @param hidePrinting: Flag to allow/prohibit the display of the printing sprite

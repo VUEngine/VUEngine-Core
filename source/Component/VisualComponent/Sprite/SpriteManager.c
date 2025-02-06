@@ -752,6 +752,25 @@ void SpriteManager::writeTextures()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+void SpriteManager::invalidateRendering()
+{
+	for(VirtualNode node = this->components->tail; NULL != node; node = node->previous)
+	{
+		NM_ASSERT(!isDeleted(node->data), "SpriteManager::showSprites: NULL node's data");
+
+		Sprite sprite = Sprite::safeCast(node->data);
+
+		if(sprite->deleteMe)
+		{
+			continue;
+		}
+
+		Sprite::invalidateRendering(sprite);
+	}
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 // This is unsafe since it calls external methods that could trigger modifications of the list of components
 #ifdef __TOOLS
 void SpriteManager::showAllSprites(Sprite spareSprite, bool showPrinting)

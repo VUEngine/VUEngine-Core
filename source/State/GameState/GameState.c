@@ -141,6 +141,10 @@ void GameState::start(void* owner)
 
 	// Call custom code implementation
 	GameState::enter(this, owner);
+
+	// Make sure that the rendering is up to date with any change made by the 
+	// derive implementation of resume
+	GameState::invalidateRendering(this);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -278,6 +282,10 @@ void GameState::unpause(void* owner)
 		
 		// Call custom code implementation
 		GameState::resume(this, owner);
+
+		// Make sure that the rendering is up to date with any change made by the 
+		// derive implementation of resume
+		GameState::invalidateRendering(this);
 	}
 #ifdef __TOOLS
 	else
@@ -985,6 +993,14 @@ void GameState::stream()
 #ifdef __ENABLE_PROFILER
 	Profiler::lap(kProfilerLapTypeNormalProcess, PROCESS_NAME_STREAMING);
 #endif
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void GameState::invalidateRendering()
+{
+	SpriteManager::invalidateRendering(this->componentManagers[kSpriteComponent]);
+	WireframeManager::invalidateRendering(this->componentManagers[kWireframeComponent]);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

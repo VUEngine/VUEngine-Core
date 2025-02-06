@@ -97,8 +97,8 @@ class WireframeManager : ComponentManager
 	/// Prepare wireframe's graphical data for drawing
 	void render();
 
-	/// Draw wireframes to the frame buffers
-	void draw();
+	/// Invalidate the rendering status of all wireframes so they re-render again in the next cycle.
+	void invalidateRendering();
 
 	/// Show all wireframes (available only when __TOOLS is defined).
 	void showAllWireframes();
