@@ -672,12 +672,15 @@ void ComponentManager::destroyAllComponents()
 		return;
 	}
 
-	HardwareManager::suspendInterrupts();
-
 	ComponentManager::purgeComponents(this);
 
-	for(VirtualNode node = this->components->head; NULL != node; node = node->next)
+	VirtualList componentsHelper = new VirtualList();
+	VirtualList::copy(componentsHelper, this->components);
+
+	for(VirtualNode node = componentsHelper->head, nextNode = NULL; NULL != node; node = nextNode)
 	{
+		nextNode = node->next;
+
 		Component component = Component::safeCast(node->data);
 
 		NM_ASSERT(__GET_CAST(Component, component), "ComponentManager::destroyAllComponents: trying to destroy a non component");
@@ -685,9 +688,12 @@ void ComponentManager::destroyAllComponents()
 		ComponentManager::releaseComponent(this, component->owner, component);
 	}
 
-	VirtualList::deleteData(this->components);
+	delete componentsHelper;
 
-	HardwareManager::resumeInterrupts();
+	if(!isDeleted(this->components))
+	{
+		VirtualList::deleteData(this->components);
+	}
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
