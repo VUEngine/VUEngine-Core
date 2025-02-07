@@ -108,10 +108,55 @@
 				extern uint32 {{ sanitizedSpecName ~ 'Actor' ~ imageData.tiles.name | sanitizeSpecName }}TilesFrameOffsets[];{{ '\n' }}
 			{%- endif -%}
 		{%- endfor -%}
-	{%- endif -%}
-{%- endfor -%}
+	{%- endif %}
+{% endfor -%}
 
-{{- '\n' ~ macros.sectionHeader('Sprites') ~ '\n' -}}
+{#- PRINT ANIMATIONS -#}
+{%- if hasAnimations -%}
+
+{{- macros.sectionHeader('Animations') ~ '\n\n' -}}
+
+{%- for animation in item.components.animations -%}
+{%- if animation.name != '' -%}
+	{%- set animationName = animation.name -%}
+{%- else -%} 
+	{%- set animationName = loop.index -%}
+{%- endif -%}
+AnimationFunctionROMSpec {{ sanitizedSpecName }}Animation{{ loop.index }}AnimationSpec =
+{
+	// Number of frames that the texture supports of this animation function
+	{{ animation.frames | length }},
+
+	// Frames to play in animation
+	{
+		{% for frame in animation.frames -%}
+			{{ frame }}, {% if loop.index % 10 == 0 and not loop.last %}{{ "\n		" }}{% endif %}
+		{%- endfor %}
+	},
+
+	// Number of cycles a frame of animation is displayed
+	{{ animation.cycles }},
+
+	// Whether to play it in loop or not
+	{{ animation.loop }},
+
+	// Animation's name
+	"{{ animationName }}",
+};
+
+{% endfor -%}
+
+AnimationFunctionROMSpec* {{ sanitizedSpecName }}AnimationSpecs[] =
+{
+	{% for animation in item.components.animations -%}
+	(AnimationFunction*)&{{ sanitizedSpecName }}Animation{{ loop.index }}AnimationSpec,
+	{% endfor -%}
+	NULL,
+};
+
+{% endif %}
+
+{{- macros.sectionHeader('Sprites') ~ '\n' -}}
 
 {%- set spriteNames = [] -%}
 {%- for sprite in item.components.sprites -%}
@@ -285,7 +330,7 @@ TextureROMSpec* const {{ spriteName }}TextureSpecs[] =
 
 			// Array of animation functions
 			{%- if isAnimated %}
-			(const AnimationFunction**)&{{ sanitizedSpecName }}AnimationSpecs
+			(const AnimationFunction**){{ sanitizedSpecName }}AnimationSpecs
 			{%- else %}
 			(const AnimationFunction**)NULL
 			{%- endif %}
@@ -315,7 +360,6 @@ TextureROMSpec* const {{ spriteName }}TextureSpecs[] =
 	{%- if item.sprites.type != 'Object' %}
 
 	// The display mode (__WORLD_BGMAP, __WORLD_AFFINE, __WORLD_OBJECT or __WORLD_HBIAS)
-	// make sure to use the proper corresponding sprite type throughout the spec (BgmapSprite or ObjectSprite)
 	__WORLD_{{ sprite.bgmapMode | upper }},
 	{% endif %}
 
@@ -354,51 +398,6 @@ TextureROMSpec* const {{ spriteName }}TextureSpecs[] =
 {% endfor -%}
 {% endfor -%}
 {% endif -%}
-
-{#- PRINT ANIMATIONS -#}
-{%- if hasAnimations -%}
-
-{{- macros.sectionHeader('Animations') ~ '\n\n' -}}
-
-{%- for animation in item.components.animations -%}
-{%- if animation.name != '' -%}
-	{%- set animationName = animation.name -%}
-{%- else -%} 
-	{%- set animationName = loop.index -%}
-{%- endif -%}
-AnimationFunctionROMSpec {{ sanitizedSpecName }}Animation{{ loop.index }}AnimationSpec =
-{
-	// Number of frames that the texture supports of this animation function
-	{{ animation.frames | length }},
-
-	// Frames to play in animation
-	{
-		{% for frame in animation.frames -%}
-			{{ frame }}, {% if loop.index % 10 == 0 and not loop.last %}{{ "\n		" }}{% endif %}
-		{%- endfor %}
-	},
-
-	// Number of cycles a frame of animation is displayed
-	{{ animation.cycles }},
-
-	// Whether to play it in loop or not
-	{{ animation.loop }},
-
-	// Animation's name
-	"{{ animationName }}",
-};
-
-{% endfor -%}
-
-AnimationFunctionROMSpec* const {{ sanitizedSpecName }}AnimationSpecs[] =
-{
-	{% for animation in item.components.animations -%}
-	(AnimationFunction*)&{{ sanitizedSpecName }}Animation{{ loop.index }}AnimationSpec,
-	{% endfor -%}
-	NULL,
-};
-
-{% endif %}
 
 {#- PRINT WIREFRAMES -#}
 {%- if item.components.wireframes | length -%}
@@ -698,7 +697,7 @@ ComponentSpec* const {{ sanitizedSpecName }}ComponentSpecs[] =
 
 	// Animation to play automatically
 	{%- if hasAnimations and item.components.animations[item.animations.default].name != '' %}
-	"{{ item.components.animations[item.animations.default].name | sanitizeSpecName }}"
+	"{{ item.components.animations[item.animations.default].name }}"
 	{%- elseif hasAnimations %} 
 	"{{ item.animations.default + 1 }}"
 	{%- else %}
