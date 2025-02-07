@@ -182,8 +182,6 @@ void GameState::update(void* owner)
 
 	GameState::stream(this);
 
-#define __DEBUGGING
-
 #ifdef __DEBUGGING
 	GameState::debugging(this);
 #endif
