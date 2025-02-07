@@ -175,7 +175,7 @@ static void Error::triggerException(char* message __attribute__((unused)), char*
 	worldPointer->w = __SCREEN_WIDTH;
 	worldPointer->h = __SCREEN_HEIGHT;
 	worldPointer->head = 
-		__WORLD_ON | __WORLD_BGMAP | __WORLD_OVR | Printer::getPrintingBgmapSegment();
+		__WORLD_ON | __WORLD_BGMAP | __WORLD_OVR;
 
 	_worldAttributesBaseAddress[__EXCEPTIONS_WORLD - 1].head = __WORLD_END;
 

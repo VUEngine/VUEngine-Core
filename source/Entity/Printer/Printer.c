@@ -415,44 +415,11 @@ static void Printer::setTextDirection(uint8 value)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void Printer::setPrintingBgmapSegment(int8 printingBgmapSegment)
-{
-	Printer printing = Printer::getInstance();
-
-	if((unsigned)printingBgmapSegment < __MAX_NUMBER_OF_BGMAPS_SEGMENTS)
-	{
-		printing->printingBgmapSegment = printingBgmapSegment;
-
-		VirtualList printingSprites = Printer::getComponents(printing, kSpriteComponent);
-
-		for(VirtualNode node = VirtualList::begin(printingSprites); NULL != node; node = VirtualNode::getNext(node))
-		{
-			PrintingSprite::setPrintingBgmapSegment(PrintingSprite::safeCast(VirtualNode::getData(node)), printingBgmapSegment);
-		}
-
-		Printer::clearComponentLists(printing, kSpriteComponent);
-	}	
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-static int8 Printer::getPrintingBgmapSegment()
-{
-	Printer printing = Printer::getInstance();
-
-	return printing->printingBgmapSegment;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
 static void Printer::addSprite()
 {
 	Printer printing = Printer::getInstance();
-	printing->printingBgmapSegment = BgmapTextureManager::getPrintingBgmapSegment(BgmapTextureManager::getInstance());
 	printing->activePrintingSprite = 
 		PrintingSprite::safeCast(Printer::addComponent(printing, (ComponentSpec*)&DefaultPrintingSpriteSpec));
-
-	PrintingSprite::setPrintingBgmapSegment(printing->activePrintingSprite, printing->printingBgmapSegment);
 
 	PixelVector position = 
 	{
@@ -460,6 +427,8 @@ static void Printer::addSprite()
 	};
 
 	PrintingSprite::setPosition(printing->activePrintingSprite, &position);
+
+	Printer::configureBgmapSegment(printing, BgmapTextureManager::getPrintingBgmapSegment(BgmapTextureManager::getInstance()));
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -844,14 +813,11 @@ static void Printer::out(uint8 x, uint8 y, const char* string, const char* font)
 	font = __FORCE_FONT;
 #endif
 
-	if(-1 == printing->printingBgmapSegment)
-	{
-		Printer::setPrintingBgmapSegment(BgmapTextureManager::getPrintingBgmapSegment(BgmapTextureManager::getInstance()));
+	int8 printingBgmapSegment = BgmapTextureManager::getPrintingBgmapSegment(BgmapTextureManager::getInstance());
 
-		if(-1 == printing->printingBgmapSegment)
-		{
-			return;
-		}
+	if(printingBgmapSegment != printing->printingBgmapSegment)
+	{
+		Printer::configureBgmapSegment(printing, printingBgmapSegment);
 	}
 
 	uint32 i = 0, position = 0, startColumn = x, temp = 0;
@@ -1073,6 +1039,24 @@ void Printer::destructor()
 {
 	// Always explicitly call the base's destructor 
 	Base::destructor();
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void Printer::configureBgmapSegment(int8 printingBgmapSegment)
+{
+	this->printingBgmapSegment = printingBgmapSegment;
+	
+	VirtualList printingSprites = Printer::getComponents(this, kSpriteComponent);
+
+	for(VirtualNode node = VirtualList::begin(printingSprites); NULL != node; node = VirtualNode::getNext(node))
+	{
+		PrintingSprite::setPrintingBgmapSegment(PrintingSprite::safeCast(VirtualNode::getData(node)), this->printingBgmapSegment);
+	}
+
+	Printer::clearComponentLists(this, kSpriteComponent);
+
+	Printer::fireEvent(this, kEventFontRewritten);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

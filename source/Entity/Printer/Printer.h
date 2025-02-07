@@ -261,14 +261,6 @@ singleton class Printer : Entity
 	/// @param value: PrintingDirection
 	static void setTextDirection(uint8 value);
 
-	/// Cache the printing bgmap segment.
-	/// @param printingBgmapSegment: Index of the bgmap segment to print to
-	static void setPrintingBgmapSegment(int8 printingBgmapSegment);
-
-	/// Get the printing bgmap segment.
-	/// @return Index of the bgmap segment to print to
-	static int8 getPrintingBgmapSegment();
-
 	/// Create a printing sprite.
 	static void addSprite();
 
