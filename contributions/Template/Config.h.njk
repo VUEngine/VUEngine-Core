@@ -50,26 +50,18 @@
 
 #define __FIXED_POINT_TYPE {% if config.math.fixedPointPrecision %}{{config.math.fixedPointPrecision}}{% else %}6{% endif %}
 
-{{ macros.sectionHeader('Communications') }}
-
-{% if config.communications.enable %}#define{% else %}#undef{% endif %} __ENABLE_COMMUNICATIONS
-
+{% if config.debug.enableProfiler or (config.debug.mode is defined and config.debug.mode != 'NONE') -%}
 {{ macros.sectionHeader('Debugging / Profiling') }}
 
-{% if config.debug.showMemoryPoolStatus %}#define{% else %}#undef{% endif %} __SHOW_MEMORY_POOL_STATUS
-{% if config.debug.showDetailedMemoryPoolStatus %}#define{% else %}#undef{% endif %} __SHOW_DETAILED_MEMORY_POOL_STATUS
+{% if config.debug.enableProfiler -%}
+#define __ENABLE_PROFILER
 
-{% if config.debug.enableProfiler %}#define{% else %}#undef{% endif %} __ENABLE_PROFILER
-{% if config.debug.profileStreaming %}#define{% else %}#undef{% endif %} __PROFILE_STREAMING
-{% if config.debug.showStreamingProfiling %}#define{% else %}#undef{% endif %} __SHOW_STREAMING_PROFILING
-{% if config.debug.dimmForProfiling %}#define{% else %}#undef{% endif %} __DIMM_FOR_PROFILING
+{% elseif config.debug.mode is defined and config.debug.mode != 'NONE' -%}
+#define __DEBUGGING
+#define __DEBUGGING_{{ config.debug.mode }}
 
-{% if config.debug.printFramerate %}#define{% else %}#undef{% endif %} __PRINT_FRAMERATE
-
-{% if config.debug.alertVipOvertime %}#define{% else %}#undef{% endif %} __SHOW_VIP_OVERTIME_COUNT
-
-{% if config.debug.showStackOverflowAlert %}#define{% else %}#undef{% endif %} __SHOW_STACK_OVERFLOW_ALERT
-#define __STACK_HEADROOM {{ config.debug.stackHeadroom }}
+{% endif -%}
+{% endif -%}
 
 {{ macros.sectionHeader('Debugging tools') }}
 
@@ -141,8 +133,6 @@
 #define __TARGET_FPS				   (__MAXIMUM_FPS >> __FRAME_CYCLE)
 #define __GAME_FRAME_DURATION		   (__MILLISECONDS_PER_SECOND / __TARGET_FPS)
 #define __OPTIMUM_FPS				   (__TARGET_FPS >> __FRAME_CYCLE)
-
-{% if config.frameRate.runDelayedMessagesAtHalfFrameRate %}#define{% else %}#undef{% endif %} __RUN_DELAYED_MESSAGES_DISPATCHING_AT_HALF_FRAME_RATE
 
 {{ macros.sectionHeader('Animation') }}
 

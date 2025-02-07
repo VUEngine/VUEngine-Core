@@ -67,58 +67,16 @@
 				},
 				"additionalProperties": false
 			},
-			"communications": {
-				"type": "object",
-				"properties": {
-					"enable": {
-						"type": "boolean",
-						"default": false
-					}
-				},
-				"additionalProperties": false
-			},
 			"debug": {
 				"type": "object",
 				"properties": {
-					"alertVipOvertime": {
-						"type": "boolean",
-						"default": false
-					},
-					"dimmForProfiling": {
-						"type": "boolean",
-						"default": false
+					"diagnostics": {
+						"type": "string",
+						"default": "NONE"
 					},
 					"enableProfiler": {
 						"type": "boolean",
 						"default": false
-					},
-					"printFramerate": {
-						"type": "boolean",
-						"default": false
-					},
-					"profileStreaming": {
-						"type": "boolean",
-						"default": false
-					},
-					"showDetailedMemoryPoolStatus": {
-						"type": "boolean",
-						"default": false
-					},
-					"showMemoryPoolStatus": {
-						"type": "boolean",
-						"default": false
-					},
-					"showStackOverflowAlert": {
-						"type": "boolean",
-						"default": false
-					},
-					"showStreamingProfiling": {
-						"type": "boolean",
-						"default": false
-					},
-					"stackHeadroom": {
-						"type": "integer",
-						"default": 1000
 					}
 				},
 				"additionalProperties": false
@@ -152,10 +110,6 @@
 				"properties": {
 					"frameCycle": {
 						"type": "integer"
-					},
-					"runDelayedMessagesAtHalfFrameRate": {
-						"type": "boolean",
-						"default": false
 					},
 					"timerResolution": {
 						"type": "integer",
@@ -205,10 +159,6 @@
 			"memoryPools": {
 				"type": "object",
 				"properties": {
-					"cleanUp": {
-						"type": "boolean",
-						"default": false
-					},
 					"warningThreshold": {
 						"type": "integer",
 						"default": 85,
