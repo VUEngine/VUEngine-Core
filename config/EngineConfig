@@ -37,48 +37,52 @@
         "fixedPointPrecision": 6
     },
     "memoryPools": {
-        "pools": [
-            {
-                "objects": 450,
-                "size": 16
-            },
-            {
-                "objects": 700,
-                "size": 20
-            },
-            {
-                "objects": 350,
-                "size": 28
-            },
-            {
-                "objects": 30,
-                "size": 40
-            },
-            {
-                "objects": 60,
-                "size": 68
-            },
-            {
-                "objects": 50,
-                "size": 80
-            },
-            {
-                "objects": 40,
-                "size": 108
-            },
-            {
-                "objects": 40,
-                "size": 116
-            },
-            {
-                "objects": 10,
-                "size": 140
-            },
-            {
-                "objects": 10,
-                "size": 152
-            }
-        ],
+		"pools": [
+			{
+				"objects": 450,
+				"size": 16
+			},
+			{
+				"objects": 700,
+				"size": 20
+			},
+			{
+				"objects": 350,
+				"size": 28
+			},
+			{
+				"objects": 30,
+				"size": 40
+			},
+			{
+				"objects": 60,
+				"size": 68
+			},
+			{
+				"objects": 50,
+				"size": 80
+			},
+			{
+				"objects": 40,
+				"size": 108
+			},
+			{
+				"objects": 40,
+				"size": 116
+			},
+			{
+				"objects": 10,
+				"size": 140
+			},
+			{
+				"objects": 10,
+				"size": 152
+			},
+			{
+				"objects": 1,
+				"size": 164
+			}
+		],
         "warningThreshold": 85
     },
     "optics": {
@@ -150,7 +154,7 @@
         "frustumExtensionPower": 0,
         "interlacedThreshold": 4096,
         "lineShrinkingPadding": 0,
-        "sort": true,
+        "sort": false,
         "verticalLineOptimization": false
     }
 }
