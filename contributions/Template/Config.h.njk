@@ -50,18 +50,18 @@
 
 #define __FIXED_POINT_TYPE {% if config.math.fixedPointPrecision %}{{config.math.fixedPointPrecision}}{% else %}6{% endif %}
 
-{% if config.debug.enableProfiler or (config.debug.mode is defined and config.debug.mode != 'NONE') -%}
 {{ macros.sectionHeader('Debugging / Profiling') }}
 
 {% if config.debug.enableProfiler -%}
 #define __ENABLE_PROFILER
 
-{% elseif config.debug.mode is defined and config.debug.mode != 'NONE' -%}
+{% elseif config.debug.diagnostics is defined and config.debug.diagnostics != 'NONE' -%}
 #define __DEBUGGING
-#define __DEBUGGING_{{ config.debug.mode }}
+#define __DEBUGGING_{{ config.debug.diagnostics }}
 
 {% endif -%}
-{% endif -%}
+
+#define __STACK_HEADROOM {{ config.debug.stackHeadroom }}
 
 {{ macros.sectionHeader('Debugging tools') }}
 

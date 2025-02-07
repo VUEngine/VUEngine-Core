@@ -77,6 +77,10 @@
 					"enableProfiler": {
 						"type": "boolean",
 						"default": false
+					},
+					"stackHeadroom": {
+						"type": "integer",
+						"default": 1000
 					}
 				},
 				"additionalProperties": false
