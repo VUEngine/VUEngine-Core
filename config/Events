@@ -1,5 +1,5 @@
 {
-    "_version": "1.0.0",
+    "_version": "0.6.0",
     "events": {
         "0Hu9jumtTGOiT4z2": "ColliderDeleted",
         "0KnAJoSYkv6ClR8a": "SoundFinished",
