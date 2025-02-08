@@ -1231,7 +1231,7 @@ void SpriteManager::applySpecialEffects()
 
 		Sprite sprite = Sprite::safeCast(node->data);
 
-		if(__HIDE == sprite->show)
+		if(sprite->deleteMe || __HIDE == sprite->show)
 		{
 			continue;
 		}
