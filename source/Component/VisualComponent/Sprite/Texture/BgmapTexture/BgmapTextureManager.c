@@ -116,15 +116,6 @@ secure void BgmapTextureManager::reset()
 
 	VirtualList::deleteData(this->bgmapTextures);
 
-	this->availableBgmapSegmentsForTextures = (uint32)((__PARAM_TABLE_END - __BGMAP_SPACE_BASE_ADDRESS) / __BGMAP_SEGMENT_SIZE);
-
-	if(this->availableBgmapSegmentsForTextures > __MAX_NUMBER_OF_BGMAPS_SEGMENTS)
-	{
-		this->availableBgmapSegmentsForTextures = __MAX_NUMBER_OF_BGMAPS_SEGMENTS;
-	}
-
-	this->printingBgmapSegment = this->availableBgmapSegmentsForTextures - 1;
-
 	// Clear each bgmap segment usage
 	for(int32 i = 0; i < __MAX_NUMBER_OF_BGMAPS_SEGMENTS; i++)
 	{
@@ -408,6 +399,8 @@ void BgmapTextureManager::constructor()
 	Base::constructor();
 
 	this->bgmapTextures = new VirtualList();
+
+	BgmapTextureManager::configure(this, __BGMAP_SPACE_BASE_ADDRESS);
 
 	BgmapTextureManager::reset(this);
 }

@@ -39,6 +39,9 @@ static void ParamTableManager::print(int32 x, int32 y)
 
 	Printer::text("PARAM TABLE STATUS", x, y++, NULL);
 	Printer::text("Size:              ", x, ++y, NULL);
+	Printer::int32(__PARAM_TABLE_END - paramTableManager->paramTableBase, x + xDisplacement, y, NULL);
+
+	Printer::text("Available:              ", x, ++y, NULL);
 	Printer::int32(paramTableManager->size, x + xDisplacement, y, NULL);
 
 	Printer::text("Used:              ", x, ++y, NULL);
@@ -89,6 +92,8 @@ secure uint32 ParamTableManager::configure(int32 availableBgmapSegmentsForParamT
 	{
 		this->paramTableBase = __PARAM_TABLE_END - __BGMAP_SEGMENT_SIZE * availableBgmapSegmentsForParamTable;
 	}
+
+	this->paramTableBase -= __PRINTABLE_BGMAP_AREA;
 
 	// Find the next address that is a multiple of 8192
 	// Taking into account the printable area
@@ -321,7 +326,7 @@ uint32 ParamTableManager::calculateSpriteParamTableSize(BgmapSprite bgmapSprite)
 	}
 
 	uint16 spriteHead = Sprite::getHead(bgmapSprite);
-	uint32 textureRows = ((SpriteSpec*)Sprite::getSpec(bgmapSprite))->textureSpec->rows + __PARAM_TABLE_PADDING;
+	uint32 textureRows = ((SpriteSpec*)Sprite::getSpec(bgmapSprite))->textureSpec->rows;
 	uint32 size = 0;
 
 	if(__WORLD_AFFINE & spriteHead)
@@ -333,7 +338,7 @@ uint32 ParamTableManager::calculateSpriteParamTableSize(BgmapSprite bgmapSprite)
 
 		// Calculate necessary space to allocate
 		// Size = sprite's rows * 8 pixels each one * 16 bytes needed by each row = sprite's rows * 2 ^ 7
-		// Add one row as padding to make sure not ovewriting take place
+		// Add one row as padding to make sure not ovewriting takes place
 		size = (textureRows << 7) * __MAXIMUM_SCALE;
 	}
 	else if(__WORLD_HBIAS & spriteHead)
