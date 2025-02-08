@@ -141,8 +141,6 @@
 
 {{ macros.sectionHeader('Memory pool') }}
 
-{% if config.memoryPools.cleanUp %}#define{% else %}#undef{% endif %} __MEMORY_POOL_CLEAN_UP
-
 #undef __MEMORY_POOLS
 #define __MEMORY_POOLS {{ config.memoryPools.pools | length }}
 
