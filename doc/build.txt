@@ -5,9 +5,9 @@ YOUR_GAME=
 TYPE=
 
 ENGINE_FOLDER=$YOUR_PATH_TO/vuengine/core
-PLUGINS_FOLDER=$YOUR_PATH_TO//vuengine/plugins
+PLUGINS_FOLDER=$YOUR_PATH_TO/vuengine/plugins
 USER_PLUGINS_FOLDER=$YOUR_PATH_TO//vuengine/user
-MAKEFILE=$YOUR_PATH_TO//vuengine/core/makefile-game
+MAKEFILE=$YOUR_PATH_TO/vuengine/core/lib/compiler/make/makefile-game
 GAME_FOLDER=$YOUR_PATH_TO/$YOUR_GAME
 LC_ALL=C
 BUILD_ALL=1

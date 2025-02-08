@@ -1,4 +1,4 @@
-include $(ENGINE_HOME)/makefile-compiler
+include $(ENGINE_HOME)/lib/compiler/make/makefile-compiler
 
 # Number of jobs to run
 MAKE_JOBS = 4
@@ -51,7 +51,7 @@ BUILD_MODE=$(TYPE)$(WORKING_FOLDER_SUFFIX)
 PLUGINS_PATH = $(BUILD_DIR)/
 
 # Plugin makefile
-PLUGIN_MAKEFILE=$(ENGINE_HOME)/makefile
+PLUGIN_MAKEFILE=$(ENGINE_HOME)/lib/compiler/make/makefile
 
 # Which directories will contain source files
 ASSETS_DIRS = $(shell find $(MY_HOME)/assets -type d -print)
@@ -134,7 +134,7 @@ preprocessEngine:
 	@-$(foreach DUMMY, "1",	 																														\
 		if [ ! -f $(ENGINE_LIBRARY_FILE) ]; then 																									\
 			$(MAKE) --no-print-directory preprocessClasses																							\
-				-f $(ENGINE_HOME)/makefile																											\
+				-f $(ENGINE_HOME)/lib/compiler/make/makefile																						\
 				-e NAME=$(ENGINE_NAME)																												\
 				-e GAME_NAME=$(GAME_NAME)																											\
 				-e GAME_HOME=$(GAME_HOME)																											\
@@ -154,7 +154,7 @@ preprocessEngine:
 	@-$(foreach DUMMY, "1",	 																														\
 		if [ ! -f $(ENGINE_LIBRARY_FILE) ]; then 																									\
 			$(MAKE) --no-print-directory preprocessClasses																							\
-				-f $(ENGINE_HOME)/makefile																											\
+				-f $(ENGINE_HOME)/lib/compiler/make/makefile																						\
 				-e NAME=$(ENGINE_NAME)																												\
 				-e GAME_NAME=$(GAME_NAME)																											\
 				-e GAME_HOME=$(GAME_HOME)																											\
@@ -215,7 +215,7 @@ preprocessPlugins:
 preprocessHeaderFiles:
 	@$(MAKE) --no-print-directory preprocess																										\
 		-j $(MAKE_JOBS)																																\
-		-f $(ENGINE_HOME)/makefile-preprocess																										\
+		-f $(ENGINE_HOME)/lib/compiler/make/makefile-preprocess																						\
 		-e TYPE=$(TYPE)																																\
 		-e GAME_NAME=$(GAME_NAME)																													\
 		-e GAME_HOME=$(GAME_HOME)																													\
@@ -231,7 +231,7 @@ preprocessHeaderFiles:
 compile:
 	@$(MAKE) --no-print-directory compile -s		 																								\
 		-j $(MAKE_JOBS)																																\
-		-f $(ENGINE_HOME)/makefile-compile																											\
+		-f $(ENGINE_HOME)/lib/compiler/make/makefile-compile																						\
 		-e TYPE=$(TYPE)																																\
 		-e NAME=$(NAME) 																															\
 		-e MY_HOME=$(MY_HOME)																														\
@@ -251,7 +251,7 @@ engine:
 		if [ ! -f $(ENGINE_LIBRARY_FILE) ]; then 																									\
 			$(MAKE) --no-print-directory	 																										\
 				$(GAME_HOME)/build/lib$(ENGINE_NAME).a																								\
-				-f $(ENGINE_HOME)/makefile																											\
+				-f $(ENGINE_HOME)/lib/compiler/make/makefile																						\
 				-e NAME=$(ENGINE_NAME)																												\
 				-e GAME_NAME=$(GAME_NAME)																											\
 				-e GAME_HOME=$(GAME_HOME)																											\

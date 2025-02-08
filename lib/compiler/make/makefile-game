@@ -17,7 +17,7 @@ override GAME_NAME = $(shell basename $(MY_HOME))
 override NAME = $(GAME_NAME)
 
 # Common
-include $(ENGINE_HOME)/makefile-common
+include $(ENGINE_HOME)/lib/compiler/make/makefile-common
 
 ifneq ($(BUILD_MODE),)
 	TYPE = $(BUILD_MODE)
