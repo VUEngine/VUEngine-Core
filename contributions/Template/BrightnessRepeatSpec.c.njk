@@ -11,10 +11,10 @@
 
 BrightnessRepeatROMSpec {{ sanitizedSpecName }}BrightnessRepeatSpec =
 {
-	// mirror spec?
+	// Mirror spec?
 	{% if item.mirror %}true{% else %}false{% endif %},
 
-	// brightness repeat values
+	// Brightness repeat values
 	{
 		{% for x in range(0, 96) -%}
 			{%- if not (item.mirror and loop.index > 48) -%}

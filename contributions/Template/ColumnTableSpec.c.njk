@@ -11,10 +11,10 @@
 
 ColumnTableROMSpec {{ sanitizedSpecName }}ColumnTableSpec =
 {
-	// mirror spec?
+	// Mirror spec?
 	{% if item.mirror %}true{% else %}false{% endif %},
 
-	// column table spec
+	// Column table spec
 	{
 		{% for x in range(0, 256) -%}
 			{%- if not (item.mirror and loop.index > 128) -%}

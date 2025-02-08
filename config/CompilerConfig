@@ -1,5 +1,5 @@
 {
-    "_version": "1.0.0",
+    "_version": "0.6.0",
     "framePointer": false,
     "memorySections": {
         "dram": {

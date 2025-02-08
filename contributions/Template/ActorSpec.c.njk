@@ -212,9 +212,9 @@ AnimationFunctionROMSpec* {{ sanitizedSpecName }}AnimationSpecs[] =
 CharSetROMSpec {{ charsetSpecName }}CharsetSpec =
 {
 	// Number of CHARs in function of the number of frames to load at the same time
-	{%- if isOptimizedAnimation %}
+	{%- if isAnimated and isOptimizedAnimation %}
 	{{ imageData.animation.largestFrame }},
-	{%- elseif isSpritesheetAnimation %}
+	{%- elseif isAnimated and isSpritesheetAnimation %}
 	{{ (imageData.tiles.count / item.animations.totalFrames) | round(0, "floor") }},
 	{%- else %}
 	{{ imageData.tiles.count }},
@@ -269,7 +269,7 @@ TextureROMSpec {{ spriteName }}TextureSpec =
 	{%- if spriteClass == 'FrameBlendBgmapSprite' -%}
 		{%- set mapHeight = mapHeight / 2 | round(0, "floor") -%}
 	{%- endif -%}
-	{%- if isSpritesheetAnimation and not isOptimizedAnimation -%}
+	{%- if isAnimated and isSpritesheetAnimation and not isOptimizedAnimation -%}
 		{%- set mapHeight = mapHeight / item.animations.totalFrames -%}
 	{%- endif -%}
 	{{ mapHeight }},
