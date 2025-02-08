@@ -141,6 +141,7 @@ void GameState::start(void* owner)
 	GameState::pauseClocks(this);
 
 	GameState::startClock(this, kGameStateMessagingClock);
+	GameState::startClock(this, kGameStateAnimationsClock);
 
 	// Call custom code implementation
 	GameState::enter(this, owner);
