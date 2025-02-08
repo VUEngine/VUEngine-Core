@@ -79,6 +79,8 @@ void PrintingSprite::reset()
 
 	this->halfWidth = __SCREEN_WIDTH >> 1;
 	this->halfHeight = __SCREEN_HEIGHT >> 1;
+
+	this->rendered = false;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -89,6 +91,8 @@ void PrintingSprite::setPrintingBgmapSegment(int8 printingBgmapSegment)
 	{
 		this->printingBgmapSegment = printingBgmapSegment;
 	}
+
+	this->rendered = false;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -98,6 +102,8 @@ void PrintingSprite::setGValues(int16 gx, int16 gy, int16 gp)
 	this->position.x = gx;
 	this->position.y = gy;
 	this->position.parallax = gp;
+
+	this->rendered = false;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -107,12 +113,16 @@ void PrintingSprite::setMValues(int16 mx, int16 my, int16 mp)
 	this->bgmapTextureSource.mx = mx;
 	this->bgmapTextureSource.my = my;
 	this->bgmapTextureSource.mp = mp;
+
+	this->rendered = false;
 }
 
 void PrintingSprite::setSize(uint16 width, uint16 height)
 {
 	this->halfWidth = width >> 1;
 	this->halfHeight = height >> 1;
+
+	this->rendered = false;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
