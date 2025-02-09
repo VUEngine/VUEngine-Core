@@ -359,7 +359,7 @@ TextureROMSpec* const {{ spriteName }}TextureSpecs[] =
 
 	{%- if item.sprites.type != 'Object' %}
 
-	// The display mode (__WORLD_BGMAP, __WORLD_AFFINE, __WORLD_OBJECT or __WORLD_HBIAS)
+	// The display mode (__WORLD_BGMAP, __WORLD_AFFINE or __WORLD_HBIAS)
 	__WORLD_{{ sprite.bgmapMode | upper }},
 	{% endif %}
 
