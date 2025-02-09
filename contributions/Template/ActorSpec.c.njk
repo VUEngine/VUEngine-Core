@@ -221,11 +221,7 @@ CharSetROMSpec {{ charsetSpecName }}CharsetSpec =
 	{%- endif %}
 
 	// Whether it is shared or not
-	{%- if isSpritesheetAnimation and not item.animations.multiframe %}
-	false,
-	{%- else %}
-	true,
-	{%- endif %}
+	{{ sprite.shareTiles }},
 
 	// Whether the tiles are optimized or not
 	{%- if isOptimizedAnimation %}

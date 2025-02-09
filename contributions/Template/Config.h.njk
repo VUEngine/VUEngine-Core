@@ -32,7 +32,7 @@
 {% elseif macro.type == 'macro' or macro.type == 'symbol' -%}
 #define {{ macroName }} {{ macro.value | formatValue | safe |replace('"', '') }}
 {% elseif macro.type == 'text' -%}
-#define {{ macroName }} ("{{ macro.value | formatValue | safe |replace('"', '') }}")
+#define {{ macroName }} "{{ macro.value | formatValue | safe |replace('"', '') }}"
 {% elseif macro.type == 'number' -%}
 #define {{ macroName }} ({{ macro.value | formatValue | safe }})
 {% elseif macro.type == 'boolean' -%}

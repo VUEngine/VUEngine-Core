@@ -368,6 +368,10 @@
 									"type": "boolean",
 									"default": true
 								},
+								"shareTiles": {
+									"type": "boolean",
+									"default": true
+								},
 								"texture": {
 									"type": "object",
 									"properties": {
