@@ -162,7 +162,6 @@ bool BgmapSprite::hasSpecialEffects()
 
 void BgmapSprite::processEffects(int32 maximumParamTableRowsToComputePerCall)
 {
-	
 	// Set the world size according to the zoom
 	if(0 < this->param && (uint8)__NO_RENDER_INDEX != this->index)
 	{

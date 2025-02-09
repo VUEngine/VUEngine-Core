@@ -23,6 +23,12 @@
 #include "ParamTableManager.h"
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+// CLASS' MACROS
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+#define __PARAM_TABLE_PADDING		1
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DECLARATIONS
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
@@ -326,7 +332,7 @@ uint32 ParamTableManager::calculateSpriteParamTableSize(BgmapSprite bgmapSprite)
 	}
 
 	uint16 spriteHead = Sprite::getHead(bgmapSprite);
-	uint32 textureRows = ((SpriteSpec*)Sprite::getSpec(bgmapSprite))->textureSpec->rows;
+	uint32 textureRows = ((SpriteSpec*)Sprite::getSpec(bgmapSprite))->textureSpec->rows + __PARAM_TABLE_PADDING;
 	uint32 size = 0;
 
 	if(__WORLD_AFFINE & spriteHead)

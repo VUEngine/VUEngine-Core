@@ -63,7 +63,7 @@ typedef struct TextureSpec
 	/// Palette index to use by the graphical data
 	uint8 palette;
 
-	/// Flag to recyble the texture with a different map
+	/// Flag to recycle the texture with a different map
 	bool recyclable;
 
 	// Flag to vertically flip the image
