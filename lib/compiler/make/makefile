@@ -29,7 +29,7 @@ endif
 GAME_HOME = .
 
 # Common
-include $(ENGINE_HOME)/makefile-common
+include $(ENGINE_HOME)/lib/compiler/make/makefile-common
 
 # the target file
 TARGET_FILE = lib$(BASENAME)
