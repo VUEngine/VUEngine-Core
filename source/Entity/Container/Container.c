@@ -648,7 +648,7 @@ Container Container::getRelativeByName(const char* relativeName)
 {
 	Container firstAncestor = Container::getFirstAncestor(this);
 
-	return NULL != firstAncestor ? Container::getChildByName(topAncestor, relativeName, true) : NULL;
+	return NULL != firstAncestor ? Container::getChildByName(firstAncestor, relativeName, true) : NULL;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
