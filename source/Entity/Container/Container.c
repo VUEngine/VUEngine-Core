@@ -630,16 +630,25 @@ int32 Container::getChildrenCount()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-Container Container::getRelativeByName(const char* relativeName)
+Container Container::getFirstAncestor()
 {
-	Container topAncestor = this->parent;
+	Container firstAncestor = this->parent;
 
-	while(NULL != topAncestor->parent)
+	while(NULL != firstAncestor->parent)
 	{
-		topAncestor = topAncestor->parent;
+		firstAncestor = firstAncestor->parent;
 	}
 
-	return Container::getChildByName(topAncestor, relativeName, true);
+	return firstAncestor;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+Container Container::getRelativeByName(const char* relativeName)
+{
+	Container firstAncestor = Container::getFirstAncestor(this);
+
+	return NULL != firstAncestor ? Container::getChildByName(topAncestor, relativeName, true) : NULL;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
