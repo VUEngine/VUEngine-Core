@@ -33,9 +33,6 @@ extern uint32 _dramDirtyStart;
 // CLASS' MACROS
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-// Add at least 8 pixels of headroom
-#define __PARAM_TABLE_PADDING				8
-
 // Address where the param tables space ends
 #define __PARAM_TABLE_END					((uint32) & _dramDirtyStart)
 

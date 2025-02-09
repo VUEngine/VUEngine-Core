@@ -188,7 +188,7 @@ secure uint32 ParamTableManager::allocate(BgmapSprite bgmapSprite)
 	}
 #endif
 
-	return paramAddress;
+	return paramAddress + (__PARAM_TABLE_PADDING << 2) * 16;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -197,7 +197,7 @@ secure void ParamTableManager::free(BgmapSprite bgmapSprite)
 {
 	if(VirtualList::removeData(this->bgmapSprites, bgmapSprite))
 	{
-		uint32 paramToFree = BgmapSprite::getParam(bgmapSprite);
+		uint32 paramToFree = BgmapSprite::getParam(bgmapSprite) - (__PARAM_TABLE_PADDING << 2) * 16;
 		
 		for(VirtualNode node = this->bgmapSprites->head; NULL != node; node = node->next)
 		{
