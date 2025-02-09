@@ -10,7 +10,7 @@
 {%- endif -%}
 
 {%- set isSpritesheetAnimation = false -%}
-{%- if hasAnimations and not item.animations.multiframe -%}
+{%- if hasAnimations -%}
 	{%- set isSpritesheetAnimation = true -%}
 {%- endif -%}
 
@@ -214,14 +214,14 @@ CharSetROMSpec {{ charsetSpecName }}CharsetSpec =
 	// Number of CHARs in function of the number of frames to load at the same time
 	{%- if isAnimated and isOptimizedAnimation %}
 	{{ imageData.animation.largestFrame }},
-	{%- elseif isAnimated and isSpritesheetAnimation %}
+	{%- elseif isAnimated and isSpritesheetAnimation and not item.animations.multiframe %}
 	{{ (imageData.tiles.count / item.animations.totalFrames) | round(0, "floor") }},
 	{%- else %}
 	{{ imageData.tiles.count }},
 	{%- endif %}
 
 	// Whether it is shared or not
-	{%- if isSpritesheetAnimation %}
+	{%- if isSpritesheetAnimation and not item.animations.multiframe %}
 	false,
 	{%- else %}
 	true,
@@ -289,7 +289,7 @@ TextureROMSpec {{ spriteName }}TextureSpec =
 	// Palette index to use by the graphical data (0 - 3)
 	{{ sprite.texture.palette | default(0) }},
 
-	// Flag to recyble the texture with a different map
+	// Flag to recycle the texture with a different map
 	{{ sprite.texture.recycleable | default(false) }},
 
 	// Flag to vertically flip the image
