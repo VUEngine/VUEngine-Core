@@ -249,12 +249,6 @@ secure void ParamTableManager::defragment(bool deferred)
 				{
 					int32 size = ParamTableManager::calculateSpriteParamTableSize(this, sprite);
 
-					// Check that the sprite won't override itself
-					if(this->paramTableFreeData.param + size > spriteParam)
-					{
-						break;
-					}
-
 					if(!isDeleted(this->previouslyMovedBgmapSprite) && 0 < BgmapSprite::getParamTableRow(this->previouslyMovedBgmapSprite))
 					{
 						break;
