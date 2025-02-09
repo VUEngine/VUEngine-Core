@@ -3,7 +3,7 @@ VUEngine
 
 [VUEngine](https://github.com/VUEngine/VUEngine-Core) ("Virtual Utopia Engine", based on the Virtual Boy's code name, "Virtual Utopia Experience") is a high-level, object oriented game engine for the Nintendo Virtual Boy. It is written in [Virtual C](https://www.vuengine.dev/documentation/language/introduction/), a custom C-dialect that resembles some of C++’ syntax that is converted by our custom transpiler to plain C with macros.
 
-The engine aims to facilitate the creation of games for the Virtual Boy without having to worry about nor master its underlying hardware unless you want to. Instead, it provides higher level abstractions that are relevant for general game development. Check the documentaiton [here](https://www.vuengine.dev/documentation/user-guide/introduction/).
+The engine aims to facilitate the creation of games for the Virtual Boy without having to worry about nor master its underlying hardware unless you want to. Instead, it provides higher level abstractions that are relevant for general game development. Check the documentation [here](https://www.vuengine.dev/documentation/user-guide/introduction/).
 
 Features:
 
@@ -30,7 +30,7 @@ Features:
 	- Physics
 	- Colliders
 	- Sprites
-	-Wireframes
+	- Wireframes
 
 - Particles:
 	- Physically capable

@@ -1,0 +1,10 @@
+Only one check of collision between two colliders is performed.
+If the first does nothing with the collision, the second
+collider is not checked.
+
+
+LIMITATIONS
+
+Parenting:
+	1) Cannot add children during the initialization phase (initialize method)
+	2)
