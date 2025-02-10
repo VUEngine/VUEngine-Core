@@ -112,7 +112,7 @@ static void BgmapTextureManager::print(int32 x, int32 y)
 
 secure void BgmapTextureManager::reset()
 {
-	NM_ASSERT(__BGMAP_SPACE_BASE_ADDRESS < __PARAM_TABLE_END, "BgmapTextureManager::reset: bgmap address space is negative");
+	NM_ASSERT(__BGMAP_SPACE_BASE_ADDRESS < ParamTableManager::getParamTableEnd(ParamTableManager::getInstance()), "BgmapTextureManager::reset: bgmap address space is negative");
 
 	VirtualList::deleteData(this->bgmapTextures);
 
@@ -145,7 +145,7 @@ secure void BgmapTextureManager::clearDRAM()
 	uint8* bgmapStartAddress = (uint8*)__BGMAP_SPACE_BASE_ADDRESS;
 
 	// Clear every bgmap segment
-	for(bgmapStartAddress = 0; bgmapStartAddress < (uint8*)__PARAM_TABLE_END; bgmapStartAddress++)
+	for(bgmapStartAddress = 0; bgmapStartAddress < (uint8*)ParamTableManager::getParamTableEnd(ParamTableManager::getInstance()); bgmapStartAddress++)
 	{
 		*bgmapStartAddress = 0;
 	}

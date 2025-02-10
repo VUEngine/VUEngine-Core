@@ -45,7 +45,7 @@ static void ParamTableManager::print(int32 x, int32 y)
 
 	Printer::text("PARAM TABLE STATUS", x, y++, NULL);
 	Printer::text("Size:              ", x, ++y, NULL);
-	Printer::int32(__PARAM_TABLE_END - paramTableManager->paramTableBase, x + xDisplacement, y, NULL);
+	Printer::int32(paramTableManager->paramTableEnd - paramTableManager->paramTableBase, x + xDisplacement, y, NULL);
 
 	Printer::text("Available:              ", x, ++y, NULL);
 	Printer::int32(paramTableManager->size, x + xDisplacement, y, NULL);
@@ -56,7 +56,7 @@ static void ParamTableManager::print(int32 x, int32 y)
 	Printer::text("ParamBase:          ", x, ++y, NULL);
 	Printer::hex(paramTableManager->paramTableBase, x + xDisplacement, y, 8, NULL);
 	Printer::text("ParamEnd:           ", x, ++y, NULL);
-	Printer::hex(__PARAM_TABLE_END, x + xDisplacement, y, 8, NULL);
+	Printer::hex(paramTableManager->paramTableEnd, x + xDisplacement, y, 8, NULL);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -71,12 +71,15 @@ secure void ParamTableManager::reset()
 {
 	VirtualList::clear(this->bgmapSprites);
 
-	this->paramTableBase = __PARAM_TABLE_END;
+	extern uint32 _dramDirtyStart;
+	
+	this->paramTableBase = ParamTableManager::getParamTableEnd(this);
+	this->paramTableEnd = (uint32)&_dramDirtyStart;
 
 	// Set the size of the param table
-	this->size = __PARAM_TABLE_END - this->paramTableBase;
+	this->size = this->paramTableEnd - this->paramTableBase;
 
-	NM_ASSERT(__PARAM_TABLE_END >= this->paramTableBase, "ParamTableManager::reset: param table size is negative");
+	NM_ASSERT(this->paramTableEnd >= this->paramTableBase, "ParamTableManager::reset: param table size is negative");
 
 	// TODO: all param tables should start at a 16bit boundary
 	this->usedBytes = 1;
@@ -92,11 +95,11 @@ secure uint32 ParamTableManager::configure(int32 availableBgmapSegmentsForParamT
 {
 	if(0 == availableBgmapSegmentsForParamTable)
 	{
-		this->paramTableBase = __PARAM_TABLE_END;
+		this->paramTableBase = this->paramTableEnd;
 	}
 	else
 	{
-		this->paramTableBase = __PARAM_TABLE_END - __BGMAP_SEGMENT_SIZE * availableBgmapSegmentsForParamTable;
+		this->paramTableBase = this->paramTableEnd - __BGMAP_SEGMENT_SIZE * availableBgmapSegmentsForParamTable;
 	}
 
 	this->paramTableBase -= __PRINTABLE_BGMAP_AREA;
@@ -105,12 +108,12 @@ secure uint32 ParamTableManager::configure(int32 availableBgmapSegmentsForParamT
 	// Taking into account the printable area
 	for(; 0 != (this->paramTableBase % __BGMAP_SEGMENT_SIZE) && this->paramTableBase > __BGMAP_SPACE_BASE_ADDRESS; this->paramTableBase--);
 
-	NM_ASSERT(this->paramTableBase <= __PARAM_TABLE_END, "ParamTableManager::setup: param table size is negative");
+	NM_ASSERT(this->paramTableBase <= this->paramTableEnd, "ParamTableManager::setup: param table size is negative");
 
-	this->size = __PARAM_TABLE_END - this->paramTableBase;
+	this->size = this->paramTableEnd - this->paramTableBase;
 
 	// Clean param tables memory
-	for(uint8* data = (uint8*)this->paramTableBase; data < (uint8*)__PARAM_TABLE_END; data++)
+	for(uint8* data = (uint8*)this->paramTableBase; data < (uint8*)this->paramTableEnd; data++)
 	{
 		*data = 0;
 	}
@@ -165,7 +168,7 @@ secure uint32 ParamTableManager::allocate(BgmapSprite bgmapSprite)
 	uint32 paramAddress = 0;
 
 	//if there is space in the param table, allocate
-	if(this->paramTableBase + this->usedBytes + size < (__PARAM_TABLE_END))
+	if(this->paramTableBase + this->usedBytes + size < (this->paramTableEnd))
 	{
 		//set sprite param
 		paramAddress = this->paramTableBase + this->usedBytes;
@@ -182,7 +185,7 @@ secure uint32 ParamTableManager::allocate(BgmapSprite bgmapSprite)
 	if(0 == paramAddress)
 	{
 		Printer::text("Total size: ", 20, 7, NULL);
-		Printer::int32(__PARAM_TABLE_END - this->paramTableBase, 20 + 19, 7, NULL);
+		Printer::int32(this->paramTableEnd - this->paramTableBase, 20 + 19, 7, NULL);
 
 		NM_ASSERT(false, "ParamTableManager::allocate: memory depleted");
 	}
@@ -280,6 +283,13 @@ secure void ParamTableManager::defragment(bool deferred)
 		}
 		while(!deferred && 0 != this->paramTableFreeData.param);
 	}
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+uint32 ParamTableManager::getParamTableEnd()
+{
+	return this->paramTableEnd;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

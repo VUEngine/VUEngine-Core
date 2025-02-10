@@ -24,19 +24,6 @@
 class BgmapSprite;
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-// FORWARD DECLARATIONS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-extern uint32 _dramDirtyStart;
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-// CLASS' MACROS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-// Address where the param tables space ends
-#define __PARAM_TABLE_END					((uint32) & _dramDirtyStart)
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DATA
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
@@ -129,6 +116,9 @@ singleton class ParamTableManager : Object
 	// Displacement in bytes to keep track of the start address of param table space
 	uint32 paramTableBase;
 
+	// Displacement in bytes to keep track of the end address of param table space
+	uint32 paramTableEnd;
+
 	/// @publicsection
 
 	/// Print the information about param table space usage.
@@ -156,6 +146,10 @@ singleton class ParamTableManager : Object
 	/// Defragment param table space.
 	/// @param deferred: Flag to defragment param table memory over time
 	void defragment(bool deferred);
+
+	/// Retrieve the address where the param table ends.
+	/// @return Address where the param table ends
+	uint32 getParamTableEnd();
 }
 
 #endif

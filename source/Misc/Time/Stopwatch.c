@@ -67,11 +67,9 @@ void Stopwatch::update()
 
 float Stopwatch::lap()
 {
-	extern uint8* const _hardwareRegisters;
-
 	TimerManager::disable(TimerManager::getInstance());
 
-	uint16 currentTimerCounter = (_hardwareRegisters[__THR] << 8 ) | _hardwareRegisters[__TLR];
+	uint16 currentTimerCounter = TimerManager::getCurrentTimerCounter();
 
 	uint16 timerCounter = 0;
 
