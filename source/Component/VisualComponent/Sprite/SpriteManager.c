@@ -67,10 +67,6 @@ int32 _writtenTextureTiles = 0;
 int32 _writtenObjectTiles = 0;
 #endif
 
-// Pointers to access the DRAM space
-WorldAttributes* const _worldAttributesBaseAddress = (WorldAttributes*)__WORLD_SPACE_BASE_ADDRESS;
-ObjectAttributes* const _objectAttributesBaseAddress = (ObjectAttributes*)__OBJECT_SPACE_BASE_ADDRESS;
-
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PUBLIC METHODS
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -94,6 +90,11 @@ void SpriteManager::constructor()
 	this->spt = __TOTAL_OBJECT_SEGMENTS - 1;
 	this->objectIndex = __TOTAL_OBJECTS - 1;
 	this->previousObjectIndex = __TOTAL_OBJECTS - 1;
+
+	// Pointers to access the DRAM space
+	this->worldAttributesBaseAddress = (WorldAttributes*)__WORLD_SPACE_BASE_ADDRESS;
+	this->objectAttributesBaseAddress = (ObjectAttributes*)__OBJECT_SPACE_BASE_ADDRESS;
+
 
 	for(int16 i = 0; i < kSpriteListEnd; i++)
 	{
@@ -781,7 +782,7 @@ void SpriteManager::showAllSprites(Sprite spareSprite, bool showPrinting)
 
 		Sprite::setPosition(sprite, &sprite->position);
 
-		_worldAttributesBaseAddress[sprite->index].head &= ~__WORLD_END;
+		this->worldAttributesBaseAddress[sprite->index].head &= ~__WORLD_END;
 	}
 
 	if(showPrinting)
@@ -960,7 +961,7 @@ void SpriteManager::print(int32 x, int32 y, bool resumed)
 		Printer::text(": ", auxX + 2, auxY, NULL);
 		Printer::text(spriteClassName, auxX + 4, auxY, NULL);
 //		Printer::int32(sprite->position.z + sprite->displacement.z, auxX + 2, auxY, NULL);
-//		Printer::hex(_worldAttributesBaseAddress[sprite->index].head, auxX + __MAX_SPRITE_CLASS_NAME_SIZE + 4, auxY, 4, NULL);
+//		Printer::hex(this->worldAttributesBaseAddress[sprite->index].head, auxX + __MAX_SPRITE_CLASS_NAME_SIZE + 4, auxY, 4, NULL);
 //		Printer::int32(Sprite::getTotalPixels(sprite), auxX + __MAX_SPRITE_CLASS_NAME_SIZE + 4, auxY, NULL);
 
 		++auxY;
@@ -1069,7 +1070,7 @@ void SpriteManager::printSPTInfo(int16 spt, int32 x, int32 y)
 	Printer::text("SPT value:                ", x, y, NULL);
 	Printer::int32(NULL != objectSpriteContainer ? _vipRegisters[__SPT0 + spt] : 0, x + 18, y, NULL);
 	Printer::text("HEAD:                   ", x, ++y, NULL);
-	Printer::hex(_worldAttributesBaseAddress[objectSpriteContainer->index].head, x + 18, y, 4, NULL);
+	Printer::hex(this->worldAttributesBaseAddress[objectSpriteContainer->index].head, x + 18, y, 4, NULL);
 	Printer::text("Total OBJs:            ", x, ++y, NULL);
 	Printer::int32(totalUsedObjects, x + 18, y, NULL);
 	Printer::text("OBJ index range:      ", x, ++y, NULL);
@@ -1257,13 +1258,13 @@ void SpriteManager::writeAttributesToDRAM()
 
 	Mem::copyWORD
 	(
-		(WORD*)(_objectAttributesBaseAddress), (WORD*)(_objectAttributesCache + this->objectIndex), 
+		(WORD*)(this->objectAttributesBaseAddress), (WORD*)(_objectAttributesCache + this->objectIndex), 
 		sizeof(ObjectAttributes) * (__TOTAL_OBJECTS - this->objectIndex) >> 2
 	);
 
 	Mem::copyWORD
 	(
-		(WORD*)(_worldAttributesBaseAddress + this->bgmapIndex), (WORD*)(_worldAttributesCache + this->bgmapIndex), 
+		(WORD*)(this->worldAttributesBaseAddress + this->bgmapIndex), (WORD*)(_worldAttributesCache + this->bgmapIndex), 
 		sizeof(WorldAttributes) * (__TOTAL_LAYERS - (this->bgmapIndex)) >> 2
 	);
 }
@@ -1303,17 +1304,17 @@ void SpriteManager::clearDRAM()
 		_worldAttributesCache[i].param = 0;
 		_worldAttributesCache[i].ovr = 0;
 
-		_worldAttributesBaseAddress[i].head = 0;
-		_worldAttributesBaseAddress[i].gx = 0;
-		_worldAttributesBaseAddress[i].gp = 0;
-		_worldAttributesBaseAddress[i].gy = 0;
-		_worldAttributesBaseAddress[i].mx = 0;
-		_worldAttributesBaseAddress[i].mp = 0;
-		_worldAttributesBaseAddress[i].my = 0;
-		_worldAttributesBaseAddress[i].w = 0;
-		_worldAttributesBaseAddress[i].h = 0;
-		_worldAttributesBaseAddress[i].param = 0;
-		_worldAttributesBaseAddress[i].ovr = 0;
+		this->worldAttributesBaseAddress[i].head = 0;
+		this->worldAttributesBaseAddress[i].gx = 0;
+		this->worldAttributesBaseAddress[i].gp = 0;
+		this->worldAttributesBaseAddress[i].gy = 0;
+		this->worldAttributesBaseAddress[i].mx = 0;
+		this->worldAttributesBaseAddress[i].mp = 0;
+		this->worldAttributesBaseAddress[i].my = 0;
+		this->worldAttributesBaseAddress[i].w = 0;
+		this->worldAttributesBaseAddress[i].h = 0;
+		this->worldAttributesBaseAddress[i].param = 0;
+		this->worldAttributesBaseAddress[i].ovr = 0;
 	}
 
 	for(int32 i = 0; i < __TOTAL_OBJECTS; i++)
@@ -1323,10 +1324,10 @@ void SpriteManager::clearDRAM()
 		_objectAttributesCache[i].jy = 0;
 		_objectAttributesCache[i].tile = 0;
 
-		_objectAttributesBaseAddress[i].jx = 0;
-		_objectAttributesBaseAddress[i].head = 0;
-		_objectAttributesBaseAddress[i].jy = 0;
-		_objectAttributesBaseAddress[i].tile = 0;
+		this->objectAttributesBaseAddress[i].jx = 0;
+		this->objectAttributesBaseAddress[i].head = 0;
+		this->objectAttributesBaseAddress[i].jy = 0;
+		this->objectAttributesBaseAddress[i].tile = 0;
 	}
 }
 

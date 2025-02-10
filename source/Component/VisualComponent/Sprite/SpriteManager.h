@@ -70,6 +70,12 @@ class SpriteManager : ComponentManager
 {
 	/// @protectedsection
 
+	// Pointers to access the WORLD DRAM space
+	WorldAttributes* worldAttributesBaseAddress;
+
+	// Pointers to access the OBJECT DRAM space
+	ObjectAttributes* objectAttributesBaseAddress;
+
 	/// Clock for the animations
 	Clock animationsClock;
 

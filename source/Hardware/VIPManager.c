@@ -691,7 +691,6 @@ secure void VIPManager::processInterrupt(uint16 interrupt)
 #ifdef __ENABLE_PROFILER
 				Profiler::lap(kProfilerLapTypeStartInterrupt, NULL);
 #endif
-
 				this->processingGAMESTART = true;
 
 				VIPManager::registerCurrentDrawingFrameBufferSet(this);
