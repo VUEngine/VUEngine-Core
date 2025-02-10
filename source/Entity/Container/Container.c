@@ -1215,8 +1215,6 @@ inline void Container::applyEnvironmentToScale(const Transformation* environment
 
 void Container::doTransform(const Transformation* environmentTransformation, uint8 invalidateTransformationFlag)
 {
-	ASSERT(environmentTransformation, "Container::transform: null environmentTransformation");
-
 	uint8 invalidateTransformationFlagHelper = (invalidateTransformationFlag | this->transformation.invalid);
 
 	if(NULL != environmentTransformation)

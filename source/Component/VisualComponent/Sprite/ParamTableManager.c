@@ -69,12 +69,12 @@ static void ParamTableManager::print(int32 x, int32 y)
 
 secure void ParamTableManager::reset()
 {
-	VirtualList::clear(this->bgmapSprites);
+	if(!isDeleted(this->bgmapSprites))
+	{
+		VirtualList::clear(this->bgmapSprites);
+	}
 
-	extern uint32 _dramDirtyStart;
-	
-	this->paramTableBase = ParamTableManager::getParamTableEnd(this);
-	this->paramTableEnd = (uint32)&_dramDirtyStart;
+	this->paramTableBase = this->paramTableEnd;
 
 	// Set the size of the param table
 	this->size = this->paramTableEnd - this->paramTableBase;
@@ -308,16 +308,21 @@ void ParamTableManager::constructor()
 	this->bgmapSprites = new VirtualList();
 	this->previouslyMovedBgmapSprite = NULL;
 
-	ParamTableManager::reset(this);
+	extern uint32 _dramDirtyStart;
+	
+	this->paramTableEnd = (uint32) & _dramDirtyStart;
+	this->paramTableBase = this->paramTableEnd;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void ParamTableManager::destructor()
 {
-	ParamTableManager::reset(this);
+	if(!isDeleted(this->bgmapSprites))
+	{
+		delete this->bgmapSprites;
+	}
 
-	delete this->bgmapSprites;
 	this ->bgmapSprites = NULL;
 
 	// Always explicitly call the base's destructor 
