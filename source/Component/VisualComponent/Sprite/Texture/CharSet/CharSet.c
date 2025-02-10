@@ -58,7 +58,7 @@ void CharSet::constructor(const CharSetSpec* charSetSpec, uint16 offset)
 	this->charSetSpec = charSetSpec;
 	this->tilesDisplacement = 0;
 
-	// Set the offset
+	this->frame = 0;
 	this->offset = offset;
 	this->usageCount = 1;
 	this->written = false;
@@ -225,24 +225,34 @@ void CharSet::putPixel(const uint32 charToReplace, const Pixel* charSetPixel, BY
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void CharSet::setFrame(uint16 frame)
-{
-	uint32 tilesDisplacement = 0;
+{	
+	if(!this->written || this->frame != frame)
+	{
+		this->frame = frame;
 
-	if(NULL != this->charSetSpec->frameOffsets)
-	{
-		tilesDisplacement = this->charSetSpec->frameOffsets[frame] - 1;
-	}
-	else
-	{
-		tilesDisplacement = __UINT32S_PER_CHARS(this->charSetSpec->numberOfChars * frame);
-	}
-
-	if(!this->written || this->tilesDisplacement != tilesDisplacement)
-	{
-		this->tilesDisplacement = tilesDisplacement;
+		if(NULL != this->charSetSpec->frameOffsets)
+		{
+			this->tilesDisplacement = this->charSetSpec->frameOffsets[frame] - 1;
+		}
+		else
+		{
+			this->tilesDisplacement = __UINT32S_PER_CHARS(this->charSetSpec->numberOfChars * this->frame);
+		}
 
 		CharSet::write(this);
+
+		if(CharSet::isShared(this))
+		{
+			CharSet::fireEvent(this, kEventCharSetChangedFrame);
+		}
 	}
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+uint16 CharSet::getFrame()
+{
+	return this->frame;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

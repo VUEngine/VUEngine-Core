@@ -89,6 +89,9 @@ class CharSet : ListenerObject
 	// Offset in the array of graphical data
 	uint32 tilesDisplacement;
 
+	/// Indicator of the block inside the tiles array to write to DRAM
+	uint16 frame;
+
 	/// Offset in CHAR space where the block allocated for this char set starts
 	uint16 offset;
 
@@ -172,6 +175,10 @@ class CharSet : ListenerObject
 	/// Set the current frame (frame * number of CHARs + number of CHARs) to write to CHAR memory.
 	/// @param frame: The frame to write to CHAR memory
 	void setFrame(uint16 frame);
+
+	/// Retriev the current frame (frame * number of CHARs + number of CHARs) to write to CHAR memory.
+	/// @return The frame to write to CHAR memory
+	uint16 getFrame();
 
 	/// Write the tile graphical data to VRAM.
 	void write();

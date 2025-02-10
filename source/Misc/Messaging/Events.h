@@ -41,6 +41,7 @@ enum Events
 	kEventAnimationCompleted,
 	kEventTextureRewritten,
 	kEventTextureSetFrame,
+	kEventCharSetChangedFrame,
 	kEventCharSetChangedOffset,
 	kEventCharSetDeleted,
 	kEventFontRewritten,
