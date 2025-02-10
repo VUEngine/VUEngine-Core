@@ -255,7 +255,7 @@ void Mesh::render(Vector3D relativePosition)
 		{
 			Vertex* vertex = (Vertex*)node->data;
 
-			Vector3D vector = Vector3D::rotate(Vector3D::sum(relativePosition, vertex->vector), _previousCameraInvertedRotation);
+			Vector3D vector = Vector3D::rotate(Vector3D::sum(relativePosition, vertex->vector), *_cameraInvertedRotation);
 
 			vertex->pixelVector = PixelVector::projectVector3D(vector, Optics::calculateParallax(vector.z));
 		}
@@ -275,7 +275,7 @@ void Mesh::render(Vector3D relativePosition)
 				Vector3D::rotate
 				(
 					Vector3D::sum(relativePosition, Vector3D::rotate(Vector3D::scale(vertex->vector, scale), rotation)), 
-					_previousCameraInvertedRotation
+					*_cameraInvertedRotation
 				);
 
 			vertex->pixelVector = PixelVector::projectVector3D(vector, Optics::calculateParallax(vector.z));
@@ -294,7 +294,7 @@ void Mesh::render(Vector3D relativePosition)
 			Vector3D vector = 
 				Vector3D::rotate
 				(
-					Vector3D::sum(relativePosition, Vector3D::rotate(vertex->vector, rotation)), _previousCameraInvertedRotation
+					Vector3D::sum(relativePosition, Vector3D::rotate(vertex->vector, rotation)), *_cameraInvertedRotation
 				);
 
 			vertex->pixelVector = PixelVector::projectVector3D(vector, Optics::calculateParallax(vector.z));
@@ -313,7 +313,7 @@ void Mesh::render(Vector3D relativePosition)
 			Vector3D vector = 
 				Vector3D::rotate
 				(
-					Vector3D::sum(relativePosition, Vector3D::scale(vertex->vector, scale)), _previousCameraInvertedRotation
+					Vector3D::sum(relativePosition, Vector3D::scale(vertex->vector, scale)), *_cameraInvertedRotation
 				);
 
 			vertex->pixelVector = PixelVector::projectVector3D(vector, Optics::calculateParallax(vector.z));

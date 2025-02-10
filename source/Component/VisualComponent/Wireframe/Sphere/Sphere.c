@@ -59,7 +59,7 @@ void Sphere::render(Vector3D relativePosition)
 {
 	NM_ASSERT(NULL != this->transformation, "Sphere::render: NULL transformation");
 
-	relativePosition = Vector3D::rotate(relativePosition, _previousCameraInvertedRotation);
+	relativePosition = Vector3D::rotate(relativePosition, *_cameraInvertedRotation);
 
 	this->position = PixelVector::projectVector3D(relativePosition, Optics::calculateParallax(relativePosition.z));
 	this->scaledRadius = __METERS_TO_PIXELS(__FIXED_MULT(this->radius, Vector3D::getScale(relativePosition.z, false)));

@@ -102,9 +102,10 @@ abstract class Wireframe : VisualComponent
 	bool isVisible();
 
 	/// Configure the wireframe to be drawn.
-	/// @param relativePosition relativePosition: Wireframe's position relative to the camera's position 
+	/// @param relativePosition relativePosition: Wireframe's position relative to the camera's position
+	/// @param cameraDirection: Direction towards which the camera is facing
 	/// @return True if the wireframe is visible within the camera's frustum; false otherwise
-	bool prepareForRender(Vector3D* relativePosition);
+	bool prepareForRender(Vector3D* relativePosition, const Vector3D* cameraDirection);
 
 	/// Retrieve the list of vertices that compose the mesh.
 	/// @return Linked list of vertices

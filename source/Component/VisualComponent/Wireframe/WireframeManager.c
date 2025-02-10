@@ -30,16 +30,6 @@ friend class VirtualList;
 friend class Wireframe;
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-// CLASS' ATTRIBUTES
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-Vector3D _cameraDirection __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE = {0, 0, 0};
-Vector3D _previousCameraPosition __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE = {0, 0, 0};
-Vector3D _previousCameraPositionBuffer __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE = {0, 0, 0};
-Rotation _previousCameraInvertedRotation __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE = {0, 0, 0};
-Rotation _previousCameraInvertedRotationBuffer __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE = {0, 0, 0};
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PUBLIC METHODS
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
@@ -119,12 +109,6 @@ void WireframeManager::disable()
 	Base::disable(this);
 
 	WireframeManager::destroyAllComponents(this);
-
-	_previousCameraPosition = *_cameraPosition;
-	_previousCameraPositionBuffer = _previousCameraPosition;
-
-	_previousCameraInvertedRotation = *_cameraInvertedRotation;
-	_previousCameraInvertedRotationBuffer = _previousCameraInvertedRotation;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -160,11 +144,11 @@ void WireframeManager::render()
 		return;
 	}
 
-	_cameraDirection = Vector3D::rotate((Vector3D){0, 0, __1I_FIXED}, *_cameraRotation);
-
 #ifdef __PROFILE_WIREFRAMES
 	this->renderedWireframes = 0;
 #endif
+
+	Vector3D cameraDirection = Vector3D::rotate((Vector3D){0, 0, __1I_FIXED}, *_cameraRotation);
 
 	for(VirtualNode node = this->components->head, nextNode = NULL; NULL != node; node = nextNode)
 	{
@@ -197,7 +181,7 @@ void WireframeManager::render()
 
 		Vector3D relativePosition = Vector3D::zero();
 
-		if(!Wireframe::prepareForRender(wireframe, &relativePosition))
+		if(!Wireframe::prepareForRender(wireframe, &relativePosition, &cameraDirection))
 		{
 			continue;
 		}
@@ -222,12 +206,6 @@ void WireframeManager::render()
 #ifdef __WIREFRAME_MANAGER_SORT_FOR_DRAWING
 	WireframeManager::sortProgressively(this);
 #endif
-
-	_previousCameraPosition = _previousCameraPositionBuffer;
-	_previousCameraPositionBuffer = *_cameraPosition;
-
-	_previousCameraInvertedRotation = _previousCameraInvertedRotationBuffer;
-	_previousCameraInvertedRotationBuffer = *_cameraInvertedRotation;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

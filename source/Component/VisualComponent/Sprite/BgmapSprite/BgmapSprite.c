@@ -383,9 +383,7 @@ void BgmapSprite::setScale(const PixelScale* scale)
 		NM_ASSERT(0 < scaleHelper.x, "Sprite::scale: 0 scale x");
 		NM_ASSERT(0 < scaleHelper.y, "Sprite::scale: 0 scale y");
 
-		extern Rotation _previousCameraInvertedRotation;
-
-		Vector3D vector = Vector3D::rotate(Vector3D::getRelativeToCamera(this->transformation->position), _previousCameraInvertedRotation);
+		Vector3D vector = Vector3D::rotate(Vector3D::getRelativeToCamera(this->transformation->position), *_cameraInvertedRotation);
 
 		fix7_9 ratio = __FIXED_TO_FIX7_9(Vector3D::getScale(vector.z, true));
 

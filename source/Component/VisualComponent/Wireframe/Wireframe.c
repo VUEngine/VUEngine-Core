@@ -84,10 +84,10 @@ bool Wireframe::isVisible()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-bool Wireframe::prepareForRender(Vector3D* relativePosition)
+bool Wireframe::prepareForRender(Vector3D* relativePosition, const Vector3D* cameraDirection)
 {
 	Vector3D displacement = Vector3D::rotate(this->displacement, this->transformation->rotation);
-	*relativePosition = Vector3D::sub(Vector3D::sum(this->transformation->position, displacement), _previousCameraPosition);
+	*relativePosition = Vector3D::sub(Vector3D::sum(this->transformation->position, displacement), *_cameraPosition);
 
 	if(NULL == ((WireframeSpec*)this->componentSpec))
 	{
@@ -132,7 +132,7 @@ bool Wireframe::prepareForRender(Vector3D* relativePosition)
 			(
 				__COS(cameraViewingAngle) 
 				> 
-				__FIXED_EXT_TO_FIX7_9(Vector3D::dotProduct(Vector3D::normalize(*relativePosition), _cameraDirection))
+				__FIXED_EXT_TO_FIX7_9(Vector3D::dotProduct(Vector3D::normalize(*relativePosition), *cameraDirection))
 			)
 			{
 #ifdef __WIREFRAME_MANAGER_SORT_FOR_DRAWING

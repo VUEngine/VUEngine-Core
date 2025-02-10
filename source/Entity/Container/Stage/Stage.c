@@ -62,21 +62,6 @@ typedef struct ActorLoadingListener
 // CLASS' ATTRIBUTES
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-const Transformation _neutralEnvironmentTransformation =
-{
-	// Spatial position
-	{0, 0, 0},
- 
-	// Spatial rotation
-	{0, 0, 0},
- 
-	// Spatial scale
-	{__1I_FIX7_9, __1I_FIX7_9, __1I_FIX7_9},
-
-	// Invalidty flag
-	__VALID_TRANSFORMATION
-};
-
 static const StreamingPhase _streamingPhases[] =
 {
 	&Stage::unloadOutOfRangeActors,
@@ -239,7 +224,7 @@ void Stage::resume()
 
 	Base::resume(this);
 
-	Stage::transform(this, &_neutralEnvironmentTransformation, __INVALIDATE_TRANSFORMATION);
+	Stage::transform(this, NULL, __INVALIDATE_TRANSFORMATION);
 
 	this->actorFactory = new ActorFactory();
 }
@@ -448,7 +433,7 @@ void Stage::destroyChildActor(Actor child)
 
 void Stage::streamAll()
 {
-	Stage::transform(this, &_neutralEnvironmentTransformation, __INVALIDATE_TRANSFORMATION);
+	Stage::transform(this, NULL, __INVALIDATE_TRANSFORMATION);
 
 	this->streamingHeadNode = NULL;
 
@@ -470,7 +455,7 @@ void Stage::streamAll()
 
 	while(ActorFactory::createNextActor(this->actorFactory))
 	{
-		Stage::transform(this, &_neutralEnvironmentTransformation, __INVALIDATE_TRANSFORMATION);
+		Stage::transform(this, NULL, __INVALIDATE_TRANSFORMATION);
 	}
 
 	this->streamingAmplitude = this->stageSpec->streaming.streamingAmplitude;
@@ -598,7 +583,7 @@ void Stage::configure(VirtualList positionedActorsToIgnore)
 	Stage::setFocusActor(this, Camera::getFocusActor(Camera::getInstance()));
 
 	// Apply transformations
-	Stage::transform(this, &_neutralEnvironmentTransformation, __INVALIDATE_TRANSFORMATION);
+	Stage::transform(this, NULL, __INVALIDATE_TRANSFORMATION);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

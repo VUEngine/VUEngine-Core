@@ -46,7 +46,7 @@ void Asterisk::render(Vector3D relativePosition)
 {
 	NM_ASSERT(NULL != this->transformation, "Asterisk::render: NULL transformation");
 
-	relativePosition = Vector3D::rotate(relativePosition, _previousCameraInvertedRotation);
+	relativePosition = Vector3D::rotate(relativePosition, *_cameraInvertedRotation);
 	this->position = PixelVector::projectVector3D(relativePosition, Optics::calculateParallax(relativePosition.z));
 	this->scaledLength = __METERS_TO_PIXELS(__FIXED_MULT(this->length, Vector3D::getScale(relativePosition.z, false)));
 }

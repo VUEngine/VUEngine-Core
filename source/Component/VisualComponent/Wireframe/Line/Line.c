@@ -49,11 +49,11 @@ void Line::render(Vector3D relativePosition)
 	}
 	
 	Vector3D a = Vector3D::sum(relativePosition, ((LineSpec*)this->componentSpec)->a);
-	a = Vector3D::rotate(a, _previousCameraInvertedRotation);
+	a = Vector3D::rotate(a, *_cameraInvertedRotation);
 	this->a = PixelVector::projectVector3D(a, Optics::calculateParallax(a.z));
 
 	Vector3D b = Vector3D::sum(relativePosition, ((LineSpec*)this->componentSpec)->b);
-	b = Vector3D::rotate(b, _previousCameraInvertedRotation);
+	b = Vector3D::rotate(b, *_cameraInvertedRotation);
 	this->b = PixelVector::projectVector3D(b, Optics::calculateParallax(b.z));
 }
 

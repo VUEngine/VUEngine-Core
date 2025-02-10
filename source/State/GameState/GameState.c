@@ -791,9 +791,7 @@ void GameState::configureUI(StageSpec* stageSpec)
 
 	if(!isDeleted(this->uiContainer))
 	{
-		extern Transformation _neutralEnvironmentTransformation;
-	
-		UIContainer::transform(this->uiContainer, &_neutralEnvironmentTransformation, Camera::getTransformationFlags(Camera::getInstance()));
+		UIContainer::transform(this->uiContainer, NULL, Camera::getTransformationFlags(Camera::getInstance()));
 	}
 }
 
@@ -821,8 +819,6 @@ void GameState::applyTransformationsUI()
 	{
 		return;
 	}
-
-	extern Transformation _neutralEnvironmentTransformation;
 
 	UIContainer::transform(this->uiContainer, NULL, __INVALIDATE_TRANSFORMATION);
 }
@@ -931,9 +927,7 @@ void GameState::applyTransformations()
 		return;
 	}
 
-	extern Transformation _neutralEnvironmentTransformation;
-
-	Stage::transform(this->stage, &_neutralEnvironmentTransformation, Camera::getTransformationFlags(Camera::getInstance()));
+	Stage::transform(this->stage, NULL, Camera::getTransformationFlags(Camera::getInstance()));
 
 #ifdef __ENABLE_PROFILER
 	Profiler::lap(kProfilerLapTypeNormalProcess, PROCESS_NAME_TRANSFORMS);

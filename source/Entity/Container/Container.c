@@ -1218,21 +1218,24 @@ void Container::doTransform(const Transformation* environmentTransformation, uin
 	ASSERT(environmentTransformation, "Container::transform: null environmentTransformation");
 
 	uint8 invalidateTransformationFlagHelper = (invalidateTransformationFlag | this->transformation.invalid);
-	
-	if(0 != (__INVALIDATE_SCALE & invalidateTransformationFlagHelper))
-	{
-		Container::applyEnvironmentToScale(this, environmentTransformation);
-	}
 
-	if(0 != (__INVALIDATE_ROTATION & invalidateTransformationFlagHelper))
+	if(NULL != environmentTransformation)
 	{
-		Container::applyEnvironmentToRotation(this, environmentTransformation);
-	}
+		if(0 != (__INVALIDATE_SCALE & invalidateTransformationFlagHelper))
+		{
+			Container::applyEnvironmentToScale(this, environmentTransformation);
+		}
 
-	if(0 != ((__INVALIDATE_POSITION | __INVALIDATE_ROTATION) & invalidateTransformationFlagHelper))
-	{
-		Container::applyEnvironmentToPosition(this, environmentTransformation);
-	}
+		if(0 != (__INVALIDATE_ROTATION & invalidateTransformationFlagHelper))
+		{
+			Container::applyEnvironmentToRotation(this, environmentTransformation);
+		}
+
+		if(0 != ((__INVALIDATE_POSITION | __INVALIDATE_ROTATION) & invalidateTransformationFlagHelper))
+		{
+			Container::applyEnvironmentToPosition(this, environmentTransformation);
+		}
+	}	
 
 	Container::transformChildren(this, invalidateTransformationFlagHelper);
 

@@ -46,7 +46,6 @@ friend class VirtualList;
 friend class Sprite;
 friend class Container;
 
-extern Transformation _neutralEnvironmentTransformation;
 extern UserObject _userObjects[];
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -614,7 +613,7 @@ void StageEditor::changeProjection(uint32 pressedKey)
 
 	StageEditor::printProjectionValues(this);
 
-	Stage::transform(ToolState::getCurrentStage(this->toolState), &_neutralEnvironmentTransformation, Camera::getTransformationFlags(Camera::getInstance()));
+	Stage::transform(ToolState::getCurrentStage(this->toolState), NULL, Camera::getTransformationFlags(Camera::getInstance()));
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -735,7 +734,7 @@ void StageEditor::applyTranslationToActor(Vector3D translation)
 
 		Container::setLocalPosition(container, &localPosition);
 
-		Stage::transform(ToolState::getCurrentStage(this->toolState), &_neutralEnvironmentTransformation, Camera::getTransformationFlags(Camera::getInstance()));
+		Stage::transform(ToolState::getCurrentStage(this->toolState), NULL, Camera::getTransformationFlags(Camera::getInstance()));
 
 		StageEditor::printActorPosition(this);
 
@@ -900,7 +899,7 @@ void StageEditor::applyTranslationToCamera(Vector3D translation)
 	}
 
 	Camera::translate(Camera::getInstance(), translation, true);
-	Stage::transform(ToolState::getCurrentStage(this->toolState), &_neutralEnvironmentTransformation, Camera::getTransformationFlags(Camera::getInstance()));
+	Stage::transform(ToolState::getCurrentStage(this->toolState), NULL, Camera::getTransformationFlags(Camera::getInstance()));
 	StageEditor::printCameraPosition(this);
 	Stage::streamAll(ToolState::getCurrentStage(this->toolState));
 }
