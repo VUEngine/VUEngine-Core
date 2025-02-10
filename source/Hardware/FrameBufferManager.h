@@ -46,6 +46,9 @@ singleton class FrameBufferManager : ListenerObject
 	/// Maximum number of pixels to draw during each cycle
 	uint16 maximumPixelsToDraw;
 
+	/// Frame buffers set using during the current game frame
+	uint32 currentDrawingFrameBufferSet;
+
 	/// @publicsection
 
 	/// Draw a single point.

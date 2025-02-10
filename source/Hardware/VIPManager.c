@@ -119,7 +119,6 @@ typedef struct PostProcessingEffectRegistry
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 volatile uint16* _vipRegisters __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE = (uint16*)0x0005F800;
-uint32* _currentDrawingFrameBufferSet __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE = NULL;
 
 static uint16* const _columnTableBaseAddressLeft =	(uint16*)0x0003DC00; // base address of Column Table (Left Eye)
 static uint16* const _columnTableBaseAddressRight =	(uint16*)0x0003DE00; // base address of Column Table (Right Eye)
@@ -580,6 +579,13 @@ secure void VIPManager::allowInterrupts(bool allowInterrupts)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+uint32 VIPManager::getCurrentDrawingFrameBufferSet()
+{
+	return this->currentDrawingFrameBufferSet;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 static void VIPManager::print(int16 x, int16 y)
 {
 	int16 xDisplacement = 8;
@@ -640,8 +646,6 @@ void VIPManager::constructor()
 	this->allowInterrupts = true;
 
 	VIPManager::setFrameCycle(__FRAME_CYCLE);
-
-	_currentDrawingFrameBufferSet = &this->currentDrawingFrameBufferSet;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

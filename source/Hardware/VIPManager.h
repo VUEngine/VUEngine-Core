@@ -304,6 +304,9 @@ singleton class VIPManager : ListenerObject
 	/// Set the enabling of interrupts.
 	/// @param allowInterrupts: If true, interrupts are enabled when drawing starts
 	void allowInterrupts(bool allowInterrupts);
+
+	/// Retrieve inded of the frame buffers set using during the current game frame 
+	uint32 getCurrentDrawingFrameBufferSet();
 }
 
 #endif

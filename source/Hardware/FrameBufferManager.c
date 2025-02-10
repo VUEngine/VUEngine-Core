@@ -32,12 +32,6 @@
 #define __FLIP_FRAME_BUFFER_SIDE_BIT(a)						a ^= __FRAME_BUFFER_SIDE_BIT
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-// CLASS' DECLARATIONS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-extern uint32* _currentDrawingFrameBufferSet __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE;
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DATA
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
@@ -266,16 +260,18 @@ static inline bool FrameBufferManager::shrinkLineToScreenSpace(fixed_ext_t* x0, 
 
 static bool FrameBufferManager::drawPoint(PixelVector point, int32 color, uint8 bufferIndex, bool interlaced)
 {
+	FrameBufferManager frameBufferManager = FrameBufferManager::getInstance();
+
 	if(interlaced)
 	{
-		uint32 buffer = *_currentDrawingFrameBufferSet | (bufferIndex << __FRAME_BUFFER_SIDE_BIT_INDEX);
+		uint32 buffer = frameBufferManager->currentDrawingFrameBufferSet | (bufferIndex << __FRAME_BUFFER_SIDE_BIT_INDEX);
 
 		FrameBufferManager::drawColorPixelInterlaced((BYTE*)buffer, point.x, point.y, 0!= bufferIndex ? -point.parallax : point.parallax, color);
 	}
 	else
 	{
-		uint32 leftBuffer = *_currentDrawingFrameBufferSet | __LEFT_FRAME_BUFFER_0;
-		uint32 rightBuffer = *_currentDrawingFrameBufferSet | __RIGHT_FRAME_BUFFER_0;
+		uint32 leftBuffer = frameBufferManager->currentDrawingFrameBufferSet | __LEFT_FRAME_BUFFER_0;
+		uint32 rightBuffer = frameBufferManager->currentDrawingFrameBufferSet | __RIGHT_FRAME_BUFFER_0;
 
 		if(!FrameBufferManager::isPointInsideFrustum(point))
 		{
@@ -292,7 +288,7 @@ static bool FrameBufferManager::drawPoint(PixelVector point, int32 color, uint8 
 
 static bool FrameBufferManager::drawLine(PixelVector fromPoint, PixelVector toPoint, int32 color, uint8 bufferIndex, bool interlaced)
 {
-	FrameBufferManager FrameBufferManager = FrameBufferManager::getInstance();
+	FrameBufferManager frameBufferManager = FrameBufferManager::getInstance();
 	
 	uint16 xFromDeltaLeft = (unsigned)(fromPoint.x - fromPoint.parallax - _frustum.x0);
 	uint16 xFromDeltaRight = (unsigned)(fromPoint.x +  fromPoint.parallax - _frustum.x0);
@@ -436,9 +432,9 @@ static bool FrameBufferManager::drawLine(PixelVector fromPoint, PixelVector toPo
 		totalPixels = __ABS(__FIXED_EXT_TO_I(toPointY - fromPointY)) + totalPixelRounding;
 	}
 
-	FrameBufferManager->drawnPixelsCounter += totalPixels;
+	frameBufferManager->drawnPixelsCounter += totalPixels;
 
-	if(FrameBufferManager->drawnPixelsCounter > FrameBufferManager->maximumPixelsToDraw)
+	if(frameBufferManager->drawnPixelsCounter > frameBufferManager->maximumPixelsToDraw)
 	{
 		return false;
 	}
@@ -448,7 +444,7 @@ static bool FrameBufferManager::drawLine(PixelVector fromPoint, PixelVector toPo
 
 	if(interlaced)
 	{
-		uint32 leftBuffer = *_currentDrawingFrameBufferSet | (bufferIndex << __FRAME_BUFFER_SIDE_BIT_INDEX);
+		uint32 leftBuffer = frameBufferManager->currentDrawingFrameBufferSet | (bufferIndex << __FRAME_BUFFER_SIDE_BIT_INDEX);
 		uint32 rightBuffer = leftBuffer ^ __FRAME_BUFFER_SIDE_BIT;
 
 		parallaxStep <<= 1;
@@ -503,8 +499,8 @@ static bool FrameBufferManager::drawLine(PixelVector fromPoint, PixelVector toPo
 	}
 	else
 	{
-		uint32 leftBuffer = *_currentDrawingFrameBufferSet | __LEFT_FRAME_BUFFER_0;
-		uint32 rightBuffer = *_currentDrawingFrameBufferSet | __RIGHT_FRAME_BUFFER_0;
+		uint32 leftBuffer = frameBufferManager->currentDrawingFrameBufferSet | __LEFT_FRAME_BUFFER_0;
+		uint32 rightBuffer = frameBufferManager->currentDrawingFrameBufferSet | __RIGHT_FRAME_BUFFER_0;
 
 		for(; 0 < totalPixels; totalPixels -=1)
 		{
@@ -536,6 +532,8 @@ static bool FrameBufferManager::drawCircle(PixelVector center, int16 radius, int
 		return false;
 	}
 
+	FrameBufferManager frameBufferManager = FrameBufferManager::getInstance();
+
 	bool xFromOutside = _frustumWidth < center.x - radius;
 	bool yFromOutside = _frustumHeight < center.y - radius;
 	bool zFromOutside = _frustumDepth < center.z - radius;
@@ -556,7 +554,7 @@ static bool FrameBufferManager::drawCircle(PixelVector center, int16 radius, int
 	// Bresenham circle algorithm
 	if(interlaced && 3 < radius)
 	{
-		uint32 leftBuffer = *_currentDrawingFrameBufferSet | (bufferIndex << __FRAME_BUFFER_SIDE_BIT_INDEX);
+		uint32 leftBuffer = frameBufferManager->currentDrawingFrameBufferSet | (bufferIndex << __FRAME_BUFFER_SIDE_BIT_INDEX);
 		uint32 rightBuffer = leftBuffer ^ __FRAME_BUFFER_SIDE_BIT;
 
 		int16 x = radius;
@@ -620,8 +618,8 @@ static bool FrameBufferManager::drawCircle(PixelVector center, int16 radius, int
 	}
 	else
 	{
-		uint32 leftBuffer = *_currentDrawingFrameBufferSet | __LEFT_FRAME_BUFFER_0;
-		uint32 rightBuffer = *_currentDrawingFrameBufferSet | __RIGHT_FRAME_BUFFER_0;
+		uint32 leftBuffer = frameBufferManager->currentDrawingFrameBufferSet | __LEFT_FRAME_BUFFER_0;
+		uint32 rightBuffer = frameBufferManager->currentDrawingFrameBufferSet | __RIGHT_FRAME_BUFFER_0;
 
 		int16 x = radius;
 		int16 y = 0;		
@@ -698,6 +696,8 @@ static bool FrameBufferManager::drawX(PixelVector center, int16 length, int32 co
 		return false;
 	}
 
+	FrameBufferManager frameBufferManager = FrameBufferManager::getInstance();
+
 	int16 lengthHelper = 0;
 	int16 halfLength = length >> 1;
 	int16 x = center.x - halfLength;
@@ -705,7 +705,7 @@ static bool FrameBufferManager::drawX(PixelVector center, int16 length, int32 co
 
 	if(interlaced)
 	{
-		uint32 leftBuffer = *_currentDrawingFrameBufferSet | (bufferIndex << __FRAME_BUFFER_SIDE_BIT_INDEX);
+		uint32 leftBuffer = frameBufferManager->currentDrawingFrameBufferSet | (bufferIndex << __FRAME_BUFFER_SIDE_BIT_INDEX);
 		uint32 rightBuffer = leftBuffer ^ __FRAME_BUFFER_SIDE_BIT;
 
 		if(0 != bufferIndex)
@@ -728,8 +728,8 @@ static bool FrameBufferManager::drawX(PixelVector center, int16 length, int32 co
 	}
 	else
 	{
-		uint32 leftBuffer = *_currentDrawingFrameBufferSet | __LEFT_FRAME_BUFFER_0;
-		uint32 rightBuffer = *_currentDrawingFrameBufferSet | __RIGHT_FRAME_BUFFER_0;
+		uint32 leftBuffer = frameBufferManager->currentDrawingFrameBufferSet | __LEFT_FRAME_BUFFER_0;
+		uint32 rightBuffer = frameBufferManager->currentDrawingFrameBufferSet | __RIGHT_FRAME_BUFFER_0;
 
 		for(; lengthHelper <= length; lengthHelper++, x++, y++)
 		{
@@ -754,12 +754,14 @@ static bool FrameBufferManager::drawCross(PixelVector center, int16 length, int3
 		return false;
 	}
 
+	FrameBufferManager frameBufferManager = FrameBufferManager::getInstance();
+
 	int16 lengthHelper = 0;
 	int16 halfLength = length >> 1;
 
 	if(interlaced)
 	{
-		uint32 leftBuffer = *_currentDrawingFrameBufferSet | (bufferIndex << __FRAME_BUFFER_SIDE_BIT_INDEX);
+		uint32 leftBuffer = frameBufferManager->currentDrawingFrameBufferSet | (bufferIndex << __FRAME_BUFFER_SIDE_BIT_INDEX);
 		uint32 rightBuffer = leftBuffer ^ __FRAME_BUFFER_SIDE_BIT;
 
 		if(0 != bufferIndex)
@@ -781,8 +783,8 @@ static bool FrameBufferManager::drawCross(PixelVector center, int16 length, int3
 	}
 	else
 	{
-		uint32 leftBuffer = *_currentDrawingFrameBufferSet | __LEFT_FRAME_BUFFER_0;
-		uint32 rightBuffer = *_currentDrawingFrameBufferSet | __RIGHT_FRAME_BUFFER_0;
+		uint32 leftBuffer = frameBufferManager->currentDrawingFrameBufferSet | __LEFT_FRAME_BUFFER_0;
+		uint32 rightBuffer = frameBufferManager->currentDrawingFrameBufferSet | __RIGHT_FRAME_BUFFER_0;
 
 		for(int16 coordinate = -halfLength; lengthHelper < length; coordinate++, lengthHelper++)
 		{
@@ -845,12 +847,14 @@ static bool FrameBufferManager::drawSolidRhumbus(PixelVector center, int16 radiu
 		return false;
 	}
 
+	FrameBufferManager frameBufferManager = FrameBufferManager::getInstance();
+
 	int16 radiusHelper = 0;
 	int16 y = center.y - radius;
 
 	if(interlaced)
 	{
-		uint32 leftBuffer = *_currentDrawingFrameBufferSet | (bufferIndex << __FRAME_BUFFER_SIDE_BIT_INDEX);
+		uint32 leftBuffer = frameBufferManager->currentDrawingFrameBufferSet | (bufferIndex << __FRAME_BUFFER_SIDE_BIT_INDEX);
 		uint32 rightBuffer = leftBuffer ^ __FRAME_BUFFER_SIDE_BIT;
 
 		center.parallax >>= 1;
@@ -886,8 +890,8 @@ static bool FrameBufferManager::drawSolidRhumbus(PixelVector center, int16 radiu
 	}
 	else
 	{
-		uint32 leftBuffer = *_currentDrawingFrameBufferSet | __LEFT_FRAME_BUFFER_0;
-		uint32 rightBuffer = *_currentDrawingFrameBufferSet | __RIGHT_FRAME_BUFFER_0;
+		uint32 leftBuffer = frameBufferManager->currentDrawingFrameBufferSet | __LEFT_FRAME_BUFFER_0;
+		uint32 rightBuffer = frameBufferManager->currentDrawingFrameBufferSet | __RIGHT_FRAME_BUFFER_0;
 
 		for(; radiusHelper <= radius; radiusHelper++, y++)
 		{
@@ -1087,6 +1091,13 @@ bool FrameBufferManager::onEvent(ListenerObject eventFirer __attribute__((unused
 {
 	switch(eventCode)
 	{
+		case kEventVIPManagerGAMESTART:
+		{
+			this->currentDrawingFrameBufferSet = VIPManager::getCurrentDrawingFrameBufferSet(eventFirer);
+
+			return true;
+		}
+
 		case kEventVIPManagerXPEND:
 		{
 #ifdef __SHOW_DIRECT_DRAWING_PROFILING
@@ -1226,13 +1237,14 @@ void FrameBufferManager::constructor()
 	// Always explicitly call the base's constructor 
 	Base::constructor();
 
+	this->currentDrawingFrameBufferSet = 0;
 	this->drawnPixelsCounter = 0;
 	this->maximumPixelsToDraw = 0;
 
 	FrameBufferManager::reset(this);
 
+	VIPManager::addEventListener(VIPManager::getInstance(), ListenerObject::safeCast(this), kEventVIPManagerGAMESTART);
 	VIPManager::addEventListener(VIPManager::getInstance(), ListenerObject::safeCast(this), kEventVIPManagerXPEND);
-
 	VIPManager::addEventListener(VIPManager::getInstance(), ListenerObject::safeCast(this), kEventVIPManagerGAMESTARTDuringXPEND);
 }
 
@@ -1240,8 +1252,8 @@ void FrameBufferManager::constructor()
 
 void FrameBufferManager::destructor()
 {
+	VIPManager::removeEventListener(VIPManager::getInstance(), ListenerObject::safeCast(this), kEventVIPManagerGAMESTART);
 	VIPManager::removeEventListener(VIPManager::getInstance(), ListenerObject::safeCast(this), kEventVIPManagerXPEND);
-
 	VIPManager::removeEventListener(VIPManager::getInstance(), ListenerObject::safeCast(this), kEventVIPManagerGAMESTARTDuringXPEND);
 
 	// Always explicitly call the base's destructor 
