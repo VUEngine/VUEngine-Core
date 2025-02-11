@@ -84,7 +84,14 @@ cp -p -f $INPUT_FILE $OUTPUT_FILE
 
 # Inline multiline declarations
 sed -i.b 's/^[	]\+(/(/g'  $OUTPUT_FILE
-sedGNU=`strings $(which sed)|grep -i gnu`
+
+if command -v strings 2>&1 >/dev/null
+then
+	echo strings exists
+	sedGNU=`strings $(which sed)|grep -i gnu`
+else
+	echo NO STRINGS
+fi
 
 if [ ! -z "$sedGNU" ];
 then
