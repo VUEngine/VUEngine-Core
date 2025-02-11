@@ -87,10 +87,7 @@ sed -i.b 's/^[	]\+(/(/g'  $OUTPUT_FILE
 
 if command -v strings 2>&1 >/dev/null
 then
-	echo strings exists
 	sedGNU=`strings $(which sed)|grep -i gnu`
-else
-	echo NO STRINGS
 fi
 
 if [ ! -z "$sedGNU" ];
