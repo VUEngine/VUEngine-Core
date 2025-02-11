@@ -131,7 +131,7 @@ fi
 if [ -z "$className" ];
 then
 	# Maybe it is a static class
-	className=`grep -o -m 1 -e '^\(static\|secure\)[ 	]*.*[ 	][ 	]*[A-Z][A-z0-9]*[ 	]*::[ 	]*[a-z][A-z0-9]*[ 	]*(' $OUTPUT_FILE | sed -e 's/^.*[ 	][ 	]*\([A-Z][A-z0-9]*\)[ 	]*::.*/\1/'`
+	className=`grep -o -m 1 -e '^\(static\|secure\)[ 	]*.*[ 	][ 	]*[A-Z][A-z0-9]*[ 	]*::[ 	]*[a-z][A-z0-9]*[ 	]*[(]*' $OUTPUT_FILE | sed -e 's/^.*[ 	][ 	]*\([A-Z][A-z0-9]*\)[ 	]*::.*/\1/'`
 
 	if [ -z "$className" ];
 	then
