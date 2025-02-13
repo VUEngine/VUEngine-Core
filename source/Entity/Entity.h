@@ -46,7 +46,7 @@ abstract class Entity : ListenerObject
 	Transformation transformation;
 
 	/// Cache the Body component for physics simulations to avoid 
-	/// having constantly grabing it from the ComponentManager
+	/// having to constantly retrieve it through the ComponentManager
 	Body body;
 
 	/// Flag used for streaming purposes
