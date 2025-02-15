@@ -256,13 +256,6 @@ bool VUEngine::onEvent(ListenerObject eventFirer, uint16 eventCode)
 			return true;
 		}
 
-		case kEventVIPManagerXPEND:
-		{
-			VUEngine::drawingStarted(this);
-			
-			return true;
-		}
-
 		case kEventStateMachineWillCleanStack:
 		{
 			if(StateMachine::safeCast(eventFirer) != this->stateMachine)
@@ -613,10 +606,6 @@ secure void VUEngine::run(GameState currentGameState)
 	VIPManager::addEventListener(VIPManager::getInstance(), ListenerObject::safeCast(this), kEventVIPManagerFRAMESTART);
 	VIPManager::addEventListener(VIPManager::getInstance(), ListenerObject::safeCast(this), kEventVIPManagerGAMESTART);
 
-#ifdef __SHOW_PROCESS_NAME_DURING_XPEND
-	VIPManager::addEventListener(VIPManager::getInstance(), ListenerObject::safeCast(this), kEventVIPManagerXPEND);
-#endif
-
 	VUEngine::setState(currentGameState);
 
 	while(NULL != this->currentGameState)
@@ -645,7 +634,6 @@ void VUEngine::cleanUp()
 {
 	VIPManager::removeEventListener(VIPManager::getInstance(), ListenerObject::safeCast(this), kEventVIPManagerFRAMESTART);
 	VIPManager::removeEventListener(VIPManager::getInstance(), ListenerObject::safeCast(this), kEventVIPManagerGAMESTART);
-	VIPManager::removeEventListener(VIPManager::getInstance(), ListenerObject::safeCast(this), kEventVIPManagerXPEND);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
