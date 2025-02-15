@@ -142,10 +142,11 @@ secure void BgmapTextureManager::reset()
 
 secure void BgmapTextureManager::clearDRAM()
 {
-	uint8* bgmapStartAddress = (uint8*)__BGMAP_SPACE_BASE_ADDRESS;
+	uint32* bgmapStartAddress = (uint32*)__BGMAP_SPACE_BASE_ADDRESS;
+	uint32* paramTableEnd = (uint32*)ParamTableManager::getParamTableEnd(ParamTableManager::getInstance());
 
 	// Clear every bgmap segment
-	for(bgmapStartAddress = 0; bgmapStartAddress < (uint8*)ParamTableManager::getParamTableEnd(ParamTableManager::getInstance()); bgmapStartAddress++)
+	for(bgmapStartAddress = 0; bgmapStartAddress < paramTableEnd; bgmapStartAddress++)
 	{
 		*bgmapStartAddress = 0;
 	}
