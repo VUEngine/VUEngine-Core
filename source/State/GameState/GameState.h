@@ -244,10 +244,6 @@ class GameState : State
 	/// Process the provided user input.
 	/// @param userInput: Struct with the current user input information
 	virtual void processUserInput(const UserInput*  userInput);
-
-	/// Check if the game state is in versus mode.
-	/// @return True if the state is in versus mode; false otherwise
-	virtual bool isVersusMode();
 }
 
 #endif
