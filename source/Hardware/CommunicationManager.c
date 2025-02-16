@@ -194,8 +194,7 @@ void CommunicationManager::enableCommunications(ListenerObject scope)
 	// If handshake is taking place
 	if(CommunicationManager::isHandshakeIncoming(this))
 	{
-		// There is another system attached already managing
-		// The channel
+		// There is another system attached already managing the channel
 		this->communicationMode = __COM_AS_MASTER;
 
 		// Send dummy payload to verify communication
