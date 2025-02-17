@@ -384,6 +384,11 @@ CollisionResult Collider::collides(Collider collider)
 			Collider::collisionEnds(this, &collision);
 			break;
 		}
+
+		default:
+		{
+			break;
+		}
 	}
 
 	return collision.result;
