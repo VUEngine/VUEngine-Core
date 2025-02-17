@@ -271,12 +271,13 @@ void CharSet::write()
 	switch(this->charSetSpec->tiles[0])
 	{
 		case __CHAR_SET_COMPRESSION_RLE:
-
+		{
 			CharSet::writeRLE(this);
 			break;
+		}
 
 		default:
-
+		{
 			if(100 < tilesToWrite)
 			{
 				CACHE_RESET;
@@ -313,6 +314,7 @@ void CharSet::write()
 			);
 #endif
 			break;
+		}
 	}
 
 	this->written = true;

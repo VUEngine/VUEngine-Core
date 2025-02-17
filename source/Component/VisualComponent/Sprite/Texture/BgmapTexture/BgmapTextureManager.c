@@ -565,22 +565,25 @@ int32 BgmapTextureManager::doAllocate
 			case __WORLD_4x2:
 			case __WORLD_2x4:
 			case __WORLD_1x8:
-
+			{
 				segmentStep = 8;
 				break;
+			}
 
 			case __WORLD_4x1:
 			case __WORLD_2x2:
 			case __WORLD_1x4:
-
+			{
 				segmentStep = 4;
 				break;
+			}
 
 			case __WORLD_2x1:
 			case __WORLD_1x2:
-
+			{
 				segmentStep = 2;
 				break;
+			}
 		}
 
 		if(0 != minimumSegment % segmentStep)

@@ -536,23 +536,25 @@ bool Texture::update(int16 maximumTextureRowsToWrite)
 	switch(this->status)
 	{
 		case kTexturePendingWriting:
-
+		{
 			Texture::write(this, maximumTextureRowsToWrite);
 			break;
+		}
 
 		case kTexturePendingRewriting:
-
+		{
 			Texture::write(this, maximumTextureRowsToWrite);
 			break;
+		}
 
 		case kTextureMapDisplacementChanged:
-
+		{
 			Texture::write(this, maximumTextureRowsToWrite);
+		}
 
-			// Intended fall through
-
+		// Intended fall through
 		default:
-
+		{
 			if(isDeleted(this->charSet))
 			{
 				Texture::write(this, maximumTextureRowsToWrite);
@@ -567,6 +569,7 @@ bool Texture::update(int16 maximumTextureRowsToWrite)
 			}
 
 			break;
+		}
 	}
 
 	return kTextureWritten != this->status;

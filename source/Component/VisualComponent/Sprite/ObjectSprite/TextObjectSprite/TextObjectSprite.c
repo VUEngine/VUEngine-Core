@@ -163,42 +163,34 @@ void TextObjectSprite::out(uint16 index)
 	// Print text
 	while(this->text[i])
 	{
-		switch(this->text[i])
+		for(charOffsetX = 0; charOffsetX < fontData->fontSpec->fontSize.x; charOffsetX++)
 		{
-			default:
-				{
-					for(charOffsetX = 0; charOffsetX < fontData->fontSpec->fontSize.x; charOffsetX++)
-					{
-						for(charOffsetY = 0; charOffsetY < fontData->fontSpec->fontSize.y; charOffsetY++)
-						{
-							charOffset = charOffsetX + (charOffsetY * fontData->fontSpec->charactersPerLineInCharset * fontData->fontSpec->fontSize.x);
+			for(charOffsetY = 0; charOffsetY < fontData->fontSpec->fontSize.y; charOffsetY++)
+			{
+				charOffset = charOffsetX + (charOffsetY * fontData->fontSpec->charactersPerLineInCharset * fontData->fontSpec->fontSize.x);
 
-							int32 objectIndex = index + i;
+				int32 objectIndex = index + i;
 
-							uint16 charNumber =
-								// Offset of charset in char memory
-								offset +
+				uint16 charNumber =
+					// Offset of charset in char memory
+					offset +
 
-								// Offset of character in charset
-								((uint8)(this->text[i] - fontData->fontSpec->offset) * fontData->fontSpec->fontSize.x) +
+					// Offset of character in charset
+					((uint8)(this->text[i] - fontData->fontSpec->offset) * fontData->fontSpec->fontSize.x) +
 
-								// Additional y offset in charset
-								(((uint8)(this->text[i] - fontData->fontSpec->offset)
-									/ fontData->fontSpec->charactersPerLineInCharset
-									* fontData->fontSpec->charactersPerLineInCharset * fontData->fontSpec->fontSize.x)
-										* (fontData->fontSpec->fontSize.y - 1)) +
+					// Additional y offset in charset
+					(((uint8)(this->text[i] - fontData->fontSpec->offset)
+						/ fontData->fontSpec->charactersPerLineInCharset
+						* fontData->fontSpec->charactersPerLineInCharset * fontData->fontSpec->fontSize.x)
+							* (fontData->fontSpec->fontSize.y - 1)) +
 
-								// Respective char of character
-								charOffset;
+					// Respective char of character
+					charOffset;
 
-							ObjectAttributes* objectPointer = &_objectAttributesCache[objectIndex];
+				ObjectAttributes* objectPointer = &_objectAttributesCache[objectIndex];
 
-							objectPointer->tile = this->palette | (charNumber & 0x7FF);
-						}
-					}
-				}
-
-				break;
+				objectPointer->tile = this->palette | (charNumber & 0x7FF);
+			}
 		}
 
 		i++;
