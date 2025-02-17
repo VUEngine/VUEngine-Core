@@ -678,7 +678,7 @@ abstract class Object : Object
 
  	/// Converts the object into an instance of the target class if object's class is in the hierarchy of the target class.
 	/// @param targetClass: pointer to the target class' virtual table
-	/// @return	True if successful
+	/// @return True if successful
 	bool mutateTo(const void* targetClass);
 }
 
