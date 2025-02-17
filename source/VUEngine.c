@@ -424,11 +424,6 @@ void VUEngine::changedState()
 
 	this->currentGameState = GameState::safeCast(StateMachine::getCurrentState(this->stateMachine));
 
-	if(GameState::isVersusMode(this->currentGameState))
-	{
-		CommunicationManager::startSyncCycle(CommunicationManager::getInstance());
-	}
-
 	VIPManager::startDrawing(VIPManager::getInstance());
 	VIPManager::startDisplaying(VIPManager::getInstance());
 
