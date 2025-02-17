@@ -437,7 +437,8 @@ static bool Printer::setActiveSprite(uint16 printingSpriteIndex)
 {
 	Printer printing = Printer::getInstance();
 
-	printing->activePrintingSprite = PrintingSprite::safeCast(Printer::getComponentAtIndex(printing, kSpriteComponent, printingSpriteIndex));
+	printing->activePrintingSprite = 
+		PrintingSprite::safeCast(Printer::getComponentAtIndex(printing, kSpriteComponent, printingSpriteIndex));
 
 	bool result = NULL != printing->activePrintingSprite;
 
