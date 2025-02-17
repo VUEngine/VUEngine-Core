@@ -80,7 +80,8 @@ then
 	exit 0
 fi
 
-cp -p -f $INPUT_FILE $OUTPUT_FILE
+#cp -p -f $INPUT_FILE $OUTPUT_FILE
+tr -d $'\r' < $INPUT_FILE > $OUTPUT_FILE
 
 # Inline multiline declarations
 sed -i.b 's/^[	]\+(/(/g'  $OUTPUT_FILE

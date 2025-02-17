@@ -248,14 +248,19 @@ then
 	exit 0
 fi
 
-classDeclaration=`grep -n -e "^[ 	]*[A-z0-9\!]*[ 	]*class[ 	]\+[A-Z][A-z0-9]*[ 	]*:[ 	]*[A-Z][A-z0-9]*" $INPUT_FILE`
+CLEAN_INPUT_FILE=$OUTPUT_FILE.clean
+
+tr -d $'\r' < $INPUT_FILE > $CLEAN_INPUT_FILE
+
+
+classDeclaration=`grep -n -e "^[ 	]*[A-z0-9\!]*[ 	]*class[ 	]\+[A-Z][A-z0-9]*[ 	]*:[ 	]*[A-Z][A-z0-9]*" $CLEAN_INPUT_FILE`
 cleanClassDeclaration=`cut -d: -f2,3 <<< "$classDeclaration"`
 className=`sed -e 's#^.*class \([A-z][A-z0-9]*\)[ 	]*\:.*#\1#' <<< "$cleanClassDeclaration"`
 baseClassName=`cut -d: -f2 <<< "$cleanClassDeclaration" | sed -e 's/[^[:alnum:]_-]//g'`
 
 if [ -z "$className" ];
 then
-	cp -f $INPUT_FILE $OUTPUT_FILE
+	tr -d $'\r' < $INPUT_FILE > $OUTPUT_FILE
 	clean_up
 #	echo No class in $INPUT_FILE
 	exit 0
@@ -502,11 +507,11 @@ fi
 #echo className $className
 #echo baseClassesNames $baseClassesNames
 
-end=`tail -n +$line $INPUT_FILE | grep -m 1 -n "}" | cut -d: -f1`
+end=`tail -n +$line $CLEAN_INPUT_FILE | grep -m 1 -n "}" | cut -d: -f1`
 end=$((line + end))
 line=$((line + 1))
 
-classDeclarationBlock=`cat $INPUT_FILE | sed ''"$line"','"$end"'!d' | grep -v -e '^[ 	]*[\*//]\+.*' | sed -e 's#[{}]#\'$'\n#' | tr -d "\r\n"  | sed -e 's/;/;\'$'\n/g'`
+classDeclarationBlock=`cat $CLEAN_INPUT_FILE | sed ''"$line"','"$end"'!d' | grep -v -e '^[ 	]*[\*//]\+.*' | sed -e 's#[{}]#\'$'\n#' | tr -d "\r\n"  | sed -e 's/;/;\'$'\n/g'`
 #echo "$classDeclarationBlock"
 
 # Get class' methods
@@ -877,12 +882,12 @@ sed -e 's#static[ 	]\+##g' <<< "$methodDeclarations" >> $TEMPORAL_FILE
 echo "Writing $OUTPUT_FILE file on caller $CALLER"  >> $CLASS_LOG_FILE
 
 prelude=$((line - 2))
-totalLines=`wc -l < $INPUT_FILE`
+totalLines=`wc -l < $CLEAN_INPUT_FILE`
 remaining=$((totalLines - end + 1))
 
-head -${prelude} $INPUT_FILE > $OUTPUT_FILE
+head -${prelude} $CLEAN_INPUT_FILE > $OUTPUT_FILE
 cat $TEMPORAL_FILE >> $OUTPUT_FILE
-tail -${remaining} $INPUT_FILE >> $OUTPUT_FILE
+tail -${remaining} $CLEAN_INPUT_FILE >> $OUTPUT_FILE
 
 # Clean up
 #sed -i.b 's#^[ 	]*class[ 	][ 	]*\([A-Z][A-z0-9]*\)[ 	]*;#__FORWARD_CLASS(\1);#' $OUTPUT_FILE
