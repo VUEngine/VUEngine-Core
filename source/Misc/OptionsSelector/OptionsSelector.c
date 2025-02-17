@@ -365,14 +365,16 @@ void OptionsSelector::print(uint8 x, uint8 y, uint32 alignment, uint8 spacing)
 		switch(alignment)
 		{
 			case kOptionsAlignCenter:
-
+			{
 				jStart -= this->columnWidth / 2 - 1;
 				break;
+			}
 
 			case kOptionsAlignRight:
-
+			{
 				jStart -= this->columnWidth;
 				break;
+			}
 		}
 
 		for(int32 i = 0; i < (this->rows * fontData->fontSpec->fontSize.y) && y + i < __SCREEN_HEIGHT_IN_CHARS; i++)
@@ -395,9 +397,10 @@ void OptionsSelector::print(uint8 x, uint8 y, uint32 alignment, uint8 spacing)
 			switch(alignment)
 			{
 				case kOptionsAlignCenter:
-
+				{
 					optionsLengthDivisor = 2;
 					break;
+				}
 			}
 
 			if(NULL == option->value)
@@ -409,7 +412,7 @@ void OptionsSelector::print(uint8 x, uint8 y, uint32 alignment, uint8 spacing)
 				switch(option->type)
 				{
 					case kString:
-
+					{
 						optionsLength = alignment == kOptionsAlignLeft ? 0 : strnlen((char*)option->value, this->columnWidth);
 						Printer::text
 						(
@@ -417,9 +420,10 @@ void OptionsSelector::print(uint8 x, uint8 y, uint32 alignment, uint8 spacing)
 							y, this->font
 						);
 						break;
+					}
 
 					case kFloat:
-
+					{
 						optionsLength = alignment == kOptionsAlignLeft ? 0 : Math::getDigitsCount(*((int32*)option->value)) - 3;
 						Printer::float
 						(
@@ -427,9 +431,10 @@ void OptionsSelector::print(uint8 x, uint8 y, uint32 alignment, uint8 spacing)
 							y, 2, this->font
 						);
 						break;
+					}
 
 					case kInt:
-
+					{
 						optionsLength = alignment == kOptionsAlignLeft ? 0 : Math::getDigitsCount(*((int32*)option->value));
 						Printer::int32
 						(
@@ -437,9 +442,10 @@ void OptionsSelector::print(uint8 x, uint8 y, uint32 alignment, uint8 spacing)
 							y, this->font
 						);
 						break;
-
+					}
+					
 					case kShortInt:
-
+					{
 						optionsLength = alignment == kOptionsAlignLeft ? 0 : Math::getDigitsCount(*((int32*)option->value));
 						Printer::int32
 						(
@@ -447,16 +453,18 @@ void OptionsSelector::print(uint8 x, uint8 y, uint32 alignment, uint8 spacing)
 							y, this->font
 						);
 						break;
-
+					}
+					
 					case kChar:
-
+					{
 						optionsLength = alignment == kOptionsAlignLeft ? 0 : Math::getDigitsCount(*((int32*)option->value));
 						Printer::int32
 						(
 							*((int8*)option->value), x + fontData->fontSpec->fontSize.x - optionsLength / optionsLengthDivisor, 
 							y, this->font
 						);
-						break;				
+						break;
+					}			
 				}
 			}
 
@@ -534,7 +542,7 @@ void OptionsSelector::printSelectorMark(char* mark, int8 optionsLength)
 		switch(this->alignment)
 		{
 			case kOptionsAlignCenter:
-
+			{
 				if(0 < optionsLength)
 				{
 					int8 optionsLengthHelper = optionsLength;
@@ -546,6 +554,7 @@ void OptionsSelector::printSelectorMark(char* mark, int8 optionsLength)
 				}
 
 				break;
+			}
 		}
 
 		Printer::text

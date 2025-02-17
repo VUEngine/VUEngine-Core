@@ -89,10 +89,12 @@ bool CameraEffectManager::handleMessage(Telegram telegram)
 	switch(Telegram::getMessage(telegram))
 	{
 		case kFadeTo:
-			
+		{				
 			CameraEffectManager::fxFadeAsync(this);
 			break;
+		}	
 	}
+
 	return true;
 }
 
@@ -144,23 +146,26 @@ void CameraEffectManager::startEffect(int32 effect, va_list args)
 	switch(effect)
 	{
 		case kShow:
-
+		{
 			CameraEffectManager::showCamera(this);
 			break;
+		}
 
 		case kHide:
-
+		{
 			CameraEffectManager::hideCamera(this);
 			break;
-
+		}
+		
 		case kFadeIn:
 		case kFadeOut:
-
+		{
 			CameraEffectManager::fxFadeStart(this, effect, va_arg(args, int32));
 			break;
+		}
 
 		case kFadeTo:
-
+		{
 			CameraEffectManager::fxFadeAsyncStart
 			(
 				this,
@@ -170,6 +175,7 @@ void CameraEffectManager::startEffect(int32 effect, va_list args)
 				va_arg(args, ListenerObject)
 			);
 			break;
+		}
 	}
 }
 

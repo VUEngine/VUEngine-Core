@@ -938,6 +938,7 @@ void Debug::showBgmapSegment()
 			myDisplacement = 0;
 			break;
 		}
+
 		case 1:
 		{
 			Printer::text
@@ -962,6 +963,7 @@ void Debug::showBgmapSegment()
 			myDisplacement = 0;
 			break;
 		}
+
 		case 2:
 		{
 			Printer::text("                                                ", 0, yOffset, NULL);
@@ -981,6 +983,7 @@ void Debug::showBgmapSegment()
 			myDisplacement = __SCREEN_HEIGHT_IN_CHARS - (topBorder + bottomBorder) - 2;
 			break;
 		}
+
 		case 3:
 		{
 			Printer::text("                                                ", 0, yOffset, NULL);
@@ -1000,6 +1003,7 @@ void Debug::showBgmapSegment()
 			myDisplacement = __SCREEN_HEIGHT_IN_CHARS - (topBorder + bottomBorder) - 2;
 			break;
 		}
+
 		case 4:
 		{
 			Printer::text("                                                ", 0, yOffset, NULL);
@@ -1025,6 +1029,7 @@ void Debug::showBgmapSegment()
 			myDisplacement = 64 - (__SCREEN_HEIGHT_IN_CHARS - (topBorder + bottomBorder));
 			break;
 		}
+		
 		case 5:
 		{
 			Printer::text("                                                ", 0, yOffset, NULL);

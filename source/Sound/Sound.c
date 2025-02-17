@@ -151,7 +151,7 @@ void Sound::play(const Vector3D* position, uint32 playbackType)
 	switch(playbackType)
 	{
 		case kSoundPlaybackFadeIn:
-
+		{
 			if(kSoundPlaying != this->state)
 			{
 				Sound::setVolumeReduction(this, __MAXIMUM_VOLUME * this->volumeReductionMultiplier);
@@ -162,12 +162,13 @@ void Sound::play(const Vector3D* position, uint32 playbackType)
 			}
 
 			break;
+		}
 
-			// Intentional fall through
 		case kSoundPlaybackNormal:
-			
+		{	
 			Sound::setVolumeReduction(this, 0);
 			break;
+		}
 	}
 
 	this->playbackType = playbackType;
@@ -176,27 +177,27 @@ void Sound::play(const Vector3D* position, uint32 playbackType)
 	{
 		case kSoundPlaybackFadeIn:
 		case kSoundPlaybackNormal:
+		{
+			bool wasPaused = kSoundPaused == this->state;
+
+			this->state = kSoundPlaying;
+
+			this->position = position;
+
+			for(VirtualNode node = this->soundTracks->head; NULL != node; node = node->next)
 			{
-				bool wasPaused = kSoundPaused == this->state;
+				SoundTrack soundTrack = SoundTrack::safeCast(node->data);
 
-				this->state = kSoundPlaying;
+				SoundTrack::start(soundTrack, wasPaused);
+			}
 
-				this->position = position;
-
-				for(VirtualNode node = this->soundTracks->head; NULL != node; node = node->next)
-				{
-					SoundTrack soundTrack = SoundTrack::safeCast(node->data);
-
-					SoundTrack::start(soundTrack, wasPaused);
-				}
-
-				if(!wasPaused)
-				{
-					this->previouslyElapsedTicks = 0;
-				}
+			if(!wasPaused)
+			{
+				this->previouslyElapsedTicks = 0;
 			}
 
 			break;
+		}
 	}
 }
 
@@ -812,7 +813,7 @@ void Sound::updateVolumeReduction()
 		switch(this->playbackType)
 		{
 			case kSoundPlaybackFadeIn:
-
+			{
 				this->volumeReduction -= (this->volumeReductionMultiplier >> 1) + 1;
 
 				if(0 >= this->volumeReduction)
@@ -822,9 +823,10 @@ void Sound::updateVolumeReduction()
 				}
 
 				break;
+			}
 
 			case kSoundPlaybackFadeOut:
-
+			{
 				this->volumeReduction += (this->volumeReductionMultiplier >> 1) + 1;
 
 				if(__MAXIMUM_VOLUME * this->volumeReductionMultiplier <= this->volumeReduction)
@@ -835,9 +837,10 @@ void Sound::updateVolumeReduction()
 				}
 
 				break;
+			}
 
 			case kSoundPlaybackFadeOutAndRelease:
-
+			{
 				this->volumeReduction += (this->volumeReductionMultiplier >> 1) + 1;
 
 				if(__MAXIMUM_VOLUME * this->volumeReductionMultiplier <= this->volumeReduction)
@@ -849,6 +852,7 @@ void Sound::updateVolumeReduction()
 				}
 
 				break;
+			}
 		}
 
 		this->previouslyElapsedTicks = this->mainSoundTrack->elapsedTicks;

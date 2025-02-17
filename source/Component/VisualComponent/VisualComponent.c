@@ -69,54 +69,64 @@ void VisualComponent::handleCommand(int32 command, va_list args)
 	switch(command)
 	{
 		case cVisualComponentCommandShow:
-
+		{
 			VisualComponent::show(this);
 			break;
+		}
 
 		case cVisualComponentCommandHide:
-
+		{
 			VisualComponent::hide(this);
 			break;
+		}
 
 		case cVisualComponentCommandSetTransparency:
-
+		{
 			VisualComponent::setTransparency(this, (uint8)va_arg(args, uint32));
 			break;
+		}
 
 		case cVisualComponentCommandPlay:
-
+		{
 			VisualComponent::play(this, (const char*)va_arg(args, char*),va_arg(args, ListenerObject));
 			break;
+		}
 
 		case cVisualComponentCommandPause:
-
+		{
 			VisualComponent::pause(this, (bool)va_arg(args, uint32));
 			break;
+		}
 
 		case cVisualComponentCommandStop:
-
+		{
 			VisualComponent::stop(this);
 			break;
+		}
 
 		case cVisualComponentCommandSetFrame:
-
+		{
 			VisualComponent::setActualFrame(this, (int16)va_arg(args, uint32));
 			break;
+		}
 
 		case cVisualComponentCommandNextFrame:
-
+		{
 			VisualComponent::nextFrame(this);
 			break;
+		}
 
 		case cVisualComponentCommandPreviousFrame:
-
+		{
 			VisualComponent::previousFrame(this);
 			break;
+		}
 
 		default:
-
+		{
 			Base::handleCommand(this, command, args);
 			break;
+		}
 	}
 }
 

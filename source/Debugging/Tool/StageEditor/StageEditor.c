@@ -136,24 +136,28 @@ void StageEditor::processUserInput(uint16 pressedKey)
 	switch(this->state)
 	{
 		case kMoveCamera:
-
+		{
 			StageEditor::moveCamera(this, pressedKey);
 			break;
+		}
 
 		case kChangeProjection:
-
+		{
 			StageEditor::changeProjection(this, pressedKey);
 			break;
+		}
 
 		case kTranslateActors:
-
+		{
 			StageEditor::translateActor(this, pressedKey);
 			break;
+		}
 
 		case kAddObjects:
-
+		{
 			StageEditor::selectUserObject(this, pressedKey);
 			break;
+		}
 	}
 }
 
@@ -237,7 +241,7 @@ void StageEditor::configureState()
 	switch(this->state)
 	{
 		case kAddObjects:
-
+		{
 			if(OptionsSelector::getNumberOfOptions(this->userActorSelector))
 			{
 				StageEditor::releaseWireframe(this);
@@ -247,23 +251,26 @@ void StageEditor::configureState()
 			}
 
 			this->state = kMoveCamera;
-
+		}
+		
 		case kMoveCamera:
-
+		{
 			StageEditor::releaseWireframe(this);
 			StageEditor::printCameraPosition(this);
 			StageEditor::printTranslationStepSize(this, 38, 7);
 			break;
+		}
 
 		case kChangeProjection:
-
+		{
 			StageEditor::releaseWireframe(this);
 			StageEditor::printProjectionValues(this);
 			StageEditor::printTranslationStepSize(this, 38, 10);
 			break;
+		}
 
 		case kTranslateActors:
-
+		{
 			if(!this->actorNode)
 			{
 				StageEditor::selectNextActor(this);
@@ -276,6 +283,7 @@ void StageEditor::configureState()
 			StageEditor::printActorPosition(this);
 			StageEditor::printTranslationStepSize(this, 38, 8);
 			break;
+		}
 	}
 }
 

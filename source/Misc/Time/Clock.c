@@ -44,19 +44,22 @@ static void Clock::printTime(uint32 milliseconds, int32 x, int32 y, const char* 
 	switch(precision)
 	{
 		case kTimePrecision1:
-
+		{
 			Clock::printDeciseconds(milliseconds, x + 6, y, font);
 			break;
+		}
 
 		case kTimePrecision2:
-
+		{
 			Clock::printCentiseconds(milliseconds, x + 6, y, font);
 			break;
+		}
 
 		case kTimePrecision3:
-
+		{
 			Clock::printMilliseconds(milliseconds, x + 6, y, font);
 			break;
+		}
 	}
 }
 

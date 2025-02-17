@@ -141,14 +141,16 @@ static void TimerManager::resetTimerCounter()
 	switch(timerManager->resolution)
 	{
 		case __TIMER_20US:
-
+		{
 			break;
+		}
 
 		case __TIMER_100US:
-
+		{
 			// Compensate for the difference in speed between 20US and 100US timer resolution
 			timerCounter += __TIMER_COUNTER_DELTA;
 			break;
+		}
 	}
 
 	_hardwareRegisters[__TLR] = (timerCounter & 0xFF);
@@ -164,21 +166,24 @@ static void TimerManager::setResolution(uint16 resolution)
 	switch(resolution)
 	{
 		case __TIMER_20US:
-
+		{
 			timerManager->resolution = resolution;
 			break;
+		}
 
 		case __TIMER_100US:
-
+		{
 			timerManager->resolution = resolution;
 			break;
+		}
 
 		default:
-
+		{
 			NM_ASSERT(false, "TimerManager::setResolution: wrong timer resolution");
 
 			timerManager->resolution =  __TIMER_20US;
 			break;
+		}
 	}
 
 	uint32 targetTimePerInterrupt = timerManager->targetTimePerInterrupt;
@@ -186,24 +191,27 @@ static void TimerManager::setResolution(uint16 resolution)
 	switch(timerManager->targetTimePerInterrupttUnits)
 	{
 		case kUS:
-			{
-				uint32 residue = targetTimePerInterrupt % TimerManager::getResolutionInUS(timerManager);
+		{
+			uint32 residue = targetTimePerInterrupt % TimerManager::getResolutionInUS(timerManager);
 
-				if(targetTimePerInterrupt > residue)
-				{
-					targetTimePerInterrupt -= residue;
-				}
+			if(targetTimePerInterrupt > residue)
+			{
+				targetTimePerInterrupt -= residue;
 			}
+
 			break;
+		}
 
 		case kMS:
-
+		{
 			break;
+		}
 
 		default:
-
+		{
 			ASSERT(false, "TimerManager::setResolution: wrong timer resolution scale");
 			break;
+		}
 	}
 
 	TimerManager::setTargetTimePerInterrupt(targetTimePerInterrupt);
@@ -227,20 +235,22 @@ static uint16 TimerManager::getResolutionInUS()
 	switch(timerManager->resolution)
 	{
 		case __TIMER_20US:
-
+		{
 			return 20;
 			break;
+		}
 
 		case __TIMER_100US:
-
+		{
 			return 100;
 			break;
+		}
 
 		default:
-
+		{
 			ASSERT(false, "TimerManager::getResolutionInUS: wrong timer resolution");
-
 			break;
+		}
 	}
 
 	return 0;
@@ -258,22 +268,25 @@ static void TimerManager::setTargetTimePerInterrupt(uint16 targetTimePerInterrup
 	switch(timerManager->targetTimePerInterrupttUnits)
 	{
 		case kUS:
-
+		{
 			minimumTimePerInterrupt = 
 				TimerManager::getResolutionInUS(timerManager) + TimerManager::getResolutionInUS(timerManager) * __TIMER_COUNTER_DELTA;
 			maximumTimePerInterrupt = __MAXIMUM_TIME_PER_INTERRUPT_US;
 			break;
+		}
 
 		case kMS:
-
+		{
 			minimumTimePerInterrupt = __MINIMUM_TIME_PER_INTERRUPT_MS;
 			maximumTimePerInterrupt = __MAXIMUM_TIME_PER_INTERRUPT_MS;
 			break;
+		}
 
 		default:
-
+		{
 			ASSERT(false, "TimerManager::setTargetTimePerInterrupt: wrong resolution scale");
 			break;
+		}
 	}
 
 	if((int16)targetTimePerInterrupt < minimumTimePerInterrupt)
@@ -307,19 +320,22 @@ static float TimerManager::getTargetTimePerInterruptInMS()
 	switch(timerManager->targetTimePerInterrupttUnits)
 	{
 		case kUS:
-
+		{
 			return timerManager->targetTimePerInterrupt / (float)__MICROSECONDS_PER_MILLISECOND;
 			break;
+		}
 
 		case kMS:
-
+		{
 			return timerManager->targetTimePerInterrupt;
 			break;
+		}
 
 		default:
-
+		{
 			ASSERT(false, "TimerManager::getTargetTimePerInterruptInMS: wrong timer resolution scale");
 			break;
+		}
 	}
 
 	return 0;
@@ -334,19 +350,22 @@ static uint32 TimerManager::getTargetTimePerInterruptInUS()
 	switch(timerManager->targetTimePerInterrupttUnits)
 	{
 		case kUS:
-
+		{
 			return timerManager->targetTimePerInterrupt;
 			break;
-
+		}
+		
 		case kMS:
-
+		{
 			return timerManager->targetTimePerInterrupt * __MICROSECONDS_PER_MILLISECOND;
 			break;
+		}
 
 		default:
-
+		{
 			ASSERT(false, "TimerManager::getTargetTimePerInterruptInUS: wrong timer resolution scale");
 			break;
+		}
 	}
 
 	return 0;
@@ -362,14 +381,16 @@ static void TimerManager::setTargetTimePerInterruptUnits(uint16 targetTimePerInt
 	{
 		case kUS:
 		case kMS:
-
+		{
 			timerManager->targetTimePerInterrupttUnits = targetTimePerInterrupttUnits;
 			break;
+		}
 
 		default:
-
+		{
 			ASSERT(false, "TimerManager::setTargetTimePerInterruptUnits: wrong resolution scale");
 			break;
+		}
 	}
 
 	TimerManager::setResolution(timerManager->resolution);
@@ -409,13 +430,14 @@ static uint16 TimerManager::getMinimumTimePerInterruptStep()
 	switch(timerManager->targetTimePerInterrupttUnits)
 	{
 		case kUS:
+		{
 			return TimerManager::getResolutionInUS();
-			break;
+		}
 
 		case kMS:
-
+		{
 			return 1;
-			break;
+		}
 	}
 
 	return 0;
@@ -501,37 +523,43 @@ static void TimerManager::print(int32 x, int32 y)
 	switch(timerManager->resolution)
 	{
 		case __TIMER_20US:
-
+		{
 			Printer::text("Resolution    20 US ", x, y++, NULL);
 			break;
+		}
 
 		case __TIMER_100US:
-
+		{
 			Printer::text("Resolution    100 US ", x, y++, NULL);
 			break;
+		}
 
 		default:
-
+		{
 			Printer::text("Resolution    ?      ", x, y++, NULL);
 			break;
+		}
 	}
 
 	switch(timerManager->targetTimePerInterrupttUnits)
 	{
 		case kUS:
-
+		{
 			Printer::text("US/interrupt        ", x, y, NULL);
 			break;
+		}
 
 		case kMS:
-
+		{
 			Printer::text("MS/interrupt        ", x, y, NULL);
 			break;
+		}
 
 		default:
-
+		{
 			Printer::text(" ?/interrupt        ", x, y, NULL);
 			break;
+		}
 	}
 
 	Printer::int32(timerManager->targetTimePerInterrupt, x + 14, y++, NULL);
@@ -645,19 +673,22 @@ uint16 TimerManager::computeTimerCounter()
 	switch(this->targetTimePerInterrupttUnits)
 	{
 		case kUS:
-
+		{
 			timerCounter = __TIME_US(this->targetTimePerInterrupt);
 			break;
-
+		}
+		
 		case kMS:
-
+		{
 			timerCounter = __TIME_MS(this->targetTimePerInterrupt);
 			break;
+		}
 
 		default:
-	
+		{
 			NM_ASSERT(false, "TimerManager::setTargetTimePerInterruptUnits: wrong resolution scale");
 			break;
+		}
 	}
 
 	return (uint16)(0 >= timerCounter ? 1 : timerCounter);

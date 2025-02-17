@@ -211,24 +211,28 @@ void AnimationInspector::processUserInput(uint16 pressedKey)
 	switch(this->state)
 	{
 		case kSelectActor:
-
+		{
 			AnimationInspector::selectActor(this, pressedKey);
 			break;
+		}
 
 		case kSelectSprite:
-
+		{
 			AnimationInspector::selectSprite(this, pressedKey);
 			break;
+		}
 
 		case kSelectAnimation:
-
+		{
 			AnimationInspector::selectAnimation(this, pressedKey);
 			break;
+		}
 
 		case kEditAnimation:
-
+		{
 			AnimationInspector::editAnimation(this, pressedKey);
 			break;
+		}
 	}
 }
 
@@ -312,14 +316,15 @@ void AnimationInspector::configureState()
 	switch(this->state)
 	{
 		case kSelectActor:
-
+		{
 			AnimationInspector::removePreviousSprite(this);
 			Printer::text("Select \x13  ", 39, 2, NULL);
 			AnimationInspector::printUserAnimatedActors(this);
 			break;
+		}
 
 		case kSelectSprite:
-
+		{
 			Printer::text("Select \x13  ", 39, 2, NULL);
 			Printer::text("Back   \x14  ", 39, 3, NULL);
 			AnimationInspector::createSpriteSelector(this);
@@ -327,18 +332,20 @@ void AnimationInspector::configureState()
 			AnimationInspector::createSprite(this);
 			Sprite::pause(this->sprite, true);
 			break;
+		}
 
 		case kSelectAnimation:
-
+		{
 			Printer::text("Select \x13  ", 39, 2, NULL);
 			Printer::text("Back   \x14  ", 39, 3, NULL);
 			AnimationInspector::createAnimationsSelector(this);
 			Sprite::pause(this->sprite, true);
 			AnimationInspector::printActorAnimations(this);
 			break;
+		}
 
 		case kEditAnimation:
-
+		{
 			AnimationInspector::loadAnimationFunction(this);
 			AnimationInspector::createAnimationEditionSelector(this);
 			AnimationInspector::createFrameEditionSelector(this);
@@ -348,6 +355,7 @@ void AnimationInspector::configureState()
 			Sprite::pause(this->sprite, false);
 			AnimationInspector::printAnimationConfig(this);
 			break;
+		}
 	}
 }
 
@@ -470,7 +478,7 @@ void AnimationInspector::editAnimation(uint32 pressedKey)
 		switch(selectedProperty)
 		{
 			case kNumberOfFrames:
-
+			{
 				if(0 == --this->animationFunction.numberOfFrames)
 				{
 					this->animationFunction.numberOfFrames = 1;
@@ -478,9 +486,10 @@ void AnimationInspector::editAnimation(uint32 pressedKey)
 
 				AnimationInspector::createFrameEditionSelector(this);
 				break;
+			}
 
 			case kDelay:
-
+			{
 				this->animationFunction.delay -= 1;
 
 				if(0 > (int8)this->animationFunction.delay)
@@ -488,15 +497,18 @@ void AnimationInspector::editAnimation(uint32 pressedKey)
 					this->animationFunction.delay = 0;
 				}
 				break;
+			}
 
 			case kLoop:
-
+			{
 				this->animationFunction.loop = !this->animationFunction.loop;
 				break;
+			}
 
 			case kFrames:
-
+			{
 				break;
+			}
 		}
 	}
 	else if(pressedKey & K_LR)
@@ -505,7 +517,7 @@ void AnimationInspector::editAnimation(uint32 pressedKey)
 		switch(selectedProperty)
 		{
 			case kNumberOfFrames:
-
+			{
 				if(__MAX_FRAMES_PER_ANIMATION_FUNCTION < ++this->animationFunction.numberOfFrames)
 				{
 					this->animationFunction.numberOfFrames = __MAX_FRAMES_PER_ANIMATION_FUNCTION;
@@ -514,20 +526,24 @@ void AnimationInspector::editAnimation(uint32 pressedKey)
 				AnimationInspector::createFrameEditionSelector(this);
 
 				break;
+			}
 
 			case kDelay:
-
+			{
 				this->animationFunction.delay += 1;
 				break;
-
+			}
+			
 			case kLoop:
-
+			{
 				this->animationFunction.loop = !this->animationFunction.loop;
 				break;
-
+			}
+			
 			case kFrames:
-
+			{
 				break;
+			}
 		}
 	}
 	else if(pressedKey & K_RU)
@@ -536,9 +552,10 @@ void AnimationInspector::editAnimation(uint32 pressedKey)
 		switch(selectedProperty)
 		{
 			case kFrames:
-
+			{
 				OptionsSelector::selectPrevious(this->frameEditionSelector);
 				break;
+			}
 		}
 	}
 	else if(pressedKey & K_RD)
@@ -547,9 +564,10 @@ void AnimationInspector::editAnimation(uint32 pressedKey)
 		switch(selectedProperty)
 		{
 			case kFrames:
-
+			{
 				OptionsSelector::selectNext(this->frameEditionSelector);
 				break;
+			}
 		}
 	}
 	else if(pressedKey & K_RL)
@@ -560,13 +578,14 @@ void AnimationInspector::editAnimation(uint32 pressedKey)
 		switch(selectedProperty)
 		{
 			case kFrames:
-
+			{
 				if(0 < this->animationFunction.frames[selectedFrame])
 				{
 					this->animationFunction.frames[selectedFrame]--;
 				}
 
 				break;
+			}
 		}
 	}
 	else if(pressedKey & K_RR)
@@ -577,26 +596,27 @@ void AnimationInspector::editAnimation(uint32 pressedKey)
 		switch(selectedProperty)
 		{
 			case kFrames:
+			{
+				NM_ASSERT(this->sprite, "AnimationInspector::selectAnimation: null sprite");
+
+				Texture texture = Sprite::getTexture(this->sprite);
+				NM_ASSERT(texture, "AnimationInspector::selectAnimation: null texture");
+
+				const TextureSpec* textureSpec = Texture::getSpec(texture);
+				NM_ASSERT(textureSpec, "AnimationInspector::selectAnimation: null textureSpec");
+
+				if
+				(
+					++this->animationFunction.frames[selectedFrame] >= textureSpec->numberOfFrames 
+					&& 
+					1 < textureSpec->numberOfFrames
+				)
 				{
-					NM_ASSERT(this->sprite, "AnimationInspector::selectAnimation: null sprite");
-
-					Texture texture = Sprite::getTexture(this->sprite);
-					NM_ASSERT(texture, "AnimationInspector::selectAnimation: null texture");
-
-					const TextureSpec* textureSpec = Texture::getSpec(texture);
-					NM_ASSERT(textureSpec, "AnimationInspector::selectAnimation: null textureSpec");
-
-					if
-					(
-						++this->animationFunction.frames[selectedFrame] >= textureSpec->numberOfFrames 
-						&& 
-						1 < textureSpec->numberOfFrames
-					)
-					{
-						this->animationFunction.frames[selectedFrame] = textureSpec->numberOfFrames - 1;
-					}
+					this->animationFunction.frames[selectedFrame] = textureSpec->numberOfFrames - 1;
 				}
+
 				break;
+			}
 		}
 	}
 
@@ -664,16 +684,18 @@ void AnimationInspector::printAnimationConfig()
 	switch(selectedProperty)
 	{
 		case kFrames:
-
+		{
 			Printer::text("Select \x1F\x1A\x1B", 37, 7, NULL);
 			Printer::text("Modify \x1F\x1C\x1D", 37, 8, NULL);
 			break;
+		}
 
 		default:
-
+		{
 			Printer::text("                   ", 37, 7, NULL);
 			Printer::text("                   ", 37, 8, NULL);
 			break;
+		}
 	}
 }
 

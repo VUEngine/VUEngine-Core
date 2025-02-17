@@ -220,9 +220,10 @@ void Body::handleCommand(int32 command, va_list args __attribute__((unused)))
 	switch(command)
 	{
 		case cComponentCommandReset:
-
+		{
 			Body::reset(this);
 			break;
+		}
 	}
 }
 

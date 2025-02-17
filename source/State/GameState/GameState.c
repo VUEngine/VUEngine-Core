@@ -116,15 +116,16 @@ bool GameState::handleMessage(Telegram telegram)
 	switch(Telegram::getMessage(telegram))
 	{
 		case kMessageRestoreFPS:
-
+		{
 			VUEngine::setGameFrameRate(this->framerate);
 			break;
+		}
 
 		case kMessageEnableKeypad:
-
+		{
 			KeypadManager::enable();
 			break;
-
+		}
 	}
 
 	return false;

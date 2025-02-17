@@ -169,19 +169,22 @@ void SoundTest::processUserInput(uint16 pressedKey)
 		switch(timerResolution)
 		{
 			case __TIMER_20US:
-
+			{
 				timerResolution = __TIMER_100US;
 				break;
+			}
 
 			case __TIMER_100US:
-
+			{
 				timerResolution = __TIMER_20US;
 				break;
+			}
 
 			default:
-
+			{
 				ASSERT(false, "SoundTest::processUserInput: wrong timer frequency");
 				break;
+			}
 		}
 
 		TimerManager::setResolution(timerResolution);
@@ -195,21 +198,24 @@ void SoundTest::processUserInput(uint16 pressedKey)
 		switch(targetTimePerInterrupttUnits)
 		{
 			case kUS:
-
+			{
 				targetTimePerInterrupttUnits = kMS;
 				targetTimePerInterrupt = 10;
 				break;
+			}
 
 			case kMS:
-
+			{
 				targetTimePerInterrupttUnits = kUS;
 				targetTimePerInterrupt = 1000;
 				break;
+			}
 
 			default:
-
+			{
 				ASSERT(false, "SoundTest::processUserInput: wrong timer resolution scale");
 				break;
+			}
 		}
 
 		TimerManager::setTargetTimePerInterruptUnits(targetTimePerInterrupttUnits);

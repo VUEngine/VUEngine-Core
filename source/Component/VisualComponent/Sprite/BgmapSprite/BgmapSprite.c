@@ -490,21 +490,23 @@ void BgmapSprite::setMode(uint16 display, uint16 mode)
 		switch(mode)
 		{
 			case __WORLD_BGMAP:
-
+			{
 				// Set map head
 				this->head = display | __WORLD_BGMAP;
 				break;
+			}
 
 			case __WORLD_AFFINE:
-
+			{
 				this->head = display | __WORLD_AFFINE;
 				this->param = ParamTableManager::allocate(ParamTableManager::getInstance(), this);
 				this->applyParamTableEffect = 
 					NULL != this->applyParamTableEffect ? this->applyParamTableEffect : BgmapSprite::doApplyAffineTransformations;
 				break;
+			}
 
 			case __WORLD_HBIAS:
-
+			{
 				// Set map head
 				this->head = display | __WORLD_HBIAS;
 
@@ -514,6 +516,7 @@ void BgmapSprite::setMode(uint16 display, uint16 mode)
 				}
 
 				break;
+			}
 		}
 	}
 

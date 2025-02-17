@@ -68,18 +68,20 @@ bool Entity::handleMessage(Telegram telegram)
 	switch(Telegram::getMessage(telegram))
 	{
 		case kMessageBodyStartedMoving:
-
+		{
 			Entity::checkCollisions(this, true);
 			return true;
-			break;
-
+		}
+		
 		case kMessageBodyStopped:
-
+		{
 			if(NULL == this->body || __NO_AXIS == Body::getMovementOnAllAxis(this->body))
 			{
 				Entity::checkCollisions(this, false);
 			}
+			
 			break;
+		}
 	}
 
 	return false;

@@ -381,13 +381,15 @@ static void Printer::setOrientation(uint8 value)
 	{
 		case kPrintingOrientationHorizontal:
 		case kPrintingOrientationVertical:
-
+		{
 			break;
+		}
 
 		default:
-
+		{
 			printing->orientation = kPrintingOrientationHorizontal;
 			break;
+		}
 	}
 }
 
@@ -403,13 +405,15 @@ static void Printer::setTextDirection(uint8 value)
 	{
 		case kPrintingDirectionLTR:
 		case kPrintingDirectionRTL:
-
+		{
 			break;
+		}
 
 		default:
-
+		{
 			printing->direction = kPrintingDirectionLTR;
 			break;
+		}
 	}
 }
 
@@ -741,24 +745,27 @@ static FontSize Printer::getTextSize(const char* string, const char* font)
 		{
 			// Line feed
 			case 13:
-
+			{
 				break;
+			}
 
 			// Tab
 			case 9:
-
+			{
 				currentLineLength += (currentLineLength / __TAB_SIZE + 1) * __TAB_SIZE * fontData->fontSpec->fontSize.x;
 				break;
+			}
 
 			// Carriage return
 			case 10:
-
+			{
 				fontSize.y += fontData->fontSpec->fontSize.y;
 				currentLineLength = 0;
 				break;
+			}
 
 			default:
-
+			{
 				currentLineLength += fontData->fontSpec->fontSize.x;
 				if(currentLineLength >= 64)
 				{
@@ -767,6 +774,7 @@ static FontSize Printer::getTextSize(const char* string, const char* font)
 				}
 
 				break;
+			}
 		}
 
 		if(currentLineLength > fontSize.x)
@@ -880,12 +888,13 @@ static void Printer::out(uint8 x, uint8 y, const char* string, const char* font)
 		{
 			// Line feed
 			case 13:
-
+			{
 				break;
+			}
 
 			// Tab
 			case 9:
-
+			{
 				if(kPrintingOrientationHorizontal == printing->orientation)
 				{
 					x = (x / __TAB_SIZE + 1) * __TAB_SIZE * fontData->fontSpec->fontSize.x;
@@ -895,44 +904,45 @@ static void Printer::out(uint8 x, uint8 y, const char* string, const char* font)
 					y = (y / __TAB_SIZE + 1) * __TAB_SIZE * fontData->fontSpec->fontSize.y;
 				}
 				break;
+			}
 
 			// Carriage return
 			case 10:
-
+			{
 				temp = fontData->fontSpec->fontSize.y;
 				y = (printing->direction == kPrintingDirectionLTR)
 					? y + temp
 					: y - temp;
 				x = startColumn;
 				break;
+			}
 
 			default:
+			{
+				for(charOffsetX = 0; charOffsetX < fontData->fontSpec->fontSize.x; charOffsetX++)
 				{
-					for(charOffsetX = 0; charOffsetX < fontData->fontSpec->fontSize.x; charOffsetX++)
+					for(charOffsetY = 0; charOffsetY < fontData->fontSpec->fontSize.y; charOffsetY++)
 					{
-						for(charOffsetY = 0; charOffsetY < fontData->fontSpec->fontSize.y; charOffsetY++)
-						{
-							charOffset = 
-								charOffsetX + 
-								(charOffsetY * fontData->fontSpec->charactersPerLineInCharset * fontData->fontSpec->fontSize.x);
+						charOffset = 
+							charOffsetX + 
+							(charOffsetY * fontData->fontSpec->charactersPerLineInCharset * fontData->fontSpec->fontSize.x);
 
-							bgmapSpaceBaseAddress[(0x1000 * (printing->printingBgmapSegment + 1) - 
-							__PRINTABLE_BGMAP_AREA) + position + charOffsetX + (charOffsetY << 6)] =
-								(
-									// Offset of charset in char memory
-									offset +
-									((uint8)(string[i] - fontData->fontSpec->offset) * fontData->fontSpec->fontSize.x) +
+						bgmapSpaceBaseAddress[(0x1000 * (printing->printingBgmapSegment + 1) - 
+						__PRINTABLE_BGMAP_AREA) + position + charOffsetX + (charOffsetY << 6)] =
+							(
+								// Offset of charset in char memory
+								offset +
+								((uint8)(string[i] - fontData->fontSpec->offset) * fontData->fontSpec->fontSize.x) +
 
-									(((uint8)(string[i] - fontData->fontSpec->offset)
-										/ fontData->fontSpec->charactersPerLineInCharset
-										* fontData->fontSpec->charactersPerLineInCharset * fontData->fontSpec->fontSize.x)
-											* (fontData->fontSpec->fontSize.y - 1)) +
+								(((uint8)(string[i] - fontData->fontSpec->offset)
+									/ fontData->fontSpec->charactersPerLineInCharset
+									* fontData->fontSpec->charactersPerLineInCharset * fontData->fontSpec->fontSize.x)
+										* (fontData->fontSpec->fontSize.y - 1)) +
 
-									// Respective char of character
-									charOffset
-								)
-								| (printing->palette << 14);
-						}
+								// Respective char of character
+								charOffset
+							)
+							| (printing->palette << 14);
 					}
 				}
 
@@ -962,7 +972,9 @@ static void Printer::out(uint8 x, uint8 y, const char* string, const char* font)
 				}
 
 				break;
+			}
 		}
+
 		i++;
 	}
 }

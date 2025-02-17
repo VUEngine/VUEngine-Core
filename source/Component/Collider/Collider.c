@@ -150,14 +150,16 @@ bool Collider::handleMessage(Telegram telegram)
 	switch(Telegram::getMessage(telegram))
 	{
 		case kMessageColliderShow:
-
+		{
 			Collider::show(this);
 			break;
+		}
 
 		case kMessageColliderHide:
-
+		{
 			Collider::hide(this);
 			break;
+		}
 	}
 
 	return false;
@@ -170,44 +172,52 @@ void Collider::handleCommand(int32 command, va_list args)
 	switch(command)
 	{
 		case cComponentCommandReset:
-
+		{
 			Collider::discardCollisions(this);
 			break;
-			
-		case cColliderComponentCommandShow:
+		}
 
+		case cColliderComponentCommandShow:
+		{
 			Collider::show(this);
 			break;
-
+		}
+		
 		case cColliderComponentCommandHide:
-
+		{
 			Collider::hide(this);
 			break;
+		}
 
 		case cColliderComponentCommandCheckCollisions:
-
+		{
 			Collider::checkCollisions(this, (bool)va_arg(args, uint32));
 			break;
-
+		}
+		
 		case cColliderComponentCommandRegisterCollisions:
-
+		{
 			Collider::registerCollisions(this, (bool)va_arg(args, uint32));
 			break;
+		}
 
 		case cColliderComponentCommandSetLayers:
-
+		{
 			Collider::setLayers(this, (uint32)va_arg(args, uint32));
 			break;
+		}
 
 		case cColliderComponentCommandSetLayersToIgnore:
-
+		{
 			Collider::setLayersToIgnore(this, (uint32)va_arg(args, uint32));
 			break;
+		}
 
 		default:
-
+		{
 			Base::handleCommand(this, command, args);
 			break;
+		}
 	}
 }
 
@@ -358,22 +368,22 @@ CollisionResult Collider::collides(Collider collider)
 	switch(collision.result)
 	{
 		case kCollisionStarts:
-
+		{
 			Collider::collisionStarts(this, &collision);
 			break;
+		}
 
 		case kCollisionPersists:
-
+		{
 			Collider::collisionPersists(this, &collision);
 			break;
-
+		}
+		
 		case kCollisionEnds:
-
+		{
 			Collider::collisionEnds(this, &collision);
 			break;
-
-		default:
-			break;
+		}
 	}
 
 	return collision.result;

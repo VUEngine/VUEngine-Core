@@ -124,7 +124,7 @@ bool CommunicationManager::handleMessage(Telegram telegram)
 	switch(Telegram::getMessage(telegram))
 	{
 		case kMessageCheckIfRemoteIsReady:
-
+		{
 			if(CommunicationManager::isRemoteReady(this))
 			{
 				CommunicationManager::startClockSignal(this);
@@ -135,7 +135,7 @@ bool CommunicationManager::handleMessage(Telegram telegram)
 			}
 
 			return true;
-			break;
+		}
 	}
 
 	return false;
@@ -148,7 +148,7 @@ void CommunicationManager::reset()
 	switch(this->status)
 	{
 		case kCommunicationsStatusNone:
-
+		{
 			this->connected = false;
 			this->communicationMode = __COM_AS_REMOTE;
 			this->status = kCommunicationsStatusIdle;
@@ -163,15 +163,18 @@ void CommunicationManager::reset()
 
 			CommunicationManager::endCommunications(this);
 			break;
+		}
 
 		case kCommunicationsStatusSendingHandshake:
-
+		{
 			break;
+		}
 
 		default:
-
+		{
 			CommunicationManager::cancelCommunications(this);
 			break;
+		}
 	}
 }
 
@@ -445,24 +448,40 @@ void CommunicationManager::print(int32 x, int32 y)
 	switch(this->status)
 	{
 		case kCommunicationsStatusIdle:
+		{
 			helper = "Idle             ";
 			break;
+		}
+
 		case kCommunicationsStatusSendingHandshake:
+		{
 			helper = "Sending handshake         ";
 			break;
+		}
+
 		case kCommunicationsStatusWaitingPayload:
+		{
 			helper = "Waiting payload            ";
 			break;
+		}
+
 		case kCommunicationsStatusSendingPayload:
+		{
 			helper = "Sending payload            ";
 			break;
+		}
+
 		case kCommunicationsStatusSendingAndReceivingPayload:
+		{
 			helper = "Send / Recv payload        ";
 			break;
+		}
 
 		default:
+		{
 			helper = "Error            ";
 			break;
+		}
 	}
 
 	PRINT_TEXT("Status:", x, y);
@@ -623,25 +642,27 @@ void CommunicationManager::startClockSignal()
 	switch(this->broadcast)
 	{
 		case kCommunicationsBroadcastSync:
-
+		{
 			_communicationRegisters[__CCR] = __COM_DISABLE_INTERRUPT | this->communicationMode | __COM_START;
 
 			this->numberOfBytesPendingTransmission = 0;
 			this->status = kCommunicationsStatusIdle;
 			break;
+		}
 
 		case kCommunicationsBroadcastAsync:
-
+		{
 			_communicationRegisters[__CCR] = this->communicationMode | __COM_START;
 			break;
+		}
 
 		default:
-
+		{
 			// Start communications
 			_communicationRegisters[__CCR] = this->communicationMode | __COM_START;
 
 			break;
-
+		}
 	}
 }
 
@@ -1020,7 +1041,7 @@ void CommunicationManager::processInterrupt()
 	switch(status)
 	{
 		case kCommunicationsStatusSendingHandshake:
-
+		{
 			if(__COM_HANDSHAKE != _communicationRegisters[__CDRR])
 			{
 				CommunicationManager::sendHandshake(this);
@@ -1031,17 +1052,19 @@ void CommunicationManager::processInterrupt()
 			CommunicationManager::fireEvent(this, kEventCommunicationsConnected);
 			NM_ASSERT(!isDeleted(this), "CommunicationManager::processInterrupt: deleted this during kEventCommunicationsConnected");
 			CommunicationManager::removeEventListeners(this, kEventCommunicationsConnected);
+		}
 
 		default:
-
+		{
 			this->connected = !this->broadcast;
 			break;
+		}
 	}
 
 	switch(status)
 	{
 		case kCommunicationsStatusWaitingPayload:
-
+		{
 			if(this->syncReceivedByte)
 			{
 				*this->syncReceivedByte = _communicationRegisters[__CDRR];
@@ -1076,9 +1099,10 @@ void CommunicationManager::processInterrupt()
 			}
 
 			break;
+		}
 
 		case kCommunicationsStatusSendingPayload:
-
+		{
 			if(this->syncSentByte)
 			{
 				this->syncSentByte++;
@@ -1112,9 +1136,10 @@ void CommunicationManager::processInterrupt()
 			}
 
 			break;
+		}
 
 		case kCommunicationsStatusSendingAndReceivingPayload:
-
+		{
 			if(this->syncSentByte && this->syncReceivedByte)
 			{
 				*this->syncReceivedByte = _communicationRegisters[__CDRR];
@@ -1153,6 +1178,7 @@ void CommunicationManager::processInterrupt()
 			}
 
 			break;
+		}
 	}
 }
 

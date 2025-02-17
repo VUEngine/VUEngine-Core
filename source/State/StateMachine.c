@@ -318,7 +318,7 @@ void StateMachine::applyTransition()
 		switch(this->transition)
 		{
 			case kStateMachineCleanStack:
-
+			{
 				if(NULL != this->events)
 				{
 					StateMachine::fireEvent(this, kEventStateMachineWillCleanStack);
@@ -336,9 +336,10 @@ void StateMachine::applyTransition()
 					StateMachine::fireEvent(this, kEventStateMachineCleanedStack);
 				}
 				break;
+			}
 
 			case kStateMachineSwapState:
-
+			{
 				if(NULL != this->events)
 				{
 					StateMachine::fireEvent(this, kEventStateMachineWillSwapState);
@@ -352,9 +353,10 @@ void StateMachine::applyTransition()
 				}
 
 				break;
+			}
 
 			case kStateMachinePushState:
-
+			{
 				if(NULL != this->events)
 				{
 					StateMachine::fireEvent(this, kEventStateMachineWillPushState);
@@ -368,9 +370,10 @@ void StateMachine::applyTransition()
 				}
 
 				break;
+			}
 
 			case kStateMachinePopState:
-
+			{
 				if(NULL != this->events)
 				{
 					StateMachine::fireEvent(this, kEventStateMachineWillPopState);
@@ -383,6 +386,7 @@ void StateMachine::applyTransition()
 					StateMachine::fireEvent(this, kEventStateMachinePoppedState);
 				}
 				break;
+			}
 		}
 
 		this->nextState = NULL;

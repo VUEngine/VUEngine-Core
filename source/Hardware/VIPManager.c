@@ -680,14 +680,15 @@ secure void VIPManager::processInterrupt(uint16 interrupt)
 		switch(interrupt & interruptTable[i])
 		{
 			case __FRAMESTART:
-
+			{
 				this->FRAMESTARTDuringXPEND = this->processingXPEND;
 
 				VIPManager::fireEvent(this, kEventVIPManagerFRAMESTART);
 				break;
+			}
 
 			case __GAMESTART:
-
+			{
 #ifdef __ENABLE_PROFILER
 				Profiler::lap(kProfilerLapTypeStartInterrupt, NULL);
 #endif
@@ -710,9 +711,10 @@ secure void VIPManager::processInterrupt(uint16 interrupt)
 				Profiler::lap(kProfilerLapTypeVIPInterruptGAMESTARTProcess, PROCESS_NAME_RENDER);
 #endif
 				break;
+			}
 
 			case __XPEND:
-
+			{
 #ifdef __ENABLE_PROFILER
 				Profiler::lap(kProfilerLapTypeStartInterrupt, NULL);
 #endif
@@ -739,19 +741,21 @@ secure void VIPManager::processInterrupt(uint16 interrupt)
 				Profiler::lap(kProfilerLapTypeVIPInterruptXPENDProcess, PROCESS_NAME_VRAM_WRITE);
 #endif
 				break;
-
+			}
 #ifndef __SHIPPING
 			case __TIMEERR:
-
+			{
 				VIPManager::fireEvent(this, kEventVIPManagerTimeError);
 				break;
+			}
 
 			case __SCANERR:
-
+			{
 				VIPManager::fireEvent(this, kEventVIPManagerScanError);
 
-				Error::triggerException("VIPManager::servo error", NULL);		
+				Error::triggerException("VIPManager::servo error", NULL);
 				break;
+			}
 #endif
 		}
 	}
