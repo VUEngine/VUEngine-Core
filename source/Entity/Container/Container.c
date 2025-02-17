@@ -1234,6 +1234,10 @@ void Container::doTransform(const Transformation* environmentTransformation, uin
 			Container::applyEnvironmentToPosition(this, environmentTransformation);
 		}
 	}	
+	else
+	{
+		this->transformation = this->localTransformation;
+	}
 
 	Container::transformChildren(this, invalidateTransformationFlagHelper);
 
