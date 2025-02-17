@@ -115,7 +115,7 @@ abstract class ListenerObject : Object
 	/// @param message: The message's code to discard
 	void discardMessages(uint32 message);
 
-	/// Process an event that the instance is listen for.
+	/// Process an event that the instance is listening for.
 	/// @param eventFirer: ListenerObject that signals the event
 	/// @param eventCode: Code of the firing event
 	/// @return False if the listener has to be removed; true to keep it

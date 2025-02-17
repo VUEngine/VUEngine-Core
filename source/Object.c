@@ -216,13 +216,6 @@ void Object::destructor()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-const void* Object::getVTable()
-{
-	return this->vTable;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
 bool Object::mutateTo(const void* targetClass)
 {
 	const struct Object_vTable* targetClassVTable = (const struct Object_vTable*)targetClass;

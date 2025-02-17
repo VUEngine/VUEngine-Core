@@ -666,7 +666,7 @@ abstract class Object : Object
 
 	/// @publicsection
 
-	/// Cast an object at runtime to a give class.
+	/// Cast an object at runtime to a given class.
 	/// @param object: Object to cast
 	/// @param targetClassGetClassMethod: pointer to the target class' identifier method
 	/// @param baseClassGetClassMethod: pointer to the object's base class' identifier method
@@ -675,10 +675,6 @@ abstract class Object : Object
 
 	/// Class' constructor
 	void constructor();
-
- 	/// Retrieve the object's virtual table pointer
-	/// @return	Pointer to the object's virtual table pointer
-	const void* getVTable();
 
  	/// Converts the object into an instance of the target class if object's class is in the hierarchy of the target class.
 	/// @param targetClass: pointer to the target class' virtual table
