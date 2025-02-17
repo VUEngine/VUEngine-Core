@@ -48,7 +48,7 @@ void CameraMovementManager::destructor()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-bool CameraMovementManager::onEvent(ListenerObject eventFirer __attribute__((unused)), uint16 eventCode)
+bool CameraMovementManager::onEvent(ListenerObject eventFirer, uint16 eventCode)
 {
 	switch(eventCode)
 	{

@@ -873,7 +873,7 @@ Actor Stage::doAddChildActor(const PositionedActor* const positionedActor, bool 
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-bool Stage::onEvent(ListenerObject eventFirer __attribute__((unused)), uint16 eventCode)
+bool Stage::onEvent(ListenerObject eventFirer, uint16 eventCode)
 {
 	switch(eventCode)
 	{

@@ -65,7 +65,7 @@ void ObjectSprite::destructor()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-bool ObjectSprite::onEvent(ListenerObject eventFirer __attribute__((unused)), uint16 eventCode)
+bool ObjectSprite::onEvent(ListenerObject eventFirer, uint16 eventCode)
 {
 	switch(eventCode)
 	{

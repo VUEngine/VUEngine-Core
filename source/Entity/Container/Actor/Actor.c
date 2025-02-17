@@ -412,7 +412,7 @@ void Actor::destructor()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-bool Actor::onEvent(ListenerObject eventFirer __attribute__((unused)), uint16 eventCode)
+bool Actor::onEvent(ListenerObject eventFirer, uint16 eventCode)
 {
 	switch(eventCode)
 	{

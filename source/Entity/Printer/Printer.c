@@ -960,7 +960,7 @@ static void Printer::out(uint8 x, uint8 y, const char* string, const char* font)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-bool Printer::onEvent(ListenerObject eventFirer __attribute__((unused)), uint16 eventCode)
+bool Printer::onEvent(ListenerObject eventFirer, uint16 eventCode)
 {
 	switch(eventCode)
 	{

@@ -290,7 +290,7 @@ void SoundTest::destructor()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-bool SoundTest::onEvent(ListenerObject eventFirer __attribute__((unused)), uint16 eventCode)
+bool SoundTest::onEvent(ListenerObject eventFirer, uint16 eventCode)
 {
 	switch(eventCode)
 	{
