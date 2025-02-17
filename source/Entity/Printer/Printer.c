@@ -464,7 +464,11 @@ static void Printer::printSprite(int16 x, int16 y)
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #ifdef __FORCE_PRINTING_LAYER
-static void Printer::setCoordinates(int16 x __attribute__ ((unused)), int16 y __attribute__ ((unused)), int16 z __attribute__ ((unused)), int8 parallax __attribute__ ((unused)))
+static void Printer::setCoordinates
+(
+	int16 x __attribute__ ((unused)), int16 y __attribute__ ((unused)), int16 z __attribute__ ((unused)), 
+	int8 parallax __attribute__ ((unused))
+)
 {
 	Printer::setWorldCoordinates(0, 0, 0, 0);
 	Printer::setBgmapCoordinates(0, 0, 0);
@@ -481,7 +485,11 @@ static void Printer::setCoordinates(int16 x, int16 y, int16 z, int8 parallax)
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #ifdef __FORCE_PRINTING_LAYER
-static void Printer::setWorldCoordinates(int16 x __attribute__ ((unused)), int16 y __attribute__ ((unused)), int16 z __attribute__ ((unused)), int8 parallax __attribute__ ((unused)))
+static void Printer::setWorldCoordinates
+(
+	int16 x __attribute__ ((unused)), int16 y __attribute__ ((unused)), int16 z __attribute__ ((unused)), 
+	int8 parallax __attribute__ ((unused))
+)
 {
 	Printer printing = Printer::getInstance();
 
@@ -518,7 +526,10 @@ static void Printer::setWorldCoordinates(int16 x, int16 y, int16 z, int8 paralla
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #ifdef __FORCE_PRINTING_LAYER
-static void Printer::setBgmapCoordinates(int16 mx __attribute__ ((unused)), int16 my __attribute__ ((unused)), int8 mp __attribute__ ((unused)))
+static void Printer::setBgmapCoordinates
+(
+	int16 mx __attribute__ ((unused)), int16 my __attribute__ ((unused)), int8 mp __attribute__ ((unused))
+)
 {
 	Printer printing = Printer::getInstance();
 
@@ -528,7 +539,10 @@ static void Printer::setBgmapCoordinates(int16 mx __attribute__ ((unused)), int1
 	}
 }
 #else
-static void Printer::setBgmapCoordinates(int16 mx __attribute__ ((unused)), int16 my __attribute__ ((unused)), int8 mp __attribute__ ((unused)))
+static void Printer::setBgmapCoordinates
+(
+	int16 mx __attribute__ ((unused)), int16 my __attribute__ ((unused)), int8 mp __attribute__ ((unused))
+)
 {
 	Printer printing = Printer::getInstance();
 
