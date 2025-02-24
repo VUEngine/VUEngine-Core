@@ -26,7 +26,7 @@
 {%- if item.inGameType != '' -%}
 	{%- set includes = (includes.push('InGameTypes'), includes) -%}
 {%- endif -%}
-{%- if item.body.enabled -%}
+{%- if item.components.bodies | length -%}
 	{%- set includes = (includes.push('Body'), includes) -%}
 {%- endif -%}
 {%- if item.components.sprites | length -%}
@@ -536,11 +536,16 @@ ColliderROMSpec {{ colliderName }}ColliderSpec =
 {% endfor %}
 {% endif -%}
 
-{#- PRINT BODY -#}
-{% if item.body.enabled -%}
-{{ macros.sectionHeader('Body') }}
+{#- PRINT BODIES -#}
+{% set bodyNames = [] -%}
+{% if item.components.bodies | length %}
+{{ macros.sectionHeader('Bodies') }}
 
-BodyROMSpec {{ sanitizedSpecName }}BodySpec =
+{% for body in item.components.bodies -%}
+{% set bodyName = sanitizedSpecName ~ 'Body' ~ loop.index -%}
+{% set bodyNames = (bodyNames.push(bodyName), bodyNames) -%}
+
+BodyROMSpec {{ bodyName }}BodySpec =
 {
 	// Component
 	{
@@ -555,35 +560,37 @@ BodyROMSpec {{ sanitizedSpecName }}BodySpec =
 	true,
 
 	// Mass
-	__F_TO_FIX10_6({{ (item.body.mass | float).toFixed(3) }}f),
+	__F_TO_FIX10_6({{ (body.mass | float).toFixed(3) }}f),
 
 	// Friction
-	__F_TO_FIX10_6({{ (item.body.friction | float).toFixed(3) }}f),
+	__F_TO_FIX10_6({{ (body.friction | float).toFixed(3) }}f),
 
 	// Bounciness
-	__F_TO_FIX10_6({{ (item.body.bounciness | float).toFixed(3) }}f),
+	__F_TO_FIX10_6({{ (body.bounciness | float).toFixed(3) }}f),
 
 	// Maximum velocity
-	{ __I_TO_FIXED({{ item.body.maximumVelocity.x }}), __I_TO_FIXED({{ item.body.maximumVelocity.y }}), __I_TO_FIXED({{ item.body.maximumVelocity.z }}) },
+	{ __I_TO_FIXED({{ body.maximumVelocity.x }}), __I_TO_FIXED({{ body.maximumVelocity.y }}), __I_TO_FIXED({{ body.maximumVelocity.z }}) },
 
 	// Maximum speed
-	__I_TO_FIX10_6({{ item.body.maximumSpeed }}),
+	__I_TO_FIX10_6({{ body.maximumSpeed }}),
 
 	// Axises on which the body is subject to gravity
-	{% if item.body.gravityAxes.length -%}
-	{{- item.body.gravityAxes | join(' | ') -}}
+	{% if body.gravityAxes.length -%}
+	{{- body.gravityAxes | join(' | ') -}}
 	{%- else -%}
 	__NO_AXIS
 	{%- endif -%},
 
 	// Axises around which to rotate the owner when syncronizing with body
-	{% if item.body.rotationAxes.length -%}
-	{{- item.body.rotationAxes | join(' | ') -}}
+	{% if body.rotationAxes.length -%}
+	{{- body.rotationAxes | join(' | ') -}}
 	{%- else -%}
 	__NO_AXIS
 	{%- endif %}
 };
-{% endif -%}
+
+{% endfor %}
+{%- endif -%}
 
 {# PRINT MUTATORS -#}
 {% set mutatorNames = [] -%}
@@ -612,7 +619,7 @@ MutatorROMSpec {{ mutatorName }}MutatorSpec =
 };
 
 {% endfor %}
-{%- endif %}
+{% endif %}
 
 {#- PRINT CHILDREN -#}
 {%- if item.components.children | length %}
@@ -645,9 +652,9 @@ ComponentSpec* const {{ sanitizedSpecName }}ComponentSpecs[] =
 	{% for colliderName in colliderNames -%}
 	(ComponentSpec*)&{{ colliderName }}ColliderSpec,
 	{% endfor -%}
-	{% if item.body.enabled -%}
-	(ComponentSpec*)&{{ sanitizedSpecName }}BodySpec,
-	{% endif -%}
+	{% for bodyName in bodyNames -%}
+	(ComponentSpec*)&{{ bodyName }}BodySpec,
+	{% endfor -%}
 	{% for mutatorName in mutatorNames -%}
 	(ComponentSpec*)&{{ mutatorName }}MutatorSpec,
 	{% endfor -%}

@@ -6,10 +6,6 @@
 			"extraProperties": {
 				"type": "object",
 				"properties": {
-					"enabled": {
-						"type": "boolean",
-						"default": false
-					},
 					"extraInfo": {
 						"type": "string"
 					},
@@ -81,6 +77,57 @@
 									"items": {
 										"type": "integer",
 										"minimum": 0
+									}
+								}
+							},
+							"additionalProperties": false
+						}
+					},
+					"bodies": {
+						"type": "array",
+						"items": {
+							"type": "object",
+							"properties": {
+								"name": {
+									"type": "string"
+								},
+								"mass": {
+									"type": "number"
+								},
+								"friction": {
+									"type": "number"
+								},
+								"bounciness": {
+									"type": "number"
+								},
+								"maximumSpeed": {
+									"type": "number"
+								},
+								"maximumVelocity": {
+									"type": "object",
+									"properties": {
+										"x": {
+											"type": "number"
+										},
+										"y": {
+											"type": "number"
+										},
+										"z": {
+											"type": "number"
+										}
+									},
+									"additionalProperties": false
+								},
+								"gravityAxes": {
+									"type": "array",
+									"items": {
+										"type": "string"
+									}
+								},
+								"rotationAxes": {
+									"type": "array",
+									"items": {
+										"type": "string"
 									}
 								}
 							},
@@ -580,62 +627,9 @@
 				"type": "string",
 				"default": "None"
 			},
-			"body": {
-				"type": "object",
-				"properties": {
-					"enabled": {
-						"type": "boolean",
-						"default": false
-					},
-					"mass": {
-						"type": "number"
-					},
-					"friction": {
-						"type": "number"
-					},
-					"bounciness": {
-						"type": "number"
-					},
-					"maximumSpeed": {
-						"type": "number"
-					},
-					"maximumVelocity": {
-						"type": "object",
-						"properties": {
-							"x": {
-								"type": "number"
-							},
-							"y": {
-								"type": "number"
-							},
-							"z": {
-								"type": "number"
-							}
-						},
-						"additionalProperties": false
-					},
-					"gravityAxes": {
-						"type": "array",
-						"items": {
-							"type": "string"
-						}
-					},
-					"rotationAxes": {
-						"type": "array",
-						"items": {
-							"type": "string"
-						}
-					}
-				},
-				"additionalProperties": false
-			},
 			"logic": {
 				"type": "object",
 				"properties": {
-					"enabled": {
-						"type": "boolean",
-						"default": false
-					},
 					"customAllocator": {
 						"type": "string"
 					},
