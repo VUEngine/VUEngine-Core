@@ -50,6 +50,9 @@ enum CameraFX
 /// Manages camera's special effects, brightness transitions, etc.
 singleton class CameraEffectManager : ListenerObject
 {
+	/// Current brightness
+	Brightness currentBrightness;
+
 	/// Target brightness for the current fade effect
 	Brightness fxFadeTargetBrightness;
 

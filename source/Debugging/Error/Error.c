@@ -91,7 +91,7 @@ static void Error::triggerException(char* message __attribute__((unused)), char*
 		32
 	};
 	
-	VIPManager::configureBrightness(&brightness);
+	VIPManager::configureBrightness(brightness);
 
 	VIPManager::configureBackgroundColor(__COLOR_BLACK);
 
@@ -186,7 +186,7 @@ static void Error::triggerException(char* message __attribute__((unused)), char*
 		{__DIMM_VALUE_2, __DIMM_VALUE_2, __DIMM_VALUE_2, __DIMM_VALUE_2}
 	};
 	
-	VIPManager::configurePalettes(&paletteConfig);
+	VIPManager::configurePalettes(paletteConfig);
 
 	// Trap the game here
 	while(true);

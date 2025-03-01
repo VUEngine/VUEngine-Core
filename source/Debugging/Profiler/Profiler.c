@@ -96,7 +96,7 @@ static void Profiler::initialize()
 		((uint8*)&paletteConfig.bgmap)[__PRINTING_PALETTE] = 0xE0;
 	}
 
-	VIPManager::configurePalettes(&paletteConfig);
+	VIPManager::configurePalettes(paletteConfig);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

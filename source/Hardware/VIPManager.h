@@ -219,15 +219,15 @@ singleton class VIPManager : ListenerObject
 
 	/// Configure the VIP's palettes with the provided configuration.
 	/// @param paletteConfig: Palettes configuration
-	static void configurePalettes(const PaletteConfig* paletteConfig);
+	static void configurePalettes(PaletteConfig paletteConfig);
 
 	/// Setup the column table with the provided spec.
 	/// @param columnTableSpec: Specification for the configuration of the column table
-	static void setupColumnTable(const ColumnTableSpec* columnTableSpec);
+	static void configureColumnTable(const ColumnTableSpec* columnTableSpec);
 
-	/// Configure the brightness registers with the provided configuration.
+	/// Set the brightness registers with the provided configuration.
 	/// @param brightness: Brightness configuration
-	static void configureBrightness(const Brightness* brightness);
+	static void configureBrightness(Brightness brightness);
 
 	/// Configure the column table brightness repeat values.
 	/// @param brightnessRepeat: Brightness configuration
@@ -242,6 +242,10 @@ singleton class VIPManager : ListenerObject
 
 	/// Lower the brightness to the minimum.
 	static void lowerBrightness();
+
+	/// Retrieve the current brightness from the hardware registers.
+	/// @return Brightness configuration
+	static Brightness getBrightness();
 
 	/// Retrieve the registry of the interrupts being processed.
 	/// @return The registry of the interrupts being processed
@@ -273,8 +277,8 @@ singleton class VIPManager : ListenerObject
 	/// Configure the brightness registers with the provided configuration.
 	void configure
 	(
-		uint8 backgroundColor, const Brightness* brightness, const BrightnessRepeatSpec* brightnessRepeat,
-		const PaletteConfig* paletteConfig, PostProcessingEffect* postProcessingEffects
+		uint8 backgroundColor, Brightness, const BrightnessRepeatSpec* brightnessRepeat,
+		PaletteConfig paletteConfig, PostProcessingEffect* postProcessingEffects
 	);
 
 	/// Start memore refresh cycle

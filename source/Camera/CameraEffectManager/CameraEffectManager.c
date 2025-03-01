@@ -50,8 +50,6 @@
 
 friend class Camera;
 
-extern volatile uint16* _vipRegisters __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE;
-
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PUBLIC METHODS
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -60,15 +58,17 @@ extern volatile uint16* _vipRegisters __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUT
 
 void CameraEffectManager::constructor()
 {
+	// Always explicitly call the base's constructor 
+	Base::constructor();
+
 	// Init class variables
 	this->fxFadeTargetBrightness = (Brightness){0, 0, 0};
 	this->fxFadeDelay = 0;
 	this->fxFadeScope = NULL;
 	this->fadeEffectIncrement = __CAMERA_EFFECT_FADE_INCREMENT;
 	this->startingANewEffect = false;
-	
-	// Always explicitly call the base's constructor 
-	Base::constructor();
+	this->currentBrightness = (Brightness){0, 0, 0};
+	VIPManager::configureBrightness(this->currentBrightness);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -147,13 +147,15 @@ void CameraEffectManager::startEffect(int32 effect, va_list args)
 	{
 		case kShow:
 		{
-			CameraEffectManager::showCamera(this);
+			this->currentBrightness = CameraEffectManager::getDefaultBrightness(this);
+			VIPManager::configureBrightness(this->currentBrightness);
 			break;
 		}
 
 		case kHide:
 		{
-			CameraEffectManager::hideCamera(this);
+			this->currentBrightness = (Brightness){0, 0, 0};
+			VIPManager::configureBrightness(this->currentBrightness);
 			break;
 		}
 		
@@ -166,6 +168,8 @@ void CameraEffectManager::startEffect(int32 effect, va_list args)
 
 		case kFadeTo:
 		{
+			this->currentBrightness = VIPManager::getBrightness();
+
 			CameraEffectManager::fxFadeAsyncStart
 			(
 				this,
@@ -202,13 +206,14 @@ void CameraEffectManager::stopEffect(int32 effect)
 
 void CameraEffectManager::fxFadeStart(int32 effect, int32 delay)
 {
-	Brightness defaultBrightness = CameraEffectManager::getDefaultBrightness(this);
-
 	switch(effect)
 	{
 		case kFadeIn:
+		{
+			this->currentBrightness = (Brightness){0, 0, 0};
+			VIPManager::configureBrightness(this->currentBrightness);
 
-			CameraEffectManager::hideCamera(this);
+			Brightness defaultBrightness = CameraEffectManager::getDefaultBrightness(this);
 
 			TimerManager::repeatMethodCall
 			(
@@ -217,21 +222,25 @@ void CameraEffectManager::fxFadeStart(int32 effect, int32 delay)
 				ListenerObject::safeCast(this),
 				(void (*)(ListenerObject, uint32))&CameraEffectManager::fxFadeIn
 			);
+
 			break;
+		}
 
 		case kFadeOut:
-
-			CameraEffectManager::showCamera(this);
+		{
+			this->currentBrightness = CameraEffectManager::getDefaultBrightness(this);
+			VIPManager::configureBrightness(this->currentBrightness);
 
 			TimerManager::repeatMethodCall
 			(
-				defaultBrightness.darkRed,
-				(delay * defaultBrightness.darkRed),
+				this->currentBrightness.darkRed,
+				(delay * this->currentBrightness.darkRed),
 				ListenerObject::safeCast(this),
 				(void (*)(ListenerObject, uint32))&CameraEffectManager::fxFadeOut
 			);
 
 			break;
+		}
 	}
 }
 
@@ -256,9 +265,7 @@ void CameraEffectManager::fxFadeAsyncStart
 	{
 		this->fxFadeTargetBrightness = *targetBrightness;
 	}
-
-	this->fxFadeTargetBrightness = CameraEffectManager::convertBrightnessToVipFormat(this, this->fxFadeTargetBrightness);
-
+	
 	// Set effect parameters
 	this->fxFadeDelay = (0 >= delayBetweenSteps) ? 1 : (uint8)(delayBetweenSteps);
 
@@ -268,11 +275,11 @@ void CameraEffectManager::fxFadeAsyncStart
 
 		if
 		(
-			0 == _vipRegisters[__BRTA]
+			0 == this->currentBrightness.darkRed
 			&&
-			0 == _vipRegisters[__BRTB]
+			0 == this->currentBrightness.mediumRed
 			&&
-			0 == _vipRegisters[__BRTC]
+			0 == this->currentBrightness.brightRed
 		)
 		{		
 			CameraEffectManager::addEventListener(this, scope, kEventEffectFadeInComplete);
@@ -318,42 +325,22 @@ void CameraEffectManager::fxFadeAsyncStop()
 
 void CameraEffectManager::fxFadeIn(uint32 call __attribute__((unused)))
 {
-	Brightness incrementalBrightness =
-	{
-		_vipRegisters[__BRTA] + 1,
-		_vipRegisters[__BRTB] + 2,
-		_vipRegisters[__BRTC] - _vipRegisters[__BRTB] - _vipRegisters[__BRTA] + 1
-	};
+	this->currentBrightness.darkRed += 1;
+	this->currentBrightness.mediumRed += 2;
+	this->currentBrightness.brightRed += 1;
 	
-	VIPManager::configureBrightness(&incrementalBrightness);
-
-#ifdef __DIMM_FOR_PROFILING
-
-		_vipRegisters[__GPLT0] = 0x50;
-		_vipRegisters[__GPLT1] = 0x50;
-		_vipRegisters[__GPLT2] = 0x54;
-		_vipRegisters[__GPLT3] = 0x54;
-		_vipRegisters[__JPLT0] = 0x54;
-		_vipRegisters[__JPLT1] = 0x54;
-		_vipRegisters[__JPLT2] = 0x54;
-		_vipRegisters[__JPLT3] = 0x54;
-
-		_vipRegisters[0x30 | __PRINTING_PALETTE] = 0xE4;
-#endif
+	VIPManager::configureBrightness(this->currentBrightness);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void CameraEffectManager::fxFadeOut()
 {
-	Brightness decrementalBrightness =
-	{
-		(_vipRegisters[__BRTA] > 0) ? _vipRegisters[__BRTA] - 1 : 0,
-		(_vipRegisters[__BRTB] > 1) ? _vipRegisters[__BRTB] - 2 : 0,
-		(_vipRegisters[__BRTC] > 0) ? _vipRegisters[__BRTC] - 1 : 0
-	};
+	this->currentBrightness.darkRed -= 1;
+	this->currentBrightness.mediumRed -= 2;
+	this->currentBrightness.brightRed -= 1;
 	
-	VIPManager::configureBrightness(&decrementalBrightness);
+	VIPManager::configureBrightness(this->currentBrightness);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -363,24 +350,24 @@ void CameraEffectManager::fxFadeAsync()
 	ASSERT(this, "CameraEffectManager::fxFadeAsync: invalid this");
 
 	// Note: need to cast brightness registers to uint8 because only their lower 8 bits are valid
-	bool lightRedDone 	= (uint8)_vipRegisters[__BRTC] == this->fxFadeTargetBrightness.brightRed;
-	bool mediumRedDone 	= (uint8)_vipRegisters[__BRTB] == this->fxFadeTargetBrightness.mediumRed;
-	bool darkRedDone 	= (uint8)_vipRegisters[__BRTA] == this->fxFadeTargetBrightness.darkRed;
+	bool lightRedDone 	= this->currentBrightness.brightRed == this->fxFadeTargetBrightness.brightRed;
+	bool mediumRedDone 	= this->currentBrightness.mediumRed == this->fxFadeTargetBrightness.mediumRed;
+	bool darkRedDone 	= this->currentBrightness.darkRed == this->fxFadeTargetBrightness.darkRed;
 
 	// Fade light red
 	if(!lightRedDone)
 	{
-		if((uint8)_vipRegisters[__BRTC] + this->fadeEffectIncrement < this->fxFadeTargetBrightness.brightRed)
+		if(this->currentBrightness.brightRed + this->fadeEffectIncrement * 4 < this->fxFadeTargetBrightness.brightRed)
 		{
-			_vipRegisters[__BRTC] += this->fadeEffectIncrement;
+			this->currentBrightness.brightRed += this->fadeEffectIncrement * 4;
 		}
-		else if((uint8)_vipRegisters[__BRTC] > this->fxFadeTargetBrightness.brightRed + this->fadeEffectIncrement)
+		else if(this->currentBrightness.brightRed > this->fxFadeTargetBrightness.brightRed + this->fadeEffectIncrement * 4)
 		{
-			_vipRegisters[__BRTC] -= this->fadeEffectIncrement;
+			this->currentBrightness.brightRed -= this->fadeEffectIncrement * 4;
 		}
 		else
 		{
-			_vipRegisters[__BRTC] = this->fxFadeTargetBrightness.brightRed;
+			this->currentBrightness.brightRed = this->fxFadeTargetBrightness.brightRed;
 			lightRedDone = true;
 		}
 	}
@@ -390,17 +377,17 @@ void CameraEffectManager::fxFadeAsync()
 		// Fade medium red
 		for(uint16 i = 0; i < 2; i++)
 		{
-			if((uint8)_vipRegisters[__BRTB] + this->fadeEffectIncrement < this->fxFadeTargetBrightness.mediumRed)
+			if(this->currentBrightness.mediumRed + this->fadeEffectIncrement < this->fxFadeTargetBrightness.mediumRed)
 			{
-				_vipRegisters[__BRTB] += this->fadeEffectIncrement;
+				this->currentBrightness.mediumRed += this->fadeEffectIncrement;
 			}
-			else if((uint8)_vipRegisters[__BRTB] > this->fxFadeTargetBrightness.mediumRed + this->fadeEffectIncrement)
+			else if(this->currentBrightness.mediumRed > this->fxFadeTargetBrightness.mediumRed + this->fadeEffectIncrement)
 			{
-				_vipRegisters[__BRTB] -= this->fadeEffectIncrement;
+				this->currentBrightness.mediumRed -= this->fadeEffectIncrement;
 			}
 			else
 			{
-				_vipRegisters[__BRTB] = this->fxFadeTargetBrightness.mediumRed;
+				this->currentBrightness.mediumRed = this->fxFadeTargetBrightness.mediumRed;
 				mediumRedDone = true;
 				break;
 			}
@@ -410,20 +397,22 @@ void CameraEffectManager::fxFadeAsync()
 	if(!darkRedDone)
 	{
 		// Fade dark red
-		if((uint8)_vipRegisters[__BRTA] + this->fadeEffectIncrement < this->fxFadeTargetBrightness.darkRed)
+		if(this->currentBrightness.darkRed + this->fadeEffectIncrement < this->fxFadeTargetBrightness.darkRed)
 		{
-			_vipRegisters[__BRTA] += this->fadeEffectIncrement;
+			this->currentBrightness.darkRed += this->fadeEffectIncrement;
 		}
-		else if((uint8)_vipRegisters[__BRTA] > this->fxFadeTargetBrightness.darkRed + this->fadeEffectIncrement)
+		else if(this->currentBrightness.darkRed > this->fxFadeTargetBrightness.darkRed + this->fadeEffectIncrement)
 		{
-			_vipRegisters[__BRTA] -= this->fadeEffectIncrement;
+			this->currentBrightness.darkRed -= this->fadeEffectIncrement;
 		}
 		else
 		{
-			_vipRegisters[__BRTA] = this->fxFadeTargetBrightness.darkRed;
+			this->currentBrightness.darkRed = this->fxFadeTargetBrightness.darkRed;
 			darkRedDone = true;
 		}
 	}
+
+	VIPManager::configureBrightness(this->currentBrightness);
 
 	// Finish effect or call next round
 	if(lightRedDone && mediumRedDone && darkRedDone)
@@ -439,21 +428,6 @@ void CameraEffectManager::fxFadeAsync()
 			CameraEffectManager::removeEventListeners(this, kEventEffectFadeInComplete);
 			CameraEffectManager::removeEventListeners(this, kEventEffectFadeOutComplete);
 		}
-
-#ifdef __DIMM_FOR_PROFILING
-
-		_vipRegisters[__GPLT0] = 0x50;
-		_vipRegisters[__GPLT1] = 0x50;
-		_vipRegisters[__GPLT2] = 0x54;
-		_vipRegisters[__GPLT3] = 0x54;
-		_vipRegisters[__JPLT0] = 0x54;
-		_vipRegisters[__JPLT1] = 0x54;
-		_vipRegisters[__JPLT2] = 0x54;
-		_vipRegisters[__JPLT3] = 0x54;
-
-		_vipRegisters[0x30 | __PRINTING_PALETTE] = 0xE4;
-#endif
-
 	}
 	else
 	{
@@ -461,29 +435,5 @@ void CameraEffectManager::fxFadeAsync()
 	}
 }
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-Brightness CameraEffectManager::convertBrightnessToVipFormat(Brightness brightness)
-{
-	brightness.brightRed -= (brightness.darkRed + brightness.mediumRed);
-
-	return brightness;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void CameraEffectManager::showCamera()
-{
-	Brightness defaultBrightness = CameraEffectManager::getDefaultBrightness(this);
-	defaultBrightness = CameraEffectManager::convertBrightnessToVipFormat(this, defaultBrightness);
-	VIPManager::configureBrightness(&defaultBrightness);
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void CameraEffectManager::hideCamera()
-{
-	VIPManager::lowerBrightness(VIPManager::getInstance());
-}
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

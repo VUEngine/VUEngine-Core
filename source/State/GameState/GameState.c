@@ -1064,9 +1064,9 @@ void GameState::configureGraphics()
 	(
 		VIPManager::getInstance(), 
 		stageSpec->rendering.colorConfig.backgroundColor,
-		&stageSpec->rendering.colorConfig.brightness,
+		stageSpec->rendering.colorConfig.brightness,
 		stageSpec->rendering.colorConfig.brightnessRepeat,
-		&stageSpec->rendering.paletteConfig,
+		stageSpec->rendering.paletteConfig,
 		stageSpec->postProcessingEffects
 	);
 
@@ -1139,10 +1139,10 @@ void GameState::debugging()
 #endif	
 
 #ifdef __DEBUGGING_MEMORY_POOL
+	MemoryPool::printResumedUsage(1, 1);
+#else
 #ifdef __DEBUGGING_MEMORY_POOL_DETAILED
 	MemoryPool::printDetailedUsage(1, 1);
-#else
-	MemoryPool::printResumedUsage(1, 1);
 #endif
 #endif
 

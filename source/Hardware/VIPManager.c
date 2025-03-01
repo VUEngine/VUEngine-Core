@@ -308,22 +308,22 @@ static void VIPManager::setFrameCycle(uint8 frameCycle __attribute__((unused)))
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void VIPManager::configurePalettes(const PaletteConfig* paletteConfig)
+static void VIPManager::configurePalettes(PaletteConfig paletteConfig)
 {
-	_vipRegisters[__GPLT0] = paletteConfig->bgmap.gplt0;
-	_vipRegisters[__GPLT1] = paletteConfig->bgmap.gplt1;
-	_vipRegisters[__GPLT2] = paletteConfig->bgmap.gplt2;
-	_vipRegisters[__GPLT3] = paletteConfig->bgmap.gplt3;
+	_vipRegisters[__GPLT0] = paletteConfig.bgmap.gplt0;
+	_vipRegisters[__GPLT1] = paletteConfig.bgmap.gplt1;
+	_vipRegisters[__GPLT2] = paletteConfig.bgmap.gplt2;
+	_vipRegisters[__GPLT3] = paletteConfig.bgmap.gplt3;
 
-	_vipRegisters[__JPLT0] = paletteConfig->object.jplt0;
-	_vipRegisters[__JPLT1] = paletteConfig->object.jplt1;
-	_vipRegisters[__JPLT2] = paletteConfig->object.jplt2;
-	_vipRegisters[__JPLT3] = paletteConfig->object.jplt3;
+	_vipRegisters[__JPLT0] = paletteConfig.object.jplt0;
+	_vipRegisters[__JPLT1] = paletteConfig.object.jplt1;
+	_vipRegisters[__JPLT2] = paletteConfig.object.jplt2;
+	_vipRegisters[__JPLT3] = paletteConfig.object.jplt3;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void VIPManager::setupColumnTable(const ColumnTableSpec* columnTableSpec)
+static void VIPManager::configureColumnTable(const ColumnTableSpec* columnTableSpec)
 {
 	int32 i, value;
 
@@ -347,13 +347,28 @@ static void VIPManager::setupColumnTable(const ColumnTableSpec* columnTableSpec)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void VIPManager::configureBrightness(const Brightness* brightness)
+static void VIPManager::configureBrightness(Brightness brightness)
 {
-	while(_vipRegisters[__XPSTTS] & __XPBSY);
+	VIPManager vipManager = VIPManager::getInstance();
+
+	while(vipManager->isDrawingAllowed && 0 != (_vipRegisters[__XPSTTS] & __XPBSY));
 	
-	_vipRegisters[__BRTA] = brightness->darkRed;
-	_vipRegisters[__BRTB] = brightness->mediumRed;
-	_vipRegisters[__BRTC] = brightness->brightRed - (brightness->mediumRed + brightness->darkRed);
+	_vipRegisters[__BRTA] = brightness.darkRed;
+	_vipRegisters[__BRTB] = brightness.mediumRed;
+	_vipRegisters[__BRTC] = brightness.brightRed - (brightness.mediumRed + brightness.darkRed);
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+static Brightness VIPManager::getBrightness()
+{
+	return 	
+		(Brightness)
+		{
+			_vipRegisters[__BRTA],
+			_vipRegisters[__BRTB],
+			_vipRegisters[__BRTC] + (_vipRegisters[__BRTB] + _vipRegisters[__BRTA])
+		};
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -411,7 +426,10 @@ static void VIPManager::configurePostProcessingEffects(PostProcessingEffect* pos
 
 static void VIPManager::upBrightness()
 {
-	while(_vipRegisters[__XPSTTS] & __XPBSY);
+	VIPManager vipManager = VIPManager::getInstance();
+
+	while(vipManager->isDrawingAllowed && 0 != (_vipRegisters[__XPSTTS] & __XPBSY));
+
 	_vipRegisters[__BRTA] = 32;
 	_vipRegisters[__BRTB] = 64;
 	_vipRegisters[__BRTC] = 32;
@@ -421,7 +439,10 @@ static void VIPManager::upBrightness()
 
 static void VIPManager::lowerBrightness()
 {
-	while(_vipRegisters[__XPSTTS] & __XPBSY);
+	VIPManager vipManager = VIPManager::getInstance();
+
+	while(vipManager->isDrawingAllowed && 0 != (_vipRegisters[__XPSTTS] & __XPBSY));
+
 	_vipRegisters[__BRTA] = 0;
 	_vipRegisters[__BRTB] = 0;
 	_vipRegisters[__BRTC] = 0;
@@ -468,15 +489,15 @@ secure void VIPManager::reset()
 	VIPManager::removePostProcessingEffects();
 
 	VIPManager::setFrameCycle(__FRAME_CYCLE);
-	VIPManager::setupColumnTable(NULL);
+	VIPManager::configureColumnTable(NULL);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 secure void VIPManager::configure
 (
-	uint8 backgroundColor, const Brightness* brightness, const BrightnessRepeatSpec* brightnessRepeat, 
-	const PaletteConfig* paletteConfig, PostProcessingEffect* postProcessingEffects
+	uint8 backgroundColor, Brightness brightness, const BrightnessRepeatSpec* brightnessRepeat, 
+	PaletteConfig paletteConfig, PostProcessingEffect* postProcessingEffects
 )
 {
 	VIPManager::configureBackgroundColor(backgroundColor);
@@ -509,7 +530,8 @@ secure void VIPManager::startDrawing()
 
 	VIPManager::enableInterrupts(this, __GAMESTART | __XPEND);
 
-	while(_vipRegisters[__XPSTTS] & __XPBSY);
+	while(0 != (_vipRegisters[__XPSTTS] & __XPBSY));
+	
 	_vipRegisters[__XPCTRL] |= __XPEN;
 }
 
@@ -521,7 +543,7 @@ secure void VIPManager::resumeDrawing()
 	{
 		if(kVIPManagerFavorStability == this->drawingStrategy)
 		{
-			while(_vipRegisters[__XPSTTS] & __XPBSY);
+			while(0 != (_vipRegisters[__XPSTTS] & __XPBSY));
 		}
 
 		_vipRegisters[__XPCTRL] |= __XPEN;
@@ -536,7 +558,7 @@ secure void VIPManager::suspendDrawing()
 	
 	if(kVIPManagerFavorStability == this->drawingStrategy)
 	{
-		while(_vipRegisters[__XPSTTS] & __XPBSY);
+		while(this->isDrawingAllowed && 0 != (_vipRegisters[__XPSTTS] & __XPBSY));
 	}
 
 	_vipRegisters[__XPCTRL] &= ~__XPEN;
@@ -546,12 +568,13 @@ secure void VIPManager::suspendDrawing()
 
 secure void VIPManager::stopDrawing()
 {
-	this->isDrawingAllowed = false;
-
 	VIPManager::disableInterrupts(this);
 
-	while(_vipRegisters[__XPSTTS] & __XPBSY);
+	while(this->isDrawingAllowed && 0 != (_vipRegisters[__XPSTTS] & __XPBSY));
+
 	_vipRegisters[__XPCTRL] &= ~__XPEN;
+
+	this->isDrawingAllowed = false;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -646,6 +669,7 @@ void VIPManager::constructor()
 	this->allowInterrupts = true;
 
 	VIPManager::setFrameCycle(__FRAME_CYCLE);
+	VIPManager::lowerBrightness();
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
