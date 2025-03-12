@@ -1,5 +1,4 @@
 {
-	"enabled": false,
 	"file": ".audio",
 	"schema": {
 		"title": "Audio",
@@ -294,7 +293,9 @@
 			},
 			"speed": {
 				"type": "integer",
-				"default": 300
+				"default": 16,
+				"minimum": 1,
+				"maximum": 65
 			},
 			"loop": {
 				"type": "boolean",
