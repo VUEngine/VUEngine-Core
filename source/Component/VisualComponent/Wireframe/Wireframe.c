@@ -125,7 +125,7 @@ bool Wireframe::prepareForRender(Vector3D* relativePosition, const Vector3D* cam
 	else
 	{
 		int16 cameraViewingAngle = __CAMERA_VIEWING_ANGLE;
-
+/*
 		if(__FIXED_SQUARE(__PIXELS_TO_METERS(__SCREEN_WIDTH << 1)) < distanceToCamera)
 		{
 			if
@@ -142,7 +142,7 @@ bool Wireframe::prepareForRender(Vector3D* relativePosition, const Vector3D* cam
 				return __COLOR_BLACK != this->color;
 			}
 		}
-		
+*/		
 		if(__FIXED_SQUARE((__DIRECT_DRAW_INTERLACED_THRESHOLD << 1) < distanceToCamera))
 		{
 			this->color = __COLOR_BLACK;
