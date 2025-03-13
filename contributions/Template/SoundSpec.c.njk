@@ -115,23 +115,23 @@ const int8 {{ sanitizedSpecName }}ModulationData{{ loop.index0 }}[] =
 	{%- for tick in pattern.events | keys -%}
 		{%- set event = pattern.events[tick] -%}
 		{%- set eventList = [] -%}
-		{#- Ensure events for sweep/mod and noise channels are played the respective channels #}
+		{#- Ensure events for sweep/mod and noise channels are played the respective channels -#}
 		{{- macros.append(eventList, 'kSoundTrackEventSweepMod', channel.type == 'sweepMod') -}}
 		{{- macros.append(eventList, 'kSoundTrackEventNoise', channel.type == 'noise') -}}
 		{{- macros.append(eventList, 'kSoundTrackEventStart', isFirstEvent) -}}
 
-		{%- if event['note'] -%}
-			{#- "PLAY NOTE" EVENT #}
+		{%- if event['note'] is defined -%}
+			{#- "PLAY NOTE" EVENT -#}
 			{{- macros.append(eventList, 'kSoundTrackEventSxFQ', not isFirstEvent) -}}
 			{{- macros.append(valuesSxFQ, SxFQ(notesLookup[event['note']])) -}}
 		{%- endif -%}
-		{%- if event['volume'] -%}
-			{#- "VOLUME CHANGE" EVENT #}
+		{%- if event['volume'] is defined -%}
+			{#- "VOLUME CHANGE" EVENT -#}
 			{{- macros.append(eventList, 'kSoundTrackEventSxLRV', not isFirstEvent) -}}
 			{{- macros.append(valuesSxLRV, event['volume'] | intToHex(2)) -}}
 		{%- endif -%}
-		{%- if event['instrument'] -%}
-			{#- "INSTRUMENT CHANGE" EVENT #}
+		{%- if event['instrument'] is defined -%}
+			{#- "INSTRUMENT CHANGE" EVENT -#}
 			{%- set newInstrumentId = event['instrument'] -%}
 			{%- set newInstrument = item.instruments[newInstrumentId] -%}
 			{{- macros.append(eventList, 'kSoundTrackEventSxINT') -}}
@@ -149,7 +149,7 @@ const int8 {{ sanitizedSpecName }}ModulationData{{ loop.index0 }}[] =
 			{{- macros.append(eventList, 'kSoundTrackEventSxMOD') -}}
 			{{- macros.append(valuesSxMOD, [S5MOD(newInstrumentId,  newInstrument.sweepMod, newInstrument.type)]) -}}
 		{%- endif -%}
-		{#- TODO: add other event types #}
+		{#- TODO: add other event types -#}
 
 		{{- macros.append(valuesKeyframes, '{' ~ (tick - previousEventOffset) ~ ', ' ~ eventList | join(' | ') ~ '}') -}}
 		{%- set isFirstEvent = false -%}
