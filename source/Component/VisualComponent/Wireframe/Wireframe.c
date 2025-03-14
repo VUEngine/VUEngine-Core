@@ -84,7 +84,7 @@ bool Wireframe::isVisible()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-bool Wireframe::prepareForRender(Vector3D* relativePosition, const Vector3D* cameraDirection)
+bool Wireframe::prepareForRender(Vector3D* relativePosition, const Vector3D* cameraDirection __attribute__((unused)))
 {
 	Vector3D displacement = Vector3D::rotate(this->displacement, this->transformation->rotation);
 	*relativePosition = Vector3D::sub(Vector3D::sum(this->transformation->position, displacement), *_cameraPosition);
@@ -124,8 +124,8 @@ bool Wireframe::prepareForRender(Vector3D* relativePosition, const Vector3D* cam
 	}
 	else
 	{
-		int16 cameraViewingAngle = __CAMERA_VIEWING_ANGLE;
-/*
+/*		int16 cameraViewingAngle = __CAMERA_VIEWING_ANGLE;
+
 		if(__FIXED_SQUARE(__PIXELS_TO_METERS(__SCREEN_WIDTH << 1)) < distanceToCamera)
 		{
 			if
