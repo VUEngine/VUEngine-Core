@@ -218,6 +218,10 @@ class Sound : ListenerObject
 	/// Retrieve the frequency delta added to the VSU's frequency registers.
 	uint16 getFrequencyDelta();
 
+	/// Retrieve the sound track's elapsed ticks.
+	/// @return Elapsed ticks since playback started
+	uint32 getTotalElapsedTicks();
+
 	/// Check if the sound is playing.
 	/// @return True if playback is going on
 	bool isPlaying();

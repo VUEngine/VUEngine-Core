@@ -150,6 +150,14 @@ uint32 SoundTrack::getTicks()
 	return this->ticks;
 }
 
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+uint32 SoundTrack::getTotalElapsedTicks()
+{
+	return __FIX7_9_TO_I(this->totalElapsedTicks);
+}
+
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 float SoundTrack::getElapsedTicksPercentaje()
@@ -234,6 +242,7 @@ void SoundTrack::reset()
 
 	this->finished = false;
 	this->elapsedTicks = 0;
+	this->totalElapsedTicks = 0;
 	this->nextElapsedTicksTarget = 0;
 }
 
@@ -288,6 +297,7 @@ bool SoundTrack::updateNative
 )
 {
 	this->elapsedTicks += tickStep;
+	this->totalElapsedTicks += tickStep;
 
 	if(this->elapsedTicks < this->nextElapsedTicksTarget)
 	{

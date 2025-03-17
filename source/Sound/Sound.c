@@ -456,6 +456,13 @@ uint16 Sound::getFrequencyDelta()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+uint32 Sound::getTotalElapsedTicks()
+{
+	return NULL != this->mainSoundTrack? SoundTrack::getTotalElapsedTicks(this->mainSoundTrack) : 0;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 bool Sound::isPlaying()
 {
 	return kSoundPlaying == this->state;
