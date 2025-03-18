@@ -191,7 +191,7 @@ enum SoundEvents
 /// @memberof SoundTrack
 typedef struct SoundTrackKeyframe
 {
-	/// Tick
+	/// Amount of thicks that the sound effect must active
 	uint16 tick;
 
 	/// Events flag
