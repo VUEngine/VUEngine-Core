@@ -3,12 +3,20 @@
 
 {%- import 'templates/partials/macros.njk' as macros -%}
 
-{%- macro SxINT(enabled, interval) -%}
-	{{ (interval.value + interval.enabled * 32 + enabled * 128 ) | intToHex(2) }}
+{%- macro SxINT(channelEnabled, interval) -%}
+	{{ hexFromBitsArray([
+		[channelEnabled, 1],
+		[NULL, 1],
+		[interval.enabled, 1],
+		[interval.value, 5]
+	]) }}
 {%- endmacro -%}
 
 {%- macro SxLRV(volume) -%}
-	{{ (volume.right + volume.left * 16) | intToHex(2) }}
+	{{ hexFromBitsArray([
+		[volume.left, 4],
+		[volume.right, 4]
+	]) }}
 {%- endmacro -%}
 
 {%- macro SxFQ(frequency) -%}
@@ -16,14 +24,32 @@
 {%- endmacro -%}
 
 {%- macro SxEV0(envelope) -%}
-	{{ (envelope.stepTime + envelope.direction * 8 + envelope.initialValue * 16) | intToHex(2) }}
+	{{ hexFromBitsArray([
+		[envelope.initialValue, 4],
+		[envelope.direction, 1],
+		[envelope.stepTime, 3]
+	]) }}
 {%- endmacro -%}
 
 {%- macro SxEV1(envelope, sweepMod, tap, type) -%}
 	{%- if (type == 'noise') -%}
-		{{ (envelope.enabled + envelope.repeat * 2 + tap * 16) | intToHex(2) }}
+		{{ hexFromBitsArray([
+			[NULL, 1],
+			[tap, 3],
+			[NULL, 2],
+			[envelope.repeat, 1],
+			[envelope.enabled, 1]
+		]) }}
 	{%- else -%}
-		{{ (envelope.enabled + envelope.repeat * 2 + sweepMod.function * 16 + sweepMod.repeat * 32 + sweepMod.enabled * 64) | intToHex(2) }}
+		{{ hexFromBitsArray([
+			[NULL, 1],
+			[sweepMod.enabled, 1],
+			[sweepMod.repeat, 1],
+			[sweepMod.function, 1],
+			[NULL, 2],
+			[envelope.repeat, 1],
+			[envelope.enabled, 1]
+		]) }}
 	{%- endif -%}
 {%- endmacro -%}
 
@@ -37,7 +63,12 @@
 {%- endmacro -%}
 
 {%- macro S5SWP(sweepMod) -%}
-	{{ (sweepMod.shift + sweepMod.direction * 8 + sweepMod.interval * 16 + sweepMod.frequency * 128) | intToHex(2) }}
+	{{ hexFromBitsArray([
+		[sweepMod.frequency, 1],
+		[sweepMod.interval, 3],
+		[sweepMod.direction, 1],
+		[sweepMod.shift, 3]
+	]) }}
 {%- endmacro -%}
 
 {%- macro S5MOD(instrumentId, sweepMod, type) -%}
@@ -70,8 +101,15 @@
 
 {{ macros.sectionHeader('Declarations') }}
 
+{#- Render modulation data for all sweep/mod instruments -#}
+{%- set isFirstModulationData = true -%}
 {%- for instrument in item.instruments -%}
 {%- if instrument.type == 'sweepMod' and instrument.sweepMod.function %}
+
+{%- if isFirstModulationData %}
+
+// Modulation Data
+{%- endif %}
 
 const int8 {{ sanitizedSpecName }}ModulationData{{ loop.index0 }}[] =
 {
@@ -82,21 +120,26 @@ const int8 {{ sanitizedSpecName }}ModulationData{{ loop.index0 }}[] =
 	{%- endif -%}
 	{%- endfor %}
 };
+{%- set isFirstModulationData = false -%}
 {%- endif -%}
 {%- endfor -%}
 
+{#- Render all channels -#}
 {%- for channel in item.channels -%}
 {%- if channel.sequence | length -%}
+
+{#- Initial configuration -#}
 {%- set initialInstrument = item.instruments[channel.instrument] -%}
 {%- set valuesSxINT = [SxINT(true, initialInstrument.interval)] -%}
 {%- set valuesSxLRV = [SxLRV(initialInstrument.volume)] -%}
 {%- set valuesSxEV0 = [SxEV0(initialInstrument.envelope)] -%}
 {%- set valuesSxEV1 = [SxEV1(initialInstrument.envelope, initialInstrument.sweepMod, initialInstrument.tap, initialInstrument.type)] -%}
-{%- set valuesSxFQ = [] -%}
+{%- set valuesSxFQ = ['0x0000'] -%}
 {%- set valuesSxRAM = [SxRAM(initialInstrument.waveform, initialInstrument.type)] -%}
 {%- set valuesSxSWP = [S5SWP(initialInstrument.sweepMod)] -%}
-{%- set valuesSxMOD = [S5MOD(channel.instrument,  initialInstrument.sweepMod, initialInstrument.type)] -%}
-{%- set valuesKeyframes = [] -%}
+{%- set valuesSxMOD = [S5MOD(channel.instrument, initialInstrument.sweepMod, initialInstrument.type)] -%}
+
+{%- set keyframes = [] -%}
 {#- 
 	Compute all register values and keyframes. We do this in a single loop because:
 	a) it's cleaner to define handling for the different events in a single place
@@ -104,60 +147,97 @@ const int8 {{ sanitizedSpecName }}ModulationData{{ loop.index0 }}[] =
 	c) we have to keep track of previous state, because end user effects allow to edit individual values, 
 	   e.g. envelope.enabled, while the spec wants the whole register values
 -#}
-{%- set isFirstEvent = true -%}
-{%- set previousEventOffset = 0 -%}
 {%- for patternId in channel.sequence -%}
 	{%- set pattern = channel.patterns[patternId] -%}
-	{%- set sequenceLength = pattern.bar | replace | float * item.noteResolution -%}
-	{%- if not loop.first -%}
-		{%- set previousEventOffset = (previousEventOffset - sequenceLength) -%}
-	{%- endif -%}
-	{%- for tick in pattern.events | keys -%}
-		{%- set event = pattern.events[tick] -%}
-		{%- set eventList = [] -%}
-		{#- Ensure events for sweep/mod and noise channels are played the respective channels -#}
-		{{- macros.append(eventList, 'kSoundTrackEventSweepMod', channel.type == 'sweepMod') -}}
-		{{- macros.append(eventList, 'kSoundTrackEventNoise', channel.type == 'noise') -}}
-		{{- macros.append(eventList, 'kSoundTrackEventStart', isFirstEvent) -}}
+	{%- set patternLength = pattern.bar | replace | float * item.noteResolution -%}
 
-		{%- if event['note'] is defined -%}
+	{#- Prepare events array -#}
+	{%- set events = [] -%}
+	{%- for tick, event in pattern.events -%}
+		{{- macros.append(events, {tick: tick, event: event}) -}}
+	{%- endfor -%}
+
+	{#- Prepend the start event -#}
+	{%- if loop.first -%}
+		{%- set startEvent = {
+			tick: 0, 
+			event: { start: 1 }
+		} -%}
+		{{- macros.prepend(events, startEvent) -}}
+	{%- endif -%}
+
+	{#- Increase duration of last event when pattern is empty -#}
+	{%- if not (events | length) and (keyframes | length) -%}	
+		{%- set keyframe = { 
+			duration: ((keyframes | last).duration | int) + patternLength,
+			flags: (keyframes | last).flags 
+		} -%}
+		{%- set keyframes = keyframes | setArrayIndex((keyframes | length) - 1, keyframe) -%}
+	{%- endif -%}
+
+	{%- for event in events -%}
+		{%- set flags = [] -%}
+
+		{%- if event.event['start'] is defined -%}
+			{#- "START" EVENT -#}
+			{{- macros.append(flags, 'kSoundTrackEventStart') -}}
+		{%- endif -%}
+
+		{%- if event.event['note'] is defined -%}
 			{#- "PLAY NOTE" EVENT -#}
-			{{- macros.append(eventList, 'kSoundTrackEventSxFQ', not isFirstEvent) -}}
-			{{- macros.append(valuesSxFQ, SxFQ(notesLookup[event['note']])) -}}
+			{{- macros.append(flags, 'kSoundTrackEventSxFQ') -}}
+			{{- macros.append(valuesSxFQ, SxFQ(notesLookup[event.event['note']])) -}}
 		{%- endif -%}
-		{%- if event['volume'] is defined -%}
+
+		{%- if event.event['volume'] is defined -%}
 			{#- "VOLUME CHANGE" EVENT -#}
-			{{- macros.append(eventList, 'kSoundTrackEventSxLRV', not isFirstEvent) -}}
-			{{- macros.append(valuesSxLRV, event['volume'] | intToHex(2)) -}}
+			{{- macros.append(flags, 'kSoundTrackEventSxLRV') -}}
+			{{- macros.append(valuesSxLRV, event.event['volume'] | intToHex(2)) -}}
 		{%- endif -%}
-		{%- if event['instrument'] is defined -%}
+
+		{%- if event.event['instrument'] is defined -%}
 			{#- "INSTRUMENT CHANGE" EVENT -#}
 			{%- set newInstrumentId = event['instrument'] -%}
 			{%- set newInstrument = item.instruments[newInstrumentId] -%}
-			{{- macros.append(eventList, 'kSoundTrackEventSxINT') -}}
+			{{- macros.append(flags, 'kSoundTrackEventSxINT') -}}
 			{{- macros.append(valuesSxINT, [SxINT(true, newInstrument.interval)]) -}}
-			{{- macros.append(eventList, 'kSoundTrackEventSxLRV') -}}
+			{{- macros.append(flags, 'kSoundTrackEventSxLRV') -}}
 			{{- macros.append(valuesSxLRV, [SxLRV(newInstrument.volume)]) -}}
-			{{- macros.append(eventList, 'kSoundTrackEventSxEV0') -}}
+			{{- macros.append(flags, 'kSoundTrackEventSxEV0') -}}
 			{{- macros.append(valuesSxEV0, [SxEV0(newInstrument.envelope)]) -}}
-			{{- macros.append(eventList, 'kSoundTrackEventSxEV1') -}}
+			{{- macros.append(flags, 'kSoundTrackEventSxEV1') -}}
 			{{- macros.append(valuesSxEV1, [SxEV1(newInstrument.envelope, newInstrument.sweepMod, newInstrument.tap, newInstrument.type)]) -}}
-			{{- macros.append(eventList, 'kSoundTrackEventSxRAM') -}}
+			{{- macros.append(flags, 'kSoundTrackEventSxRAM') -}}
 			{{- macros.append(valuesSxRAM, [SxRAM(newInstrument.waveform, newInstrument.type)]) -}}
-			{{- macros.append(eventList, 'kSoundTrackEventSxSWP') -}}
+			{{- macros.append(flags, 'kSoundTrackEventSxSWP') -}}
 			{{- macros.append(valuesSxSWP, [S5SWP(newInstrument.sweepMod)]) -}}
-			{{- macros.append(eventList, 'kSoundTrackEventSxMOD') -}}
+			{{- macros.append(flags, 'kSoundTrackEventSxMOD') -}}
 			{{- macros.append(valuesSxMOD, [S5MOD(newInstrumentId,  newInstrument.sweepMod, newInstrument.type)]) -}}
 		{%- endif -%}
+
 		{#- TODO: add other event types -#}
 
-		{{- macros.append(valuesKeyframes, '{' ~ (tick - previousEventOffset) ~ ', ' ~ eventList | join(' | ') ~ '}') -}}
-		{%- set isFirstEvent = false -%}
-		{%- set previousEventOffset = tick -%}
+		{#- Ensure events for sweep/mod and noise are played on the respective channels -#}
+		{{- macros.append(flags, 'kSoundTrackEventSweepMod', channel.type == 'sweepMod') -}}
+		{{- macros.append(flags, 'kSoundTrackEventNoise', channel.type == 'noise') -}}
+
+		{#- Add first event's duration to previous pattern's last event duration -#}
+		{%- if loop.first and (keyframes | length) -%}
+			{%- set keyframe = { 
+				duration: ((keyframes | last).duration | int) + (event.tick | int),
+				flags: (keyframes | last).flags 
+			} -%}
+			{%- set keyframes = keyframes | setArrayIndex((keyframes | length) - 1, keyframe) -%}
+		{%- endif -%}
+
+		{#- Finally, append to list of keyframes -#}
+		{%- set duration = events[loop.index].tick - event.tick -%}
+		{%- if loop.last -%}
+			{%- set duration = patternLength - event.tick -%}
+		{%- endif -%}
+		{%- set keyframe = { duration: duration, flags: flags } -%}
+		{{- macros.append(keyframes, keyframe) -}}
 	{%- endfor -%}
-	{%- if loop.last -%}
-		{{- macros.append(valuesKeyframes, '{' ~ (sequenceLength - previousEventOffset) ~ ', kSoundTrackEventEnd}') -}}
-	{%- endif -%}
 {%- endfor %}
 
 // Channel {{ (channel.id + 1) }}
@@ -204,7 +284,10 @@ const int8* const {{ sanitizedSpecName }}SoundTrack{{ channel.id }}SxMOD[] =
 
 const SoundTrackKeyframe {{ sanitizedSpecName }}SoundTrack{{ channel.id }}Keyframes[] =
 {
-	{{ printValueList(valuesKeyframes, 1) }}
+	{% for keyframe in keyframes -%}
+	{{'{'}}{{ keyframe.duration }}, {{ keyframe.flags | join(' | ') }}{{'},'}}
+	{% endfor -%}
+	{0, kSoundTrackEventEnd}, 
 };
 
 SoundTrackROMSpec {{ sanitizedSpecName }}SoundTrack{{ channel.id }} =
