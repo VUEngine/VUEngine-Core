@@ -23,7 +23,7 @@
 {{ macros.sectionHeader('Macros') }}
 
 {% for macro in config.macros | sort(false, false, "name") -%}
-{% if macro.enabled -%}
+{% if macro.enabled and macro.name -%}
 {% set macroName = macro.name | toUpperSnakeCase -%}
 {% if macro.type == 'define' -%}
 #define {{ macroName }} 
