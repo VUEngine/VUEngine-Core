@@ -155,7 +155,7 @@ uint32 SoundTrack::getTicks()
 
 uint32 SoundTrack::getTotalElapsedTicks()
 {
-	return __FIX7_9_TO_I(this->totalElapsedTicks);
+	return __FIX7_9_EXT_TO_I(this->totalElapsedTicks);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
