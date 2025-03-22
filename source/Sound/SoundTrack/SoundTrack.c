@@ -93,24 +93,7 @@ void SoundTrack::resume()
 
 void SoundTrack::rewind()
 {
-	if(this->finished)
-	{
-		this->cursor = 0;
-		this->cursorSxINT = 0;
-		this->cursorSxLRV = 0;
-		this->cursorSxFQ = 0;
-		this->cursorSxEV0 = 0;
-		this->cursorSxEV1 = 0;
-		this->cursorSxRAM = 0;
-		this->cursorSxSWP = 0;
-		this->cursorSxMOD = 0;
-
-		this->finished = false;
-	}
-	else
-	{
-		SoundTrack::reset(this);
-	}
+	SoundTrack::reset(this);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
