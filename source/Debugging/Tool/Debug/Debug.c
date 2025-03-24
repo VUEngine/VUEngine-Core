@@ -1280,7 +1280,7 @@ void Debug::showSramPage(int32 increment __attribute__ ((unused)), int32 x __att
 
 	totalPages = __TOTAL_SAVE_RAM >> 7;
 
-	extern uint32 _sramBssEnd;
+	extern uint32 _sramBssStart;
 
 	this->sramPage += increment;
 
@@ -1294,7 +1294,7 @@ void Debug::showSramPage(int32 increment __attribute__ ((unused)), int32 x __att
 	}
 
 	// Get sram base address
-	uint16* startAddress = (uint16*)&_sramBssEnd;
+	uint16* startAddress = (uint16*)&_sramBssStart;
 
 	// Print status header
 	Printer::text("SRAM STATUS", 1, y++, NULL);
