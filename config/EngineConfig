@@ -1,161 +1,161 @@
 {
-    "_version": "0.6.0",
-    "affine": {
-        "maxRowsPerCall": 16,
-        "maxScale": 2
-    },
-    "animation": {
-        "maxAnimationFunctionNameLength": 16,
-        "maxFramesPerAnimationFunction": 16
-    },
-    "brightness": {
-        "brightRed": 128,
-        "darkRed": 32,
-        "fadeDelay": 16,
-        "fadeIncrement": 1,
-        "mediumRed": 64
-    },
-    "chars": {
-        "totalChars": 2048
-    },
-    "debug": {
-        "diagnostics": "NONE",
-        "enableProfiler": false,
-        "stackHeadroom": 1000
-    },
-    "exceptions": {
-        "position": {
-            "x": 0,
-            "y": 0
-        }
-    },
-    "frameRate": {
-        "frameCycle": 0,
-        "timerResolution": 10
-    },
-    "macros": [],
-    "math": {
-        "fixedPointPrecision": 6
-    },
-    "memoryPools": {
-        "pools": [
-            {
-                "objects": 450,
-                "size": 16
-            },
-            {
-                "objects": 700,
-                "size": 20
-            },
-            {
-                "objects": 350,
-                "size": 28
-            },
-            {
-                "objects": 30,
-                "size": 40
-            },
-            {
-                "objects": 60,
-                "size": 68
-            },
-            {
-                "objects": 50,
-                "size": 80
-            },
-            {
-                "objects": 40,
-                "size": 108
-            },
-            {
-                "objects": 40,
-                "size": 116
-            },
-            {
-                "objects": 10,
-                "size": 140
-            },
-            {
-                "objects": 10,
-                "size": 152
-            },
-            {
-                "objects": 1,
-                "size": 164
-            }
-        ],
-        "warningThreshold": 85
-    },
-    "optics": {
-        "baseFactor": 32,
-        "cameraNearPlane": 0,
-        "horizontalViewPointCenter": 192,
-        "maximumXViewDistance": 2048,
-        "maximumYViewDistance": 4096,
-        "scalingModifierFactor": 1,
-        "screenDepth": 2048,
-        "screenHeight": 224,
-        "screenWidth": 384,
-        "useLegacyCoordinateProjection": false,
-        "verticalViewPointCenter": 112
-    },
-    "palettes": {
-        "bgMapPalette0": "11100100",
-        "bgMapPalette1": "11100000",
-        "bgMapPalette2": "10010000",
-        "bgMapPalette3": "01010000",
-        "objectPalette0": "11100100",
-        "objectPalette1": "11100000",
-        "objectPalette2": "10010000",
-        "objectPalette3": "01010000",
-        "printingPalette": 0
-    },
-    "physics": {
-        "angleToPreventColliderDisplacement": 10,
-        "collidersMaximumSize": 256,
-        "frictionForceFactorPower": 2,
-        "gravity": 10,
-        "highPrecision": false,
-        "maximumBouncinessCoefficient": 1,
-        "maximumFrictionCoefficient": 1,
-        "stopBouncingVelocityThreshold": 48,
-        "stopVelocityThreshold": 8,
-        "timeElapsedDivisor": 2
-    },
-    "random": {
-        "addUserInputAndTimeToRandomSeed": false,
-        "seedCycles": 2
-    },
-    "sound": {
-        "earDisplacement": 384,
-        "stereoAttenuationDistance": 2048
-    },
-    "sprite": {
-        "hackBgmapSpriteHeight": true,
-        "spritesRotateIn3D": true,
-        "totalLayers": 32,
-        "totalObjects": 1024
-    },
-    "sram": {
-        "totalSram": 8192
-    },
-    "texture": {
-        "bgmapsPerSegments": 14,
-        "paramTableSegments": 1,
-        "printing": {
-            "offset": {
-                "parallax": 0,
-                "x": 0,
-                "y": 0
-            },
-            "printableArea": 1792
-        }
-    },
-    "wireframes": {
-        "frustumExtensionPower": 0,
-        "interlacedThreshold": 4096,
-        "lineShrinkingPadding": 0,
-        "sort": false,
-        "verticalLineOptimization": false
-    }
+	"_version": "0.6.0",
+	"affine": {
+		"maxRowsPerCall": 16,
+		"maxScale": 2
+	},
+	"animation": {
+		"maxAnimationFunctionNameLength": 16,
+		"maxFramesPerAnimationFunction": 16
+	},
+	"brightness": {
+		"brightRed": 128,
+		"darkRed": 32,
+		"fadeDelay": 16,
+		"fadeIncrement": 1,
+		"mediumRed": 64
+	},
+	"chars": {
+		"totalChars": 2048
+	},
+	"debug": {
+		"diagnostics": "NONE",
+		"enableProfiler": false,
+		"stackHeadroom": 1000
+	},
+	"exceptions": {
+		"position": {
+			"x": 0,
+			"y": 0
+		}
+	},
+	"frameRate": {
+		"frameCycle": 0,
+		"timerResolution": 10
+	},
+	"macros": [],
+	"math": {
+		"fixedPointPrecision": 6
+	},
+	"memoryPools": {
+		"pools": [
+			{
+				"objects": 450,
+				"size": 16
+			},
+			{
+				"objects": 700,
+				"size": 20
+			},
+			{
+				"objects": 350,
+				"size": 28
+			},
+			{
+				"objects": 30,
+				"size": 40
+			},
+			{
+				"objects": 60,
+				"size": 68
+			},
+			{
+				"objects": 50,
+				"size": 80
+			},
+			{
+				"objects": 40,
+				"size": 108
+			},
+			{
+				"objects": 40,
+				"size": 116
+			},
+			{
+				"objects": 10,
+				"size": 140
+			},
+			{
+				"objects": 10,
+				"size": 152
+			},
+			{
+				"objects": 1,
+				"size": 164
+			}
+		],
+		"warningThreshold": 85
+	},
+	"optics": {
+		"baseFactor": 32,
+		"cameraNearPlane": 0,
+		"horizontalViewPointCenter": 192,
+		"maximumXViewDistance": 2048,
+		"maximumYViewDistance": 4096,
+		"scalingModifierFactor": 1,
+		"screenDepth": 2048,
+		"screenHeight": 224,
+		"screenWidth": 384,
+		"useLegacyCoordinateProjection": false,
+		"verticalViewPointCenter": 112
+	},
+	"palettes": {
+		"bgMapPalette0": "11100100",
+		"bgMapPalette1": "11100000",
+		"bgMapPalette2": "10010000",
+		"bgMapPalette3": "01010000",
+		"objectPalette0": "11100100",
+		"objectPalette1": "11100000",
+		"objectPalette2": "10010000",
+		"objectPalette3": "01010000",
+		"printingPalette": 0
+	},
+	"physics": {
+		"angleToPreventColliderDisplacement": 10,
+		"collidersMaximumSize": 256,
+		"frictionForceFactorPower": 2,
+		"gravity": 10,
+		"highPrecision": false,
+		"maximumBouncinessCoefficient": 1,
+		"maximumFrictionCoefficient": 1,
+		"stopBouncingVelocityThreshold": 48,
+		"stopVelocityThreshold": 8,
+		"timeElapsedDivisor": 2
+	},
+	"random": {
+		"addUserInputAndTimeToRandomSeed": false,
+		"seedCycles": 2
+	},
+	"sound": {
+		"earDisplacement": 384,
+		"stereoAttenuationDistance": 2048
+	},
+	"sprite": {
+		"hackBgmapSpriteHeight": true,
+		"spritesRotateIn3D": true,
+		"totalLayers": 32,
+		"totalObjects": 1024
+	},
+	"sram": {
+		"totalSram": 8192
+	},
+	"texture": {
+		"bgmapsPerSegments": 14,
+		"paramTableSegments": 1,
+		"printing": {
+			"offset": {
+				"parallax": 0,
+				"x": 0,
+				"y": 0
+			},
+			"printableArea": 1792
+		}
+	},
+	"wireframes": {
+		"frustumExtensionPower": 0,
+		"interlacedThreshold": 4096,
+		"lineShrinkingPadding": 0,
+		"sort": false,
+		"verticalLineOptimization": false
+	}
 }

@@ -1,9 +1,9 @@
 {
-    "_version": "0.6.0",
-    "gameCodeId": "VU",
-    "gameCodeLanguage": "E",
-    "gameCodeSystem": "V",
-    "gameTitle": "VUENGINE PROJECT",
-    "makerCode": "VU",
-    "revision": 0
+	"_version": "0.6.0",
+	"gameCodeId": "VU",
+	"gameCodeLanguage": "E",
+	"gameCodeSystem": "V",
+	"gameTitle": "VUENGINE PROJECT",
+	"makerCode": "VU",
+	"revision": 0
 }
