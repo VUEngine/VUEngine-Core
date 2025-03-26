@@ -8,8 +8,6 @@
 const int8 {{ sanitizedSpecName }}WaveForm[] =
 {
 	{% for value in item.values -%}
-	{%- if value - 1 < 10 -%}{{ ' ' }} {%- endif -%}
-	{{- value - 1 -}}{{- ', '-}} 
-	{%- if loop.index % 16 == 0 and not loop.last %}{{ "\n	" }}{% endif -%}
+		{{- value - 1 -}}{{- ', '-}} 
 	{%- endfor %}
 };

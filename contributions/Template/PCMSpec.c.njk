@@ -7,10 +7,10 @@
 {{ macros.sectionHeader('Includes') }}
 
 #include <Sound.h>
-#include <WaveForms.h>
 
 {{ macros.sectionHeader('Declarations') }}
 
+extern const int8 PCMWaveForm[];
 #define {{ sanitizedSpecName }}SoundTrackLength {{ soundData | length }}
 
 {{ macros.sectionHeader('Definitions') }}

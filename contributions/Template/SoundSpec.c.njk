@@ -243,27 +243,27 @@ const int8 {{ sanitizedSpecName }}ModulationData{{ loop.index0 }}[] =
 
 const uint8 {{ sanitizedSpecName }}SoundTrack{{ channel.id }}SxINT[] =
 {
-	{{ printValueList(valuesSxINT) }}
+	{{ printValueList(valuesSxINT, 22) }}
 };
 
 const uint8 {{ sanitizedSpecName }}SoundTrack{{ channel.id }}SxLRV[] =
 {
-	{{ printValueList(valuesSxLRV) }}
+	{{ printValueList(valuesSxLRV, 22) }}
 };
 
 const uint16 {{ sanitizedSpecName }}SoundTrack{{ channel.id }}SxFQ[] =
 {
-	{{ printValueList(valuesSxFQ, 12) }}
+	{{ printValueList(valuesSxFQ, 16) }}
 };
 
 const uint8 {{ sanitizedSpecName }}SoundTrack{{ channel.id }}SxEV0[] =
 {
-	{{ printValueList(valuesSxEV0) }}
+	{{ printValueList(valuesSxEV0, 22) }}
 };
 
 const uint8 {{ sanitizedSpecName }}SoundTrack{{ channel.id }}SxEV1[] =
 {
-	{{ printValueList(valuesSxEV1) }}
+	{{ printValueList(valuesSxEV1, 22) }}
 };
 
 const int8* const {{ sanitizedSpecName }}SoundTrack{{ channel.id }}SxRAM[] =
@@ -273,7 +273,7 @@ const int8* const {{ sanitizedSpecName }}SoundTrack{{ channel.id }}SxRAM[] =
 
 const uint8 {{ sanitizedSpecName }}SoundTrack{{ channel.id }}SxSWP[] =
 {
-	{{ printValueList(valuesSxSWP) }}
+	{{ printValueList(valuesSxSWP, 22) }}
 };
 
 const int8* const {{ sanitizedSpecName }}SoundTrack{{ channel.id }}SxMOD[] =
