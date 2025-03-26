@@ -132,7 +132,7 @@ const int8 {{ sanitizedSpecName }}ModulationData{{ loop.index0 }}[] =
 {#- Initial configuration -#}
 {%- set initialInstrument = item.instruments[channel.instrument] -%}
 {%- set valuesSxINT = [SxINT(true, initialInstrument.interval)] -%}
-{%- set valuesSxLRV = [SxLRV(initialInstrument.volume)] -%}
+{%- set valuesSxLRV = ['0x00'] -%} {#- Explicit silent note. Initial instrument's volume is set on the first event. -#}
 {%- set valuesSxEV0 = [SxEV0(initialInstrument.envelope)] -%}
 {%- set valuesSxEV1 = [SxEV1(initialInstrument.envelope, initialInstrument.sweepMod, initialInstrument.tap, initialInstrument.type)] -%}
 {%- set valuesSxFQ = ['0x0000'] -%}
@@ -206,6 +206,13 @@ const int8 {{ sanitizedSpecName }}ModulationData{{ loop.index0 }}[] =
 		{%- endif -%}
 
 		{#- TODO: add other event types -#}
+
+		{#- Set initial volume on the very first event (after the start event) -#}
+		{#- Skip if the event sets the volume explicitly -#}
+		{%- if (keyframes | length) == 1 and not 'kSoundTrackEventSxLRV' in flags -%}
+			{{- macros.append(flags, 'kSoundTrackEventSxLRV') -}}
+			{{- macros.append(valuesSxLRV, SxLRV(initialInstrument.volume)) -}}
+		{%- endif -%}
 
 		{#- Ensure events for sweep/mod and noise are played on the respective channels -#}
 		{{- macros.append(flags, 'kSoundTrackEventSweepMod', channel.type == 'sweepMod') -}}
