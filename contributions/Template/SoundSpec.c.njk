@@ -140,7 +140,10 @@ const int8 {{ sanitizedSpecName }}ModulationData{{ loop.index0 }}[] =
 {%- set valuesSxSWP = [S5SWP(initialInstrument.sweepMod)] -%}
 {%- set valuesSxMOD = [S5MOD(channel.instrument, initialInstrument.sweepMod, initialInstrument.type)] -%}
 
-{%- set keyframes = [] -%}
+{%- set keyframes = [{ 
+	duration: 0,
+	flags: ['kSoundTrackEventStart'] 
+}] -%}
 {#- 
 	Compute all register values and keyframes. We do this in a single loop because:
 	a) it's cleaner to define handling for the different events in a single place
@@ -158,15 +161,6 @@ const int8 {{ sanitizedSpecName }}ModulationData{{ loop.index0 }}[] =
 		{{- macros.append(events, {tick: tick, event: event}) -}}
 	{%- endfor -%}
 
-	{#- Prepend the start event -#}
-	{%- if loop.first -%}
-		{%- set startEvent = {
-			tick: 0, 
-			event: { start: 1 }
-		} -%}
-		{{- macros.prepend(events, startEvent) -}}
-	{%- endif -%}
-
 	{#- Increase duration of last event when pattern is empty -#}
 	{%- if not (events | length) and (keyframes | length) -%}	
 		{%- set keyframe = { 
@@ -178,11 +172,6 @@ const int8 {{ sanitizedSpecName }}ModulationData{{ loop.index0 }}[] =
 
 	{%- for event in events -%}
 		{%- set flags = [] -%}
-
-		{%- if event.event['start'] is defined -%}
-			{#- "START" EVENT -#}
-			{{- macros.append(flags, 'kSoundTrackEventStart') -}}
-		{%- endif -%}
 
 		{%- if event.event['note'] is defined -%}
 			{#- "PLAY NOTE" EVENT -#}
@@ -232,8 +221,10 @@ const int8 {{ sanitizedSpecName }}ModulationData{{ loop.index0 }}[] =
 		{%- endif -%}
 
 		{#- Finally, append to list of keyframes -#}
+		{#- Use duration from _next_ tick -#}
 		{%- set duration = events[loop.index].tick - event.tick -%}
 		{%- if loop.last -%}
+			{#- ... or the current pattern's remaining number of ticks -#}
 			{%- set duration = patternLength - event.tick -%}
 		{%- endif -%}
 		{%- set keyframe = { duration: duration, flags: flags } -%}
