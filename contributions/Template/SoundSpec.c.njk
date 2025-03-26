@@ -187,22 +187,22 @@ const int8 {{ sanitizedSpecName }}ModulationData{{ loop.index0 }}[] =
 
 		{%- if event.event['instrument'] is defined -%}
 			{#- "INSTRUMENT CHANGE" EVENT -#}
-			{%- set newInstrumentId = event['instrument'] -%}
+			{%- set newInstrumentId = event.event['instrument'] -%}
 			{%- set newInstrument = item.instruments[newInstrumentId] -%}
 			{{- macros.append(flags, 'kSoundTrackEventSxINT') -}}
-			{{- macros.append(valuesSxINT, [SxINT(true, newInstrument.interval)]) -}}
+			{{- macros.append(valuesSxINT, SxINT(true, newInstrument.interval)) -}}
 			{{- macros.append(flags, 'kSoundTrackEventSxLRV') -}}
-			{{- macros.append(valuesSxLRV, [SxLRV(newInstrument.volume)]) -}}
+			{{- macros.append(valuesSxLRV, SxLRV(newInstrument.volume)) -}}
 			{{- macros.append(flags, 'kSoundTrackEventSxEV0') -}}
-			{{- macros.append(valuesSxEV0, [SxEV0(newInstrument.envelope)]) -}}
+			{{- macros.append(valuesSxEV0, SxEV0(newInstrument.envelope)) -}}
 			{{- macros.append(flags, 'kSoundTrackEventSxEV1') -}}
-			{{- macros.append(valuesSxEV1, [SxEV1(newInstrument.envelope, newInstrument.sweepMod, newInstrument.tap, newInstrument.type)]) -}}
+			{{- macros.append(valuesSxEV1, SxEV1(newInstrument.envelope, newInstrument.sweepMod, newInstrument.tap, newInstrument.type)) -}}
 			{{- macros.append(flags, 'kSoundTrackEventSxRAM') -}}
-			{{- macros.append(valuesSxRAM, [SxRAM(newInstrument.waveform, newInstrument.type)]) -}}
+			{{- macros.append(valuesSxRAM, SxRAM(newInstrument.waveform, newInstrument.type)) -}}
 			{{- macros.append(flags, 'kSoundTrackEventSxSWP') -}}
-			{{- macros.append(valuesSxSWP, [S5SWP(newInstrument.sweepMod)]) -}}
+			{{- macros.append(valuesSxSWP, S5SWP(newInstrument.sweepMod)) -}}
 			{{- macros.append(flags, 'kSoundTrackEventSxMOD') -}}
-			{{- macros.append(valuesSxMOD, [S5MOD(newInstrumentId,  newInstrument.sweepMod, newInstrument.type)]) -}}
+			{{- macros.append(valuesSxMOD, S5MOD(newInstrumentId,  newInstrument.sweepMod, newInstrument.type)) -}}
 		{%- endif -%}
 
 		{#- TODO: add other event types -#}
