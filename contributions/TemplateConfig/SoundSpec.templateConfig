@@ -4,5 +4,5 @@
 		"root": "file"
 	}],
 	"template": "contributions/Template/SoundSpec.c.njk",
-	"itemSpecific": "Audio"
+	"itemSpecific": "Sound"
 }

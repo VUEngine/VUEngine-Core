@@ -1,7 +1,7 @@
 {
-	"file": ".audio",
+	"file": ".sound",
 	"schema": {
-		"title": "Audio",
+		"title": "Sound",
 		"properties": {
 			"name": {
 				"type": "string",
@@ -317,7 +317,7 @@
 		"required": []
 	},
 	"uiSchema": {
-		"type": "MusicEditor",
+		"type": "SoundEditor",
 		"scope": "#"
 	},
 	"icon": "codicon codicon-music",
