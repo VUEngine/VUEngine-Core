@@ -167,6 +167,11 @@ secure void SoundManager::updateSounds()
 
 secure void SoundManager::playSounds(uint32 elapsedMicroseconds)
 {
+	if(NULL != this->events)
+	{
+		SoundManager::fireEvent(this, kEventPlaySounds);
+	}
+	
 #ifdef __RELEASE
 	// This is an aggressive optimization that bypasses the SoundTrack's methods altogether
 	// to keep the PCM playback viable on hardware

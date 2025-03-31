@@ -59,6 +59,8 @@ enum Events
 	kEventActorBounced,
 	kEventActorCannotMove,
 
+	kEventPlaySounds,
+
 	kEventSoundFinished,
 	kEventSoundReleased,
 
