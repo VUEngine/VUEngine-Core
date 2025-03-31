@@ -166,12 +166,7 @@ secure void SoundManager::updateSounds()
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 secure void SoundManager::playSounds(uint32 elapsedMicroseconds)
-{
-	if(NULL != this->events)
-	{
-		SoundManager::fireEvent(this, kEventPlaySounds);
-	}
-	
+{	
 #ifdef __RELEASE
 	// This is an aggressive optimization that bypasses the SoundTrack's methods altogether
 	// to keep the PCM playback viable on hardware
@@ -182,6 +177,11 @@ secure void SoundManager::playSounds(uint32 elapsedMicroseconds)
 	else
 	{
 #endif
+		if(NULL != this->events)
+		{
+			SoundManager::fireEvent(this, kEventPlaySounds);
+		}
+
 		VSUManager::update(VSUManager::getInstance());
 
 		for(VirtualNode node = this->sounds->head; NULL != node; node = node->next)
