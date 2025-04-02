@@ -42,12 +42,10 @@ static void TimerManager::interruptHandler()
 	TimerManager timerManager = TimerManager::getInstance();
 
 	//disable
-#ifndef __ENABLE_PROFILER
-	TimerManager::disable(timerManager);
-	TimerManager::clearStat(timerManager);
-#else
 	TimerManager::disableInterrupt(timerManager);
+	TimerManager::clearStat(timerManager);
 
+#ifdef __ENABLE_PROFILER
 	Profiler::lap(kProfilerLapTypeStartInterrupt, NULL);
 #endif
 
@@ -69,16 +67,18 @@ static void TimerManager::interruptHandler()
 	}
 
 	// Update sounds
-	SoundManager::playSounds(SoundManager::getInstance(), timerManager->elapsedMicrosecondsPerInterrupt);
+	if(SoundManager::playSounds(SoundManager::getInstance(), timerManager->elapsedMicrosecondsPerInterrupt))
+	{
+		TimerManager::resetTimerCounter(timerManager);	
+	}
 
 	// Update Stopwatchs: no use is being done of them so this is commented out for now since it affects PCM playback
 	//StopwatchManager::update();
 
-// enable
-#ifndef __ENABLE_PROFILER
-	TimerManager::enable();
-#else
+	// enable
 	TimerManager::enableInterrupt(timerManager);
+
+#ifdef __ENABLE_PROFILER
 	Profiler::lap(kProfilerLapTypeTimerInterruptProcess, PROCESS_NAME_SOUND_PLAY);
 #endif
 }
@@ -114,7 +114,7 @@ static void TimerManager::enable()
 {
 	TimerManager timerManager = TimerManager::getInstance();
 
-	timerManager->tcrValue |= __TIMER_ENB | __TIMER_INT;
+	timerManager->tcrValue |= __TIMER_ENB | __TIMER_Z_INT;
 
 	_hardwareRegisters[__TCR] = timerManager->tcrValue;
 }
@@ -125,7 +125,7 @@ static void TimerManager::disable()
 {
 	TimerManager timerManager = TimerManager::getInstance();
 
-	timerManager->tcrValue &= ~(__TIMER_ENB | __TIMER_INT);
+	timerManager->tcrValue &= ~(__TIMER_ENB | __TIMER_Z_INT);
 
 	_hardwareRegisters[__TCR] = timerManager->tcrValue;
 }
@@ -698,7 +698,7 @@ uint16 TimerManager::computeTimerCounter()
 
 void TimerManager::enableInterrupt()
 {
-	this->tcrValue |= __TIMER_INT;
+	this->tcrValue |= __TIMER_Z_INT;
 
 	_hardwareRegisters[__TCR] = this->tcrValue;
 }
@@ -707,7 +707,7 @@ void TimerManager::enableInterrupt()
 
 void TimerManager::disableInterrupt()
 {
-	this->tcrValue &= ~__TIMER_INT;
+	this->tcrValue &= ~__TIMER_Z_INT;
 
 	_hardwareRegisters[__TCR] = this->tcrValue;
 }
@@ -724,7 +724,7 @@ void TimerManager::setTimerResolution()
 
 void TimerManager::clearStat()
 {
-	_hardwareRegisters[__TCR] = (this->tcrValue | __TIMER_ZCLR);
+	_hardwareRegisters[__TCR] = (this->tcrValue | __TIMER_Z_STAT_ZCLR);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

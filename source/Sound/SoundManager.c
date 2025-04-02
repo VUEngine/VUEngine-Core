@@ -165,14 +165,16 @@ secure void SoundManager::updateSounds()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-secure void SoundManager::playSounds(uint32 elapsedMicroseconds)
+secure bool SoundManager::playSounds(uint32 elapsedMicroseconds)
 {	
 #ifdef __RELEASE
 	// This is an aggressive optimization that bypasses the SoundTrack's methods altogether
 	// to keep the PCM playback viable on hardware
 	if(kPlaybackPCM == VSUManager::getMode() && NULL != this->sounds->head)
-	{
+	{		
 		SoundManager::updatePCM(Sound::safeCast(this->sounds->head->data), elapsedMicroseconds, this->targetPCMUpdates);
+		
+		return true;
 	}
 	else
 	{
@@ -193,6 +195,8 @@ secure void SoundManager::playSounds(uint32 elapsedMicroseconds)
 #ifdef __RELEASE
 	}
 #endif
+
+	return false;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

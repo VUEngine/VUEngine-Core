@@ -42,9 +42,9 @@ class ListenerObject;
 													TimerManager::getResolutionInUS() / 1000)
 
 #define __TIMER_ENB									0x01
-#define __TIMER_ZSTAT								0x02
-#define __TIMER_ZCLR								0x04
-#define __TIMER_INT									0x08
+#define __TIMER_Z_STAT								0x02
+#define __TIMER_Z_STAT_ZCLR							0x04
+#define __TIMER_Z_INT								0x08
 #define __TIMER_20US								0x10
 #define __TIMER_100US								0x00
 

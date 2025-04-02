@@ -78,7 +78,8 @@ singleton class SoundManager : ListenerObject
 
 	/// Play the allocated sounds.
 	/// @param elapsedMicroseconds: Elapsed time between call
-	void playSounds(uint32 elapsedMicroseconds);
+	/// @return True if PCM playback is happening
+	bool playSounds(uint32 elapsedMicroseconds);
 
 	/// Reset the manager's state.
 	void reset();
