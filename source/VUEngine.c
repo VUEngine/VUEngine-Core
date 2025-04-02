@@ -555,6 +555,8 @@ void VUEngine::startGameFrame()
 #endif
 
 #ifdef __ENABLE_PROFILER
+	HardwareManager::suspendInterrupts();
+
 	Profiler::start();
 #endif
 }
@@ -584,6 +586,10 @@ void VUEngine::endGameFrame()
 		//  Wait for the next game start
 		while(!VUEngine::hasGameFrameStarted());			
 	}
+
+#ifdef __ENABLE_PROFILER
+	HardwareManager::resumeInterrupts();
+#endif
 
 	FrameRate::update(FrameRate::getInstance());
 }

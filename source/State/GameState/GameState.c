@@ -794,6 +794,10 @@ void GameState::configureUI(StageSpec* stageSpec)
 void GameState::focusCamera()
 {
 	Camera::focus(Camera::getInstance());
+
+#ifdef __ENABLE_PROFILER
+	Profiler::lap(kProfilerLapTypeVIPInterruptGAMESTARTProcess, PROCESS_NAME_CAMERA);
+#endif
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -803,6 +807,10 @@ void GameState::render()
 	SpriteManager::render(this->componentManagers[kSpriteComponent]);
 	
 	WireframeManager::render(this->componentManagers[kWireframeComponent]);
+
+#ifdef __ENABLE_PROFILER
+	Profiler::lap(kProfilerLapTypeVIPInterruptGAMESTARTProcess, PROCESS_NAME_RENDER);
+#endif
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -815,6 +823,10 @@ void GameState::applyTransformationsUI()
 	}
 
 	UIContainer::transform(this->uiContainer, NULL, __INVALIDATE_TRANSFORMATION);
+
+#ifdef __ENABLE_PROFILER
+	Profiler::lap(kProfilerLapTypeNormalProcess, PROCESS_NAME_UI_TRANSFORMS);
+#endif
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -828,7 +840,7 @@ void GameState::updateStage()
 	}
 
 #ifdef __ENABLE_PROFILER
-	Profiler::lap(kProfilerLapTypeNormalProcess, PROCESS_NAME_EXECUTE_STATE);
+	Profiler::lap(kProfilerLapTypeNormalProcess, PROCESS_NAME_UPDATE_STAGE);
 #endif
 }
 
