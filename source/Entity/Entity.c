@@ -586,7 +586,37 @@ void Entity::setPosition(const Vector3D* position)
 
 void Entity::setRotation(const Rotation* rotation)
 {
-	this->transformation.rotation = *rotation;
+	this->transformation.rotation = Rotation::clamp(rotation->x, rotation->y, rotation->z);
+
+	if(!isDeleted(this->body))
+	{
+		Vector3D direction = Vector3D::zero();
+
+		if(0 != this->transformation.rotation.x)
+		{
+			direction.x = 0;
+			direction.y = __FIX7_9_TO_FIXED(__COS(__FIXED_TO_I(this->transformation.rotation.x)));
+			direction.z = __FIX7_9_TO_FIXED(__SIN(__FIXED_TO_I(this->transformation.rotation.x)));
+		
+			Body::setDirection(this->body, &direction);
+		}
+		else if(0 != this->transformation.rotation.y)
+		{
+			direction.x = __FIX7_9_TO_FIXED(__SIN(__FIXED_TO_I(this->transformation.rotation.y)));
+			direction.y = 0;
+			direction.z = __FIX7_9_TO_FIXED(__COS(__FIXED_TO_I(this->transformation.rotation.y)));
+	
+			Body::setDirection(this->body, &direction);
+		}
+		else if(0 != this->transformation.rotation.z)
+		{
+			direction.x = __FIX7_9_TO_FIXED(__COS(__FIXED_TO_I(this->transformation.rotation.z)));
+			direction.y = __FIX7_9_TO_FIXED(__SIN(__FIXED_TO_I(this->transformation.rotation.z)));
+			direction.z = 0;
+
+			Body::setDirection(this->body, &direction);
+		}
+	}
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

@@ -14,7 +14,7 @@ extern const int8 OrganWaveForm[];
 extern const int8 PianoWaveForm[];
 extern const int8 RolandWaveForm[];
 extern const int8 SawWaveForm[];
-extern const int8 SawSquareWaveForm[];
+extern const int8 SawWaveForm[];
 extern const int8 SineWaveForm[];
 extern const int8 SinePlusAlphaWaveForm[];
 extern const int8 SquareWaveForm[];
