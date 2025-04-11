@@ -532,6 +532,8 @@ uint16 Body::stopMovement(uint16 axis)
 		axisOfStopping |= axisOfMovement & __Z_AXIS;
 	}
 
+	this->speed = Vector3D::length(this->velocity);
+
 	Body::setMovementType(this, __NO_MOVEMENT, axisOfStopping);
 
 	if(!Body::getMovementOnAllAxis(this))
