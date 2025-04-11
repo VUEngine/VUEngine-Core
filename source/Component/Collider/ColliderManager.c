@@ -157,8 +157,6 @@ uint32 ColliderManager::update()
 			collider->invalidPosition = false;
 		}
 
-		Vector3D colliderPosition = collider->transformation->position;
-
 		for(VirtualNode node = this->components->head; NULL != node; node = node->next)
 		{
 			Collider colliderToCheck = Collider::safeCast(node->data);
@@ -183,7 +181,7 @@ uint32 ColliderManager::update()
 			}
 
 			fixed_ext_t distanceVectorSquareLength = 
-				Vector3D::squareLength(Vector3D::get(colliderToCheck->transformation->position, colliderPosition));
+				Vector3D::squareLength(Vector3D::get(colliderToCheck->transformation->position, collider->position));
 
 			if(__FIXED_SQUARE(__COLLIDER_MAXIMUM_SIZE) < distanceVectorSquareLength)
 			{
