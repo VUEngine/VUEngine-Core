@@ -43,6 +43,7 @@ typedef struct CustomCameraFrustum
 	fixed_ext_t x1;
 	fixed_ext_t y1;
 	fixed_ext_t z1;
+
 } CustomCameraFrustum;
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -1151,6 +1152,21 @@ secure void FrameBufferManager::reset()
 	{
 		0, 0, 0, __SCREEN_WIDTH - 1, __SCREEN_HEIGHT - 1, 8191
 	});
+
+	void clearBuffer(uint16 buffer)
+	{
+		uint32* leftBuffer  = (uint32*)(buffer | __LEFT_FRAME_BUFFER_0);
+		uint32* rightBuffer = (uint32*)(buffer | __RIGHT_FRAME_BUFFER_0);
+
+		for(uint16 i = 0; i < __FRAME_BUFFERS_SIZE / sizeof(uint32); i++)
+		{
+			leftBuffer[i] = 0;
+			rightBuffer[i] = 0;
+		}
+	}
+
+	clearBuffer(0);
+	clearBuffer(0x8000);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
