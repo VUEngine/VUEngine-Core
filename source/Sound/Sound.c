@@ -748,6 +748,9 @@ fix7_9_ext Sound::computeTimerResolutionFactor()
 	uint32 timerCounter = TimerManager::getTimerCounter(TimerManager::getInstance()) + __TIMER_COUNTER_DELTA;
 	uint32 timerUsPerInterrupt = timerCounter * __SOUND_TARGET_US_PER_TICK;
 	uint32 targetTimerResolutionUS = 0 != this->soundSpec->targetTimerResolutionUS ? this->soundSpec->targetTimerResolutionUS : 1000;
+
+	targetTimerResolutionUS = 0 == targetTimerResolutionUS? 1000: targetTimerResolutionUS;
+	
 	uint32 soundTargetUsPerInterrupt = 
 		(__TIME_US(targetTimerResolutionUS) + __TIMER_COUNTER_DELTA) * __SOUND_TARGET_US_PER_TICK;
 
@@ -800,8 +803,11 @@ void Sound::configureTracks()
 	this->mainSoundTrack = longestSoundTrack;
 
 #ifdef __SOUND_TEST
-	this->totalPlaybackMilliseconds = 
-		SoundTrack::getTotalPlaybackMilliseconds(this->mainSoundTrack, this->soundSpec->targetTimerResolutionUS);
+	if(!isDeleted(this->mainSoundTrack))
+	{
+		this->totalPlaybackMilliseconds = 
+			SoundTrack::getTotalPlaybackMilliseconds(this->mainSoundTrack, this->soundSpec->targetTimerResolutionUS);
+	}
 #endif
 
 }
