@@ -1028,7 +1028,7 @@ void Stage::configureCamera(bool reset)
 
 void Stage::configureGraphics()
 {
-	BgmapTextureManager::reset(BgmapTextureManager::getInstance());
+	Texture::reset();
 
 	Printer::loadFonts(this->stageSpec->assets.fontSpecs);
 	CharSetManager::loadCharSets(CharSetManager::getInstance(), (const CharSetSpec**)this->stageSpec->assets.charSetSpecs);

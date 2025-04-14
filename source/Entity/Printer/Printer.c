@@ -744,49 +744,24 @@ static void Printer::printSprite(int16 x, int16 y)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-#ifdef __FORCE_PRINTING_LAYER
-static void Printer::setCoordinates
-(
-	int16 x __attribute__ ((unused)), int16 y __attribute__ ((unused)), int16 z __attribute__ ((unused)), 
-	int8 parallax __attribute__ ((unused))
-)
-{
-	Printer::setWorldCoordinates(0, 0, 0, 0);
-	Printer::setBgmapCoordinates(0, 0, 0);
-	Printer::setWorldSize(__SCREEN_WIDTH, __SCREEN_HEIGHT);
-}
-#else
 static void Printer::setCoordinates(int16 x, int16 y, int16 z, int8 parallax)
 {
+#ifdef __FORCE_PRINTING_LAYER
+	return;
+#endif
+
 	Printer::setWorldCoordinates(x, y, z, parallax);
 	Printer::setBgmapCoordinates(x, y, 0);
 }
-#endif
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-#ifdef __FORCE_PRINTING_LAYER
-static void Printer::setWorldCoordinates
-(
-	int16 x __attribute__ ((unused)), int16 y __attribute__ ((unused)), int16 z __attribute__ ((unused)), 
-	int8 parallax __attribute__ ((unused))
-)
-{
-	Printer printing = Printer::getInstance();
-
-	if(!isDeleted(printing->activePrintingSprite))
-	{
-		PixelVector position = 
-		{
-			0, 0, -64, -4
-		};
-
-		PrintingSprite::setPosition(printing->activePrintingSprite, &position);
-	}
-}
-#else
 static void Printer::setWorldCoordinates(int16 x, int16 y, int16 z, int8 parallax)
 {
+#ifdef __FORCE_PRINTING_LAYER
+	return;
+#endif
+
 	Printer printing = Printer::getInstance();
 
 	if(!isDeleted(printing->activePrintingSprite))
@@ -802,62 +777,37 @@ static void Printer::setWorldCoordinates(int16 x, int16 y, int16 z, int8 paralla
 		PrintingSprite::setPosition(printing->activePrintingSprite, &position);
 	}
 }
-#endif
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+static void Printer::setBgmapCoordinates(int16 mx, int16 my, int8 mp)
+{
 #ifdef __FORCE_PRINTING_LAYER
-static void Printer::setBgmapCoordinates
-(
-	int16 mx __attribute__ ((unused)), int16 my __attribute__ ((unused)), int8 mp __attribute__ ((unused))
-)
-{
-	Printer printing = Printer::getInstance();
+	return;
+#endif
 
-	if(!isDeleted(printing->activePrintingSprite))
-	{
-		PrintingSprite::setMValues(printing->activePrintingSprite, __PRINTING_BGMAP_X_OFFSET, __PRINTING_BGMAP_Y_OFFSET, 0);
-	}
-}
-#else
-static void Printer::setBgmapCoordinates
-(
-	int16 mx __attribute__ ((unused)), int16 my __attribute__ ((unused)), int8 mp __attribute__ ((unused))
-)
-{
 	Printer printing = Printer::getInstance();
 
 	if(!isDeleted(printing->activePrintingSprite))
 	{
 		PrintingSprite::setMValues
 		(
-			printing->activePrintingSprite, mx <= 64 * 8 ? 
-				mx : 
-				0, 
-				__PRINTING_BGMAP_Y_OFFSET + my <= 64 * 8 ? 
-					__PRINTING_BGMAP_Y_OFFSET + my 
-					: 
-					__PRINTING_BGMAP_Y_OFFSET, mp
+			printing->activePrintingSprite, 
+			mx <= 64 * 8 ? mx : 0, 
+			my <= 64 * 8 ? my : 0,
+			mp
 		);
 	}
 }
-#endif
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+static void Printer::setWorldSize(uint16 w, uint16 h)
+{
 #ifdef __FORCE_PRINTING_LAYER
-static void Printer::setWorldSize(uint16 w __attribute__ ((unused)), uint16 h __attribute__ ((unused)))
-{
-	Printer printing = Printer::getInstance();
+	return;
+#endif
 
-	if(!isDeleted(printing->activePrintingSprite))
-	{
-		PrintingSprite::setSize(printing->activePrintingSprite, __SCREEN_WIDTH - 1, __SCREEN_HEIGHT - 1);
-	}
-}
-#else
-static void Printer::setWorldSize(uint16 w __attribute__ ((unused)), uint16 h __attribute__ ((unused)))
-{
 	Printer printing = Printer::getInstance();
 
 	if(!isDeleted(printing->activePrintingSprite))
@@ -868,7 +818,6 @@ static void Printer::setWorldSize(uint16 w __attribute__ ((unused)), uint16 h __
 		);
 	}
 }
-#endif
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 

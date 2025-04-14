@@ -38,7 +38,13 @@ void PrintingSprite::constructor(Entity owner, const PrintingSpriteSpec* printin
 	// Always explicitly call the base's constructor 
 	Base::constructor(owner, &printingSpriteSpec->bgmapSpriteSpec);
 
-	this->checkIfWithinScreenSpace = false;
+	this->hasTextures = false;
+	this->transformation = NULL;
+
+	if(NULL == this->texture)
+	{
+		PrintingSprite::loadTexture(this, typeofclass(BgmapTexture), false);		
+	}
 
 	if(!isDeleted(this->texture))
 	{
@@ -65,9 +71,9 @@ int16 PrintingSprite::doRender(int16 index)
 	worldPointer->mx = this->bgmapTextureSource.mx;
 	worldPointer->mp = this->bgmapTextureSource.mp;
 	worldPointer->my = this->bgmapTextureSource.my;
-	worldPointer->gx = this->position.x - this->halfWidth;
+	worldPointer->gx = this->position.x;
 	worldPointer->gp = this->position.parallax;
-	worldPointer->gy = this->position.y - this->halfHeight;
+	worldPointer->gy = this->position.y;
 	worldPointer->w = this->halfWidth << 1;
 	worldPointer->h = this->halfHeight << 1;
 	worldPointer->head = __WORLD_ON | __WORLD_BGMAP | __WORLD_OVR |  (BgmapTexture::safeCast(this->texture))->segment;
@@ -82,35 +88,17 @@ void PrintingSprite::reset()
 	this->position.x = 0;
 	this->position.y = 0;
 	this->position.parallax = 0;
+	this->bgmapTextureSource.mx = 0;
+	this->bgmapTextureSource.my = 0;
+	this->bgmapTextureSource.mp = 0;	
 
-	NM_ASSERT(!isDeleted(this->texture), "PrintingSprite::reset: no texture");
+	this->halfWidth = __HALF_SCREEN_WIDTH;
+	this->halfHeight = __HALF_SCREEN_HEIGHT;
 
 	if(!isDeleted(this->texture))
 	{
-		this->bgmapTextureSource.mx = BgmapTexture::getXOffset(this->texture) << 3;
-		this->bgmapTextureSource.my = BgmapTexture::getYOffset(this->texture) << 3;
-		this->bgmapTextureSource.mp = __PRINTING_BGMAP_PARALLAX_OFFSET;
-		this->halfWidth = this->texture->textureSpec->cols << 2;
-		this->halfHeight = this->texture->textureSpec->rows << 2;
-	}
-	else
-	{
-		this->bgmapTextureSource.mx = __PRINTING_BGMAP_X_OFFSET;
-		this->bgmapTextureSource.my = __PRINTING_BGMAP_Y_OFFSET;
-		this->bgmapTextureSource.mp = __PRINTING_BGMAP_PARALLAX_OFFSET;	
-
-		this->halfWidth = __HALF_SCREEN_WIDTH;
-		this->halfHeight = __HALF_SCREEN_HEIGHT;
-	}
-
-	if(__HALF_SCREEN_WIDTH < this->halfWidth)
-	{
-		this->halfWidth = __HALF_SCREEN_WIDTH;
-	}
-
-	if(__HALF_SCREEN_HEIGHT < this->halfHeight)
-	{
-		this->halfHeight = __HALF_SCREEN_HEIGHT;
+		PrintingSprite::setMValues(this, 0, 0, 0);
+		PrintingSprite::setSize(this, this->texture->textureSpec->cols << 3,this->texture->textureSpec->rows << 3);
 	}
 
 	this->rendered = false;
@@ -128,22 +116,24 @@ void PrintingSprite::clear()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void PrintingSprite::setGValues(int16 gx, int16 gy, int16 gp)
-{
-	this->position.x = gx;
-	this->position.y = gy;
-	this->position.parallax = gp;
-
-	this->rendered = false;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
 void PrintingSprite::setMValues(int16 mx, int16 my, int16 mp)
 {
-	this->bgmapTextureSource.mx = mx;
-	this->bgmapTextureSource.my = my;
-	this->bgmapTextureSource.mp = mp;
+	if(!isDeleted(this->texture))
+	{
+		this->bgmapTextureSource.mx = BgmapTexture::getXOffset(this->texture) << 3;
+		this->bgmapTextureSource.my = BgmapTexture::getYOffset(this->texture) << 3;
+		this->bgmapTextureSource.mp = __PRINTING_BGMAP_PARALLAX_OFFSET;
+
+		this->bgmapTextureSource.mx += mx;
+		this->bgmapTextureSource.my += my;
+		this->bgmapTextureSource.mp += mp;
+	}
+	else
+	{
+		this->bgmapTextureSource.mx = mx;
+		this->bgmapTextureSource.my = my;
+		this->bgmapTextureSource.mp = mp;
+	}
 
 	this->rendered = false;
 }
@@ -152,6 +142,16 @@ void PrintingSprite::setSize(uint16 width, uint16 height)
 {
 	this->halfWidth = width >> 1;
 	this->halfHeight = height >> 1;
+
+	if(__HALF_SCREEN_WIDTH < this->halfWidth)
+	{
+		this->halfWidth = __HALF_SCREEN_WIDTH;
+	}
+
+	if(__HALF_SCREEN_HEIGHT < this->halfHeight)
+	{
+		this->halfHeight = __HALF_SCREEN_HEIGHT;
+	}
 
 	this->rendered = false;
 }
