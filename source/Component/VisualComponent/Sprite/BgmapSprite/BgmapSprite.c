@@ -299,8 +299,8 @@ void BgmapSprite::setMultiframe(uint16 frame)
 		return;
 	}
 
-	int16 mx = BgmapTexture::getXOffset(this->texture);
-	int16 my = BgmapTexture::getYOffset(this->texture);
+	int16 mx = BgmapTexture::getXOffset(this->texture) << 3;
+	int16 my = BgmapTexture::getYOffset(this->texture) << 3;
 	
 	int16 cols = Texture::getCols(this->texture);
 
