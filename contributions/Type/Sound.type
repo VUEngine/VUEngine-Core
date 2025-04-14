@@ -21,8 +21,7 @@
 							"default": "wave"
 						},
 						"instrument": {
-							"type": "integer",
-							"default": 0
+							"type": "string"
 						},
 						"sequence": {
 							"type": "array",
@@ -80,7 +79,7 @@
 					{
 						"id": 0,
 						"type": "wave",
-						"instrument": 0,
+						"instrument": "8sZFerMDSiQbgxKr",
 						"sequence": [
 							0
 						],
@@ -98,7 +97,7 @@
 					{
 						"id": 1,
 						"type": "wave",
-						"instrument": 0,
+						"instrument": "",
 						"sequence": [],
 						"patterns": [],
 						"allowSkip": false,
@@ -108,7 +107,7 @@
 					{
 						"id": 2,
 						"type": "wave",
-						"instrument": 0,
+						"instrument": "",
 						"sequence": [],
 						"patterns": [],
 						"allowSkip": false,
@@ -118,7 +117,7 @@
 					{
 						"id": 3,
 						"type": "wave",
-						"instrument": 0,
+						"instrument": "",
 						"sequence": [],
 						"patterns": [],
 						"allowSkip": false,
@@ -128,7 +127,7 @@
 					{
 						"id": 4,
 						"type": "sweepMod",
-						"instrument": 0,
+						"instrument": "",
 						"sequence": [],
 						"patterns": [],
 						"allowSkip": false,
@@ -138,7 +137,7 @@
 					{
 						"id": 5,
 						"type": "noise",
-						"instrument": 0,
+						"instrument": "",
 						"sequence": [],
 						"patterns": [],
 						"allowSkip": false,
@@ -150,13 +149,12 @@
 				"minItems": 6
 			},
 			"instruments": {
-				"type": "array",
-				"items": {
+				"type": "object",
+				"additionalProperties": {
 					"type": "object",
 					"properties": {
 						"name": {
-							"type": "string",
-							"default": ""
+							"type": "string"
 						},
 						"type": {
 							"type": "string",
@@ -284,12 +282,11 @@
 					},
 					"additionalProperties": false
 				},
-				"default": [
-					{
-						"name": "Synth"
+				"default": {
+					"8sZFerMDSiQbgxKr": {
+						"name": "Instrument 1"
 					}
-				],
-				"minItems": 1
+				}
 			},
 			"speed": {
 				"type": "integer",
