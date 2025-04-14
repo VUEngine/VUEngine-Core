@@ -43,10 +43,7 @@ typedef const PrintingSpriteSpec PrintingSpriteROMSpec;
 ///
 /// Enables the Printer class to output text to the screen.
 class PrintingSprite : BgmapSprite
-{
-	/// BGMAP segment used for printing
-	int8 printingBgmapSegment;
-	
+{	
 	/// @publicsection
 	void constructor(Entity owner, const PrintingSpriteSpec* printingSpriteSpec);
 	
@@ -58,9 +55,8 @@ class PrintingSprite : BgmapSprite
 	/// Reset the sprite's rendering configuration.
 	void reset();
 
-	/// Set the BGMAP segment used for printing.
-	/// @param printingBgmapSegment: BGMAP segment to use for printing
-	void setPrintingBgmapSegment(int8 printingBgmapSegment);
+	/// Clear the texture.
+	void clear();
 
 	/// Set the G values to be written to the WORLD's entry mananged by the sprite.
 	/// @param gx: GX coordinate of the WORLD used to display the text

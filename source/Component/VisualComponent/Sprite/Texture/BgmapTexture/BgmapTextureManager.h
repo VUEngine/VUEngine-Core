@@ -100,14 +100,9 @@ singleton class BgmapTextureManager : Object
 	/// @return Number of available BGMAP segments to allocate textures
 	int8 getAvailableBgmapSegmentsForTextures();
 
-	/// Retrieve the number of the BGMAP segment available for printing.
-	/// @return Number of the BGMAP segment available for printing
-	int8 getPrintingBgmapSegment();
-
 	/// Load textures in function of the provided array of specs.
 	/// @param textureSpecs: Array of texture specs in function of which to load textures 
-	/// @param removeOldTextures: If true, previously loaded texturered are first destroyed and deallocated
-	void loadTextures(const TextureSpec** textureSpecs, bool removeOldTextures);
+	void loadTextures(const TextureSpec** textureSpecs);
 
 	/// Retrieve a texture initialized with the provided spec.
 	/// @param bgmapTextureSpec: Spec to use to initilize the desired texture

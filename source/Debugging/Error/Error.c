@@ -13,7 +13,6 @@
 
 #include <string.h>
 
-#include <BgmapTextureManager.h>
 #include <DebugConfig.h>
 #include <HardwareManager.h>
 #include <Printer.h>
@@ -166,16 +165,16 @@ static void Error::triggerException(char* message __attribute__((unused)), char*
 	// Error display message
 	WorldAttributes* worldPointer = &_worldAttributesBaseAddress[__EXCEPTIONS_WORLD];
 
-	worldPointer->mx = __PRINTING_BGMAP_X_OFFSET;
+	worldPointer->mx = Printer::getPrintingBgmapXOffset();
 	worldPointer->mp = __PRINTING_BGMAP_PARALLAX_OFFSET;
-	worldPointer->my = __PRINTING_BGMAP_Y_OFFSET;
+	worldPointer->my = Printer::getPrintingBgmapYOffset();
 	worldPointer->gx = 0;
 	worldPointer->gp = 0;
 	worldPointer->gy = 0;
 	worldPointer->w = __SCREEN_WIDTH;
 	worldPointer->h = __SCREEN_HEIGHT;
 	worldPointer->head = 
-		__WORLD_ON | __WORLD_BGMAP | __WORLD_OVR | BgmapTextureManager::getPrintingBgmapSegment(BgmapTextureManager::getInstance());
+		__WORLD_ON | __WORLD_BGMAP | __WORLD_OVR | Printer::getPrintingBgmapSegment();
 
 	_worldAttributesBaseAddress[__EXCEPTIONS_WORLD - 1].head = __WORLD_END;
 

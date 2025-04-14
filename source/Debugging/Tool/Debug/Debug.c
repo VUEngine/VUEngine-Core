@@ -114,7 +114,6 @@ void Debug::update()
 void Debug::show()
 {
 	Printer::clear();
-	Printer::setCoordinates(0, 0, -64, -2);
 
 	SpriteManager spriteManager = 
 		SpriteManager::safeCast(ToolState::getComponentManager(this->toolState, kSpriteComponent));
@@ -848,15 +847,12 @@ void Debug::charMemoryShowMemory(int32 increment __attribute__ ((unused)), int32
 		24,	25,	26,	27,	28,	29,	30,	31
 	};
 
-	uint32 printingBgmap = BgmapTextureManager::getPrintingBgmapSegment(BgmapTextureManager::getInstance());
-	uint16* const bgmapSpaceBaseAddress = (uint16*)__BGMAP_SPACE_BASE_ADDRESS;
-
 	// Put the map into memory calculating the number of char for each reference
 	for(i = 0; i <  __CHARS_PER_SEGMENT_TO_SHOW / __CHARS_PER_ROW_TO_SHOW; i++)
 	{
 		Mem::addOffsetToHWORD
 		(
-			(HWORD*)(&bgmapSpaceBaseAddress[(0x1000 * (printingBgmap + 1) - __PRINTABLE_BGMAP_AREA) + ((yOffset + i) << 6) + 2]),
+			Printer::getPrintingBgmapAddress() + ((yOffset + i) << 6) + 2,
 			(HWORD*)charMemoryMap,
 			__CHARS_PER_ROW_TO_SHOW,
 			this->charSegment * __CHARS_PER_SEGMENT_TO_SHOW + i * __CHARS_PER_ROW_TO_SHOW
@@ -900,7 +896,6 @@ void Debug::showDebugBgmap()
 
 void Debug::showBgmapSegment()
 {
-	uint32 printingBgmap = BgmapTextureManager::getPrintingBgmapSegment(BgmapTextureManager::getInstance());
 	int32 topBorder = 0;
 	int32 bottomBorder = 0;
 	int32 leftBorder = 0;
@@ -1066,11 +1061,7 @@ void Debug::showBgmapSegment()
 	{
 		Mem::copyHWORD
 		(
-			(HWORD*)
-			(
-				&bgmapSpaceBaseAddress[(0x1000 * (printingBgmap + 1) - __PRINTABLE_BGMAP_AREA) + 
-				((row + topBorder) << 6) + offsetDisplacement]
-			),
+			Printer::getPrintingBgmapAddress() + ((row + topBorder) << 6) + offsetDisplacement,
 			(const HWORD*)(&bgmapSpaceBaseAddress[(0x1000 * (this->bgmapSegment)) + ((row + myDisplacement) << 6) + mxDisplacement]), 
 			numberOfHWORDS
 		);

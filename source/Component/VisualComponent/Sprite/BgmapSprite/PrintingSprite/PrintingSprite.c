@@ -11,13 +11,21 @@
 // INCLUDES
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-#include <BgmapTextureManager.h>
+#include <BgmapTexture.h>
 #include <DebugConfig.h>
+#include <Mem.h>
 #include <Optics.h>
 #include <VirtualList.h>
 #include <VirtualNode.h>
 
 #include "PrintingSprite.h"
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+// CLASS' DECLARATIONS
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+friend class Texture;
+friend class BgmapTexture;
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PUBLIC METHODS
@@ -30,10 +38,12 @@ void PrintingSprite::constructor(Entity owner, const PrintingSpriteSpec* printin
 	// Always explicitly call the base's constructor 
 	Base::constructor(owner, &printingSpriteSpec->bgmapSpriteSpec);
 
-	this->hasTextures = false;
+	this->checkIfWithinScreenSpace = false;
 
-	// Ignore the owner's transfomation
-	this->transformation = NULL;
+	if(!isDeleted(this->texture))
+	{
+		Texture::write(this->texture, -1);
+	}
 
 	PrintingSprite::reset(this);
 }
@@ -55,12 +65,12 @@ int16 PrintingSprite::doRender(int16 index)
 	worldPointer->mx = this->bgmapTextureSource.mx;
 	worldPointer->mp = this->bgmapTextureSource.mp;
 	worldPointer->my = this->bgmapTextureSource.my;
-	worldPointer->gx = this->position.x;
+	worldPointer->gx = this->position.x - this->halfWidth;
 	worldPointer->gp = this->position.parallax;
-	worldPointer->gy = this->position.y;
+	worldPointer->gy = this->position.y - this->halfHeight;
 	worldPointer->w = this->halfWidth << 1;
 	worldPointer->h = this->halfHeight << 1;
-	worldPointer->head = __WORLD_ON | __WORLD_BGMAP | __WORLD_OVR | this->printingBgmapSegment;
+	worldPointer->head = __WORLD_ON | __WORLD_BGMAP | __WORLD_OVR |  (BgmapTexture::safeCast(this->texture))->segment;
 
 	return index;
 }
@@ -73,26 +83,47 @@ void PrintingSprite::reset()
 	this->position.y = 0;
 	this->position.parallax = 0;
 
-	this->bgmapTextureSource.mx = __PRINTING_BGMAP_X_OFFSET;
-	this->bgmapTextureSource.my = __PRINTING_BGMAP_Y_OFFSET;
-	this->bgmapTextureSource.mp = __PRINTING_BGMAP_PARALLAX_OFFSET;
+	NM_ASSERT(!isDeleted(this->texture), "PrintingSprite::reset: no texture");
 
-	this->halfWidth = __SCREEN_WIDTH >> 1;
-	this->halfHeight = __SCREEN_HEIGHT >> 1;
+	if(!isDeleted(this->texture))
+	{
+		this->bgmapTextureSource.mx = BgmapTexture::getXOffset(this->texture) << 3;
+		this->bgmapTextureSource.my = BgmapTexture::getYOffset(this->texture) << 3;
+		this->bgmapTextureSource.mp = __PRINTING_BGMAP_PARALLAX_OFFSET;
+		this->halfWidth = this->texture->textureSpec->cols << 2;
+		this->halfHeight = this->texture->textureSpec->rows << 2;
+	}
+	else
+	{
+		this->bgmapTextureSource.mx = __PRINTING_BGMAP_X_OFFSET;
+		this->bgmapTextureSource.my = __PRINTING_BGMAP_Y_OFFSET;
+		this->bgmapTextureSource.mp = __PRINTING_BGMAP_PARALLAX_OFFSET;	
+
+		this->halfWidth = __HALF_SCREEN_WIDTH;
+		this->halfHeight = __HALF_SCREEN_HEIGHT;
+	}
+
+	if(__HALF_SCREEN_WIDTH < this->halfWidth)
+	{
+		this->halfWidth = __HALF_SCREEN_WIDTH;
+	}
+
+	if(__HALF_SCREEN_HEIGHT < this->halfHeight)
+	{
+		this->halfHeight = __HALF_SCREEN_HEIGHT;
+	}
 
 	this->rendered = false;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void PrintingSprite::setPrintingBgmapSegment(int8 printingBgmapSegment)
+void PrintingSprite::clear()
 {
-	if((unsigned)printingBgmapSegment < __MAX_NUMBER_OF_BGMAPS_SEGMENTS)
+	if(!isDeleted(this->texture))
 	{
-		this->printingBgmapSegment = printingBgmapSegment;
+		Texture::write(this->texture, -1);
 	}
-
-	this->rendered = false;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

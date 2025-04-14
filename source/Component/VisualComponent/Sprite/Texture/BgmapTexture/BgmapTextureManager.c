@@ -45,8 +45,6 @@ static void BgmapTextureManager::print(int32 x, int32 y)
 	Printer::text("BGMAP TEXTURES USAGE", x, y++, NULL);
 	Printer::text("Segments for textures: ", x, ++y, NULL);
 	Printer::int32(BgmapTextureManager::getAvailableBgmapSegmentsForTextures(bgmapTextureManager), x + 23, y, NULL);
-	Printer::text("Printer segment: ", x, ++y, NULL);
-	Printer::int32(BgmapTextureManager::getPrintingBgmapSegment(bgmapTextureManager), x + 23, y, NULL);
 	Printer::text("Textures count: ", x, ++y, NULL);
 	Printer::int32(VirtualList::getCount(bgmapTextureManager->bgmapTextures), x + 23, y, NULL);
 
@@ -142,20 +140,14 @@ secure void BgmapTextureManager::reset()
 
 secure void BgmapTextureManager::clearDRAM()
 {
-	uint32* bgmapStartAddress = (uint32*)__BGMAP_SPACE_BASE_ADDRESS;
-	uint32* paramTableEnd = (uint32*)ParamTableManager::getParamTableEnd(ParamTableManager::getInstance());
+	uint16* bgmapStartAddress = (uint16*)__BGMAP_SPACE_BASE_ADDRESS;
+	uint16* paramTableEnd = (uint16*)ParamTableManager::getParamTableEnd(ParamTableManager::getInstance());
 
 	// Clear every bgmap segment
-	for(bgmapStartAddress = 0; bgmapStartAddress < paramTableEnd; bgmapStartAddress++)
+	for(; bgmapStartAddress < paramTableEnd; bgmapStartAddress++)
 	{
 		*bgmapStartAddress = 0;
 	}
-
-	Mem::clear
-	(
-		(BYTE*)__BGMAP_SEGMENT(this->printingBgmapSegment + 1) - 
-		__PRINTABLE_BGMAP_AREA * 2, __PRINTABLE_BGMAP_AREA * 2
-	);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -197,8 +189,6 @@ secure void BgmapTextureManager::configure(uint32 paramTableBase)
 	{
 		this->availableBgmapSegmentsForTextures = __MAX_NUMBER_OF_BGMAPS_SEGMENTS;
 	}
-
-	this->printingBgmapSegment = this->availableBgmapSegmentsForTextures - 1;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -210,20 +200,8 @@ int8 BgmapTextureManager::getAvailableBgmapSegmentsForTextures()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-int8 BgmapTextureManager::getPrintingBgmapSegment()
+secure void BgmapTextureManager::loadTextures(const TextureSpec** textureSpecs)
 {
-	return this->printingBgmapSegment;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-secure void BgmapTextureManager::loadTextures(const TextureSpec** textureSpecs, bool removeOldTextures)
-{
-	if(removeOldTextures)
-	{
-		BgmapTextureManager::reset(this);
-	}
-
 	// Textures
 	if(NULL != textureSpecs)
 	{
@@ -598,7 +576,7 @@ int32 BgmapTextureManager::doAllocate
 
 	for(i = minimumSegment; i < __MAX_NUMBER_OF_BGMAPS_SEGMENTS && i < this->availableBgmapSegmentsForTextures; i += segmentStep)
 	{
-		int32 maximumRow = i == this->printingBgmapSegment ? 64 - __SCREEN_HEIGHT_IN_CHARS : 64;
+		int32 maximumRow = 64;
 		
 		// If there is space in the segment memory
 		// There are 4096 chars in each bgmap segment
