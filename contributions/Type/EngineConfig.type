@@ -493,11 +493,6 @@
 									}
 								},
 								"additionalProperties": false
-							},
-							"printableArea": {
-								"type": "integer",
-								"default": 1792,
-								"minimum": 0
 							}
 						},
 						"additionalProperties": false

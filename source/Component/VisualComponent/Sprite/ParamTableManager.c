@@ -102,8 +102,6 @@ secure uint32 ParamTableManager::configure(int32 availableBgmapSegmentsForParamT
 		this->paramTableBase = this->paramTableEnd - __BGMAP_SEGMENT_SIZE * availableBgmapSegmentsForParamTable;
 	}
 
-	this->paramTableBase -= __PRINTABLE_BGMAP_AREA;
-
 	// Find the next address that is a multiple of 8192
 	// Taking into account the printable area
 	for(; 0 != (this->paramTableBase % __BGMAP_SEGMENT_SIZE) && this->paramTableBase > __BGMAP_SPACE_BASE_ADDRESS; this->paramTableBase--);

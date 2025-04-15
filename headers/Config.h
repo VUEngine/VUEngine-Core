@@ -181,7 +181,6 @@
 #define __PRINTING_BGMAP_X_OFFSET		  0
 #define __PRINTING_BGMAP_Y_OFFSET		  (64 * 8 - __SCREEN_HEIGHT)
 #define __PRINTING_BGMAP_PARALLAX_OFFSET  0
-#define __PRINTABLE_BGMAP_AREA			  1792
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // PARAM TABLE
