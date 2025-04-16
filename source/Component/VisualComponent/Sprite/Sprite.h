@@ -125,8 +125,9 @@ abstract class Sprite : VisualComponent
 {
 	/// @protectedsection
 
-	/// Flag to check if rendered even if outside the screen
-	bool checkIfWithinScreenSpace;
+
+	/// Texture to display
+	Texture texture;
 
 	/// Position cache
 	PixelVector position;
@@ -137,12 +138,12 @@ abstract class Sprite : VisualComponent
 	/// Rotation cache
 	Rotation rotation;
 
+	/// Scale cache
+	PixelScale scale;
+
 	/// Index of the block in DRAM that the sprite configures to
 	/// display its texture
 	int16 index;
-
-	/// Scale cache
-	PixelScale scale;
 
 	/// Head flags for DRAM entries
 	uint16 head;
@@ -153,8 +154,9 @@ abstract class Sprite : VisualComponent
 	/// Cache of the texture's half height
 	int16 halfHeight;
 
-	/// Texture to display
-	Texture texture;
+
+	/// Flag to check if rendered even if outside the screen
+	bool checkIfWithinScreenSpace;
 
 	/// Flag for special sprites
 	bool hasTextures;

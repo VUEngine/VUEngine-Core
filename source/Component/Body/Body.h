@@ -100,29 +100,23 @@ class Body : Component
 {
 	/// @protectedsection
 
-	/// Spatial position
-	Vector3D position;
-
 	/// Spatial position at higher decimal precision
 	Vector3DPlus internalPosition;
 
-	/// Velocity vector
-	Vector3D velocity;
-
 	/// Velocity vector at higher decimal precision
 	Vector3DPlus internalVelocity;
+
+	/// Spatial position
+	Vector3D position;
+
+	/// Velocity vector
+	Vector3D velocity;
 
 	// Direction vector
 	Vector3D direction;
 
 	/// Maximum velocity
 	Vector3D maximumVelocity;
-
-	/// Speed magnitude
-	fixed_t speed;
-
-	/// Maximum speed
-	fixed_t maximumSpeed;
 
 	/// Gravity affecting the body
 	Vector3D gravity;
@@ -139,8 +133,38 @@ class Body : Component
 	/// List of normal for the forces affecting the body
 	VirtualList normals;
 
+	/// Body's movement type on each axis
+	MovementType movementType;
+
 	/// Flags for the acceleration state of the body on each axis
 	Vector3DFlag accelerating;
+
+	/// If not true, the body skips physical simulations
+	bool awake;
+
+	/// If true, the body informs its owner of its change in movement state
+	bool sendMessages;
+
+	/// If true, the movement of the body is independent on each axis
+	bool movesIndependentlyOnEachAxis;
+
+	/// Number of cycles to skip physical simulations to slow down physics
+	int8 skipCycles;
+
+	/// Number of skiped cycles
+	int8 skipedCycles;
+
+	/// Axises on which the body is subject to gravity
+	uint16 axisSubjectToGravity;
+
+	/// Axises around which to rotate the owner when syncronizing with body
+	uint16 axisForSynchronizationWithBody;
+
+	/// Speed magnitude
+	fixed_t speed;
+
+	/// Maximum speed
+	fixed_t maximumSpeed;
 
 	/// Body's bounciness factor
 	fixed_t bounciness;
@@ -159,30 +183,6 @@ class Body : Component
 
 	/// Body's mass
 	fixed_t mass;
-
-	/// Body's movement type on each axis
-	MovementType movementType;
-
-	/// Axises on which the body is subject to gravity
-	uint16 axisSubjectToGravity;
-
-	/// Axises around which to rotate the owner when syncronizing with body
-	uint16 axisForSynchronizationWithBody;
-
-	/// Number of cycles to skip physical simulations to slow down physics
-	int8 skipCycles;
-
-	/// Number of skiped cycles
-	int8 skipedCycles;
-
-	/// If not true, the body skips physical simulations
-	bool awake;
-
-	/// If true, the body informs its owner of its change in movement state
-	bool sendMessages;
-
-	/// If true, the movement of the body is independent on each axis
-	bool movesIndependentlyOnEachAxis;
 
 	/// @publicsection
 

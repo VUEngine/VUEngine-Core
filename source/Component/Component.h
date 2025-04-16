@@ -78,6 +78,9 @@ abstract class Component : ListenerObject
 {
 	/// @protectedsection
 
+	/// Flag to mark the component as pending deletion
+	bool deleteMe;
+
 	/// Object to which this component attaches to
 	Entity owner;
 
@@ -87,9 +90,6 @@ abstract class Component : ListenerObject
 	/// Cache the transformation of the Entity that the component attaches to
 	/// to avoid having to retrieve it all the time
 	const Transformation* transformation;
-
-	/// Flag to mark the component as pending deletion
-	bool deleteMe;
 
 	/// @publicsection
 

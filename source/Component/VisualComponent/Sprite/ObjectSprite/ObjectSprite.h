@@ -59,11 +59,11 @@ class ObjectSprite : Sprite
 {
 	/// @protectedsection
 
-	/// The number of OBJECTs that the sprite uses
-	int16 totalObjects;
-
 	/// Texture's displacement in the map array
 	ObjectTextureSource objectTextureSource;
+
+	/// The number of OBJECTs that the sprite uses
+	int16 totalObjects;
 
 	// Cache some attributes to speed up rendering
 

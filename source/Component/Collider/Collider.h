@@ -181,11 +181,20 @@ abstract class Collider : Component
 {
 	/// @protectedsection
 
-	/// Displaced position
-	Vector3D position;
+	/// Wireframe to make the collider visible (mainly for debugging purposes)
+	Wireframe wireframe;
 
 	/// List of colliding colliders
 	VirtualList otherColliders;
+
+	/// Displaced position
+	Vector3D position;
+
+	/// Class index to avoid using __GET_CAST when checking for collisions
+	uint8 classIndex;
+
+	/// If false, it is ignored in all callision checks
+	bool enabled;
 
 	/// Layers on which this collider live
 	uint32 layers;
@@ -193,20 +202,11 @@ abstract class Collider : Component
 	/// Layers to ignore when checking for collisions
 	uint32 layersToIgnore;
 
-	/// Wireframe to make the collider visible (mainly for debugging purposes)
-	Wireframe wireframe;
-
-	/// If false, it is ignored in all callision checks
-	bool enabled;
-
 	/// If false, it doesn't check collision against other colliders
-	uint8 checkForCollisions;
+	bool checkForCollisions;
 
 	/// If true, it registers other colliders when a collision arises
 	bool registerCollisions;
-
-	/// Class index to avoid using __GET_CAST when checking for collisions
-	uint8 classIndex;
 
 	/// Flag to force the computation of the collider's position
 	bool invalidPosition;
