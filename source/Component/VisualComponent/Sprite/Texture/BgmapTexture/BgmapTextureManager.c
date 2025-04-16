@@ -578,9 +578,8 @@ int32 BgmapTextureManager::doAllocate
 	{
 		int32 maximumRow = 64;
 		
-		// If there is space in the segment memory
-		// There are 4096 chars in each bgmap segment
-		if((int32)(4096 - this->usedTiles[i]) >= (int32)area )
+		// There are 4096 chars in each BGMAP segment
+		if((int32)(4096 - this->usedTiles[i]) >= (int32)area)
 		{
 			// Check if there is space within the segment
 			// We check the next so don't go to the last element
