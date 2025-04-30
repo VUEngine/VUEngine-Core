@@ -372,6 +372,11 @@ class SoundTrack : Object
 	/// @param targetTimerResolutionUS: Target timer resolution in US
 	/// @return The total time of playback in milliseconds
 	uint32 getTotalPlaybackMilliseconds(uint16 targetTimerResolutionUS);
+
+	/// Print the indexes of the track.
+	/// @param x: Screen x coordinate where to print
+	/// @param y: Screen y coordinate where to print
+	void print(int16 x, int16 y);
 }
 
 #endif
