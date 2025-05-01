@@ -419,9 +419,7 @@ void VSUManager::configureSoundSource
 	this->haveUsedSoundSources = true;
 
 	bool setSxINT = 
-		0 != (0x80 & vsuSoundSourceConfiguration->SxINT) 
-		|| 
-		(this->vsuSoundSourceConfigurations[i].requester != vsuSoundSourceConfiguration->requester)
+		0 != (0x80 & vsuSoundSourceConfiguration->SxINT)
 		|| 
 		(this->vsuSoundSourceConfigurations[i].requester != vsuSoundSourceConfiguration->requester);
 
