@@ -516,11 +516,6 @@ bool Sound::updatePlaybackState()
 			Sound::stop(this);
 		}
 	}
-	else
-	{
-		Sound::rewind(this);
-		this->state = kSoundPlaying;
-	}
 
 	return kSoundRelease != this->state;
 }
@@ -619,10 +614,16 @@ void Sound::update(uint32 elapsedMicroseconds, uint32 targetPCMUpdates)
 
 	if(finished)
 	{
-		this->state = kSoundFinished;
+		if(!this->soundSpec->loop)
+		{
+			this->state = kSoundFinished;
+		}
+		else
+		{
+			Sound::rewind(this);
+		}
 	}
-
-	if(kSoundPlaybackNormal != this->playbackType)
+	else if(kSoundPlaybackNormal != this->playbackType)
 	{
 		Sound::updateVolumeReduction(this);
 	}
