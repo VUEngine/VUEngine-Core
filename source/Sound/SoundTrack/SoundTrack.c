@@ -306,7 +306,12 @@ bool SoundTrack::updateNative
 
 	this->elapsedTicks -= this->nextElapsedTicksTarget;
 
-	SoundTrackKeyframe soundTrackKeyframe = this->soundTrackSpec->trackKeyframes[this->cursor];
+	if(this->cursor >= this->samples)
+	{
+		return true;
+	}
+
+	SoundTrackKeyframe soundTrackKeyframe = this->soundTrackSpec->trackKeyframes[this->cursor++];
 
 	this->nextElapsedTicksTarget = __I_TO_FIX7_9_EXT(soundTrackKeyframe.tick);
 
@@ -436,7 +441,7 @@ bool SoundTrack::updateNative
 
 	VSUManager::applySoundSourceConfiguration(&vsuChannelConfiguration);
 
-	return ++this->cursor >= this->samples;
+	return false;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
