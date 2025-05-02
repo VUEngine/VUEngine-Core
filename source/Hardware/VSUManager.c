@@ -538,7 +538,7 @@ void VSUManager::releaseSoundSources()
 
 		/// Don't change to >= since it prevents pop sounds when a new sound request
 		/// arrives in during the same timer interrupt as this.
-		if(this->ticks >= this->vsuSoundSourceConfigurations[i].timeout)
+		if(this->ticks > this->vsuSoundSourceConfigurations[i].timeout)
 		{
 			this->vsuSoundSourceConfigurations[i].requester = NULL;
 			this->vsuSoundSourceConfigurations[i].timeout = -1;
