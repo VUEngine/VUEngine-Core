@@ -212,6 +212,9 @@ typedef struct SoundTrackSpec
 	/// Total number of samples
 	uint32 samples;
 
+	/// Loop back point (cursor)
+	uint32 loopPointCursor;
+
 	/// Keyframes that define the track
 	SoundTrackKeyframe* trackKeyframes;
 
@@ -337,6 +340,9 @@ class SoundTrack : Object
 
 	/// Rewind the track.
 	void rewind();
+
+	/// Loop the track.
+	void loop();
 
 	/// Advance the playback on the sound's MIDI tracks.
 	/// @param elapsedMicroseconds: Elapsed time since the last call

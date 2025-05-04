@@ -98,6 +98,13 @@ void SoundTrack::rewind()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+void SoundTrack::loop()
+{
+	SoundTrack::fastForward(this, this->soundTrackSpec->loopPointCursor);
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 bool SoundTrack::update
 (
 	uint32 elapsedMicroseconds, uint32 targetPCMUpdates, fix7_9_ext tickStep, fix7_9_ext targetTimerResolutionFactor, 
@@ -442,6 +449,60 @@ bool SoundTrack::updateNative
 	VSUManager::applySoundSourceConfiguration(&vsuChannelConfiguration);
 
 	return false;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void SoundTrack::fastForward(uint32 cursor)
+{
+	SoundTrack::reset(this);
+
+	for(; this->cursor < cursor;)
+	{
+		SoundTrackKeyframe soundTrackKeyframe = this->soundTrackSpec->trackKeyframes[this->cursor++];
+
+		this->nextElapsedTicksTarget = __I_TO_FIX7_9_EXT(soundTrackKeyframe.tick);
+
+		if(0 != (kSoundTrackEventSxINT & soundTrackKeyframe.events))
+		{
+			this->cursorSxINT++;
+		}
+
+		if(0 != (kSoundTrackEventSxLRV & soundTrackKeyframe.events))
+		{
+			this->cursorSxLRV++;
+		}
+
+		if(0 != (kSoundTrackEventSxFQ & soundTrackKeyframe.events))
+		{
+			this->cursorSxFQ++;
+		}
+
+		if(0 != (kSoundTrackEventSxEV0 & soundTrackKeyframe.events))
+		{
+			this->cursorSxEV0++;
+		}
+
+		if(0 != (kSoundTrackEventSxEV1 & soundTrackKeyframe.events))
+		{
+			this->cursorSxEV1++;
+		}
+
+		if(0 != (kSoundTrackEventSxRAM & soundTrackKeyframe.events))
+		{
+			this->cursorSxRAM++;
+		}
+
+		if(0 != (kSoundTrackEventSxSWP & soundTrackKeyframe.events))
+		{
+			this->cursorSxSWP++;
+		}
+
+		if(0 != (kSoundTrackEventSxMOD & soundTrackKeyframe.events))
+		{
+			this->cursorSxMOD++;
+		}
+	}
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

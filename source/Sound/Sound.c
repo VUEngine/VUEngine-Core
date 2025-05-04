@@ -620,7 +620,7 @@ void Sound::update(uint32 elapsedMicroseconds, uint32 targetPCMUpdates)
 		}
 		else
 		{
-			Sound::rewind(this);
+			Sound::loop(this);
 		}
 	}
 	else if(kSoundPlaybackNormal != this->playbackType)
@@ -870,6 +870,33 @@ void Sound::updateVolumeReduction()
 		}
 
 		this->previouslyElapsedTicks = this->mainSoundTrack->elapsedTicks;
+	}
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void Sound::loop()
+{
+	if(NULL == this->soundSpec)
+	{
+		return;
+	}
+
+	if(isDeleted(this->soundTracks))
+	{
+		return;
+	}
+
+	this->targetTimerResolutionFactor = Sound::computeTimerResolutionFactor(this);
+	this->tickStep = __FIX7_9_EXT_MULT(this->speed, this->targetTimerResolutionFactor);
+
+	this->previouslyElapsedTicks = 0;
+
+	for(VirtualNode node = this->soundTracks->head; NULL != node; node = node->next)
+	{
+		SoundTrack soundTrack = SoundTrack::safeCast(node->data);
+
+		SoundTrack::loop(soundTrack);
 	}
 }
 
