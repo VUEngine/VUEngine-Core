@@ -583,8 +583,13 @@ touch $CLASS_INHERITED_METHODS_DICTIONARY
 echo "Writing virtual methods on caller $CALLER"  >> $CLASS_LOG_FILE
 
 CLASS_VIRTUAL_METHODS_DICTIONARY=$WORKING_FOLDER/classes/dictionaries/$className"MethodsVirtual.txt"
-rm -f $CLASS_VIRTUAL_METHODS_DICTIONARY
-touch $CLASS_VIRTUAL_METHODS_DICTIONARY
+
+# Do not delete the virtual methods dictionary
+if [ ! "$isExtensionClass" = true ];
+then
+	rm -f $CLASS_VIRTUAL_METHODS_DICTIONARY
+	touch $CLASS_VIRTUAL_METHODS_DICTIONARY
+fi
 
 CLASS_DEPENDENCIES_FILE=$WORKING_FOLDER/classes/dependencies/$PLUGINS_NAME/$className".d"
 #echo "$OUTPUT_FILE:" | sed -e 's@'"$WORKING_FOLDER"'/@@g' > $CLASS_DEPENDENCIES_FILE
