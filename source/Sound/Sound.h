@@ -111,6 +111,9 @@ class Sound : ListenerObject
 	/// Elapsed ticks in the previous update
 	uint32 previouslyElapsedTicks;
 
+	/// Total elapsed ticks since the track started to play
+	fix7_9_ext totalElapsedTicks;
+
 	/// Total playback time
 	uint32 totalPlaybackMilliseconds;
 

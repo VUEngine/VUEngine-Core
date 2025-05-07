@@ -78,6 +78,7 @@ void Sound::constructor(const SoundSpec* soundSpec, ListenerObject scope)
 	this->soundSpec = soundSpec;
 	this->speed = __I_TO_FIX7_9_EXT(1);
 	this->previouslyElapsedTicks = 0;
+    this->totalElapsedTicks = 0;
 	this->totalPlaybackMilliseconds = 0;
 	this->autoReleaseOnFinish = false;
 	this->playbackType = kSoundPlaybackNone;
@@ -458,7 +459,7 @@ uint16 Sound::getFrequencyDelta()
 
 uint32 Sound::getTotalElapsedTicks()
 {
-	return NULL != this->mainSoundTrack? SoundTrack::getTotalElapsedTicks(this->mainSoundTrack) : 0;
+	return __FIX7_9_EXT_TO_I(this->totalElapsedTicks);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -611,6 +612,8 @@ void Sound::update(uint32 elapsedMicroseconds, uint32 targetPCMUpdates)
 				this->frequencyDelta
 			) && finished;
 	}
+
+    this->totalElapsedTicks += this->tickStep;
 
 	if(finished)
 	{
@@ -891,6 +894,7 @@ void Sound::loop()
 	this->tickStep = __FIX7_9_EXT_MULT(this->speed, this->targetTimerResolutionFactor);
 
 	this->previouslyElapsedTicks = 0;
+    this->totalElapsedTicks = 0;
 
 	for(VirtualNode node = this->soundTracks->head; NULL != node; node = node->next)
 	{

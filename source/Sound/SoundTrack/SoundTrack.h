@@ -300,9 +300,6 @@ class SoundTrack : Object
 	/// Ticks before moving the cursor
 	fix7_9_ext elapsedTicks;
 
-	/// Total elapsed ticks since the track started to play
-	fix7_9_ext totalElapsedTicks;
-
 	/// Next ticks target
 	fix7_9_ext nextElapsedTicksTarget;
 
@@ -365,10 +362,6 @@ class SoundTrack : Object
 	/// Retrieve the sound track's total ticks.
 	/// @return Total number of ticks
 	uint32 getTicks();
-
-	/// Retrieve the sound track's elapsed ticks.
-	/// @return Elapsed ticks since playback started
-	uint32 getTotalElapsedTicks();
 
 	/// Retrieve the sound track's percentage of elapsed ticks.
 	/// @return Percentaje of elapsed ticks
