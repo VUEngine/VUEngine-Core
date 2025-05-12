@@ -1,8 +1,16 @@
+{%- import 'templates/partials/macros.njk' as macros -%}
+
 {%- set sanitizedSpecName = itemUri | basename(false) | sanitizeSpecName -%}
 {%- set notesLookup = [2028, 2027, 2026, 2024, 2023, 2022, 2020, 2018, 2017, 2015, 2013, 2011, 2008, 2006, 2004, 2001, 1998, 1995, 1992, 1989, 1985, 1981, 1978, 1973, 1969, 1964, 1960, 1954, 1948, 1942, 1936, 1930, 1922, 1915, 1907, 1899, 1890, 1880, 1870, 1860, 1849, 1837, 1824, 1811, 1797, 1782, 1766, 1749, 1732, 1713, 1693, 1672, 1650, 1625, 1600, 1574, 1547, 1516, 1484, 1451, 1415, 1378, 1338, 1296, 1251, 1203, 1153, 1100, 1044, 984, 921, 854, 783, 707, 628, 543, 454, 359, 258, 152, 39, 0, 0, 0] -%}
-{%- set tickDurationScalingFactor = 50 -%}
+{%- set noteResolution = 16 -%}
+{%- set cyclesPerNote = 64 -%}
 
-{%- import 'templates/partials/macros.njk' as macros -%}
+{%- set soloChannel = -1 -%}
+{%- for channel in item.channels -%}
+	{%- if channel.solo -%}
+		{%- set soloChannel = channel.id -%}
+	{%- endif -%}
+{%- endfor -%}
 
 {%- macro SxINT(channelEnabled, interval) -%}
 	{{ hexFromBitsArray([
@@ -127,7 +135,7 @@ const int8 {{ sanitizedSpecName }}ModulationData{{ loop.index0 }}[] =
 
 {#- Render all channels -#}
 {%- for channel in item.channels -%}
-{%- if channel.sequence | length -%}
+{%- if channel.sequence | length and not (isSoundEditorPreview and (channel.muted or (soloChannel > -1 and soloChannel != channel.id))) -%}
 
 {#- Initial configuration -#}
 {%- set initialInstrument = item.instruments[channel.instrument] -%}
@@ -153,7 +161,7 @@ const int8 {{ sanitizedSpecName }}ModulationData{{ loop.index0 }}[] =
 -#}
 {%- for patternId in channel.sequence -%}
 	{%- set pattern = channel.patterns[patternId] -%}
-	{%- set patternLength = pattern.bar | replace | float * item.noteResolution -%}
+	{%- set patternLength = pattern.size * noteResolution -%}
 
 	{#- Prepare events array -#}
 	{%- set events = [] -%}
@@ -284,7 +292,8 @@ const int8* const {{ sanitizedSpecName }}SoundTrack{{ channel.id }}SxMOD[] =
 const SoundTrackKeyframe {{ sanitizedSpecName }}SoundTrack{{ channel.id }}Keyframes[] =
 {
 	{% for keyframe in keyframes -%}
-	{{'{'}}{{ keyframe.duration * tickDurationScalingFactor }}, {{ keyframe.flags | join(' | ') }}{{'},'}}
+	{% if keyframe.flags | length == 0 -%}//{% endif -%}
+	{{-'{'}}{{ keyframe.duration * cyclesPerNote }}, {{ keyframe.flags | join(' | ') }}{{'},'}}	
 	{% endfor -%}
 	{0, kSoundTrackEventEnd}, 
 };
@@ -302,6 +311,9 @@ SoundTrackROMSpec {{ sanitizedSpecName }}SoundTrack{{ channel.id }} =
 
 	// Total number of samples (0 if not PCM)
 	0,
+
+	// Loop back point (cursor)
+ 	{{ item.loopPoint * cyclesPerNote * noteResolution }},
 
 	// Keyframes that define the track
 	(SoundTrackKeyframe*){{ sanitizedSpecName }}SoundTrack{{ channel.id }}Keyframes,
@@ -338,7 +350,7 @@ SoundTrackROMSpec {{ sanitizedSpecName }}SoundTrack{{ channel.id }} =
 SoundTrackROMSpec* const {{ sanitizedSpecName }}SoundTracks[] =
 {
 	{%- for channel in item.channels %}
-	{%- if channel.sequence | length %}
+	{%- if channel.sequence | length and not (isSoundEditorPreview and (channel.muted or (soloChannel > -1 and soloChannel != channel.id))) %}
 	&{{ sanitizedSpecName }}SoundTrack{{ channel.id }},
 	{%- endif %}
 	{%- endfor %}
@@ -354,7 +366,7 @@ SoundROMSpec {{ sanitizedSpecName }}SoundSpec =
 	{{ item.loop }},
 
 	// Tick duration in US
-	{{ item.speed * 1000 / tickDurationScalingFactor }},
+	{{ item.speed * 1000 / cyclesPerNote }},
 
 	// Tracks
 	(SoundTrackSpec**){{ sanitizedSpecName }}SoundTracks,

@@ -12,10 +12,6 @@
 				"items": {
 					"type": "object",
 					"properties": {
-						"id": {
-							"type": "integer",
-							"default": 0
-						},
 						"type": {
 							"type": "string",
 							"default": "wave"
@@ -24,24 +20,23 @@
 							"type": "string"
 						},
 						"sequence": {
-							"type": "array",
-							"items": {
-								"type": "integer",
-								"default": 0
+							"type": "object",
+							"additionalProperties": {
+								"type": "string"
 							}
 						},
 						"patterns": {
-							"type": "array",
-							"items": {
+							"type": "object",
+							"additionalProperties": {
 								"type": "object",
 								"properties": {
 									"name": {
 										"type": "string",
 										"default": ""
 									},
-									"bar": {
-										"type": "string",
-										"default": "4/4"
+									"size": {
+										"type": "number",
+										"default": 4
 									},
 									"events": {
 										"type": "object",
@@ -50,15 +45,12 @@
 											"type": "object",
 											"properties": {},
 											"additionalProperties": {
-												"type": "integer",
-												"default": 0
+												"type": ["integer", "string"]
 											}
 										}
 									}
-								},
-								"additionalProperties": false
-							},
-							"minItems": 1
+								}
+							}
 						},
 						"allowSkip": {
 							"type": "boolean",
@@ -71,82 +63,15 @@
 						"solo": {
 							"type": "boolean",
 							"default": false
+						},
+						"seeThrough": {
+							"type": "boolean",
+							"default": true
 						}
 					},
 					"additionalProperties": false
 				},
-				"default": [
-					{
-						"id": 0,
-						"type": "wave",
-						"instrument": "8sZFerMDSiQbgxKr",
-						"sequence": [
-							0
-						],
-						"patterns": [
-							{
-								"name": "",
-								"size": 32,
-								"events": {}
-							}
-						],
-						"allowSkip": false,
-						"muted": false,
-						"solo": false
-					},
-					{
-						"id": 1,
-						"type": "wave",
-						"instrument": "",
-						"sequence": [],
-						"patterns": [],
-						"allowSkip": false,
-						"muted": false,
-						"solo": false
-					},
-					{
-						"id": 2,
-						"type": "wave",
-						"instrument": "",
-						"sequence": [],
-						"patterns": [],
-						"allowSkip": false,
-						"muted": false,
-						"solo": false
-					},
-					{
-						"id": 3,
-						"type": "wave",
-						"instrument": "",
-						"sequence": [],
-						"patterns": [],
-						"allowSkip": false,
-						"muted": false,
-						"solo": false
-					},
-					{
-						"id": 4,
-						"type": "sweepMod",
-						"instrument": "",
-						"sequence": [],
-						"patterns": [],
-						"allowSkip": false,
-						"muted": false,
-						"solo": false
-					},
-					{
-						"id": 5,
-						"type": "noise",
-						"instrument": "",
-						"sequence": [],
-						"patterns": [],
-						"allowSkip": false,
-						"muted": false,
-						"solo": false
-					}
-				],
-				"maxItems": 6,
-				"minItems": 6
+				"maxItems": 6
 			},
 			"instruments": {
 				"type": "object",
@@ -159,6 +84,10 @@
 						"type": {
 							"type": "string",
 							"default": "wave"
+						},
+						"color": {
+							"type": "number",
+							"default": 4
 						},
 						"waveform": {
 							"type": "string",
@@ -284,27 +213,58 @@
 				},
 				"default": {
 					"8sZFerMDSiQbgxKr": {
-						"name": "Instrument 1"
+						"color": 4,
+						"envelope": {
+							"direction": 0,
+							"enabled": false,
+							"initialValue": 15,
+							"repeat": false,
+							"stepTime": 0
+						},
+						"interval": {
+							"enabled": false,
+							"value": 0
+						},
+						"modulationData": [
+							1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+						],
+						"name": "Instrument 1",
+						"sweepMod": {
+							"direction": 0,
+							"enabled": false,
+							"frequency": 0,
+							"function": 1,
+							"interval": 0,
+							"repeat": true,
+							"shift": 0
+						},
+						"tap": 0,
+						"type": "wave",
+						"volume": {
+							"left": 15,
+							"right": 15
+						},
+						"waveform": "6QP1zxkpXVn9SMlC"
 					}
 				}
 			},
+			"size": {
+				"type": "number",
+				"default": 16
+			},
 			"speed": {
 				"type": "integer",
-				"default": 16,
+				"default": 32,
 				"minimum": 1,
-				"maximum": 65
+				"maximum": 128
 			},
 			"loop": {
 				"type": "boolean",
 				"default": false
 			},
-			"defaultBar": {
-				"type": "string",
-				"default": "4/4"
-			},
-			"noteResolution": {
-				"type": "integer",
-				"default": 16
+			"loopPoint": {
+				"type": "number",
+				"default": 0
 			},
 			"section": {
 				"type": "string",
