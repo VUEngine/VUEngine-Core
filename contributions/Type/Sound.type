@@ -25,33 +25,6 @@
 								"type": "string"
 							}
 						},
-						"patterns": {
-							"type": "object",
-							"additionalProperties": {
-								"type": "object",
-								"properties": {
-									"name": {
-										"type": "string",
-										"default": ""
-									},
-									"size": {
-										"type": "number",
-										"default": 4
-									},
-									"events": {
-										"type": "object",
-										"properties": {},
-										"additionalProperties": {
-											"type": "object",
-											"properties": {},
-											"additionalProperties": {
-												"type": ["integer", "string"]
-											}
-										}
-									}
-								}
-							}
-						},
 						"allowSkip": {
 							"type": "boolean",
 							"default": false
@@ -72,6 +45,33 @@
 					"additionalProperties": false
 				},
 				"maxItems": 6
+			},
+			"patterns": {
+				"type": "object",
+				"additionalProperties": {
+					"type": "object",
+					"properties": {
+						"name": {
+							"type": "string",
+							"default": ""
+						},
+						"size": {
+							"type": "number",
+							"default": 4
+						},
+						"events": {
+							"type": "object",
+							"properties": {},
+							"additionalProperties": {
+								"type": "object",
+								"properties": {},
+								"additionalProperties": {
+									"type": ["integer", "string"]
+								}
+							}
+						}
+					}
+				}
 			},
 			"instruments": {
 				"type": "object",
