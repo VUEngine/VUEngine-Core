@@ -8,7 +8,7 @@
 {%- set soloChannel = -1 -%}
 {%- for channel in item.channels -%}
 	{%- if channel.solo -%}
-		{%- set soloChannel = channel.id -%}
+		{%- set soloChannel = loop.index0 -%}
 	{%- endif -%}
 {%- endfor -%}
 
@@ -135,7 +135,7 @@ const int8 {{ sanitizedSpecName }}ModulationData{{ loop.index0 }}[] =
 
 {#- Render all channels -#}
 {%- for channel in item.channels -%}
-{%- if channel.sequence | length and not (isSoundEditorPreview and (channel.muted or (soloChannel > -1 and soloChannel != channel.id))) -%}
+{%- if channel.sequence | length and not (isSoundEditorPreview and (channel.muted or (soloChannel > -1 and soloChannel != loop.index0))) -%}
 
 {#- Initial configuration -#}
 {%- set initialInstrument = item.instruments[channel.instrument] -%}
@@ -159,43 +159,34 @@ const int8 {{ sanitizedSpecName }}ModulationData{{ loop.index0 }}[] =
 	c) we have to keep track of previous state, because end user effects allow to edit individual values, 
 	   e.g. envelope.enabled, while the spec wants the whole register values
 -#}
-{%- for patternId in channel.sequence -%}
-	{%- set pattern = channel.patterns[patternId] -%}
-	{%- set patternLength = pattern.size * noteResolution -%}
-
-	{#- Prepare events array -#}
-	{%- set events = [] -%}
-	{%- for tick, event in pattern.events -%}
-		{{- macros.append(events, {tick: tick, event: event}) -}}
-	{%- endfor -%}
-
-	{#- Increase duration of last event when pattern is empty -#}
-	{%- if not (events | length) and (keyframes | length) -%}	
-		{%- set keyframe = { 
-			duration: ((keyframes | last).duration | int) + patternLength,
-			flags: (keyframes | last).flags 
-		} -%}
-		{%- set keyframes = keyframes | setArrayIndex((keyframes | length) - 1, keyframe) -%}
+{%- set prevNoteStep = 0 -%}
+{%- for step in range(0, item.size * noteResolution) -%}
+	{#- Does a pattern start at the current step? -#}
+	{%- if channel.sequence[step / noteResolution] is defined -%}	
+		{%- set pattern = item.patterns[channel.sequence[step / noteResolution]] -%}
+		{%- set patternStartStep = step -%}
 	{%- endif -%}
 
-	{%- for event in events -%}
+	{#- Is there an event for the current step in the current pattern? -#}
+	{%- if pattern is defined and pattern.events[step - patternStartStep] is defined -%}
+		{%- set event = pattern.events[step - patternStartStep] -%}
 		{%- set flags = [] -%}
 
-		{%- if event.event['note'] is defined -%}
+		{%- if event['note'] is defined -%}
 			{#- "PLAY NOTE" EVENT -#}
 			{{- macros.append(flags, 'kSoundTrackEventSxFQ') -}}
-			{{- macros.append(valuesSxFQ, SxFQ(notesLookup[event.event['note']])) -}}
+			{{- macros.append(valuesSxFQ, SxFQ(notesLookup[event['note']])) -}}
 		{%- endif -%}
 
-		{%- if event.event['volume'] is defined -%}
+		{%- if event['volume'] is defined -%}
 			{#- "VOLUME CHANGE" EVENT -#}
 			{{- macros.append(flags, 'kSoundTrackEventSxLRV') -}}
-			{{- macros.append(valuesSxLRV, event.event['volume'] | intToHex(2)) -}}
+			{{- macros.append(valuesSxLRV, event['volume'] | intToHex(2)) -}}
 		{%- endif -%}
 
-		{%- if event.event['instrument'] is defined -%}
+		{%- if event['instrument'] is defined -%}
 			{#- "INSTRUMENT CHANGE" EVENT -#}
-			{%- set newInstrumentId = event.event['instrument'] -%}
+			{%- set newInstrumentId = event['instrument'] -%}
 			{%- set newInstrument = item.instruments[newInstrumentId] -%}
 			{{- macros.append(flags, 'kSoundTrackEventSxINT') -}}
 			{{- macros.append(valuesSxINT, SxINT(true, newInstrument.interval)) -}}
@@ -226,70 +217,75 @@ const int8 {{ sanitizedSpecName }}ModulationData{{ loop.index0 }}[] =
 		{{- macros.append(flags, 'kSoundTrackEventSweepMod', channel.type == 'sweepMod') -}}
 		{{- macros.append(flags, 'kSoundTrackEventNoise', channel.type == 'noise') -}}
 
-		{#- Add first event's duration to previous pattern's last event duration -#}
-		{%- if loop.first and (keyframes | length) -%}
-			{%- set keyframe = { 
-				duration: ((keyframes | last).duration | int) + (event.tick | int),
-				flags: (keyframes | last).flags 
-			} -%}
-			{%- set keyframes = keyframes | setArrayIndex((keyframes | length) - 1, keyframe) -%}
-		{%- endif -%}
+		{#- Now that it is known, set duration on the previous event -#}
+		{%- set keyframe = { 
+			duration: step - prevNoteStep,
+			flags: (keyframes | last).flags 
+		} -%}
+		{%- set keyframes = keyframes | setArrayIndex((keyframes | length) - 1, keyframe) -%}
 
 		{#- Finally, append to list of keyframes -#}
-		{#- Use duration from _next_ tick -#}
-		{%- set duration = events[loop.index].tick - event.tick -%}
-		{%- if loop.last -%}
-			{#- ... or the current pattern's remaining number of ticks -#}
-			{%- set duration = patternLength - event.tick -%}
-		{%- endif -%}
-		{%- set keyframe = { duration: duration, flags: flags } -%}
+		{%- set keyframe = { duration: 0, flags: flags } -%}
 		{{- macros.append(keyframes, keyframe) -}}
-	{%- endfor -%}
+
+		{#- Take note of this note's step to compute its duration later -#}
+		{%- set prevNoteStep = step -%}
+	{%- endif -%}
+
+	{%- if loop.last -%}
+		{#- Set duration of the last event -#}
+		{%- set keyframe = { 
+			duration: step - prevNoteStep + 1,
+			flags: (keyframes | last).flags 
+		} -%}
+		{%- set keyframes = keyframes | setArrayIndex((keyframes | length) - 1, keyframe) -%}
+	{%- endif -%}
 {%- endfor %}
 
-// Channel {{ (channel.id + 1) }}
 
-const uint8 {{ sanitizedSpecName }}SoundTrack{{ channel.id }}SxINT[] =
+// Channel {{ loop.index }}
+
+const uint8 {{ sanitizedSpecName }}SoundTrack{{ loop.index0 }}SxINT[] =
 {
 	{{ printValueList(valuesSxINT, 22) }}
 };
 
-const uint8 {{ sanitizedSpecName }}SoundTrack{{ channel.id }}SxLRV[] =
+const uint8 {{ sanitizedSpecName }}SoundTrack{{ loop.index0 }}SxLRV[] =
 {
 	{{ printValueList(valuesSxLRV, 22) }}
 };
 
-const uint16 {{ sanitizedSpecName }}SoundTrack{{ channel.id }}SxFQ[] =
+const uint16 {{ sanitizedSpecName }}SoundTrack{{ loop.index0 }}SxFQ[] =
 {
 	{{ printValueList(valuesSxFQ, 16) }}
 };
 
-const uint8 {{ sanitizedSpecName }}SoundTrack{{ channel.id }}SxEV0[] =
+const uint8 {{ sanitizedSpecName }}SoundTrack{{ loop.index0 }}SxEV0[] =
 {
 	{{ printValueList(valuesSxEV0, 22) }}
 };
 
-const uint8 {{ sanitizedSpecName }}SoundTrack{{ channel.id }}SxEV1[] =
+const uint8 {{ sanitizedSpecName }}SoundTrack{{ loop.index0 }}SxEV1[] =
 {
 	{{ printValueList(valuesSxEV1, 22) }}
 };
 
-const int8* const {{ sanitizedSpecName }}SoundTrack{{ channel.id }}SxRAM[] =
+const int8* const {{ sanitizedSpecName }}SoundTrack{{ loop.index0 }}SxRAM[] =
 {
 	{{ printValueList(valuesSxRAM, 4) }}
 };
 
-const uint8 {{ sanitizedSpecName }}SoundTrack{{ channel.id }}SxSWP[] =
+const uint8 {{ sanitizedSpecName }}SoundTrack{{ loop.index0 }}SxSWP[] =
 {
 	{{ printValueList(valuesSxSWP, 22) }}
 };
 
-const int8* const {{ sanitizedSpecName }}SoundTrack{{ channel.id }}SxMOD[] =
+const int8* const {{ sanitizedSpecName }}SoundTrack{{ loop.index0 }}SxMOD[] =
 {
 	{{ printValueList(valuesSxMOD, 4) }}
 };
 
-const SoundTrackKeyframe {{ sanitizedSpecName }}SoundTrack{{ channel.id }}Keyframes[] =
+const SoundTrackKeyframe {{ sanitizedSpecName }}SoundTrack{{ loop.index0 }}Keyframes[] =
 {
 	{% for keyframe in keyframes -%}
 	{% if keyframe.flags | length == 0 -%}//{% endif -%}
@@ -298,16 +294,13 @@ const SoundTrackKeyframe {{ sanitizedSpecName }}SoundTrack{{ channel.id }}Keyfra
 	{0, kSoundTrackEventEnd}, 
 };
 
-SoundTrackROMSpec {{ sanitizedSpecName }}SoundTrack{{ channel.id }} =
+SoundTrackROMSpec {{ sanitizedSpecName }}SoundTrack{{ loop.index0 }} =
 {
 	// kTrackNative, kTrackPCM
 	kTrackNative,
 
 	// Skip if no sound source available?
 	{{ channel.allowSkip }},
-
-	/// Loop back point (cursor)
-	0,
 
 	// Total number of samples (0 if not PCM)
 	0,
@@ -316,31 +309,31 @@ SoundTrackROMSpec {{ sanitizedSpecName }}SoundTrack{{ channel.id }} =
  	{{ item.loopPoint * cyclesPerNote * noteResolution }},
 
 	// Keyframes that define the track
-	(SoundTrackKeyframe*){{ sanitizedSpecName }}SoundTrack{{ channel.id }}Keyframes,
+	(SoundTrackKeyframe*){{ sanitizedSpecName }}SoundTrack{{ loop.index0 }}Keyframes,
 
 	// SxINT values
-	(uint8*){{ sanitizedSpecName }}SoundTrack{{ channel.id }}SxINT,
+	(uint8*){{ sanitizedSpecName }}SoundTrack{{ loop.index0 }}SxINT,
 
 	// SxLRV values
-	(uint8*){{ sanitizedSpecName }}SoundTrack{{ channel.id }}SxLRV,
+	(uint8*){{ sanitizedSpecName }}SoundTrack{{ loop.index0 }}SxLRV,
 
 	// SxFQH and SxFQL values
-	(uint16*){{ sanitizedSpecName }}SoundTrack{{ channel.id }}SxFQ,
+	(uint16*){{ sanitizedSpecName }}SoundTrack{{ loop.index0 }}SxFQ,
 
 	// SxEV0 values
-	(uint8*){{ sanitizedSpecName }}SoundTrack{{ channel.id }}SxEV0,
+	(uint8*){{ sanitizedSpecName }}SoundTrack{{ loop.index0 }}SxEV0,
 
 	// SxEV1 values
-	(uint8*){{ sanitizedSpecName }}SoundTrack{{ channel.id }}SxEV1,
+	(uint8*){{ sanitizedSpecName }}SoundTrack{{ loop.index0 }}SxEV1,
 
 	// SxRAM pointers
-	(int8**){{ sanitizedSpecName }}SoundTrack{{ channel.id }}SxRAM,
+	(int8**){{ sanitizedSpecName }}SoundTrack{{ loop.index0 }}SxRAM,
 
 	// SxSWP values
-	(uint8*){{ sanitizedSpecName }}SoundTrack{{ channel.id }}SxSWP,
+	(uint8*){{ sanitizedSpecName }}SoundTrack{{ loop.index0 }}SxSWP,
 
 	// SxMOD pointers
-	(int8**){{ sanitizedSpecName }}SoundTrack{{ channel.id }}SxMOD,
+	(int8**){{ sanitizedSpecName }}SoundTrack{{ loop.index0 }}SxMOD,
 };
 {%- endif %}
 {%- endfor %}
@@ -350,8 +343,8 @@ SoundTrackROMSpec {{ sanitizedSpecName }}SoundTrack{{ channel.id }} =
 SoundTrackROMSpec* const {{ sanitizedSpecName }}SoundTracks[] =
 {
 	{%- for channel in item.channels %}
-	{%- if channel.sequence | length and not (isSoundEditorPreview and (channel.muted or (soloChannel > -1 and soloChannel != channel.id))) %}
-	&{{ sanitizedSpecName }}SoundTrack{{ channel.id }},
+	{%- if channel.sequence | length and not (isSoundEditorPreview and (channel.muted or (soloChannel > -1 and soloChannel != loop.index0))) %}
+	&{{ sanitizedSpecName }}SoundTrack{{ loop.index0 }},
 	{%- endif %}
 	{%- endfor %}
 	NULL
