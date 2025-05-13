@@ -17,7 +17,8 @@
 							"default": "wave"
 						},
 						"instrument": {
-							"type": "string"
+							"type": "string",
+							"default": "built-in-1"
 						},
 						"sequence": {
 							"type": "object",
@@ -80,10 +81,6 @@
 					"properties": {
 						"name": {
 							"type": "string"
-						},
-						"type": {
-							"type": "string",
-							"default": "wave"
 						},
 						"color": {
 							"type": "number",
@@ -212,7 +209,7 @@
 					"additionalProperties": false
 				},
 				"default": {
-					"8sZFerMDSiQbgxKr": {
+					"built-in-1": {
 						"color": 4,
 						"envelope": {
 							"direction": 0,
@@ -239,7 +236,6 @@
 							"shift": 0
 						},
 						"tap": 0,
-						"type": "wave",
 						"volume": {
 							"left": 15,
 							"right": 15
