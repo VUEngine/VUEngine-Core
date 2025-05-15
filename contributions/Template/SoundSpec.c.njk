@@ -3,7 +3,13 @@
 {%- set sanitizedSpecName = itemUri | basename(false) | sanitizeSpecName -%}
 {%- set notesLookup = [2028, 2027, 2026, 2024, 2023, 2022, 2020, 2018, 2017, 2015, 2013, 2011, 2008, 2006, 2004, 2001, 1998, 1995, 1992, 1989, 1985, 1981, 1978, 1973, 1969, 1964, 1960, 1954, 1948, 1942, 1936, 1930, 1922, 1915, 1907, 1899, 1890, 1880, 1870, 1860, 1849, 1837, 1824, 1811, 1797, 1782, 1766, 1749, 1732, 1713, 1693, 1672, 1650, 1625, 1600, 1574, 1547, 1516, 1484, 1451, 1415, 1378, 1338, 1296, 1251, 1203, 1153, 1100, 1044, 984, 921, 854, 783, 707, 628, 543, 454, 359, 258, 152, 39, 0, 0, 0] -%}
 {%- set noteResolution = 16 -%}
-{%- set cyclesPerNote = 64 -%}
+{%- set subNoteResolution = 50 -%}
+{%- set barNoteResolution = noteResolution * subNoteResolution -%}
+
+{%- set loopPoint = item.loopPoint -%}
+{%- if isSoundEditorPreview and playRangeStart is defined -%}
+	{%- set loopPoint = 0 -%}
+{%- endif -%}
 
 {%- set soloChannel = -1 -%}
 {%- for channel in item.channels -%}
@@ -159,11 +165,12 @@ const int8 {{ sanitizedSpecName }}ModulationData{{ loop.index0 }}[] =
 	c) we have to keep track of previous state, because end user effects allow to edit individual values, 
 	   e.g. envelope.enabled, while the spec wants the whole register values
 -#}
+{%- set loopKeyframe = 0 -%}
 {%- set prevNoteStep = 0 -%}
-{%- for step in range(0, item.size * noteResolution) -%}
+{%- for step in range(0, item.size * barNoteResolution) -%}
 	{#- Does a pattern start at the current step? -#}
-	{%- if channel.sequence[step / noteResolution] is defined -%}	
-		{%- set pattern = item.patterns[channel.sequence[step / noteResolution]] -%}
+	{%- if channel.sequence[step / barNoteResolution] is defined -%}	
+		{%- set pattern = item.patterns[channel.sequence[step / barNoteResolution]] -%}
 		{%- set patternStartStep = step -%}
 	{%- endif -%}
 
@@ -232,6 +239,28 @@ const int8 {{ sanitizedSpecName }}ModulationData{{ loop.index0 }}[] =
 		{%- set prevNoteStep = step -%}
 	{%- endif -%}
 
+	{#- Find loop back keyframe -#}
+	{%- if loopPoint > 0 and step == loopPoint * barNoteResolution -%}
+		{#- Add "dummy" keyframe to loop back to if there is none at this step -#}
+		{%- if prevNoteStep != step -%}
+
+			{#- Set duration on the previous event -#}
+			{%- set keyframe = { 
+				duration: step - prevNoteStep,
+				flags: (keyframes | last).flags 
+			} -%}
+			{%- set keyframes = keyframes | setArrayIndex((keyframes | length) - 1, keyframe) -%}
+
+			{#- Add empty keyframe -#}
+			{%- set keyframe = { duration: 0, flags: [] } -%}
+			{{- macros.append(keyframes, keyframe) -}}
+
+			{%- set prevNoteStep = step -%}
+		{%- endif -%}
+
+		{%- set loopKeyframe = (keyframes | length) - 1 -%}
+	{%- endif -%}
+
 	{%- if loop.last -%}
 		{#- Set duration of the last event -#}
 		{%- set keyframe = { 
@@ -240,7 +269,12 @@ const int8 {{ sanitizedSpecName }}ModulationData{{ loop.index0 }}[] =
 		} -%}
 		{%- set keyframes = keyframes | setArrayIndex((keyframes | length) - 1, keyframe) -%}
 	{%- endif -%}
-{%- endfor %}
+{%- endfor -%}
+
+{#- Trim events for range play in editor preview -#}
+{%- if isSoundEditorPreview and (playRangeStart is defined or playRangeEnd is defined) -%}
+	{#- TODO -#}
+{%- endif %}
 
 
 // Channel {{ loop.index }}
@@ -288,8 +322,7 @@ const int8* const {{ sanitizedSpecName }}SoundTrack{{ loop.index0 }}SxMOD[] =
 const SoundTrackKeyframe {{ sanitizedSpecName }}SoundTrack{{ loop.index0 }}Keyframes[] =
 {
 	{% for keyframe in keyframes -%}
-	{% if keyframe.flags | length == 0 -%}//{% endif -%}
-	{{-'{'}}{{ keyframe.duration * cyclesPerNote }}, {{ keyframe.flags | join(' | ') }}{{'},'}}	
+	{{-'{'}}{{ keyframe.duration }}, {% if keyframe.flags | length == 0 %}0{% else %}{{ keyframe.flags | join(' | ') }}{% endif %}{{'},'}}
 	{% endfor -%}
 	{0, kSoundTrackEventEnd}, 
 };
@@ -306,7 +339,7 @@ SoundTrackROMSpec {{ sanitizedSpecName }}SoundTrack{{ loop.index0 }} =
 	0,
 
 	// Loop back point (cursor)
- 	{{ item.loopPoint * cyclesPerNote * noteResolution }},
+	{{ loopKeyframe }},
 
 	// Keyframes that define the track
 	(SoundTrackKeyframe*){{ sanitizedSpecName }}SoundTrack{{ loop.index0 }}Keyframes,
@@ -359,7 +392,7 @@ SoundROMSpec {{ sanitizedSpecName }}SoundSpec =
 	{{ item.loop }},
 
 	// Tick duration in US
-	{{ item.speed * 1000 / cyclesPerNote }},
+	{{ item.speed * 1000 / subNoteResolution }},
 
 	// Tracks
 	(SoundTrackSpec**){{ sanitizedSpecName }}SoundTracks,
