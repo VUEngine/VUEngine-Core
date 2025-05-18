@@ -11,10 +11,10 @@
 	{%- set loopPoint = 0 -%}
 {%- endif -%}
 
-{%- set soloChannel = -1 -%}
-{%- for channel in item.channels -%}
-	{%- if channel.solo -%}
-		{%- set soloChannel = loop.index0 -%}
+{%- set soloTrack = -1 -%}
+{%- for track in item.tracks -%}
+	{%- if track.solo -%}
+		{%- set soloTrack = loop.index0 -%}
 	{%- endif -%}
 {%- endfor -%}
 
@@ -139,12 +139,12 @@ const int8 {{ sanitizedSpecName }}ModulationData{{ loop.index0 }}[] =
 {%- endif -%}
 {%- endfor -%}
 
-{#- Render all channels -#}
-{%- for channel in item.channels -%}
-{%- if channel.sequence | length and not (isSoundEditorPreview and (channel.muted or (soloChannel > -1 and soloChannel != loop.index0))) -%}
+{#- Render all tracks -#}
+{%- for track in item.tracks -%}
+{%- if track.sequence | length and not (isSoundEditorPreview and (track.muted or (soloTrack > -1 and soloTrack != loop.index0))) -%}
 
 {#- Initial configuration -#}
-{%- set initialInstrument = item.instruments[channel.instrument] -%}
+{%- set initialInstrument = item.instruments[track.instrument] -%}
 {%- set valuesSxINT = [SxINT(true, initialInstrument.interval)] -%}
 {%- set valuesSxLRV = ['0x00'] -%} {#- Explicit silent note. Initial instrument's volume is set on the first event. -#}
 {%- set valuesSxEV0 = [SxEV0(initialInstrument.envelope)] -%}
@@ -152,7 +152,7 @@ const int8 {{ sanitizedSpecName }}ModulationData{{ loop.index0 }}[] =
 {%- set valuesSxFQ = ['0x0000'] -%}
 {%- set valuesSxRAM = [SxRAM(initialInstrument.waveform, initialInstrument.type)] -%}
 {%- set valuesSxSWP = [S5SWP(initialInstrument.sweepMod)] -%}
-{%- set valuesSxMOD = [S5MOD(channel.instrument, initialInstrument.sweepMod, initialInstrument.type)] -%}
+{%- set valuesSxMOD = [S5MOD(track.instrument, initialInstrument.sweepMod, initialInstrument.type)] -%}
 
 {%- set keyframes = [{ 
 	duration: 0,
@@ -169,8 +169,8 @@ const int8 {{ sanitizedSpecName }}ModulationData{{ loop.index0 }}[] =
 {%- set prevNoteStep = 0 -%}
 {%- for step in range(0, item.size * barNoteResolution) -%}
 	{#- Does a pattern start at the current step? -#}
-	{%- if channel.sequence[step / barNoteResolution] is defined -%}	
-		{%- set pattern = item.patterns[channel.sequence[step / barNoteResolution]] -%}
+	{%- if track.sequence[step / barNoteResolution] is defined -%}	
+		{%- set pattern = item.patterns[track.sequence[step / barNoteResolution]] -%}
 		{%- set patternStartStep = step -%}
 	{%- endif -%}
 
@@ -221,8 +221,8 @@ const int8 {{ sanitizedSpecName }}ModulationData{{ loop.index0 }}[] =
 		{%- endif -%}
 
 		{#- Ensure events for sweep/mod and noise are played on the respective channels -#}
-		{{- macros.append(flags, 'kSoundTrackEventSweepMod', channel.type == 'sweepMod') -}}
-		{{- macros.append(flags, 'kSoundTrackEventNoise', channel.type == 'noise') -}}
+		{{- macros.append(flags, 'kSoundTrackEventSweepMod', track.type == 'sweepMod') -}}
+		{{- macros.append(flags, 'kSoundTrackEventNoise', track.type == 'noise') -}}
 
 		{#- Now that it is known, set duration on the previous event -#}
 		{%- set keyframe = { 
@@ -277,7 +277,7 @@ const int8 {{ sanitizedSpecName }}ModulationData{{ loop.index0 }}[] =
 {%- endif %}
 
 
-// Channel {{ loop.index }}
+// Track {{ loop.index }}
 
 const uint8 {{ sanitizedSpecName }}SoundTrack{{ loop.index0 }}SxINT[] =
 {
@@ -333,7 +333,7 @@ SoundTrackROMSpec {{ sanitizedSpecName }}SoundTrack{{ loop.index0 }} =
 	kTrackNative,
 
 	// Skip if no sound source available?
-	{{ channel.allowSkip }},
+	{{ track.allowSkip }},
 
 	// Total number of samples (0 if not PCM)
 	0,
@@ -375,8 +375,8 @@ SoundTrackROMSpec {{ sanitizedSpecName }}SoundTrack{{ loop.index0 }} =
 
 SoundTrackROMSpec* const {{ sanitizedSpecName }}SoundTracks[] =
 {
-	{%- for channel in item.channels %}
-	{%- if channel.sequence | length and not (isSoundEditorPreview and (channel.muted or (soloChannel > -1 and soloChannel != loop.index0))) %}
+	{%- for track in item.tracks %}
+	{%- if track.sequence | length and not (isSoundEditorPreview and (track.muted or (soloTrack > -1 and soloTrack != loop.index0))) %}
 	&{{ sanitizedSpecName }}SoundTrack{{ loop.index0 }},
 	{%- endif %}
 	{%- endfor %}

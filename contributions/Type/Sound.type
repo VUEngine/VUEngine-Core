@@ -7,7 +7,7 @@
 				"type": "string",
 				"default": ""
 			},
-			"channels": {
+			"tracks": {
 				"type": "array",
 				"items": {
 					"type": "object",
