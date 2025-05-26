@@ -1,8 +1,0 @@
-{
-	"targets": [{
-		"path": "Converted/${_filename}WaveFormSpec.c",
-		"root": "file"
-	}],
-	"template": "contributions/Template/WaveForm.c.njk",
-	"itemSpecific": "WaveForm"
-}

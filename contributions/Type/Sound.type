@@ -29,18 +29,6 @@
 						"allowSkip": {
 							"type": "boolean",
 							"default": false
-						},
-						"muted": {
-							"type": "boolean",
-							"default": false
-						},
-						"solo": {
-							"type": "boolean",
-							"default": false
-						},
-						"seeThrough": {
-							"type": "boolean",
-							"default": true
 						}
 					},
 					"additionalProperties": false
@@ -87,8 +75,15 @@
 							"default": 4
 						},
 						"waveform": {
-							"type": "string",
-							"default": "6QP1zxkpXVn9SMlC"
+							"type": "array",
+							"items": {
+								"type": "integer",
+								"default": 0,
+								"maximum": 63,
+								"minimum": 0
+							},
+							"maxItems": 32,
+							"minItems": 32
 						},
 						"volume": {
 							"type": "object",
@@ -193,9 +188,9 @@
 							"type": "array",
 							"items": {
 								"type": "integer",
-								"minimum": 1,
-								"maximum": 256,
-								"default": 1
+								"minimum": 0,
+								"maximum": 255,
+								"default": 0
 							},
 							"minItems": 32,
 							"maxItems": 32
@@ -223,7 +218,7 @@
 							"value": 0
 						},
 						"modulationData": [
-							1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+							0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 						],
 						"name": "Instrument 1",
 						"sweepMod": {
@@ -240,7 +235,9 @@
 							"left": 15,
 							"right": 15
 						},
-						"waveform": "6QP1zxkpXVn9SMlC"
+						"waveform": [
+							63,62,60,57,53,48,42,35,28,21,15,10,6,3,1,0,0,1,3,6,10,15,21,28,35,42,48,53,57,60,62,63
+						]
 					}
 				}
 			},

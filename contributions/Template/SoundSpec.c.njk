@@ -7,17 +7,42 @@
 {%- set subNoteResolution = 50 -%}
 {%- set barNoteResolution = noteResolution * subNoteResolution -%}
 
+{%- set waveforms = {} -%}
+{%- set modulationData = {} -%}
+
 {%- set loopPoint = item.loopPoint -%}
 {%- if isSoundEditorPreview and playRangeStart is defined -%}
 	{%- set loopPoint = 0 -%}
 {%- endif -%}
 
 {%- set soloTrack = -1 -%}
-{%- for track in item.tracks -%}
-	{%- if track.solo -%}
-		{%- set soloTrack = loop.index0 -%}
-	{%- endif -%}
-{%- endfor -%}
+{%- if isSoundEditorPreview -%}
+	{%- for trackSetting in trackSettings -%}
+		{%- if trackSetting.solo -%}
+			{%- set soloTrack = loop.index0 -%}
+		{%- endif -%}
+	{%- endfor -%}
+{%- endif -%}
+
+{%- macro instrumentIsUsed(instrumentId) -%}
+	{%- set result = false -%}
+	{%- for track in item.tracks -%}
+		{%- if track.instrument == instrumentId -%}
+			{%- set result = true -%}
+		{%- endif -%}
+		{%- for patternId in track.sequence | values -%}
+			{%- set pattern = item.patterns[patternId] -%}
+			{%- if pattern -%}
+				{%- for step in pattern.events | values -%}
+					{%- if step.instrument is defined and step.instrument == instrumentId -%}
+						{%- set result = true -%}
+					{%- endif -%}
+				{%- endfor -%}
+			{%- endif -%}
+		{%- endfor -%}
+	{%- endfor -%}
+	{{ result }}
+{%- endmacro -%}
 
 {%- macro SxINT(channelEnabled, interval) -%}
 	{{ hexFromBitsArray([
@@ -69,12 +94,12 @@
 	{%- endif -%}
 {%- endmacro -%}
 
-{%- macro SxRAM(waveformId, type) -%}
-	{%- set waveform = project.items.WaveForm[waveformId] -%}
-	{%- if (type == 'noise' or not waveform) -%}
-		NULL
+{%- macro SxRAM(waveform, type) -%}
+	{%- if (type !== 'noise') -%}
+		{%- set hash = waveform | crc32 -%}
+		&{{ sanitizedSpecName }}WaveForm{{ waveforms[hash] }}
 	{%- else -%}
-		{{waveform._fileUri | basename(false) | sanitizeSpecName}}WaveForm
+		NULL
 	{%- endif -%}
 {%- endmacro -%}
 
@@ -87,9 +112,10 @@
 	]) }}
 {%- endmacro -%}
 
-{%- macro S5MOD(instrumentId, sweepMod, type) -%}
+{%- macro S5MOD(modData, sweepMod, type) -%}
 	{%- if (type == 'sweepMod' and sweepMod.function) -%}
-		{{ sanitizedSpecName }}ModulationData{{ instrumentId }}
+		{%- set hash = modData | crc32 -%}
+		{{ sanitizedSpecName }}ModulationData{{ modulationData[hash] }}
 	{%- else -%}
 		NULL
 	{%- endif -%}
@@ -113,27 +139,55 @@
 
 #include <Sound.h>
 #include <SoundTrack.h>
-#include <WaveForms.h>
 
 {{ macros.sectionHeader('Declarations') }}
 
-{#- Render modulation data for all sweep/mod instruments -#}
+{#- Render waveforms for all instruments -#}
+{%- set isFirstWaveform = true -%}
+{%- for instrumentId in item.instruments | keys -%}
+{%- set instrument = item.instruments[instrumentId] -%}
+{%- set hash = instrument.waveform | crc32 -%}
+{%- set isUsed = instrumentIsUsed(instrumentId) -%}
+{%- if isUsed == 'true' and not waveforms[hash] is defined -%}
+{%- set waveformsKey = waveforms | length + 1 -%}
+{%- set waveforms = waveforms | setProperty(hash | string, waveformsKey) -%}
+
+{%- if isFirstWaveform %}
+
+// Waveforms
+{%- endif %}
+
+const WaveformData {{ sanitizedSpecName }}Waveform{{ waveformsKey }} =
+{
+	// Checksum
+	{{ hash }},
+
+	// Data
+	{% for value in instrument.waveform -%}
+		{{- (value ~ '') ~ ', ' -}} 
+	{%- endfor %}
+};
+{%- set isFirstWaveform = false -%}
+{%- endif -%}
+{%- endfor -%}
+
+{#- Render modulation data for all instruments -#}
 {%- set isFirstModulationData = true -%}
-{%- for instrument in item.instruments -%}
-{%- if instrument.type == 'sweepMod' and instrument.sweepMod.function %}
+{%- for instrument in item.instruments | values -%}
+{%- set hash = instrument.modulationData | crc32 | string -%}
+{%- if not modulationData[hash] is defined -%}
+{%- set modulationDataKey = modulationData | length + 1 -%}
+{%- set modulationData = modulationData | setProperty(hash, modulationDataKey) -%}
 
 {%- if isFirstModulationData %}
 
 // Modulation Data
 {%- endif %}
 
-const int8 {{ sanitizedSpecName }}ModulationData{{ loop.index0 }}[] =
+const int8 {{ sanitizedSpecName }}ModulationData{{ modulationDataKey }}[] =
 {
 	{% for value in instrument.modulationData -%}
-	{{- ((value - 1) ~ '') | padStart(3, ' ') ~ ', ' -}} 
-	{%- if loop.index % 16 == 0 and not loop.last -%}
-		{{ "\n	" }}
-	{%- endif -%}
+		{{- (value ~ '') ~ ', ' -}} 
 	{%- endfor %}
 };
 {%- set isFirstModulationData = false -%}
@@ -142,18 +196,18 @@ const int8 {{ sanitizedSpecName }}ModulationData{{ loop.index0 }}[] =
 
 {#- Render all tracks -#}
 {%- for track in item.tracks -%}
-{%- if track.sequence | length and not (isSoundEditorPreview and (track.muted or (soloTrack > -1 and soloTrack != loop.index0))) -%}
+{%- if track.sequence | length and not (isSoundEditorPreview and (trackSettings[loop.loop0].muted or (soloTrack > -1 and soloTrack !== loop.index0))) -%}
 
 {#- Initial configuration -#}
 {%- set initialInstrument = item.instruments[track.instrument] -%}
 {%- set valuesSxINT = [SxINT(true, initialInstrument.interval)] -%}
 {%- set valuesSxLRV = ['0x00'] -%} {#- Explicit silent note. Initial instrument's volume is set on the first event. -#}
 {%- set valuesSxEV0 = [SxEV0(initialInstrument.envelope)] -%}
-{%- set valuesSxEV1 = [SxEV1(initialInstrument.envelope, initialInstrument.sweepMod, initialInstrument.tap, initialInstrument.type)] -%}
+{%- set valuesSxEV1 = [SxEV1(initialInstrument.envelope, initialInstrument.sweepMod, initialInstrument.tap, track.type)] -%}
 {%- set valuesSxFQ = ['0x0000'] -%}
-{%- set valuesSxRAM = [SxRAM(initialInstrument.waveform, initialInstrument.type)] -%}
+{%- set valuesSxRAM = [SxRAM(initialInstrument.waveform, track.type)] -%}
 {%- set valuesSxSWP = [S5SWP(initialInstrument.sweepMod)] -%}
-{%- set valuesSxMOD = [S5MOD(track.instrument, initialInstrument.sweepMod, initialInstrument.type)] -%}
+{%- set valuesSxMOD = [S5MOD(initialInstrument.modulationData, initialInstrument.sweepMod, track.type)] -%}
 
 {%- set keyframes = [{ 
 	duration: 0,
@@ -203,13 +257,13 @@ const int8 {{ sanitizedSpecName }}ModulationData{{ loop.index0 }}[] =
 			{{- macros.append(flags, 'kSoundTrackEventSxEV0') -}}
 			{{- macros.append(valuesSxEV0, SxEV0(newInstrument.envelope)) -}}
 			{{- macros.append(flags, 'kSoundTrackEventSxEV1') -}}
-			{{- macros.append(valuesSxEV1, SxEV1(newInstrument.envelope, newInstrument.sweepMod, newInstrument.tap, newInstrument.type)) -}}
+			{{- macros.append(valuesSxEV1, SxEV1(newInstrument.envelope, newInstrument.sweepMod, newInstrument.tap, track.type)) -}}
 			{{- macros.append(flags, 'kSoundTrackEventSxRAM') -}}
-			{{- macros.append(valuesSxRAM, SxRAM(newInstrument.waveform, newInstrument.type)) -}}
+			{{- macros.append(valuesSxRAM, SxRAM(newInstrument.waveform, track.type)) -}}
 			{{- macros.append(flags, 'kSoundTrackEventSxSWP') -}}
 			{{- macros.append(valuesSxSWP, S5SWP(newInstrument.sweepMod)) -}}
 			{{- macros.append(flags, 'kSoundTrackEventSxMOD') -}}
-			{{- macros.append(valuesSxMOD, S5MOD(newInstrumentId,  newInstrument.sweepMod, newInstrument.type)) -}}
+			{{- macros.append(valuesSxMOD, S5MOD(newInstrument.modulationData,  newInstrument.sweepMod, track.type)) -}}
 		{%- endif -%}
 
 		{#- TODO: add other event types -#}
@@ -243,7 +297,7 @@ const int8 {{ sanitizedSpecName }}ModulationData{{ loop.index0 }}[] =
 	{#- Find loop back keyframe -#}
 	{%- if loopPoint > 0 and step == loopPoint * barNoteResolution / sequencerResolution -%}
 		{#- Add "dummy" keyframe to loop back to if there is none at this step -#}
-		{%- if prevNoteStep != step -%}
+		{%- if prevNoteStep !==  step -%}
 
 			{#- Set duration on the previous event -#}
 			{%- set keyframe = { 
@@ -276,7 +330,6 @@ const int8 {{ sanitizedSpecName }}ModulationData{{ loop.index0 }}[] =
 {%- if isSoundEditorPreview and (playRangeStart is defined or playRangeEnd is defined) -%}
 	{#- TODO -#}
 {%- endif %}
-
 
 // Track {{ loop.index }}
 
@@ -377,7 +430,7 @@ SoundTrackROMSpec {{ sanitizedSpecName }}SoundTrack{{ loop.index0 }} =
 SoundTrackROMSpec* const {{ sanitizedSpecName }}SoundTracks[] =
 {
 	{%- for track in item.tracks %}
-	{%- if track.sequence | length and not (isSoundEditorPreview and (track.muted or (soloTrack > -1 and soloTrack != loop.index0))) %}
+	{%- if track.sequence | length and not (isSoundEditorPreview and (trackSettings[loop.loop0].muted or (soloTrack > -1 and soloTrack !== loop.index0))) %}
 	&{{ sanitizedSpecName }}SoundTrack{{ loop.index0 }},
 	{%- endif %}
 	{%- endfor %}
