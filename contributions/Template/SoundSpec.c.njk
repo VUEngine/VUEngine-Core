@@ -10,9 +10,9 @@
 {%- set waveforms = {} -%}
 {%- set modulationData = {} -%}
 
-{%- set loopPoint = item.loopPoint -%}
-{%- if isSoundEditorPreview and playRangeStart is defined -%}
-	{%- set loopPoint = 0 -%}
+{%- set loopPoint = 0 -%}
+{%- if item.loop and not (isSoundEditorPreview and playRangeStart is defined) -%}
+	{%- set loopPoint = item.loopPoint -%}
 {%- endif -%}
 
 {%- set soloTrack = -1 -%}
@@ -96,8 +96,8 @@
 
 {%- macro SxRAM(waveform, type) -%}
 	{%- if (type !== 'noise') -%}
-		{%- set hash = waveform | crc32 -%}
-		&{{ sanitizedSpecName }}WaveForm{{ waveforms[hash] }}
+		{%- set checksum = waveform | crc32 -%}
+		&{{ sanitizedSpecName }}Waveform{{ waveforms[checksum] }}
 	{%- else -%}
 		NULL
 	{%- endif -%}
@@ -114,8 +114,8 @@
 
 {%- macro S5MOD(modData, sweepMod, type) -%}
 	{%- if (type == 'sweepMod' and sweepMod.function) -%}
-		{%- set hash = modData | crc32 -%}
-		{{ sanitizedSpecName }}ModulationData{{ modulationData[hash] }}
+		{%- set checksum = modData | crc32 -%}
+		{{ sanitizedSpecName }}ModulationData{{ modulationData[checksum] }}
 	{%- else -%}
 		NULL
 	{%- endif -%}
@@ -125,18 +125,6 @@
 	{% set count = 0 -%}
 	{%- for value in values -%}
 		{{- value -}}{{- ', ' -}}
-		{% set count = count + 1 -%}
-		{%- if count == columnWidth and not loop.last -%}
-			{{- '\n\t' -}}
-			{% set count = 0 -%}
-		{%- endif -%}
-	{%- endfor %}
-{%- endmacro -%}
-
-{%- macro printReferenceList(values, columnWidth=16) -%}
-	{% set count = 0 -%}
-	{%- for value in values -%}
-		{{- '&' -}}{{- value -}}{{- ', ' -}}
 		{% set count = count + 1 -%}
 		{%- if count == columnWidth and not loop.last -%}
 			{{- '\n\t' -}}
@@ -158,11 +146,11 @@
 {%- set isFirstWaveform = true -%}
 {%- for instrumentId in item.instruments | keys -%}
 {%- set instrument = item.instruments[instrumentId] -%}
-{%- set hash = instrument.waveform | crc32 -%}
+{%- set checksum = instrument.waveform | crc32 -%}
 {%- set isUsed = instrumentIsUsed(instrumentId) -%}
-{%- if isUsed == 'true' and not waveforms[hash] is defined -%}
+{%- if isUsed == 'true' and not waveforms[checksum] is defined -%}
 {%- set waveformsKey = waveforms | length + 1 -%}
-{%- set waveforms = waveforms | setProperty(hash | string, waveformsKey) -%}
+{%- set waveforms = waveforms | setProperty(checksum | string, waveformsKey) -%}
 
 {%- if isFirstWaveform %}
 
@@ -171,13 +159,16 @@
 
 const WaveformData {{ sanitizedSpecName }}Waveform{{ waveformsKey }} =
 {
-	// Checksum
-	{{ hash }},
-
 	// Data
-	{% for value in instrument.waveform -%}
-		{{- (value ~ '') ~ ', ' -}} 
-	{%- endfor %}
+	{
+		{% for value in instrument.waveform -%}
+			{{- (value ~ '') -}}
+			{%- if not loop.last -%}{{ ', ' }}{%- endif -%}
+		{%- endfor %}
+	},
+
+	// Checksum
+	{{ checksum }}
 };
 {%- set isFirstWaveform = false -%}
 {%- endif -%}
@@ -186,10 +177,10 @@ const WaveformData {{ sanitizedSpecName }}Waveform{{ waveformsKey }} =
 {#- Render modulation data for all instruments -#}
 {%- set isFirstModulationData = true -%}
 {%- for instrument in item.instruments | values -%}
-{%- set hash = instrument.modulationData | crc32 | string -%}
-{%- if not modulationData[hash] is defined -%}
+{%- set checksum = instrument.modulationData | crc32 | string -%}
+{%- if not modulationData[checksum] is defined -%}
 {%- set modulationDataKey = modulationData | length + 1 -%}
-{%- set modulationData = modulationData | setProperty(hash, modulationDataKey) -%}
+{%- set modulationData = modulationData | setProperty(checksum, modulationDataKey) -%}
 
 {%- if isFirstModulationData %}
 
@@ -432,7 +423,7 @@ SoundTrackROMSpec {{ sanitizedSpecName }}SoundTrack{{ loop.index0 }} =
 	(uint8*){{ sanitizedSpecName }}SoundTrack{{ loop.index0 }}SxSWP,
 
 	// SxMOD pointers
-	(WaveformData**){{ sanitizedSpecName }}SoundTrack{{ loop.index0 }}SxMOD,
+	(int8**){{ sanitizedSpecName }}SoundTrack{{ loop.index0 }}SxMOD,
 };
 {%- endif %}
 {%- endfor %}
