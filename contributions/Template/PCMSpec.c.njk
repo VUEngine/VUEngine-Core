@@ -76,11 +76,11 @@ SoundTrackROMSpec {{ sanitizedSpecName }}SoundTrack =
 	// Skip if no sound source available?
 	false,
 
-	/// Loop back point (cursor)
-	0,
-
 	// Total number of samples (0 if not PCM)
 	{{ sanitizedSpecName }}SoundTrackLength,
+
+	/// Loop back point (cursor)
+	0,
 
 	// Keyframes that define the track
 	(SoundTrackKeyframe*){{ sanitizedSpecName }}SoundTrack1Keyframes,
