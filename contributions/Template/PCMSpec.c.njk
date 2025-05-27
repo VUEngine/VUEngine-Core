@@ -10,7 +10,7 @@
 
 {{ macros.sectionHeader('Declarations') }}
 
-extern const int8 PCMWaveForm[];
+extern const WaveformData PCMWaveform[];
 #define {{ sanitizedSpecName }}SoundTrackLength {{ soundData | length }}
 
 {{ macros.sectionHeader('Definitions') }}
@@ -47,9 +47,9 @@ const uint8 {{ sanitizedSpecName }}SoundTrack1SxEV1[] =
 	0x00,
 };
 
-const int8* const {{ sanitizedSpecName }}SoundTrack1SxRAM[] =
+const WaveformData* const {{ sanitizedSpecName }}SoundTrack1SxRAM[] =
 {
-	PCMWaveForm,
+	&PCMWaveform,
 };
 
 const uint8 {{ sanitizedSpecName }}SoundTrack1SxSWP[] =
@@ -101,7 +101,7 @@ SoundTrackROMSpec {{ sanitizedSpecName }}SoundTrack =
 	(uint8*){{ sanitizedSpecName }}SoundTrack1SxEV1,
 
 	// SxRAM pointers
-	(int8**){{ sanitizedSpecName }}SoundTrack1SxRAM,
+	(WaveformData**){{ sanitizedSpecName }}SoundTrack1SxRAM,
 
 	// SxSWP values
 	(uint8*){{ sanitizedSpecName }}SoundTrack1SxSWP,

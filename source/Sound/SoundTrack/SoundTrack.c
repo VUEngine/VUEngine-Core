@@ -398,14 +398,10 @@ bool SoundTrack::updateNative
 
 	uint16 note = this->soundTrackSpec->SxFQ[this->cursorSxFQ] + frequencyDelta;
 
-	VSUSoundSourceConfiguration vsuChannelConfiguration = 
+	VSUSoundSourceConfigurationRequest vsuChannelConfigurationRequest = 
 	{
 		// Requester object
 		Object::safeCast(this),
-		// VSU sound source to configure
-		NULL,
-		// VSU waveform to use
-		NULL,
 		// Time when the configuration elapses
 		__FIX7_9_EXT_DIV(__I_TO_FIX7_9_EXT(soundTrackKeyframe.tick), targetTimerResolutionFactor),
 		// Sound source type
@@ -436,7 +432,7 @@ bool SoundTrack::updateNative
 		this->soundTrackSpec->skippable
 	};
 
-	VSUManager::applySoundSourceConfiguration(&vsuChannelConfiguration);
+	VSUManager::applySoundSourceConfiguration(&vsuChannelConfigurationRequest);
 
 	return false;
 }

@@ -50,6 +50,18 @@ enum VSUPlaybackModes
 	kPlaybackPCM
 };
 
+/// A struct that holds the Waveform Data
+/// @memberof VSUManager
+typedef struct WaveformData
+{
+	/// Waveform's data
+	int8 data[32];
+
+	/// Data's CRC
+	uint32 crc;
+
+} WaveformData;
+
 /// A Waveform struct
 /// @memberof VSUManager
 typedef struct Waveform
@@ -60,14 +72,17 @@ typedef struct Waveform
 	/// Count of channels using this waveform
 	int8 usageCount;
 
-	/// Pointer to the VSU's waveform address
-	uint8* wave;
-
 	/// If true, waveform data has to be rewritten
 	uint8 overwrite;
 
-	/// Pointer to the waveform's data
+	/// Pointer to the VSU's waveform address
+	uint8* wave;
+
+	/// Pointer to the waveform data
 	const int8* data;
+
+	/// Data's CRC
+	uint32 crc;
 
 } Waveform;
 
@@ -130,8 +145,8 @@ typedef struct VSUSoundSourceConfiguration
 	/// SxEV1 values
 	uint8 SxEV1;
 
-	/// SxRAM pointer
-	const int8* SxRAM;
+	/// SxRAM index
+	uint8 SxRAM;
 
 	/// SxSWP values
 	uint8 SxSWP;
@@ -143,6 +158,51 @@ typedef struct VSUSoundSourceConfiguration
 	bool skippable;
 
 } VSUSoundSourceConfiguration;
+
+/// Sound source configuration request
+/// @memberof VSUManager
+typedef struct VSUSoundSourceConfigurationRequest
+{
+	/// Requester object
+	Object requester;
+
+	/// Time when the configuration elapses
+	fix7_9_ext timeout;
+
+	/// Sound source type
+	uint32 type;
+
+	/// SxINT values
+	uint8 SxINT;
+
+	/// SxLRV values
+	uint8 SxLRV;
+
+	/// SxFQL values
+	uint8 SxFQL;
+
+	/// SxFQH values
+	uint8 SxFQH;
+
+	/// SxEV0 values
+	uint8 SxEV0;
+
+	/// SxEV1 values
+	uint8 SxEV1;
+
+	/// SxRAM index
+	const WaveformData* SxRAM;
+
+	/// SxSWP values
+	uint8 SxSWP;
+
+	/// SxMOD pointer
+	const int8* SxMOD;
+
+	/// Skip if no sound source available?
+	bool skippable;
+
+} VSUSoundSourceConfigurationRequest;
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DECLARATION
@@ -158,7 +218,7 @@ singleton class VSUManager : Object
 	/// @protectedsection
 
 	/// List of queued sound source configurations
-	VirtualList queuedVSUSoundSourceConfigurations;
+	VirtualList queuedVSUSoundSourceConfigurationRequests;
 
 	/// Mapping of VSU sound source configurations
 	VSUSoundSourceConfiguration vsuSoundSourceConfigurations[__TOTAL_SOUND_SOURCES];
@@ -192,8 +252,8 @@ singleton class VSUManager : Object
 	void playSounds(uint32 elapsedMicroseconds);
 
 	/// Apply a sound source configuration to a VSU sound source with the provided data.
-	/// @param vsuSoundSourceConfiguration: VSU sound source configuration
-	static void applySoundSourceConfiguration(const VSUSoundSourceConfiguration* vsuSoundSourceConfiguration);
+	/// @param vsuSoundSourceConfigurationRequest: VSU sound source configuration
+	static void applySoundSourceConfiguration(const VSUSoundSourceConfigurationRequest* vsuSoundSourceConfigurationRequest);
 
 	/// Apply a sound source configuration to a VSU sound source with the provided data for PCM playback.
 	/// @param sample: PCM sample data
@@ -235,8 +295,6 @@ singleton class VSUManager : Object
 	void disableQueue();
 }
 
-#endif
-
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PUBLIC STATIC METHODS
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -267,3 +325,5 @@ static inline void VSUManager::applyPCMSampleToSoundSource(int8 sample)
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+#endif

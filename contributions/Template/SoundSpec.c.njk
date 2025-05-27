@@ -107,6 +107,18 @@
 	{%- endfor %}
 {%- endmacro -%}
 
+{%- macro printReferenceList(values, columnWidth=16) -%}
+	{% set count = 0 -%}
+	{%- for value in values -%}
+		{{- '&' -}}{{- value -}}{{- ', ' -}}
+		{% set count = count + 1 -%}
+		{%- if count == columnWidth and not loop.last -%}
+			{{- '\n\t' -}}
+			{% set count = 0 -%}
+		{%- endif -%}
+	{%- endfor %}
+{%- endmacro -%}
+
 {% include('templates/partials/fileHeader/fileHeader.c.njk') %}
 
 {{ macros.sectionHeader('Includes') }}
@@ -305,7 +317,7 @@ const uint8 {{ sanitizedSpecName }}SoundTrack{{ loop.index0 }}SxEV1[] =
 	{{ printValueList(valuesSxEV1, 22) }}
 };
 
-const int8* const {{ sanitizedSpecName }}SoundTrack{{ loop.index0 }}SxRAM[] =
+const WaveformData* const {{ sanitizedSpecName }}SoundTrack{{ loop.index0 }}SxRAM[] =
 {
 	{{ printValueList(valuesSxRAM, 4) }}
 };
@@ -361,13 +373,13 @@ SoundTrackROMSpec {{ sanitizedSpecName }}SoundTrack{{ loop.index0 }} =
 	(uint8*){{ sanitizedSpecName }}SoundTrack{{ loop.index0 }}SxEV1,
 
 	// SxRAM pointers
-	(int8**){{ sanitizedSpecName }}SoundTrack{{ loop.index0 }}SxRAM,
+	(WaveformData**){{ sanitizedSpecName }}SoundTrack{{ loop.index0 }}SxRAM,
 
 	// SxSWP values
 	(uint8*){{ sanitizedSpecName }}SoundTrack{{ loop.index0 }}SxSWP,
 
 	// SxMOD pointers
-	(int8**){{ sanitizedSpecName }}SoundTrack{{ loop.index0 }}SxMOD,
+	(WaveformData**){{ sanitizedSpecName }}SoundTrack{{ loop.index0 }}SxMOD,
 };
 {%- endif %}
 {%- endfor %}

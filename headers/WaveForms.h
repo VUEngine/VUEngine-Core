@@ -6,21 +6,27 @@
 #define WAVEFORMS_H_
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+// INCLUDES
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+#include <VSUManager.h>
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // DECLARATIONS
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-extern const int8 GlockenWaveForm[];
-extern const int8 OrganWaveForm[];
-extern const int8 PianoWaveForm[];
-extern const int8 RolandWaveForm[];
-extern const int8 SawWaveForm[];
-extern const int8 SawSquareWaveForm[];
-extern const int8 SineWaveForm[];
-extern const int8 SinePlusAlphaWaveForm[];
-extern const int8 SquareWaveForm[];
-extern const int8 SquareDuty75WaveForm[];
-extern const int8 TriangleWaveForm[];
-extern const int8 TrumpetWaveForm[];
-extern const int8 ViolinWaveForm[];
+extern const WaveformData GlockenWaveForm;
+extern const WaveformData OrganWaveForm;
+extern const WaveformData PianoWaveForm;
+extern const WaveformData RolandWaveForm;
+extern const WaveformData SawWaveForm;
+extern const WaveformData SawSquareWaveForm;
+extern const WaveformData SineWaveForm;
+extern const WaveformData SinePlusAlphaWaveForm;
+extern const WaveformData SquareWaveForm;
+extern const WaveformData SquareDuty75WaveForm;
+extern const WaveformData TriangleWaveForm;
+extern const WaveformData TrumpetWaveForm;
+extern const WaveformData ViolinWaveForm;
 
 #endif
