@@ -82,7 +82,7 @@ secure void ParamTableManager::reset()
 	NM_ASSERT(this->paramTableEnd >= this->paramTableBase, "ParamTableManager::reset: param table size is negative");
 
 	// TODO: all param tables should start at a 16bit boundary
-	this->usedBytes = 1;
+	this->usedBytes = 0;
 
 	this->paramTableFreeData.param = 0;
 	this->paramTableFreeData.recoveredSize = 0;
