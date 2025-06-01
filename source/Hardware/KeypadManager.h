@@ -29,7 +29,7 @@
 #define __S_HWDIS		0x01	 // Disable Hardware Reading
 
 // keypad specs
-#define K_NON			0x000	// No key
+#define K_NON			0x0000	// No key
 #define K_PWR			0x0001  // Low Power
 #define K_SGN			0x0002  // Signature; 1 = Standard Pad
 #define K_A				0x0004  // A Button
@@ -53,8 +53,8 @@
 #define K_RPAD			0xC0C0  // Right d-pad only
 
 #define __KEY_NONE		0x0000
-#define __KEY_PRESSED  0x0001
-#define __KEY_RELEASED 0x0010
+#define __KEY_PRESSED   0x0001
+#define __KEY_RELEASED  0x0010
 #define __KEY_HOLD		0x0100
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
