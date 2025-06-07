@@ -56,12 +56,10 @@
 		{%- endif %}
 	{%- endfor -%}
 {%- endif -%}
-{%- if item.inGameType != '' and item.components.colliders | length -%}
+{%- if item.components.colliders | length -%}
+	{%- set includes = (includes.push('ColliderLayers'), includes) -%}
 	{%- for collider in item.components.colliders -%}
 		{%- set includes = (includes.push(collider.type), includes) -%}
-		{%- if collider.layers | length > 0 %}
-			{%- set includes = (includes.push('ColliderLayers'), includes) -%}
-		{%- endif %}
 	{%- endfor -%}
 {%- endif -%}
 {%- if item.components.wireframes | length -%}
@@ -576,14 +574,14 @@ BodyROMSpec {{ bodyName }}BodySpec =
 
 	// Axises on which the body is subject to gravity
 	{% if body.gravityAxes.length -%}
-	{{- body.gravityAxes | join(' | ') -}}
+	__{{- body.gravityAxes | join(' | __') -}}
 	{%- else -%}
 	__NO_AXIS
 	{%- endif -%},
 
 	// Axises around which to rotate the owner when syncronizing with body
 	{% if body.rotationAxes.length -%}
-	{{- body.rotationAxes | join(' | ') -}}
+	__{{- body.rotationAxes | join(' | __') -}}
 	{%- else -%}
 	__NO_AXIS
 	{%- endif %}
