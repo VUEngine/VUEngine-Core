@@ -835,13 +835,6 @@ void Actor::stopAnimation()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void Actor::setActualFrame(int16 frame)
-{
-	ComponentManager::propagateCommand(cVisualComponentCommandSetFrame, Entity::safeCast(this), kSpriteComponent, frame);
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
 void Actor::nextFrame()
 {
 	ComponentManager::propagateCommand(cVisualComponentCommandNextFrame, Entity::safeCast(this), kSpriteComponent);
@@ -852,6 +845,32 @@ void Actor::nextFrame()
 void Actor::previousFrame()
 {
 	ComponentManager::propagateCommand(cVisualComponentCommandPreviousFrame, Entity::safeCast(this), kSpriteComponent);
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void Actor::setActualFrame(int16 frame)
+{
+	ComponentManager::propagateCommand(cVisualComponentCommandSetFrame, Entity::safeCast(this), kSpriteComponent, frame);
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+int16 Actor::getActualFrame()
+{
+	VirtualList sprites = Entity::getComponents(this, kSpriteComponent);
+
+	if(NULL != sprites->head)
+	{
+		Sprite sprite = Sprite::safeCast(sprites->head->data);
+
+		if(!isDeleted(sprite))
+		{
+			return Sprite::getActualFrame(sprite);
+		}
+	}
+
+	return -1;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

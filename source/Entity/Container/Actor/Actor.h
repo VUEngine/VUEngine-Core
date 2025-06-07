@@ -277,16 +277,16 @@ class Actor : Container
 	/// @return Animation function's name currently playing if any
 	const char* getPlayingAnimationName();
 
-	/// Skip the currently playing animation to the provided frame.
-	/// @param frame: The frame of the playing animation to skip to
-	/// @return True if the actual frame was changed; false otherwise
-	void setActualFrame(int16 frame);
-
 	/// Skip the currently playing animation to the next frame.
 	void nextFrame();
 
 	/// Rewind the currently playing animation to the previous frame.
 	void previousFrame();
+
+	/// Skip the currently playing animation to the provided frame.
+	/// @param frame: The frame of the playing animation to skip to
+	/// @return True if the actual frame was changed; false otherwise
+	void setActualFrame(int16 frame);
 
 	/// Retrieve the actual frame of the playing animation if any.
 	/// @return Actual frame of the playing animation if any
