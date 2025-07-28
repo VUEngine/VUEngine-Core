@@ -157,7 +157,7 @@ static void KeypadManager::printUserInput(int32 x, int32 y)
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 secure void KeypadManager::reset()
-{	
+{
 	this->userInput.dummyKey = K_NON;
 
 	KeypadManager::flush(this);
@@ -171,7 +171,7 @@ secure void KeypadManager::reset()
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 secure void KeypadManager::readUserInput(bool waitForStableReading)
-{	
+{
 	if(!waitForStableReading)
 	{
 		if(*_readingStatus & __S_STAT)
@@ -257,7 +257,7 @@ void KeypadManager::destructor()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 void KeypadManager::enableInterrupt()
-{	
+{
 	KeypadManager::flush(this);
 
 	_hardwareRegisters[__SCR] = 0;
@@ -275,35 +275,35 @@ void KeypadManager::disableInterrupt()
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void KeypadManager::flush()
-{	
+{
 	this->userInput = (UserInput){K_NON, K_NON, K_NON, K_NON, K_NON, K_NON, K_NON, this->userInput.dummyKey};
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 uint16 KeypadManager::getPressedKey()
-{	
+{
 	return this->userInput.allKeys & ~this->userInput.previousKey;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 uint16 KeypadManager::getReleasedKey()
-{	
+{
 	return ~this->userInput.allKeys & this->userInput.previousKey;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 uint16 KeypadManager::getHoldKey()
-{	
+{
 	return this->userInput.allKeys & this->userInput.previousKey;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 uint16 KeypadManager::getPreviousKey()
-{	
+{
 	return this->userInput.previousKey;
 }
 
