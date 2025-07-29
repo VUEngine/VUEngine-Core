@@ -509,6 +509,7 @@ uint16 Body::stopMovement(uint16 axis)
 		this->internalVelocity.x = 0;
 		this->accelerating.x = false;
 		this->externalForce.x = 0;
+		this->direction.x = 0;
 		axisOfStopping |= axisOfMovement & __X_AXIS;
 	}
 
@@ -519,6 +520,7 @@ uint16 Body::stopMovement(uint16 axis)
 		this->internalVelocity.y = 0;
 		this->accelerating.y = false;
 		this->externalForce.y = 0;
+		this->direction.y = 0;
 		axisOfStopping |= axisOfMovement & __Y_AXIS;
 	}
 
@@ -529,6 +531,7 @@ uint16 Body::stopMovement(uint16 axis)
 		this->internalVelocity.z = 0;
 		this->accelerating.z = false;
 		this->externalForce.z = 0;
+		this->direction.z = 0;
 		axisOfStopping |= axisOfMovement & __Z_AXIS;
 	}
 
