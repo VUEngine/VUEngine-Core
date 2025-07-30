@@ -304,7 +304,7 @@ void CommunicationManager::startSyncCycle()
 
 	// The received message and data can be shifted due to the chance of this method being called out of sync
 	// So, we create composite value to circle shift the result and compare with it
-	uint64 target = (((uint64)CommunicationManager::getClass()) << 32) | (*(uint32*)CommunicationManager::getClass());
+	uint64 target = (((uint64)(uint32)CommunicationManager::getClass()) << 32) | (*(uint32*)CommunicationManager::getClass());
 
 	do
 	{
@@ -315,7 +315,8 @@ void CommunicationManager::startSyncCycle()
 		(
 			!CommunicationManager::sendAndReceiveData
 			(
-				this, CommunicationManager::getClass(), (BYTE*)CommunicationManager::getClass(), sizeof(CommunicationManager::getClass())
+				this, (uint32)CommunicationManager::getClass(), 
+				(BYTE*)CommunicationManager::getClass(), sizeof((uint32)CommunicationManager::getClass())
 			)
 		)
 		{
@@ -347,7 +348,7 @@ void CommunicationManager::startSyncCycle()
 			if(result == target)
 			{
 				// Performe a dummy transmission to shift the send data by a byte
-				CommunicationManager::sendAndReceiveData(this, result, (BYTE*)&result, 1);
+				CommunicationManager::sendAndReceiveData(this, (uint32)result, (BYTE*)&result, 1);
 
 				break;
 			}
