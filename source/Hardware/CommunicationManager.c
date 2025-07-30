@@ -249,6 +249,8 @@ bool CommunicationManager::cancelCommunications()
 	this->asyncReceivedByte = NULL;
 	this->status = kCommunicationsStatusIdle;
 	this->broadcast = kCommunicationsBroadcastNone;
+	this->numberOfBytesPendingTransmission = 0;
+	this->numberOfBytesPreviouslySent = 0;
 
 	CommunicationManager::removeEventListeners(this, kEventCommunicationsConnected);
 	CommunicationManager::removeEventListeners(this, kEventCommunicationsTransmissionCompleted);
@@ -265,7 +267,7 @@ void CommunicationManager::startSyncCycle()
 	{
 		return;
 	}
-
+/*
 	VIPManager::startMemoryRefresh(VIPManager::getInstance());
 
 	CommunicationManager::cancelCommunications(this);
@@ -296,6 +298,64 @@ void CommunicationManager::startSyncCycle()
 		}
 		while(__MASTER_FRMCYC_SET_MESSAGE != message);
 	}
+*/
+
+	CommunicationManager::cancelCommunications(this);
+
+	// The received message and data can be shifted due to the chance of this method being called out of sync
+	// So, we create composite value to circle shift the result and compare with it
+	uint64 target = (((uint64)CommunicationManager::getClass()) << 32) | (*(uint32*)CommunicationManager::getClass());
+
+	do
+	{
+		/*
+		 * Data transmission can fail if there was already a request to send data.
+		 */
+		if
+		(
+			!CommunicationManager::sendAndReceiveData
+			(
+				this, CommunicationManager::getClass(), (BYTE*)CommunicationManager::getClass(), sizeof(CommunicationManager::getClass())
+			)
+		)
+		{
+			/*
+			 * In this case, simply cancel all communications and try again. This supposes
+			 * that there are no other calls that could cause a race condition.
+			 */
+			CommunicationManager::cancelCommunications(this);
+			continue;
+		}
+
+		// Create the composite result to circle shift the results
+		uint64 result = (((uint64)CommunicationManager::getReceivedMessage(this)) << 32) | (*(uint32*)CommunicationManager::getReceivedData(this));
+
+		if(target == result)
+		{
+			return;
+		}
+
+		// Shifts be of 4 bits each
+		int16 shifts = 64;
+		
+		while(0 < shifts)
+		{
+			// Circle shift the result fo the left
+			result = ((result & 0xFF00000000000000) >> 60) | (result << 4);
+
+			// If the shifted result is equal to the target
+			if(result == target)
+			{
+				// Performe a dummy transmission to shift the send data by a byte
+				CommunicationManager::sendAndReceiveData(this, result, (BYTE*)&result, 1);
+
+				break;
+			}
+
+			shifts -= 4;
+		}
+	}
+	while(true);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -609,6 +669,7 @@ void CommunicationManager::endCommunications()
 
 	_communicationRegisters[__CCR] = __COM_DISABLE_INTERRUPT;
 	_communicationRegisters[__CDTR] = 0;
+	_communicationRegisters[__CDRR] = 0;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
