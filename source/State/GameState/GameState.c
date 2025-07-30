@@ -162,8 +162,6 @@ void GameState::update(void* owner)
 
 	GameState::applyTransformationsUI(this);
 
-	GameState::updateStage(this);
-
 	GameState::readUserInput(this);
 
 	GameState::execute(this, owner);
@@ -179,6 +177,8 @@ void GameState::update(void* owner)
 	GameState::processCollisions(this);
 
 	GameState::dispatchDelayedMessages(this);
+
+	GameState::updateStage(this);
 
 	GameState::updateSounds(this);
 
