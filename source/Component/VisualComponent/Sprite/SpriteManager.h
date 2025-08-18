@@ -57,6 +57,16 @@ typedef struct SpriteRegistry
 
 } SpriteRegistry;
 
+typedef struct ObjectSpritesContainerConfiguration
+{
+	/// Instantiate
+	bool instantiate;
+
+	/// Z position
+	int16 zPosition;
+
+} ObjectSpritesContainerConfiguration;
+
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DECLARATION
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -159,13 +169,12 @@ class SpriteManager : ComponentManager
 	/// Configure the manager's state.
 	/// @param texturesMaximumRowsToWrite: Number of texture rows to write during each rendering cycle
 	/// @param maximumParamTableRowsToComputePerCall: Number of param table rows to write during each rendering cycle 
-	/// @param size: Array with the number of OBJECTS for each container
-	/// @param z: Array of Z coordinates for each container
+	/// @param objectSpritesContainerConfiguration: Array with the configuration of ObjectSpriteContainers
 	/// @param animationsClock: Clock for the animations
 	void configure
 	(
 		uint8 texturesMaximumRowsToWrite, int32 maximumParamTableRowsToComputePerCall,
-		const int16 size[__TOTAL_OBJECT_SEGMENTS], const int16 z[__TOTAL_OBJECT_SEGMENTS], Clock animationsClock
+		const ObjectSpritesContainerConfiguration objectSpritesContainersConfiguration[__TOTAL_OBJECT_SEGMENTS], Clock animationsClock
 	);
 
 	/// Set the clock that determines if the animations must be updated or not.

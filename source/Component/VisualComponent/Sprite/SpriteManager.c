@@ -337,12 +337,12 @@ bool SpriteManager::areComponentsVisual()
 void SpriteManager::configure
 (
 	uint8 texturesMaximumRowsToWrite, int32 maximumParamTableRowsToComputePerCall,
-	const int16 size[__TOTAL_OBJECT_SEGMENTS], const int16 z[__TOTAL_OBJECT_SEGMENTS], Clock animationsClock
+	const ObjectSpritesContainerConfiguration objectSpritesContainersConfiguration[__TOTAL_OBJECT_SEGMENTS], Clock animationsClock
 )
 {
 	SpriteManager::setTexturesMaximumRowsToWrite(this, texturesMaximumRowsToWrite);
 	SpriteManager::setMaximumParamTableRowsToComputePerCall(this, maximumParamTableRowsToComputePerCall);
-	SpriteManager::configureObjectSpriteContainers(this, size, z);
+	SpriteManager::configureObjectSpriteContainers(this, objectSpritesContainersConfiguration);
 	SpriteManager::setAnimationsClock(this, animationsClock);
 }
 
@@ -422,17 +422,20 @@ void SpriteManager::registerSprite(Sprite sprite, SpriteRegistry* spriteRegistry
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void SpriteManager::configureObjectSpriteContainers(const int16 size[__TOTAL_OBJECT_SEGMENTS], const int16 z[__TOTAL_OBJECT_SEGMENTS])
+void SpriteManager::configureObjectSpriteContainers
+(
+	const ObjectSpritesContainerConfiguration objectSpritesContainersConfiguration[__TOTAL_OBJECT_SEGMENTS]
+)
 {
 #ifndef __RELEASE
-	int16 previousZ = z[__TOTAL_OBJECT_SEGMENTS - 1];
+	int16 previousZ = objectSpritesContainersConfiguration[__TOTAL_OBJECT_SEGMENTS - 1].zPosition;
 #endif
 
 	for(int32 i = __TOTAL_OBJECT_SEGMENTS; i--; )
 	{
-		NM_ASSERT(z[i] <= previousZ, "SpriteManager::configureObjectSpriteContainers: wrong z");
+		NM_ASSERT(objectSpritesContainersConfiguration[i].zPosition <= previousZ, "SpriteManager::configureObjectSpriteContainers: wrong z");
 
-		if(0 < size[i])
+		if(objectSpritesContainersConfiguration[i].instantiate)
 		{
 			NM_ASSERT(isDeleted(this->objectSpriteContainers[i]), "SpriteManager::configureObjectSpriteContainers: error creating container");
 
@@ -448,13 +451,13 @@ void SpriteManager::configureObjectSpriteContainers(const int16 size[__TOTAL_OBJ
 
 			PixelVector position =
 			{
-				0, 0, z[i], 0
+				0, 0, objectSpritesContainersConfiguration[i].zPosition, 0
 			};
 
 			ObjectSpriteContainer::setPosition(this->objectSpriteContainers[i], &position);
 
 #ifndef __RELEASE
-			previousZ = z[i];
+			previousZ = objectSpritesContainersConfiguration[i].zPosition;
 #endif
 		}
 	}

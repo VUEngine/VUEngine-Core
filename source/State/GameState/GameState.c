@@ -1067,8 +1067,7 @@ void GameState::configureGraphics()
 		this->componentManagers[kSpriteComponent],
 		stageSpec->rendering.texturesMaximumRowsToWrite,
 		stageSpec->rendering.maximumAffineRowsToComputePerCall,
-		stageSpec->rendering.objectSpritesContainersSize,
-		stageSpec->rendering.objectSpritesContainersZPosition,
+		stageSpec->rendering.objectSpritesContainersConfiguration,
 		this->animationsClock
 	);
 

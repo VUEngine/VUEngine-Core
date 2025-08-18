@@ -116,11 +116,8 @@ typedef struct StageSpec
 		/// Number of BGMAP segments reserved for the param tables
 		int32 paramTableSegments;
 
-		/// Object segments' sizes (__spt0 to __spt3)
-		int16 objectSpritesContainersSize[__TOTAL_OBJECT_SEGMENTS];
-
-		/// Object segments' z coordinates (__spt0 to __spt3)
-		int16 objectSpritesContainersZPosition[__TOTAL_OBJECT_SEGMENTS];
+		/// Object Sprite Containers configuration
+		ObjectSpritesContainerConfiguration objectSpritesContainersConfiguration[__TOTAL_OBJECT_SEGMENTS];
 
 		/// Struct defining the optical settings for the stage
 		PixelOptical pixelOptical;
