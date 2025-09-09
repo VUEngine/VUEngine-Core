@@ -12,7 +12,7 @@
 // DEFINITIONS
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-const FontData _fontData[] =
+FontData _fontData[] =
 {
 	{(FontSpec*)&DefaultFontSpec, NULL},
 	{(FontSpec*)&ProfilerFontSpec, NULL},

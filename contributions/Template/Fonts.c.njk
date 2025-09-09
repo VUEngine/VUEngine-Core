@@ -16,7 +16,8 @@
 
 {{ macros.sectionHeader('Definitions') }}
 
-const FontData _fontData[] =
+# Must not be const since the NULL will be replaced during runtime
+FontData _fontData[] =
 {
 	{(FontSpec*)&DefaultFontSpec, NULL},
 	{(FontSpec*)&ProfilerFontSpec, NULL},
