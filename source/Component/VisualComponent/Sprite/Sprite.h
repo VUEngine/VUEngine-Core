@@ -297,7 +297,8 @@ abstract class Sprite : VisualComponent
 
 	/// Replace a CHAR in the sprite's texture.
 	/// @param texturePoint: Coordinate in texture's space of the CHAR to replace
-	/// @param newChar: Color data array for the CHAR
+	/// @param newChar: Color data array for the CHAR 
+	/// __UINT32S_PER_CHARS(n) provides the offset within a a uint32 array of color data.
 	void putChar(const Point* texturePoint, const uint32* newChar);
 
 	/// Replace a pixel in the sprite's texture.

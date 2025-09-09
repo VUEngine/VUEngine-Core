@@ -163,7 +163,8 @@ class CharSet : ListenerObject
 
 	/// Replace the color provided color data to a CHAR.
 	/// @param charToReplace: Index of the CHAR to replace
-	/// @param newChar: Color data array for the CHAR 
+	/// @param newChar: Color data array for the CHAR
+	/// __UINT32S_PER_CHARS(n) provides the offset within a a uint32 array of color data.
 	void putChar(uint32 charToReplace, const uint32* newChar);
 
 	/// Replace a pixel in a CHAR.
