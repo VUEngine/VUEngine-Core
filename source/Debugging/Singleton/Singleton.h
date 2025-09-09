@@ -28,7 +28,7 @@
 /// Checks that the provided authorization array lives in non volatile memory.
 /// @param ClassName: Class to verity
 /// @return Implementation of a check for the validity of the authorization array
-#ifdef __SHIPPING
+#ifndef __SHIPPING
 #define __SINGLETON_SECURITY_CHECKER(ClassName)																							\
 																																		\
 	extern uint32 _textStart __attribute__((unused));																					\
@@ -36,10 +36,10 @@
 																																		\
 	if(!(&_textStart < (uint32*)requesterClasses && (uint32*)requesterClasses < &_dataLma))												\
 	{																																	\
-		Printing_setDebugMode();																										\
-		Printing_clear();																												\
-		Printing_text(#ClassName, 44, 25, NULL);																						\
-		Printing_hex((WORD)requesterClasses, 44, 26, 8, NULL);																			\
+		Printer_setDebugMode();																											\
+		Printer_clear();																												\
+		Printer_text(#ClassName, 44, 25, NULL);																							\
+		Printer_hex((WORD)requesterClasses, 44, 26, 8, NULL);																			\
 		NM_ASSERT(false, ClassName ## initialize: the provided array lives in WRAM);													\
 	}
 #else
