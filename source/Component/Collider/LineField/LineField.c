@@ -168,9 +168,9 @@ void LineField::configureWireframe()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-#ifndef __SHIPPING
-void LineField::print(int32 x, int32 y)
+void LineField::print(int32 x __attribute__((unused)), int32 y __attribute__((unused)))
 {
+#ifndef __SHIPPING
 	Base::print(this, x, y);
 	
 	Printer::text("L:             " , x, y, NULL);
@@ -194,11 +194,8 @@ void LineField::print(int32 x, int32 y)
 	Printer::int32(__METERS_TO_PIXELS(this->a.z), x + 2, y, NULL);
 	Printer::text("," , x + 6, y, NULL);
 	Printer::int32(__METERS_TO_PIXELS(this->a.z), x + 8, y++, NULL);
-}
-#else
-void LineField::print(int32 x __attribute__((unused)), int32 y __attribute__((unused)))
-{}
 #endif
+}
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 

@@ -148,9 +148,9 @@ void Ball::configureWireframe()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-#ifndef __SHIPPING
-void Ball::print(int32 x, int32 y)
+void Ball::print(int32 x __attribute__((unused)), int32 y __attribute__((unused)))
 {
+#ifndef __SHIPPING
 	Base::print(this, x, y);
 	
 	Printer::text("R:             " , x, y, NULL);
@@ -174,11 +174,8 @@ void Ball::print(int32 x, int32 y)
 	Printer::int32(__METERS_TO_PIXELS(this->transformation->position.z - this->radius), x + 2, y, NULL);
 	Printer::text("-" , x + 6, y, NULL);
 	Printer::int32(__METERS_TO_PIXELS(this->transformation->position.z + this->radius), x + 8, y++, NULL);
-}
-#else
-void Ball::print(int32 x __attribute__((unused)), int32 y __attribute__((unused)))
-{}
 #endif
+}
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 

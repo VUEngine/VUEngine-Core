@@ -560,9 +560,9 @@ Vector3D Collider::getNormal()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-#ifndef __SHIPPING
-void Collider::print(int32 x, int32 y)
+void Collider::print(int32 x __attribute__((unused)), int32 y __attribute__((unused)))
 {
+#ifndef __SHIPPING
 	Printer::text("SHAPE ", x, y++, NULL);
 	Printer::text("Owner:            ", x, y, NULL);
 	Printer::text(this->owner ? __GET_CLASS_NAME(this->owner) : "No owner", x + 7, y++, NULL);
@@ -572,11 +572,8 @@ void Collider::print(int32 x, int32 y)
 	Printer::int32(this->otherColliders ? VirtualList::getCount(this->otherColliders) : 0, x + 21, y++, NULL);
 	Printer::text("Impenetrable colliders:            ", x, y, NULL);
 	Printer::int32(Collider::getNumberOfImpenetrableOtherColliders(this), x + 21, y++, NULL);
-}
-#else
-void Collider::print(int32 x __attribute__((unused)), int32 y __attribute__((unused)))
-{}
 #endif
+}
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
