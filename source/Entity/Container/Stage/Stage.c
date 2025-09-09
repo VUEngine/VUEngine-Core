@@ -70,10 +70,12 @@ static const StreamingPhase _streamingPhases[] =
 
 #define __DEBUGGING_STREAMING
 #ifdef __DEBUGGING_STREAMING
+#ifndef __SHIPPING
 static uint32 unloadOutOfRangeActorsHighestTime = 0;
 static uint32 loadInRangeActorsHighestTime = 0;
 static uint32 processRemovedActorsHighestTime = 0;
 static uint32 actorFactoryHighestTime = 0;
+#endif
 #endif
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

@@ -221,6 +221,9 @@ void Box::print(int32 x, int32 y)
 	Printer::text("-" , x + 6, y, NULL);
 	Printer::int32(__METERS_TO_PIXELS(rightBox.z1 + this->transformation->position.z), x + 8, y++, NULL);
 }
+#else
+void Box::print(int32 x __attribute__((unused)), int32 y __attribute__((unused)))
+{}
 #endif
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

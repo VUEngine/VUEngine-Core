@@ -195,6 +195,9 @@ void LineField::print(int32 x, int32 y)
 	Printer::text("," , x + 6, y, NULL);
 	Printer::int32(__METERS_TO_PIXELS(this->a.z), x + 8, y++, NULL);
 }
+#else
+void LineField::print(int32 x __attribute__((unused)), int32 y __attribute__((unused)))
+{}
 #endif
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

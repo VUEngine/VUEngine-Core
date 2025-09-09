@@ -573,6 +573,9 @@ void Collider::print(int32 x, int32 y)
 	Printer::text("Impenetrable colliders:            ", x, y, NULL);
 	Printer::int32(Collider::getNumberOfImpenetrableOtherColliders(this), x + 21, y++, NULL);
 }
+#else
+void Collider::print(int32 x __attribute__((unused)), int32 y __attribute__((unused)))
+{}
 #endif
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
