@@ -37,9 +37,9 @@ friend class VirtualNode;
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-#ifndef __SHIPPING
-static void BgmapTextureManager::print(int32 x, int32 y)
+static void BgmapTextureManager::print(int32 x __attribute__((unused)), int32 y __attribute__((unused)))
 {
+#ifndef __SHIPPING
 	BgmapTextureManager bgmapTextureManager = BgmapTextureManager::getInstance();
 
 	Printer::text("BGMAP TEXTURES USAGE", x, y++, NULL);
@@ -97,8 +97,8 @@ static void BgmapTextureManager::print(int32 x, int32 y)
 
 	Printer::int32(recyclableTextures, x + 7, y - 7, NULL);
 	Printer::int32(freeEntries, x + 7, y - 6, NULL);
-}
 #endif
+}
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 

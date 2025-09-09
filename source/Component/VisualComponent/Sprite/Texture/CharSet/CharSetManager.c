@@ -33,9 +33,9 @@ friend class CharSet;
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-#ifndef __SHIPPING
-static void CharSetManager::print(int32 x, int32 y)
+static void CharSetManager::print(int32 x __attribute__((unused)), int32 y __attribute__((unused)))
 {
+#ifndef __SHIPPING
 	CharSetManager charSetManager = CharSetManager::getInstance();
 	Printer::text("CHAR MEMORY USAGE", x, y++, NULL);
 
@@ -45,8 +45,8 @@ static void CharSetManager::print(int32 x, int32 y)
 	Printer::int32(CharSetManager::getTotalUsedChars(charSetManager), x + 18, y, NULL);
 	Printer::text("Total free chars:      ", x, ++y, NULL);
 	Printer::int32(CharSetManager::getTotalFreeChars(charSetManager), x + 18, y, NULL);
-}
 #endif
+}
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PUBLIC METHODS
