@@ -433,10 +433,9 @@ void SpriteManager::configureObjectSpriteContainers
 
 	for(int32 i = __TOTAL_OBJECT_SEGMENTS; i--; )
 	{
-		NM_ASSERT(objectSpritesContainersConfiguration[i].zPosition <= previousZ, "SpriteManager::configureObjectSpriteContainers: wrong z");
-
 		if(objectSpritesContainersConfiguration[i].instantiate)
 		{
+			NM_ASSERT(objectSpritesContainersConfiguration[i].zPosition <= previousZ, "SpriteManager::configureObjectSpriteContainers: wrong z");
 			NM_ASSERT(isDeleted(this->objectSpriteContainers[i]), "SpriteManager::configureObjectSpriteContainers: error creating container");
 
 			if(!isDeleted(this->objectSpriteContainers[i]))
