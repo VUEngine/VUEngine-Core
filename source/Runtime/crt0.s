@@ -1,4 +1,4 @@
-	.section .text
+.section .text
 	.align	1
 
 
@@ -163,7 +163,7 @@ end_init_sramData:
 	jr	    end_init_bss
 top_init_bss:
 	st.h	r0, 0[r6]
-	add	    1,  r6
+	add	    2,  r6
 end_init_bss:
 	cmp	    r7, r6
 	blt	    top_init_bss
@@ -188,8 +188,8 @@ end_init_dram_bss:
 	movea   lo(__sramBssEnd),     r7, r7
 	jr      end_init_sram_bss
 top_init_sram_bss:
-	st.b    r0, 0[r6]
-	add	    1,  r6
+	st.h    r0, 0[r6]
+	add	    2,  r6
 end_init_sram_bss:
 	cmp     r7, r6
 	blt     top_init_sram_bss
@@ -381,4 +381,3 @@ _interrupt_table:
 	movea	lo(_start), r1, r1
 	jmp	    [r1]
 	.fill	0x06
-
