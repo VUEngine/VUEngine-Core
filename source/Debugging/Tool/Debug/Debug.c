@@ -1265,12 +1265,8 @@ void Debug::sramPage(int32 increment __attribute__ ((unused)), int32 x __attribu
 
 void Debug::showSramPage(int32 increment __attribute__ ((unused)), int32 x __attribute__ ((unused)), int32 y)
 {
-	uint8 value;
-	int32 i, j, totalPages;
 	char word[9];
-
-	totalPages = __TOTAL_SAVE_RAM >> 7;
-
+	int32 totalPages = __TOTAL_SAVE_RAM >> 7;
 	extern uint32 _sramBssStart;
 
 	this->sramPage += increment;
@@ -1285,7 +1281,7 @@ void Debug::showSramPage(int32 increment __attribute__ ((unused)), int32 x __att
 	}
 
 	// Get sram base address
-	uint8* startAddress = (uint8*)&_sramBssStart;
+	uint16* startAddress = (uint16*)&_sramBssStart;
 
 	// Print status header
 	Printer::text("SRAM STATUS", 1, y++, NULL);
@@ -1306,20 +1302,23 @@ void Debug::showSramPage(int32 increment __attribute__ ((unused)), int32 x __att
 	);
 
 	// Print values
-	for(i = 0; i < 16; i++)
+	for(int32 i = 0; i < 16; i++)
 	{
 		// Print address
 		Printer::text("0x00000000: ", 1, ++y, NULL);
 		Printer::hex((int32)startAddress + (this->sramPage << 7) + (i << 3), 3, y, 8, NULL);
 
 		// Values
-		for(j = 0; j < 8; j++)
+		for(int32 j = 0; j < 4; j++)
 		{
 			// Read byte from sram
-			value = startAddress[(this->sramPage << 7) + (i << 3) + j];
+			uint16 value = startAddress[(this->sramPage << 6) + (i << 2) + j];
 
-			// Print byte
-			Printer::hex(value, 13 + (j*3), y, 2, NULL);
+			// Print low byte
+			Printer::hex(0xFF & value, 13 + (j * 6), y, 2, NULL);
+
+			// Print high byte
+			Printer::hex(value >> 8, 16 + (j * 6), y, 2, NULL);
 
 			// Add current character to line word
 			// If outside of extended ascii range, print whitespace
