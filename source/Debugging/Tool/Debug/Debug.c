@@ -1285,7 +1285,7 @@ void Debug::showSramPage(int32 increment __attribute__ ((unused)), int32 x __att
 	}
 
 	// Get sram base address
-	uint16* startAddress = (uint16*)&_sramBssStart;
+	uint8* startAddress = (uint8*)&_sramBssStart;
 
 	// Print status header
 	Printer::text("SRAM STATUS", 1, y++, NULL);
