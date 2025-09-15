@@ -269,6 +269,10 @@ static void TimerManager::setTargetTimePerInterrupt(uint16 targetTimePerInterrup
 	{
 		case kUS:
 		{
+#ifdef __DEBUG
+			targetTimePerInterrupt = 1000 > targetTimePerInterrupt ? 1000 : targetTimePerInterrupt;
+#endif
+
 			minimumTimePerInterrupt = 
 				TimerManager::getResolutionInUS(timerManager) + TimerManager::getResolutionInUS(timerManager) * __TIMER_COUNTER_DELTA;
 			maximumTimePerInterrupt = __MAXIMUM_TIME_PER_INTERRUPT_US;
