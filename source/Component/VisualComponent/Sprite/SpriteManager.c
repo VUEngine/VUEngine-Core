@@ -625,9 +625,9 @@ void SpriteManager::render()
 
 		if(__SHOW == objectSpriteContainer->show)
 		{
-			for(VirtualNode node = this->spriteRegistry[i].sprites->tail, nextPervious = NULL; NULL != node; node = nextPervious)
+			for(VirtualNode node = this->spriteRegistry[i].sprites->tail, nextPrevious = NULL; NULL != node; node = nextPrevious)
 			{
-				nextPervious = node->previous;
+				nextPrevious = node->previous;
 
 				ObjectSprite objectSprite = ObjectSprite::safeCast(node->data);
 
