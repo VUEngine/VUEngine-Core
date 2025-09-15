@@ -203,6 +203,8 @@ secure bool SoundManager::playSounds(uint32 elapsedMicroseconds)
 
 secure void SoundManager::reset()
 {
+	HardwareManager::suspendInterrupts();
+
 	VSUManager::reset(VSUManager::getInstance());
 
 	for(VirtualNode node = this->sounds->head; NULL != node; node = node->next)
@@ -219,6 +221,8 @@ secure void SoundManager::reset()
 	SoundManager::setPCMTargetPlaybackRefreshRate(this, __DEFAULT_PCM_HZ);
 	SoundManager::stopAllSounds(this, false, NULL);
 	SoundManager::unlock(this);
+
+	HardwareManager::resumeInterrupts();
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
