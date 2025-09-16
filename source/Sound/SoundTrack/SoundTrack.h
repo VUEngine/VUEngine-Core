@@ -166,8 +166,7 @@
 /// @memberof SoundTrack
 enum SoundTrackTypes
 {
-	kTrackNative = 0,
-	kTrackPCM
+	kTrackNative = 0
 };
 
 /// Sound events that the sound player recongnizes
