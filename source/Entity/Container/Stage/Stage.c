@@ -1046,7 +1046,6 @@ void Stage::configureGraphics()
 void Stage::configureSounds()
 {
 	SoundManager::unlock(SoundManager::getInstance());
-	SoundManager::setPCMTargetPlaybackRefreshRate(SoundManager::getInstance(), this->stageSpec->sound.pcmTargetPlaybackRefreshRate);
 
 	int32 i = 0;
 

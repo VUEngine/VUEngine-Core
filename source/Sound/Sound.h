@@ -247,8 +247,7 @@ class Sound : ListenerObject
 
 	/// Advance the playback on the sound's native tracks.
 	/// @param elapsedMicroseconds: Elapsed time since the last call
-	/// @param targetPCMUpdates: Ideal Elapsed time since the last call
-	void update(uint32 elapsedMicroseconds, uint32 targetPCMUpdates);
+	void update(uint32 elapsedMicroseconds);
 
 	/// Print the sounds's properties.
 	/// @param x: Screen x coordinate where to print

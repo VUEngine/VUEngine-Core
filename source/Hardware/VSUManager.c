@@ -273,13 +273,13 @@ secure void VSUManager::reset()
 		this->vsuSoundSourceConfigurations[i].SxLRV = 0;
 		this->vsuSoundSourceConfigurations[i].SxFQL = 0;
 		this->vsuSoundSourceConfigurations[i].SxFQH = 0;
-		this->vsuSoundSourceConfigurations[i].SxEV0 = kPlaybackPCM == this->playbackMode ? 0xFF : 0x00;
+		this->vsuSoundSourceConfigurations[i].SxEV0 = 0;
 		this->vsuSoundSourceConfigurations[i].SxEV1 = 0;
 		this->vsuSoundSourceConfigurations[i].SxRAM = 0;
 		this->vsuSoundSourceConfigurations[i].SxSWP = 0;
-		this->vsuSoundSourceConfigurations[i].SxINT = kPlaybackPCM == this->playbackMode ? 0x9F : 0;
+		this->vsuSoundSourceConfigurations[i].SxINT = 0;
 
-		Waveform* waveform = VSUManager::findWaveform(this, this->playbackMode ? &PCMWaveform : NULL);
+		Waveform* waveform = VSUManager::findWaveform(this, NULL);
 
 		this->vsuSoundSourceConfigurations[i].waveform = waveform;
 		this->vsuSoundSourceConfigurations[i].vsuSoundSource->SxLRV = this->vsuSoundSourceConfigurations[i].SxLRV;
@@ -291,29 +291,6 @@ secure void VSUManager::reset()
 		this->vsuSoundSourceConfigurations[i].vsuSoundSource->SxSWP = this->vsuSoundSourceConfigurations[i].SxSWP;
 		this->vsuSoundSourceConfigurations[i].vsuSoundSource->SxINT = this->vsuSoundSourceConfigurations[i].SxINT;
 	}
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-secure void VSUManager::setMode(uint32 playbackMode)
-{
-	this->playbackMode = playbackMode;
-
-	switch(playbackMode)
-	{
-		case kPlaybackPCM:
-		{
-			VIPManager::enableMultiplexedInterrupts(kVIPAllMultiplexedInterrupts);	
-			break;
-		}
-		default:
-		{
-			VIPManager::enableMultiplexedInterrupts(kVIPNoMultiplexedInterrupts);
-			break;
-		}
-	}
-
-	VSUManager::reset(this);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -345,11 +322,11 @@ secure void VSUManager::stopAllSounds()
 		this->vsuSoundSourceConfigurations[i].SxLRV = 0;
 		this->vsuSoundSourceConfigurations[i].SxFQL = 0;
 		this->vsuSoundSourceConfigurations[i].SxFQH = 0;
-		this->vsuSoundSourceConfigurations[i].SxEV0 = kPlaybackPCM == this->playbackMode ? 0xFF : 0x00;
+		this->vsuSoundSourceConfigurations[i].SxEV0 = 0;
 		this->vsuSoundSourceConfigurations[i].SxEV1 = 0;
 		this->vsuSoundSourceConfigurations[i].SxRAM = 0;
 		this->vsuSoundSourceConfigurations[i].SxSWP = 0;
-		this->vsuSoundSourceConfigurations[i].SxINT = kPlaybackPCM == this->playbackMode ? 0x9F : 0;
+		this->vsuSoundSourceConfigurations[i].SxINT = 0;
 	}
 
 	__SSTOP = 0x01;
@@ -391,8 +368,6 @@ void VSUManager::constructor()
 
 	this->queuedVSUSoundSourceConfigurationRequests = new VirtualList();
 	this->allowQueueingSoundRequests = true;
-	this->targetPCMUpdates = 0;
-	this->playbackMode = kPlaybackNative;
 	this->haveUsedSoundSources = false;
 	this->haveQueuedRequests = false;
 

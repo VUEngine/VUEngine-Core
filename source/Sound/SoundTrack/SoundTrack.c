@@ -20,23 +20,6 @@
 #include "SoundTrack.h"
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-// CLASS' ATTRIBUTES
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-static uint16 _pcmTargetPlaybackRefreshRate = 4000;
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-// CLASS' PUBLIC STATIC METHODS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-static void SoundTrack::setPCMTargetPlaybackRefreshRate(uint16 pcmTargetPlaybackRefreshRate)
-{
-	_pcmTargetPlaybackRefreshRate = pcmTargetPlaybackRefreshRate;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PUBLIC METHODS
@@ -50,21 +33,12 @@ void SoundTrack::start(bool wasPaused)
 	{
 		SoundTrack::reset(this);
 	}
-
-	if(kTrackPCM == this->soundTrackSpec->trackType)
-	{
-		VSUManager::setMode(VSUManager::getInstance(), kPlaybackPCM);
-	}
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void SoundTrack::stop()
 {
-	if(kTrackPCM == this->soundTrackSpec->trackType)
-	{
-		VSUManager::setMode(VSUManager::getInstance(), kPlaybackNative);
-	}
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -107,8 +81,8 @@ void SoundTrack::loop()
 
 bool SoundTrack::update
 (
-	uint32 elapsedMicroseconds, uint32 targetPCMUpdates, fix7_9_ext tickStep, fix7_9_ext targetTimerResolutionFactor, 
-	fixed_t leftVolumeFactor, fixed_t rightVolumeFactor, int8 volumeReduction, uint8 volumenScalePower, uint16 frequencyDelta
+	uint32 elapsedMicroseconds, fix7_9_ext tickStep, fix7_9_ext targetTimerResolutionFactor, fixed_t leftVolumeFactor, 
+	fixed_t rightVolumeFactor, int8 volumeReduction, uint8 volumenScalePower, uint16 frequencyDelta
 )
 {
 	if(this->finished)
@@ -116,196 +90,21 @@ bool SoundTrack::update
 		return true;
 	}
 
-	if(kTrackPCM == this->soundTrackSpec->trackType)
-	{
-		this->finished = SoundTrack::updatePCM(this, elapsedMicroseconds, targetPCMUpdates, volumeReduction);
-	}
-	else /*if(kTrackNative == this->soundTrackSpec->trackType)*/
-	{
-		this->finished = 
-			SoundTrack::updateNative
-			(
-				this, tickStep, targetTimerResolutionFactor, leftVolumeFactor, rightVolumeFactor, volumeReduction, 
-				volumenScalePower, frequencyDelta
-			);
-	}
-
-	return this->finished;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-uint32 SoundTrack::getTicks()
-{
-	return this->ticks;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-float SoundTrack::getElapsedTicksPercentaje()
-{
-	if(0 == this->samples)
-	{
-		return 0;
-	}
-
-	return (float)this->cursor / this->samples;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-uint32 SoundTrack::getTotalPlaybackMilliseconds(uint16 targetTimerResolutionUS)
-{
-	uint32 totalPlaybackMilliseconds = 0;
-
-	if(kTrackPCM == this->soundTrackSpec->trackType)
-	{
-		totalPlaybackMilliseconds = (this->samples * __MICROSECONDS_PER_MILLISECOND) / _pcmTargetPlaybackRefreshRate;
-	}
-	else if(kTrackNative == this->soundTrackSpec->trackType)
-	{
-		totalPlaybackMilliseconds = (uint32)((long)this->ticks * targetTimerResolutionUS / __MICROSECONDS_PER_MILLISECOND);
-	}
-
-	return totalPlaybackMilliseconds;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void SoundTrack::print(int16 x, int16 y)
-{
-	if(this->finished)
-	{
-		Printer::text("Done", x, y, NULL);
-	}
-	else
-	{
-		Printer::text("Play", x, y, NULL);	
-	}
-
-	Printer::text("     ", x, ++y, NULL);
-	Printer::int32(this->cursor, x, y, NULL);
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-// CLASS' PRIVATE METHODS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void SoundTrack::constructor(const SoundTrackSpec* soundTrackSpec)
-{
-	// Always explicitly call the base's constructor 
-	Base::constructor();
-
-	this->soundTrackSpec = soundTrackSpec;
-	this->samples = this->soundTrackSpec->samples;
-
-	SoundTrack::reset(this);
-
-	if(0 == this->samples)
-	{
-		SoundTrack::computeLength(this);
-	}
-	else
-	{
-		this->ticks = this->samples = this->soundTrackSpec->samples;
-	}
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void SoundTrack::destructor()
-{
-	SoundTrack::stop(this);
-	
-	// Always explicitly call the base's destructor 
-	Base::destructor();
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void SoundTrack::reset()
-{
-	this->cursor = 0;
-	this->cursorSxINT = 0;
-	this->cursorSxLRV = 0;
-	this->cursorSxFQ = 0;
-	this->cursorSxEV0 = 0;
-	this->cursorSxEV1 = 0;
-	this->cursorSxRAM = 0;
-	this->cursorSxSWP = 0;
-	this->cursorSxMOD = 0;
-
 	this->finished = false;
-	this->elapsedTicks = 0;
-	this->nextElapsedTicksTarget = 0;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void SoundTrack::computeLength()
-{
-	if(NULL == this->soundTrackSpec || NULL == this->soundTrackSpec->trackKeyframes || NULL == this->soundTrackSpec->SxLRV)
-	{
-		return;
-	}
-
-	this->ticks = 0;
-	this->samples = 0;
-
-	int32 keyframe = 0;
-
-	while(kSoundTrackEventEnd != this->soundTrackSpec->trackKeyframes[keyframe].events)
-	{
-		keyframe++;
-		this->samples++;
-		this->ticks += this->soundTrackSpec->trackKeyframes[keyframe].tick;
-	}
-
-	this->ticks += this->soundTrackSpec->trackKeyframes[keyframe].tick;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-bool SoundTrack::updatePCM(uint32 elapsedMicroseconds, uint32 targetPCMUpdates, int8 volumeReduction)
-{
-	CACHE_ENABLE;
-
-	// Elapsed time during PCM playback is based on the cursor, track's ticks and target Hz
-	this->elapsedTicks += elapsedMicroseconds;
-
-	this->cursor = this->elapsedTicks / targetPCMUpdates;
-
-	VSUManager::applyPCMSampleToSoundSource(this->soundTrackSpec->SxLRV[this->cursor] - volumeReduction);
-
-	CACHE_DISABLE;
-
-	return this->cursor >= this->samples;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-bool SoundTrack::updateNative
-(
-	fix7_9_ext tickStep, fix7_9_ext targetTimerResolutionFactor, fixed_t leftVolumeFactor, fixed_t rightVolumeFactor, 
-	int8 volumeReduction, uint8 volumenScalePower, uint16 frequencyDelta
-)
-{
+	
 	this->elapsedTicks += tickStep;
 
 	if(this->elapsedTicks < this->nextElapsedTicksTarget)
 	{
-		return false;
+		return this->finished;
 	}
 
 	this->elapsedTicks -= this->nextElapsedTicksTarget;
 
 	if(this->cursor >= this->samples)
 	{
-		return true;
+		this->finished = true;
+		return this->finished;
 	}
 
 	SoundTrackKeyframe soundTrackKeyframe = this->soundTrackSpec->trackKeyframes[this->cursor++];
@@ -434,7 +233,138 @@ bool SoundTrack::updateNative
 
 	VSUManager::applySoundSourceConfiguration(&vsuChannelConfigurationRequest);
 
-	return false;
+	return this->finished;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+uint32 SoundTrack::getTicks()
+{
+	return this->ticks;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+float SoundTrack::getElapsedTicksPercentaje()
+{
+	if(0 == this->samples)
+	{
+		return 0;
+	}
+
+	return (float)this->cursor / this->samples;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+uint32 SoundTrack::getTotalPlaybackMilliseconds(uint16 targetTimerResolutionUS)
+{
+	uint32 totalPlaybackMilliseconds = 0;
+
+	if(kTrackNative == this->soundTrackSpec->trackType)
+	{
+		totalPlaybackMilliseconds = (uint32)((long)this->ticks * targetTimerResolutionUS / __MICROSECONDS_PER_MILLISECOND);
+	}
+
+	return totalPlaybackMilliseconds;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void SoundTrack::print(int16 x, int16 y)
+{
+	if(this->finished)
+	{
+		Printer::text("Done", x, y, NULL);
+	}
+	else
+	{
+		Printer::text("Play", x, y, NULL);	
+	}
+
+	Printer::text("     ", x, ++y, NULL);
+	Printer::int32(this->cursor, x, y, NULL);
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+// CLASS' PRIVATE METHODS
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void SoundTrack::constructor(const SoundTrackSpec* soundTrackSpec)
+{
+	// Always explicitly call the base's constructor 
+	Base::constructor();
+
+	this->soundTrackSpec = soundTrackSpec;
+	this->samples = this->soundTrackSpec->samples;
+
+	SoundTrack::reset(this);
+
+	if(0 == this->samples)
+	{
+		SoundTrack::computeLength(this);
+	}
+	else
+	{
+		this->ticks = this->samples = this->soundTrackSpec->samples;
+	}
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void SoundTrack::destructor()
+{
+	SoundTrack::stop(this);
+	
+	// Always explicitly call the base's destructor 
+	Base::destructor();
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void SoundTrack::reset()
+{
+	this->cursor = 0;
+	this->cursorSxINT = 0;
+	this->cursorSxLRV = 0;
+	this->cursorSxFQ = 0;
+	this->cursorSxEV0 = 0;
+	this->cursorSxEV1 = 0;
+	this->cursorSxRAM = 0;
+	this->cursorSxSWP = 0;
+	this->cursorSxMOD = 0;
+
+	this->finished = false;
+	this->elapsedTicks = 0;
+	this->nextElapsedTicksTarget = 0;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void SoundTrack::computeLength()
+{
+	if(NULL == this->soundTrackSpec || NULL == this->soundTrackSpec->trackKeyframes || NULL == this->soundTrackSpec->SxLRV)
+	{
+		return;
+	}
+
+	this->ticks = 0;
+	this->samples = 0;
+
+	int32 keyframe = 0;
+
+	while(kSoundTrackEventEnd != this->soundTrackSpec->trackKeyframes[keyframe].events)
+	{
+		keyframe++;
+		this->samples++;
+		this->ticks += this->soundTrackSpec->trackKeyframes[keyframe].tick;
+	}
+
+	this->ticks += this->soundTrackSpec->trackKeyframes[keyframe].tick;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

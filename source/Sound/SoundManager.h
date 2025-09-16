@@ -43,9 +43,6 @@ singleton class SoundManager : ListenerObject
 	/// List of playing sounds
 	VirtualList sounds;
 
-	/// Target PCM cycles per game cycle
-	uint32 targetPCMUpdates;
-
 	/// If raised, no petitions to play or allocate sounds are processed
 	bool lock;
 
@@ -83,10 +80,6 @@ singleton class SoundManager : ListenerObject
 
 	/// Reset the manager's state.
 	void reset();
-
-	/// Set the target refresh rate for PCM playback.
-	/// @param pcmTargetPlaybackRefreshRate: Target refresh rate for PCM playback
-	void setPCMTargetPlaybackRefreshRate(uint16 pcmTargetPlaybackRefreshRate);
 
 	///  Check if a sound with the provided spec is playing.
 	/// @param soundSpec: Sound spec to check for

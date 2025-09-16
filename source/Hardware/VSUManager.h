@@ -229,9 +229,6 @@ singleton class VSUManager : Object
 	/// Elapsed ticks
 	fix7_9_ext ticks;
 
-	/// Target PCM cycles per game cycle
-	uint32 targetPCMUpdates;
-
 	/// Playback mode
 	uint32 playbackMode;
 
@@ -254,10 +251,6 @@ singleton class VSUManager : Object
 	/// Apply a sound source configuration to a VSU sound source with the provided data.
 	/// @param vsuSoundSourceConfigurationRequest: VSU sound source configuration
 	static void applySoundSourceConfiguration(const VSUSoundSourceConfigurationRequest* vsuSoundSourceConfigurationRequest);
-
-	/// Apply a sound source configuration to a VSU sound source with the provided data for PCM playback.
-	/// @param sample: PCM sample data
-	static inline void applyPCMSampleToSoundSource(int8 sample);
 
 	/// Stop sound output in the sound sources in use by the requester object.
 	/// @param requester: Object using a sound source
@@ -294,36 +287,5 @@ singleton class VSUManager : Object
 	/// is ignored).
 	void disableQueue();
 }
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-// CLASS' PUBLIC STATIC METHODS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-static inline void VSUManager::applyPCMSampleToSoundSource(int8 sample)
-{
-	extern VSUSoundSource* const _vsuSoundSources;
-
-	int16 vsuSoundSourceIndex = 0;
-	
-	while(true)
-	{
-		if(__MAXIMUM_VOLUME <= sample)
-		{
-			_vsuSoundSources[vsuSoundSourceIndex].SxLRV = 0xFF;
-			sample -= __MAXIMUM_VOLUME;
-		}
-		else
-		{
-			_vsuSoundSources[vsuSoundSourceIndex].SxLRV = ((sample << 4) | sample);
-			break;
-		}
-
-		vsuSoundSourceIndex++;
-	}
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #endif
