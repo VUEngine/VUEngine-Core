@@ -246,8 +246,7 @@ class Sound : ListenerObject
 	bool updatePlaybackState();
 
 	/// Advance the playback on the sound's native tracks.
-	/// @param elapsedMicroseconds: Elapsed time since the last call
-	void update(uint32 elapsedMicroseconds);
+	void update();
 
 	/// Print the sounds's properties.
 	/// @param x: Screen x coordinate where to print

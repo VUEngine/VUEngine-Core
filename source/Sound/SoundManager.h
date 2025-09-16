@@ -70,16 +70,21 @@ singleton class SoundManager : ListenerObject
 	/// @param scope: Object that will be notified of communication events
 	static Sound findSound(const SoundSpec* soundSpec, ListenerObject scope);
 
+	/// Process an event that the instance is listening for.
+	/// @param eventFirer: ListenerObject that signals the event
+	/// @param eventCode: Code of the firing event
+	/// @return False if the listener has to be removed; true to keep it
+	override bool onEvent(ListenerObject eventFirer, uint16 eventCode);
+
 	/// Update the sounds lists.
 	void updateSounds();
 
-	/// Play the allocated sounds.
-	/// @param elapsedMicroseconds: Elapsed time between call
-	/// @return True if PCM playback is happening
-	bool playSounds(uint32 elapsedMicroseconds);
-
 	/// Reset the manager's state.
 	void reset();
+
+	/// Set the target refresh rate for PCM playback.
+	/// @param pcmTargetPlaybackRefreshRate: Target refresh rate for PCM playback
+	void setPCMTargetPlaybackRefreshRate(uint16 pcmTargetPlaybackRefreshRate);
 
 	///  Check if a sound with the provided spec is playing.
 	/// @param soundSpec: Sound spec to check for

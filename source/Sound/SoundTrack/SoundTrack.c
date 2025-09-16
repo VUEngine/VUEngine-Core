@@ -81,8 +81,8 @@ void SoundTrack::loop()
 
 bool SoundTrack::update
 (
-	uint32 elapsedMicroseconds, fix7_9_ext tickStep, fix7_9_ext targetTimerResolutionFactor, fixed_t leftVolumeFactor, 
-	fixed_t rightVolumeFactor, int8 volumeReduction, uint8 volumenScalePower, uint16 frequencyDelta
+	fix7_9_ext tickStep, fix7_9_ext targetTimerResolutionFactor, fixed_t leftVolumeFactor, fixed_t rightVolumeFactor, 
+	int8 volumeReduction, uint8 volumenScalePower, uint16 frequencyDelta
 )
 {
 	if(this->finished)

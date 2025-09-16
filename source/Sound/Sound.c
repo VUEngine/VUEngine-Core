@@ -523,7 +523,7 @@ bool Sound::updatePlaybackState()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void Sound::update(uint32 elapsedMicroseconds)
+void Sound::update()
 {
 	if(kSoundPlaying !=	this->state)
 	{
@@ -601,7 +601,6 @@ void Sound::update(uint32 elapsedMicroseconds)
 			SoundTrack::update
 			(
 				soundTrack, 
-				elapsedMicroseconds, 
 				this->tickStep, 
 				this->targetTimerResolutionFactor, 
 				leftVolumeFactor, 

@@ -17,8 +17,6 @@
 #include <Printer.h>
 #include <Profiler.h>
 #include <Singleton.h>
-#include <SoundManager.h>
-#include <StopwatchManager.h>
 #include <VUEngine.h>
 
 #include "TimerManager.h"
@@ -66,14 +64,10 @@ static void TimerManager::interruptHandler()
 		timerManager->totalElapsedMilliseconds += elapsedMilliseconds;
 	}
 
-	// Update sounds
-	if(SoundManager::playSounds(SoundManager::getInstance(), timerManager->elapsedMicrosecondsPerInterrupt))
-	{
-		TimerManager::resetTimerCounter(timerManager);	
+	if(NULL != timerManager->events)
+	{		
+		TimerManager::fireEvent(timerManager, kEventTimerManagerInterrupt);
 	}
-
-	// Update Stopwatchs: no use is being done of them so this is commented out for now since it affects PCM playback
-	//StopwatchManager::update();
 
 	// enable
 	TimerManager::enableInterrupt(timerManager);

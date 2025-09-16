@@ -339,7 +339,6 @@ class SoundTrack : Object
 	void loop();
 
 	/// Advance the playback on the sound's MIDI tracks.
-	/// @param elapsedMicroseconds: Elapsed time since the last call
 	/// @param tickStep: Tick step per timer interrupt
 	/// @param targetTimerResolutionFactor: Factor to apply to the tick step
 	/// @param leftVolumeFactor: Factor to apply to the left speaker's volume
@@ -350,8 +349,8 @@ class SoundTrack : Object
 	/// @return True if the playback is complete; false otherwise
 	bool update
 	(
-		uint32 elapsedMicroseconds, fix7_9_ext tickStep, fix7_9_ext targetTimerResolutionFactor, fixed_t leftVolumeFactor, 
-		fixed_t rightVolumeFactor, int8 volumeReduction, uint8 volumenScalePower, uint16 frequencyDelta
+		fix7_9_ext tickStep, fix7_9_ext targetTimerResolutionFactor, fixed_t leftVolumeFactor, fixed_t rightVolumeFactor, 
+		int8 volumeReduction, uint8 volumenScalePower, uint16 frequencyDelta
 	);
 
 	/// Retrieve the sound track's total ticks.

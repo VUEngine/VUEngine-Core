@@ -74,6 +74,8 @@ enum Events
 	kEventVIPManagerXPENDDuringXPEND,
 	kEventVIPManagerXPENDDuringGAMESTART,
 
+	kEventTimerManagerInterrupt,
+	
 	kEventKeypadManagerRaisedPowerFlag,
 
 	kEventStateMachineWillCleanStack,

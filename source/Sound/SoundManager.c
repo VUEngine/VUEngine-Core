@@ -110,9 +110,35 @@ static Sound SoundManager::findSound(const SoundSpec* soundSpec, ListenerObject 
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+bool SoundManager::onEvent(ListenerObject eventFirer, uint16 eventCode)
+{
+	switch(eventCode)
+	{
+		case kEventTimerManagerInterrupt:
+		{
+			if(SoundManager::playSounds(this))
+			{
+				return true;
+			}
+
+			return false;
+		}
+	}
+
+	return Base::onEvent(this, eventFirer, eventCode);
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+// CLASS' PUBLIC METHODS
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 secure void SoundManager::updateSounds()
 {
-	HardwareManager::suspendInterrupts();
+	TimerManager::removeEventListener(TimerManager::getInstance(), ListenerObject::safeCast(this), kEventTimerManagerInterrupt);
 
 	for(VirtualNode node = this->sounds->head, nextNode = NULL; NULL != node; node = nextNode)
 	{
@@ -129,30 +155,33 @@ secure void SoundManager::updateSounds()
 		}
 	}
 
-	HardwareManager::resumeInterrupts();
+	if(NULL != this->sounds->head)
+	{
+		TimerManager::addEventListener(TimerManager::getInstance(), ListenerObject::safeCast(this), kEventTimerManagerInterrupt);
+	}
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-secure bool SoundManager::playSounds(uint32 elapsedMicroseconds)
-{	
+bool SoundManager::playSounds()
+{
 	VSUManager::update(VSUManager::getInstance());
 
 	for(VirtualNode node = this->sounds->head; NULL != node; node = node->next)
 	{
 		Sound sound = Sound::safeCast(node->data);
 
-		Sound::update(sound, elapsedMicroseconds);
+		Sound::update(sound);
 	}
 
-	return false;
+	return NULL != this->sounds->head;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 secure void SoundManager::reset()
 {
-	HardwareManager::suspendInterrupts();
+	TimerManager::removeEventListener(TimerManager::getInstance(), ListenerObject::safeCast(this), kEventTimerManagerInterrupt);
 
 	VSUManager::reset(VSUManager::getInstance());
 
@@ -169,8 +198,6 @@ secure void SoundManager::reset()
 
 	SoundManager::stopAllSounds(this, false, NULL);
 	SoundManager::unlock(this);
-
-	HardwareManager::resumeInterrupts();
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -341,6 +368,8 @@ void SoundManager::constructor()
 
 void SoundManager::destructor()
 {
+	TimerManager::removeEventListener(TimerManager::getInstance(), ListenerObject::safeCast(this), kEventTimerManagerInterrupt);
+
 	if(!isDeleted(this->sounds))
 	{
 		VirtualList::deleteData(this->sounds);
@@ -364,6 +393,8 @@ Sound SoundManager::doGetSound(const SoundSpec* soundSpec, ListenerObject scope)
 	Sound sound = new Sound(soundSpec, scope);
 
 	VirtualList::pushBack(this->sounds, sound);
+
+	TimerManager::addEventListener(TimerManager::getInstance(), ListenerObject::safeCast(this), kEventTimerManagerInterrupt);
 
 	return sound;
 }

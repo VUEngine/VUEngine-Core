@@ -14,13 +14,7 @@
 // INCLUDES
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-#include <Object.h>
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-// FORWARD DECLARATIONS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-class ListenerObject;
+#include <ListenerObject.h>
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' MACROS
@@ -67,7 +61,7 @@ enum TimerResolutionScales
 /// Inherits from Object
 ///
 /// Manages rumble effects.
-singleton class TimerManager : Object
+singleton class TimerManager : ListenerObject
 {
 	/// Elapsed milliseconds since the last call to reset
 	uint32 elapsedMilliseconds;
