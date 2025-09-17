@@ -992,13 +992,14 @@ void GameState::stream()
 		return;
 	}
 
+#ifndef __ENABLE_PROFILER
 #ifndef __DEBUG
 	while(Stage::stream(this->stage) && !VUEngine::hasGameFrameStarted());
 #else
 	while(Stage::stream(this->stage));
 #endif
-
-#ifdef __ENABLE_PROFILER
+#else
+	Stage::stream(this->stage);
 	Profiler::lap(kProfilerLapTypeNormalProcess, PROCESS_NAME_STREAMING);
 #endif
 }
