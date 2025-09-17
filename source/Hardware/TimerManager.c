@@ -53,7 +53,7 @@ static void TimerManager::interruptHandler()
 
 	timerManager->elapsedMicroseconds += timerManager->elapsedMicrosecondsPerInterrupt;
 
-	if(timerManager->elapsedMicroseconds > __MICROSECONDS_PER_MILLISECOND)
+	if(__MICROSECONDS_PER_MILLISECOND < timerManager->elapsedMicroseconds)
 	{
 		uint32 elapsedMilliseconds = timerManager->elapsedMicroseconds / __MICROSECONDS_PER_MILLISECOND;
 
