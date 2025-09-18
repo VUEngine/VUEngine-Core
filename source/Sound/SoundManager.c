@@ -138,7 +138,7 @@ bool SoundManager::onEvent(ListenerObject eventFirer, uint16 eventCode)
 
 secure void SoundManager::updateSounds()
 {
-	TimerManager::removeEventListener(TimerManager::getInstance(), ListenerObject::safeCast(this), kEventTimerManagerInterrupt);
+	bool deleted = false;
 
 	for(VirtualNode node = this->sounds->head, nextNode = NULL; NULL != node; node = nextNode)
 	{
@@ -148,6 +148,8 @@ secure void SoundManager::updateSounds()
 
 		if(!Sound::updatePlaybackState(sound))
 		{
+			deleted = true;
+			TimerManager::removeEventListener(TimerManager::getInstance(), ListenerObject::safeCast(this), kEventTimerManagerInterrupt);
 			VirtualList::removeNode(this->sounds, node);
 			
 			delete sound;
@@ -155,7 +157,7 @@ secure void SoundManager::updateSounds()
 		}
 	}
 
-	if(NULL != this->sounds->head)
+	if(deleted && NULL != this->sounds->head)
 	{
 		TimerManager::addEventListener(TimerManager::getInstance(), ListenerObject::safeCast(this), kEventTimerManagerInterrupt);
 	}
