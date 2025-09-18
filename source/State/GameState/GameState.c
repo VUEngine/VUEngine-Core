@@ -157,32 +157,74 @@ void GameState::start(void* owner)
 void GameState::update(void* owner)
 {
 	GameState::render(this);
+#ifdef __ENABLE_PROFILER
+	Profiler::lap(kProfilerLapTypeVIPInterruptGAMESTARTProcess, PROCESS_NAME_RENDER);
+#endif
 	
 	GameState::focusCamera(this);
+#ifdef __ENABLE_PROFILER
+	Profiler::lap(kProfilerLapTypeVIPInterruptGAMESTARTProcess, PROCESS_NAME_CAMERA);
+#endif
 
 	GameState::applyTransformationsUI(this);
+#ifdef __ENABLE_PROFILER
+	Profiler::lap(kProfilerLapTypeNormalProcess, PROCESS_NAME_UI_TRANSFORMS);
+#endif
 
 	GameState::readUserInput(this);
+#ifdef __ENABLE_PROFILER
+		Profiler::lap(kProfilerLapTypeNormalProcess, PROCESS_NAME_INPUT);
+#endif
 
 	GameState::execute(this, owner);
+#ifdef __ENABLE_PROFILER
+		Profiler::lap(kProfilerLapTypeNormalProcess, PROCESS_NAME_EXECUTE);
+#endif
 
 	GameState::processBehaviors(this);
+#ifdef __ENABLE_PROFILER
+	Profiler::lap(kProfilerLapTypeNormalProcess, PROCESS_NAME_BEHAVIORS);
+#endif
 
 	GameState::processMutators(this);
+#ifdef __ENABLE_PROFILER
+	Profiler::lap(kProfilerLapTypeNormalProcess, PROCESS_NAME_MUTATORS);
+#endif
 
 	GameState::simulatePhysics(this);
+#ifdef __ENABLE_PROFILER
+	Profiler::lap(kProfilerLapTypeNormalProcess, PROCESS_NAME_PHYSICS);
+#endif
 
 	GameState::applyTransformations(this);
+#ifdef __ENABLE_PROFILER
+	Profiler::lap(kProfilerLapTypeNormalProcess, PROCESS_NAME_TRANSFORMS);
+#endif
 
 	GameState::processCollisions(this);
+#ifdef __ENABLE_PROFILER
+	Profiler::lap(kProfilerLapTypeNormalProcess, PROCESS_NAME_COLLISIONS);
+#endif
 
 	GameState::dispatchDelayedMessages(this);
+#ifdef __ENABLE_PROFILER
+	Profiler::lap(kProfilerLapTypeNormalProcess, PROCESS_NAME_MESSAGES);
+#endif
 
 	GameState::updateStage(this);
+#ifdef __ENABLE_PROFILER
+	Profiler::lap(kProfilerLapTypeNormalProcess, PROCESS_NAME_UPDATE_STAGE);
+#endif
 
 	GameState::updateSounds(this);
+#ifdef __ENABLE_PROFILER
+	Profiler::lap(kProfilerLapTypeNormalProcess, PROCESS_NAME_SOUND_PURGE);
+#endif
 
 	GameState::stream(this);
+#ifdef __ENABLE_PROFILER
+	Profiler::lap(kProfilerLapTypeNormalProcess, PROCESS_NAME_STREAMING);
+#endif
 
 #ifdef __DEBUGGING
 	GameState::debugging(this);
@@ -791,26 +833,18 @@ void GameState::configureUI(StageSpec* stageSpec)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void GameState::focusCamera()
-{
-	Camera::focus(Camera::getInstance());
-
-#ifdef __ENABLE_PROFILER
-	Profiler::lap(kProfilerLapTypeVIPInterruptGAMESTARTProcess, PROCESS_NAME_CAMERA);
-#endif
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
 void GameState::render()
 {
 	SpriteManager::render(this->componentManagers[kSpriteComponent]);
 	
 	WireframeManager::render(this->componentManagers[kWireframeComponent]);
+}
 
-#ifdef __ENABLE_PROFILER
-	Profiler::lap(kProfilerLapTypeVIPInterruptGAMESTARTProcess, PROCESS_NAME_RENDER);
-#endif
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void GameState::focusCamera()
+{
+	Camera::focus(Camera::getInstance());
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -823,25 +857,6 @@ void GameState::applyTransformationsUI()
 	}
 
 	UIContainer::transform(this->uiContainer, NULL, __INVALIDATE_TRANSFORMATION);
-
-#ifdef __ENABLE_PROFILER
-	Profiler::lap(kProfilerLapTypeNormalProcess, PROCESS_NAME_UI_TRANSFORMS);
-#endif
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void GameState::updateStage()
-{
-	if(!Clock::isPaused(this->logicsClock))
-	{
-		Stage::update(this->stage);
-		UIContainer::update(this->uiContainer);
-	}
-
-#ifdef __ENABLE_PROFILER
-	Profiler::lap(kProfilerLapTypeNormalProcess, PROCESS_NAME_UPDATE_STAGE);
-#endif
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -860,10 +875,17 @@ void GameState::readUserInput()
 	if(0 != (userInput.dummyKey | userInput.pressedKey | userInput.holdKey | userInput.releasedKey))
 	{
 		GameState::processUserInput(this, &userInput);
+	}
+}
 
-#ifdef __ENABLE_PROFILER
-		Profiler::lap(kProfilerLapTypeNormalProcess, PROCESS_NAME_INPUT);
-#endif
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void GameState::updateStage()
+{
+	if(!Clock::isPaused(this->logicsClock))
+	{
+		Stage::update(this->stage);
+		UIContainer::update(this->uiContainer);
 	}
 }
 
@@ -877,10 +899,6 @@ void GameState::processMutators()
 	}
 
 	MutatorManager::update(this->componentManagers[kMutatorComponent]);
-
-#ifdef __ENABLE_PROFILER
-	Profiler::lap(kProfilerLapTypeNormalProcess, PROCESS_NAME_MUTATORS);
-#endif
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -898,10 +916,6 @@ void GameState::processBehaviors()
 	}
 
 	BehaviorManager::update(this->componentManagers[kBehaviorComponent]);
-
-#ifdef __ENABLE_PROFILER
-	Profiler::lap(kProfilerLapTypeNormalProcess, PROCESS_NAME_BEHAVIORS);
-#endif
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -919,10 +933,6 @@ void GameState::simulatePhysics()
 	}
 
 	BodyManager::update(this->componentManagers[kPhysicsComponent]);
-
-#ifdef __ENABLE_PROFILER
-	Profiler::lap(kProfilerLapTypeNormalProcess, PROCESS_NAME_PHYSICS);
-#endif
 }
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
@@ -934,10 +944,6 @@ void GameState::applyTransformations()
 	}
 
 	Stage::transform(this->stage, NULL, Camera::getTransformationFlags(Camera::getInstance()));
-
-#ifdef __ENABLE_PROFILER
-	Profiler::lap(kProfilerLapTypeNormalProcess, PROCESS_NAME_TRANSFORMS);
-#endif
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -955,10 +961,6 @@ void GameState::processCollisions()
 	}
 
 	ColliderManager::update(this->componentManagers[kColliderComponent]);
-
-#ifdef __ENABLE_PROFILER
-	Profiler::lap(kProfilerLapTypeNormalProcess, PROCESS_NAME_COLLISIONS);
-#endif
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -966,10 +968,6 @@ void GameState::processCollisions()
 void GameState::dispatchDelayedMessages()
 {
 	MessageDispatcher::dispatchDelayedMessages(MessageDispatcher::getInstance());
-
-#ifdef __ENABLE_PROFILER
-	Profiler::lap(kProfilerLapTypeNormalProcess, PROCESS_NAME_MESSAGES);
-#endif
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -977,10 +975,6 @@ void GameState::dispatchDelayedMessages()
 void GameState::updateSounds()
 {
 	SoundManager::updateSounds(SoundManager::getInstance());
-
-#ifdef __ENABLE_PROFILER
-	Profiler::lap(kProfilerLapTypeNormalProcess, PROCESS_NAME_SOUND_PURGE);
-#endif
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -1000,7 +994,6 @@ void GameState::stream()
 #endif
 #else
 	Stage::stream(this->stage);
-	Profiler::lap(kProfilerLapTypeNormalProcess, PROCESS_NAME_STREAMING);
 #endif
 }
 
