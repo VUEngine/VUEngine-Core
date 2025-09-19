@@ -763,12 +763,6 @@ void AnimationInspector::createSprite()
 	Sprite::processEffects(this->sprite, -1);
 
 	this->sprite->updateAnimationFrame = true;
-
-	SpriteManager spriteManager = 
-		SpriteManager::safeCast(ToolState::getComponentManager(this->toolState, kSpriteComponent));
-
-	//SpriteManager::hideAllSprites(spriteManager, this->sprite, false);
-	SpriteManager::prepareAll(spriteManager);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

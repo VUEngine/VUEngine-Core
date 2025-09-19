@@ -515,46 +515,6 @@ void SpriteManager::sortSprites()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void SpriteManager::prepareAll()
-{
-	bool deferTextureUpdating = this->deferTextureUpdating;
-
-	// Prevent VIP's interrupt from calling render during spriteManager process
-	VIPManager::suspendDrawing(VIPManager::getInstance());
-
-	// Must make sure that all textures are completely written
-	SpriteManager::deferParamTableEffects(this, false);
-
-	// Make sure all textures are written right now
-	SpriteManager::writeTextures(this);
-
-	// Sort all sprites' layers
-	SpriteManager::sortSprites(this);
-
-	// Render and draw sprites as soon as possible
-	SpriteManager::render(this);
-	SpriteManager::writeDRAM(this);
-
-	// Sort all sprites' layers again
-	// Don't remove me, some custom sprites depend on others
-	// To have been setup up before
-	SpriteManager::sortSprites(this);
-
-	// Render and draw sprites as soon as possible again
-	SpriteManager::render(this);
-	SpriteManager::writeDRAM(this);
-
-	// Defer rendering again
-	SpriteManager::deferParamTableEffects(this, true);
-
-	// Restore drawing
-	VIPManager::resumeDrawing(VIPManager::getInstance());
-
-	this->deferTextureUpdating = deferTextureUpdating;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
 void SpriteManager::render()
 {
 #ifdef __DEBUGGING_SPRITES

@@ -212,9 +212,6 @@ class SpriteManager : ComponentManager
 	/// they are written in a single pass
 	void deferParamTableEffects(bool deferAffineTransformations);
 
-	/// Force the rendering and drawing of all sprites.
-	void prepareAll();
-
 	/// Render sprites.
 	void render();
 
