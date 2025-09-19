@@ -622,6 +622,9 @@ void GameState::streamAll()
 
 	// Be sure that the manager's removed components are deleted
 	GameState::purgeComponentManagers(this);
+
+	// Render the game now that everything is in place
+	GameState::render(this);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
