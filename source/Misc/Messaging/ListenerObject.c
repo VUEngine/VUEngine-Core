@@ -56,9 +56,10 @@ void ListenerObject::destructor()
 
 	if(!isDeleted(this->events))
 	{
-		VirtualList::deleteData(this->events);
-		delete this->events;
+		VirtualList events = this->events;
 		this->events = NULL;
+		VirtualList::deleteData(events);
+		delete events;
 	}
 
 	// Always explicitly call the base's destructor 
@@ -146,7 +147,6 @@ void ListenerObject::removeEventListener(ListenerObject listener, uint16 eventCo
 
 					continue;
 				}
-
 			}
 
 			if(listener == event->listener && eventCode == event->code)
@@ -165,8 +165,9 @@ void ListenerObject::removeEventListener(ListenerObject listener, uint16 eventCo
 
 		if(NULL != this->events && NULL == this->events->head)
 		{
-			delete this->events;
+			VirtualList events = this->events;
 			this->events = NULL;
+			delete events;
 		}
 	}
 }
@@ -214,8 +215,9 @@ void ListenerObject::removeEventListeners(uint16 eventCode)
 
 		if(NULL != this->events && NULL == this->events->head)
 		{
-			delete this->events;
+			VirtualList events = this->events;
 			this->events = NULL;
+			delete events;
 		}
 	}
 }
@@ -228,9 +230,10 @@ void ListenerObject::removeAllEventListeners()
 	{
 		if(0 == this->eventFirings)
 		{
-			VirtualList::deleteData(this->events);
-			delete this->events;
+			VirtualList events = this->events;
 			this->events = NULL;
+			VirtualList::deleteData(events);
+			delete events;
 		}
 		else
 		{
@@ -320,8 +323,9 @@ void ListenerObject::fireEvent(uint16 eventCode)
 		
 		if(NULL != this->events && NULL == this->events->head)
 		{
-			delete this->events;
+			VirtualList events = this->events;
 			this->events = NULL;
+			delete events;
 		}
 
 		this->eventFirings--;
