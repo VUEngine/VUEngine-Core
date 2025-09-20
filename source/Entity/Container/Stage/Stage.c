@@ -553,25 +553,17 @@ void Stage::stream()
 		return;
 	}
 
-	if(Stage::updateActorFactory(this))
+	if(!Stage::updateActorFactory(this))
 	{
-		return;
-	}
-	
-	do
-	{
-		if(++this->streamingPhase >= sizeof(_streamingPhases) / sizeof(StreamingPhase))
+		do
 		{
-			this->streamingPhase = 0;
+			if(++this->streamingPhase >= sizeof(_streamingPhases) / sizeof(StreamingPhase))
+			{
+				this->streamingPhase = 0;
+			}
 		}
-		
+		while(_streamingPhases[this->streamingPhase](this, this->stageSpec->streaming.deferred) && this->stageSpec->streaming.deferred);
 	}
-	while
-	(
-		_streamingPhases[this->streamingPhase](this, this->stageSpec->streaming.deferred) 
-		&& 
-		this->stageSpec->streaming.deferred 
-	);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
