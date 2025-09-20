@@ -40,8 +40,6 @@ void WireframeManager::constructor()
 	// Always explicitly call the base's constructor 
 	Base::constructor();
 
-	this->stopRendering = false;
-	this->stopDrawing = false;
 	this->evenFrame = __TRANSPARENCY_EVEN;
 	this->renderedWireframes = 0;
 	this->drawnWireframes = 00;
@@ -65,9 +63,6 @@ bool WireframeManager::onEvent(ListenerObject eventFirer, uint16 eventCode)
 	{
 		case kEventVIPManagerXPEND:
 		{
-			this->stopDrawing = false;
-			this->stopRendering = kVIPManagerFavorPerformance == VIPManager::getDrawingStrategy(eventFirer);
-
 			WireframeManager::draw(this);
 
 			return true;
@@ -75,8 +70,6 @@ bool WireframeManager::onEvent(ListenerObject eventFirer, uint16 eventCode)
 
 		case kEventVIPManagerXPENDDuringGAMESTART:
 		{
-			this->stopRendering = kVIPManagerFavorPerformance == VIPManager::getDrawingStrategy(eventFirer);
-
 			WireframeManager::draw(this);
 
 			return true;

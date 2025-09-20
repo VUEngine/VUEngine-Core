@@ -267,6 +267,7 @@ bool VUEngine::onEvent(ListenerObject eventFirer, uint16 eventCode)
 
 			return false;
 		}
+
 		case kEventStateMachineWillPushState:
 		{
 			if(StateMachine::safeCast(eventFirer) != this->stateMachine)

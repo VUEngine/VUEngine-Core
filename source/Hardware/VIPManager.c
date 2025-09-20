@@ -266,28 +266,6 @@ static void VIPManager::enableMultiplexedInterrupts(uint32 enabledMultiplexedInt
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void VIPManager::setDrawingStrategy(uint32 drawingStrategy)
-{
-	VIPManager vipManager = VIPManager::getInstance();
-
-	if(kVIPManagerStrategyLimiter <= drawingStrategy)
-	{
-		drawingStrategy = 0;
-	}
-
-	vipManager->drawingStrategy = drawingStrategy;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-static uint32 VIPManager::getDrawingStrategy()
-{
-	VIPManager vipManager = VIPManager::getInstance();
-
-	return vipManager->drawingStrategy;
-}
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
 static void VIPManager::setFrameCycle(uint8 frameCycle __attribute__((unused)))
 {
 	VIPManager vipManager = VIPManager::getInstance();
@@ -481,10 +459,9 @@ secure void VIPManager::reset()
 	this->processingGAMESTART = false;
 	this->processingXPEND = false;
 	this->isDrawingAllowed = false;
-	this->drawingStrategy = kVIPManagerFavorStability;
 	this->enabledMultiplexedInterrupts = kVIPNoMultiplexedInterrupts;
 	this->allowInterrupts = true;
-
+ 
 	VIPManager::lowerBrightness();
 	VIPManager::removePostProcessingEffects();
 
@@ -541,10 +518,7 @@ secure void VIPManager::resumeDrawing()
 {
 	if(this->isDrawingAllowed)
 	{
-		if(kVIPManagerFavorStability == this->drawingStrategy)
-		{
-			while(0 != (_vipRegisters[__XPSTTS] & __XPBSY));
-		}
+		while(0 != (_vipRegisters[__XPSTTS] & __XPBSY));
 
 		_vipRegisters[__XPCTRL] |= __XPEN;
 	}
@@ -556,10 +530,7 @@ secure void VIPManager::suspendDrawing()
 {
 	this->isDrawingAllowed = VIPManager::isDrawingAllowed(this);
 	
-	if(kVIPManagerFavorStability == this->drawingStrategy)
-	{
-		while(this->isDrawingAllowed && 0 != (_vipRegisters[__XPSTTS] & __XPBSY));
-	}
+	while(this->isDrawingAllowed && 0 != (_vipRegisters[__XPSTTS] & __XPBSY));
 
 	_vipRegisters[__XPCTRL] &= ~__XPEN;
 }
@@ -665,7 +636,6 @@ void VIPManager::constructor()
 	this->currrentInterrupt = 0;
 	this->enabledMultiplexedInterrupts = kVIPNoMultiplexedInterrupts;
 	this->isDrawingAllowed = false;
-	this->drawingStrategy = kVIPManagerFavorStability;
 	this->allowInterrupts = true;
 
 	VIPManager::setFrameCycle(__FRAME_CYCLE);

@@ -115,16 +115,6 @@ enum VIPMultiplexedInterrupts
 	kVIPAllMultiplexedInterrupts 			= 0x7FFFFFFF,
 };
 
-/// Enums used to control the suspension and resuming of drawing
-/// @member of VIPManager
-enum VIPManagerStrategies
-{
-	kVIPManagerFavorStability = 0,
-	kVIPManagerFavorPerformance,
-
-	kVIPManagerStrategyLimiter
-};
-
 /// A method pointer for processing special effects after drawing operations are completed
 typedef void (*PostProcessingEffect)(uint32 currentDrawingFrameBufferSet, Entity scope);
 
@@ -150,10 +140,6 @@ singleton class VIPManager : ListenerObject
 
 	/// Enum that determines which multiplexed interrupts are allowed
 	uint32 enabledMultiplexedInterrupts;
-
-	/// Enum to determine if the manager waits for the VIP before suspending/resuming
-	/// the VIP's drawing operations
-	uint32 drawingStrategy;
 
 	/// Allows VIP interrupts that the engine doesn't use
 	uint16 customInterrupts;
@@ -208,14 +194,6 @@ singleton class VIPManager : ListenerObject
 	/// Set the multiplexed interrupts that are allowed
 	/// @param enabledMultiplexedInterrupts: Multiplexed interrupts to allow
 	static void enableMultiplexedInterrupts(uint32 enabledMultiplexedInterrupts);
-
-	/// Set the drawing management drawingStrategy interrupts that are allowed
-	/// @param drawingStrategy: Value to control the suspension and resuming of drawing
-	static void setDrawingStrategy(uint32 drawingStrategy);
-
-	/// Retrieve the drawing management drawingStrategy interrupts that are allowed
-	/// @return Value that controls the suspension and resuming of drawing
-	static uint32 getDrawingStrategy();
 
 	/// Configure the VIP's palettes with the provided configuration.
 	/// @param paletteConfig: Palettes configuration
