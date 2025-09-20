@@ -235,7 +235,7 @@ class Stage : Container
 	VirtualList actorLoadingListeners;
 
 	/// Index for streaming method to execute in the current game cycle
-	int32 streamingPhase;
+	uint16 streamingPhase;
 
 	/// Amount of actor descriptions to check for streaming in entitis
 	uint16 streamingAmplitude;
@@ -312,7 +312,7 @@ class Stage : Container
 	void print(int32 x, int32 y);
 
 	/// Stream in or out actors within or outside the camera's range.
-	virtual bool stream();
+	virtual void stream();
 
 	/// Configure the stage with the actors defined in its spec.
 	/// @param positionedActorsToIgnore: List of positioned actor structs to register for streaming

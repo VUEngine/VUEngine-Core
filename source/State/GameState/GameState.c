@@ -989,15 +989,7 @@ void GameState::stream()
 		return;
 	}
 
-#ifndef __ENABLE_PROFILER
-#ifndef __DEBUG
-	while(Stage::stream(this->stage) && !VUEngine::hasGameFrameStarted());
-#else
-	while(Stage::stream(this->stage));
-#endif
-#else
 	Stage::stream(this->stage);
-#endif
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
