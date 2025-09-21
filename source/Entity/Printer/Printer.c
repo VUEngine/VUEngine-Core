@@ -906,12 +906,6 @@ static FontData* Printer::getFontByName(const char* font)
 	if(printing->mode == __PRINTING_MODE_DEBUG)
 	{
 		result = (FontData*)&VUENGINE_DEBUG_FONT_DATA;
-
-		if(NULL == result->charSet)
-		{
-			result->charSet = CharSet::get(result->fontSpec->charSetSpec);
-			CharSet::write(result->charSet);
-		}
 	}
 	else
 	{

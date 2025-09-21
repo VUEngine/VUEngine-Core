@@ -585,7 +585,7 @@ void VUEngine::endGameFrame()
 		HardwareManager::enableInterrupts();
 
 		//  Wait for the next game start
-		while(!VUEngine::hasGameFrameStarted());			
+		while(!VUEngine::hasGameFrameStarted());
 	}
 
 #ifdef __ENABLE_PROFILER
