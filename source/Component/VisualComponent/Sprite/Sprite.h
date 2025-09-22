@@ -125,7 +125,6 @@ abstract class Sprite : VisualComponent
 {
 	/// @protectedsection
 
-
 	/// Texture to display
 	Texture texture;
 
