@@ -176,7 +176,7 @@ secure void BgmapTextureManager::updateTextures(int16 maximumTextureRowsToWrite,
 
 void BgmapTextureManager::clearBgmapSegment(int32 segment)
 {
-	Mem::clear((BYTE*)__BGMAP_SEGMENT(segment), 64 * 64 * 2);
+	Mem::clear((uint8*)__BGMAP_SEGMENT(segment), 64 * 64 * 2);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

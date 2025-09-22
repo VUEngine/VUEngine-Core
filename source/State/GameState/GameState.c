@@ -226,6 +226,8 @@ void GameState::update(void* owner)
 	Profiler::lap(kProfilerLapTypeNormalProcess, PROCESS_NAME_STREAMING);
 #endif
 
+	MemoryPool::printDetailedUsage(1, 1);
+
 #ifdef __DEBUGGING
 	GameState::debugging(this);
 #endif

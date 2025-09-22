@@ -446,7 +446,7 @@ static void Printer::int32(int32 value, uint8 x, uint8 y, const char* font)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void Printer::hex(WORD value, uint8 x, uint8 y, uint8 length, const char* font)
+static void Printer::hex(uint32 value, uint8 x, uint8 y, uint8 length, const char* font)
 {
 	Printer::out(x, y, Utilities::itoa((int32)(value), 16, length), font);
 }
@@ -1154,7 +1154,7 @@ static void Printer::out(uint8 x, uint8 y, const char* string, const char* font)
 							charOffsetX + 
 							(charOffsetY * fontData->fontSpec->charactersPerLineInCharset * fontData->fontSpec->fontSize.x);
 
-						uint16* offsetDisplacement = (HWORD*)__BGMAP_SEGMENT(printingBgmapSegment) + xOffset + (yOffset << 6) +
+						uint16* offsetDisplacement = (uint16*)__BGMAP_SEGMENT(printingBgmapSegment) + xOffset + (yOffset << 6) +
 							+ position + charOffsetX + (charOffsetY << 6);
 
 

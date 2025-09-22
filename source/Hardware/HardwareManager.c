@@ -54,7 +54,7 @@ typedef const struct ROMInfo
 	char title[20];
 
 	// Reserved
-	BYTE reserved[5];
+	uint8 reserved[5];
 
 	// Published ID
 	char publisherID[2];
@@ -63,7 +63,7 @@ typedef const struct ROMInfo
 	char gameID[4];
 
 	// ROM Version
-	BYTE version;
+	uint8 version;
 
 } ROMInfo;
 

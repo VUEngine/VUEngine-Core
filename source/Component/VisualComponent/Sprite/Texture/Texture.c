@@ -498,7 +498,7 @@ void Texture::putChar(const Point* textureChar, const uint32* newChar)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void Texture::putPixel(const Point* texturePixel, const Pixel* charSetPixel, BYTE newPixelColor)
+void Texture::putPixel(const Point* texturePixel, const Pixel* charSetPixel, uint8 newPixelColor)
 {
 	if
 	(

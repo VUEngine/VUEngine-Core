@@ -25,10 +25,6 @@ typedef signed short 									int16;
 typedef signed int	 									int32;
 typedef signed long long 								int64;
 
-typedef uint8		 									BYTE;
-typedef uint16		 									HWORD;
-typedef uint32		 									WORD;
-
 // Define of boolean type
 typedef uint8											bool;
 enum { false, true };

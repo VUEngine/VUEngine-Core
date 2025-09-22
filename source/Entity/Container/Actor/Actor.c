@@ -371,7 +371,7 @@ void Actor::constructor(const ActorSpec* actorSpec, int16 internalId, const char
 		Printer::setDebugMode();
 		Printer::clear();
 		Printer::text(__GET_CLASS_NAME(this), 1, 25, NULL);
-		Printer::hex((WORD)actorSpec, 1, 26, 8, NULL);
+		Printer::hex((uint32)actorSpec, 1, 26, 8, NULL);
 		NM_ASSERT(false, "Actor::constructor: the provided spec lives in WRAM");
 	}
 #endif

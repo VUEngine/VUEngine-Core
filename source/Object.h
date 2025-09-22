@@ -140,7 +140,7 @@
 		{																																\
 			ASSERT(object && *(uint32*)((uint32)object - __DYNAMIC_STRUCT_PAD), 														\
 				"Oop: deleting null basic object");																						\
-			MemoryPool_free((BYTE*)((uint32)object - __DYNAMIC_STRUCT_PAD));															\
+			MemoryPool_free((uint8*)((uint32)object - __DYNAMIC_STRUCT_PAD));															\
 		}																																\
 		else 																															\
 		{																																\

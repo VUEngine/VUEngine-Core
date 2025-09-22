@@ -305,7 +305,7 @@ abstract class Sprite : VisualComponent
 	/// @param texturePixel: Coordinate in texture's space of the CHAR to replace
 	/// @param charSetPixel: Coordinate in CHAR space of the CHAR to replace
 	/// @param newPixelColor: Color data array for the CHAR
-	void putPixel(const Point* texturePixel, const Pixel* charSetPixel, BYTE newPixelColor);
+	void putPixel(const Point* texturePixel, const Pixel* charSetPixel, uint8 newPixelColor);
 
 	/// Invalidate the flags that determine if the sprite requires rendering.
 	void invalidateRendering();

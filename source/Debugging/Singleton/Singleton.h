@@ -39,7 +39,7 @@
 		Printer_setDebugMode();																											\
 		Printer_clear();																												\
 		Printer_text(#ClassName, 44, 25, NULL);																							\
-		Printer_hex((WORD)requesterClasses, 44, 26, 8, NULL);																			\
+		Printer_hex((uint32)requesterClasses, 44, 26, 8, NULL);																			\
 		NM_ASSERT(false, ClassName ## initialize: the provided array lives in WRAM);													\
 	}
 #else

@@ -248,7 +248,7 @@ void BgmapTexture::writeAllFrames(int16 maximumTextureRowsToWrite, int16 xOffset
 // TODO: inlining this causes trouble with ANIMATED_MULTI animations
 static inline void BgmapTexture::addHWORD
 (
-	HWORD* destination, const HWORD* source, uint32 numberOfHWORDS, uint32 offset, uint16 flip, int16 increment
+	uint16* destination, const uint16* source, uint32 numberOfHWORDS, uint32 offset, uint16 flip, int16 increment
 )
 {
 #ifdef __SHOW_SPRITES_PROFILING
@@ -256,7 +256,7 @@ static inline void BgmapTexture::addHWORD
 	_writtenTextureTiles += numberOfHWORDS;
 #endif
 
-	const HWORD* finalSource = source + numberOfHWORDS;
+	const uint16* finalSource = source + numberOfHWORDS;
 
 	asm
 	(
@@ -280,10 +280,10 @@ static inline void BgmapTexture::addHWORD
 // TODO: inlining this causes trouble with ANIMATED_MULTI animations
 static inline void BgmapTexture::addHWORDCompressed
 (
-	HWORD* destination, const HWORD* source, uint32 numberOfHWORDS, uint32 offset, uint16 flip, int16 increment
+	uint16* destination, const uint16* source, uint32 numberOfHWORDS, uint32 offset, uint16 flip, int16 increment
 )
 {
-	const HWORD* finalSource = source + numberOfHWORDS;
+	const uint16* finalSource = source + numberOfHWORDS;
 
 	asm
 	(
@@ -318,8 +318,8 @@ void BgmapTexture::writeFrame
 
 	int16 cols = this->textureSpec->cols;
 	int16 rows = this->textureSpec->rows;
-	HWORD* offsetDisplacement = (HWORD*)__BGMAP_SEGMENT(this->segment) + xOffset + (yOffset << 6);
-	const HWORD* mapDisplacement = (HWORD*)this->textureSpec->map + this->mapDisplacement + cols * rows * frame;
+	uint16* offsetDisplacement = (uint16*)__BGMAP_SEGMENT(this->segment) + xOffset + (yOffset << 6);
+	const uint16* mapDisplacement = (uint16*)this->textureSpec->map + this->mapDisplacement + cols * rows * frame;
 	int32 counter = forceFullRewrite ? -1 : maximumTextureRowsToWrite;
 	uint16 flip = ((this->horizontalFlip << 1) | this->verticalFlip) << 12;
 	int8 remainingRowsToBeWritten = this->remainingRowsToBeWritten;
@@ -339,7 +339,7 @@ void BgmapTexture::writeFrame
 			{
 				BgmapTexture::addHWORD
 				(
-					(HWORD*)offsetDisplacement + ((remainingRowsToBeWritten) << 6) + cols - 1,
+					(uint16*)offsetDisplacement + ((remainingRowsToBeWritten) << 6) + cols - 1,
 					mapDisplacement + ((rows - remainingRowsToBeWritten - 1) * cols),
 					cols,
 					offset,
@@ -355,7 +355,7 @@ void BgmapTexture::writeFrame
 			{
 				BgmapTexture::addHWORD
 				(
-					(HWORD*)offsetDisplacement + (remainingRowsToBeWritten << 6) + cols - 1,
+					(uint16*)offsetDisplacement + (remainingRowsToBeWritten << 6) + cols - 1,
 					mapDisplacement + ((remainingRowsToBeWritten) * cols),
 					cols,
 					offset,
@@ -374,7 +374,7 @@ void BgmapTexture::writeFrame
 			{
 				BgmapTexture::addHWORD
 				(
-					(HWORD*)offsetDisplacement + (remainingRowsToBeWritten << 6),
+					(uint16*)offsetDisplacement + (remainingRowsToBeWritten << 6),
 					mapDisplacement + ((rows - remainingRowsToBeWritten - 1) * cols),
 					cols,
 					offset,
@@ -390,7 +390,7 @@ void BgmapTexture::writeFrame
 			{
 				BgmapTexture::addHWORD
 				(
-					(HWORD*)offsetDisplacement + (remainingRowsToBeWritten << 6),
+					(uint16*)offsetDisplacement + (remainingRowsToBeWritten << 6),
 					mapDisplacement + ((remainingRowsToBeWritten) * cols),
 					cols,
 					offset,
@@ -407,8 +407,8 @@ void BgmapTexture::writeFrame
 	{
 		BgmapTexture::addHWORD
 		(
-			(HWORD*)offsetDisplacement + (rows << 6),
-			(const HWORD*)_emptyTextureRow,
+			(uint16*)offsetDisplacement + (rows << 6),
+			(const uint16*)_emptyTextureRow,
 			cols,
 			0,
 			false,

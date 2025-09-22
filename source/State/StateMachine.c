@@ -130,7 +130,7 @@ void StateMachine::swapState(State newState)
 	this->previousState = NULL;
 
 	// Push new state in the top of the stack
-	VirtualList::pushFront(this->stateStack, (BYTE*)this->currentState);
+	VirtualList::pushFront(this->stateStack, (uint8*)this->currentState);
 
 	// Call enter method from new state
 	State::start(this->currentState, this->owner);
@@ -158,7 +158,7 @@ void StateMachine::pushState(State newState)
 	NM_ASSERT(!isDeleted(this->currentState), "StateMachine::pushState: null currentState");
 
 	// Push new state in the top of the stack
-	VirtualList::pushFront(this->stateStack, (BYTE*)this->currentState);
+	VirtualList::pushFront(this->stateStack, (uint8*)this->currentState);
 
 	// Call enter method from new state
 	State::start(this->currentState, this->owner);

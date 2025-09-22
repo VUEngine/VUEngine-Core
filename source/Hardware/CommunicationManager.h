@@ -39,22 +39,22 @@ singleton class CommunicationManager : ListenerObject
 	volatile int32 status;
 
 	/// Data sent over the EXT port
-	volatile BYTE* sentData;
+	volatile uint8* sentData;
 
 	/// Data received over the EXT port
-	volatile BYTE* receivedData;
+	volatile uint8* receivedData;
 
 	/// Last byte sent synchronously over the EXT port
-	volatile BYTE* syncSentByte;
+	volatile uint8* syncSentByte;
 
 	/// Last byte received synchronously over the EXT port
-	volatile BYTE* syncReceivedByte;
+	volatile uint8* syncReceivedByte;
 
 	/// Last byte sent asynchronously over the EXT port
-	volatile BYTE* asyncSentByte;
+	volatile uint8* asyncSentByte;
 
 	/// Last byte received asynchronously over the EXT port
-	volatile BYTE* asyncReceivedByte;
+	volatile uint8* asyncReceivedByte;
 
 	/// Number of bytes pending transmission over the EXT port
 	volatile int32 numberOfBytesPendingTransmission;
@@ -104,38 +104,38 @@ singleton class CommunicationManager : ListenerObject
 	/// Send data synchronously over the EXT port if there is nothing detectable attached to it.
 	/// @param data: Data to broadcast
 	/// @param numberOfBytes: Number of bytes to broadcast
-	bool broadcastData(BYTE* data, int32 numberOfBytes);
+	bool broadcastData(uint8* data, int32 numberOfBytes);
 
 	/// Send data asynchronously over the EXT port if there is nothing detectable attached to it.
 	/// @param data: Data to broadcast
 	/// @param numberOfBytes: Number of bytes to broadcast
 	/// @param scope: Object that will be notified of communication events
-	void broadcastDataAsync(BYTE* data, int32 numberOfBytes, ListenerObject scope);
+	void broadcastDataAsync(uint8* data, int32 numberOfBytes, ListenerObject scope);
 
 	/// Send and receive data synchronously over the EXT port if there is something detectable attached to it.
 	/// @param message: Control message for the receiving partner
 	/// @param data: Data to broadcast
 	/// @param numberOfBytes: Number of bytes to broadcast
-	bool sendAndReceiveData(WORD message, BYTE* data, int32 numberOfBytes);
+	bool sendAndReceiveData(uint32 message, uint8* data, int32 numberOfBytes);
 
 	/// Send and receive data asynchronously over the EXT port if there is something detectable attached to it.
 	/// @param message: Control message for the receiving partner
 	/// @param data: Data to broadcast
 	/// @param numberOfBytes: Number of bytes to broadcast
 	/// @param scope: Object that will be notified of communication events
-	bool sendAndReceiveDataAsync(WORD message, BYTE* data, int32 numberOfBytes, ListenerObject scope);
+	bool sendAndReceiveDataAsync(uint32 message, uint8* data, int32 numberOfBytes, ListenerObject scope);
 
 	/// Retrieve the last sent message on the EXT port.
-	WORD getSentMessage();
+	uint32 getSentMessage();
 
 	/// Retrieve the last received message on the EXT port.
-	WORD getReceivedMessage();
+	uint32 getReceivedMessage();
 
 	/// Retrieve the last sent data on the EXT port.
-	const BYTE* getSentData();
+	const uint8* getSentData();
 
 	/// Retrieve the last received data on the EXT port.
-	const BYTE* getReceivedData();
+	const uint8* getReceivedData();
 
 	/// Print the manager's status.
 	/// @param x: Screen x coordinate where to print

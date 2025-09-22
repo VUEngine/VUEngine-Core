@@ -35,7 +35,7 @@ extern uint32 _sramBssEnd;
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void SRAMManager::save(const BYTE* const source, int32 memberOffset, int32 dataSize)
+static void SRAMManager::save(const uint8* const source, int32 memberOffset, int32 dataSize)
 {
 	SRAMManager sramManager = SRAMManager::getInstance();
 
@@ -50,7 +50,7 @@ static void SRAMManager::save(const BYTE* const source, int32 memberOffset, int3
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void SRAMManager::read(BYTE* destination, int32 memberOffset, int32 dataSize)
+static void SRAMManager::read(uint8* destination, int32 memberOffset, int32 dataSize)
 {
 	SRAMManager sramManager = SRAMManager::getInstance();
 
@@ -109,7 +109,7 @@ void SRAMManager::initialize()
 	{
 		uint16 dummyChar[__SRAM_DUMMY_READ_LENGTH];
 
-		SRAMManager::read((BYTE*)&dummyChar, i, sizeof(dummyChar));
+		SRAMManager::read((uint8*)&dummyChar, i, sizeof(dummyChar));
 	}
 }
 

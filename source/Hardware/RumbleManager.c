@@ -206,21 +206,21 @@ void RumbleManager::execute()
 		{
 			CommunicationManager::broadcastDataAsync
 			(
-				CommunicationManager::getInstance(), (BYTE*)this->rumbleCommands, this->rumbleCommandIndex, NULL
+				CommunicationManager::getInstance(), (uint8*)this->rumbleCommands, this->rumbleCommandIndex, NULL
 			);
 		}
 		else
 		{
 			CommunicationManager::broadcastDataAsync
 			(
-				CommunicationManager::getInstance(), (BYTE*)this->rumbleCommands, this->rumbleCommandIndex, ListenerObject::safeCast(this)
+				CommunicationManager::getInstance(), (uint8*)this->rumbleCommands, this->rumbleCommandIndex, ListenerObject::safeCast(this)
 			);
 		}
 	}
 	else
 	{
 		CommunicationManager::broadcastData(
-				CommunicationManager::getInstance(), (BYTE*)this->rumbleCommands, this->rumbleCommandIndex);
+				CommunicationManager::getInstance(), (uint8*)this->rumbleCommands, this->rumbleCommandIndex);
 		this->rumbleCommandIndex = 0;
 	}
 #endif

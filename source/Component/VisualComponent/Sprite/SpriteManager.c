@@ -1220,13 +1220,13 @@ void SpriteManager::writeAttributesToDRAM()
 
 	Mem::copyWORD
 	(
-		(WORD*)(this->objectAttributesBaseAddress), (WORD*)(_objectAttributesCache + this->objectIndex), 
+		(uint32*)(this->objectAttributesBaseAddress), (uint32*)(_objectAttributesCache + this->objectIndex), 
 		sizeof(ObjectAttributes) * (__TOTAL_OBJECTS - this->objectIndex) >> 2
 	);
 
 	Mem::copyWORD
 	(
-		(WORD*)(this->worldAttributesBaseAddress + this->bgmapIndex), (WORD*)(_worldAttributesCache + this->bgmapIndex), 
+		(uint32*)(this->worldAttributesBaseAddress + this->bgmapIndex), (uint32*)(_worldAttributesCache + this->bgmapIndex), 
 		sizeof(WorldAttributes) * (__TOTAL_LAYERS - (this->bgmapIndex)) >> 2
 	);
 }

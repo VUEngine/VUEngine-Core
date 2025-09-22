@@ -267,7 +267,7 @@ static bool FrameBufferManager::drawPoint(PixelVector point, int32 color, uint8 
 	{
 		uint32 buffer = frameBufferManager->currentDrawingFrameBufferSet | (bufferIndex << __FRAME_BUFFER_SIDE_BIT_INDEX);
 
-		FrameBufferManager::drawColorPixelInterlaced((BYTE*)buffer, point.x, point.y, 0!= bufferIndex ? -point.parallax : point.parallax, color);
+		FrameBufferManager::drawColorPixelInterlaced((uint8*)buffer, point.x, point.y, 0!= bufferIndex ? -point.parallax : point.parallax, color);
 	}
 	else
 	{
@@ -279,7 +279,7 @@ static bool FrameBufferManager::drawPoint(PixelVector point, int32 color, uint8 
 			return false;
 		}
 
-		FrameBufferManager::drawColorPixel((BYTE*)leftBuffer, (BYTE*)rightBuffer, point.x, point.y, point.parallax, color);
+		FrameBufferManager::drawColorPixel((uint8*)leftBuffer, (uint8*)rightBuffer, point.x, point.y, point.parallax, color);
 	}
 
 	return true;
@@ -459,7 +459,7 @@ static bool FrameBufferManager::drawLine(PixelVector fromPoint, PixelVector toPo
 			{
 				FrameBufferManager::drawColorPixelInterlaced
 				(
-					(BYTE*)leftBuffer, __FIXED_EXT_TO_I(fromPointX), __FIXED_EXT_TO_I(fromPointY), __FIXED_EXT_TO_I(parallaxStart), color
+					(uint8*)leftBuffer, __FIXED_EXT_TO_I(fromPointX), __FIXED_EXT_TO_I(fromPointY), __FIXED_EXT_TO_I(parallaxStart), color
 				);
 
 				fromPointX += xStep;
@@ -467,7 +467,7 @@ static bool FrameBufferManager::drawLine(PixelVector fromPoint, PixelVector toPo
 
 				FrameBufferManager::drawColorPixelInterlaced
 				(
-					(BYTE*)rightBuffer, __FIXED_EXT_TO_I(fromPointX), __FIXED_EXT_TO_I(fromPointY), -__FIXED_EXT_TO_I(parallaxStart), color
+					(uint8*)rightBuffer, __FIXED_EXT_TO_I(fromPointX), __FIXED_EXT_TO_I(fromPointY), -__FIXED_EXT_TO_I(parallaxStart), color
 				);
 
 				fromPointX += xStep;
@@ -481,7 +481,7 @@ static bool FrameBufferManager::drawLine(PixelVector fromPoint, PixelVector toPo
 			{
 				FrameBufferManager::drawColorPixelInterlaced
 				(
-					(BYTE*)leftBuffer, __FIXED_EXT_TO_I(fromPointX), __FIXED_EXT_TO_I(fromPointY), __FIXED_EXT_TO_I(parallaxStart), color
+					(uint8*)leftBuffer, __FIXED_EXT_TO_I(fromPointX), __FIXED_EXT_TO_I(fromPointY), __FIXED_EXT_TO_I(parallaxStart), color
 				);
 
 				fromPointX += xStep;
@@ -489,7 +489,7 @@ static bool FrameBufferManager::drawLine(PixelVector fromPoint, PixelVector toPo
 
 				FrameBufferManager::drawColorPixelInterlaced
 				(
-					(BYTE*)rightBuffer, __FIXED_EXT_TO_I(fromPointX), __FIXED_EXT_TO_I(fromPointY), -__FIXED_EXT_TO_I(parallaxStart), color
+					(uint8*)rightBuffer, __FIXED_EXT_TO_I(fromPointX), __FIXED_EXT_TO_I(fromPointY), -__FIXED_EXT_TO_I(parallaxStart), color
 				);
 
 				fromPointX += xStep;
@@ -507,7 +507,7 @@ static bool FrameBufferManager::drawLine(PixelVector fromPoint, PixelVector toPo
 		{
 			FrameBufferManager::drawColorPixel
 			(
-				(BYTE*)leftBuffer, (BYTE*)rightBuffer, __FIXED_EXT_TO_I(fromPointX), __FIXED_EXT_TO_I(fromPointY), 
+				(uint8*)leftBuffer, (uint8*)rightBuffer, __FIXED_EXT_TO_I(fromPointX), __FIXED_EXT_TO_I(fromPointY), 
 				__FIXED_EXT_TO_I(parallaxStart), color
 			);
 
@@ -517,7 +517,7 @@ static bool FrameBufferManager::drawLine(PixelVector fromPoint, PixelVector toPo
 		}
 
 #ifdef __DIRECT_DRAW_OPTIMIZED_VERTICAL_LINES
-		FrameBufferManager::drawColorPixel((BYTE*)leftBuffer, (BYTE*)rightBuffer, -1, -1, 0, 0);
+		FrameBufferManager::drawColorPixel((uint8*)leftBuffer, (uint8*)rightBuffer, -1, -1, 0, 0);
 #endif
 	}
 
@@ -574,14 +574,14 @@ static bool FrameBufferManager::drawCircle(PixelVector center, int16 radius, int
 
 		while (x >= y)
 		{
-			FrameBufferManager::drawColorPixelInterlaced((BYTE*)leftBuffer, center.x + x + radius, center.y + y + radius, center.parallax, color);
-			FrameBufferManager::drawColorPixelInterlaced((BYTE*)leftBuffer, center.x + y + radius, center.y + x + radius, center.parallax, color);
-			FrameBufferManager::drawColorPixelInterlaced((BYTE*)leftBuffer, center.x - x + radius, center.y + y + radius, center.parallax, color);
-			FrameBufferManager::drawColorPixelInterlaced((BYTE*)leftBuffer, center.x - y + radius, center.y + x + radius, center.parallax, color);
-			FrameBufferManager::drawColorPixelInterlaced((BYTE*)leftBuffer, center.x - x + radius, center.y - y + radius, center.parallax, color);
-			FrameBufferManager::drawColorPixelInterlaced((BYTE*)leftBuffer, center.x - y + radius, center.y - x + radius, center.parallax, color);
-			FrameBufferManager::drawColorPixelInterlaced((BYTE*)leftBuffer, center.x + x + radius, center.y - y + radius, center.parallax, color);
-			FrameBufferManager::drawColorPixelInterlaced((BYTE*)leftBuffer, center.x + y + radius, center.y - x + radius, center.parallax, color);
+			FrameBufferManager::drawColorPixelInterlaced((uint8*)leftBuffer, center.x + x + radius, center.y + y + radius, center.parallax, color);
+			FrameBufferManager::drawColorPixelInterlaced((uint8*)leftBuffer, center.x + y + radius, center.y + x + radius, center.parallax, color);
+			FrameBufferManager::drawColorPixelInterlaced((uint8*)leftBuffer, center.x - x + radius, center.y + y + radius, center.parallax, color);
+			FrameBufferManager::drawColorPixelInterlaced((uint8*)leftBuffer, center.x - y + radius, center.y + x + radius, center.parallax, color);
+			FrameBufferManager::drawColorPixelInterlaced((uint8*)leftBuffer, center.x - x + radius, center.y - y + radius, center.parallax, color);
+			FrameBufferManager::drawColorPixelInterlaced((uint8*)leftBuffer, center.x - y + radius, center.y - x + radius, center.parallax, color);
+			FrameBufferManager::drawColorPixelInterlaced((uint8*)leftBuffer, center.x + x + radius, center.y - y + radius, center.parallax, color);
+			FrameBufferManager::drawColorPixelInterlaced((uint8*)leftBuffer, center.x + y + radius, center.y - x + radius, center.parallax, color);
 
 			y++;
 
@@ -595,14 +595,14 @@ static bool FrameBufferManager::drawCircle(PixelVector center, int16 radius, int
 				radiusError += 2 * (y - x + 1);
 			}
 
-			FrameBufferManager::drawColorPixelInterlaced((BYTE*)rightBuffer, center.x + x + radius, center.y + y + radius, -center.parallax, color);
-			FrameBufferManager::drawColorPixelInterlaced((BYTE*)rightBuffer, center.x + y + radius, center.y + x + radius, -center.parallax, color);
-			FrameBufferManager::drawColorPixelInterlaced((BYTE*)rightBuffer, center.x - x + radius, center.y + y + radius, -center.parallax, color);
-			FrameBufferManager::drawColorPixelInterlaced((BYTE*)rightBuffer, center.x - y + radius, center.y + x + radius, -center.parallax, color);
-			FrameBufferManager::drawColorPixelInterlaced((BYTE*)rightBuffer, center.x - x + radius, center.y - y + radius, -center.parallax, color);
-			FrameBufferManager::drawColorPixelInterlaced((BYTE*)rightBuffer, center.x - y + radius, center.y - x + radius, -center.parallax, color);
-			FrameBufferManager::drawColorPixelInterlaced((BYTE*)rightBuffer, center.x + x + radius, center.y - y + radius, -center.parallax, color);
-			FrameBufferManager::drawColorPixelInterlaced((BYTE*)rightBuffer, center.x + y + radius, center.y - x + radius, -center.parallax, color);
+			FrameBufferManager::drawColorPixelInterlaced((uint8*)rightBuffer, center.x + x + radius, center.y + y + radius, -center.parallax, color);
+			FrameBufferManager::drawColorPixelInterlaced((uint8*)rightBuffer, center.x + y + radius, center.y + x + radius, -center.parallax, color);
+			FrameBufferManager::drawColorPixelInterlaced((uint8*)rightBuffer, center.x - x + radius, center.y + y + radius, -center.parallax, color);
+			FrameBufferManager::drawColorPixelInterlaced((uint8*)rightBuffer, center.x - y + radius, center.y + x + radius, -center.parallax, color);
+			FrameBufferManager::drawColorPixelInterlaced((uint8*)rightBuffer, center.x - x + radius, center.y - y + radius, -center.parallax, color);
+			FrameBufferManager::drawColorPixelInterlaced((uint8*)rightBuffer, center.x - y + radius, center.y - x + radius, -center.parallax, color);
+			FrameBufferManager::drawColorPixelInterlaced((uint8*)rightBuffer, center.x + x + radius, center.y - y + radius, -center.parallax, color);
+			FrameBufferManager::drawColorPixelInterlaced((uint8*)rightBuffer, center.x + y + radius, center.y - x + radius, -center.parallax, color);
 
 			y++;
 
@@ -633,42 +633,42 @@ static bool FrameBufferManager::drawCircle(PixelVector center, int16 radius, int
 		{
 			FrameBufferManager::drawColorPixel
 			(
-				(BYTE*)leftBuffer, (BYTE*)rightBuffer, center.x + x + radius, center.y + y + radius, center.parallax, color
+				(uint8*)leftBuffer, (uint8*)rightBuffer, center.x + x + radius, center.y + y + radius, center.parallax, color
 			);
 			
 			FrameBufferManager::drawColorPixel
 			(
-				(BYTE*)leftBuffer, (BYTE*)rightBuffer, center.x + y + radius, center.y + x + radius, center.parallax, color
+				(uint8*)leftBuffer, (uint8*)rightBuffer, center.x + y + radius, center.y + x + radius, center.parallax, color
 			);
 			
 			FrameBufferManager::drawColorPixel
 			(
-				(BYTE*)leftBuffer, (BYTE*)rightBuffer, center.x - x + radius, center.y + y + radius, center.parallax, color
+				(uint8*)leftBuffer, (uint8*)rightBuffer, center.x - x + radius, center.y + y + radius, center.parallax, color
 			);
 
 			FrameBufferManager::drawColorPixel
 			(
-				(BYTE*)leftBuffer, (BYTE*)rightBuffer, center.x - y + radius, center.y + x + radius, center.parallax, color
+				(uint8*)leftBuffer, (uint8*)rightBuffer, center.x - y + radius, center.y + x + radius, center.parallax, color
 			);
 			
 			FrameBufferManager::drawColorPixel
 			(
-				(BYTE*)leftBuffer, (BYTE*)rightBuffer, center.x - x + radius, center.y - y + radius, center.parallax, color
+				(uint8*)leftBuffer, (uint8*)rightBuffer, center.x - x + radius, center.y - y + radius, center.parallax, color
 			);
 
 			FrameBufferManager::drawColorPixel
 			(
-				(BYTE*)leftBuffer, (BYTE*)rightBuffer, center.x - y + radius, center.y - x + radius, center.parallax, color
+				(uint8*)leftBuffer, (uint8*)rightBuffer, center.x - y + radius, center.y - x + radius, center.parallax, color
 			);
 			
 			FrameBufferManager::drawColorPixel
 			(
-				(BYTE*)leftBuffer, (BYTE*)rightBuffer, center.x + x + radius, center.y - y + radius, center.parallax, color
+				(uint8*)leftBuffer, (uint8*)rightBuffer, center.x + x + radius, center.y - y + radius, center.parallax, color
 			);
 			
 			FrameBufferManager::drawColorPixel
 			(
-				(BYTE*)leftBuffer, (BYTE*)rightBuffer, center.x + y + radius, center.y - x + radius, center.parallax, color
+				(uint8*)leftBuffer, (uint8*)rightBuffer, center.x + y + radius, center.y - x + radius, center.parallax, color
 			);
 
 			y++;
@@ -716,15 +716,15 @@ static bool FrameBufferManager::drawX(PixelVector center, int16 length, int32 co
 
 		for(; lengthHelper <= length; lengthHelper++, x++, y++)
 		{
-			FrameBufferManager::drawColorPixelInterlaced((BYTE*)leftBuffer, x, y, center.parallax, color);
-			FrameBufferManager::drawColorPixelInterlaced((BYTE*)leftBuffer, (center.x + halfLength) - lengthHelper, y, center.parallax, color);
+			FrameBufferManager::drawColorPixelInterlaced((uint8*)leftBuffer, x, y, center.parallax, color);
+			FrameBufferManager::drawColorPixelInterlaced((uint8*)leftBuffer, (center.x + halfLength) - lengthHelper, y, center.parallax, color);
 
 			x++;
 			y++;
 			lengthHelper++;
 
-			FrameBufferManager::drawColorPixelInterlaced((BYTE*)rightBuffer, x, y, -center.parallax, color);
-			FrameBufferManager::drawColorPixelInterlaced((BYTE*)rightBuffer, (center.x + halfLength) - lengthHelper, y, -center.parallax, color);
+			FrameBufferManager::drawColorPixelInterlaced((uint8*)rightBuffer, x, y, -center.parallax, color);
+			FrameBufferManager::drawColorPixelInterlaced((uint8*)rightBuffer, (center.x + halfLength) - lengthHelper, y, -center.parallax, color);
 		}
 	}
 	else
@@ -734,11 +734,11 @@ static bool FrameBufferManager::drawX(PixelVector center, int16 length, int32 co
 
 		for(; lengthHelper <= length; lengthHelper++, x++, y++)
 		{
-			FrameBufferManager::drawColorPixel((BYTE*)leftBuffer, (BYTE*)rightBuffer, x, y, center.parallax, color);
+			FrameBufferManager::drawColorPixel((uint8*)leftBuffer, (uint8*)rightBuffer, x, y, center.parallax, color);
 			
 			FrameBufferManager::drawColorPixel
 			(
-				(BYTE*)leftBuffer, (BYTE*)rightBuffer, (center.x + halfLength) - lengthHelper, y, center.parallax, color
+				(uint8*)leftBuffer, (uint8*)rightBuffer, (center.x + halfLength) - lengthHelper, y, center.parallax, color
 			);
 		}
 	}
@@ -772,14 +772,14 @@ static bool FrameBufferManager::drawCross(PixelVector center, int16 length, int3
 
 		for(int16 coordinate = -halfLength; lengthHelper < length; coordinate++, lengthHelper++)
 		{
-			FrameBufferManager::drawColorPixelInterlaced((BYTE*)leftBuffer, center.x + coordinate, center.y, center.parallax, color);
-			FrameBufferManager::drawColorPixelInterlaced((BYTE*)leftBuffer, center.x, center.y + coordinate, center.parallax, color);
+			FrameBufferManager::drawColorPixelInterlaced((uint8*)leftBuffer, center.x + coordinate, center.y, center.parallax, color);
+			FrameBufferManager::drawColorPixelInterlaced((uint8*)leftBuffer, center.x, center.y + coordinate, center.parallax, color);
 
 			coordinate++;
 			lengthHelper++;
 
-			FrameBufferManager::drawColorPixelInterlaced((BYTE*)rightBuffer, center.x + coordinate, center.y, -center.parallax, color);
-			FrameBufferManager::drawColorPixelInterlaced((BYTE*)rightBuffer, center.x, center.y + coordinate, -center.parallax, color);
+			FrameBufferManager::drawColorPixelInterlaced((uint8*)rightBuffer, center.x + coordinate, center.y, -center.parallax, color);
+			FrameBufferManager::drawColorPixelInterlaced((uint8*)rightBuffer, center.x, center.y + coordinate, -center.parallax, color);
 		}
 	}
 	else
@@ -789,8 +789,8 @@ static bool FrameBufferManager::drawCross(PixelVector center, int16 length, int3
 
 		for(int16 coordinate = -halfLength; lengthHelper < length; coordinate++, lengthHelper++)
 		{
-			FrameBufferManager::drawColorPixel((BYTE*)leftBuffer, (BYTE*)rightBuffer, center.x + coordinate, center.y, center.parallax, color);
-			FrameBufferManager::drawColorPixel((BYTE*)leftBuffer, (BYTE*)rightBuffer, center.x, center.y + coordinate, center.parallax, color);
+			FrameBufferManager::drawColorPixel((uint8*)leftBuffer, (uint8*)rightBuffer, center.x + coordinate, center.y, center.parallax, color);
+			FrameBufferManager::drawColorPixel((uint8*)leftBuffer, (uint8*)rightBuffer, center.x, center.y + coordinate, center.parallax, color);
 		}
 	}
 
@@ -869,11 +869,11 @@ static bool FrameBufferManager::drawSolidRhumbus(PixelVector center, int16 radiu
 		{
 			for(int16 x = center.x - radiusHelper; x <= center.x + radiusHelper; x++)
 			{
-				FrameBufferManager::drawColorPixelInterlaced((BYTE*)leftBuffer, x, y, center.parallax, color);
+				FrameBufferManager::drawColorPixelInterlaced((uint8*)leftBuffer, x, y, center.parallax, color);
 
 				x++;
 
-				FrameBufferManager::drawColorPixelInterlaced((BYTE*)rightBuffer, x, y, -center.parallax, color);
+				FrameBufferManager::drawColorPixelInterlaced((uint8*)rightBuffer, x, y, -center.parallax, color);
 			}
 		}
 
@@ -881,11 +881,11 @@ static bool FrameBufferManager::drawSolidRhumbus(PixelVector center, int16 radiu
 		{
 			for(int16 x = center.x - radiusHelper; x <= center.x + radiusHelper; x++)
 			{
-				FrameBufferManager::drawColorPixelInterlaced((BYTE*)leftBuffer, x, y, center.parallax, color);
+				FrameBufferManager::drawColorPixelInterlaced((uint8*)leftBuffer, x, y, center.parallax, color);
 
 				x++;
 
-				FrameBufferManager::drawColorPixelInterlaced((BYTE*)rightBuffer, x, y, -center.parallax, color);
+				FrameBufferManager::drawColorPixelInterlaced((uint8*)rightBuffer, x, y, -center.parallax, color);
 			}
 		}
 	}
@@ -898,7 +898,7 @@ static bool FrameBufferManager::drawSolidRhumbus(PixelVector center, int16 radiu
 		{
 			for(int16 x = center.x - radiusHelper; x <= center.x + radiusHelper; x++)
 			{
-				FrameBufferManager::drawColorPixel((BYTE*)leftBuffer, (BYTE*)rightBuffer, x, y, center.parallax, color);
+				FrameBufferManager::drawColorPixel((uint8*)leftBuffer, (uint8*)rightBuffer, x, y, center.parallax, color);
 			}
 		}
 
@@ -906,7 +906,7 @@ static bool FrameBufferManager::drawSolidRhumbus(PixelVector center, int16 radiu
 		{
 			for(int16 x = center.x - radiusHelper; x <= center.x + radiusHelper; x++)
 			{
-				FrameBufferManager::drawColorPixel((BYTE*)leftBuffer, (BYTE*)rightBuffer, x, y, center.parallax, color);
+				FrameBufferManager::drawColorPixel((uint8*)leftBuffer, (uint8*)rightBuffer, x, y, center.parallax, color);
 			}
 		}
 	}
@@ -933,7 +933,7 @@ static void FrameBufferManager::drawPixel(uint32 buffer, uint16 x, uint16 y, int
 {
 	// A pointer to the buffer
 	//int32* pointer = (int32*)buffer;
-	BYTE* pointer = (BYTE*)buffer;
+	uint8* pointer = (uint8*)buffer;
 
 	// Calculate pixel position
 	// Each column has 16 words, so 16 * 4 bytes = 64, each byte represents 4 pixels
@@ -952,7 +952,7 @@ static void FrameBufferManager::drawPixel(uint32 buffer, uint16 x, uint16 y, int
 /// @param x			Camera x coordinate
 /// @param y			Camera y coordinate
 /// @param color		The color to draw (__COLOR_BRIGHT_RED, __COLOR_MEDIUM_RED or __COLOR_DARK_RED)
-static void FrameBufferManager::drawColorPixel(BYTE* leftBuffer, BYTE* rightBuffer, int16 x, int16 y, int16 parallax, int32 color)
+static void FrameBufferManager::drawColorPixel(uint8* leftBuffer, uint8* rightBuffer, int16 x, int16 y, int16 parallax, int32 color)
 {
 #ifdef __DIRECT_DRAW_OPTIMIZED_VERTICAL_LINES
 	uint16 pixel = color << ((y & 0x7) << 1);
@@ -1009,7 +1009,7 @@ static void FrameBufferManager::drawColorPixel(BYTE* leftBuffer, BYTE* rightBuff
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void FrameBufferManager::drawColorPixelInterlaced(BYTE* buffer, int16 x, int16 y, int16 parallax, int32 color)
+static void FrameBufferManager::drawColorPixelInterlaced(uint8* buffer, int16 x, int16 y, int16 parallax, int32 color)
 {
 	// Calculate pixel position
 	// Each column has 16 words, so 16 * 4 bytes = 64, each byte represents 4 pixels
@@ -1034,7 +1034,7 @@ static void FrameBufferManager::drawColorPixelInterlaced(BYTE* buffer, int16 x, 
 /// @param buffer	Buffer base address
 /// @param x			Camera x coordinate
 /// @param y			Camera y coordinate
-static void FrameBufferManager::drawBlackPixel(BYTE* leftBuffer, BYTE* rightBuffer, int16 x, int16 y, int16 parallax)
+static void FrameBufferManager::drawBlackPixel(uint8* leftBuffer, uint8* rightBuffer, int16 x, int16 y, int16 parallax)
 {
 	uint16 yHelper = y >> 2;
 	uint8 pixel = ~(3 << ((y & 3) << 1));

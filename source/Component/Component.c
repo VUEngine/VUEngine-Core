@@ -54,7 +54,7 @@ void Component::constructor(Entity owner, const ComponentSpec* componentSpec)
 		Printer::setDebugMode();
 		Printer::clear();
 		Printer::text(__GET_CLASS_NAME(this), 1, 25, NULL);
-		Printer::hex((WORD)componentSpec, 1, 26, 8, NULL);
+		Printer::hex((uint32)componentSpec, 1, 26, 8, NULL);
 		NM_ASSERT(false, "Component::constructor: the provided spec lives in WRAM");
 	}
 #endif

@@ -232,7 +232,7 @@ singleton class Printer : Entity
 	/// @param y: Row to start printing at
 	/// @param length: Digits to print
 	/// @param font: Name of font to use for printing
-	static void hex(WORD value, uint8 x, uint8 y, uint8 length, const char* font);
+	static void hex(uint32 value, uint8 x, uint8 y, uint8 length, const char* font);
 
 	/// Print a float value.
 	/// @param value: Float value to print

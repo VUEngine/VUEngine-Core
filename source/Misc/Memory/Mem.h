@@ -39,19 +39,19 @@ static class Mem : Object
 	/// @param destination: Starting destination address
 	/// @param source: Starting source address
 	/// @param numberOfBYTES: Total number of BYTEs to copy
-	static inline void copyBYTE(BYTE* destination, const BYTE* source, uint32 numberOfBYTES);
+	static inline void copyBYTE(uint8* destination, const uint8* source, uint32 numberOfBYTES);
 
 	/// Copy a block of HWORDs from the source memory address to the destination memory address
 	/// @param destination: Starting destination address
 	/// @param source: Starting source address
 	/// @param numberOfHWORDS: Total number of HWORDs to copy
-	static inline void copyHWORD(HWORD* destination, const HWORD* source, uint32 numberOfHWORDS);
+	static inline void copyHWORD(uint16* destination, const uint16* source, uint32 numberOfHWORDS);
 
 	/// Copy a block of WORDs from the source memory address to the destination memory address
 	/// @param destination: Starting destination address
 	/// @param source: Starting source address
 	/// @param numberOfWORDS: Total number of WORDs to copy
-	static inline void copyWORD(WORD* destination, const WORD* source, uint32 numberOfWORDS);
+	static inline void copyWORD(uint32* destination, const uint32* source, uint32 numberOfWORDS);
 
 	/// Apply a bitwise OR operation to the specified number of BYTEs from the provided source addresses and place the results 
 	/// in the destination address onwards
@@ -59,7 +59,7 @@ static class Mem : Object
 	/// @param source1: Starting first source address
 	/// @param source2: Starting second source address
 	/// @param numberOfBYTES: Total number of BYTEs to combine
-	static inline void combineBYTEs(BYTE* destination, const BYTE* source1, const BYTE* source2, uint32 numberOfBYTES);
+	static inline void combineBYTEs(uint8* destination, const uint8* source1, const uint8* source2, uint32 numberOfBYTES);
 
 	/// Apply a bitwise OR operation to the specified number of HWORDs from the provided source addresses and place the results 
 	/// in the destination address onwards
@@ -67,7 +67,7 @@ static class Mem : Object
 	/// @param source1: Starting first source address
 	/// @param source2: Starting second source address
 	/// @param numberOfWORDS: Total number of HWORDs to combine
-	static inline void combineHWORDs(HWORD* destination, const HWORD* source1, const HWORD* source2, uint32 numberOfWORDS);
+	static inline void combineHWORDs(uint16* destination, const uint16* source1, const uint16* source2, uint32 numberOfWORDS);
 
 	/// Apply a bitwise OR operation to the specified number of WORDs from the provided source addresses and place the results 
 	/// in the destination address onwards
@@ -75,33 +75,33 @@ static class Mem : Object
 	/// @param source1: Starting first source address
 	/// @param source2: Starting second source address
 	/// @param numberOfWORDS: Total number of WORDs to combine
-	static inline void combineWORDs(WORD* destination, const WORD* source1, const WORD* source2, uint32 numberOfWORDS);
+	static inline void combineWORDs(uint32* destination, const uint32* source1, const uint32* source2, uint32 numberOfWORDS);
 
 	/// Add the provided offset to the data from the provided memory source and place the results in the destination address onwards
 	/// @param destination: Starting destination address
 	/// @param source: Starting source address
 	/// @param numberOfBYTES: Total number of BYTEs to combine
 	/// @param offset: Value to add to the data in the source address
-	static inline void addOffsetToBYTE(BYTE* destination, const BYTE* source, uint32 numberOfBYTES, uint32 offset);
+	static inline void addOffsetToBYTE(uint8* destination, const uint8* source, uint32 numberOfBYTES, uint32 offset);
 
 	/// Add the provided offset to the data from the provided memory source and place the results in the destination address onwards
 	/// @param destination: Starting destination address
 	/// @param source: Starting source address
 	/// @param numberOfHWORDS: Total number of HWORDs to combine
 	/// @param offset: Value to add to the data in the source address
-	static inline void addOffsetToHWORD(HWORD* destination, const HWORD* source, uint32 numberOfHWORDS, uint32 offset);
+	static inline void addOffsetToHWORD(uint16* destination, const uint16* source, uint32 numberOfHWORDS, uint32 offset);
 
 	/// Add the provided offset to the data from the provided memory source and place the results in the destination address onwards
 	/// @param destination: Starting destination address
 	/// @param source: Starting source address
 	/// @param numberOfWORDS: Total number of WORDs to combine
 	/// @param offset: Value to add to the data in the source address
-	static inline void addOffsetToWORD(WORD* destination, const WORD* source, uint32 numberOfWORDS, uint32 offset);
+	static inline void addOffsetToWORD(uint32* destination, const uint32* source, uint32 numberOfWORDS, uint32 offset);
 
 	/// Write a determined number of zeros from the specified memory address onwards.
 	/// @param destination: Starting address
 	/// @param numberOfBYTES: Total number of zeros to write
-	static void clear(BYTE* destination, uint32 numberOfBYTES);
+	static void clear(uint8* destination, uint32 numberOfBYTES);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -110,7 +110,7 @@ static class Mem : Object
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static inline void Mem::copyBYTE(BYTE* destination, const BYTE* source, uint32 numberOfBYTES)
+static inline void Mem::copyBYTE(uint8* destination, const uint8* source, uint32 numberOfBYTES)
 {
 	for(; 0 < numberOfBYTES; numberOfBYTES--)
 	{
@@ -120,7 +120,7 @@ static inline void Mem::copyBYTE(BYTE* destination, const BYTE* source, uint32 n
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static inline void Mem::copyHWORD(HWORD* destination, const HWORD* source, uint32 numberOfHWORDS)
+static inline void Mem::copyHWORD(uint16* destination, const uint16* source, uint32 numberOfHWORDS)
 {
 	for(; 0 < numberOfHWORDS; numberOfHWORDS--)
 	{
@@ -130,7 +130,7 @@ static inline void Mem::copyHWORD(HWORD* destination, const HWORD* source, uint3
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static inline void Mem::copyWORD(WORD* destination, const WORD* source, uint32 numberOfWORDS)
+static inline void Mem::copyWORD(uint32* destination, const uint32* source, uint32 numberOfWORDS)
 {
 	for(; 0 < numberOfWORDS; numberOfWORDS--)
 	{
@@ -140,7 +140,7 @@ static inline void Mem::copyWORD(WORD* destination, const WORD* source, uint32 n
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static inline void Mem::combineBYTEs(BYTE* destination, const BYTE* source1, const BYTE* source2, uint32 numberOfBYTES)
+static inline void Mem::combineBYTEs(uint8* destination, const uint8* source1, const uint8* source2, uint32 numberOfBYTES)
 {
 	for(; 0 < numberOfBYTES; numberOfBYTES--)
 	{
@@ -148,7 +148,7 @@ static inline void Mem::combineBYTEs(BYTE* destination, const BYTE* source1, con
 	}
 }
 
-static inline void Mem::combineHWORDs(HWORD* destination, const HWORD* source1, const HWORD* source2, uint32 numberOfHWORDS)
+static inline void Mem::combineHWORDs(uint16* destination, const uint16* source1, const uint16* source2, uint32 numberOfHWORDS)
 {
 	for(; 0 < numberOfHWORDS; numberOfHWORDS--)
 	{
@@ -158,7 +158,7 @@ static inline void Mem::combineHWORDs(HWORD* destination, const HWORD* source1, 
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static inline void Mem::combineWORDs(WORD* destination, const WORD* source1, const WORD* source2, uint32 numberOfWORDS)
+static inline void Mem::combineWORDs(uint32* destination, const uint32* source1, const uint32* source2, uint32 numberOfWORDS)
 {
 	for(; 0 < numberOfWORDS; numberOfWORDS--)
 	{
@@ -168,7 +168,7 @@ static inline void Mem::combineWORDs(WORD* destination, const WORD* source1, con
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static inline void Mem::addOffsetToBYTE(BYTE* destination, const BYTE* source, uint32 numberOfBYTES, uint32 offset)
+static inline void Mem::addOffsetToBYTE(uint8* destination, const uint8* source, uint32 numberOfBYTES, uint32 offset)
 {
 	for(; 0 < numberOfBYTES; numberOfBYTES--)
 	{
@@ -178,7 +178,7 @@ static inline void Mem::addOffsetToBYTE(BYTE* destination, const BYTE* source, u
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static inline void Mem::addOffsetToHWORD(HWORD* destination, const HWORD* source, uint32 numberOfHWORDS, uint32 offset)
+static inline void Mem::addOffsetToHWORD(uint16* destination, const uint16* source, uint32 numberOfHWORDS, uint32 offset)
 {
 	for(; 0 < numberOfHWORDS; numberOfHWORDS--)
 	{
@@ -188,7 +188,7 @@ static inline void Mem::addOffsetToHWORD(HWORD* destination, const HWORD* source
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static inline void Mem::addOffsetToWORD(WORD* destination, const WORD* source, uint32 numberOfWORDS, uint32 offset)
+static inline void Mem::addOffsetToWORD(uint32* destination, const uint32* source, uint32 numberOfWORDS, uint32 offset)
 {
 	for(; 0 < numberOfWORDS; numberOfWORDS--)
 	{

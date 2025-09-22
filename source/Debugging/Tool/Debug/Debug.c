@@ -839,7 +839,7 @@ void Debug::charMemoryShowMemory(int32 increment __attribute__ ((unused)), int32
 		Printer::text("\x07                                \x07", 1, yOffset+i, NULL);
 	}
 
-	const HWORD charMemoryMap[] =
+	const uint16 charMemoryMap[] =
 	{
 		0,	1,	2,	3,	4,	5,	6,	7,
 		8,	9,	10,	11,	12,	13,	14,	15,
@@ -853,7 +853,7 @@ void Debug::charMemoryShowMemory(int32 increment __attribute__ ((unused)), int32
 		Mem::addOffsetToHWORD
 		(
 			Printer::getPrintingBgmapAddress() + ((yOffset + i) << 6) + 2,
-			(HWORD*)charMemoryMap,
+			(uint16*)charMemoryMap,
 			__CHARS_PER_ROW_TO_SHOW,
 			this->charSegment * __CHARS_PER_SEGMENT_TO_SHOW + i * __CHARS_PER_ROW_TO_SHOW
 		);
@@ -1062,7 +1062,7 @@ void Debug::showBgmapSegment()
 		Mem::copyHWORD
 		(
 			Printer::getPrintingBgmapAddress() + ((row + topBorder) << 6) + offsetDisplacement,
-			(const HWORD*)(&bgmapSpaceBaseAddress[(0x1000 * (this->bgmapSegment)) + ((row + myDisplacement) << 6) + mxDisplacement]), 
+			(const uint16*)(&bgmapSpaceBaseAddress[(0x1000 * (this->bgmapSegment)) + ((row + myDisplacement) << 6) + mxDisplacement]), 
 			numberOfHWORDS
 		);
 	}

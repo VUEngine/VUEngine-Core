@@ -197,11 +197,11 @@ void CharSet::putChar(uint32 charToReplace, const uint32* newChar)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void CharSet::putPixel(const uint32 charToReplace, const Pixel* charSetPixel, BYTE newPixelColor)
+void CharSet::putPixel(const uint32 charToReplace, const Pixel* charSetPixel, uint8 newPixelColor)
 {
 	if(charSetPixel && charToReplace < this->charSetSpec->numberOfChars && charSetPixel->x < 8 && charSetPixel->y < 8)
 	{
-		static BYTE auxChar[] =
+		static uint8 auxChar[] =
 		{
 			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 		};
@@ -217,7 +217,7 @@ void CharSet::putPixel(const uint32 charToReplace, const Pixel* charSetPixel, BY
 
 		Mem::copyBYTE
 		(
-			(uint8*)__CHAR_SPACE_BASE_ADDRESS + (((uint32)this->offset) << 4) + (charToReplace << 4), auxChar, (int32)(sizeof(BYTE) << 4)
+			(uint8*)__CHAR_SPACE_BASE_ADDRESS + (((uint32)this->offset) << 4) + (charToReplace << 4), auxChar, (int32)(sizeof(uint8) << 4)
 		);
 	}
 }
@@ -351,7 +351,7 @@ void CharSet::writeRLE()
 
 		while(cycles--)
 		{
-			uint8 pack = ((BYTE*)&compressedData)[3];
+			uint8 pack = ((uint8*)&compressedData)[3];
 
 			uint8 counter = (pack >> 4) + 1;
 			uint8 data = 0x0F & (pack);

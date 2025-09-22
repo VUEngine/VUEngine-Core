@@ -44,13 +44,13 @@ singleton class SRAMManager : Object
 	/// @param source			WRAM address from were data will be copied
 	/// @param memberOffset		WRAM address offset
 	/// @param dataSize			Number of BYTES to read
-	static void save(const BYTE* const source, int32 memberOffset, int32 dataSize);
+	static void save(const uint8* const source, int32 memberOffset, int32 dataSize);
 
 	/// Retrieve data from SRAM.
 	/// @param destination		WRAM address were data will be loaded
 	/// @param memberOffset		WRAM address offset
 	/// @param dataSize			Number of BYTES to read
-	static void read(BYTE* destination, int32 memberOffset, int32 dataSize);
+	static void read(uint8* destination, int32 memberOffset, int32 dataSize);
 
 	/// Reset the manager's state.
 	void reset();

@@ -25,7 +25,7 @@
 
 /// It doesn't need to be inlined since it is not used in performance critical places
 /// and it produces graphical glitches when inlined.
-static void Mem::clear(BYTE* destination, uint32 numberOfBYTES)
+static void Mem::clear(uint8* destination, uint32 numberOfBYTES)
 {
 	uint32 i;
 
@@ -46,7 +46,7 @@ static void Mem::clear(BYTE* destination, uint32 numberOfBYTES)
 /// Redefinition of memcpy
 __attribute__ ((unused)) static void* memcpy(void *destination, const void *source, size_t numberOfBytes)
 {
-	BYTE* finalSource = (BYTE*)source + numberOfBytes / sizeof(uint32) + __MODULO(numberOfBytes, sizeof(uint32));
+	uint8* finalSource = (uint8*)source + numberOfBytes / sizeof(uint32) + __MODULO(numberOfBytes, sizeof(uint32));
 
 	asm
 	(

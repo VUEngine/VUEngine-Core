@@ -43,7 +43,7 @@ typedef struct ColumnTableSpec
 	bool mirror;
 
 	/// Column table entries array
-	BYTE columnTable[__COLUMN_TABLE_ENTRIES];
+	uint8 columnTable[__COLUMN_TABLE_ENTRIES];
 
 } ColumnTableSpec;
 

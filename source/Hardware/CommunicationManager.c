@@ -50,7 +50,7 @@ enum CommunicationsStatus
 // CLASS' ATTRIBUTES
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-volatile BYTE* _communicationRegisters =			(uint8*)0x02000000;
+volatile uint8* _communicationRegisters =			(uint8*)0x02000000;
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' MACROS
@@ -78,7 +78,7 @@ volatile BYTE* _communicationRegisters =			(uint8*)0x02000000;
 #define __COM_HANDSHAKE					0x34
 #define __COM_CHECKSUM					0x44
 
-#define	__MESSAGE_SIZE					sizeof(WORD)
+#define	__MESSAGE_SIZE					sizeof(uint32)
 
 #define __REMOTE_READY_MESSAGE			0x43873AD1
 #define __MASTER_FRMCYC_SET_MESSAGE		0x5DC289F4
@@ -277,7 +277,7 @@ void CommunicationManager::startSyncCycle()
 		uint32 message = 0;
 		do
 		{
-			CommunicationManager::receiveData(this, (BYTE*)&message, sizeof(message));
+			CommunicationManager::receiveData(this, (uint8*)&message, sizeof(message));
 		}
 		while(__REMOTE_READY_MESSAGE != message);
 
@@ -285,16 +285,16 @@ void CommunicationManager::startSyncCycle()
 
 		VIPManager::waitForFRAMESTART(VIPManager::getInstance());
 
-		CommunicationManager::sendData(this, (BYTE*)&message, sizeof(message));
+		CommunicationManager::sendData(this, (uint8*)&message, sizeof(message));
 	}
 	else
 	{
 		uint32 message = __REMOTE_READY_MESSAGE;
-		CommunicationManager::sendData(this, (BYTE*)&message, sizeof(message));
+		CommunicationManager::sendData(this, (uint8*)&message, sizeof(message));
 
 		do
 		{
-			CommunicationManager::receiveData(this, (BYTE*)&message, sizeof(message));
+			CommunicationManager::receiveData(this, (uint8*)&message, sizeof(message));
 		}
 		while(__MASTER_FRMCYC_SET_MESSAGE != message);
 	}
@@ -316,7 +316,7 @@ void CommunicationManager::startSyncCycle()
 			!CommunicationManager::sendAndReceiveData
 			(
 				this, (uint32)CommunicationManager::getClass(), 
-				(BYTE*)CommunicationManager::getClass(), sizeof((uint32)CommunicationManager::getClass())
+				(uint8*)CommunicationManager::getClass(), sizeof((uint32)CommunicationManager::getClass())
 			)
 		)
 		{
@@ -348,7 +348,7 @@ void CommunicationManager::startSyncCycle()
 			if(result == target)
 			{
 				// Performe a dummy transmission to shift the send data by a byte
-				CommunicationManager::sendAndReceiveData(this, (uint32)result, (BYTE*)&result, 1);
+				CommunicationManager::sendAndReceiveData(this, (uint32)result, (uint8*)&result, 1);
 
 				break;
 			}
@@ -375,7 +375,7 @@ bool CommunicationManager::isMaster()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-secure bool CommunicationManager::broadcastData(BYTE* data, int32 numberOfBytes)
+secure bool CommunicationManager::broadcastData(uint8* data, int32 numberOfBytes)
 {
 	if(CommunicationManager::isConnected(this))
 	{
@@ -420,7 +420,7 @@ secure bool CommunicationManager::broadcastData(BYTE* data, int32 numberOfBytes)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-secure void CommunicationManager::broadcastDataAsync(BYTE* data, int32 numberOfBytes, ListenerObject scope)
+secure void CommunicationManager::broadcastDataAsync(uint8* data, int32 numberOfBytes, ListenerObject scope)
 {
 	if(CommunicationManager::isConnected(this))
 	{
@@ -451,7 +451,7 @@ secure void CommunicationManager::broadcastDataAsync(BYTE* data, int32 numberOfB
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-bool CommunicationManager::sendAndReceiveData(WORD message, BYTE* data, int32 numberOfBytes)
+bool CommunicationManager::sendAndReceiveData(uint32 message, uint8* data, int32 numberOfBytes)
 {
 	return CommunicationManager::startBidirectionalDataTransmission(this, message, data, numberOfBytes);
 }
@@ -460,7 +460,7 @@ bool CommunicationManager::sendAndReceiveData(WORD message, BYTE* data, int32 nu
 
 bool CommunicationManager::sendAndReceiveDataAsync
 (
-	WORD message, BYTE* data, int32 numberOfBytes, ListenerObject scope
+	uint32 message, uint8* data, int32 numberOfBytes, ListenerObject scope
 )
 {
 	return CommunicationManager::startBidirectionalDataTransmissionAsync(this, message, data, numberOfBytes, scope);
@@ -468,30 +468,30 @@ bool CommunicationManager::sendAndReceiveDataAsync
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-WORD CommunicationManager::getSentMessage()
+uint32 CommunicationManager::getSentMessage()
 {
-	return *(WORD*)this->sentData;
+	return *(uint32*)this->sentData;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-WORD CommunicationManager::getReceivedMessage()
+uint32 CommunicationManager::getReceivedMessage()
 {
-	return *(WORD*)this->receivedData;
+	return *(uint32*)this->receivedData;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-const BYTE* CommunicationManager::getSentData()
+const uint8* CommunicationManager::getSentData()
 {
-	return (const BYTE*)this->sentData + __MESSAGE_SIZE;
+	return (const uint8*)this->sentData + __MESSAGE_SIZE;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-const BYTE* CommunicationManager::getReceivedData()
+const uint8* CommunicationManager::getReceivedData()
 {
-	return (const BYTE*)this->receivedData + __MESSAGE_SIZE;
+	return (const uint8*)this->receivedData + __MESSAGE_SIZE;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -848,7 +848,7 @@ bool CommunicationManager::sendAndReceivePayload(uint8 payload, bool async)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-bool CommunicationManager::startDataTransmission(BYTE* data, int32 numberOfBytes, bool sendingData)
+bool CommunicationManager::startDataTransmission(uint8* data, int32 numberOfBytes, bool sendingData)
 {
 	if((sendingData && NULL == data) || 0 >= numberOfBytes || !CommunicationManager::isFreeForTransmissions(this))
 	{
@@ -905,7 +905,7 @@ bool CommunicationManager::startDataTransmission(BYTE* data, int32 numberOfBytes
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-bool CommunicationManager::sendDataAsync(BYTE* data, int32 numberOfBytes, ListenerObject scope)
+bool CommunicationManager::sendDataAsync(uint8* data, int32 numberOfBytes, ListenerObject scope)
 {
 	if(NULL == data || 0 >= numberOfBytes || !CommunicationManager::isFreeForTransmissions(this))
 	{
@@ -930,7 +930,7 @@ bool CommunicationManager::sendDataAsync(BYTE* data, int32 numberOfBytes, Listen
 	if(isDeleted(this->sentData))
 	{
 		// Allocate memory to hold both the message and the data
-		this->sentData = (BYTE*)((uint32)MemoryPool::allocate(numberOfBytes + __DYNAMIC_STRUCT_PAD) + __DYNAMIC_STRUCT_PAD);
+		this->sentData = (uint8*)((uint32)MemoryPool::allocate(numberOfBytes + __DYNAMIC_STRUCT_PAD) + __DYNAMIC_STRUCT_PAD);
 	}
 
 	if(!isDeleted(this->receivedData))
@@ -946,7 +946,7 @@ bool CommunicationManager::sendDataAsync(BYTE* data, int32 numberOfBytes, Listen
 	this->numberOfBytesPendingTransmission = numberOfBytes;
 
 	// Copy the data
-	Mem::copyBYTE((BYTE*)this->sentData, data, numberOfBytes);
+	Mem::copyBYTE((uint8*)this->sentData, data, numberOfBytes);
 
 	CommunicationManager::sendPayload(this, *this->asyncSentByte, true);
 
@@ -955,21 +955,21 @@ bool CommunicationManager::sendDataAsync(BYTE* data, int32 numberOfBytes, Listen
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-bool CommunicationManager::sendData(BYTE* data, int32 numberOfBytes)
+bool CommunicationManager::sendData(uint8* data, int32 numberOfBytes)
 {
 	return CommunicationManager::startDataTransmission(this, data, numberOfBytes, true);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-bool CommunicationManager::receiveData(BYTE* data, int32 numberOfBytes)
+bool CommunicationManager::receiveData(uint8* data, int32 numberOfBytes)
 {
 	return CommunicationManager::startDataTransmission(this, data, numberOfBytes, false);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-bool CommunicationManager::startBidirectionalDataTransmission(WORD message, BYTE* data, int32 numberOfBytes)
+bool CommunicationManager::startBidirectionalDataTransmission(uint32 message, uint8* data, int32 numberOfBytes)
 {
 	if((NULL == data) || 0 >= numberOfBytes || !CommunicationManager::isFreeForTransmissions(this))
 	{
@@ -994,13 +994,13 @@ bool CommunicationManager::startBidirectionalDataTransmission(WORD message, BYTE
 	if(isDeleted(this->sentData))
 	{
 		this->sentData = 
-			(BYTE*)((uint32)MemoryPool::allocate(numberOfBytes + __DYNAMIC_STRUCT_PAD + __MESSAGE_SIZE) + __DYNAMIC_STRUCT_PAD);
+			(uint8*)((uint32)MemoryPool::allocate(numberOfBytes + __DYNAMIC_STRUCT_PAD + __MESSAGE_SIZE) + __DYNAMIC_STRUCT_PAD);
 	}
 
 	if(isDeleted(this->receivedData))
 	{
 		this->receivedData = 
-			(BYTE*)((uint32)MemoryPool::allocate(numberOfBytes + __DYNAMIC_STRUCT_PAD + __MESSAGE_SIZE) + __DYNAMIC_STRUCT_PAD);
+			(uint8*)((uint32)MemoryPool::allocate(numberOfBytes + __DYNAMIC_STRUCT_PAD + __MESSAGE_SIZE) + __DYNAMIC_STRUCT_PAD);
 	}
 
 	this->asyncSentByte = this->asyncReceivedByte = NULL;
@@ -1010,10 +1010,10 @@ bool CommunicationManager::startBidirectionalDataTransmission(WORD message, BYTE
 	this->numberOfBytesPendingTransmission = numberOfBytes + __MESSAGE_SIZE;
 
 	// Save the message
-	*(WORD*)this->sentData = message;
+	*(uint32*)this->sentData = message;
 
 	// Copy the data
-	Mem::copyBYTE((BYTE*)this->sentData + __MESSAGE_SIZE, data, numberOfBytes);
+	Mem::copyBYTE((uint8*)this->sentData + __MESSAGE_SIZE, data, numberOfBytes);
 
 	while(0 < this->numberOfBytesPendingTransmission)
 	{
@@ -1035,7 +1035,7 @@ bool CommunicationManager::startBidirectionalDataTransmission(WORD message, BYTE
 
 bool CommunicationManager::startBidirectionalDataTransmissionAsync
 (
-	WORD message, BYTE* data, int32 numberOfBytes, ListenerObject scope
+	uint32 message, uint8* data, int32 numberOfBytes, ListenerObject scope
 )
 {
 	if(NULL == data || 0 >= numberOfBytes || !CommunicationManager::isFreeForTransmissions(this))
@@ -1068,13 +1068,13 @@ bool CommunicationManager::startBidirectionalDataTransmissionAsync
 	{
 		// Allocate memory to hold both the message and the data
 		this->sentData = 
-			(BYTE*)((uint32)MemoryPool::allocate(numberOfBytes + __DYNAMIC_STRUCT_PAD + __MESSAGE_SIZE) + __DYNAMIC_STRUCT_PAD);
+			(uint8*)((uint32)MemoryPool::allocate(numberOfBytes + __DYNAMIC_STRUCT_PAD + __MESSAGE_SIZE) + __DYNAMIC_STRUCT_PAD);
 	}
 
 	if(isDeleted(this->receivedData))
 	{
 		this->receivedData = 
-			(BYTE*)((uint32)MemoryPool::allocate(numberOfBytes + __DYNAMIC_STRUCT_PAD + __MESSAGE_SIZE) + __DYNAMIC_STRUCT_PAD);
+			(uint8*)((uint32)MemoryPool::allocate(numberOfBytes + __DYNAMIC_STRUCT_PAD + __MESSAGE_SIZE) + __DYNAMIC_STRUCT_PAD);
 	}
 
 	this->syncSentByte = this->syncReceivedByte = NULL;
@@ -1084,10 +1084,10 @@ bool CommunicationManager::startBidirectionalDataTransmissionAsync
 	this->numberOfBytesPendingTransmission = numberOfBytes + __MESSAGE_SIZE;
 
 	// Save the message
-	*(WORD*)this->sentData = message;
+	*(uint32*)this->sentData = message;
 
 	// Copy the data
-	Mem::copyBYTE((BYTE*)this->sentData + __MESSAGE_SIZE, data, numberOfBytes);
+	Mem::copyBYTE((uint8*)this->sentData + __MESSAGE_SIZE, data, numberOfBytes);
 	CommunicationManager::sendAndReceivePayload(this, *this->asyncSentByte, true);
 
 	return true;

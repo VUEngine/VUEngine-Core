@@ -22,7 +22,7 @@
 
 // MemoryPool's defines
 #define __BLOCK_DEFINITION(BlockSize, Elements)															\
-	BYTE pool ## BlockSize ## B[BlockSize * Elements]; 													\
+	uint8 pool ## BlockSize ## B[BlockSize * Elements]; 													\
 
 #define __SET_MEMORY_POOL_ARRAY(BlockSize)																\
 	this->poolLocation[pool] = &this->pool ## BlockSize ## B[0];										\
@@ -59,24 +59,24 @@ singleton class MemoryPool : Object
 	__MEMORY_POOL_ARRAYS
 
 	/// Array of pointers to the beginning of each memory pool
-	BYTE* poolLocation[__MEMORY_POOLS];
+	uint8* poolLocation[__MEMORY_POOLS];
 	
 	/// Mapping of memory pools to their block and total size
 	uint16 poolSizes[__MEMORY_POOLS][2];
 	
 	/// Array of pointers to the last free block found in each pool to accelerate the next search
-	BYTE* poolLastFreeBlock[__MEMORY_POOLS];
+	uint8* poolLastFreeBlock[__MEMORY_POOLS];
 
 	/// @publicsection
 
 	/// Allocate a block big enough to hold the provided amount of bytes.
 	/// @param numBytes: Total number of bytes to allocate
 	/// @return A pointer to the allocated block
-	static BYTE* allocate(int32 numBytes);
+	static uint8* allocate(int32 numBytes);
 
 	/// Free the memory block in which the provided object was allocated.
 	/// @param object: Pointer to the memory block to free
-	static void free(BYTE* object);
+	static void free(uint8* object);
 	
 	/// Print a resume of the memory usage.
 	/// @param x: Screen x coordinate where to print

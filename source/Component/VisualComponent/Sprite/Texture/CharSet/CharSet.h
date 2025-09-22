@@ -29,7 +29,7 @@ class CharSet;
 // Bytes per CHAR
 #define __BYTES_PER_CHARS(n)				((n) << 4)
 
-// CHARS PER BYTE
+// CHARS PER uint8
 #define __CHARS_PER_BYTE(n)					((n) >> 4)
 
 // uint32s per CHAR
@@ -171,7 +171,7 @@ class CharSet : ListenerObject
 	/// @param charToReplace: Index of the CHAR to replace
 	/// @param charSetPixel: Coordinate in CHAR space of the CHAR to replace
 	/// @param newPixelColor: Color data for the pixel 
-	void putPixel(const uint32 charToReplace, const Pixel* charSetPixel, BYTE newPixelColor);
+	void putPixel(const uint32 charToReplace, const Pixel* charSetPixel, uint8 newPixelColor);
 
 	/// Set the current frame (frame * number of CHARs + number of CHARs) to write to CHAR memory.
 	/// @param frame: The frame to write to CHAR memory

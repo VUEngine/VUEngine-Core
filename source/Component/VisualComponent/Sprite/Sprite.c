@@ -601,7 +601,7 @@ void Sprite::putChar(const Point* texturePoint, const uint32* newChar)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void Sprite::putPixel(const Point* texturePixel, const Pixel* charSetPixel, BYTE newPixelColor)
+void Sprite::putPixel(const Point* texturePixel, const Pixel* charSetPixel, uint8 newPixelColor)
 {
 	if(isDeleted(this->texture))
 	{
