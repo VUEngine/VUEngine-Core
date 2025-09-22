@@ -38,19 +38,19 @@ class VirtualList;
 abstract class Entity : ListenerObject
 {
 	/// @protectedsection
-	
-	/// Linked list of attached components
-	VirtualList* components;
+
+	/// Flag used for streaming purposes
+	bool isVisible;
 	
 	/// 3D transformation
 	Transformation transformation;
+	
+	/// Linked list of attached components
+	VirtualList* components;
 
 	/// Cache the Body component for physics simulations to avoid 
 	/// having to constantly retrieve it through the ComponentManager
 	Body body;
-
-	/// Flag used for streaming purposes
-	bool isVisible;
 
 	/// @publicsection
 
