@@ -38,7 +38,7 @@
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static BYTE* MemoryPool::allocate(int32 numberOfBytes)
+static uint8* MemoryPool::allocate(int32 numberOfBytes)
 {
 	MemoryPool memoryPool = MemoryPool::getInstance();
 
@@ -74,11 +74,11 @@ static BYTE* MemoryPool::allocate(int32 numberOfBytes)
 			continue;
 		}
 
-		BYTE* poolLocationStart = &memoryPool->poolLocation[pool][0];
-		BYTE* poolLocationLeft = memoryPool->poolLastFreeBlock[pool];
-		BYTE* poolLocationRight = poolLocationLeft + blockSize;
-		BYTE* poolLocationEnd = poolLocationStart + memoryPool->poolSizes[pool][ePoolSize] - blockSize;
-		BYTE* poolLocation = NULL;
+		uint8* poolLocationStart = &memoryPool->poolLocation[pool][0];
+		uint8* poolLocationLeft = memoryPool->poolLastFreeBlock[pool];
+		uint8* poolLocationRight = poolLocationLeft + blockSize;
+		uint8* poolLocationEnd = poolLocationStart + memoryPool->poolSizes[pool][ePoolSize] - blockSize;
+		uint8* poolLocation = NULL;
 
 		if(100 < memoryPool->poolSizes[pool][ePoolSize] / blockSize)
 		{
@@ -203,7 +203,7 @@ static BYTE* MemoryPool::allocate(int32 numberOfBytes)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void MemoryPool::free(BYTE* object)
+static void MemoryPool::free(uint8* object)
 {
 	MemoryPool memoryPool = MemoryPool::getInstance();
 
