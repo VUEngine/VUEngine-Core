@@ -176,11 +176,6 @@ void GameState::update(void* owner)
 		Profiler::lap(kProfilerLapTypeNormalProcess, PROCESS_NAME_INPUT);
 #endif
 
-	GameState::execute(this, owner);
-#ifdef __ENABLE_PROFILER
-		Profiler::lap(kProfilerLapTypeNormalProcess, PROCESS_NAME_EXECUTE);
-#endif
-
 	GameState::processBehaviors(this);
 #ifdef __ENABLE_PROFILER
 	Profiler::lap(kProfilerLapTypeNormalProcess, PROCESS_NAME_BEHAVIORS);
@@ -204,6 +199,11 @@ void GameState::update(void* owner)
 	GameState::processCollisions(this);
 #ifdef __ENABLE_PROFILER
 	Profiler::lap(kProfilerLapTypeNormalProcess, PROCESS_NAME_COLLISIONS);
+#endif
+
+	GameState::execute(this, owner);
+#ifdef __ENABLE_PROFILER
+		Profiler::lap(kProfilerLapTypeNormalProcess, PROCESS_NAME_EXECUTE);
 #endif
 
 	GameState::dispatchDelayedMessages(this);
