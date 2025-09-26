@@ -35,22 +35,22 @@ class VUEngine;
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #define PROCESS_NAME_BEHAVIORS				"BEHAVIORS"
-#define PROCESS_NAME_MUTATORS				"MUTATORS"
 #define PROCESS_NAME_CAMERA					"CAMERA"
 #define PROCESS_NAME_COLLISIONS				"COLLISIONS"
-#define PROCESS_NAME_INPUT					"INPUT"
+#define PROCESS_NAME_COMMUNICATE			"COMMUNICATE"
 #define PROCESS_NAME_EXECUTE				"EXECUTE"
-#define PROCESS_NAME_UPDATE_STAGE			"UPD STAGE"
+#define PROCESS_NAME_INPUT					"INPUT"
 #define PROCESS_NAME_MESSAGES				"MESSAGES"
+#define PROCESS_NAME_MUTATORS				"MUTATORS"
 #define PROCESS_NAME_PHYSICS				"PHYSICS"
+#define PROCESS_NAME_RENDER					"RENDER"
+#define PROCESS_NAME_SOUND_PLAY				"SOUND PLAY"
+#define PROCESS_NAME_SOUND_PURGE			"SOUND PURGE"
 #define PROCESS_NAME_STREAMING				"STREAMING"
 #define PROCESS_NAME_TRANSFORMS				"TRANSFORMS"
 #define PROCESS_NAME_UI_TRANSFORMS			"UI TRANSF"
-#define PROCESS_NAME_RENDER					"RENDER"
+#define PROCESS_NAME_UPDATE_STAGE			"UPD STAGE"
 #define PROCESS_NAME_VRAM_WRITE				"VRAM WRITE"
-#define PROCESS_NAME_SOUND_PLAY				"SOUND PLAY"
-#define PROCESS_NAME_SOUND_PURGE			"SOUND PURGE"
-#define PROCESS_NAME_COMMUNICATIONS			"COMMS"
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DECLARATION

@@ -241,6 +241,10 @@ class GameState : State
 	/// @param owner: Object that is in this state
 	virtual void resume(void* owner);
 
+	/// This is where all communications logic must be.
+	/// @param owner: Object that is in this state
+	virtual void communicate(void* owner);
+
 	/// Process the provided user input.
 	/// @param userInput: Struct with the current user input information
 	virtual void processUserInput(const UserInput*  userInput);

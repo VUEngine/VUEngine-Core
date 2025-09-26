@@ -156,6 +156,11 @@ void GameState::start(void* owner)
 
 void GameState::update(void* owner)
 {
+	GameState::communicate(this, owner);
+#ifdef __ENABLE_PROFILER
+		Profiler::lap(kProfilerLapTypeNormalProcess, PROCESS_NAME_COMMUNICATE);
+#endif
+
 	GameState::render(this);
 #ifdef __ENABLE_PROFILER
 	Profiler::lap(kProfilerLapTypeVIPInterruptGAMESTARTProcess, PROCESS_NAME_RENDER);
@@ -671,6 +676,11 @@ void GameState::suspend(void* owner __attribute__ ((unused)))
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void GameState::resume(void* owner __attribute__ ((unused)))
+{}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void GameState::communicate(void* owner __attribute__ ((unused)))
 {}
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
