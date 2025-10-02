@@ -381,6 +381,11 @@ bool CommunicationManager::sendAndReceiveDataAsync
 	uint32 message, uint8* data, int32 numberOfBytes, ListenerObject scope
 )
 {
+	if(kCommunicationsStatusReset == this->status)
+	{
+		CommunicationManager::startSyncCycle(CommunicationManager::getInstance());
+	}
+
 	return CommunicationManager::startBidirectionalDataTransmissionAsync(this, message, data, numberOfBytes, scope);
 }
 
