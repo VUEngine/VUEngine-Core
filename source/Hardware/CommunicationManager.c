@@ -38,7 +38,7 @@ enum CommunicationsBroadcastStates
 
 enum CommunicationsStatus
 {
-	kCommunicationsStatusNone = 0,
+	kCommunicationsStatusReset = 0,
 	kCommunicationsStatusIdle,
 	kCommunicationsStatusSendingHandshake,
 	kCommunicationsStatusSendingPayload,
@@ -145,44 +145,18 @@ bool CommunicationManager::handleMessage(Telegram telegram)
 
 void CommunicationManager::reset()
 {
-	switch(this->status)
-	{
-		case kCommunicationsStatusNone:
-		{
-			this->connected = false;
-			this->communicationMode = __COM_AS_REMOTE;
-			this->status = kCommunicationsStatusIdle;
-			this->broadcast = kCommunicationsBroadcastNone;
-			this->sentData = NULL;
-			this->syncSentByte = NULL;
-			this->asyncSentByte = NULL;
-			this->receivedData = NULL;
-			this->syncReceivedByte = NULL;
-			this->asyncReceivedByte = NULL;
-			this->numberOfBytesPreviouslySent = 0;
+	CommunicationManager::cancelCommunications(this);
 
-			CommunicationManager::endCommunications(this);
-			break;
-		}
 
-		case kCommunicationsStatusSendingHandshake:
-		{
-			break;
-		}
-
-		default:
-		{
-			CommunicationManager::cancelCommunications(this);
-			break;
-		}
-	}
+	this->status = kCommunicationsStatusReset;
+	this->broadcast = kCommunicationsBroadcastNone;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void CommunicationManager::enableCommunications(ListenerObject scope)
 {
-	if(this->connected || kCommunicationsStatusIdle != this->status)
+	if(this->connected || kCommunicationsStatusReset != this->status)
 	{
 		return;
 	}
@@ -218,10 +192,6 @@ void CommunicationManager::enableCommunications(ListenerObject scope)
 
 void CommunicationManager::disableCommunications()
 {
-	CommunicationManager::cancelCommunications(this);
-
-	this->status = kCommunicationsStatusNone;
-
 	CommunicationManager::reset(this);	
 }
 
@@ -268,9 +238,9 @@ void CommunicationManager::startSyncCycle()
 		return;
 	}
 
-	VIPManager::startMemoryRefresh(VIPManager::getInstance());
-
 	CommunicationManager::cancelCommunications(this);
+
+	VIPManager::startMemoryRefresh(VIPManager::getInstance());
 
 	if(CommunicationManager::isMaster(this))
 	{
@@ -299,7 +269,7 @@ void CommunicationManager::startSyncCycle()
 		while(__MASTER_FRMCYC_SET_MESSAGE != message);
 	}
 	
-	CommunicationManager::flushCommunicationData(this);
+	CommunicationManager::correctDataDrift(this);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -396,6 +366,11 @@ secure void CommunicationManager::broadcastDataAsync(uint8* data, int32 numberOf
 
 bool CommunicationManager::sendAndReceiveData(uint32 message, uint8* data, int32 numberOfBytes)
 {
+	if(kCommunicationsStatusReset == this->status)
+	{
+		CommunicationManager::startSyncCycle(CommunicationManager::getInstance());
+	}
+
 	return CommunicationManager::startBidirectionalDataTransmission(this, message, data, numberOfBytes);
 }
 
@@ -531,9 +506,17 @@ void CommunicationManager::constructor()
 	// Always explicitly call the base's constructor 
 	Base::constructor();
 
-	this->status = 	kCommunicationsStatusNone;
-
-	CommunicationManager::reset(this);
+	this->connected = false;
+	this->communicationMode = __COM_AS_REMOTE;
+	this->status = kCommunicationsStatusReset;
+	this->broadcast = kCommunicationsBroadcastNone;
+	this->sentData = NULL;
+	this->syncSentByte = NULL;
+	this->asyncSentByte = NULL;
+	this->receivedData = NULL;
+	this->syncReceivedByte = NULL;
+	this->asyncReceivedByte = NULL;
+	this->numberOfBytesPreviouslySent = 0;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -601,7 +584,7 @@ bool CommunicationManager::isFreeForTransmissions()
 		NULL == this->syncReceivedByte &&
 		NULL == this->asyncSentByte &&
 		NULL == this->asyncReceivedByte &&
-		kCommunicationsStatusIdle == this->status
+		kCommunicationsStatusIdle >= this->status
 	);
 }
 
@@ -627,14 +610,9 @@ void CommunicationManager::waitForRemote()
 
 bool CommunicationManager::sendHandshake()
 {
-	if(kCommunicationsStatusIdle == this->status)
-	{
-		this->status = kCommunicationsStatusSendingHandshake;
-		CommunicationManager::startTransmissions(this, __COM_HANDSHAKE, false);
-		return true;
-	}
-
-	return false;
+	this->status = kCommunicationsStatusSendingHandshake;
+	CommunicationManager::startTransmissions(this, __COM_HANDSHAKE, false);
+	return true;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -673,7 +651,7 @@ void CommunicationManager::startClockSignal()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void CommunicationManager::flushCommunicationData()
+void CommunicationManager::correctDataDrift()
 {
 	CommunicationManager::cancelCommunications(this);
 
