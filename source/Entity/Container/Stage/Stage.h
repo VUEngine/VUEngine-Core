@@ -312,7 +312,7 @@ class Stage : Container
 	void print(int32 x, int32 y);
 
 	/// Stream in or out actors within or outside the camera's range.
-	virtual void stream();
+	virtual bool stream();
 
 	/// Configure the stage with the actors defined in its spec.
 	/// @param positionedActorsToIgnore: List of positioned actor structs to register for streaming

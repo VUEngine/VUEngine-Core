@@ -546,24 +546,24 @@ void Stage::print(int32 x, int32 y)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void Stage::stream()
+bool Stage::stream()
 {
 	if(NULL == this->stageActorDescriptions->head)
 	{
-		return;
+		return false;
 	}
 
-	if(!Stage::updateActorFactory(this))
+	if(Stage::updateActorFactory(this))
 	{
-		do
-		{
-			if(++this->streamingPhase >= sizeof(_streamingPhases) / sizeof(StreamingPhase))
-			{
-				this->streamingPhase = 0;
-			}
-		}
-		while(_streamingPhases[this->streamingPhase](this, this->stageSpec->streaming.deferred) && this->stageSpec->streaming.deferred);
+		return true;
 	}
+	
+	if(++this->streamingPhase >= sizeof(_streamingPhases) / sizeof(StreamingPhase))
+	{
+		this->streamingPhase = 0;
+	}
+
+	return _streamingPhases[this->streamingPhase](this, this->stageSpec->streaming.deferred);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

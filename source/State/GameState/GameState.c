@@ -155,7 +155,7 @@ void GameState::start(void* owner)
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void GameState::update(void* owner)
-{
+{	
 	GameState::communicate(this, owner);
 #ifdef __ENABLE_PROFILER
 		Profiler::lap(kProfilerLapTypeNormalProcess, PROCESS_NAME_COMMUNICATE);
@@ -165,7 +165,7 @@ void GameState::update(void* owner)
 #ifdef __ENABLE_PROFILER
 	Profiler::lap(kProfilerLapTypeVIPInterruptGAMESTARTProcess, PROCESS_NAME_RENDER);
 #endif
-	
+
 	GameState::focusCamera(this);
 #ifdef __ENABLE_PROFILER
 	Profiler::lap(kProfilerLapTypeVIPInterruptGAMESTARTProcess, PROCESS_NAME_CAMERA);
@@ -999,7 +999,7 @@ void GameState::stream()
 		return;
 	}
 
-	Stage::stream(this->stage);
+	while(!VUEngine::hasGameFrameStarted() && Stage::stream(this->stage));
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
