@@ -48,7 +48,7 @@ void ListenerObject::constructor()
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void ListenerObject::destructor()
-{	
+{
 	ASSERT(!isDeleted(this), "ListenerObject::destructor: already deleted this");
 	NM_ASSERT(0 == this->eventFirings, "ListenerObject::destructor: called during event firing");
 
@@ -79,47 +79,45 @@ void ListenerObject::addEventListener(ListenerObject listener, uint16 eventCode)
 
 	NM_ASSERT(NULL != __GET_CAST(ListenerObject, listener), "ListenerObject::addEventListener: wrong listener object type");
 
+	HardwareManager::suspendInterrupts();
+
+	VirtualNode node = NULL;
+
 	if(NULL == this->events)
 	{
 		this->events = new VirtualList();
 	}
 	else
 	{
-		for(VirtualNode node = this->events->head, nextNode = NULL; NULL != node; node = nextNode)
+		node = this->events->head;
+		
+		for(VirtualNode nextNode = NULL; NULL != node; node = nextNode)
 		{
 			nextNode = node->next;
 
 			Event* event = (Event*)node->data;
 
-			if(isDeleted(event) || event->remove)
+			if(event->remove || (listener == event->listener && eventCode == event->code))
 			{
-				if(0 == this->eventFirings)
-				{
-					VirtualList::removeNode(this->events, node);
-
-					if(!isDeleted(event))
-					{
-						delete event;
-					}
-
-					continue;
-				}
-			}
-
-			if(listener == event->listener && eventCode == event->code)
-			{
+				event->listener = listener;
+				event->code = eventCode;
 				event->remove = false;
-				return;
+				break;
 			}
 		}
 	}
 
-	Event* event = new Event;
-	event->listener = listener;
-	event->code = eventCode;
-	event->remove = false;
+	if(NULL == node)
+	{
+		Event* event = new Event;
+		event->listener = listener;
+		event->code = eventCode;
+		event->remove = false;
 
-	VirtualList::pushBack(this->events, event);
+		VirtualList::pushBack(this->events, event);		
+	}
+
+	HardwareManager::resumeInterrupts();
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -128,14 +126,29 @@ void ListenerObject::removeEventListener(ListenerObject listener, uint16 eventCo
 {
 	if(NULL != this->events)
 	{
+		HardwareManager::suspendInterrupts();
+
 		for(VirtualNode node = this->events->head, nextNode = NULL; NULL != node; node = nextNode)
 		{
 			nextNode = node->next;
 
 			Event* event = (Event*)node->data;
 
-			if(isDeleted(event) || event->remove)
+			if
+			(
+				NULL == event 
+				|| 
+				event->remove 
+				|| 
+				(
+					(NULL == listener || listener == event->listener) 
+					&& 
+					(kEventEngineFirst == eventCode || eventCode == event->code)
+				)
+			)
 			{
+				event->remove = true;
+				
 				if(0 == this->eventFirings)
 				{
 					VirtualList::removeNode(this->events, node);
@@ -148,27 +161,15 @@ void ListenerObject::removeEventListener(ListenerObject listener, uint16 eventCo
 					continue;
 				}
 			}
-
-			if(listener == event->listener && eventCode == event->code)
-			{
-				if(0 < this->eventFirings)
-				{
-					event->remove = true;
-				}
-				else
-				{
-					VirtualList::removeNode(this->events, node);
-					delete event;
-				}
-			}
 		}
 
-		if(NULL != this->events && NULL == this->events->head)
-		{
-			VirtualList events = this->events;
-			this->events = NULL;
-			delete events;
-		}
+        if(NULL == this->events->head && 0 == this->eventFirings)
+        {
+            delete this->events;
+            this->events = NULL;
+        }
+		
+		HardwareManager::resumeInterrupts();
 	}
 }
 
@@ -176,80 +177,14 @@ void ListenerObject::removeEventListener(ListenerObject listener, uint16 eventCo
 
 void ListenerObject::removeEventListeners(uint16 eventCode)
 {
-	if(NULL != this->events)
-	{
-		for(VirtualNode node = this->events->head, nextNode = NULL; NULL != node; node = nextNode)
-		{
-			nextNode = node->next;
-
-			Event* event = (Event*)node->data;
-
-			if(isDeleted(event) || event->remove)
-			{
-				if(0 == this->eventFirings)
-				{
-					VirtualList::removeNode(this->events, node);
-
-					if(!isDeleted(event))
-					{
-						delete event;
-					}
-
-					continue;
-				}
-			}
-
-			if(eventCode == event->code)
-			{
-				if(0 < this->eventFirings)
-				{
-					event->remove = true;
-				}
-				else
-				{
-					VirtualList::removeNode(this->events, node);
-					delete event;
-				}
-			}
-		}
-
-		if(NULL != this->events && NULL == this->events->head)
-		{
-			VirtualList events = this->events;
-			this->events = NULL;
-			delete events;
-		}
-	}
+	ListenerObject::removeEventListener(this, NULL, eventCode);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void ListenerObject::removeAllEventListeners()
 {
-	if(NULL != this->events)
-	{
-		if(0 == this->eventFirings)
-		{
-			VirtualList events = this->events;
-			this->events = NULL;
-			VirtualList::deleteData(events);
-			delete events;
-		}
-		else
-		{
-			for(VirtualNode node = this->events->head, nextNode = NULL; NULL != node; node = nextNode)
-			{
-				nextNode = node->next;
-
-				Event* event = (Event*)node->data;
-
-				if(!isDeleted(event))
-				{
-					event->remove = true;
-				}
-			}			
-		}
-	}
+	ListenerObject::removeEventListener(this, NULL, kEventEngineFirst);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -265,6 +200,8 @@ void ListenerObject::fireEvent(uint16 eventCode)
 {
 	if(NULL != this->events)
 	{
+		HardwareManager::suspendInterrupts();
+
 		this->eventFirings++;
 
 		for(VirtualNode node = this->events->head, nextNode; NULL != node; node = nextNode)
@@ -329,6 +266,14 @@ void ListenerObject::fireEvent(uint16 eventCode)
 		}
 
 		this->eventFirings--;
+
+        if(NULL != this->events && NULL == this->events->head && 0 == this->eventFirings)
+        {
+            delete this->events;
+            this->events = NULL;
+        }
+		
+		HardwareManager::resumeInterrupts();
 	}
 }
 
