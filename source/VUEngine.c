@@ -183,6 +183,10 @@ static void VUEngine::setGameFrameRate(uint16 gameFrameRate)
 		gameFrameRate = __MAXIMUM_FPS;
 	}
 
+#ifdef __DEBUG
+	gameFrameRate = 12;
+#endif
+
 	FrameRate::setTarget(FrameRate::getInstance(), gameFrameRate);
 	VIPManager::setFrameCycle(__MAXIMUM_FPS / gameFrameRate - 1);
 }

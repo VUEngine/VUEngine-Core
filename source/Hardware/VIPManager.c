@@ -270,10 +270,6 @@ static void VIPManager::setFrameCycle(uint8 frameCycle __attribute__((unused)))
 {
 	VIPManager vipManager = VIPManager::getInstance();
 
-#ifdef __DEBUG
-	frameCycle++;
-#endif
-
 	if(3 < frameCycle)
 	{
 		frameCycle = 3;
