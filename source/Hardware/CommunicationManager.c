@@ -147,7 +147,6 @@ void CommunicationManager::reset()
 {
 	CommunicationManager::cancelCommunications(this);
 
-
 	this->status = kCommunicationsStatusReset;
 	this->broadcast = kCommunicationsBroadcastNone;
 }
@@ -638,17 +637,11 @@ void CommunicationManager::startClockSignal()
 			break;
 		}
 
-		case kCommunicationsBroadcastAsync:
-		{
-			_communicationRegisters[__CCR] = this->communicationMode | __COM_START;
-			break;
-		}
-
 		default:
 		{
 			// Start communications
 			_communicationRegisters[__CCR] = this->communicationMode | __COM_START;
-
+		
 			break;
 		}
 	}
