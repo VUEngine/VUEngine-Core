@@ -1,9 +1,12 @@
 {
 	"targets": [{
-		"path": "lib/compiler/linker/vb_beta.ld",
+		"path": "lib/compiler/linker/vb_shpping.ld",
 		"root": "project"
 	}, {
 		"path": "lib/compiler/linker/vb_release.ld",
+		"root": "project"
+	}, {
+		"path": "lib/compiler/linker/vb_beta.ld",
 		"root": "project"
 	}],
 	"template": "contributions/Template/vb.ld.njk"
