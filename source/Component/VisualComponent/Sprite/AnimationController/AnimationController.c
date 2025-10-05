@@ -98,7 +98,7 @@ bool AnimationController::play(const AnimationFunction* animationFunctions[], co
 				// Remove previous listeners
 				if(NULL != this->animationFunction)
 				{
-					AnimationController::removeEventListeners(this, kEventAnimationCompleted);
+					AnimationController::removeEventListeners(this, NULL, kEventAnimationCompleted);
 				}
 
 				this->animationFunction = animationFunctions[i];
@@ -136,7 +136,7 @@ void AnimationController::playAnimationFunction(const AnimationFunction* animati
 	// Remove previous listeners
 	if(NULL != this->animationFunction)
 	{
-		AnimationController::removeEventListeners(this, kEventAnimationCompleted);
+		AnimationController::removeEventListeners(this, NULL, kEventAnimationCompleted);
 	}
 
 	// Setup animation frame

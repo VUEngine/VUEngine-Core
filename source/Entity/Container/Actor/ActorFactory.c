@@ -465,7 +465,7 @@ uint32 ActorFactory::cleanUp()
 	{
 		Actor::fireEvent(positionedActorDescription->actor, kEventActorCreated);
 		NM_ASSERT(!isDeleted(positionedActorDescription->actor), "ActorFactory::cleanUp: deleted actor during kEventActorCreated");
-		Actor::removeEventListeners(positionedActorDescription->actor, kEventActorCreated);
+		Actor::removeEventListeners(positionedActorDescription->actor, NULL, kEventActorCreated);
 
 		VirtualList::removeData(this->spawnedActors, positionedActorDescription);
 		delete positionedActorDescription;

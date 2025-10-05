@@ -173,9 +173,9 @@ void ListenerObject::removeEventListener(ListenerObject listener, uint16 eventCo
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void ListenerObject::removeEventListeners(uint16 eventCode)
+void ListenerObject::removeEventListeners(ListenerObject listener, uint16 eventCode)
 {
-	ListenerObject::removeEventListener(this, NULL, eventCode);
+	ListenerObject::removeEventListener(this, listener, eventCode);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

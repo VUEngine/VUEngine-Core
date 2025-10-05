@@ -88,8 +88,7 @@ void Collider::destructor()
 
 			if(!isDeleted(otherColliderRegistry->collider))
 			{
-				Collider::removeEventListener(otherColliderRegistry->collider, ListenerObject::safeCast(this), kEventColliderDeleted);
-				Collider::removeEventListener(otherColliderRegistry->collider, ListenerObject::safeCast(this), kEventColliderChanged);
+				Collider::removeEventListeners(otherColliderRegistry->collider, ListenerObject::safeCast(this), kEventEngineFirst);
 			}
 
 			delete otherColliderRegistry;
@@ -479,8 +478,7 @@ void Collider::discardCollisions()
 
 			if(!isDeleted(otherColliderRegistry->collider))
 			{
-				Collider::removeEventListener(otherColliderRegistry->collider, ListenerObject::safeCast(this), kEventColliderDeleted);
-				Collider::removeEventListener(otherColliderRegistry->collider, ListenerObject::safeCast(this), kEventColliderChanged);
+				Collider::removeEventListeners(otherColliderRegistry->collider, ListenerObject::safeCast(this), kEventEngineFirst);
 			}
 
 			delete otherColliderRegistry;
@@ -666,8 +664,7 @@ bool Collider::unregisterOtherCollider(Collider otherCollider)
 
 	if(!isDeleted(otherCollider))
 	{
-		Collider::removeEventListener(otherCollider, ListenerObject::safeCast(this), kEventColliderDeleted);
-		Collider::removeEventListener(otherCollider, ListenerObject::safeCast(this), kEventColliderChanged);
+		Collider::removeEventListeners(otherCollider, ListenerObject::safeCast(this), kEventEngineFirst);
 	}
 
 	return true;

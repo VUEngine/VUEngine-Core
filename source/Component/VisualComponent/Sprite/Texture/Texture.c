@@ -664,13 +664,7 @@ void Texture::releaseCharSet()
 
 	if(!isDeleted(this->charSet))
 	{
-		CharSet::removeEventListener(this->charSet, ListenerObject::safeCast(this), kEventCharSetChangedOffset);
-		CharSet::removeEventListener(this->charSet, ListenerObject::safeCast(this), kEventCharSetDeleted);
-
-		if(CharSet::isShared(this->charSet))
-		{
-			CharSet::removeEventListener(this->charSet, ListenerObject::safeCast(this), kEventCharSetChangedFrame);
-		}
+		CharSet::removeEventListeners(this->charSet, ListenerObject::safeCast(this), kEventEngineFirst);
 
 		CharSet::release(this->charSet);
 

@@ -387,7 +387,7 @@ static void Printer::releaseFonts()
 {
 	Printer printing = Printer::getInstance();
 
-	Printer::removeEventListeners(printing, kEventFontRewritten);
+	Printer::removeEventListeners(printing, NULL, kEventFontRewritten);
 
 	for(int16 i = 0; NULL != _fontData[i].fontSpec; i++)
 	{

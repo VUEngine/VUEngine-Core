@@ -221,8 +221,7 @@ bool CommunicationManager::cancelCommunications()
 	this->numberOfBytesPendingTransmission = 0;
 	this->numberOfBytesPreviouslySent = 0;
 
-	CommunicationManager::removeEventListeners(this, kEventCommunicationsConnected);
-	CommunicationManager::removeEventListeners(this, kEventCommunicationsTransmissionCompleted);
+	CommunicationManager::removeEventListeners(this, NULL, kEventEngineFirst);
 	CommunicationManager::discardAllMessages(this);
 
 	return true;
@@ -892,7 +891,7 @@ bool CommunicationManager::sendDataAsync(uint8* data, int32 numberOfBytes, Liste
 
 	if(!isDeleted(scope))
 	{
-		CommunicationManager::removeEventListeners(this, kEventCommunicationsTransmissionCompleted);
+		CommunicationManager::removeEventListeners(this, NULL, kEventCommunicationsTransmissionCompleted);
 		CommunicationManager::addEventListener(this, scope, kEventCommunicationsTransmissionCompleted);
 	}
 
@@ -1023,7 +1022,7 @@ bool CommunicationManager::startBidirectionalDataTransmissionAsync
 
 	if(!isDeleted(scope))
 	{
-		CommunicationManager::removeEventListeners(this, kEventCommunicationsTransmissionCompleted);
+		CommunicationManager::removeEventListeners(this, NULL, kEventCommunicationsTransmissionCompleted);
 		CommunicationManager::addEventListener(this, scope, kEventCommunicationsTransmissionCompleted);
 	}
 
@@ -1091,7 +1090,7 @@ void CommunicationManager::processInterrupt()
 			this->connected = true;
 			CommunicationManager::fireEvent(this, kEventCommunicationsConnected);
 			NM_ASSERT(!isDeleted(this), "CommunicationManager::processInterrupt: deleted this during kEventCommunicationsConnected");
-			CommunicationManager::removeEventListeners(this, kEventCommunicationsConnected);
+			CommunicationManager::removeEventListeners(this, NULL, kEventCommunicationsConnected);
 		}
 
 		default:
@@ -1130,7 +1129,7 @@ void CommunicationManager::processInterrupt()
 						"CommunicationManager::processInterrupt: deleted this during kEventCommunicationsTransmissionCompleted"
 					);
 
-					CommunicationManager::removeEventListeners(this, kEventCommunicationsTransmissionCompleted);
+					CommunicationManager::removeEventListeners(this, NULL, kEventCommunicationsTransmissionCompleted);
 				}
 			}
 
@@ -1162,7 +1161,7 @@ void CommunicationManager::processInterrupt()
 						"CommunicationManager::processInterrupt: deleted this during kEventCommunicationsTransmissionCompleted"
 					);
 
-					CommunicationManager::removeEventListeners(this, kEventCommunicationsTransmissionCompleted);
+					CommunicationManager::removeEventListeners(this, NULL, kEventCommunicationsTransmissionCompleted);
 					this->asyncSentByte = NULL;
 					this->broadcast = kCommunicationsBroadcastNone;
 				}
@@ -1200,7 +1199,7 @@ void CommunicationManager::processInterrupt()
 						"CommunicationManager::processInterrupt: deleted this during kEventCommunicationsTransmissionCompleted"
 					);
 
-					CommunicationManager::removeEventListeners(this, kEventCommunicationsTransmissionCompleted);
+					CommunicationManager::removeEventListeners(this, NULL, kEventCommunicationsTransmissionCompleted);
 					this->asyncSentByte = NULL;
 					this->asyncReceivedByte = NULL;
 				}

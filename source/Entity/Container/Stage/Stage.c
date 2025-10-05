@@ -938,7 +938,7 @@ void Stage::alertOfLoadedActor(Actor actor)
 
 	Actor::fireEvent(actor, kEventActorCreated);
 	NM_ASSERT(!isDeleted(actor), "Stage::alertOfLoadedActor: deleted actor during kEventActorCreated");
-	Actor::removeEventListeners(actor, kEventActorCreated);
+	Actor::removeEventListeners(actor, NULL, kEventActorCreated);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

@@ -297,7 +297,7 @@ void CameraEffectManager::fxFadeAsyncStart
 
 	// Fire effect started event
 	CameraEffectManager::fireEvent(this, kEventEffectFadeStart);
-	CameraEffectManager::removeEventListeners(this, kEventEffectFadeStart);
+	CameraEffectManager::removeEventListeners(this, NULL, kEventEffectFadeStart);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -305,8 +305,8 @@ void CameraEffectManager::fxFadeAsyncStart
 void CameraEffectManager::fxFadeAsyncStop()
 {
 	// Remove event listener
-	CameraEffectManager::removeEventListeners(this, kEventEffectFadeInComplete);
-	CameraEffectManager::removeEventListeners(this, kEventEffectFadeOutComplete);
+	CameraEffectManager::removeEventListeners(this, NULL, kEventEffectFadeInComplete);
+	CameraEffectManager::removeEventListeners(this, NULL, kEventEffectFadeOutComplete);
 
 	// Discard pending delayed messages to stop effect
 	CameraEffectManager::discardMessages(this, kFadeTo);
@@ -318,7 +318,7 @@ void CameraEffectManager::fxFadeAsyncStop()
 
 	// Fire effect stopped event
 	CameraEffectManager::fireEvent(this, kEventEffectFadeStop);
-	CameraEffectManager::removeEventListeners(this, kEventEffectFadeStop);
+	CameraEffectManager::removeEventListeners(this, NULL, kEventEffectFadeStop);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -425,8 +425,8 @@ void CameraEffectManager::fxFadeAsync()
 
 		if(!this->startingANewEffect)
 		{
-			CameraEffectManager::removeEventListeners(this, kEventEffectFadeInComplete);
-			CameraEffectManager::removeEventListeners(this, kEventEffectFadeOutComplete);
+			CameraEffectManager::removeEventListeners(this, NULL, kEventEffectFadeInComplete);
+			CameraEffectManager::removeEventListeners(this, NULL, kEventEffectFadeOutComplete);
 		}
 	}
 	else
