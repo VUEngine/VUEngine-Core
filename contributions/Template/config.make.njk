@@ -33,7 +33,7 @@ USE_PROLOG_FUNCTIONS			= {% if compiler.prologFunctions %}1{% else %}0{% endif %
 # the WORLD attributes start.
 
 # valid options are [/.data/.sdata/.dram_data/.sram_data]
-MEMORY_POOL_SECTION					= {{ compiler.memoryUsage.memoryPools }}
+MEMORY_POOL_SECTION					= {{ compiler.memoryUsage.memoryPool }}
 # valid options are [/.bss/.sbss/.dram_bss/.sram_bss]
 NON_INITIALIZED_GLOBAL_DATA_SECTION	= {{ compiler.memoryUsage.uninitializedData }}
 # valid options are [/.data/.sdata/.dram_data/.sram_data]

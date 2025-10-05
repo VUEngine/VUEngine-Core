@@ -103,7 +103,7 @@
 						"type": "string",
 						"default": ".sdata"
 					},
-					"memoryPools": {
+					"memoryPool": {
 						"type": "string",
 						"default": ".sdata"
 					},
