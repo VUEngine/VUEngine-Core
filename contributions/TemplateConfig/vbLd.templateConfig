@@ -1,6 +1,6 @@
 {
 	"targets": [{
-		"path": "lib/compiler/linker/vb_shpping.ld",
+		"path": "lib/compiler/linker/vb_shipping.ld",
 		"root": "project"
 	}, {
 		"path": "lib/compiler/linker/vb_release.ld",
