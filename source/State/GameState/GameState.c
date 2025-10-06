@@ -226,7 +226,7 @@ void GameState::update(void* owner)
 	Profiler::lap(kProfilerLapTypeNormalProcess, PROCESS_NAME_SOUND_PURGE);
 #endif
 
-	GameState::stream(this);
+	GameState::stream(this, false);
 #ifdef __ENABLE_PROFILER
 	Profiler::lap(kProfilerLapTypeNormalProcess, PROCESS_NAME_STREAMING);
 #endif
@@ -274,7 +274,7 @@ void GameState::pause(void* owner)
 	{
 		// Force all streaming right now of any pending entity to make sure that their components are fully created
 		// This must happen before the managers are disabled
-		GameState::streamAll(this);
+		GameState::stream(this, true);
 		
 		if(!isDeleted(this->stage))
 		{
@@ -334,7 +334,7 @@ void GameState::unpause(void* owner)
 		GameState::applyTransformations(this);
 
 		// Force all streaming right now
-		GameState::streamAll(this);
+		GameState::stream(this, true);
 		
 		// Call custom code implementation
 		GameState::resume(this, owner);
@@ -604,32 +604,6 @@ void GameState::changeFramerate(int16 targetFPS, int32 duration)
 	{
 		this->framerate = targetFPS;
 	}
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void GameState::streamAll()
-{
-	// Make sure that the focus actor is transformed before focusing the camera
-	GameState::applyTransformations(this);
-
-	// Move the camera to its initial position
-	Camera::focus(Camera::getInstance());
-
-	// Invalidate transformations
-	Stage::invalidateTransformation(this->stage);
-
-	// Transformation everything
-	GameState::applyTransformations(this);
-
-	// Stream in and out all relevant actors
-	Stage::streamAll(this->stage);
-
-	// Be sure that the manager's removed components are deleted
-	GameState::purgeComponentManagers(this);
-
-	// Render the game now that everything is in place
-	GameState::render(this);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -992,15 +966,39 @@ void GameState::updateSounds()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void GameState::stream()
+void GameState::stream(bool complete)
 {
-	if(!this->stream)
+	if(complete)
 	{
-		return;
-	}
+		// Stream in and out all relevant actors
+		do
+		{
+			// Make sure the stage deletes any pending child
+			Stage::purgeChildren(this->stage);
 
-	while(!VUEngine::hasGameFrameStarted() && Stage::stream(this->stage));
+			// Be sure that the manager's removed components are deleted
+			GameState::purgeComponentManagers(this);
+
+			// Make sure that the focus actor is transformed before focusing the camera
+			GameState::applyTransformations(this);
+
+			// Move the camera to its initial position
+			Camera::focus(Camera::getInstance());
+
+			// Invalidate transformations
+			Stage::invalidateTransformation(this->stage);
+
+			// Render the game now that everything is in place
+			GameState::render(this);
+		}
+		while(Stage::stream(this->stage));		
+	}
+	else if(this->stream)
+	{
+		while(!VUEngine::hasGameFrameStarted() && Stage::stream(this->stage));
+	}
 }
+
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 

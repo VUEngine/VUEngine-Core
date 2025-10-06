@@ -909,7 +909,6 @@ void StageEditor::applyTranslationToCamera(Vector3D translation)
 	Camera::translate(Camera::getInstance(), translation, true);
 	Stage::transform(ToolState::getCurrentStage(this->toolState), NULL, Camera::getTransformationFlags(Camera::getInstance()));
 	StageEditor::printCameraPosition(this);
-	Stage::streamAll(ToolState::getCurrentStage(this->toolState));
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

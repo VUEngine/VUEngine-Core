@@ -209,8 +209,9 @@ class GameState : State
 	/// as the state is active)
 	void changeFramerate(int16 targetFPS, int32 duration);
 
-	/// Force to completely stream in and out actors and to initialize all.
-	void streamAll();
+	/// Run the next step of the streaming process.
+	/// @param complete: If true, force to completely stream in and out actors
+	void stream(bool complete);
 
 	/// Check if the framerate is locked or not
 	/// @return True if the framerate is locked; false otherwise

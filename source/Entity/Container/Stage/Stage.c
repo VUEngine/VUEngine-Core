@@ -433,39 +433,6 @@ void Stage::destroyChildActor(Actor child)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void Stage::streamAll()
-{
-	Stage::transform(this, NULL, __INVALIDATE_TRANSFORMATION);
-
-	this->streamingHeadNode = NULL;
-
-	// Make sure that the actor factory doesn't have any pending operations
-	while(ActorFactory::createNextActor(this->actorFactory));
-
-	do
-	{
-		this->streamingHeadNode = NULL;
-
-		Stage::purgeChildren(this);
-
-	} while(Stage::unloadOutOfRangeActors(this, false));
-
-	this->streamingHeadNode = NULL;
-	this->streamingAmplitude = (uint16)-1;
-
-	while(Stage::loadInRangeActors(this, false));
-
-	while(ActorFactory::createNextActor(this->actorFactory))
-	{
-		Stage::transform(this, NULL, __INVALIDATE_TRANSFORMATION);
-	}
-
-	this->streamingAmplitude = this->stageSpec->streaming.streamingAmplitude;
-	this->streamingHeadNode = NULL;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
 VirtualList Stage::getSounds()
 {
 	return this->sounds;

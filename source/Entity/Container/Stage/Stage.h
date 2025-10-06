@@ -295,9 +295,6 @@ class Stage : Container
 	/// @param child: Actor to destroy
 	void destroyChildActor(Actor child);
 
-	/// Stream in or/and out all pending actors.
-	void streamAll();
-
 	/// Retrieve the sounds that are playing in the stage.
 	/// @return List of playing sounds
 	VirtualList getSounds();
