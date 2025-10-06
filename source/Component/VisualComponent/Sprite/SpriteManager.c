@@ -570,7 +570,12 @@ void SpriteManager::render()
 		}
 	}
 
-	NM_ASSERT(0 <= this->bgmapIndex, "SpriteManager::render: more sprites than WORLDs");
+#ifdef __ALERT_WORLD_MEMORY_DEPLETION
+	Printer::setDebugMode();
+	Printer::clear();
+
+	NM_ASSERT(false, "SpriteManager::render: WORLD memory depleted");
+#endif
 
 	for(int16 i = kSpriteListObject1 + __TOTAL_OBJECT_SEGMENTS - 1; kSpriteListObject1 <= i ; i--)
 	{
@@ -611,7 +616,13 @@ void SpriteManager::render()
 					(0 > this->objectIndex - objectSprite->totalObjects)
 				)
 				{
-					NM_ASSERT(0 < this->objectIndex - objectSprite->totalObjects, "SpriteManager::renderSprites: OBJECTS depleted");
+#ifdef __ALERT_OBJECT_MEMORY_DEPLETION
+					Printer::setDebugMode();
+					Printer::clear();
+
+					NM_ASSERT(false, "SpriteManager::render: OBJECT memory depleted");
+#endif
+
 					objectSprite->index = __NO_RENDER_INDEX;
 					continue;
 				}

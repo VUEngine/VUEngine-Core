@@ -30,7 +30,8 @@ class Texture;
 /// @memberof Texture
 enum TextureStatus
 {
-	kTexturePendingWriting = 1,
+	kTextureNoCharSet = 1,
+	kTexturePendingWriting,
 	kTexturePendingRewriting,
 	kTextureMapDisplacementChanged,
 	kTextureFrameChanged,

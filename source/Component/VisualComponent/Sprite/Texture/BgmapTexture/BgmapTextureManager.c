@@ -501,6 +501,13 @@ BgmapTexture BgmapTextureManager::allocateTexture
 
 	if(0 > segment)
 	{
+#ifdef __ALERT_BGMAP_MEMORY_DEPLETION
+		Printer::setDebugMode();
+		Printer::clear();
+
+		NM_ASSERT(false, "BgmapTextureManager::allocateCharSet: BGMAP memory depleted");
+#endif
+
 		return NULL;
 	}
 

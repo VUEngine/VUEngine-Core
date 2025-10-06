@@ -289,23 +289,10 @@ CharSet CharSetManager::allocateCharSet(const CharSetSpec* charSetSpec)
 		return charSet;
 	}
 
-// TODO: implement __CHAR_FORCE_LOADING in Config.h file
-#ifdef __CHAR_FORCE_LOADING
-	else
-	{
-		CharSet charSet = new CharSet(charSetSpec, __CHAR_MEMORY_TOTAL_CHARS - charSetSpec->numberOfChars);
-
-		VirtualList::pushBack(this->charSets, charSet);
-
-		return charSet;		
-	}
-#endif
-
-#ifndef __SHIPPING
+#ifdef __ALERT_BGMAP_MEMORY_DEPLETION
 	Printer::setDebugMode();
 	Printer::clear();
 
-	// If there isn't enough memory thrown an exception
 	NM_ASSERT(false, "CharSetManager::allocateCharSet: CHAR mem depleted");
 #endif
 

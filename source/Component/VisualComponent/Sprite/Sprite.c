@@ -234,7 +234,7 @@ bool Sprite::prepareToRender()
 		return NULL != this->texture;
 	}
 
-	if(kTextureInvalid == this->texture->status || isDeleted(this->texture->charSet))
+	if(kTextureInvalid == this->texture->status || kTextureNoCharSet == this->texture->status)
 	{
 		return false;
 	}

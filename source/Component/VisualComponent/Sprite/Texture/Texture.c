@@ -216,7 +216,7 @@ void Texture::constructor(const TextureSpec* textureSpec, uint16 id)
 	this->charSet = NULL;
 	// Set the palette
 	this->palette = textureSpec->palette;
-	this->status = kTextureInvalid;
+	this->status = kTextureNoCharSet;
 	this->frame = 0;
 	this->update = false;
 }
@@ -522,7 +522,7 @@ void Texture::prepare()
 
 		if(isDeleted(this->charSet))
 		{
-			this->status = kTextureInvalid;
+			this->status = kTextureNoCharSet;
 		}
 	}
 
@@ -535,6 +535,12 @@ bool Texture::update(int16 maximumTextureRowsToWrite)
 {
 	switch(this->status)
 	{
+		case kTextureNoCharSet:
+		{
+			Texture::loadCharSet(this);
+			break;
+		}
+		
 		case kTexturePendingWriting:
 		{
 			Texture::write(this, maximumTextureRowsToWrite);
@@ -621,11 +627,13 @@ void Texture::loadCharSet()
 {
 	if(!isDeleted(this->charSet))
 	{
+		this->status = kTexturePendingWriting;
 		return;
 	}
 
 	if(NULL == this->textureSpec || NULL == this->textureSpec->charSetSpec)
 	{
+		this->status = kTextureInvalid;
 		return;
 	}
 
@@ -633,6 +641,7 @@ void Texture::loadCharSet()
 
 	if(isDeleted(this->charSet))
 	{
+		this->status = kTextureNoCharSet;
 		return;
 	}
 
