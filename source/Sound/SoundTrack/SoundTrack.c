@@ -11,11 +11,7 @@
 // INCLUDES
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-#include <Printer.h>
-#include <Utilities.h>
-#include <VirtualList.h>
 #include <VSUManager.h>
-#include <WaveForms.h>
 
 #include "SoundTrack.h"
 
