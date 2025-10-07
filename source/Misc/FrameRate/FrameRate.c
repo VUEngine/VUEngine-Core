@@ -66,7 +66,7 @@ void FrameRate::update()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void FrameRate::gameFrameStarted(bool gameCycleEnded, bool printFPS)
+void FrameRate::gameFrameStarted(bool gameCycleEnded)
 {
 	if(!gameCycleEnded)
 	{
@@ -81,7 +81,11 @@ void FrameRate::gameFrameStarted(bool gameCycleEnded, bool printFPS)
 		this->totalFPS += this->FPS;
 		this->totalUnevenFPS += this->unevenFPS;
 
+#ifdef __TOOLS
+		if(!isDeleted(this->events) && !VUEngine::isInToolState())
+#else
 		if(!isDeleted(this->events))
+#endif
 		{
 			FrameRate::fireEvent(this, kEventFramerateReady);
 		}
@@ -92,11 +96,6 @@ void FrameRate::gameFrameStarted(bool gameCycleEnded, bool printFPS)
 			{
 				FrameRate::fireEvent(this, kEventFramerateDipped);
 			}
-		}
-
-		if(printFPS)
-		{
-			FrameRate::print(this, __PRINT_FRAMERATE_AT_X, __PRINT_FRAMERATE_AT_Y);
 		}
 
 		this->FPS = 0;

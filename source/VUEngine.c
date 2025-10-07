@@ -468,17 +468,7 @@ void VUEngine::gameFrameStarted(uint16 gameFrameDuration)
 
 	ClockManager::update(ClockManager::getInstance(), gameFrameDuration);
 
-#ifdef __PRINT_FRAMERATE
-	bool printFPS = true;
-#else
-	bool printFPS = NULL != this->currentGameState ? !GameState::lockFrameRate(this->currentGameState) : false;
-#endif
-
-#ifdef __TOOLS
-	printFPS = !VUEngine::isInToolState();
-#endif
-
-	FrameRate::gameFrameStarted(FrameRate::getInstance(), this->currentGameCycleEnded, printFPS);
+	FrameRate::gameFrameStarted(FrameRate::getInstance(), this->currentGameCycleEnded);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

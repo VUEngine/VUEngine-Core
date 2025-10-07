@@ -64,8 +64,7 @@ singleton class FrameRate : ListenerObject
 
 	/// The next game frame cycle has started.
 	/// @param gameCycleEnded: Flag that indicates if the previous game frame was completed before the current second has elapsed
-	/// @param printFPS: True to print the FPS during the previous second
-	void gameFrameStarted(bool gameCycleEnded, bool printFPS);
+	void gameFrameStarted(bool gameCycleEnded);
 
 	/// Print the frames per second statistics.
 	/// @param x: Screen x coordinate where to print
