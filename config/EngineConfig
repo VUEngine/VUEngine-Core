@@ -19,6 +19,7 @@
 		"totalChars": 2048
 	},
 	"debug": {
+		"alertGraphicsDepletion" : true,
 		"diagnostics": "NONE",
 		"enableProfiler": false,
 		"stackHeadroom": 1000

@@ -70,6 +70,10 @@
 			"debug": {
 				"type": "object",
 				"properties": {
+					"alertGraphicsDepletion": {
+						"type": "boolean",
+						"default": true
+					},
 					"diagnostics": {
 						"type": "string",
 						"default": "NONE"

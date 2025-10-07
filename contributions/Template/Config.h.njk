@@ -54,17 +54,24 @@
 
 {{ macros.sectionHeader('Debugging / Profiling') }}
 
+{% if config.debug.alertGraphicsDepletion -%}
+#ifndef __SHIPPING
+#define __ALERT_CHAR_MEMORY_DEPLETION
+#define __ALERT_BGMAP_MEMORY_DEPLETION
+#define __ALERT_OBJECT_MEMORY_DEPLETION
+#define __ALERT_WORLD_MEMORY_DEPLETION
+#endif
+
+{% endif -%}
+#define __STACK_HEADROOM {{ config.debug.stackHeadroom }}
+
 {% if config.debug.enableProfiler -%}
 #define __ENABLE_PROFILER
 
 {% elseif config.debug.diagnostics is defined and config.debug.diagnostics != 'NONE' -%}
 #define __DEBUGGING
 #define __DEBUGGING_{{ config.debug.diagnostics }}
-
 {% endif -%}
-
-#define __STACK_HEADROOM {{ config.debug.stackHeadroom }}
-
 {{ macros.sectionHeader('Debugging tools') }}
 
 #ifdef __TOOLS
