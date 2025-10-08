@@ -14,6 +14,9 @@
 #include <DebugConfig.h>
 #include <Printer.h>
 #include <Singleton.h>
+#ifdef __TOOLS
+#include <VUEngine.h>
+#endif
 
 #include "FrameRate.h"
 
