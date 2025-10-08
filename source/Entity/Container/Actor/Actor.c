@@ -662,7 +662,7 @@ void Actor::addChildActorsDeferred(const PositionedActor* childrenSpecs)
 	{
 		ActorFactory::spawnActor
 		(
-			this->actorFactory, &childrenSpecs[i], Container::safeCast(this), this->internalId + Actor::getChildrenCount(this)
+			this->actorFactory, &childrenSpecs[i], Container::safeCast(this), this->internalId + Actor::getChildrenCount(this), false
 		);
 	}
 }

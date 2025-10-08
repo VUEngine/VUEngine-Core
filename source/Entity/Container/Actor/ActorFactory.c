@@ -154,7 +154,7 @@ void ActorFactory::destructor()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void ActorFactory::spawnActor(const PositionedActor* positionedActor, Container parent, int16 internalId)
+void ActorFactory::spawnActor(const PositionedActor* positionedActor, Container parent, int16 internalId, bool highPriority)
 {
 	if(NULL == positionedActor || NULL == parent)
 	{
@@ -172,7 +172,14 @@ void ActorFactory::spawnActor(const PositionedActor* positionedActor, Container 
 	positionedActorDescription->componentsCreated = false;
 	positionedActorDescription->componentIndex = 0;
 
-	VirtualList::pushBack(this->actorsToInstantiate, positionedActorDescription);
+	if(highPriority)
+	{	
+		VirtualList::pushFront(this->actorsToInstantiate, positionedActorDescription);
+	}
+	else
+	{	
+		VirtualList::pushBack(this->actorsToInstantiate, positionedActorDescription);
+	}
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

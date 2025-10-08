@@ -691,7 +691,7 @@ bool Stage::loadInRangeActors(int32 defer)
 						ActorFactory::spawnActor
 						(
 							this->actorFactory, stageActorDescription->positionedActor, Container::safeCast(this), 
-							stageActorDescription->internalId
+							stageActorDescription->internalId, false
 						);
 					}
 					else
@@ -751,7 +751,7 @@ bool Stage::loadInRangeActors(int32 defer)
 						ActorFactory::spawnActor
 						(
 							this->actorFactory, stageActorDescription->positionedActor, Container::safeCast(this), 
-							stageActorDescription->internalId
+							stageActorDescription->internalId, false
 						);
 					}
 					else

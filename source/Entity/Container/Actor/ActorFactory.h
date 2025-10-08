@@ -70,7 +70,8 @@ class ActorFactory : Object
 	/// and the spatial information about where and how to positione it
 	/// @param parent: The parent of the new actor instance
 	/// @param internalId: ID to keep track internally of the new instance
-	void spawnActor(const PositionedActor* positionedActor, Container parent, int16 internalId);
+	/// @param highPriority: If true, the requested actor will be put at the top of the queue.
+	void spawnActor(const PositionedActor* positionedActor, Container parent, int16 internalId, bool highPriority);
 
 	/// Create the next queued actor.
 	/// @return False if there are no actors pending instantiation; true otherwise
