@@ -115,6 +115,11 @@ void Particle::setup
 	{
 		Particle::removeComponents(this, kPhysicsComponent);
 		this->body = Body::safeCast(Particle::addComponent(this, physicsComponentSpec));
+
+		if(!isDeleted(this->body))
+		{
+			Body::sendMessages(this->body, false);		
+		}
 	}
 
 	if(NULL != colliderComponentSpec)
@@ -122,6 +127,11 @@ void Particle::setup
 		Particle::removeComponents(this, kColliderComponent);
 		Particle::addComponent(this, colliderComponentSpec);
 		Particle::registerCollisions(this, false);
+
+		if(!isDeleted(this->body))
+		{
+			Body::sendMessages(this->body, true);
+		}
 	}
 
 	Particle::playAnimation(this, this->particleSpec->initialAnimation);
