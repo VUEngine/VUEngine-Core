@@ -274,7 +274,12 @@ void Body::clearNormal(ListenerObject referent)
 			}
 		}
 
-		if(NULL != node)
+		if(NULL == this->normals->head)
+		{
+			delete this->normals;
+			this->normals = NULL;
+		}
+		else if(NULL != node)
 		{
 			Body::computeTotalNormal(this);
 		}
@@ -1459,7 +1464,12 @@ void Body::clearNormalOnAxis(uint16 axis __attribute__ ((unused)))
 			}
 		}
 
-		if(computeTotalNormal)
+		if(NULL == this->normals->head)
+		{
+			delete this->normals;
+			this->normals = NULL;
+		}
+		else if(computeTotalNormal)
 		{
 			Body::computeTotalNormal(this);
 		}
