@@ -266,6 +266,7 @@ uint32 SoundTrack::getTotalPlaybackMilliseconds(uint16 targetTimerResolutionUS)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+#ifndef __SHIPPING
 void SoundTrack::print(int16 x, int16 y)
 {
 	if(this->finished)
@@ -280,6 +281,7 @@ void SoundTrack::print(int16 x, int16 y)
 	Printer::text("     ", x, ++y, NULL);
 	Printer::int32(this->cursor, x, y, NULL);
 }
+#endif
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
