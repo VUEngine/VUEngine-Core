@@ -13,6 +13,7 @@
 
 #include <Singleton.h>
 #include <Sound.h>
+#include <TimerManager.h>
 #include <VirtualList.h>
 #include <VSUManager.h>
 #include <WaveForms.h>

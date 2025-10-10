@@ -626,6 +626,7 @@ void Sound::update()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+#ifndef __SHIPPING
 void Sound::print(int32 x, int32 y)
 {
 	PRINT_TEXT("                                  ", x, y);
@@ -664,9 +665,11 @@ void Sound::print(int32 x, int32 y)
 		this->soundSpec->loop ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, trackInfoXOffset + trackInfoValuesXOffset, y++
 	);
 }
+#endif
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+#ifndef __SHIPPING
 void Sound::printPlaybackTime(int32 x, int32 y)
 {
 	static uint32 previousSecond = 0;
@@ -692,9 +695,11 @@ void Sound::printPlaybackTime(int32 x, int32 y)
 		Sound::printTiming(this, currentSecond, x, y);
 	}
 }
+#endif
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+#ifndef __SHIPPING
 void Sound::printPlaybackProgress(int32 x, int32 y)
 {
 	if(NULL == this->mainSoundTrack || 0 == this->mainSoundTrack->ticks)
@@ -730,6 +735,7 @@ void Sound::printPlaybackProgress(int32 x, int32 y)
 
 	PRINT_TEXT(boxesArray, x, y);
 }
+#endif
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
@@ -898,6 +904,7 @@ void Sound::loop()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+#ifndef __SHIPPING
 void Sound::printTiming(uint32 seconds, int32 x, int32 y)
 {
 	uint32 minutes = seconds / 60;
@@ -922,5 +929,6 @@ void Sound::printTiming(uint32 seconds, int32 x, int32 y)
 		PRINT_INT(seconds, x + minutesDigits + 1, y);
 	}
 }
+#endif
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
