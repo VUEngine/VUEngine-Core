@@ -298,11 +298,6 @@ Sprite SpriteManager::create(Entity owner, const SpriteSpec* spriteSpec)
 
 void SpriteManager::purgeComponents()
 {
-	if(this->locked)
-	{
-		return;
-	}
-
 	for(VirtualNode node = this->components->head; NULL != node; node = node->next)
 	{
 		Sprite sprite = Sprite::safeCast(node->data);
@@ -1167,7 +1162,6 @@ void SpriteManager::startRendering()
 
 	this->spt = __TOTAL_OBJECT_SEGMENTS - 1;
 	this->objectIndex = __TOTAL_OBJECTS - 1;
-	this->locked = true;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -1188,7 +1182,6 @@ void SpriteManager::stopRendering()
 	}
 
 	this->previousObjectIndex = this->objectIndex;
-	this->locked = false;
 
 	HardwareManager::resumeInterrupts();
 }

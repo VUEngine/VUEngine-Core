@@ -42,9 +42,6 @@ abstract class ComponentManager : ListenerObject
 	/// List of components
 	VirtualList components;
 
-	/// Flag to prevent the manipulation of the components list
-	bool locked;
-
 	/// @publicsection
 
 	/// Create a component with the specified owner.

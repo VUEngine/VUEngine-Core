@@ -642,7 +642,6 @@ void ComponentManager::constructor()
 	Base::constructor();
 
 	this->components = new VirtualList();
-	this->locked = false;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -715,11 +714,6 @@ void ComponentManager::disable()
 void ComponentManager::purgeComponents()
 {
 	if(NULL == this->components)
-	{
-		return;
-	}
-
-	if(this->locked)
 	{
 		return;
 	}
