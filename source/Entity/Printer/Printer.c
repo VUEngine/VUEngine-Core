@@ -928,11 +928,13 @@ static FontData* Printer::getFontByName(const char* font)
 		{
 			result->charSet = CharSet::get(result->fontSpec->charSetSpec);
 
-			NM_ASSERT(!isDeleted(result->charSet), "Printer::getFontByName: cannot load charset");
-
 			if(NULL != result->charSet)
 			{
 				CharSet::addEventListener(result->charSet, ListenerObject::safeCast(printing), kEventCharSetChangedOffset);
+			}
+			else
+			{
+				result = NULL;
 			}
 		}
 	}

@@ -289,7 +289,7 @@ CharSet CharSetManager::allocateCharSet(const CharSetSpec* charSetSpec)
 		return charSet;
 	}
 
-#ifdef __ALERT_BGMAP_MEMORY_DEPLETION
+#ifdef __ALERT_CHAR_MEMORY_DEPLETION
 	Printer::setDebugMode();
 	Printer::clear();
 
