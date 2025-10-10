@@ -317,16 +317,16 @@ const PrintingSpriteSpec DefaultPrintingSpriteSpec =
 
 static void Printer::setDebugMode()
 {
-	Printer printing = Printer::getInstance();
+	Printer printer = Printer::getInstance();
 
-	if(__PRINTING_MODE_DEBUG == printing->mode)
+	if(__PRINTING_MODE_DEBUG == printer->mode)
 	{
 		return;
 	}
 
-	printing->mode = __PRINTING_MODE_DEBUG;
-	printing->lastUsedFontData = NULL;
-	printing->lastUsedFont = NULL;
+	printer->mode = __PRINTING_MODE_DEBUG;
+	printer->lastUsedFontData = NULL;
+	printer->lastUsedFont = NULL;
 	Printer::loadDebugFont();
 	Printer::clear();
 }
@@ -335,16 +335,16 @@ static void Printer::setDebugMode()
 
 static void Printer::loadFonts(FontSpec** fontSpecs)
 {
-	Printer printing = Printer::getInstance();
+	Printer printer = Printer::getInstance();
 
 	// Since fonts' charsets will be released, there is no reason to keep
-	// Anything in the printing area
+	// Anything in the printer area
 	Printer::clear();
 
 	// Empty list of registered fonts
 	Printer::releaseFonts();
 
-	// Prevent VIP's interrupt from calling render during printing process
+	// Prevent VIP's interrupt from calling render during printer process
 	HardwareManager::suspendInterrupts();
 
 	/// Must force CHAR defragmentation
@@ -376,14 +376,14 @@ static void Printer::loadFonts(FontSpec** fontSpecs)
 
 		if(!isDeleted(lastCharSet))
 		{		
-			CharSet::addEventListener(lastCharSet, ListenerObject::safeCast(printing), kEventCharSetChangedOffset);
+			CharSet::addEventListener(lastCharSet, ListenerObject::safeCast(printer), kEventCharSetChangedOffset);
 		}
 
 	}
 
-	if(NULL == printing->activePrintingSprite)
+	if(NULL == printer->activePrintingSprite)
 	{
-		Printer::addSprite(printing);
+		Printer::addSprite(printer);
 	}
 
 	HardwareManager::resumeInterrupts();
@@ -393,16 +393,16 @@ static void Printer::loadFonts(FontSpec** fontSpecs)
 
 static void Printer::releaseFonts()
 {
-	Printer printing = Printer::getInstance();
+	Printer printer = Printer::getInstance();
 
-	Printer::removeEventListeners(printing, NULL, kEventFontRewritten);
+	Printer::removeEventListeners(printer, NULL, kEventFontRewritten);
 
 	for(int16 i = 0; NULL != _fontData[i].fontSpec; i++)
 	{
 		// Preload charset and save charset reference, if font was found
 		if(!isDeleted(_fontData[i].charSet))
 		{
-			CharSet::removeEventListener(_fontData[i].charSet, ListenerObject::safeCast(printing), kEventCharSetChangedOffset);
+			CharSet::removeEventListener(_fontData[i].charSet, ListenerObject::safeCast(printer), kEventCharSetChangedOffset);
 
 			while(!CharSet::release(_fontData[i].charSet));
 		}
@@ -410,19 +410,19 @@ static void Printer::releaseFonts()
 		_fontData[i].charSet = NULL;
 	}
 
-	printing->lastUsedFont = NULL;
-	printing->lastUsedFontData = NULL;
+	printer->lastUsedFont = NULL;
+	printer->lastUsedFontData = NULL;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 static void Printer::clear()
 {
-	Printer printing = Printer::getInstance();
+	Printer printer = Printer::getInstance();
 
-	if(!isDeleted(printing->activePrintingSprite))
+	if(!isDeleted(printer->activePrintingSprite))
 	{
-		PrintingSprite::clear(printing->activePrintingSprite);
+		PrintingSprite::clear(printer->activePrintingSprite);
 	}
 }
 
@@ -582,11 +582,11 @@ static void Printer::setFontPage(const char* font, uint16 page)
 
 static void Printer::setOrientation(uint8 value)
 {
-	Printer printing = Printer::getInstance();
+	Printer printer = Printer::getInstance();
 
-	printing->orientation = value;
+	printer->orientation = value;
 
-	switch(printing->orientation)
+	switch(printer->orientation)
 	{
 		case kPrintingOrientationHorizontal:
 		case kPrintingOrientationVertical:
@@ -596,7 +596,7 @@ static void Printer::setOrientation(uint8 value)
 
 		default:
 		{
-			printing->orientation = kPrintingOrientationHorizontal;
+			printer->orientation = kPrintingOrientationHorizontal;
 			break;
 		}
 	}
@@ -606,11 +606,11 @@ static void Printer::setOrientation(uint8 value)
 
 static void Printer::setTextDirection(uint8 value)
 {
-	Printer printing = Printer::getInstance();
+	Printer printer = Printer::getInstance();
 
-	printing->direction = value;
+	printer->direction = value;
 
-	switch(printing->direction)
+	switch(printer->direction)
 	{
 		case kPrintingDirectionLTR:
 		case kPrintingDirectionRTL:
@@ -620,7 +620,7 @@ static void Printer::setTextDirection(uint8 value)
 
 		default:
 		{
-			printing->direction = kPrintingDirectionLTR;
+			printer->direction = kPrintingDirectionLTR;
 			break;
 		}
 	}
@@ -630,36 +630,36 @@ static void Printer::setTextDirection(uint8 value)
 
 static void Printer::addSprite()
 {
-	Printer printing = Printer::getInstance();
-	printing->activePrintingSprite = 
-		PrintingSprite::safeCast(Printer::addComponent(printing, (ComponentSpec*)&DefaultPrintingSpriteSpec));
+	Printer printer = Printer::getInstance();
+	printer->activePrintingSprite = 
+		PrintingSprite::safeCast(Printer::addComponent(printer, (ComponentSpec*)&DefaultPrintingSpriteSpec));
 
 	PixelVector position = 
 	{
 		0, 0, 0, 0
 	};
 
-	PrintingSprite::setPosition(printing->activePrintingSprite, &position);
+	PrintingSprite::setPosition(printer->activePrintingSprite, &position);
 
-	Printer::clearComponentLists(printing, kSpriteComponent);
+	Printer::clearComponentLists(printer, kSpriteComponent);
 
-	Printer::fireEvent(printing, kEventFontRewritten);
+	Printer::fireEvent(printer, kEventFontRewritten);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 static bool Printer::setActiveSprite(uint16 printingSpriteIndex)
 {
-	Printer printing = Printer::getInstance();
+	Printer printer = Printer::getInstance();
 
-	printing->activePrintingSprite = 
-		PrintingSprite::safeCast(Printer::getComponentAtIndex(printing, kSpriteComponent, printingSpriteIndex));
+	printer->activePrintingSprite = 
+		PrintingSprite::safeCast(Printer::getComponentAtIndex(printer, kSpriteComponent, printingSpriteIndex));
 
-	bool result = NULL != printing->activePrintingSprite;
+	bool result = NULL != printer->activePrintingSprite;
 
-	if(NULL == printing->activePrintingSprite)
+	if(NULL == printer->activePrintingSprite)
 	{
-		printing->activePrintingSprite = PrintingSprite::safeCast(Printer::getComponentAtIndex(printing, kSpriteComponent, 0));
+		printer->activePrintingSprite = PrintingSprite::safeCast(Printer::getComponentAtIndex(printer, kSpriteComponent, 0));
 	}
 
 	return result;
@@ -669,14 +669,14 @@ static bool Printer::setActiveSprite(uint16 printingSpriteIndex)
 
 static int16 Printer::getPrintingBgmapSegment()
 {
-	Printer printing = Printer::getInstance();
+	Printer printer = Printer::getInstance();
 
-	if(isDeleted(printing->activePrintingSprite))
+	if(isDeleted(printer->activePrintingSprite))
 	{
 		return 0;
 	}
 
-	BgmapTexture texture = BgmapTexture::safeCast(PrintingSprite::getTexture(printing->activePrintingSprite));
+	BgmapTexture texture = BgmapTexture::safeCast(PrintingSprite::getTexture(printer->activePrintingSprite));
 
 	if(isDeleted(texture))
 	{
@@ -690,14 +690,14 @@ static int16 Printer::getPrintingBgmapSegment()
 
 static int16 Printer::getPrintingBgmapXOffset()
 {
-	Printer printing = Printer::getInstance();
+	Printer printer = Printer::getInstance();
 
-	if(isDeleted(printing->activePrintingSprite))
+	if(isDeleted(printer->activePrintingSprite))
 	{
 		return 0;
 	}
 
-	BgmapTexture texture = BgmapTexture::safeCast(PrintingSprite::getTexture(printing->activePrintingSprite));
+	BgmapTexture texture = BgmapTexture::safeCast(PrintingSprite::getTexture(printer->activePrintingSprite));
 
 	if(isDeleted(texture))
 	{
@@ -711,14 +711,14 @@ static int16 Printer::getPrintingBgmapXOffset()
 
 static int16 Printer::getPrintingBgmapYOffset()
 {
-	Printer printing = Printer::getInstance();
+	Printer printer = Printer::getInstance();
 
-	if(isDeleted(printing->activePrintingSprite))
+	if(isDeleted(printer->activePrintingSprite))
 	{
 		return 0;
 	}
 
-	BgmapTexture texture = BgmapTexture::safeCast(PrintingSprite::getTexture(printing->activePrintingSprite));
+	BgmapTexture texture = BgmapTexture::safeCast(PrintingSprite::getTexture(printer->activePrintingSprite));
 
 	if(isDeleted(texture))
 	{
@@ -742,11 +742,11 @@ static uint16* Printer::getPrintingBgmapAddress()
 
 static void Printer::printSprite(int16 x, int16 y)
 {
-	Printer printing = Printer::getInstance();
+	Printer printer = Printer::getInstance();
 
-	if(!isDeleted(printing->activePrintingSprite))
+	if(!isDeleted(printer->activePrintingSprite))
 	{
-		PrintingSprite::print(printing->activePrintingSprite, x, y);
+		PrintingSprite::print(printer->activePrintingSprite, x, y);
 	}
 }
 
@@ -770,9 +770,9 @@ static void Printer::setWorldCoordinates(int16 x, int16 y, int16 z, int8 paralla
 	return;
 #endif
 
-	Printer printing = Printer::getInstance();
+	Printer printer = Printer::getInstance();
 
-	if(!isDeleted(printing->activePrintingSprite))
+	if(!isDeleted(printer->activePrintingSprite))
 	{
 		PixelVector position = 
 		{
@@ -782,7 +782,7 @@ static void Printer::setWorldCoordinates(int16 x, int16 y, int16 z, int8 paralla
 			parallax
 		};
 
-		PrintingSprite::setPosition(printing->activePrintingSprite, &position);
+		PrintingSprite::setPosition(printer->activePrintingSprite, &position);
 	}
 }
 
@@ -794,13 +794,13 @@ static void Printer::setBgmapCoordinates(int16 mx, int16 my, int8 mp)
 	return;
 #endif
 
-	Printer printing = Printer::getInstance();
+	Printer printer = Printer::getInstance();
 
-	if(!isDeleted(printing->activePrintingSprite))
+	if(!isDeleted(printer->activePrintingSprite))
 	{
 		PrintingSprite::setMValues
 		(
-			printing->activePrintingSprite, 
+			printer->activePrintingSprite, 
 			mx <= 64 * 8 ? mx : 0, 
 			my <= 64 * 8 ? my : 0,
 			mp
@@ -816,13 +816,13 @@ static void Printer::setWorldSize(uint16 w, uint16 h)
 	return;
 #endif
 
-	Printer printing = Printer::getInstance();
+	Printer printer = Printer::getInstance();
 
-	if(!isDeleted(printing->activePrintingSprite))
+	if(!isDeleted(printer->activePrintingSprite))
 	{
 		PrintingSprite::setSize
 		(
-			printing->activePrintingSprite, w < __SCREEN_WIDTH ? w : __SCREEN_WIDTH, h < __SCREEN_HEIGHT ? h : __SCREEN_HEIGHT
+			printer->activePrintingSprite, w < __SCREEN_WIDTH ? w : __SCREEN_WIDTH, h < __SCREEN_HEIGHT ? h : __SCREEN_HEIGHT
 		);
 	}
 }
@@ -831,11 +831,11 @@ static void Printer::setWorldSize(uint16 w, uint16 h)
 
 static void Printer::setTransparency(uint8 transparency)
 {
-	Printer printing = Printer::getInstance();
+	Printer printer = Printer::getInstance();
 
-	if(!isDeleted(printing->activePrintingSprite))
+	if(!isDeleted(printer->activePrintingSprite))
 	{
-		Sprite::setTransparency(printing->activePrintingSprite, transparency);
+		Sprite::setTransparency(printer->activePrintingSprite, transparency);
 	}
 }
 
@@ -843,11 +843,11 @@ static void Printer::setTransparency(uint8 transparency)
 
 static void Printer::setPalette(uint8 palette)
 {
-	Printer printing = Printer::getInstance();
+	Printer printer = Printer::getInstance();
 
 	if(4 > palette)
 	{
-		printing->palette = palette;
+		printer->palette = palette;
 	}
 }
 
@@ -855,11 +855,11 @@ static void Printer::setPalette(uint8 palette)
 
 static void Printer::resetCoordinates()
 {
-	Printer printing = Printer::getInstance();
+	Printer printer = Printer::getInstance();
 
-	if(!isDeleted(printing->activePrintingSprite))
+	if(!isDeleted(printer->activePrintingSprite))
 	{
-		PrintingSprite::reset(printing->activePrintingSprite);
+		PrintingSprite::reset(printer->activePrintingSprite);
 	}
 }
 
@@ -867,38 +867,38 @@ static void Printer::resetCoordinates()
 
 static int16 Printer::getWorldCoordinatesX()
 {
-	Printer printing = Printer::getInstance();
+	Printer printer = Printer::getInstance();
 
-	return !isDeleted(printing->activePrintingSprite) ? PrintingSprite::getEffectiveX(printing->activePrintingSprite) : 0;
+	return !isDeleted(printer->activePrintingSprite) ? PrintingSprite::getEffectiveX(printer->activePrintingSprite) : 0;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 static int16 Printer::getWorldCoordinatesY()
 {
-	Printer printing = Printer::getInstance();
+	Printer printer = Printer::getInstance();
 
-	return !isDeleted(printing->activePrintingSprite) ? PrintingSprite::getEffectiveY(printing->activePrintingSprite) : 0;
+	return !isDeleted(printer->activePrintingSprite) ? PrintingSprite::getEffectiveY(printer->activePrintingSprite) : 0;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 static int16 Printer::getWorldCoordinatesP()
 {
-	Printer printing = Printer::getInstance();
+	Printer printer = Printer::getInstance();
 
-	return !isDeleted(printing->activePrintingSprite) ? PrintingSprite::getEffectiveP(printing->activePrintingSprite) : 0;
+	return !isDeleted(printer->activePrintingSprite) ? PrintingSprite::getEffectiveP(printer->activePrintingSprite) : 0;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 static PixelVector Printer::getActiveSpritePosition()
 {
-	Printer printing = Printer::getInstance();
+	Printer printer = Printer::getInstance();
 
 	return 
-		!isDeleted(printing->activePrintingSprite) ? 
-			PrintingSprite::getDisplacedPosition(printing->activePrintingSprite) 
+		!isDeleted(printer->activePrintingSprite) ? 
+			PrintingSprite::getDisplacedPosition(printer->activePrintingSprite) 
 			: 
 			(PixelVector){0, 0, 0, 0};
 }
@@ -907,11 +907,11 @@ static PixelVector Printer::getActiveSpritePosition()
 
 static FontData* Printer::getFontByName(const char* font)
 {
-	Printer printing = Printer::getInstance();
+	Printer printer = Printer::getInstance();
 
 	FontData* result = NULL;
 
-	if(printing->mode == __PRINTING_MODE_DEBUG)
+	if(printer->mode == __PRINTING_MODE_DEBUG)
 	{
 		result = (FontData*)&VUENGINE_DEBUG_FONT_DATA;
 	}
@@ -938,7 +938,7 @@ static FontData* Printer::getFontByName(const char* font)
 
 			if(NULL != result->charSet)
 			{
-				CharSet::addEventListener(result->charSet, ListenerObject::safeCast(printing), kEventCharSetChangedOffset);
+				CharSet::addEventListener(result->charSet, ListenerObject::safeCast(printer), kEventCharSetChangedOffset);
 			}
 			else
 			{
@@ -1052,7 +1052,7 @@ static void Printer::number(int32 value, uint8 x, uint8 y, const char* font)
 
 static void Printer::out(uint8 x, uint8 y, const char* string, const char* font)
 {
-	Printer printing = Printer::getInstance();
+	Printer printer = Printer::getInstance();
 
 #ifdef __DEFAULT_FONT
 	if(NULL == font)
@@ -1067,39 +1067,39 @@ static void Printer::out(uint8 x, uint8 y, const char* string, const char* font)
 
 	uint32 i = 0, position = 0, startColumn = x, temp = 0;
 	uint32 charOffset = 0, charOffsetX = 0, charOffsetY = 0;
-	FontData* fontData = printing->lastUsedFontData;
+	FontData* fontData = printer->lastUsedFontData;
 
 	if(NULL == fontData)
 	{
 		fontData = Printer::getFontByName(font);
-		printing->lastUsedFontData = fontData;
-		printing->lastUsedFont = font;
+		printer->lastUsedFontData = fontData;
+		printer->lastUsedFont = font;
 	}
-	else if(printing->lastUsedFont != font && strcmp(fontData->fontSpec->name, font))
+	else if(printer->lastUsedFont != font && strcmp(fontData->fontSpec->name, font))
 	{
 		fontData = Printer::getFontByName(font);
-		printing->lastUsedFontData = fontData;
-		printing->lastUsedFont = font;
+		printer->lastUsedFontData = fontData;
+		printer->lastUsedFont = font;
 	}
 	else
 	{
-		printing->lastUsedFontData = fontData;
-		printing->lastUsedFont = font;
+		printer->lastUsedFontData = fontData;
+		printer->lastUsedFont = font;
 	}
 
-	if(NULL == fontData || (__PRINTING_MODE_DEBUG != printing->mode && isDeleted(fontData->charSet)))
+	if(NULL == fontData || (__PRINTING_MODE_DEBUG != printer->mode && isDeleted(fontData->charSet)))
 	{
 		return;
 	}
 
-	uint32 offset = __PRINTING_MODE_DEBUG == printing->mode ? VUENGINE_DEBUG_FONT_CHARSET_OFFSET : CharSet::getOffset(fontData->charSet);
+	uint32 offset = __PRINTING_MODE_DEBUG == printer->mode ? VUENGINE_DEBUG_FONT_CHARSET_OFFSET : CharSet::getOffset(fontData->charSet);
 
-	if(isDeleted(printing->activePrintingSprite))
+	if(isDeleted(printer->activePrintingSprite))
 	{
 		return;
 	}
 
-	BgmapTexture texture = BgmapTexture::safeCast(PrintingSprite::getTexture(printing->activePrintingSprite));
+	BgmapTexture texture = BgmapTexture::safeCast(PrintingSprite::getTexture(printer->activePrintingSprite));
 
 	if(isDeleted(texture))
 	{
@@ -1113,7 +1113,7 @@ static void Printer::out(uint8 x, uint8 y, const char* string, const char* font)
 	// Print text
 	while('\0' != string[i] && x < (__SCREEN_WIDTH_IN_CHARS))
 	{
-		// Do not allow printing outside of the visible area, since that would corrupt the param table
+		// Do not allow printer outside of the visible area, since that would corrupt the param table
 		if(y > 27/* || y < 0*/)
 		{
 			break;
@@ -1132,7 +1132,7 @@ static void Printer::out(uint8 x, uint8 y, const char* string, const char* font)
 			// Tab
 			case 9:
 			{
-				if(kPrintingOrientationHorizontal == printing->orientation)
+				if(kPrintingOrientationHorizontal == printer->orientation)
 				{
 					x = (x / __TAB_SIZE + 1) * __TAB_SIZE * fontData->fontSpec->fontSize.x;
 				}
@@ -1147,7 +1147,7 @@ static void Printer::out(uint8 x, uint8 y, const char* string, const char* font)
 			case 10:
 			{
 				temp = fontData->fontSpec->fontSize.y;
-				y = (printing->direction == kPrintingDirectionLTR)
+				y = (printer->direction == kPrintingDirectionLTR)
 					? y + temp
 					: y - temp;
 				x = startColumn;
@@ -1182,21 +1182,21 @@ static void Printer::out(uint8 x, uint8 y, const char* string, const char* font)
 								// Respective char of character
 								charOffset
 							)
-							| (printing->palette << 14);
+							| (printer->palette << 14);
 					}
 				}
 
-				if(kPrintingOrientationHorizontal == printing->orientation)
+				if(kPrintingOrientationHorizontal == printer->orientation)
 				{
 					temp = fontData->fontSpec->fontSize.x;
-					x = (printing->direction == kPrintingDirectionLTR)
+					x = (printer->direction == kPrintingDirectionLTR)
 						? x + temp
 						: x - temp;
 				}
 				else
 				{
 					temp = fontData->fontSpec->fontSize.y;
-					y = (printing->direction == kPrintingDirectionLTR)
+					y = (printer->direction == kPrintingDirectionLTR)
 						? y + temp
 						: y - temp;
 				}
@@ -1205,7 +1205,7 @@ static void Printer::out(uint8 x, uint8 y, const char* string, const char* font)
 				{
 					// Wrap around when outside of the visible area
 					temp = fontData->fontSpec->fontSize.y;
-					y = (printing->direction == kPrintingDirectionLTR)
+					y = (printer->direction == kPrintingDirectionLTR)
 						? y + temp
 						: y - temp;
 					x = startColumn;
@@ -1239,7 +1239,7 @@ bool Printer::onEvent(ListenerObject eventFirer, uint16 eventCode)
 			{
 				CharSet::write(charSet);
 				Printer::fireEvent(this, kEventFontRewritten);
-				NM_ASSERT(!isDeleted(this), "Printer::onEvent: deleted printing during kEventFontRewritten");
+				NM_ASSERT(!isDeleted(this), "Printer::onEvent: deleted printer during kEventFontRewritten");
 			}
 
 			return true;
