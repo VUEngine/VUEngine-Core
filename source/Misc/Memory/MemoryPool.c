@@ -181,6 +181,8 @@ static uint8* MemoryPool::allocate(int32 numberOfBytes)
 			HardwareManager::resumeInterrupts();
 			return poolLocation;
 		}
+
+		memoryPool->poolOverflows[pool]++;
 	}
 
 #ifndef __SHIPPING
@@ -328,7 +330,7 @@ static void MemoryPool::printDetailedUsage(int32 x, int32 y)
 
 	Printer::text("MEMORY POOLS STATUS", x, y++, NULL);
 
-	Printer::text("Pool Free Used", x, ++y, NULL);
+	Printer::text("Pool Free Used Over", x, ++y, NULL);
 	Printer::text("\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08", x, ++y, NULL);
 
 	for(pool = 0; pool < __MEMORY_POOLS; pool++)
@@ -344,7 +346,7 @@ static void MemoryPool::printDetailedUsage(int32 x, int32 y)
 
 		totalUsedBytes += totalUsedBlocks * memoryPool->poolSizes[pool][eBlockSize];
 
-		Printer::text("	              ", x, ++y, NULL);
+		Printer::text("	                   ", x, ++y, NULL);
 		Printer::int32(memoryPool->poolSizes[pool][eBlockSize],  x, y, NULL);
 		Printer::int32(memoryPool->poolSizes[pool][ePoolSize] / memoryPool->poolSizes[pool][eBlockSize] - totalUsedBlocks, x + 5, y, NULL);
 		Printer::int32(totalUsedBlocks, x + 10, y, NULL);
@@ -352,6 +354,8 @@ static void MemoryPool::printDetailedUsage(int32 x, int32 y)
 		int32 usedBlocksPercentage = (100 * totalUsedBlocks) / totalBlocks;
 		Printer::int32(usedBlocksPercentage, x + 17 - Math::getDigitsCount(usedBlocksPercentage), y, NULL);
 		Printer::text("% ", x + 17, y, NULL);
+
+		Printer::int32(memoryPool->poolOverflows[pool], x + 19, y, NULL);
 
 		totalUsedBlocks = 0 ;
 	}

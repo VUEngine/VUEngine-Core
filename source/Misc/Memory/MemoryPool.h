@@ -22,13 +22,14 @@
 
 // MemoryPool's defines
 #define __BLOCK_DEFINITION(BlockSize, Elements)															\
-	uint8 pool ## BlockSize ## B[BlockSize * Elements]; 													\
+	uint8 pool ## BlockSize ## B[BlockSize * Elements]; 												\
 
 #define __SET_MEMORY_POOL_ARRAY(BlockSize)																\
 	this->poolLocation[pool] = &this->pool ## BlockSize ## B[0];										\
 	this->poolSizes[pool][ePoolSize] = sizeof(this->pool ## BlockSize ## B);							\
 	this->poolSizes[pool][eBlockSize] = BlockSize;														\
 	this->poolLastFreeBlock[pool] = &this->poolLocation[pool][0];										\
+	this->poolOverflows[pool] = 0;																		\
 	pool++;																								\
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -66,6 +67,9 @@ singleton class MemoryPool : Object
 	
 	/// Array of pointers to the last free block found in each pool to accelerate the next search
 	uint8* poolLastFreeBlock[__MEMORY_POOLS];
+	
+	/// Array to keep track of which pools are being constantly overflown
+	uint8 poolOverflows[__MEMORY_POOLS];
 
 	/// @publicsection
 
