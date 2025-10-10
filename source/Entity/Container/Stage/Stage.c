@@ -522,6 +522,11 @@ bool Stage::stream()
 
 	if(Stage::updateActorFactory(this))
 	{
+		if(this->stageSpec->streaming.deferred)
+		{
+			Stage::loadInRangeActors(this, this->stageSpec->streaming.deferred);
+		}
+			
 		return true;
 	}
 	
@@ -937,9 +942,7 @@ int32 Stage::isActorInLoadRange(ScreenPixelVector onScreenPosition, const RightB
 
 bool Stage::updateActorFactory()
 {
-	bool preparingActors = ActorFactory::createNextActor(this->actorFactory);
-
-	return preparingActors;
+	return ActorFactory::createNextActor(this->actorFactory);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
