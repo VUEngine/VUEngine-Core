@@ -418,11 +418,6 @@ bool Actor::onEvent(ListenerObject eventFirer, uint16 eventCode)
 	{
 		case kEventActorCreated:
 		{
-			if(ListenerObject::safeCast(this) != eventFirer)
-			{
-				return false;
-			} 
-
 			if(isDeleted(this->actorFactory))
 			{
 				return false;
@@ -431,9 +426,10 @@ bool Actor::onEvent(ListenerObject eventFirer, uint16 eventCode)
 			if(!ActorFactory::hasActorsPending(this->actorFactory))
 			{
 				Actor::destroyActorFactory(this);
+				return false;
 			}
 
-			return false;
+			return true;
 		}
 
 		case kEventAnimationCompleted:
@@ -654,8 +650,6 @@ void Actor::addChildActorsDeferred(const PositionedActor* childrenSpecs)
 	if(isDeleted(this->actorFactory))
 	{
 		this->actorFactory = new ActorFactory();
-
-		Actor::addEventListener(this, ListenerObject::safeCast(this), kEventActorCreated);
 	}
 
 	for(int32 i = 0; NULL != childrenSpecs[i].actorSpec; i++)
