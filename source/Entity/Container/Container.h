@@ -59,20 +59,20 @@ abstract class Container : Entity
 	/// Container's internal id, set by the engine
 	int16 internalId;
 
-	/// If true, the parent will delete this container when appropriate
-	bool deleteMe;
-
-	// Flag to prevent the same container from making ready multiple times
-	bool ready;
-
-	// Flag to prevent the container from being streamed out when out of the camera's reach
-	bool dontStreamOut;
-	
-	/// Flag to mark the container (and its children) as non visible
-	bool hidden;
-
 	/// Axises around which to rotate the container when syncronizing with body
 	int8 axisForSynchronizationWithBody;
+
+	/// If true, the parent will delete this container when appropriate
+	bool deleteMe:1;
+
+	// Flag to prevent the same container from making ready multiple times
+	bool ready:1;
+
+	// Flag to prevent the container from being streamed out when out of the camera's reach
+	bool dontStreamOut:1;
+	
+	/// Flag to mark the container (and its children) as non visible
+	bool hidden:1;
 
 	/// @publicsection
 

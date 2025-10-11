@@ -123,18 +123,18 @@ class ParticleSystem : Actor
 	uint8 maximumNumberOfAliveParticles;
 
 	/// Flag to pause the generation of particles
-	bool paused;
+	bool paused : 1;
 
 	/// If false, the spawning or particles stops once the total number 
 	/// of spawned particles equals the maximum number of alive particles
-	bool loop;
+	bool loop : 1;
 	
 	/// If true, the particle system auto destroys when the total number 
 	/// of spawned particles equals the maximum number of alive particles
-	bool selfDestroyWhenDone;
+	bool selfDestroyWhenDone : 1;
 	
 	/// Flag to prevent computing force when not necessary
-	bool applyForceToParticles;
+	bool applyForceToParticles : 1;
 
 	/// @publicsection
 

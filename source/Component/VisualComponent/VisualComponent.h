@@ -99,13 +99,13 @@ abstract class VisualComponent : Component
 	uint8 transparency;
 
 	/// Show state flag (__HIDE, __SHOW)
-	uint8 show;
+	uint8 show : 1;
 
 	/// Rendering status flag
-	bool rendered;
+	bool rendered : 1;
 
 	/// Flag to allow/prohibit the update of the animation
-	bool updateAnimationFrame;
+	bool updateAnimationFrame : 1;
 
 	/// @publicsection
 

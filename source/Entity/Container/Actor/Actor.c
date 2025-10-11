@@ -858,7 +858,7 @@ void Actor::setActualFrame(int16 frame)
 
 int16 Actor::getActualFrame()
 {
-	VirtualList sprites = Entity::getComponents(this, kSpriteComponent);
+	VirtualList sprites = Actor::getComponents(this, kSpriteComponent);
 
 	if(NULL != sprites->head)
 	{
@@ -882,7 +882,7 @@ bool Actor::isPlaying()
 		return false;
 	}
 
-	VirtualList sprites = Entity::getComponents(this, kSpriteComponent);
+	VirtualList sprites = Actor::getComponents(this, kSpriteComponent);
 
 	for(VirtualNode node = sprites->head; NULL != node; node = node->next)
 	{

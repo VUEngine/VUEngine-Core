@@ -194,22 +194,22 @@ abstract class Collider : Component
 	uint8 classIndex;
 
 	/// If false, it is ignored in all callision checks
-	bool enabled;
+	bool enabled : 1;
+
+	/// If false, it doesn't check collision against other colliders
+	bool checkForCollisions : 1;
+
+	/// If true, it registers other colliders when a collision arises
+	bool registerCollisions : 1;
+
+	/// Flag to force the computation of the collider's position
+	bool invalidPosition : 1;
 
 	/// Layers on which this collider live
 	uint32 layers;
 
 	/// Layers to ignore when checking for collisions
 	uint32 layersToIgnore;
-
-	/// If false, it doesn't check collision against other colliders
-	bool checkForCollisions;
-
-	/// If true, it registers other colliders when a collision arises
-	bool registerCollisions;
-
-	/// Flag to force the computation of the collider's position
-	bool invalidPosition;
 
 	/// @publicsection
 

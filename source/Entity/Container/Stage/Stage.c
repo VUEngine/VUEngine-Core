@@ -116,7 +116,6 @@ void Stage::constructor(StageSpec *stageSpec)
 	Base::constructor(0, NULL);
 
 	this->actorFactory = new ActorFactory();
-	this->children = new VirtualList();
 	this->actorLoadingListeners = NULL;
 
 	this->stageSpec = stageSpec;
@@ -1094,6 +1093,11 @@ void Stage::unpauseSounds()
 
 Actor Stage::findChildByInternalId(int16 internalId)
 {
+	if(isDeleted(this->children))
+	{
+		return NULL;
+	}
+
 	VirtualNode node = this->children->head;
 
 	for(; NULL != node; node = node->next)
