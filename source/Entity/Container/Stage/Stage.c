@@ -514,18 +514,8 @@ void Stage::print(int32 x, int32 y)
 
 bool Stage::stream()
 {
-	if(NULL == this->stageActorDescriptions->head)
-	{
-		return false;
-	}
-
 	if(Stage::updateActorFactory(this))
 	{
-		if(this->stageSpec->streaming.deferred)
-		{
-			Stage::loadInRangeActors(this, this->stageSpec->streaming.deferred);
-		}
-			
 		return true;
 	}
 	
