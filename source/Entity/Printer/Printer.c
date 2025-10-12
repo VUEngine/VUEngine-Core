@@ -354,8 +354,6 @@ static void Printer::loadFonts(FontSpec** fontSpecs)
 	// Preload charset for font if in list of fonts to preload
 	if(NULL != fontSpecs)
 	{
-		CharSet lastCharSet = NULL;
-		
 		for(int16 i = 0; NULL != fontSpecs[i]; i++)
 		{
 			// Find defined font in list of fonts to preload
@@ -368,17 +366,11 @@ static void Printer::loadFonts(FontSpec** fontSpecs)
 
 					if(NULL != _fontData[j].charSet)
 					{
-						lastCharSet = _fontData[j].charSet;
+						CharSet::addEventListener(_fontData[j].charSet, ListenerObject::safeCast(printer), kEventCharSetChangedOffset);
 					}
 				}
 			}
 		}
-
-		if(!isDeleted(lastCharSet))
-		{		
-			CharSet::addEventListener(lastCharSet, ListenerObject::safeCast(printer), kEventCharSetChangedOffset);
-		}
-
 	}
 
 	if(NULL == printer->activePrintingSprite)
