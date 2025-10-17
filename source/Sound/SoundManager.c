@@ -50,13 +50,6 @@ void SoundManager::destructor()
 {
 	TimerManager::removeEventListener(TimerManager::getInstance(), ListenerObject::safeCast(this), kEventTimerManagerInterrupt);
 
-	if(!isDeleted(this->components))
-	{
-		VirtualList::deleteData(this->components);
-		delete this->components;
-		this->components = NULL;
-	}
-
 	// Always explicitly call the base's destructor 
 	Base::destructor();
 }
@@ -106,7 +99,7 @@ void SoundManager::disable()
 
 Sound SoundManager::create(Entity owner, const SoundSpec* soundSpec)
 {
-	if(NULL == soundSpec)
+	if(NULL == soundSpec || this->lock)
 	{
 		return NULL;
 	}

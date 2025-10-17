@@ -73,11 +73,6 @@ static Sound Sound::get(const SoundSpec* soundSpec, Entity owner, ListenerObject
 
 static bool Sound::playSound(const SoundSpec* soundSpec, Entity owner, uint32 playbackType, ListenerObject scope)
 {
-	if(NULL == soundSpec)
-	{
-		return false;
-	}
-
 	Sound sound = Sound::get(soundSpec, owner, scope);
 
 	if(!isDeleted(sound))
