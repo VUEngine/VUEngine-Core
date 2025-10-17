@@ -85,9 +85,6 @@ class SoundManager : ComponentManager
 	/// Update the sounds lists.
 	void update();
 
-	/// Reset the manager's state.
-	void reset();
-
 	/// Set the target refresh rate for PCM playback.
 	/// @param pcmTargetPlaybackRefreshRate: Target refresh rate for PCM playback
 	void setPCMTargetPlaybackRefreshRate(uint16 pcmTargetPlaybackRefreshRate);

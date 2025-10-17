@@ -51,6 +51,26 @@ static Mirror _mirror = {false, false, false};
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+static Sound Sound::get(const SoundSpec* soundSpec, Entity owner, ListenerObject scope)
+{
+	if(NULL == soundSpec)
+	{
+		return NULL;
+	}
+
+	Sound sound = NULL; 
+	sound = Sound::safeCast(ComponentManager::createComponent(owner, (ComponentSpec*)soundSpec));
+
+	if(!isDeleted(sound) && !isDeleted(scope))
+	{
+		Sound::addEventListener(sound, scope, kEventSoundReleased);
+	}
+
+	return sound;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 static bool Sound::playSound(const SoundSpec* soundSpec, Entity owner, uint32 playbackType, ListenerObject scope)
 {
 	if(NULL == soundSpec)
@@ -58,15 +78,10 @@ static bool Sound::playSound(const SoundSpec* soundSpec, Entity owner, uint32 pl
 		return false;
 	}
 
-	Sound sound = Sound::safeCast(ComponentManager::createComponent(owner, (ComponentSpec*)soundSpec));
+	Sound sound = Sound::get(soundSpec, owner, scope);
 
 	if(!isDeleted(sound))
 	{
-		if(!isDeleted(scope))
-		{
-			Sound::addEventListener(sound, scope, kEventSoundReleased);
-		}
-
 		Sound::autoReleaseOnFinish(sound, true);
 		Sound::play(sound, playbackType);
 

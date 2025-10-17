@@ -74,7 +74,7 @@ bool SoundManager::onEvent(ListenerObject eventFirer, uint16 eventCode)
 				return true;
 			}
 
-			return false;
+			return NULL == this->components->head;
 		}
 	}
 
@@ -111,10 +111,7 @@ Sound SoundManager::create(Entity owner, const SoundSpec* soundSpec)
 		return NULL;
 	}
 
-	if(NULL == this->components->head)
-	{
-		TimerManager::addEventListener(TimerManager::getInstance(), ListenerObject::safeCast(this), kEventTimerManagerInterrupt);	
-	}
+	TimerManager::addEventListener(TimerManager::getInstance(), ListenerObject::safeCast(this), kEventTimerManagerInterrupt);
 
 	return ((Sound (*)(Entity, const SoundSpec*)) ((ComponentSpec*)soundSpec)->allocator)(owner, soundSpec);
 }
@@ -124,6 +121,8 @@ Sound SoundManager::create(Entity owner, const SoundSpec* soundSpec)
 void SoundManager::purgeComponents()
 {
 	TimerManager::removeEventListener(TimerManager::getInstance(), ListenerObject::safeCast(this), kEventTimerManagerInterrupt);
+
+	Base::purgeComponents(this);	
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -144,7 +143,6 @@ void SoundManager::update()
 		if(!Sound::updatePlaybackState(sound))
 		{
 			VirtualList::removeNode(this->components, node);
-			
 			delete sound;
 			continue;
 		}
@@ -170,29 +168,6 @@ bool SoundManager::playSounds()
 	}
 
 	return NULL != this->components->head;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void SoundManager::reset()
-{
-	TimerManager::removeEventListener(TimerManager::getInstance(), ListenerObject::safeCast(this), kEventTimerManagerInterrupt);
-
-	VSUManager::reset(VSUManager::getInstance());
-
-	for(VirtualNode node = this->components->head; NULL != node; node = node->next)
-	{
-		Sound sound = Sound::safeCast(node->data);
-
-		NM_ASSERT(!isDeleted(sound), "SoundManager::reset: deleted soundSpec wrapper");
-
-		delete sound;
-	}
-
-	VirtualList::clear(this->components);
-
-	SoundManager::stopAllSounds(this, false, NULL);
-	SoundManager::unlock(this);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

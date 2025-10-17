@@ -144,6 +144,13 @@ class Sound : Component
 
 	/// @publicsection
 
+	/// Get a sound defined by the provided spec.
+	/// @param soundSpec: Spec that defines the sound to play
+	/// @param owner: Entity to which the component attaches to
+	/// @param scope: ListenerObject on which to perform the callback
+	/// @return Created sound
+	static Sound get(const SoundSpec* soundSpec, Entity owner, ListenerObject scope);
+
 	/// Play a sound defined by the provided spec.
 	/// @param soundSpec: Spec that defines the sound to play
 	/// @param owner: Entity to which the component attaches to
