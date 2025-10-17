@@ -581,7 +581,7 @@ static bool ComponentManager::getRightBoxFromComponents(ComponentManager compone
 			continue;
 		}
 
-		if(Component::overrides(component, getRightBox))
+		if(!Component::overrides(component, getRightBox))
 		{
 			continue;
 		}
