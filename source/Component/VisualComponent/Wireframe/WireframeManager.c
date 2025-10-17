@@ -123,13 +123,6 @@ Wireframe WireframeManager::create(Entity owner, const WireframeSpec* wireframeS
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-bool WireframeManager::areComponentsVisual()
-{
-	return true;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
 void WireframeManager::render()
 {
 	if(NULL == this->components->head)

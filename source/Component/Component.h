@@ -48,6 +48,7 @@ enum ComponentTypes
 	kWireframeComponent,
 	kMutatorComponent,
 	kBehaviorComponent,
+	kSoundComponent,
 
 	// Limmiter
 	kComponentTypes,

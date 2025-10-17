@@ -14,7 +14,8 @@
 // INCLUDES
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-#include <ListenerObject.h>
+#include <Component.h>
+#include <Entity.h>
 #include <SoundTrack.h>
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -53,6 +54,9 @@ enum SoundState
 /// @memberof Sound
 typedef struct SoundSpec
 {
+	/// Component spec
+	ComponentSpec componentSpec;
+
 	/// Name
 	char* name;
 
@@ -80,15 +84,9 @@ typedef const SoundSpec SoundROMSpec;
 /// Inherits from ListenerObject
 ///
 /// Implements sound playback.
-class Sound : ListenerObject
+class Sound : Component
 {
 	/// @protectedsection
-
-	/// Pointer to the spec that defines how to initialize the sound 
-	const SoundSpec* soundSpec;
-
-	/// Pointer to vector for spatial positioning of the sound
-	const Vector3D* position;
 
 	/// List of sound tracks
 	VirtualList soundTracks;
@@ -146,24 +144,29 @@ class Sound : ListenerObject
 
 	/// @publicsection
 
+	/// Play a sound defined by the provided spec.
+	/// @param soundSpec: Spec that defines the sound to play
+	/// @param owner: Entity to which the component attaches to
+	/// @param playbackType: How to play the sound
+	/// @param scope: ListenerObject on which to perform the callback
+	static bool playSound(const SoundSpec* soundSpec, Entity owner, uint32 playbackType, ListenerObject scope);
+
 	/// Mirror the spatial positioning of the sound.
 	/// @param mirror: Struct with a flag for each axis to mirror
 	static void setMirror(Mirror mirror);
 
 	/// Class' constructor
-	/// @param soundSpec: Specification that determines how to configure the sound
-	/// @param soundReleaseListener: Callback for when the sound is released
-	/// @param scope: Object that will be notified of sound events
-	void constructor(const SoundSpec* soundSpec, ListenerObject scope);
+	/// @param owner: Entity to which the component attaches to
+	/// @param soundSpec: Pointer to the spec that defines how to initialize the component
+	void constructor(Entity owner, const SoundSpec* soundSpec);
 
 	/// Retrieve the spec pointer that defined how to initialized the sound
 	/// @return Sound spec pointer
 	const SoundSpec* getSpec();
 
 	/// Play the sound.
-	/// @param position: Pointer to the spatial position of the sound
 	/// @param playbackType: Specifies how the playback should start
-	void play(const Vector3D* position, uint32 playbackType);
+	void play(uint32 playbackType);
 
 	/// Stop the playback.
 	void stop();

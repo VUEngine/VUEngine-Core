@@ -14,7 +14,7 @@
 // INCLUDES
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-#include <ListenerObject.h>
+#include <ComponentManager.h>
 #include <Sound.h>
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -33,10 +33,10 @@
 
 /// Class SoundManager
 ///
-/// Inherits from ListenerObject
+/// Inherits from ComponentManager
 ///
 /// Manages the Sound instances.
-singleton class SoundManager : ListenerObject
+class SoundManager : ComponentManager
 {
 	/// @protectedsection
 
@@ -48,27 +48,14 @@ singleton class SoundManager : ListenerObject
 
 	/// @publicsection
 
-	/// Play a sound defined by the provided spec.
-	/// @param soundSpec: Spec that defines the sound to play
-	/// @param position: Position for spatilly position sound
-	/// @param playbackType: How to play the sound
-	/// @param scope: Object on which to perform the callback
-	static bool playSound
-	(
-		const SoundSpec* soundSpec, const Vector3D* position, uint32 playbackType, ListenerObject scope
-	);
-
 	/// Allocate sound defined by the provided spec.
 	/// @param soundSpec: Spec that defines the sound to play
 	/// @param soundReleaseListener: Callback method for when the sound is released
 	/// @param scope: Object that will be notified of communication events
 	static Sound getSound(const SoundSpec* soundSpec, ListenerObject scope);
 
-	/// Retrieve a previously allocated sound defined by the provided spec.
-	/// @param soundSpec: Spec that defines the sound to play
-	/// @param soundReleaseListener: Callback method for when the sound is released
-	/// @param scope: Object that will be notified of communication events
-	static Sound findSound(const SoundSpec* soundSpec, ListenerObject scope);
+	/// Class' constructor
+	void constructor();
 
 	/// Process an event that the instance is listening for.
 	/// @param eventFirer: ListenerObject that signals the event
@@ -76,8 +63,27 @@ singleton class SoundManager : ListenerObject
 	/// @return False if the listener has to be removed; true to keep it
 	override bool onEvent(ListenerObject eventFirer, uint16 eventCode);
 
+	/// Retrieve the compoment type that the manager manages.
+	/// @return Component type
+	override uint32 getType();
+
+	/// Enable the manager.
+	override void enable();
+
+	/// Disable the manager.
+	override void disable();
+
+	/// Create a sprite with the provided spec.
+	/// @param owner: Object to which the sprite will attach to
+	/// @param soundSpec: Spec to use to create the sound
+	/// @return Created sound
+	override Sound create(Entity owner, const SoundSpec* soundSpec);
+
+	/// Force the purging of deleted components.
+	override void purgeComponents();
+
 	/// Update the sounds lists.
-	void updateSounds();
+	void update();
 
 	/// Reset the manager's state.
 	void reset();
@@ -99,10 +105,20 @@ singleton class SoundManager : ListenerObject
 	/// Rewind all playing sounds
 	void rewindAllSounds();
 
+	/// Pause any playing sound.
+	void pauseSounds();
+
+	/// Resume playback on all registerd sounds.
+	void unpauseSounds();
+
 	/// Stop all playing sounds.
 	/// @param release: If true, sounds are not only stopped but released
 	/// @param excludedSounds: Array of sound specs to not stop
 	void stopAllSounds(bool release, SoundSpec** excludedSounds);
+
+	/// Fade in or out the registered sounds
+	/// @param playbackType: Specifies how the playback should start
+	void fadeSounds(uint32 playbackType);
 
 	/// Refuse petitions to play or allocate sounds are processed.
 	void lock();

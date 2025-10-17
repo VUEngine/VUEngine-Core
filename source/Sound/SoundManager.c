@@ -11,7 +11,6 @@
 // INCLUDES
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-#include <Singleton.h>
 #include <Sound.h>
 #include <TimerManager.h>
 #include <VirtualList.h>
@@ -30,83 +29,37 @@ friend class VirtualNode;
 friend class VirtualList;
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-// CLASS' PUBLIC STATIC METHODS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-static bool SoundManager::playSound
-(
-	const SoundSpec* soundSpec, const Vector3D* position, uint32 playbackType, ListenerObject scope
-)
-{
-	SoundManager soundManager = SoundManager::getInstance();
-
-	if(soundManager->lock || NULL == soundSpec)
-	{
-		return false;
-	}
-
-	Sound sound = SoundManager::doGetSound(soundManager, soundSpec, scope);
-
-	if(!isDeleted(sound))
-	{
-		Sound::autoReleaseOnFinish(sound, true);
-		Sound::play(sound, position, playbackType);
-
-		return true;
-	}
-
-	return false;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-static Sound SoundManager::getSound(const SoundSpec* soundSpec, ListenerObject scope)
-{
-	SoundManager soundManager = SoundManager::getInstance();
-
-	if(soundManager->lock || NULL == scope)
-	{
-		return NULL;
-	}
-
-	return SoundManager::doGetSound(soundManager, soundSpec, scope);
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-static Sound SoundManager::findSound(const SoundSpec* soundSpec, ListenerObject scope)
-{
-	SoundManager soundManager = SoundManager::getInstance();
-
-	if(NULL == scope)
-	{
-		return NULL;
-	}
-
-	for(VirtualNode node = soundManager->sounds->head; NULL != node; node = node->next)
-	{
-		Sound sound = Sound::safeCast(node->data);
-
-		if(!isDeleted(sound))
-		{
-			if(soundSpec == sound->soundSpec)
-			{
-				Sound::addEventListener(sound, scope, kEventSoundReleased);
-				return sound;
-			}
-		}
-	}
-
-	return NULL;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PUBLIC METHODS
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void SoundManager::constructor()
+{
+	// Always explicitly call the base's constructor 
+	Base::constructor();
+
+	this->components = new VirtualList();
+
+	this->lock = false;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void SoundManager::destructor()
+{
+	TimerManager::removeEventListener(TimerManager::getInstance(), ListenerObject::safeCast(this), kEventTimerManagerInterrupt);
+
+	if(!isDeleted(this->components))
+	{
+		VirtualList::deleteData(this->components);
+		delete this->components;
+		this->components = NULL;
+	}
+
+	// Always explicitly call the base's destructor 
+	Base::destructor();
+}
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
@@ -130,20 +83,59 @@ bool SoundManager::onEvent(ListenerObject eventFirer, uint16 eventCode)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-// CLASS' PUBLIC METHODS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-secure void SoundManager::updateSounds()
+uint32 SoundManager::getType()
 {
-	if(NULL == this->sounds->head)
+	return kSoundComponent;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void SoundManager::enable()
+{
+	Base::enable(this);
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void SoundManager::disable()
+{
+	Base::disable(this);
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+Sound SoundManager::create(Entity owner, const SoundSpec* soundSpec)
+{
+	if(NULL == soundSpec)
+	{
+		return NULL;
+	}
+
+	if(NULL == this->components->head)
+	{
+		TimerManager::addEventListener(TimerManager::getInstance(), ListenerObject::safeCast(this), kEventTimerManagerInterrupt);	
+	}
+
+	return ((Sound (*)(Entity, const SoundSpec*)) ((ComponentSpec*)soundSpec)->allocator)(owner, soundSpec);
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void SoundManager::purgeComponents()
+{
+	TimerManager::removeEventListener(TimerManager::getInstance(), ListenerObject::safeCast(this), kEventTimerManagerInterrupt);
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void SoundManager::update()
+{
+	if(NULL == this->components->head)
 	{
 		return;		
 	}
 
-	for(VirtualNode node = this->sounds->head, nextNode = NULL; NULL != node; node = nextNode)
+	for(VirtualNode node = this->components->head, nextNode = NULL; NULL != node; node = nextNode)
 	{
 		nextNode = node->next;
 
@@ -151,14 +143,14 @@ secure void SoundManager::updateSounds()
 
 		if(!Sound::updatePlaybackState(sound))
 		{
-			VirtualList::removeNode(this->sounds, node);
+			VirtualList::removeNode(this->components, node);
 			
 			delete sound;
 			continue;
 		}
 	}
 
-	if(NULL == this->sounds->head)
+	if(NULL == this->components->head)
 	{
 		TimerManager::removeEventListener(TimerManager::getInstance(), ListenerObject::safeCast(this), kEventTimerManagerInterrupt);
 	}
@@ -170,25 +162,25 @@ bool SoundManager::playSounds()
 {
 	VSUManager::update(VSUManager::getInstance());
 
-	for(VirtualNode node = this->sounds->head; NULL != node; node = node->next)
+	for(VirtualNode node = this->components->head; NULL != node; node = node->next)
 	{
 		Sound sound = Sound::safeCast(node->data);
 
 		Sound::update(sound);
 	}
 
-	return NULL != this->sounds->head;
+	return NULL != this->components->head;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-secure void SoundManager::reset()
+void SoundManager::reset()
 {
 	TimerManager::removeEventListener(TimerManager::getInstance(), ListenerObject::safeCast(this), kEventTimerManagerInterrupt);
 
 	VSUManager::reset(VSUManager::getInstance());
 
-	for(VirtualNode node = this->sounds->head; NULL != node; node = node->next)
+	for(VirtualNode node = this->components->head; NULL != node; node = node->next)
 	{
 		Sound sound = Sound::safeCast(node->data);
 
@@ -197,7 +189,7 @@ secure void SoundManager::reset()
 		delete sound;
 	}
 
-	VirtualList::clear(this->sounds);
+	VirtualList::clear(this->components);
 
 	SoundManager::stopAllSounds(this, false, NULL);
 	SoundManager::unlock(this);
@@ -207,13 +199,13 @@ secure void SoundManager::reset()
 
 bool SoundManager::isPlayingSound(const SoundSpec* soundSpec)
 {
-	VirtualNode node = this->sounds->head;
+	VirtualNode node = this->components->head;
 
 	for(; NULL != node; node = node->next)
 	{
 		Sound sound = Sound::safeCast(node->data);
 
-		if(soundSpec == sound->soundSpec)
+		if(soundSpec == (SoundSpec*)sound->componentSpec)
 		{
 			return true;
 		}
@@ -226,7 +218,7 @@ bool SoundManager::isPlayingSound(const SoundSpec* soundSpec)
 
 void SoundManager::muteAllSounds()
 {
-	VirtualNode node = this->sounds->head;
+	VirtualNode node = this->components->head;
 
 	for(; NULL != node; node = node->next)
 	{
@@ -240,7 +232,7 @@ void SoundManager::muteAllSounds()
 
 void SoundManager::unmuteAllSounds()
 {
-	VirtualNode node = this->sounds->head;
+	VirtualNode node = this->components->head;
 
 	for(; NULL != node; node = node->next)
 	{
@@ -254,7 +246,7 @@ void SoundManager::unmuteAllSounds()
 
 void SoundManager::rewindAllSounds()
 {
-	VirtualNode node = this->sounds->head;
+	VirtualNode node = this->components->head;
 
 	for(; NULL != node; node = node->next)
 	{
@@ -266,9 +258,45 @@ void SoundManager::rewindAllSounds()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+void SoundManager::pauseSounds()
+{
+	if(!isDeleted(this->components))
+	{
+		for(VirtualNode node = this->components->head; NULL != node; node = node->next)
+		{
+			Sound sound = Sound::safeCast(node->data);
+
+			if(!isDeleted(sound))
+			{
+				Sound::pause(sound);
+			}
+		}
+	}
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void SoundManager::unpauseSounds()
+{
+	if(!isDeleted(this->components))
+	{
+		for(VirtualNode node = this->components->head; NULL != node; node = node->next)
+		{
+			Sound sound = Sound::safeCast(node->data);
+
+			if(!isDeleted(sound))
+			{
+				Sound::unpause(sound);
+			}
+		}
+	}
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void SoundManager::stopAllSounds(bool release, SoundSpec** excludedSounds)
 {
-	VirtualNode node = this->sounds->head;
+	VirtualNode node = this->components->head;
 
 	for(; NULL != node; node = node->next)
 	{
@@ -282,7 +310,7 @@ void SoundManager::stopAllSounds(bool release, SoundSpec** excludedSounds)
 			{
 				for(int16 i = 0; NULL != excludedSounds[i]; i++)
 				{
-					if(excludedSounds[i] == sound->soundSpec)
+					if(excludedSounds[i] == (SoundSpec*)sound->componentSpec)
 					{
 						if(release)
 						{
@@ -318,6 +346,24 @@ void SoundManager::stopAllSounds(bool release, SoundSpec** excludedSounds)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+void SoundManager::fadeSounds(uint32 playbackType)
+{
+	if(!isDeleted(this->components))
+	{
+		for(VirtualNode node = this->components->head; NULL != node; node = node->next)
+		{
+			Sound sound = Sound::safeCast(node->data);
+
+			if(!isDeleted(sound))
+			{
+				Sound::play(sound, playbackType);
+			}
+		}
+	}
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void SoundManager::lock()
 {
 	this->lock = true;
@@ -335,7 +381,7 @@ void SoundManager::unlock()
 #ifdef __SOUND_TEST
 void SoundManager::printPlaybackTime(int32 x, int32 y)
 {
-	VirtualNode node = this->sounds->head;
+	VirtualNode node = this->components->head;
 
 	if(!isDeleted(node))
 	{
@@ -355,61 +401,12 @@ void SoundManager::printPlaybackTime(int32 x, int32 y)
 // CLASS' PRIVATE METHODS
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void SoundManager::constructor()
-{
-	// Always explicitly call the base's constructor 
-	Base::constructor();
-
-	this->sounds = new VirtualList();
-
-	this->lock = false;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void SoundManager::destructor()
-{
-	TimerManager::removeEventListener(TimerManager::getInstance(), ListenerObject::safeCast(this), kEventTimerManagerInterrupt);
-
-	if(!isDeleted(this->sounds))
-	{
-		VirtualList::deleteData(this->sounds);
-		delete this->sounds;
-		this->sounds = NULL;
-	}
-
-	// Always explicitly call the base's destructor 
-	Base::destructor();
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-Sound SoundManager::doGetSound(const SoundSpec* soundSpec, ListenerObject scope)
-{
-	if(NULL == soundSpec)
-	{
-		return NULL;
-	}
-
-	Sound sound = new Sound(soundSpec, scope);
-
-	if(NULL == this->sounds->head)
-	{
-		TimerManager::addEventListener(TimerManager::getInstance(), ListenerObject::safeCast(this), kEventTimerManagerInterrupt);	
-	}
-
-	VirtualList::pushBack(this->sounds, sound);
-
-	return sound;
-}
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void SoundManager::suspendPlayingSounds()
 {
-	VirtualNode node = this->sounds->head;
+	VirtualNode node = this->components->head;
 
 	for(; NULL != node; node = node->next)
 	{
@@ -426,7 +423,7 @@ void SoundManager::suspendPlayingSounds()
 
 void SoundManager::resumePlayingSounds()
 {
-	VirtualNode node = this->sounds->head;
+	VirtualNode node = this->components->head;
 
 	for(; NULL != node; node = node->next)
 	{

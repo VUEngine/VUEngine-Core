@@ -463,11 +463,6 @@ static bool ComponentManager::calculateRightBox(Entity owner, RightBox* rightBox
 	{
 		ComponentManager componentManager = ComponentManager::getManager(i);
 
-		if(NULL == componentManager || !ComponentManager::overrides(componentManager, areComponentsVisual))
-		{
-			continue;
-		}
-
 		modified |= ComponentManager::getRightBoxFromComponents(componentManager, owner, rightBox);
 	}
 
@@ -582,6 +577,11 @@ static bool ComponentManager::getRightBoxFromComponents(ComponentManager compone
 		}
 
 		if(component->deleteMe)
+		{
+			continue;
+		}
+
+		if(Component::overrides(component, getRightBox))
 		{
 			continue;
 		}
@@ -733,13 +733,6 @@ void ComponentManager::purgeComponents()
 			delete component;
 		}
 	}
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-bool ComponentManager::areComponentsVisual()
-{
-	return false;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

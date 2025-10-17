@@ -316,7 +316,7 @@ void GameState::unpause(void* owner)
 		GameState::enableManagers(this);
 
 		// Reset the engine state
-		GameState::reset(this, NULL == Stage::getSpec(this->stage)->assets.sounds);
+		GameState::reset(this);
 
 		// Configure the game state
 		GameState::configure(this);
@@ -381,7 +381,7 @@ void GameState::configureStage(StageSpec* stageSpec, VirtualList positionedActor
 	}
 
 	// Reset the engine state
-	GameState::reset(this, NULL == stageSpec->assets.sounds);
+	GameState::reset(this);
 
 	// Make sure no actor is set as focus for the camera
 	Camera::setFocusActor(Camera::getInstance(), NULL);
@@ -670,17 +670,12 @@ void GameState::processUserInput(const UserInput* userInput __attribute__ ((unus
 
 //—————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void GameState::reset(bool resetSounds)
+void GameState::reset()
 {
 	HardwareManager::reset();
 
 	FrameRate::reset(FrameRate::getInstance());
 	StopwatchManager::reset(StopwatchManager::getInstance());
-
-	if(resetSounds)
-	{
-		SoundManager::reset(SoundManager::getInstance());
-	}
 
 #ifdef __ENABLE_PROFILER
 	Profiler::reset();
@@ -719,6 +714,7 @@ void GameState::createManagers()
 			_componentManagerAllocators[kColliderComponent] = __TYPE(ColliderManager);
 			_componentManagerAllocators[kSpriteComponent] = __TYPE(SpriteManager);
 			_componentManagerAllocators[kWireframeComponent] = __TYPE(WireframeManager);
+			_componentManagerAllocators[kSoundComponent] = __TYPE(SoundManager);
 
 			this->componentManagers[i] = ComponentManager::safeCast(_componentManagerAllocators[i]());
 		}
@@ -961,7 +957,7 @@ void GameState::dispatchDelayedMessages()
 
 void GameState::updateSounds()
 {
-	SoundManager::updateSounds(SoundManager::getInstance());
+	SoundManager::update(this->componentManagers[kSoundComponent]);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -1188,6 +1184,10 @@ void GameState::debugging()
 	
 #ifdef __DEBUGGING_COLLISIONS
 	ColliderManager::print(this->componentManagers[kColliderComponent], 1, 1);
+#endif
+	
+#ifdef __DEBUGGING_SOUNDS
+	SoundManager::print(this->componentManagers[kSoundComponent], 1, 1);
 #endif
 
 #ifdef __DEBUGGING_STREAMING

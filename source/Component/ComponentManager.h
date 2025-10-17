@@ -151,10 +151,6 @@ abstract class ComponentManager : ListenerObject
 
 	/// Force the purging of deleted components.
 	virtual void purgeComponents();
-
-	/// Retrieve information regarding if the components are visile.
-	/// @return True if the components managed are visual; false otherwise
-	virtual bool areComponentsVisual();
 }
 
 #endif

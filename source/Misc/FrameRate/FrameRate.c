@@ -85,7 +85,7 @@ void FrameRate::gameFrameStarted(bool gameCycleEnded)
 		this->totalUnevenFPS += this->unevenFPS;
 
 #ifdef __TOOLS
-		if(!isDeleted(this->events) && !VUEngine::isInToolState())
+		if(!isDeleted(this->events) && NULL == VUEngine::getActiveToolState())
 #else
 		if(!isDeleted(this->events))
 #endif

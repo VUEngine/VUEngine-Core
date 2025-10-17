@@ -11,6 +11,7 @@
 // INCLUDES
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+#include <ComponentManager.h>
 #include <TimerManager.h>
 #include <VirtualList.h>
 #include <VUEngine.h>
@@ -50,6 +51,33 @@ static Mirror _mirror = {false, false, false};
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+static bool Sound::playSound(const SoundSpec* soundSpec, Entity owner, uint32 playbackType, ListenerObject scope)
+{
+	if(NULL == soundSpec)
+	{
+		return false;
+	}
+
+	Sound sound = Sound::safeCast(ComponentManager::createComponent(owner, (ComponentSpec*)soundSpec));
+
+	if(!isDeleted(sound))
+	{
+		if(!isDeleted(scope))
+		{
+			Sound::addEventListener(sound, scope, kEventSoundReleased);
+		}
+
+		Sound::autoReleaseOnFinish(sound, true);
+		Sound::play(sound, playbackType);
+
+		return true;
+	}
+
+	return false;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 static void Sound::setMirror(Mirror mirror)
 {
 	_mirror = mirror;
@@ -63,13 +91,12 @@ static void Sound::setMirror(Mirror mirror)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void Sound::constructor(const SoundSpec* soundSpec, ListenerObject scope)
+void Sound::constructor(Entity owner, const SoundSpec* soundSpec)
 {
 	// Always explicitly call the base's constructor 
-	Base::constructor();
+	Base::constructor(owner, (const ComponentSpec*)&soundSpec->componentSpec);
 
 	this->state = kSoundOff;
-	this->soundSpec = soundSpec;
 	this->speed = __I_TO_FIX7_9_EXT(1);
 	this->previouslyElapsedTicks = 0;
     this->totalElapsedTicks = 0;
@@ -89,7 +116,6 @@ void Sound::constructor(const SoundSpec* soundSpec, ListenerObject scope)
 
 	this->soundTracks = NULL;
 	this->mainSoundTrack = NULL;
-	this->position = NULL;
 	this->volumeReduction = 0;
 	this->volumeReductionMultiplier = 1;
 	this->volumenScalePower = 0;
@@ -97,9 +123,9 @@ void Sound::constructor(const SoundSpec* soundSpec, ListenerObject scope)
 
 	Sound::configureTracks(this);
 
-	if(!isDeleted(scope))
+	if(!isDeleted(this->owner))
 	{
-		Sound::addEventListener(this, scope, kEventSoundReleased);
+		Sound::addEventListener(this, ListenerObject::safeCast(this->owner), kEventSoundReleased);
 	}
 }
 
@@ -107,8 +133,6 @@ void Sound::constructor(const SoundSpec* soundSpec, ListenerObject scope)
 
 void Sound::destructor()
 {
-	this->soundSpec = NULL;
-
 	if(!isDeleted(this->soundTracks))
 	{
 		VirtualList::deleteData(this->soundTracks);
@@ -126,14 +150,14 @@ void Sound::destructor()
 
 const SoundSpec* Sound::getSpec()
 {
-	return this->soundSpec;
+	return ((SoundSpec*)this->componentSpec);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void Sound::play(const Vector3D* position, uint32 playbackType)
+void Sound::play(uint32 playbackType)
 {
-	if(NULL == this->soundSpec)
+	if(kSoundRelease == this->state)
 	{
 		return;
 	}
@@ -177,8 +201,6 @@ void Sound::play(const Vector3D* position, uint32 playbackType)
 
 			this->state = kSoundPlaying;
 
-			this->position = position;
-
 			for(VirtualNode node = this->soundTracks->head; NULL != node; node = node->next)
 			{
 				SoundTrack soundTrack = SoundTrack::safeCast(node->data);
@@ -200,7 +222,7 @@ void Sound::play(const Vector3D* position, uint32 playbackType)
 
 void Sound::stop()
 {
-	if(NULL == this->soundSpec)
+	if(kSoundRelease == this->state)
 	{
 		return;
 	}
@@ -224,7 +246,7 @@ void Sound::stop()
 
 void Sound::pause()
 {
-	if(NULL == this->soundSpec)
+	if(kSoundRelease == this->state)
 	{
 		return;
 	}
@@ -251,7 +273,7 @@ void Sound::pause()
 
 void Sound::unpause()
 {
-	if(NULL == this->soundSpec)
+	if(kSoundRelease == this->state)
 	{
 		return;
 	}
@@ -278,7 +300,7 @@ void Sound::unpause()
 
 void Sound::suspend()
 {
-	if(NULL == this->soundSpec)
+	if(kSoundRelease == this->state)
 	{
 		return;
 	}
@@ -305,7 +327,7 @@ void Sound::suspend()
 
 void Sound::resume()
 {
-	if(NULL == this->soundSpec)
+	if(kSoundRelease == this->state)
 	{
 		return;
 	}
@@ -346,7 +368,7 @@ void Sound::unmute()
 
 void Sound::rewind()
 {
-	if(NULL == this->soundSpec)
+	if(kSoundRelease == this->state)
 	{
 		return;
 	}
@@ -373,7 +395,7 @@ void Sound::rewind()
 
 void Sound::release()
 {
-	if(NULL == this->soundSpec)
+	if(kSoundRelease == this->state)
 	{
 		return;
 	}
@@ -381,7 +403,6 @@ void Sound::release()
 	Sound::stop(this);
 
 	this->state = kSoundRelease;
-	this->soundSpec = NULL;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -500,7 +521,7 @@ bool Sound::updatePlaybackState()
 
 	Sound::fireEvent(this, kEventSoundFinished);
 
-	if(!this->soundSpec->loop)
+	if(!((SoundSpec*)this->componentSpec)->loop)
 	{
 		if(this->autoReleaseOnFinish)
 		{
@@ -528,10 +549,10 @@ void Sound::update()
 	fixed_t leftVolumeFactor = -1;
 	fixed_t rightVolumeFactor = -1;
 
-	if(NULL != this->position)
+	if(NULL != this->transformation && __NON_TRANSFORMED != this->transformation->invalid)
 	{
 #ifndef __LEGACY_COORDINATE_PROJECTION
-		Vector3D relativePosition = Vector3D::rotate(Vector3D::getRelativeToCamera(*this->position), *_cameraInvertedRotation);
+		Vector3D relativePosition = Vector3D::rotate(Vector3D::getRelativeToCamera(this->transformation->position), *_cameraInvertedRotation);
 #else
 		Vector3D relativePosition = 
 			Vector3D::rotate
@@ -540,7 +561,7 @@ void Sound::update()
 				(
 					Vector3D::getRelativeToCamera
 					(
-						*this->position), (Vector3D){__HALF_SCREEN_WIDTH_METERS, __HALF_SCREEN_HEIGHT_METERS, 0}
+						this->transformation->position), (Vector3D){__HALF_SCREEN_WIDTH_METERS, __HALF_SCREEN_HEIGHT_METERS, 0}
 					), 
 					*_cameraInvertedRotation
 			);
@@ -609,7 +630,7 @@ void Sound::update()
 
 	if(finished)
 	{
-		if(!this->soundSpec->loop)
+		if(!((SoundSpec*)this->componentSpec)->loop)
 		{
 			this->state = kSoundFinished;
 		}
@@ -630,7 +651,7 @@ void Sound::update()
 void Sound::print(int32 x, int32 y)
 {
 	PRINT_TEXT("                                  ", x, y);
-	PRINT_TEXT(this->soundSpec->name, x, y++);
+	PRINT_TEXT(((SoundSpec*)this->componentSpec)->name, x, y++);
 	y++;
 
 	Sound::printPlaybackProgress(this, x, y++);
@@ -662,7 +683,7 @@ void Sound::print(int32 x, int32 y)
 	PRINT_TEXT("Loop", trackInfoXOffset, ++y);
 	PRINT_TEXT
 	(
-		this->soundSpec->loop ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, trackInfoXOffset + trackInfoValuesXOffset, y++
+		((SoundSpec*)this->componentSpec)->loop ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, trackInfoXOffset + trackInfoValuesXOffset, y++
 	);
 }
 #endif
@@ -749,7 +770,7 @@ fix7_9_ext Sound::computeTimerResolutionFactor()
 {
 	uint32 timerCounter = TimerManager::getTimerCounter(TimerManager::getInstance()) + __TIMER_COUNTER_DELTA;
 	uint32 timerUsPerInterrupt = timerCounter * __SOUND_TARGET_US_PER_TICK;
-	uint32 targetTimerResolutionUS = 0 != this->soundSpec->targetTimerResolutionUS ? this->soundSpec->targetTimerResolutionUS : 1000;
+	uint32 targetTimerResolutionUS = 0 != ((SoundSpec*)this->componentSpec)->targetTimerResolutionUS ? ((SoundSpec*)this->componentSpec)->targetTimerResolutionUS : 1000;
 
 	targetTimerResolutionUS = 0 == targetTimerResolutionUS? 1000: targetTimerResolutionUS;
 	
@@ -777,7 +798,7 @@ void Sound::setVolumeReduction(int8 volumeReduction)
 
 void Sound::configureTracks()
 {
-	if(NULL == this->soundSpec || NULL == this->soundSpec->soundTrackSpecs)
+	if(kSoundRelease == this->state || NULL == ((SoundSpec*)this->componentSpec)->soundTrackSpecs)
 	{
 		return;
 	}
@@ -789,9 +810,9 @@ void Sound::configureTracks()
 
 	SoundTrack longestSoundTrack = NULL;
 
-	for(int16 i = 0; NULL != this->soundSpec->soundTrackSpecs[i]; i++)
+	for(int16 i = 0; NULL != ((SoundSpec*)this->componentSpec)->soundTrackSpecs[i]; i++)
 	{
-		SoundTrack soundTrack = new SoundTrack(this->soundSpec->soundTrackSpecs[i]);
+		SoundTrack soundTrack = new SoundTrack(((SoundSpec*)this->componentSpec)->soundTrackSpecs[i]);
 
 		VirtualList::pushBack(this->soundTracks, soundTrack);
 
@@ -808,7 +829,7 @@ void Sound::configureTracks()
 	if(!isDeleted(this->mainSoundTrack))
 	{
 		this->totalPlaybackMilliseconds = 
-			SoundTrack::getTotalPlaybackMilliseconds(this->mainSoundTrack, this->soundSpec->targetTimerResolutionUS);
+			SoundTrack::getTotalPlaybackMilliseconds(this->mainSoundTrack, ((SoundSpec*)this->componentSpec)->targetTimerResolutionUS);
 	}
 #endif
 
@@ -820,7 +841,7 @@ __attribute__((noinline))
 void Sound::updateVolumeReduction()
 {
 	uint32 elapsedMilliseconds = 
-		this->soundSpec->targetTimerResolutionUS * (this->mainSoundTrack->elapsedTicks 
+		((SoundSpec*)this->componentSpec)->targetTimerResolutionUS * (this->mainSoundTrack->elapsedTicks 
 		- this->previouslyElapsedTicks) / __MICROSECONDS_PER_MILLISECOND;
 
 	if(VUEngine::getGameFrameDuration() <= elapsedMilliseconds)
@@ -878,7 +899,7 @@ void Sound::updateVolumeReduction()
 
 void Sound::loop()
 {
-	if(NULL == this->soundSpec)
+	if(kSoundRelease == this->state)
 	{
 		return;
 	}

@@ -124,7 +124,6 @@ void Stage::constructor(StageSpec *stageSpec)
 	this->streamingHeadNode = NULL;
 	this->nextActorId = 0;
 	this->streamingPhase = 0;
-	this->sounds = NULL;
 	this->streamingAmplitude = this->stageSpec->streaming.streamingAmplitude;
 	this->reverseStreaming = false;
 	this->cameraTransformation.position = Vector3D::getFromPixelVector(this->stageSpec->level.cameraInitialPosition);
@@ -144,25 +143,6 @@ void Stage::destructor()
 		VirtualList::deleteData(this->actorLoadingListeners);
 		delete this->actorLoadingListeners;
 		this->actorLoadingListeners = NULL;
-	}
-
-	if(!isDeleted(this->sounds))
-	{
-		// Do not need to release sound wrappers here,
-		// They are taken care by the SoundManager when
-		// I called SoundManager::stopAllSounds
-		for(VirtualNode node = this->sounds->head; NULL != node; node = node->next)
-		{
-			Sound sound = Sound::safeCast(node->data);
-
-			if(!isDeleted(sound))
-			{
-				Sound::removeEventListener(sound, ListenerObject::safeCast(this), kEventSoundReleased);
-			}
-		}
-
-		delete this->sounds;
-		this->sounds = NULL;
 	}
 
 	if(!isDeleted(this->actorFactory))
@@ -427,35 +407,6 @@ void Stage::destroyChildActor(Actor child)
 
 		delete node->data;
 		VirtualList::removeNode(this->stageActorDescriptions, node);
-	}
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-VirtualList Stage::getSounds()
-{
-	return this->sounds;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void Stage::fadeSounds(uint32 playbackType)
-{
-	if(!isDeleted(this->sounds))
-	{
-		// Do not need to release sound wrappers here,
-		// They are taken care by the SoundManager when
-		// I called SoundManager::stopAllSounds
-		for(VirtualNode node = this->sounds->head; NULL != node; node = node->next)
-		{
-			Sound sound = Sound::safeCast(node->data);
-
-			if(!isDeleted(sound))
-			{
-				Sound::removeEventListener(sound, ListenerObject::safeCast(this), kEventSoundReleased);
-				Sound::play(sound, NULL, playbackType);
-			}
-		}
 	}
 }
 
@@ -850,15 +801,6 @@ bool Stage::onEvent(ListenerObject eventFirer, uint16 eventCode)
 			return false;
 		}
 
-		case kEventSoundReleased:
-		{
-			VirtualList::removeData(this->sounds, eventFirer);
-
-			Stage::fireEvent(this, kEventSoundReleased);
-
-			return false;
-		}
-
 		case kEventActorDeleted:
 		{
 			if(!isDeleted(this->focusActor) && ListenerObject::safeCast(this->focusActor) == eventFirer)
@@ -1002,79 +944,15 @@ void Stage::configureGraphics()
 
 void Stage::configureSounds()
 {
-	SoundManager::unlock(SoundManager::getInstance());
-
 	int32 i = 0;
-
-	// Stop all sounds
-	SoundManager::stopAllSounds(SoundManager::getInstance(), true, this->stageSpec->assets.sounds);
 
 	for(; NULL != this->stageSpec->assets.sounds[i]; i++)
 	{
-		Sound sound = SoundManager::findSound(this->stageSpec->assets.sounds[i], ListenerObject::safeCast(this));
-
-		if(isDeleted(sound))
-		{
-			sound = SoundManager::getSound(this->stageSpec->assets.sounds[i], ListenerObject::safeCast(this));
-		}
+		Sound sound = Sound::safeCast(ComponentManager::createComponent(NULL, (ComponentSpec*)this->stageSpec->assets.sounds[i]));
 
 		if(!isDeleted(sound))
 		{
-			if(isDeleted(this->sounds))
-			{
-				this->sounds = new VirtualList();
-			}
-
-			VirtualList::pushBack(this->sounds, sound);
-
-			if(!Sound::isPlaying(sound))
-			{
-				Sound::play(sound, NULL, kSoundPlaybackFadeIn);
-			}
-		}
-	}
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void Stage::pauseSounds()
-{
-	if(!isDeleted(this->sounds))
-	{
-		// Do not need to release sound wrappers here,
-		// They are taken care by the SoundManager when
-		// I called SoundManager::stopAllSounds
-		for(VirtualNode node = this->sounds->head; NULL != node; node = node->next)
-		{
-			Sound sound = Sound::safeCast(node->data);
-
-			if(!isDeleted(sound))
-			{
-				Sound::removeEventListener(sound, ListenerObject::safeCast(this), kEventSoundReleased);
-				Sound::pause(sound);
-			}
-		}
-	}
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void Stage::unpauseSounds()
-{
-	if(!isDeleted(this->sounds))
-	{
-		// Do not need to release sound wrappers here,
-		// They are taken care by the SoundManager when
-		// I called SoundManager::stopAllSounds
-		for(VirtualNode node = this->sounds->head; NULL != node; node = node->next)
-		{
-			Sound sound = Sound::safeCast(node->data);
-
-			if(!isDeleted(sound))
-			{
-				Sound::removeEventListener(sound, ListenerObject::safeCast(this), kEventSoundReleased);
-				Sound::unpause(sound);
-			}
+			Sound::play(sound, kSoundPlaybackFadeIn);
 		}
 	}
 }

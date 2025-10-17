@@ -214,6 +214,8 @@ abstract class Collider : Component
 	/// @publicsection
 
 	/// Class' constructor
+	/// @param owner: Entity to which the component attaches to
+	/// @param colliderSpec: Pointer to the spec that defines how to initialize the component
 	void constructor(Entity owner, const ColliderSpec* colliderSpec);
 
 	/// Process an event that the instance is listen for.

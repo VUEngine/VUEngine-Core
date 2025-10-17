@@ -162,10 +162,6 @@ class SpriteManager : ComponentManager
 	/// Force the purging of deleted components.
 	override void purgeComponents();
 
-	/// Retrieve information regarding if the components are visile.
-	/// @return True if the components managed are visual; false otherwise
-	override bool areComponentsVisual();
-
 	/// Configure the manager's state.
 	/// @param texturesMaximumRowsToWrite: Number of texture rows to write during each rendering cycle
 	/// @param maximumParamTableRowsToComputePerCall: Number of param table rows to write during each rendering cycle 

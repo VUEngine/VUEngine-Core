@@ -59,8 +59,6 @@ void SoundTest::show()
 {
 	this->soundIndex = 0;
 
-	SoundManager::reset(SoundManager::getInstance());
-
 	Printer::clear();
 #ifdef __TOOLS
 	SpriteManager spriteManager = 
@@ -126,7 +124,7 @@ void SoundTest::processUserInput(uint16 pressedKey)
 		{
 			if(!Sound::isPlaying(this->sound))
 			{
-				Sound::play(this->sound, NULL, kSoundPlaybackNormal);
+				Sound::play(this->sound, kSoundPlaybackNormal);
 			}
 			else
 			{
@@ -254,7 +252,7 @@ void SoundTest::processUserInput(uint16 pressedKey)
 
 			if(!Sound::isPaused(this->sound))
 			{
-				Sound::play(this->sound, NULL, kSoundPlaybackFadeIn);
+				Sound::play(this->sound, kSoundPlaybackFadeIn);
 			}
 		}
 	}
@@ -408,7 +406,7 @@ void SoundTest::loadSound()
 	TimerManager::setTargetTimePerInterruptUnits(kUS);
 	TimerManager::setTargetTimePerInterrupt(_userSounds[this->soundIndex]->targetTimerResolutionUS);
 
-	this->sound = SoundManager::getSound((SoundSpec*)_userSounds[this->soundIndex], ListenerObject::safeCast(this));
+	this->sound = Sound::safeCast(ComponentManager::createComponent(NULL, (ComponentSpec*)_userSounds[this->soundIndex]));
 
 	NM_ASSERT(!isDeleted(this->sound), "SoundTest::loadSound: no sound");
 

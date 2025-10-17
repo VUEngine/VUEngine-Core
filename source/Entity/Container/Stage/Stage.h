@@ -228,9 +228,6 @@ class Stage : Container
 	/// Pivot node for streaming
 	VirtualNode streamingHeadNode;
 
-	// List of sounds loaded from the stage spec
-	VirtualList sounds;
-
 	/// List of listeners for actor loading
 	VirtualList actorLoadingListeners;
 
@@ -294,14 +291,6 @@ class Stage : Container
 	/// Destroy a stage's child.
 	/// @param child: Actor to destroy
 	void destroyChildActor(Actor child);
-
-	/// Retrieve the sounds that are playing in the stage.
-	/// @return List of playing sounds
-	VirtualList getSounds();
-	
-	/// Fade in or out the registered sounds
-	/// @param playbackType: Specifies how the playback should start
-	void fadeSounds(uint32 playbackType);
 
 	/// Print the stage's state.
 	/// @param x: Screen x coordinate where to print

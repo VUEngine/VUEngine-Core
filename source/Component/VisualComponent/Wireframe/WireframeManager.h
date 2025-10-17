@@ -72,10 +72,6 @@ class WireframeManager : ComponentManager
 	/// @return Created wireframe
 	override Wireframe create(Entity owner, const WireframeSpec* wireframeSpec);
 
-	/// Retrieve information regarding if the components are visile.
-	/// @return True if the components managed are visual; false otherwise
-	override bool areComponentsVisual();
-
 	/// Enable wireframe rendering and drawing.
 	void enable();
 
