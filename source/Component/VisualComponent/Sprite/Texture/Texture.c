@@ -247,8 +247,14 @@ bool Texture::onEvent(ListenerObject eventFirer, uint16 eventCode)
 	{
 		case kEventCharSetChangedFrame:
 		{
-			this->frame = CharSet::getFrame(this->charSet);
-			Texture::rewrite(this);
+			uint16 frame = CharSet::getFrame(this->charSet);
+			
+			if(frame != this->frame)
+			{
+				this->frame = frame;
+
+				Texture::rewrite(this);
+			}
 
 			return true;
 		}
