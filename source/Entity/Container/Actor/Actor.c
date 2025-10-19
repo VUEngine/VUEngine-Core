@@ -860,9 +860,13 @@ int16 Actor::getActualFrame()
 
 		if(!isDeleted(sprite))
 		{
+			Actor::clearComponentLists(this, kSpriteComponent);
+
 			return Sprite::getActualFrame(sprite);
 		}
 	}
+
+	Actor::clearComponentLists(this, kSpriteComponent);
 
 	return -1;
 }
@@ -882,9 +886,13 @@ bool Actor::isPlaying()
 	{
 		if(Sprite::isPlaying(node->data))
 		{
+			Actor::clearComponentLists(this, kSpriteComponent);
+
 			return true;
 		}
 	}
+
+	Actor::clearComponentLists(this, kSpriteComponent);
 
 	return false;
 }
