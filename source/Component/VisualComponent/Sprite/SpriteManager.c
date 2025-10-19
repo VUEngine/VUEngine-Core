@@ -560,10 +560,13 @@ void SpriteManager::render()
 	}
 
 #ifdef __ALERT_WORLD_MEMORY_DEPLETION
-	Printer::setDebugMode();
-	Printer::clear();
+	if(0 >= this->bgmapIndex)
+	{
+		Printer::setDebugMode();
+		Printer::clear();
 
-	NM_ASSERT(false, "SpriteManager::render: WORLD memory depleted");
+		NM_ASSERT(false, "SpriteManager::render: WORLD memory depleted");		
+	}
 #endif
 
 	for(int16 i = kSpriteListObject1 + __TOTAL_OBJECT_SEGMENTS - 1; kSpriteListObject1 <= i ; i--)
