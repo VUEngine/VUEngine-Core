@@ -245,13 +245,6 @@ bool Texture::onEvent(ListenerObject eventFirer, uint16 eventCode)
 {
 	switch(eventCode)
 	{
-		case kEventCharSetDeleted:
-		{
-			this->charSet = CharSet::safeCast(eventFirer) == this->charSet ? NULL : this->charSet;
-
-			return false;
-		}
-
 		case kEventCharSetChangedFrame:
 		{
 			this->frame = CharSet::getFrame(this->charSet);
@@ -650,7 +643,6 @@ void Texture::loadCharSet()
 	Texture::setupUpdateFunction(this);
 
 	CharSet::addEventListener(this->charSet, ListenerObject::safeCast(this), kEventCharSetChangedOffset);
-	CharSet::addEventListener(this->charSet, ListenerObject::safeCast(this), kEventCharSetDeleted);
 
 	if(CharSet::isShared(this->charSet))
 	{
