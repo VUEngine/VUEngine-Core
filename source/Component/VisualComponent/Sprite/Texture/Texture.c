@@ -654,7 +654,10 @@ void Texture::loadCharSet()
 	{
 		this->frame = CharSet::getFrame(this->charSet);
 
-		CharSet::addEventListener(this->charSet, ListenerObject::safeCast(this), kEventCharSetChangedFrame);
+		if(Texture::isMultiframe(this))
+		{
+			CharSet::addEventListener(this->charSet, ListenerObject::safeCast(this), kEventCharSetChangedFrame);
+		}
 	}
 }
 
