@@ -750,6 +750,10 @@ void Stage::loadInitialActors()
 					{
 						this->streamingHeadNode = node;
 					}
+					else
+					{
+						actor->dontStreamOut = stageActorDescription->positionedActor->loadRegardlessOfPosition;
+					}
 
 					stageActorDescription->internalId = Actor::getInternalId(actor);
 				}
