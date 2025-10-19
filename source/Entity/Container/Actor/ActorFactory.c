@@ -283,8 +283,8 @@ uint32 ActorFactory::instantiateActors()
 
 			if(NULL == actorFactory || __LIST_EMPTY == ActorFactory::instantiateActors(actorFactory))
 			{
-				VirtualList::pushBack(this->actorsToTransform, positionedActorDescription);
 				VirtualList::removeData(this->actorsToInstantiate, positionedActorDescription);
+				VirtualList::pushBack(this->actorsToTransform, positionedActorDescription);
 
 				return __ACTOR_PROCESSED;
 			}
@@ -383,8 +383,8 @@ uint32 ActorFactory::transformActors()
 
 		if(NULL == actorFactory || __LIST_EMPTY == ActorFactory::transformActors(actorFactory))
 		{
-			VirtualList::pushBack(this->actorsToAddAsChildren, positionedActorDescription);
 			VirtualList::removeData(this->actorsToTransform, positionedActorDescription);
+			VirtualList::pushBack(this->actorsToAddAsChildren, positionedActorDescription);
 
 			return __ACTOR_PROCESSED;
 		}
@@ -437,8 +437,8 @@ uint32 ActorFactory::addChildActors()
 			// Must add the child to its parent before making it ready
 			Container::addChild(positionedActorDescription->parent, Container::safeCast(positionedActorDescription->actor));
 
-			VirtualList::pushBack(this->spawnedActors, positionedActorDescription);
 			VirtualList::removeData(this->actorsToAddAsChildren, positionedActorDescription);
+			VirtualList::pushBack(this->spawnedActors, positionedActorDescription);
 
 			return __ACTOR_PROCESSED;
 		}
