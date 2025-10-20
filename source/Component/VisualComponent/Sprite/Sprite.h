@@ -314,8 +314,7 @@ abstract class Sprite : VisualComponent
 
 	/// Load a texture.
 	/// @param textureClass: Class of the texture to load
-	/// @param listenForRewriting: If true, a listener is added for the texture's rewriting event
-	virtual void loadTexture(ClassPointer textureClass, bool listenForRewriting);
+	virtual void loadTexture(ClassPointer textureClass);
 
 	/// Release the sprite's texture(s)
 	virtual void releaseTexture();

@@ -50,7 +50,7 @@ void ObjectSprite::constructor(Entity owner, const ObjectSpriteSpec* objectSprit
 
 	this->fourthWordValue = (this->head & 0x3000) | (((SpriteSpec*)objectSpriteSpec)->textureSpec->palette << 14);
 
-	ObjectSprite::loadTexture(this, typeofclass(ObjectTexture), true);
+	ObjectSprite::loadTexture(this, typeofclass(ObjectTexture));
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -72,9 +72,9 @@ ClassPointer ObjectSprite::getBasicType()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void ObjectSprite::loadTexture(ClassPointer textureClass __attribute__((unused)), bool listenForRewriting __attribute__((unused)))
+void ObjectSprite::loadTexture(ClassPointer textureClass __attribute__((unused)))
 {
-	Base::loadTexture(this, typeofclass(ObjectTexture), true);
+	Base::loadTexture(this, typeofclass(ObjectTexture));
 
 	NM_ASSERT(NULL != this->texture, "ObjectSprite::constructor: could not load texture");
 

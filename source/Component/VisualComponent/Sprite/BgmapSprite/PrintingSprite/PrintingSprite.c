@@ -43,7 +43,7 @@ void PrintingSprite::constructor(Entity owner, const PrintingSpriteSpec* printin
 
 	if(NULL == this->texture)
 	{
-		PrintingSprite::loadTexture(this, typeofclass(BgmapTexture), false);		
+		PrintingSprite::loadTexture(this, typeofclass(BgmapTexture));		
 	}
 
 	if(!isDeleted(this->texture))

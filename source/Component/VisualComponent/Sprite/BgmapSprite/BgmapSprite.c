@@ -93,7 +93,7 @@ void BgmapSprite::constructor(Entity owner, const BgmapSpriteSpec* bgmapSpriteSp
 
 	this->applyParamTableEffect = bgmapSpriteSpec->applyParamTableEffect;
 
-	BgmapSprite::loadTexture(this, typeofclass(BgmapTexture), false);		
+	BgmapSprite::loadTexture(this, typeofclass(BgmapTexture));		
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -144,9 +144,9 @@ ClassPointer BgmapSprite::getBasicType()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void BgmapSprite::loadTexture(ClassPointer textureClass __attribute__((unused)), bool listenForRewriting __attribute__((unused)))
+void BgmapSprite::loadTexture(ClassPointer textureClass __attribute__((unused)))
 {
-	Base::loadTexture(this, typeofclass(BgmapTexture), false);
+	Base::loadTexture(this, typeofclass(BgmapTexture));
 
 	BgmapSprite::configureTexture(this);
 }

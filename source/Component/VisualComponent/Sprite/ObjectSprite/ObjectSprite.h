@@ -103,8 +103,7 @@ class ObjectSprite : Sprite
 
 	/// Load a texture.
 	/// @param textureClass: Class of the texture to load
-	/// @param listenForRewriting: If true, a listener is added for the texture's rewriting event
-	override void loadTexture(ClassPointer textureClass, bool listenForRewriting);
+	override void loadTexture(ClassPointer textureClass);
 
 	/// Render the sprite by configuring the DRAM assigned to it by means of the provided index.
 	/// @param index: Determines the region of DRAM that this sprite is allowed to configure

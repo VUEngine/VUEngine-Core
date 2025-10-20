@@ -229,7 +229,7 @@ bool Sprite::prepareToRender()
 
 	if(NULL == this->texture)
 	{
-		Sprite::loadTexture(this, NULL, true);
+		Sprite::loadTexture(this, NULL);
 
 		return NULL != this->texture;
 	}
@@ -613,7 +613,7 @@ void Sprite::putPixel(const Point* texturePixel, const Pixel* charSetPixel, uint
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void Sprite::loadTexture(ClassPointer textureClass, bool listenForRewriting)
+void Sprite::loadTexture(ClassPointer textureClass)
 {
 	if(this->deleteMe || NULL == textureClass)
 	{
@@ -626,11 +626,6 @@ void Sprite::loadTexture(ClassPointer textureClass, bool listenForRewriting)
 	}
 
 	this->texture = Texture::get(textureClass, ((SpriteSpec*)this->componentSpec)->textureSpec, 0, false, 0);
-
-	if(!isDeleted(this->texture) && listenForRewriting)
-	{
-		Texture::addEventListener(this->texture, ListenerObject::safeCast(this), kEventTextureRewritten);
-	}
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
