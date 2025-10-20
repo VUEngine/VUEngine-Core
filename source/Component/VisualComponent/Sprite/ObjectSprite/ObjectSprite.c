@@ -65,23 +65,6 @@ void ObjectSprite::destructor()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-bool ObjectSprite::onEvent(ListenerObject eventFirer, uint16 eventCode)
-{
-	switch(eventCode)
-	{
-		case kEventTextureRewritten:
-		{
-			ObjectSprite::rewrite(this);
-
-			return true;
-		}
-	}
-
-	return Base::onEvent(this, eventFirer, eventCode);
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
 ClassPointer ObjectSprite::getBasicType()
 {
 	return typeofclass(ObjectSprite);
@@ -295,48 +278,6 @@ void ObjectSprite::removeFromCache()
 				objectPointer = &_objectAttributesCache[objectIndex];
 				objectPointer->head = __OBJECT_SPRITE_CHAR_HIDE_MASK;
 			}
-		}
-	}
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void ObjectSprite::rewrite()
-{
-	if(__HIDE == this->show)
-	{
-		return;
-	}
-
-	if(__NO_RENDER_INDEX == this->index)
-	{
-		return;
-	}
-
-	NM_ASSERT(!isDeleted(this->texture), "ObjectSprite::rewrite: null texture");
-	NM_ASSERT(!isDeleted(this->texture->charSet), "ObjectSprite::rewrite: null char set");
-
-	uint16 fourthWordValue = 
-		(this->head & 0x3000) | (this->texture->palette << 14) | 
-		(CharSet::getOffset(this->texture->charSet) +  this->objectTextureSource.displacement);
-
-	int16 jDisplacement = 0;
-
-	uint16* framePointer = 
-		(uint16*)(this->texture->textureSpec->map + this->texture->mapDisplacement + this->objectTextureSource.displacement);
-
-	ObjectAttributes* objectPointer = NULL;
-
-	for(int16 i = 0; i < this->rows; i++, jDisplacement += this->cols)
-	{
-		int16 objectIndexStart = this->index + jDisplacement;
-
-		for(int16 j = 0; j < this->cols; j++)
-		{
-			int16 objectIndex = objectIndexStart + j;
-			objectPointer = &_objectAttributesCache[objectIndex];
-
-			objectPointer->tile = fourthWordValue + framePointer[jDisplacement + j];
 		}
 	}
 }
