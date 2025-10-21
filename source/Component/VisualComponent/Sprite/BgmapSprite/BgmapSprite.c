@@ -463,11 +463,6 @@ void BgmapSprite::configureTexture()
 		this->bgmapTextureSource.mp = 0;
 
 		BgmapSprite::setMode(this, ((BgmapSpriteSpec*)this->componentSpec)->display, ((BgmapSpriteSpec*)this->componentSpec)->bgmapMode);
-
-		if(0 != this->param && !isDeleted(this->texture))
-		{
-			Texture::addEventListener(this->texture, ListenerObject::safeCast(this), kEventTextureRewritten);
-		}
 	}
 }
 

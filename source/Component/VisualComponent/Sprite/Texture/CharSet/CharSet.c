@@ -56,6 +56,7 @@ void CharSet::constructor(const CharSetSpec* charSetSpec, uint16 offset)
 
 	// Save spec
 	this->charSetSpec = charSetSpec;
+	this->generation = 0;
 	this->tilesDisplacement = 0;
 
 	this->frame = 0;
@@ -130,12 +131,14 @@ void CharSet::setOffset(uint16 offset)
 {
 	ASSERT(offset < 2048, "CharSet::setOffset: offset out of bounds");
 
-	this->written = this->written && this->offset == offset;
-
-	this->offset = offset;
-
-	if(!this->written)
+	if(this->offset != offset)
 	{
+		this->generation++;
+
+		this->written = false;
+		
+		this->offset = offset;
+
 		CharSet::fireEvent(this, kEventCharSetChangedOffset);
 	}
 }
@@ -223,9 +226,13 @@ void CharSet::putPixel(const uint32 charToReplace, const Pixel* charSetPixel, ui
 
 void CharSet::setFrame(uint16 frame)
 {	
-	if(!this->written || this->frame != frame)
+	if(this->frame != frame)
 	{
+		this->written = false;
+		
 		this->frame = frame;
+
+		this->generation++;
 
 		if(NULL != this->charSetSpec->frameOffsets)
 		{
@@ -234,13 +241,6 @@ void CharSet::setFrame(uint16 frame)
 		else
 		{
 			this->tilesDisplacement = __UINT32S_PER_CHARS(this->charSetSpec->numberOfChars * this->frame);
-		}
-
-		CharSet::write(this);
-
-		if(CharSet::isShared(this))
-		{
-			CharSet::fireEvent(this, kEventCharSetChangedFrame);
 		}
 	}
 }
@@ -254,8 +254,20 @@ uint16 CharSet::getFrame()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void CharSet::write()
+uint32 CharSet::getGeneration()
 {
+	return this->generation;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+uint32 CharSet::write()
+{
+	if(this->written)
+	{
+		return this->generation;
+	}
+	
 	NM_ASSERT(0 < this->charSetSpec->numberOfChars, "CharSet::write: 0 chars");
 
 	uint16 tilesToWrite = this->charSetSpec->numberOfChars;
@@ -315,6 +327,8 @@ void CharSet::write()
 	}
 
 	this->written = true;
+	
+	return this->generation;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

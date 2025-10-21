@@ -15,7 +15,7 @@
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <CharSet.h>
-#include <ListenerObject.h>
+#include <Object.h>
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // FORWARD DECLARATIONS
@@ -30,13 +30,12 @@ class Texture;
 /// @memberof Texture
 enum TextureStatus
 {
-	kTextureNoCharSet = 1,
-	kTexturePendingWriting,
+	kTexturePendingWriting = 1,
 	kTexturePendingRewriting,
-	kTextureMapDisplacementChanged,
 	kTextureFrameChanged,
 	kTextureWritten,
-	kTextureInvalid
+	kTextureInvalid,
+	kTextureNoCharSet
 };
 
 /// A Texture spec
@@ -88,7 +87,7 @@ typedef const TextureSpec TextureROMSpec;
 /// Inherits from ListenerObject
 ///
 /// A texture to be displayed by a sprite.
-abstract class Texture : ListenerObject
+abstract class Texture : Object
 {
 	/// Pointer to the implementation that updates graphical data in DRAM
 	void (*doUpdate)(Texture, int16);
@@ -101,6 +100,9 @@ abstract class Texture : ListenerObject
 
 	/// Displacement inside the map array modified according to the frame's value
 	uint32 mapDisplacement;
+
+	/// Keeps track of writes
+	uint32 generation;
 
 	/// Identificator
 	uint16 id;
@@ -158,12 +160,6 @@ abstract class Texture : ListenerObject
 	/// @param textureSpec: Specification that determines how to configure the texture
 	/// @param id: Texture's identificator
 	void constructor(const TextureSpec* textureSpec, uint16 id);
-
-	/// Process an event that the instance is listen for.
-	/// @param eventFirer: ListenerObject that signals the event
-	/// @param eventCode: Code of the firing event
-	/// @return False if the listener has to be removed; true to keep it
-	override bool onEvent(ListenerObject eventFirer, uint16 eventCode);
 
 	/// Retrieve the texture's identificator.
 	/// @return Texture's identificator
@@ -268,7 +264,7 @@ abstract class Texture : ListenerObject
 	/// Write graphical data to the allocated DRAM space.
 	/// @param maximumTextureRowsToWrite: Number of texture rows to write during this call
 	/// @return True if the texture was written; false if it fails
-	virtual bool write(int16 maximumTextureRowsToWrite);
+	virtual uint8 write(int16 maximumTextureRowsToWrite);
 
 	/// Rewrite graphical data to the allocated DRAM space.
 	virtual void rewrite();

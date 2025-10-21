@@ -86,6 +86,9 @@ class CharSet : ListenerObject
 	/// Spec used in the construction of the char set
 	const CharSetSpec* charSetSpec;
 
+	/// Keeps track of writes
+	uint32 generation;
+
 	// Offset in the array of graphical data
 	uint32 tilesDisplacement;
 
@@ -177,12 +180,17 @@ class CharSet : ListenerObject
 	/// @param frame: The frame to write to CHAR memory
 	void setFrame(uint16 frame);
 
-	/// Retriev the current frame (frame * number of CHARs + number of CHARs) to write to CHAR memory.
+	/// Retrieve the current frame (frame * number of CHARs + number of CHARs) to write to CHAR memory.
 	/// @return The frame to write to CHAR memory
 	uint16 getFrame();
 
+	/// Retrieve the writing count.
+	/// @return The count of writes
+	uint32 getGeneration();
+
 	/// Write the tile graphical data to VRAM.
-	void write();
+	/// @return The count of writes
+	uint32 write();
 }
 
 #endif

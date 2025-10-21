@@ -21,6 +21,9 @@
 // CLASS' DECLARATIONS
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+#ifdef __RELEASE		
+friend class CharSet;
+#endif
 friend class ObjectTexture;
 friend class Texture;
 friend class VirtualList;
@@ -45,14 +48,24 @@ secure void ObjectTextureManager::updateTextures(int16 maximumTextureRowsToWrite
 	{
 		Texture texture = Texture::safeCast(node->data);
 
-		if(!texture->update)
+		if(kTextureInvalid == texture->status)
 		{
 			continue;
 		}
 
-		texture->update = Texture::update(texture, maximumTextureRowsToWrite);
+#ifdef __RELEASE		
+		if(kTextureWritten == texture->status)
+		{
+			texture->status = texture->generation != texture->charSet->generation? kTexturePendingRewriting : texture->status;
 
-		if(!texture->update && defer)
+			if(kTextureWritten == texture->status)
+			{
+				continue;
+			}
+		}
+#endif
+
+		if(kTextureWritten != Texture::update(texture, maximumTextureRowsToWrite) && defer)
 		{
 			break;
 		}
@@ -75,7 +88,7 @@ secure ObjectTexture ObjectTextureManager::getTexture(ObjectTextureSpec* objectT
 	ObjectTexture objectTexture = new ObjectTexture(objectTextureSpec, textureNextId++);
 
 	VirtualList::pushBack(this->objectTextures, objectTexture);
-
+	
 	ObjectTexture::prepare(objectTexture);
 
 	return objectTexture;

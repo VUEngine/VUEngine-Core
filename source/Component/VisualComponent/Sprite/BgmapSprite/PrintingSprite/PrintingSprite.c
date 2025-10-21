@@ -48,7 +48,7 @@ void PrintingSprite::constructor(Entity owner, const PrintingSpriteSpec* printin
 
 	if(!isDeleted(this->texture))
 	{
-		Texture::write(this->texture, -1);
+		while(kTextureWritten != Texture::update(this->texture, -1));
 	}
 
 	PrintingSprite::reset(this);

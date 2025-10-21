@@ -114,8 +114,6 @@ void Sprite::releaseTexture()
 {
 	if(!isDeleted(this->texture))
 	{
-		Texture::removeEventListener(this->texture, ListenerObject::safeCast(this), kEventTextureRewritten);
-		
 		Texture::release(this->texture);
 	}
 

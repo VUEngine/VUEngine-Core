@@ -26,6 +26,9 @@
 // CLASS' DECLARATIONS
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+#ifdef __RELEASE		
+friend class CharSet;
+#endif
 friend class Texture;
 friend class BgmapTexture;
 friend class VirtualList;
@@ -157,15 +160,25 @@ secure void BgmapTextureManager::updateTextures(int16 maximumTextureRowsToWrite,
 	for(VirtualNode node = this->bgmapTextures->head; NULL != node; node = node->next)
 	{
 		Texture texture = Texture::safeCast(node->data);
-
-		if(!texture->update)
+		
+		if(kTextureInvalid == texture->status)
 		{
 			continue;
 		}
 
-		texture->update = Texture::update(texture, maximumTextureRowsToWrite);
+#ifdef __RELEASE		
+		if(kTextureWritten == texture->status)
+		{
+			texture->status = texture->generation != texture->charSet->generation? kTexturePendingRewriting : texture->status;
 
-		if(!texture->update && defer)
+			if(kTextureWritten == texture->status)
+			{
+				continue;
+			}
+		}
+#endif
+
+		if(kTextureWritten != Texture::update(texture, maximumTextureRowsToWrite) && defer)
 		{
 			break;
 		}

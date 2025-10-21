@@ -568,6 +568,7 @@ static void Printer::setFontPage(const char* font, uint16 page)
 	}
 
 	CharSet::setFrame(fontData->charSet, page);
+	CharSet::write(fontData->charSet);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

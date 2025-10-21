@@ -178,7 +178,7 @@ static void Texture::updateDefault(Texture texture, int16 maximumTextureRowsToWr
 		return;
 	}
 
-	CharSet::setFrame(texture->charSet, texture->frame);
+	texture->generation = CharSet::write(texture->charSet);
 
 	texture->status = kTextureWritten;
 }
@@ -205,6 +205,7 @@ void Texture::constructor(const TextureSpec* textureSpec, uint16 id)
 
 	// Set id
 	this->id = id;
+	this->generation = 0;
 
 	this->doUpdate = NULL;
 
@@ -218,17 +219,13 @@ void Texture::constructor(const TextureSpec* textureSpec, uint16 id)
 	this->palette = textureSpec->palette;
 	this->status = kTextureNoCharSet;
 	this->frame = 0;
-	this->update = false;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Texture::destructor()
 {
-	if(this->update)
-	{
-		this->update = false;
-	}
+	this->status = kTextureInvalid;
 
 	// Make sure that I'm not destroyed again
 	this->usageCount = 0;
@@ -237,37 +234,6 @@ void Texture::destructor()
 
 	// Always explicitly call the base's destructor 
 	Base::destructor();
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-bool Texture::onEvent(ListenerObject eventFirer, uint16 eventCode)
-{
-	switch(eventCode)
-	{
-		case kEventCharSetChangedFrame:
-		{
-			uint16 frame = CharSet::getFrame(this->charSet);
-			
-			if(frame != this->frame)
-			{
-				this->frame = frame;
-
-				Texture::rewrite(this);
-			}
-
-			return true;
-		}
-
-		case kEventCharSetChangedOffset:
-		{
-			Texture::rewrite(this);
-
-			return true;
-		}
-	}
-
-	return Base::onEvent(this, eventFirer, eventCode);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -383,15 +349,15 @@ uint32 Texture::getNumberOfFrames()
 
 void Texture::setFrame(uint16 frame)
 {
-	bool statusChanged = kTextureFrameChanged != this->status;
-	this->status = this->status > kTextureFrameChanged ? kTextureFrameChanged : this->status;
-	
-	bool valueChanged = this->frame != frame;
-	this->frame = frame;
-
-	if((valueChanged && !this->update) || (statusChanged && kTextureFrameChanged == this->status))
+	if(this->frame != frame)
 	{
-		Texture::prepare(this);
+		this->frame = frame;
+		Texture::setStatus(this, kTextureFrameChanged);		
+
+		if(!isDeleted(this->charSet))
+		{
+			CharSet::setFrame(this->charSet, this->frame);		
+		}
 	}
 }
 
@@ -517,21 +483,21 @@ void Texture::prepare()
 {
 	if(isDeleted(this->charSet))
 	{
-		Texture::loadCharSet(this);
-
-		if(isDeleted(this->charSet))
-		{
-			this->status = kTextureNoCharSet;
-		}
+		this->status = kTextureNoCharSet;
 	}
-
-	this->update = true;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-bool Texture::update(int16 maximumTextureRowsToWrite)
+uint8 Texture::update(int16 maximumTextureRowsToWrite)
 {
+#ifndef __RELEASE		
+	if(NULL != this->charSet)
+	{
+		this->status = this->generation != CharSet::getGeneration(this->charSet)? kTexturePendingRewriting : this->status;
+	}
+#endif
+
 	switch(this->status)
 	{
 		case kTextureNoCharSet:
@@ -541,30 +507,15 @@ bool Texture::update(int16 maximumTextureRowsToWrite)
 		}
 		
 		case kTexturePendingWriting:
-		{
-			Texture::write(this, maximumTextureRowsToWrite);
-			break;
-		}
-
 		case kTexturePendingRewriting:
 		{
 			Texture::write(this, maximumTextureRowsToWrite);
 			break;
 		}
 
-		case kTextureMapDisplacementChanged:
+		case kTextureFrameChanged:
 		{
-			Texture::write(this, maximumTextureRowsToWrite);
-		}
-
-		// Intended fall through
-		default:
-		{
-			if(isDeleted(this->charSet))
-			{
-				Texture::write(this, maximumTextureRowsToWrite);
-			}
-			else if(NULL != this->doUpdate)
+			if(NULL != this->doUpdate)
 			{
 				this->doUpdate(this, maximumTextureRowsToWrite);
 			}
@@ -577,7 +528,7 @@ bool Texture::update(int16 maximumTextureRowsToWrite)
 		}
 	}
 
-	return kTextureWritten != this->status;
+	return this->status;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -587,7 +538,17 @@ bool Texture::write(int16 maximumTextureRowsToWrite __attribute__((unused)))
 	ASSERT(this->textureSpec, "Texture::write: null textureSpec");
 	ASSERT(this->textureSpec->charSetSpec, "Texture::write: null charSetSpec");
 
-	CharSet::setFrame(this->charSet, this->frame);
+	if(isDeleted(this->charSet))
+	{
+		return false;
+	}
+
+	if(CharSet::isShared(this->charSet))
+	{
+		this->frame = CharSet::getFrame(this->charSet);
+	}
+
+	this->generation = CharSet::write(this->charSet);
 
 	if(CharSet::isOptimized(this->charSet))
 	{
@@ -595,6 +556,7 @@ bool Texture::write(int16 maximumTextureRowsToWrite __attribute__((unused)))
 	}
 
 	this->status = kTextureWritten;
+
 	return true;
 }
 
@@ -602,16 +564,7 @@ bool Texture::write(int16 maximumTextureRowsToWrite __attribute__((unused)))
 
 void Texture::rewrite()
 {
-	bool statusChanged = kTexturePendingRewriting != this->status;
-
-	this->status = this->status > kTexturePendingWriting ? kTexturePendingRewriting : this->status;
-
-	if(!this->update || (statusChanged && kTexturePendingRewriting == this->status))
-	{
-		// Prepare the texture right away just in case the call initiates
-		// At a defragmentation process
-		Texture::prepare(this);
-	}
+	Texture::setStatus(this, kTexturePendingWriting);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -622,11 +575,22 @@ void Texture::rewrite()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+void Texture::setStatus(uint8 status)
+{
+	if(kTextureNoCharSet == this->status)
+	{
+		return;
+	}
+	
+	this->status = this->status > status ? status : this->status;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void Texture::loadCharSet()
 {
 	if(!isDeleted(this->charSet))
 	{
-		this->status = kTexturePendingWriting;
 		return;
 	}
 
@@ -644,20 +608,15 @@ void Texture::loadCharSet()
 		return;
 	}
 
+	this->generation = CharSet::getGeneration(this->charSet);
+
 	this->status = kTexturePendingWriting;
 
 	Texture::setupUpdateFunction(this);
 
-	CharSet::addEventListener(this->charSet, ListenerObject::safeCast(this), kEventCharSetChangedOffset);
-
 	if(CharSet::isShared(this->charSet))
 	{
 		this->frame = CharSet::getFrame(this->charSet);
-
-		if(Texture::isMultiframe(this))
-		{
-			CharSet::addEventListener(this->charSet, ListenerObject::safeCast(this), kEventCharSetChangedFrame);
-		}
 	}
 }
 
@@ -665,17 +624,10 @@ void Texture::loadCharSet()
 
 void Texture::releaseCharSet()
 {
-	if(this->update)
-	{
-		this->update = false;
-	}
-
 	this->status = kTextureInvalid;
 
 	if(!isDeleted(this->charSet))
 	{
-		CharSet::removeEventListeners(this->charSet, ListenerObject::safeCast(this), kEventEngineFirst);
-
 		CharSet::release(this->charSet);
 
 		this->charSet = NULL;
@@ -686,18 +638,10 @@ void Texture::releaseCharSet()
 
 void Texture::setMapDisplacement(uint32 mapDisplacement)
 {
-	bool statusChanged = kTextureMapDisplacementChanged != this->status;
-	this->status = 
-		this->mapDisplacement != mapDisplacement 
-		&& 
-		this->status > kTextureMapDisplacementChanged ? kTextureMapDisplacementChanged : this->status;
-
-	bool valueChanged = this->mapDisplacement != mapDisplacement;
-	this->mapDisplacement = mapDisplacement;
-
-	if((valueChanged && !this->update) || (statusChanged && kTextureMapDisplacementChanged == this->status))
+	if(this->mapDisplacement != mapDisplacement)
 	{
-		Texture::prepare(this);
+		this->mapDisplacement = mapDisplacement;
+		Texture::setStatus(this, kTexturePendingRewriting);		
 	}
 }
 
