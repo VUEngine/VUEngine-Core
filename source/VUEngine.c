@@ -550,7 +550,7 @@ void VUEngine::startGameFrame()
 #endif
 
 #ifdef __ENABLE_PROFILER
-	HardwareManager::suspendInterrupts();
+	HardwareManager::disableInterrupts();
 
 	Profiler::start();
 #endif
@@ -573,18 +573,15 @@ void VUEngine::endGameFrame()
 {
 	this->currentGameCycleEnded = true;
 
+#ifdef __ENABLE_PROFILER
+	HardwareManager::enableInterrupts();
+#endif
+
 	if(NULL != this->currentGameState && GameState::lockFrameRate(this->currentGameState))
 	{
-		// Make sure that interrupts are enabled, otherwise we will be locked here
-		HardwareManager::enableInterrupts();
-
 		//  Wait for the next game start
 		while(!VUEngine::hasGameFrameStarted());
 	}
-
-#ifdef __ENABLE_PROFILER
-	HardwareManager::resumeInterrupts();
-#endif
 
 	FrameRate::update(FrameRate::getInstance());
 }
