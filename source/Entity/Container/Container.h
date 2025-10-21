@@ -150,7 +150,8 @@ abstract class Container : Entity
 	void removeChild(Container child, bool deleteChild);
 
 	/// Force the destruction of all children marked to be deleted.
-	void purgeChildren();
+	/// @return True if a children is destroyed
+	bool purgeChildren();
 
 	/// Retrieve the linked list of children that are instances of the provided class.
 	/// @param classPointer: Pointer to the class to use as search criteria. Usage: typeofclass(ClassName)

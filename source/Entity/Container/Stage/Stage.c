@@ -64,8 +64,12 @@ typedef struct ActorLoadingListener
 
 static const StreamingPhase _streamingPhases[] =
 {
+	&Stage::purgeActors,
+	&Stage::updateActorFactory,
 	&Stage::unloadOutOfRangeActors,
-	&Stage::loadInRangeActors
+	&Stage::updateActorFactory,
+	&Stage::loadInRangeActors,
+	&Stage::updateActorFactory,
 };
 
 #define __DEBUGGING_STREAMING
@@ -465,11 +469,6 @@ void Stage::print(int32 x, int32 y)
 
 bool Stage::stream()
 {
-	if(Stage::updateActorFactory(this))
-	{
-		return true;
-	}
-	
 	if(++this->streamingPhase >= sizeof(_streamingPhases) / sizeof(StreamingPhase))
 	{
 		this->streamingPhase = 0;
@@ -875,7 +874,14 @@ int32 Stage::isActorInLoadRange(ScreenPixelVector onScreenPosition, const RightB
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-bool Stage::updateActorFactory()
+bool Stage::purgeActors(int32 defer __attribute__((unused)))
+{
+	return Stage::purgeChildren(this);
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+bool Stage::updateActorFactory(int32 defer __attribute__((unused)))
 {
 	return ActorFactory::createNextActor(this->actorFactory);
 }

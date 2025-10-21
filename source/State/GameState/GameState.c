@@ -211,24 +211,24 @@ void GameState::update(void* owner)
 		Profiler::lap(kProfilerLapTypeNormalProcess, PROCESS_NAME_EXECUTE);
 #endif
 
-	GameState::dispatchDelayedMessages(this);
-#ifdef __ENABLE_PROFILER
-	Profiler::lap(kProfilerLapTypeNormalProcess, PROCESS_NAME_MESSAGES);
-#endif
-
 	GameState::updateStage(this);
 #ifdef __ENABLE_PROFILER
 	Profiler::lap(kProfilerLapTypeNormalProcess, PROCESS_NAME_UPDATE_STAGE);
 #endif
 
-	GameState::updateSounds(this);
+	GameState::dispatchDelayedMessages(this);
 #ifdef __ENABLE_PROFILER
-	Profiler::lap(kProfilerLapTypeNormalProcess, PROCESS_NAME_SOUND_PURGE);
+	Profiler::lap(kProfilerLapTypeNormalProcess, PROCESS_NAME_MESSAGES);
 #endif
 
 	GameState::stream(this, false);
 #ifdef __ENABLE_PROFILER
 	Profiler::lap(kProfilerLapTypeNormalProcess, PROCESS_NAME_STREAMING);
+#endif
+
+	GameState::updateSounds(this);
+#ifdef __ENABLE_PROFILER
+	Profiler::lap(kProfilerLapTypeNormalProcess, PROCESS_NAME_SOUND_PURGE);
 #endif
 
 #ifdef __DEBUGGING
@@ -955,13 +955,6 @@ void GameState::dispatchDelayedMessages()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void GameState::updateSounds()
-{
-	SoundManager::update(this->componentManagers[kSoundComponent]);
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
 void GameState::stream(bool complete)
 {
 	if(complete)
@@ -999,6 +992,20 @@ void GameState::stream(bool complete)
 #else
 		while(!VUEngine::hasGameFrameStarted() && Stage::stream(this->stage));
 #endif
+	}
+	else
+	{
+		Stage::purgeChildren(this->stage);
+	}
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void GameState::updateSounds()
+{
+	if(!VUEngine::hasGameFrameStarted())
+	{
+		SoundManager::update(this->componentManagers[kSoundComponent]);
 	}
 }
 

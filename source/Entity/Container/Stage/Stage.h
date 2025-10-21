@@ -311,6 +311,8 @@ class Stage : Container
 	/// in source files. Don't call these.
 	bool unloadOutOfRangeActors(int32 defer);
 	bool loadInRangeActors(int32 defer);
+	bool updateActorFactory(int32 defer);
+	bool purgeActors(int32 defer);
 }
 
 #endif

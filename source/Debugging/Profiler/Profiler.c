@@ -142,7 +142,7 @@ static void Profiler::start()
 
 	Profiler::end();
 
-	if(0 < --profiler->skipFrames)
+	if(0 < profiler->skipFrames--)
 	{
 		return;
 	}

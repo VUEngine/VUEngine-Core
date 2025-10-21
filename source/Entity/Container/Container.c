@@ -481,7 +481,7 @@ void Container::removeChild(Container child, bool deleteChild)
 	{
 		child->parent = NULL;
 		child->deleteMe = deleteChild;
-
+		
 		if(deleteChild)
 		{
 			Container::discardAllMessages(child);
@@ -504,12 +504,14 @@ void Container::removeChild(Container child, bool deleteChild)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void Container::purgeChildren()
+bool Container::purgeChildren()
 {
 	if(NULL == this->children)
 	{
-		return;
+		return false;
 	}
+
+	bool purged = false;
 
 	for(VirtualNode node = this->children->head, nextNode = NULL; NULL != node; node = nextNode)
 	{
@@ -536,6 +538,12 @@ void Container::purgeChildren()
 			child->parent = NULL;
 			child->deleteMe = true;
 			delete child;
+
+			purged = true;
+		}
+		else if(NULL != child->children)
+		{
+			Container::purgeChildren(child);
 		}
 	}
 
@@ -544,6 +552,8 @@ void Container::purgeChildren()
 		delete this->children;
 		this->children = NULL;
 	}
+
+	return purged;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -661,10 +671,8 @@ void Container::updateChildren()
 		return;
 	}
 
-	for(VirtualNode node = this->children->head, nextNode = NULL; NULL != node; node = nextNode)
+	for(VirtualNode node = this->children->head; NULL != node; node = node->next)
 	{
-		nextNode = node->next;
-		
 		Container child = Container::safeCast(node->data);
 
 #ifndef __RELEASE
@@ -681,9 +689,6 @@ void Container::updateChildren()
 #endif
 		if(child->deleteMe)
 		{
-			VirtualList::removeNode(this->children, node);
-			child->parent = NULL;
-			delete child;
 			continue;
 		}
 
