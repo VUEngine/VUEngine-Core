@@ -226,7 +226,7 @@ void CharSet::putPixel(const uint32 charToReplace, const Pixel* charSetPixel, ui
 
 void CharSet::setFrame(uint16 frame)
 {	
-	if(this->frame != frame)
+	if(this->frame != frame || !this->written)
 	{
 		this->written = false;
 		

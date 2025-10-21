@@ -349,7 +349,7 @@ uint32 Texture::getNumberOfFrames()
 
 void Texture::setFrame(uint16 frame)
 {
-	if(this->frame != frame)
+	if(this->frame != frame || kTextureWritten != this->status)
 	{
 		this->frame = frame;
 		Texture::setStatus(this, kTextureFrameChanged);		
@@ -548,6 +548,8 @@ bool Texture::write(int16 maximumTextureRowsToWrite __attribute__((unused)))
 		this->frame = CharSet::getFrame(this->charSet);
 	}
 
+	CharSet::setFrame(this->charSet, this->frame);		
+
 	this->generation = CharSet::write(this->charSet);
 
 	if(CharSet::isOptimized(this->charSet))
@@ -638,7 +640,7 @@ void Texture::releaseCharSet()
 
 void Texture::setMapDisplacement(uint32 mapDisplacement)
 {
-	if(this->mapDisplacement != mapDisplacement)
+	if(this->mapDisplacement != mapDisplacement || kTextureWritten != this->status)
 	{
 		this->mapDisplacement = mapDisplacement;
 		Texture::setStatus(this, kTexturePendingRewriting);		
