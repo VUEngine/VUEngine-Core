@@ -94,6 +94,7 @@ class ActorFactory : Object
 	uint32 instantiateActors();
 	uint32 transformActors();
 	uint32 addChildActors();
+	uint32 cleanUp();
 }
 
 #endif

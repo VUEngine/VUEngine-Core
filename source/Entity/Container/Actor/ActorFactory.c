@@ -57,7 +57,8 @@ static const InstantiationPhase _instantiationPhases[] =
 {
 	&ActorFactory::instantiateActors,
 	&ActorFactory::transformActors,
-	&ActorFactory::addChildActors
+	&ActorFactory::addChildActors,
+	&ActorFactory::cleanUp
 };
 
 static int32 _instantiationPhasesCount = sizeof(_instantiationPhases) / sizeof(InstantiationPhase);
@@ -186,8 +187,6 @@ void ActorFactory::spawnActor(const PositionedActor* positionedActor, Container 
 
 bool ActorFactory::createNextActor()
 {
-	ActorFactory::cleanUp(this);
-
 	if(this->instantiationPhase >= _instantiationPhasesCount)
 	{
 		this->instantiationPhase = 0;
@@ -225,7 +224,8 @@ bool ActorFactory::hasActorsPending()
 {
 	return NULL != this->actorsToInstantiate->head ||
 			NULL != this->actorsToTransform->head ||
-			NULL != this->actorsToAddAsChildren->head;
+			NULL != this->actorsToAddAsChildren->head ||
+			NULL != this->spawnedActors->head;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
