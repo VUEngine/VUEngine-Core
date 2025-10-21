@@ -155,7 +155,7 @@ void GameState::start(void* owner)
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void GameState::update(void* owner)
-{	
+{
 	GameState::communicate(this, owner);
 #ifdef __ENABLE_PROFILER
 		Profiler::lap(kProfilerLapTypeNormalProcess, PROCESS_NAME_COMMUNICATE);
@@ -991,7 +991,14 @@ void GameState::stream(bool complete)
 	}
 	else if(this->stream)
 	{
+#ifdef __PROFILER
+		if(!VUEngine::hasGameFrameStarted())
+		{
+			Stage::stream(this->stage);
+		}
+#else
 		while(!VUEngine::hasGameFrameStarted() && Stage::stream(this->stage));
+#endif
 	}
 }
 
