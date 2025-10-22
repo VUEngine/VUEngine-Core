@@ -469,12 +469,21 @@ void Stage::print(int32 x, int32 y)
 
 bool Stage::stream()
 {
-	if(++this->streamingPhase >= sizeof(_streamingPhases) / sizeof(StreamingPhase))
-	{
-		this->streamingPhase = 0;
-	}
+	bool result = false;
+	uint8 streamingPhase = this->streamingPhase;
 
-	return _streamingPhases[this->streamingPhase](this, this->stageSpec->streaming.deferred);
+	do
+	{	
+		result = _streamingPhases[this->streamingPhase](this, this->stageSpec->streaming.deferred);
+
+		if(++this->streamingPhase >= sizeof(_streamingPhases) / sizeof(StreamingPhase))
+		{
+			this->streamingPhase = 0;
+		}
+
+	} while(!result && streamingPhase != this->streamingPhase);
+
+	return result;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
