@@ -74,6 +74,9 @@ abstract class Container : Entity
 	/// Flag to mark the container (and its children) as non visible
 	bool hidden:1;
 
+	/// Flag to purge children
+	bool pendingChildrenPurging:1;
+
 	/// @publicsection
 
 	/// Class' constructor

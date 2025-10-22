@@ -28,6 +28,7 @@
 #include <VirtualList.h>
 #include <VirtualNode.h>
 #include <VIPManager.h>
+#include <VUEngine.h>
 
 #include "Stage.h"
 
@@ -61,16 +62,6 @@ typedef struct ActorLoadingListener
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' ATTRIBUTES
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-static const StreamingPhase _streamingPhases[] =
-{
-	&Stage::purgeActors,
-	&Stage::updateActorFactory,
-	&Stage::unloadOutOfRangeActors,
-	&Stage::updateActorFactory,
-	&Stage::loadInRangeActors,
-	&Stage::updateActorFactory,
-};
 
 #define __DEBUGGING_STREAMING
 #ifdef __DEBUGGING_STREAMING
@@ -472,16 +463,29 @@ bool Stage::stream()
 	bool result = false;
 	uint8 streamingPhase = this->streamingPhase;
 
+	static const StreamingPhase streamingPhases[] =
+	{
+		&Stage::unloadOutOfRangeActors,
+		&Stage::purgeActors,
+		&Stage::loadInRangeActors,
+		&Stage::updateActorFactory,
+	};
+
 	do
 	{	
-		result = _streamingPhases[this->streamingPhase](this, this->stageSpec->streaming.deferred);
+		result = streamingPhases[this->streamingPhase](this, this->stageSpec->streaming.deferred);
 
-		if(++this->streamingPhase >= sizeof(_streamingPhases) / sizeof(StreamingPhase))
+		if(result)
+		{
+			break;
+		}
+
+		if(++this->streamingPhase >= sizeof(streamingPhases) / sizeof(StreamingPhase))
 		{
 			this->streamingPhase = 0;
 		}
 
-	} while(!result && streamingPhase != this->streamingPhase);
+	} while(!VUEngine::hasGameFrameStarted() && !result && streamingPhase != this->streamingPhase);
 
 	return result;
 }
@@ -885,14 +889,14 @@ int32 Stage::isActorInLoadRange(ScreenPixelVector onScreenPosition, const RightB
 
 bool Stage::purgeActors(int32 defer __attribute__((unused)))
 {
-	return Stage::purgeChildren(this);
+	return this->pendingChildrenPurging && Stage::purgeChildren(this);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 bool Stage::updateActorFactory(int32 defer __attribute__((unused)))
-{
-	return ActorFactory::createNextActor(this->actorFactory);
+{	
+	return ActorFactory::hasActorsPending(this->actorFactory) && ActorFactory::createNextActor(this->actorFactory);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

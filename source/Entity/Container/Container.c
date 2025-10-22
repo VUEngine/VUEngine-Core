@@ -38,6 +38,7 @@ void Container::constructor(int16 internalId, const char* const name)
 	Base::constructor();
 
 	this->internalId = internalId;
+	this->pendingChildrenPurging = false;
 
 	this->localTransformation.position = Vector3D::zero();
 	this->localTransformation.rotation = Rotation::zero();
@@ -487,6 +488,8 @@ void Container::removeChild(Container child, bool deleteChild)
 			Container::discardAllMessages(child);
 			Container::destroyComponents(child);
 		}
+
+		this->pendingChildrenPurging = true;
 	}
 #ifndef __RELEASE
 	else
@@ -506,7 +509,7 @@ void Container::removeChild(Container child, bool deleteChild)
 
 bool Container::purgeChildren()
 {
-	if(NULL == this->children)
+	if(NULL == this->children || !this->pendingChildrenPurging)
 	{
 		return false;
 	}
@@ -552,6 +555,8 @@ bool Container::purgeChildren()
 		delete this->children;
 		this->children = NULL;
 	}
+
+	this->pendingChildrenPurging = false;
 
 	return purged;
 }
