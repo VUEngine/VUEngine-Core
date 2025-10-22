@@ -1058,7 +1058,7 @@ static void Printer::out(uint8 x, uint8 y, const char* string, const char* font)
 	font = __FORCE_FONT;
 #endif
 
-	uint32 i = 0, position = 0, startColumn = x, temp = 0;
+	uint32 i = 0, position = 0, startColumn = x, xDisplacement = 0, yDisplacement = 0;
 	uint32 charOffset = 0, charOffsetX = 0, charOffsetY = 0;
 	FontData* fontData = printer->lastUsedFontData;
 
@@ -1103,6 +1103,36 @@ static void Printer::out(uint8 x, uint8 y, const char* string, const char* font)
 	int16 xOffset = BgmapTexture::getXOffset(texture);
 	int16 yOffset = BgmapTexture::getYOffset(texture);
 
+	uint16 fontSizeX = fontData->fontSpec->fontSize.x;
+	uint16 fontSizeY = fontData->fontSpec->fontSize.y;
+
+	if(kPrintingOrientationHorizontal == printer->orientation)
+	{
+		if(printer->direction == kPrintingDirectionLTR)
+		{
+			xDisplacement = fontSizeX;
+		}
+		else
+		{
+			xDisplacement = -fontSizeX;
+		}
+	}
+	else
+	{
+		if(printer->direction == kPrintingDirectionLTR)
+		{
+			yDisplacement = fontSizeY;
+		}
+		else
+		{
+			yDisplacement = -fontSizeY;
+		}
+	}
+	
+	uint16* offsetDisplacementStart = (uint16*)__BGMAP_SEGMENT(printingBgmapSegment) + xOffset + (yOffset << 6);
+	int16 charLineSize = fontData->fontSpec->charactersPerLineInCharset * fontSizeX;
+	int16 charLineSizeYModifier = charLineSize * (fontSizeY - 1);
+
 	// Print text
 	while('\0' != string[i] && x < (__SCREEN_WIDTH_IN_CHARS))
 	{
@@ -1127,11 +1157,11 @@ static void Printer::out(uint8 x, uint8 y, const char* string, const char* font)
 			{
 				if(kPrintingOrientationHorizontal == printer->orientation)
 				{
-					x = (x / __TAB_SIZE + 1) * __TAB_SIZE * fontData->fontSpec->fontSize.x;
+					x = (x / __TAB_SIZE + 1) * __TAB_SIZE * fontSizeX;
 				}
 				else
 				{
-					y = (y / __TAB_SIZE + 1) * __TAB_SIZE * fontData->fontSpec->fontSize.y;
+					y = (y / __TAB_SIZE + 1) * __TAB_SIZE * fontSizeY;
 				}
 				break;
 			}
@@ -1139,68 +1169,46 @@ static void Printer::out(uint8 x, uint8 y, const char* string, const char* font)
 			// Carriage return
 			case 10:
 			{
-				temp = fontData->fontSpec->fontSize.y;
-				y = (printer->direction == kPrintingDirectionLTR)
-					? y + temp
-					: y - temp;
+				y += (printer->direction == kPrintingDirectionLTR)
+					? fontSizeY
+					: -fontSizeY;
 				x = startColumn;
 				break;
 			}
 
 			default:
 			{
-				for(charOffsetX = 0; charOffsetX < fontData->fontSpec->fontSize.x; charOffsetX++)
+				uint16 stringEntryOffset = (uint8)(string[i] - fontData->fontSpec->offset);
+				uint16 stringEntryOffsetBySizeX = stringEntryOffset * fontSizeX;
+				uint16 stringEntryOffsetBySizeY = 
+					(stringEntryOffset / fontData->fontSpec->charactersPerLineInCharset) * charLineSizeYModifier;
+				
+				for(charOffsetX = 0; charOffsetX < fontSizeX; charOffsetX++)
 				{
-					for(charOffsetY = 0; charOffsetY < fontData->fontSpec->fontSize.y; charOffsetY++)
+					uint16* offsetDisplacement = offsetDisplacementStart + position + charOffsetX;
+
+					for(charOffsetY = 0; charOffsetY < fontSizeY; charOffsetY++)
 					{
-						charOffset = 
-							charOffsetX + 
-							(charOffsetY * fontData->fontSpec->charactersPerLineInCharset * fontData->fontSpec->fontSize.x);
+						charOffset = charOffsetX + charOffsetY * charLineSize;
 
-						uint16* offsetDisplacement = (uint16*)__BGMAP_SEGMENT(printingBgmapSegment) + xOffset + (yOffset << 6) +
-							+ position + charOffsetX + (charOffsetY << 6);
-
-
-						*offsetDisplacement =
+						*(offsetDisplacement + (charOffsetY << 6)) =
 							(
-								// Offset of charset in char memory
-								offset +
-								((uint8)(string[i] - fontData->fontSpec->offset) * fontData->fontSpec->fontSize.x) +
-
-								(((uint8)(string[i] - fontData->fontSpec->offset)
-									/ fontData->fontSpec->charactersPerLineInCharset
-									* fontData->fontSpec->charactersPerLineInCharset * fontData->fontSpec->fontSize.x)
-										* (fontData->fontSpec->fontSize.y - 1)) +
-
-								// Respective char of character
-								charOffset
+								// Offset of charset in char memory + respective char of character
+								offset + stringEntryOffsetBySizeX + stringEntryOffsetBySizeY + charOffset								
 							)
 							| (printer->palette << 14);
 					}
 				}
 
-				if(kPrintingOrientationHorizontal == printer->orientation)
-				{
-					temp = fontData->fontSpec->fontSize.x;
-					x = (printer->direction == kPrintingDirectionLTR)
-						? x + temp
-						: x - temp;
-				}
-				else
-				{
-					temp = fontData->fontSpec->fontSize.y;
-					y = (printer->direction == kPrintingDirectionLTR)
-						? y + temp
-						: y - temp;
-				}
-
+				x += xDisplacement;
+				y += yDisplacement;
+				
 				if(x >= 48/* || x < 0*/)
 				{
 					// Wrap around when outside of the visible area
-					temp = fontData->fontSpec->fontSize.y;
-					y = (printer->direction == kPrintingDirectionLTR)
-						? y + temp
-						: y - temp;
+					y += (printer->direction == kPrintingDirectionLTR)
+						? fontSizeY
+						: -fontSizeY;
 					x = startColumn;
 				}
 
