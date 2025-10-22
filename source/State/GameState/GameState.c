@@ -984,7 +984,7 @@ void GameState::stream(bool complete)
 	}
 	else if(this->stream)
 	{
-#ifdef __PROFILER
+#ifdef __ENABLE_PROFILER
 		if(!VUEngine::hasGameFrameStarted())
 		{
 			Stage::stream(this->stage);
