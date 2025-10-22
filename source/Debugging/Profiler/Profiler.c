@@ -35,7 +35,7 @@ extern volatile uint16* _vipRegisters __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUT
 // CLASS' MACROS
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-#define __ENABLE_PROFILER_SKIP_FRAMES				5
+#define __ENABLE_PROFILER_SKIP_FRAMES				3
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DATA
