@@ -189,67 +189,61 @@ int16 BgmapSprite::doRender(int16 index)
 
 	WorldAttributes* worldPointer = &_worldAttributesCache[index];
 
-	// Get coordinates
+	int16 cameraFrustumX0 = _cameraFrustum->x0, cameraFrustumY0 = _cameraFrustum->y0;
+	int16 cameraFrustumX1 = _cameraFrustum->x1, cameraFrustumY1 = _cameraFrustum->y1;
+
 	int16 gx = this->position.x + this->displacement.x - this->halfWidth;
 	int16 gy = this->position.y + this->displacement.y - this->halfHeight;
 	int16 gp = this->position.parallax + this->displacement.parallax;
-
+	
 	int16 auxGp = __ABS(gp);
+	uint32 param = this->param;
 
 	// Get sprite's size
 	int16 w = this->halfWidth << 1;
 	int16 h = this->halfHeight << 1;
 
-	// Set the head
 	int32 mx = this->bgmapTextureSource.mx;
 	int32 my = this->bgmapTextureSource.my;
 	int32 mp = this->bgmapTextureSource.mp;
 
-	// Cap coordinates to camera space
-	if(_cameraFrustum->x0 - auxGp > gx)
+	// Horizontal clip
+	int16 leftLimit = cameraFrustumX0 - auxGp;
+	
+	if (gx < leftLimit && param == 0)
 	{
-		if(0 == this->param)
-		{
-			mx += (_cameraFrustum->x0 - auxGp - gx);
-			w -= (_cameraFrustum->x0 - auxGp - gx);
-			gx = _cameraFrustum->x0 - auxGp;
-		}
+		int16 deltaX = leftLimit - gx;
+		mx += deltaX;
+		w -= deltaX;
+		gx = leftLimit;
 	}
 
 	int16 myDisplacement = 0;
 
-	if(_cameraFrustum->y0 > gy)
+	// Vertical clip
+	if (gy < cameraFrustumY0)
 	{
-		myDisplacement = (_cameraFrustum->y0 - gy);
-
+		myDisplacement = cameraFrustumY0 - gy;
 		my += myDisplacement;
-		h -= (_cameraFrustum->y0 - gy);
-		gy = _cameraFrustum->y0;
+		h -= myDisplacement;
+		gy  = cameraFrustumY0;
 	}
 
-	if(w + gx >= _cameraFrustum->x1 + auxGp)
+	int16 rightLimit = cameraFrustumX1 + auxGp;
+	
+	if (gx + w >= rightLimit)
 	{
-		w = _cameraFrustum->x1 - gx + auxGp;
+		w = rightLimit - gx;
 	}
 
 	if (__WORLD_SIZE_DISPLACEMENT >= w)
-	{
+	{		
 		return __NO_RENDER_INDEX;
 	}
 
-/*
-	if(_cameraFrustum->y0 > h + gy)
+	if (gy + h >= cameraFrustumY1)
 	{
-		worldPointer->head = __WORLD_OFF;
-#ifdef __PROFILE_GAME
-		worldPointer->w = 0;
-		worldPointer->h = 0;
-#endif
-	}
-*/
-	if(h + gy >= _cameraFrustum->y1)
-	{
-		h = _cameraFrustum->y1 - gy;
+		h = cameraFrustumY1 - gy;
 	}
 
 #ifdef __HACK_BGMAP_SPRITE_HEIGHT
@@ -259,8 +253,7 @@ int16 BgmapSprite::doRender(int16 index)
 		{
 			return __NO_RENDER_INDEX;
 		}
-
-		my -= __MINIMUM_BGMAP_SPRITE_HEIGHT - h;
+		my -= (__MINIMUM_BGMAP_SPRITE_HEIGHT - h);
 	}
 #else
 	if (__WORLD_SIZE_DISPLACEMENT >= h)
@@ -269,22 +262,23 @@ int16 BgmapSprite::doRender(int16 index)
 	}
 #endif
 
+	w -= __WORLD_SIZE_DISPLACEMENT;
+	h -= __WORLD_SIZE_DISPLACEMENT;
+
+	// Sequential writes for memory bus efficiencameraFrustumY
 	worldPointer->gx = gx;
 	worldPointer->gy = gy;
 	worldPointer->gp = gp;
-
 	worldPointer->mx = mx;
 	worldPointer->my = my;
 	worldPointer->mp = mp;
-
-	worldPointer->w = w - __WORLD_SIZE_DISPLACEMENT;
-	worldPointer->h = h - __WORLD_SIZE_DISPLACEMENT;
-
+	worldPointer->w = w;
+	worldPointer->h = h;
 	worldPointer->head = this->head | (BgmapTexture::safeCast(this->texture))->segment;
 
-	if(0 < this->param)
+	if(0 < param)
 	{
-		worldPointer->param = (uint16)((((this->param + (myDisplacement << 4))) - 0x20000) >> 1) & 0xFFF0;
+		worldPointer->param = (uint16)((((param + (myDisplacement << 4))) - 0x20000) >> 1) & 0xFFF0;
 	}
 
 	return index;

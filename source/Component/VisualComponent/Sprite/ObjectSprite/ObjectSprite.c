@@ -21,6 +21,7 @@
 // CLASS' DECLARATIONS
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+friend class CharSet;
 friend class Texture;
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -91,67 +92,68 @@ int16 ObjectSprite::doRender(int16 index)
 	NM_ASSERT(!isDeleted(this->texture), "ObjectSprite::doRender: null texture");
 	NM_ASSERT(!isDeleted(this->texture->charSet), "ObjectSprite::doRender: null char set");
 
+	// Cache reused references
+	int16 cameraFrustumX0 = _cameraFrustum->x0, cameraFrustumX1 = _cameraFrustum->x1;
+	int16 cameraFrustumY0 = _cameraFrustum->y0, cameraFrustumY1 = _cameraFrustum->y1;
+	Texture texture = this->texture;
+
+	const int16 xDeltaIncrement = this->xDisplacementIncrement;
+	const int16 yDeltaIncrement = this->yDisplacementIncrement;
+	const int16 cols = this->cols;
+	const int16 rows = this->rows;
+
 	int16 x = this->position.x - this->halfWidth + this->displacement.x - this->xDisplacementDelta;
 	int16 y = this->position.y - this->halfHeight + this->displacement.y - this->yDisplacementDelta;
 
 	uint16 secondWordValue = this->head | (this->position.parallax + this->displacement.parallax);
 	uint16 fourthWordValue = 
-		this->fourthWordValue | (CharSet::getOffset(this->texture->charSet) + this->objectTextureSource.displacement);
+		this->fourthWordValue | (texture->charSet->offset + this->objectTextureSource.displacement);
+
+	uint16* framePointer = (uint16*)(texture->textureSpec->map + texture->mapDisplacement);
+	ObjectAttributes* objectAttributesCache = &_objectAttributesCache[index];
+
+	uint16 yLimit = cameraFrustumY0 - 8;
+	uint16 xLimit = cameraFrustumX0 - 4;
 
 	int16 yDisplacement = 0;
 	int16 jDisplacement = 0;
 
-	uint16* framePointer = 
-		(uint16*)(this->texture->textureSpec->map + this->texture->mapDisplacement);
-	uint16 result = index;
-
-	ObjectAttributes* objectPointer = NULL;
-
-	for(int16 i = 0; i < this->rows; i++, jDisplacement += this->cols, yDisplacement += this->yDisplacementIncrement)
+	for (int16 i = 0; i < rows; i++, jDisplacement += cols, yDisplacement += yDeltaIncrement)
 	{
 		int16 outputY = y + yDisplacement;
 
-		int16 objectIndexStart = index + jDisplacement;
-
-		if((unsigned)(outputY - _cameraFrustum->y0 + 8) > (unsigned)(_cameraFrustum->y1 - _cameraFrustum->y0 + 8))
+		if((unsigned)(outputY - yLimit) > (unsigned)(cameraFrustumY1 - yLimit))
 		{
-			for(int16 j = 0; j < this->cols; j++)
-			{
-				int16 objectIndex = objectIndexStart + j;
-
-				objectPointer = &_objectAttributesCache[objectIndex];
-				objectPointer->head = __OBJECT_SPRITE_CHAR_HIDE_MASK;
+			ObjectAttributes* object = objectAttributesCache + jDisplacement;
+			
+			for (int16 j = 0; j < cols; j++, object++)
+			{				
+				object->head = __OBJECT_SPRITE_CHAR_HIDE_MASK;
 			}
-
 			continue;
 		}
 
-		for(int16 j = 0, xDisplacement = 0; j < this->cols; j++, xDisplacement += this->xDisplacementIncrement)
+		uint16* frameRow = framePointer + jDisplacement;
+		ObjectAttributes* object = objectAttributesCache + jDisplacement;
+		
+		for (int16 j = 0, xDisplacement = 0; j < cols; j++, xDisplacement += xDeltaIncrement, object++)
 		{
-			int16 objectIndex = objectIndexStart + j;
-			objectPointer = &_objectAttributesCache[objectIndex];
-
 			int16 outputX = x + xDisplacement;
 
-			// Add 8 to the calculation to avoid char's cut off when scrolling hide the object if outside
-			// Screen's bounds
-			if((unsigned)(outputX - _cameraFrustum->x0 + 4) > (unsigned)(_cameraFrustum->x1 - _cameraFrustum->x0 + 4))
+			if((unsigned)(outputX - xLimit) > (unsigned)(cameraFrustumX1 - xLimit))
 			{
-				objectPointer->head = __OBJECT_SPRITE_CHAR_HIDE_MASK;
+				object->head = __OBJECT_SPRITE_CHAR_HIDE_MASK;
 				continue;
 			}
 
-			objectPointer->jx = outputX;
-			objectPointer->head = secondWordValue;
-			objectPointer->jy = outputY;
-
-			objectPointer->tile = fourthWordValue + framePointer[jDisplacement + j];
-
-			result = index;
+			object->jx = outputX;
+			object->jy = outputY;
+			object->head = secondWordValue;
+			object->tile = fourthWordValue + frameRow[j];
 		}
 	}
 
-	return result;
+	return index;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
