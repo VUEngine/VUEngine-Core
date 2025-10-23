@@ -134,32 +134,29 @@ void ParticleSystem::update()
 		Base::update(this);
 	}
 
-	if(isDeleted(this->particles))
-	{
-		return;
-	}
-
-	ParticleSystem::processExpiredParticles(this);
-
 	if(__VALID_TRANSFORMATION != this->transformation.invalid)
 	{
 		return;
 	}
 
-	VirtualNode node = this->particles->head;
-
-	if(NULL == node && this->paused)
+	for(VirtualNode node = this->particles->head, nextNode; NULL != node; node = nextNode)
 	{
-		return;
-	}
+		nextNode = node->next;
 
-	for(; NULL != node; node = node->next)
-	{
 		Particle particle = Particle::safeCast(node->data);
 
 		if(particle->expired)
 		{
-			continue;
+			if(particle->expired && !((ParticleSystemSpec*)this->actorSpec)->recycleParticles)
+			{
+				VirtualList::removeNode(this->particles, node);
+
+				NM_ASSERT(!isDeleted(particle), "ParticleSystem::purgeExpiredParticles: deleted particle");
+
+				delete particle;
+			}
+			
+			this->aliveParticlesCount--;
 		}
 
 		if(Particle::update(particle, this->elapsedTime))
@@ -239,7 +236,7 @@ void ParticleSystem::suspend()
 {
 	Base::suspend(this);
 
-	ParticleSystem::processExpiredParticles(this);
+	ParticleSystem::purgeExpiredParticles(this);
 
 	if(isDeleted(this->particles))
 	{
@@ -544,6 +541,7 @@ bool ParticleSystem::recycleParticle()
 		if(particle->expired)
 		{
 			Vector3D position = ParticleSystem::getParticleSpawnPosition(this);
+			
 			int16 lifeSpan = 
 			((ParticleSystemSpec*)this->actorSpec)->particleSpec->minimumLifeSpan + 
 			(0 != ((ParticleSystemSpec*)this->actorSpec)->particleSpec->lifeSpanDelta ? 
@@ -566,11 +564,6 @@ bool ParticleSystem::recycleParticle()
 				(
 					particle, NULL, NULL, NULL, lifeSpan, &position, NULL, ((ParticleSystemSpec*)this->actorSpec)->movementType
 				);
-			}
-
-			if(ParticleSystem::overrides(this, particleRecycled))
-			{
-				ParticleSystem::particleRecycled(this, particle);
 			}
 
 			return true;
@@ -718,16 +711,13 @@ int32 ParticleSystem::computeNextSpawnTime()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void ParticleSystem::processExpiredParticles()
+void ParticleSystem::purgeExpiredParticles()
 {
 	if(!((ParticleSystemSpec*)this->actorSpec)->recycleParticles)
 	{
 		if(!isDeleted(this->particles))
 		{
-			VirtualList particles = this->particles;
-			this->particles = NULL;
-
-			for(VirtualNode node = particles->head, nextNode; NULL != node; node = nextNode)
+			for(VirtualNode node = this->particles->head, nextNode; NULL != node; node = nextNode)
 			{
 				nextNode = node->next;
 
@@ -735,16 +725,14 @@ void ParticleSystem::processExpiredParticles()
 
 				if(particle->expired)
 				{
-					VirtualList::removeNode(particles, node);
+					VirtualList::removeNode(this->particles, node);
 
-					NM_ASSERT(!isDeleted(particle), "ParticleSystem::processExpiredParticles: deleted particle");
+					NM_ASSERT(!isDeleted(particle), "ParticleSystem::purgeExpiredParticles: deleted particle");
 
 					delete particle;
 					this->aliveParticlesCount--;
 				}
 			}
-
-			this->particles = particles;
 		}
 	}
 }
