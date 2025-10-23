@@ -139,6 +139,8 @@ void ParticleSystem::update()
 		return;
 	}
 
+	bool dontRecycleParticles = !((ParticleSystemSpec*)this->actorSpec)->recycleParticles;
+
 	for(VirtualNode node = this->particles->head, nextNode; NULL != node; node = nextNode)
 	{
 		nextNode = node->next;
@@ -147,7 +149,7 @@ void ParticleSystem::update()
 
 		if(particle->expired)
 		{
-			if(particle->expired && !((ParticleSystemSpec*)this->actorSpec)->recycleParticles)
+			if(particle->expired && dontRecycleParticles)
 			{
 				VirtualList::removeNode(this->particles, node);
 
@@ -158,8 +160,7 @@ void ParticleSystem::update()
 			
 			this->aliveParticlesCount--;
 		}
-
-		if(Particle::update(particle, this->elapsedTime))
+		else if(Particle::update(particle, this->elapsedTime))
 		{
 			this->aliveParticlesCount--;
 		}
