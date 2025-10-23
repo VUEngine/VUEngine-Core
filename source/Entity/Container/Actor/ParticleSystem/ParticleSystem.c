@@ -147,9 +147,9 @@ void ParticleSystem::update()
 
 		Particle particle = Particle::safeCast(node->data);
 
-		if(particle->expired)
+		if(particle->expired || Particle::update(particle, this->elapsedTime))
 		{
-			if(particle->expired && dontRecycleParticles)
+			if(dontRecycleParticles)
 			{
 				VirtualList::removeNode(this->particles, node);
 
@@ -158,10 +158,6 @@ void ParticleSystem::update()
 				delete particle;
 			}
 			
-			this->aliveParticlesCount--;
-		}
-		else if(Particle::update(particle, this->elapsedTime))
-		{
 			this->aliveParticlesCount--;
 		}
 

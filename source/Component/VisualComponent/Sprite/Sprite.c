@@ -232,50 +232,50 @@ bool Sprite::prepareToRender()
 		return NULL != this->texture;
 	}
 
-	if(kTextureInvalid == this->texture->status || kTextureNoCharSet == this->texture->status)
+	if
+	(
+		kTextureInvalid == this->texture->status 
+		|| 
+		kTextureNoCharSet == this->texture->status
+		||
+		kTexturePendingWriting == this->texture->status
+	)
 	{
 		return false;
 	}
 
-	if(kTexturePendingWriting == this->texture->status)
+	if(NULL == this->owner)
+	{
+		return true;
+	}
+	
+	if(NULL == this->transformation || __NON_TRANSFORMED == this->transformation->invalid)
 	{
 		return false;
 	}
 
-	if(NULL != this->owner)
+	Sprite::position(this);
+
+	if
+	(
+		this->rotation.x != this->transformation->rotation.x
+		||
+		this->rotation.y != this->transformation->rotation.y
+		||
+		this->rotation.z != this->transformation->rotation.z
+	)
 	{
-		if(NULL == this->transformation)
-		{
-			return false;
-		}
-		else if(__NON_TRANSFORMED == this->transformation->invalid)
-		{
-			return false;
-		}
+		Sprite::rotate(this);
+	}
 
-		Sprite::position(this);
-
-		if
-		(
-			this->rotation.x != this->transformation->rotation.x
-			||
-			this->rotation.y != this->transformation->rotation.y
-			||
-			this->rotation.z != this->transformation->rotation.z
-		)
-		{
-			Sprite::rotate(this);
-		}
-
-		if
-		(
-			this->scale.x != this->transformation->scale.x
-			||
-			this->scale.y != this->transformation->scale.y
-		)
-		{
-			Sprite::scale(this);
-		}
+	if
+	(
+		this->scale.x != this->transformation->scale.x
+		||
+		this->scale.y != this->transformation->scale.y
+	)
+	{
+		Sprite::scale(this);
 	}
 
 	// Do not remove this check, it prevents sprites from looping
@@ -291,7 +291,11 @@ bool Sprite::prepareToRender()
 
 int16 Sprite::render(int16 index, bool updateAnimation)
 {
-	if(Sprite::prepareToRender(this))
+	if(!Sprite::prepareToRender(this))
+	{
+		this->index = __NO_RENDER_INDEX;
+	}
+	else 
 	{
 #ifdef __SHOW_SPRITES_PROFILING
 		extern int32 _renderedSprites;
@@ -320,10 +324,6 @@ int16 Sprite::render(int16 index, bool updateAnimation)
 		{
 			Sprite::update(this);
 		}
-	}
-	else 
-	{
-		this->index = __NO_RENDER_INDEX;
 	}
 
 	return this->index;
