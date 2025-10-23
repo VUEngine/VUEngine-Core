@@ -147,7 +147,7 @@ void ParticleSystem::update()
 
 		Particle particle = Particle::safeCast(node->data);
 
-		if(particle->expired || Particle::update(particle, this->elapsedTime))
+		if(particle->expired)
 		{
 			if(dontRecycleParticles)
 			{
@@ -157,7 +157,9 @@ void ParticleSystem::update()
 
 				delete particle;
 			}
-			
+		}
+		else if(Particle::update(particle, this->elapsedTime))
+		{
 			this->aliveParticlesCount--;
 		}
 
@@ -539,7 +541,7 @@ bool ParticleSystem::recycleParticle()
 		if(particle->expired)
 		{
 			Vector3D position = ParticleSystem::getParticleSpawnPosition(this);
-			
+
 			int16 lifeSpan = 
 			((ParticleSystemSpec*)this->actorSpec)->particleSpec->minimumLifeSpan + 
 			(0 != ((ParticleSystemSpec*)this->actorSpec)->particleSpec->lifeSpanDelta ? 
@@ -562,6 +564,11 @@ bool ParticleSystem::recycleParticle()
 				(
 					particle, NULL, NULL, NULL, lifeSpan, &position, NULL, ((ParticleSystemSpec*)this->actorSpec)->movementType
 				);
+			}
+
+			if(ParticleSystem::overrides(this, particleRecycled))
+			{
+				ParticleSystem::particleRecycled(this, particle);
 			}
 
 			return true;
