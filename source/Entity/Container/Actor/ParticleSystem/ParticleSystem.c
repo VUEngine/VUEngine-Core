@@ -190,6 +190,7 @@ void ParticleSystem::update()
 	if(0 > this->nextSpawnTime && this->aliveParticlesCount < this->maximumNumberOfAliveParticles)
 	{
 		uint16 spawnedParticles = 0;
+
 		do
 		{
 			if(!this->loop && this->totalSpawnedParticles >= this->maximumNumberOfAliveParticles)
@@ -200,7 +201,7 @@ void ParticleSystem::update()
 
 			++this->totalSpawnedParticles;
 
-			if(!((ParticleSystemSpec*)this->actorSpec)->recycleParticles)
+			if(dontRecycleParticles)
 			{
 				VirtualList::pushBack(this->particles, ParticleSystem::spawnParticle(this));
 				this->aliveParticlesCount++;
