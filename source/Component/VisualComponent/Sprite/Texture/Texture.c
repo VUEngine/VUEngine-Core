@@ -352,7 +352,7 @@ void Texture::setFrame(uint16 frame)
 	if(this->frame != frame || kTextureWritten != this->status)
 	{
 		this->frame = frame;
-		Texture::setStatus(this, kTextureFrameChanged);		
+		Texture::setStatus(this, kTextureFrameChanged);	
 
 		if(!isDeleted(this->charSet))
 		{
@@ -618,7 +618,14 @@ void Texture::loadCharSet()
 
 	if(CharSet::isShared(this->charSet))
 	{
-		this->frame = CharSet::getFrame(this->charSet);
+		if(1 == CharSet::getUsageCount(this->charSet))
+		{
+			CharSet::setFrame(this->charSet, this->frame);			
+		}
+		else
+		{		
+			this->frame = CharSet::getFrame(this->charSet);
+		}
 	}
 }
 
