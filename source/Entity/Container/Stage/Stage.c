@@ -461,6 +461,11 @@ void Stage::print(int32 x, int32 y)
 void Stage::resetStreaming()
 {
 	this->streamingPhase = 0;
+
+	while(Stage::unloadOutOfRangeActors(this, false));
+	while(Stage::purgeActors(this, false));
+	while(Stage::loadInRangeActors(this, false));
+	while(Stage::updateActorFactory(this, false));
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -664,7 +669,6 @@ bool Stage::loadInRangeActors(int32 defer)
 						(
 							this, stageActorDescription->positionedActor, false, stageActorDescription->internalId
 						);
-						break;
 					}
 				}
 			}
@@ -724,7 +728,6 @@ bool Stage::loadInRangeActors(int32 defer)
 						(
 							this, stageActorDescription->positionedActor, false, stageActorDescription->internalId
 						);
-						break;
 					}
 				}
 			}
