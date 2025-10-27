@@ -297,6 +297,9 @@ class Stage : Container
 	/// @param y: Screen y coordinate where to print
 	void print(int32 x, int32 y);
 
+	/// Reset the streaming state so the new cycle starts anew.
+	virtual void resetStreaming();
+	
 	/// Stream in or out actors within or outside the camera's range.
 	virtual bool stream();
 

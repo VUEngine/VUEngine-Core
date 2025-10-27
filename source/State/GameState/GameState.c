@@ -959,6 +959,9 @@ void GameState::stream(bool complete)
 {
 	if(complete)
 	{
+		// Make sure the streaming starts anew
+		Stage::resetStreaming(this->stage);
+		
 		// Stream in and out all relevant actors
 		do
 		{
