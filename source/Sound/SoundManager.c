@@ -93,6 +93,10 @@ void SoundManager::enable()
 void SoundManager::disable()
 {
 	Base::disable(this);
+
+	VSUManager::flushQueuedSounds(VSUManager::getInstance());
+
+	SoundManager::destroyAllComponents(this);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

@@ -519,6 +519,7 @@ void Actor::suspend()
 
 	Actor::removeComponents(this, kSpriteComponent);
 	Actor::removeComponents(this, kWireframeComponent);
+	Actor::removeComponents(this, kSoundComponent);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -531,6 +532,7 @@ void Actor::resume()
 	{
 		Actor::addComponents(this, this->actorSpec->componentSpecs, kSpriteComponent);
 		Actor::addComponents(this, this->actorSpec->componentSpecs, kWireframeComponent);
+		Actor::addComponents(this, this->actorSpec->componentSpecs, kSoundComponent);
 	}
 
 	Actor::playAnimation(this, this->playingAnimationName);
