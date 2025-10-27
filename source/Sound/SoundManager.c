@@ -47,7 +47,7 @@ void SoundManager::constructor()
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void SoundManager::destructor()
-{
+{	
 	TimerManager::removeEventListener(TimerManager::getInstance(), ListenerObject::safeCast(this), kEventTimerManagerInterrupt);
 
 	// Always explicitly call the base's destructor 
@@ -114,6 +114,8 @@ Sound SoundManager::create(Entity owner, const SoundSpec* soundSpec)
 void SoundManager::purgeComponents()
 {
 	TimerManager::removeEventListener(TimerManager::getInstance(), ListenerObject::safeCast(this), kEventTimerManagerInterrupt);
+
+	VSUManager::flushQueuedSounds(VSUManager::getInstance());
 
 	Base::purgeComponents(this);	
 }

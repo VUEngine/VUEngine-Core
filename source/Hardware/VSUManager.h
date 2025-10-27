@@ -286,6 +286,9 @@ singleton class VSUManager : Object
 	/// sound sources availables at the time of request, the petition
 	/// is ignored).
 	void disableQueue();
+
+	/// Flush all pending sound requests.
+	void flushQueuedSounds();
 }
 
 #endif
