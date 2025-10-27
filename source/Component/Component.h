@@ -113,9 +113,6 @@ abstract class Component : ListenerObject
 	/// @return Component's type'
 	uint32 getType();
 
-	/// Called to release the component.
-	virtual void releaseResources();
-
 	/// Handle a command.
 	/// @param command: Command to handle
 	/// @param args: Variable arguments list depending on the command to handle

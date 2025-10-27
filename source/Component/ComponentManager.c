@@ -772,11 +772,6 @@ void ComponentManager::releaseComponent(Entity owner, Component component)
 	}
 
 	component->deleteMe = true;
-	
-	if(Component::overrides(component, releaseResources))
-	{
-		Component::releaseResources(component);
-	}
 
 	if(NULL == owner || NULL == component->componentSpec || kComponentTypes <= component->componentSpec->componentType)
 	{
