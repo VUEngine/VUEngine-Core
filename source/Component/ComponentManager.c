@@ -673,26 +673,20 @@ void ComponentManager::destroyAllComponents()
 
 	ComponentManager::purgeComponents(this);
 
-	VirtualList componentsHelper = new VirtualList();
-	VirtualList::copy(componentsHelper, this->components);
-
-	for(VirtualNode node = componentsHelper->head, nextNode = NULL; NULL != node; node = nextNode)
+	for(VirtualNode node = this->components->head, nextNode = NULL; NULL != node; node = nextNode)
 	{
 		nextNode = node->next;
 
 		Component component = Component::safeCast(node->data);
 
-		NM_ASSERT(__GET_CAST(Component, component), "ComponentManager::destroyAllComponents: trying to destroy a non component");
+		NM_ASSERT(!isDeleted(component), "ComponentManager::purgeComponents: deleted component");
 
 		ComponentManager::releaseComponent(this, component->owner, component);
+
+		delete component;
 	}
 
-	delete componentsHelper;
-
-	if(!isDeleted(this->components))
-	{
-		VirtualList::deleteData(this->components);
-	}
+	VirtualList::clear(this->components);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
