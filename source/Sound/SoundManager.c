@@ -39,8 +39,6 @@ void SoundManager::constructor()
 	// Always explicitly call the base's constructor 
 	Base::constructor();
 
-	this->components = new VirtualList();
-
 	this->lock = false;
 }
 
