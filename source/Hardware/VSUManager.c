@@ -86,6 +86,19 @@ static void VSUManager::stopSoundSourcesUsedBy(Object requester)
 			vsuManager->vsuSoundSourceConfigurations[i].vsuSoundSource->SxINT = 0;
 		}
 	}	
+
+	for(VirtualNode node = vsuManager->queuedVSUSoundSourceConfigurationRequests->head, nextNode = NULL; NULL != node; node = nextNode)
+	{
+		nextNode = node->next;
+
+		VSUSoundSourceConfigurationRequest* queuedVSUSoundSourceConfigurationRequest = (VSUSoundSourceConfigurationRequest*)node->data;
+
+		if(requester == queuedVSUSoundSourceConfigurationRequest->requester)
+		{
+			VirtualList::removeNode(vsuManager->queuedVSUSoundSourceConfigurationRequests, node);
+			delete queuedVSUSoundSourceConfigurationRequest;
+		}
+	}
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -533,6 +546,13 @@ void VSUManager::dispatchQueuedSoundSourceConfigurations()
 		nextNode = node->next;
 
 		VSUSoundSourceConfigurationRequest* queuedVSUSoundSourceConfigurationRequest = (VSUSoundSourceConfigurationRequest*)node->data;
+
+		if(isDeleted(queuedVSUSoundSourceConfigurationRequest->requester))
+		{
+			VirtualList::removeNode(this->queuedVSUSoundSourceConfigurationRequests, node);
+			delete queuedVSUSoundSourceConfigurationRequest;
+			continue;
+		}
 
 		int16 vsuSoundSourceIndex = 
 			VSUManager::findAvailableSoundSource
