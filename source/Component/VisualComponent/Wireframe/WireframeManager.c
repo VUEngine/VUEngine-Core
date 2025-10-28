@@ -220,12 +220,11 @@ void WireframeManager::draw()
 
 		wireframe->drawn = false;
 
-		if(__COLOR_BLACK == wireframe->color)
-		{
-			continue;
-		}
-
-		if((__HIDE == wireframe->show) || (wireframe->transparency & this->evenFrame))
+		if
+		(
+			__COLOR_BLACK == wireframe->color || wireframe->deleteMe || 
+			(__HIDE == wireframe->show) || (wireframe->transparency & this->evenFrame)
+		)
 		{
 			continue;
 		}
