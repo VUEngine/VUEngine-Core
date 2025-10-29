@@ -780,7 +780,10 @@ fix7_9_ext Sound::computeTimerResolutionFactor()
 {
 	uint32 timerCounter = TimerManager::getTimerCounter(TimerManager::getInstance()) + __TIMER_COUNTER_DELTA;
 	uint32 timerUsPerInterrupt = timerCounter * __SOUND_TARGET_US_PER_TICK;
-	uint32 targetTimerResolutionUS = 0 != ((SoundSpec*)this->componentSpec)->targetTimerResolutionUS ? ((SoundSpec*)this->componentSpec)->targetTimerResolutionUS : 1000;
+	uint32 targetTimerResolutionUS = 
+		0 != ((SoundSpec*)this->componentSpec)->targetTimerResolutionUS 
+		? 
+		((SoundSpec*)this->componentSpec)->targetTimerResolutionUS : 1000;
 
 	targetTimerResolutionUS = 0 == targetTimerResolutionUS? 1000: targetTimerResolutionUS;
 	
