@@ -1039,6 +1039,8 @@ void Container::suspend()
 
 void Container::resume()
 {
+	Container::purgeChildren(this);
+
 	Container::invalidateTransformation(this);
 
 	if(NULL == this->children)

@@ -957,51 +957,59 @@ void GameState::dispatchDelayedMessages()
 
 void GameState::stream(bool complete)
 {
-	if(complete)
+	if(!isDeleted(this->stage))
 	{
-		// Make sure the streaming starts anew before streaming everything
-		Stage::resetStreaming(this->stage);
-		
-		// Stream in and out all relevant actors
-		do
+		if(complete)
 		{
-			// Make sure the stage deletes any pending child
+			// Make sure the streaming starts anew before streaming everything
+			Stage::resetStreaming(this->stage);
+			
+			// Stream in and out all relevant actors
+			do
+			{
+				// Make sure the stage deletes any pending child
+				Stage::purgeChildren(this->stage);
+
+				// Be sure that the manager's removed components are deleted
+				GameState::purgeComponentManagers(this);
+
+				// Make sure that the focus actor is transformed before focusing the camera
+				GameState::applyTransformations(this);
+
+				// Move the camera to its initial position
+				Camera::focus(Camera::getInstance());
+
+				// Invalidate transformations
+				Stage::invalidateTransformation(this->stage);
+
+				// Render the game now that everything is in place
+				GameState::render(this);
+			}
+			while(Stage::stream(this->stage));
+
+			// Make sure the streaming starts anew in the next game cycle
+			Stage::resetStreaming(this->stage);
+		}
+		else if(this->stream)
+		{
+	#ifdef __ENABLE_PROFILER
+			if(!VUEngine::hasGameFrameStarted())
+			{
+				Stage::stream(this->stage);
+			}
+	#else
+			while(!VUEngine::hasGameFrameStarted() && Stage::stream(this->stage));
+	#endif
+		}
+		else
+		{
 			Stage::purgeChildren(this->stage);
-
-			// Be sure that the manager's removed components are deleted
-			GameState::purgeComponentManagers(this);
-
-			// Make sure that the focus actor is transformed before focusing the camera
-			GameState::applyTransformations(this);
-
-			// Move the camera to its initial position
-			Camera::focus(Camera::getInstance());
-
-			// Invalidate transformations
-			Stage::invalidateTransformation(this->stage);
-
-			// Render the game now that everything is in place
-			GameState::render(this);
 		}
-		while(Stage::stream(this->stage));
+	}
 
-		// Make sure the streaming starts anew in the next game cycle
-		Stage::resetStreaming(this->stage);
-	}
-	else if(this->stream)
+	if(!isDeleted(this->uiContainer))
 	{
-#ifdef __ENABLE_PROFILER
-		if(!VUEngine::hasGameFrameStarted())
-		{
-			Stage::stream(this->stage);
-		}
-#else
-		while(!VUEngine::hasGameFrameStarted() && Stage::stream(this->stage));
-#endif
-	}
-	else
-	{
-		Stage::purgeChildren(this->stage);
+		UIContainer::purgeChildren(this->uiContainer);
 	}
 }
 

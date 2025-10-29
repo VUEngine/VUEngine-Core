@@ -1165,7 +1165,7 @@ void SpriteManager::startRendering()
 
 void SpriteManager::stopRendering()
 {
-	NM_ASSERT(0 <= (int8)this->bgmapIndex, "SpriteManager::stopRendering: no more layers");
+	NM_ASSERT(-1 <= (int8)this->bgmapIndex, "SpriteManager::stopRendering: no more layers");
 
 	if(0 <= this->bgmapIndex)
 	{
