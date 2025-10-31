@@ -46,6 +46,9 @@ class ColliderManager : ComponentManager
 	/// If false, colliders out of camera's range are culled of from collision testing
 	bool checkCollidersOutOfCameraRange;
 
+	/// Counter to force the computation of the collider's position
+	uint8 positionGeneration;
+
 	/// @publicsection
 
 	/// Class' constructor

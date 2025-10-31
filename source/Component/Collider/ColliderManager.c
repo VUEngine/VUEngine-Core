@@ -104,6 +104,8 @@ uint32 ColliderManager::update()
 	_checkCycles++;
 #endif
 
+	this->positionGeneration++;
+
 	for(VirtualNode auxNode = this->components->head, auxNextNode = NULL; NULL != auxNode; auxNode = auxNextNode)
 	{
 		auxNextNode = auxNode->next;
@@ -122,13 +124,6 @@ uint32 ColliderManager::update()
 			continue;
 		}
 
-		collider->invalidPosition = true;
-	}
-
-	for(VirtualNode auxNode = this->components->head; NULL != auxNode; auxNode = auxNode->next)
-	{
-		Collider collider = Collider::safeCast(auxNode->data);
-
 	#ifdef __DRAW_SHAPES
 		if(collider->enabled)
 		{
@@ -145,7 +140,7 @@ uint32 ColliderManager::update()
 			continue;
 		}
 
-		if(collider->invalidPosition)
+		if(collider->positionGeneration != this->positionGeneration)
 		{
 			Vector3D displacement = 
 			Vector3D::rotate
@@ -154,7 +149,7 @@ uint32 ColliderManager::update()
 			);
 
 			collider->position = Vector3D::sum(collider->transformation->position, displacement);
-			collider->invalidPosition = false;
+			collider->positionGeneration = this->positionGeneration;
 		}
 
 		for(VirtualNode node = this->components->head; NULL != node; node = node->next)
@@ -192,7 +187,7 @@ uint32 ColliderManager::update()
 			_lastCycleCollisionChecks++;
 #endif
 
-			if(colliderToCheck->invalidPosition)
+			if(colliderToCheck->positionGeneration != this->positionGeneration)
 			{
 				Vector3D displacement = 
 					Vector3D::rotate
@@ -202,7 +197,7 @@ uint32 ColliderManager::update()
 					);	
 				
 				colliderToCheck->position = Vector3D::sum(colliderToCheck->transformation->position, displacement);
-				colliderToCheck->invalidPosition = false;
+				colliderToCheck->positionGeneration = this->positionGeneration;
 			}
 
 #ifdef __DEBUGGING_COLLISIONS
@@ -316,6 +311,7 @@ void ColliderManager::constructor()
 	Base::constructor();
 
 	this->checkCollidersOutOfCameraRange = false;
+	this->positionGeneration = 0;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

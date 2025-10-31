@@ -190,6 +190,9 @@ abstract class Collider : Component
 	/// Displaced position
 	Vector3D position;
 
+	/// Counter to force the computation of the collider's position
+	uint8 positionGeneration;
+
 	/// Class index to avoid using __GET_CAST when checking for collisions
 	uint8 classIndex;
 
@@ -201,9 +204,6 @@ abstract class Collider : Component
 
 	/// If true, it registers other colliders when a collision arises
 	bool registerCollisions : 1;
-
-	/// Flag to force the computation of the collider's position
-	bool invalidPosition : 1;
 
 	/// Layers on which this collider live
 	uint32 layers;

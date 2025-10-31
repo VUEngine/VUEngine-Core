@@ -59,9 +59,17 @@ void Collider::constructor(Entity owner, const ColliderSpec* colliderSpec)
 	this->layersToIgnore = colliderSpec->layersToIgnore;
 	this->otherColliders = NULL;
 	this->registerCollisions = colliderSpec->checkForCollisions;
+/*
+	Vector3D displacement = 
+	Vector3D::rotate
+	(
+		Vector3D::getFromPixelVector(((ColliderSpec*)this->componentSpec)->displacement), this->transformation->rotation
+	);
 
+	this->position = Vector3D::sum(this->transformation->position, displacement);
+*/
 	this->position = Vector3D::sum(this->transformation->position, Vector3D::getFromPixelVector(colliderSpec->displacement));
-	this->invalidPosition = true;
+	this->positionGeneration = 0;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
