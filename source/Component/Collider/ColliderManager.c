@@ -156,7 +156,7 @@ uint32 ColliderManager::update()
 		{
 			Collider colliderToCheck = Collider::safeCast(node->data);
 
-			if(!colliderToCheck->enabled || __NON_TRANSFORMED == colliderToCheck->transformation->invalid)
+			if(colliderToCheck->deleteMe || !colliderToCheck->enabled || __NON_TRANSFORMED == colliderToCheck->transformation->invalid)
 			{
 				continue;
 			}

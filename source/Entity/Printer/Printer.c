@@ -1059,7 +1059,6 @@ static void Printer::out(uint8 x, uint8 y, const char* string, const char* font)
 #endif
 
 	uint32 i = 0, position = 0, startColumn = x, xDisplacement = 0, yDisplacement = 0;
-	uint32 charOffset = 0, charOffsetX = 0, charOffsetY = 0;
 	FontData* fontData = printer->lastUsedFontData;
 
 	if(NULL == fontData)
@@ -1132,6 +1131,7 @@ static void Printer::out(uint8 x, uint8 y, const char* string, const char* font)
 	uint16* offsetDisplacementStart = (uint16*)__BGMAP_SEGMENT(printingBgmapSegment) + xOffset + (yOffset << 6);
 	int16 charLineSize = fontData->fontSpec->charactersPerLineInCharset * fontSizeX;
 	int16 charLineSizeYModifier = charLineSize * (fontSizeY - 1);
+	uint16 fontOffsetCache = (uint8)fontData->fontSpec->offset;
 
 	// Print text
 	while('\0' != string[i] && x < (__SCREEN_WIDTH_IN_CHARS))
@@ -1178,26 +1178,40 @@ static void Printer::out(uint8 x, uint8 y, const char* string, const char* font)
 
 			default:
 			{
-				uint16 stringEntryOffset = (uint8)(string[i] - fontData->fontSpec->offset);
-				uint16 stringEntryOffsetBySizeX = stringEntryOffset * fontSizeX;
-				uint16 stringEntryOffsetBySizeY = 
-					(stringEntryOffset / fontData->fontSpec->charactersPerLineInCharset) * charLineSizeYModifier;
-				
-				for(charOffsetX = 0; charOffsetX < fontSizeX; charOffsetX++)
-				{
-					uint16* offsetDisplacement = offsetDisplacementStart + position + charOffsetX;
+				if(1 < fontSizeX || 1 < fontSizeY)
+				{					
+					uint16 stringEntryOffset = (uint8)(string[i] - fontOffsetCache);
+					uint16 stringEntryOffsetBySizeX = stringEntryOffset * fontSizeX;
+					uint16 stringEntryOffsetBySizeY = 
+						(stringEntryOffset / fontData->fontSpec->charactersPerLineInCharset) * charLineSizeYModifier;
 
-					for(charOffsetY = 0; charOffsetY < fontSizeY; charOffsetY++)
+					for(uint32 charOffsetX = 0; charOffsetX < fontSizeX; charOffsetX++)
 					{
-						charOffset = charOffsetX + charOffsetY * charLineSize;
+						uint16* offsetDisplacement = offsetDisplacementStart + position + charOffsetX;
 
-						*(offsetDisplacement + (charOffsetY << 6)) =
-							(
-								// Offset of charset in char memory + respective char of character
-								offset + stringEntryOffsetBySizeX + stringEntryOffsetBySizeY + charOffset								
-							)
-							| (printer->palette << 14);
+						for(uint32 charOffsetY = 0; charOffsetY < fontSizeY; charOffsetY++)
+						{
+							uint32 charOffset = charOffsetX + charOffsetY * charLineSize;
+
+							*(offsetDisplacement + (charOffsetY << 6)) =
+								(
+									// Offset of charset in char memory + respective char of character
+									offset + stringEntryOffsetBySizeX + stringEntryOffsetBySizeY + charOffset								
+								)
+								| (printer->palette << 14);
+						}
 					}
+				}
+				else
+				{
+					uint16* offsetDisplacement = offsetDisplacementStart + position;
+
+					*(offsetDisplacement + (0 << 6)) =
+						(
+							// Offset of charset in char memory + respective char of character
+							offset + (string[i] - fontOffsetCache)								
+						)
+						| (printer->palette << 14);					
 				}
 
 				x += xDisplacement;
