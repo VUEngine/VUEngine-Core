@@ -124,7 +124,7 @@ uint32 ColliderManager::update()
 			continue;
 		}
 
-	#ifdef __DRAW_SHAPES
+#ifdef __DRAW_SHAPES
 		if(collider->enabled)
 		{
 			Collider::show(collider);
@@ -133,7 +133,7 @@ uint32 ColliderManager::update()
 		{
 			Collider::hide(collider);
 		}
-	#endif
+#endif
 
 		if(!(collider->enabled && collider->checkForCollisions) || __NON_TRANSFORMED == collider->transformation->invalid)
 		{
@@ -165,20 +165,14 @@ uint32 ColliderManager::update()
 			_lastCycleCheckProducts++;
 #endif
 
-			if(0 != (collider->layersToIgnore & colliderToCheck->layers))
-			{
-				continue;
-			}
-
-			if(collider->owner == colliderToCheck->owner)
-			{
-				continue;
-			}
-
-			fixed_ext_t distanceVectorSquareLength = 
-				Vector3D::squareLength(Vector3D::get(colliderToCheck->transformation->position, collider->position));
-
-			if(__FIXED_SQUARE(__COLLIDER_MAXIMUM_SIZE) < distanceVectorSquareLength)
+			if
+			(
+				0 != (collider->layersToIgnore & colliderToCheck->layers)
+				||
+				(collider->owner == colliderToCheck->owner)
+				||
+				__NON_TRANSFORMED == colliderToCheck->transformation->invalid
+			)
 			{
 				continue;
 			}
@@ -198,6 +192,14 @@ uint32 ColliderManager::update()
 				
 				colliderToCheck->position = Vector3D::sum(colliderToCheck->transformation->position, displacement);
 				colliderToCheck->positionGeneration = this->positionGeneration;
+			}
+
+			fixed_ext_t distanceVectorSquareLength = 
+				Vector3D::squareLength(Vector3D::get(colliderToCheck->position, collider->position));
+
+			if(__FIXED_SQUARE(__COLLIDER_MAXIMUM_SIZE) < distanceVectorSquareLength)
+			{
+				continue;
 			}
 
 #ifdef __DEBUGGING_COLLISIONS

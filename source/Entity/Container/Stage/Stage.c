@@ -497,7 +497,7 @@ bool Stage::stream()
 			this->streamingPhase = 0;
 		}
 
-	} while(!VUEngine::hasGameFrameStarted() && !result && streamingPhase != this->streamingPhase);
+	} while(!VUEngine::hasGameFrameStarted() && streamingPhase != this->streamingPhase);
 
 	return result;
 }
