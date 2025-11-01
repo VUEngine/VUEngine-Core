@@ -998,7 +998,7 @@ void GameState::stream(bool complete)
 				Stage::stream(this->stage);
 			}
 	#else
-			while(!VUEngine::hasGameFrameStarted() && Stage::stream(this->stage));
+			while(Stage::stream(this->stage) && !VUEngine::hasGameFrameStarted());
 	#endif
 		}
 		else
