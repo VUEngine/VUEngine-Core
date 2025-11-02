@@ -308,10 +308,18 @@ CollisionResult Collider::collides(Collider collider)
 		return kNoCollision;
 	}
 
-	Collision collision;
-	collision.result = kNoCollision;
-	collision.collisionInformation.collider = NULL;
-	collision.collisionInformation.otherCollider = NULL;
+	Collision collision = 
+	{
+		kNoCollision,
+		{
+			NULL,
+			NULL,
+			{
+				{0, 0, 0},
+				0
+			}
+		}
+	};
 
 	OtherColliderRegistry* otherColliderRegistry = Collider::findOtherColliderRegistry(this, collider);
 

@@ -85,7 +85,10 @@ static void CollisionTester::testOverlaping(Collider requesterCollider, Collider
 
 	collisionInformation->collider = NULL;
 
-	collisionTesterMethod(requesterCollider, otherCollider, collisionInformation);
+	if(NULL != collisionTesterMethod)
+	{
+		collisionTesterMethod(requesterCollider, otherCollider, collisionInformation);
+	}
 
 	// We could have swapped the arguments to the checking methods to avoid code repetition
 	if(NULL != collisionInformation->collider)
