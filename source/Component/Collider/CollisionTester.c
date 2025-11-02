@@ -271,8 +271,10 @@ static void CollisionTester::getSolutionVectorBetweenBallAndLineField(Ball ball,
 	// TODO: this misses some cases when the ball's radius is bigger than the line field's length
 	// A first check should compare them and use the bigger's collider axis as the line onto which
 	// Project the other collider's points
+	fixed_t ballRadius = ball->radius;
+	fixed_t ballDiameter = ballRadius << 1;
 
-	Vector3D ballSideToCheck = Vector3D::sum(ball->position, Vector3D::scalarProduct(lineField->normal, ball->radius));
+	Vector3D ballSideToCheck = Vector3D::sum(ball->position, Vector3D::scalarProduct(lineField->normal, ballRadius));
 
 	Vector3D lineFieldA = Vector3D::sum(lineField->a, lineField->position);
 	Vector3D lineFieldB = Vector3D::sum(lineField->b, lineField->position);
@@ -284,9 +286,9 @@ static void CollisionTester::getSolutionVectorBetweenBallAndLineField(Ball ball,
 			lineFieldA.x != lineFieldB.x
 			&&
 			(
-				(ballSideToCheck.x + (ball->radius << 1) < lineFieldA.x && ballSideToCheck.x < lineFieldB.x)
+				(ballSideToCheck.x + (ballDiameter) < lineFieldA.x && ballSideToCheck.x < lineFieldB.x)
 				||
-				(ballSideToCheck.x - (ball->radius << 1) > lineFieldA.x && ballSideToCheck.x > lineFieldB.x)
+				(ballSideToCheck.x - (ballDiameter) > lineFieldA.x && ballSideToCheck.x > lineFieldB.x)
 			)
 		)
 		||
@@ -294,9 +296,9 @@ static void CollisionTester::getSolutionVectorBetweenBallAndLineField(Ball ball,
 			lineFieldA.y != lineFieldB.y
 			&&
 			(
-				(ballSideToCheck.y + (ball->radius << 1) < lineFieldA.y && ballSideToCheck.y < lineFieldB.y)
+				(ballSideToCheck.y + (ballDiameter) < lineFieldA.y && ballSideToCheck.y < lineFieldB.y)
 				||
-				(ballSideToCheck.y - (ball->radius << 1) > lineFieldA.y && ballSideToCheck.y > lineFieldB.y)
+				(ballSideToCheck.y - (ballDiameter) > lineFieldA.y && ballSideToCheck.y > lineFieldB.y)
 			)
 		)
 	)
@@ -316,24 +318,32 @@ static void CollisionTester::getSolutionVectorBetweenBallAndLineField(Ball ball,
 
 		if(!collision)
 		{
-			Vector3D ballRadiusVector = Vector3D::scalarProduct(lineField->normal, ball->radius);
+			Vector3D ballRadiusVector = Vector3D::scalarProduct(lineField->normal, ballRadius);
 
 			// Check both sides of the ball
 			// This is a rough approximation since it identifies a collision even if the ball and the line field
 			// Are not really overlapping
-			for(bool left = true; !collision && left; left = false)
-			{
-				Vector3D projectionPlusRadio = Vector3D::sum(projection, Vector3D::perpendicularZPlane(ballRadiusVector, left));
-				
-				collision = Vector3D::isVectorInsideLine(projectionPlusRadio, lineFieldA, lineFieldB);
-			}
+			collision =
+				Vector3D::isVectorInsideLine
+				(
+					Vector3D::sum(projection, Vector3D::perpendicularZPlane(ballRadiusVector, true)),
+					lineFieldA, 
+					lineFieldB
+				)
+				||
+				Vector3D::isVectorInsideLine
+				(
+					Vector3D::sum(projection, Vector3D::perpendicularZPlane(ballRadiusVector, false)),
+					lineFieldA, 
+					lineFieldB
+				);
 		}
 
 		if(collision)
 		{
 			fixed_t distanceToLine = Vector3D::length(Vector3D::get(projection, ballSideToCheck));
 
-			if(distanceToLine < lineField->normalLength + (ball->radius << 1))
+			if(distanceToLine < lineField->normalLength + (ballDiameter))
 			{
 				solutionVector->magnitude = distanceToLine + __PIXELS_TO_METERS(1);
 				solutionVector->direction = Vector3D::scalarProduct(lineField->normal, __I_TO_FIXED(-1));
