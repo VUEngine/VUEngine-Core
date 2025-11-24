@@ -196,7 +196,7 @@ void Collider::handleCommand(int32 command, va_list args)
 			break;
 		}
 
-		case cComponentCommandDisabel:
+		case cComponentCommandDisable:
 		{
 			Collider::disable(this);
 			break;
