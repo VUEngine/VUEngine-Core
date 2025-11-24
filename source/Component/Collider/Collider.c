@@ -189,6 +189,18 @@ void Collider::handleCommand(int32 command, va_list args)
 			Collider::show(this);
 			break;
 		}
+
+		case cComponentCommandEnable:
+		{
+			Collider::enable(this);
+			break;
+		}
+
+		case cComponentCommandDisabel:
+		{
+			Collider::disable(this);
+			break;
+		}
 		
 		case cColliderComponentCommandHide:
 		{
