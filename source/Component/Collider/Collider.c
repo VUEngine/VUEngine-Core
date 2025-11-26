@@ -184,12 +184,6 @@ void Collider::handleCommand(int32 command, va_list args)
 			break;
 		}
 
-		case cColliderComponentCommandShow:
-		{
-			Collider::show(this);
-			break;
-		}
-
 		case cComponentCommandEnable:
 		{
 			Collider::enable(this);
@@ -199,6 +193,12 @@ void Collider::handleCommand(int32 command, va_list args)
 		case cComponentCommandDisable:
 		{
 			Collider::disable(this);
+			break;
+		}
+
+		case cColliderComponentCommandShow:
+		{
+			Collider::show(this);
 			break;
 		}
 		
@@ -244,7 +244,7 @@ void Collider::handleCommand(int32 command, va_list args)
 
 void Collider::enable()
 {
-	if(!this->enabled)
+	if(!this->enabled && NULL != this->events)
 	{
 		Collider::fireEvent(this, kEventColliderChanged);
 	}
@@ -256,7 +256,7 @@ void Collider::enable()
 
 void Collider::disable()
 {
-	if(this->enabled)
+	if(this->enabled && NULL != this->events)
 	{
 		Collider::fireEvent(this, kEventColliderChanged);
 	}
