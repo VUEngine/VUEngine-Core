@@ -28,7 +28,8 @@ friend class VirtualList;
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #define __WAVE_ADDRESS(n)					(uint8*)(0x01000000 + (n * 128))
-#define __MODULATION_DATA					(uint8*)0x01000280;
+#define __MODULATION_DATA					(uint8*)0x01000280
+#define __MODULATION_DATA_ENTRIES			32
 #define __SSTOP								*(uint8*)0x01000580
 #define __SOUND_WRAPPER_STOP_SOUND 			0x20
 
@@ -233,7 +234,7 @@ secure void VSUManager::reset()
 
 	uint8* modulationData = __MODULATION_DATA;
 
-	for(int16 i = 0; i <= 32 * 4; i++)
+	for(int16 i = 0; i <= __MODULATION_DATA_ENTRIES; i++)
 	{
 		modulationData[i] = 0;
 	}
@@ -420,6 +421,16 @@ void VSUManager::configureSoundSource
 	vsuSoundSource->SxEV1 = vsuSoundSourceConfigurationRequest->SxEV1;
 	vsuSoundSource->SxRAM = waveform->index;
 	vsuSoundSource->SxSWP = vsuSoundSourceConfigurationRequest->SxSWP;
+
+	if(NULL != vsuSoundSourceConfigurationRequest->SxMOD)
+	{		
+		uint8* modulationData = __MODULATION_DATA;
+
+		for(int16 i = 0; i <= __MODULATION_DATA_ENTRIES; i++)
+		{
+			modulationData[i << 2] = vsuSoundSourceConfigurationRequest->SxMOD[i];
+		}
+	}
 
 	/// If SxINT is set every time it can produce the pop sound because it 
 	/// resets various of the VSU's internal counters.
@@ -650,19 +661,6 @@ void VSUManager::setWaveform(Waveform* waveform, const WaveformData* waveFormDat
 
 		// Turn back interrupts on
 		HardwareManager::resumeInterrupts();
-		/*
-		// TODO
-		const uint8 kModData[] = {
-		0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 18, 17, 18, 19, 20, 21, -1, -2, -3, -4, -5,
-		-6, -7, -8, -9, -16, -17, -18, -19, -20, -21, -22
-		};
-
-		uint8* moddata = __MODULATION_DATA;
-		for(i = 0; i <= 0x7C; i++)
-		{
-			moddata[i << 2] = kModData[i];
-		}
-		*/
 	}
 }
 
