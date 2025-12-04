@@ -199,18 +199,19 @@ const int8 {{ sanitizedSpecName }}ModulationData{{ modulationDataKey }}[] =
 
 {#- Render all tracks -#}
 {%- for track in item.tracks -%}
-{%- if track.sequence | length and not (isSoundEditorPreview and (trackSettings[loop.loop0].muted or (soloTrack > -1 and soloTrack !== loop.index0))) -%}
+{%- if track.sequence | length and not (isSoundEditorPreview and (trackSettings[loop.index0].muted or (soloTrack > -1 and soloTrack !== loop.index0))) -%}
 
 {#- Initial configuration -#}
-{%- set initialInstrument = item.instruments[track.instrument] -%}
-{%- set valuesSxINT = [SxINT(true, initialInstrument.interval)] -%}
+{%- set defaultInstrumentId = track.instrument -%}
+{%- set defaultInstrument = item.instruments[defaultInstrumentId] -%}
+{%- set valuesSxINT = [SxINT(true, defaultInstrument.interval)] -%}
 {%- set valuesSxLRV = ['0x00'] -%} {#- Explicit silent note. Initial instrument's volume is set on the first event. -#}
-{%- set valuesSxEV0 = [SxEV0(initialInstrument.envelope)] -%}
-{%- set valuesSxEV1 = [SxEV1(initialInstrument.envelope, initialInstrument.sweepMod, initialInstrument.tap, track.type)] -%}
+{%- set valuesSxEV0 = [SxEV0(defaultInstrument.envelope)] -%}
+{%- set valuesSxEV1 = [SxEV1(defaultInstrument.envelope, defaultInstrument.sweepMod, defaultInstrument.tap, track.type)] -%}
 {%- set valuesSxFQ = ['0x0000'] -%}
-{%- set valuesSxRAM = [SxRAM(initialInstrument.waveform, track.type)] -%}
-{%- set valuesSxSWP = [S5SWP(initialInstrument.sweepMod)] -%}
-{%- set valuesSxMOD = [S5MOD(initialInstrument.modulationData, initialInstrument.sweepMod, track.type)] -%}
+{%- set valuesSxRAM = [SxRAM(defaultInstrument.waveform, track.type)] -%}
+{%- set valuesSxSWP = [S5SWP(defaultInstrument.sweepMod)] -%}
+{%- set valuesSxMOD = [S5MOD(defaultInstrument.modulationData, defaultInstrument.sweepMod, track.type)] -%}
 
 {%- set keyframes = [{ 
 	duration: 0,
@@ -225,6 +226,7 @@ const int8 {{ sanitizedSpecName }}ModulationData{{ modulationDataKey }}[] =
 -#}
 {%- set loopKeyframe = 0 -%}
 {%- set prevNoteStep = 0 -%}
+{%- set prevInstrumentId = null -%}
 {%- for step in range(0, item.size * barNoteResolution / sequencerResolution) -%}
 	{#- Does a pattern start at the current step? -#}
 	{%- if track.sequence[step / barNoteResolution * sequencerResolution] is defined -%}	
@@ -249,9 +251,13 @@ const int8 {{ sanitizedSpecName }}ModulationData{{ modulationDataKey }}[] =
 			{{- macros.append(valuesSxLRV, event['volume'] | intToHex(2)) -}}
 		{%- endif -%}
 
-		{%- if event['instrument'] is defined -%}
+		{%- if event['instrument'] != prevInstrumentId -%}
 			{#- "INSTRUMENT CHANGE" EVENT -#}
-			{%- set newInstrumentId = event['instrument'] -%}
+			{%- set prevInstrumentId = event['instrument'] -%}
+			{%- set newInstrumentId = defaultInstrumentId -%}
+			{%- if event['instrument'] is defined -%}
+				{%- set newInstrumentId = event['instrument'] -%}
+			{%- endif -%}
 			{%- set newInstrument = item.instruments[newInstrumentId] -%}
 			{{- macros.append(flags, 'kSoundTrackEventSxINT') -}}
 			{{- macros.append(valuesSxINT, SxINT(true, newInstrument.interval)) -}}
@@ -261,12 +267,16 @@ const int8 {{ sanitizedSpecName }}ModulationData{{ modulationDataKey }}[] =
 			{{- macros.append(valuesSxEV0, SxEV0(newInstrument.envelope)) -}}
 			{{- macros.append(flags, 'kSoundTrackEventSxEV1') -}}
 			{{- macros.append(valuesSxEV1, SxEV1(newInstrument.envelope, newInstrument.sweepMod, newInstrument.tap, track.type)) -}}
-			{{- macros.append(flags, 'kSoundTrackEventSxRAM') -}}
-			{{- macros.append(valuesSxRAM, SxRAM(newInstrument.waveform, track.type)) -}}
-			{{- macros.append(flags, 'kSoundTrackEventSxSWP') -}}
-			{{- macros.append(valuesSxSWP, S5SWP(newInstrument.sweepMod)) -}}
-			{{- macros.append(flags, 'kSoundTrackEventSxMOD') -}}
-			{{- macros.append(valuesSxMOD, S5MOD(newInstrument.modulationData,  newInstrument.sweepMod, track.type)) -}}
+			{%- if track.type != 'noise' -%}
+				{{- macros.append(flags, 'kSoundTrackEventSxRAM') -}}
+				{{- macros.append(valuesSxRAM, SxRAM(newInstrument.waveform, track.type)) -}}
+			{%- endif -%}
+			{%- if track.type == 'sweepMod' -%}
+				{{- macros.append(flags, 'kSoundTrackEventSxSWP') -}}
+				{{- macros.append(valuesSxSWP, S5SWP(newInstrument.sweepMod)) -}}
+				{{- macros.append(flags, 'kSoundTrackEventSxMOD') -}}
+				{{- macros.append(valuesSxMOD, S5MOD(newInstrument.modulationData,  newInstrument.sweepMod, track.type)) -}}
+			{%- endif -%}
 		{%- endif -%}
 
 		{#- TODO: add other event types -#}
@@ -275,7 +285,7 @@ const int8 {{ sanitizedSpecName }}ModulationData{{ modulationDataKey }}[] =
 		{#- Skip if the event sets the volume explicitly -#}
 		{%- if (keyframes | length) == 1 and not 'kSoundTrackEventSxLRV' in flags -%}
 			{{- macros.append(flags, 'kSoundTrackEventSxLRV') -}}
-			{{- macros.append(valuesSxLRV, SxLRV(initialInstrument.volume)) -}}
+			{{- macros.append(valuesSxLRV, SxLRV(defaultInstrument.volume)) -}}
 		{%- endif -%}
 
 		{#- Ensure events for sweep/mod and noise are played on the respective channels -#}
@@ -433,7 +443,7 @@ SoundTrackROMSpec {{ sanitizedSpecName }}SoundTrack{{ loop.index0 }} =
 SoundTrackROMSpec* const {{ sanitizedSpecName }}SoundTracks[] =
 {
 	{%- for track in item.tracks %}
-	{%- if track.sequence | length and not (isSoundEditorPreview and (trackSettings[loop.loop0].muted or (soloTrack > -1 and soloTrack !== loop.index0))) %}
+	{%- if track.sequence | length and not (isSoundEditorPreview and (trackSettings[loop.index0].muted or (soloTrack > -1 and soloTrack !== loop.index0))) %}
 	&{{ sanitizedSpecName }}SoundTrack{{ loop.index0 }},
 	{%- endif %}
 	{%- endfor %}

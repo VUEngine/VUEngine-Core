@@ -7,6 +7,14 @@
 				"type": "string",
 				"default": ""
 			},
+			"author": {
+				"type": "string",
+				"default": ""
+			},
+			"comment": {
+				"type": "string",
+				"default": ""
+			},
 			"tracks": {
 				"type": "array",
 				"items": {
@@ -169,7 +177,7 @@
 								},
 								"interval": {
 									"type": "integer",
-									"minimum": 0,
+									"minimum": 1,
 									"maximum": 7
 								},
 								"direction": {
@@ -178,6 +186,7 @@
 								},
 								"shift": {
 									"type": "integer",
+									"default": 7,
 									"minimum": 0,
 									"maximum": 7
 								}
