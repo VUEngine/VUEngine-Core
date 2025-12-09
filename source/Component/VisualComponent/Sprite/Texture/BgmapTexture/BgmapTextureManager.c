@@ -359,7 +359,16 @@ secure void BgmapTextureManager::releaseTexture(BgmapTexture bgmapTexture)
 {
 	if(!isDeleted(bgmapTexture))
 	{
-		BgmapTexture::decreaseUsageCount(bgmapTexture);
+		if(BgmapTexture::decreaseUsageCount(bgmapTexture))
+		{
+			const TextureSpec* textureSpec = Texture::getSpec(bgmapTexture);
+
+			if(NULL == textureSpec || (!textureSpec->recyclable && !textureSpec->charSetSpec->shared))
+			{
+				VirtualList::removeData(this->bgmapTextures, bgmapTexture);	
+				delete bgmapTexture;
+			}
+		}
 	}
 }
 
