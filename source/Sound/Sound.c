@@ -681,7 +681,7 @@ void Sound::print(int32 x, int32 y)
 	PRINT_INT(speed, x + 6, y);
 	PRINT_TEXT("%", x + 6 + ((speed < 10) ? 1 : (speed < 100) ? 2 : 3), y);
 
-	PRINT_TEXT(kSoundPlaying == this->state ? "\x07\x07" : " \x0B ", x + 15, y++);
+	PRINT_TEXT(kSoundPlaying == this->state ? "  " : "\x07\x07", x + 15, y++);
 
 	y+=2;
 
@@ -710,9 +710,9 @@ void Sound::printPlaybackTime(int32 x, int32 y)
 		return;
 	}
 
-	float elapsedTicksPercentaje = SoundTrack::getElapsedTicksPercentaje(this->mainSoundTrack);
+	float elapsedTicksPercentage = SoundTrack::getElapsedTicksPercentaje(this->mainSoundTrack);
 	
-	uint32 currentSecond = elapsedTicksPercentaje * this->totalPlaybackMilliseconds / __MILLISECONDS_PER_SECOND;
+	uint32 currentSecond = elapsedTicksPercentage * this->totalPlaybackMilliseconds / __MILLISECONDS_PER_SECOND;
 
 	if(previousSecond > currentSecond)
 	{
@@ -738,14 +738,14 @@ void Sound::printPlaybackProgress(int32 x, int32 y)
 		return;
 	}
 
-	float elapsedTicksPercentaje = SoundTrack::getElapsedTicksPercentaje(this->mainSoundTrack);
+	float elapsedTicksPercentage = SoundTrack::getElapsedTicksPercentaje(this->mainSoundTrack);
 
-	if(0 > elapsedTicksPercentaje || 1 < elapsedTicksPercentaje)
+	if(0 > elapsedTicksPercentage || 1 < elapsedTicksPercentage)
 	{
-		elapsedTicksPercentaje = 1;		
+		elapsedTicksPercentage = 1;		
 	}
 
-	uint32 position = elapsedTicksPercentaje * 32;
+	uint32 position = elapsedTicksPercentage * 32;
 
 	char boxesArray[33] = 
 	{
