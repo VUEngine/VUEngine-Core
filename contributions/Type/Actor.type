@@ -134,21 +134,6 @@
 							"additionalProperties": false
 						}
 					},
-					"mutators": {
-						"type": "array",
-						"items": {
-							"type": "object",
-							"properties": {
-								"name": {
-									"type": "string"
-								},
-								"mutationClass": {
-									"type": "string"
-								}
-							},
-							"additionalProperties": false
-						}
-					},
 					"children": {
 						"type": "array",
 						"items": {
@@ -321,6 +306,30 @@
 									"items": {
 										"type": "string"
 									}
+								}
+							},
+							"additionalProperties": false
+						}
+					},
+					"mutators": {
+						"type": "array",
+						"items": {
+							"type": "object",
+							"properties": {
+								"mutationClass": {
+									"type": "string"
+								}
+							},
+							"additionalProperties": false
+						}
+					},
+					"sounds": {
+						"type": "array",
+						"items": {
+							"type": "object",
+							"properties": {
+								"itemId": {
+									"type": "string"
 								}
 							},
 							"additionalProperties": false

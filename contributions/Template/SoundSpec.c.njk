@@ -239,20 +239,20 @@ const int8 {{ sanitizedSpecName }}ModulationData{{ modulationDataKey }}[] =
 		{%- set event = pattern.events[step - patternStartStep] -%}
 		{%- set flags = [] -%}
 
+		{#- "PLAY NOTE" EVENT -#}
 		{%- if event['note'] is defined -%}
-			{#- "PLAY NOTE" EVENT -#}
 			{{- macros.append(flags, 'kSoundTrackEventSxFQ') -}}
 			{{- macros.append(valuesSxFQ, SxFQ(notesLookup[event['note']])) -}}
 		{%- endif -%}
 
+		{#- "VOLUME CHANGE" EVENT -#}
 		{%- if event['volume'] is defined -%}
-			{#- "VOLUME CHANGE" EVENT -#}
 			{{- macros.append(flags, 'kSoundTrackEventSxLRV') -}}
 			{{- macros.append(valuesSxLRV, event['volume'] | intToHex(2)) -}}
 		{%- endif -%}
 
+		{#- "INSTRUMENT CHANGE" EVENT -#}
 		{%- if event['instrument'] != prevInstrumentId -%}
-			{#- "INSTRUMENT CHANGE" EVENT -#}
 			{%- set prevInstrumentId = event['instrument'] -%}
 			{%- set newInstrumentId = defaultInstrumentId -%}
 			{%- if event['instrument'] is defined -%}
@@ -462,7 +462,7 @@ SoundROMSpec {{ sanitizedSpecName }}SoundSpec =
 	},
 
 	// Name
-	"{{ item.name }}",
+	"{{ item.name | safe }}",
 
 	// Play in loop
 	{{ item.loop }},
