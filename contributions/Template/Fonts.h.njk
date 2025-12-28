@@ -1,6 +1,6 @@
 {%- import 'templates/partials/macros.njk' as macros -%}
 {%- set itemNames = [] -%}
-{%- if project.items.WaveForm is defined -%}
+{%- if project.items.Font is defined -%}
 {%- for item in project.items.Font | values | unique('_fileUri') -%}
 	{%- set itemSanitizedSpecName = item._fileUri | basename(false) | sanitizeSpecName -%}
 	{%- if item._contributor != "engine" -%}
