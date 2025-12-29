@@ -312,7 +312,7 @@ const int8 {{ sanitizedSpecName }}ModulationData{{ modulationDataKey }}[] =
 	{%- endif -%}
 
 	{#- Find loop back keyframe -#}
-	{%- if loopPoint > 0 and step == loopPoint * barNoteResolution / sequencerResolution -%}
+	{%- if loopPoint > 0 and step == (loopPoint * barNoteResolution / sequencerResolution) -%}
 		{#- Add "dummy" keyframe to loop back to if there is none at this step -#}
 		{%- if prevNoteStep !==  step -%}
 			{#- Set duration on the previous event -#}
@@ -465,7 +465,13 @@ SoundROMSpec {{ sanitizedSpecName }}SoundSpec =
 	},
 
 	// Name
-	"{{ item.name | safe }}",
+	"
+		{%- if item.author -%}
+			{{- item.author | safe -}}
+			{{- ' - ' -}}
+		{%- endif -%}
+		{{- item.name | safe -}}
+	",
 
 	// Play in loop
 	{{ item.loop }},
