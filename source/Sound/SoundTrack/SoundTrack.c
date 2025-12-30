@@ -282,6 +282,8 @@ void SoundTrack::print(int16 x, int16 y)
 
 	Printer::text("     ", x, ++y, NULL);
 	Printer::int32(this->cursor, x, y, NULL);
+	Printer::text("     ", x, ++y, NULL);
+	Printer::int32(this->nextElapsedTicksTarget, x, y, NULL);
 }
 #endif
 
@@ -375,9 +377,7 @@ void SoundTrack::fastForward(uint32 cursor)
 	for(; this->cursor < cursor;)
 	{
 		SoundTrackKeyframe soundTrackKeyframe = this->soundTrackSpec->trackKeyframes[this->cursor++];
-
-		this->nextElapsedTicksTarget = __I_TO_FIX7_9_EXT(soundTrackKeyframe.tick);
-
+		
 		if(0 != (kSoundTrackEventSxINT & soundTrackKeyframe.events))
 		{
 			this->cursorSxINT++;
