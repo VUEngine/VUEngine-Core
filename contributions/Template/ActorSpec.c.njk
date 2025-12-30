@@ -24,10 +24,10 @@
 {#- DETERMINE INCLUDES -#}
 {%- set includes = [actorClass, 'Texture'] -%}
 {%- if item.inGameType != '' -%}
-	{%- set includes = (includes.push('InGameTypes'), includes) -%}
+	{{- macros.append(includes, 'InGameTypes') -}}
 {%- endif -%}
 {%- if item.components.bodies | length -%}
-	{%- set includes = (includes.push('Body'), includes) -%}
+	{{- macros.append(includes, 'Body') -}}
 {%- endif -%}
 {%- if item.components.sprites | length -%}
 	{%- for sprite in item.components.sprites -%}
@@ -49,28 +49,74 @@
 		{%- elseif isAnimated -%}
 			{%- set spriteAllocatorClass = item.sprites.type ~ 'Sprite' -%}
 		{%- endif -%}
-		{%- set includes = (includes.push(spriteClass), includes) -%}
-		{%- set includes = (includes.push(spriteAllocatorClass), includes) -%}
+		{{- macros.append(includes, spriteClass) -}}
+		{{- macros.append(includes, spriteAllocatorClass) -}}
 		{%- if sprite.bgmapMode == 'HBias' and sprite.manipulationFunction != '' %}
-			{%- set includes = (includes.push(sprite.manipulationFunction.split('_')[0] ~ 'Extensions'), includes) -%}
+			{{- macros.append(includes, sprite.manipulationFunction.split('_')[0] ~ 'Extensions') -}}
 		{%- endif %}
 	{%- endfor -%}
 {%- endif -%}
 {%- if item.components.colliders | length -%}
-	{%- set includes = (includes.push('ColliderLayers'), includes) -%}
+	{{- macros.append(includes, 'ColliderLayers') -}}
 	{%- for collider in item.components.colliders -%}
-		{%- set includes = (includes.push(collider.type), includes) -%}
-	{%- endfor -%}
-{%- endif -%}
-{%- if item.components.wireframes | length -%}
-	{%- for wireframe in item.components.wireframes -%}
-		{%- set includes = (includes.push(wireframe.type), includes) -%}
+		{{- macros.append(includes, collider.type) -}}
 	{%- endfor -%}
 {%- endif -%}
 {%- if item.components.mutators | length -%}
-	{%- set includes = (includes.push('Mutator'), includes) -%}
+		{{- macros.append(includes, 'Mutator') -}}
 	{%- for mutator in item.components.mutators -%}
-		{%- set includes = (includes.push(mutator.mutationClass), includes) -%}
+		{{- macros.append(includes, mutator.mutationClass) -}}
+	{%- endfor -%}
+{%- endif -%}
+{%- if item.components.sounds | length -%}
+		{{- macros.append(includes, 'Sound') -}}
+{%- endif -%}
+{%- if item.components.wireframes | length -%}
+	{%- for wireframe in item.components.wireframes -%}
+		{{- macros.append(includes, wireframe.type) -}}
+	{%- endfor -%}
+{%- endif -%}
+
+{#- DETERMINE DECLARATIONS -#}
+{%- set declarations = [] -%}
+
+{%- if item.components.children | length -%}
+	{%- for child in item.components.children -%}
+		{%- set childActor = project.items.Actor[child.itemId] -%}
+		{%- if childActor is defined %}
+			{%- set childName = childActor._fileUri | basename(false) | sanitizeSpecName -%}
+			{{- macros.append(declarations, 'ActorSpec ' ~ childName ~ 'ActorSpec') -}}
+		{%- endif -%}
+	{%- endfor -%}
+{%- endif -%}
+{%- if item.components.sounds | length -%}
+	{%- for sound in item.components.sounds -%}
+		{%- set soundItem = project.items.Sound[sound.itemId] -%}
+		{%- if soundItem is defined %}
+			{%- set childName = soundItem._fileUri | basename(false) | sanitizeSpecName -%}
+			{{- macros.append(declarations, 'SoundSpec ' ~ childName ~ 'SoundSpec') -}}
+		{%- endif -%}
+	{%- endfor -%}
+{%- endif -%}
+{%- if item.components.sprites | length -%}
+	{%- for sprite in item.components.sprites -%}
+		{%- if not sprite._imageData | int and sprite._imageData.images | length -%}
+			{%- for imageData in sprite._imageData.images -%}
+				{#- Tiles -#}
+				{%- if imageData.tiles.data -%}
+					{{- macros.append(declarations, 'uint32 ' ~ sanitizedSpecName ~ 'Actor' ~ (imageData.tiles.name | sanitizeSpecName)  ~ 'Tiles[]') -}}
+				{%- endif -%}
+				{#- Maps -#}
+				{%- for map in imageData.maps -%}
+					{%- set mapName = sanitizedSpecName ~ 'Actor' ~ map.name | sanitizeSpecName -%}
+					{{- macros.append(declarations, 'uint16 ' ~ mapName ~ 'Map[]') -}}
+				{%- endfor -%}
+				{#- Frame Offsets -#}
+				{%- if imageData.tiles.frameOffsets is defined -%}
+					{{- macros.append(declarations, 'uint32 ' ~ sanitizedSpecName ~ 'Actor' ~ imageData.tiles.name | sanitizeSpecName  ~ 'TilesFrameOffsets[]') -}}
+				{%- endif -%}
+			{%- endfor -%}
+		{%- endif %}
 	{%- endfor -%}
 {%- endif -%}
 
@@ -84,30 +130,18 @@
 {% endfor %}
 {%- endif %}
 
-{#- PRINT IMAGE DATA AND SPRITES -#}
-{%- if item.components.sprites | length -%}
+{#- PRINT DECLARATIONS -#}
+{%- if declarations | length -%}
 
 {{- '\n' ~ macros.sectionHeader('Declarations') ~ '\n\n' -}}
 
-{%- for sprite in item.components.sprites -%}
-	{%- if not sprite._imageData | int and sprite._imageData.images | length -%}
-		{%- for imageData in sprite._imageData.images -%}
-			{#- Tiles -#}
-			{%- if imageData.tiles.data -%}
-				extern uint32 {{ sanitizedSpecName ~ 'Actor' ~ imageData.tiles.name | sanitizeSpecName }}Tiles[];{{ '\n' }}
-			{%- endif -%}
-			{#- Maps -#}
-			{%- for map in imageData.maps -%}
-				{%- set mapName = sanitizedSpecName ~ 'Actor' ~ map.name | sanitizeSpecName -%}
-				extern uint16 {{ mapName }}Map[];{{ '\n' }}
-			{%- endfor -%}
-			{#- Frame Offsets -#}
-			{%- if imageData.tiles.frameOffsets is defined -%}
-				extern uint32 {{ sanitizedSpecName ~ 'Actor' ~ imageData.tiles.name | sanitizeSpecName }}TilesFrameOffsets[];{{ '\n' }}
-			{%- endif -%}
-		{%- endfor -%}
-	{%- endif %}
-{% endfor -%}
+{%- for declaration in declarations | unique | sort -%}
+extern {{ declaration }};
+{% endfor %}
+{% endif %}
+
+{#- PRINT IMAGE DATA AND SPRITES -#}
+{%- if item.components.sprites | length -%}
 
 {#- PRINT ANIMATIONS -#}
 {%- if hasAnimations -%}
@@ -200,7 +234,7 @@ AnimationFunctionROMSpec* {{ sanitizedSpecName }}AnimationSpecs[] =
 {%- if isStereo -%}
 	{%- set spriteName = spriteName ~ eye -%}
 {%- endif -%}
-{%- set spriteNames = (spriteNames.push(spriteName), spriteNames) -%}
+{{- macros.append(spriteNames, spriteName) -}}
 {%- set isOptimizedAnimation = false -%}
 {%- if isAnimated and imageData.animation.largestFrame is defined -%}
 	{%- set isOptimizedAnimation = true -%}
@@ -401,7 +435,7 @@ TextureROMSpec* const {{ spriteName }}TextureSpecs[] =
 {%- set wireframeNames = [] -%}
 {%- for wireframe in item.components.wireframes -%}
 {%- set wireframeName = sanitizedSpecName ~ 'Wireframe' ~ loop.index -%}
-{%- set wireframeNames = (wireframeNames.push(wireframeName), wireframeNames) -%}
+{{- macros.append(wireframeNames, wireframeName) -}}
 
 {% if wireframe.type == 'Mesh' -%}
 const PixelVector {{ wireframeName }}WireframeSegments[][2]=
@@ -477,7 +511,7 @@ const PixelVector {{ wireframeName }}WireframeSegments[][2]=
 {%- set colliderNames = [] -%}
 {%- for collider in item.components.colliders -%}
 {%- set colliderName = sanitizedSpecName ~ 'Collider' ~ loop.index -%}
-{%- set colliderNames = (colliderNames.push(colliderName), colliderNames) -%}
+{{- macros.append(colliderNames, colliderName) -}}
 
 ColliderROMSpec {{ colliderName }}ColliderSpec = 
 {
@@ -536,12 +570,12 @@ ColliderROMSpec {{ colliderName }}ColliderSpec =
 
 {#- PRINT BODIES -#}
 {% set bodyNames = [] -%}
-{% if item.components.bodies | length %}
+{% if item.components.bodies | length -%}
 {{ macros.sectionHeader('Bodies') }}
 
 {% for body in item.components.bodies -%}
 {% set bodyName = sanitizedSpecName ~ 'Body' ~ loop.index -%}
-{% set bodyNames = (bodyNames.push(bodyName), bodyNames) -%}
+{{- macros.append(bodyNames, bodyName) -}}
 
 BodyROMSpec {{ bodyName }}BodySpec =
 {
@@ -597,7 +631,7 @@ BodyROMSpec {{ bodyName }}BodySpec =
 
 {% for mutator in item.components.mutators -%}
 {% set mutatorName = sanitizedSpecName ~ 'Mutator' ~ loop.index -%}
-{% set mutatorNames = (mutatorNames.push(mutatorName), mutatorNames) -%}
+{{- macros.append(mutatorNames, mutatorName) -}}
 
 MutatorROMSpec {{ mutatorName }}MutatorSpec =
 {
@@ -620,9 +654,8 @@ MutatorROMSpec {{ mutatorName }}MutatorSpec =
 {% endif %}
 
 {#- PRINT CHILDREN -#}
-{%- if item.components.children | length %}
-
-{{ macros.sectionHeader('Children') -}}
+{%- if item.components.children | length -%}
+{{ macros.sectionHeader('Children') }}
 
 PositionedActorROMSpec {{ sanitizedSpecName }}Children[] =
 {
@@ -634,7 +667,8 @@ PositionedActorROMSpec {{ sanitizedSpecName }}Children[] =
 	{%- endfor %}
 	{NULL, {0, 0, 0}, {0, 0, 0}, {1, 1, 1},  0, NULL, NULL, NULL, false},
 };
-{%- endif %}
+
+{% endif %}
 
 {{- macros.sectionHeader('Actor') ~ '\n\n' -}}
 
@@ -655,6 +689,13 @@ ComponentSpec* const {{ sanitizedSpecName }}ComponentSpecs[] =
 	{% endfor -%}
 	{% for mutatorName in mutatorNames -%}
 	(ComponentSpec*)&{{ mutatorName }}MutatorSpec,
+	{% endfor -%}
+	{% for sound in item.components.sounds -%}
+	{% set soundItem = project.items.Sound[sound.itemId] -%}
+	{% if soundItem is defined -%}
+	{% set soundName = soundItem._fileUri | basename(false) | sanitizeSpecName -%}
+	(ComponentSpec*)&{{ soundName }}SoundSpec,
+	{% endif -%}
 	{% endfor -%}
 	NULL
 };

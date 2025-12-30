@@ -224,6 +224,7 @@ const int8 {{ sanitizedSpecName }}ModulationData{{ modulationDataKey }}[] =
 	c) we have to keep track of previous state, because end user effects allow to edit individual values, 
 	   e.g. envelope.enabled, while the spec wants the whole register values
 -#}
+{%- set initialVolumeSet = false -%}
 {%- set loopKeyframe = 0 -%}
 {%- set prevNoteStep = 0 -%}
 {%- set prevInstrumentId = null -%}
@@ -239,20 +240,20 @@ const int8 {{ sanitizedSpecName }}ModulationData{{ modulationDataKey }}[] =
 		{%- set event = pattern.events[step - patternStartStep] -%}
 		{%- set flags = [] -%}
 
+		{#- "PLAY NOTE" EVENT -#}
 		{%- if event['note'] is defined -%}
-			{#- "PLAY NOTE" EVENT -#}
 			{{- macros.append(flags, 'kSoundTrackEventSxFQ') -}}
 			{{- macros.append(valuesSxFQ, SxFQ(notesLookup[event['note']])) -}}
 		{%- endif -%}
 
+		{#- "VOLUME CHANGE" EVENT -#}
 		{%- if event['volume'] is defined -%}
-			{#- "VOLUME CHANGE" EVENT -#}
 			{{- macros.append(flags, 'kSoundTrackEventSxLRV') -}}
 			{{- macros.append(valuesSxLRV, event['volume'] | intToHex(2)) -}}
 		{%- endif -%}
 
+		{#- "INSTRUMENT CHANGE" EVENT -#}
 		{%- if event['instrument'] != prevInstrumentId -%}
-			{#- "INSTRUMENT CHANGE" EVENT -#}
 			{%- set prevInstrumentId = event['instrument'] -%}
 			{%- set newInstrumentId = defaultInstrumentId -%}
 			{%- if event['instrument'] is defined -%}
@@ -282,10 +283,13 @@ const int8 {{ sanitizedSpecName }}ModulationData{{ modulationDataKey }}[] =
 		{#- TODO: add other event types -#}
 
 		{#- Set initial volume on the very first event (after the start event) -#}
-		{#- Skip if the event sets the volume explicitly -#}
-		{%- if (keyframes | length) == 1 and not 'kSoundTrackEventSxLRV' in flags -%}
-			{{- macros.append(flags, 'kSoundTrackEventSxLRV') -}}
-			{{- macros.append(valuesSxLRV, SxLRV(defaultInstrument.volume)) -}}
+		{%- if not initialVolumeSet -%}
+			{%- set initialVolumeSet = true -%}
+			{#- Do nothing if the event sets the volume explicitly -#}
+			{%- if not 'kSoundTrackEventSxLRV' in flags -%}
+				{{- macros.append(flags, 'kSoundTrackEventSxLRV') -}}
+				{{- macros.append(valuesSxLRV, SxLRV(defaultInstrument.volume)) -}}
+			{%- endif -%}
 		{%- endif -%}
 
 		{#- Ensure events for sweep/mod and noise are played on the respective channels -#}
@@ -308,10 +312,9 @@ const int8 {{ sanitizedSpecName }}ModulationData{{ modulationDataKey }}[] =
 	{%- endif -%}
 
 	{#- Find loop back keyframe -#}
-	{%- if loopPoint > 0 and step == loopPoint * barNoteResolution / sequencerResolution -%}
+	{%- if loopPoint > 0 and step == (loopPoint * barNoteResolution / sequencerResolution) -%}
 		{#- Add "dummy" keyframe to loop back to if there is none at this step -#}
 		{%- if prevNoteStep !==  step -%}
-
 			{#- Set duration on the previous event -#}
 			{%- set keyframe = { 
 				duration: step - prevNoteStep,
@@ -462,7 +465,13 @@ SoundROMSpec {{ sanitizedSpecName }}SoundSpec =
 	},
 
 	// Name
-	"{{ item.name }}",
+	"
+		{%- if item.author -%}
+			{{- item.author | safe -}}
+			{{- ' - ' -}}
+		{%- endif -%}
+		{{- item.name | safe -}}
+	",
 
 	// Play in loop
 	{{ item.loop }},
