@@ -33,9 +33,11 @@ friend class VirtualList;
 #define __SSTOP								*(uint8*)0x01000580
 #define __SOUND_WRAPPER_STOP_SOUND 			0x20
 
-#define CHAR_DARK_RED_BOX			'\x0E'
-#define CHAR_MEDIUM_RED_BOX	  		'\x0F'
-#define CHAR_BRIGHT_RED_BOX			'\x10'
+#undef __CHAR_DARK_RED_BOX
+#define __CHAR_DARK_RED_BOX						'\x0E'
+#undef __CHAR_BRIGHT_RED_BOX
+#define __CHAR_BRIGHT_RED_BOX					'\x10'
+
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' ATTRIBUTES
@@ -229,24 +231,24 @@ static void VSUManager::printChannels(int32 x, int32 y)
 
 		char boxesArray[] = 
 		{
-			CHAR_DARK_RED_BOX, CHAR_DARK_RED_BOX, CHAR_DARK_RED_BOX, CHAR_DARK_RED_BOX, CHAR_DARK_RED_BOX,
-			CHAR_DARK_RED_BOX, CHAR_DARK_RED_BOX, CHAR_DARK_RED_BOX, CHAR_DARK_RED_BOX, CHAR_DARK_RED_BOX,
-			CHAR_DARK_RED_BOX, CHAR_DARK_RED_BOX, CHAR_DARK_RED_BOX, CHAR_DARK_RED_BOX, CHAR_DARK_RED_BOX,
+			__CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX,
+			__CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX,
+			__CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX,
 			'C', '0' + i + 1,
-			CHAR_DARK_RED_BOX, CHAR_DARK_RED_BOX, CHAR_DARK_RED_BOX, CHAR_DARK_RED_BOX, CHAR_DARK_RED_BOX,
-			CHAR_DARK_RED_BOX, CHAR_DARK_RED_BOX, CHAR_DARK_RED_BOX, CHAR_DARK_RED_BOX, CHAR_DARK_RED_BOX,
-			CHAR_DARK_RED_BOX, CHAR_DARK_RED_BOX, CHAR_DARK_RED_BOX, CHAR_DARK_RED_BOX, CHAR_DARK_RED_BOX,
+			__CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX,
+			__CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX,
+			__CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX,
 			'\0'
 		};
 
 		for(uint16 j = 0; j < leftValue && 15 > j; j++)
 		{
-			boxesArray[15 - j - 1] = CHAR_BRIGHT_RED_BOX;
+			boxesArray[15 - j - 1] = __CHAR_BRIGHT_RED_BOX;
 		}
 
 		for(uint16 j = 0; j < rightValue && 15 > j; j++)
 		{
-			boxesArray[15 + 2 + j] = CHAR_BRIGHT_RED_BOX;
+			boxesArray[15 + 2 + j] = __CHAR_BRIGHT_RED_BOX;
 		}
 
 		PRINT_TEXT(boxesArray, x, y);
