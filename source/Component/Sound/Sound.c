@@ -710,14 +710,14 @@ void Sound::print(int32 x, int32 y)
 	y++;
 
 	Sound::printPlaybackProgress(this, x, y++);
-
+ 
 	uint8 trackInfoXOffset = x + 22;
 	uint8 trackInfoValuesXOffset = 9;
 	uint16 speed = __FIX7_9_EXT_TO_I(__FIX7_9_EXT_MULT(this->speed, __I_TO_FIX7_9_EXT(100)));
 
 	y++;
 
-	Sound::printTiming(this, 0, x + 23, y);
+	Sound::printPlaybackTime(this, x + 23, y);
 	PRINT_TEXT("/", x + 27, y);
 	Sound::printTiming(this, this->totalPlaybackMilliseconds / __MILLISECONDS_PER_SECOND, x + 28, y);
 
