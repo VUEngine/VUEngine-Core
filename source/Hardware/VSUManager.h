@@ -266,6 +266,9 @@ singleton class VSUManager : Object
 	/// Print waveforms.
 	static void printWaveFormStatus(int32 x, int32 y);
 
+	/// Print channels' status.
+	static void printChannels(int32 x, int32 y);
+
 	/// Reset the manager's state.
 	void reset();
 

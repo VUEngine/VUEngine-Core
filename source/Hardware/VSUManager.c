@@ -111,7 +111,6 @@ static uint32 VSUManager::getMode()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-
 #ifndef __SHIPPING
 static void VSUManager::print(int32 x, int32 y)
 {
@@ -195,6 +194,66 @@ static void VSUManager::printVSUSoundSourceConfiguration
 
 	PRINT_TEXT("SXSWP:         ", x, ++y);
 	PRINT_HEX_EXT(vsuSoundSourceConfiguration->SxSWP, x + 7, y, 2);
+}
+#endif
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+#ifndef __SHIPPING
+static void VSUManager::printChannels(int32 x, int32 y)
+{
+	VSUManager vsuManager = VSUManager::getInstance();
+
+	int32 xDisplacement = 15;
+	int32 yDisplacement = y;
+
+	int32 i = 0;
+
+	uint16 totalVolume = 0;
+
+	for(i = 0; i < __TOTAL_SOUND_SOURCES; i++)
+	{
+		uint16 volume = vsuManager->vsuSoundSourceConfigurations[i].SxLRV;
+
+		totalVolume += volume;
+
+		uint16 leftVolume = (volume) >> 4;
+		uint16 rightVolume = (volume & 0x0F);
+
+		uint16 frequency = (vsuManager->vsuSoundSourceConfigurations[i].SxFQH << 4) | vsuManager->vsuSoundSourceConfigurations[i].SxFQL;
+
+		uint16 leftValue = 0;
+		uint16 rightValue = 0;
+
+		leftValue = ((frequency * leftVolume) / __MAXIMUM_VOLUME) >> 4;
+		rightValue = ((frequency * rightVolume) / __MAXIMUM_VOLUME) >> 4;
+
+		char boxesArray[] = 
+		{
+			__CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX,
+			__CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX,
+			__CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX,
+			'C', '0' + i,
+			__CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX,
+			__CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX,
+			__CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX,
+			'\0'
+		};
+
+		for(uint16 j = 0; j < leftValue && 15 > j; j++)
+		{
+			boxesArray[15 - j - 1] = __CHAR_BRIGHT_RED_BOX;
+		}
+
+		for(uint16 j = 0; j < rightValue && 15 > j; j++)
+		{
+			boxesArray[15 + 2 + j] = __CHAR_BRIGHT_RED_BOX;
+		}
+
+		PRINT_TEXT(boxesArray, x, y);
+
+		y++;
+	}
 }
 #endif
 
