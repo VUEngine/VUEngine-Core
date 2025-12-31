@@ -288,26 +288,10 @@ bool CommunicationManager::isMaster()
 
 secure bool CommunicationManager::broadcastData(uint8* data, int32 numberOfBytes)
 {
-	if(CommunicationManager::isConnected(this))
+	if(!CommunicationManager::getReadyToBroadcast(this))
 	{
 		return false;
 	}
-
-	switch (this->status)
-	{
-		case kCommunicationsStatusSendingHandshake:
-
-			CommunicationManager::cancelCommunications(this);
-			break;
-	}
-
-	if(kCommunicationsStatusIdle != this->status)
-	{
-		return false;
-	}
-
-	// Always start comms as master when broadcasting
-	this->communicationMode = __COM_AS_MASTER;
 
 	this->broadcast = kCommunicationsBroadcastSync;
 
@@ -331,24 +315,11 @@ secure bool CommunicationManager::broadcastData(uint8* data, int32 numberOfBytes
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-secure void CommunicationManager::broadcastDataAsync(uint8* data, int32 numberOfBytes, ListenerObject scope)
+secure bool CommunicationManager::broadcastDataAsync(uint8* data, int32 numberOfBytes, ListenerObject scope)
 {
-	if(CommunicationManager::isConnected(this))
+	if(!CommunicationManager::getReadyToBroadcast(this))
 	{
-		return;
-	}
-
-	switch (this->status)
-	{
-		case kCommunicationsStatusSendingHandshake:
-
-			CommunicationManager::cancelCommunications(this);
-			break;
-	}
-
-	if(kCommunicationsStatusIdle != this->status)
-	{
-		return;
+		return false;
 	}
 
 	// Always start comms as master when broadcasting
@@ -357,7 +328,7 @@ secure void CommunicationManager::broadcastDataAsync(uint8* data, int32 numberOf
 	this->broadcast = kCommunicationsBroadcastAsync;
 	CommunicationManager::sendDataAsync(this, data, numberOfBytes, scope);
 
-	return;
+	return true;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -703,6 +674,40 @@ void CommunicationManager::correctDataDrift()
 		}
 	}
 	while(true);
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+bool CommunicationManager::getReadyToBroadcast()
+{
+	if(CommunicationManager::isConnected(this))
+	{
+		return false;
+	}
+
+	switch (this->status)
+	{
+		case kCommunicationsStatusSendingHandshake:
+		{
+			CommunicationManager::cancelCommunications(this);			
+		}
+		// Intended fallthrough
+		case kCommunicationsStatusIdle:
+		case kCommunicationsStatusReset:
+		{
+			break;
+		}
+
+		default:
+		{
+			return false;
+		}
+	}
+
+	// Always start comms as master when broadcasting
+	this->communicationMode = __COM_AS_MASTER;
+
+	return true;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

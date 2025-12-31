@@ -104,13 +104,15 @@ singleton class CommunicationManager : ListenerObject
 	/// Send data synchronously over the EXT port if there is nothing detectable attached to it.
 	/// @param data: Data to broadcast
 	/// @param numberOfBytes: Number of bytes to broadcast
+	/// @return True if broadcasting took place
 	bool broadcastData(uint8* data, int32 numberOfBytes);
 
 	/// Send data asynchronously over the EXT port if there is nothing detectable attached to it.
 	/// @param data: Data to broadcast
 	/// @param numberOfBytes: Number of bytes to broadcast
 	/// @param scope: Object that will be notified of communication events
-	void broadcastDataAsync(uint8* data, int32 numberOfBytes, ListenerObject scope);
+	/// @return True if broadcasting took place
+	bool broadcastDataAsync(uint8* data, int32 numberOfBytes, ListenerObject scope);
 
 	/// Send and receive data synchronously over the EXT port if there is something detectable attached to it.
 	/// @param message: Control message for the receiving partner
