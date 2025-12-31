@@ -25,8 +25,7 @@
 							"default": "wave"
 						},
 						"instrument": {
-							"type": "string",
-							"default": "built-in-1"
+							"type": "string"
 						},
 						"sequence": {
 							"type": "object",
@@ -215,44 +214,6 @@
 						}
 					},
 					"additionalProperties": false
-				},
-				"default": {
-					"built-in-1": {
-						"type": "wave",
-						"color": 4,
-						"envelope": {
-							"direction": 0,
-							"enabled": false,
-							"initialValue": 15,
-							"repeat": false,
-							"stepTime": 0
-						},
-						"interval": {
-							"enabled": false,
-							"value": 0
-						},
-						"modulationData": [
-							0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-						],
-						"name": "Instrument 1",
-						"sweepMod": {
-							"direction": 0,
-							"enabled": false,
-							"frequency": 0,
-							"function": 1,
-							"interval": 0,
-							"repeat": true,
-							"shift": 0
-						},
-						"tap": 0,
-						"volume": {
-							"left": 15,
-							"right": 15
-						},
-						"waveform": [
-							63,62,60,57,53,48,42,35,28,21,15,10,6,3,1,0,0,1,3,6,10,15,21,28,35,42,48,53,57,60,62,63
-						]
-					}
 				}
 			},
 			"size": {
