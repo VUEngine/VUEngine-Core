@@ -204,14 +204,9 @@ static void VSUManager::printChannels(int32 x, int32 y)
 {
 	VSUManager vsuManager = VSUManager::getInstance();
 
-	int32 xDisplacement = 15;
-	int32 yDisplacement = y;
-
-	int32 i = 0;
-
 	uint16 totalVolume = 0;
 
-	for(i = 0; i < __TOTAL_SOUND_SOURCES; i++)
+	for(uint16 i = 0; i < __TOTAL_SOUND_SOURCES; i++)
 	{
 		uint16 volume = vsuManager->vsuSoundSourceConfigurations[i].SxLRV;
 
