@@ -306,7 +306,6 @@ secure bool CommunicationManager::broadcastData(uint8* data, int32 numberOfBytes
 
 		numberOfBytes--;
 	}
-
 	
 	this->broadcast = kCommunicationsBroadcastNone;
 
@@ -322,10 +321,8 @@ secure bool CommunicationManager::broadcastDataAsync(uint8* data, int32 numberOf
 		return false;
 	}
 
-	// Always start comms as master when broadcasting
-	this->communicationMode = __COM_AS_MASTER;
-
 	this->broadcast = kCommunicationsBroadcastAsync;
+
 	CommunicationManager::sendDataAsync(this, data, numberOfBytes, scope);
 
 	return true;
@@ -582,11 +579,10 @@ void CommunicationManager::waitForRemote()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-bool CommunicationManager::sendHandshake()
+void CommunicationManager::sendHandshake()
 {
 	this->status = kCommunicationsStatusSendingHandshake;
 	CommunicationManager::startTransmissions(this, __COM_HANDSHAKE, false);
-	return true;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -611,7 +607,6 @@ void CommunicationManager::startClockSignal()
 		{
 			// Start communications
 			_communicationRegisters[__CCR] = this->communicationMode | __COM_START;
-		
 			break;
 		}
 	}
