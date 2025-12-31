@@ -34,9 +34,9 @@ friend class VirtualList;
 #define __SOUND_WRAPPER_STOP_SOUND 			0x20
 
 #undef __CHAR_DARK_RED_BOX
-#define __CHAR_DARK_RED_BOX						'\x0E'
+#define __CHAR_DARK_RED_BOX					'\x0E'
 #undef __CHAR_BRIGHT_RED_BOX
-#define __CHAR_BRIGHT_RED_BOX					'\x10'
+#define __CHAR_BRIGHT_RED_BOX				'\x10'
 
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
