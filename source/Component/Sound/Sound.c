@@ -883,14 +883,11 @@ void Sound::configureTracks()
 
 	this->mainSoundTrack = longestSoundTrack;
 
-#ifdef __SOUND_TEST
 	if(!isDeleted(this->mainSoundTrack))
 	{
 		this->totalPlaybackMilliseconds = 
 			SoundTrack::getTotalPlaybackMilliseconds(this->mainSoundTrack, ((SoundSpec*)this->componentSpec)->targetTimerResolutionUS);
 	}
-#endif
-
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
