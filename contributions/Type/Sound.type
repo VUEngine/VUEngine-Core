@@ -51,6 +51,10 @@
 							"type": "string",
 							"default": ""
 						},
+						"type": {
+							"type": "string",
+							"default": "wave"
+						},
 						"size": {
 							"type": "number",
 							"default": 4
