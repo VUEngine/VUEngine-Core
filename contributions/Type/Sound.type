@@ -78,6 +78,10 @@
 						"name": {
 							"type": "string"
 						},
+						"type": {
+							"type": "string",
+							"default": "wave"
+						},
 						"color": {
 							"type": "number",
 							"default": 4
@@ -214,6 +218,7 @@
 				},
 				"default": {
 					"built-in-1": {
+						"type": "wave",
 						"color": 4,
 						"envelope": {
 							"direction": 0,
