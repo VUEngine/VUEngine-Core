@@ -165,6 +165,51 @@ const SoundSpec* Sound::getSpec()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+void Sound::fastForward(uint32 elapsedTicks)
+{
+	if(kSoundRelease == this->state)
+	{
+		return;
+	}
+
+	if(isDeleted(this->soundTracks))
+	{
+		return;
+	}
+
+	Sound::rewind(this);
+
+	this->targetTimerResolutionFactor = Sound::computeTimerResolutionFactor(this);
+	this->tickStep = __FIX7_9_EXT_MULT(this->speed, this->targetTimerResolutionFactor);
+
+	this->previouslyElapsedTicks = 0;
+    this->totalElapsedTicks = 0;
+
+	while(this->totalElapsedTicks < __I_TO_FIX7_9_EXT(elapsedTicks))
+	{
+		for(VirtualNode node = this->soundTracks->head; NULL != node; node = node->next)
+		{
+			SoundTrack soundTrack = SoundTrack::safeCast(node->data);
+
+			SoundTrack::update
+			(
+				soundTrack, 
+				this->tickStep, 
+				this->targetTimerResolutionFactor, 
+				0, 
+				0, 
+				__MAXIMUM_VOLUME, 
+				__MAXIMUM_VOLUME, 
+				0
+			);
+		}
+
+		this->totalElapsedTicks += this->tickStep;		
+	}
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void Sound::play(uint32 playbackType)
 {
 	if(kSoundRelease == this->state)

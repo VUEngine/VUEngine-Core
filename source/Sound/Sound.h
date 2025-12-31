@@ -171,6 +171,11 @@ class Sound : Component
 	/// @return Sound spec pointer
 	const SoundSpec* getSpec();
 
+	/// Fast forward the sound by the number of elapsed ticks. 
+	/// The sound must be playing for this to take effect.
+	/// @param elapsedTicks: Number of elapsed ticks to fast forward the playback
+	void fastForward(uint32 elapsedTicks);
+
 	/// Play the sound.
 	/// @param playbackType: Specifies how the playback should start
 	void play(uint32 playbackType);

@@ -192,43 +192,46 @@ bool SoundTrack::update
 	leftVolume >>= volumenScalePower;
 	rightVolume >>= volumenScalePower;
 
-	uint16 note = this->soundTrackSpec->SxFQ[this->cursorSxFQ] + frequencyDelta;
-
-	VSUSoundSourceConfigurationRequest vsuChannelConfigurationRequest = 
+	if(0 < leftVolume || 0 < rightVolume)
 	{
-		// Requester object
-		Object::safeCast(this),
-		// Time when the configuration elapses
-		__FIX7_9_EXT_DIV(__I_TO_FIX7_9_EXT(soundTrackKeyframe.tick), targetTimerResolutionFactor),
-		// Sound source type
-		0 != (kSoundTrackEventSweepMod & soundTrackKeyframe.events) ? 
-			kSoundSourceModulation:
-			0 != (kSoundTrackEventNoise & soundTrackKeyframe.events) ?
-				kSoundSourceNoise:
-				kSoundSourceNormal,
-		// SxINT values
-		this->soundTrackSpec->SxINT[this->cursorSxINT],
-		// SxLRV values
-		(leftVolume << 4) | rightVolume,
-		// SxFQL values
-		note & 0xFF,
-		// SxFQH values
-		note >> 8,
-		// SxEV0 values
-		this->soundTrackSpec->SxEV0[this->cursorSxEV0],
-		// SxEV1 values
-		this->soundTrackSpec->SxEV1[this->cursorSxEV1],
-		// SxRAM pointer
-		this->soundTrackSpec->SxRAM[this->cursorSxRAM],
-		// SxSWP values
-		this->soundTrackSpec->SxSWP[this->cursorSxSWP],
-		// SxMOD pointer
-		this->soundTrackSpec->SxMOD[this->cursorSxMOD],
-		// Skip if no sound source available?
-		this->soundTrackSpec->skippable
-	};
+		uint16 note = this->soundTrackSpec->SxFQ[this->cursorSxFQ] + frequencyDelta;
 
-	VSUManager::applySoundSourceConfiguration(&vsuChannelConfigurationRequest);
+		VSUSoundSourceConfigurationRequest vsuChannelConfigurationRequest = 
+		{
+			// Requester object
+			Object::safeCast(this),
+			// Time when the configuration elapses
+			__FIX7_9_EXT_DIV(__I_TO_FIX7_9_EXT(soundTrackKeyframe.tick), targetTimerResolutionFactor),
+			// Sound source type
+			0 != (kSoundTrackEventSweepMod & soundTrackKeyframe.events) ? 
+				kSoundSourceModulation:
+				0 != (kSoundTrackEventNoise & soundTrackKeyframe.events) ?
+					kSoundSourceNoise:
+					kSoundSourceNormal,
+			// SxINT values
+			this->soundTrackSpec->SxINT[this->cursorSxINT],
+			// SxLRV values
+			(leftVolume << 4) | rightVolume,
+			// SxFQL values
+			note & 0xFF,
+			// SxFQH values
+			note >> 8,
+			// SxEV0 values
+			this->soundTrackSpec->SxEV0[this->cursorSxEV0],
+			// SxEV1 values
+			this->soundTrackSpec->SxEV1[this->cursorSxEV1],
+			// SxRAM pointer
+			this->soundTrackSpec->SxRAM[this->cursorSxRAM],
+			// SxSWP values
+			this->soundTrackSpec->SxSWP[this->cursorSxSWP],
+			// SxMOD pointer
+			this->soundTrackSpec->SxMOD[this->cursorSxMOD],
+			// Skip if no sound source available?
+			this->soundTrackSpec->skippable
+		};
+
+		VSUManager::applySoundSourceConfiguration(&vsuChannelConfigurationRequest);		
+	}
 
 	return this->finished;
 }
