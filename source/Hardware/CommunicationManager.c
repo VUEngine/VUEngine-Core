@@ -690,6 +690,7 @@ bool CommunicationManager::getReadyToBroadcast()
 		case kCommunicationsStatusIdle:
 		case kCommunicationsStatusReset:
 		{
+			this->status = kCommunicationsStatusIdle;
 			break;
 		}
 
