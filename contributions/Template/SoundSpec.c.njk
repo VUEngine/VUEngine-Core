@@ -338,37 +338,6 @@ const int8 {{ sanitizedSpecName }}ModulationData{{ modulationDataKey }}[] =
 		{%- set event = {} -%}
 		{%- set flags = [] -%}
 	{%- endif -%}
-
-	{#- Mute if note duration is over, or reset if note event is set -#}
-	{#- Ignore, if LRV gets set anyway in the current keyframe or new value is same as previous -#}
-	{%- if currentNoteDurationExpired -%}
-		{%- set currentNoteDurationExpired = false -%}
-
-		{%- if (valuesSxLRV | last) != '0x00' and not 'kSoundTrackEventSxLRV' in flags -%}
-			{#- Add new keyframe if there is none -#}
-			{%- if prevNoteStep !==  step -%}
-				{#- Set duration on the previous event -#}
-				{%- set keyframe = { 
-					duration: step - prevNoteStep,
-					flags: (keyframes | last).flags 
-				} -%}
-				{%- set keyframes = keyframes | setArrayIndex((keyframes | length) - 1, keyframe) -%}
-
-				{#- Add new keyframe -#}
-				{%- set keyframe = { duration: 0, flags: ['kSoundTrackEventSxLRV'] } -%}
-				{{- macros.append(valuesSxLRV, '0x00') -}}
-				{{- macros.append(keyframes, keyframe) -}}
-
-				{%- set prevNoteStep = step -%}
-			{%- else -%}
-				{{- macros.append(flags, 'kSoundTrackEventSxLRV') -}}
-				{{- macros.append(valuesSxLRV, '0x00') -}}
-			{%- endif -%}
-		{%- endif -%}
-	{%- elseif event['note'] is defined and (valuesSxLRV | last) !=  ''~SxLRV(item.instruments[currentInstrumentId].volume) and not 'kSoundTrackEventSxLRV' in flags -%}
-		{{- macros.append(flags, 'kSoundTrackEventSxLRV') -}}
-		{{- macros.append(valuesSxLRV, SxLRV(item.instruments[currentInstrumentId].volume)) -}}
-	{%- endif -%}
 	
 	{#- Find loop back keyframe -#}
 	{%- if loopPoint > 0 and step == (loopPoint * barNoteResolution / sequencerResolution) -%}
