@@ -277,7 +277,8 @@ const int8 {{ sanitizedSpecName }}ModulationData{{ modulationDataKey }}[] =
 		{%- endif -%}
 
 		{#- "INSTRUMENT CHANGE" EVENT -#}
-		{%- if event['instrument'] is defined and event['instrument'] != currentInstrumentId -%}
+		{#- Change back to default instrument if none set -#}
+		{%- if event['instrument'] != currentInstrumentId -%}
 			{%- set currentInstrumentId = event['instrument'] -%}
 			{%- set newInstrumentId = defaultInstrumentId -%}
 			{%- if event['instrument'] is defined -%}
