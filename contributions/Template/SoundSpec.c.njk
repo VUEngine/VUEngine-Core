@@ -12,20 +12,8 @@
 {%- set modulationData = {} -%}
 
 {%- set totalSize = item.size * barNoteResolution / sequencerResolution -%}
-
-{%- set loopPoint = 0 -%}
-{%- if item.loop and not (isSoundEditorPreview and playRangeStart is defined) -%}
-	{%- set loopPoint = item.loopPoint -%}
-{%- endif -%}
-
+{%- set loopPoint = item.loopPoint -%}
 {%- set soloTrack = -1 -%}
-{%- if isSoundEditorPreview -%}
-	{%- for trackSetting in trackSettings -%}
-		{%- if trackSetting.solo -%}
-			{%- set soloTrack = loop.index0 -%}
-		{%- endif -%}
-	{%- endfor -%}
-{%- endif -%}
 
 {%- macro instrumentIsUsed(instrumentId) -%}
 	{%- set result = false -%}
@@ -144,6 +132,26 @@
 #include <SoundTrack.h>
 
 {{ macros.sectionHeader('Declarations') }}
+
+{%- if isSoundEditorPreview -%}
+	{%- for trackSetting in trackSettings -%}
+		{%- if trackSetting.solo -%}
+			{%- set soloTrack = loop.index0 -%}
+		{%- endif -%}
+	{%- endfor -%}
+
+	{%- set startTick = 0  -%}
+	{%- if playRangeStart is defined and playRangeStart > 0 -%}
+		{%- set startTick = playRangeStart * subNoteResolution -%}
+		{%- set loopPoint = playRangeStart / sequencerResolution -%}
+		{%- if playRangeEnd is defined and playRangeEnd > 0 and playRangeEnd > playRangeStart -%}
+			{%- set totalSize = playRangeEnd / sequencerResolution * barNoteResolution / sequencerResolution -%}
+		{%- endif -%}
+	{%- endif -%}
+
+	{{- '\n\nconst bool startFromSramTick = ' ~ startFromSramTick ~ ';\n' -}}
+	{{- 'const uint32 startFromTick = ' ~ startTick ~ ';' -}}
+{%- endif -%}
 
 {#- Render waveforms for all instruments -#}
 {%- set isFirstWaveform = true -%}
@@ -360,7 +368,7 @@ const int8 {{ sanitizedSpecName }}ModulationData{{ modulationDataKey }}[] =
 		{{- macros.append(flags, 'kSoundTrackEventSxLRV') -}}
 		{{- macros.append(valuesSxLRV, SxLRV(item.instruments[currentInstrumentId].volume)) -}}
 	{%- endif -%}
-
+	
 	{#- Find loop back keyframe -#}
 	{%- if loopPoint > 0 and step == (loopPoint * barNoteResolution / sequencerResolution) -%}
 		{#- Add "dummy" keyframe to loop back to if there is none at this step -#}
@@ -391,11 +399,6 @@ const int8 {{ sanitizedSpecName }}ModulationData{{ modulationDataKey }}[] =
 		{%- set keyframes = keyframes | setArrayIndex((keyframes | length) - 1, keyframe) -%}
 	{%- endif -%}
 {%- endfor -%}
-
-{#- Trim events for range play in editor preview -#}
-{%- if isSoundEditorPreview and (playRangeStart is defined or playRangeEnd is defined) -%}
-	{#- TODO -#}
-{%- endif %}
 
 // Track {{ loop.index }}
 
