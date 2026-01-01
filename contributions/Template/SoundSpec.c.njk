@@ -238,7 +238,7 @@ const int8 {{ sanitizedSpecName }}ModulationData{{ modulationDataKey }}[] =
 {%- set initialVolumeSet = false -%}
 {%- set loopKeyframe = 0 -%}
 {%- set prevNoteStep = 0 -%}
-{%- set currentInstrumentId = defaultInstrumentId -%}
+{%- set currentInstrumentId = null -%}
 {%- set currentNoteDuration = 0 -%}
 {%- set currentNoteDurationExpired = false -%}
 {%- for step in range(0, totalSize) -%}
@@ -272,8 +272,11 @@ const int8 {{ sanitizedSpecName }}ModulationData{{ modulationDataKey }}[] =
 
 		{#- "VOLUME CHANGE" EVENT -#}
 		{%- if event['volume'] is defined -%}
-			{{- macros.append(flags, 'kSoundTrackEventSxLRV') -}}
-			{{- macros.append(valuesSxLRV, event['volume'] | intToHex(2)) -}}
+			{%- set newValueSxLRV = event['volume'] | intToHex(2) -%}
+			{%- if (valuesSxLRV | last) != ''~newValueSxLRV -%}
+				{{- macros.append(flags, 'kSoundTrackEventSxLRV') -}}
+				{{- macros.append(valuesSxLRV, newValueSxLRV) -}}
+			{%- endif -%}
 		{%- endif -%}
 
 		{#- "INSTRUMENT CHANGE" EVENT -#}
@@ -285,23 +288,50 @@ const int8 {{ sanitizedSpecName }}ModulationData{{ modulationDataKey }}[] =
 				{%- set newInstrumentId = event['instrument'] -%}
 			{%- endif -%}
 			{%- set newInstrument = item.instruments[newInstrumentId] -%}
-			{{- macros.append(flags, 'kSoundTrackEventSxINT') -}}
-			{{- macros.append(valuesSxINT, SxINT(true, newInstrument.interval)) -}}
-			{{- macros.append(flags, 'kSoundTrackEventSxLRV') -}}
-			{{- macros.append(valuesSxLRV, SxLRV(newInstrument.volume)) -}}
-			{{- macros.append(flags, 'kSoundTrackEventSxEV0') -}}
-			{{- macros.append(valuesSxEV0, SxEV0(newInstrument.envelope)) -}}
-			{{- macros.append(flags, 'kSoundTrackEventSxEV1') -}}
-			{{- macros.append(valuesSxEV1, SxEV1(newInstrument.envelope, newInstrument.sweepMod, newInstrument.tap, track.type)) -}}
-			{%- if track.type != 'noise' -%}
-				{{- macros.append(flags, 'kSoundTrackEventSxRAM') -}}
-				{{- macros.append(valuesSxRAM, SxRAM(newInstrument.waveform, track.type)) -}}
+
+			{%- set newValueSxINT = SxINT(true, newInstrument.interval) -%}
+			{%- if (valuesSxINT | last) != ''~newValueSxINT -%}
+				{{- macros.append(flags, 'kSoundTrackEventSxINT') -}}
+				{{- macros.append(valuesSxINT, newValueSxINT) -}}
 			{%- endif -%}
+
+			{%- set newValueSxLRV = SxLRV(newInstrument.volume) -%}
+			{%- if (valuesSxLRV | last) != ''~newValueSxLRV -%}
+				{{- macros.append(flags, 'kSoundTrackEventSxLRV') -}}
+				{{- macros.append(valuesSxLRV, newValueSxLRV) -}}
+			{%- endif -%}
+
+			{%- set newValueSxEV0 = SxEV0(newInstrument.envelope) -%}
+			{%- if (valuesSxEV0 | last) != ''~newValueSxEV0 -%}
+				{{- macros.append(flags, 'kSoundTrackEventSxEV0') -}}
+				{{- macros.append(valuesSxEV0, newValueSxEV0) -}}
+			{%- endif -%}
+
+			{%- set newValueSxEV1 = SxEV1(newInstrument.envelope, newInstrument.sweepMod, newInstrument.tap, track.type) -%}
+			{%- if (valuesSxEV1 | last) != ''~newValueSxEV1 -%}
+				{{- macros.append(flags, 'kSoundTrackEventSxEV1') -}}
+				{{- macros.append(valuesSxEV1, newValueSxEV1) -}}
+			{%- endif -%}
+
+			{%- if track.type != 'noise' -%}
+				{%- set newValueSxRAM = SxRAM(newInstrument.waveform, track.type) -%}
+				{%- if (valuesSxRAM | last) != ''~newValueSxRAM -%}
+					{{- macros.append(flags, 'kSoundTrackEventSxRAM') -}}
+					{{- macros.append(valuesSxRAM, newValueSxRAM) -}}
+				{%- endif -%}
+			{%- endif -%}
+
 			{%- if track.type == 'sweepMod' -%}
-				{{- macros.append(flags, 'kSoundTrackEventSxSWP') -}}
-				{{- macros.append(valuesSxSWP, S5SWP(newInstrument.sweepMod)) -}}
-				{{- macros.append(flags, 'kSoundTrackEventSxMOD') -}}
-				{{- macros.append(valuesSxMOD, S5MOD(newInstrument.modulationData,  newInstrument.sweepMod, track.type)) -}}
+				{%- set newValueSxSWP = S5SWP(newInstrument.sweepMod) -%}
+				{%- if (valuesSxSWP | last) != ''~newValueSxSWP -%}
+					{{- macros.append(flags, 'kSoundTrackEventSxSWP') -}}
+					{{- macros.append(valuesSxSWP, newValueSxSWP) -}}
+				{%- endif -%}
+				{%- set newValueSxMOD = S5MOD(newInstrument.modulationData,  newInstrument.sweepMod, track.type) -%}
+				{%- if (valuesSxMOD | last) != ''~newValueSxMOD -%}
+					{{- macros.append(flags, 'kSoundTrackEventSxMOD') -}}
+					{{- macros.append(valuesSxMOD, newValueSxMOD) -}}
+				{%- endif -%}
 			{%- endif -%}
 		{%- endif -%}
 
@@ -338,7 +368,7 @@ const int8 {{ sanitizedSpecName }}ModulationData{{ modulationDataKey }}[] =
 		{%- set event = {} -%}
 		{%- set flags = [] -%}
 	{%- endif -%}
-	
+
 	{#- Find loop back keyframe -#}
 	{%- if loopPoint > 0 and step == (loopPoint * barNoteResolution / sequencerResolution) -%}
 		{#- Add "dummy" keyframe to loop back to if there is none at this step -#}
