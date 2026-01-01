@@ -241,12 +241,12 @@ void Body::reset()
 	Body::computeTotalNormal(this);
 	Body::setSurroundingFrictionCoefficient(this, 0);
 
-	this->velocity 				= Vector3D::zero();
-	this->accelerating 			= (Vector3DFlag){false, false, false};
-	this->externalForce	 		= Vector3D::zero();
-	this->friction 				= Vector3D::zero();
-	this->totalNormal			= Vector3D::zero();
-	this->gravity 				= Body::getGravity(this);
+	this->velocity 			= Vector3D::zero();
+	this->accelerating 		= (Vector3DFlag){false, false, false};
+	this->externalForce		= Vector3D::zero();
+	this->friction 			= Vector3D::zero();
+	this->totalNormal		= Vector3D::zero();
+	this->gravity 			= Body::getGravity(this);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -634,7 +634,6 @@ void Body::setAxisSubjectToGravity(uint16 axisSubjectToGravity)
 	this->axisSubjectToGravity = axisSubjectToGravity;
 
 	this->gravity = Body::getGravity(this);
-
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -1468,6 +1467,7 @@ void Body::clearNormalOnAxis(uint16 axis __attribute__ ((unused)))
 		{
 			delete this->normals;
 			this->normals = NULL;
+			this->totalNormal = Vector3D::zero();
 		}
 		else if(computeTotalNormal)
 		{
