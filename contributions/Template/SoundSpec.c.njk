@@ -141,10 +141,10 @@
 	{%- endfor -%}
 
 	{%- set startTick = 0  -%}
-	{%- if playRangeStart is defined and playRangeStart > 0 -%}
+	{%- if playRangeStart is defined and playRangeStart > -1 -%}
 		{%- set startTick = playRangeStart * subNoteResolution -%}
 		{%- set loopPoint = playRangeStart / sequencerResolution -%}
-		{%- if playRangeEnd is defined and playRangeEnd > 0 and playRangeEnd > playRangeStart -%}
+		{%- if playRangeEnd is defined and playRangeEnd > -1 and playRangeEnd > playRangeStart -%}
 			{%- set totalSize = playRangeEnd / sequencerResolution * barNoteResolution / sequencerResolution -%}
 		{%- endif -%}
 	{%- endif -%}
