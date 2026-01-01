@@ -709,7 +709,7 @@ void Sound::print(int32 x, int32 y)
 	PRINT_TEXT(((SoundSpec*)this->componentSpec)->name, x, y++);
 	y++;
 
-	Sound::printPlaybackProgress(this, x, y++);
+ 	Sound::printPlaybackProgress(this, x, y++);
  
 	uint8 trackInfoXOffset = x + 22;
 	uint8 trackInfoValuesXOffset = 9;
@@ -728,7 +728,7 @@ void Sound::print(int32 x, int32 y)
 
 	PRINT_TEXT(kSoundPlaying == this->state ? "  " : "\x07\x07", x + 15, y++);
 
-	y+=2;
+	y += 2;
 
 	PRINT_TEXT("TRACK INFO", trackInfoXOffset, y++);
 
