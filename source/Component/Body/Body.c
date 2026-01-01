@@ -818,17 +818,17 @@ uint16 Body::getMovementOnAllAxis()
 
 	uint16 result = 0;
 
-	if(this->velocity.x || this->accelerating.x)
+	if(0 != this->velocity.x || 0 != this->accelerating.x)
 	{
 		result |= __X_AXIS;
 	}
 
-	if(this->velocity.y || this->accelerating.y)
+	if(0 != this->velocity.y || 0 != this->accelerating.y)
 	{
 		result |= __Y_AXIS;
 	}
 
-	if(this->velocity.z || this->accelerating.z)
+	if(0 != this->velocity.z || 0 != this->accelerating.z)
 	{
 		result |= __Z_AXIS;
 	}
