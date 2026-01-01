@@ -238,15 +238,12 @@ const int8 {{ sanitizedSpecName }}ModulationData{{ modulationDataKey }}[] =
 {%- set initialVolumeSet = false -%}
 {%- set loopKeyframe = 0 -%}
 {%- set prevNoteStep = 0 -%}
-{%- set currentInstrumentId = null -%}
-{%- set currentNoteDuration = 0 -%}
-{%- set currentNoteDurationExpired = false -%}
+{%- set currentInstrumentId = defaultInstrumentId -%}
+{%- set currentNoteDuration = -1 -%}
+{%- set needsVolumeReset = false -%}
 {%- for step in range(0, totalSize) -%}
 	{#- Update running variables -#}
 	{%- set currentNoteDuration = currentNoteDuration - 1 -%}
-	{%- if currentNoteDuration == 0 -%}
-		{%- set currentNoteDurationExpired = true -%}
-	{%- endif -%}
 
 	{#- Does a pattern start at the current step? -#}
 	{%- if track.sequence[step / barNoteResolution * sequencerResolution] is defined -%}	
@@ -263,8 +260,7 @@ const int8 {{ sanitizedSpecName }}ModulationData{{ modulationDataKey }}[] =
 		{%- if event['note'] is defined -%}
 			{{- macros.append(flags, 'kSoundTrackEventSxFQ') -}}
 			{{- macros.append(valuesSxFQ, SxFQ(notesLookup[event['note']])) -}}
-			{%- set currentNoteDurationExpired = false -%}
-			{%- set currentNoteDuration = 0 -%}
+			{%- set currentNoteDuration = -1 -%}
 			{%- if event['duration'] is defined -%}
 				{%- set currentNoteDuration = event['duration'] -%}
 			{%- endif -%}
@@ -282,11 +278,11 @@ const int8 {{ sanitizedSpecName }}ModulationData{{ modulationDataKey }}[] =
 		{#- "INSTRUMENT CHANGE" EVENT -#}
 		{#- Change back to default instrument if none set -#}
 		{%- if event['instrument'] != currentInstrumentId -%}
-			{%- set currentInstrumentId = event['instrument'] -%}
 			{%- set newInstrumentId = defaultInstrumentId -%}
 			{%- if event['instrument'] is defined -%}
 				{%- set newInstrumentId = event['instrument'] -%}
 			{%- endif -%}
+			{%- set currentInstrumentId = newInstrumentId -%}
 			{%- set newInstrument = item.instruments[newInstrumentId] -%}
 
 			{%- set newValueSxINT = SxINT(true, newInstrument.interval) -%}
@@ -367,6 +363,43 @@ const int8 {{ sanitizedSpecName }}ModulationData{{ modulationDataKey }}[] =
 	{%- else -%}
 		{%- set event = {} -%}
 		{%- set flags = [] -%}
+	{%- endif -%}
+
+	{#- Mute if note duration is over, or reset if note event is set -#}
+	{#- Ignore, if LRV gets set anyway in the current keyframe or new value is same as previous -#}
+	{%- if currentNoteDuration == 0 -%}
+		{%- if (valuesSxLRV | last) != '0x00' and not 'kSoundTrackEventSxLRV' in flags -%}
+			{%- set needsVolumeReset = true -%}
+
+			{#- Add new keyframe if there is none -#}
+			{%- if prevNoteStep !==  step -%}
+				{#- Set duration on the previous event -#}
+				{%- set keyframe = { 
+					duration: step - prevNoteStep,
+					flags: (keyframes | last).flags 
+				} -%}
+				{%- set keyframes = keyframes | setArrayIndex((keyframes | length) - 1, keyframe) -%}
+
+				{#- Add new keyframe -#}
+				{%- set keyframe = { duration: 0, flags: ['kSoundTrackEventSxLRV'] } -%}
+				{{- macros.append(valuesSxLRV, '0x00') -}}
+				{{- macros.append(keyframes, keyframe) -}}
+
+				{%- set prevNoteStep = step -%}
+			{%- else -%}
+				{{- macros.append(flags, 'kSoundTrackEventSxLRV') -}}
+				{{- macros.append(valuesSxLRV, '0x00') -}}
+			{%- endif -%}
+		{%- endif -%}
+	{%- elseif needsVolumeReset and event['note'] is defined -%}
+		{%- set needsVolumeReset = false -%}
+		{%- if not 'kSoundTrackEventSxLRV' in flags -%}
+			{%- set newValueSxLRV = SxLRV(item.instruments[currentInstrumentId].volume) -%}
+			{%- if (valuesSxLRV | last) != ''~newValueSxLRV -%}
+				{{- macros.append(flags, 'kSoundTrackEventSxLRV') -}}
+				{{- macros.append(valuesSxLRV, newValueSxLRV) -}}
+			{%- endif -%}
+		{%- endif -%}
 	{%- endif -%}
 
 	{#- Find loop back keyframe -#}
