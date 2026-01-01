@@ -770,6 +770,10 @@ void Sound::printPlaybackTime(int32 x, int32 y)
 
 		Sound::printTiming(this, currentSecond, x, y);
 	}
+	else if(0 == elapsedTicksPercentage)
+	{
+		Sound::printTiming(this, 0, x, y);
+	}
 }
 #endif
 
