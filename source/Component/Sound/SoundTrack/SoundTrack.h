@@ -358,8 +358,8 @@ class SoundTrack : Object
 	uint32 getTicks();
 
 	/// Retrieve the sound track's percentage of elapsed ticks.
-	/// @return Percentaje of elapsed ticks
-	float getElapsedTicksPercentaje();
+	/// @return Percentage of elapsed ticks
+	float getElapsedTicksPercentage();
 
 	/// Retrieve the total time of playback in milliseconds.
 	/// @param targetTimerResolutionUS: Target timer resolution in US

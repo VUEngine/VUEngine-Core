@@ -30,12 +30,6 @@ friend class VirtualList;
 // CLASS' MACROS
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-// Must redefine these because they are defined as strings
-#undef __CHAR_DARK_RED_BOX
-#define __CHAR_DARK_RED_BOX						'\x0E'
-#undef __CHAR_BRIGHT_RED_BOX
-#define __CHAR_BRIGHT_RED_BOX					'\x10'
-
 #define __MIDI_CONVERTER_FREQUENCY_US			20
 #define __SOUND_TARGET_US_PER_TICK				__MIDI_CONVERTER_FREQUENCY_US
 
@@ -709,7 +703,7 @@ void Sound::print(int32 x, int32 y)
 	PRINT_TEXT(((SoundSpec*)this->componentSpec)->name, x, y++);
 	y++;
 
- 	Sound::printPlaybackProgress(this, x, y++);
+ 	Sound::printPlaybackProgress(this, x, y++, 32);
  
 	uint8 trackInfoXOffset = x + 22;
 	uint8 trackInfoValuesXOffset = 9;
@@ -755,7 +749,7 @@ void Sound::printPlaybackTime(int32 x, int32 y)
 		return;
 	}
 
-	float elapsedTicksPercentage = SoundTrack::getElapsedTicksPercentaje(this->mainSoundTrack);
+	float elapsedTicksPercentage = SoundTrack::getElapsedTicksPercentage(this->mainSoundTrack);
 	
 	uint32 currentSecond = elapsedTicksPercentage * this->totalPlaybackMilliseconds / __MILLISECONDS_PER_SECOND;
 
@@ -780,40 +774,33 @@ void Sound::printPlaybackTime(int32 x, int32 y)
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #ifndef __SHIPPING
-void Sound::printPlaybackProgress(int32 x, int32 y)
+void Sound::printPlaybackProgress(int32 x, int32 y, int32 width)
 {
 	if(NULL == this->mainSoundTrack || 0 == this->mainSoundTrack->ticks)
 	{
 		return;
 	}
 
-	float elapsedTicksPercentage = SoundTrack::getElapsedTicksPercentaje(this->mainSoundTrack);
+	float elapsedTicksPercentage = SoundTrack::getElapsedTicksPercentage(this->mainSoundTrack);
 
 	if(0 > elapsedTicksPercentage || 1 < elapsedTicksPercentage)
 	{
 		elapsedTicksPercentage = 1;		
 	}
 
-	uint32 position = elapsedTicksPercentage * 32;
+	uint32 position = elapsedTicksPercentage * width;
 
-	char boxesArray[33] = 
+	for(uint16 i = 0; i < width; i++)
 	{
-		__CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, 
-		__CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX,
-		__CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, 
-		__CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX,
-		__CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, 
-		__CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX,
-		__CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, 
-		__CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, '\0'
-	};
-
-	for(uint16 i = 0; i < position && 32 >= i; i++)
-	{
-		boxesArray[i] = __CHAR_BRIGHT_RED_BOX;
+		if (i < position)
+		{
+			Printer::text(__CHAR_BRIGHT_RED_BOX, x + i, y, NULL);
+		}
+		else
+		{
+			Printer::text(__CHAR_DARK_RED_BOX, x + i, y, NULL);
+		}
 	}
-
-	PRINT_TEXT(boxesArray, x, y);
 }
 #endif
 

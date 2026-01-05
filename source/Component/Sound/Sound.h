@@ -276,7 +276,8 @@ class Sound : Component
 	/// Print the sounds's playback progress.
 	/// @param x: Screen x coordinate where to print
 	/// @param y: Screen y coordinate where to print
-	void printPlaybackProgress(int32 x, int32 y);
+	/// @param size: Total width of progress bar
+	void printPlaybackProgress(int32 x, int32 y, int32 size);
 }
 
 #endif

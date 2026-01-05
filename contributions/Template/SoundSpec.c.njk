@@ -431,7 +431,7 @@ const int8 {{ sanitizedSpecName }}ModulationData{{ modulationDataKey }}[] =
 		} -%}
 		{%- set keyframes = keyframes | setArrayIndex((keyframes | length) - 1, keyframe) -%}
 	{%- endif -%}
-{%- endfor -%}
+{%- endfor %}
 
 // Track {{ loop.index }}
 

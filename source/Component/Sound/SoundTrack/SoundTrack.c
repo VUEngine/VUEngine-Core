@@ -245,7 +245,7 @@ uint32 SoundTrack::getTicks()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-float SoundTrack::getElapsedTicksPercentaje()
+float SoundTrack::getElapsedTicksPercentage()
 {
 	if(0 == this->samples)
 	{

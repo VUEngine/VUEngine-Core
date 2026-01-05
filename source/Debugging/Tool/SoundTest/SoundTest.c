@@ -46,7 +46,7 @@ void SoundTest::update()
 
 		if(delay++ >= __TARGET_FPS)
 		{
-			Sound::printPlaybackProgress(this->sound, 1, 6);
+			Sound::printPlaybackProgress(this->sound, 1, 6, 32);
 			Sound::printPlaybackTime(this->sound, 24, 8);
 			delay = 0;
 		}
@@ -303,7 +303,7 @@ bool SoundTest::onEvent(ListenerObject eventFirer, uint16 eventCode)
 			if(!isDeleted(this->sound))
 			{
 				Sound::printPlaybackTime(this->sound, 24, 8);
-				Sound::printPlaybackProgress(this->sound, 1, 6);
+				Sound::printPlaybackProgress(this->sound, 1, 6, 32);
 			}
 
 			return true;
