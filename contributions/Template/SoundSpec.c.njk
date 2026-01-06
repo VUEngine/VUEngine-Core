@@ -150,7 +150,8 @@
 	{%- endif -%}
 
 	{{- '\n\nconst bool startFromSramTick = ' ~ startFromSramTick ~ ';\n' -}}
-	{{- 'const uint32 startFromTick = ' ~ startTick ~ ';' -}}
+	{{- 'const uint32 startFromTick = ' ~ startTick ~ ';\n' -}}
+	{{- 'const bool miniVisualizer = ' ~ miniVisualizer ~ ';' -}}
 {%- endif -%}
 
 {#- Render waveforms for all instruments -#}
