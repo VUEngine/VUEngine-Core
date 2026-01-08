@@ -35,87 +35,10 @@
 	{{ result }}
 {%- endmacro -%}
 
-{%- macro SxINT(channelEnabled, interval) -%}
-	{{ hexFromBitsArray([
-		[channelEnabled, 1],
-		[NULL, 1],
-		[interval.enabled, 1],
-		[interval.value, 5]
-	]) }}
-{%- endmacro -%}
-
-{%- macro SxLRV(volume) -%}
-	{{ hexFromBitsArray([
-		[volume.left, 4],
-		[volume.right, 4]
-	]) }}
-{%- endmacro -%}
-
-{%- macro SxFQ(frequency) -%}
-	{{ frequency | intToHex(4) }}
-{%- endmacro -%}
-
-{%- macro SxEV0(envelope) -%}
-	{{ hexFromBitsArray([
-		[envelope.initialValue, 4],
-		[envelope.direction, 1],
-		[envelope.stepTime, 3]
-	]) }}
-{%- endmacro -%}
-
-{%- macro SxEV1(envelope, sweepMod, tap, type) -%}
-	{%- if (type == 'noise') -%}
-		{{ hexFromBitsArray([
-			[NULL, 1],
-			[tap, 3],
-			[NULL, 2],
-			[envelope.repeat, 1],
-			[envelope.enabled, 1]
-		]) }}
-	{%- else -%}
-		{{ hexFromBitsArray([
-			[NULL, 1],
-			[sweepMod.enabled, 1],
-			[sweepMod.repeat, 1],
-			[sweepMod.function, 1],
-			[NULL, 2],
-			[envelope.repeat, 1],
-			[envelope.enabled, 1]
-		]) }}
-	{%- endif -%}
-{%- endmacro -%}
-
-{%- macro SxRAM(waveform, type) -%}
-	{%- if (type !== 'noise') -%}
-		{%- set checksum = waveform | crc32 -%}
-		&{{ sanitizedSpecName }}Waveform{{ waveforms[checksum] }}
-	{%- else -%}
-		NULL
-	{%- endif -%}
-{%- endmacro -%}
-
-{%- macro S5SWP(sweepMod) -%}
-	{{ hexFromBitsArray([
-		[sweepMod.frequency, 1],
-		[sweepMod.interval, 3],
-		[sweepMod.direction, 1],
-		[sweepMod.shift, 3]
-	]) }}
-{%- endmacro -%}
-
-{%- macro S5MOD(modData, sweepMod, type) -%}
-	{%- if (type == 'sweepMod' and sweepMod.function) -%}
-		{%- set checksum = modData | crc32 -%}
-		{{ sanitizedSpecName }}ModulationData{{ modulationData[checksum] }}
-	{%- else -%}
-		NULL
-	{%- endif -%}
-{%- endmacro -%}
-
 {%- macro printValueList(values, columnWidth=16) -%}
 	{% set count = 0 -%}
 	{%- for value in values -%}
-		{{- value -}}{{- ', ' -}}
+		{{- value | safe -}}{{- ', ' -}}
 		{% set count = count + 1 -%}
 		{%- if count == columnWidth and not loop.last -%}
 			{{- '\n\t' -}}
@@ -213,272 +136,53 @@ const int8 {{ sanitizedSpecName }}ModulationData{{ modulationDataKey }}[] =
 {%- for track in item.tracks -%}
 {%- if track.sequence | length and not (isSoundEditorPreview and (trackSettings[loop.index0].muted or (soloTrack > -1 and soloTrack !== loop.index0))) -%}
 
-{#- Initial configuration -#}
-{%- set defaultInstrumentId = track.instrument -%}
-{%- set defaultInstrument = item.instruments[defaultInstrumentId] -%}
-{%- set valuesSxINT = [SxINT(true, defaultInstrument.interval)] -%}
-{%- set valuesSxLRV = ['0x00'] -%} {#- Explicit silent note. Initial instrument's volume is set on the first event. -#}
-{%- set valuesSxEV0 = [SxEV0(defaultInstrument.envelope)] -%}
-{%- set valuesSxEV1 = [SxEV1(defaultInstrument.envelope, defaultInstrument.sweepMod, defaultInstrument.tap, track.type)] -%}
-{%- set valuesSxFQ = ['0x0000'] -%}
-{%- set valuesSxRAM = [SxRAM(defaultInstrument.waveform, track.type)] -%}
-{%- set valuesSxSWP = [S5SWP(defaultInstrument.sweepMod)] -%}
-{%- set valuesSxMOD = [S5MOD(defaultInstrument.modulationData, defaultInstrument.sweepMod, track.type)] -%}
-
-{%- set keyframes = [{ 
-	duration: 0,
-	flags: ['kSoundTrackEventStart'] 
-}] -%}
-{#- 
-	Compute all register values and keyframes. We do this in a single loop because:
-	a) it's cleaner to define handling for the different events in a single place
-	b) registers can contain values from multiple logical places, e.g. EV1
-	c) we have to keep track of previous state, because end user effects allow to edit individual values, 
-	   e.g. envelope.enabled, while the spec wants the whole register values
--#}
-{%- set initialVolumeSet = false -%}
-{%- set loopKeyframe = 0 -%}
-{%- set prevNoteStep = 0 -%}
-{%- set currentInstrumentId = defaultInstrumentId -%}
-{%- set currentNoteDuration = -1 -%}
-{%- set needsVolumeReset = false -%}
-{%- for step in range(0, totalSize) -%}
-	{#- Update running variables -#}
-	{%- set currentNoteDuration = currentNoteDuration - 1 -%}
-
-	{#- Does a pattern start at the current step? -#}
-	{%- if track.sequence[step / barNoteResolution * sequencerResolution] is defined -%}	
-		{%- set pattern = item.patterns[track.sequence[step / barNoteResolution * sequencerResolution]] -%}
-		{%- set patternStartStep = step -%}
-	{%- endif -%}
-
-	{#- Is there an event for the current step in the current pattern? -#}
-	{%- if pattern is defined and pattern.events[step - patternStartStep] is defined -%}
-		{%- set event = pattern.events[step - patternStartStep] -%}
-		{%- set flags = [] -%}
-
-		{#- "PLAY NOTE" EVENT -#}
-		{%- if event['note'] is defined -%}
-			{{- macros.append(flags, 'kSoundTrackEventSxFQ') -}}
-			{{- macros.append(valuesSxFQ, SxFQ(notesLookup[event['note']])) -}}
-			{%- set currentNoteDuration = -1 -%}
-			{%- if event['duration'] is defined -%}
-				{%- set currentNoteDuration = event['duration'] -%}
-			{%- endif -%}
-		{%- endif -%}
-
-		{#- "VOLUME CHANGE" EVENT -#}
-		{%- if event['volume'] is defined -%}
-			{%- set newValueSxLRV = event['volume'] | intToHex(2) -%}
-			{%- if (valuesSxLRV | last) != ''~newValueSxLRV -%}
-				{{- macros.append(flags, 'kSoundTrackEventSxLRV') -}}
-				{{- macros.append(valuesSxLRV, newValueSxLRV) -}}
-			{%- endif -%}
-		{%- endif -%}
-
-		{#- "INSTRUMENT CHANGE" EVENT -#}
-		{#- Change back to default instrument if none set -#}
-		{%- if event['instrument'] != currentInstrumentId -%}
-			{%- set newInstrumentId = defaultInstrumentId -%}
-			{%- if event['instrument'] is defined -%}
-				{%- set newInstrumentId = event['instrument'] -%}
-			{%- endif -%}
-			{%- set currentInstrumentId = newInstrumentId -%}
-			{%- set newInstrument = item.instruments[newInstrumentId] -%}
-
-			{%- set newValueSxINT = SxINT(true, newInstrument.interval) -%}
-			{%- if (valuesSxINT | last) != ''~newValueSxINT -%}
-				{{- macros.append(flags, 'kSoundTrackEventSxINT') -}}
-				{{- macros.append(valuesSxINT, newValueSxINT) -}}
-			{%- endif -%}
-
-			{%- set newValueSxLRV = SxLRV(newInstrument.volume) -%}
-			{%- if (valuesSxLRV | last) != ''~newValueSxLRV -%}
-				{{- macros.append(flags, 'kSoundTrackEventSxLRV') -}}
-				{{- macros.append(valuesSxLRV, newValueSxLRV) -}}
-			{%- endif -%}
-
-			{%- set newValueSxEV0 = SxEV0(newInstrument.envelope) -%}
-			{%- if (valuesSxEV0 | last) != ''~newValueSxEV0 -%}
-				{{- macros.append(flags, 'kSoundTrackEventSxEV0') -}}
-				{{- macros.append(valuesSxEV0, newValueSxEV0) -}}
-			{%- endif -%}
-
-			{%- set newValueSxEV1 = SxEV1(newInstrument.envelope, newInstrument.sweepMod, newInstrument.tap, track.type) -%}
-			{%- if (valuesSxEV1 | last) != ''~newValueSxEV1 -%}
-				{{- macros.append(flags, 'kSoundTrackEventSxEV1') -}}
-				{{- macros.append(valuesSxEV1, newValueSxEV1) -}}
-			{%- endif -%}
-
-			{%- if track.type != 'noise' -%}
-				{%- set newValueSxRAM = SxRAM(newInstrument.waveform, track.type) -%}
-				{%- if (valuesSxRAM | last) != ''~newValueSxRAM -%}
-					{{- macros.append(flags, 'kSoundTrackEventSxRAM') -}}
-					{{- macros.append(valuesSxRAM, newValueSxRAM) -}}
-				{%- endif -%}
-			{%- endif -%}
-
-			{%- if track.type == 'sweepMod' -%}
-				{%- set newValueSxSWP = S5SWP(newInstrument.sweepMod) -%}
-				{%- if (valuesSxSWP | last) != ''~newValueSxSWP -%}
-					{{- macros.append(flags, 'kSoundTrackEventSxSWP') -}}
-					{{- macros.append(valuesSxSWP, newValueSxSWP) -}}
-				{%- endif -%}
-				{%- set newValueSxMOD = S5MOD(newInstrument.modulationData,  newInstrument.sweepMod, track.type) -%}
-				{%- if (valuesSxMOD | last) != ''~newValueSxMOD -%}
-					{{- macros.append(flags, 'kSoundTrackEventSxMOD') -}}
-					{{- macros.append(valuesSxMOD, newValueSxMOD) -}}
-				{%- endif -%}
-			{%- endif -%}
-		{%- endif -%}
-
-		{#- TODO: add other event types -#}
-
-		{#- Set initial volume on the very first event (after the start event) -#}
-		{%- if not initialVolumeSet -%}
-			{%- set initialVolumeSet = true -%}
-			{#- Do nothing if the event sets the volume explicitly -#}
-			{%- if not 'kSoundTrackEventSxLRV' in flags -%}
-				{{- macros.append(flags, 'kSoundTrackEventSxLRV') -}}
-				{{- macros.append(valuesSxLRV, SxLRV(defaultInstrument.volume)) -}}
-			{%- endif -%}
-		{%- endif -%}
-
-		{#- Ensure events for sweep/mod and noise are played on the respective channels -#}
-		{{- macros.append(flags, 'kSoundTrackEventSweepMod', track.type == 'sweepMod') -}}
-		{{- macros.append(flags, 'kSoundTrackEventNoise', track.type == 'noise') -}}
-
-		{#- Now that it is known, set duration on the previous event -#}
-		{%- set keyframe = { 
-			duration: step - prevNoteStep,
-			flags: (keyframes | last).flags 
-		} -%}
-		{%- set keyframes = keyframes | setArrayIndex((keyframes | length) - 1, keyframe) -%}
-
-		{#- Finally, append to list of keyframes -#}
-		{%- set keyframe = { duration: 0, flags: flags } -%}
-		{{- macros.append(keyframes, keyframe) -}}
-
-		{#- Take note of this note's step to compute its duration later -#}
-		{%- set prevNoteStep = step -%}
-	{%- else -%}
-		{%- set event = {} -%}
-		{%- set flags = [] -%}
-	{%- endif -%}
-
-	{#- Mute if note duration is over, or reset if note event is set -#}
-	{#- Ignore, if LRV gets set anyway in the current keyframe or new value is same as previous -#}
-	{%- if currentNoteDuration == 0 -%}
-		{%- if (valuesSxLRV | last) != '0x00' and not 'kSoundTrackEventSxLRV' in flags -%}
-			{%- set needsVolumeReset = true -%}
-
-			{#- Add new keyframe if there is none -#}
-			{%- if prevNoteStep !==  step -%}
-				{#- Set duration on the previous event -#}
-				{%- set keyframe = { 
-					duration: step - prevNoteStep,
-					flags: (keyframes | last).flags 
-				} -%}
-				{%- set keyframes = keyframes | setArrayIndex((keyframes | length) - 1, keyframe) -%}
-
-				{#- Add new keyframe -#}
-				{%- set keyframe = { duration: 0, flags: ['kSoundTrackEventSxLRV'] } -%}
-				{{- macros.append(valuesSxLRV, '0x00') -}}
-				{{- macros.append(keyframes, keyframe) -}}
-
-				{%- set prevNoteStep = step -%}
-			{%- else -%}
-				{{- macros.append(flags, 'kSoundTrackEventSxLRV') -}}
-				{{- macros.append(valuesSxLRV, '0x00') -}}
-			{%- endif -%}
-		{%- endif -%}
-	{%- elseif needsVolumeReset and event['note'] is defined -%}
-		{%- set needsVolumeReset = false -%}
-		{%- if not 'kSoundTrackEventSxLRV' in flags -%}
-			{%- set newValueSxLRV = SxLRV(item.instruments[currentInstrumentId].volume) -%}
-			{%- if (valuesSxLRV | last) != ''~newValueSxLRV -%}
-				{{- macros.append(flags, 'kSoundTrackEventSxLRV') -}}
-				{{- macros.append(valuesSxLRV, newValueSxLRV) -}}
-			{%- endif -%}
-		{%- endif -%}
-	{%- endif -%}
-
-	{#- Find loop back keyframe -#}
-	{%- if loopPoint > 0 and step == (loopPoint * barNoteResolution / sequencerResolution) -%}
-		{#- Add "dummy" keyframe to loop back to if there is none at this step -#}
-		{%- if prevNoteStep !==  step -%}
-			{#- Set duration on the previous event -#}
-			{%- set keyframe = { 
-				duration: step - prevNoteStep,
-				flags: (keyframes | last).flags 
-			} -%}
-			{%- set keyframes = keyframes | setArrayIndex((keyframes | length) - 1, keyframe) -%}
-
-			{#- Add empty keyframe -#}
-			{%- set keyframe = { duration: 0, flags: [] } -%}
-			{{- macros.append(keyframes, keyframe) -}}
-
-			{%- set prevNoteStep = step -%}
-		{%- endif -%}
-
-		{%- set loopKeyframe = (keyframes | length) - 1 -%}
-	{%- endif -%}
-
-	{%- if loop.last -%}
-		{#- Set duration of the last event -#}
-		{%- set keyframe = { 
-			duration: step - prevNoteStep + 1,
-			flags: (keyframes | last).flags 
-		} -%}
-		{%- set keyframes = keyframes | setArrayIndex((keyframes | length) - 1, keyframe) -%}
-	{%- endif -%}
-{%- endfor %}
+{%- set trackKeyframes = getTrackKeyframes(track, sanitizedSpecName, totalSize, loopPoint, waveforms, modulationData, item) %}
 
 // Track {{ loop.index }}
 
 const uint8 {{ sanitizedSpecName }}SoundTrack{{ loop.index0 }}SxINT[] =
 {
-	{{ printValueList(valuesSxINT, 22) }}
+	{{ printValueList(trackKeyframes.values.SxINT, 22) }}
 };
 
 const uint8 {{ sanitizedSpecName }}SoundTrack{{ loop.index0 }}SxLRV[] =
 {
-	{{ printValueList(valuesSxLRV, 22) }}
+	{{ printValueList(trackKeyframes.values.SxLRV, 22) }}
 };
 
 const uint16 {{ sanitizedSpecName }}SoundTrack{{ loop.index0 }}SxFQ[] =
 {
-	{{ printValueList(valuesSxFQ, 16) }}
+	{{ printValueList(trackKeyframes.values.SxFQ, 16) }}
 };
 
 const uint8 {{ sanitizedSpecName }}SoundTrack{{ loop.index0 }}SxEV0[] =
 {
-	{{ printValueList(valuesSxEV0, 22) }}
+	{{ printValueList(trackKeyframes.values.SxEV0, 22) }}
 };
 
 const uint8 {{ sanitizedSpecName }}SoundTrack{{ loop.index0 }}SxEV1[] =
 {
-	{{ printValueList(valuesSxEV1, 22) }}
+	{{ printValueList(trackKeyframes.values.SxEV1, 22) }}
 };
 
 const WaveformData* const {{ sanitizedSpecName }}SoundTrack{{ loop.index0 }}SxRAM[] =
 {
-	{{ printValueList(valuesSxRAM, 4) }}
+	{{ printValueList(trackKeyframes.values.SxRAM, 4) }}
 };
 
 const uint8 {{ sanitizedSpecName }}SoundTrack{{ loop.index0 }}SxSWP[] =
 {
-	{{ printValueList(valuesSxSWP, 22) }}
+	{{ printValueList(trackKeyframes.values.SxSWP, 22) }}
 };
 
 const int8* const {{ sanitizedSpecName }}SoundTrack{{ loop.index0 }}SxMOD[] =
 {
-	{{ printValueList(valuesSxMOD, 4) }}
+	{{ printValueList(trackKeyframes.values.SxMOD, 4) }}
 };
 
 const SoundTrackKeyframe {{ sanitizedSpecName }}SoundTrack{{ loop.index0 }}Keyframes[] =
 {
-	{% for keyframe in keyframes -%}
+	{% for keyframe in trackKeyframes.keyframes -%}
 	{{-'{'}}{{ keyframe.duration }}, {% if keyframe.flags | length == 0 %}0{% else %}{{ keyframe.flags | join(' | ') }}{% endif %}{{'},'}}
 	{% endfor -%}
 	{0, kSoundTrackEventEnd}, 
@@ -496,7 +200,7 @@ SoundTrackROMSpec {{ sanitizedSpecName }}SoundTrack{{ loop.index0 }} =
 	0,
 
 	// Loop back point (cursor)
-	{{ loopKeyframe }},
+	{{ trackKeyframes.loopKeyframe }},
 
 	// Keyframes that define the track
 	(SoundTrackKeyframe*){{ sanitizedSpecName }}SoundTrack{{ loop.index0 }}Keyframes,
