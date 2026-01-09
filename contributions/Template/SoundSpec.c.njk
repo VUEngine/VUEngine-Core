@@ -14,6 +14,7 @@
 {%- set totalSize = item.size * barNoteResolution / sequencerResolution -%}
 {%- set loopPoint = item.loopPoint -%}
 {%- set soloTrack = -1 -%}
+{%- set playInLoop = item.loop -%}
 
 {%- macro instrumentIsUsed(instrumentId) -%}
 	{%- set result = false -%}
@@ -67,9 +68,12 @@
 	{%- if playRangeStart is defined and playRangeStart > -1 -%}
 		{%- set startTick = playRangeStart * subNoteResolution -%}
 		{%- set loopPoint = playRangeStart / sequencerResolution -%}
+		{%- set playInLoop = true -%}
 		{%- if playRangeEnd is defined and playRangeEnd > -1 and playRangeEnd > playRangeStart -%}
 			{%- set totalSize = playRangeEnd / sequencerResolution * barNoteResolution / sequencerResolution -%}
 		{%- endif -%}
+	{%- elseif currentPlayerPosition > -1 -%}
+		{%- set startTick = currentPlayerPosition * subNoteResolution -%}
 	{%- endif -%}
 
 	{{- '\n\nconst bool startFromSramTick = ' ~ startFromSramTick ~ ';\n' -}}
@@ -265,7 +269,7 @@ SoundROMSpec {{ sanitizedSpecName }}SoundSpec =
 	",
 
 	// Play in loop
-	{{ item.loop }},
+	{{ playInLoop }},
 
 	// Tick duration in US
 	{{ item.speed * 1000 / subNoteResolution }},
