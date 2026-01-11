@@ -19,19 +19,21 @@
 {%- macro instrumentIsUsed(instrumentId) -%}
 	{%- set result = false -%}
 	{%- for track in item.tracks -%}
-		{%- if track.instrument == instrumentId -%}
-			{%- set result = true -%}
-		{%- endif -%}
-		{%- for patternId in track.sequence | values -%}
-			{%- set pattern = item.patterns[patternId] -%}
-			{%- if pattern -%}
-				{%- for step in pattern.events | values -%}
-					{%- if step.instrument is defined and step.instrument == instrumentId -%}
-						{%- set result = true -%}
-					{%- endif -%}
-				{%- endfor -%}
+		{%- if track.sequence | length and not track.instrument == '' and not (isSoundEditorPreview and (trackSettings[loop.index0].muted or (soloTrack > -1 and soloTrack !== loop.index0))) -%}
+			{%- if track.instrument == instrumentId -%}
+				{%- set result = true -%}
 			{%- endif -%}
-		{%- endfor -%}
+			{%- for patternId in track.sequence | values -%}
+				{%- set pattern = item.patterns[patternId] -%}
+				{%- if pattern -%}
+					{%- for step in pattern.events | values -%}
+						{%- if step.instrument is defined and step.instrument == instrumentId -%}
+							{%- set result = true -%}
+						{%- endif -%}
+					{%- endfor -%}
+				{%- endif -%}
+			{%- endfor -%}
+		{%- endif -%}
 	{%- endfor -%}
 	{{ result }}
 {%- endmacro -%}
@@ -116,6 +118,8 @@ const WaveformData {{ sanitizedSpecName }}Waveform{{ waveformsKey }} =
 {#- Render modulation data for all instruments -#}
 {%- set isFirstModulationData = true -%}
 {%- for instrument in item.instruments | values -%}
+{%- set isUsed = instrumentIsUsed(instrumentId) -%}
+{%- if isUsed == 'true' -%}
 {%- set checksum = instrument.modulationData | crc32 | string -%}
 {%- if not modulationData[checksum] is defined -%}
 {%- set modulationDataKey = modulationData | length + 1 -%}
@@ -134,11 +138,12 @@ const int8 {{ sanitizedSpecName }}ModulationData{{ modulationDataKey }}[] =
 };
 {%- set isFirstModulationData = false -%}
 {%- endif -%}
+{%- endif -%}
 {%- endfor -%}
 
 {#- Render all tracks -#}
 {%- for track in item.tracks -%}
-{%- if track.sequence | length and not (isSoundEditorPreview and (trackSettings[loop.index0].muted or (soloTrack > -1 and soloTrack !== loop.index0))) -%}
+{%- if track.sequence | length and not track.instrument == '' and not (isSoundEditorPreview and (trackSettings[loop.index0].muted or (soloTrack > -1 and soloTrack !== loop.index0))) -%}
 
 {%- set trackKeyframes = getTrackKeyframes(track, sanitizedSpecName, totalSize, loopPoint, waveforms, modulationData, item) %}
 

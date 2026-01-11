@@ -222,7 +222,7 @@
 			},
 			"size": {
 				"type": "number",
-				"default": 16
+				"default": 64
 			},
 			"speed": {
 				"type": "integer",
