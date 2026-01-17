@@ -240,6 +240,8 @@ void CommunicationManager::startSyncCycle()
 
 	VIPManager::startMemoryRefresh(VIPManager::getInstance());
 
+	CommunicationManager::correctDataDrift(this);
+
 	if(CommunicationManager::isMaster(this))
 	{
 		uint32 message = 0;
@@ -266,8 +268,6 @@ void CommunicationManager::startSyncCycle()
 		}
 		while(__MASTER_FRMCYC_SET_MESSAGE != message);
 	}
-	
-	CommunicationManager::correctDataDrift(this);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -664,7 +664,7 @@ void CommunicationManager::correctDataDrift()
 
 				break;
 			}
-
+			
 			shifts -= 4;
 		}
 	}
