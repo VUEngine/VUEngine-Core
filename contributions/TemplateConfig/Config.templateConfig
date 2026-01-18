@@ -1,7 +1,0 @@
-{
-	"targets": [{
-		"path": "headers/Config.h",
-		"root": "project"
-	}],
-	"template": "contributions/Template/Config.h.njk"
-}

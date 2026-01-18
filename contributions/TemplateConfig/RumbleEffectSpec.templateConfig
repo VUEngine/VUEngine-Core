@@ -1,8 +1,0 @@
-{
-	"targets": [{
-		"path": "Converted/${_filename}RumbleEffectSpec.c",
-		"root": "file"
-	}],
-	"template": "contributions/Template/RumbleEffectSpec.c.njk",
-	"itemSpecific": "RumbleEffect"
-}

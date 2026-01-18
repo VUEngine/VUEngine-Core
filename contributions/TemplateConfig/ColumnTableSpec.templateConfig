@@ -1,8 +1,0 @@
-{
-	"targets": [{
-		"path": "Converted/${_filename}ColumnTableSpec.c",
-		"root": "file"
-	}],
-	"template": "contributions/Template/ColumnTableSpec.c.njk",
-	"itemSpecific": "ColumnTable"
-}
