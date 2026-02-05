@@ -23,7 +23,6 @@
 #include <HardwareManager.h>
 #include <Printer.h>
 #include <SoundManager.h>
-#include <TimerManager.h>
 #include <UIContainer.h>
 #include <VirtualList.h>
 #include <VirtualNode.h>

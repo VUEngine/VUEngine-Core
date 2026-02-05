@@ -828,7 +828,7 @@ fix7_9_ext Sound::computeTimerResolutionFactor()
 
 	NM_ASSERT(0 < soundTargetUsPerInterrupt, "Sound::computeTimerResolutionFactor: zero soundTargetUsPerInterrupt");
 
-	return __FIX7_9_EXT_DIV(__I_TO_FIX7_9_EXT(timerUsPerInterrupt), __I_TO_FIX7_9_EXT(soundTargetUsPerInterrupt));
+	return __FIX19_13_TO_FIX7_9_EXT(__FIX19_13_DIV(__I_TO_FIX19_13(timerUsPerInterrupt), __I_TO_FIX19_13(soundTargetUsPerInterrupt)));
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
