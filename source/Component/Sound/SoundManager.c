@@ -115,11 +115,14 @@ Sound SoundManager::create(Entity owner, const SoundSpec* soundSpec)
 
 void SoundManager::purgeComponents()
 {
-	TimerManager::removeEventListener(TimerManager::getInstance(), ListenerObject::safeCast(this), kEventTimerManagerInterrupt);
-
 	VSUManager::flushQueuedSounds(VSUManager::getInstance());
 
 	Base::purgeComponents(this);	
+
+	if(NULL == this->components->head)
+	{
+		TimerManager::removeEventListener(TimerManager::getInstance(), ListenerObject::safeCast(this), kEventTimerManagerInterrupt);
+	}
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -184,6 +187,25 @@ bool SoundManager::isPlayingSound(const SoundSpec* soundSpec)
 	}
 
 	return false;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+Sound SoundManager::getPlayingSound(const SoundSpec* soundSpec)
+{
+	VirtualNode node = this->components->head;
+
+	for(; NULL != node; node = node->next)
+	{
+		Sound sound = Sound::safeCast(node->data);
+
+		if(soundSpec == (SoundSpec*)sound->componentSpec)
+		{
+			return sound;
+		}
+	}
+
+	return NULL;	
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

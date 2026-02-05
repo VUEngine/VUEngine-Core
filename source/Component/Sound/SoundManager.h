@@ -85,13 +85,14 @@ class SoundManager : ComponentManager
 	/// Update the sounds lists.
 	void update();
 
-	/// Set the target refresh rate for PCM playback.
-	/// @param pcmTargetPlaybackRefreshRate: Target refresh rate for PCM playback
-	void setPCMTargetPlaybackRefreshRate(uint16 pcmTargetPlaybackRefreshRate);
-
-	///  Check if a sound with the provided spec is playing.
+	/// Check if a sound with the provided spec is playing.
 	/// @param soundSpec: Sound spec to check for
 	bool isPlayingSound(const SoundSpec* soundSpec);
+
+	/// Retrive the first sound using the provided spec is playing.
+	/// @param soundSpec: Sound spec to check for
+	/// @return Sound using the provided spec 
+	Sound getPlayingSound(const SoundSpec* soundSpec);
 
 	/// Mute all playing sounds
 	void muteAllSounds();
