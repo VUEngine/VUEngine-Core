@@ -281,7 +281,6 @@ secure void VSUManager::reset()
 	{
 		this->waveforms[i].index = i;
 		this->waveforms[i].usageCount = 0;
-		this->waveforms[i].overwrite = true;
 		this->waveforms[i].wave = __WAVE_ADDRESS(i);
 		this->waveforms[i].data = NULL;
 		this->waveforms[i].crc = 0;
@@ -700,12 +699,17 @@ Waveform* VSUManager::findWaveform(const WaveformData* waveFormData)
 
 void VSUManager::setWaveform(Waveform* waveform, const WaveformData* waveFormData)
 {
-	if(NULL != waveform)// && waveform->overwrite)
+	if(NULL != waveform && NULL != waveFormData)
 	{
 		waveform->usageCount = 1;
+
+		if(waveform->crc == waveFormData->crc) 
+		{
+			return;
+		}
+
 		waveform->data = waveFormData->data;
 		waveform->crc = waveFormData->crc;
-		waveform->overwrite = false;
 
 		// Disable interrupts to make the following as soon as possible
 		HardwareManager::suspendInterrupts();

@@ -72,9 +72,6 @@ typedef struct Waveform
 	/// Count of channels using this waveform
 	int8 usageCount;
 
-	/// If true, waveform data has to be rewritten
-	uint8 overwrite;
-
 	/// Pointer to the VSU's waveform address
 	uint8* wave;
 
