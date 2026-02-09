@@ -431,6 +431,7 @@ void Sound::rewind()
 	this->tickStep = __FIX7_9_EXT_MULT(this->speed, this->targetTimerResolutionFactor);
 
 	this->previouslyElapsedTicks = 0;
+    this->totalElapsedTicks = 0;
 
 	for(VirtualNode node = this->soundTracks->head; NULL != node; node = node->next)
 	{
@@ -964,8 +965,16 @@ void Sound::loop()
 	for(VirtualNode node = this->soundTracks->head; NULL != node; node = node->next)
 	{
 		SoundTrack soundTrack = SoundTrack::safeCast(node->data);
-
-		SoundTrack::loop(soundTrack);
+		fix7_9_ext soundTrackElapsedTicks = SoundTrack::loop(soundTrack);
+		
+		if(0 == this->totalElapsedTicks)
+		{
+			this->totalElapsedTicks = soundTrackElapsedTicks;
+		}
+		else if(this->totalElapsedTicks > soundTrackElapsedTicks)
+		{
+			this->totalElapsedTicks > soundTrackElapsedTicks;
+		}
 	}
 }
 

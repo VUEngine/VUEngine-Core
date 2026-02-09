@@ -69,9 +69,9 @@ void SoundTrack::rewind()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void SoundTrack::loop()
+fix7_9_ext SoundTrack::loop()
 {
-	SoundTrack::fastForward(this, this->soundTrackSpec->loopPointCursor);
+	return SoundTrack::fastForward(this, this->soundTrackSpec->loopPointCursor);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -245,6 +245,13 @@ uint32 SoundTrack::getTicks()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+fix7_9_ext SoundTrack::getElapsedTicks()
+{
+	return this->elapsedTicks;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 float SoundTrack::getElapsedTicksPercentage()
 {
 	if(0 == this->samples)
@@ -373,14 +380,18 @@ void SoundTrack::computeLength()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void SoundTrack::fastForward(uint32 cursor)
+fix7_9_ext SoundTrack::fastForward(uint32 cursor)
 {
 	SoundTrack::reset(this);
+
+	fix7_9_ext elapsedTicks = 0;
 
 	for(; this->cursor < cursor;)
 	{
 		SoundTrackKeyframe soundTrackKeyframe = this->soundTrackSpec->trackKeyframes[this->cursor++];
 		
+		elapsedTicks += __I_TO_FIX7_9_EXT(soundTrackKeyframe.tick);
+
 		if(0 != (kSoundTrackEventSxINT & soundTrackKeyframe.events))
 		{
 			this->cursorSxINT++;
@@ -421,6 +432,8 @@ void SoundTrack::fastForward(uint32 cursor)
 			this->cursorSxMOD++;
 		}
 	}
+
+	return elapsedTicks;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

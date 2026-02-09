@@ -336,7 +336,8 @@ class SoundTrack : Object
 	void rewind();
 
 	/// Loop the track.
-	void loop();
+	/// @return Total elapsed ticks from the beginning of the track to the looping cursor's position
+	fix7_9_ext loop();
 
 	/// Advance the playback on the sound's MIDI tracks.
 	/// @param tickStep: Tick step per timer interrupt
@@ -356,6 +357,9 @@ class SoundTrack : Object
 	/// Retrieve the sound track's total ticks.
 	/// @return Total number of ticks
 	uint32 getTicks();
+
+	/// Retrieve 
+	fix7_9_ext getElapsedTicks();
 
 	/// Retrieve the sound track's percentage of elapsed ticks.
 	/// @return Percentage of elapsed ticks
