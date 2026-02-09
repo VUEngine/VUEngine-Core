@@ -38,6 +38,7 @@ friend class VirtualList;
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 static Mirror _mirror = {false, false, false};
+static uint8 _soundVolumeGroups[kSoundVolumeOther + 1] = { [0 ... kSoundVolumeOther] = __MAXIMUM_VOLUME };
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PUBLIC STATIC METHODS
@@ -78,6 +79,23 @@ static bool Sound::playSound(const SoundSpec* soundSpec, Entity owner, uint32 pl
 	}
 
 	return false;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+static void Sound::setVolume(uint32 volumeGroup, uint8 volume)
+{
+	if(kSoundVolumeNone > (int32)volumeGroup || kSoundVolumeOther < (int32)volumeGroup)
+	{
+		return;
+	}
+
+	if(__MAXIMUM_VOLUME < volume)
+	{
+		volume = __MAXIMUM_VOLUME;
+	}
+
+	_soundVolumeGroups[volumeGroup] = volume;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -191,9 +209,10 @@ void Sound::fastForward(uint32 elapsedTicks)
 				this->tickStep, 
 				this->targetTimerResolutionFactor, 
 				0, 
-				0, 
-				__MAXIMUM_VOLUME, 
-				__MAXIMUM_VOLUME, 
+				0,
+				_soundVolumeGroups[((SoundSpec*)this->componentSpec)->volumeGroup],
+				__MAXIMUM_VOLUME,
+				__MAXIMUM_VOLUME,
 				0
 			);
 		}
@@ -667,7 +686,8 @@ void Sound::update()
 			(
 				soundTrack, 
 				this->tickStep, 
-				this->targetTimerResolutionFactor, 
+				this->targetTimerResolutionFactor,
+				_soundVolumeGroups[((SoundSpec*)this->componentSpec)->volumeGroup],
 				leftVolumeFactor, 
 				rightVolumeFactor, 
 				this->volumeReduction, 

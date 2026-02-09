@@ -78,8 +78,8 @@ fix7_9_ext SoundTrack::loop()
 
 bool SoundTrack::update
 (
-	fix7_9_ext tickStep, fix7_9_ext targetTimerResolutionFactor, fixed_t leftVolumeFactor, fixed_t rightVolumeFactor, 
-	int8 volumeReduction, uint8 volumenScalePower, uint16 frequencyDelta
+	fix7_9_ext tickStep, fix7_9_ext targetTimerResolutionFactor, uint8 maximumVolume, fixed_t leftVolumeFactor, 
+	fixed_t rightVolumeFactor, int8 volumeReduction, uint8 volumenScalePower, uint16 frequencyDelta
 )
 {
 	if(this->finished)
@@ -175,18 +175,18 @@ bool SoundTrack::update
 	{
 		leftVolume = 0;
 	}
-	else if(leftVolume > __MAXIMUM_VOLUME)
+	else if(leftVolume > maximumVolume)
 	{
-		leftVolume = __MAXIMUM_VOLUME;
+		leftVolume = maximumVolume;
 	}
 
 	if(rightVolume < 0)
 	{
 		rightVolume = 0;
 	}
-	else if(rightVolume > __MAXIMUM_VOLUME)
+	else if(rightVolume > maximumVolume)
 	{
-		rightVolume = __MAXIMUM_VOLUME;
+		rightVolume = maximumVolume;
 	}
 
 	leftVolume >>= volumenScalePower;
