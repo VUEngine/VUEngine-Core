@@ -486,6 +486,8 @@ void VSUManager::configureSoundSource
 	vsuSoundSource->SxLRV = vsuSoundSourceConfigurationRequest->SxLRV;
 	vsuSoundSource->SxFQL = vsuSoundSourceConfigurationRequest->SxFQL;
 	vsuSoundSource->SxFQH = vsuSoundSourceConfigurationRequest->SxFQH;
+	vsuSoundSource->SxEV0 = vsuSoundSourceConfigurationRequest->SxEV0;
+	vsuSoundSource->SxEV1 = vsuSoundSourceConfigurationRequest->SxEV1;
 
 /*	
 	if(setSxEV0)
