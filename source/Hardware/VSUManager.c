@@ -460,6 +460,16 @@ void VSUManager::configureSoundSource
 		|| 
 		(this->vsuSoundSourceConfigurations[i].requester != vsuSoundSourceConfigurationRequest->requester);
 
+	bool setSxEV0 = 
+		this->vsuSoundSourceConfigurations[i].SxEV0 != vsuSoundSourceConfigurationRequest->SxEV0
+		|| 
+		(this->vsuSoundSourceConfigurations[i].requester != vsuSoundSourceConfigurationRequest->requester);
+
+	bool setSxEV1 = 
+		this->vsuSoundSourceConfigurations[i].SxEV1 != vsuSoundSourceConfigurationRequest->SxEV1
+		|| 
+		(this->vsuSoundSourceConfigurations[i].requester != vsuSoundSourceConfigurationRequest->requester);
+
 	this->vsuSoundSourceConfigurations[i].requester = vsuSoundSourceConfigurationRequest->requester;
 	this->vsuSoundSourceConfigurations[i].waveform = waveform;
 	this->vsuSoundSourceConfigurations[i].timeout = this->ticks + vsuSoundSourceConfigurationRequest->timeout;
@@ -476,8 +486,17 @@ void VSUManager::configureSoundSource
 	vsuSoundSource->SxLRV = vsuSoundSourceConfigurationRequest->SxLRV;
 	vsuSoundSource->SxFQL = vsuSoundSourceConfigurationRequest->SxFQL;
 	vsuSoundSource->SxFQH = vsuSoundSourceConfigurationRequest->SxFQH;
-	vsuSoundSource->SxEV0 = vsuSoundSourceConfigurationRequest->SxEV0;
-	vsuSoundSource->SxEV1 = vsuSoundSourceConfigurationRequest->SxEV1;
+	
+	if(setSxEV0)
+	{
+		vsuSoundSource->SxEV0 = vsuSoundSourceConfigurationRequest->SxEV0;
+	}
+	
+	if(setSxEV1)
+	{
+		vsuSoundSource->SxEV1 = vsuSoundSourceConfigurationRequest->SxEV1;
+	}
+	
 	vsuSoundSource->SxRAM = waveform->index;
 	vsuSoundSource->SxSWP = vsuSoundSourceConfigurationRequest->SxSWP;
 
