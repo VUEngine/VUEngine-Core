@@ -497,7 +497,7 @@ void VSUManager::configureSoundSource
 	{
 		vsuSoundSource->SxEV1 = vsuSoundSourceConfigurationRequest->SxEV1;
 	}
-*/	
+*/Rolle	
 	vsuSoundSource->SxRAM = waveform->index;
 	vsuSoundSource->SxSWP = vsuSoundSourceConfigurationRequest->SxSWP;
 
