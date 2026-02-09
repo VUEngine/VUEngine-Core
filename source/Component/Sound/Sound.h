@@ -54,10 +54,10 @@ enum SoundState
 /// @memberof Sound
 enum SoundGroup
 {
-	kSoundVolumeNone = 0,
-	kSoundVolumeMusic,
-	kSoundVolumeEffects,
-	kSoundVolumeOther
+	kSoundGroupNone = 0,
+	kSoundGroupMusic,
+	kSoundGroupEffects,
+	kSoundGroupOther
 };
 
 /// A Sound spec
@@ -79,8 +79,8 @@ typedef struct SoundSpec
 	/// Tracks
 	SoundTrackSpec** soundTrackSpecs;
 
-	/// Volume group
-	uint32 volumeGroup;
+	/// Sound group
+	uint32 soundGroup;
 
 } SoundSpec;
 
@@ -172,9 +172,9 @@ class Sound : Component
 	static bool playSound(const SoundSpec* soundSpec, Entity owner, uint32 playbackType, ListenerObject scope);
 	
 	/// Set the volumen group's maximum volume.
-	/// @param volumeGroup: Volume group to configure
+	/// @param soundGroup: Volume group to configure
 	/// @param volume: Maximun volume for the group
-	static void setVolume(uint32 volumeGroup, uint8 volume);
+	static void setVolume(uint32 soundGroup, uint8 volume);
 
 	/// Mirror the spatial positioning of the sound.
 	/// @param mirror: Struct with a flag for each axis to mirror

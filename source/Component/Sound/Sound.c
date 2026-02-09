@@ -38,7 +38,7 @@ friend class VirtualList;
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 static Mirror _mirror = {false, false, false};
-static uint8 _soundVolumeGroups[kSoundVolumeOther + 1] = { [0 ... kSoundVolumeOther] = __MAXIMUM_VOLUME };
+static uint8 _soundsoundGroups[kSoundGroupOther + 1] = { [0 ... kSoundGroupOther] = __MAXIMUM_VOLUME };
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PUBLIC STATIC METHODS
@@ -83,9 +83,9 @@ static bool Sound::playSound(const SoundSpec* soundSpec, Entity owner, uint32 pl
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void Sound::setVolume(uint32 volumeGroup, uint8 volume)
+static void Sound::setVolume(uint32 soundGroup, uint8 volume)
 {
-	if(kSoundVolumeNone > (int32)volumeGroup || kSoundVolumeOther < (int32)volumeGroup)
+	if(kSoundGroupNone > (int32)soundGroup || kSoundGroupOther < (int32)soundGroup)
 	{
 		return;
 	}
@@ -95,7 +95,7 @@ static void Sound::setVolume(uint32 volumeGroup, uint8 volume)
 		volume = __MAXIMUM_VOLUME;
 	}
 
-	_soundVolumeGroups[volumeGroup] = volume;
+	_soundsoundGroups[soundGroup] = volume;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -210,7 +210,7 @@ void Sound::fastForward(uint32 elapsedTicks)
 				this->targetTimerResolutionFactor, 
 				0, 
 				0,
-				_soundVolumeGroups[((SoundSpec*)this->componentSpec)->volumeGroup],
+				_soundsoundGroups[((SoundSpec*)this->componentSpec)->soundGroup],
 				__MAXIMUM_VOLUME,
 				__MAXIMUM_VOLUME,
 				0
@@ -687,7 +687,7 @@ void Sound::update()
 				soundTrack, 
 				this->tickStep, 
 				this->targetTimerResolutionFactor,
-				_soundVolumeGroups[((SoundSpec*)this->componentSpec)->volumeGroup],
+				_soundsoundGroups[((SoundSpec*)this->componentSpec)->soundGroup],
 				leftVolumeFactor, 
 				rightVolumeFactor, 
 				this->volumeReduction, 
