@@ -456,10 +456,10 @@ void VSUManager::configureSoundSource
 	this->haveUsedSoundSources = true;
 
 	bool setSxINT = 
-		0 != (0x80 & vsuSoundSourceConfigurationRequest->SxINT)
+		this->vsuSoundSourceConfigurations[i].SxINT != vsuSoundSourceConfigurationRequest->SxINT
 		|| 
 		(this->vsuSoundSourceConfigurations[i].requester != vsuSoundSourceConfigurationRequest->requester);
-/*
+
 	bool setSxEV0 = 
 		this->vsuSoundSourceConfigurations[i].SxEV0 != vsuSoundSourceConfigurationRequest->SxEV0
 		|| 
@@ -469,11 +469,11 @@ void VSUManager::configureSoundSource
 		this->vsuSoundSourceConfigurations[i].SxEV1 != vsuSoundSourceConfigurationRequest->SxEV1
 		|| 
 		(this->vsuSoundSourceConfigurations[i].requester != vsuSoundSourceConfigurationRequest->requester);
-*/
+
 	this->vsuSoundSourceConfigurations[i].requester = vsuSoundSourceConfigurationRequest->requester;
 	this->vsuSoundSourceConfigurations[i].waveform = waveform;
 	this->vsuSoundSourceConfigurations[i].timeout = this->ticks + vsuSoundSourceConfigurationRequest->timeout;
-	this->vsuSoundSourceConfigurations[i].SxINT = vsuSoundSourceConfigurationRequest->SxINT | 0x80;
+	this->vsuSoundSourceConfigurations[i].SxINT = vsuSoundSourceConfigurationRequest->SxINT;
 	this->vsuSoundSourceConfigurations[i].SxLRV = vsuSoundSourceConfigurationRequest->SxLRV;
 	this->vsuSoundSourceConfigurations[i].SxFQL = vsuSoundSourceConfigurationRequest->SxFQL;
 	this->vsuSoundSourceConfigurations[i].SxFQH = vsuSoundSourceConfigurationRequest->SxFQH;
@@ -486,8 +486,7 @@ void VSUManager::configureSoundSource
 	vsuSoundSource->SxLRV = vsuSoundSourceConfigurationRequest->SxLRV;
 	vsuSoundSource->SxFQL = vsuSoundSourceConfigurationRequest->SxFQL;
 	vsuSoundSource->SxFQH = vsuSoundSourceConfigurationRequest->SxFQH;
-
-/*	
+	
 	if(setSxEV0)
 	{
 		vsuSoundSource->SxEV0 = vsuSoundSourceConfigurationRequest->SxEV0;
@@ -497,7 +496,7 @@ void VSUManager::configureSoundSource
 	{
 		vsuSoundSource->SxEV1 = vsuSoundSourceConfigurationRequest->SxEV1;
 	}
-*/	
+	
 	vsuSoundSource->SxRAM = waveform->index;
 	vsuSoundSource->SxSWP = vsuSoundSourceConfigurationRequest->SxSWP;
 
@@ -515,7 +514,7 @@ void VSUManager::configureSoundSource
 	/// resets various of the VSU's internal counters.
 	if(setSxINT)
 	{
-		vsuSoundSource->SxINT = vsuSoundSourceConfigurationRequest->SxINT | 0x80;
+		vsuSoundSource->SxINT = vsuSoundSourceConfigurationRequest->SxINT;
 	}
 }
 
