@@ -967,13 +967,9 @@ void Sound::loop()
 		SoundTrack soundTrack = SoundTrack::safeCast(node->data);
 		fix7_9_ext soundTrackElapsedTicks = SoundTrack::loop(soundTrack);
 		
-		if(0 == this->totalElapsedTicks)
+		if(0 == this->totalElapsedTicks || this->totalElapsedTicks > soundTrackElapsedTicks)
 		{
 			this->totalElapsedTicks = soundTrackElapsedTicks;
-		}
-		else if(this->totalElapsedTicks > soundTrackElapsedTicks)
-		{
-			this->totalElapsedTicks > soundTrackElapsedTicks;
 		}
 	}
 }
