@@ -54,7 +54,7 @@ enum SoundState
 /// @memberof Sound
 enum SoundGroup
 {
-	kSoundGroupNone = 0,
+	kSoundGroupGeneral = 0,
 	kSoundGroupMusic,
 	kSoundGroupEffects,
 	kSoundGroupOther

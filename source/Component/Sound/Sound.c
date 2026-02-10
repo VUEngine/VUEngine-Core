@@ -18,6 +18,7 @@
 
 #include "Sound.h"
 
+
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DECLARATIONS
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -38,7 +39,32 @@ friend class VirtualList;
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 static Mirror _mirror = {false, false, false};
-static uint8 _soundsoundGroups[kSoundGroupOther + 1] = { [0 ... kSoundGroupOther] = __MAXIMUM_VOLUME };
+static uint8 _soundsoundGroups[kSoundGroupOther + 1] = 
+{ 
+#ifdef __MAXIMUM_VOLUME_GROUP_GENERAL
+	__MAXIMUM_VOLUME_GROUP_GENERAL,
+#else
+	__MAXIMUM_VOLUME
+#endif
+
+#ifdef __MAXIMUM_VOLUME_GROUP_MUSIC
+	__MAXIMUM_VOLUME_GROUP_MUSIC,
+#else
+	__MAXIMUM_VOLUME
+#endif
+
+#ifdef __MAXIMUM_VOLUME_GROUP_EFFECTS
+	__MAXIMUM_VOLUME_GROUP_EFFECTS,
+#else
+	__MAXIMUM_VOLUME
+#endif
+
+#ifdef __MAXIMUM_VOLUME_GROUP_OTHER
+	__MAXIMUM_VOLUME_GROUP_OTHER,
+#else
+	__MAXIMUM_VOLUME
+#endif
+};
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PUBLIC STATIC METHODS
@@ -85,7 +111,7 @@ static bool Sound::playSound(const SoundSpec* soundSpec, Entity owner, uint32 pl
 
 static void Sound::setVolume(uint32 soundGroup, uint8 volume)
 {
-	if(kSoundGroupNone > (int32)soundGroup || kSoundGroupOther < (int32)soundGroup)
+	if(kSoundGroupGeneral > (int32)soundGroup || kSoundGroupOther < (int32)soundGroup)
 	{
 		return;
 	}
