@@ -473,7 +473,7 @@ void VSUManager::configureSoundSource
 	this->vsuSoundSourceConfigurations[i].requester = vsuSoundSourceConfigurationRequest->requester;
 	this->vsuSoundSourceConfigurations[i].waveform = waveform;
 	this->vsuSoundSourceConfigurations[i].timeout = this->ticks + vsuSoundSourceConfigurationRequest->timeout;
-	this->vsuSoundSourceConfigurations[i].SxINT = vsuSoundSourceConfigurationRequest->SxINT | 0x80;
+	this->vsuSoundSourceConfigurations[i].SxINT = vsuSoundSourceConfigurationRequest->SxINT;
 	this->vsuSoundSourceConfigurations[i].SxLRV = vsuSoundSourceConfigurationRequest->SxLRV;
 	this->vsuSoundSourceConfigurations[i].SxFQL = vsuSoundSourceConfigurationRequest->SxFQL;
 	this->vsuSoundSourceConfigurations[i].SxFQH = vsuSoundSourceConfigurationRequest->SxFQH;
@@ -737,12 +737,22 @@ void VSUManager::setWaveform(Waveform* waveform, const WaveformData* waveFormDat
 		HardwareManager::suspendInterrupts();
 
 		// Must stop all sound sources before writing the waveforms
-		VSUManager::stopAllSounds(this);
+		__SSTOP = 0x01;
 
 		// Set the wave data
 		for(uint32 i = 0; i < 32; i++)
 		{
 			waveform->wave[(i << 2)] = (uint8)waveform->data[i];
+		}
+
+		for(int16 i = 0; i < __TOTAL_SOUND_SOURCES; i++)
+		{
+			if(NULL != this->vsuSoundSourceConfigurations[i].requester && 0 < this->vsuSoundSourceConfigurations[i].timeout)
+			{
+				VSUSoundSource* vsuSoundSource = this->vsuSoundSourceConfigurations[i].vsuSoundSource;
+
+				vsuSoundSource->SxINT = this->vsuSoundSourceConfigurations[i].SxINT | 0x80;
+			}
 		}
 
 		// Turn back interrupts on
