@@ -33,6 +33,7 @@ friend class VirtualList;
 
 #define __MIDI_CONVERTER_FREQUENCY_US			20
 #define __SOUND_TARGET_US_PER_TICK				__MIDI_CONVERTER_FREQUENCY_US
+#define __SOUND_FADE_INCREMENT					__F_TO_FIX7_9(0.05f)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' ATTRIBUTES
@@ -165,7 +166,6 @@ void Sound::constructor(Entity owner, const SoundSpec* soundSpec)
 	this->soundTracks = NULL;
 	this->mainSoundTrack = NULL;
 	this->volumeReduction = 0;
-	this->volumeReductionMultiplier = 1;
 	this->volumenScalePower = 0;
 	this->frequencyDelta = 0;
 
@@ -267,7 +267,7 @@ void Sound::play(uint32 playbackType)
 		{
 			if(kSoundPlaying != this->state)
 			{
-				Sound::setVolumeReduction(this, __MAXIMUM_VOLUME * this->volumeReductionMultiplier);
+				Sound::setVolumeReduction(this, __I_TO_FIX7_9(_soundsoundGroups[((SoundSpec*)this->componentSpec)->soundGroup]));
 			}
 			else
 			{
@@ -716,7 +716,7 @@ void Sound::update()
 				_soundsoundGroups[((SoundSpec*)this->componentSpec)->soundGroup],
 				leftVolumeFactor, 
 				rightVolumeFactor, 
-				this->volumeReduction, 
+				__FIX7_9_TO_I(this->volumeReduction), 
 				this->volumenScalePower, 
 				this->frequencyDelta
 			) && finished;
@@ -880,11 +880,20 @@ fix7_9_ext Sound::computeTimerResolutionFactor()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void Sound::setVolumeReduction(int8 volumeReduction)
+void Sound::setVolumeReduction(fix7_9 volumeReduction)
 {
 	if(Sound::isFadingIn(this) || Sound::isFadingOut(this))
 	{
 		return;
+	}
+
+	if(0 > volumeReduction)
+	{
+		volumeReduction = 0;
+	}
+	else if(__I_TO_FIX7_9(_soundsoundGroups[((SoundSpec*)this->componentSpec)->soundGroup]) < volumeReduction)
+	{
+		volumeReduction = __I_TO_FIX7_9(_soundsoundGroups[((SoundSpec*)this->componentSpec)->soundGroup]);
 	}
 
 	this->volumeReduction = volumeReduction;
@@ -943,7 +952,7 @@ void Sound::updateVolumeReduction()
 		{
 			case kSoundPlaybackFadeIn:
 			{
-				this->volumeReduction -= (this->volumeReductionMultiplier >> 1) + 1;
+				this->volumeReduction -= __SOUND_FADE_INCREMENT;
 
 				if(0 >= this->volumeReduction)
 				{
@@ -956,11 +965,11 @@ void Sound::updateVolumeReduction()
 
 			case kSoundPlaybackFadeOut:
 			{
-				this->volumeReduction += (this->volumeReductionMultiplier >> 1) + 1;
+				this->volumeReduction += __SOUND_FADE_INCREMENT;
 
-				if(__MAXIMUM_VOLUME * this->volumeReductionMultiplier <= this->volumeReduction)
+				if(__I_TO_FIX7_9(_soundsoundGroups[((SoundSpec*)this->componentSpec)->soundGroup]) < this->volumeReduction)
 				{
-					this->volumeReduction = __MAXIMUM_VOLUME * this->volumeReductionMultiplier;
+					this->volumeReduction = __I_TO_FIX7_9(_soundsoundGroups[((SoundSpec*)this->componentSpec)->soundGroup]);						
 					this->playbackType = kSoundPlaybackNone;
 					Sound::pause(this);
 				}
@@ -970,11 +979,11 @@ void Sound::updateVolumeReduction()
 
 			case kSoundPlaybackFadeOutAndRelease:
 			{
-				this->volumeReduction += (this->volumeReductionMultiplier >> 1) + 1;
+				this->volumeReduction += __SOUND_FADE_INCREMENT;
 
-				if(__MAXIMUM_VOLUME * this->volumeReductionMultiplier <= this->volumeReduction)
+				if(__I_TO_FIX7_9(_soundsoundGroups[((SoundSpec*)this->componentSpec)->soundGroup]) < this->volumeReduction)
 				{
-					this->volumeReduction = __MAXIMUM_VOLUME * this->volumeReductionMultiplier;
+					this->volumeReduction = __I_TO_FIX7_9(_soundsoundGroups[((SoundSpec*)this->componentSpec)->soundGroup]);
 					this->playbackType = kSoundPlaybackNone;
 					this->state = kSoundFinished;
 					this->autoReleaseOnFinish = true;

@@ -134,11 +134,8 @@ class Sound : Component
 	/// Delta added to the frequency registers
 	uint16 frequencyDelta;
 
-	/// Multiplier used for fade effects
-	uint16 volumeReductionMultiplier;
-
 	/// Volume reduction used for fade effects
-	int8 volumeReduction;
+	fix7_9 volumeReduction;
 
 	/// 2's power to divide to the final volume value
 	uint8 volumenScalePower;

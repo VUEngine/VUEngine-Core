@@ -168,9 +168,6 @@ bool SoundTrack::update
 		}		
 	}
 
-	leftVolume -= volumeReduction;
-	rightVolume -= volumeReduction;
-
 	if(leftVolume < 0)
 	{
 		leftVolume = 0;
@@ -188,6 +185,9 @@ bool SoundTrack::update
 	{
 		rightVolume = maximumVolume;
 	}
+
+	leftVolume -= volumeReduction;
+	rightVolume -= volumeReduction;
 
 	leftVolume >>= volumenScalePower;
 	rightVolume >>= volumenScalePower;
