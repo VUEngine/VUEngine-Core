@@ -42,6 +42,8 @@ friend class VirtualList;
 static Mirror _mirror = {false, false, false};
 static uint8 _soundsoundGroups[kSoundGroupOther + 1] = 
 { 
+	__MAXIMUM_VOLUME,
+
 #ifdef __MAXIMUM_VOLUME_GROUP_GENERAL
 	__MAXIMUM_VOLUME_GROUP_GENERAL,
 #else
@@ -233,12 +235,12 @@ void Sound::fastForward(uint32 elapsedTicks)
 			(
 				soundTrack, 
 				this->tickStep, 
-				this->targetTimerResolutionFactor, 
-				0, 
+				this->targetTimerResolutionFactor,
 				0,
-				_soundsoundGroups[((SoundSpec*)this->componentSpec)->soundGroup],
-				__MAXIMUM_VOLUME,
-				__MAXIMUM_VOLUME,
+				0, 
+				0, 
+				0, 
+				0, 
 				0
 			);
 		}
