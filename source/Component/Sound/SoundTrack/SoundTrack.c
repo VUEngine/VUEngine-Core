@@ -35,14 +35,14 @@ void SoundTrack::start(bool wasPaused)
 
 void SoundTrack::stop()
 {
-	VSUManager::stopSoundSourcesUsedBy(Object::safeCast(this));
+	VSUManager::stopSoundSourcesUsedBy(this->id);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void SoundTrack::pause()
 {
-	VSUManager::stopSoundSourcesUsedBy(Object::safeCast(this));
+	VSUManager::stopSoundSourcesUsedBy(this->id);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -192,7 +192,7 @@ bool SoundTrack::update
 		VSUSoundSourceConfigurationRequest vsuChannelConfigurationRequest = 
 		{
 			// Requester object
-			Object::safeCast(this),
+			this->id,
 			// Time when the configuration elapses
 			__FIX7_9_EXT_DIV(__I_TO_FIX7_9_EXT(soundTrackKeyframe.tick), targetTimerResolutionFactor),
 			// Sound source type
@@ -305,6 +305,9 @@ void SoundTrack::constructor(const SoundTrackSpec* soundTrackSpec)
 
 	this->soundTrackSpec = soundTrackSpec;
 	this->samples = this->soundTrackSpec->samples;
+
+	static uint32 id = 0;
+	this->id = id++;
 
 	SoundTrack::reset(this);
 

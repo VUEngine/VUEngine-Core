@@ -265,6 +265,9 @@ class SoundTrack : Object
 	/// Pointer to the spec that defines how to initialize the soundtrack
 	const SoundTrackSpec* soundTrackSpec;
 
+	/// Identifier provided to the VSUManager
+	uint32 id;
+
 	/// Channel's effective length
 	uint32 samples;
 

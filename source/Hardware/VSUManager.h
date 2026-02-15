@@ -109,8 +109,8 @@ typedef struct VSUSoundSource
 /// @memberof VSUManager
 typedef struct VSUSoundSourceConfiguration
 {
-	/// Requester object
-	Object requester;
+	/// Requester Id
+	uint32 requesterId;
 
 	/// VSU sound source to configure
 	VSUSoundSource* vsuSoundSource;
@@ -160,8 +160,8 @@ typedef struct VSUSoundSourceConfiguration
 /// @memberof VSUManager
 typedef struct VSUSoundSourceConfigurationRequest
 {
-	/// Requester object
-	Object requester;
+	/// Requester Id
+	uint32 requesterId;
 
 	/// Time when the configuration elapses
 	fix7_9_ext timeout;
@@ -249,9 +249,9 @@ singleton class VSUManager : Object
 	/// @param vsuSoundSourceConfigurationRequest: VSU sound source configuration
 	static void applySoundSourceConfiguration(const VSUSoundSourceConfigurationRequest* vsuSoundSourceConfigurationRequest);
 
-	/// Stop sound output in the sound sources in use by the requester object.
-	/// @param requester: Object using a sound source
-	static void stopSoundSourcesUsedBy(Object requester);
+	/// Stop sound output in the sound sources in use by the requester Id.
+	/// @param requester: Id of of the user of a sound source
+	static void stopSoundSourcesUsedBy(uint32 requesterId);
 
 	/// Retriev the playback mode (stops any playing sound).
 	/// @return kPlaybackNative or kPlaybackPCM
