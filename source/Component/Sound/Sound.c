@@ -168,7 +168,6 @@ void Sound::constructor(Entity owner, const SoundSpec* soundSpec)
 	this->soundTracks = NULL;
 	this->mainSoundTrack = NULL;
 	this->volumeReduction = 0;
-	this->volumenScalePower = 0;
 	this->frequencyDelta = 0;
 
 	Sound::configureTracks(this);
@@ -237,7 +236,6 @@ void Sound::fastForward(uint32 elapsedTicks)
 				this->tickStep, 
 				this->targetTimerResolutionFactor,
 				0,
-				0, 
 				0, 
 				0, 
 				0, 
@@ -543,18 +541,6 @@ fix7_9_ext Sound::getSpeed()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void Sound::setVolumenScalePower(uint8 volumenScalePower)
-{
-	if(4 < volumenScalePower)
-	{
-		volumenScalePower = 4;
-	}
-
-	this->volumenScalePower = volumenScalePower;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
 void Sound::setFrequencyDelta(uint16 frequencyDelta)
 {
 	this->frequencyDelta = frequencyDelta;
@@ -719,7 +705,6 @@ void Sound::update()
 				leftVolumeFactor, 
 				rightVolumeFactor, 
 				__FIX7_9_TO_I(this->volumeReduction), 
-				this->volumenScalePower, 
 				this->frequencyDelta
 			) && finished;
 	}

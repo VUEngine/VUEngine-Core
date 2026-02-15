@@ -138,9 +138,6 @@ class Sound : Component
 	/// Volume reduction used for fade effects
 	fix7_9 volumeReduction;
 
-	/// 2's power to divide to the final volume value
-	uint8 volumenScalePower;
-
 	/// Type of playback to perform (SoundPlaybackTypes)
 	uint8 playbackType;
 
@@ -240,10 +237,6 @@ class Sound : Component
 	/// Retrieve the playback's speed.
 	/// @return Target playback speed
 	fix7_9_ext getSpeed();
-
-	/// Set the factor (2's power) by which the final volume is reduced.
-	/// @param volumenScalePower: Factor by which the final volume is reduced
-	void setVolumenScalePower(uint8 volumenScalePower);
 
 	/// Set the frequency delta to be added to the VSU's frequency registers.
 	/// @param frequencyDelta: Delta to be added to the frequency

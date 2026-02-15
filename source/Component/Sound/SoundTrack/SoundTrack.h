@@ -346,13 +346,12 @@ class SoundTrack : Object
 	/// @param leftVolumeFactor: Factor to apply to the left speaker's volume
 	/// @param rightVolumeFactor: Factor to apply to the right speaker's volume
 	/// @param volumeReduction: Volume reduction used for fade effects
-	/// @param volumenScalePower: 2's power to divide to the final volume value
 	/// @param frequencyDelta: added to the frequency registers
 	/// @return True if the playback is complete; false otherwise
 	bool update
 	(
 		fix7_9_ext tickStep, fix7_9_ext targetTimerResolutionFactor, uint8 maximumVolume, fixed_t leftVolumeFactor,
-		fixed_t rightVolumeFactor, int8 volumeReduction, uint8 volumenScalePower, uint16 frequencyDelta
+		fixed_t rightVolumeFactor, int8 volumeReduction, uint16 frequencyDelta
 	);
 
 	/// Retrieve the sound track's total ticks.
