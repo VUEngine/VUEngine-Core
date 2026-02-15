@@ -150,8 +150,8 @@ bool SoundTrack::update
 
 	uint8 volume = this->soundTrackSpec->SxLRV[this->cursorSxLRV];
 	
-	int16 leftVolume = volume >> 4;
-	int16 rightVolume = volume & 0xF;
+	int8 leftVolume = volume >> 4;
+	int8 rightVolume = volume & 0xF;
 
 	if(0 < leftVolume)
 	{
@@ -160,7 +160,7 @@ bool SoundTrack::update
 			leftVolume = maximumVolume;
 		}
 		
-		leftVolume -= (volumeReduction + leftVolumeReduction*0);
+		leftVolume -= (volumeReduction + leftVolumeReduction);
 
 		if(leftVolume <= 0)
 		{
@@ -176,7 +176,7 @@ bool SoundTrack::update
 			rightVolume = maximumVolume;
 		}
 
-		rightVolume -= (volumeReduction + rightVolumeReduction*0);
+		rightVolume -= (volumeReduction + rightVolumeReduction);
 
 		if(rightVolume <= 0)
 		{
