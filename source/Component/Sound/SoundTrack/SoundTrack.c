@@ -78,8 +78,8 @@ fix7_9_ext SoundTrack::loop()
 
 bool SoundTrack::update
 (
-	fix7_9_ext tickStep, fix7_9_ext targetTimerResolutionFactor, uint8 maximumVolume, fixed_t leftVolumeFactor, 
-	fixed_t rightVolumeFactor, int8 volumeReduction, uint16 frequencyDelta
+	fix7_9_ext tickStep, fix7_9_ext targetTimerResolutionFactor, uint8 maximumVolume, uint8 leftVolumeReduction, 
+	uint8 rightVolumeReduction, uint8 volumeReduction, uint16 frequencyDelta
 )
 {
 	if(this->finished)
@@ -153,41 +153,37 @@ bool SoundTrack::update
 	int16 leftVolume = volume >> 4;
 	int16 rightVolume = volume & 0xF;
 
-	if(0 != volume)
+	if(0 < leftVolume)
 	{
-		fixed_t volumeHelper = __I_TO_FIXED(volume);
-
-		if(0 <= leftVolumeFactor)
+		if(leftVolume > maximumVolume)
 		{
-			leftVolume = __FIXED_TO_I(__FIXED_MULT(volumeHelper, leftVolumeFactor));
+			leftVolume = maximumVolume;
+		}
+		
+		leftVolume -= (volumeReduction + leftVolumeReduction*0);
+
+		if(leftVolume <= 0)
+		{
+			// Don't allow 0 values to prevent pop sounds
+			leftVolume = 1;
+		}
+	}
+
+	if(0 < rightVolume)
+	{
+		if(rightVolume > maximumVolume)
+		{
+			rightVolume = maximumVolume;
 		}
 
-		if(0 <= rightVolumeFactor)
+		rightVolume -= (volumeReduction + rightVolumeReduction*0);
+
+		if(rightVolume <= 0)
 		{
-			rightVolume = __FIXED_TO_I(__FIXED_MULT(volumeHelper, rightVolumeFactor));
-		}		
+			// Don't allow 0 values to prevent pop sounds
+			rightVolume = 1;
+		}
 	}
-
-	if(leftVolume < 0)
-	{
-		leftVolume = 0;
-	}
-	else if(leftVolume > maximumVolume)
-	{
-		leftVolume = maximumVolume;
-	}
-
-	if(rightVolume < 0)
-	{
-		rightVolume = 0;
-	}
-	else if(rightVolume > maximumVolume)
-	{
-		rightVolume = maximumVolume;
-	}
-
-	leftVolume -= volumeReduction;
-	rightVolume -= volumeReduction;
 
 	if(0 < leftVolume || 0 < rightVolume)
 	{

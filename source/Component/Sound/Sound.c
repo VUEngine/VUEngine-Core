@@ -604,16 +604,13 @@ bool Sound::updatePlaybackState()
 
 	Sound::fireEvent(this, kEventSoundFinished);
 
-	if(!((SoundSpec*)this->componentSpec)->loop)
+	if(this->autoReleaseOnFinish)
 	{
-		if(this->autoReleaseOnFinish)
-		{
-			Sound::release(this);
-		}
-		else
-		{
-			Sound::stop(this);
-		}
+		Sound::release(this);
+	}
+	else if(!((SoundSpec*)this->componentSpec)->loop)
+	{
+		Sound::stop(this);
 	}
 
 	return kSoundRelease != this->state;
@@ -629,8 +626,8 @@ void Sound::update()
 	}
 
 	bool finished = true;
-	fixed_t leftVolumeFactor = -1;
-	fixed_t rightVolumeFactor = -1;
+	fix7_9 leftVolumeReduction = 0;
+	fix7_9 rightVolumeReduction = 0;
 
 	if(NULL != this->transformation && __NON_TRANSFORMED != this->transformation->invalid)
 	{
@@ -670,25 +667,38 @@ void Sound::update()
 		fixed_ext_t squaredDistanceToLeftEar = Vector3D::squareLength(Vector3D::get(leftEar, relativePosition));
 		fixed_ext_t squaredDistanceToRightEar = Vector3D::squareLength(Vector3D::get(rightEar, relativePosition));
 
-		leftVolumeFactor  = 
-			__1I_FIXED - 
-			__FIXED_EXT_DIV(squaredDistanceToLeftEar, __FIXED_SQUARE(__PIXELS_TO_METERS(__SOUND_STEREO_ATTENUATION_DISTANCE)));
-		
-		rightVolumeFactor = 
-			__1I_FIXED - 
-			__FIXED_EXT_DIV(squaredDistanceToRightEar, __FIXED_SQUARE(__PIXELS_TO_METERS(__SOUND_STEREO_ATTENUATION_DISTANCE)));
+		fix7_9 maximumVolume = __I_TO_FIX7_9(_soundsoundGroups[((SoundSpec*)this->componentSpec)->soundGroup]);
 
-		if(leftVolumeFactor > rightVolumeFactor)
+		leftVolumeReduction = __FIX7_9_MULT
+			(
+				maximumVolume,
+				__FIXED_EXT_TO_FIX7_9
+				(
+					__FIXED_EXT_DIV(squaredDistanceToLeftEar, __FIXED_SQUARE(__PIXELS_TO_METERS(__SOUND_STEREO_ATTENUATION_DISTANCE)))
+				)
+			); 
+		
+		rightVolumeReduction = __FIX7_9_MULT
+			(
+				maximumVolume,
+				__FIXED_EXT_TO_FIX7_9
+				(
+					__FIXED_EXT_DIV(squaredDistanceToRightEar, __FIXED_SQUARE(__PIXELS_TO_METERS(__SOUND_STEREO_ATTENUATION_DISTANCE)))
+				)
+			); 
+
+
+		if(leftVolumeReduction > rightVolumeReduction)
 		{
-			rightVolumeFactor -= (leftVolumeFactor - rightVolumeFactor);
+			rightVolumeReduction += (leftVolumeReduction - rightVolumeReduction);
 		}
 		else
 		{
-			leftVolumeFactor -= (rightVolumeFactor - leftVolumeFactor);
+			leftVolumeReduction += (rightVolumeReduction - leftVolumeReduction);
 		}
 
-		leftVolumeFactor = 0 > leftVolumeFactor ? 0 : leftVolumeFactor;
-		rightVolumeFactor = 0 > rightVolumeFactor ? 0 : rightVolumeFactor;
+		leftVolumeReduction = maximumVolume < leftVolumeReduction ? maximumVolume : leftVolumeReduction;
+		rightVolumeReduction = maximumVolume < rightVolumeReduction ? maximumVolume : rightVolumeReduction;
 	}
 
 	for(VirtualNode node = this->soundTracks->head; NULL != node; node = node->next)
@@ -702,8 +712,8 @@ void Sound::update()
 				this->tickStep, 
 				this->targetTimerResolutionFactor,
 				_soundsoundGroups[((SoundSpec*)this->componentSpec)->soundGroup],
-				leftVolumeFactor, 
-				rightVolumeFactor, 
+				__FIX7_9_TO_I(leftVolumeReduction), 
+				__FIX7_9_TO_I(rightVolumeReduction), 
 				__FIX7_9_TO_I(this->volumeReduction), 
 				this->frequencyDelta
 			) && finished;
