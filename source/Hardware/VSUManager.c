@@ -64,7 +64,7 @@ static void VSUManager::applySoundSourceConfiguration(const VSUSoundSourceConfig
 
 	if(0 > vsuSoundSourceIndex)
 	{
-		if(vsuManager->allowQueueingSoundRequests && vsuSoundSourceConfigurationRequest->skip)
+		if(vsuManager->allowQueueingSoundRequests && !vsuSoundSourceConfigurationRequest->skip)
 		{
 			VSUManager::registerQueuedSoundSourceConfigurationRequest(vsuManager, vsuSoundSourceConfigurationRequest);
 		}
