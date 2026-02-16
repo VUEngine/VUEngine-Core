@@ -631,8 +631,21 @@ void Sound::update()
 
 	if(NULL != this->transformation && __NON_TRANSFORMED != this->transformation->invalid)
 	{
+#ifndef __LEGACY_COORDINATE_PROJECTION
 		Vector3D relativePosition = Vector3D::rotate(Vector3D::getRelativeToCamera(this->transformation->position), *_cameraInvertedRotation);
-
+#else
+		Vector3D relativePosition = 
+			Vector3D::rotate
+			(
+				Vector3D::sub
+				(
+					Vector3D::getRelativeToCamera
+					(
+						this->transformation->position), (Vector3D){__HALF_SCREEN_WIDTH_METERS, __HALF_SCREEN_HEIGHT_METERS, 0}
+					), 
+					*_cameraInvertedRotation
+			);
+#endif
 		if(_mirror.x)
 		{
 			relativePosition.x = -relativePosition.x;
