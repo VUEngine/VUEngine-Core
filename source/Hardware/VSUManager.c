@@ -483,11 +483,12 @@ void VSUManager::configureSoundSource
 	this->vsuSoundSourceConfigurations[i].SxSWP = vsuSoundSourceConfigurationRequest->SxSWP;
 	this->vsuSoundSourceConfigurations[i].skippable = vsuSoundSourceConfigurationRequest->skippable;
 
-	vsuSoundSource->SxLRV = vsuSoundSourceConfigurationRequest->SxLRV;
-	vsuSoundSource->SxFQL = vsuSoundSourceConfigurationRequest->SxFQL;
-	vsuSoundSource->SxFQH = vsuSoundSourceConfigurationRequest->SxFQH;
-	vsuSoundSource->SxEV0 = vsuSoundSourceConfigurationRequest->SxEV0;
-	vsuSoundSource->SxEV1 = vsuSoundSourceConfigurationRequest->SxEV1;
+	/// If SxINT is set every time it can produce the pop sound because it 
+	/// resets various of the VSU's internal counters.
+	if(setSxINT)
+	{
+		vsuSoundSource->SxINT = vsuSoundSourceConfigurationRequest->SxINT | 0x80;
+	}
 
 /*	
 	if(setSxEV0)
@@ -500,6 +501,13 @@ void VSUManager::configureSoundSource
 		vsuSoundSource->SxEV1 = vsuSoundSourceConfigurationRequest->SxEV1;
 	}
 */	
+
+	vsuSoundSource->SxLRV = vsuSoundSourceConfigurationRequest->SxLRV;
+	vsuSoundSource->SxFQL = vsuSoundSourceConfigurationRequest->SxFQL;
+	vsuSoundSource->SxFQH = vsuSoundSourceConfigurationRequest->SxFQH;
+	vsuSoundSource->SxEV0 = vsuSoundSourceConfigurationRequest->SxEV0;
+	vsuSoundSource->SxEV1 = vsuSoundSourceConfigurationRequest->SxEV1;
+
 	vsuSoundSource->SxRAM = waveform->index;
 	vsuSoundSource->SxSWP = vsuSoundSourceConfigurationRequest->SxSWP;
 
@@ -511,13 +519,6 @@ void VSUManager::configureSoundSource
 		{
 			modulationData[i << 2] = vsuSoundSourceConfigurationRequest->SxMOD[i];
 		}
-	}
-
-	/// If SxINT is set every time it can produce the pop sound because it 
-	/// resets various of the VSU's internal counters.
-	if(setSxINT)
-	{
-		vsuSoundSource->SxINT = vsuSoundSourceConfigurationRequest->SxINT | 0x80;
 	}
 }
 
