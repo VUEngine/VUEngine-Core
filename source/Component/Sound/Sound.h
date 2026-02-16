@@ -68,8 +68,11 @@ typedef struct SoundSpec
 	/// Component spec
 	ComponentSpec componentSpec;
 
-	/// Name
+	/// Song/Sound's name
 	char* name;
+
+	/// Author's name
+	char* author;
 
 	/// Play in loop
 	bool loop;
