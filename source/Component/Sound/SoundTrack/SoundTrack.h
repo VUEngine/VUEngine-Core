@@ -162,14 +162,6 @@
 // CLASS' DATA
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-/// Sound track types
-/// @memberof SoundTrack
-enum SoundTrackTypes
-{
-	kTrackNative = 0,
-	kTrackPCM
-};
-
 /// Sound events that the sound player recongnizes
 /// @memberof SoundTrack
 enum SoundEvents
@@ -204,14 +196,11 @@ typedef struct SoundTrackKeyframe
 /// @memberof SoundTrack
 typedef struct SoundTrackSpec
 {
-	/// kTrackNative, kTrackPCM
-	uint32 trackType;
-
 	/// Priority for sound channel usage
 	uint8 priority;
 
-	/// Total number of samples
-	uint32 samples;
+	/// Skip if no sound source available?
+	bool skip;
 
 	/// Loop back point (cursor)
 	uint32 loopPointCursor;

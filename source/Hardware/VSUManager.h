@@ -154,6 +154,9 @@ typedef struct VSUSoundSourceConfiguration
 	/// Priority for sound channel usage
 	uint8 priority;
 
+	/// Skip if no sound source available?
+	bool skip;
+
 } VSUSoundSourceConfiguration;
 
 /// Sound source configuration request
@@ -198,6 +201,9 @@ typedef struct VSUSoundSourceConfigurationRequest
 
 	/// Priority for sound channel usage
 	uint8 priority;
+
+	/// Skip if no sound source available?
+	bool skip;
 
 } VSUSoundSourceConfigurationRequest;
 

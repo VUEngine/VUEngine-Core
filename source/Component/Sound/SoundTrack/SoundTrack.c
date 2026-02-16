@@ -220,7 +220,9 @@ bool SoundTrack::update
 			// SxMOD pointer
 			this->soundTrackSpec->SxMOD[this->cursorSxMOD],
 			// Priority
-			this->soundTrackSpec->priority
+			this->soundTrackSpec->priority,
+			// Skip
+			this->soundTrackSpec->skip
 		};
 
 		VSUManager::applySoundSourceConfiguration(&vsuChannelConfigurationRequest);		
@@ -259,14 +261,7 @@ float SoundTrack::getElapsedTicksPercentage()
 
 uint32 SoundTrack::getTotalPlaybackMilliseconds(uint16 targetTimerResolutionUS)
 {
-	uint32 totalPlaybackMilliseconds = 0;
-
-	if(kTrackNative == this->soundTrackSpec->trackType)
-	{
-		totalPlaybackMilliseconds = (uint32)((long)this->ticks * targetTimerResolutionUS / __MICROSECONDS_PER_MILLISECOND);
-	}
-
-	return totalPlaybackMilliseconds;
+	return (uint32)((long)this->ticks * targetTimerResolutionUS / __MICROSECONDS_PER_MILLISECOND);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -303,22 +298,15 @@ void SoundTrack::constructor(const SoundTrackSpec* soundTrackSpec)
 	// Always explicitly call the base's constructor 
 	Base::constructor();
 
-	this->soundTrackSpec = soundTrackSpec;
-	this->samples = this->soundTrackSpec->samples;
-
 	static uint32 id = 0;
 	this->id = id++;
 
-	SoundTrack::reset(this);
+	this->soundTrackSpec = soundTrackSpec;
+	this->samples = 0;
+	this->ticks = 0;
 
-	if(0 == this->samples)
-	{
-		SoundTrack::computeLength(this);
-	}
-	else
-	{
-		this->ticks = this->samples = this->soundTrackSpec->samples;
-	}
+	SoundTrack::reset(this);
+	SoundTrack::computeLength(this);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
