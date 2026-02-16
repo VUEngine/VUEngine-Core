@@ -207,8 +207,8 @@ typedef struct SoundTrackSpec
 	/// kTrackNative, kTrackPCM
 	uint32 trackType;
 
-	/// Skip if no sound source available?
-	bool skippable;
+	/// Priority for sound channel usage
+	uint8 priority;
 
 	/// Total number of samples
 	uint32 samples;

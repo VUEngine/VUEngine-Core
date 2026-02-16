@@ -219,8 +219,8 @@ bool SoundTrack::update
 			this->soundTrackSpec->SxSWP[this->cursorSxSWP],
 			// SxMOD pointer
 			this->soundTrackSpec->SxMOD[this->cursorSxMOD],
-			// Skip if no sound source available?
-			this->soundTrackSpec->skippable
+			// Priority
+			this->soundTrackSpec->priority
 		};
 
 		VSUManager::applySoundSourceConfiguration(&vsuChannelConfigurationRequest);		

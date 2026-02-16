@@ -151,8 +151,8 @@ typedef struct VSUSoundSourceConfiguration
 	/// SxMOD pointer
 	const int8* SxMOD;
 
-	/// Skip if no sound source available?
-	bool skippable;
+	/// Priority for sound channel usage
+	uint8 priority;
 
 } VSUSoundSourceConfiguration;
 
@@ -196,8 +196,8 @@ typedef struct VSUSoundSourceConfigurationRequest
 	/// SxMOD pointer
 	const int8* SxMOD;
 
-	/// Skip if no sound source available?
-	bool skippable;
+	/// Priority for sound channel usage
+	uint8 priority;
 
 } VSUSoundSourceConfigurationRequest;
 

@@ -56,15 +56,15 @@ static void VSUManager::applySoundSourceConfiguration(const VSUSoundSourceConfig
 	VSUManager vsuManager = VSUManager::getInstance();
 
 	int16 vsuSoundSourceIndex = 
-		VSUManager::findAvailableSoundSource
+		VSUManager::freeableSoundSource
 		(
 			vsuManager, vsuSoundSourceConfigurationRequest->requesterId, vsuSoundSourceConfigurationRequest->type, 
-			!vsuSoundSourceConfigurationRequest->skippable
+			vsuSoundSourceConfigurationRequest->priority
 		);
 
 	if(0 > vsuSoundSourceIndex)
 	{
-		if(vsuManager->allowQueueingSoundRequests && !vsuSoundSourceConfigurationRequest->skippable)
+		if(vsuManager->allowQueueingSoundRequests && 0 == vsuSoundSourceConfigurationRequest->priority)
 		{
 			VSUManager::registerQueuedSoundSourceConfigurationRequest(vsuManager, vsuSoundSourceConfigurationRequest);
 		}
@@ -481,7 +481,7 @@ void VSUManager::configureSoundSource
 	this->vsuSoundSourceConfigurations[i].SxEV1 = vsuSoundSourceConfigurationRequest->SxEV1;
 	this->vsuSoundSourceConfigurations[i].SxRAM = waveform->index;
 	this->vsuSoundSourceConfigurations[i].SxSWP = vsuSoundSourceConfigurationRequest->SxSWP;
-	this->vsuSoundSourceConfigurations[i].skippable = vsuSoundSourceConfigurationRequest->skippable;
+	this->vsuSoundSourceConfigurations[i].priority = vsuSoundSourceConfigurationRequest->priority;
 
 	/// If SxINT is set every time it can produce the pop sound because it 
 	/// resets various of the VSU's internal counters.
@@ -524,7 +524,7 @@ void VSUManager::configureSoundSource
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-int16 VSUManager::findAvailableSoundSource(uint32 requesterId, uint32 soundSourceType, bool force)
+int16 VSUManager::freeableSoundSource(uint32 requesterId, uint32 soundSourceType, uint8 priority)
 {
 	// First try to find a sound source that has previously assigned to the same requesterId
 	for(int16 i = 0; i < __TOTAL_SOUND_SOURCES; i++)
@@ -554,38 +554,33 @@ int16 VSUManager::findAvailableSoundSource(uint32 requesterId, uint32 soundSourc
 		}
 	}
 
-	if(force)
+	int16 stolenSoundSourceIndex = -1;
+
+	// Now try to find a sound source whose timeout has just expired
+	for(int16 i = 0; i < __TOTAL_SOUND_SOURCES; i++)
 	{
-		int16 soonestFreeSoundSource = -1;
-
-		// Now try to find a sound source whose timeout has just expired
-		for(int16 i = 0; i < __TOTAL_SOUND_SOURCES; i++)
+		if(0 == (soundSourceType & this->vsuSoundSourceConfigurations[i].type))
 		{
-			if(0 == (soundSourceType & this->vsuSoundSourceConfigurations[i].type))
-			{
-				continue;
-			}
-
-			if(!this->vsuSoundSourceConfigurations[i].skippable)
-			{
-				continue;
-			}
-
-			if
-			(
-				0 > soonestFreeSoundSource 
-				|| 
-				this->vsuSoundSourceConfigurations[i].timeout < this->vsuSoundSourceConfigurations[soonestFreeSoundSource].timeout
-			)
-			{
-				soonestFreeSoundSource = i;
-			}
+			continue;
 		}
 
-		return soonestFreeSoundSource;
+		if(this->vsuSoundSourceConfigurations[i].priority < priority)
+		{
+			continue;
+		}
+
+		if
+		(
+			0 > stolenSoundSourceIndex 
+			|| 
+			this->vsuSoundSourceConfigurations[i].timeout < this->vsuSoundSourceConfigurations[stolenSoundSourceIndex].timeout
+		)
+		{
+			stolenSoundSourceIndex = i;
+		}
 	}
 
-	return -1;
+	return stolenSoundSourceIndex;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -641,10 +636,10 @@ void VSUManager::dispatchQueuedSoundSourceConfigurations()
 		VSUSoundSourceConfigurationRequest* queuedVSUSoundSourceConfigurationRequest = (VSUSoundSourceConfigurationRequest*)node->data;
 
 		int16 vsuSoundSourceIndex = 
-			VSUManager::findAvailableSoundSource
+			VSUManager::freeableSoundSource
 			(
 				this, queuedVSUSoundSourceConfigurationRequest->requesterId, queuedVSUSoundSourceConfigurationRequest->type, 
-				!queuedVSUSoundSourceConfigurationRequest->skippable
+				queuedVSUSoundSourceConfigurationRequest->priority
 			);
 
 		if(0 <= vsuSoundSourceIndex)
