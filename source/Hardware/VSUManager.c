@@ -564,7 +564,7 @@ int16 VSUManager::freeableSoundSource(uint32 requesterId, uint32 soundSourceType
 			continue;
 		}
 
-		if(this->vsuSoundSourceConfigurations[i].priority < priority)
+		if(this->vsuSoundSourceConfigurations[i].priority > priority)
 		{
 			continue;
 		}
