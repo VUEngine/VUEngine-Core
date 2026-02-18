@@ -59,7 +59,7 @@ static void VSUManager::applySoundSourceConfiguration(const VSUSoundSourceConfig
 		VSUManager::freeableSoundSource
 		(
 			vsuManager, vsuSoundSourceConfigurationRequest->requesterId, vsuSoundSourceConfigurationRequest->type, 
-			vsuSoundSourceConfigurationRequest->priority
+			vsuSoundSourceConfigurationRequest->priority, vsuSoundSourceConfigurationRequest->skip
 		);
 
 	if(0 > vsuSoundSourceIndex)
@@ -524,7 +524,7 @@ void VSUManager::configureSoundSource
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-int16 VSUManager::freeableSoundSource(uint32 requesterId, uint32 soundSourceType, uint8 priority)
+int16 VSUManager::freeableSoundSource(uint32 requesterId, uint32 soundSourceType, uint8 priority, bool skip)
 {
 	// First try to find a sound source that has previously assigned to the same requesterId
 	for(int16 i = 0; i < __TOTAL_SOUND_SOURCES; i++)
@@ -556,28 +556,31 @@ int16 VSUManager::freeableSoundSource(uint32 requesterId, uint32 soundSourceType
 
 	int16 stolenSoundSourceIndex = -1;
 
-	// Now try to find a sound source whose timeout has just expired
-	for(int16 i = 0; i < __TOTAL_SOUND_SOURCES; i++)
+	if(!skip)
 	{
-		if(0 == (soundSourceType & this->vsuSoundSourceConfigurations[i].type))
+		// Now try to find a sound source whose timeout has just expired
+		for(int16 i = 0; i < __TOTAL_SOUND_SOURCES; i++)
 		{
-			continue;
-		}
+			if(0 == (soundSourceType & this->vsuSoundSourceConfigurations[i].type))
+			{
+				continue;
+			}
 
-		if(this->vsuSoundSourceConfigurations[i].priority > priority)
-		{
-			continue;
-		}
+			if(this->vsuSoundSourceConfigurations[i].priority > priority)
+			{
+				continue;
+			}
 
-		if
-		(
-			0 > stolenSoundSourceIndex 
-			|| 
-			this->vsuSoundSourceConfigurations[i].timeout < this->vsuSoundSourceConfigurations[stolenSoundSourceIndex].timeout
-		)
-		{
-			stolenSoundSourceIndex = i;
-		}
+			if
+			(
+				0 > stolenSoundSourceIndex 
+				|| 
+				this->vsuSoundSourceConfigurations[i].timeout < this->vsuSoundSourceConfigurations[stolenSoundSourceIndex].timeout
+			)
+			{
+				stolenSoundSourceIndex = i;
+			}
+		}		
 	}
 
 	return stolenSoundSourceIndex;
@@ -639,7 +642,7 @@ void VSUManager::dispatchQueuedSoundSourceConfigurations()
 			VSUManager::freeableSoundSource
 			(
 				this, queuedVSUSoundSourceConfigurationRequest->requesterId, queuedVSUSoundSourceConfigurationRequest->type, 
-				queuedVSUSoundSourceConfigurationRequest->priority
+				queuedVSUSoundSourceConfigurationRequest->priority, queuedVSUSoundSourceConfigurationRequest->skip
 			);
 
 		if(0 <= vsuSoundSourceIndex)

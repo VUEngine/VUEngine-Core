@@ -56,8 +56,8 @@ enum SoundGroup
 {
 	kSoundGroupNone = 0,
 	kSoundGroupGeneral,
-	kSoundGroupMusic,
 	kSoundGroupEffects,
+	kSoundGroupMusic,
 	kSoundGroupOther
 };
 
