@@ -132,9 +132,6 @@ class Sound : Component
 	/// Total playback time
 	uint32 totalPlaybackMilliseconds;
 
-	/// Target refresh rate for PCM playback
-	uint16 pcmTargetPlaybackRefreshRate;
-
 	/// Delta added to the frequency registers
 	uint16 frequencyDelta;
 

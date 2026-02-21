@@ -57,14 +57,6 @@ typedef struct StageSpec
 
 	} timer;
 
-	/// Sound config
-	struct SoundConfig
-	{
-		/// Target refresh rate for PCM playback
-		uint16 pcmTargetPlaybackRefreshRate;
-
-	} sound;
-
 	/// General stage's attributes
 	struct Level
 	{
