@@ -456,10 +456,10 @@ void VSUManager::configureSoundSource
 	this->haveUsedSoundSources = true;
 
 	bool setSxINT = 
-		0 != (0x80 & vsuSoundSourceConfigurationRequest->SxINT)
+		this->vsuSoundSourceConfigurations[i].SxINT != vsuSoundSourceConfigurationRequest->SxINT
 		|| 
 		(this->vsuSoundSourceConfigurations[i].requesterId != vsuSoundSourceConfigurationRequest->requesterId);
-/*
+
 	bool setSxEV0 = 
 		this->vsuSoundSourceConfigurations[i].SxEV0 != vsuSoundSourceConfigurationRequest->SxEV0
 		|| 
@@ -469,7 +469,12 @@ void VSUManager::configureSoundSource
 		this->vsuSoundSourceConfigurations[i].SxEV1 != vsuSoundSourceConfigurationRequest->SxEV1
 		|| 
 		(this->vsuSoundSourceConfigurations[i].requesterId != vsuSoundSourceConfigurationRequest->requesterId);
-*/
+
+	bool setSxSWP = 
+		this->vsuSoundSourceConfigurations[i].SxSWP != vsuSoundSourceConfigurationRequest->SxSWP
+		|| 
+		(this->vsuSoundSourceConfigurations[i].requesterId != vsuSoundSourceConfigurationRequest->requesterId);
+
 	this->vsuSoundSourceConfigurations[i].requesterId = vsuSoundSourceConfigurationRequest->requesterId;
 	this->vsuSoundSourceConfigurations[i].waveform = waveform;
 	this->vsuSoundSourceConfigurations[i].timeout = this->ticks + vsuSoundSourceConfigurationRequest->timeout;
@@ -483,14 +488,11 @@ void VSUManager::configureSoundSource
 	this->vsuSoundSourceConfigurations[i].SxSWP = vsuSoundSourceConfigurationRequest->SxSWP;
 	this->vsuSoundSourceConfigurations[i].priority = vsuSoundSourceConfigurationRequest->priority;
 
-	/// If SxINT is set every time it can produce the pop sound because it 
-	/// resets various of the VSU's internal counters.
 	if(setSxINT)
 	{
-		vsuSoundSource->SxINT = vsuSoundSourceConfigurationRequest->SxINT | 0x80;
+		vsuSoundSource->SxINT = vsuSoundSourceConfigurationRequest->SxINT;
 	}
 
-/*	
 	if(setSxEV0)
 	{
 		vsuSoundSource->SxEV0 = vsuSoundSourceConfigurationRequest->SxEV0;
@@ -500,16 +502,17 @@ void VSUManager::configureSoundSource
 	{
 		vsuSoundSource->SxEV1 = vsuSoundSourceConfigurationRequest->SxEV1;
 	}
-*/	
 
 	vsuSoundSource->SxLRV = vsuSoundSourceConfigurationRequest->SxLRV;
 	vsuSoundSource->SxFQL = vsuSoundSourceConfigurationRequest->SxFQL;
 	vsuSoundSource->SxFQH = vsuSoundSourceConfigurationRequest->SxFQH;
-	vsuSoundSource->SxEV0 = vsuSoundSourceConfigurationRequest->SxEV0;
-	vsuSoundSource->SxEV1 = vsuSoundSourceConfigurationRequest->SxEV1;
+
+	if(setSxSWP)
+	{
+		vsuSoundSource->SxSWP = vsuSoundSourceConfigurationRequest->SxSWP;
+	}
 
 	vsuSoundSource->SxRAM = waveform->index;
-	vsuSoundSource->SxSWP = vsuSoundSourceConfigurationRequest->SxSWP;
 
 	if(NULL != vsuSoundSourceConfigurationRequest->SxMOD)
 	{		
