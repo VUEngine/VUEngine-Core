@@ -33,6 +33,14 @@ friend class VirtualList;
 #define __SSTOP								*(uint8*)0x01000580
 #define __SOUND_WRAPPER_STOP_SOUND 			0x20
 
+// The following flags must use unused bits in their corresponding
+// VSU registers to not clash with the hardware meanings
+#define __SET_SxINT_FLAG					0x40
+#define __SET_SxEV0_FLAG					0x80
+#define __SET_SxEV1_FLAG					0x80
+#define __SET_SxSWP_FLAG					0x08
+
+
 #undef __CHAR_DARK_RED_BOX
 #define __CHAR_DARK_RED_BOX					'\x0E'
 #undef __CHAR_BRIGHT_RED_BOX
@@ -456,28 +464,28 @@ void VSUManager::configureSoundSource
 	this->haveUsedSoundSources = true;
 
 	bool setSxINT = 
-		0 != (0x40 & vsuSoundSourceConfigurationRequest->SxINT)
+		0 != (__SET_SxINT_FLAG & vsuSoundSourceConfigurationRequest->SxINT)
 		|| 
 		this->vsuSoundSourceConfigurations[i].SxINT != vsuSoundSourceConfigurationRequest->SxINT
 		|| 
 		(this->vsuSoundSourceConfigurations[i].requesterId != vsuSoundSourceConfigurationRequest->requesterId);
 
 	bool setSxEV0 = 
-		0 != (0x80 & vsuSoundSourceConfigurationRequest->SxEV1)
+		0 != (__SET_SxEV0_FLAG & vsuSoundSourceConfigurationRequest->SxEV1)
 		||
 		this->vsuSoundSourceConfigurations[i].SxEV0 != vsuSoundSourceConfigurationRequest->SxEV0
 		||
 		(this->vsuSoundSourceConfigurations[i].requesterId != vsuSoundSourceConfigurationRequest->requesterId);
 
 	bool setSxEV1 = 
-		0 != (0x80 & vsuSoundSourceConfigurationRequest->SxEV1)
+		0 != (__SET_SxEV1_FLAG & vsuSoundSourceConfigurationRequest->SxEV1)
 		||
 		this->vsuSoundSourceConfigurations[i].SxEV1 != vsuSoundSourceConfigurationRequest->SxEV1
 		|| 
 		(this->vsuSoundSourceConfigurations[i].requesterId != vsuSoundSourceConfigurationRequest->requesterId);
 
 	bool setSxSWP = 
-		0 != (0x08 & vsuSoundSourceConfigurationRequest->SxEV1)
+		0 != (__SET_SxSWP_FLAG & vsuSoundSourceConfigurationRequest->SxEV1)
 		|| 
 		this->vsuSoundSourceConfigurations[i].SxSWP != vsuSoundSourceConfigurationRequest->SxSWP
 		||
