@@ -12,10 +12,9 @@ Features:
 	- Composite and composition architecture
 	- Decoupling through message sending and propagation, and event firing
 	- State machines
-	- Separation of concers through *Spec* recipes to instantiate
-	game actors
+	- Separation of concerns through *Spec* recipes to instantiate game actors
 	- Restricted singletons
-	- Dinaymic memory allocation through custom memory pools
+	- Dynamic memory allocation through custom memory pools
 	- Runtime debugging tools
 	- User data saving support
 	- Assets preloading
