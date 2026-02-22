@@ -456,23 +456,31 @@ void VSUManager::configureSoundSource
 	this->haveUsedSoundSources = true;
 
 	bool setSxINT = 
+		0 != (0x40 & vsuSoundSourceConfigurationRequest->SxINT)
+		|| 
 		this->vsuSoundSourceConfigurations[i].SxINT != vsuSoundSourceConfigurationRequest->SxINT
 		|| 
 		(this->vsuSoundSourceConfigurations[i].requesterId != vsuSoundSourceConfigurationRequest->requesterId);
 
 	bool setSxEV0 = 
+		0 != (0x80 & vsuSoundSourceConfigurationRequest->SxEV1)
+		||
 		this->vsuSoundSourceConfigurations[i].SxEV0 != vsuSoundSourceConfigurationRequest->SxEV0
-		|| 
+		||
 		(this->vsuSoundSourceConfigurations[i].requesterId != vsuSoundSourceConfigurationRequest->requesterId);
 
 	bool setSxEV1 = 
+		0 != (0x80 & vsuSoundSourceConfigurationRequest->SxEV1)
+		||
 		this->vsuSoundSourceConfigurations[i].SxEV1 != vsuSoundSourceConfigurationRequest->SxEV1
 		|| 
 		(this->vsuSoundSourceConfigurations[i].requesterId != vsuSoundSourceConfigurationRequest->requesterId);
 
 	bool setSxSWP = 
-		this->vsuSoundSourceConfigurations[i].SxSWP != vsuSoundSourceConfigurationRequest->SxSWP
+		0 != (0x08 & vsuSoundSourceConfigurationRequest->SxEV1)
 		|| 
+		this->vsuSoundSourceConfigurations[i].SxSWP != vsuSoundSourceConfigurationRequest->SxSWP
+		||
 		(this->vsuSoundSourceConfigurations[i].requesterId != vsuSoundSourceConfigurationRequest->requesterId);
 
 	this->vsuSoundSourceConfigurations[i].requesterId = vsuSoundSourceConfigurationRequest->requesterId;
