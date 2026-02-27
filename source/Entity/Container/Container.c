@@ -649,7 +649,7 @@ Container Container::getFirstAncestor()
 {
 	Container firstAncestor = this->parent;
 
-	while(NULL != firstAncestor->parent)
+	while(NULL != firstAncestor && NULL != firstAncestor->parent)
 	{
 		firstAncestor = firstAncestor->parent;
 	}

@@ -246,13 +246,13 @@ void ActorFactory::print(int32 x, int32 y)
 	Printer::int32(NULL != this->actorsToInstantiate ? VirtualList::getCount(this->actorsToInstantiate) : 0, x + xDisplacement, y++, NULL);
 
 	Printer::text("2 Transformation:			", x, y, NULL);
-	Printer::int32(NULL != this->actorsToInstantiate ? VirtualList::getCount(this->actorsToTransform) : 0, x + xDisplacement, y++, NULL);
+	Printer::int32(NULL != this->actorsToTransform ? VirtualList::getCount(this->actorsToTransform) : 0, x + xDisplacement, y++, NULL);
 
 	Printer::text("3 Make ready:			", x, y, NULL);
-	Printer::int32(NULL != this->actorsToInstantiate ? VirtualList::getCount(this->actorsToAddAsChildren) : 0, x + xDisplacement, y++, NULL);
+	Printer::int32(NULL != this->actorsToAddAsChildren ? VirtualList::getCount(this->actorsToAddAsChildren) : 0, x + xDisplacement, y++, NULL);
 
 	Printer::text("4 Call listeners:			", x, y, NULL);
-	Printer::int32(NULL != this->actorsToInstantiate ? VirtualList::getCount(this->spawnedActors) : 0, x + xDisplacement, y++, NULL);
+	Printer::int32(NULL != this->spawnedActors ? VirtualList::getCount(this->spawnedActors) : 0, x + xDisplacement, y++, NULL);
 }
 #endif
 
