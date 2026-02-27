@@ -1341,6 +1341,12 @@ bool Container::propagateArguments(bool (*propagationHandler)(void*, va_list), v
 		return false;
 	}
 
+	if(propagationHandler(this, args))
+	{
+		// Stop propagation
+		return true;
+	}
+
 	if(NULL != this->children)
 	{
 		for(VirtualNode node = this->children->head; NULL != node; node = node->next)
@@ -1355,8 +1361,7 @@ bool Container::propagateArguments(bool (*propagationHandler)(void*, va_list), v
 		}
 	}
 
-	// If no child processed the message, I process it
-	return propagationHandler(this, args);
+	return false;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
