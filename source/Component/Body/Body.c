@@ -856,45 +856,34 @@ void Body::print(int32 x, int32 y)
 		__UNIFORM_MOVEMENT == this->movementType.x ? 
 		"Uniform" 
 		: 
-		__UNIFORM_MOVEMENT == this->movementType.x ? 
-			"Uniform" 
+		__ACCELERATED_MOVEMENT == this->movementType.x ? 
+			"Accel" 
 			: 
-			__ACCELERATED_MOVEMENT == this->movementType.x ? 
-				"Accel" 
-				: 
-				"None", 
+			"None", 
+		xDisplacement + x, y, NULL
+	);
+
+	Printer::text
+	(		
+		__UNIFORM_MOVEMENT == this->movementType.y ? 
+		"Uniform" 
+		: 
+		__ACCELERATED_MOVEMENT == this->movementType.y ? 
+			"Accel" 
+			: 
+			"None", 
 		xDisplacement + x, y, NULL
 	);
 
 	Printer::text
 	(
-		
-		__UNIFORM_MOVEMENT == this->movementType.y ? 
-		"Uniform" 
-		: 
-		__UNIFORM_MOVEMENT == this->movementType.y ? 
-			"Uniform" 
-			: 
-			__ACCELERATED_MOVEMENT == this->movementType.y ? 
-				"Accel" 
-				: 
-				"None", 
-		xDisplacement + x, y, NULL
-	);
-
-	Printer::text
-	(
-		
 		__UNIFORM_MOVEMENT == this->movementType.z ? 
 		"Uniform" 
 		: 
-		__UNIFORM_MOVEMENT == this->movementType.z ? 
-			"Uniform" 
+		__ACCELERATED_MOVEMENT == this->movementType.z ? 
+			"Accel" 
 			: 
-			__ACCELERATED_MOVEMENT == this->movementType.z ? 
-				"Accel" 
-				: 
-				"None", 
+			"None", 
 		xDisplacement + x, y, NULL
 	);
 
