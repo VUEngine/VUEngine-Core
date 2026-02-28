@@ -86,6 +86,8 @@ bool Wireframe::isVisible()
 
 bool Wireframe::prepareForRender(Vector3D* relativePosition, const Vector3D* cameraDirection __attribute__((unused)))
 {
+	this->rendered = false;
+	
 	Vector3D displacement = Vector3D::rotate(this->displacement, this->transformation->rotation);
 	*relativePosition = Vector3D::sub(Vector3D::sum(this->transformation->position, displacement), *_cameraPosition);
 

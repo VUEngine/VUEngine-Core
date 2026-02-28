@@ -55,6 +55,8 @@ void Line::render(Vector3D relativePosition)
 	Vector3D b = Vector3D::sum(relativePosition, ((LineSpec*)this->componentSpec)->b);
 	b = Vector3D::rotate(b, *_cameraInvertedRotation);
 	this->b = PixelVector::projectVector3D(b, Optics::calculateParallax(b.z));
+
+	this->rendered = true;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

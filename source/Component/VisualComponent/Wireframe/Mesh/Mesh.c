@@ -35,7 +35,7 @@ friend class VirtualList;
 
 static RightBox Mesh::getRightBoxFromSpec(MeshSpec* meshSpec)
 {
-	RightBox rightBox = {0, 0, 0, 0, 0, 0};
+	RightBox rightBox = {-1, -1, -1, 1, 1, 1};
 
 	bool isEndSegment = false;
 	uint16 i = 0;
@@ -319,6 +319,8 @@ void Mesh::render(Vector3D relativePosition)
 			vertex->pixelVector = PixelVector::projectVector3D(vector, Optics::calculateParallax(vector.z));
 		}
 	}
+
+	this->rendered = true;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

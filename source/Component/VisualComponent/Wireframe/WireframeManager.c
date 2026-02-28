@@ -178,8 +178,6 @@ void WireframeManager::render()
 
 		HardwareManager::resumeInterrupts();
 
-		wireframe->rendered = true;
-
 #ifdef __PROFILE_WIREFRAMES
 		this->renderedWireframes++;
 #endif
