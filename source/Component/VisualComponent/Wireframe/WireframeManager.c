@@ -42,7 +42,7 @@ void WireframeManager::constructor()
 
 	this->evenFrame = __TRANSPARENCY_EVEN;
 	this->renderedWireframes = 0;
-	this->drawnWireframes = 00;
+	this->drawnWireframes = 0;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
