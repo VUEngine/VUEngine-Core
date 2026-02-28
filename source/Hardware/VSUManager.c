@@ -471,7 +471,7 @@ void VSUManager::configureSoundSource
 		(this->vsuSoundSourceConfigurations[i].requesterId != vsuSoundSourceConfigurationRequest->requesterId);
 
 	bool setSxEV0 = 
-		0 != (__SET_SxEV0_FLAG & vsuSoundSourceConfigurationRequest->SxEV0)
+		0 != (__SET_SxEV0_FLAG & vsuSoundSourceConfigurationRequest->SxEV1)
 		||
 		this->vsuSoundSourceConfigurations[i].SxEV0 != vsuSoundSourceConfigurationRequest->SxEV0
 		||
