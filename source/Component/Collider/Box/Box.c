@@ -130,6 +130,8 @@ void Box::configureWireframe()
 
 	this->meshSpec = new MeshSpec;
 
+	// MeshesSegments can be stack-allocated because Mesh copies the segments data
+	// during construction and does not retain the pointer afterwards
 	const PixelVector MeshesSegments[][2]=
 	{
 		{

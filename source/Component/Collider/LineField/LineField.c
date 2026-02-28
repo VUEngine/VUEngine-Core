@@ -25,21 +25,6 @@
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void LineField::project(Vector3D center, fixed_t radius, Vector3D vector, fixed_t* min, fixed_t* max)
-{
-	// Project this onto the current normal
-	fixed_t dotProduct = Vector3D::dotProduct(vector, center);
-
-	*min = dotProduct - radius;
-	*max = dotProduct + radius;
-
-	if(*min > *max)
-	{
-		fixed_t aux = *min;
-		*min = *max;
-		*max = aux;
-	}
-}
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
@@ -98,6 +83,8 @@ void LineField::configureWireframe()
 
 	this->meshSpec = new MeshSpec;
 
+	// MeshesSegments can be stack-allocated because Mesh copies the segments data
+	// during construction and does not retain the pointer afterwards
 	PixelVector MeshesSegments[][2]=
 	{
 		// Line
@@ -193,7 +180,7 @@ void LineField::print(int32 x __attribute__((unused)), int32 y __attribute__((un
 	Printer::text("Z:               " , x, y, NULL);
 	Printer::int32(__METERS_TO_PIXELS(this->a.z), x + 2, y, NULL);
 	Printer::text("," , x + 6, y, NULL);
-	Printer::int32(__METERS_TO_PIXELS(this->a.z), x + 8, y++, NULL);
+	Printer::int32(__METERS_TO_PIXELS(this->b.z), x + 8, y++, NULL);
 #endif
 }
 
@@ -215,8 +202,9 @@ Vector3D LineField::getCenter()
 			Vector3D::sum
 			(
 				this->transformation->position, 
-				Vector3D::intermediate(this->a, this->b)), Vector3D::getFromPixelVector(((ColliderSpec*)this->componentSpec)->displacement
-			)
+				Vector3D::intermediate(this->a, this->b)
+			), 
+			Vector3D::getFromPixelVector(((ColliderSpec*)this->componentSpec)->displacement)
 		);
 }
 

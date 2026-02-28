@@ -317,6 +317,8 @@ void StageEditor::highLightActor()
 			int16 height = __METERS_TO_PIXELS(Actor::getHeight(actor)) << 2;
 			fixed_t parallax = Optics::calculateParallax(Actor::getPosition(actor)->z);
 
+			// MeshesSegments can be stack-allocated because Mesh copies the segments data
+			// during construction and does not retain the pointer afterwards
 			const PixelVector MeshesSegments[][2]=
 			{
 				{
