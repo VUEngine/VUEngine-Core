@@ -5,14 +5,14 @@ function waitRandomShort()
 #	PREPROCESSING_WAIT_FOR_LOCK_DELAY_FACTOR=0.000
 #	delay=$PREPROCESSING_WAIT_FOR_LOCK_DELAY_FACTOR$(( ( ( RANDOM % 900 ) + 10 ) ))
 #	sleep $delay
-	sleep 0.0001
+	sleep 0.01
 }
 
 function waitRandomLong()
 {
 #	delay=$PREPROCESSING_WAIT_FOR_LOCK_DELAY_FACTOR$(( ( ( RANDOM % 900 ) + 10 ) ))
 #	sleep $delay
-	sleep 0.001
+	sleep 0.1
 }
 
 function waitForLockToRelease()
