@@ -439,9 +439,6 @@ void Collider::resolveCollision(const CollisionInformation* collisionInformation
 	{
 		Collider::displaceOwner(this, Vector3D::scalarProduct(solutionVector.direction, solutionVector.magnitude));
 
-		// Need to invalidate solution vectors for other colliding colliders
-		//Collider::checkPreviousCollisions(this, collisionInformation->otherCollider);
-
 		if(this->registerCollisions)
 		{
 			OtherColliderRegistry* otherColliderRegistry = 

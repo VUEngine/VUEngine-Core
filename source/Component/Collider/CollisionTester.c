@@ -77,7 +77,7 @@ static void CollisionTester::testOverlaping(Collider requesterCollider, Collider
 		// LineField against others
 		{
 			CollisionTester::testIfLineFieldOverlapsBall, CollisionTester::testIfLineFieldOverlapsBox, 
-			CollisionTester::checkLineFieldIfOverlapsInverseBox, CollisionTester::testIfLineFieldOverlapsLineField
+			CollisionTester::testIfLineFieldOverlapsInverseBox, CollisionTester::testIfLineFieldOverlapsLineField
 		},
 	};
 
@@ -127,7 +127,7 @@ static void CollisionTester::getSolutionVectorBetweenBoxAndBox(Box boxA, Box box
 
 	if(!boxB->normals)
 	{
-		Box::projectOntoItself(boxA);
+		Box::projectOntoItself(boxB);
 	}
 
 	Vector3D* normals[2] =
@@ -194,6 +194,8 @@ static void CollisionTester::getSolutionVectorBetweenBoxAndBox(Box boxA, Box box
 			}
 		}
 
+		// Correct direction once per box's normals set; safe to run twice since
+		// a no-op if solutionVector wasn't updated in this iteration
 		if(Vector3D::dotProduct(distanceVector, solutionVector->direction) < 0)
 		{
 			solutionVector->direction = Vector3D::scalarProduct(solutionVector->direction, __I_TO_FIXED(-1));
@@ -751,7 +753,7 @@ static void CollisionTester::testIfLineFieldOverlapsBox(Collider colliderA __att
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void CollisionTester::checkLineFieldIfOverlapsInverseBox(Collider colliderA __attribute__((unused)), Collider colliderB __attribute__((unused)), CollisionInformation* collisionInformation __attribute__((unused)))
+static void CollisionTester::testIfLineFieldOverlapsInverseBox(Collider colliderA __attribute__((unused)), Collider colliderB __attribute__((unused)), CollisionInformation* collisionInformation __attribute__((unused)))
 {}
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
