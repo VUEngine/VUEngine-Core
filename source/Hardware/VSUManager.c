@@ -676,7 +676,7 @@ void VSUManager::dispatchQueuedSoundSourceConfigurations()
 		}
 	}
 
-	this->haveQueuedRequests = NULL == this->queuedVSUSoundSourceConfigurationRequests->head;
+	this->haveQueuedRequests = NULL != this->queuedVSUSoundSourceConfigurationRequests->head;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
