@@ -27,13 +27,12 @@
 
 static void Terminal::print(char* text)
 {
-#ifndef __SHIPPING
-
 	if(NULL == text)
 	{
 		return;
 	}
 	
+#ifndef __SHIPPING
 	unsigned char* const TerminalOut = __Terminal_OUTPUT_ADDRESS;
 
     while (0 != *text)
