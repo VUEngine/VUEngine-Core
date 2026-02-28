@@ -363,16 +363,22 @@ then
 	fi
 fi
 
+CLASS_OWNED_METHODS_DICTIONARY=$WORKING_FOLDER/classes/dictionaries/$className"MethodsOwned.txt"
 
-if [ -z "${mustBeReprocessed##false}" ] && [ -f "$OUTPUT_FILE" ] && [ "$OUTPUT_FILE" -nt "$INPUT_FILE" ];
+CLASS_INHERITED_METHODS_DICTIONARY=$WORKING_FOLDER/classes/dictionaries/$className"MethodsInherited.txt"
+
+if [ -f "$CLASS_OWNED_METHODS_DICTIONARY" ] && [ -f "$CLASS_INHERITED_METHODS_DICTIONARY" ]; 
 then
-#	ls -l $OUTPUT_FILE
-#	ls -l $INPUT_FILE
-#	echo Up to date "$className"
-	clean_up
-	releaseLocks
-	echo "Don't need processing, base class is fine, and I'm newer on caller $CALLER"  >> $CLASS_LOG_FILE
-	exit 0
+	if [ -z "${mustBeReprocessed##false}" ] && [ -f "$OUTPUT_FILE" ] && [ "$OUTPUT_FILE" -nt "$INPUT_FILE" ];
+	then
+	#	ls -l $OUTPUT_FILE
+	#	ls -l $INPUT_FILE
+	#	echo Up to date "$className"
+		clean_up
+		releaseLocks
+		echo "Don't need processing, base class is fine, and I'm newer on caller $CALLER"  >> $CLASS_LOG_FILE
+		exit 0
+	fi
 fi
 
 # Then continue
@@ -564,10 +570,6 @@ echo "Writing owned methods on caller $CALLER"  >> $CLASS_LOG_FILE
 
 # Process each method to generate the final header
 methodDeclarations=
-
-CLASS_OWNED_METHODS_DICTIONARY=$WORKING_FOLDER/classes/dictionaries/$className"MethodsOwned.txt"
-
-CLASS_INHERITED_METHODS_DICTIONARY=$WORKING_FOLDER/classes/dictionaries/$className"MethodsInherited.txt"
 
 if [ ! "$isExtensionClass" = true ];
 then
