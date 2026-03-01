@@ -33,16 +33,15 @@ static void Terminal::print(char* text)
 	}
 	
 #ifndef __SHIPPING
-	unsigned char* const TerminalOut = __Terminal_OUTPUT_ADDRESS;
+	unsigned char* const terminalOut = __Terminal_OUTPUT_ADDRESS;
 
     while (0 != *text)
 	{
-        *TerminalOut = *text;
+        *terminalOut = *text;
         text++;
     }
 	
-    *TerminalOut = '\n';
-
+    *terminalOut = '\n';
 #endif
 }
 
