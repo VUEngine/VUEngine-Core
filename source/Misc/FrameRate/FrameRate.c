@@ -50,7 +50,7 @@ void FrameRate::reset()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void FrameRate::setTarget(uint8 targetFPS)
+void FrameRate::setTargetFPS(uint8 targetFPS)
 {
 	FrameRate::reset(this);
 	this->targetFPS = targetFPS;
@@ -58,6 +58,20 @@ void FrameRate::setTarget(uint8 targetFPS)
 #ifdef __DEBUG
 	this->targetFPS >>= 1;
 #endif
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+uint8 FrameRate::getTargetFPS()
+{
+	return this->targetFPS;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+uint8 FrameRate::getAverageFPS()
+{
+	return 0 < this->seconds ? this->totalFPS / this->seconds : this->FPS;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

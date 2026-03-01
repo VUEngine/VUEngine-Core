@@ -57,7 +57,15 @@ singleton class FrameRate : ListenerObject
 
 	/// Set the target frames per second.
 	/// @param targetFPS: Target frames per second
-	void setTarget(uint8 targetFPS);
+	void setTargetFPS(uint8 targetFPS);
+
+	/// Retrieve the target frames per second.
+	/// @return Target frames per second
+	uint8 getTargetFPS();
+
+	/// Retrieve the average frames per second.
+	/// @return Average frames per second
+	uint8 getAverageFPS();
 
 	/// Update the elapsed frames during the current second.
 	void update();
