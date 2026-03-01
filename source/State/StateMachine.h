@@ -79,10 +79,10 @@ class StateMachine : ListenerObject
 	override bool handleMessage(Telegram telegram);
 
 	/// Instructs the machine to change to the provided state by the transition specified by command
-	/// @param state: State to transition to
 	/// @param command: Enum that specifies the type of transition defined in StateOperations 
+	/// @param state: State to transition to
 	/// @return true if the machine is not scheduled for a transition already, false otherwise
-	bool transitionTo(State state, int16 command);
+	bool startTransition(int16 command, State state);
 
 	/// Swap the state at the top of the stack by the provided state.
 	/// @param newState: State to put at the top of the stack

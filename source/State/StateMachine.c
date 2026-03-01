@@ -82,17 +82,45 @@ bool StateMachine::handleMessage(Telegram telegram)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-bool StateMachine::transitionTo(State state, int16 transition)
+bool StateMachine::startTransition(int16 transition, State state)
 {
-	if(kStateMachineIdle != this->transition || NULL == state || kStateMachineIdle == transition)
+	if(kStateMachineIdle != this->transition)
 	{
 		return false;
 	}
 
-	this->nextState = state;
+	switch(transition)
+	{
+		case kStateMachineCleanStack:
+		case kStateMachineSwapState:
+		case kStateMachinePushState:
+		{
+			if(NULL != state)
+			{
+				this->nextState = state;
+				break;
+			}			
+		}
+
+		case kStateMachinePopState:
+		{
+			if(NULL == state || state == this->currentState)
+			{
+				this->nextState = NULL;
+				break;				
+			}
+		}
+
+		case kStateMachineIdle:
+		default:
+		{
+			return false;
+		}
+	}
+
 	this->transition = transition;
 
-	if(NULL == this->currentState && NULL != this->nextState)
+	if(NULL == this->currentState)
 	{
 		StateMachine::applyTransition(this);
 	}
@@ -326,10 +354,7 @@ void StateMachine::applyTransition()
 
 				StateMachine::popAllStates(this);
 
-				if(NULL != this->nextState)
-				{
-					StateMachine::pushState(this, this->nextState);
-				}
+				StateMachine::pushState(this, this->nextState);
 
 				if(NULL != this->events)
 				{
@@ -385,6 +410,7 @@ void StateMachine::applyTransition()
 				{
 					StateMachine::fireEvent(this, kEventStateMachinePoppedState);
 				}
+				
 				break;
 			}
 		}
