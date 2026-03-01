@@ -65,7 +65,7 @@ singleton class FrameRate : ListenerObject
 
 	/// Retrieve the average frames per second.
 	/// @return Average frames per second
-	uint8 getAverageFPS();
+	uint32 getAverageFPS();
 
 	/// Update the elapsed frames during the current second.
 	void update();

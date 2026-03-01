@@ -69,7 +69,7 @@ uint8 FrameRate::getTargetFPS()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-uint8 FrameRate::getAverageFPS()
+uint32 FrameRate::getAverageFPS()
 {
 	return 0 < this->seconds ? this->totalFPS / this->seconds : this->FPS;
 }
