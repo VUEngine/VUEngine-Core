@@ -24,13 +24,13 @@
 /// @param str_1: String to concatenate at the start
 /// @param str_2: String to concatenate at the end
 /// @return Concatenated string: str_1str_2
-#define __MAKE_CONCAT(str_1,str_2) str_1 ## str_2
+#define __CONCAT(str_1,str_2) str_1 ## str_2
 
 /// Concatenate two strings
 /// @param str_1: String to concatenate at the start
 /// @param str_2: String to concatenate at the end
 /// @return Concatenated string: str_1str_2
-#define __CUSTOM_CONCAT(str_1,str_2) __MAKE_CONCAT(str_1,str_2)
+#define __CUSTOM_CONCAT(str_1,str_2) __CONCAT(str_1,str_2)
 
 /// Remove class name printing in shipping releases.
 /// @param value: Class' name string
