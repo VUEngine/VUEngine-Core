@@ -110,9 +110,6 @@ class ParticleSystem : Actor
 	/// Number of available visual component specs for particles
 	int8 numberOfVisualComponentSpecs;
 
-	/// Number of available wireframes specs for particles
-	int8 numberOfWireframeSpecs;
-
 	/// Number of alive particles
 	int8 aliveParticlesCount;
 
