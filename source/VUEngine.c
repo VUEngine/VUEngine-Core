@@ -14,7 +14,6 @@
 #include <string.h>
 
 #include <Camera.h>
-#include <CommunicationManager.h>
 #include <Clock.h>
 #include <ClockManager.h>
 #include <DebugConfig.h>
@@ -26,7 +25,6 @@
 #include <Singleton.h>
 #include <Stage.h>
 #include <StateMachine.h>
-#include <SoundTestState.h>
 #include <Telegram.h>
 #include <ToolState.h>
 #include <TimerManager.h>
