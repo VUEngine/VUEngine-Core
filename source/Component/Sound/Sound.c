@@ -40,7 +40,7 @@ friend class VirtualList;
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 static Mirror _mirror = {false, false, false};
-static uint8 _soundsoundGroups[kSoundGroupOther + 1] = 
+static uint8 _soundGroups[kSoundGroupOther + 1] = 
 { 
 	__MAXIMUM_VOLUME,
 
@@ -124,7 +124,7 @@ static void Sound::setVolume(uint32 soundGroup, uint8 volume)
 		volume = __MAXIMUM_VOLUME;
 	}
 
-	_soundsoundGroups[soundGroup] = volume;
+	_soundGroups[soundGroup] = volume;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -267,7 +267,7 @@ void Sound::play(uint32 playbackType)
 		{
 			if(kSoundPlaying != this->state)
 			{
-				Sound::setVolumeReduction(this, __I_TO_FIX7_9(_soundsoundGroups[((SoundSpec*)this->componentSpec)->soundGroup]));
+				Sound::setVolumeReduction(this, __I_TO_FIX7_9(_soundGroups[((SoundSpec*)this->componentSpec)->soundGroup]));
 			}
 			else
 			{
@@ -667,7 +667,7 @@ void Sound::update()
 		fixed_ext_t squaredDistanceToLeftEar = Vector3D::squareLength(Vector3D::get(leftEar, relativePosition));
 		fixed_ext_t squaredDistanceToRightEar = Vector3D::squareLength(Vector3D::get(rightEar, relativePosition));
 
-		fix7_9_ext maximumVolume = __I_TO_FIX7_9(_soundsoundGroups[((SoundSpec*)this->componentSpec)->soundGroup]);
+		fix7_9_ext maximumVolume = __I_TO_FIX7_9(_soundGroups[((SoundSpec*)this->componentSpec)->soundGroup]);
 
 		leftVolumeReduction = __FIX7_9_EXT_MULT
 			(
@@ -701,7 +701,7 @@ void Sound::update()
 				soundTrack, 
 				this->tickStep, 
 				this->targetTimerResolutionFactor,
-				_soundsoundGroups[((SoundSpec*)this->componentSpec)->soundGroup],
+				_soundGroups[((SoundSpec*)this->componentSpec)->soundGroup],
 				__FIX7_9_EXT_TO_I(leftVolumeReduction), 
 				__FIX7_9_EXT_TO_I(rightVolumeReduction), 
 				__FIX7_9_TO_I(this->volumeReduction), 
@@ -878,9 +878,9 @@ void Sound::setVolumeReduction(fix7_9 volumeReduction)
 	{
 		volumeReduction = 0;
 	}
-	else if(__I_TO_FIX7_9(_soundsoundGroups[((SoundSpec*)this->componentSpec)->soundGroup]) < volumeReduction)
+	else if(__I_TO_FIX7_9(_soundGroups[((SoundSpec*)this->componentSpec)->soundGroup]) < volumeReduction)
 	{
-		volumeReduction = __I_TO_FIX7_9(_soundsoundGroups[((SoundSpec*)this->componentSpec)->soundGroup]);
+		volumeReduction = __I_TO_FIX7_9(_soundGroups[((SoundSpec*)this->componentSpec)->soundGroup]);
 	}
 
 	this->volumeReduction = volumeReduction;
@@ -954,9 +954,9 @@ void Sound::updateVolumeReduction()
 			{
 				this->volumeReduction += __SOUND_FADE_INCREMENT;
 
-				if(__I_TO_FIX7_9(_soundsoundGroups[((SoundSpec*)this->componentSpec)->soundGroup]) < this->volumeReduction)
+				if(__I_TO_FIX7_9(_soundGroups[((SoundSpec*)this->componentSpec)->soundGroup]) < this->volumeReduction)
 				{
-					this->volumeReduction = __I_TO_FIX7_9(_soundsoundGroups[((SoundSpec*)this->componentSpec)->soundGroup]);						
+					this->volumeReduction = __I_TO_FIX7_9(_soundGroups[((SoundSpec*)this->componentSpec)->soundGroup]);						
 					this->playbackType = kSoundPlaybackNone;
 					Sound::pause(this);
 				}
@@ -968,9 +968,9 @@ void Sound::updateVolumeReduction()
 			{
 				this->volumeReduction += __SOUND_FADE_INCREMENT;
 
-				if(__I_TO_FIX7_9(_soundsoundGroups[((SoundSpec*)this->componentSpec)->soundGroup]) < this->volumeReduction)
+				if(__I_TO_FIX7_9(_soundGroups[((SoundSpec*)this->componentSpec)->soundGroup]) < this->volumeReduction)
 				{
-					this->volumeReduction = __I_TO_FIX7_9(_soundsoundGroups[((SoundSpec*)this->componentSpec)->soundGroup]);
+					this->volumeReduction = __I_TO_FIX7_9(_soundGroups[((SoundSpec*)this->componentSpec)->soundGroup]);
 					this->playbackType = kSoundPlaybackNone;
 					this->state = kSoundFinished;
 					this->autoReleaseOnFinish = true;
