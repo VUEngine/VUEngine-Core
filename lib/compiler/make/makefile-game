@@ -69,6 +69,7 @@ postDirCleanUp:
 #	@echo "Finding total number of components"
 	@$(shell rm -f $(WORKING_FOLDER)/traces/$(BUILD_MODE)/*omponents.txt*)
 	@$(shell echo "core" > $(WORKING_FOLDER)/traces/$(BUILD_MODE)/components.txt)
+	@rm -f $(WORKING_FOLDER)/classes/hierarchies/classesHierarchy.txt
 	@rm -f $(WORKING_FOLDER)/traces/$(BUILD_MODE)/preprocessing.txt
 	@rm -f $(WORKING_FOLDER)/*.a
 
