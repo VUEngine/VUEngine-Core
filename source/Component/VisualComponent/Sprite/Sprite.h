@@ -214,22 +214,6 @@ abstract class Sprite : VisualComponent
 	/// @return True if the sprite is hidden; false otherwise
 	bool isHidden();
 
-	/// Check if the sprite displays a texture in BGMAP mode.
-	/// @return True if the sprite displays a texture in BGMAP mode; false otherwise
-	bool isBgmap();
-
-	/// Check if the sprite displays a texture in OBJECT mode.
-	/// @return True if the sprite displays a texture in OBJECT mode; false otherwise
-	bool isObject();
-
-	/// Check if the sprite displays a texture in AFFINE mode.
-	/// @return True if the sprite displays a texture in AFFINE mode; false otherwise
-	bool isAffine();
-
-	/// Check if the sprite displays a texture in HBIAS mode.
-	/// @return True if the sprite displays a texture in HBIAS mode; false otherwise
-	bool isHBias();
-
 	/// Set the position cache.
 	/// @param position: Position cache to save
 	void setPosition(const PixelVector* position);

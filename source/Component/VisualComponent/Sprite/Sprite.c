@@ -13,14 +13,11 @@
 
 #include <AnimationController.h>
 #include <AnimationCoordinatorFactory.h>
-#include <BgmapTexture.h>
 #include <Clock.h>
 #include <Entity.h>
-#include <ObjectSprite.h>
 #include <Optics.h>
 #include <Printer.h>
 #include <Texture.h>
-#include <VIPManager.h>
 
 #include "Sprite.h"
 
@@ -359,34 +356,6 @@ bool Sprite::isVisible()
 bool Sprite::isHidden()
 {
 	return __HIDE == this->show;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-bool Sprite::isBgmap()
-{
-	return (__WORLD_BGMAP == (this->head & __WORLD_BGMAP)) || Sprite::isAffine(this) || Sprite::isHBias(this);
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-bool Sprite::isObject()
-{
-	return NULL != __GET_CAST(ObjectSprite, this);
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-bool Sprite::isAffine()
-{
-	return __WORLD_AFFINE == (this->head & __WORLD_AFFINE);
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-bool Sprite::isHBias()
-{
-	return __WORLD_HBIAS == (this->head & __WORLD_HBIAS);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
