@@ -532,7 +532,7 @@ bool VUEngine::checkIfToggleTool()
 
 	if(NULL != toolState)
 	{
-		KeypadManager::reset(KeypadManager::getInstance());
+		KeypadManager::reset();
 		VUEngine::toggleTool(this, toolState);
 		return true;
 	}

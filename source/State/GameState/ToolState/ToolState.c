@@ -129,7 +129,7 @@ void ToolState::start(void* owner __attribute__ ((unused)))
 
 void ToolState::update(void* owner __attribute__ ((unused)))
 {
-	KeypadManager::readUserInput(KeypadManager::getInstance(), this->lockFrameRate);
+	KeypadManager::readUserInput(this->lockFrameRate);
 
 	UserInput userInput = KeypadManager::getUserInput();
 

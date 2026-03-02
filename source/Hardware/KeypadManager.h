@@ -14,7 +14,7 @@
 // INCLUDES
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-#include <ListenerObject.h>
+#include <Object.h>
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' MACROS
@@ -98,29 +98,11 @@ typedef struct UserInput
 
 /// Class KeypadManager
 ///
-/// Inherits from ListenerObject
+/// Inherits from Object
 ///
 /// Manages keypad inputs.
-singleton class KeypadManager : ListenerObject
+abstract class KeypadManager : Object
 {
-	/// @protectedsection
-
-	/// Holds the mathematical sum of all user's presses
-	long accumulatedUserInput;
-
-	/// Struct that holds the user's input during the last game frame
-	UserInput userInput;
-
-	/// Flags to select which inputs to register and which to ignore
-	UserInput userInputToRegister;
-
-	/// Flag to enable/disable the capture of user input
-	bool enabled;
-
-	/// Flag to prevent pressed and released keys from being raised when
-	/// holding buttons while changing game states
-	bool reseted;
-
 	/// @publicsection
 
 	/// Interrupt handler for keypad's interrupts
@@ -152,19 +134,19 @@ singleton class KeypadManager : ListenerObject
 
 	/// Retrieve the accumulated sum of user inputs since the start of the program.
 	/// @return The mathematical sum of all user's presses.
-	static long getAccumulatedUserInput();
+	static uint32 getAccumulatedUserInput();
 
 	/// Print the last reads of user input.
 	/// @param x: Screen x coordinate where to print
 	/// @param y: Screen y coordinate where to print
-	void print(int32 x, int32 y);
+	static void print(int32 x, int32 y);
 
 	/// Reset the manager's state.
-	void reset();
+	static void reset();
 
 	/// Reat the user input during the last game frame
 	/// @param waitForStableReading: If true, wait for reading to be stable (__S_STAT)
-	void readUserInput(bool waitForStableReading);
+	static void readUserInput(bool waitForStableReading);
 }
 
 #endif

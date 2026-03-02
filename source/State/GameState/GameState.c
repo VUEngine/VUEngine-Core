@@ -846,12 +846,12 @@ void GameState::applyTransformationsUI()
 
 void GameState::readUserInput()
 {
-	if(!KeypadManager::isEnabled(KeypadManager::getInstance()))
+	if(!KeypadManager::isEnabled())
 	{
 		return;
 	}
 
-	KeypadManager::readUserInput(KeypadManager::getInstance(), this->lockFrameRate);
+	KeypadManager::readUserInput(this->lockFrameRate);
 
 	UserInput userInput = KeypadManager::getUserInput();
 
