@@ -206,42 +206,6 @@ abstract class Sprite : VisualComponent
 	/// @return Sprite's texture's half height
 	int32 getHalfHeight();
 
-	/// Retrieve the head flags written in the DRAM entries determined by index.
-	/// @return Head flags written to DRAM entries
-	uint32 getEffectiveHead();
-
-	/// Retrieve the weight written in the DRAM entries determined by index.
-	/// @return Weight written to DRAM entries
-	uint16 getEffectiveWidth();
-
-	/// Retrieve the height written in the DRAM entries determined by index.
-	/// @return Height written to DRAM entries
-	uint16 getEffectiveHeight();
-
-	/// Retrieve the X coordinate written in the DRAM entries determined by index.
-	/// @return X coordinate written to DRAM entries
-	int16 getEffectiveX();
-
-	/// Retrieve the Y coordinate written in the DRAM entries determined by index.
-	/// @return Y coordinate written to DRAM entries
-	int16 getEffectiveY();
-
-	/// Retrieve the P value written in the DRAM entries determined by index.
-	/// @return P value written to DRAM entries
-	int16 getEffectiveP();
-
-	/// Retrieve the MX coordinate written in the DRAM entries determined by index.
-	/// @return MX coordinate written to DRAM entries
-	int16 getEffectiveMX();
-
-	/// Retrieve the MY coordinate written in the DRAM entries determined by index.
-	/// @return MY coordinate written to DRAM entries
-	int16 getEffectiveMY();
-
-	/// Retrieve the MP value written in the DRAM entries determined by index.
-	/// @return MP value written to DRAM entries
-	int16 getEffectiveMP();
-
 	/// Check if the sprite is visible.
 	/// @return True if the sprite is visible; false otherwise
 	bool isVisible();
@@ -358,7 +322,7 @@ abstract class Sprite : VisualComponent
 	/// Print the sprite's properties.
 	/// @param x: Screen x coordinate where to print
 	/// @param y: Screen y coordinate where to print
-	virtual void print(int32 x, int32 y);
+	virtual void print(int32 x, int32 y) = 0;
 }
 
 #endif

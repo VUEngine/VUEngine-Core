@@ -14,6 +14,7 @@
 #include <AnimationController.h>
 #include <DebugConfig.h>
 #include <ObjectTexture.h>
+#include <Printer.h>
 
 #include "ObjectSprite.h"
 
@@ -23,6 +24,12 @@
 
 friend class CharSet;
 friend class Texture;
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+// CLASS' ATTRIBUTES
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+ObjectAttributes _objectAttributesCache[__TOTAL_OBJECTS] __attribute__((section(".dram_bss")));
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PUBLIC METHODS
@@ -232,6 +239,62 @@ int32 ObjectSprite::getTotalPixels()
 	}
 
 	return 0;
+}
+
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void ObjectSprite::print(int32 x, int32 y)
+{
+	// Allow normal rendering once for WORLD values to populate properly
+	uint8 transparency = this->transparency;
+	this->transparency = __TRANSPARENCY_NONE;
+
+	Printer::text("SPRITE ", x, y++, NULL);
+	Printer::text("Class: ", x, ++y, NULL);
+	Printer::text(__GET_CLASS_NAME(this), x + 18, y, NULL);
+	Printer::text("Mode:", x, ++y, NULL);
+
+	Printer::text("OBJECT   ", x + 18, y, NULL);
+	Printer::text("Index: ", x, ++y, NULL);
+	Printer::int32(this->index, x + 18, y, NULL);
+	Printer::text("Transparent:                         ", x, ++y, NULL);
+	Printer::text(transparency > 0 ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, x + 18, y, NULL);
+	Printer::text(transparency == 1 ? "(Even)" : (transparency == 2) ? "(Odd)" : "", x + 20, y, NULL);
+	Printer::text("Shown:                         ", x, ++y, NULL);
+	Printer::text(__HIDE != this->show ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, x + 18, y, NULL);
+
+	Printer::text("Pos. (x,y,z,p):                      ", x, ++y, NULL);
+	Printer::int32(this->position.x, x + 18, y, NULL);
+	Printer::int32(this->position.y, x + 24, y, NULL);
+	Printer::int32(this->position.z, x + 30, y, NULL);
+	Printer::int32(this->position.parallax, x + 36, y, NULL);
+	Printer::text("Displ. (x,y,z,p):                    ", x, ++y, NULL);
+	Printer::int32(this->displacement.x, x + 18, y, NULL);
+	Printer::int32(this->displacement.y, x + 24, y, NULL);
+	Printer::int32(this->displacement.z, x + 30, y, NULL);
+	Printer::int32(this->displacement.parallax, x + 36, y, NULL);
+	Printer::text("FPos. (x,y,z,p):                      ", x, ++y, NULL);
+	Printer::int32(this->position.x + this->displacement.x, x + 18, y, NULL);
+	Printer::int32(this->position.y + this->displacement.y, x + 24, y, NULL);
+	Printer::int32(this->position.z + this->displacement.z, x + 30, y, NULL);
+	Printer::int32(this->position.parallax + this->displacement.parallax, x + 36, y, NULL);
+	Printer::text("Pixels:                      ", x, y, NULL);
+	Printer::int32(ObjectSprite::getTotalPixels(this), x + 18, y++, NULL);
+
+	if(NULL != ObjectSprite::getTexture(this))
+	{
+		y++;
+		Printer::text("TEXTURE                          ", x, ++y, NULL);
+		y++;
+		Printer::text("Spec:                      ", x, ++y, NULL);
+		Printer::hex((int32)Texture::getSpec(ObjectSprite::getTexture(this)), x + 18, y, 8, NULL);
+		Printer::text("Size (w,h):                      ", x, ++y, NULL);
+		Printer::int32(this->halfWidth * 2, x + 18, y, NULL);
+		Printer::int32(this->halfHeight * 2, x + 24, y, NULL);
+	}
+
+	this->transparency = transparency;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

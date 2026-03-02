@@ -858,33 +858,6 @@ static void Printer::resetCoordinates()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static int16 Printer::getWorldCoordinatesX()
-{
-	Printer printer = Printer::getInstance();
-
-	return !isDeleted(printer->activePrintingSprite) ? PrintingSprite::getEffectiveX(printer->activePrintingSprite) : 0;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-static int16 Printer::getWorldCoordinatesY()
-{
-	Printer printer = Printer::getInstance();
-
-	return !isDeleted(printer->activePrintingSprite) ? PrintingSprite::getEffectiveY(printer->activePrintingSprite) : 0;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-static int16 Printer::getWorldCoordinatesP()
-{
-	Printer printer = Printer::getInstance();
-
-	return !isDeleted(printer->activePrintingSprite) ? PrintingSprite::getEffectiveP(printer->activePrintingSprite) : 0;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
 static PixelVector Printer::getActiveSpritePosition()
 {
 	Printer printer = Printer::getInstance();

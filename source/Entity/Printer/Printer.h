@@ -322,18 +322,6 @@ singleton class Printer : Entity
 	/// Reset the coordinates of the WORLD used for printing.
 	static void resetCoordinates();
 
-	/// Retrieve WORLD's gx.
-	/// @return WORLD's gx
-	static int16 getWorldCoordinatesX();
-
-	/// Retrieve WORLD's gy.
-	/// @return: WORLD's gy
-	static int16 getWorldCoordinatesY();
-
-	/// Retrieve WORLD's gp.
-	/// @return: WORLD's gp
-	static int16 getWorldCoordinatesP();
-
 	/// Retrieve the active sprite's position.
 	/// @return Sprite's position
 	static PixelVector getActiveSpritePosition();

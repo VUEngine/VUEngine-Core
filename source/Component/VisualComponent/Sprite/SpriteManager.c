@@ -1026,8 +1026,6 @@ void SpriteManager::printSPTInfo(int16 spt, int32 x, int32 y)
 	Printer::int32(NULL != objectSpriteContainer ? objectSpriteContainer->index : -1, x + 18, y, NULL);
 	Printer::text("Class: ", x, ++y, NULL);
 	Printer::text(NULL != objectSpriteContainer ? __GET_CLASS_NAME(objectSpriteContainer) : "N/A", x + 18, y, NULL);
-	Printer::text("Head:                         ", x, ++y, NULL);
-	Printer::hex(NULL != objectSpriteContainer ? Sprite::getEffectiveHead(objectSpriteContainer) : 0, x + 18, y, 8, NULL);
 	Printer::text("Mode:", x, ++y, NULL);
 	Printer::text("OBJECT   ", x + 18, y, NULL);
 	Printer::text("Segment:                ", x, ++y, NULL);

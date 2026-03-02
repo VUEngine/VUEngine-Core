@@ -137,6 +137,11 @@ class BgmapSprite : Sprite
 	/// @return Sprite's total number of pixels actually displayed
 	override int32 getTotalPixels();
 
+	/// Print the sprite's properties.
+	/// @param x: Screen x coordinate where to print
+	/// @param y: Screen y coordinate where to print
+	override void print(int32 x, int32 y);
+
 	/// Configure the sprite's texture.
 	void configureTexture();
 	

@@ -122,6 +122,11 @@ class ObjectSprite : Sprite
 	/// @return Sprite's total number of pixels actually displayed
 	override int32 getTotalPixels();
 
+	/// Print the sprite's properties.
+	/// @param x: Screen x coordinate where to print
+	/// @param y: Screen y coordinate where to print
+	override void print(int32 x, int32 y);
+
 	/// Force the computation of the number of OBJECTs that the sprite uses.
 	void resetTotalObjects();
 

@@ -18,6 +18,7 @@
 #include <DebugConfig.h>
 #include <Optics.h>
 #include <ParamTableManager.h>
+#include <Printer.h>
 
 #include "BgmapSprite.h"
 
@@ -27,6 +28,12 @@
 
 friend class Texture;
 friend class BgmapTexture;
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+// CLASS' ATTRIBUTES
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+WorldAttributes _worldAttributesCache[__TOTAL_LAYERS] __attribute__((section(".dram_bss")));
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PUBLIC STATIC METHODS
@@ -440,10 +447,108 @@ int32 BgmapSprite::getTotalPixels()
 {
 	if(__NO_RENDER_INDEX != this->index)
 	{
-		return Sprite::getEffectiveWidth(this) * Sprite::getEffectiveHeight(this);
+		return BgmapSprite::getEffectiveWidth(this) * BgmapSprite::getEffectiveHeight(this);
 	}
 
 	return 0;
+}
+
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void BgmapSprite::print(int32 x, int32 y)
+{
+	// Allow normal rendering once for WORLD values to populate properly
+	uint8 transparency = this->transparency;
+	this->transparency = __TRANSPARENCY_NONE;
+
+	Printer::text("SPRITE ", x, y++, NULL);
+	Printer::text("Class: ", x, ++y, NULL);
+	Printer::text(__GET_CLASS_NAME(this), x + 18, y, NULL);
+	Printer::text("Mode:", x, ++y, NULL);
+
+	if(BgmapSprite::isAffine(this))
+	{
+		Printer::text("AFFINE   ", x + 18, y, NULL);
+	}
+	else if(BgmapSprite::isHBias(this))
+	{
+		Printer::text("H-BIAS   ", x + 18, y, NULL);
+	}
+	else if(BgmapSprite::isBgmap(this))
+	{
+		Printer::text("BGMAP    ", x + 18, y, NULL);
+	}
+
+	Printer::text("Index: ", x, ++y, NULL);
+	Printer::int32(this->index, x + 18, y, NULL);
+	Printer::text("Head:                         ", x, ++y, NULL);
+	Printer::hex(BgmapSprite::getEffectiveHead(this), x + 18, y, 8, NULL);
+	Printer::text("Transparent:                         ", x, ++y, NULL);
+	Printer::text(transparency > 0 ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, x + 18, y, NULL);
+	Printer::text(transparency == 1 ? "(Even)" : (transparency == 2) ? "(Odd)" : "", x + 20, y, NULL);
+	Printer::text("Shown:                         ", x, ++y, NULL);
+	Printer::text(__HIDE != this->show ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, x + 18, y, NULL);
+
+	Printer::text("Pos. (x,y,z,p):                      ", x, ++y, NULL);
+	Printer::int32(this->position.x, x + 18, y, NULL);
+	Printer::int32(this->position.y, x + 24, y, NULL);
+	Printer::int32(this->position.z, x + 30, y, NULL);
+	Printer::int32(this->position.parallax, x + 36, y, NULL);
+	Printer::text("Displ. (x,y,z,p):                    ", x, ++y, NULL);
+	Printer::int32(this->displacement.x, x + 18, y, NULL);
+	Printer::int32(this->displacement.y, x + 24, y, NULL);
+	Printer::int32(this->displacement.z, x + 30, y, NULL);
+	Printer::int32(this->displacement.parallax, x + 36, y, NULL);
+	Printer::text("FPos. (x,y,z,p):                      ", x, ++y, NULL);
+	Printer::int32(this->position.x + this->displacement.x, x + 18, y, NULL);
+	Printer::int32(this->position.y + this->displacement.y, x + 24, y, NULL);
+	Printer::int32(this->position.z + this->displacement.z, x + 30, y, NULL);
+	Printer::int32(this->position.parallax + this->displacement.parallax, x + 36, y, NULL);
+	Printer::text("G (x,y,p):                           ", x, ++y, NULL);
+	Printer::int32(BgmapSprite::getEffectiveX(this), x + 18, y, NULL);
+	Printer::int32(BgmapSprite::getEffectiveY(this), x + 24, y, NULL);
+	Printer::int32(BgmapSprite::getEffectiveP(this), x + 30, y, NULL);
+	Printer::text("M (x,y,p):                           ", x, ++y, NULL);
+	Printer::int32(BgmapSprite::getEffectiveMX(this), x + 18, y, NULL);
+	Printer::int32(BgmapSprite::getEffectiveMY(this), x + 24, y, NULL);
+	Printer::int32(BgmapSprite::getEffectiveMP(this), x + 30, y, NULL);
+	Printer::text("Size (w,h):                          ", x, ++y, NULL);
+	Printer::int32(BgmapSprite::getEffectiveWidth(this), x + 18, y, NULL);
+	Printer::int32(BgmapSprite::getEffectiveHeight(this), x + 24, y++, NULL);
+	Printer::text("Pixels:                      ", x, y, NULL);
+	Printer::int32(BgmapSprite::getTotalPixels(this), x + 18, y++, NULL);
+
+	if(NULL != BgmapSprite::getTexture(this))
+	{
+		y++;
+		Printer::text("TEXTURE                          ", x, ++y, NULL);
+		y++;
+		Printer::text("Spec:                      ", x, ++y, NULL);
+		Printer::hex((int32)Texture::getSpec(BgmapSprite::getTexture(this)), x + 18, y, 8, NULL);
+		Printer::text("Size (w,h):                      ", x, ++y, NULL);
+		Printer::int32(this->halfWidth * 2, x + 18, y, NULL);
+		Printer::int32(this->halfHeight * 2, x + 24, y, NULL);
+
+		if(BgmapSprite::getTexture(this))
+		{
+			BgmapTexture bgmapTexture = __GET_CAST(BgmapTexture, BgmapSprite::getTexture(this));
+
+			Printer::text("Segment:                         ", x, ++y, NULL);
+			Printer::int32(BgmapTexture::getSegment(bgmapTexture), x + 18, y, NULL);
+			Printer::text("Written:                         ", x, ++y, NULL);
+			Printer::text
+			(
+				
+				Texture::isWritten(bgmapTexture) ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, x + 18, y, NULL
+			);
+
+			Printer::text("Rows remaining:                  ", x, ++y, NULL);
+			Printer::int32(BgmapTexture::getRemainingRowsToBeWritten(bgmapTexture), x + 18, y, NULL);
+		}
+	}
+
+	this->transparency = transparency;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -585,6 +690,79 @@ void BgmapSprite::removeFromCache()
 		WorldAttributes* worldPointer = &_worldAttributesCache[this->index];
 		worldPointer->head = __WORLD_OFF;
 	}
+}
+
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+uint32 BgmapSprite::getEffectiveHead()
+{
+	WorldAttributes* worldPointer = &_worldAttributesCache[this->index];
+	return worldPointer->head;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+uint16 BgmapSprite::getEffectiveWidth()
+{
+	WorldAttributes* worldPointer = &_worldAttributesCache[this->index];
+	return 0 > (int16)worldPointer->w ? 0 : worldPointer->w;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+uint16 BgmapSprite::getEffectiveHeight()
+{
+	WorldAttributes* worldPointer = &_worldAttributesCache[this->index];
+	return 0 > (int16)worldPointer->h ? 0 : worldPointer->h;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+int16 BgmapSprite::getEffectiveX()
+{
+	WorldAttributes* worldPointer = &_worldAttributesCache[this->index];
+	return worldPointer->gx;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+int16 BgmapSprite::getEffectiveY()
+{
+	WorldAttributes* worldPointer = &_worldAttributesCache[this->index];
+	return worldPointer->gy;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+int16 BgmapSprite::getEffectiveP()
+{
+	WorldAttributes* worldPointer = &_worldAttributesCache[this->index];
+	return worldPointer->gp;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+int16 BgmapSprite::getEffectiveMX()
+{
+	WorldAttributes* worldPointer = &_worldAttributesCache[this->index];
+	return worldPointer->mx;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+int16 BgmapSprite::getEffectiveMY()
+{
+	WorldAttributes* worldPointer = &_worldAttributesCache[this->index];
+	return worldPointer->my;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+int16 BgmapSprite::getEffectiveMP()
+{
+	WorldAttributes* worldPointer = &_worldAttributesCache[this->index];
+	return worldPointer->mp;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
