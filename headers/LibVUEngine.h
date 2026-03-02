@@ -21,6 +21,7 @@
 #include <HardwareManager.h>
 #include <Constants.h>
 #include <Math.h>
+#include <Platform.h>
 #ifndef __SHIPPING
 #include <Printer.h>
 #endif
