@@ -161,7 +161,6 @@ preprocessEngine:
 				-e GAME_CONFIG_MAKE_FILE=$(GAME_CONFIG_MAKE_FILE) 																					\
 				-e COMPONENTS=$(COMPONENTS)																											\
 				-e MAKE_JOBS=$(MAKE_JOBS)																											\
-				-e PREPROCESSING_WAIT_FOR_LOCK_DELAY_FACTOR=$(PREPROCESSING_WAIT_FOR_LOCK_DELAY_FACTOR);											\
 		else																																		\
 			echo "Preprocessing (skip) $(ENGINE_NAME)";																								\
 		fi;																																			\
@@ -201,7 +200,6 @@ preprocessPlugins:
 					-e GAME_CONFIG_MAKE_FILE=$(GAME_CONFIG_MAKE_FILE) 																				\
 					-e NAME=$(PLUGIN)																												\
 					-e MAKE_JOBS=$(MAKE_JOBS)																										\
-					-e PREPROCESSING_WAIT_FOR_LOCK_DELAY_FACTOR=$(PREPROCESSING_WAIT_FOR_LOCK_DELAY_FACTOR)											\
 					-e COMPONENTS=$(COMPONENTS);																									\
 			fi;																																		\
 		else																																		\
@@ -225,7 +223,6 @@ preprocessHeaderFiles:
 		-e CLASSES_HIERARCHY_FILE=$(CLASSES_HIERARCHY_FILE) 																						\
 		-e WORKING_FOLDER=$(WORKING_FOLDER) 																										\
 		-e BUILD_MODE=$(BUILD_MODE) 																												\
-		-e PREPROCESSING_WAIT_FOR_LOCK_DELAY_FACTOR=$(PREPROCESSING_WAIT_FOR_LOCK_DELAY_FACTOR)														\
 		-e PLUGINS="$(PLUGINS)"
 
 compile:

@@ -120,6 +120,8 @@ PLUGINS_CLEAN = $(shell echo $(PLUGINS) | sed -r "s@(user//|vuengine//)@/@g")
 ESSENTIAL_HEADERS = 	$(shell if [ ! -z $(CONFIG_FILE) ]; then echo -include $(CONFIG_FILE); fi;) 												\
 						$(shell if [ ! -z $(DEBUG_CONFIG_FILE) ]; then echo -include $(DEBUG_CONFIG_FILE); fi;) 									\
 						-include $(WORKING_FOLDER)/headers/$(ENGINE_NAME)/headers/LibVUEngine.h 													\
+						$(foreach PLATFORM, $(PLUGINS_CLEAN), $(shell if [ -f $(PLATFORMS_FOLDER)/$(PLATFORM)/headers/Config.h ]; then					\
+							echo -include $(PLATFORMS_FOLDER)/$(PLATFORM)/headers/Config.h; fi; ))														\
 						$(foreach PLUGIN, $(PLUGINS_CLEAN), $(shell if [ -f $(PLUGINS_FOLDER)/$(PLUGIN)/headers/Config.h ]; then					\
 							echo -include $(PLUGINS_FOLDER)/$(PLUGIN)/headers/Config.h; fi; ))														\
 						$(foreach PLUGIN, $(PLUGINS_CLEAN), $(shell if [ -f $(USER_PLUGINS_FOLDER)/$(PLUGIN)/headers/Config.h ]; then 				\
@@ -129,13 +131,13 @@ ESSENTIAL_HEADERS = 	$(shell if [ ! -z $(CONFIG_FILE) ]; then echo -include $(CO
 ASSETS_ESSENTIAL_HEADERS = 	$(shell if [ ! -z $(CONFIG_FILE) ]; then echo -include $(CONFIG_FILE); fi;) 											\
 						$(shell if [ ! -z $(DEBUG_CONFIG_FILE) ]; then echo -include $(DEBUG_CONFIG_FILE); fi;) 									\
 						-include $(WORKING_FOLDER)/headers/$(ENGINE_NAME)/headers/MinimalLib.h 														\
+						$(foreach PLATFORM, $(PLUGINS_CLEAN), $(shell if [ -f $(PLATFORMS_FOLDER)/$(PLATFORM)/headers/Config.h ]; then					\
+							echo -include $(PLATFORMS_FOLDER)/$(PLATFORM)/headers/Config.h; fi; ))														\
 						$(foreach PLUGIN, $(PLUGINS_CLEAN), $(shell if [ -f $(PLUGINS_FOLDER)/$(PLUGIN)/headers/Config.h ]; then					\
 							echo -include $(PLUGINS_FOLDER)/$(PLUGIN)/headers/Config.h; fi; ))														\
 						$(foreach PLUGIN, $(PLUGINS_CLEAN), $(shell if [ -f $(USER_PLUGINS_FOLDER)/$(PLUGIN)/headers/Config.h ]; then 				\
 							echo -include $(USER_PLUGINS_FOLDER)/$(PLUGIN)/headers/Config.h; fi; ))													\
 						$(shell if [ -f $(MY_HOME)/headers/Config.h ]; then echo -include $(MY_HOME)/headers/Config.h; fi;)							\
-
-
 
 # Class setup file
 SETUP_CLASSES = $(BASENAME)SetupClasses

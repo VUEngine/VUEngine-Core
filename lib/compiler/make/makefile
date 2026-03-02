@@ -8,6 +8,9 @@ override ENGINE_NAME = core
 # Engine's home
 override ENGINE_HOME = $(ENGINE_FOLDER)
 
+# Home of platform plugins
+PLATFORMS_FOLDER = $(PLATFORMS_FOLDER)
+
 # Home of custom user plugins
 USER_PLUGINS_FOLDER = $(PLUGINS_FOLDER)
 
@@ -18,11 +21,15 @@ CLEAN_NAME = $(shell echo $(NAME) | sed -e "s@.*//@@")
 ifeq ($(NAME), $(ENGINE_NAME))
     override MY_HOME = $(ENGINE_HOME)
 else
-ifneq (,$(findstring user,$(NAME)))
-    override MY_HOME = $(USER_PLUGINS_FOLDER)/$(CLEAN_NAME)
-else
-    override MY_HOME = $(PLUGINS_FOLDER)/$(CLEAN_NAME)
-endif
+	ifeq (platform,$(findstring platform,$(NAME)))
+		override MY_HOME = $(PLATFORMS_FOLDER)/$(CLEAN_NAME)
+	else
+		ifeq (user,$(findstring user,$(NAME)))
+			override MY_HOME = $(USER_PLUGINS_FOLDER)/$(CLEAN_NAME)
+		else
+			override MY_HOME = $(PLUGINS_FOLDER)/$(CLEAN_NAME)
+		endif
+	endif
 endif
 
 # Where the game lives

@@ -252,7 +252,7 @@ static void Singleton::secure()
 	ClockManager::secure(&ClockManagerAuthorizedClasses);
 	CommunicationManager::secure(&CommunicationManagerAuthorizedClasses);
 	FrameBufferManager::secure(&FrameBufferManagerAuthorizedClasses);
-	KeypadManager::secure(&KeypadManagerAuthorizedClasses);
+//	KeypadManager::secure(&KeypadManagerAuthorizedClasses);
 	MessageDispatcher::secure(&MessageDispatcherAuthorizedClasses);
 	ObjectTextureManager::secure(&ObjectTextureManagerAuthorizedClasses);
 	ParamTableManager::secure(&ParamTableManagerAuthorizedClasses);

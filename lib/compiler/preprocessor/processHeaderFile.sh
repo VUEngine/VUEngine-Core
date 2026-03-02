@@ -2,16 +2,11 @@
 #
 function waitRandomShort()
 {
-#	PREPROCESSING_WAIT_FOR_LOCK_DELAY_FACTOR=0.000
-#	delay=$PREPROCESSING_WAIT_FOR_LOCK_DELAY_FACTOR$(( ( ( RANDOM % 900 ) + 10 ) ))
-#	sleep $delay
 	sleep 0.01
 }
 
 function waitRandomLong()
 {
-#	delay=$PREPROCESSING_WAIT_FOR_LOCK_DELAY_FACTOR$(( ( ( RANDOM % 900 ) + 10 ) ))
-#	sleep $delay
 	sleep 0.1
 }
 
@@ -195,6 +190,10 @@ do
 		PLUGINS_NAME="$2"
 		shift # past argument
 		;;
+		-t)
+		PLATFORMS_FOLDER="$2"
+		shift # past argument
+		;;
 		-p)
 		PLUGINS_FOLDER="$2"
 		shift # past argument
@@ -206,10 +205,6 @@ do
 		-l)
 		PLUGINS="$PLUGINS $2"
 		PLUGINS_ARGUMENT="$PLUGINS_ARGUMENT -l $2"
-		shift # past argument
-		;;
-		-t)
-		PREPROCESSING_WAIT_FOR_LOCK_DELAY_FACTOR="$2"
 		shift # past argument
 		;;
 		-x)
@@ -342,7 +337,7 @@ then
 #				echo "$baseClassName file $baseClassFile"
 #				echo "$baseClassName processedBaseClassFile $processedBaseClassFile"
 				
-				bash $ENGINE_HOME/lib/compiler/preprocessor/processHeaderFile.sh -e $ENGINE_HOME -i $baseClassFile -o $processedBaseClassFile -m $GAME_HOME -w $WORKING_FOLDER -c $CLASSES_HIERARCHY_FILE -n $PLUGINS_NAME -h $HEADERS_FOLDER -p $PLUGINS_FOLDER -u $USER_PLUGINS_FOLDER -g $className -t $PREPROCESSING_WAIT_FOR_LOCK_DELAY_FACTOR $PLUGINS_ARGUMENT
+				bash $ENGINE_HOME/lib/compiler/preprocessor/processHeaderFile.sh -e $ENGINE_HOME -i $baseClassFile -o $processedBaseClassFile -m $GAME_HOME -w $WORKING_FOLDER -c $CLASSES_HIERARCHY_FILE -n $PLUGINS_NAME -h $HEADERS_FOLDER  -t $PLATFORMS_FOLDER -p $PLUGINS_FOLDER -u $USER_PLUGINS_FOLDER -g $className $PLUGINS_ARGUMENT
 			else
 				mustBeReprocessed=true
 			fi
@@ -602,11 +597,16 @@ for plugin in $PLUGINS;
 do
 	plugin=`echo $plugin | sed -r "s@(user//|vuengine//)@/@"`
 
-	if [ -d "$PLUGINS_FOLDER/$plugin" ]; 
+	if [ -d "$PLATFORMS_FOLDER/$plugin" ]; 
 	then
-		searchPaths=$searchPaths" $PLUGINS_FOLDER/$plugin/source"
+		searchPaths=$searchPaths" $PLATFORMS_FOLDER/$plugin/source"
 	else
-		searchPaths=$searchPaths" $USER_PLUGINS_FOLDER/$plugin/source"
+		if [ -d "$PLUGINS_FOLDER/$plugin" ]; 
+		then
+			searchPaths=$searchPaths" $PLUGINS_FOLDER/$plugin/source"
+		else
+			searchPaths=$searchPaths" $USER_PLUGINS_FOLDER/$plugin/source"
+		fi
 	fi
 done
 
@@ -651,7 +651,7 @@ do
 	then
 		# It needs to depend on both the original and the preprocessed base class header file
 		echo " $headerFile \\" >> $CLASS_DEPENDENCIES_FILE
-		preprocessedHeader=`echo "$headerFile" | sed -e 's@'"$PLUGINS_FOLDER"'@'"$WORKING_FOLDER"'/headers/vuengine@g' | sed -e 's@'"$USER_PLUGINS_FOLDER"'@'"$WORKING_FOLDER"'/headers/user@g' | sed -e 's@'"$ENGINE_HOME"'@'"$WORKING_FOLDER"'/headers/core@g' | sed -e 's@^.*/'"$GAME_NAME"'@'"$WORKING_FOLDER"'/headers/'"$GAME_NAME"'@g'`
+		preprocessedHeader=`echo "$headerFile" | sed -e 's@'"$PLUGINS_FOLDER"'@'"$WORKING_FOLDER"'/headers/vuengine@g' | sed -e 's@'"$PLATFORMS_FOLDER"'@'"$WORKING_FOLDER"'/headers/platform@g' | sed -e 's@'"$USER_PLUGINS_FOLDER"'@'"$WORKING_FOLDER"'/headers/user@g' | sed -e 's@'"$ENGINE_HOME"'@'"$WORKING_FOLDER"'/headers/core@g' | sed -e 's@^.*/'"$GAME_NAME"'@'"$WORKING_FOLDER"'/headers/'"$GAME_NAME"'@g'`
 		echo " $GAME_HOME/$preprocessedHeader \\" >> $CLASS_DEPENDENCIES_FILE
 	else
 		echo "$className: header file not found for $ancestorClassName in $searchPaths with $PLUGINS "
