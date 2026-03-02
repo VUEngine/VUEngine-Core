@@ -11,8 +11,8 @@
 // INCLUDES
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-#include <FrameBufferManager.h>
 #include <DebugConfig.h>
+#include <FrameBufferManager.h>
 #include <PixelVector.h>
 #include <VirtualList.h>
 #include <VirtualNode.h>

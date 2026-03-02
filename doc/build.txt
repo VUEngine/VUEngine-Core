@@ -13,7 +13,7 @@ GAME_FOLDER=$YOUR_PATH_TO/$YOUR_GAME
 LC_ALL=C
 BUILD_ALL=1
 MAKE_JOBS=24
-DUMP_ELF=0
+DUMP_ELF=1
 PRINT_PEDANTIC_WARNINGS=0
 export PATH=/opt/VUEngine/resources/app/binaries/vuengine-studio-tools/linux/gcc/bin:$PATH
 

@@ -257,8 +257,8 @@ static void Singleton::secure()
 	ObjectTextureManager::secure(&ObjectTextureManagerAuthorizedClasses);
 	ParamTableManager::secure(&ParamTableManagerAuthorizedClasses);
 	Printer::secure(&PrintingAuthorizedClasses);
-	RumbleManager::secure(&RumbleManagerAuthorizedClasses);
-	SRAMManager::secure(&SRAMManagerAuthorizedClasses);
+//	RumbleManager::secure(&RumbleManagerAuthorizedClasses);
+//	SRAMManager::secure(&SRAMManagerAuthorizedClasses);
 	StopwatchManager::secure(&StopwatchManagerAuthorizedClasses);
 	TimerManager::secure(&TimerManagerAuthorizedClasses);
 	VIPManager::secure(&VIPManagerAuthorizedClasses);	
