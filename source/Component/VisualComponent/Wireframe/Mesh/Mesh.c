@@ -16,7 +16,6 @@
 #include <PixelVector.h>
 #include <VirtualList.h>
 #include <VirtualNode.h>
-#include <WireframeManager.h>
 
 #include "Mesh.h"
 

@@ -15,7 +15,6 @@
 #include <DebugConfig.h>
 #include <VirtualList.h>
 #include <VirtualNode.h>
-#include <WireframeManager.h>
 
 #include "Wireframe.h"
 
