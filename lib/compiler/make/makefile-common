@@ -160,7 +160,7 @@ preprocessEngine:
 				-e GAME_HOME=$(GAME_HOME)																											\
 				-e GAME_CONFIG_MAKE_FILE=$(GAME_CONFIG_MAKE_FILE) 																					\
 				-e COMPONENTS=$(COMPONENTS)																											\
-				-e MAKE_JOBS=$(MAKE_JOBS)																											\
+				-e MAKE_JOBS=$(MAKE_JOBS);																											\
 		else																																		\
 			echo "Preprocessing (skip) $(ENGINE_NAME)";																								\
 		fi;																																			\

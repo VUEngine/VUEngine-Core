@@ -30,119 +30,81 @@ class Telegram;
 ///
 /// Inherits from ListenerObject
 ///
-/// Manages communications on the EXT port.
+/// Manages communications with other systems.
 singleton class CommunicationManager : ListenerObject
 {
-	/// @protectedsection
-
-	/// Status of the communications
-	volatile int32 status;
-
-	/// Data sent over the EXT port
-	volatile uint8* sentData;
-
-	/// Data received over the EXT port
-	volatile uint8* receivedData;
-
-	/// Last byte sent synchronously over the EXT port
-	volatile uint8* syncSentByte;
-
-	/// Last byte received synchronously over the EXT port
-	volatile uint8* syncReceivedByte;
-
-	/// Last byte sent asynchronously over the EXT port
-	volatile uint8* asyncSentByte;
-
-	/// Last byte received asynchronously over the EXT port
-	volatile uint8* asyncReceivedByte;
-
-	/// Number of bytes pending transmission over the EXT port
-	volatile int32 numberOfBytesPendingTransmission;
-
-	/// Number of bytes already transmitted over the EXT port
-	int32 numberOfBytesPreviouslySent;
-
-	/// Status of broadcast communications
-	volatile uint32 broadcast;
-
-	/// Flag that indicates if there is something connected to the EXT port
-	volatile bool connected;
-
-	/// Keeps track of the role as master or slave that the system holds in data transmissions
-	volatile uint8 communicationMode;
-
 	/// @publicsection
 
 	/// Interrupt handler for COM interrupts
 	static void interruptHandler();
 
 	/// Reset the manager's state.
-	void reset();
+	static void reset();
 
 	/// Enable communications on the EXT port.
 	/// @param scope: Object that will be notified of communication events
-	void enableCommunications(ListenerObject scope);
+	static void enableCommunications(ListenerObject scope);
 
 	/// Disable communication on the EXT port.
-	void disableCommunications();
+	static void disableCommunications();
 
 	/// Cancel all pending transmissions on the EXT port.
-	bool cancelCommunications();
+	static bool cancelCommunications();
 
 	/// Start the sync procedure according to the official documentation once a connection
 	/// has been stablished.
-	void startSyncCycle();
+	static void startSyncCycle();
 
 	/// Check if there is something attached to the EXT port.
 	/// @return True if there is something attached to the EXT port; false otherwise
-	bool isConnected();
+	static bool isConnected();
 
 	/// Check if the system is the master during the next cycle of communications over the EXT port.
 	/// @return True if the system is the master; false otherwise
-	bool isMaster();
+	static bool isMaster();
 
 	/// Send data synchronously over the EXT port if there is nothing detectable attached to it.
 	/// @param data: Data to broadcast
 	/// @param numberOfBytes: Number of bytes to broadcast
 	/// @return True if broadcasting took place
-	bool broadcastData(uint8* data, int32 numberOfBytes);
+	static bool broadcastData(uint8* data, int32 numberOfBytes);
 
 	/// Send data asynchronously over the EXT port if there is nothing detectable attached to it.
 	/// @param data: Data to broadcast
 	/// @param numberOfBytes: Number of bytes to broadcast
 	/// @param scope: Object that will be notified of communication events
 	/// @return True if broadcasting took place
-	bool broadcastDataAsync(uint8* data, int32 numberOfBytes, ListenerObject scope);
+	static bool broadcastDataAsync(uint8* data, int32 numberOfBytes, ListenerObject scope);
 
 	/// Send and receive data synchronously over the EXT port if there is something detectable attached to it.
 	/// @param message: Control message for the receiving partner
 	/// @param data: Data to broadcast
 	/// @param numberOfBytes: Number of bytes to broadcast
-	bool sendAndReceiveData(uint32 message, uint8* data, int32 numberOfBytes);
+	static bool sendAndReceiveData(uint32 message, uint8* data, int32 numberOfBytes);
 
 	/// Send and receive data asynchronously over the EXT port if there is something detectable attached to it.
 	/// @param message: Control message for the receiving partner
 	/// @param data: Data to broadcast
 	/// @param numberOfBytes: Number of bytes to broadcast
 	/// @param scope: Object that will be notified of communication events
-	bool sendAndReceiveDataAsync(uint32 message, uint8* data, int32 numberOfBytes, ListenerObject scope);
+	static bool sendAndReceiveDataAsync(uint32 message, uint8* data, int32 numberOfBytes, ListenerObject scope);
 
 	/// Retrieve the last sent message on the EXT port.
-	uint32 getSentMessage();
+	static uint32 getSentMessage();
 
 	/// Retrieve the last received message on the EXT port.
-	uint32 getReceivedMessage();
+	static uint32 getReceivedMessage();
 
 	/// Retrieve the last sent data on the EXT port.
-	const uint8* getSentData();
+	static const uint8* getSentData();
 
 	/// Retrieve the last received data on the EXT port.
-	const uint8* getReceivedData();
+	static const uint8* getReceivedData();
 
 	/// Print the manager's status.
 	/// @param x: Screen x coordinate where to print
 	/// @param y: Screen y coordinate where to print
-	void print(int32 x, int32 y);
+	static void print(int32 x, int32 y);
 
 	/// Receive and process a Telegram.
 	/// @param telegram: Received telegram to process

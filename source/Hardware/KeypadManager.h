@@ -14,7 +14,7 @@
 // INCLUDES
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-#include <Object.h>
+#include <ListenerObject.h>
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DATA
@@ -57,10 +57,10 @@ typedef struct UserInput
 
 /// Class KeypadManager
 ///
-/// Inherits from Object
+/// Inherits from ListenerObject
 ///
 /// Manages keypad inputs.
-static class KeypadManager : Object
+singleton class KeypadManager : ListenerObject
 {
 	/// @publicsection
 
