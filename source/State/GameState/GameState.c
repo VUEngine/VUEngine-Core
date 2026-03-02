@@ -1195,7 +1195,7 @@ void GameState::debugging()
 #endif
 
 #ifdef __DEBUGGING_FRAME_BUFFERS
-	FrameBufferManager::print(FrameBufferManager::getInstance(), 1, 1);
+	FrameBufferManager::print(1, 1);
 #endif
 
 #ifdef __DEBUGGING_SPRITES

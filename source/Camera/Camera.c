@@ -69,7 +69,7 @@ void Camera::setup(PixelOptical pixelOptical, CameraFrustum cameraFrustum)
 	this->optical = Optical::getFromPixelOptical(pixelOptical, this->cameraFrustum);
 	this->transformationFlags |= __INVALIDATE_TRANSFORMATION;
 
-	FrameBufferManager::setFrustum(FrameBufferManager::getInstance(), this->cameraFrustum);
+	FrameBufferManager::setFrustum(this->cameraFrustum);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

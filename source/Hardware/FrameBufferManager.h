@@ -27,17 +27,6 @@
 /// Implements various draw rutines that manipulate the frame buffers.
 singleton class FrameBufferManager : ListenerObject
 {
-	/// @protectedsection
-
-	/// Number of pixels drawn during the current cycle
-	uint16 drawnPixelsCounter;
-
-	/// Maximum number of pixels to draw during each cycle
-	uint16 maximumPixelsToDraw;
-
-	/// Frame buffers set using during the current game frame
-	uint32 currentDrawingFrameBufferSet;
-
 	/// @publicsection
 
 	/// Draw a single point.
@@ -102,27 +91,27 @@ singleton class FrameBufferManager : ListenerObject
 	/// @return True if a pixel was written to the frame buffers
 	static bool drawSolidRhumbus(PixelVector center, int16 radius, int32 color, uint8 bufferIndex, bool interlaced);
 
+	/// Reset the manager's state
+	static void reset();
+
+	/// Configure the frustum where drawing is allowed.
+	/// @param frustum: 3D boundary when drawing is allowed
+	static void setFrustum(CameraFrustum frustum);
+
+	/// Retrieve the frustum where drawing is allowed.
+	/// @return 3D boundary when drawing is allowed
+	static CameraFrustum getFrustum();
+	
+	/// Print the manager's current status.
+	/// @param x: Screen x coordinate where to print
+	/// @param y: Screen y coordinate where to print
+	static void print(int16 x, int16 y);
+
 	/// Process an event that the instance is listen for.
 	/// @param eventFirer: ListenerObject that signals the event
 	/// @param eventCode: Code of the firing event
 	/// @return False if the listener has to be removed; true to keep it
 	override bool onEvent(ListenerObject eventFirer, uint16 eventCode);
-
-	/// Reset the manager's state
-	void reset();
-
-	/// Configure the frustum where drawing is allowed.
-	/// @param frustum: 3D boundary when drawing is allowed
-	void setFrustum(CameraFrustum frustum);
-
-	/// Retrieve the frustum where drawing is allowed.
-	/// @return 3D boundary when drawing is allowed
-	CameraFrustum getFrustum();
-	
-	/// Print the manager's current status.
-	/// @param x: Screen x coordinate where to print
-	/// @param y: Screen y coordinate where to print
-	void print(int16 x, int16 y);
 }
 
 #endif
