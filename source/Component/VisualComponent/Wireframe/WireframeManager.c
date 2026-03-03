@@ -61,14 +61,14 @@ bool WireframeManager::onEvent(ListenerObject eventFirer, uint16 eventCode)
 {
 	switch(eventCode)
 	{
-		case kEventDisplayUnitXPEND:
+		case kEventDisplayUnitVBlank:
 		{
 			WireframeManager::draw(this);
 
 			return true;
 		}
 
-		case kEventDisplayUnitXPENDDuringGAMESTART:
+		case kEventDisplayUnitVBlankDuringGameStart:
 		{
 			WireframeManager::draw(this);
 
@@ -310,8 +310,8 @@ void WireframeManager::startListeningForVIP()
 {
 	Hardware::suspendInterrupts();
 
-	DisplayUnit::addEventListener(DisplayUnit::getInstance(), ListenerObject::safeCast(this), kEventDisplayUnitXPEND);
-	DisplayUnit::addEventListener(DisplayUnit::getInstance(), ListenerObject::safeCast(this), kEventDisplayUnitXPENDDuringGAMESTART);
+	DisplayUnit::addEventListener(DisplayUnit::getInstance(), ListenerObject::safeCast(this), kEventDisplayUnitVBlank);
+	DisplayUnit::addEventListener(DisplayUnit::getInstance(), ListenerObject::safeCast(this), kEventDisplayUnitVBlankDuringGameStart);
 
 	Hardware::resumeInterrupts();
 }
@@ -322,8 +322,8 @@ void WireframeManager::stopListeningForVIP()
 {
 	Hardware::suspendInterrupts();
 
-	DisplayUnit::removeEventListener(DisplayUnit::getInstance(), ListenerObject::safeCast(this), kEventDisplayUnitXPEND);
-	DisplayUnit::removeEventListener(DisplayUnit::getInstance(), ListenerObject::safeCast(this), kEventDisplayUnitXPENDDuringGAMESTART);
+	DisplayUnit::removeEventListener(DisplayUnit::getInstance(), ListenerObject::safeCast(this), kEventDisplayUnitVBlank);
+	DisplayUnit::removeEventListener(DisplayUnit::getInstance(), ListenerObject::safeCast(this), kEventDisplayUnitVBlankDuringGameStart);
 
 	Hardware::resumeInterrupts();
 }

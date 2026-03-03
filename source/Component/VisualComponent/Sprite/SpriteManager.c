@@ -145,7 +145,7 @@ bool SpriteManager::onEvent(ListenerObject eventFirer, uint16 eventCode)
 {
 	switch(eventCode)
 	{
-		case kEventDisplayUnitXPEND:
+		case kEventDisplayUnitVBlank:
 		{
 			SpriteManager::writeDRAM(this);
 		
@@ -1234,14 +1234,14 @@ void SpriteManager::writeAttributesToDRAM()
 
 void SpriteManager::startListeningForVIP()
 {
-	DisplayUnit::addEventListener(DisplayUnit::getInstance(), ListenerObject::safeCast(this), kEventDisplayUnitXPEND);
+	DisplayUnit::addEventListener(DisplayUnit::getInstance(), ListenerObject::safeCast(this), kEventDisplayUnitVBlank);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void SpriteManager::stopListeningForVIP()
 {
-	DisplayUnit::removeEventListener(DisplayUnit::getInstance(), ListenerObject::safeCast(this), kEventDisplayUnitXPEND);
+	DisplayUnit::removeEventListener(DisplayUnit::getInstance(), ListenerObject::safeCast(this), kEventDisplayUnitVBlank);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

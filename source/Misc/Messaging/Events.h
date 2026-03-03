@@ -66,13 +66,11 @@ enum Events
 
 	kEventDisplayUnitTimeError,
 	kEventDisplayUnitScanError,
-	kEventDisplayUnitFRAMESTART,
-	kEventDisplayUnitGAMESTART,
-	kEventDisplayUnitGAMESTARTDuringGAMESTART,
-	kEventDisplayUnitGAMESTARTDuringXPEND,
-	kEventDisplayUnitXPEND,
-	kEventDisplayUnitXPENDDuringXPEND,
-	kEventDisplayUnitXPENDDuringGAMESTART,
+	kEventDisplayUnitFrameStart,
+	kEventDisplayUnitGameStart,
+	kEventDisplayUnitGameStartDuringVBlank,
+	kEventDisplayUnitVBlank,
+	kEventDisplayUnitVBlankDuringGameStart,
 
 	kEventTimerInterrupt,
 	

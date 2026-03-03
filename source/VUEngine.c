@@ -250,14 +250,14 @@ bool VUEngine::onEvent(ListenerObject eventFirer, uint16 eventCode)
 {
 	switch(eventCode)
 	{
-		case kEventDisplayUnitFRAMESTART:
+		case kEventDisplayUnitFrameStart:
 		{
 			VUEngine::frameStarted(this, __MILLISECONDS_PER_SECOND / __MAXIMUM_FPS);
 
 			return true;
 		}
 
-		case kEventDisplayUnitGAMESTART:
+		case kEventDisplayUnitGameStart:
 		{
 			VUEngine::gameFrameStarted(this, DisplayUnit::getGameFrameDuration(eventFirer));
 
@@ -603,8 +603,8 @@ secure void VUEngine::run(GameState currentGameState)
 		return;
 	}
 
-	DisplayUnit::addEventListener(DisplayUnit::getInstance(), ListenerObject::safeCast(this), kEventDisplayUnitFRAMESTART);
-	DisplayUnit::addEventListener(DisplayUnit::getInstance(), ListenerObject::safeCast(this), kEventDisplayUnitGAMESTART);
+	DisplayUnit::addEventListener(DisplayUnit::getInstance(), ListenerObject::safeCast(this), kEventDisplayUnitFrameStart);
+	DisplayUnit::addEventListener(DisplayUnit::getInstance(), ListenerObject::safeCast(this), kEventDisplayUnitGameStart);
 
 	VUEngine::setState(currentGameState);
 
@@ -632,8 +632,8 @@ bool VUEngine::isInState(GameState gameState)
 
 void VUEngine::cleanUp()
 {
-	DisplayUnit::removeEventListener(DisplayUnit::getInstance(), ListenerObject::safeCast(this), kEventDisplayUnitFRAMESTART);
-	DisplayUnit::removeEventListener(DisplayUnit::getInstance(), ListenerObject::safeCast(this), kEventDisplayUnitGAMESTART);
+	DisplayUnit::removeEventListener(DisplayUnit::getInstance(), ListenerObject::safeCast(this), kEventDisplayUnitFrameStart);
+	DisplayUnit::removeEventListener(DisplayUnit::getInstance(), ListenerObject::safeCast(this), kEventDisplayUnitGameStart);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
