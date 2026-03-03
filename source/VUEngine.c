@@ -449,7 +449,7 @@ void VUEngine::frameStarted(uint16 gameFrameDuration)
 
 	totalTime += gameFrameDuration;
 
-	TimerManager::frameStarted(TimerManager::getInstance(), gameFrameDuration * __MICROSECONDS_PER_MILLISECOND);
+	TimerManager::frameStarted(gameFrameDuration * __MICROSECONDS_PER_MILLISECOND);
 
 	if(__MILLISECONDS_PER_SECOND <= totalTime)
 	{

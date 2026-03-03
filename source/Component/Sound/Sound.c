@@ -848,21 +848,7 @@ void Sound::printPlaybackProgress(int32 x, int32 y, int32 width)
 
 fix7_9_ext Sound::computeTimerResolutionFactor()
 {
-	uint32 timerCounter = TimerManager::getTimerCounter(TimerManager::getInstance()) + __TIMER_COUNTER_DELTA;
-	uint32 timerUsPerInterrupt = timerCounter * __SOUND_TARGET_US_PER_TICK;
-	uint32 targetTimerResolutionUS = 
-		0 != ((SoundSpec*)this->componentSpec)->targetTimerResolutionUS 
-		? 
-		((SoundSpec*)this->componentSpec)->targetTimerResolutionUS : 1000;
-
-	targetTimerResolutionUS = 0 == targetTimerResolutionUS? 1000: targetTimerResolutionUS;
-	
-	uint32 soundTargetUsPerInterrupt = 
-		(__TIME_US(targetTimerResolutionUS) + __TIMER_COUNTER_DELTA) * __SOUND_TARGET_US_PER_TICK;
-
-	NM_ASSERT(0 < soundTargetUsPerInterrupt, "Sound::computeTimerResolutionFactor: zero soundTargetUsPerInterrupt");
-
-	return __FIX19_13_TO_FIX7_9_EXT(__FIX19_13_DIV(__I_TO_FIX19_13(timerUsPerInterrupt), __I_TO_FIX19_13(soundTargetUsPerInterrupt)));
+	return TimerManager::computeTimerResolutionFactor(((SoundSpec*)this->componentSpec)->targetTimerResolutionUS, __SOUND_TARGET_US_PER_TICK);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

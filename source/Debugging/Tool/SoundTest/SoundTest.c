@@ -162,7 +162,7 @@ void SoundTest::processUserInput(uint16 pressedKey)
 	// Timer controls
 	else if(K_RU & pressedKey)
 	{
-		uint16 timerResolution = TimerManager::getResolution(TimerManager::getInstance());
+		uint16 timerResolution = TimerManager::getResolution();
 
 		switch(timerResolution)
 		{
@@ -190,8 +190,8 @@ void SoundTest::processUserInput(uint16 pressedKey)
 	}
 	else if(K_RD & pressedKey)
 	{
-		uint16 targetTimePerInterrupttUnits = TimerManager::getTargetTimePerInterruptUnits(TimerManager::getInstance());
-		uint16 targetTimePerInterrupt = TimerManager::getTargetTimePerInterrupt(TimerManager::getInstance());
+		uint16 targetTimePerInterrupttUnits = TimerManager::getTargetTimePerInterruptUnits();
+		uint16 targetTimePerInterrupt = TimerManager::getTargetTimePerInterrupt();
 
 		switch(targetTimePerInterrupttUnits)
 		{
@@ -222,18 +222,18 @@ void SoundTest::processUserInput(uint16 pressedKey)
 	}
 	else if(K_RL & pressedKey)
 	{
-		uint16 targetTimePerInterrupt = TimerManager::getTargetTimePerInterrupt(TimerManager::getInstance());
+		uint16 targetTimePerInterrupt = TimerManager::getTargetTimePerInterrupt();
 
-		targetTimePerInterrupt -= TimerManager::getMinimumTimePerInterruptStep(TimerManager::getInstance());
+		targetTimePerInterrupt -= TimerManager::getMinimumTimePerInterruptStep();
 
 		TimerManager::setTargetTimePerInterrupt(targetTimePerInterrupt);
 		timerChanged = true;
 	}
 	else if(K_RR & pressedKey)
 	{
-		uint16 targetTimePerInterrupt = TimerManager::getTargetTimePerInterrupt(TimerManager::getInstance());
+		uint16 targetTimePerInterrupt = TimerManager::getTargetTimePerInterrupt();
 
-		targetTimePerInterrupt += TimerManager::getMinimumTimePerInterruptStep(TimerManager::getInstance());
+		targetTimePerInterrupt += TimerManager::getMinimumTimePerInterruptStep();
 
 		TimerManager::setTargetTimePerInterrupt(targetTimePerInterrupt);
 		timerChanged = true;
@@ -401,7 +401,7 @@ void SoundTest::loadSound()
 
 	SoundTest::releaseSound(this);
 
-	TimerManager::reset(TimerManager::getInstance());
+	TimerManager::reset();
 	TimerManager::setResolution(__TIMER_20US);
 	TimerManager::setTargetTimePerInterruptUnits(kUS);
 	TimerManager::setTargetTimePerInterrupt(_userSounds[this->soundIndex]->targetTimerResolutionUS);

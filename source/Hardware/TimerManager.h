@@ -17,42 +17,6 @@
 #include <ListenerObject.h>
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-// CLASS' MACROS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-#define __TIMER_COUNTER_DELTA						1
-
-// Use with 20us timer (range = 0 to 1300)
-#define __TIME_US(n)			(((n) / TimerManager::getResolutionInUS()) 												\
-													- __TIMER_COUNTER_DELTA)
-#define __TIME_INVERSE_US(n)	((n + __TIMER_COUNTER_DELTA) * 															\
-													TimerManager::getResolutionInUS())
-
-// Use with 100us timer (range = 0 to 6500, and 0 to 6.5)
-#define __TIME_MS(n)			((((n) * __MICROSECONDS_PER_MILLISECOND) / 												\
-													TimerManager::getResolutionInUS()) - __TIMER_COUNTER_DELTA)
-
-#define __TIME_INVERSE_MS(n)	((n + __TIMER_COUNTER_DELTA) * 															\
-													TimerManager::getResolutionInUS() / 1000)
-
-#define __TIMER_ENB									0x01
-#define __TIMER_Z_STAT								0x02
-#define __TIMER_Z_STAT_ZCLR							0x04
-#define __TIMER_Z_INT								0x08
-#define __TIMER_20US								0x10
-#define __TIMER_100US								0x00
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-// CLASS' DATA
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-enum TimerResolutionScales
-{
-	kUS = 0,			// Microseconds
-	kMS,				// Milliseconds
-};
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DECLARATION
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
@@ -60,41 +24,9 @@ enum TimerResolutionScales
 ///
 /// Inherits from Object
 ///
-/// Manages rumble effects.
+/// Manages the platform's clock.
 singleton class TimerManager : ListenerObject
 {
-	/// Elapsed milliseconds since the last call to reset
-	uint32 elapsedMilliseconds;
-
-	/// Elapsed microseconds
-	uint32 elapsedMicroseconds;
-
-	/// Elapsed milliseconds since the start of the program
-	uint32 totalElapsedMilliseconds;
-
-	/// Timer's resolution
-	uint16 resolution;
-
-	/// Interrupts during the last secoond
-	uint16 interruptsPerSecond;
-
-	/// Interrupts during the last game frame
-	uint16 interruptsPerGameFrame;
-
-	/// Elapsed microseconds per interrupt
-	uint32 elapsedMicrosecondsPerInterrupt;
-
-	/// Target elapsed time per interrupt
-	uint16 targetTimePerInterrupt;
-
-	/// Units of the target time per interrupt
-	uint16 targetTimePerInterrupttUnits;
-
-	/// Last written value to the TCR registry
-	uint8 tcrValue;
-
-	/// @publicsection
-
 	/// Interrupt handler for timer's interrupts
 	static void interruptHandler();
 
@@ -195,11 +127,18 @@ singleton class TimerManager : ListenerObject
 	static void printInterruptStats(int x, int y);
 
 	/// Reset the manager's state.
-	void reset();
+	static void reset();
 
 	/// Call when the next frame starts.
 	/// @param elapsedMicroseconds: Elapsed microseconds between calls
-	void frameStarted(uint32 elapsedMicroseconds);
+	static void frameStarted(uint32 elapsedMicroseconds);
+
+	/// Compute the factor between the currently configured timer's resolution and 
+	/// a target timer resolution in US.
+	/// @param targetTimerResolutionUS: Target timer resolution in US
+	/// @param targetUSPerTick: Target US per timer's tick
+	/// @return Factor between the currently resolution and the target
+	static fix7_9_ext computeTimerResolutionFactor(uint32 targetTimerResolutionUS, uint32 targetUSPerTick);
 }
 
 #endif

@@ -17,5 +17,6 @@
 #include <Types.h>
 #include <Math.h>
 #include <Constants.h>
+#include <Platform.h>
 
 #endif
