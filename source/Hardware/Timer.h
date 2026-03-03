@@ -31,7 +31,7 @@ singleton class Timer : ListenerObject
 	static void interruptHandler();
 
 	/// Configure the timer with the provided arguments.
-	/// @param timerResolution: Timer's resolution (__TIMER_100US or __TIMER_20US)
+	/// @param timerResolution: Timer's target resolution
 	/// @param targetTimePerInterrupt: Target elapsed time between timer interrupts
 	/// @param targetTimePerInterrupttUnits: Timer interrupt's target time units
 	static void configure(uint16 timerResolution, uint16 targetTimePerInterrupt, uint16 targetTimePerInterrupttUnits);
@@ -50,7 +50,7 @@ singleton class Timer : ListenerObject
 	static void resetTimerCounter();
 
 	/// Set the timer's resolution.
-	/// @param resolution: __TIMER_20US or __TIMER_100US
+	/// @param resolution: Timer's target resolution
 	static void setResolution(uint16 resolution);
 
 	/// Retrieve the timer's resolution.
