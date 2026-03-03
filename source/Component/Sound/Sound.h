@@ -238,11 +238,11 @@ class Sound : Component
 	/// @return Target playback speed
 	fix7_9_ext getSpeed();
 
-	/// Set the frequency delta to be added to the VSU's frequency registers.
+	/// Set the frequency delta to be added.
 	/// @param frequencyDelta: Delta to be added to the frequency
 	void setFrequencyDelta(uint16 frequencyDelta);
 
-	/// Retrieve the frequency delta added to the VSU's frequency registers.
+	/// Retrieve the frequency added delta.
 	uint16 getFrequencyDelta();
 
 	/// Retrieve the sound track's elapsed ticks.
