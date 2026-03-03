@@ -121,10 +121,10 @@ singleton class Timer : ListenerObject
 	/// @param y: Screen y coordinate where to print
 	static void print(int32 x, int32 y);
 
-	/// Print the stats related to the interrupts.
+	/// Print the stats related to the interrupts, etc.
 	/// @param x: Screen x coordinate where to print
 	/// @param y: Screen y coordinate where to print
-	static void printInterruptStats(int x, int y);
+	static void printStats(int x, int y);
 
 	/// Reset the manager's state.
 	static void reset();
