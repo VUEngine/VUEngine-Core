@@ -595,7 +595,7 @@ CLASS_DEPENDENCIES_FILE=$WORKING_FOLDER/classes/dependencies/$PLUGINS_NAME/$clas
 searchPaths="$HEADERS_FOLDER/source $ENGINE_HOME/source "
 for plugin in $PLUGINS;
 do
-	plugin=`echo $plugin | sed -r "s@(user//|platform//|vuengine//)@/@"`
+	plugin=`echo $plugin | sed -r "s@(user//|platforms//|vuengine//)@/@"`
 
 	if [ -d "$PLATFORMS_FOLDER/$plugin" ]; 
 	then
@@ -651,7 +651,7 @@ do
 	then
 		# It needs to depend on both the original and the preprocessed base class header file
 		echo " $headerFile \\" >> $CLASS_DEPENDENCIES_FILE
-		preprocessedHeader=`echo "$headerFile" | sed -e 's@'"$PLUGINS_FOLDER"'@'"$WORKING_FOLDER"'/headers/vuengine@g' | sed -e 's@'"$PLATFORMS_FOLDER"'@'"$WORKING_FOLDER"'/headers/platform@g' | sed -e 's@'"$USER_PLUGINS_FOLDER"'@'"$WORKING_FOLDER"'/headers/user@g' | sed -e 's@'"$ENGINE_HOME"'@'"$WORKING_FOLDER"'/headers/core@g' | sed -e 's@^.*/'"$GAME_NAME"'@'"$WORKING_FOLDER"'/headers/'"$GAME_NAME"'@g'`
+		preprocessedHeader=`echo "$headerFile" | sed -e 's@'"$PLUGINS_FOLDER"'@'"$WORKING_FOLDER"'/headers/vuengine@g' | sed -e 's@'"$PLATFORMS_FOLDER"'@'"$WORKING_FOLDER"'/headers/platforms@g' | sed -e 's@'"$USER_PLUGINS_FOLDER"'@'"$WORKING_FOLDER"'/headers/user@g' | sed -e 's@'"$ENGINE_HOME"'@'"$WORKING_FOLDER"'/headers/core@g' | sed -e 's@^.*/'"$GAME_NAME"'@'"$WORKING_FOLDER"'/headers/'"$GAME_NAME"'@g'`
 		echo " $GAME_HOME/$preprocessedHeader \\" >> $CLASS_DEPENDENCIES_FILE
 	else
 		echo "$className: header file not found for $ancestorClassName in $searchPaths with $PLUGINS "

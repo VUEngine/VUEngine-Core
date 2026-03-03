@@ -8,7 +8,7 @@ override ENGINE_NAME = core
 # Engine's home
 override ENGINE_HOME = $(ENGINE_FOLDER)
 
-# Home of platform plugins
+# Home of platforms
 PLATFORMS_FOLDER = $(PLATFORMS_FOLDER)
 
 # Home of custom user plugins
@@ -21,7 +21,7 @@ CLEAN_NAME = $(shell echo $(NAME) | sed -e "s@.*//@@")
 ifeq ($(NAME), $(ENGINE_NAME))
     override MY_HOME = $(ENGINE_HOME)
 else
-	ifeq (platform,$(findstring platform,$(NAME)))
+	ifeq (platforms,$(findstring platforms,$(NAME)))
 		override MY_HOME = $(PLATFORMS_FOLDER)/$(CLEAN_NAME)
 	else
 		ifeq (user,$(findstring user,$(NAME)))
