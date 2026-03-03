@@ -21,9 +21,8 @@
 // FORWARD DECLARATIONS
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-extern uint8* const _hardwareRegisters;
-extern bool _enabledInterrupts __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE;
-extern int16 _suspendInterruptRequest __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE;
+extern bool _enabledInterrupts;
+extern int16 _suspendInterruptRequest;
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DECLARATION

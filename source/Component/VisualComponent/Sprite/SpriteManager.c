@@ -43,7 +43,7 @@ friend class Texture;
 friend class VirtualNode;
 friend class VirtualList;
 
-extern volatile uint16* _vipRegisters __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE;
+extern volatile uint16* _vipRegisters;
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' MACROS
