@@ -23,100 +23,11 @@
 class Entity;
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-// CLASS' MACROS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-// Column table
-#define __COLUMN_TABLE_ENTRIES				256
-#define __BRIGHTNESS_REPEAT_ENTRIES 		96
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DATA
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-/// Column table specification
-/// @memberof DisplayUnit
-typedef struct ColumnTableSpec
-{
-	/// Defines whether the spec's first half should be mirrored (true)
-	/// or if a full 256 entry table is provided (false)
-	bool mirror;
-
-	/// Column table entries array
-	uint8 columnTable[__COLUMN_TABLE_ENTRIES];
-
-} ColumnTableSpec;
-
-/// A ColumnTable spec that is stored in ROM
-/// @memberof DisplayUnit
-typedef const ColumnTableSpec ColumnTableROMSpec;
-
-/// Brigtness control specification
-/// @memberof DisplayUnit
-typedef struct BrightnessRepeatSpec
-{
-	/// Defines whether the spec's first half should be mirrored (true)
-	/// or if a full 96 entry table is provided (false)
-	bool mirror;
-
-	/// Brightness repeat values
-	uint8 brightnessRepeat[__BRIGHTNESS_REPEAT_ENTRIES];
-
-} BrightnessRepeatSpec;
-
-/// A BrightnessRepeat spec that is stored in ROM
-/// @memberof DisplayUnit
-typedef const BrightnessRepeatSpec BrightnessRepeatROMSpec;
-
-/// Color configuration struct
-/// @memberof DisplayUnit
-typedef struct ColorConfig
-{
-	/// Background color
-	uint8 backgroundColor;
-
-	// Brightness config
-	Brightness brightness;
-
-	// Brightness repeat values
-	BrightnessRepeatSpec* brightnessRepeat;
-
-} ColorConfig;
-
-/// Palette configuration struct
-/// @memberof DisplayUnit
-typedef struct PaletteConfig
-{
-	struct Bgmap
-	{
-		uint8 gplt0;
-		uint8 gplt1;
-		uint8 gplt2;
-		uint8 gplt3;
-	} bgmap;
-
-	struct Object
-	{
-		uint8 jplt0;
-		uint8 jplt1;
-		uint8 jplt2;
-		uint8 jplt3;
-	} object;
-
-} PaletteConfig;
-
-/// Enums used to control VIP interrupts
-/// @memberof DisplayUnit
-enum VIPMultiplexedInterrupts
-{
-	kVIPNoMultiplexedInterrupts 			= 1 << 0,
-	kVIPOnlyVIPMultiplexedInterrupts 		= 1 << 2,
-	kVIPOnlyNonVIPMultiplexedInterrupts 	= 1 << 3,
-	kVIPAllMultiplexedInterrupts 			= 0x7FFFFFFF,
-};
-
 /// A method pointer for processing special effects after drawing operations are completed
-typedef void (*PostProcessingEffect)(uint32 currentDrawingFrameBufferSet, Entity scope);
+typedef void (*PostProcessingEffect)(Entity scope);
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DECLARATION
@@ -161,10 +72,6 @@ singleton class DisplayUnit : ListenerObject
 	/// Configure the VIP's palettes with the provided configuration.
 	/// @param paletteConfig: Palettes configuration
 	static void configurePalettes(PaletteConfig paletteConfig);
-
-	/// Setup the column table with the provided spec.
-	/// @param columnTableSpec: Specification for the configuration of the column table
-	static void configureColumnTable(const ColumnTableSpec* columnTableSpec);
 
 	/// Set the brightness registers with the provided configuration.
 	/// @param brightness: Brightness configuration
@@ -226,7 +133,7 @@ singleton class DisplayUnit : ListenerObject
 	static void startMemoryRefresh();
 
 	/// Wait for the next FCLK signal.
-	static void waitForFRAMESTART();
+	static void waitForFrame();
 
 	/// Start VIP drawing operations.
 	static void startDrawing();
