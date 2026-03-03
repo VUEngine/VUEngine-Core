@@ -306,7 +306,7 @@ abstract class Sprite : VisualComponent
 	/// Print the sprite's properties.
 	/// @param x: Screen x coordinate where to print
 	/// @param y: Screen y coordinate where to print
-	virtual void print(int32 x, int32 y) = 0;
+	virtual void print(int32 x, int32 y);
 }
 
 #endif

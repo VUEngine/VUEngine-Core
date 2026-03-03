@@ -520,7 +520,7 @@ void Sprite::forceHide()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void Sprite::setRotation(const Rotation* rotation __attribute__((unused)))
+void Sprite::setRotation(const Rotation* rotation)
 {
 	if(NULL == rotation)
 	{
@@ -533,7 +533,7 @@ void Sprite::setRotation(const Rotation* rotation __attribute__((unused)))
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void Sprite::setScale(const PixelScale* scale __attribute__((unused)))
+void Sprite::setScale(const PixelScale* scale)
 {
 	if(NULL == scale)
 	{
@@ -543,6 +543,11 @@ void Sprite::setScale(const PixelScale* scale __attribute__((unused)))
 	this->scale = *scale;
 	this->rendered = false;
 }
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void Sprite::print(int32 x __attribute__((unused)), int32 y __attribute__((unused)))
+{}
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
