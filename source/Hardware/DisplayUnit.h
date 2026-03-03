@@ -129,43 +129,6 @@ typedef void (*PostProcessingEffect)(uint32 currentDrawingFrameBufferSet, Entity
 /// Manages the VIP.
 singleton class DisplayUnit : ListenerObject
 {
-	/// @protectedsection
-
-	/// Linked list of post processing effects to be applied after the VIP's
-	/// drawing operations are completed
-	VirtualList postProcessingEffects;
-
-	/// Frame buffers set using during the current game frame
-	uint32 currentDrawingFrameBufferSet;
-
-	/// Enum that determines which multiplexed interrupts are allowed
-	uint32 enabledMultiplexedInterrupts;
-
-	/// Allows VIP interrupts that the engine doesn't use
-	uint16 customInterrupts;
-
-	/// Register of the interrupts being processed
-	uint16 currrentInterrupt;
-
-	/// Time in milliseconds that the game frame last according to the
-	/// FRMCYC configuration
-	uint16 gameFrameDuration;
-
-	/// If true, XPEN is raised
-	bool isDrawingAllowed;
-
-	/// If false, no interrupts are enable
-	bool allowInterrupts;
-
-	/// If true, a VIP interrupt happened while in the midst of GAMESTART
-	volatile bool processingGAMESTART;
-
-	/// If true, a VIP interrupt happened while in the midst of XPEND
-	volatile bool processingXPEND;
-
-	/// If true, FRAMESTART happened during XPEND
-	volatile bool FRAMESTARTDuringXPEND;
-
 	/// Interrupt handler for timer's interrupts
 	static void interruptHandler();
 
@@ -244,7 +207,7 @@ singleton class DisplayUnit : ListenerObject
 	static void print(int16 x, int16 y);
 
 	/// Reset the manager's state.
-	void reset();
+	static void reset();
 
 	/// Configure the manager's state.
 	/// @param backgroundColor: Color to apply to the background
@@ -253,42 +216,42 @@ singleton class DisplayUnit : ListenerObject
 	/// @param paletteConfig: Palettes configuration
 	/// @param postProcessingEffects: Array of postprocessing effects
 	/// Configure the brightness registers with the provided configuration.
-	void configure
+	static void configure
 	(
 		uint8 backgroundColor, Brightness, const BrightnessRepeatSpec* brightnessRepeat,
 		PaletteConfig paletteConfig, PostProcessingEffect* postProcessingEffects
 	);
 
 	/// Start memore refresh cycle
-	void startMemoryRefresh();
+	static void startMemoryRefresh();
 
 	/// Wait for the next FCLK signal.
-	void waitForFRAMESTART();
+	static void waitForFRAMESTART();
 
 	/// Start VIP drawing operations.
-	void startDrawing();
+	static void startDrawing();
 
 	/// Resume VIP drawing operations.
-	void resumeDrawing();
+	static void resumeDrawing();
 
 	/// Suspend VIP drawing operations.
-	void suspendDrawing();
+	static void suspendDrawing();
 
 	/// Stop VIP drawing operations.
-	void stopDrawing();
+	static void stopDrawing();
 
 	/// Start VIP displaying operations.
-	void startDisplaying();
+	static void startDisplaying();
 
 	/// Stop VIP displaying operations.
-	void stopDisplaying();
+	static void stopDisplaying();
 
 	/// Set the enabling of interrupts.
 	/// @param allowInterrupts: If true, interrupts are enabled when drawing starts
-	void allowInterrupts(bool allowInterrupts);
+	static void allowInterrupts(bool allowInterrupts);
 
 	/// Retrieve inded of the frame buffers set using during the current game frame 
-	uint32 getCurrentDrawingFrameBufferSet();
+	static uint32 getCurrentDrawingFrameBufferSet();
 }
 
 #endif

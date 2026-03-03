@@ -1093,7 +1093,6 @@ void GameState::configureGraphics()
 
 	DisplayUnit::configure
 	(
-		DisplayUnit::getInstance(), 
 		stageSpec->rendering.colorConfig.backgroundColor,
 		stageSpec->rendering.colorConfig.brightness,
 		stageSpec->rendering.colorConfig.brightnessRepeat,

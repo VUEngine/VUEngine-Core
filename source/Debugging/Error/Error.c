@@ -75,9 +75,9 @@ static void Error::triggerException(char* message __attribute__((unused)), char*
 	Timer::disable();
 
 	// Turn on the display
-	DisplayUnit::allowInterrupts(DisplayUnit::getInstance(), false);
-	DisplayUnit::startDisplaying(DisplayUnit::getInstance());
-	DisplayUnit::startDrawing(DisplayUnit::getInstance());
+	DisplayUnit::allowInterrupts(false);
+	DisplayUnit::startDisplaying();
+	DisplayUnit::startDrawing();
 
 	// Disable interrupts
 	Hardware::disableInterrupts();
