@@ -42,17 +42,8 @@ static Object Object::getCast(void* object, ClassPointer targetClassGetClassMeth
 
 	if(-1 == lp && -1 == sp)
 	{
-		asm
-		(
-			"mov	sp, %0"
-			: "=r" (sp)
-		);
-
-		asm
-		(
-			"mov	lp, %0"
-			: "=r" (lp)
-		);
+		__CPU_GET_STACK_POINTER(sp);
+		__CPU_GET_STACK_POINTER(lp);
 	}
 
 #ifdef __DEBUG
@@ -60,14 +51,15 @@ static Object Object::getCast(void* object, ClassPointer targetClassGetClassMeth
 
 	if(20 < ++counter)
 	{
+		_vuengineLinkPointer = lp;
+		_vuengineStackPointer = sp;
+
 		Printer::setDebugMode();
 		Printer::text("Object's class: ", 1, 15, NULL);
 		Printer::text(__GET_CLASS_NAME(object), 18, 15, NULL);
 		Printer::text("Object's address: ", 1, 16, NULL);
 		Printer::hex((uint32)object, 18, 16, 8, NULL);
 
-		_vuengineLinkPointer = lp;
-		_vuengineStackPointer = sp;
 		NM_CAST_ASSERT(false, "Object::getCast: infinite callback");
 	}
 #endif
@@ -88,34 +80,37 @@ static Object Object::getCast(void* object, ClassPointer targetClassGetClassMeth
 #ifndef __RELEASE
 	if(isDeleted(object))
 	{
+		_vuengineLinkPointer = lp;
+
+		_vuengineStackPointer = sp;
 		Printer::setDebugMode();
 		Printer::text("Object's address: ", 1, 15, NULL);
 		Printer::hex((uint32)object, 18, 15, 8, NULL);
 	
-		_vuengineLinkPointer = lp;
-		_vuengineStackPointer = sp;
 		NM_CAST_ASSERT(false, "Object::getCast: deleted object");
 	}
 
 	if(NULL == __VIRTUAL_CALL_ADDRESS(Object, getClassName, object))
 	{
+		_vuengineLinkPointer = lp;
+		_vuengineStackPointer = sp;
+
 		Printer::setDebugMode();
 		Printer::text("Object's address: ", 1, 15, NULL);
 		Printer::hex((uint32)object, 18, 15, 8, NULL);
 	
-		_vuengineLinkPointer = lp;
-		_vuengineStackPointer = sp;
 		NM_CAST_ASSERT(false, "Object::getCast: null getClassName");
 	}
 
 	if(NULL == __VIRTUAL_CALL_ADDRESS(Object, getBaseClass, object))
 	{
+		_vuengineLinkPointer = lp;
+		_vuengineStackPointer = sp;
+
 		Printer::setDebugMode();
 		Printer::text("Object's address: ", 1, 15, NULL);
 		Printer::hex((uint32)object, 18, 15, 8, NULL);
 	
-		_vuengineLinkPointer = lp;
-		_vuengineStackPointer = sp;
 		NM_CAST_ASSERT(false, "Object::getCast: null getBaseClass");
 	}
 #endif

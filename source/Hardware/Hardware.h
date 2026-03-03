@@ -15,29 +15,7 @@
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <Object.h>
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-// CLASS' MACROS
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-// Hardware register mnemonics
-#define	__CCR				0x00	// Communication Control Register	(0x0200 0000)
-#define	__CCSR				0x04	// COMCNT Control Register			(0x0200 0004)
-#define	__CDTR				0x08	// Transmitted Data Register		(0x0200 0008)
-#define	__CDRR				0x0C	// Received Data Register			(0x0200 000C)
-#define	__SDLR				0x10	// Serial Data Low Register			(0x0200 0010)
-#define	__SDHR				0x14	// Serial Data High Register		(0x0200 0014)
-#define	__TLR				0x18	// Timer Low Register				(0x0200 0018)
-#define	__THR				0x1C	// Timer High Register				(0x0200 001C)
-#define	__TCR				0x20	// Timer Control Register			(0x0200 0020)
-#define	__WCR				0x24	// Wait-state Control Register		(0x0200 0024)
-#define	__SCR				0x28	// Serial Control Register			(0x0200 0028)
-
-// Cache management
-#define CACHE_ENABLE		asm("mov 2,r1 \n  ldsr r1,sr24": /* No Output */: /* No Input */: "r1" /* Reg r1 Used */)
-#define CACHE_DISABLE		asm("ldsr r0,sr24")
-#define CACHE_CLEAR			asm("mov 1,r1 \n  ldsr r1,sr24": /* No Output */: /* No Input */: "r1" /* Reg r1 Used */)
-#define CACHE_RESET			CACHE_DISABLE; CACHE_CLEAR; CACHE_ENABLE
+#include <Platform.h>
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // FORWARD DECLARATIONS
@@ -95,18 +73,6 @@ static class Hardware : Object
 	/// @return True if interrupts are not disabled nor suspended
 	static inline bool areInterruptsSuspended();
 
-	/// Retrieve the Stack Pointer's value.
-	/// @return Stack pointer
-	static inline int32 getStackPointer();
-
-	/// Retrieve the Link Pointer's value.
-	/// @return Link pointer
-	static inline int32 getLinkPointer();
-
-	/// Retrieve the PSW
-	/// @return PSW
-	static inline int32 getPSW();
-
 	/// Print the status of the stack.
 	/// @param x: Screen x coordinate where to print
 	/// @param y: Screen y coordinate where to print
@@ -130,28 +96,14 @@ static inline void Hardware::halt()
 	// Make sure that I don't halt forever
 	Hardware::enableInterrupts();
 
-	asm("halt"::);
+	__CPU_HALT;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 static inline void Hardware::setInterruptLevel(uint8 level)
 {
-	asm
-	(
-		"stsr	sr5, r6			\n\t"	\
-		"movhi	0xFFF1, r0, r7	\n\t"	\
-		"movea	0xFFFF, r7, r7	\n\t"	\
-		"and	r6, r7			\n\t"	\
-		"mov	%0,r6			\n\t"	\
-		"andi	0x000F, r6, r6	\n\t"	\
-		"shl	0x10, r6		\n\t"	\
-		"or		r7, r6			\n\t"	\
-		"ldsr	r6, sr5			\n\t"
-		: // Output
-		: "r" (level) // Input
-		: "r6", "r7" // Clobber
-	);
+	__CPU_SET_INTERRUPT_LEVEL(level);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -163,7 +115,7 @@ static inline void Hardware::enableInterrupts()
 		_enabledInterrupts = true;
 		_suspendInterruptRequest = 0;
 
-		asm("cli");
+		__CPU_ENABLE_INTERRUPTS;
 		Hardware::setInterruptLevel(0);
 	}
 }
@@ -177,7 +129,7 @@ static inline void Hardware::disableInterrupts()
 		_enabledInterrupts = false;
 		_suspendInterruptRequest = 0;
 
-		asm("sei");
+		__CPU_SUSPEND_INTERRUPTS;
 		Hardware::setInterruptLevel(5);
 	}
 }
@@ -191,7 +143,7 @@ static inline void Hardware::resumeInterrupts()
 		if(0 >= --_suspendInterruptRequest)
 		{
 			_suspendInterruptRequest = 0;
-			asm("cli");
+			__CPU_ENABLE_INTERRUPTS;
 			Hardware::setInterruptLevel(0);
 		}
 	}
@@ -204,7 +156,7 @@ static inline void Hardware::suspendInterrupts()
 	if(_enabledInterrupts)
 	{
 		_suspendInterruptRequest++;
-		asm("sei");
+		__CPU_SUSPEND_INTERRUPTS;
 		Hardware::setInterruptLevel(5);
 	}
 }
@@ -213,37 +165,14 @@ static inline void Hardware::suspendInterrupts()
 
 static inline void Hardware::enableMultiplexedInterrupts()
 {
-	uint32 psw;
-
-	asm
-	(
-		"stsr	psw, %0"
-		: "=r" (psw) // Output
-	);
-
-	psw &= 0xFFF0BFFF;
-
-	asm
-	(
-		"ldsr	%0, psw	\n\t"	\
-		"cli	\n\t"
-		: // Output
-		: "r" (psw) // Input
-		: // Clobber
-	);
+	__CPU_MULTIPLEX_INTERRUPTS;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 static inline void Hardware::disableMultiplexedInterrupts()
 {
-	asm
-	(
-		"sei"
-		: // Output
-		: // Input
-		: // Clobber
-	);
+	__CPU_SUSPEND_INTERRUPTS;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -251,51 +180,6 @@ static inline void Hardware::disableMultiplexedInterrupts()
 static inline bool Hardware::areInterruptsSuspended()
 {
 	return !_enabledInterrupts || 0 < _suspendInterruptRequest;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-static inline int32 Hardware::getStackPointer()
-{
-	int32 sp;
-
-	asm
-	(
-		"mov	sp, %0"
-		: "=r" (sp) // Output
-	);
-
-	return sp;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-static inline int32 Hardware::getLinkPointer()
-{
-	int32 lp;
-
-	asm
-	(
-		"mov	lp, %0"
-		: "=r" (lp) // Output
-	);
-
-	return lp;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-static inline int32 Hardware::getPSW()
-{
-	int32 psw;
-
-	asm
-	(
-		"stsr	psw, %0"
-		: "=r" (psw) // Output
-	);
-
-	return psw;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

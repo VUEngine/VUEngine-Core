@@ -46,7 +46,8 @@ static uint8* MemoryPool::allocate(int32 numberOfBytes)
 
 #ifndef __SHIPPING
 #ifndef __RELEASE
-	int32 lp = Hardware::getLinkPointer();
+	int32 lp = 0;
+	__CPU_GET_LINK_POINTER(lp);
 #endif
 #endif
 
