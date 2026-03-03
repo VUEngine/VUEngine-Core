@@ -12,7 +12,7 @@
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <DebugConfig.h>
-#include <HardwareManager.h>
+#include <Hardware.h>
 #include <Printer.h>
 #include <Singleton.h>
 #include <Utilities.h>
@@ -46,7 +46,7 @@ static uint8* MemoryPool::allocate(int32 numberOfBytes)
 
 #ifndef __SHIPPING
 #ifndef __RELEASE
-	int32 lp = HardwareManager::getLinkPointer();
+	int32 lp = Hardware::getLinkPointer();
 #endif
 #endif
 
@@ -63,7 +63,7 @@ static uint8* MemoryPool::allocate(int32 numberOfBytes)
 		pool++;
 	}
 
-	HardwareManager::suspendInterrupts();
+	Hardware::suspendInterrupts();
 
 	while(0 != pool--)
 	{
@@ -178,7 +178,7 @@ static uint8* MemoryPool::allocate(int32 numberOfBytes)
 #endif
 			memoryPool->poolLastFreeBlock[pool] = poolLocation;
 			
-			HardwareManager::resumeInterrupts();
+			Hardware::resumeInterrupts();
 			return poolLocation;
 		}
 
@@ -235,7 +235,7 @@ static void MemoryPool::free(uint8* object)
 	// Get the total objects in the pool
 	uint32 numberOfBlocks = memoryPool->poolSizes[pool][ePoolSize] / memoryPool->poolSizes[pool][eBlockSize];
 
-	HardwareManager::suspendInterrupts();
+	Hardware::suspendInterrupts();
 
 	// Look for the pool in which it is allocated
 	for(uint32 i = 0, displacement = 0; i < numberOfBlocks; i++, displacement += memoryPool->poolSizes[pool][eBlockSize])
@@ -246,7 +246,7 @@ static void MemoryPool::free(uint8* object)
 			// Free the block
 			*(uint32*)((uint32)object) = __MEMORY_FREE_BLOCK_FLAG;
 			
-			HardwareManager::resumeInterrupts();
+			Hardware::resumeInterrupts();
 			return;
 		}
 	}

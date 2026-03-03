@@ -14,11 +14,11 @@
 #include <string.h>
 
 #include <DebugConfig.h>
-#include <HardwareManager.h>
+#include <Hardware.h>
 #include <Printer.h>
 #include <Sprite.h>
-#include <TimerManager.h>
-#include <VIPManager.h>
+#include <Timer.h>
+#include <DisplayUnit.h>
 
 #include "Error.h"
 
@@ -72,15 +72,15 @@ static void Error::triggerException(char* message __attribute__((unused)), char*
 	int32 y = 0 <= __EXCEPTION_LINE && __EXCEPTION_LINE <= 28 ? __EXCEPTION_LINE : 0;
 
 	// Disable timer
-	TimerManager::disable();
+	Timer::disable();
 
 	// Turn on the display
-	VIPManager::allowInterrupts(VIPManager::getInstance(), false);
-	VIPManager::startDisplaying(VIPManager::getInstance());
-	VIPManager::startDrawing(VIPManager::getInstance());
+	DisplayUnit::allowInterrupts(DisplayUnit::getInstance(), false);
+	DisplayUnit::startDisplaying(DisplayUnit::getInstance());
+	DisplayUnit::startDrawing(DisplayUnit::getInstance());
 
 	// Disable interrupts
-	HardwareManager::disableInterrupts();
+	Hardware::disableInterrupts();
 
 	// Make sure the brightness is ok
 	Brightness brightness =
@@ -90,9 +90,9 @@ static void Error::triggerException(char* message __attribute__((unused)), char*
 		32
 	};
 	
-	VIPManager::configureBrightness(brightness);
+	DisplayUnit::configureBrightness(brightness);
 
-	VIPManager::configureBackgroundColor(__COLOR_BLACK);
+	DisplayUnit::configureBackgroundColor(__COLOR_BLACK);
 
 	// Make sure there are fonts to show the exception
 	Printer::setDebugMode();
@@ -156,11 +156,11 @@ static void Error::triggerException(char* message __attribute__((unused)), char*
 	}
 
 #ifdef __SHOW_STACK_OVERFLOW_ALERT
-	HardwareManager::printStackStatus((__SCREEN_WIDTH_IN_CHARS) - 10, 0, true);
+	Hardware::printStackStatus((__SCREEN_WIDTH_IN_CHARS) - 10, 0, true);
 #endif
 
 	// Prevent VIP's interrupts
-	HardwareManager::disableInterrupts();
+	Hardware::disableInterrupts();
 
 	// Error display message
 	WorldAttributes* worldPointer = &_worldAttributesBaseAddress[__EXCEPTIONS_WORLD];
@@ -185,7 +185,7 @@ static void Error::triggerException(char* message __attribute__((unused)), char*
 		{__DIMM_VALUE_2, __DIMM_VALUE_2, __DIMM_VALUE_2, __DIMM_VALUE_2}
 	};
 	
-	VIPManager::configurePalettes(paletteConfig);
+	DisplayUnit::configurePalettes(paletteConfig);
 
 	// Trap the game here
 	while(true);

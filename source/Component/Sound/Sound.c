@@ -12,7 +12,7 @@
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <ComponentManager.h>
-#include <TimerManager.h>
+#include <Timer.h>
 #include <VirtualList.h>
 #include <VUEngine.h>
 
@@ -848,7 +848,7 @@ void Sound::printPlaybackProgress(int32 x, int32 y, int32 width)
 
 fix7_9_ext Sound::computeTimerResolutionFactor()
 {
-	return TimerManager::computeTimerResolutionFactor(((SoundSpec*)this->componentSpec)->targetTimerResolutionUS, __SOUND_TARGET_US_PER_TICK);
+	return Timer::computeTimerResolutionFactor(((SoundSpec*)this->componentSpec)->targetTimerResolutionUS, __SOUND_TARGET_US_PER_TICK);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

@@ -80,7 +80,7 @@ void Tool::dimmGame()
 		((uint8*)&paletteConfig.bgmap)[__PRINTING_PALETTE] = 0x90;
 	}
 
-	VIPManager::configurePalettes(&paletteConfig);
+	DisplayUnit::configurePalettes(&paletteConfig);
 */
 }
 

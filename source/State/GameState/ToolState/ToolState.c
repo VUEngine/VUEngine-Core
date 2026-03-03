@@ -13,7 +13,7 @@
 
 #include <AnimationInspectorState.h>
 #include <DebugState.h>
-#include <KeypadManager.h>
+#include <Keypad.h>
 #include <StageEditor.h>
 #include <StageEditorState.h>
 #include <StateMachine.h>
@@ -129,9 +129,9 @@ void ToolState::start(void* owner __attribute__ ((unused)))
 
 void ToolState::update(void* owner __attribute__ ((unused)))
 {
-	KeypadManager::readUserInput(this->lockFrameRate);
+	Keypad::readUserInput(this->lockFrameRate);
 
-	UserInput userInput = KeypadManager::getUserInput();
+	UserInput userInput = Keypad::getUserInput();
 
 	if(0 != (userInput.dummyKey | userInput.pressedKey | userInput.holdKey | userInput.releasedKey))
 	{

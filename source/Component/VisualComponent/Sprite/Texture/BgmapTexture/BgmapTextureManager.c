@@ -18,7 +18,7 @@
 #include <Singleton.h>
 #include <Sprite.h>
 #include <VirtualList.h>
-#include <VIPManager.h>
+#include <DisplayUnit.h>
 
 #include "BgmapTextureManager.h"
 

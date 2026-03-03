@@ -16,7 +16,7 @@
 
 #include <ComponentManager.h>
 #include <State.h>
-#include <KeypadManager.h>
+#include <Keypad.h>
 #include <Stage.h>
 #include <UIContainer.h>
 

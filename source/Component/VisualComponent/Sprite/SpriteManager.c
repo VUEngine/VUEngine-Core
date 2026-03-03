@@ -28,7 +28,7 @@
 #include <Sprite.h>
 #include <VirtualList.h>
 #include <VirtualNode.h>
-#include <VIPManager.h>
+#include <DisplayUnit.h>
 
 #include "SpriteManager.h"
 
@@ -145,7 +145,7 @@ bool SpriteManager::onEvent(ListenerObject eventFirer, uint16 eventCode)
 {
 	switch(eventCode)
 	{
-		case kEventVIPManagerXPEND:
+		case kEventDisplayUnitXPEND:
 		{
 			SpriteManager::writeDRAM(this);
 		
@@ -993,7 +993,7 @@ void SpriteManager::printSPTInfo(int16 spt, int32 x, int32 y)
 			ObjectSprite::show(objectSprite);
 		}
 
-		TimerManager::wait(40);
+		Timer::wait(40);
 	}
 
 	totalUsedObjects = 0;
@@ -1153,7 +1153,7 @@ int32 SpriteManager::getTotalPixelsDrawn()
 
 void SpriteManager::startRendering()
 {
-	HardwareManager::suspendInterrupts();
+	Hardware::suspendInterrupts();
 
 	this->spt = __TOTAL_OBJECT_SEGMENTS - 1;
 	this->objectIndex = __TOTAL_OBJECTS - 1;
@@ -1178,7 +1178,7 @@ void SpriteManager::stopRendering()
 
 	this->previousObjectIndex = this->objectIndex;
 
-	HardwareManager::resumeInterrupts();
+	Hardware::resumeInterrupts();
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -1234,14 +1234,14 @@ void SpriteManager::writeAttributesToDRAM()
 
 void SpriteManager::startListeningForVIP()
 {
-	VIPManager::addEventListener(VIPManager::getInstance(), ListenerObject::safeCast(this), kEventVIPManagerXPEND);
+	DisplayUnit::addEventListener(DisplayUnit::getInstance(), ListenerObject::safeCast(this), kEventDisplayUnitXPEND);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void SpriteManager::stopListeningForVIP()
 {
-	VIPManager::removeEventListener(VIPManager::getInstance(), ListenerObject::safeCast(this), kEventVIPManagerXPEND);
+	DisplayUnit::removeEventListener(DisplayUnit::getInstance(), ListenerObject::safeCast(this), kEventDisplayUnitXPEND);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

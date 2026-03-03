@@ -16,7 +16,7 @@
 #include <DebugConfig.h>
 #include <Printer.h>
 #include <VirtualList.h>
-#include <VIPManager.h>
+#include <DisplayUnit.h>
 #include <Wireframe.h>
 
 #include "WireframeManager.h"
@@ -61,14 +61,14 @@ bool WireframeManager::onEvent(ListenerObject eventFirer, uint16 eventCode)
 {
 	switch(eventCode)
 	{
-		case kEventVIPManagerXPEND:
+		case kEventDisplayUnitXPEND:
 		{
 			WireframeManager::draw(this);
 
 			return true;
 		}
 
-		case kEventVIPManagerXPENDDuringGAMESTART:
+		case kEventDisplayUnitXPENDDuringGAMESTART:
 		{
 			WireframeManager::draw(this);
 
@@ -172,11 +172,11 @@ void WireframeManager::render()
 			continue;
 		}
 
-		HardwareManager::suspendInterrupts();
+		Hardware::suspendInterrupts();
 	
 		Wireframe::render(wireframe, relativePosition);
 
-		HardwareManager::resumeInterrupts();
+		Hardware::resumeInterrupts();
 
 #ifdef __PROFILE_WIREFRAMES
 		this->renderedWireframes++;
@@ -308,24 +308,24 @@ void WireframeManager::print(int32 x, int32 y)
 
 void WireframeManager::startListeningForVIP()
 {
-	HardwareManager::suspendInterrupts();
+	Hardware::suspendInterrupts();
 
-	VIPManager::addEventListener(VIPManager::getInstance(), ListenerObject::safeCast(this), kEventVIPManagerXPEND);
-	VIPManager::addEventListener(VIPManager::getInstance(), ListenerObject::safeCast(this), kEventVIPManagerXPENDDuringGAMESTART);
+	DisplayUnit::addEventListener(DisplayUnit::getInstance(), ListenerObject::safeCast(this), kEventDisplayUnitXPEND);
+	DisplayUnit::addEventListener(DisplayUnit::getInstance(), ListenerObject::safeCast(this), kEventDisplayUnitXPENDDuringGAMESTART);
 
-	HardwareManager::resumeInterrupts();
+	Hardware::resumeInterrupts();
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void WireframeManager::stopListeningForVIP()
 {
-	HardwareManager::suspendInterrupts();
+	Hardware::suspendInterrupts();
 
-	VIPManager::removeEventListener(VIPManager::getInstance(), ListenerObject::safeCast(this), kEventVIPManagerXPEND);
-	VIPManager::removeEventListener(VIPManager::getInstance(), ListenerObject::safeCast(this), kEventVIPManagerXPENDDuringGAMESTART);
+	DisplayUnit::removeEventListener(DisplayUnit::getInstance(), ListenerObject::safeCast(this), kEventDisplayUnitXPEND);
+	DisplayUnit::removeEventListener(DisplayUnit::getInstance(), ListenerObject::safeCast(this), kEventDisplayUnitXPENDDuringGAMESTART);
 
-	HardwareManager::resumeInterrupts();
+	Hardware::resumeInterrupts();
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

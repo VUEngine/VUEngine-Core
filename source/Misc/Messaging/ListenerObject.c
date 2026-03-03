@@ -79,7 +79,7 @@ void ListenerObject::addEventListener(ListenerObject listener, uint16 eventCode)
 
 	NM_ASSERT(NULL != __GET_CAST(ListenerObject, listener), "ListenerObject::addEventListener: wrong listener object type");
 
-	HardwareManager::suspendInterrupts();
+	Hardware::suspendInterrupts();
 
 	VirtualNode node = NULL;
 
@@ -117,7 +117,7 @@ void ListenerObject::addEventListener(ListenerObject listener, uint16 eventCode)
 		VirtualList::pushBack(this->events, event);		
 	}
 
-	HardwareManager::resumeInterrupts();
+	Hardware::resumeInterrupts();
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -126,7 +126,7 @@ void ListenerObject::removeEventListener(ListenerObject listener, uint16 eventCo
 {
 	if(NULL != this->events)
 	{
-		HardwareManager::suspendInterrupts();
+		Hardware::suspendInterrupts();
 
 		for(VirtualNode node = this->events->head, nextNode = NULL; NULL != node; node = nextNode)
 		{
@@ -167,7 +167,7 @@ void ListenerObject::removeEventListener(ListenerObject listener, uint16 eventCo
             this->events = NULL;
         }
 		
-		HardwareManager::resumeInterrupts();
+		Hardware::resumeInterrupts();
 	}
 }
 
@@ -198,7 +198,7 @@ void ListenerObject::fireEvent(uint16 eventCode)
 {
 	if(NULL != this->events)
 	{
-		HardwareManager::suspendInterrupts();
+		Hardware::suspendInterrupts();
 
 		this->eventFirings++;
 
@@ -264,7 +264,7 @@ void ListenerObject::fireEvent(uint16 eventCode)
             this->events = NULL;
         }
 		
-		HardwareManager::resumeInterrupts();
+		Hardware::resumeInterrupts();
 	}
 }
 

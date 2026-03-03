@@ -19,7 +19,7 @@
 #include <BgmapTextureManager.h>
 #include <Camera.h>
 #include <GameState.h>
-#include <KeypadManager.h>
+#include <Keypad.h>
 #include <Optics.h>
 #include <OptionsSelector.h>
 #include <Printer.h>

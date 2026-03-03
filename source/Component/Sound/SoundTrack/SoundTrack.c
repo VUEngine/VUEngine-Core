@@ -11,7 +11,7 @@
 // INCLUDES
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-#include <SoundUnitManager.h>
+#include <SoundUnit.h>
 
 #include "SoundTrack.h"
 
@@ -35,14 +35,14 @@ void SoundTrack::start(bool wasPaused)
 
 void SoundTrack::stop()
 {
-	SoundUnitManager::stopSoundSourcesUsedBy(this->id);
+	SoundUnit::stopSoundSourcesUsedBy(this->id);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void SoundTrack::pause()
 {
-	SoundUnitManager::stopSoundSourcesUsedBy(this->id);
+	SoundUnit::stopSoundSourcesUsedBy(this->id);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -225,7 +225,7 @@ bool SoundTrack::update
 			this->soundTrackSpec->skip
 		};
 
-		SoundUnitManager::applySoundSourceConfiguration(&vsuChannelConfigurationRequest);		
+		SoundUnit::applySoundSourceConfiguration(&vsuChannelConfigurationRequest);		
 	}
 
 	return this->finished;

@@ -11,7 +11,7 @@
 // INCLUDES
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-#include <FrameBufferManager.h>
+#include <FrameBuffers.h>
 #include <WireframeManager.h>
 
 #include "Line.h"
@@ -63,7 +63,7 @@ void Line::render(Vector3D relativePosition)
 
 bool Line::draw()
 {
-	bool drawn = FrameBufferManager::drawLine
+	bool drawn = FrameBuffers::drawLine
 	(
 		this->a,
 		this->b,

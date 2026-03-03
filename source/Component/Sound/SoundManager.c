@@ -12,9 +12,9 @@
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <Sound.h>
-#include <TimerManager.h>
+#include <Timer.h>
 #include <VirtualList.h>
-#include <SoundUnitManager.h>
+#include <SoundUnit.h>
 #include <WaveForms.h>
 
 #include "SoundManager.h"
@@ -46,7 +46,7 @@ void SoundManager::constructor()
 
 void SoundManager::destructor()
 {	
-	TimerManager::removeEventListener(TimerManager::getInstance(), ListenerObject::safeCast(this), kEventTimerManagerInterrupt);
+	Timer::removeEventListener(Timer::getInstance(), ListenerObject::safeCast(this), kEventTimerInterrupt);
 
 	// Always explicitly call the base's destructor 
 	Base::destructor();
@@ -58,7 +58,7 @@ bool SoundManager::onEvent(ListenerObject eventFirer, uint16 eventCode)
 {
 	switch(eventCode)
 	{
-		case kEventTimerManagerInterrupt:
+		case kEventTimerInterrupt:
 		{
 			if(SoundManager::playSounds(this))
 			{
@@ -92,7 +92,7 @@ void SoundManager::disable()
 {
 	Base::disable(this);
 
-	SoundUnitManager::flushQueuedSounds(SoundUnitManager::getInstance());
+	SoundUnit::flushQueuedSounds(SoundUnit::getInstance());
 
 	SoundManager::destroyAllComponents(this);
 }
@@ -106,7 +106,7 @@ Sound SoundManager::create(Entity owner, const SoundSpec* soundSpec)
 		return NULL;
 	}
 
-	TimerManager::addEventListener(TimerManager::getInstance(), ListenerObject::safeCast(this), kEventTimerManagerInterrupt);
+	Timer::addEventListener(Timer::getInstance(), ListenerObject::safeCast(this), kEventTimerInterrupt);
 
 	return ((Sound (*)(Entity, const SoundSpec*)) ((ComponentSpec*)soundSpec)->allocator)(owner, soundSpec);
 }
@@ -115,13 +115,13 @@ Sound SoundManager::create(Entity owner, const SoundSpec* soundSpec)
 
 void SoundManager::purgeComponents()
 {
-	SoundUnitManager::flushQueuedSounds(SoundUnitManager::getInstance());
+	SoundUnit::flushQueuedSounds(SoundUnit::getInstance());
 
 	Base::purgeComponents(this);	
 
 	if(NULL == this->components->head)
 	{
-		TimerManager::removeEventListener(TimerManager::getInstance(), ListenerObject::safeCast(this), kEventTimerManagerInterrupt);
+		Timer::removeEventListener(Timer::getInstance(), ListenerObject::safeCast(this), kEventTimerInterrupt);
 	}
 }
 
@@ -150,7 +150,7 @@ void SoundManager::update()
 
 	if(NULL == this->components->head)
 	{
-		TimerManager::removeEventListener(TimerManager::getInstance(), ListenerObject::safeCast(this), kEventTimerManagerInterrupt);
+		Timer::removeEventListener(Timer::getInstance(), ListenerObject::safeCast(this), kEventTimerInterrupt);
 	}
 }
 
@@ -158,7 +158,7 @@ void SoundManager::update()
 
 bool SoundManager::playSounds()
 {
-	SoundUnitManager::update(SoundUnitManager::getInstance());
+	SoundUnit::update(SoundUnit::getInstance());
 
 	for(VirtualNode node = this->components->head; NULL != node; node = node->next)
 	{
@@ -334,7 +334,7 @@ void SoundManager::stopAllSounds(bool release, SoundSpec** excludedSounds)
 
 	if(NULL == excludedSounds)
 	{
-		SoundUnitManager::stopAllSounds(SoundUnitManager::getInstance());
+		SoundUnit::stopAllSounds(SoundUnit::getInstance());
 	}
 }
 

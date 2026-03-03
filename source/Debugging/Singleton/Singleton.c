@@ -19,19 +19,19 @@
 #include <Body.h>
 #include <BodyManager.h>
 #include <Camera.h>
-#include <CommunicationManager.h>
+#include <Communications.h>
 #include <CharSetManager.h>
 #include <Clock.h>
 #include <ClockManager.h>
 #include <ColliderManager.h>
 #include <DebugConfig.h>
 #include <DebugState.h>
-#include <FrameBufferManager.h>
+#include <FrameBuffers.h>
 #include <Error.h>
 #include <FrameRate.h>
 #include <GameState.h>
-#include <HardwareManager.h>
-#include <KeypadManager.h>
+#include <Hardware.h>
+#include <Keypad.h>
 #include <MBgmapSprite.h>
 #include <MemoryPool.h>
 #include <MessageDispatcher.h>
@@ -42,11 +42,11 @@
 #include <ParamTableManager.h>
 #include <Printer.h>
 #include <Profiler.h>
-#include <RumbleManager.h>
+#include <Rumble.h>
 #include <SoundManager.h>
 #include <SoundTrack.h>
 #include <SpriteManager.h>
-#include <SRAMManager.h>
+#include <SRAM.h>
 #include <Stage.h>
 #include <StageEditor.h>
 #include <StageEditorState.h>
@@ -57,12 +57,12 @@
 #include <SoundTest.h>
 #include <Telegram.h>
 #include <ToolState.h>
-#include <TimerManager.h>
+#include <Timer.h>
 #include <UIContainer.h>
 #include <Utilities.h>
 #include <VirtualList.h>
-#include <VIPManager.h>
-#include <SoundUnitManager.h>
+#include <DisplayUnit.h>
+#include <SoundUnit.h>
 #include <VUEngine.h>
 #include <WireframeManager.h>
 
@@ -116,24 +116,24 @@ const ClassPointer ClockManagerAuthorizedClasses[] =
 	NULL
 };
 
-const ClassPointer CommunicationManagerAuthorizedClasses[] =
+const ClassPointer CommunicationsAuthorizedClasses[] =
 {
-	typeofclass(RumbleManager),
+	typeofclass(Rumble),
 	typeofclass(VUEngine),
 	NULL
 };
 
-const ClassPointer FrameBufferManagerAuthorizedClasses[] =
+const ClassPointer FrameBuffersAuthorizedClasses[] =
 {
-	typeofclass(HardwareManager),
+	typeofclass(Hardware),
 	typeofclass(VUEngine),
 	NULL
 };
 
-const ClassPointer KeypadManagerAuthorizedClasses[] =
+const ClassPointer KeypadAuthorizedClasses[] =
 {
 	typeofclass(GameState),
-	typeofclass(HardwareManager),
+	typeofclass(Hardware),
 	typeofclass(ToolState),
 	typeofclass(VUEngine),
 	NULL
@@ -167,9 +167,9 @@ const ClassPointer PrintingAuthorizedClasses[] =
 	NULL
 };
 
-const ClassPointer RumbleManagerAuthorizedClasses[] =
+const ClassPointer RumbleAuthorizedClasses[] =
 {
-	typeofclass(HardwareManager),
+	typeofclass(Hardware),
 	typeofclass(VUEngine),
 	NULL
 };
@@ -180,14 +180,14 @@ const ClassPointer SoundManagerAuthorizedClasses[] =
 #ifdef __TOOLS
 	typeofclass(SoundTest),
 #endif
-	typeofclass(TimerManager),
+	typeofclass(Timer),
 	typeofclass(VUEngine),
 	NULL
 };
 
-const ClassPointer SRAMManagerAuthorizedClasses[] =
+const ClassPointer SRAMAuthorizedClasses[] =
 {
-	typeofclass(HardwareManager),
+	typeofclass(Hardware),
 	typeofclass(VUEngine),
 	NULL
 };
@@ -200,29 +200,29 @@ const ClassPointer StopwatchManagerAuthorizedClasses[] =
 	NULL
 };
 
-const ClassPointer TimerManagerAuthorizedClasses[] =
+const ClassPointer TimerAuthorizedClasses[] =
 {
 #ifdef __TOOLS
 	typeofclass(SoundTest),
 #endif
-	typeofclass(HardwareManager),
+	typeofclass(Hardware),
 	typeofclass(VUEngine),
 	NULL
 };
 
-const ClassPointer VIPManagerAuthorizedClasses[] =
+const ClassPointer DisplayUnitAuthorizedClasses[] =
 {
-	typeofclass(CommunicationManager),
+	typeofclass(Communications),
 	typeofclass(GameState),
-	typeofclass(HardwareManager),
+	typeofclass(Hardware),
 	typeofclass(SpriteManager),
 	typeofclass(VUEngine),
 	NULL
 };
 
-const ClassPointer SoundUnitManagerAuthorizedClasses[] =
+const ClassPointer SoundUnitAuthorizedClasses[] =
 {
-	typeofclass(HardwareManager),
+	typeofclass(Hardware),
 	typeofclass(SoundManager),
 	typeofclass(SoundTrack),
 	typeofclass(VUEngine),
@@ -250,19 +250,19 @@ static void Singleton::secure()
 	Camera::secure(&CameraAuthorizedClasses);
 	CharSetManager::secure(&CharSetManagerAuthorizedClasses);
 	ClockManager::secure(&ClockManagerAuthorizedClasses);
-	CommunicationManager::secure(&CommunicationManagerAuthorizedClasses);
-	FrameBufferManager::secure(&FrameBufferManagerAuthorizedClasses);
-//	KeypadManager::secure(&KeypadManagerAuthorizedClasses);
+	Communications::secure(&CommunicationsAuthorizedClasses);
+	FrameBuffers::secure(&FrameBuffersAuthorizedClasses);
+//	Keypad::secure(&KeypadAuthorizedClasses);
 	MessageDispatcher::secure(&MessageDispatcherAuthorizedClasses);
 	ObjectTextureManager::secure(&ObjectTextureManagerAuthorizedClasses);
 	ParamTableManager::secure(&ParamTableManagerAuthorizedClasses);
 	Printer::secure(&PrintingAuthorizedClasses);
-//	RumbleManager::secure(&RumbleManagerAuthorizedClasses);
-//	SRAMManager::secure(&SRAMManagerAuthorizedClasses);
+//	Rumble::secure(&RumbleAuthorizedClasses);
+//	SRAM::secure(&SRAMAuthorizedClasses);
 	StopwatchManager::secure(&StopwatchManagerAuthorizedClasses);
-	TimerManager::secure(&TimerManagerAuthorizedClasses);
-	VIPManager::secure(&VIPManagerAuthorizedClasses);	
-	SoundUnitManager::secure(&SoundUnitManagerAuthorizedClasses);
+	Timer::secure(&TimerAuthorizedClasses);
+	DisplayUnit::secure(&DisplayUnitAuthorizedClasses);	
+	SoundUnit::secure(&SoundUnitAuthorizedClasses);
 	VUEngine::secure(&VUEngineAuthorizedClasses);
 #endif
 }

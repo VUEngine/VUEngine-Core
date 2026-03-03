@@ -15,7 +15,7 @@
 #include <CharSet.h>
 #include <DebugConfig.h>
 #include <Mem.h>
-#include <VIPManager.h>
+#include <DisplayUnit.h>
 
 #include "BgmapTexture.h"
 

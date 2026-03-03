@@ -12,7 +12,7 @@
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <DebugConfig.h>
-#include <FrameBufferManager.h>
+#include <FrameBuffers.h>
 #include <PixelVector.h>
 #include <VirtualList.h>
 #include <VirtualNode.h>
@@ -336,7 +336,7 @@ bool Mesh::draw()
 
 		// Draw the line in both buffers
 		drawn |= 
-			FrameBufferManager::drawLine
+			FrameBuffers::drawLine
 			(
 				meshSegment->fromVertex->pixelVector, meshSegment->toVertex->pixelVector, this->color, 
 				this->bufferIndex, this->interlaced
@@ -441,7 +441,7 @@ bool Mesh::drawInterlaced()
 
 		// Draw the line in both buffers
 		drawn |= 
-			FrameBufferManager::drawLine
+			FrameBuffers::drawLine
 			(
 				meshSegment->fromVertex->pixelVector, meshSegment->toVertex->pixelVector, this->color, this->bufferIndex, true
 			) 

@@ -7,8 +7,8 @@
  * that was distributed with this source code.
  */
 
-#ifndef FRAME_BUFFER_MANAGER_H_
-#define FRAME_BUFFER_MANAGER_H_
+#ifndef FRAME_BUFFER_H_
+#define FRAME_BUFFER_H_
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // INCLUDES
@@ -20,12 +20,12 @@
 // CLASS' DECLARATION
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-/// Class FrameBufferManager
+/// Class FrameBuffers
 ///
 /// Inherits from Object
 ///
 /// Implements various draw rutines that manipulate the frame buffers.
-singleton class FrameBufferManager : ListenerObject
+singleton class FrameBuffers : ListenerObject
 {
 	/// @publicsection
 

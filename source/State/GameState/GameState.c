@@ -18,9 +18,9 @@
 #include <CharSetManager.h>
 #include <Clock.h>
 #include <ColliderManager.h>
-#include <FrameBufferManager.h>
+#include <FrameBuffers.h>
 #include <FrameRate.h>
-#include <KeypadManager.h>
+#include <Keypad.h>
 #include <MessageDispatcher.h>
 #include <MutatorManager.h>
 #include <ParamTableManager.h>
@@ -32,7 +32,7 @@
 #include <Telegram.h>
 #include <ToolState.h>
 #include <VUEngine.h>
-#include <SoundUnitManager.h>
+#include <SoundUnit.h>
 #include <WireframeManager.h>
 
 #include "GameState.h"
@@ -123,7 +123,7 @@ bool GameState::handleMessage(Telegram telegram)
 
 		case kMessageEnableKeypad:
 		{
-			KeypadManager::enable();
+			Keypad::enable();
 			break;
 		}
 	}
@@ -346,7 +346,7 @@ void GameState::unpause(void* owner)
 #ifdef __TOOLS
 	else
 	{
-		KeypadManager::disable();
+		Keypad::disable();
 		GameState::sendMessageToSelf(this, kMessageEnableKeypad, 500, 0);
 	}
 #endif
@@ -672,7 +672,7 @@ void GameState::processUserInput(const UserInput* userInput __attribute__ ((unus
 
 void GameState::reset()
 {
-	HardwareManager::reset();
+	Hardware::reset();
 
 	FrameRate::reset(FrameRate::getInstance());
 	StopwatchManager::reset(StopwatchManager::getInstance());
@@ -846,14 +846,14 @@ void GameState::applyTransformationsUI()
 
 void GameState::readUserInput()
 {
-	if(!KeypadManager::isEnabled())
+	if(!Keypad::isEnabled())
 	{
 		return;
 	}
 
-	KeypadManager::readUserInput(this->lockFrameRate);
+	Keypad::readUserInput(this->lockFrameRate);
 
-	UserInput userInput = KeypadManager::getUserInput();
+	UserInput userInput = Keypad::getUserInput();
 
 	if(0 != (userInput.dummyKey | userInput.pressedKey | userInput.holdKey | userInput.releasedKey))
 	{
@@ -1064,7 +1064,7 @@ void GameState::configureTimer()
 
 	const StageSpec* stageSpec = Stage::getSpec(this->stage);
 
-	TimerManager::configure
+	Timer::configure
 	(
 		stageSpec->timer.resolution, stageSpec->timer.targetTimePerInterrupt, 
 		stageSpec->timer.targetTimePerInterrupttUnits
@@ -1091,9 +1091,9 @@ void GameState::configureGraphics()
 		this->animationsClock
 	);
 
-	VIPManager::configure
+	DisplayUnit::configure
 	(
-		VIPManager::getInstance(), 
+		DisplayUnit::getInstance(), 
 		stageSpec->rendering.colorConfig.backgroundColor,
 		stageSpec->rendering.colorConfig.brightness,
 		stageSpec->rendering.colorConfig.brightnessRepeat,
@@ -1166,7 +1166,7 @@ void GameState::debugging()
 	Printer::setWorldCoordinates(0, 0, -256, 0);
 
 #ifdef __DEBUGGING_STACK_STATUS
-	HardwareManager::printStackStatus(1, 1, false);
+	Hardware::printStackStatus(1, 1, false);
 #endif	
 
 #ifdef __DEBUGGING_MEMORY_POOL
@@ -1187,15 +1187,15 @@ void GameState::debugging()
 #endif
 
 #ifdef __DEBUGGING_VIP
-	VIPManager::print(1, 1);
+	DisplayUnit::print(1, 1);
 #endif
 
 #ifdef __DEBUGGING_VSU
-	SoundUnitManager::print(1, 1);
+	SoundUnit::print(1, 1);
 #endif
 
 #ifdef __DEBUGGING_FRAME_BUFFERS
-	FrameBufferManager::print(1, 1);
+	FrameBuffers::print(1, 1);
 #endif
 
 #ifdef __DEBUGGING_SPRITES

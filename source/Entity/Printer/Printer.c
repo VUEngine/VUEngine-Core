@@ -24,7 +24,7 @@
 #include <Singleton.h>
 #include <Utilities.h>
 #include <VirtualList.h>
-#include <VIPManager.h>
+#include <DisplayUnit.h>
 
 #include "Printer.h"
 
@@ -345,7 +345,7 @@ static void Printer::loadFonts(FontSpec** fontSpecs)
 	Printer::releaseFonts();
 
 	// Prevent VIP's interrupt from calling render during printer process
-	HardwareManager::suspendInterrupts();
+	Hardware::suspendInterrupts();
 
 	/// Must force CHAR defragmentation
 	CharSetManager::writeCharSets(CharSetManager::getInstance());
@@ -378,7 +378,7 @@ static void Printer::loadFonts(FontSpec** fontSpecs)
 		Printer::addSprite(printer);
 	}
 
-	HardwareManager::resumeInterrupts();
+	Hardware::resumeInterrupts();
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

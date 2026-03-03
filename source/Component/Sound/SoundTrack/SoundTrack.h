@@ -15,7 +15,7 @@
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <Object.h>
-#include <SoundUnitManager.h>
+#include <SoundUnit.h>
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' MACROS
@@ -254,7 +254,7 @@ class SoundTrack : Object
 	/// Pointer to the spec that defines how to initialize the soundtrack
 	const SoundTrackSpec* soundTrackSpec;
 
-	/// Identifier provided to the SoundUnitManager
+	/// Identifier provided to the SoundUnit
 	uint32 id;
 
 	/// Channel's effective length

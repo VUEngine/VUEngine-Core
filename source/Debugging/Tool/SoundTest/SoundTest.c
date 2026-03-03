@@ -14,14 +14,14 @@
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <BgmapTextureManager.h>
-#include <HardwareManager.h>
-#include <KeypadManager.h>
+#include <Hardware.h>
+#include <Keypad.h>
 #include <Printer.h>
 #include <Singleton.h>
 #include <SpriteManager.h>
-#include <TimerManager.h>
+#include <Timer.h>
 #include <Utilities.h>
-#include <VIPManager.h>
+#include <DisplayUnit.h>
 #include <VUEngine.h>
 
 #include "SoundTest.h"
@@ -69,9 +69,9 @@ void SoundTest::show()
 	Printer::resetCoordinates();
 	Printer::show(Printer::getInstance());
 
-	TimerManager::setResolution(__TIMER_100US);
-	TimerManager::setTargetTimePerInterruptUnits(kMS);
-	TimerManager::setTargetTimePerInterrupt(10);
+	Timer::setResolution(__TIMER_100US);
+	Timer::setTargetTimePerInterruptUnits(kMS);
+	Timer::setTargetTimePerInterrupt(10);
 
 	SoundTest::applyTimerSettings(this);
 	SoundTest::loadSound(this);
@@ -162,7 +162,7 @@ void SoundTest::processUserInput(uint16 pressedKey)
 	// Timer controls
 	else if(K_RU & pressedKey)
 	{
-		uint16 timerResolution = TimerManager::getResolution();
+		uint16 timerResolution = Timer::getResolution();
 
 		switch(timerResolution)
 		{
@@ -185,13 +185,13 @@ void SoundTest::processUserInput(uint16 pressedKey)
 			}
 		}
 
-		TimerManager::setResolution(timerResolution);
+		Timer::setResolution(timerResolution);
 		timerChanged = true;
 	}
 	else if(K_RD & pressedKey)
 	{
-		uint16 targetTimePerInterrupttUnits = TimerManager::getTargetTimePerInterruptUnits();
-		uint16 targetTimePerInterrupt = TimerManager::getTargetTimePerInterrupt();
+		uint16 targetTimePerInterrupttUnits = Timer::getTargetTimePerInterruptUnits();
+		uint16 targetTimePerInterrupt = Timer::getTargetTimePerInterrupt();
 
 		switch(targetTimePerInterrupttUnits)
 		{
@@ -216,26 +216,26 @@ void SoundTest::processUserInput(uint16 pressedKey)
 			}
 		}
 
-		TimerManager::setTargetTimePerInterruptUnits(targetTimePerInterrupttUnits);
-		TimerManager::setTargetTimePerInterrupt(targetTimePerInterrupt);
+		Timer::setTargetTimePerInterruptUnits(targetTimePerInterrupttUnits);
+		Timer::setTargetTimePerInterrupt(targetTimePerInterrupt);
 		timerChanged = true;
 	}
 	else if(K_RL & pressedKey)
 	{
-		uint16 targetTimePerInterrupt = TimerManager::getTargetTimePerInterrupt();
+		uint16 targetTimePerInterrupt = Timer::getTargetTimePerInterrupt();
 
-		targetTimePerInterrupt -= TimerManager::getMinimumTimePerInterruptStep();
+		targetTimePerInterrupt -= Timer::getMinimumTimePerInterruptStep();
 
-		TimerManager::setTargetTimePerInterrupt(targetTimePerInterrupt);
+		Timer::setTargetTimePerInterrupt(targetTimePerInterrupt);
 		timerChanged = true;
 	}
 	else if(K_RR & pressedKey)
 	{
-		uint16 targetTimePerInterrupt = TimerManager::getTargetTimePerInterrupt();
+		uint16 targetTimePerInterrupt = Timer::getTargetTimePerInterrupt();
 
-		targetTimePerInterrupt += TimerManager::getMinimumTimePerInterruptStep();
+		targetTimePerInterrupt += Timer::getMinimumTimePerInterruptStep();
 
-		TimerManager::setTargetTimePerInterrupt(targetTimePerInterrupt);
+		Timer::setTargetTimePerInterrupt(targetTimePerInterrupt);
 		timerChanged = true;
 	}
 
@@ -392,7 +392,7 @@ void SoundTest::loadSound()
 		return;
 	}
 
-	KeypadManager::disable();
+	Keypad::disable();
 
 #ifdef __SOUND_TEST
 	Printer::clear();
@@ -401,10 +401,10 @@ void SoundTest::loadSound()
 
 	SoundTest::releaseSound(this);
 
-	TimerManager::reset();
-	TimerManager::setResolution(__TIMER_20US);
-	TimerManager::setTargetTimePerInterruptUnits(kUS);
-	TimerManager::setTargetTimePerInterrupt(_userSounds[this->soundIndex]->targetTimerResolutionUS);
+	Timer::reset();
+	Timer::setResolution(__TIMER_20US);
+	Timer::setTargetTimePerInterruptUnits(kUS);
+	Timer::setTargetTimePerInterrupt(_userSounds[this->soundIndex]->targetTimerResolutionUS);
 
 	this->sound = Sound::safeCast(ComponentManager::createComponent(NULL, (ComponentSpec*)_userSounds[this->soundIndex]));
 
@@ -420,7 +420,7 @@ void SoundTest::loadSound()
 #endif
 	}
 
-	KeypadManager::enable();
+	Keypad::enable();
 
 	SoundTest::printGUI(this, false);
 }
@@ -429,7 +429,7 @@ void SoundTest::loadSound()
 
 void SoundTest::applyTimerSettings()
 {
-	TimerManager::applySettings(true);
+	Timer::applySettings(true);
 
 	SoundTest::printTimer(this);
 }
@@ -443,7 +443,7 @@ void SoundTest::printTimer()
 		return;
 	}
 
-	TimerManager::print(1, 11);
+	Timer::print(1, 11);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

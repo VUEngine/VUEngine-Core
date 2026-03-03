@@ -128,7 +128,7 @@
 	{																																	\
 		void* object = (void*)objectToDelete;																							\
 																																		\
-		HardwareManager_suspendInterrupts();																							\
+		Hardware_suspendInterrupts();																							\
 																																		\
 		if(__OBJECT_MEMORY_FOOT_PRINT == *(uint16*)((uint32)object - __DYNAMIC_STRUCT_PAD))												\
 		{																																\
@@ -147,7 +147,7 @@
 			NM_ASSERT(false, "Oop: deleting something not dynamically allocated");														\
 		}																																\
 																																		\
-		HardwareManager_resumeInterrupts();																								\
+		Hardware_resumeInterrupts();																								\
 																																		\
 	}
 #else
@@ -155,7 +155,7 @@
 	{																																	\
 		void* object = (void*)objectToDelete;																							\
 																																		\
-		HardwareManager_suspendInterrupts();																							\
+		Hardware_suspendInterrupts();																							\
 																																		\
 		if(__OBJECT_MEMORY_FOOT_PRINT == *(uint16*)((uint32)object - __DYNAMIC_STRUCT_PAD))												\
 		{																																\
@@ -170,7 +170,7 @@
 			NM_ASSERT(false, "Oop: deleting something not dynamically allocated");														\
 		}																																\
 																																		\
-		HardwareManager_resumeInterrupts();																								\
+		Hardware_resumeInterrupts();																								\
 																																		\
 	}
 #endif
@@ -554,12 +554,12 @@ typedef void* (*(*ClassPointer)(void*))(void*);
 	void ClassName ## _restoreMethods()																									\
 	{																																	\
 		/* must prevent any interrupt from calling methods on unstable vtables */														\
-		HardwareManager_suspendInterrupts();																							\
+		Hardware_suspendInterrupts();																							\
 																																		\
 		ClassName ## _setVTable(true);																									\
 																																		\
 		/* resume interrupts */																											\
-		HardwareManager_resumeInterrupts();																								\
+		Hardware_resumeInterrupts();																								\
 	}																																	\
 																																		\
 	/* now add the function which will handle the vtable */																				\
@@ -610,12 +610,12 @@ typedef void* (*(*ClassPointer)(void*))(void*);
 	void ClassName ## _restoreMethods()																									\
 	{																																	\
 		/* must prevent any interrupt from calling methods on unstable vtables */														\
-		HardwareManager_suspendInterrupts();																							\
+		Hardware_suspendInterrupts();																							\
 																																		\
 		ClassName ## _setVTable(true);																									\
 																																		\
 		/* resume interrupts */																											\
-		HardwareManager_resumeInterrupts();																								\
+		Hardware_resumeInterrupts();																								\
 	}																																	\
 																																		\
 	/* now add the function which will handle the vtable */																				\

@@ -20,13 +20,13 @@
 #include <Camera.h>
 #include <CharSetManager.h>
 #include <DebugConfig.h>
-#include <HardwareManager.h>
+#include <Hardware.h>
 #include <Printer.h>
 #include <SoundManager.h>
 #include <UIContainer.h>
 #include <VirtualList.h>
 #include <VirtualNode.h>
-#include <VIPManager.h>
+#include <DisplayUnit.h>
 #include <VUEngine.h>
 
 #include "Stage.h"
@@ -215,7 +215,7 @@ const StageSpec* Stage::getSpec()
 
 void Stage::configurePalettes()
 {
-	VIPManager::configurePalettes(this->stageSpec->rendering.paletteConfig);
+	DisplayUnit::configurePalettes(this->stageSpec->rendering.paletteConfig);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

@@ -11,7 +11,7 @@
 // INCLUDES
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-#include <FrameBufferManager.h>
+#include <FrameBuffers.h>
 #include <WireframeManager.h>
 
 #include "Asterisk.h"
@@ -62,11 +62,11 @@ bool Asterisk::draw()
 
 	if(this->bufferIndex)
 	{
-		drawn = FrameBufferManager::drawX(this->position, this->scaledLength, this->color, this->bufferIndex, this->interlaced);
+		drawn = FrameBuffers::drawX(this->position, this->scaledLength, this->color, this->bufferIndex, this->interlaced);
 	}
 	else		
 	{
-		drawn = FrameBufferManager::drawCross(this->position, this->scaledLength, this->color, this->bufferIndex, this->interlaced);
+		drawn = FrameBuffers::drawCross(this->position, this->scaledLength, this->color, this->bufferIndex, this->interlaced);
 	}
 
 	this->bufferIndex = !this->bufferIndex;

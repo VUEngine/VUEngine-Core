@@ -19,17 +19,17 @@
 #include <DebugConfig.h>
 #include <FrameRate.h>
 #include <GameState.h>
-#include <HardwareManager.h>
-#include <KeypadManager.h>
+#include <Hardware.h>
+#include <Keypad.h>
 #include <Profiler.h>
 #include <Singleton.h>
 #include <Stage.h>
 #include <StateMachine.h>
 #include <Telegram.h>
 #include <ToolState.h>
-#include <TimerManager.h>
+#include <Timer.h>
 #include <VirtualList.h>
-#include <VIPManager.h>
+#include <DisplayUnit.h>
 
 #include "VUEngine.h"
 
@@ -175,7 +175,7 @@ static ToolState VUEngine::getActiveToolState()
 
 static uint16 VUEngine::getGameFrameDuration()
 {
-	return VIPManager::getGameFrameDuration(VIPManager::getInstance());
+	return DisplayUnit::getGameFrameDuration(DisplayUnit::getInstance());
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -192,7 +192,7 @@ static void VUEngine::setGameFrameRate(uint16 gameFrameRate)
 #endif
 
 	FrameRate::setTargetFPS(FrameRate::getInstance(), gameFrameRate);
-	VIPManager::setFrameCycle(__MAXIMUM_FPS / gameFrameRate - 1);
+	DisplayUnit::setFrameCycle(__MAXIMUM_FPS / gameFrameRate - 1);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -226,7 +226,7 @@ static bool VUEngine::isPaused()
 
 static void VUEngine::wait(uint32 milliSeconds)
 {
-	TimerManager::wait(milliSeconds);
+	Timer::wait(milliSeconds);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -250,16 +250,16 @@ bool VUEngine::onEvent(ListenerObject eventFirer, uint16 eventCode)
 {
 	switch(eventCode)
 	{
-		case kEventVIPManagerFRAMESTART:
+		case kEventDisplayUnitFRAMESTART:
 		{
 			VUEngine::frameStarted(this, __MILLISECONDS_PER_SECOND / __MAXIMUM_FPS);
 
 			return true;
 		}
 
-		case kEventVIPManagerGAMESTART:
+		case kEventDisplayUnitGAMESTART:
 		{
-			VUEngine::gameFrameStarted(this, VIPManager::getGameFrameDuration(eventFirer));
+			VUEngine::gameFrameStarted(this, DisplayUnit::getGameFrameDuration(eventFirer));
 
 			return true;
 		}
@@ -378,10 +378,10 @@ void VUEngine::destructor()
 
 void VUEngine::cleaniningStatesStack()
 {
-	HardwareManager::disableInterrupts();
+	Hardware::disableInterrupts();
 
-	VIPManager::stopDisplaying(VIPManager::getInstance());
-	VIPManager::stopDrawing(VIPManager::getInstance());
+	DisplayUnit::stopDisplaying(DisplayUnit::getInstance());
+	DisplayUnit::stopDrawing(DisplayUnit::getInstance());
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -392,30 +392,30 @@ void VUEngine::pushingState()
 	this->activeToolState = __GET_CAST(ToolState, StateMachine::getNextState(this->stateMachine));
 #endif
 
-	HardwareManager::disableInterrupts();
+	Hardware::disableInterrupts();
 
-	VIPManager::stopDisplaying(VIPManager::getInstance());
-	VIPManager::stopDrawing(VIPManager::getInstance());
+	DisplayUnit::stopDisplaying(DisplayUnit::getInstance());
+	DisplayUnit::stopDrawing(DisplayUnit::getInstance());
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void VUEngine::swappingState()
 {
-	HardwareManager::disableInterrupts();
+	Hardware::disableInterrupts();
 	
-	VIPManager::stopDisplaying(VIPManager::getInstance());
-	VIPManager::stopDrawing(VIPManager::getInstance());
+	DisplayUnit::stopDisplaying(DisplayUnit::getInstance());
+	DisplayUnit::stopDrawing(DisplayUnit::getInstance());
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void VUEngine::poppingState()
 {
-	HardwareManager::disableInterrupts();
+	Hardware::disableInterrupts();
 
-	VIPManager::stopDisplaying(VIPManager::getInstance());
-	VIPManager::stopDrawing(VIPManager::getInstance());
+	DisplayUnit::stopDisplaying(DisplayUnit::getInstance());
+	DisplayUnit::stopDrawing(DisplayUnit::getInstance());
 
 #ifdef __TOOLS
 	this->activeToolState = __GET_CAST(ToolState, this->currentGameState);
@@ -433,12 +433,12 @@ void VUEngine::changedState()
 
 	this->currentGameState = GameState::safeCast(StateMachine::getCurrentState(this->stateMachine));
 
-	VIPManager::startDrawing(VIPManager::getInstance());
-	VIPManager::startDisplaying(VIPManager::getInstance());
+	DisplayUnit::startDrawing(DisplayUnit::getInstance());
+	DisplayUnit::startDisplaying(DisplayUnit::getInstance());
 
 	VUEngine::fireEvent(this, kEventNextStateSet);
 
-	HardwareManager::enableInterrupts();
+	Hardware::enableInterrupts();
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -449,7 +449,7 @@ void VUEngine::frameStarted(uint16 gameFrameDuration)
 
 	totalTime += gameFrameDuration;
 
-	TimerManager::frameStarted(gameFrameDuration * __MICROSECONDS_PER_MILLISECOND);
+	Timer::frameStarted(gameFrameDuration * __MICROSECONDS_PER_MILLISECOND);
 
 	if(__MILLISECONDS_PER_SECOND <= totalTime)
 	{
@@ -526,13 +526,13 @@ void VUEngine::toggleTool(ToolState toolState)
 bool VUEngine::checkIfToggleTool()
 {
 #ifdef __TOOLS
-	UserInput userInput = KeypadManager::getUserInput();
+	UserInput userInput = Keypad::getUserInput();
 
 	ToolState toolState = ToolState::get(&userInput);
 
 	if(NULL != toolState)
 	{
-		KeypadManager::reset();
+		Keypad::reset();
 		VUEngine::toggleTool(this, toolState);
 		return true;
 	}
@@ -557,7 +557,7 @@ void VUEngine::startGameFrame()
 #endif
 
 #ifdef __ENABLE_PROFILER
-	HardwareManager::disableInterrupts();
+	Hardware::disableInterrupts();
 
 	Profiler::start();
 #endif
@@ -581,7 +581,7 @@ void VUEngine::endGameFrame()
 	this->currentGameCycleEnded = true;
 
 #ifdef __ENABLE_PROFILER
-	HardwareManager::enableInterrupts();
+	Hardware::enableInterrupts();
 #endif
 
 	if(NULL != this->currentGameState && GameState::lockFrameRate(this->currentGameState))
@@ -603,8 +603,8 @@ secure void VUEngine::run(GameState currentGameState)
 		return;
 	}
 
-	VIPManager::addEventListener(VIPManager::getInstance(), ListenerObject::safeCast(this), kEventVIPManagerFRAMESTART);
-	VIPManager::addEventListener(VIPManager::getInstance(), ListenerObject::safeCast(this), kEventVIPManagerGAMESTART);
+	DisplayUnit::addEventListener(DisplayUnit::getInstance(), ListenerObject::safeCast(this), kEventDisplayUnitFRAMESTART);
+	DisplayUnit::addEventListener(DisplayUnit::getInstance(), ListenerObject::safeCast(this), kEventDisplayUnitGAMESTART);
 
 	VUEngine::setState(currentGameState);
 
@@ -632,8 +632,8 @@ bool VUEngine::isInState(GameState gameState)
 
 void VUEngine::cleanUp()
 {
-	VIPManager::removeEventListener(VIPManager::getInstance(), ListenerObject::safeCast(this), kEventVIPManagerFRAMESTART);
-	VIPManager::removeEventListener(VIPManager::getInstance(), ListenerObject::safeCast(this), kEventVIPManagerGAMESTART);
+	DisplayUnit::removeEventListener(DisplayUnit::getInstance(), ListenerObject::safeCast(this), kEventDisplayUnitFRAMESTART);
+	DisplayUnit::removeEventListener(DisplayUnit::getInstance(), ListenerObject::safeCast(this), kEventDisplayUnitGAMESTART);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -653,7 +653,7 @@ int32 main(void)
 	setupClasses();
 
 	// Initialize hardware related stuff
-	HardwareManager::initialize();
+	Hardware::initialize();
 
 #ifndef __RELEASE
 	// Restrict the access to the engine's singletons

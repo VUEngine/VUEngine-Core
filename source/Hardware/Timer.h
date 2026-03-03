@@ -7,8 +7,8 @@
  * that was distributed with this source code.
  */
 
-#ifndef TIMER_MANAGER_H_
-#define TIMER_MANAGER_H_
+#ifndef TIMER_H_
+#define TIMER_H_
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // INCLUDES
@@ -20,12 +20,12 @@
 // CLASS' DECLARATION
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-/// Class TimerManager
+/// Class Timer
 ///
 /// Inherits from Object
 ///
 /// Manages the platform's clock.
-singleton class TimerManager : ListenerObject
+singleton class Timer : ListenerObject
 {
 	/// Interrupt handler for timer's interrupts
 	static void interruptHandler();

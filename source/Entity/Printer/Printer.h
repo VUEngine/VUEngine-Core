@@ -16,7 +16,7 @@
 
 #include <CharSet.h>
 #include <Entity.h>
-#include <TimerManager.h>
+#include <Timer.h>
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // FORWARD DECLARATIONS
@@ -36,7 +36,7 @@ class PrintingSprite;
 #define PRINT_TIME(x, y)																					\
 	Printer::int32																							\
 	(																										\
-		TimerManager::getTotalElapsedMilliseconds(),														\
+		Timer::getTotalElapsedMilliseconds(),														\
 		x,																									\
 		y,																									\
 		NULL																								\

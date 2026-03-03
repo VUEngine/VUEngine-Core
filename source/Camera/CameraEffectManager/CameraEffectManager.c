@@ -17,8 +17,8 @@
 #include <GameState.h>
 #include <Singleton.h>
 #include <Telegram.h>
-#include <TimerManager.h>
-#include <VIPManager.h>
+#include <Timer.h>
+#include <DisplayUnit.h>
 #include <VUEngine.h>
 
 #include "CameraEffectManager.h"
@@ -28,7 +28,7 @@
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 // These are redefintions that shouldn't exist here. The manager should not access the registers directly
-// but should read and write to the through the VIPManager's interface.
+// but should read and write to the through the DisplayUnit's interface.
 
 #define __BRTA						0x12  // Brightness A
 #define __BRTB						0x13  // Brightness B
@@ -68,7 +68,7 @@ void CameraEffectManager::constructor()
 	this->fadeEffectIncrement = __CAMERA_EFFECT_FADE_INCREMENT;
 	this->startingANewEffect = false;
 	this->currentBrightness = (Brightness){0, 0, 0};
-	VIPManager::configureBrightness(this->currentBrightness);
+	DisplayUnit::configureBrightness(this->currentBrightness);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -148,14 +148,14 @@ void CameraEffectManager::startEffect(int32 effect, va_list args)
 		case kShow:
 		{
 			this->currentBrightness = CameraEffectManager::getDefaultBrightness(this);
-			VIPManager::configureBrightness(this->currentBrightness);
+			DisplayUnit::configureBrightness(this->currentBrightness);
 			break;
 		}
 
 		case kHide:
 		{
 			this->currentBrightness = (Brightness){0, 0, 0};
-			VIPManager::configureBrightness(this->currentBrightness);
+			DisplayUnit::configureBrightness(this->currentBrightness);
 			break;
 		}
 		
@@ -168,7 +168,7 @@ void CameraEffectManager::startEffect(int32 effect, va_list args)
 
 		case kFadeTo:
 		{
-			this->currentBrightness = VIPManager::getBrightness();
+			this->currentBrightness = DisplayUnit::getBrightness();
 
 			CameraEffectManager::fxFadeAsyncStart
 			(
@@ -211,11 +211,11 @@ void CameraEffectManager::fxFadeStart(int32 effect, int32 delay)
 		case kFadeIn:
 		{
 			this->currentBrightness = (Brightness){0, 0, 0};
-			VIPManager::configureBrightness(this->currentBrightness);
+			DisplayUnit::configureBrightness(this->currentBrightness);
 
 			Brightness defaultBrightness = CameraEffectManager::getDefaultBrightness(this);
 
-			TimerManager::repeatMethodCall
+			Timer::repeatMethodCall
 			(
 				defaultBrightness.darkRed,
 				(delay * defaultBrightness.darkRed),
@@ -229,9 +229,9 @@ void CameraEffectManager::fxFadeStart(int32 effect, int32 delay)
 		case kFadeOut:
 		{
 			this->currentBrightness = CameraEffectManager::getDefaultBrightness(this);
-			VIPManager::configureBrightness(this->currentBrightness);
+			DisplayUnit::configureBrightness(this->currentBrightness);
 
-			TimerManager::repeatMethodCall
+			Timer::repeatMethodCall
 			(
 				this->currentBrightness.darkRed,
 				(delay * this->currentBrightness.darkRed),
@@ -329,7 +329,7 @@ void CameraEffectManager::fxFadeIn(uint32 call __attribute__((unused)))
 	this->currentBrightness.mediumRed += 2;
 	this->currentBrightness.brightRed += 1;
 	
-	VIPManager::configureBrightness(this->currentBrightness);
+	DisplayUnit::configureBrightness(this->currentBrightness);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -340,7 +340,7 @@ void CameraEffectManager::fxFadeOut()
 	this->currentBrightness.mediumRed -= 2;
 	this->currentBrightness.brightRed -= 1;
 	
-	VIPManager::configureBrightness(this->currentBrightness);
+	DisplayUnit::configureBrightness(this->currentBrightness);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -412,7 +412,7 @@ void CameraEffectManager::fxFadeAsync()
 		}
 	}
 
-	VIPManager::configureBrightness(this->currentBrightness);
+	DisplayUnit::configureBrightness(this->currentBrightness);
 
 	// Finish effect or call next round
 	if(lightRedDone && mediumRedDone && darkRedDone)

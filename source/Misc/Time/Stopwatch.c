@@ -12,7 +12,7 @@
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <StopwatchManager.h>
-#include <TimerManager.h>
+#include <Timer.h>
 #include <VUEngine.h>
 
 #include "Stopwatch.h"
@@ -51,8 +51,8 @@ void Stopwatch::reset()
 {
 	this->interrupts = 0;
 	this->milliSeconds = 0;
-	this->timerCounter = TimerManager::getTimerCounter(TimerManager::getInstance());
-	this->timeProportion = TimerManager::getTargetTimePerInterruptInMS(TimerManager::getInstance()) / (float)this->timerCounter;
+	this->timerCounter = Timer::getTimerCounter(Timer::getInstance());
+	this->timeProportion = Timer::getTargetTimePerInterruptInMS(Timer::getInstance()) / (float)this->timerCounter;
 	this->previousTimerCounter = this->timerCounter;
 }
 
@@ -67,9 +67,9 @@ void Stopwatch::update()
 
 float Stopwatch::lap()
 {
-	TimerManager::disable(TimerManager::getInstance());
+	Timer::disable(Timer::getInstance());
 
-	uint16 currentTimerCounter = TimerManager::getCurrentTimerCounter();
+	uint16 currentTimerCounter = Timer::getCurrentTimerCounter();
 
 	uint16 timerCounter = 0;
 
@@ -102,7 +102,7 @@ float Stopwatch::lap()
 
 	this->milliSeconds += elapsedTime;
 
-	TimerManager::enable(TimerManager::getInstance());
+	Timer::enable(Timer::getInstance());
 
 	return elapsedTime;
 }

@@ -21,7 +21,7 @@
 #include <ColliderManager.h>
 #include <Debug.h>
 #include <GameState.h>
-#include <KeypadManager.h>
+#include <Keypad.h>
 #include <Mesh.h>
 #include <Optics.h>
 #include <OptionsSelector.h>

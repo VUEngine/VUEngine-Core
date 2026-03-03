@@ -15,7 +15,7 @@
 #include <CameraEffectManager.h>
 #include <CameraMovementManager.h>
 #include <DebugConfig.h>
-#include <FrameBufferManager.h>
+#include <FrameBuffers.h>
 #include <Optics.h>
 #include <Printer.h>
 #include <Singleton.h>
@@ -69,7 +69,7 @@ void Camera::setup(PixelOptical pixelOptical, CameraFrustum cameraFrustum)
 	this->optical = Optical::getFromPixelOptical(pixelOptical, this->cameraFrustum);
 	this->transformationFlags |= __INVALIDATE_TRANSFORMATION;
 
-	FrameBufferManager::setFrustum(this->cameraFrustum);
+	FrameBuffers::setFrustum(this->cameraFrustum);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

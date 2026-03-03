@@ -34,11 +34,11 @@
 #include <ColliderManager.h>
 #include <Container.h>
 #include <DebugState.h>
-#include <FrameBufferManager.h>
+#include <FrameBuffers.h>
 #include <FrameRate.h>
 #include <GameState.h>
-#include <HardwareManager.h>
-#include <KeypadManager.h>
+#include <Hardware.h>
+#include <Keypad.h>
 #include <InverseBox.h>
 #include <LineField.h>
 #include <MBgmapSprite.h>
@@ -59,7 +59,7 @@
 #include <Singleton.h>
 #include <Sprite.h>
 #include <SpriteManager.h>
-#include <SRAMManager.h>
+#include <SRAM.h>
 #include <Stage.h>
 #include <StageEditor.h>
 #include <StageEditorState.h>
@@ -68,10 +68,10 @@
 #include <Sound.h>
 #include <Telegram.h>
 #include <Texture.h>
-#include <TimerManager.h>
+#include <Timer.h>
 #include <UIContainer.h>
 #include <VirtualList.h>
-#include <VIPManager.h>
+#include <DisplayUnit.h>
 #include <VUEngine.h>
 #include <Wireframe.h>
 
@@ -521,7 +521,7 @@ void Debug::memoryStatusShowZeroPage(int32 increment __attribute__ ((unused)), i
 	ClassSizeData classesSizeData[] =
 	{
 		{&VUEngine_getObjectSize, 						"VUEngine"},
-		{&FrameBufferManager_getObjectSize, 					"FrameBufferManager"},
+		{&FrameBuffers_getObjectSize, 					"FrameBuffers"},
 		{&FrameRate_getObjectSize, 						"FrameRate"},
 		//{&I18n_getObjectSize, 						"I18n"},
 		{&MemoryPool_getObjectSize, 					"MemoryPool"},
@@ -545,15 +545,15 @@ void Debug::memoryStatusShowFirstPage(int32 increment __attribute__ ((unused)), 
 		{&CharSetManager_getObjectSize, 				"CharSetManager"},
 		{&ClockManager_getObjectSize, 					"ClockManager"},
 		{&ColliderManager_getObjectSize, 				"ColliderManager"},
-		{&KeypadManager_getObjectSize, 					"KeypadManager"},
+		{&Keypad_getObjectSize, 					"Keypad"},
 		{&ParamTableManager_getObjectSize, 				"ParamTableManager"},
 		{&CameraEffectManager_getObjectSize, 			"CameraEff.Manager"},
 		{&CameraMovementManager_getObjectSize, 			"CameraMov.Manager"},
 		{&SpriteManager_getObjectSize, 					"SpriteManager"},
 		{&SoundManager_getObjectSize, 					"SoundManager"},
-		{&SRAMManager_getObjectSize, 					"SRAMManager"},
-		{&TimerManager_getObjectSize, 					"TimerManager"},
-		{&VIPManager_getObjectSize, 					"VIPManager"},
+		{&SRAM_getObjectSize, 					"SRAM"},
+		{&Timer_getObjectSize, 					"Timer"},
+		{&DisplayUnit_getObjectSize, 					"DisplayUnit"},
 	};
 
 	Debug::printClassSizes(this, classesSizeData, sizeof(classesSizeData) / sizeof(ClassSizeData), x + 21, y, "VUEngine classes:");
@@ -1243,7 +1243,7 @@ void Debug::hardwareRegistersPage(int32 increment __attribute__ ((unused)), int3
 {
 	Debug::removeSubPages(this);
 
-	HardwareManager::print(x, y);
+	Hardware::print(x, y);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

@@ -22,9 +22,9 @@
 #include <SoundManager.h>
 #include <SpriteManager.h>
 #include <Texture.h>
-#include <TimerManager.h>
+#include <Timer.h>
 #include <UIContainer.h>
-#include <VIPManager.h>
+#include <DisplayUnit.h>
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // FORWARD DECLARATIONS

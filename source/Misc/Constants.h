@@ -197,7 +197,7 @@ enum DefaulCollisionLayers
 
 #ifndef __RELEASE
 
-void HardwareManager_printStackStatus(int32 x, int32 y, bool resumed);
+void Hardware_printStackStatus(int32 x, int32 y, bool resumed);
 void Error_triggerException(char* message, char* detail);
 
 #define __CHECK_STACK_STATUS																			\
@@ -211,8 +211,8 @@ void Error_triggerException(char* message, char* detail);
 			_vuengineStackPointer - __STACK_HEADROOM < (int32)&_bssEnd)									\
 		{																								\
 			_stackHeadroomViolation = true;																\
-			/* HardwareManager_printStackStatus(1, 15, false); */										\
-			NM_ASSERT(false, "HardwareManager_checkStack: surpassed headroom boundary!");				\
+			/* Hardware_printStackStatus(1, 15, false); */										\
+			NM_ASSERT(false, "Hardware_checkStack: surpassed headroom boundary!");				\
 		}																								\
 	}
 #else

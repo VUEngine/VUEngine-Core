@@ -7,8 +7,8 @@
  * that was distributed with this source code.
  */
 
-#ifndef KEY_PAD_MANAGER_H_
-#define KEY_PAD_MANAGER_H_
+#ifndef KEYPAD_H_
+#define KEYPAD_H_
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // INCLUDES
@@ -21,7 +21,7 @@
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 /// User's input
-/// @memberof KeypadManager
+/// @memberof Keypad
 typedef struct UserInput
 {
 	/// All pressed key(s)
@@ -55,12 +55,12 @@ typedef struct UserInput
 // CLASS' DECLARATION
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-/// Class KeypadManager
+/// Class Keypad
 ///
 /// Inherits from ListenerObject
 ///
 /// Manages keypad inputs.
-singleton class KeypadManager : ListenerObject
+singleton class Keypad : ListenerObject
 {
 	/// @publicsection
 

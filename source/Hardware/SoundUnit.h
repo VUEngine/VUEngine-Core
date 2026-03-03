@@ -7,8 +7,8 @@
  * that was distributed with this source code.
  */
 
-#ifndef SOUND_UNIT_MANAGER_H_
-#define SOUND_UNIT_MANAGER_H_
+#ifndef SOUND_UNIT_H_
+#define SOUND_UNIT_H_
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // INCLUDES
@@ -20,12 +20,12 @@
 // CLASS' DECLARATION
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-/// Class SoundUnitManager
+/// Class SoundUnit
 ///
 /// Inherits from Object
 ///
 /// Manages the VSU.
-singleton class SoundUnitManager : Object
+singleton class SoundUnit : Object
 {
 	/// @publicsection
 

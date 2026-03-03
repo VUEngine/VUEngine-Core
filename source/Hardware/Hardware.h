@@ -51,12 +51,12 @@ extern int16 _suspendInterruptRequest __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUT
 // CLASS' DECLARATION
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-/// Class HardwareManager
+/// Class Hardware
 ///
 /// Inherits from Object
 ///
 /// Centralizes the management of the hardware.
-static class HardwareManager : Object
+static class Hardware : Object
 {
 	/// @publicsection
 
@@ -125,17 +125,17 @@ static class HardwareManager : Object
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static inline void HardwareManager::halt()
+static inline void Hardware::halt()
 {
 	// Make sure that I don't halt forever
-	HardwareManager::enableInterrupts();
+	Hardware::enableInterrupts();
 
 	asm("halt"::);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static inline void HardwareManager::setInterruptLevel(uint8 level)
+static inline void Hardware::setInterruptLevel(uint8 level)
 {
 	asm
 	(
@@ -156,7 +156,7 @@ static inline void HardwareManager::setInterruptLevel(uint8 level)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static inline void HardwareManager::enableInterrupts()
+static inline void Hardware::enableInterrupts()
 {
 	if(!_enabledInterrupts || 0 != _suspendInterruptRequest)
 	{
@@ -164,13 +164,13 @@ static inline void HardwareManager::enableInterrupts()
 		_suspendInterruptRequest = 0;
 
 		asm("cli");
-		HardwareManager::setInterruptLevel(0);
+		Hardware::setInterruptLevel(0);
 	}
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static inline void HardwareManager::disableInterrupts()
+static inline void Hardware::disableInterrupts()
 {
 	if(_enabledInterrupts)
 	{
@@ -178,13 +178,13 @@ static inline void HardwareManager::disableInterrupts()
 		_suspendInterruptRequest = 0;
 
 		asm("sei");
-		HardwareManager::setInterruptLevel(5);
+		Hardware::setInterruptLevel(5);
 	}
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static inline void HardwareManager::resumeInterrupts()
+static inline void Hardware::resumeInterrupts()
 {
 	if(_enabledInterrupts)
 	{
@@ -192,26 +192,26 @@ static inline void HardwareManager::resumeInterrupts()
 		{
 			_suspendInterruptRequest = 0;
 			asm("cli");
-			HardwareManager::setInterruptLevel(0);
+			Hardware::setInterruptLevel(0);
 		}
 	}
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static inline void HardwareManager::suspendInterrupts()
+static inline void Hardware::suspendInterrupts()
 {
 	if(_enabledInterrupts)
 	{
 		_suspendInterruptRequest++;
 		asm("sei");
-		HardwareManager::setInterruptLevel(5);
+		Hardware::setInterruptLevel(5);
 	}
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static inline void HardwareManager::enableMultiplexedInterrupts()
+static inline void Hardware::enableMultiplexedInterrupts()
 {
 	uint32 psw;
 
@@ -235,7 +235,7 @@ static inline void HardwareManager::enableMultiplexedInterrupts()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static inline void HardwareManager::disableMultiplexedInterrupts()
+static inline void Hardware::disableMultiplexedInterrupts()
 {
 	asm
 	(
@@ -248,14 +248,14 @@ static inline void HardwareManager::disableMultiplexedInterrupts()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static inline bool HardwareManager::areInterruptsSuspended()
+static inline bool Hardware::areInterruptsSuspended()
 {
 	return !_enabledInterrupts || 0 < _suspendInterruptRequest;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static inline int32 HardwareManager::getStackPointer()
+static inline int32 Hardware::getStackPointer()
 {
 	int32 sp;
 
@@ -270,7 +270,7 @@ static inline int32 HardwareManager::getStackPointer()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static inline int32 HardwareManager::getLinkPointer()
+static inline int32 Hardware::getLinkPointer()
 {
 	int32 lp;
 
@@ -285,7 +285,7 @@ static inline int32 HardwareManager::getLinkPointer()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static inline int32 HardwareManager::getPSW()
+static inline int32 Hardware::getPSW()
 {
 	int32 psw;
 

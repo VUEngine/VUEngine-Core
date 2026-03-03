@@ -52,7 +52,7 @@
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 /// Represents an entry in WORLD space in DRAM
-/// @memberof VIPManager
+/// @memberof DisplayUnit
 typedef struct WorldAttributes
 {
 	uint16 head;
@@ -71,7 +71,7 @@ typedef struct WorldAttributes
 } WorldAttributes;
 
 /// Represents an entry in OBJECT space in DRAM
-/// @memberof VIPManager
+/// @memberof DisplayUnit
 typedef struct ObjectAttributes
 {
 	int16 jx;

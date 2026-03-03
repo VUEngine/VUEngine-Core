@@ -18,7 +18,7 @@
 #include <Events.h>
 #include <Error.h>
 #include <MemoryPool.h>
-#include <HardwareManager.h>
+#include <Hardware.h>
 #include <Constants.h>
 #include <Math.h>
 #include <Platform.h>

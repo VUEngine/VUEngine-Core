@@ -35,7 +35,7 @@ static Object Object::getCast(void* object, ClassPointer targetClassGetClassMeth
 
 	NM_ASSERT(!isDeleted(object), "Object::getCast: call with deleted object");
 
-	HardwareManager::suspendInterrupts();
+	Hardware::suspendInterrupts();
 
 	static int32 lp = -1;
 	static int32 sp = -1;
@@ -80,7 +80,7 @@ static Object Object::getCast(void* object, ClassPointer targetClassGetClassMeth
 		counter = 0;
 #endif
 
-		HardwareManager::resumeInterrupts();
+		Hardware::resumeInterrupts();
 		return NULL;
 	}
 
@@ -131,7 +131,7 @@ static Object Object::getCast(void* object, ClassPointer targetClassGetClassMeth
 			counter = 0;
 #endif
 
-			HardwareManager::resumeInterrupts();
+			Hardware::resumeInterrupts();
 			return object;
 		}
 
@@ -167,7 +167,7 @@ static Object Object::getCast(void* object, ClassPointer targetClassGetClassMeth
 		NM_CAST_ASSERT(false, "Object::getCast: failed cast");
 #endif
 */
-		HardwareManager::resumeInterrupts();
+		Hardware::resumeInterrupts();
 		return NULL;
 	}
 
@@ -180,11 +180,11 @@ static Object Object::getCast(void* object, ClassPointer targetClassGetClassMeth
 		counter = 0;
 #endif
 
-		HardwareManager::resumeInterrupts();
+		Hardware::resumeInterrupts();
 		return object;
 	}
 
-	HardwareManager::resumeInterrupts();
+	Hardware::resumeInterrupts();
 
 	return Object::getCast((Object)object, targetClassGetClassMethod, (ClassPointer)baseClassGetClassMethod(object));
 }

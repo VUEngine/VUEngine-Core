@@ -7,8 +7,8 @@
  * that was distributed with this source code.
  */
 
-#ifndef VIP_MANAGER_H_
-#define VIP_MANAGER_H_
+#ifndef DISPLAY_UNIT_H_
+#define DISPLAY_UNIT_H_
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // INCLUDES
@@ -35,7 +35,7 @@ class Entity;
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 /// Column table specification
-/// @memberof VIPManager
+/// @memberof DisplayUnit
 typedef struct ColumnTableSpec
 {
 	/// Defines whether the spec's first half should be mirrored (true)
@@ -48,11 +48,11 @@ typedef struct ColumnTableSpec
 } ColumnTableSpec;
 
 /// A ColumnTable spec that is stored in ROM
-/// @memberof VIPManager
+/// @memberof DisplayUnit
 typedef const ColumnTableSpec ColumnTableROMSpec;
 
 /// Brigtness control specification
-/// @memberof VIPManager
+/// @memberof DisplayUnit
 typedef struct BrightnessRepeatSpec
 {
 	/// Defines whether the spec's first half should be mirrored (true)
@@ -65,11 +65,11 @@ typedef struct BrightnessRepeatSpec
 } BrightnessRepeatSpec;
 
 /// A BrightnessRepeat spec that is stored in ROM
-/// @memberof VIPManager
+/// @memberof DisplayUnit
 typedef const BrightnessRepeatSpec BrightnessRepeatROMSpec;
 
 /// Color configuration struct
-/// @memberof VIPManager
+/// @memberof DisplayUnit
 typedef struct ColorConfig
 {
 	/// Background color
@@ -84,7 +84,7 @@ typedef struct ColorConfig
 } ColorConfig;
 
 /// Palette configuration struct
-/// @memberof VIPManager
+/// @memberof DisplayUnit
 typedef struct PaletteConfig
 {
 	struct Bgmap
@@ -106,7 +106,7 @@ typedef struct PaletteConfig
 } PaletteConfig;
 
 /// Enums used to control VIP interrupts
-/// @memberof VIPManager
+/// @memberof DisplayUnit
 enum VIPMultiplexedInterrupts
 {
 	kVIPNoMultiplexedInterrupts 			= 1 << 0,
@@ -122,12 +122,12 @@ typedef void (*PostProcessingEffect)(uint32 currentDrawingFrameBufferSet, Entity
 // CLASS' DECLARATION
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-/// Class VIPManager
+/// Class DisplayUnit
 ///
 /// Inherits from ListenerObject
 ///
 /// Manages the VIP.
-singleton class VIPManager : ListenerObject
+singleton class DisplayUnit : ListenerObject
 {
 	/// @protectedsection
 

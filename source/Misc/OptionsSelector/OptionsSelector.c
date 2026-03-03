@@ -29,13 +29,13 @@
 #include <ClockManager.h>
 #include <Container.h>
 #include <DebugState.h>
-#include <FrameBufferManager.h>
+#include <FrameBuffers.h>
 #include <Actor.h>
 #include <ColliderManager.h>
 #include <FrameRate.h>
 #include <GameState.h>
-#include <HardwareManager.h>
-#include <KeypadManager.h>
+#include <Hardware.h>
+#include <Keypad.h>
 #include <InverseBox.h>
 #include <LineField.h>
 #include <MBgmapSprite.h>
@@ -53,7 +53,7 @@
 #include <Sphere.h>
 #include <Sprite.h>
 #include <SpriteManager.h>
-#include <SRAMManager.h>
+#include <SRAM.h>
 #include <Stage.h>
 #include <StageEditor.h>
 #include <StageEditorState.h>
@@ -62,11 +62,11 @@
 #include <Sound.h>
 #include <Telegram.h>
 #include <Texture.h>
-#include <TimerManager.h>
+#include <Timer.h>
 #include <UIContainer.h>
 #include <Utilities.h>
 #include <VirtualList.h>
-#include <VIPManager.h>
+#include <DisplayUnit.h>
 #include <VUEngine.h>
 #include <Wireframe.h>
 

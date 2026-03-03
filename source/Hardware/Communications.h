@@ -7,8 +7,8 @@
  * that was distributed with this source code.
  */
 
-#ifndef COMMUNICATTION_MANAGER_H_
-#define COMMUNICATTION_MANAGER_H_
+#ifndef COMMUNICATTIONS_H_
+#define COMMUNICATTIONS_H_
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // INCLUDES
@@ -26,12 +26,12 @@ class Telegram;
 // CLASS' DECLARATION
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-/// Class CommunicationManager
+/// Class Communications
 ///
 /// Inherits from ListenerObject
 ///
 /// Manages communications with other systems.
-singleton class CommunicationManager : ListenerObject
+singleton class Communications : ListenerObject
 {
 	/// @publicsection
 

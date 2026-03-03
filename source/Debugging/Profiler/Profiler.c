@@ -14,13 +14,13 @@
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <DebugConfig.h>
-#include <HardwareManager.h>
+#include <Hardware.h>
 #include <Printer.h>
 #include <Singleton.h>
-#include <TimerManager.h>
+#include <Timer.h>
 #include <Utilities.h>
 #include <VirtualList.h>
-#include <VIPManager.h>
+#include <DisplayUnit.h>
 #include <VUEngine.h>
 
 #include "Profiler.h"
@@ -96,7 +96,7 @@ static void Profiler::initialize()
 		((uint8*)&paletteConfig.bgmap)[__PRINTING_PALETTE] = 0xE0;
 	}
 
-	VIPManager::configurePalettes(paletteConfig);
+	DisplayUnit::configurePalettes(paletteConfig);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -111,9 +111,9 @@ static void Profiler::reset()
 	profiler->initialized = false;
 	profiler->currentProfilingProcess = 0;
 	profiler->printedProcessesNames = false;
-	profiler->timerCounter = TimerManager::getTimerCounter();
+	profiler->timerCounter = Timer::getTimerCounter();
 	profiler->timePerGameFrameInMS = VUEngine::getGameFrameDuration();
-	profiler->timeProportion = TimerManager::getTargetTimePerInterruptInMS() / (float)profiler->timerCounter;
+	profiler->timeProportion = Timer::getTargetTimePerInterruptInMS() / (float)profiler->timerCounter;
 	profiler->skipFrames = 1;
 	profiler->lastCycleTotalTime = 0;
 	profiler->totalTime = 0;
@@ -162,12 +162,12 @@ static void Profiler::start()
 	profiler->lastLapIndex = 0;
 	profiler->interruptFlags = 0;
 
-	TimerManager::disable();
-	TimerManager::resetTimerCounter();
-	TimerManager::enable();
+	Timer::disable();
+	Timer::resetTimerCounter();
+	Timer::enable();
 	Profiler::wait(1000);
 
-	profiler->previousTimerCounter = TimerManager::getCurrentTimerCounter();
+	profiler->previousTimerCounter = Timer::getCurrentTimerCounter();
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -180,7 +180,7 @@ static void Profiler::end()
 	{
 		Profiler::computeLap("HEADROOM", kProfilerLapTypeNormalProcess, true);
 
-		VIPManager::configureBrightnessRepeat((BrightnessRepeatSpec*)&profileBrightnessRepeatSpec);
+		DisplayUnit::configureBrightnessRepeat((BrightnessRepeatSpec*)&profileBrightnessRepeatSpec);
 
 		for(int32 i = 0; i < 96; i++)
 		{
@@ -210,7 +210,7 @@ static void Profiler::lap(uint32 lapType, const char* processName)
 	{
 		if(kProfilerLapTypeStartInterrupt == lapType)
 		{
-			profiler->previousTimerCounter = TimerManager::getCurrentTimerCounter();
+			profiler->previousTimerCounter = Timer::getCurrentTimerCounter();
 			return;
 		}
 		else
@@ -264,11 +264,11 @@ static void Profiler::computeLap(const char* processName, uint32 lapType, bool i
 {
 	Profiler profiler = Profiler::getInstance();
 
-	HardwareManager::suspendInterrupts();
+	Hardware::suspendInterrupts();
 
-	TimerManager::disable();
+	Timer::disable();
 
-	uint16 currentTimerCounter = TimerManager::getCurrentTimerCounter();
+	uint16 currentTimerCounter = Timer::getCurrentTimerCounter();
 
 	if(profiler->previousTimerCounter < currentTimerCounter)
 	{
@@ -322,9 +322,9 @@ static void Profiler::computeLap(const char* processName, uint32 lapType, bool i
 		Profiler::registerLap("AVERAGE", profiler->totalTime / profiler->cycles, lapType, 47);		
 	}
 
-	TimerManager::enable();
+	Timer::enable();
 
-	HardwareManager::resumeInterrupts();
+	Hardware::resumeInterrupts();
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

@@ -11,7 +11,7 @@
 // INCLUDES
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-#include <FrameBufferManager.h>
+#include <FrameBuffers.h>
 #include <Math.h>
 #include <Optics.h>
 #include <WireframeManager.h>
@@ -75,11 +75,11 @@ bool Sphere::draw()
 
 	bool drawn = false;
 
-	drawn = FrameBufferManager::drawCircle(this->position, this->scaledRadius, this->color, this->bufferIndex, this->interlaced);
+	drawn = FrameBuffers::drawCircle(this->position, this->scaledRadius, this->color, this->bufferIndex, this->interlaced);
 
 	if(this->drawCenter)
 	{
-		FrameBufferManager::drawPoint(this->position, this->color, this->bufferIndex, this->interlaced);
+		FrameBuffers::drawPoint(this->position, this->color, this->bufferIndex, this->interlaced);
 	}
 
 	this->bufferIndex = !this->bufferIndex;
