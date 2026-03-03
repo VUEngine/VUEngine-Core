@@ -32,7 +32,7 @@
 #include <Telegram.h>
 #include <ToolState.h>
 #include <VUEngine.h>
-#include <VSUManager.h>
+#include <SoundUnitManager.h>
 #include <WireframeManager.h>
 
 #include "GameState.h"
@@ -1191,7 +1191,7 @@ void GameState::debugging()
 #endif
 
 #ifdef __DEBUGGING_VSU
-	VSUManager::print(1, 1);
+	SoundUnitManager::print(1, 1);
 #endif
 
 #ifdef __DEBUGGING_FRAME_BUFFERS

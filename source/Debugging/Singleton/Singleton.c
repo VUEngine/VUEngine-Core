@@ -62,7 +62,7 @@
 #include <Utilities.h>
 #include <VirtualList.h>
 #include <VIPManager.h>
-#include <VSUManager.h>
+#include <SoundUnitManager.h>
 #include <VUEngine.h>
 #include <WireframeManager.h>
 
@@ -220,7 +220,7 @@ const ClassPointer VIPManagerAuthorizedClasses[] =
 	NULL
 };
 
-const ClassPointer VSUManagerAuthorizedClasses[] =
+const ClassPointer SoundUnitManagerAuthorizedClasses[] =
 {
 	typeofclass(HardwareManager),
 	typeofclass(SoundManager),
@@ -262,7 +262,7 @@ static void Singleton::secure()
 	StopwatchManager::secure(&StopwatchManagerAuthorizedClasses);
 	TimerManager::secure(&TimerManagerAuthorizedClasses);
 	VIPManager::secure(&VIPManagerAuthorizedClasses);	
-	VSUManager::secure(&VSUManagerAuthorizedClasses);
+	SoundUnitManager::secure(&SoundUnitManagerAuthorizedClasses);
 	VUEngine::secure(&VUEngineAuthorizedClasses);
 #endif
 }

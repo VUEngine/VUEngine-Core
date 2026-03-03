@@ -14,7 +14,7 @@
 #include <Sound.h>
 #include <TimerManager.h>
 #include <VirtualList.h>
-#include <VSUManager.h>
+#include <SoundUnitManager.h>
 #include <WaveForms.h>
 
 #include "SoundManager.h"
@@ -92,7 +92,7 @@ void SoundManager::disable()
 {
 	Base::disable(this);
 
-	VSUManager::flushQueuedSounds(VSUManager::getInstance());
+	SoundUnitManager::flushQueuedSounds(SoundUnitManager::getInstance());
 
 	SoundManager::destroyAllComponents(this);
 }
@@ -115,7 +115,7 @@ Sound SoundManager::create(Entity owner, const SoundSpec* soundSpec)
 
 void SoundManager::purgeComponents()
 {
-	VSUManager::flushQueuedSounds(VSUManager::getInstance());
+	SoundUnitManager::flushQueuedSounds(SoundUnitManager::getInstance());
 
 	Base::purgeComponents(this);	
 
@@ -158,7 +158,7 @@ void SoundManager::update()
 
 bool SoundManager::playSounds()
 {
-	VSUManager::update(VSUManager::getInstance());
+	SoundUnitManager::update(SoundUnitManager::getInstance());
 
 	for(VirtualNode node = this->components->head; NULL != node; node = node->next)
 	{
@@ -334,7 +334,7 @@ void SoundManager::stopAllSounds(bool release, SoundSpec** excludedSounds)
 
 	if(NULL == excludedSounds)
 	{
-		VSUManager::stopAllSounds(VSUManager::getInstance());
+		SoundUnitManager::stopAllSounds(SoundUnitManager::getInstance());
 	}
 }
 

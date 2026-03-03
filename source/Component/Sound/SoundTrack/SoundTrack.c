@@ -11,7 +11,7 @@
 // INCLUDES
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-#include <VSUManager.h>
+#include <SoundUnitManager.h>
 
 #include "SoundTrack.h"
 
@@ -35,14 +35,14 @@ void SoundTrack::start(bool wasPaused)
 
 void SoundTrack::stop()
 {
-	VSUManager::stopSoundSourcesUsedBy(this->id);
+	SoundUnitManager::stopSoundSourcesUsedBy(this->id);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void SoundTrack::pause()
 {
-	VSUManager::stopSoundSourcesUsedBy(this->id);
+	SoundUnitManager::stopSoundSourcesUsedBy(this->id);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -189,7 +189,7 @@ bool SoundTrack::update
 	{
 		uint16 note = this->soundTrackSpec->SxFQ[this->cursorSxFQ] + frequencyDelta;
 
-		VSUSoundSourceConfigurationRequest vsuChannelConfigurationRequest = 
+		SoundSourceConfigurationRequest vsuChannelConfigurationRequest = 
 		{
 			// Requester object
 			this->id,
@@ -225,7 +225,7 @@ bool SoundTrack::update
 			this->soundTrackSpec->skip
 		};
 
-		VSUManager::applySoundSourceConfiguration(&vsuChannelConfigurationRequest);		
+		SoundUnitManager::applySoundSourceConfiguration(&vsuChannelConfigurationRequest);		
 	}
 
 	return this->finished;
