@@ -120,7 +120,7 @@ endif
 INCLUDE_PATHS = $(shell find $(WORKING_FOLDER)/headers/$(GAME_NAME) -type d -print)
 INCLUDE_PATHS := $(INCLUDE_PATHS) $(shell find $(WORKING_FOLDER)/headers -path $(WORKING_FOLDER)/headers/$(GAME_NAME) -prune -o -type d -print)
 
-PLUGINS_CLEAN = $(shell echo $(PLUGINS) | sed -r "s@(platform//|user//|vuengine//)@/@g")
+PLUGINS_CLEAN = $(shell echo $(PLUGINS) | sed -r "s@(platforms//|user//|vuengine//)@/@g")
 
 # Obligatory headers
 ESSENTIAL_HEADERS = 	$(shell if [ ! -z $(CONFIG_FILE) ]; then echo -include $(CONFIG_FILE); fi;) 												\
