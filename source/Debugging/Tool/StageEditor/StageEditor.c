@@ -14,7 +14,6 @@
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <Actor.h>
-#include <BgmapTextureManager.h>
 #include <BodyManager.h>
 #include <Box.h>
 #include <Camera.h>

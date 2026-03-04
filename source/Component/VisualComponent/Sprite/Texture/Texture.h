@@ -122,28 +122,6 @@ abstract class Texture : Object
 	/// Flag to signal that the texture needs to update DRAM in the next render cycle
 	bool update;
 
-	/// Get a texture configured with the provided spec.
-	/// @param textureClass: Class of texture to instantiate
-	/// @param textureSpec: Spec used to select or initialize a texture with
-	/// @param minimumSegment: Minimum BGMAP segment where to allocate the texture
-	/// @param mustLiveAtEvenSegment: Required BGMAP segment where to allocate the texture
-	/// @param scValue: SC configuration value for multi segment textures
-	/// @return Texture initialized with the provided spec
-	static Texture get
-	(
-		ClassPointer textureClass, const TextureSpec* textureSpec, int16 minimumSegment, bool mustLiveAtEvenSegment, uint32 scValue
-	);
-
-	/// Release a texture.
-	/// @param texture: Texture to release
-	static void release(Texture texture);
-
-	/// Update texture pending rewriting of data in DRAM.
-	/// @param maximumTextureRowsToWrite: Number of texture rows to write during this call
-	/// @param defer: If true, the texture data is written overtime; otherwise
-	/// all is written in a single pass
-	static void updateTextures(int16 maximumTextureRowsToWrite, bool defer);
-
 	/// Retrieve the total horizontal size of the textures defined by the provided spec.
 	/// @param textureSpec: Spec of which to compute the horizontal size
 	/// @return Total horizontal size of the textures defined by the provided spec

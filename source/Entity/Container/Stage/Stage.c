@@ -16,13 +16,13 @@
 #include <ActorFactory.h>
 #include <Actor.h>
 #include <BgmapTexture.h>
-#include <BgmapTextureManager.h>
 #include <Camera.h>
 #include <CharSetManager.h>
 #include <DebugConfig.h>
 #include <Hardware.h>
 #include <Printer.h>
 #include <SoundManager.h>
+#include <TextureManager.h>
 #include <UIContainer.h>
 #include <VirtualList.h>
 #include <VirtualNode.h>
@@ -961,15 +961,12 @@ void Stage::configureCamera(bool reset)
 
 void Stage::configureGraphics()
 {
-	BgmapTextureManager::reset(BgmapTextureManager::getInstance());
+	TextureManager::reset();
 
 	Printer::loadFonts(this->stageSpec->assets.fontSpecs);
 	CharSetManager::loadCharSets(CharSetManager::getInstance(), (const CharSetSpec**)this->stageSpec->assets.charSetSpecs);
 
-	BgmapTextureManager::loadTextures
-	(
-		BgmapTextureManager::getInstance(), (const TextureSpec**)this->stageSpec->assets.textureSpecs
-	);
+	TextureManager::loadTextures((const TextureSpec**)this->stageSpec->assets.textureSpecs);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

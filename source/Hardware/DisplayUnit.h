@@ -116,6 +116,9 @@ singleton class DisplayUnit : ListenerObject
 	/// Reset the manager's state.
 	static void reset();
 
+	/// Erase the contents of graphics memory space.
+	static void clearGraphicMemory();
+
 	/// Configure the manager's state.
 	/// @param backgroundColor: Color to apply to the background
 	/// @param brightness: Brightness configuration

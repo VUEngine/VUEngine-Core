@@ -18,6 +18,7 @@
 #include <Optics.h>
 #include <Printer.h>
 #include <Texture.h>
+#include <TextureManager.h>
 
 #include "Sprite.h"
 
@@ -94,7 +95,7 @@ void Sprite::releaseTexture()
 {
 	if(!isDeleted(this->texture))
 	{
-		Texture::release(this->texture);
+		TextureManager::release(this->texture);
 	}
 
 	this->texture = NULL;
@@ -458,7 +459,7 @@ void Sprite::loadTexture(ClassPointer textureClass)
 		return;
 	}
 
-	this->texture = Texture::get(textureClass, ((SpriteSpec*)this->componentSpec)->textureSpec, 0, false, 0);
+	this->texture = TextureManager::get(textureClass, ((SpriteSpec*)this->componentSpec)->textureSpec, 0, false, 0);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

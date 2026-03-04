@@ -16,7 +16,6 @@
 #include <BgmapSprite.h>
 #include <BgmapTexture.h>
 #include <CharSetManager.h>
-#include <BgmapTextureManager.h>
 #include <Clock.h>
 #include <DebugConfig.h>
 #include <Mem.h>
@@ -26,6 +25,7 @@
 #include <ParamTableManager.h>
 #include <Printer.h>
 #include <Sprite.h>
+#include <TextureManager.h>
 #include <VirtualList.h>
 #include <VirtualNode.h>
 #include <DisplayUnit.h>
@@ -169,7 +169,9 @@ void SpriteManager::enable()
 {
 	Base::enable(this);
 
-	SpriteManager::clearDRAM(this);
+	CharSetManager::clearDRAM(CharSetManager::getInstance());
+	TextureManager::clearGraphicMemory();
+	DisplayUnit::clearGraphicMemory();
 	Printer::reset(Printer::getInstance());
 	CharSetManager::reset(CharSetManager::getInstance());
 	ParamTableManager::reset(ParamTableManager::getInstance());
@@ -686,7 +688,7 @@ void SpriteManager::writeDRAM()
 	// Update all graphical data
 
 	// Update DRAM memory
-	Texture::updateTextures(this->texturesMaximumRowsToWrite, this->deferTextureUpdating);
+	TextureManager::updateTextures(this->texturesMaximumRowsToWrite, this->deferTextureUpdating);
 
 	// Update param tables
 	SpriteManager::applySpecialEffects(this);
@@ -701,7 +703,7 @@ void SpriteManager::writeTextures()
 {
 	CharSetManager::writeCharSets(CharSetManager::getInstance());
 
-	Texture::updateTextures(-1, false);
+	TextureManager::updateTextures(-1, false);
 
 	CharSetManager::writeCharSets(CharSetManager::getInstance());
 }
@@ -1242,54 +1244,6 @@ void SpriteManager::startListeningForVIP()
 void SpriteManager::stopListeningForVIP()
 {
 	DisplayUnit::removeEventListener(DisplayUnit::getInstance(), ListenerObject::safeCast(this), kEventDisplayUnitVBlank);
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void SpriteManager::clearDRAM()
-{
-	CharSetManager::clearDRAM(CharSetManager::getInstance());
-	BgmapTextureManager::clearDRAM(BgmapTextureManager::getInstance());
-
-	for(int32 i = 0; i < __TOTAL_LAYERS; i++)
-	{
-		_worldAttributesCache[i].head = 0;
-		_worldAttributesCache[i].gx = 0;
-		_worldAttributesCache[i].gp = 0;
-		_worldAttributesCache[i].gy = 0;
-		_worldAttributesCache[i].mx = 0;
-		_worldAttributesCache[i].mp = 0;
-		_worldAttributesCache[i].my = 0;
-		_worldAttributesCache[i].w = 0;
-		_worldAttributesCache[i].h = 0;
-		_worldAttributesCache[i].param = 0;
-		_worldAttributesCache[i].ovr = 0;
-
-		this->worldAttributesBaseAddress[i].head = 0;
-		this->worldAttributesBaseAddress[i].gx = 0;
-		this->worldAttributesBaseAddress[i].gp = 0;
-		this->worldAttributesBaseAddress[i].gy = 0;
-		this->worldAttributesBaseAddress[i].mx = 0;
-		this->worldAttributesBaseAddress[i].mp = 0;
-		this->worldAttributesBaseAddress[i].my = 0;
-		this->worldAttributesBaseAddress[i].w = 0;
-		this->worldAttributesBaseAddress[i].h = 0;
-		this->worldAttributesBaseAddress[i].param = 0;
-		this->worldAttributesBaseAddress[i].ovr = 0;
-	}
-
-	for(int32 i = 0; i < __TOTAL_OBJECTS; i++)
-	{
-		_objectAttributesCache[i].jx = 0;
-		_objectAttributesCache[i].head = 0;
-		_objectAttributesCache[i].jy = 0;
-		_objectAttributesCache[i].tile = 0;
-
-		this->objectAttributesBaseAddress[i].jx = 0;
-		this->objectAttributesBaseAddress[i].head = 0;
-		this->objectAttributesBaseAddress[i].jy = 0;
-		this->objectAttributesBaseAddress[i].tile = 0;
-	}
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

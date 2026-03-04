@@ -292,36 +292,13 @@ uint32 CharSet::write()
 				CACHE_RESET;
 			}
 
-#ifndef __RELEASE
 			Mem::copyWORD
 			(
 				(uint32*)(__CHAR_SPACE_BASE_ADDRESS + (((uint32)this->offset) << 4)),
 				&this->charSetSpec->tiles[1] + this->tilesDisplacement,
 				__UINT32S_PER_CHARS(tilesToWrite)
 			);
-#else
-			// Based on dasi's memcpy
-			asm
-			(
-				"loop%=:				\n\t"	  \
-				"ld.w	0[%1], r11		\n\t"	  \
-				"ld.w	4[%1], r12		\n\t"	  \
-				"ld.w	8[%1], r13		\n\t"	  \
-				"st.w	r11, 0[%0]		\n\t"	  \
-				"addi	16, %0, %0		\n\t"	  \
-				"ld.w	12[%1], r11		\n\t"	  \
-				"st.w	r12, -12[%0]	\n\t"	  \
-				"addi	16, %1, %1		\n\t"	  \
-				"st.w	r13, -8[%0]		\n\t"	  \
-				"add 	-1, %2			\n\t"	  \
-				"st.w	r11, -4[%0]		\n\t"	  \
-				"bne   loop%=			\n\t"
-				: // No Output
-				: "r" ((uint32*)(__CHAR_SPACE_BASE_ADDRESS + (((uint32)this->offset) << 4))), 
-					"r" (&this->charSetSpec->tiles[1] + this->tilesDisplacement), "r" (__UINT32S_PER_CHARS(tilesToWrite) >> 2)
-				: "r11", "r12", "r13" // regs used
-			);
-#endif
+
 			break;
 		}
 	}

@@ -16,7 +16,6 @@
 #include <string.h>
 
 #include <AnimationController.h>
-#include <BgmapTextureManager.h>
 #include <Camera.h>
 #include <GameState.h>
 #include <Keypad.h>

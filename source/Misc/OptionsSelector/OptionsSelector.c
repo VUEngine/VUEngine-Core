@@ -17,7 +17,6 @@
 #include <AnimationCoordinatorFactory.h>
 #include <Actor.h>
 #include <Ball.h>
-#include <BgmapTextureManager.h>
 #include <Body.h>
 #include <Box.h>
 #include <Camera.h>

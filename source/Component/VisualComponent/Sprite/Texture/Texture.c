@@ -12,8 +12,7 @@
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <CharSetManager.h>
-#include <BgmapTextureManager.h>
-#include <ObjectTextureManager.h>
+#include <TextureManager.h>
 #include <Optics.h>
 #include <VirtualList.h>
 #include <VirtualNode.h>
@@ -31,72 +30,6 @@ friend class VirtualNode;
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PUBLIC STATIC METHODS
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-static void Texture::reset()
-{
-	BgmapTextureManager::reset(BgmapTextureManager::getInstance());
-	ObjectTextureManager::reset(ObjectTextureManager::getInstance());
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-static Texture Texture::get
-(
-	ClassPointer textureClass, const TextureSpec* textureSpec, int16 minimumSegment, bool mustLiveAtEvenSegment, uint32 scValue
-)
-{
-	if(NULL == textureSpec)
-	{
-		return NULL;
-	}
-
-	if(typeofclass(BgmapTexture) == textureClass)
-	{
-		return 
-			Texture::safeCast
-			(
-				BgmapTextureManager::getTexture
-				(
-					BgmapTextureManager::getInstance(), (BgmapTextureSpec*)textureSpec, minimumSegment, mustLiveAtEvenSegment, scValue
-				)
-			);
-	}
-	else if(typeofclass(ObjectTexture) == textureClass)
-	{
-		return Texture::safeCast(ObjectTextureManager::getTexture(ObjectTextureManager::getInstance(), (ObjectTextureSpec*)textureSpec));
-	}
-
-	return NULL;	
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-static void Texture::release(Texture texture)
-{
-	if(isDeleted(texture))
-	{
-		return;
-	}
-
-	if(__IS_INSTANCE_OF(BgmapTexture, texture))
-	{
-		BgmapTextureManager::releaseTexture(BgmapTextureManager::getInstance(), BgmapTexture::safeCast(texture));
-	}
-	else if(__IS_INSTANCE_OF(ObjectTexture, texture))
-	{
-		ObjectTextureManager::releaseTexture(ObjectTextureManager::getInstance(), ObjectTexture::safeCast(texture));
-	}
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-static void Texture::updateTextures(int16 maximumTextureRowsToWrite, bool defer)
-{
-	BgmapTextureManager::updateTextures(BgmapTextureManager::getInstance(), maximumTextureRowsToWrite, defer);
-	ObjectTextureManager::updateTextures(ObjectTextureManager::getInstance(), maximumTextureRowsToWrite, defer);
-}
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
