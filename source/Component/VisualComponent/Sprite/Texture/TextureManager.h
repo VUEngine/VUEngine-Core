@@ -38,14 +38,8 @@ static class TextureManager : Object
 	/// Get a texture configured with the provided spec.
 	/// @param textureClass: Class of texture to instantiate
 	/// @param textureSpec: Spec used to select or initialize a texture with
-	/// @param minimumSegment: Minimum BGMAP segment where to allocate the texture
-	/// @param mustLiveAtEvenSegment: Required BGMAP segment where to allocate the texture
-	/// @param scValue: SC configuration value for multi segment textures
 	/// @return Texture initialized with the provided spec
-	static Texture get
-	(
-		ClassPointer textureClass, const TextureSpec* textureSpec, int16 minimumSegment, bool mustLiveAtEvenSegment, uint32 scValue
-	);
+	static Texture get(ClassPointer textureClass, const TextureSpec* textureSpec);
 
 	/// Release a texture.
 	/// @param texture: Texture to release

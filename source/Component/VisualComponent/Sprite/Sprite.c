@@ -459,7 +459,7 @@ void Sprite::loadTexture(ClassPointer textureClass)
 		return;
 	}
 
-	this->texture = TextureManager::get(textureClass, ((SpriteSpec*)this->componentSpec)->textureSpec, 0, false, 0);
+	this->texture = TextureManager::get(textureClass, ((SpriteSpec*)this->componentSpec)->textureSpec);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
