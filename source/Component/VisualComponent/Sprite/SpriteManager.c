@@ -610,13 +610,6 @@ void SpriteManager::render()
 					(0 > this->objectIndex - objectSprite->totalObjects)
 				)
 				{
-#ifdef __ALERT_OBJECT_MEMORY_DEPLETION
-					Printer::setDebugMode();
-					Printer::clear();
-
-					NM_ASSERT(false, "SpriteManager::render: OBJECT memory depleted");
-#endif
-
 					objectSprite->index = __NO_RENDER_INDEX;
 					continue;
 				}
@@ -654,6 +647,16 @@ void SpriteManager::render()
 			}
 		}
 	}
+
+#ifdef __ALERT_OBJECT_MEMORY_DEPLETION
+	if(0 >= this->objectIndex)
+	{
+		Printer::setDebugMode();
+		Printer::clear();
+
+		NM_ASSERT(false, "SpriteManager::render: OBJECT memory depleted");
+	}
+#endif
 
 	SpriteManager::stopRendering(this);
 
