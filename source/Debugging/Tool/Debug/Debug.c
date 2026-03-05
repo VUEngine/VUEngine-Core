@@ -1127,6 +1127,7 @@ void Debug::objectsShowStatus(int32 increment, int32 x, int32 y)
 
 	Debug::dimmGame(this);
 
+/*
 	if(0 > this->objectSegment)
 	{
 		this->objectSegment = __TOTAL_OBJECT_SEGMENTS - 1;
@@ -1135,7 +1136,7 @@ void Debug::objectsShowStatus(int32 increment, int32 x, int32 y)
 	{
 		this->objectSegment = 0;
 	}
-
+*/
 	SpriteManager spriteManager = 
 		SpriteManager::safeCast(ToolState::getComponentManager(this->toolState, kSpriteComponent));
 

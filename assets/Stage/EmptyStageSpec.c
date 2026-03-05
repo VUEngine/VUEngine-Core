@@ -25,11 +25,11 @@ StageROMSpec EmptyStageSpec =
 	// Timer config
 	{
 		// Timer's resolution (__TIMER_100US or __TIMER_20US)
-		__TIMER_100US,
+		0,
 		// Target elapsed time between timer interrupts
-		1000,
+		0,
 		// Timer interrupt's target time units
-		kMS
+		0
 	},
 
 	// General stage's attributes

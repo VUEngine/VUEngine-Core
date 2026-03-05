@@ -157,7 +157,7 @@ void SpriteManager::enable()
 	
 	for(int16 i = 0; i < __TOTAL_SPRITE_LISTS; i++)
 	{
-		nextSlotIndexes[i] = &this->spriteRegistry[i].nextSlotIndex;
+		nextSlotIndexes[i] = (const int16*)&this->spriteRegistry[i].nextSlotIndex;
 	}
 
 	DisplayUnit::fillAvailableSlots(availableSlots, nextSlotIndexes, __TOTAL_SPRITE_LISTS);
