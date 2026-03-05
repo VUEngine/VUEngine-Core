@@ -21,6 +21,7 @@
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 class Entity;
+class Sprite;
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DATA
@@ -162,6 +163,23 @@ singleton class DisplayUnit : ListenerObject
 
 	/// Retrieve inded of the frame buffers set using during the current game frame 
 	static uint32 getCurrentDrawingFrameBufferSet();
+
+	/// Configure the number of available sprite slots per sprite lists
+	/// @param availableSlots: Pointer to the array to fill
+	/// @param nextSlotIndex: Pointer to the indexes of each slot for every sprite list 
+	/// @param totalSpriteLists: Number of total sprite lists
+	static void fillAvailableSlots(int16* availableSlots, const int16** nextSlotIndex, int16 totalSpriteLists);
+
+	/// Commit the graphics to memory
+	/// @param nextSlotIndex: Pointer to the array of the next available slot per sprite list
+	/// @param totalSpriteLists: Number of total sprite lists
+	static void commitGraphics();
+
+	static uint16 getSpriteListIndex(Sprite sprite);
+	static void disableRendering();
+	static void startRendering();
+	static void stopRendering();
+
 }
 
 #endif

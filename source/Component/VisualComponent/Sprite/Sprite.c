@@ -52,6 +52,7 @@ void Sprite::constructor(Entity owner, const SpriteSpec* spriteSpec)
 
 	// Clear values
 	this->index = __NO_RENDER_INDEX;
+	this->usedSlots = 0;
 	this->head = 0;
 	this->texture = NULL;
 	this->halfWidth = 0;
@@ -197,7 +198,7 @@ bool Sprite::prepareToRender()
 /*
 	if(__HIDE == this->show)
 	{
-		return __NO_RENDER_INDEX;
+		return 0;
 	}
 */
 
@@ -272,9 +273,10 @@ bool Sprite::prepareToRender()
 
 int16 Sprite::render(int16 index, bool updateAnimation)
 {
-	if(!Sprite::prepareToRender(this))
+	if(!Sprite::prepareToRender(this) || false)
 	{
 		this->index = __NO_RENDER_INDEX;
+		this->usedSlots = -1;
 	}
 	else 
 	{
@@ -288,16 +290,22 @@ int16 Sprite::render(int16 index, bool updateAnimation)
 
 			int16 previousIndex = this->index;
 
-			this->index = Sprite::doRender(this, index);
+			this->usedSlots = Sprite::doRender(this, index);
 
-			if(__NO_RENDER_INDEX != this->index)
+			if(0 < this->usedSlots)
 			{
+				this->index = index;
+				
 				if(NULL != this->owner)
 				{
 					Entity::setVisible(this->owner);
 				}
 
 				this->updateAnimationFrame = this->updateAnimationFrame || __NO_RENDER_INDEX == previousIndex;
+			}
+			else
+			{
+				this->index = __NO_RENDER_INDEX;
 			}
 		}
 
@@ -307,7 +315,7 @@ int16 Sprite::render(int16 index, bool updateAnimation)
 		}
 	}
 
-	return this->index;
+	return this->usedSlots;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -493,7 +501,7 @@ void Sprite::updateAnimation()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void Sprite::processEffects(int32 maximumParamTableRowsToComputePerCall __attribute__((unused)))
+void Sprite::processEffects(int32 specialEffectsRowsPerFrame __attribute__((unused)))
 {}
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

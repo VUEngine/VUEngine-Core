@@ -67,6 +67,9 @@ abstract class Sprite : VisualComponent
 	/// display its texture
 	int16 index;
 
+	/// Amount of sprite slots used to render it
+	int16 usedSlots;
+
 	/// Head flags for DRAM entries
 	uint16 head;
 
@@ -209,9 +212,9 @@ abstract class Sprite : VisualComponent
 	virtual void updateAnimation();
 
 	/// Process special effects.
-	/// @param maximumParamTableRowsToComputePerCall: Used to defer param table computations 
+	/// @param specialEffectsRowsPerFrame: Used to defer param table computations 
 	/// (-1 to compute the whole table)
-	virtual void processEffects(int32 maximumParamTableRowsToComputePerCall);
+	virtual void processEffects(int32 specialEffectsRowsPerFrame);
 
 	/// Set the current multiframe.
 	/// @param frame: Current animation frame

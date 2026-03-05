@@ -31,29 +31,27 @@ class VirtualNode;
 // CLASS' MACROS
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-#define __TOTAL_OBJECT_SEGMENTS 	4
+#define __TOTAL_BGMAP_SPRITE_LISTS       1
+#define __TOTAL_OBJECT_SPRITE_LISTS      1
+#define __TOTAL_SPRITE_LISTS 		(__TOTAL_BGMAP_SPRITE_LISTS + __TOTAL_OBJECT_SPRITE_LISTS)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DATA
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-enum SpriteListTypes
-{
-	kSpriteListSpecial = 0,
-	kSpriteListBgmap1,
-	kSpriteListObject1,
-	kSpriteListObject2,
-	kSpriteListObject3,
-	kSpriteListObject4,
-
-	kSpriteListEnd
-};
-
 typedef struct SpriteRegistry
 {
+	/// List of sprites in this registry
 	VirtualList sprites;
 
+	/// Next node in the list to sort
 	VirtualNode sortingNode;
+
+	/// Total available hardware entries per sprite type
+	int16 availableSlots;
+
+	/// Index of the last slot used
+	int16 nextSlotIndex;
 
 } SpriteRegistry;
 
@@ -80,39 +78,23 @@ class SpriteManager : ComponentManager
 {
 	/// @protectedsection
 
-	// Pointers to access the WORLD DRAM space
-	WorldAttributes* worldAttributesBaseAddress;
-
-	// Pointers to access the OBJECT DRAM space
-	ObjectAttributes* objectAttributesBaseAddress;
-
 	/// Clock for the animations
 	Clock animationsClock;
 
 	/// List of all created sprites
-	SpriteRegistry spriteRegistry[kSpriteListEnd];
+	SpriteRegistry spriteRegistry[__TOTAL_SPRITE_LISTS];
 
-	/// List of object sprite containers
-	ObjectSpriteContainer objectSpriteContainers[__TOTAL_OBJECT_SEGMENTS];
+	/// List of special sprites
+	VirtualList specialSprites;
 
 	/// Total pixels currently drawn
 	int32 totalPixelsDrawn;
 	
-	/// Number of param table rows to write during each rendering cycle
-	int16 maximumParamTableRowsToComputePerCall;
+	/// Number of special effects rows to write during each rendering cycle
+	int16 specialEffectsRowsPerFrame;
 
 	/// Flag to distinguish between even and odd game frames
 	bool evenFrame;
-
-	/// Free WORLD layer during the last rendering cycle
-	int16 bgmapIndex;
-
-	/// Free OBJECT during the last rendering cycle
-	int16 objectIndex;
-
-	/// Previous free OBJECT during the last rendering cycle, used to avoid
-	/// writing the whole address space
-	int16 previousObjectIndex;
 
 	/// Number of texture rows to write during each rendering cycle
 	int8 texturesMaximumRowsToWrite;
@@ -120,17 +102,11 @@ class SpriteManager : ComponentManager
 	/// Flag to defer texturing writing over time
 	bool deferTextureUpdating;
 
-	/// Flag to defer param tables writing over time
-	bool deferParamTableEffects;
+	/// Flag to defer special effect writing over time
+	bool deferSpecialEffectsProcessing;
 
 	// Flag to forze a complete Z sorting of sprites
 	bool completeSort;
-
-	/// SPT index that for OBJECT memory management
-	int8 spt;
-
-	/// Cache for the VIP SPT registers
-	uint16 vipSPTRegistersCache[__TOTAL_OBJECT_SEGMENTS];
 
 	/// @publicsection
 
@@ -164,31 +140,26 @@ class SpriteManager : ComponentManager
 
 	/// Configure the manager's state.
 	/// @param texturesMaximumRowsToWrite: Number of texture rows to write during each rendering cycle
-	/// @param maximumParamTableRowsToComputePerCall: Number of param table rows to write during each rendering cycle 
+	/// @param specialEffectsRowsPerFrame: Number of special effect rows to write during each rendering cycle 
 	/// @param objectSpritesContainerConfiguration: Array with the configuration of ObjectSpriteContainers
 	/// @param animationsClock: Clock for the animations
 	void configure
 	(
-		uint8 texturesMaximumRowsToWrite, int32 maximumParamTableRowsToComputePerCall,
-		const ObjectSpritesContainerConfiguration objectSpritesContainersConfiguration[__TOTAL_OBJECT_SEGMENTS], Clock animationsClock
+		uint8 texturesMaximumRowsToWrite, int32 specialEffectsRowsPerFrame,
+		const ObjectSpritesContainerConfiguration* objectSpritesContainersConfiguration, Clock animationsClock
 	);
 
 	/// Set the clock that determines if the animations must be updated or not.
 	/// @param clock: Clock for the animations
 	void setAnimationsClock(Clock animationsClock);
 
-	/// Configure the object sprite containers.
-	/// @param size: Array with the number of OBJECTS for each container
-	/// @param z: Array of Z coordinates for each container
-	void setupObjectSpriteContainers(int16 size[__TOTAL_OBJECT_SEGMENTS], int16 z[__TOTAL_OBJECT_SEGMENTS]);
+	/// Set the number of special effects rows to write during each rendering cycle.
+	/// @param specialEffectsRowsPerFrame: Number of special effects rows to write during each rendering cycle 
+	void setSpecialEffectsRowsPerFrame(int32 specialEffectsRowsPerFrame);
 
-	/// Set the number of param table rows to write during each rendering cycle.
-	/// @param maximumParamTableRowsToComputePerCall: Number of param table rows to write during each rendering cycle 
-	void setMaximumParamTableRowsToComputePerCall(int32 maximumParamTableRowsToComputePerCall);
-
-	/// Retrieve the number of param table rows to write during each rendering cycle.
-	/// @return Number of param table rows to write during each rendering cycle 
-	int32 getMaximumParamTableRowsToComputePerCall();
+	/// Retrieve the number of special effects rows to write during each rendering cycle.
+	/// @return Number of special effects rows to write during each rendering cycle 
+	int32 getSpecialEffectsRowsPerFrame();
 
 	/// Set the number of texture rows to write during each rendering cycle.
 	/// @param texturesMaximumRowsToWrite: Number of texture rows to write during each rendering cycle
@@ -203,10 +174,10 @@ class SpriteManager : ComponentManager
 	/// they are written in a single pass
 	void deferTextureUpdating(bool deferTextureUpdating);
 
-	/// Enable or disable the writing of param tables over time.
-	/// @param deferAffineTransformations: If true, param tables are written overtime; otherwise
+	/// Enable or disable the writing of special effectss over time.
+	/// @param deferSpecialEffectsProcessing: If true, special effectss are written overtime; otherwise
 	/// they are written in a single pass
-	void deferParamTableEffects(bool deferAffineTransformations);
+	void deferSpecialEffectsProcessing(bool deferSpecialEffectsProcessing);
 
 	/// Render sprites.
 	void render();
@@ -220,11 +191,6 @@ class SpriteManager : ComponentManager
 	/// Invalidate the rendering status of all sprites so they re-render again in the next cycle.
 	void invalidateRendering();
 
-	/// Hide all sprites except the provided one.
-	/// @param spareSprite: Sprite to not hide
-	/// @param hidePrinting: Flag to allow/prohibit the display of the printing sprite
-	void hideAllSprites(Sprite spareSprite, bool hidePrinting);
-
 	/// Show all sprites except the provided one (available only when __TOOLS is defined).
 	/// @param spareSprite: Sprite to not show
 	/// @param showPrinting: Flag to allow/prohibit the display of the printing sprite
@@ -237,10 +203,6 @@ class SpriteManager : ComponentManager
 
 	/// Compute the total pixels drawn.
 	void computeTotalPixelsDrawn();
-
-	/// Retrieve the free WORLD layer during the last rendering cycle.
-	/// @return Free WORLD layer during the last rendering cycle
-	int8 getFreeLayer();
 
 	/// Retrieve the total number of registerd sprites.
 	/// @return Total number of registerd sprites
@@ -256,11 +218,6 @@ class SpriteManager : ComponentManager
 	/// @param y: Screen y coordinate where to print
 	/// @param resumed: If true it only prints the most important statistics
 	void print(int32 x, int32 y, bool resumed);
-
-	/// Print OBJECT related stats.
-	/// @param x: Screen x coordinate where to print
-	/// @param y: Screen y coordinate where to print
-	void printSPTInfo(int16 spt, int32 x, int32 y);
 }
 
 #endif

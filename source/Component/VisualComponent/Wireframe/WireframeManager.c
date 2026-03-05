@@ -49,7 +49,7 @@ void WireframeManager::constructor()
 
 void WireframeManager::destructor()
 {
-	WireframeManager::stopListeningForVIP(this);
+	WireframeManager::stopListeningForVBlank(this);
 
 	// Always explicitly call the base's destructor 
 	Base::destructor();
@@ -97,7 +97,7 @@ void WireframeManager::enable()
 
 void WireframeManager::disable()
 {
-	WireframeManager::stopListeningForVIP(this);
+	WireframeManager::stopListeningForVBlank(this);
 
 	Base::disable(this);
 
@@ -115,7 +115,7 @@ Wireframe WireframeManager::create(Entity owner, const WireframeSpec* wireframeS
 
 	if(NULL == this->components->head)
 	{
-		WireframeManager::startListeningForVIP(this);			
+		WireframeManager::startListeningForVBlank(this);			
 	}
 
 	return  ((Wireframe (*)(Entity, const WireframeSpec*))((ComponentSpec*)wireframeSpec)->allocator)(owner, wireframeSpec);
@@ -306,7 +306,7 @@ void WireframeManager::print(int32 x, int32 y)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void WireframeManager::startListeningForVIP()
+void WireframeManager::startListeningForVBlank()
 {
 	Hardware::suspendInterrupts();
 
@@ -318,7 +318,7 @@ void WireframeManager::startListeningForVIP()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void WireframeManager::stopListeningForVIP()
+void WireframeManager::stopListeningForVBlank()
 {
 	Hardware::suspendInterrupts();
 

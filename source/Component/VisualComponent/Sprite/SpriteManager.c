@@ -19,9 +19,6 @@
 #include <Clock.h>
 #include <DebugConfig.h>
 #include <Mem.h>
-#include <ObjectSprite.h>
-#include <ObjectTexture.h>
-#include <ObjectSpriteContainer.h>
 #include <ParamTableManager.h>
 #include <Printer.h>
 #include <Sprite.h>
@@ -37,22 +34,13 @@
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 friend class Sprite;
-friend class ObjectSprite;
-friend class ObjectSpriteContainer;
 friend class Texture;
 friend class VirtualNode;
 friend class VirtualList;
 
-extern volatile uint16* _vipRegisters;
-
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' MACROS
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-#define __SPT0									0x24  // OBJ Group 0 Pointer
-#define __SPT1									0x25  // OBJ Group 1 Pointer
-#define __SPT2									0x26  // OBJ Group 2 Pointer
-#define __SPT3									0x27  // OBJ Group 3 Pointer
 
 #define __MAX_SPRITE_CLASS_NAME_SIZE			14
 
@@ -79,33 +67,20 @@ void SpriteManager::constructor()
 	Base::constructor();
 
 	this->totalPixelsDrawn = 0;
-	this->maximumParamTableRowsToComputePerCall = -1;
-	this->deferParamTableEffects = false;
+	this->specialEffectsRowsPerFrame = -1;
 	this->animationsClock = NULL;
-	this->bgmapIndex = __TOTAL_LAYERS - 1;
 	this->deferTextureUpdating = false;
 	this->texturesMaximumRowsToWrite = -1;
 	this->completeSort = true;
 	this->evenFrame = __TRANSPARENCY_EVEN;
-	this->spt = __TOTAL_OBJECT_SEGMENTS - 1;
-	this->objectIndex = __TOTAL_OBJECTS - 1;
-	this->previousObjectIndex = __TOTAL_OBJECTS - 1;
+	this->specialSprites = new VirtualList();
 
-	// Pointers to access the DRAM space
-	this->worldAttributesBaseAddress = (WorldAttributes*)__WORLD_SPACE_BASE_ADDRESS;
-	this->objectAttributesBaseAddress = (ObjectAttributes*)__OBJECT_SPACE_BASE_ADDRESS;
-
-
-	for(int16 i = 0; i < kSpriteListEnd; i++)
+	for(int16 i = 0; i < __TOTAL_SPRITE_LISTS; i++)
 	{
-		this->spriteRegistry[i].sprites = new VirtualList();
+		this->spriteRegistry[i].sprites = NULL;
 		this->spriteRegistry[i].sortingNode = NULL;
-	}
-	
-	for(int16 i = 0; i < __TOTAL_OBJECT_SEGMENTS; i++)
-	{
-		this->vipSPTRegistersCache[i] = this->objectIndex;
-		this->objectSpriteContainers[i] = NULL;
+		this->spriteRegistry[i].availableSlots = 0;
+		this->spriteRegistry[i].nextSlotIndex = 0;
 	}
 }
 
@@ -113,9 +88,15 @@ void SpriteManager::constructor()
 
 void SpriteManager::destructor()
 {
-	SpriteManager::stopListeningForVIP(this);
+	SpriteManager::stopListeningForVBlank(this);
 
-	for(int16 i = 0; i < kSpriteListEnd; i++)
+	if(!isDeleted(this->specialSprites))
+	{
+		delete this->specialSprites;
+		this->specialSprites = NULL;
+	}
+
+	for(int16 i = 0; i < __TOTAL_SPRITE_LISTS; i++)
 	{
 		if(!isDeleted(this->spriteRegistry[i].sprites))
 		{
@@ -124,15 +105,6 @@ void SpriteManager::destructor()
 		}
 
 		this->spriteRegistry[i].sortingNode = NULL;
-	}
-
-	for(int16 i = 0; i < __TOTAL_OBJECT_SEGMENTS; i++)
-	{
-		if(!isDeleted(this->objectSpriteContainers[i]))
-		{
-			delete this->objectSpriteContainers[i];
-			this->objectSpriteContainers[i] = NULL;
-		}
 	}
 
 	// Always explicitly call the base's destructor 
@@ -147,7 +119,7 @@ bool SpriteManager::onEvent(ListenerObject eventFirer, uint16 eventCode)
 	{
 		case kEventDisplayUnitVBlank:
 		{
-			SpriteManager::writeDRAM(this);
+			SpriteManager::commitGraphics(this);
 		
 			return true;
 		}
@@ -169,53 +141,48 @@ void SpriteManager::enable()
 {
 	Base::enable(this);
 
-	CharSetManager::clearDRAM(CharSetManager::getInstance());
+	CharSetManager::clearGraphicMemory(CharSetManager::getInstance());
 	TextureManager::clearGraphicMemory();
 	DisplayUnit::clearGraphicMemory();
 	Printer::reset(Printer::getInstance());
 	CharSetManager::reset(CharSetManager::getInstance());
 	ParamTableManager::reset(ParamTableManager::getInstance());
+	DisplayUnit::stopRendering();
 
-	for(int32 i = __TOTAL_OBJECTS - 1; 0 <= i; i--)
-	{
-		_objectAttributesCache[i].head = __OBJECT_SPRITE_CHAR_HIDE_MASK;
-	}
-
-	this->spt = __TOTAL_OBJECT_SEGMENTS - 1;
-	this->objectIndex = __TOTAL_OBJECTS - 1;
-
-	for(int16 i = 0; i < __TOTAL_OBJECT_SEGMENTS; i++)
-	{
-		this->vipSPTRegistersCache[i] = this->objectIndex;
-	}
-
-	for(int32 i = 0; i < __TOTAL_OBJECTS; i++)
-	{
-		_vipRegisters[__SPT3 - i] = 0;
-		_objectAttributesCache[i].jx = 0;
-		_objectAttributesCache[i].head = 0;
-		_objectAttributesCache[i].jy = 0;
-		_objectAttributesCache[i].tile = 0;
-	}
-
-	this->bgmapIndex = __TOTAL_LAYERS - 1;
 	this->completeSort = true;
 	this->evenFrame = __TRANSPARENCY_EVEN;
 
-	SpriteManager::stopRendering(this);
+	int16 availableSlots[__TOTAL_SPRITE_LISTS] = {0};
+	const int16** nextSlotIndexes[__TOTAL_SPRITE_LISTS] = {NULL};
+	
+	for(int16 i = 0; i < __TOTAL_SPRITE_LISTS; i++)
+	{
+		nextSlotIndexes[i] = &this->spriteRegistry[i].nextSlotIndex;
+	}
+
+	DisplayUnit::fillAvailableSlots(availableSlots, nextSlotIndexes, __TOTAL_SPRITE_LISTS);
+
+	for(int16 i = 0; i < __TOTAL_SPRITE_LISTS; i++)
+	{
+		NM_ASSERT(0 < availableSlots[i], "SpriteManager::enable: invalid available sprite slots");
+		this->spriteRegistry[i].sprites = new VirtualList();
+		this->spriteRegistry[i].sortingNode = NULL;
+		this->spriteRegistry[i].availableSlots = availableSlots[i];
+		this->spriteRegistry[i].nextSlotIndex = availableSlots[i] - 1;
+	}
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void SpriteManager::disable()
 {
-	SpriteManager::stopListeningForVIP(this);
+	SpriteManager::stopListeningForVBlank(this);
 
 	Base::disable(this);
 
 	SpriteManager::destroyAllComponents(this);
 
-	for(int16 i = 0; i < kSpriteListEnd; i++)
+	for(int16 i = 0; i < __TOTAL_SPRITE_LISTS; i++)
 	{
 		if(!isDeleted(this->spriteRegistry[i].sprites))
 		{
@@ -225,16 +192,7 @@ void SpriteManager::disable()
 		this->spriteRegistry[i].sortingNode = NULL;
 	}
 
-	for(int16 i = 0; i < __TOTAL_OBJECT_SEGMENTS; i++)
-	{
-		this->vipSPTRegistersCache[i] = this->objectIndex;
-
-		if(!isDeleted(this->objectSpriteContainers[i]))
-		{
-			delete this->objectSpriteContainers[i];
-			this->objectSpriteContainers[i] = NULL;
-		}
-	}
+	DisplayUnit::disableRendering();
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -248,48 +206,25 @@ Sprite SpriteManager::create(Entity owner, const SpriteSpec* spriteSpec)
 
 	if(NULL == this->components->head)
 	{
-		SpriteManager::startListeningForVIP(this);			
+		SpriteManager::startListeningForVBlank(this);			
 	}
 
 	Sprite sprite = ((Sprite (*)(Entity, const SpriteSpec*)) ((ComponentSpec*)spriteSpec)->allocator)(owner, spriteSpec);
 
 	Sprite::transform(sprite);
 
-	ClassPointer classPointer = Sprite::getBasicType(sprite);
+	int16 spriteListIndex = DisplayUnit::getSpriteListIndex(sprite);
 
-	if(typeofclass(ObjectSprite) == classPointer)
+	if(0 <= spriteListIndex && spriteListIndex < __TOTAL_SPRITE_LISTS)
 	{
-		int16 z = 0;
-
-		if(NULL != sprite->transformation)
-		{
-			z = __METERS_TO_PIXELS(sprite->transformation->position.z);
-		}
-		
-		int16 spriteListObjectIndex = SpriteManager::getObjectSpriteContainer(this, z + sprite->displacement.z);
-
-		NM_ASSERT(0 <= spriteListObjectIndex, "SpriteManager::create: invalid object list index");
-
-		if(0 <= spriteListObjectIndex)
-		{
-			SpriteManager::registerSprite(this, sprite, &this->spriteRegistry[spriteListObjectIndex + kSpriteListObject1]);
-		}
-
-	}
-	else if(typeofclass(BgmapSprite) == classPointer)
-	{
-		SpriteManager::registerSprite(this, sprite, &this->spriteRegistry[kSpriteListBgmap1]);
-	}
-	else if(typeofclass(Sprite) == classPointer)
-	{
-		SpriteManager::registerSprite(this, sprite, &this->spriteRegistry[kSpriteListBgmap1]);
+		SpriteManager::registerSprite(this, sprite, &this->spriteRegistry[spriteListIndex]);
 	}
 
 	if(Sprite::hasSpecialEffects(sprite))
 	{
-		if(!isDeleted(this->spriteRegistry[kSpriteListSpecial].sprites))
+		if(!isDeleted(this->specialSprites))
 		{
-			VirtualList::pushBack(this->spriteRegistry[kSpriteListSpecial].sprites, sprite);
+			VirtualList::pushBack(this->specialSprites, sprite);
 		}
 	}
 
@@ -306,7 +241,7 @@ void SpriteManager::purgeComponents()
 
 		if(sprite->deleteMe)
 		{
-			for(int16 i = 0; i < kSpriteListEnd; i++)
+			for(int16 i = 0; i < __TOTAL_SPRITE_LISTS; i++)
 			{
 				if(NULL != this->spriteRegistry[i].sprites)
 				{
@@ -327,13 +262,13 @@ void SpriteManager::purgeComponents()
 
 void SpriteManager::configure
 (
-	uint8 texturesMaximumRowsToWrite, int32 maximumParamTableRowsToComputePerCall,
-	const ObjectSpritesContainerConfiguration objectSpritesContainersConfiguration[__TOTAL_OBJECT_SEGMENTS], Clock animationsClock
+	uint8 texturesMaximumRowsToWrite, int32 specialEffectsRowsPerFrame,
+	const ObjectSpritesContainerConfiguration* objectSpritesContainersConfiguration, Clock animationsClock
 )
 {
 	SpriteManager::setTexturesMaximumRowsToWrite(this, texturesMaximumRowsToWrite);
-	SpriteManager::setMaximumParamTableRowsToComputePerCall(this, maximumParamTableRowsToComputePerCall);
-	SpriteManager::configureObjectSpriteContainers(this, objectSpritesContainersConfiguration);
+	SpriteManager::setSpecialEffectsRowsPerFrame(this, specialEffectsRowsPerFrame);
+//	SpriteManager::configureObjectSpriteContainers(this, objectSpritesContainersConfiguration);
 	SpriteManager::setAnimationsClock(this, animationsClock);
 }
 
@@ -361,16 +296,16 @@ void SpriteManager::destroySprite(Sprite sprite)
 
 	if(NULL == this->components->head)
 	{
-		SpriteManager::stopListeningForVIP(this);			
+		SpriteManager::stopListeningForVBlank(this);			
 	}
 
 #ifdef __RELEASE
 	if(Sprite::hasSpecialEffects(sprite))
 #endif
 	{
-		if(!isDeleted(this->spriteRegistry[kSpriteListSpecial].sprites))
+		if(!isDeleted(this->specialSprites))
 		{
-			VirtualList::removeData(this->spriteRegistry[kSpriteListSpecial].sprites, sprite);
+			VirtualList::removeData(this->specialSprites, sprite);
 		}
 	}
 
@@ -413,58 +348,16 @@ void SpriteManager::registerSprite(Sprite sprite, SpriteRegistry* spriteRegistry
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void SpriteManager::configureObjectSpriteContainers
-(
-	const ObjectSpritesContainerConfiguration objectSpritesContainersConfiguration[__TOTAL_OBJECT_SEGMENTS]
-)
+void SpriteManager::setSpecialEffectsRowsPerFrame(int32 specialEffectsRowsPerFrame)
 {
-#ifndef __RELEASE
-	int16 previousZ = objectSpritesContainersConfiguration[__TOTAL_OBJECT_SEGMENTS - 1].zPosition;
-#endif
-
-	for(int32 i = __TOTAL_OBJECT_SEGMENTS; i--; )
-	{
-		if(objectSpritesContainersConfiguration[i].instantiate)
-		{
-			NM_ASSERT(objectSpritesContainersConfiguration[i].zPosition <= previousZ, "SpriteManager::configureObjectSpriteContainers: wrong z");
-			NM_ASSERT(isDeleted(this->objectSpriteContainers[i]), "SpriteManager::configureObjectSpriteContainers: error creating container");
-
-			if(!isDeleted(this->objectSpriteContainers[i]))
-			{
-				delete this->objectSpriteContainers[i];
-				this->objectSpriteContainers[i] = NULL;
-			}
-			
-			this->objectSpriteContainers[i] = new ObjectSpriteContainer();
-			
-			SpriteManager::registerSprite(this, Sprite::safeCast(this->objectSpriteContainers[i]), &this->spriteRegistry[kSpriteListBgmap1]);
-
-			PixelVector position =
-			{
-				0, 0, objectSpritesContainersConfiguration[i].zPosition, 0
-			};
-
-			ObjectSpriteContainer::setPosition(this->objectSpriteContainers[i], &position);
-
-#ifndef __RELEASE
-			previousZ = objectSpritesContainersConfiguration[i].zPosition;
-#endif
-		}
-	}
+	this->specialEffectsRowsPerFrame = specialEffectsRowsPerFrame;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void SpriteManager::setMaximumParamTableRowsToComputePerCall(int32 maximumParamTableRowsToComputePerCall)
+int32 SpriteManager::getSpecialEffectsRowsPerFrame()
 {
-	this->maximumParamTableRowsToComputePerCall = maximumParamTableRowsToComputePerCall;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-int32 SpriteManager::getMaximumParamTableRowsToComputePerCall()
-{
-	return this->deferParamTableEffects ? this->maximumParamTableRowsToComputePerCall : -1;
+	return this->deferSpecialEffectsProcessing ? this->specialEffectsRowsPerFrame : -1;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -490,9 +383,9 @@ void SpriteManager::deferTextureUpdating(bool deferTextureUpdating)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void SpriteManager::deferParamTableEffects(bool deferParamTableEffects)
+void SpriteManager::deferSpecialEffectsProcessing(bool deferSpecialEffectsProcessing)
 {
-	this->deferParamTableEffects = deferParamTableEffects;
+	this->deferSpecialEffectsProcessing = deferSpecialEffectsProcessing;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -512,18 +405,16 @@ void SpriteManager::render()
 	_renderedSprites = 0;
 #endif
 
-	SpriteManager::startRendering(this);
+	Hardware::suspendInterrupts();
+	DisplayUnit::startRendering();
 
 	// Deframent video RAM
 	CharSetManager::defragment(CharSetManager::getInstance(), true);
-	ParamTableManager::defragment(ParamTableManager::getInstance(), true);
 
 	this->completeSort = SpriteManager::sortProgressively(this, this->completeSort);
 
 	// Switch between even and odd frame
 	this->evenFrame = __TRANSPARENCY_EVEN == this->evenFrame ? __TRANSPARENCY_ODD : __TRANSPARENCY_EVEN;
-
-	this->bgmapIndex = __TOTAL_LAYERS - 1;
 
 	bool updateAnimations = true;
 	
@@ -532,133 +423,53 @@ void SpriteManager::render()
 		updateAnimations = !Clock::isPaused(this->animationsClock);
 	}
 
-	for(VirtualNode node = this->spriteRegistry[kSpriteListBgmap1].sprites->tail, previousNode = NULL; NULL != node; node = previousNode)
+	for(int16 i = 0; i < __TOTAL_SPRITE_LISTS ; i++)
 	{
-		previousNode = node->previous;
+		this->spriteRegistry[i].nextSlotIndex = this->spriteRegistry[i].availableSlots - 1;
 
-		Sprite sprite = Sprite::safeCast(node->data);
-
-		if(sprite->deleteMe)
+		for(VirtualNode node = this->spriteRegistry[i].sprites->tail, previousNode = NULL; NULL != node; node = previousNode)
 		{
-			this->spriteRegistry[kSpriteListBgmap1].sortingNode = NULL;
-			VirtualList::removeNode(this->spriteRegistry[kSpriteListBgmap1].sprites, node);
+			previousNode = node->previous;
 
-			SpriteManager::destroySprite(this, sprite);
-			continue;
-		}
+			Sprite sprite = Sprite::safeCast(node->data);
 
-		// Saves on method calls quite a bit when there are lots of
-		// Sprites. Don't remove.
-		if(__HIDE == sprite->show || (sprite->transparency & this->evenFrame))
-		{
-			sprite->index = __NO_RENDER_INDEX;
-			continue;
-		}
+			if(sprite->deleteMe)
+			{
+				this->spriteRegistry[i].sortingNode = NULL;
+				VirtualList::removeNode(this->spriteRegistry[i].sprites, node);
 
-		if(Sprite::render(sprite, this->bgmapIndex, updateAnimations) == this->bgmapIndex)
-		{
-			this->bgmapIndex--;
-		}
-	}
+				SpriteManager::destroySprite(this, sprite);
+				continue;
+			}
 
+			// Saves on method calls quite a bit when there are lots of
+			// Sprites. Don't remove.
+			if(__HIDE == sprite->show || (sprite->transparency & this->evenFrame))
+			{
+				sprite->index = __NO_RENDER_INDEX;
+				continue;
+			}
+
+			int16 usedSlots = Sprite::render(sprite, this->spriteRegistry[i].nextSlotIndex, updateAnimations);
+
+			if(0 < usedSlots)
+			{
+				this->spriteRegistry[i].nextSlotIndex -= usedSlots;
 #ifdef __ALERT_WORLD_MEMORY_DEPLETION
-	if(0 >= this->bgmapIndex)
-	{
-		Printer::setDebugMode();
-		Printer::clear();
+				if(0 > this->spriteRegistry[i].nextSlotIndex)
+				{
+					Printer::setDebugMode();
+					Printer::clear();
 
-		NM_ASSERT(false, "SpriteManager::render: WORLD memory depleted");		
-	}
+					NM_ASSERT(false, "SpriteManager::render: slots depleted");		
+				}
 #endif
-
-	for(int16 i = kSpriteListObject1 + __TOTAL_OBJECT_SEGMENTS - 1; kSpriteListObject1 <= i ; i--)
-	{
-		ObjectSpriteContainer objectSpriteContainer = this->objectSpriteContainers[i - kSpriteListObject1];
-
-		if(NULL == objectSpriteContainer)
-		{
-			continue;
-		}
-		
-		int16 firstObjectIndex = this->objectIndex;
-
-		if(__SHOW == objectSpriteContainer->show)
-		{
-			for(VirtualNode node = this->spriteRegistry[i].sprites->tail, nextPrevious = NULL; NULL != node; node = nextPrevious)
-			{
-				nextPrevious = node->previous;
-
-				ObjectSprite objectSprite = ObjectSprite::safeCast(node->data);
-
-				if(objectSprite->deleteMe)
-				{
-					this->spriteRegistry[i].sortingNode = NULL;
-					VirtualList::removeNode(this->spriteRegistry[i].sprites, node);
-
-					SpriteManager::destroySprite(this, Sprite::safeCast(objectSprite));
-					continue;
-				}
-
-				// Saves on method calls quite a bit when there are lots of
-				// Sprites. Don't remove.
-				if
-				(
-					__HIDE == objectSprite->show 
-					|| 
-					(objectSprite->transparency & this->evenFrame) 
-					|| 
-					(0 > this->objectIndex - objectSprite->totalObjects)
-				)
-				{
-					objectSprite->index = __NO_RENDER_INDEX;
-					continue;
-				}
-
-				// Do not change the order of this condition, objectSprite->totalObjects may be modified during rendering
-				// But calling ObjectSprite::getTotalObjects is too costly
-				if
-				(
-					ObjectSprite::render(objectSprite, this->objectIndex - (objectSprite->totalObjects - 1), updateAnimations) 
-					== 
-					this->objectIndex - (objectSprite->totalObjects - 1)
-				)
-				{
-					this->objectIndex -= objectSprite->totalObjects;
-				}
-			}
-		}
-
-		if(firstObjectIndex == this->objectIndex)
-		{
-			_objectAttributesCache[this->objectIndex].head = __OBJECT_SPRITE_CHAR_HIDE_MASK;
-			this->objectIndex--;
-
-			_worldAttributesCache[objectSpriteContainer->index].head = __WORLD_OFF;
-		}
-		else
-		{
-			_worldAttributesCache[objectSpriteContainer->index].head = (__WORLD_ON | __WORLD_OBJECT | __WORLD_OVR) & (~__WORLD_END);
-
-			// Make sure that the rest of spt segments only run up to the last
-			// Used object index
-			for(int32 i = this->spt--; i--;)
-			{
-				this->vipSPTRegistersCache[i] = this->objectIndex;
 			}
 		}
 	}
 
-#ifdef __ALERT_OBJECT_MEMORY_DEPLETION
-	if(0 >= this->objectIndex)
-	{
-		Printer::setDebugMode();
-		Printer::clear();
-
-		NM_ASSERT(false, "SpriteManager::render: OBJECT memory depleted");
-	}
-#endif
-
-	SpriteManager::stopRendering(this);
+	DisplayUnit::stopRendering();
+	Hardware::resumeInterrupts();
 
 #ifdef __DEBUGGING_SPRITES
 	SpriteManager::computeTotalPixelsDrawn(this);
@@ -674,13 +485,13 @@ void SpriteManager::renderAndDraw()
 	SpriteManager::render(this);
 
 	// Write render data
-	SpriteManager::writeDRAM(this);
+	SpriteManager::commitGraphics(this);
 }
 #endif
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void SpriteManager::writeDRAM()
+void SpriteManager::commitGraphics()
 {
 #ifdef __DEBUGGING_SPRITES
 	_writtenTiles = 0;
@@ -690,14 +501,11 @@ void SpriteManager::writeDRAM()
 
 	// Update all graphical data
 
-	// Update DRAM memory
+	// Update graphics memory
 	TextureManager::updateTextures(this->texturesMaximumRowsToWrite, this->deferTextureUpdating);
-
-	// Update param tables
 	SpriteManager::applySpecialEffects(this);
 
-	// Finally, write OBJ and WORLD attributes to DRAM
-	SpriteManager::writeAttributesToDRAM(this);
+	DisplayUnit::commitGraphics();
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -751,8 +559,6 @@ void SpriteManager::showAllSprites(Sprite spareSprite, bool showPrinting)
 		Sprite::forceShow(sprite);
 
 		Sprite::setPosition(sprite, &sprite->position);
-
-		this->worldAttributesBaseAddress[sprite->index].head &= ~__WORLD_END;
 	}
 
 	if(showPrinting)
@@ -763,8 +569,6 @@ void SpriteManager::showAllSprites(Sprite spareSprite, bool showPrinting)
 	{
 		Printer::hide(Printer::getInstance());
 	}
-
-	SpriteManager::stopRendering(this);
 }
 #endif
 
@@ -809,22 +613,16 @@ void SpriteManager::computeTotalPixelsDrawn()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-int8 SpriteManager::getbgmapIndex()
-{
-	return this->bgmapIndex;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
 int32 SpriteManager::getNumberOfSprites()
 {
-	return VirtualList::getCount(this->spriteRegistry[kSpriteListBgmap1].sprites);
+	return VirtualList::getCount(this->components);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 Sprite SpriteManager::getSpriteAtIndex(int16 position)
 {
+	/*
 	if(0 > position || position >= VirtualList::getCount(this->spriteRegistry[kSpriteListBgmap1].sprites))
 	{
 		return NULL;
@@ -839,50 +637,14 @@ Sprite SpriteManager::getSpriteAtIndex(int16 position)
 			return Sprite::safeCast(node->data);
 		}
 	}
+	*/
 
 	return NULL;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-int16 SpriteManager::getObjectSpriteContainer(fixed_t z)
-{
-	int16 index = -1;
-
-	for(int16 i = 0; i < __TOTAL_OBJECT_SEGMENTS; i++)
-	{
-		if(NULL == this->objectSpriteContainers[i])
-		{
-			continue;
-		}
-
-		if(0 > index)
-		{
-			index = i;
-		}
-		else
-		{
-			if
-			(
-				__ABS
-				(
-					Sprite::getPosition(this->objectSpriteContainers[i])->z - z) 
-					< 
-					__ABS(Sprite::getPosition(this->objectSpriteContainers[index])->z - z
-				)
-			)
-			{
-				index = i;
-			}
-		}
-	}
-
-	return index;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void SpriteManager::print(int32 x, int32 y, bool resumed)
+void SpriteManager::print(int32 x, int32 y, bool resumed __attribute__((unused)))
 {
 	Printer::setWorldCoordinates(0, 0, Printer::getActiveSpritePosition().z, 0);
 
@@ -893,10 +655,8 @@ void SpriteManager::print(int32 x, int32 y, bool resumed)
 	Printer::text("SPRITES USAGE", x, y++, NULL);
 	Printer::text("Total pixels:                ", x, ++y, NULL);
 	Printer::int32(this->totalPixelsDrawn, x + 22, y, NULL);
-	Printer::text("Used layers:                ", x, ++y, NULL);
-	Printer::int32(__TOTAL_LAYERS - this->bgmapIndex, x + 22, y, NULL);
 	Printer::text("Sprites count:              ", x, ++y, NULL);
-	Printer::int32(VirtualList::getCount(this->spriteRegistry[kSpriteListBgmap1].sprites), x + 22, y, NULL);
+	Printer::int32(VirtualList::getCount(this->components), x + 22, y, NULL);
 #ifdef __DEBUGGING_SPRITES
 	Printer::text("Rendered sprites:              ", x, ++y, NULL);
 	Printer::int32(_renderedSprites, x + 22, y, NULL);
@@ -907,148 +667,6 @@ void SpriteManager::print(int32 x, int32 y, bool resumed)
 	Printer::text("Written object tiles:              ", x, ++y, NULL);
 	Printer::int32(_writtenObjectTiles, x + 22, y, NULL);
 #endif
-
-	if(resumed)
-	{
-		return;
-	}
-
-	int32 auxY = y + 2;
-	int32 auxX = x;
-
-	int32 counter = __TOTAL_LAYERS - 1;
-	
-	for(VirtualNode node = this->spriteRegistry[kSpriteListBgmap1].sprites->tail; NULL != node; node = node->previous, counter--)
-	{
-		char spriteClassName[__MAX_SPRITE_CLASS_NAME_SIZE];
-		Sprite sprite = Sprite::safeCast(node->data);
-
-		strncpy(spriteClassName, __GET_CLASS_NAME(sprite), __MAX_SPRITE_CLASS_NAME_SIZE);
-		spriteClassName[__MAX_SPRITE_CLASS_NAME_SIZE - 1] = 0;
-		spriteClassName[__MAX_SPRITE_CLASS_NAME_SIZE - 2] = '.';
-
-		Printer::int32(counter, auxX, auxY, NULL);
-		Printer::text(": ", auxX + 2, auxY, NULL);
-		Printer::text(spriteClassName, auxX + 4, auxY, NULL);
-//		Printer::int32(sprite->position.z + sprite->displacement.z, auxX + 2, auxY, NULL);
-//		Printer::hex(this->worldAttributesBaseAddress[sprite->index].head, auxX + __MAX_SPRITE_CLASS_NAME_SIZE + 4, auxY, 4, NULL);
-//		Printer::int32(Sprite::getTotalPixels(sprite), auxX + __MAX_SPRITE_CLASS_NAME_SIZE + 4, auxY, NULL);
-
-		++auxY;
-		if(__TOTAL_LAYERS / 2 == counter)
-//		if((__SCREEN_HEIGHT_IN_CHARS) - 2 <= ++auxY)
-		{
-			auxY = y + 2;
-			auxX += __MAX_SPRITE_CLASS_NAME_SIZE + 10;
-		}
-	}
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void SpriteManager::printSPTInfo(int16 spt, int32 x, int32 y)
-{
-	int32 totalUsedObjects = 0;
-	int32 totalPixels = 0;
-
-	for(int16 i = kSpriteListObject1; i < kSpriteListObject1 + __TOTAL_OBJECT_SEGMENTS; i++)
-	{
-		for(VirtualNode node = this->spriteRegistry[i].sprites->head; NULL != node; node = node->next)
-		{
-			ObjectSprite objectSprite = ObjectSprite::safeCast(node->data);
-
-			if(objectSprite->deleteMe)
-			{
-				continue;
-			}
-
-			totalUsedObjects += objectSprite->totalObjects;
-		}
-	}
-	
-	Printer::text("Total used objects: ", x, ++y, NULL);
-	Printer::int32(totalUsedObjects, x + 20, y++, NULL);
-
-	if(__TOTAL_OBJECT_SEGMENTS <= (unsigned)spt)
-	{
-		return;
-	}
-
-	ObjectSpriteContainer objectSpriteContainer = this->objectSpriteContainers[spt];
-
-	y++;
-
-	Printer::text("OBJECT ", x, y++, NULL);
-
-	if(NULL != objectSpriteContainer)
-	{
-#ifdef __TOOLS
-		SpriteManager::hideAllSprites(this, Sprite::safeCast(objectSpriteContainer), false);
-#endif
-
-		for(VirtualNode node = this->spriteRegistry[spt + kSpriteListObject1].sprites->head; NULL != node; node = node->next)
-		{
-			ObjectSprite objectSprite = ObjectSprite::safeCast(node->data);
-
-			if(objectSprite->deleteMe)
-			{
-				continue;
-			}
-
-			ObjectSprite::show(objectSprite);
-		}
-
-		Timer::wait(40);
-	}
-
-	totalUsedObjects = 0;
-	totalPixels = 0;
-
-	int16 firstObjectIndex = -1;
-	int16 lastObjectIndex = -1;
-
-	for(VirtualNode node = this->spriteRegistry[spt + kSpriteListObject1].sprites->head; NULL != node; node = node->next)
-	{
-		ObjectSprite objectSprite = ObjectSprite::safeCast(node->data);
-
-		if(objectSprite->deleteMe || __NO_RENDER_INDEX == objectSprite->index)
-		{
-			continue;
-		}
-
-		totalUsedObjects += objectSprite->totalObjects;
-		totalPixels += ObjectSprite::getTotalPixels(objectSprite);
-
-		if(0 > firstObjectIndex)
-		{
-			firstObjectIndex = objectSprite->index;
-		}
-
-		lastObjectIndex = objectSprite->index - objectSprite->totalObjects;
-	}
-
-	Printer::text("Index: ", x, ++y, NULL);
-	Printer::int32(NULL != objectSpriteContainer ? objectSpriteContainer->index : -1, x + 18, y, NULL);
-	Printer::text("Class: ", x, ++y, NULL);
-	Printer::text(NULL != objectSpriteContainer ? __GET_CLASS_NAME(objectSpriteContainer) : "N/A", x + 18, y, NULL);
-	Printer::text("Mode:", x, ++y, NULL);
-	Printer::text("OBJECT   ", x + 18, y, NULL);
-	Printer::text("Segment:                ", x, ++y, NULL);
-	Printer::int32(spt, x + 18, y++, NULL);
-	Printer::text("SPT value:                ", x, y, NULL);
-	Printer::int32(NULL != objectSpriteContainer ? _vipRegisters[__SPT0 + spt] : 0, x + 18, y, NULL);
-	Printer::text("HEAD:                   ", x, ++y, NULL);
-	Printer::hex(this->worldAttributesBaseAddress[objectSpriteContainer->index].head, x + 18, y, 4, NULL);
-	Printer::text("Total OBJs:            ", x, ++y, NULL);
-	Printer::int32(totalUsedObjects, x + 18, y, NULL);
-	Printer::text("OBJ index range:      ", x, ++y, NULL);
-	Printer::int32(lastObjectIndex, x + 18, y, NULL);
-	Printer::text("-", x  + 18 + 0 <= firstObjectIndex ? Math::getDigitsCount(firstObjectIndex) : 0, y, NULL);
-	Printer::int32(firstObjectIndex, x  + 18 + Math::getDigitsCount(firstObjectIndex) + 1, y, NULL);
-	Printer::text("Z Position: ", x, ++y, NULL);
-	Printer::int32(NULL != objectSpriteContainer ? objectSpriteContainer->position.z : 0, x + 18, y, NULL);
-	Printer::text("Pixels: ", x, ++y, NULL);
-	Printer::int32(totalPixels, x + 18, y, NULL);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -1063,7 +681,7 @@ bool SpriteManager::sortProgressively(bool complete)
 {
 	bool swapped = false;
 
-	for(int16 i = kSpriteListBgmap1; i < kSpriteListEnd; i++)
+	for(int16 i = 0; i < __TOTAL_SPRITE_LISTS; i++)
 	{
 		if(NULL == this->spriteRegistry[i].sprites)
 		{
@@ -1139,7 +757,7 @@ int32 SpriteManager::getTotalPixelsDrawn()
 {
 	int32 totalPixelsToDraw = 0;
 	
-	for(VirtualNode node = this->spriteRegistry[kSpriteListBgmap1].sprites->head; NULL != node; node = node->next)
+	for(VirtualNode node = this->components->head; NULL != node; node = node->next)
 	{
 		NM_ASSERT(!isDeleted(node->data), "SpriteManager::getTotalPixelsDrawn: NULL node's data");
 
@@ -1156,43 +774,11 @@ int32 SpriteManager::getTotalPixelsDrawn()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void SpriteManager::startRendering()
-{
-	Hardware::suspendInterrupts();
-
-	this->spt = __TOTAL_OBJECT_SEGMENTS - 1;
-	this->objectIndex = __TOTAL_OBJECTS - 1;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void SpriteManager::stopRendering()
-{
-	NM_ASSERT(-1 <= (int8)this->bgmapIndex, "SpriteManager::stopRendering: no more layers");
-
-	if(0 <= this->bgmapIndex)
-	{
-		_worldAttributesCache[this->bgmapIndex].head = __WORLD_END;
-	}
-
-	// Clear OBJ memory
-	for(int32 i = this->objectIndex; this->previousObjectIndex <= i; i--)
-	{
-		_objectAttributesCache[i].head = __OBJECT_SPRITE_CHAR_HIDE_MASK;
-	}
-
-	this->previousObjectIndex = this->objectIndex;
-
-	Hardware::resumeInterrupts();
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
 void SpriteManager::applySpecialEffects()
 {
-	int32 maximumParamTableRowsToComputePerCall = SpriteManager::getMaximumParamTableRowsToComputePerCall(this);
+	int32 specialEffectsRowsPerFrame = SpriteManager::getSpecialEffectsRowsPerFrame(this);
 
-	for(VirtualNode node = this->spriteRegistry[kSpriteListSpecial].sprites->head; NULL != node; node = node->next)
+	for(VirtualNode node = this->specialSprites->head; NULL != node; node = node->next)
 	{
 		NM_ASSERT(!isDeleted(node->data), "SpriteManager::applySpecialEffects: NULL node's data");
 
@@ -1203,48 +789,20 @@ void SpriteManager::applySpecialEffects()
 			continue;
 		}
 
-		Sprite::processEffects(sprite, maximumParamTableRowsToComputePerCall);
+		Sprite::processEffects(sprite, specialEffectsRowsPerFrame);
 	}
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void SpriteManager::writeAttributesToDRAM()
-{
-#ifdef __DEBUGGING_SPRITES
-	_writtenObjectTiles = __TOTAL_OBJECTS - this->objectIndex;
-#endif
-
-	for(int32 i = __TOTAL_OBJECT_SEGMENTS; i--;)
-	{
-		_vipRegisters[__SPT0 + i] = this->vipSPTRegistersCache[i] - this->objectIndex;
-	}
-
-	CACHE_RESET;
-
-	Mem::copyWORD
-	(
-		(uint32*)(this->objectAttributesBaseAddress), (uint32*)(_objectAttributesCache + this->objectIndex), 
-		sizeof(ObjectAttributes) * (__TOTAL_OBJECTS - this->objectIndex) >> 2
-	);
-
-	Mem::copyWORD
-	(
-		(uint32*)(this->worldAttributesBaseAddress + this->bgmapIndex), (uint32*)(_worldAttributesCache + this->bgmapIndex), 
-		sizeof(WorldAttributes) * (__TOTAL_LAYERS - (this->bgmapIndex)) >> 2
-	);
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void SpriteManager::startListeningForVIP()
+void SpriteManager::startListeningForVBlank()
 {
 	DisplayUnit::addEventListener(DisplayUnit::getInstance(), ListenerObject::safeCast(this), kEventDisplayUnitVBlank);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void SpriteManager::stopListeningForVIP()
+void SpriteManager::stopListeningForVBlank()
 {
 	DisplayUnit::removeEventListener(DisplayUnit::getInstance(), ListenerObject::safeCast(this), kEventDisplayUnitVBlank);
 }

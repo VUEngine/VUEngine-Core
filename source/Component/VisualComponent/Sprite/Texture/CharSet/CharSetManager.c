@@ -66,7 +66,7 @@ secure void CharSetManager::reset()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-secure void CharSetManager::clearDRAM()
+secure void CharSetManager::clearGraphicMemory()
 {
 	Mem::clear((uint8*) __CHAR_SPACE_BASE_ADDRESS, 8192 * 4);
 }

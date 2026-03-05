@@ -131,7 +131,6 @@ void AnimationInspector::show()
 	
 	// Make sure all textures are written right now
 	SpriteManager::writeTextures(spriteManager);
-	SpriteManager::deferParamTableEffects(spriteManager, false);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -179,7 +178,6 @@ void AnimationInspector::hide()
 
 	SpriteManager::writeTextures(spriteManager);
 	//SpriteManager::showAllSprites(spriteManager, NULL, true);
-	SpriteManager::deferParamTableEffects(spriteManager, true);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

@@ -24,7 +24,7 @@
 
 static int16 Affine::transform
 (
-	int32 maximumParamTableRowsToComputePerCall, uint32 param, int16 paramTableRow, fixed_t targetHalfWidth, 
+	int32 specialEffectsRowsPerFrame, uint32 param, int16 paramTableRow, fixed_t targetHalfWidth, 
 	fixed_t targetHalfHeight, fix13_3 mx, fix13_3 my, fixed_t halfWidth, fixed_t halfHeight, const Rotation* rotation
 )
 {
@@ -86,7 +86,7 @@ static int16 Affine::transform
 
 	int16 i = 0 <= paramTableRow ? paramTableRow : 0;
 	int32 lastRow = __FIXED_TO_I(__FIXED_MULT((halfHeight << 1), finalScaleY)) + 1;
-	int32 counter = maximumParamTableRowsToComputePerCall;
+	int32 counter = specialEffectsRowsPerFrame;
 
 	if(rotation->x)
 	{
@@ -262,7 +262,7 @@ PRINT_INT(lastRow, 1, 16);
 
 static int16 Affine::rotate
 (
-	int32 maximumParamTableRowsToComputePerCall __attribute__((unused)), uint32 param, int16 paramTableRow, fixed_t targetHalfWidth, 
+	int32 specialEffectsRowsPerFrame __attribute__((unused)), uint32 param, int16 paramTableRow, fixed_t targetHalfWidth, 
 	fixed_t targetHalfHeight, fix13_3 mx, fix13_3 my, fixed_t halfWidth, fixed_t halfHeight, const Rotation* rotation
 )
 {

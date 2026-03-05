@@ -53,7 +53,7 @@ singleton class CharSetManager : Object
 	void reset();
 
 	/// Erase the contents of CHAR memory space.
-	void clearDRAM();
+	void clearGraphicMemory();
 
 	/// Load char sets in function of the provided array of specs.
 	/// @param charSetSpecs: Array of char set specs in function of which to load char sets 
