@@ -153,7 +153,7 @@ void SpriteManager::enable()
 	this->evenFrame = __TRANSPARENCY_EVEN;
 
 	int16 availableSlots[__TOTAL_SPRITE_LISTS] = {0};
-	const int16** nextSlotIndexes[__TOTAL_SPRITE_LISTS] = {NULL};
+	const int16* nextSlotIndexes[__TOTAL_SPRITE_LISTS] = {NULL};
 	
 	for(int16 i = 0; i < __TOTAL_SPRITE_LISTS; i++)
 	{
