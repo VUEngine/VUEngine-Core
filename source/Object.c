@@ -51,8 +51,8 @@ static Object Object::getCast(void* object, ClassPointer targetClassGetClassMeth
 
 	if(20 < ++counter)
 	{
-		_vuengineLinkPointer = lp;
-		_vuengineStackPointer = sp;
+		_exceptionLinkPointer = lp;
+		_exceptionStackPointer = sp;
 
 		Printer::setDebugMode();
 		Printer::text("Object's class: ", 1, 15, NULL);
@@ -80,9 +80,9 @@ static Object Object::getCast(void* object, ClassPointer targetClassGetClassMeth
 #ifndef __RELEASE
 	if(isDeleted(object))
 	{
-		_vuengineLinkPointer = lp;
+		_exceptionLinkPointer = lp;
 
-		_vuengineStackPointer = sp;
+		_exceptionStackPointer = sp;
 		Printer::setDebugMode();
 		Printer::text("Object's address: ", 1, 15, NULL);
 		Printer::hex((uint32)object, 18, 15, 8, NULL);
@@ -92,8 +92,8 @@ static Object Object::getCast(void* object, ClassPointer targetClassGetClassMeth
 
 	if(NULL == __VIRTUAL_CALL_ADDRESS(Object, getClassName, object))
 	{
-		_vuengineLinkPointer = lp;
-		_vuengineStackPointer = sp;
+		_exceptionLinkPointer = lp;
+		_exceptionStackPointer = sp;
 
 		Printer::setDebugMode();
 		Printer::text("Object's address: ", 1, 15, NULL);
@@ -104,8 +104,8 @@ static Object Object::getCast(void* object, ClassPointer targetClassGetClassMeth
 
 	if(NULL == __VIRTUAL_CALL_ADDRESS(Object, getBaseClass, object))
 	{
-		_vuengineLinkPointer = lp;
-		_vuengineStackPointer = sp;
+		_exceptionLinkPointer = lp;
+		_exceptionStackPointer = sp;
 
 		Printer::setDebugMode();
 		Printer::text("Object's address: ", 1, 15, NULL);
@@ -157,8 +157,8 @@ static Object Object::getCast(void* object, ClassPointer targetClassGetClassMeth
 		Printer::text("Target class: ", 1, 16, NULL);
 		Printer::hex((uint32)targetClassGetClassMethod, 18, 16, 8, NULL);
 	
-		_vuengineLinkPointer = lp;
-		_vuengineStackPointer = sp;
+		_exceptionLinkPointer = lp;
+		_exceptionStackPointer = sp;
 		NM_CAST_ASSERT(false, "Object::getCast: failed cast");
 #endif
 */

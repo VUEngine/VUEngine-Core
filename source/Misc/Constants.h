@@ -204,15 +204,15 @@ void Error_triggerException(char* message, char* detail);
 	extern bool _stackHeadroomViolation;																\
 	if(!_stackHeadroomViolation)																		\
 	{																									\
-		int32 _vuengineStackPointer;																	\
-		asm(" mov sp,%0  ": "=r" (_vuengineStackPointer));												\
+		int32 _exceptionStackPointer;																	\
+		asm(" mov sp,%0  ": "=r" (_exceptionStackPointer));												\
 																										\
-		if((0x05000000 & _vuengineStackPointer) &&														\
-			_vuengineStackPointer - __STACK_HEADROOM < (int32)&_bssEnd)									\
+		if((0x05000000 & _exceptionStackPointer) &&														\
+			_exceptionStackPointer - __STACK_HEADROOM < (int32)&_bssEnd)								\
 		{																								\
 			_stackHeadroomViolation = true;																\
-			/* Hardware_printStackStatus(1, 15, false); */										\
-			NM_ASSERT(false, "Hardware_checkStack: surpassed headroom boundary!");				\
+			/* Hardware_printStackStatus(1, 15, false); */												\
+			NM_ASSERT(false, "Hardware_checkStack: surpassed headroom boundary!");						\
 		}																								\
 	}
 #else
@@ -227,8 +227,8 @@ void Error_triggerException(char* message, char* detail);
 	if(!(Statement) && !_triggeringException)															\
 	{ 																									\
 		_triggeringException = true;																	\
-		asm(" mov sp,%0  ": "=r" (_vuengineStackPointer));												\
-		asm(" mov lp,%0  ": "=r" (_vuengineLinkPointer));												\
+																										\
+		__CAPTURE_EXCEPTION_REGISTERS;																	\
 																										\
 		/* thrown exception */																			\
 		Error_triggerException(__MAKE_STRING(__VA_ARGS__), NULL);										\
@@ -263,8 +263,8 @@ void Error_triggerException(char* message, char* detail);
 	if(!(Statement) && !_triggeringException) 															\
 	{																									\
 		_triggeringException = true;																	\
-		asm(" mov sp,%0  ": "=r" (_vuengineStackPointer));												\
-		asm(" mov lp,%0  ": "=r" (_vuengineLinkPointer));												\
+		asm(" mov sp,%0  ": "=r" (_exceptionStackPointer));												\
+		asm(" mov lp,%0  ": "=r" (_exceptionLinkPointer));												\
 																										\
 		/* thrown exception */																			\
 		Error_triggerException(Message, NULL);															\

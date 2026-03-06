@@ -15,8 +15,8 @@
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 extern bool _stackHeadroomViolation;
-extern int32 _vuengineLinkPointer;
-extern int32 _vuengineStackPointer;
+extern int32 _exceptionLinkPointer;
+extern int32 _exceptionStackPointer;
 extern bool _triggeringException;
 extern uint32 _bssEnd;
 

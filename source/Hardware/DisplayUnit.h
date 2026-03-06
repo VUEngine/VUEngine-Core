@@ -84,8 +84,8 @@ singleton class DisplayUnit : ListenerObject
 	/// Lower the brightness to the minimum.
 	static void lowerBrightness();
 
-	/// Force showing the screen for debugging.
-	static void debug();
+	/// Force showing the screen for showing an exception.
+	static void showException();
 
 	/// Retrieve the registry of the interrupts being processed.
 	/// @return The registry of the interrupts being processed

@@ -16,7 +16,6 @@
 #include <DebugConfig.h>
 #include <Hardware.h>
 #include <Printer.h>
-#include <Sprite.h>
 #include <Timer.h>
 #include <DisplayUnit.h>
 
@@ -46,8 +45,8 @@ static void Error::triggerException(char* message __attribute__((unused)), char*
 
 	processingException = true;
 
-	int32 lp = _vuengineLinkPointer;
-	int32 sp = _vuengineStackPointer;
+	int32 lp = _exceptionLinkPointer;
+	int32 sp = _exceptionStackPointer;
 
 	int32 x = 0 <= __EXCEPTION_COLUMN && __EXCEPTION_COLUMN <= 24 ? __EXCEPTION_COLUMN : 0;
 	int32 y = 0 <= __EXCEPTION_LINE && __EXCEPTION_LINE <= 28 ? __EXCEPTION_LINE : 0;
@@ -124,7 +123,7 @@ static void Error::triggerException(char* message __attribute__((unused)), char*
 	// Prevent VIP's interrupts
 	Hardware::disableInterrupts();
 
-	DisplayUnit::debug();
+	DisplayUnit::showException();
 
 	// Trap the game here
 	while(true);
