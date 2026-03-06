@@ -63,15 +63,6 @@ enum { false, true };
 #define fixed_ext_t										fix7_9_ext
 #endif
 
-// Brightness setting
-typedef struct Brightness
-{
-	uint8 darkRed;
-	uint8 mediumRed;
-	uint8 brightRed;
-
-} Brightness;
-
 // Spatial size
 typedef struct Size
 {
@@ -269,22 +260,6 @@ typedef struct ScreenPixelScale
 	float z;
 
 } ScreenPixelScale;
-
-// Represent the m coordinates of the textures in BGMAP space
-typedef struct BgmapTextureSource
-{
-	int16 mx;
-	int16 mp;
-	int16 my;
-
-} BgmapTextureSource;
-
-// Represent the displacement of graphics data in map arrays
-typedef struct ObjectTextureSource
-{
-	int32 displacement;
-
-} ObjectTextureSource;
 
 typedef struct TexturePadding
 {

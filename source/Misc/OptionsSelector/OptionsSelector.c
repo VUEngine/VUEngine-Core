@@ -20,7 +20,6 @@
 #include <Body.h>
 #include <Box.h>
 #include <Camera.h>
-#include <CameraEffectManager.h>
 #include <CameraMovementManager.h>
 #include <CharSet.h>
 #include <CharSetManager.h>

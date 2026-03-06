@@ -213,16 +213,9 @@ const StageSpec* Stage::getSpec()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void Stage::configurePalettes()
+DisplayUnitConfig Stage::getDisplayUnitConfig()
 {
-	DisplayUnit::configurePalettes(this->stageSpec->rendering.paletteConfig);
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-PaletteConfig Stage::getPaletteConfig()
-{
-	return this->stageSpec->rendering.paletteConfig;
+	return this->stageSpec->rendering.displayUnitConfig;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

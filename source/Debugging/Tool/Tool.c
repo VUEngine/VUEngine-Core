@@ -68,8 +68,9 @@ void Tool::destructor()
 
 void Tool::dimmGame()
 {
-/*
-	PaletteConfig paletteConfig =
+	DisplayUnitConfig displayUnitConfig = DisplayUnit::getConfig();
+	
+	displayUnitConfig.paletteConfig = (PaletteConfig)
 	{
 		{0x50, 0x50, 0x50, 0x50},
 		{0x50, 0x50, 0x50, 0x50}
@@ -77,11 +78,10 @@ void Tool::dimmGame()
 
 	if(4 > (unsigned)__PRINTING_PALETTE)
 	{
-		((uint8*)&paletteConfig.bgmap)[__PRINTING_PALETTE] = 0x90;
+		((uint8*)&displayUnitConfig.paletteConfig.bgmap)[__PRINTING_PALETTE] = 0x90;
 	}
 
-	DisplayUnit::configurePalettes(&paletteConfig);
-*/
+	DisplayUnit::configure(displayUnitConfig);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -90,7 +90,7 @@ void Tool::lightUpGame()
 {
 	if(!isDeleted(ToolState::getCurrentStage(this->toolState)))
 	{
-		Stage::configurePalettes(ToolState::getCurrentStage(this->toolState));
+		DisplayUnit::configure(Stage::getDisplayUnitConfig(ToolState::getCurrentStage(this->toolState)));
 	}
 }
 

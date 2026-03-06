@@ -55,16 +55,6 @@ typedef struct SpriteRegistry
 
 } SpriteRegistry;
 
-typedef struct ObjectSpritesContainerConfiguration
-{
-	/// Instantiate
-	bool instantiate;
-
-	/// Z position
-	int16 zPosition;
-
-} ObjectSpritesContainerConfiguration;
-
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DECLARATION
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -141,13 +131,8 @@ class SpriteManager : ComponentManager
 	/// Configure the manager's state.
 	/// @param texturesMaximumRowsToWrite: Number of texture rows to write during each rendering cycle
 	/// @param specialEffectsRowsPerFrame: Number of special effect rows to write during each rendering cycle 
-	/// @param objectSpritesContainerConfiguration: Array with the configuration of ObjectSpriteContainers
 	/// @param animationsClock: Clock for the animations
-	void configure
-	(
-		uint8 texturesMaximumRowsToWrite, int32 specialEffectsRowsPerFrame,
-		const ObjectSpritesContainerConfiguration* objectSpritesContainersConfiguration, Clock animationsClock
-	);
+	void configure(uint8 texturesMaximumRowsToWrite, int32 specialEffectsRowsPerFrame, Clock animationsClock);
 
 	/// Set the clock that determines if the animations must be updated or not.
 	/// @param clock: Clock for the animations

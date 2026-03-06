@@ -1064,11 +1064,7 @@ void GameState::configureTimer()
 
 	const StageSpec* stageSpec = Stage::getSpec(this->stage);
 
-	Timer::configure
-	(
-		stageSpec->timer.resolution, stageSpec->timer.targetTimePerInterrupt, 
-		stageSpec->timer.targetTimePerInterrupttUnits
-	);
+	Timer::configure(stageSpec->timerConfig);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -1086,26 +1082,26 @@ void GameState::configureGraphics()
 	(
 		this->componentManagers[kSpriteComponent],
 		stageSpec->rendering.texturesMaximumRowsToWrite,
-		stageSpec->rendering.maximumAffineRowsToComputePerCall,
-		stageSpec->rendering.objectSpritesContainersConfiguration,
+		stageSpec->rendering.specialEffectRowPerCall,
 		this->animationsClock
 	);
 
-	DisplayUnit::configure
-	(
-		stageSpec->rendering.colorConfig.backgroundColor,
-		stageSpec->rendering.colorConfig.brightness,
-		stageSpec->rendering.colorConfig.brightnessRepeat,
-		stageSpec->rendering.paletteConfig,
-		stageSpec->postProcessingEffects
-	);
+	DisplayUnit::configure(stageSpec->rendering.displayUnitConfig);
+
+	if(NULL != stageSpec->postProcessingEffects)
+	{
+		for(int32 i = 0; NULL != stageSpec->postProcessingEffects[i]; i++)
+		{
+			DisplayUnit::pushFrontPostProcessingEffect(stageSpec->postProcessingEffects[i], NULL);
+		}
+	}
 
 	BgmapTextureManager::configure
 	(
 		BgmapTextureManager::getInstance(), 
 		ParamTableManager::configure
 		(
-			ParamTableManager::getInstance(), stageSpec->rendering.paramTableSegments
+			ParamTableManager::getInstance(), stageSpec->rendering.displayUnitConfig.paramTableSegments
 		)
 	);
 }

@@ -43,19 +43,8 @@ typedef struct StageSpec
 {
 	AllocatorPointer allocator;
 
-	/// Timer config
-	struct Timer
-	{
-		/// Timer's resolution (__TIMER_100US or __TIMER_20US)
-		uint16 resolution;
-
-		/// Target elapsed time between timer interrupts
-		uint16 targetTimePerInterrupt;
-
-		/// Timer interrupt's target time units
-		uint16 targetTimePerInterrupttUnits;
-
-	} timer;
+	/// Timer configuration
+    TimerConfig timerConfig;
 
 	/// General stage's attributes
 	struct Level
@@ -97,19 +86,10 @@ typedef struct StageSpec
 		int32 texturesMaximumRowsToWrite;
 
 		/// Maximum number of rows to compute on each call to the affine functions
-		int32 maximumAffineRowsToComputePerCall;
+		int32 specialEffectRowPerCall;
 
-		/// Color configuration
-		ColorConfig colorConfig;
-
-		/// Palettes' configuration
-		PaletteConfig paletteConfig;
-
-		/// Number of BGMAP segments reserved for the param tables
-		int32 paramTableSegments;
-
-		/// Object Sprite Containers configuration
-		ObjectSpritesContainerConfiguration objectSpritesContainersConfiguration[__TOTAL_OBJECT_SEGMENTS];
+		/// Per platform configuration data
+		DisplayUnitConfig displayUnitConfig;
 
 		/// Struct defining the optical settings for the stage
 		PixelOptical pixelOptical;
@@ -258,15 +238,9 @@ class Stage : Container
 	/// @return Specification that determines how the stage was configured
 	const StageSpec* getSpec();
 
-	/// Configure the timer.
-	void configureTimer();
-
-	/// Configure the color palettes.
-	void configurePalettes();
-
-	/// Retrieve the palette configuration for the stage.
-	/// @return Palette configuration struct
-	PaletteConfig getPaletteConfig();
+	/// Retrieve the display configuration for the stage.
+	/// @return Display configuration struct
+	DisplayUnitConfig getDisplayUnitConfig();
 	
 	/// Register the stage's spec actors in the streaming list
 	void registerActors(VirtualList positionedActorsToIgnore);

@@ -31,10 +31,8 @@ singleton class Timer : ListenerObject
 	static void interruptHandler();
 
 	/// Configure the timer with the provided arguments.
-	/// @param timerResolution: Timer's target resolution
-	/// @param targetTimePerInterrupt: Target elapsed time between timer interrupts
-	/// @param targetTimePerInterrupttUnits: Timer interrupt's target time units
-	static void configure(uint16 timerResolution, uint16 targetTimePerInterrupt, uint16 targetTimePerInterrupttUnits);
+	/// @param timerConfig: Configuration data
+	static void configure(TimerConfig timerConfig);
 
 	/// Apply the settings to the hardware timer.
 	/// @param enable: If true, the hardware timer is enabled

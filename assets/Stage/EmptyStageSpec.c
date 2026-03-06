@@ -95,67 +95,74 @@ StageROMSpec EmptyStageSpec =
 		// Maximum number of rows to compute on each call to the affine functions
 		16,
 
-		// Color configuration
+		// DisplayUnit configuration
 		{
-			// Background color
-			__COLOR_BLACK,
-
-			// Brightness
-			// These values times the repeat values specified in the column table (max. 16) make the final
-			// brightness values on the respective regions of the screen. maximum brightness is 128.
+			// Pointer to the column table's configuration data
+			NULL,
+		
+			// Color configuration
 			{
-				// Dark red
-				16,
-				// Medium red
-				__BRIGHTNESS_MEDIUM_RED,
-				// Bright red
-				__BRIGHTNESS_BRIGHT_RED,
+				// Background color
+				__COLOR_BLACK,
+
+				// Brightness
+				// These values times the repeat values specified in the column table (max. 16) make the final
+				// brightness values on the respective regions of the screen. maximum brightness is 128.
+				{
+					// Dark red
+					16,
+					// Medium red
+					__BRIGHTNESS_MEDIUM_RED,
+					// Bright red
+					__BRIGHTNESS_BRIGHT_RED,
+				},
+
+				// Brightness repeat
+				(BrightnessRepeatSpec*)NULL,
 			},
 
-			// Brightness repeat
-			(BrightnessRepeatSpec*)NULL,
-		},
-
-		// Palettes' configuration
-		{
+			// Palettes' configuration
 			{
-				// Bgmap palette 0
-				__BGMAP_PALETTE_0,
-				// Bgmap palette 1
-				__BGMAP_PALETTE_1,
-				// Bgmap palette 2
-				__BGMAP_PALETTE_2,
-				// Bgmap palette 3
-				__BGMAP_PALETTE_3,
+				{
+					// Bgmap palette 0
+					__BGMAP_PALETTE_0,
+					// Bgmap palette 1
+					__BGMAP_PALETTE_1,
+					// Bgmap palette 2
+					__BGMAP_PALETTE_2,
+					// Bgmap palette 3
+					__BGMAP_PALETTE_3,
+				},
+				{
+					// Object palette 0
+					__OBJECT_PALETTE_0,
+					// Object palette 1
+					__OBJECT_PALETTE_1,
+					// Object palette 2
+					__OBJECT_PALETTE_2,
+					// Object palette 3
+					__OBJECT_PALETTE_3,
+				},
 			},
+
+			// Bgmap segments configuration
+			// Number of BGMAP segments reserved for the param
+			1,
+
+			// Object Sprite Containers configuration
+			// true to instantiate, z for z sorting
 			{
-				// Object palette 0
-				__OBJECT_PALETTE_0,
-				// Object palette 1
-				__OBJECT_PALETTE_1,
-				// Object palette 2
-				__OBJECT_PALETTE_2,
-				// Object palette 3
-				__OBJECT_PALETTE_3,
-			},
+				// SPT0
+				{false, 0},
+				// SPT1
+				{false, 0},
+				// SPT2
+				{false, 0},
+				// SPT3
+				{false, 0}
+			}
 		},
-
-		// Bgmap segments configuration
-		// Number of BGMAP segments reserved for the param
-		1,
-
-		// Object Sprite Containers configuration
-		// true to instantiate, z for z sorting
-		{
-			// SPT0
-			{false, 0},
-			// SPT1
-			{false, 0},
-			// SPT2
-			{false, 0},
-			// SPT3
-			{false, 0}
-		},
+		
 
 		// Struct defining the optical settings for the stage
 		{

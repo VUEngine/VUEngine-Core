@@ -180,12 +180,14 @@ static void Profiler::end()
 	{
 		Profiler::computeLap("HEADROOM", kProfilerLapTypeNormalProcess, true);
 
-		DisplayUnit::configureBrightnessRepeat((BrightnessRepeatSpec*)&profileBrightnessRepeatSpec);
-
 		for(int32 i = 0; i < 96; i++)
 		{
 			profileBrightnessRepeatSpec.brightnessRepeat[i] = 16;
 		}
+
+		DisplayUnitConfig displayUnitConfig = Stage::getDisplayUnitConfig(this->stage);
+		displayUnitConfig.brightnessRepeat = &profileBrightnessRepeatSpec;
+		DisplayUnit::configure(displayUnitConfig);
 
 		Profiler::print();
 		profiler->skipFrames = __ENABLE_PROFILER_SKIP_FRAMES;

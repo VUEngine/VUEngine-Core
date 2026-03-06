@@ -13,8 +13,6 @@
 
 #include <string.h>
 
-#include <BgmapSprite.h>
-#include <BgmapTexture.h>
 #include <CharSetManager.h>
 #include <Clock.h>
 #include <DebugConfig.h>
@@ -260,15 +258,10 @@ void SpriteManager::purgeComponents()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void SpriteManager::configure
-(
-	uint8 texturesMaximumRowsToWrite, int32 specialEffectsRowsPerFrame,
-	const ObjectSpritesContainerConfiguration* objectSpritesContainersConfiguration, Clock animationsClock
-)
+void SpriteManager::configure(uint8 texturesMaximumRowsToWrite, int32 specialEffectsRowsPerFrame, Clock animationsClock)
 {
 	SpriteManager::setTexturesMaximumRowsToWrite(this, texturesMaximumRowsToWrite);
 	SpriteManager::setSpecialEffectsRowsPerFrame(this, specialEffectsRowsPerFrame);
-//	SpriteManager::configureObjectSpriteContainers(this, objectSpritesContainersConfiguration);
 	SpriteManager::setAnimationsClock(this, animationsClock);
 }
 

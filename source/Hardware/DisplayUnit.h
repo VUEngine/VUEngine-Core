@@ -70,31 +70,19 @@ singleton class DisplayUnit : ListenerObject
 	/// @param enabledMultiplexedInterrupts: Multiplexed interrupts to allow
 	static void enableMultiplexedInterrupts(uint32 enabledMultiplexedInterrupts);
 
-	/// Configure the VIP's palettes with the provided configuration.
-	/// @param paletteConfig: Palettes configuration
-	static void configurePalettes(PaletteConfig paletteConfig);
+	/// Configure the Display unit with the provided configuration.
+	/// @param displayUnitConfig: Display configuration data
+	static void configure(DisplayUnitConfig displayUnitConfig);
 
-	/// Set the brightness registers with the provided configuration.
-	/// @param brightness: Brightness configuration
-	static void configureBrightness(Brightness brightness);
-
-	/// Configure the column table brightness repeat values.
-	/// @param brightnessRepeat: Brightness configuration
-	static void configureBrightnessRepeat(const BrightnessRepeatSpec* brightnessRepeat);
-
-	/// Configure the background color.
-	/// @param color: Color to apply to the background
-	static void configureBackgroundColor(uint8 color);
+	/// Retrieve the current configuration of the DisplayUnit.
+	/// @return Pointer to the struct holding the whole configuration
+	static DisplayUnitConfig getConfig();
 
 	/// Up the brightness to the maximum.
 	static void upBrightness();
 
 	/// Lower the brightness to the minimum.
 	static void lowerBrightness();
-
-	/// Retrieve the current brightness from the hardware registers.
-	/// @return Brightness configuration
-	static Brightness getBrightness();
 
 	/// Retrieve the registry of the interrupts being processed.
 	/// @return The registry of the interrupts being processed
@@ -119,19 +107,6 @@ singleton class DisplayUnit : ListenerObject
 
 	/// Erase the contents of graphics memory space.
 	static void clearGraphicMemory();
-
-	/// Configure the manager's state.
-	/// @param backgroundColor: Color to apply to the background
-	/// @param brightness: Brightness configuration
-	/// @param brightnessRepeat: Brightness configuration
-	/// @param paletteConfig: Palettes configuration
-	/// @param postProcessingEffects: Array of postprocessing effects
-	/// Configure the brightness registers with the provided configuration.
-	static void configure
-	(
-		uint8 backgroundColor, Brightness, const BrightnessRepeatSpec* brightnessRepeat,
-		PaletteConfig paletteConfig, PostProcessingEffect* postProcessingEffects
-	);
 
 	/// Start memore refresh cycle
 	static void startMemoryRefresh();
