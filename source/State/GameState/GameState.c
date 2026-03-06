@@ -12,7 +12,6 @@
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <BehaviorManager.h>
-#include <BgmapTextureManager.h>
 #include <BodyManager.h>
 #include <Camera.h>
 #include <CharSetManager.h>
@@ -1095,15 +1094,6 @@ void GameState::configureGraphics()
 			DisplayUnit::pushFrontPostProcessingEffect(stageSpec->postProcessingEffects[i], NULL);
 		}
 	}
-
-	BgmapTextureManager::configure
-	(
-		BgmapTextureManager::getInstance(), 
-		ParamTableManager::configure
-		(
-			ParamTableManager::getInstance(), stageSpec->rendering.displayUnitConfig.paramTableSegments
-		)
-	);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

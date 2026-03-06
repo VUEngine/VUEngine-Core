@@ -164,7 +164,6 @@
 // SPRITE MANAGEMENT
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-#define __TOTAL_LAYERS					32
 #define __TOTAL_OBJECTS					1024
 #define __SPRITE_ROTATE_IN_3D
 #define __HACK_BGMAP_SPRITE_HEIGHT

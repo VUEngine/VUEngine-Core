@@ -1142,7 +1142,6 @@ void Debug::objectsShowStatus(int32 increment, int32 x, int32 y)
 
 	Printer::text("OBJECTS INSPECTOR", x, y++, NULL);
 	Debug::setBlackBackground(this);
-	SpriteManager::printSPTInfo(spriteManager, this->objectSegment, x, ++y);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

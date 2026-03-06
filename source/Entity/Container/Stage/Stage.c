@@ -15,7 +15,6 @@
 
 #include <ActorFactory.h>
 #include <Actor.h>
-#include <BgmapTexture.h>
 #include <Camera.h>
 #include <CharSetManager.h>
 #include <DebugConfig.h>

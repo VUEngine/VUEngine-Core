@@ -31,9 +31,9 @@ class VirtualNode;
 // CLASS' MACROS
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-#define __TOTAL_BGMAP_SPRITE_LISTS       1
-#define __TOTAL_OBJECT_SPRITE_LISTS      1
-#define __TOTAL_SPRITE_LISTS 		(__TOTAL_BGMAP_SPRITE_LISTS + __TOTAL_OBJECT_SPRITE_LISTS)
+#define __TOTAL_BGMAP_SPRITE_LISTS			1
+#define __TOTAL_OBJECT_SPRITE_LISTS			1
+#define __TOTAL_SPRITE_LISTS				(__TOTAL_BGMAP_SPRITE_LISTS + __TOTAL_OBJECT_SPRITE_LISTS)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DATA

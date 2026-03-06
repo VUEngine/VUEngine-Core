@@ -41,13 +41,13 @@ void CameraEffectManager::constructor()
 	Base::constructor();
 
 	// Init class variables
-	this->fxFadeTargetBrightness = (Brightness){0, 0, 0};
+	//this->fxFadeTargetBrightness = (Brightness){0, 0, 0};
 	this->fxFadeDelay = 0;
 	this->fxFadeScope = NULL;
 	this->fadeEffectIncrement = __CAMERA_EFFECT_FADE_INCREMENT;
 	this->startingANewEffect = false;
-	this->currentBrightness = (Brightness){0, 0, 0};
-	DisplayUnit::configureBrightness(this->currentBrightness);
+	//this->currentBrightness = (Brightness){0, 0, 0};
+	//DisplayUnit::configureBrightness(this->currentBrightness);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -126,15 +126,17 @@ void CameraEffectManager::startEffect(int32 effect, va_list args)
 	{
 		case kShow:
 		{
-			this->currentBrightness = CameraEffectManager::getDefaultBrightness(this);
-			DisplayUnit::configureBrightness(this->currentBrightness);
+			DisplayUnit::upBrightness();
+			//this->currentBrightness = CameraEffectManager::getDefaultBrightness(this);
+			//DisplayUnit::configureBrightness(this->currentBrightness);
 			break;
 		}
 
 		case kHide:
 		{
-			this->currentBrightness = (Brightness){0, 0, 0};
-			DisplayUnit::configureBrightness(this->currentBrightness);
+			DisplayUnit::lowerBrightness();
+			//this->currentBrightness = (Brightness){0, 0, 0};
+			//DisplayUnit::configureBrightness(this->currentBrightness);
 			break;
 		}
 		
@@ -147,7 +149,7 @@ void CameraEffectManager::startEffect(int32 effect, va_list args)
 
 		case kFadeTo:
 		{
-			this->currentBrightness = DisplayUnit::getBrightness();
+//			this->currentBrightness = DisplayUnit::getBrightness();
 
 			CameraEffectManager::fxFadeAsyncStart
 			(
@@ -189,6 +191,8 @@ void CameraEffectManager::fxFadeStart(int32 effect, int32 delay)
 	{
 		case kFadeIn:
 		{
+			DisplayUnit::upBrightness();
+			/*
 			this->currentBrightness = (Brightness){0, 0, 0};
 			DisplayUnit::configureBrightness(this->currentBrightness);
 
@@ -201,12 +205,15 @@ void CameraEffectManager::fxFadeStart(int32 effect, int32 delay)
 				ListenerObject::safeCast(this),
 				(void (*)(ListenerObject, uint32))&CameraEffectManager::fxFadeIn
 			);
+			*/
 
 			break;
 		}
 
 		case kFadeOut:
 		{
+			DisplayUnit::lowerBrightness();
+			/*
 			this->currentBrightness = CameraEffectManager::getDefaultBrightness(this);
 			DisplayUnit::configureBrightness(this->currentBrightness);
 
@@ -217,7 +224,7 @@ void CameraEffectManager::fxFadeStart(int32 effect, int32 delay)
 				ListenerObject::safeCast(this),
 				(void (*)(ListenerObject, uint32))&CameraEffectManager::fxFadeOut
 			);
-
+*/
 			break;
 		}
 	}
@@ -235,6 +242,7 @@ void CameraEffectManager::fxFadeAsyncStart
 
 	this->startingANewEffect = true;	
 
+/*
 	// Set target brightness
 	if(NULL == targetBrightness)
 	{
@@ -244,10 +252,11 @@ void CameraEffectManager::fxFadeAsyncStart
 	{
 		this->fxFadeTargetBrightness = *targetBrightness;
 	}
-	
+*/	
 	// Set effect parameters
 	this->fxFadeDelay = (0 >= delayBetweenSteps) ? 1 : (uint8)(delayBetweenSteps);
 
+/*
 	if(scope != NULL)
 	{
 		this->fxFadeScope = scope;
@@ -265,10 +274,13 @@ void CameraEffectManager::fxFadeAsyncStart
 		}
 		else
 		{		
+			CameraEffectManager::addEventListener(this, scope, kEventEffectFadeInComplete);
 			CameraEffectManager::addEventListener(this, scope, kEventEffectFadeOutComplete);
 		}
 	}
-
+*/
+			CameraEffectManager::addEventListener(this, scope, kEventEffectFadeInComplete);
+			CameraEffectManager::addEventListener(this, scope, kEventEffectFadeOutComplete);
 	// Start effect
 	// TODO: check if the message really needs to be delayed.
 	initialDelay = 0 >= initialDelay ? 1 : initialDelay;
@@ -291,7 +303,7 @@ void CameraEffectManager::fxFadeAsyncStop()
 	CameraEffectManager::discardMessages(this, kFadeTo);
 
 	// Reset effect variables
-	this->fxFadeTargetBrightness = (Brightness){0, 0, 0};
+//	this->fxFadeTargetBrightness = (Brightness){0, 0, 0};
 	this->fxFadeDelay = 0;
 	this->fxFadeScope = NULL;
 
@@ -304,22 +316,28 @@ void CameraEffectManager::fxFadeAsyncStop()
 
 void CameraEffectManager::fxFadeIn(uint32 call __attribute__((unused)))
 {
+	DisplayUnit::upBrightness();
+	/*
 	this->currentBrightness.darkRed += 1;
 	this->currentBrightness.mediumRed += 2;
 	this->currentBrightness.brightRed += 1;
 	
 	DisplayUnit::configureBrightness(this->currentBrightness);
+*/
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void CameraEffectManager::fxFadeOut()
 {
+	DisplayUnit::lowerBrightness();
+	/*
 	this->currentBrightness.darkRed -= 1;
 	this->currentBrightness.mediumRed -= 2;
 	this->currentBrightness.brightRed -= 1;
 	
 	DisplayUnit::configureBrightness(this->currentBrightness);
+	*/
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -328,6 +346,7 @@ void CameraEffectManager::fxFadeAsync()
 {
 	ASSERT(this, "CameraEffectManager::fxFadeAsync: invalid this");
 
+/*
 	// Note: need to cast brightness registers to uint8 because only their lower 8 bits are valid
 	bool lightRedDone 	= this->currentBrightness.brightRed == this->fxFadeTargetBrightness.brightRed;
 	bool mediumRedDone 	= this->currentBrightness.mediumRed == this->fxFadeTargetBrightness.mediumRed;
@@ -390,11 +409,13 @@ void CameraEffectManager::fxFadeAsync()
 			darkRedDone = true;
 		}
 	}
-
 	DisplayUnit::configureBrightness(this->currentBrightness);
+*/
+	DisplayUnit::upBrightness();
 
 	// Finish effect or call next round
-	if(lightRedDone && mediumRedDone && darkRedDone)
+	if(true)
+//	if(lightRedDone && mediumRedDone && darkRedDone)
 	{
 		this->startingANewEffect = false;
 

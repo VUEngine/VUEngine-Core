@@ -38,7 +38,7 @@ typedef void (*PostProcessingEffect)(Entity scope);
 ///
 /// Inherits from ListenerObject
 ///
-/// Manages the VIP.
+/// Manages the platform's display unit.
 singleton class DisplayUnit : ListenerObject
 {
 	/// Interrupt handler for timer's interrupts
@@ -62,7 +62,7 @@ singleton class DisplayUnit : ListenerObject
 	/// Remove all a post-processing effects.
 	static void removePostProcessingEffects();
 
-	/// Enable VIP interrupts that the engine doesn't use.
+	/// Enable display related interrupts that the engine doesn't use.
 	/// @param customInterrupts: Interrupts to enable
 	static void enableCustomInterrupts(uint16 customInterrupts);
 
@@ -100,7 +100,7 @@ singleton class DisplayUnit : ListenerObject
 	/// @param frameCycle: FRMCYC value
 	static void setFrameCycle(uint8 frameCycle);
 
-	/// Print the status of the VIP registers.
+	/// Print the status of the display hardware.
 	/// @param x: Screen x coordinate where to print
 	/// @param y: Screen y coordinate where to print
 	static void print(int16 x, int16 y);
@@ -117,30 +117,35 @@ singleton class DisplayUnit : ListenerObject
 	/// Wait for the next FCLK signal.
 	static void waitForFrame();
 
-	/// Start VIP drawing operations.
+	/// Start drawing operations.
 	static void startDrawing();
 
-	/// Resume VIP drawing operations.
+	/// Resume drawing operations.
 	static void resumeDrawing();
 
-	/// Suspend VIP drawing operations.
+	/// Suspend drawing operations.
 	static void suspendDrawing();
 
-	/// Stop VIP drawing operations.
+	/// Stop drawing operations.
 	static void stopDrawing();
 
-	/// Start VIP displaying operations.
+	/// Start displaying operations.
 	static void startDisplaying();
 
-	/// Stop VIP displaying operations.
+	/// Stop displaying operations.
 	static void stopDisplaying();
 
-	/// Set the enabling of interrupts.
-	/// @param allowInterrupts: If true, interrupts are enabled when drawing starts
-	static void allowInterrupts(bool allowInterrupts);
+	/// Start rendering operations.
+	static void startRendering();
 
-	/// Retrieve inded of the frame buffers set using during the current game frame 
-	static uint32 getCurrentDrawingFrameBufferSet();
+	/// Stop rendering operations.
+	static void stopRendering();
+
+	/// Disable rendering operations.
+	static void disableRendering();
+
+	/// Commit graphics to memory.
+	static void commitGraphics();
 
 	/// Configure the number of available sprite slots per sprite lists
 	/// @param availableSlots: Pointer to the array to fill
@@ -148,16 +153,17 @@ singleton class DisplayUnit : ListenerObject
 	/// @param totalSpriteLists: Number of total sprite lists
 	static void fillAvailableSlots(int16* availableSlots, const int16** nextSlotIndex, int16 totalSpriteLists);
 
-	/// Commit the graphics to memory
-	/// @param nextSlotIndex: Pointer to the array of the next available slot per sprite list
-	/// @param totalSpriteLists: Number of total sprite lists
-	static void commitGraphics();
-
+	/// Retrieve the index of the list to which the sprite belongs.
+	/// @param sprite: Sprite to check
+	/// @return The index of the list in which a sprite must be registered
 	static uint16 getSpriteListIndex(Sprite sprite);
-	static void disableRendering();
-	static void startRendering();
-	static void stopRendering();
 
+	/// Set the enabling of interrupts.
+	/// @param allowInterrupts: If true, interrupts are enabled when drawing starts
+	static void allowInterrupts(bool allowInterrupts);
+
+	/// Retrieve inded of the frame buffers set using during the current game frame 
+	static uint32 getCurrentDrawingFrameBufferSet();
 }
 
 #endif
