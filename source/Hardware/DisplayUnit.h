@@ -74,9 +74,13 @@ singleton class DisplayUnit : ListenerObject
 	/// @param displayUnitConfig: Display configuration data
 	static void configure(DisplayUnitConfig displayUnitConfig);
 
-	/// Retrieve the current configuration of the DisplayUnit.
-	/// @return Pointer to the struct holding the whole configuration
-	static DisplayUnitConfig getConfig();
+	/// Apply the provided color configuration.
+	/// @param displayColorConfig: Color configuration data
+	static void applyColorConfig(DisplayColorConfig displayColorConfig);
+
+	/// Retrieve the current color configuration.
+	/// @return Color configuration data
+	static DisplayColorConfig getColorConfig();
 
 	/// Up the brightness to the maximum.
 	static void upBrightness();

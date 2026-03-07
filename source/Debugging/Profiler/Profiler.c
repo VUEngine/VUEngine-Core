@@ -185,9 +185,9 @@ static void Profiler::end()
 			profileBrightnessRepeatSpec.brightnessRepeat[i] = 16;
 		}
 
-		DisplayUnitConfig displayUnitConfig = Stage::getDisplayUnitConfig(this->stage);
-		displayUnitConfig.brightnessRepeat = &profileBrightnessRepeatSpec;
-		DisplayUnit::configure(displayUnitConfig);
+		DisplayColorConfig displayColorConfig = Stage::getDisplayUnitConfig(this->stage).displayColorConfig;
+		displayColorConfig.brightnessRepeat = &profileBrightnessRepeatSpec;
+		DisplayUnit::applyColorConfig(displayColorConfig);
 
 		Profiler::print();
 		profiler->skipFrames = __ENABLE_PROFILER_SKIP_FRAMES;
