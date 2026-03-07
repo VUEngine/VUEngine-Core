@@ -145,7 +145,6 @@ void SpriteManager::enable()
 	Printer::reset(Printer::getInstance());
 	CharSetManager::reset(CharSetManager::getInstance());
 	ParamTableManager::reset(ParamTableManager::getInstance());
-	DisplayUnit::stopRendering();
 
 	this->completeSort = true;
 	this->evenFrame = __TRANSPARENCY_EVEN;
