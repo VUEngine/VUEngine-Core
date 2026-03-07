@@ -244,15 +244,6 @@ void SpriteManager::configure(RenderingConfig renderingConfig, Clock animationsC
 	SpriteManager::setSpecialEffectsRowsPerFrame(this, renderingConfig.specialEffectsRowsPerFrame);
 	SpriteManager::setAnimationsClock(this, animationsClock);
 
-/*
-	if(NULL != stageSpec->postProcessingEffects)
-	{
-		for(int32 i = 0; NULL != stageSpec->postProcessingEffects[i]; i++)
-		{
-			DisplayUnit::pushFrontPostProcessingEffect(stageSpec->postProcessingEffects[i], NULL);
-		}
-	}
-*/
 	int16 availableSlots[__TOTAL_SPRITE_LISTS] = {0};
 	const int16* nextSlotIndexes[__TOTAL_SPRITE_LISTS] = {NULL};
 	
@@ -266,6 +257,7 @@ void SpriteManager::configure(RenderingConfig renderingConfig, Clock animationsC
 	for(int16 i = 0; i < __TOTAL_SPRITE_LISTS; i++)
 	{
 		NM_ASSERT(0 < availableSlots[i], "SpriteManager::enable: invalid available sprite slots");
+		NM_ASSERT(NULL == this->spriteRegistry[i].sprites, "SpriteManager::enable: invalid sprites list");
 		this->spriteRegistry[i].sprites = new VirtualList();
 		this->spriteRegistry[i].sortingNode = NULL;
 		this->spriteRegistry[i].availableSlots = availableSlots[i];
