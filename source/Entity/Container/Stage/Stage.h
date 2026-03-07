@@ -24,7 +24,6 @@
 #include <Texture.h>
 #include <Timer.h>
 #include <UIContainer.h>
-#include <DisplayUnit.h>
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // FORWARD DECLARATIONS
@@ -80,21 +79,7 @@ typedef struct StageSpec
 	} streaming;
 
 	/// Rendering
-	struct Rendering
-	{
-		/// Maximum number of texture's rows to write each time the texture writing is active
-		int32 texturesMaximumRowsToWrite;
-
-		/// Maximum number of rows to compute on each call to the affine functions
-		int32 specialEffectRowPerCall;
-
-		/// Per platform configuration data
-		DisplayUnitConfig displayUnitConfig;
-
-		/// Struct defining the optical settings for the stage
-		PixelOptical pixelOptical;
-
-	} rendering;
+	RenderingConfig renderingConfig;
 
 	/// Physics
 	struct Physics

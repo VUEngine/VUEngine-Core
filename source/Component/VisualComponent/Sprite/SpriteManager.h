@@ -16,13 +16,13 @@
 
 #include <Clock.h>
 #include <ComponentManager.h>
+#include <DisplayUnit.h>
 #include <Sprite.h>
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // FORWARD DECLARATIONS
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-class ObjectSpriteContainer;
 class Printer;
 class VirtualList;
 class VirtualNode;
@@ -39,6 +39,8 @@ class VirtualNode;
 // CLASS' DATA
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+/// Data for sprite registering
+/// @memberof SpriteManager
 typedef struct SpriteRegistry
 {
 	/// List of sprites in this registry
@@ -54,6 +56,24 @@ typedef struct SpriteRegistry
 	int16 nextSlotIndex;
 
 } SpriteRegistry;
+
+/// Rendering configuration data
+/// @memberof SpriteManager
+typedef struct RenderingConfig
+{
+	/// Maximum number of texture's rows to write each time the texture writing is active
+	int32 texturesMaximumRowsToWrite;
+
+	/// Maximum number of rows to compute on each call to the affine functions
+	int32 specialEffectsRowsPerFrame;
+
+	/// Per platform configuration data
+	DisplayUnitConfig displayUnitConfig;
+
+	/// Struct defining the optical settings for the stage
+	PixelOptical pixelOptical;
+
+} RenderingConfig;
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DECLARATION
@@ -129,10 +149,9 @@ class SpriteManager : ComponentManager
 	override void purgeComponents();
 
 	/// Configure the manager's state.
-	/// @param texturesMaximumRowsToWrite: Number of texture rows to write during each rendering cycle
-	/// @param specialEffectsRowsPerFrame: Number of special effect rows to write during each rendering cycle 
+	/// @param renderingConfig: Rendering configuration data
 	/// @param animationsClock: Clock for the animations
-	void configure(uint8 texturesMaximumRowsToWrite, int32 specialEffectsRowsPerFrame, Clock animationsClock);
+	void configure(RenderingConfig renderingConfig, Clock animationsClock);
 
 	/// Set the clock that determines if the animations must be updated or not.
 	/// @param clock: Clock for the animations

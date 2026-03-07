@@ -149,25 +149,6 @@ void SpriteManager::enable()
 
 	this->completeSort = true;
 	this->evenFrame = __TRANSPARENCY_EVEN;
-
-	int16 availableSlots[__TOTAL_SPRITE_LISTS] = {0};
-	const int16* nextSlotIndexes[__TOTAL_SPRITE_LISTS] = {NULL};
-	
-	for(int16 i = 0; i < __TOTAL_SPRITE_LISTS; i++)
-	{
-		nextSlotIndexes[i] = (const int16*)&this->spriteRegistry[i].nextSlotIndex;
-	}
-
-	DisplayUnit::fillAvailableSlots(availableSlots, nextSlotIndexes, __TOTAL_SPRITE_LISTS);
-
-	for(int16 i = 0; i < __TOTAL_SPRITE_LISTS; i++)
-	{
-		NM_ASSERT(0 < availableSlots[i], "SpriteManager::enable: invalid available sprite slots");
-		this->spriteRegistry[i].sprites = new VirtualList();
-		this->spriteRegistry[i].sortingNode = NULL;
-		this->spriteRegistry[i].availableSlots = availableSlots[i];
-		this->spriteRegistry[i].nextSlotIndex = availableSlots[i] - 1;
-	}
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -258,11 +239,41 @@ void SpriteManager::purgeComponents()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void SpriteManager::configure(uint8 texturesMaximumRowsToWrite, int32 specialEffectsRowsPerFrame, Clock animationsClock)
+void SpriteManager::configure(RenderingConfig renderingConfig, Clock animationsClock)
 {
-	SpriteManager::setTexturesMaximumRowsToWrite(this, texturesMaximumRowsToWrite);
-	SpriteManager::setSpecialEffectsRowsPerFrame(this, specialEffectsRowsPerFrame);
+	SpriteManager::setTexturesMaximumRowsToWrite(this, renderingConfig.texturesMaximumRowsToWrite);
+	SpriteManager::setSpecialEffectsRowsPerFrame(this, renderingConfig.specialEffectsRowsPerFrame);
 	SpriteManager::setAnimationsClock(this, animationsClock);
+
+/*
+	if(NULL != stageSpec->postProcessingEffects)
+	{
+		for(int32 i = 0; NULL != stageSpec->postProcessingEffects[i]; i++)
+		{
+			DisplayUnit::pushFrontPostProcessingEffect(stageSpec->postProcessingEffects[i], NULL);
+		}
+	}
+*/
+	int16 availableSlots[__TOTAL_SPRITE_LISTS] = {0};
+	const int16* nextSlotIndexes[__TOTAL_SPRITE_LISTS] = {NULL};
+	
+	for(int16 i = 0; i < __TOTAL_SPRITE_LISTS; i++)
+	{
+		nextSlotIndexes[i] = (const int16*)&this->spriteRegistry[i].nextSlotIndex;
+	}
+
+	DisplayUnit::fillAvailableSlots(availableSlots, nextSlotIndexes, __TOTAL_SPRITE_LISTS);
+
+	for(int16 i = 0; i < __TOTAL_SPRITE_LISTS; i++)
+	{
+		NM_ASSERT(0 < availableSlots[i], "SpriteManager::enable: invalid available sprite slots");
+		this->spriteRegistry[i].sprites = new VirtualList();
+		this->spriteRegistry[i].sortingNode = NULL;
+		this->spriteRegistry[i].availableSlots = availableSlots[i];
+		this->spriteRegistry[i].nextSlotIndex = availableSlots[i] - 1;
+	}
+
+	DisplayUnit::configure(renderingConfig.displayUnitConfig);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

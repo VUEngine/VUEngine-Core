@@ -778,7 +778,7 @@ void GameState::createStage(StageSpec* stageSpec, VirtualList positionedActorsTo
 
 	this->stage = ((Stage (*)(StageSpec*, GameState)) stageSpec->allocator)((StageSpec*)stageSpec, this);
 	
-	NM_ASSERT(!isDeleted(this->stage), "GameState::configureStage: null stage");
+	NM_ASSERT(!isDeleted(this->stage), "GameState::createStage: null stage");
 
 	GameState::configure(this);
 
@@ -1080,12 +1080,9 @@ void GameState::configureGraphics()
 	SpriteManager::configure
 	(
 		this->componentManagers[kSpriteComponent],
-		stageSpec->rendering.texturesMaximumRowsToWrite,
-		stageSpec->rendering.specialEffectRowPerCall,
+		stageSpec->renderingConfig,
 		this->animationsClock
 	);
-
-	DisplayUnit::configure(stageSpec->rendering.displayUnitConfig);
 
 	if(NULL != stageSpec->postProcessingEffects)
 	{

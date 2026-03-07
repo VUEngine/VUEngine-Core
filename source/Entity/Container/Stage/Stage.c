@@ -214,7 +214,7 @@ const StageSpec* Stage::getSpec()
 
 DisplayUnitConfig Stage::getDisplayUnitConfig()
 {
-	return this->stageSpec->rendering.displayUnitConfig;
+	return this->stageSpec->renderingConfig.displayUnitConfig;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -946,7 +946,7 @@ void Stage::configureCamera(bool reset)
 
 	Camera::setStageSize(Camera::getInstance(), Size::getFromPixelSize(this->stageSpec->level.pixelSize));
 	Camera::setTransformation(Camera::getInstance(), this->cameraTransformation, false);
-	Camera::setup(Camera::getInstance(), this->stageSpec->rendering.pixelOptical, this->stageSpec->level.cameraFrustum);
+	Camera::setup(Camera::getInstance(), this->stageSpec->renderingConfig.pixelOptical, this->stageSpec->level.cameraFrustum);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

@@ -36,7 +36,6 @@
 #include <MemoryPool.h>
 #include <MessageDispatcher.h>
 #include <ObjectSprite.h>
-#include <ObjectSpriteContainer.h>
 #include <ObjectTextureManager.h>
 #include <Optics.h>
 #include <ParamTableManager.h>
