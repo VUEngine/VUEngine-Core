@@ -492,8 +492,6 @@ void SpriteManager::commitGraphics()
 	_writtenObjectTiles = 0;
 #endif
 
-	// Update all graphical data
-
 	// Update graphics memory
 	TextureManager::updateTextures(this->texturesMaximumRowsToWrite, this->deferTextureUpdating);
 	SpriteManager::applySpecialEffects(this);
