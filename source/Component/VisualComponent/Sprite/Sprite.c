@@ -276,7 +276,7 @@ int16 Sprite::render(int16 index, bool updateAnimation)
 	if(!Sprite::prepareToRender(this))
 	{
 		this->index = __NO_RENDER_INDEX;
-		this->usedSlots = -1;
+		this->usedSlots = 0;
 	}
 	else 
 	{
