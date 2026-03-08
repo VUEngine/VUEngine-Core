@@ -279,8 +279,11 @@ void CameraEffectManager::fxFadeAsyncStart
 		}
 	}
 */
-			CameraEffectManager::addEventListener(this, scope, kEventEffectFadeInComplete);
-			CameraEffectManager::addEventListener(this, scope, kEventEffectFadeOutComplete);
+	if(scope != NULL)
+	{
+		CameraEffectManager::addEventListener(this, scope, kEventEffectFadeInComplete);
+		CameraEffectManager::addEventListener(this, scope, kEventEffectFadeOutComplete);
+	}
 	// Start effect
 	// TODO: check if the message really needs to be delayed.
 	initialDelay = 0 >= initialDelay ? 1 : initialDelay;
