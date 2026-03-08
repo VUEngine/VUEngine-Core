@@ -165,7 +165,6 @@ StageROMSpec EmptyStageSpec =
 				{false, 0}
 			}
 		},
-		
 
 		// Struct defining the optical settings for the stage
 		{
