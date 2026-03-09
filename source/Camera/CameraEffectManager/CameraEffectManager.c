@@ -157,15 +157,22 @@ void CameraEffectManager::fxFadeStart(int32 effect, int32 delay)
 	switch(effect)
 	{
 		case kFadeIn:
-		{
-			DisplayUnit::lowerBrightness(0);
-			while(DisplayUnit::upBrightness(1));
+		{			
+			while(DisplayUnit::upBrightness(1))
+			{
+				Timer::wait(delay);
+			};
+			
 			break;
 		}
 
 		case kFadeOut:
 		{
-			while(DisplayUnit::lowerBrightness(1));
+			while(DisplayUnit::lowerBrightness(1))
+			{
+				Timer::wait(delay);
+			};
+			
 			break;
 		}
 	}
