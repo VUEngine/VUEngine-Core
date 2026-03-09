@@ -694,7 +694,7 @@ void GameState::fadeOut(uint16 fadeDelay)
 		Camera::getInstance(),
 		kFadeTo, // effect type
 		0, // initial delay (in ms)
-		DisplayUnit::getDarkColorConfig(), // target brightness
+		targetDisplayColorConfig, // target brightness
 		fadeDelay, // delay between fading steps (in ms)
 		ListenerObject::safeCast(this) // callback scope
 	);
