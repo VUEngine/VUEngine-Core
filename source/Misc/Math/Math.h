@@ -423,7 +423,7 @@ static class Math : Object
 
 static inline int32 Math::abs(int32 number)
 {
-	return __ABS(number)b;
+	return __ABS(number);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
