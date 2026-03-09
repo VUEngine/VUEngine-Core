@@ -33,11 +33,7 @@ extern uint32 _gameRandomSeed __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE;
 #ifdef __USE_WORDS_SIZE_ABS_FUNCTION
 #define __ABS(number)	(((number) + ((number) >> 31)) ^ ((number) >> 31))
 #else
-#ifdef __USE_VB_REGISTER_ABS_FUNCTION
-#define __ABS(number)	Math::abs(number)
-#else
 #define __ABS(number)	abs(number)
-#endif
 #endif
 
 // Usable only when m is a power of 2
@@ -427,18 +423,7 @@ static class Math : Object
 
 static inline int32 Math::abs(int32 number)
 {
-	int32 result = 0;
-
-	asm
-	(
-		"ldsr	%1, 31	\n\t"	\
-		"stsr	31, %0	\n\t"
-		: "=r" (result)
-		: "r" (number)
-		:
-	);
-
-	return result;
+	return __ABS(number)b;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
