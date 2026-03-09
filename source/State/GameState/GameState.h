@@ -249,6 +249,14 @@ class GameState : State
 	/// Process the provided user input.
 	/// @param userInput: Struct with the current user input information
 	virtual void processUserInput(const UserInput*  userInput);
+
+	/// Start a fade in effect and listen for kEventEffectFadeInComplete
+	/// @param fadeDelay: Delay before applying the effect
+	void fadeIn(uint16 fadeDelay);
+
+	/// Start a fade out effect and listen for kEventEffectFadeOutComplete
+	/// @param fadeDelay: Delay before applying the effect
+	void fadeOut(uint16 fadeDelay);
 }
 
 #endif

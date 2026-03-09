@@ -82,11 +82,29 @@ singleton class DisplayUnit : ListenerObject
 	/// @return Color configuration data
 	static DisplayColorConfig getColorConfig();
 
-	/// Up the brightness to the maximum.
-	static void upBrightness();
+	/// Retrieve the dark color configuration.
+	/// @return Dark color configuration data
+	static DisplayColorConfig getDarkColorConfig();
 
-	/// Lower the brightness to the minimum.
-	static void lowerBrightness();
+	/// Retrieve the brightness direction between the currently configured and the target configuration
+	/// @param targetDisplayColorConfig: Target color configuration to compare with
+	static int16 getBrightnessDirection(DisplayColorConfig targetDisplayColorConfig);
+
+	/// Modify the current brightness by the provided amount towards the target configuration.
+	/// @param amount: Brightness modification amount
+	/// @param targetDisplayColorConfig: Target color configuration to compare with
+	/// @return True when the target config is reached
+	static bool modifyBrightness(uint8 amount, DisplayColorConfig targetDisplayColorConfig);
+
+	/// Up the brightness by the increment provided or to the maximiun the increment is 0.
+	/// @param increment: Amount of brightness increment
+	/// @return True when the increment is applied successfully
+	static bool upBrightness(uint8 increment);
+
+	/// Lower the brightness by the increment provided or to the minimum the increment is 0.
+	/// @param decrement: Amount of brightness decrement
+	/// @return True when the decrement is applied successfully
+	static bool lowerBrightness(uint8 decrement);
 
 	/// Force showing the screen for showing an exception.
 	static void showException();

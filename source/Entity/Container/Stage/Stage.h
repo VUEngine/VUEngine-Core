@@ -223,10 +223,14 @@ class Stage : Container
 	/// @return Specification that determines how the stage was configured
 	const StageSpec* getSpec();
 
-	/// Retrieve the display configuration for the stage.
+	/// Retrieve the display unit's configuration for the stage.
 	/// @return Display configuration struct
 	DisplayUnitConfig getDisplayUnitConfig();
-	
+
+	/// Retrieve the display color configuration for the stage.
+	/// @return Display color configuration struct
+	DisplayColorConfig getDisplayColorConfig();
+
 	/// Register the stage's spec actors in the streaming list
 	void registerActors(VirtualList positionedActorsToIgnore);
 

@@ -14,6 +14,7 @@
 #include <BehaviorManager.h>
 #include <BodyManager.h>
 #include <Camera.h>
+#include <CameraEffectManager.h>
 #include <CharSetManager.h>
 #include <Clock.h>
 #include <ColliderManager.h>
@@ -660,6 +661,42 @@ void GameState::communicate(void* owner __attribute__ ((unused)))
 
 void GameState::processUserInput(const UserInput* userInput __attribute__ ((unused)))
 {}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void GameState::fadeIn(uint16 fadeDelay)
+{
+	// Start fade in effect
+	Camera::startEffect(Camera::getInstance(), kHide);
+
+	DisplayColorConfig targetDisplayColorConfig = Stage::getDisplayColorConfig(this->stage);
+
+	Camera::startEffect
+	(
+		Camera::getInstance(),
+		kFadeTo, // effect type
+		0, // initial delay (in ms)
+		&targetDisplayColorConfig, // target color config
+		fadeDelay, // delay between fading steps (in ms)
+		ListenerObject::safeCast(this) // callback scope
+	);
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void GameState::fadeOut(uint16 fadeDelay)
+{
+	// Start fade out effect
+	Camera::startEffect
+	(
+		Camera::getInstance(),
+		kFadeTo, // effect type
+		0, // initial delay (in ms)
+		DisplayUnit::getDarkColorConfig(), // target brightness
+		fadeDelay, // delay between fading steps (in ms)
+		ListenerObject::safeCast(this) // callback scope
+	);
+}
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 

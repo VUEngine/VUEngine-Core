@@ -50,11 +50,14 @@ enum CameraFX
 /// Manages camera's special effects, brightness transitions, etc.
 singleton class CameraEffectManager : ListenerObject
 {
+	/// Target color config
+	DisplayColorConfig targetDisplayColorConfig;
+	
 	/// Callback scope for the current fade effect
-	ListenerObject fxFadeScope;
+	ListenerObject fadeScope;
 
 	/// Delay for the current fade effect
-	uint8 fxFadeDelay;
+	uint8 fadeDelay;
 
 	/// Fade increment
 	uint8 fadeEffectIncrement;
@@ -78,10 +81,6 @@ singleton class CameraEffectManager : ListenerObject
 	/// Set the fade increment to apply on the next effect.
 	/// @param fadeEffectIncrement: Fade increment
 	void setFadeIncrement(uint8 fadeEffectIncrement);
-
-	/// Retrieve the default brighness values for the current stage
-	/// @return Struct with the brightness levels
-	Brightness getDefaultBrightness();
 
 	/// Start a camera effect.
 	/// @param effect: Code of the effect to start

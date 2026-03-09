@@ -219,6 +219,13 @@ DisplayUnitConfig Stage::getDisplayUnitConfig()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+DisplayColorConfig Stage::getDisplayColorConfig()
+{
+	return this->stageSpec->renderingConfig.displayUnitConfig.displayColorConfig;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void Stage::registerActors(VirtualList positionedActorsToIgnore)
 {
 	if(!isDeleted(this->stageActorDescriptions))

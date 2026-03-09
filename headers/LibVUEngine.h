@@ -31,6 +31,7 @@
 #include <Size.h>
 #include <PixelVector.h>
 #include <PixelSize.h>
+#include <Terminal.h>
 #include <Vector2D.h>
 #include <Vector3D.h>
 
