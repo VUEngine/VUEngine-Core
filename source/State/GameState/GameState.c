@@ -686,6 +686,8 @@ void GameState::fadeIn(uint16 fadeDelay)
 
 void GameState::fadeOut(uint16 fadeDelay)
 {
+	DisplayColorConfig targetDisplayColorConfig = DisplayUnit::getDarkColorConfig();
+	
 	// Start fade out effect
 	Camera::startEffect
 	(

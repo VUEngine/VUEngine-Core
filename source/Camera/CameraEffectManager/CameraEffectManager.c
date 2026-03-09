@@ -200,11 +200,13 @@ void CameraEffectManager::fxFadeAsyncStart
 	{
 		this->fadeScope = scope;
 
-		if(0 < DisplayUnit::getBrightnessDirection(this->targetDisplayColorConfig))
+		int16 fadeDirection = DisplayUnit::getBrightnessDirection(this->targetDisplayColorConfig);
+
+		if(0 < fadeDirection)
 		{		
 			CameraEffectManager::addEventListener(this, scope, kEventEffectFadeInComplete);
 		}
-		else
+		else if(0 > fadeDirection)
 		{		
 			CameraEffectManager::addEventListener(this, scope, kEventEffectFadeOutComplete);
 		}
