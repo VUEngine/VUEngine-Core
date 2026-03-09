@@ -70,9 +70,6 @@ abstract class Sprite : VisualComponent
 	/// Amount of sprite slots used to render it
 	int16 usedSlots;
 
-	/// Head flags for DRAM entries
-	uint16 head;
-
 	/// Cache of the texture's half width
 	int16 halfWidth;
 
@@ -128,10 +125,6 @@ abstract class Sprite : VisualComponent
 	/// Retrieve the index that determines the region of DRAM that this sprite configured
 	/// @return The index that determines the region of DRAM that this sprite manages
 	int16 getIndex();
-
-	/// Retrieve the head flags for DRAM entries.
-	/// @return Head flags for DRAM entries
-	uint16 getHead();
 
 	/// Retrieve the sprite's texture's half weight.
 	/// @return Sprite's texture's half weight

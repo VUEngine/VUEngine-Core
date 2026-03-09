@@ -53,7 +53,6 @@ void Sprite::constructor(Entity owner, const SpriteSpec* spriteSpec)
 	// Clear values
 	this->index = __NO_RENDER_INDEX;
 	this->usedSlots = 0;
-	this->head = 0;
 	this->texture = NULL;
 	this->halfWidth = 0;
 	this->halfHeight = 0;
@@ -330,13 +329,6 @@ Texture Sprite::getTexture()
 int16 Sprite::getIndex()
 {
 	return this->index;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-uint16 Sprite::getHead()
-{
-	return this->head;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
