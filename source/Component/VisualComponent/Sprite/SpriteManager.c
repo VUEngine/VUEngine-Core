@@ -450,6 +450,7 @@ void SpriteManager::render()
 			if(0 < usedSlots)
 			{
 				this->spriteRegistry[i].nextSlotIndex -= usedSlots;
+
 #ifdef __ALERT_WORLD_MEMORY_DEPLETION
 				if(0 > this->spriteRegistry[i].nextSlotIndex)
 				{
