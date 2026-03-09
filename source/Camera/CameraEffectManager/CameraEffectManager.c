@@ -13,7 +13,6 @@
 
 #include <Camera.h>
 #include <DebugConfig.h>
-#include <Actor.h>
 #include <GameState.h>
 #include <Singleton.h>
 #include <Telegram.h>
@@ -67,7 +66,7 @@ bool CameraEffectManager::handleMessage(Telegram telegram)
 	{
 		case kFadeTo:
 		{				
-			CameraEffectManager::fxFadeAsync(this);
+			CameraEffectManager::fadeAsync(this);
 			break;
 		}	
 	}
@@ -112,13 +111,13 @@ void CameraEffectManager::startEffect(int32 effect, va_list args)
 		case kFadeIn:
 		case kFadeOut:
 		{
-			CameraEffectManager::fxFadeStart(this, effect, va_arg(args, int32));
+			CameraEffectManager::fadeStart(this, effect, va_arg(args, int32));
 			break;
 		}
 
 		case kFadeTo:
 		{
-			CameraEffectManager::fxFadeAsyncStart
+			CameraEffectManager::fadeAsyncStart
 			(
 				this,
 				va_arg(args, int32),
@@ -139,7 +138,7 @@ void CameraEffectManager::stopEffect(int32 effect)
 	{
 		case kFadeTo:
 
-			CameraEffectManager::fxFadeAsyncStop(this);
+			CameraEffectManager::fadeAsyncStop(this);
 			break;
 	}
 }
@@ -152,13 +151,13 @@ void CameraEffectManager::stopEffect(int32 effect)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void CameraEffectManager::fxFadeStart(int32 effect, int32 delay)
+void CameraEffectManager::fadeStart(int32 effect, int32 delay)
 {
 	switch(effect)
 	{
 		case kFadeIn:
-		{			
-			while(DisplayUnit::upBrightness(1))
+		{
+			while(DisplayUnit::upBrightness(__ABS(this->fadeEffectIncrement)))
 			{
 				Timer::wait(delay);
 			};
@@ -168,7 +167,7 @@ void CameraEffectManager::fxFadeStart(int32 effect, int32 delay)
 
 		case kFadeOut:
 		{
-			while(DisplayUnit::lowerBrightness(1))
+			while(DisplayUnit::lowerBrightness(-__ABS(this->fadeEffectIncrement)))
 			{
 				Timer::wait(delay);
 			};
@@ -180,7 +179,7 @@ void CameraEffectManager::fxFadeStart(int32 effect, int32 delay)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void CameraEffectManager::fxFadeAsyncStart
+void CameraEffectManager::fadeAsyncStart
 (
 	int32 initialDelay, const DisplayColorConfig* targetDisplayColorConfig, int32 delayBetweenSteps, ListenerObject scope
 )
@@ -231,7 +230,7 @@ void CameraEffectManager::fxFadeAsyncStart
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void CameraEffectManager::fxFadeAsyncStop()
+void CameraEffectManager::fadeAsyncStop()
 {
 	// Remove event listener
 	CameraEffectManager::removeEventListeners(this, NULL, kEventEffectFadeInComplete);
@@ -251,23 +250,9 @@ void CameraEffectManager::fxFadeAsyncStop()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void CameraEffectManager::fxFadeIn(uint32 call __attribute__((unused)))
+void CameraEffectManager::fadeAsync()
 {
-	DisplayUnit::upBrightness(__ABS(this->fadeEffectIncrement));
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void CameraEffectManager::fxFadeOut()
-{
-	DisplayUnit::lowerBrightness(-__ABS(this->fadeEffectIncrement));
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void CameraEffectManager::fxFadeAsync()
-{
-	ASSERT(this, "CameraEffectManager::fxFadeAsync: invalid this");
+	ASSERT(this, "CameraEffectManager::fadeAsync: invalid this");
 
 	if(DisplayUnit::modifyBrightness(this->fadeEffectIncrement, this->targetDisplayColorConfig))
 	{
