@@ -1,5 +1,5 @@
 {
-	"_version": "0.6.0",
+	"_version": "0.7.0",
 	"affine": {
 		"maxRowsPerCall": 16,
 		"maxScale": 2
@@ -19,7 +19,7 @@
 		"totalChars": 2048
 	},
 	"debug": {
-		"alertGraphicsDepletion" : true,
+		"alertGraphicsDepletion": true,
 		"diagnostics": "NONE",
 		"enableProfiler": false,
 		"stackHeadroom": 1000
@@ -129,6 +129,12 @@
 	},
 	"sound": {
 		"earDisplacement": 384,
+		"groups": {
+			"effects": 15,
+			"general": 15,
+			"music": 15,
+			"other": 15
+		},
 		"stereoAttenuationDistance": 2048
 	},
 	"sprite": {
