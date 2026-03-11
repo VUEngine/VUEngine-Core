@@ -167,7 +167,10 @@ void SpriteManager::disable()
 
 	Base::disable(this);
 
-	SpriteManager::destroyAllComponents(this);
+	if(!isDeleted(this->specialSprites))
+	{
+		VirtualList::clear(this->specialSprites);
+	}
 
 	for(int16 i = 0; i < __TOTAL_SPRITE_LISTS; i++)
 	{
@@ -180,6 +183,8 @@ void SpriteManager::disable()
 		this->spriteRegistry[i].sprites = NULL;
 		this->spriteRegistry[i].sortingNode = NULL;
 	}
+
+	SpriteManager::destroyAllComponents(this);
 
 	DisplayUnit::disableRendering();
 }
@@ -236,6 +241,7 @@ void SpriteManager::purgeComponents()
 				{
 					this->spriteRegistry[i].sortingNode = NULL;
 					VirtualList::removeData(this->spriteRegistry[i].sprites, sprite);
+					VirtualList::removeData(this->specialSprites, sprite);
 				}
 			}
 		}
@@ -304,9 +310,7 @@ void SpriteManager::destroySprite(Sprite sprite)
 		SpriteManager::stopListeningForVBlank(this);			
 	}
 
-#ifdef __RELEASE
 	if(Sprite::hasSpecialEffects(sprite))
-#endif
 	{
 		if(!isDeleted(this->specialSprites))
 		{
