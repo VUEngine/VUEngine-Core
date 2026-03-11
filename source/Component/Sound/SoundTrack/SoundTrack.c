@@ -108,125 +108,12 @@ bool SoundTrack::update
 
 	this->nextElapsedTicksTarget = __I_TO_FIX7_9_EXT(soundTrackKeyframe.tick);
 
-	if(0 != (kSoundTrackEventSxINT & soundTrackKeyframe.events))
-	{
-		this->cursorSxINT++;
-	}
-
-	if(0 != (kSoundTrackEventSxLRV & soundTrackKeyframe.events))
-	{
-		this->cursorSxLRV++;
-	}
-
-	if(0 != (kSoundTrackEventSxFQ & soundTrackKeyframe.events))
-	{
-		this->cursorSxFQ++;
-	}
-
-	if(0 != (kSoundTrackEventSxEV0 & soundTrackKeyframe.events))
-	{
-		this->cursorSxEV0++;
-	}
-
-	if(0 != (kSoundTrackEventSxEV1 & soundTrackKeyframe.events))
-	{
-		this->cursorSxEV1++;
-	}
-
-	if(0 != (kSoundTrackEventSxRAM & soundTrackKeyframe.events))
-	{
-		this->cursorSxRAM++;
-	}
-
-	if(0 != (kSoundTrackEventSxSWP & soundTrackKeyframe.events))
-	{
-		this->cursorSxSWP++;
-	}
-
-	if(0 != (kSoundTrackEventSxMOD & soundTrackKeyframe.events))
-	{
-		this->cursorSxMOD++;
-	}
-
-	uint8 volume = this->soundTrackSpec->SxLRV[this->cursorSxLRV];
-	
-	int8 leftVolume = volume >> 4;
-	int8 rightVolume = volume & 0xF;
-
-	if(0 < leftVolume)
-	{
-		if(leftVolume > maximumVolume)
-		{
-			leftVolume = maximumVolume;
-		}
-		
-		leftVolume -= (volumeReduction + leftVolumeReduction);
-
-		if(leftVolume <= 0)
-		{
-			// Don't allow 0 values to prevent pop sounds
-			leftVolume = 1;
-		}
-	}
-
-	if(0 < rightVolume)
-	{
-		if(rightVolume > maximumVolume)
-		{
-			rightVolume = maximumVolume;
-		}
-
-		rightVolume -= (volumeReduction + rightVolumeReduction);
-
-		if(rightVolume <= 0)
-		{
-			// Don't allow 0 values to prevent pop sounds
-			rightVolume = 1;
-		}
-	}
-
-	if(0 < leftVolume || 0 < rightVolume)
-	{
-		uint16 note = this->soundTrackSpec->SxFQ[this->cursorSxFQ] + frequencyDelta;
-
-		SoundSourceConfigurationRequest vsuChannelConfigurationRequest = 
-		{
-			// Requester object
-			this->id,
-			// Time when the configuration elapses
-			__FIX7_9_EXT_DIV(__I_TO_FIX7_9_EXT(soundTrackKeyframe.tick), targetTimerResolutionFactor),
-			// Sound source type
-			0 != (kSoundTrackEventSweepMod & soundTrackKeyframe.events) ? 
-				kSoundSourceModulation:
-				0 != (kSoundTrackEventNoise & soundTrackKeyframe.events) ?
-					kSoundSourceNoise:
-					kSoundSourceNormal,
-			// SxINT values
-			this->soundTrackSpec->SxINT[this->cursorSxINT],
-			// SxLRV values
-			(leftVolume << 4) | rightVolume,
-			// SxFQL values
-			note & 0xFF,
-			// SxFQH values
-			note >> 8,
-			// SxEV0 values
-			this->soundTrackSpec->SxEV0[this->cursorSxEV0],
-			// SxEV1 values
-			this->soundTrackSpec->SxEV1[this->cursorSxEV1],
-			// SxRAM pointer
-			this->soundTrackSpec->SxRAM[this->cursorSxRAM],
-			// SxSWP values
-			this->soundTrackSpec->SxSWP[this->cursorSxSWP],
-			// SxMOD pointer
-			this->soundTrackSpec->SxMOD[this->cursorSxMOD],
-			// Priority
-			this->soundTrackSpec->priority,
-			// Skip
-			this->soundTrackSpec->skip
-		};
-
-		SoundUnit::applySoundSourceConfiguration(&vsuChannelConfigurationRequest);		
-	}
+	SoundTrack::updateCursors(this);
+	SoundTrack::sendSoundRequest
+	(
+		this, tickStep, targetTimerResolutionFactor, maximumVolume, leftVolumeReduction, 
+		rightVolumeReduction, volumeReduction, frequencyDelta
+	);
 
 	return this->finished;
 }
@@ -287,6 +174,32 @@ void SoundTrack::print(int16 x, int16 y)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+void SoundTrack::reset()
+{
+	this->cursor = 0;
+	this->finished = false;
+	this->elapsedTicks = 0;
+	this->nextElapsedTicksTarget = 0;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void SoundTrack::updateCursors()
+{}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void SoundTrack::sendSoundRequest
+(
+	fix7_9_ext tickStep __attribute__((unused)), fix7_9_ext targetTimerResolutionFactor __attribute__((unused)), 
+	uint8 maximumVolume __attribute__((unused)), uint8 leftVolumeReduction __attribute__((unused)),
+	uint8 rightVolumeReduction __attribute__((unused)), uint8 volumeReduction __attribute__((unused)), 
+	uint16 frequencyDelta __attribute__((unused))
+)
+{}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PRIVATE METHODS
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -321,28 +234,9 @@ void SoundTrack::destructor()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void SoundTrack::reset()
-{
-	this->cursor = 0;
-	this->cursorSxINT = 0;
-	this->cursorSxLRV = 0;
-	this->cursorSxFQ = 0;
-	this->cursorSxEV0 = 0;
-	this->cursorSxEV1 = 0;
-	this->cursorSxRAM = 0;
-	this->cursorSxSWP = 0;
-	this->cursorSxMOD = 0;
-
-	this->finished = false;
-	this->elapsedTicks = 0;
-	this->nextElapsedTicksTarget = 0;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
 void SoundTrack::computeLength()
 {
-	if(NULL == this->soundTrackSpec || NULL == this->soundTrackSpec->trackKeyframes || NULL == this->soundTrackSpec->SxLRV)
+	if(NULL == this->soundTrackSpec || NULL == this->soundTrackSpec->trackKeyframes )
 	{
 		return;
 	}
@@ -376,45 +270,7 @@ fix7_9_ext SoundTrack::fastForward(uint32 cursor)
 		
 		elapsedTicks += __I_TO_FIX7_9_EXT(soundTrackKeyframe.tick);
 
-		if(0 != (kSoundTrackEventSxINT & soundTrackKeyframe.events))
-		{
-			this->cursorSxINT++;
-		}
-
-		if(0 != (kSoundTrackEventSxLRV & soundTrackKeyframe.events))
-		{
-			this->cursorSxLRV++;
-		}
-
-		if(0 != (kSoundTrackEventSxFQ & soundTrackKeyframe.events))
-		{
-			this->cursorSxFQ++;
-		}
-
-		if(0 != (kSoundTrackEventSxEV0 & soundTrackKeyframe.events))
-		{
-			this->cursorSxEV0++;
-		}
-
-		if(0 != (kSoundTrackEventSxEV1 & soundTrackKeyframe.events))
-		{
-			this->cursorSxEV1++;
-		}
-
-		if(0 != (kSoundTrackEventSxRAM & soundTrackKeyframe.events))
-		{
-			this->cursorSxRAM++;
-		}
-
-		if(0 != (kSoundTrackEventSxSWP & soundTrackKeyframe.events))
-		{
-			this->cursorSxSWP++;
-		}
-
-		if(0 != (kSoundTrackEventSxMOD & soundTrackKeyframe.events))
-		{
-			this->cursorSxMOD++;
-		}
+		SoundTrack::updateCursors(this);
 	}
 
 	return elapsedTicks;
