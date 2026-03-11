@@ -24,7 +24,7 @@
 ///
 /// Inherits from Object
 ///
-/// Manages the VSU.
+/// Manages the platform's sound hardware.
 singleton class SoundUnit : Object
 {
 	/// @publicsection
