@@ -146,6 +146,15 @@ void SpriteManager::enable()
 	CharSetManager::reset(CharSetManager::getInstance());
 	ParamTableManager::reset(ParamTableManager::getInstance());
 
+	for(int16 i = 0; i < __TOTAL_SPRITE_LISTS; i++)
+	{
+		NM_ASSERT(NULL == this->spriteRegistry[i].sprites, "SpriteManager::enable: invalid sprites list");
+		this->spriteRegistry[i].sprites = new VirtualList();
+		this->spriteRegistry[i].sortingNode = NULL;
+		this->spriteRegistry[i].availableSlots = 0;
+		this->spriteRegistry[i].nextSlotIndex = 0;
+	}
+
 	this->completeSort = true;
 	this->evenFrame = __TRANSPARENCY_EVEN;
 }
@@ -165,8 +174,10 @@ void SpriteManager::disable()
 		if(!isDeleted(this->spriteRegistry[i].sprites))
 		{
 			VirtualList::clear(this->spriteRegistry[i].sprites);
+			delete this->spriteRegistry[i].sprites;
 		}
 
+		this->spriteRegistry[i].sprites = NULL;
 		this->spriteRegistry[i].sortingNode = NULL;
 	}
 
@@ -257,8 +268,7 @@ void SpriteManager::configure(RenderingConfig renderingConfig, Clock animationsC
 	for(int16 i = 0; i < __TOTAL_SPRITE_LISTS; i++)
 	{
 		NM_ASSERT(0 < availableSlots[i], "SpriteManager::enable: invalid available sprite slots");
-		NM_ASSERT(NULL == this->spriteRegistry[i].sprites, "SpriteManager::enable: invalid sprites list");
-		this->spriteRegistry[i].sprites = new VirtualList();
+		NM_ASSERT(!isDeleted(this->spriteRegistry[i].sprites), "SpriteManager::enable: null sprites list");
 		this->spriteRegistry[i].sortingNode = NULL;
 		this->spriteRegistry[i].availableSlots = availableSlots[i];
 		this->spriteRegistry[i].nextSlotIndex = availableSlots[i] - 1;
