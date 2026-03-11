@@ -890,7 +890,9 @@ void Sound::configureTracks()
 
 	for(int16 i = 0; NULL != ((SoundSpec*)this->componentSpec)->soundTrackSpecs[i]; i++)
 	{
-		SoundTrack soundTrack = new SoundTrack(((SoundSpec*)this->componentSpec)->soundTrackSpecs[i]);
+		SoundTrackSpec* soundTrackSpec = ((SoundSpec*)this->componentSpec)->soundTrackSpecs[i];
+
+		SoundTrack soundTrack = SoundTrack::safeCast((SoundTrack (*)(const SoundTrackSpec*))(soundTrackSpec->allocator)(soundTrackSpec));
 
 		VirtualList::pushBack(this->soundTracks, soundTrack);
 

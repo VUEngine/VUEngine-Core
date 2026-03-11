@@ -44,6 +44,9 @@ typedef struct SoundTrackKeyframe
 /// @memberof SoundTrack
 typedef struct SoundTrackSpec
 {
+	/// Class' allocator
+	AllocatorPointer allocator;
+
 	/// Priority for sound channel usage
 	uint8 priority;
 

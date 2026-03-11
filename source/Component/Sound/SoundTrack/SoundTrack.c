@@ -104,16 +104,19 @@ bool SoundTrack::update
 		return this->finished;
 	}
 
-	SoundTrackKeyframe soundTrackKeyframe = this->soundTrackSpec->trackKeyframes[this->cursor++];
+	SoundTrackKeyframe soundTrackKeyframe = this->soundTrackSpec->trackKeyframes[this->cursor];
 
 	this->nextElapsedTicksTarget = __I_TO_FIX7_9_EXT(soundTrackKeyframe.tick);
 
 	SoundTrack::updateCursors(this);
+
 	SoundTrack::sendSoundRequest
 	(
 		this, tickStep, targetTimerResolutionFactor, maximumVolume, leftVolumeReduction, 
 		rightVolumeReduction, volumeReduction, frequencyDelta
 	);
+
+	this->cursor++;
 
 	return this->finished;
 }
