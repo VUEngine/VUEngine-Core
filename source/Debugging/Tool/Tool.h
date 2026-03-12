@@ -47,6 +47,10 @@ abstract class Tool : ListenerObject
 	/// @param currentGameState: Game's current game state
 	void setToolState(ToolState toolState);
 
+	/// Check if the provided user input unlocks the tool managed by this state.
+	/// @return True if the input matches the combination defined by the state
+	virtual bool isKeyCombination(const UserInput* userInput) = 0;
+
 	/// Process the provided user pressed key.
 	/// @param pressedKey: User pressed key
 	virtual void processUserInput(uint16 pressedKey) = 0;

@@ -106,6 +106,13 @@ void ToolState::destructor()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+bool ToolState::isKeyCombination(const UserInput* userInput)
+{
+	return !isDeleted(this->tool) ? Tool::isKeyCombination(this->tool, userInput) : false;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void ToolState::start(void* owner __attribute__ ((unused)))
 {
 	Base::enter(this, owner);

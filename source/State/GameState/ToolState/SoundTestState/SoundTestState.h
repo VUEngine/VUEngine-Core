@@ -32,10 +32,6 @@ singleton class SoundTestState : ToolState
 	/// Prepares the object to enter this state.
 	/// @param owner: Object that is entering in this state
 	override void enter(void* owner);
-
-	/// Check if the provided user input unlocks the tool managed by this state.
-	/// @return True if the input matches the combination defined by the state
-	override bool isKeyCombination(const UserInput* userInput);
 }
 
 #endif

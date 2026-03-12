@@ -43,6 +43,10 @@ singleton class SoundTest : Tool
 	/// @return False if the listener has to be removed; true to keep it
 	override bool onEvent(ListenerObject eventFirer, uint16 eventCode);
 
+	/// Check if the provided user input unlocks the tool managed by this state.
+	/// @return True if the input matches the combination defined by the state
+	override bool isKeyCombination(const UserInput* userInput);
+
 	/// Update the tool's state.
 	override void update();
 

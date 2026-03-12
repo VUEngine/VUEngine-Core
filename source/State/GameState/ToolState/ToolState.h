@@ -89,7 +89,7 @@ abstract class ToolState : GameState
 
 	/// Check if the provided user input unlocks the tool managed by this state.
 	/// @return True if the input matches the combination defined by the state
-	virtual bool isKeyCombination(const UserInput* userInput) = 0;
+	bool isKeyCombination(const UserInput* userInput);
 }
 
 #endif

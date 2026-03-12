@@ -64,6 +64,10 @@ singleton class StageEditor : Tool
 
 	/// @publicsection
 
+	/// Check if the provided user input unlocks the tool managed by this state.
+	/// @return True if the input matches the combination defined by the state
+	override bool isKeyCombination(const UserInput* userInput);
+
 	/// Update the tool's state.
 	override void update();
 
