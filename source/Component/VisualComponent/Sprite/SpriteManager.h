@@ -213,9 +213,10 @@ class SpriteManager : ComponentManager
 	int32 getNumberOfSprites();
 
 	/// Retrieve the sprite at the provided position in the list of sprites.
-	/// @param index: Index of the node in the list of sprites
+	/// @param spriteListIndex: Index of list of sprites
+	/// @param spriteIndex: Index of the node in the list of sprites
 	/// @return Sprite at the provided position in the list of sprites
-	Sprite getSpriteAtIndex(int16 index);
+	Sprite getSpriteAtIndex(int16 spriteListIndex, int16 spriteIndex);
 
 	/// Print sprites statistics.
 	/// @param x: Screen x coordinate where to print

@@ -628,24 +628,27 @@ int32 SpriteManager::getNumberOfSprites()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-Sprite SpriteManager::getSpriteAtIndex(int16 position)
+Sprite SpriteManager::getSpriteAtIndex(int16 spriteListIndex, int16 spriteIndex)
 {
-	/*
-	if(0 > position || position >= VirtualList::getCount(this->spriteRegistry[kSpriteListBgmap1].sprites))
+	if(0 > spriteListIndex || __TOTAL_SPRITE_LISTS <= spriteListIndex)
 	{
 		return NULL;
 	}
 
-	int32 counter = 0;
-
-	for(VirtualNode node = this->spriteRegistry[kSpriteListBgmap1].sprites->head; NULL != node; node = node->next, counter++)
+	if(0 > spriteIndex || spriteIndex >= VirtualList::getCount(this->spriteRegistry[spriteListIndex].sprites))
 	{
-		if(counter == position)
+		return NULL;
+	}
+
+	int32 index = 0;
+
+	for(VirtualNode node = this->spriteRegistry[spriteListIndex].sprites->head; NULL != node; node = node->next, index++)
+	{
+		if(index == spriteIndex)
 		{
 			return Sprite::safeCast(node->data);
 		}
 	}
-	*/
 
 	return NULL;
 }
