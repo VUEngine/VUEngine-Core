@@ -112,7 +112,7 @@ bool SoundTrack::update
 
 	SoundTrack::sendSoundRequest
 	(
-		this, tickStep, targetTimerResolutionFactor, maximumVolume, leftVolumeReduction, 
+		this, targetTimerResolutionFactor, maximumVolume, leftVolumeReduction, 
 		rightVolumeReduction, volumeReduction, frequencyDelta
 	);
 
@@ -194,10 +194,9 @@ void SoundTrack::updateCursors()
 
 void SoundTrack::sendSoundRequest
 (
-	fix7_9_ext tickStep __attribute__((unused)), fix7_9_ext targetTimerResolutionFactor __attribute__((unused)), 
-	uint8 maximumVolume __attribute__((unused)), uint8 leftVolumeReduction __attribute__((unused)),
-	uint8 rightVolumeReduction __attribute__((unused)), uint8 volumeReduction __attribute__((unused)), 
-	uint16 frequencyDelta __attribute__((unused))
+	fix7_9_ext targetTimerResolutionFactor __attribute__((unused)), uint8 maximumVolume __attribute__((unused)),
+	uint8 leftVolumeReduction __attribute__((unused)), uint8 rightVolumeReduction __attribute__((unused)),
+	uint8 volumeReduction __attribute__((unused)), uint16 frequencyDelta __attribute__((unused))
 )
 {}
 

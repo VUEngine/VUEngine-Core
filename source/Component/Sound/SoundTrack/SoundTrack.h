@@ -187,7 +187,7 @@ abstract class SoundTrack : Object
 	/// @return True if the playback is complete; false otherwise
 	virtual void sendSoundRequest
 	(
-		fix7_9_ext tickStep, fix7_9_ext targetTimerResolutionFactor, uint8 maximumVolume, uint8 leftVolumeReduction,
+		fix7_9_ext targetTimerResolutionFactor, uint8 maximumVolume, uint8 leftVolumeReduction,
 		uint8 rightVolumeReduction, uint8 volumeReduction, uint16 frequencyDelta
 	);
 }
