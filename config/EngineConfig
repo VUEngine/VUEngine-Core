@@ -15,8 +15,8 @@
 		"fadeIncrement": 1,
 		"mediumRed": 64
 	},
-	"chars": {
-		"totalChars": 2048
+	"tiles": {
+		"totalTiles": 2048
 	},
 	"debug": {
 		"alertGraphicsDepletion": true,
