@@ -657,7 +657,7 @@ Sprite SpriteManager::getSpriteAtIndex(int16 spriteListIndex, int16 spriteIndex)
 
 void SpriteManager::print(int32 x, int32 y, bool resumed __attribute__((unused)))
 {
-	Printer::setWorldCoordinates(0, 0, Printer::getActiveSpritePosition().z, 0);
+	Printer::setScreenPosition(0, 0, Printer::getActiveSpritePosition().z, 0);
 
 #ifndef __DEBUGGING_SPRITES
 	SpriteManager::computeTotalPixelsDrawn(this);

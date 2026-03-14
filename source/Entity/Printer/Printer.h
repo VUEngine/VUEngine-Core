@@ -274,30 +274,23 @@ singleton class Printer : Entity
 	/// @param y: Screen y coordinate where to print
 	static void printSprite(int16 x, int16 y);
 
-	/// Set the coordinates used for printing.
-	/// @param x: WORLD x coordinate
-	/// @param y: WORLD y coordinate
-	/// @param z: WORLD parallax value
-	/// @param parallax: WORLD parallax value
-	static void setCoordinates(int16 x, int16 y, int16 z, int8 parallax);
+	/// Set the screen coordinates for printing.
+	/// @param x: X coordinate
+	/// @param y: Y coordinate
+	/// @param z: Z value
+	/// @param parallax: Parallax value
+	static void setScreenPosition(int16 x, int16 y, int16 z, int8 parallax);
 
-	/// Set the coordinates of the WORLD used for printing.
-	/// @param x: WORLD x coordinate
-	/// @param y: WORLD y coordinate
-	/// @param z: WORLD parallax value
-	/// @param parallax: WORLD parallax value
-	static void setWorldCoordinates(int16 x, int16 y, int16 z, int8 parallax);
+	/// Set the printing texture's source coordinates.
+	/// @param mx: X source coordinate
+	/// @param my: Y source coordinate
+	/// @param mp: Parallax source value
+	static void setTextureSource(int16 mx, int16 my, int8 mp);
 
-	/// Set the coordinates of the BGMAP used for printing.
-	/// @param mx: BGMAP x coordinate
-	/// @param my: BGMAP y coordinate
-	/// @param mp: BGMAP parallax value
-	static void setBgmapCoordinates(int16 mx, int16 my, int8 mp);
-
-	/// Set WORLD's size.
-	/// @param w: WORLD's width
-	/// @param h: WORLD's height
-	static void setWorldSize(uint16 w, uint16 h);
+	/// Set printing window size.
+	/// @param w: Width
+	/// @param h: Height
+	static void setSize(uint16 w, uint16 h);
 
 	/// Set sprite's transparency
 	/// @param transparency: Transparent value (__TRANSPARENCY_NONE, _EVEN or _ODD)
@@ -307,8 +300,8 @@ singleton class Printer : Entity
 	/// @param palette: Palette for the printing area
 	static void setPalette(uint8 palette);
 
-	/// Reset the coordinates of the WORLD used for printing.
-	static void resetCoordinates();
+	/// Reset the coordinates for printing.
+	static void resetScreenPosition();
 
 	/// Retrieve the active sprite's position.
 	/// @return Sprite's position

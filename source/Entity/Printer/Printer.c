@@ -431,19 +431,7 @@ static void Printer::printSprite(int16 x, int16 y)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void Printer::setCoordinates(int16 x, int16 y, int16 z, int8 parallax)
-{
-#ifdef __FORCE_PRINTING_LAYER
-	return;
-#endif
-
-	Printer::setWorldCoordinates(x, y, z, parallax);
-	Printer::setBgmapCoordinates(x, y, 0);
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-static void Printer::setWorldCoordinates(int16 x, int16 y, int16 z, int8 parallax)
+static void Printer::setScreenPosition(int16 x, int16 y, int16 z, int8 parallax)
 {
 #ifdef __FORCE_PRINTING_LAYER
 	return;
@@ -467,7 +455,7 @@ static void Printer::setWorldCoordinates(int16 x, int16 y, int16 z, int8 paralla
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void Printer::setBgmapCoordinates(int16 mx, int16 my, int8 mp)
+static void Printer::setTextureSource(int16 mx, int16 my, int8 mp)
 {
 #ifdef __FORCE_PRINTING_LAYER
 	return;
@@ -489,7 +477,7 @@ static void Printer::setBgmapCoordinates(int16 mx, int16 my, int8 mp)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void Printer::setWorldSize(uint16 w, uint16 h)
+static void Printer::setSize(uint16 w, uint16 h)
 {
 #ifdef __FORCE_PRINTING_LAYER
 	return;
@@ -532,7 +520,7 @@ static void Printer::setPalette(uint8 palette)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void Printer::resetCoordinates()
+static void Printer::resetScreenPosition()
 {
 	Printer printer = Printer::getInstance();
 
@@ -939,7 +927,7 @@ secure void Printer::reset()
 	this->activePrintingSprite = NULL;
 
 	Printer::releaseFonts(this);
-	Printer::resetCoordinates();
+	Printer::resetScreenPosition();
 	Printer::setOrientation(kPrintingOrientationHorizontal);
 	Printer::setTextDirection(kPrintingDirectionLTR);
 }
