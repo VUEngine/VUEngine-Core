@@ -764,8 +764,8 @@ static void Printer::out(uint8 x, uint8 y, const char* string, const char* font)
 	}
 	
 	uint16* offsetDisplacementStart = (uint16*)PrintingSprite::getPrintingAddress(printer->activePrintingSprite, true);
-	int16 charLineSize = fontData->fontSpec->charactersPerLineInCharset * fontSizeX;
-	int16 charLineSizeYModifier = charLineSize * (fontSizeY - 1);
+	int16 tileLineSize = fontData->fontSpec->charactersPerLineInTileSet * fontSizeX;
+	int16 tileLineSizeYModifier = tileLineSize * (fontSizeY - 1);
 	uint16 fontOffsetCache = (uint8)fontData->fontSpec->offset;
 
 	// Print text
@@ -818,7 +818,7 @@ static void Printer::out(uint8 x, uint8 y, const char* string, const char* font)
 					uint16 stringEntryOffset = (uint8)(string[i] - fontOffsetCache);
 					uint16 stringEntryOffsetBySizeX = stringEntryOffset * fontSizeX;
 					uint16 stringEntryOffsetBySizeY = 
-						(stringEntryOffset / fontData->fontSpec->charactersPerLineInCharset) * charLineSizeYModifier;
+						(stringEntryOffset / fontData->fontSpec->charactersPerLineInTileSet) * tileLineSizeYModifier;
 
 					for(uint32 charOffsetX = 0; charOffsetX < fontSizeX; charOffsetX++)
 					{
@@ -826,7 +826,7 @@ static void Printer::out(uint8 x, uint8 y, const char* string, const char* font)
 
 						for(uint32 charOffsetY = 0; charOffsetY < fontSizeY; charOffsetY++)
 						{
-							uint32 charOffset = charOffsetX + charOffsetY * charLineSize;
+							uint32 charOffset = charOffsetX + charOffsetY * tileLineSize;
 
 							*(offsetDisplacement + (charOffsetY << 6)) =
 								(

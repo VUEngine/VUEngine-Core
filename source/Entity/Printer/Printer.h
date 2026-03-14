@@ -131,7 +131,7 @@ typedef struct FontSpec
 	uint16 characterCount;
 
 	/// Number of characters per line in tileSet
-	uint16 charactersPerLineInCharset;
+	uint16 charactersPerLineInTileSet;
 
 	/// Size of a single character (in chars) ({width, height})
 	FontSize fontSize;
