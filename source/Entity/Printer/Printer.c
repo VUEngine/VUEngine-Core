@@ -763,7 +763,7 @@ static void Printer::out(uint8 x, uint8 y, const char* string, const char* font)
 		}
 	}
 	
-	uint16* offsetDisplacementStart = (uint16*)PrintingSprite::getPrintingAddress(printer->activePrintingSprite);
+	uint16* offsetDisplacementStart = (uint16*)PrintingSprite::getPrintingAddress(printer->activePrintingSprite, true);
 	int16 charLineSize = fontData->fontSpec->charactersPerLineInCharset * fontSizeX;
 	int16 charLineSizeYModifier = charLineSize * (fontSizeY - 1);
 	uint16 fontOffsetCache = (uint8)fontData->fontSpec->offset;
