@@ -410,75 +410,11 @@ static bool Printer::setActiveSprite(uint16 printingSpriteIndex)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static int16 Printer::getPrintingBgmapSegment()
+static PrintingSprite Printer::getActiveSprite()
 {
 	Printer printer = Printer::getInstance();
 
-	if(isDeleted(printer->activePrintingSprite))
-	{
-		return 0;
-	}
-
-	BgmapTexture texture = BgmapTexture::safeCast(PrintingSprite::getTexture(printer->activePrintingSprite));
-
-	if(isDeleted(texture))
-	{
-		return 0;
-	}
-
-	return BgmapTexture::getSegment(texture);
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-static int16 Printer::getPrintingBgmapXOffset()
-{
-	Printer printer = Printer::getInstance();
-
-	if(isDeleted(printer->activePrintingSprite))
-	{
-		return 0;
-	}
-
-	BgmapTexture texture = BgmapTexture::safeCast(PrintingSprite::getTexture(printer->activePrintingSprite));
-
-	if(isDeleted(texture))
-	{
-		return 0;
-	}
-
-	return BgmapTexture::getXOffset(texture);
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-static int16 Printer::getPrintingBgmapYOffset()
-{
-	Printer printer = Printer::getInstance();
-
-	if(isDeleted(printer->activePrintingSprite))
-	{
-		return 0;
-	}
-
-	BgmapTexture texture = BgmapTexture::safeCast(PrintingSprite::getTexture(printer->activePrintingSprite));
-
-	if(isDeleted(texture))
-	{
-		return 0;
-	}
-
-	return BgmapTexture::getYOffset(texture);	
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-static uint16* Printer::getPrintingBgmapAddress()
-{
-	return 
-		(uint16*)__BGMAP_SEGMENT(Printer::getPrintingBgmapSegment()) + 
-		Printer::getPrintingBgmapXOffset() + 
-		(Printer::getPrintingBgmapYOffset() << 6);
+	return printer->activePrintingSprite;	
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

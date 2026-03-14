@@ -262,24 +262,12 @@ singleton class Printer : Entity
 	static void addSprite();
 
 	/// Set the active printing sprite.
-	/// @param  printingSpriteIndex: Index of the sprite to activate
+	/// @param printingSpriteIndex: Index of the sprite to activate
 	static bool setActiveSprite(uint16 printingSpriteIndex);
 
-	/// Get the printing BGMAP segment.
-	/// @return The BGMAP segment index of where the printing is performed
-	static int16 getPrintingBgmapSegment();
-
-	/// Get the printing BGMAP x offset.
-	/// @return The BGMAP segment index of where the printing is performed
-	static int16 getPrintingBgmapXOffset();
-
-	/// Get the printing BGMAP y offset.
-	/// @return The BGMAP segment index of where the printing is performed
-	static int16 getPrintingBgmapYOffset();
-
-	/// Get the starting addres in BGMAP space of the printing area.
-	/// @return The starting addres in BGMAP space of the printing area
-	static uint16* getPrintingBgmapAddress();
+	/// Retrieve the active printing sprite.
+	/// @retur printingSpriteIndex: Index of the sprite to activate
+	static PrintingSprite getActiveSprite();
 
 	/// Print active printing sprite's info.
 	/// @param x: Screen x coordinate where to print
