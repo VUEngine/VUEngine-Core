@@ -507,13 +507,13 @@ static void Printer::setTransparency(uint8 transparency)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void Printer::setPalette(uint8 palette)
+static void Printer::setMask(uint16 mask)
 {
 	Printer printer = Printer::getInstance();
 
-	if(4 > palette)
+	if(4 > mask)
 	{
-		printer->palette = palette;
+		printer->mask = mask;
 	}
 }
 
@@ -833,7 +833,7 @@ static void Printer::out(uint8 x, uint8 y, const char* string, const char* font)
 									// Offset of charset in char memory + respective char of character
 									offset + stringEntryOffsetBySizeX + stringEntryOffsetBySizeY + charOffset								
 								)
-								| (printer->palette << 14);
+								| (printer->mask << 14);
 						}
 					}
 				}
@@ -846,7 +846,7 @@ static void Printer::out(uint8 x, uint8 y, const char* string, const char* font)
 							// Offset of charset in char memory + respective char of character
 							offset + (string[i] - fontOffsetCache)								
 						)
-						| (printer->palette << 14);					
+						| (printer->mask << 14);					
 				}
 
 				x += xDisplacement;
@@ -935,7 +935,7 @@ void Printer::constructor()
 
 	// Initialize members
 	this->mode = __PRINTING_MODE_DEFAULT;
-	this->palette = __PRINTING_PALETTE;
+	this->mask = __PRINTING_PALETTE;
 	this->orientation = kPrintingOrientationHorizontal;
 	this->direction = kPrintingDirectionLTR;
 	this->lastUsedFont = NULL;

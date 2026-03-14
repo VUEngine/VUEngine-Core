@@ -184,14 +184,14 @@ singleton class Printer : Entity
 	/// Printer mode (Default or Debug)
 	uint8 mode;
 
-	/// Palette to use for printing
-	uint8 palette;
-
 	/// Printer orientation
 	uint8 orientation;
 
 	/// Printer direction
 	uint8 direction;
+
+	/// Mask to apply to the printed binary data
+	uint16 mask;
 
 	/// @publicsection
 
@@ -296,9 +296,9 @@ singleton class Printer : Entity
 	/// @param transparency: Transparent value (__TRANSPARENCY_NONE, _EVEN or _ODD)
 	static void setTransparency(uint8 transparency);
 
-	/// Set palette for the printing area.
-	/// @param palette: Palette for the printing area
-	static void setPalette(uint8 palette);
+	/// Set the mask to apply to the printing.
+	/// @param mask: Mask to apply to the printed binary data
+	static void setMask(uint16 mask);
 
 	/// Reset the coordinates for printing.
 	static void resetScreenPosition();
