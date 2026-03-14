@@ -13,7 +13,6 @@
 
 #include <string.h>
 
-#include <BgmapTextureManager.h>
 #include <CharSet.h>
 #include <CharSetManager.h>
 #include <ComponentManager.h>
@@ -738,17 +737,6 @@ static void Printer::out(uint8 x, uint8 y, const char* string, const char* font)
 		return;
 	}
 
-	BgmapTexture texture = BgmapTexture::safeCast(PrintingSprite::getTexture(printer->activePrintingSprite));
-
-	if(isDeleted(texture))
-	{
-		return;
-	}
-
-	int16 printingBgmapSegment = BgmapTexture::getSegment(texture);
-	int16 xOffset = BgmapTexture::getXOffset(texture);
-	int16 yOffset = BgmapTexture::getYOffset(texture);
-
 	uint16 fontSizeX = fontData->fontSpec->fontSize.x;
 	uint16 fontSizeY = fontData->fontSpec->fontSize.y;
 
@@ -775,7 +763,7 @@ static void Printer::out(uint8 x, uint8 y, const char* string, const char* font)
 		}
 	}
 	
-	uint16* offsetDisplacementStart = (uint16*)__BGMAP_SEGMENT(printingBgmapSegment) + xOffset + (yOffset << 6);
+	uint16* offsetDisplacementStart = (uint16*)PrintingSprite::getPrintingAddress(printer->activePrintingSprite);
 	int16 charLineSize = fontData->fontSpec->charactersPerLineInCharset * fontSizeX;
 	int16 charLineSizeYModifier = charLineSize * (fontSizeY - 1);
 	uint16 fontOffsetCache = (uint8)fontData->fontSpec->offset;
