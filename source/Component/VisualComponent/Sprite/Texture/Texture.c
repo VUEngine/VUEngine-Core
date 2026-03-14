@@ -35,7 +35,7 @@ friend class VirtualNode;
 
 static uint32 Texture::getTotalCols(TextureSpec* textureSpec)
 {
-	if(NULL == textureSpec->charSetSpec)
+	if(NULL == textureSpec->tileSetSpec)
 	{
 		return 0;
 	}
@@ -59,7 +59,7 @@ static uint32 Texture::getTotalCols(TextureSpec* textureSpec)
 
 static uint32 Texture::getTotalRows(TextureSpec* textureSpec)
 {
-	if(NULL == textureSpec->charSetSpec)
+	if(NULL == textureSpec->tileSetSpec)
 	{
 		return 0;
 	}
@@ -106,12 +106,12 @@ static void Texture::updateOptimized(Texture texture, int16 maximumTextureRowsTo
 
 static void Texture::updateDefault(Texture texture, int16 maximumTextureRowsToWrite __attribute__((unused)))
 {
-	if(isDeleted(texture->charSet))
+	if(isDeleted(texture->tileSet))
 	{
 		return;
 	}
 
-	texture->generation = TileSet::write(texture->charSet);
+	texture->generation = TileSet::write(texture->tileSet);
 
 	texture->status = kTextureWritten;
 }
@@ -147,7 +147,7 @@ void Texture::constructor(const TextureSpec* textureSpec, uint16 id)
 
 	// Save the bgmap spec's address
 	this->textureSpec = textureSpec;
-	this->charSet = NULL;
+	this->tileSet = NULL;
 	// Set the palette
 	this->palette = textureSpec->palette;
 	this->status = kTextureNoTileSet;
@@ -189,7 +189,7 @@ void Texture::setSpec(TextureSpec* textureSpec)
 
 	if(this->textureSpec != textureSpec || kTextureWritten != this->status)
 	{
-		if(NULL != this->charSet && textureSpec->charSetSpec != TileSet::getSpec(this->charSet))
+		if(NULL != this->tileSet && textureSpec->tileSetSpec != TileSet::getSpec(this->tileSet))
 		{
 			Texture::releaseTileSet(this);
 		}
@@ -214,12 +214,12 @@ const TextureSpec* Texture::getSpec()
 
 TileSet Texture::getTileSet(uint32 loadIfNeeded)
 {
-	if(isDeleted(this->charSet) && loadIfNeeded)
+	if(isDeleted(this->tileSet) && loadIfNeeded)
 	{
 		Texture::loadTileSet(this);
 	}
 
-	return this->charSet;
+	return this->tileSet;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -287,9 +287,9 @@ void Texture::setFrame(uint16 frame)
 		this->frame = frame;
 		Texture::setStatus(this, kTextureFrameChanged);	
 
-		if(!isDeleted(this->charSet))
+		if(!isDeleted(this->tileSet))
 		{
-			TileSet::setFrame(this->charSet, this->frame);		
+			TileSet::setFrame(this->tileSet, this->frame);		
 		}
 	}
 }
@@ -326,14 +326,14 @@ bool Texture::isWritten()
 
 bool Texture::isShared()
 {
-	if(!isDeleted(this->charSet))
+	if(!isDeleted(this->tileSet))
 	{
-		return TileSet::isShared(this->charSet);
+		return TileSet::isShared(this->tileSet);
 	}
 
-	if(NULL != this->textureSpec->charSetSpec)
+	if(NULL != this->textureSpec->tileSetSpec)
 	{
-		return this->textureSpec->charSetSpec->shared;
+		return this->textureSpec->tileSetSpec->shared;
 	}
 
 	return true;
@@ -343,7 +343,7 @@ bool Texture::isShared()
 
 bool Texture::isAnimated()
 {
-	return !isDeleted(this->charSet) && TileSet::hasMultipleFrames(this->charSet);
+	return !isDeleted(this->tileSet) && TileSet::hasMultipleFrames(this->tileSet);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -366,14 +366,14 @@ void Texture::addChar(const Point* textureChar, const uint32* newChar)
 {
 	if
 	(
-		NULL != this->charSet && NULL != textureChar && ((unsigned)textureChar->x) < this->textureSpec->cols && 
+		NULL != this->tileSet && NULL != textureChar && ((unsigned)textureChar->x) < this->textureSpec->cols && 
 		((unsigned)textureChar->y) < this->textureSpec->rows
 	)
 	{
 		uint32 displacement = this->textureSpec->cols * textureChar->y + textureChar->x;
 		uint32 charToReplace = this->textureSpec->map[displacement] & 0x7FF;
 
-		TileSet::addChar(this->charSet, charToReplace, newChar);
+		TileSet::addChar(this->tileSet, charToReplace, newChar);
 	}
 }
 
@@ -383,30 +383,30 @@ void Texture::putChar(const Point* textureChar, const uint32* newChar)
 {
 	if
 	(
-		NULL != this->charSet && NULL != textureChar && ((unsigned)textureChar->x) < this->textureSpec->cols && 
+		NULL != this->tileSet && NULL != textureChar && ((unsigned)textureChar->x) < this->textureSpec->cols && 
 		((unsigned)textureChar->y) < this->textureSpec->rows
 	)
 	{
 		uint32 displacement = this->textureSpec->cols * textureChar->y + textureChar->x;
 		uint32 charToReplace = this->textureSpec->map[displacement] & 0x7FF;
 
-		TileSet::putChar(this->charSet, charToReplace, newChar);
+		TileSet::putChar(this->tileSet, charToReplace, newChar);
 	}
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void Texture::putPixel(const Point* texturePixel, const Pixel* charSetPixel, uint8 newPixelColor)
+void Texture::putPixel(const Point* texturePixel, const Pixel* tileSetPixel, uint8 newPixelColor)
 {
 	if
 	(
-		this->charSet && texturePixel && ((unsigned)texturePixel->x) < this->textureSpec->cols && 
+		this->tileSet && texturePixel && ((unsigned)texturePixel->x) < this->textureSpec->cols && 
 		((unsigned)texturePixel->y) < this->textureSpec->rows
 	)
 	{
 		uint32 displacement = this->textureSpec->cols * texturePixel->y + texturePixel->x;
 		uint32 charToReplace = this->textureSpec->map[displacement] & 0x7FF;
-		TileSet::putPixel(this->charSet, charToReplace, charSetPixel, newPixelColor);
+		TileSet::putPixel(this->tileSet, charToReplace, tileSetPixel, newPixelColor);
 	}
 }
 
@@ -414,7 +414,7 @@ void Texture::putPixel(const Point* texturePixel, const Pixel* charSetPixel, uin
 
 void Texture::prepare()
 {
-	if(isDeleted(this->charSet))
+	if(isDeleted(this->tileSet))
 	{
 		this->status = kTextureNoTileSet;
 	}
@@ -425,9 +425,9 @@ void Texture::prepare()
 uint8 Texture::update(int16 maximumTextureRowsToWrite)
 {
 #ifndef __RELEASE		
-	if(NULL != this->charSet)
+	if(NULL != this->tileSet)
 	{
-		this->status = this->generation != TileSet::getGeneration(this->charSet)? kTexturePendingRewriting : this->status;
+		this->status = this->generation != TileSet::getGeneration(this->tileSet)? kTexturePendingRewriting : this->status;
 	}
 #endif
 
@@ -469,23 +469,23 @@ uint8 Texture::update(int16 maximumTextureRowsToWrite)
 bool Texture::write(int16 maximumTextureRowsToWrite __attribute__((unused)))
 {
 	ASSERT(this->textureSpec, "Texture::write: null textureSpec");
-	ASSERT(this->textureSpec->charSetSpec, "Texture::write: null charSetSpec");
+	ASSERT(this->textureSpec->tileSetSpec, "Texture::write: null tileSetSpec");
 
-	if(isDeleted(this->charSet))
+	if(isDeleted(this->tileSet))
 	{
 		return false;
 	}
 
-	if(TileSet::isShared(this->charSet))
+	if(TileSet::isShared(this->tileSet))
 	{
-		this->frame = TileSet::getFrame(this->charSet);
+		this->frame = TileSet::getFrame(this->tileSet);
 	}
 
-	TileSet::setFrame(this->charSet, this->frame);		
+	TileSet::setFrame(this->tileSet, this->frame);		
 
-	this->generation = TileSet::write(this->charSet);
+	this->generation = TileSet::write(this->tileSet);
 
-	if(TileSet::isOptimized(this->charSet))
+	if(TileSet::isOptimized(this->tileSet))
 	{
 		this->mapDisplacement = this->textureSpec->cols * this->textureSpec->rows * this->frame;
 	}
@@ -524,40 +524,40 @@ void Texture::setStatus(uint8 status)
 
 void Texture::loadTileSet()
 {
-	if(!isDeleted(this->charSet))
+	if(!isDeleted(this->tileSet))
 	{
 		return;
 	}
 
-	if(NULL == this->textureSpec || NULL == this->textureSpec->charSetSpec)
+	if(NULL == this->textureSpec || NULL == this->textureSpec->tileSetSpec)
 	{
 		this->status = kTextureInvalid;
 		return;
 	}
 
-	this->charSet = TileSet::get(this->textureSpec->charSetSpec);
+	this->tileSet = TileSet::get(this->textureSpec->tileSetSpec);
 
-	if(isDeleted(this->charSet))
+	if(isDeleted(this->tileSet))
 	{
 		this->status = kTextureNoTileSet;
 		return;
 	}
 
-	this->generation = TileSet::getGeneration(this->charSet);
+	this->generation = TileSet::getGeneration(this->tileSet);
 
 	this->status = kTexturePendingWriting;
 
 	Texture::setupUpdateFunction(this);
 
-	if(TileSet::isShared(this->charSet))
+	if(TileSet::isShared(this->tileSet))
 	{
-		if(1 == TileSet::getUsageCount(this->charSet))
+		if(1 == TileSet::getUsageCount(this->tileSet))
 		{
-			TileSet::setFrame(this->charSet, this->frame);			
+			TileSet::setFrame(this->tileSet, this->frame);			
 		}
 		else
 		{		
-			this->frame = TileSet::getFrame(this->charSet);
+			this->frame = TileSet::getFrame(this->tileSet);
 		}
 	}
 }
@@ -568,11 +568,11 @@ void Texture::releaseTileSet()
 {
 	this->status = kTextureInvalid;
 
-	if(!isDeleted(this->charSet))
+	if(!isDeleted(this->tileSet))
 	{
-		TileSet::release(this->charSet);
+		TileSet::release(this->tileSet);
 
-		this->charSet = NULL;
+		this->tileSet = NULL;
 	}
 }
 
@@ -596,7 +596,7 @@ void Texture::setupUpdateFunction()
 		this->doUpdate = NULL;
 		//this->doUpdate = Texture::updateMulti;
 	}
-	else if(TileSet::isOptimized(this->charSet))
+	else if(TileSet::isOptimized(this->tileSet))
 	{
 		this->doUpdate = Texture::updateOptimized;
 	}

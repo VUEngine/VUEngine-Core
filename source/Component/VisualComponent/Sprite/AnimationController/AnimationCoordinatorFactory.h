@@ -46,9 +46,9 @@ singleton class AnimationCoordinatorFactory : Object
 	/// Get an animation coordinator.
 	/// @param animationController: Animation controller to potentially coordinate
 	/// @param scope: Object that might need to listen for playback related events
-	/// @param charSetSpec: TileSetSpec shared by the animation controllers to coordinate	
+	/// @param tileSetSpec: TileSetSpec shared by the animation controllers to coordinate	
 	/// @return ClockManager singleton
-	AnimationCoordinator getCoordinator(AnimationController animationController, ListenerObject scope, const TileSetSpec* charSetSpec);
+	AnimationCoordinator getCoordinator(AnimationController animationController, ListenerObject scope, const TileSetSpec* tileSetSpec);
 }
 
 #endif

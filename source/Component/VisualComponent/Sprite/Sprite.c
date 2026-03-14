@@ -158,7 +158,7 @@ void Sprite::createAnimationController()
 				AnimationCoordinatorFactory::getInstance(),
 				this->animationController, 
 				ListenerObject::safeCast(this->owner), 
-				Texture::getSpec(this->texture)->charSetSpec
+				Texture::getSpec(this->texture)->tileSetSpec
 			)
 		);
 	}
@@ -435,14 +435,14 @@ void Sprite::putChar(const Point* texturePoint, const uint32* newChar)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void Sprite::putPixel(const Point* texturePixel, const Pixel* charSetPixel, uint8 newPixelColor)
+void Sprite::putPixel(const Point* texturePixel, const Pixel* tileSetPixel, uint8 newPixelColor)
 {
 	if(isDeleted(this->texture))
 	{
 		return;
 	}
 
-	Texture::putPixel(this->texture, texturePixel, charSetPixel, newPixelColor);
+	Texture::putPixel(this->texture, texturePixel, tileSetPixel, newPixelColor);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

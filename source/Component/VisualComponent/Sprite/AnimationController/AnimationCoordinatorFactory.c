@@ -33,25 +33,25 @@ friend class VirtualNode;
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-AnimationCoordinator AnimationCoordinatorFactory::getCoordinator(AnimationController animationController, ListenerObject scope, const TileSetSpec* charSetSpec)
+AnimationCoordinator AnimationCoordinatorFactory::getCoordinator(AnimationController animationController, ListenerObject scope, const TileSetSpec* tileSetSpec)
 {
-	NM_ASSERT(NULL != charSetSpec, "AnimationCoordinatorFactory::getCoordinator: null charSetSpec");
+	NM_ASSERT(NULL != tileSetSpec, "AnimationCoordinatorFactory::getCoordinator: null tileSetSpec");
 
-	if(NULL != charSetSpec && charSetSpec->shared)
+	if(NULL != tileSetSpec && tileSetSpec->shared)
 	{
 		// Try to find an already created coordinator
 		for(VirtualNode node = this->animationCoordinators->head; NULL != node; node = node->next)
 		{
 			AnimationCoordinator animationCoordinator = AnimationCoordinator::safeCast(node->data);
 
-			if(AnimationCoordinator::getTileSetSpec(animationCoordinator) == charSetSpec)
+			if(AnimationCoordinator::getTileSetSpec(animationCoordinator) == tileSetSpec)
 			{
 				AnimationCoordinator::addAnimationController(animationCoordinator, animationController);
 				return animationCoordinator;
 			}
 		}
 
-		AnimationCoordinator animationCoordinator = new AnimationCoordinator(charSetSpec, scope);
+		AnimationCoordinator animationCoordinator = new AnimationCoordinator(tileSetSpec, scope);
 
 		// Create a new coordinator
 		AnimationCoordinator::addAnimationController(animationCoordinator, animationController);

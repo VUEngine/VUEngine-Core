@@ -37,7 +37,7 @@ singleton class TileSetManager : Object
 	/// @protectedsection
 
 	/// Allocated char sets with a block in TILE memory allocated to them
-	VirtualList charSets;
+	VirtualList tileSets;
 
 	/// Start offset in TILE space when free memory starts
 	uint16 freedOffset;
@@ -56,18 +56,18 @@ singleton class TileSetManager : Object
 	void clearGraphicMemory();
 
 	/// Load char sets in function of the provided array of specs.
-	/// @param charSetSpecs: Array of char set specs in function of which to load char sets 
-	void loadTileSets(const TileSetSpec** charSetSpecs);
+	/// @param tileSetSpecs: Array of char set specs in function of which to load char sets 
+	void loadTileSets(const TileSetSpec** tileSetSpecs);
 
 	/// Retrieve a char set initialized with the provided spec.
-	/// @param charSetSpec: Spec to use to initilize the desired char set
+	/// @param tileSetSpec: Spec to use to initilize the desired char set
 	/// @return Char set initialized with the provided spec
-	TileSet getTileSet(const TileSetSpec* charSetSpec);
+	TileSet getTileSet(const TileSetSpec* tileSetSpec);
 
 	/// Release a char set.
-	/// @param charSet: Char set to release
+	/// @param tileSet: Char set to release
 	/// @return True if the char set is successfully deleted; false otherwise
-	bool releaseTileSet(TileSet charSet);
+	bool releaseTileSet(TileSet tileSet);
 
 	/// Write graphical data to VRAM.
 	void writeTileSets();

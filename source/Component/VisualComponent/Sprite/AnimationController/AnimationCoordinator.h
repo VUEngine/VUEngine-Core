@@ -44,14 +44,14 @@ class AnimationCoordinator : ListenerObject
 	VirtualList animationControllers;
 
 	// Spec shared by the animation controllers to coordinate
-	const TileSetSpec* charSetSpec;
+	const TileSetSpec* tileSetSpec;
 
 	/// @publicsection
 
 	/// Class' constructor
-	/// @param charSetSpec: Spec shared by the animation controllers to coordinate
+	/// @param tileSetSpec: Spec shared by the animation controllers to coordinate
 	/// @param scope: Object that might need to listen for playback related events
-	void constructor(const TileSetSpec* charSetSpec, ListenerObject scope);
+	void constructor(const TileSetSpec* tileSetSpec, ListenerObject scope);
 
 	/// Play an animation on the specified animation controller.
 	/// @param animationController: Animation controller on which to play the animation

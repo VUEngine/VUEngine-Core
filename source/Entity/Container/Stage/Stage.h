@@ -99,7 +99,7 @@ typedef struct StageSpec
 		FontSpec** fontSpecs;
 
 		// TileSets to preload
-		TileSetSpec** charSetSpecs;
+		TileSetSpec** tileSetSpecs;
 
 		// Textures to preload
 		TextureSpec** textureSpecs;

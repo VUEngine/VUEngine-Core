@@ -84,7 +84,7 @@ class TileSet : ListenerObject
 	/// @protectedsection
 
 	/// Spec used in the construction of the char set
-	const TileSetSpec* charSetSpec;
+	const TileSetSpec* tileSetSpec;
 
 	/// Keeps track of writes
 	uint32 generation;
@@ -106,20 +106,20 @@ class TileSet : ListenerObject
 
 	/// @publicsection
 
-	/// Get a charSet configured with the provided spec.
-	/// @param charSetSpec: Spec used to select or initialize a texture with
+	/// Get a tileSet configured with the provided spec.
+	/// @param tileSetSpec: Spec used to select or initialize a texture with
 	/// @return TileSet initialized with the provided spec
-	static TileSet get(const TileSetSpec* charSetSpec);
+	static TileSet get(const TileSetSpec* tileSetSpec);
 
-	/// Release a charSet.
-	/// @param charSet: TileSet to release
+	/// Release a tileSet.
+	/// @param tileSet: TileSet to release
 	/// @return True if the char set is successfully deleted; false otherwise
-	static bool release(TileSet charSet);
+	static bool release(TileSet tileSet);
 
 	/// Class' constructor
-	/// @param charSetSpec: Spec to use in the construction of the char set
+	/// @param tileSetSpec: Spec to use in the construction of the char set
 	/// @param offset: Offset in TILE space where the block allocated for this char set starts
-	void constructor(const TileSetSpec* charSetSpec, uint16 offset);
+	void constructor(const TileSetSpec* tileSetSpec, uint16 offset);
 
 	/// Increase the usage count.
 	void increaseUsageCount();
@@ -172,9 +172,9 @@ class TileSet : ListenerObject
 
 	/// Replace a pixel in a TILE.
 	/// @param charToReplace: Index of the TILE to replace
-	/// @param charSetPixel: Coordinate in TILE space of the TILE to replace
+	/// @param tileSetPixel: Coordinate in TILE space of the TILE to replace
 	/// @param newPixelColor: Color data for the pixel 
-	void putPixel(const uint32 charToReplace, const Pixel* charSetPixel, uint8 newPixelColor);
+	void putPixel(const uint32 charToReplace, const Pixel* tileSetPixel, uint8 newPixelColor);
 
 	/// Set the current frame (frame * number of TILEs + number of TILEs) to write to TILE memory.
 	/// @param frame: The frame to write to TILE memory

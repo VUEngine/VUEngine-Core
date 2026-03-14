@@ -122,7 +122,7 @@ typedef struct FontSize
 typedef struct FontSpec
 {
 	/// Pointer to the char spec that the font uses
-	const TileSetSpec* charSetSpec;
+	const TileSetSpec* tileSetSpec;
 
 	/// Offset at which character number the font starts
 	int16 offset;
@@ -151,7 +151,7 @@ typedef struct FontData
 	const struct FontSpec* fontSpec;
 
 	/// TileSet
-	TileSet charSet;
+	TileSet tileSet;
 
 } FontData;
 

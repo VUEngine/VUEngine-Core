@@ -41,6 +41,10 @@ singleton class SoundUnit : Object
 	/// @param requester: Id of of the user of a sound source
 	static void stopSoundSourcesUsedBy(uint32 requesterId);
 
+	/// Retrieve the sound source configurations.
+	/// @return A pointer to the array of sound source configurations
+	static const SoundSourceConfiguration* getSoundSourceConfigurations();
+
 	/// Print the manager's status.
 	static void print(int32 x, int32 y);
 

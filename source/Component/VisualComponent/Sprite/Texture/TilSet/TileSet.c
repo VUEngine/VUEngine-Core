@@ -24,23 +24,23 @@
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static TileSet TileSet::get(const TileSetSpec* charSetSpec)
+static TileSet TileSet::get(const TileSetSpec* tileSetSpec)
 {
-	NM_ASSERT(NULL != charSetSpec, "TileSet::get: NULL charSetSpec");
+	NM_ASSERT(NULL != tileSetSpec, "TileSet::get: NULL tileSetSpec");
 
-	if(NULL == charSetSpec)
+	if(NULL == tileSetSpec)
 	{
 		return NULL;
 	}
 
-	return TileSetManager::getTileSet(TileSetManager::getInstance(), charSetSpec);
+	return TileSetManager::getTileSet(TileSetManager::getInstance(), tileSetSpec);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static bool TileSet::release(TileSet charSet)
+static bool TileSet::release(TileSet tileSet)
 {
-	return TileSetManager::releaseTileSet(TileSetManager::getInstance(), charSet);
+	return TileSetManager::releaseTileSet(TileSetManager::getInstance(), tileSet);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -49,13 +49,13 @@ static bool TileSet::release(TileSet charSet)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void TileSet::constructor(const TileSetSpec* charSetSpec, uint16 offset)
+void TileSet::constructor(const TileSetSpec* tileSetSpec, uint16 offset)
 {
 	// Always explicitly call the base's constructor 
 	Base::constructor();
 
 	// Save spec
-	this->charSetSpec = charSetSpec;
+	this->tileSetSpec = tileSetSpec;
 	this->generation = 0;
 	this->tilesDisplacement = 0;
 
@@ -108,21 +108,21 @@ int8 TileSet::getUsageCount()
 
 bool TileSet::hasMultipleFrames()
 {
-	return NULL != this->charSetSpec->frameOffsets;
+	return NULL != this->tileSetSpec->frameOffsets;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 bool TileSet::isShared()
 {
-	return this->charSetSpec->shared;
+	return this->tileSetSpec->shared;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 bool TileSet::isOptimized()
 {
-	return this->charSetSpec->optimized;
+	return this->tileSetSpec->optimized;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -154,26 +154,26 @@ uint16 TileSet::getOffset()
 
 const TileSetSpec* TileSet::getSpec()
 {
-	return this->charSetSpec;
+	return this->tileSetSpec;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 uint16 TileSet::getNumberOfChars()
 {
-	return this->charSetSpec->numberOfChars;
+	return this->tileSetSpec->numberOfChars;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void TileSet::addChar(uint32 charToAddTo, const uint32* newChar)
 {
-	if(NULL != newChar && charToAddTo < this->charSetSpec->numberOfChars)
+	if(NULL != newChar && charToAddTo < this->tileSetSpec->numberOfChars)
 	{
 		Mem::combineWORDs
 		(
 			(uint32*)(__TILE_SPACE_BASE_ADDRESS + (((uint32)this->offset + charToAddTo) << 4)),
-			(uint32*)&this->charSetSpec->tiles[__UINT32S_PER_TILES(charToAddTo) + 1] + this->tilesDisplacement,
+			(uint32*)&this->tileSetSpec->tiles[__UINT32S_PER_TILES(charToAddTo) + 1] + this->tilesDisplacement,
 			(uint32*)newChar,
 			__UINT32S_PER_TILES(1)
 		);
@@ -184,7 +184,7 @@ void TileSet::addChar(uint32 charToAddTo, const uint32* newChar)
 
 void TileSet::putChar(uint32 charToReplace, const uint32* newChar)
 {
-	if(NULL != newChar && charToReplace < this->charSetSpec->numberOfChars)
+	if(NULL != newChar && charToReplace < this->tileSetSpec->numberOfChars)
 	{
 		Mem::copyWORD
 		(
@@ -197,9 +197,9 @@ void TileSet::putChar(uint32 charToReplace, const uint32* newChar)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void TileSet::putPixel(const uint32 charToReplace, const Pixel* charSetPixel, uint8 newPixelColor)
+void TileSet::putPixel(const uint32 charToReplace, const Pixel* tileSetPixel, uint8 newPixelColor)
 {
-	if(charSetPixel && charToReplace < this->charSetSpec->numberOfChars && charSetPixel->x < 8 && charSetPixel->y < 8)
+	if(tileSetPixel && charToReplace < this->tileSetSpec->numberOfChars && tileSetPixel->x < 8 && tileSetPixel->y < 8)
 	{
 		static uint8 auxChar[] =
 		{
@@ -208,8 +208,8 @@ void TileSet::putPixel(const uint32 charToReplace, const Pixel* charSetPixel, ui
 
 		Mem::copyBYTE(auxChar, (uint8*)__TILE_SPACE_BASE_ADDRESS + (((uint32)this->offset) << 4) + (charToReplace << 4), (int32)(1 << 4));
 
-		uint16 displacement = (charSetPixel->y << 1) + (charSetPixel->x >> 2);
-		uint16 pixelToReplaceDisplacement = (charSetPixel->x % 4) << 1;
+		uint16 displacement = (tileSetPixel->y << 1) + (tileSetPixel->x >> 2);
+		uint16 pixelToReplaceDisplacement = (tileSetPixel->x % 4) << 1;
 
 		// TODO: review this, only works with non transparency pixels
 		auxChar[displacement] &= (~(0x03 << pixelToReplaceDisplacement) | ((uint16)newPixelColor << pixelToReplaceDisplacement));
@@ -234,13 +234,13 @@ void TileSet::setFrame(uint16 frame)
 
 		this->generation++;
 
-		if(NULL != this->charSetSpec->frameOffsets)
+		if(NULL != this->tileSetSpec->frameOffsets)
 		{
-			this->tilesDisplacement = this->charSetSpec->frameOffsets[frame] - 1;
+			this->tilesDisplacement = this->tileSetSpec->frameOffsets[frame] - 1;
 		}
 		else
 		{
-			this->tilesDisplacement = __UINT32S_PER_TILES(this->charSetSpec->numberOfChars * this->frame);
+			this->tilesDisplacement = __UINT32S_PER_TILES(this->tileSetSpec->numberOfChars * this->frame);
 		}
 	}
 }
@@ -268,16 +268,16 @@ uint32 TileSet::write()
 		return this->generation;
 	}
 	
-	NM_ASSERT(0 < this->charSetSpec->numberOfChars, "TileSet::write: 0 chars");
+	NM_ASSERT(0 < this->tileSetSpec->numberOfChars, "TileSet::write: 0 chars");
 
-	uint16 tilesToWrite = this->charSetSpec->numberOfChars;
+	uint16 tilesToWrite = this->tileSetSpec->numberOfChars;
 
 #ifdef __SHOW_SPRITES_PROFILING
 	extern int32 _writtenTiles;
 	_writtenTiles += tilesToWrite;
 #endif
 
-	switch(this->charSetSpec->tiles[0])
+	switch(this->tileSetSpec->tiles[0])
 	{
 		case __TILE_SET_COMPRESSION_RLE:
 		{
@@ -295,7 +295,7 @@ uint32 TileSet::write()
 			Mem::copyWORD
 			(
 				(uint32*)(__TILE_SPACE_BASE_ADDRESS + (((uint32)this->offset) << 4)),
-				&this->charSetSpec->tiles[1] + this->tilesDisplacement,
+				&this->tileSetSpec->tiles[1] + this->tilesDisplacement,
 				__UINT32S_PER_TILES(tilesToWrite)
 			);
 
@@ -320,11 +320,11 @@ void TileSet::writeRLE()
 {
 	// 1 poxel = 2 pixels = 4 bits = 1 hex digit
 	// So, each char has 32 poxels
-	uint32 totalPoxels = this->charSetSpec->numberOfChars << 5;
+	uint32 totalPoxels = this->tileSetSpec->numberOfChars << 5;
 
 	uint32* destination = (uint32*)(__TILE_SPACE_BASE_ADDRESS + (((uint32)this->offset) << 4));
-	uint32* limit = destination + __UINT32S_PER_TILES(this->charSetSpec->numberOfChars);
-	uint32* source = &this->charSetSpec->tiles[1] + this->tilesDisplacement;
+	uint32* limit = destination + __UINT32S_PER_TILES(this->tileSetSpec->numberOfChars);
+	uint32* source = &this->tileSetSpec->tiles[1] + this->tilesDisplacement;
 
 	uint32 uncompressedData = 0;
 	uint32 uncompressedDataSize = 0;

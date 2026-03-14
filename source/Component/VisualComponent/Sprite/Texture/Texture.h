@@ -43,7 +43,7 @@ enum TextureStatus
 typedef struct TextureSpec
 {
 	/// Pointer to the char spec that the texture uses
-	TileSetSpec* charSetSpec;
+	TileSetSpec* tileSetSpec;
 
 	/// Pointer to the map array that defines how to use the tiles from the char set
 	uint16* map;
@@ -93,7 +93,7 @@ abstract class Texture : Object
 	void (*doUpdate)(Texture, int16);
 
 	/// Char set that holds the pixel data used by the texture
-	TileSet charSet;
+	TileSet tileSet;
 
 	/// Spec used to configure the texture
 	const TextureSpec* textureSpec;
@@ -227,9 +227,9 @@ abstract class Texture : Object
 
 	/// Replace a pixel in the sprite's texture.
 	/// @param texturePixel: Coordinate in texture's space of the TILE to replace
-	/// @param charSetPixel: Coordinate in TILE space of the TILE to replace
+	/// @param tileSetPixel: Coordinate in TILE space of the TILE to replace
 	/// @param newPixelColor: Color data array for the TILE
-	void putPixel(const Point* texturePixel, const Pixel* charSetPixel, uint8 newPixelColor);
+	void putPixel(const Point* texturePixel, const Pixel* tileSetPixel, uint8 newPixelColor);
 
 	/// Prepare the texture to write its graphical data to DRAM during
 	/// the next render cycle.

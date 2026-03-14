@@ -174,9 +174,9 @@ abstract class Sprite : VisualComponent
 
 	/// Replace a pixel in the sprite's texture.
 	/// @param texturePixel: Coordinate in texture's space of the TILE to replace
-	/// @param charSetPixel: Coordinate in TILE space of the TILE to replace
+	/// @param tileSetPixel: Coordinate in TILE space of the TILE to replace
 	/// @param newPixelColor: Color data array for the TILE
-	void putPixel(const Point* texturePixel, const Pixel* charSetPixel, uint8 newPixelColor);
+	void putPixel(const Point* texturePixel, const Pixel* tileSetPixel, uint8 newPixelColor);
 
 	/// Invalidate the flags that determine if the sprite requires rendering.
 	void invalidateRendering();
