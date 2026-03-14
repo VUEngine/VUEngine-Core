@@ -38,7 +38,7 @@ extern FontROMSpec DefaultFontSpec;
 // CLASS' MACROS
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-#define VUENGINE_DEBUG_FONT_TILESET_OFFSET		(__TILE_MEMORY_TOTAL_TILES - VUENGINE_DEBUG_FONT_SIZE)
+#define VUENGINE_DEBUG_FONT_TILESET_OFFSET		(__TOTAL_TILES - VUENGINE_DEBUG_FONT_SIZE)
 #define VUENGINE_DEBUG_FONT_SIZE				160
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

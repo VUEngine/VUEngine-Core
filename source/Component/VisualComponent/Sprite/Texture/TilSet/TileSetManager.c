@@ -204,7 +204,7 @@ int32 TileSetManager::getTotalUsedChars()
 
 int32 TileSetManager::getTotalFreeChars()
 {
-	return __TILE_MEMORY_TOTAL_TILES - TileSetManager::getTotalUsedChars(this);
+	return __TOTAL_TILES - TileSetManager::getTotalUsedChars(this);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -270,7 +270,7 @@ TileSet TileSetManager::allocateTileSet(const TileSetSpec* tileSetSpec)
 	NM_ASSERT(!isDeleted(this->tileSets), "TileSetManager::allocateTileSet: null tileSets");
 	NM_ASSERT(tileSetSpec, "TileSetManager::allocateTileSet: null tileSetSpec");
 	NM_ASSERT(tileSetSpec->numberOfChars > 0, "TileSetManager::allocateTileSet: number of chars < 0");
-	NM_ASSERT(tileSetSpec->numberOfChars < __TILE_MEMORY_TOTAL_TILES, "TileSetManager::allocateTileSet: too many chars in spec");
+	NM_ASSERT(tileSetSpec->numberOfChars < __TOTAL_TILES, "TileSetManager::allocateTileSet: too many chars in spec");
 
 	uint16 offset = NULL != this->tileSets->head ? 0 : 1;
 
@@ -280,7 +280,7 @@ TileSet TileSetManager::allocateTileSet(const TileSetSpec* tileSetSpec)
 		offset += TileSet::getOffset(lastTileSet) + TileSet::getNumberOfChars(lastTileSet);
 	}
 
-	if((unsigned)offset + tileSetSpec->numberOfChars < __TILE_MEMORY_TOTAL_TILES)
+	if((unsigned)offset + tileSetSpec->numberOfChars < __TOTAL_TILES)
 	{
 		TileSet tileSet = new TileSet(tileSetSpec, offset);
 
