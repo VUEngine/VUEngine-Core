@@ -766,7 +766,7 @@ void Sound::print(int32 x, int32 y)
 	PRINT_TEXT("Loop", trackInfoXOffset, ++y);
 	PRINT_TEXT
 	(
-		((SoundSpec*)this->componentSpec)->loop ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, trackInfoXOffset + trackInfoValuesXOffset, y++
+		((SoundSpec*)this->componentSpec)->loop ? __TILE_CHECKBOX_CHECKED : __TILE_CHECKBOX_UNCHECKED, trackInfoXOffset + trackInfoValuesXOffset, y++
 	);
 }
 #endif
@@ -828,11 +828,11 @@ void Sound::printPlaybackProgress(int32 x, int32 y, int32 width)
 	{
 		if (i < position)
 		{
-			Printer::text(__CHAR_BRIGHT_RED_BOX, x + i, y, NULL);
+			Printer::text(__TILE_BRIGHT_RED_BOX, x + i, y, NULL);
 		}
 		else
 		{
-			Printer::text(__CHAR_DARK_RED_BOX, x + i, y, NULL);
+			Printer::text(__TILE_DARK_RED_BOX, x + i, y, NULL);
 		}
 	}
 }

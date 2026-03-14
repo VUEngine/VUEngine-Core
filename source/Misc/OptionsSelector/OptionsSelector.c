@@ -102,10 +102,10 @@ void OptionsSelector::constructor(uint16 cols, uint16 rows, char* font, char* le
 	this->cols = ((0 < cols) && (cols <= __OPTIONS_SELECT_MAX_COLS)) ? cols : 1;
 	this->rows = ((0 < rows) && (rows <= __OPTIONS_SELECT_MAX_ROWS)) ? rows : __OPTIONS_SELECT_MAX_ROWS;
 	this->totalOptions = 0;
-	this->leftMark = NULL == leftMark ? __CHAR_SELECTOR_LEFT : leftMark;
+	this->leftMark = NULL == leftMark ? __TILE_SELECTOR_LEFT : leftMark;
 	this->rightMark = rightMark;
 	this->font = font;
-	this->columnWidth = (__SCREEN_WIDTH_IN_CHARS) / this->cols;
+	this->columnWidth = (__SCREEN_WIDTH_IN_TILES) / this->cols;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -127,7 +127,7 @@ void OptionsSelector::setColumnWidth(uint8 width)
 	// Add space for selection mark, consider font width
 	width = ((width + 1) * fontData->fontSpec->fontSize.x);
 
-	if((0 < width) && (width <= (__SCREEN_WIDTH_IN_CHARS)))
+	if((0 < width) && (width <= (__SCREEN_WIDTH_IN_TILES)))
 	{
 		this->columnWidth = width;
 	}
@@ -350,8 +350,8 @@ void OptionsSelector::print(uint8 x, uint8 y, uint32 alignment, uint8 spacing)
 	{
 		FontData* fontData = Printer::getFontByName(this->font);
 
-		this->x = (x < (__SCREEN_WIDTH_IN_CHARS)) ? x : 0;
-		this->y = (y < (__SCREEN_HEIGHT_IN_CHARS)) ? y : 0;
+		this->x = (x < (__SCREEN_WIDTH_IN_TILES)) ? x : 0;
+		this->y = (y < (__SCREEN_HEIGHT_IN_TILES)) ? y : 0;
 		this->alignment = alignment;
 		this->spacing = spacing;
 
@@ -375,9 +375,9 @@ void OptionsSelector::print(uint8 x, uint8 y, uint32 alignment, uint8 spacing)
 			}
 		}
 
-		for(int32 i = 0; i < (this->rows * fontData->fontSpec->fontSize.y) && y + i < __SCREEN_HEIGHT_IN_CHARS; i++)
+		for(int32 i = 0; i < (this->rows * fontData->fontSpec->fontSize.y) && y + i < __SCREEN_HEIGHT_IN_TILES; i++)
 		{
-			for(int32 j = 0; (this->columnWidth * this->cols) > j && x + j < __SCREEN_WIDTH_IN_CHARS; j++)
+			for(int32 j = 0; (this->columnWidth * this->cols) > j && x + j < __SCREEN_WIDTH_IN_TILES; j++)
 			{
 				Printer::text(" ", x + j + jStart, y + i * spacing, this->font);
 			}
@@ -473,7 +473,7 @@ void OptionsSelector::print(uint8 x, uint8 y, uint32 alignment, uint8 spacing)
 
 			y += fontData->fontSpec->fontSize.y * spacing;
 			
-			if((y >= (this->rows * this->spacing * fontData->fontSpec->fontSize.y + this->y)) || (y >= (__SCREEN_HEIGHT_IN_CHARS)))
+			if((y >= (this->rows * this->spacing * fontData->fontSpec->fontSize.y + this->y)) || (y >= (__SCREEN_HEIGHT_IN_TILES)))
 			{
 				y = this->y;
 				x += this->columnWidth;

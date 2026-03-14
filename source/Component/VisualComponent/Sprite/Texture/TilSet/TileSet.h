@@ -26,20 +26,20 @@ class TileSet;
 // CLASS' MACROS
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-// Bytes per CHAR
-#define __BYTES_PER_CHARS(n)				((n) << 4)
+// Bytes per TILE
+#define __BYTES_PER_TILES(n)				((n) << 4)
 
-// CHARS PER uint8
-#define __CHARS_PER_BYTE(n)					((n) >> 4)
+// TILES PER uint8
+#define __TILES_PER_BYTE(n)					((n) >> 4)
 
-// uint32s per CHAR
-#define __UINT32S_PER_CHARS(n)				((n) << 2)
+// uint32s per TILE
+#define __UINT32S_PER_TILES(n)				((n) << 2)
 
 // Compression types
-#define __CHAR_SET_COMPRESSION_RLE			0x00000001	
+#define __TILE_SET_COMPRESSION_RLE			0x00000001	
 
-// Start address for CHAR memory
-#define __CHAR_SPACE_BASE_ADDRESS			0x00078000
+// Start address for TILE memory
+#define __TILE_SPACE_BASE_ADDRESS			0x00078000
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DATA
@@ -49,7 +49,7 @@ class TileSet;
 /// @memberof TileSet
 typedef struct TileSetSpec
 {
-	/// Number of CHARs in function of the number of frames to load at the same time
+	/// Number of TILEs in function of the number of frames to load at the same time
 	uint16 numberOfChars;
 
 	/// Whether the char set is shared or not
@@ -95,7 +95,7 @@ class TileSet : ListenerObject
 	/// Indicator of the block inside the tiles array to write to DRAM
 	uint16 frame;
 
-	/// Offset in CHAR space where the block allocated for this char set starts
+	/// Offset in TILE space where the block allocated for this char set starts
 	uint16 offset;
 
 	/// If true the graphical data is written to VRAM; false otherwise
@@ -118,7 +118,7 @@ class TileSet : ListenerObject
 
 	/// Class' constructor
 	/// @param charSetSpec: Spec to use in the construction of the char set
-	/// @param offset: Offset in CHAR space where the block allocated for this char set starts
+	/// @param offset: Offset in TILE space where the block allocated for this char set starts
 	void constructor(const TileSetSpec* charSetSpec, uint16 offset);
 
 	/// Increase the usage count.
@@ -143,45 +143,45 @@ class TileSet : ListenerObject
 	/// @return True if the char set is optimized; false otherwise
 	bool isOptimized();
 
-	/// Set the offset within CHAR space.
-	/// @param offset: Offset within CHAR space
+	/// Set the offset within TILE space.
+	/// @param offset: Offset within TILE space
 	void setOffset(uint16 offset);
 
-	/// Retrieve the offset within CHAR space.
-	/// @return Offset within CHAR space
+	/// Retrieve the offset within TILE space.
+	/// @return Offset within TILE space
 	uint16 getOffset();
 
 	/// Retrieve the spec used in the construction of the char set.
 	/// @return Spec used in the construction of the char set
 	const TileSetSpec* getSpec();
 
-	/// Retrieve the number of CHARs used by the char set.
-	/// @return Number of CHARs used by the char set
+	/// Retrieve the number of TILEs used by the char set.
+	/// @return Number of TILEs used by the char set
 	uint16 getNumberOfChars();
 
-	/// Add the color provided color data to a CHAR.
-	/// @param charToAddTo: Index of the CHAR to add to
-	/// @param newChar: Color data array for the CHAR 
+	/// Add the color provided color data to a TILE.
+	/// @param charToAddTo: Index of the TILE to add to
+	/// @param newChar: Color data array for the TILE 
 	void addChar(uint32 charToAddTo, const uint32* newChar);
 
-	/// Replace the color provided color data to a CHAR.
-	/// @param charToReplace: Index of the CHAR to replace
-	/// @param newChar: Color data array for the CHAR
-	/// __UINT32S_PER_CHARS(n) provides the offset within a a uint32 array of color data.
+	/// Replace the color provided color data to a TILE.
+	/// @param charToReplace: Index of the TILE to replace
+	/// @param newChar: Color data array for the TILE
+	/// __UINT32S_PER_TILES(n) provides the offset within a a uint32 array of color data.
 	void putChar(uint32 charToReplace, const uint32* newChar);
 
-	/// Replace a pixel in a CHAR.
-	/// @param charToReplace: Index of the CHAR to replace
-	/// @param charSetPixel: Coordinate in CHAR space of the CHAR to replace
+	/// Replace a pixel in a TILE.
+	/// @param charToReplace: Index of the TILE to replace
+	/// @param charSetPixel: Coordinate in TILE space of the TILE to replace
 	/// @param newPixelColor: Color data for the pixel 
 	void putPixel(const uint32 charToReplace, const Pixel* charSetPixel, uint8 newPixelColor);
 
-	/// Set the current frame (frame * number of CHARs + number of CHARs) to write to CHAR memory.
-	/// @param frame: The frame to write to CHAR memory
+	/// Set the current frame (frame * number of TILEs + number of TILEs) to write to TILE memory.
+	/// @param frame: The frame to write to TILE memory
 	void setFrame(uint16 frame);
 
-	/// Retrieve the current frame (frame * number of CHARs + number of CHARs) to write to CHAR memory.
-	/// @return The frame to write to CHAR memory
+	/// Retrieve the current frame (frame * number of TILEs + number of TILEs) to write to TILE memory.
+	/// @return The frame to write to TILE memory
 	uint16 getFrame();
 
 	/// Retrieve the writing count.

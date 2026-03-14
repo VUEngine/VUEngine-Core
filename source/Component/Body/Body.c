@@ -842,7 +842,7 @@ void Body::print(int32 x, int32 y)
 	Printer::text("BODY", x, y++, NULL);
 
 	Printer::text("Awake:", x, y, NULL);
-	Printer::text(this->awake ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, x + 8, y++, NULL);
+	Printer::text(this->awake ? __TILE_CHECKBOX_CHECKED : __TILE_CHECKBOX_UNCHECKED, x + 8, y++, NULL);
 
 	Printer::text("                    X       Y       Z", x, y++, NULL);
 

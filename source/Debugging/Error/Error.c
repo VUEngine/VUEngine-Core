@@ -88,8 +88,8 @@ static void Error::triggerException(char* message __attribute__((unused)), char*
 		Printer::text("                                                " , x, ++y + 1, NULL);
 		Printer::text(" Message:                                       " , x, ++y, NULL);
 
-		int32 stringMaxLength = (__SCREEN_WIDTH_IN_CHARS) - 2;
-		int32 rowsAvailable  = (__SCREEN_HEIGHT_IN_CHARS) - y;
+		int32 stringMaxLength = (__SCREEN_WIDTH_IN_TILES) - 2;
+		int32 rowsAvailable  = (__SCREEN_HEIGHT_IN_TILES) - y;
 		int32 stringLength = strnlen(message, stringMaxLength * rowsAvailable) + 1;
 		int32 lines = stringLength / stringMaxLength + (stringLength % stringMaxLength ? 1 : 0);
 		int32 line = 0;
@@ -110,14 +110,14 @@ static void Error::triggerException(char* message __attribute__((unused)), char*
 			Printer::text(detail, x + 1, ++y, NULL);
 		}
 
-		if(y < (__SCREEN_HEIGHT_IN_CHARS) - 1)
+		if(y < (__SCREEN_HEIGHT_IN_TILES) - 1)
 		{
 			Printer::text("                                             ", x, y + 3, NULL);
 		}
 	}
 
 #ifdef __SHOW_STACK_OVERFLOW_ALERT
-	Hardware::printStackStatus((__SCREEN_WIDTH_IN_CHARS) - 10, 0, true);
+	Hardware::printStackStatus((__SCREEN_WIDTH_IN_TILES) - 10, 0, true);
 #endif
 
 	// Prevent VIP's interrupts

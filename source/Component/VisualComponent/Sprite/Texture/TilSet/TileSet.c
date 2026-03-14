@@ -172,10 +172,10 @@ void TileSet::addChar(uint32 charToAddTo, const uint32* newChar)
 	{
 		Mem::combineWORDs
 		(
-			(uint32*)(__CHAR_SPACE_BASE_ADDRESS + (((uint32)this->offset + charToAddTo) << 4)),
-			(uint32*)&this->charSetSpec->tiles[__UINT32S_PER_CHARS(charToAddTo) + 1] + this->tilesDisplacement,
+			(uint32*)(__TILE_SPACE_BASE_ADDRESS + (((uint32)this->offset + charToAddTo) << 4)),
+			(uint32*)&this->charSetSpec->tiles[__UINT32S_PER_TILES(charToAddTo) + 1] + this->tilesDisplacement,
 			(uint32*)newChar,
-			__UINT32S_PER_CHARS(1)
+			__UINT32S_PER_TILES(1)
 		);
 	}
 }
@@ -188,9 +188,9 @@ void TileSet::putChar(uint32 charToReplace, const uint32* newChar)
 	{
 		Mem::copyWORD
 		(
-			(uint32*)(__CHAR_SPACE_BASE_ADDRESS + (((uint32)this->offset + charToReplace) << 4)),
+			(uint32*)(__TILE_SPACE_BASE_ADDRESS + (((uint32)this->offset + charToReplace) << 4)),
 			(uint32*)newChar,
-			__UINT32S_PER_CHARS(1)
+			__UINT32S_PER_TILES(1)
 		);
 	}
 }
@@ -206,7 +206,7 @@ void TileSet::putPixel(const uint32 charToReplace, const Pixel* charSetPixel, ui
 			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 		};
 
-		Mem::copyBYTE(auxChar, (uint8*)__CHAR_SPACE_BASE_ADDRESS + (((uint32)this->offset) << 4) + (charToReplace << 4), (int32)(1 << 4));
+		Mem::copyBYTE(auxChar, (uint8*)__TILE_SPACE_BASE_ADDRESS + (((uint32)this->offset) << 4) + (charToReplace << 4), (int32)(1 << 4));
 
 		uint16 displacement = (charSetPixel->y << 1) + (charSetPixel->x >> 2);
 		uint16 pixelToReplaceDisplacement = (charSetPixel->x % 4) << 1;
@@ -217,7 +217,7 @@ void TileSet::putPixel(const uint32 charToReplace, const Pixel* charSetPixel, ui
 
 		Mem::copyBYTE
 		(
-			(uint8*)__CHAR_SPACE_BASE_ADDRESS + (((uint32)this->offset) << 4) + (charToReplace << 4), auxChar, (int32)(sizeof(uint8) << 4)
+			(uint8*)__TILE_SPACE_BASE_ADDRESS + (((uint32)this->offset) << 4) + (charToReplace << 4), auxChar, (int32)(sizeof(uint8) << 4)
 		);
 	}
 }
@@ -240,7 +240,7 @@ void TileSet::setFrame(uint16 frame)
 		}
 		else
 		{
-			this->tilesDisplacement = __UINT32S_PER_CHARS(this->charSetSpec->numberOfChars * this->frame);
+			this->tilesDisplacement = __UINT32S_PER_TILES(this->charSetSpec->numberOfChars * this->frame);
 		}
 	}
 }
@@ -279,7 +279,7 @@ uint32 TileSet::write()
 
 	switch(this->charSetSpec->tiles[0])
 	{
-		case __CHAR_SET_COMPRESSION_RLE:
+		case __TILE_SET_COMPRESSION_RLE:
 		{
 			TileSet::writeRLE(this);
 			break;
@@ -294,9 +294,9 @@ uint32 TileSet::write()
 
 			Mem::copyWORD
 			(
-				(uint32*)(__CHAR_SPACE_BASE_ADDRESS + (((uint32)this->offset) << 4)),
+				(uint32*)(__TILE_SPACE_BASE_ADDRESS + (((uint32)this->offset) << 4)),
 				&this->charSetSpec->tiles[1] + this->tilesDisplacement,
-				__UINT32S_PER_CHARS(tilesToWrite)
+				__UINT32S_PER_TILES(tilesToWrite)
 			);
 
 			break;
@@ -322,8 +322,8 @@ void TileSet::writeRLE()
 	// So, each char has 32 poxels
 	uint32 totalPoxels = this->charSetSpec->numberOfChars << 5;
 
-	uint32* destination = (uint32*)(__CHAR_SPACE_BASE_ADDRESS + (((uint32)this->offset) << 4));
-	uint32* limit = destination + __UINT32S_PER_CHARS(this->charSetSpec->numberOfChars);
+	uint32* destination = (uint32*)(__TILE_SPACE_BASE_ADDRESS + (((uint32)this->offset) << 4));
+	uint32* limit = destination + __UINT32S_PER_TILES(this->charSetSpec->numberOfChars);
 	uint32* source = &this->charSetSpec->tiles[1] + this->tilesDisplacement;
 
 	uint32 uncompressedData = 0;

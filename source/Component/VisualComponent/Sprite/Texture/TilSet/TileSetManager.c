@@ -37,7 +37,7 @@ static void TileSetManager::print(int32 x __attribute__((unused)), int32 y __att
 {
 #ifndef __SHIPPING
 	TileSetManager charSetManager = TileSetManager::getInstance();
-	Printer::text("CHAR MEMORY USAGE", x, y++, NULL);
+	Printer::text("TILE MEMORY USAGE", x, y++, NULL);
 
 	Printer::text("Total TileSets:        ", x, ++y, NULL);
 	Printer::int32(VirtualList::getCount(charSetManager->charSets), x + 18, y, NULL);
@@ -68,7 +68,7 @@ secure void TileSetManager::reset()
 
 secure void TileSetManager::clearGraphicMemory()
 {
-	Mem::clear((uint8*) __CHAR_SPACE_BASE_ADDRESS, 8192 * 4);
+	Mem::clear((uint8*) __TILE_SPACE_BASE_ADDRESS, 8192 * 4);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -204,7 +204,7 @@ int32 TileSetManager::getTotalUsedChars()
 
 int32 TileSetManager::getTotalFreeChars()
 {
-	return __CHAR_MEMORY_TOTAL_CHARS - TileSetManager::getTotalUsedChars(this);
+	return __TILE_MEMORY_TOTAL_TILES - TileSetManager::getTotalUsedChars(this);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -270,7 +270,7 @@ TileSet TileSetManager::allocateTileSet(const TileSetSpec* charSetSpec)
 	NM_ASSERT(!isDeleted(this->charSets), "TileSetManager::allocateTileSet: null charSets");
 	NM_ASSERT(charSetSpec, "TileSetManager::allocateTileSet: null charSetSpec");
 	NM_ASSERT(charSetSpec->numberOfChars > 0, "TileSetManager::allocateTileSet: number of chars < 0");
-	NM_ASSERT(charSetSpec->numberOfChars < __CHAR_MEMORY_TOTAL_CHARS, "TileSetManager::allocateTileSet: too many chars in spec");
+	NM_ASSERT(charSetSpec->numberOfChars < __TILE_MEMORY_TOTAL_TILES, "TileSetManager::allocateTileSet: too many chars in spec");
 
 	uint16 offset = NULL != this->charSets->head ? 0 : 1;
 
@@ -280,7 +280,7 @@ TileSet TileSetManager::allocateTileSet(const TileSetSpec* charSetSpec)
 		offset += TileSet::getOffset(lastTileSet) + TileSet::getNumberOfChars(lastTileSet);
 	}
 
-	if((unsigned)offset + charSetSpec->numberOfChars < __CHAR_MEMORY_TOTAL_CHARS)
+	if((unsigned)offset + charSetSpec->numberOfChars < __TILE_MEMORY_TOTAL_TILES)
 	{
 		TileSet charSet = new TileSet(charSetSpec, offset);
 
@@ -289,11 +289,11 @@ TileSet TileSetManager::allocateTileSet(const TileSetSpec* charSetSpec)
 		return charSet;
 	}
 
-#ifdef __ALERT_CHAR_MEMORY_DEPLETION
+#ifdef __ALERT_TILE_MEMORY_DEPLETION
 	Printer::setDebugMode();
 	Printer::clear();
 
-	NM_ASSERT(false, "TileSetManager::allocateTileSet: CHAR mem depleted");
+	NM_ASSERT(false, "TileSetManager::allocateTileSet: TILE mem depleted");
 #endif
 
 	return NULL;

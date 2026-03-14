@@ -36,7 +36,7 @@ Features:
 	- Recyclable
 
 - Rendering:
-	- CHAR memory management
+	- TILE memory management
 	- BGAMP memory management
 	- OBJECT memory management
 	- WORLD memory management
@@ -63,7 +63,7 @@ Features:
 		- Streaming
 		- Hardware registers' usage
 		- VIP inspector:
-			- CHAR memory
+			- TILE memory
 			- BGMAP memory
 			- OBJECT memory
 			- WORLD memory

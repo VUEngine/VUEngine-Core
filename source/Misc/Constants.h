@@ -98,22 +98,22 @@ enum DefaulCollisionLayers
 #define __HALF_SCREEN_DEPTH						(__SCREEN_DEPTH >> 1)
 
 // Camera width in chars
-#define __SCREEN_WIDTH_IN_CHARS					(__SCREEN_WIDTH >> 3)
+#define __SCREEN_WIDTH_IN_TILES					(__SCREEN_WIDTH >> 3)
 
 // Camera height in chars
-#define __SCREEN_HEIGHT_IN_CHARS				(__SCREEN_HEIGHT >> 3)
+#define __SCREEN_HEIGHT_IN_TILES				(__SCREEN_HEIGHT >> 3)
 
 // Camera depth in chars
-#define __SCREEN_DEPTH_IN_CHARS					(__SCREEN_DEPTH >> 3)
+#define __SCREEN_DEPTH_IN_TILES					(__SCREEN_DEPTH >> 3)
 
 // Camera half width in chars
-#define __HALF_SCREEN_WIDTH_IN_CHARS			(__SCREEN_WIDTH >> 4)
+#define __HALF_SCREEN_WIDTH_IN_TILES			(__SCREEN_WIDTH >> 4)
 
 // Camera half height in chars
-#define __HALF_SCREEN_HEIGHT_IN_CHARS			(__SCREEN_HEIGHT >> 4)
+#define __HALF_SCREEN_HEIGHT_IN_TILES			(__SCREEN_HEIGHT >> 4)
 
 // Camera half depth in chars
-#define __HALF_SCREEN_DEPTH_IN_CHARS			(__SCREEN_DEPTH >> 4)
+#define __HALF_SCREEN_DEPTH_IN_TILES			(__SCREEN_DEPTH >> 4)
 
 // Camera half width in meters
 #define __HALF_SCREEN_WIDTH_METERS				__PIXELS_TO_METERS(__SCREEN_WIDTH >> 1)

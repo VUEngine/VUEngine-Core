@@ -1198,7 +1198,7 @@ void GameState::debugging()
 #endif
 #endif
 
-#ifdef __DEBUGGING_CHAR_MEMORY
+#ifdef __DEBUGGING_TILE_MEMORY
 	TileSetManager::print(1, 1);
 #endif
 

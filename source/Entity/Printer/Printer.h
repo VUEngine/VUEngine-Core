@@ -48,49 +48,49 @@ class PrintingSprite;
 #define __PRINTING_MODE_DEFAULT	  0
 #define __PRINTING_MODE_DEBUG	  1
 
-#define __CHAR_BATTERY			  "\x01\x02"
+#define __TILE_BATTERY			  "\x01\x02"
 
-#define __CHAR_LINE_TOP_LEFT	  "\x03"
-#define __CHAR_LINE_TOP_RIGHT	  "\x04"
-#define __CHAR_LINE_BOTTOM_LEFT	  "\x05"
-#define __CHAR_LINE_BOTTOM_RIGHT  "\x06"
-#define __CHAR_LINE_VERTICAL	  "\x07"
-#define __CHAR_LINE_HORIZONTAL	  "\x08"
+#define __TILE_LINE_TOP_LEFT	  "\x03"
+#define __TILE_LINE_TOP_RIGHT	  "\x04"
+#define __TILE_LINE_BOTTOM_LEFT	  "\x05"
+#define __TILE_LINE_BOTTOM_RIGHT  "\x06"
+#define __TILE_LINE_VERTICAL	  "\x07"
+#define __TILE_LINE_HORIZONTAL	  "\x08"
 
-#define __CHAR_SELECTOR			  "\x0B"
-#define __CHAR_SELECTOR_LEFT	  "\x0C"
+#define __TILE_SELECTOR			  "\x0B"
+#define __TILE_SELECTOR_LEFT	  "\x0C"
 
-#define __CHAR_DARK_RED_BOX		  "\x0E"
-#define __CHAR_MEDIUM_RED_BOX	  "\x0F"
-#define __CHAR_BRIGHT_RED_BOX	  "\x10"
+#define __TILE_DARK_RED_BOX		  "\x0E"
+#define __TILE_MEDIUM_RED_BOX	  "\x0F"
+#define __TILE_BRIGHT_RED_BOX	  "\x10"
 
-#define __CHAR_CHECKBOX_UNCHECKED "\x11"
-#define __CHAR_CHECKBOX_CHECKED	  "\x12"
+#define __TILE_CHECKBOX_UNCHECKED "\x11"
+#define __TILE_CHECKBOX_CHECKED	  "\x12"
 
-#define __CHAR_START_BUTTON		  "\x15"
-#define __CHAR_SELECT_BUTTON	  "\x16"
-#define __CHAR_A_BUTTON			  "\x13"
-#define __CHAR_B_BUTTON			  "\x14"
-#define __CHAR_L_TRIGGER		  "\x17"
-#define __CHAR_R_TRIGGER		  "\x18"
-#define __CHAR_D_PAD			  "\x19"
-#define __CHAR_D_PAD_UP			  "\x1A"
-#define __CHAR_D_PAD_DOWN		  "\x1B"
-#define __CHAR_D_PAD_LEFT		  "\x1C"
-#define __CHAR_D_PAD_RIGHT		  "\x1D"
-#define __CHAR_L				  "\x1E"
-#define __CHAR_R				  "\x1F"
+#define __TILE_START_BUTTON		  "\x15"
+#define __TILE_SELECT_BUTTON	  "\x16"
+#define __TILE_A_BUTTON			  "\x13"
+#define __TILE_B_BUTTON			  "\x14"
+#define __TILE_L_TRIGGER		  "\x17"
+#define __TILE_R_TRIGGER		  "\x18"
+#define __TILE_D_PAD			  "\x19"
+#define __TILE_D_PAD_UP			  "\x1A"
+#define __TILE_D_PAD_DOWN		  "\x1B"
+#define __TILE_D_PAD_LEFT		  "\x1C"
+#define __TILE_D_PAD_RIGHT		  "\x1D"
+#define __TILE_L				  "\x1E"
+#define __TILE_R				  "\x1F"
 
-#define __CHAR_L_D_PAD			  "\x1E\x19"
-#define __CHAR_L_D_PAD_UP		  "\x1E\x1A"
-#define __CHAR_L_D_PAD_DOWN		  "\x1E\x1B"
-#define __CHAR_L_D_PAD_LEFT		  "\x1E\x1C"
-#define __CHAR_L_D_PAD_RIGHT	  "\x1E\x1D"
-#define __CHAR_R_D_PAD			  "\x1F\x19"
-#define __CHAR_R_D_PAD_UP		  "\x1F\x1A"
-#define __CHAR_R_D_PAD_DOWN		  "\x1F\x1B"
-#define __CHAR_R_D_PAD_LEFT		  "\x1F\x1C"
-#define __CHAR_R_D_PAD_RIGHT	  "\x1F\x1D"
+#define __TILE_L_D_PAD			  "\x1E\x19"
+#define __TILE_L_D_PAD_UP		  "\x1E\x1A"
+#define __TILE_L_D_PAD_DOWN		  "\x1E\x1B"
+#define __TILE_L_D_PAD_LEFT		  "\x1E\x1C"
+#define __TILE_L_D_PAD_RIGHT	  "\x1E\x1D"
+#define __TILE_R_D_PAD			  "\x1F\x19"
+#define __TILE_R_D_PAD_UP		  "\x1F\x1A"
+#define __TILE_R_D_PAD_DOWN		  "\x1F\x1B"
+#define __TILE_R_D_PAD_LEFT		  "\x1F\x1C"
+#define __TILE_R_D_PAD_RIGHT	  "\x1F\x1D"
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DATA
@@ -242,7 +242,7 @@ singleton class Printer : Entity
 	/// @param font: Name of font to use for printing
 	static void float(float value, uint8 x, uint8 y, int32 precision, const char* font);
 
-	/// Writes the font's char set to CHAR memory with displacing the source pointer
+	/// Writes the font's char set to TILE memory with displacing the source pointer
 	/// by numberOfChars * page.
 	/// @param font: Name of font to use for printing
 	/// @param page: ROM's displacement multiplier

@@ -38,7 +38,7 @@ extern FontROMSpec DefaultFontSpec;
 // CLASS' MACROS
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-#define VUENGINE_DEBUG_FONT_CHARSET_OFFSET		(__CHAR_MEMORY_TOTAL_CHARS - VUENGINE_DEBUG_FONT_SIZE)
+#define VUENGINE_DEBUG_FONT_TILESET_OFFSET		(__TILE_MEMORY_TOTAL_TILES - VUENGINE_DEBUG_FONT_SIZE)
 #define VUENGINE_DEBUG_FONT_SIZE				160
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -94,7 +94,7 @@ static void Printer::loadFonts(FontSpec** fontSpecs)
 	// Prevent VIP's interrupt from calling render during printer process
 	Hardware::suspendInterrupts();
 
-	/// Must force CHAR defragmentation
+	/// Must force TILE defragmentation
 	TileSetManager::writeTileSets(TileSetManager::getInstance());
 
 	// Iterate over all defined fonts and add to internal list
@@ -668,9 +668,9 @@ static void Printer::loadDebugFont()
 {
 	Mem::copyWORD
 	(
-		(uint32*)(__CHAR_SPACE_BASE_ADDRESS + (((uint32)VUENGINE_DEBUG_FONT_CHARSET_OFFSET) << 4)),
+		(uint32*)(__TILE_SPACE_BASE_ADDRESS + (((uint32)VUENGINE_DEBUG_FONT_TILESET_OFFSET) << 4)),
 		VUENGINE_DEBUG_FONT_DATA.fontSpec->charSetSpec->tiles + 1,
-		__UINT32S_PER_CHARS(VUENGINE_DEBUG_FONT_SIZE)
+		__UINT32S_PER_TILES(VUENGINE_DEBUG_FONT_SIZE)
 	);
 }
 
@@ -730,7 +730,7 @@ static void Printer::out(uint8 x, uint8 y, const char* string, const char* font)
 		return;
 	}
 
-	uint32 offset = __PRINTING_MODE_DEBUG == printer->mode ? VUENGINE_DEBUG_FONT_CHARSET_OFFSET : TileSet::getOffset(fontData->charSet);
+	uint32 offset = __PRINTING_MODE_DEBUG == printer->mode ? VUENGINE_DEBUG_FONT_TILESET_OFFSET : TileSet::getOffset(fontData->charSet);
 
 	if(isDeleted(printer->activePrintingSprite))
 	{
@@ -769,7 +769,7 @@ static void Printer::out(uint8 x, uint8 y, const char* string, const char* font)
 	uint16 fontOffsetCache = (uint8)fontData->fontSpec->offset;
 
 	// Print text
-	while('\0' != string[i] && x < (__SCREEN_WIDTH_IN_CHARS))
+	while('\0' != string[i] && x < (__SCREEN_WIDTH_IN_TILES))
 	{
 		// Do not allow printer outside of the visible area, since that would corrupt the param table
 		if(y > 27/* || y < 0*/)

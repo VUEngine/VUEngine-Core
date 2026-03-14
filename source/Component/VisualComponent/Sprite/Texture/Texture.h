@@ -214,21 +214,21 @@ abstract class Texture : Object
 	/// @return True if the texture is multiframe; false otherwise
 	bool isMultiframe();
 
-	/// Add the color provided color data to a CHAR in the sprite's texture.
-	/// @param texturePoint: Coordinate in texture's space of the CHAR to replace
-	/// @param newChar: Color data array for the CHAR
+	/// Add the color provided color data to a TILE in the sprite's texture.
+	/// @param texturePoint: Coordinate in texture's space of the TILE to replace
+	/// @param newChar: Color data array for the TILE
 	void addChar(const Point* texturePoint, const uint32* newChar);
 
-	/// Replace a CHAR in the sprite's texture.
-	/// @param texturePoint: Coordinate in texture's space of the CHAR to replace
-	/// @param newChar: Color data array for the CHAR
-	/// __UINT32S_PER_CHARS(n) provides the offset within a a uint32 array of color data.
+	/// Replace a TILE in the sprite's texture.
+	/// @param texturePoint: Coordinate in texture's space of the TILE to replace
+	/// @param newChar: Color data array for the TILE
+	/// __UINT32S_PER_TILES(n) provides the offset within a a uint32 array of color data.
 	void putChar(const Point* texturePoint, const uint32* newChar);
 
 	/// Replace a pixel in the sprite's texture.
-	/// @param texturePixel: Coordinate in texture's space of the CHAR to replace
-	/// @param charSetPixel: Coordinate in CHAR space of the CHAR to replace
-	/// @param newPixelColor: Color data array for the CHAR
+	/// @param texturePixel: Coordinate in texture's space of the TILE to replace
+	/// @param charSetPixel: Coordinate in TILE space of the TILE to replace
+	/// @param newPixelColor: Color data array for the TILE
 	void putPixel(const Point* texturePixel, const Pixel* charSetPixel, uint8 newPixelColor);
 
 	/// Prepare the texture to write its graphical data to DRAM during

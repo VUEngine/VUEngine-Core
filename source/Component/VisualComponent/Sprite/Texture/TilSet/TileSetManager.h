@@ -31,15 +31,15 @@ class VirtualList;
 ///
 /// Inherits from Object
 ///
-/// Manages char sets and CHAR memory allocation.
+/// Manages char sets and TILE memory allocation.
 singleton class TileSetManager : Object
 {
 	/// @protectedsection
 
-	/// Allocated char sets with a block in CHAR memory allocated to them
+	/// Allocated char sets with a block in TILE memory allocated to them
 	VirtualList charSets;
 
-	/// Start offset in CHAR space when free memory starts
+	/// Start offset in TILE space when free memory starts
 	uint16 freedOffset;
 
 	/// @publicsection
@@ -52,7 +52,7 @@ singleton class TileSetManager : Object
 	/// Empties internal virtual list of registered fonts
 	void reset();
 
-	/// Erase the contents of CHAR memory space.
+	/// Erase the contents of TILE memory space.
 	void clearGraphicMemory();
 
 	/// Load char sets in function of the provided array of specs.
@@ -72,16 +72,16 @@ singleton class TileSetManager : Object
 	/// Write graphical data to VRAM.
 	void writeTileSets();
 
-	/// Defragment CHAR space.
+	/// Defragment TILE space.
 	/// @return True if memory was defragmented; false otherwise
 	void defragment(bool deferred);
 
-	/// Return the total number of used CHARs in CHAR space.
-	/// @return Total number of used CHARs in CHAR space
+	/// Return the total number of used TILEs in TILE space.
+	/// @return Total number of used TILEs in TILE space
 	int32 getTotalUsedChars();
 
-	/// Return the total number of free CHARs in CHAR space.
-	/// @return Total number of free CHARs in CHAR space
+	/// Return the total number of free TILEs in TILE space.
+	/// @return Total number of free TILEs in TILE space
 	int32 getTotalFreeChars();
 
 	/// Return the total number of char sets.
