@@ -16,7 +16,7 @@
 #include <ActorFactory.h>
 #include <Actor.h>
 #include <Camera.h>
-#include <CharSetManager.h>
+#include <TileSetManager.h>
 #include <DebugConfig.h>
 #include <Hardware.h>
 #include <Printer.h>
@@ -963,7 +963,7 @@ void Stage::configureGraphics()
 	TextureManager::reset();
 
 	Printer::loadFonts(this->stageSpec->assets.fontSpecs);
-	CharSetManager::loadCharSets(CharSetManager::getInstance(), (const CharSetSpec**)this->stageSpec->assets.charSetSpecs);
+	TileSetManager::loadTileSets(TileSetManager::getInstance(), (const TileSetSpec**)this->stageSpec->assets.charSetSpecs);
 
 	TextureManager::loadTextures((const TextureSpec**)this->stageSpec->assets.textureSpecs);
 }

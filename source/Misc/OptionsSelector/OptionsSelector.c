@@ -21,8 +21,8 @@
 #include <Box.h>
 #include <Camera.h>
 #include <CameraMovementManager.h>
-#include <CharSet.h>
-#include <CharSetManager.h>
+#include <TileSet.h>
+#include <TileSetManager.h>
 #include <Clock.h>
 #include <ClockManager.h>
 #include <Container.h>

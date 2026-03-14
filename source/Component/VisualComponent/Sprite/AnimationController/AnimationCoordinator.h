@@ -15,7 +15,7 @@
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <ListenerObject.h>
-#include <CharSet.h>
+#include <TileSet.h>
 #include <Sprite.h>
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -32,7 +32,7 @@ class AnimationController;
 ///
 /// Inherits from ListenerObject
 ///
-/// Coordinates animation controllers whose sprites share the same CharSet.
+/// Coordinates animation controllers whose sprites share the same TileSet.
 class AnimationCoordinator : ListenerObject
 {
 	/// @protectedsection
@@ -44,14 +44,14 @@ class AnimationCoordinator : ListenerObject
 	VirtualList animationControllers;
 
 	// Spec shared by the animation controllers to coordinate
-	const CharSetSpec* charSetSpec;
+	const TileSetSpec* charSetSpec;
 
 	/// @publicsection
 
 	/// Class' constructor
 	/// @param charSetSpec: Spec shared by the animation controllers to coordinate
 	/// @param scope: Object that might need to listen for playback related events
-	void constructor(const CharSetSpec* charSetSpec, ListenerObject scope);
+	void constructor(const TileSetSpec* charSetSpec, ListenerObject scope);
 
 	/// Play an animation on the specified animation controller.
 	/// @param animationController: Animation controller on which to play the animation
@@ -70,7 +70,7 @@ class AnimationCoordinator : ListenerObject
 
 	/// Retrieve the spec shared by the animation controllers to coordinate.
 	/// @return Pointer to spec shared by the animation controllers to coordinate
-	const CharSetSpec* getCharSetSpec();
+	const TileSetSpec* getTileSetSpec();
 }
 
 #endif

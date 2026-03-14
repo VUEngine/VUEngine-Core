@@ -15,7 +15,7 @@
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <Container.h>
-#include <CharSet.h>
+#include <TileSet.h>
 #include <Actor.h>
 #include <ActorFactory.h>
 #include <Printer.h>
@@ -98,8 +98,8 @@ typedef struct StageSpec
 		/// Fonts to preload
 		FontSpec** fontSpecs;
 
-		// CharSets to preload
-		CharSetSpec** charSetSpecs;
+		// TileSets to preload
+		TileSetSpec** charSetSpecs;
 
 		// Textures to preload
 		TextureSpec** textureSpecs;

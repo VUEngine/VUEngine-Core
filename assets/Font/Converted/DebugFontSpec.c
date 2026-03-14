@@ -44,7 +44,7 @@ const uint32 DebugFontTiles[] __attribute__((aligned(4))) =
 // DEFINITIONS
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-CharSetROMSpec DebugFontCharSet =
+TileSetROMSpec DebugFontTileSet =
 {
 	// Number of chars in function of the number of frames to load at the same time
 	46,
@@ -65,7 +65,7 @@ CharSetROMSpec DebugFontCharSet =
 FontROMSpec DebugFontSpec =
 {
 	// Pointer to the char spec that the font uses
-	(CharSetSpec*)&DebugFontCharSet,
+	(TileSetSpec*)&DebugFontTileSet,
 
 	// Offset at which character number the font starts
 	45,
@@ -73,7 +73,7 @@ FontROMSpec DebugFontSpec =
 	// Number of characters in this font
 	46,
 
-	// Number of characters per line in charset
+	// Number of characters per line in tileSet
 	1,
 
 	// Size of a single character (in chars) ({width, height})

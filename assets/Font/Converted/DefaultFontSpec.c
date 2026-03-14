@@ -85,7 +85,7 @@ const uint32 DefaultFontTiles[] __attribute__((aligned(4))) =
 // DEFINITIONS
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-CharSetROMSpec DefaultFontCharSet =
+TileSetROMSpec DefaultFontTileSet =
 {
 	// Number of chars in function of the number of frames to load at the same time
 	128,
@@ -106,7 +106,7 @@ CharSetROMSpec DefaultFontCharSet =
 FontROMSpec DefaultFontSpec =
 {
 	// Pointer to the char spec that the font uses
-	(CharSetSpec*)&DefaultFontCharSet,
+	(TileSetSpec*)&DefaultFontTileSet,
 
 	// Offset at which character number the font starts
 	0,
@@ -114,7 +114,7 @@ FontROMSpec DefaultFontSpec =
 	// Number of characters in this font
 	128,
 
-	// Number of characters per line in charset
+	// Number of characters per line in tileSet
 	1,
 
 	// Size of a single character (in chars) ({width, height})

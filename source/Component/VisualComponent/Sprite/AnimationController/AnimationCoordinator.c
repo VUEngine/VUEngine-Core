@@ -32,7 +32,7 @@ friend class VirtualNode;
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void AnimationCoordinator::constructor(const CharSetSpec* charSetSpec, ListenerObject scope)
+void AnimationCoordinator::constructor(const TileSetSpec* charSetSpec, ListenerObject scope)
 {
 	// Always explicitly call the base's constructor 
 	Base::constructor();
@@ -142,7 +142,7 @@ void AnimationCoordinator::removeAnimationController(AnimationController animati
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-const CharSetSpec* AnimationCoordinator::getCharSetSpec()
+const TileSetSpec* AnimationCoordinator::getTileSetSpec()
 {
 	return this->charSetSpec;
 }

@@ -7,15 +7,15 @@
  * that was distributed with this source code.
  */
 
-#ifndef CHARSET_MANAGER_H_
-#define CHARSET_MANAGER_H_
+#ifndef TILE_SET_MANAGER_H_
+#define TILE_SET_MANAGER_H_
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // INCLUDES
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #include <Object.h>
-#include <CharSet.h>
+#include <TileSet.h>
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // FORWARD DECLARATIONS
@@ -27,12 +27,12 @@ class VirtualList;
 // CLASS' DECLARATION
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-/// Class CharSetManager
+/// Class TileSetManager
 ///
 /// Inherits from Object
 ///
 /// Manages char sets and CHAR memory allocation.
-singleton class CharSetManager : Object
+singleton class TileSetManager : Object
 {
 	/// @protectedsection
 
@@ -57,20 +57,20 @@ singleton class CharSetManager : Object
 
 	/// Load char sets in function of the provided array of specs.
 	/// @param charSetSpecs: Array of char set specs in function of which to load char sets 
-	void loadCharSets(const CharSetSpec** charSetSpecs);
+	void loadTileSets(const TileSetSpec** charSetSpecs);
 
 	/// Retrieve a char set initialized with the provided spec.
 	/// @param charSetSpec: Spec to use to initilize the desired char set
 	/// @return Char set initialized with the provided spec
-	CharSet getCharSet(const CharSetSpec* charSetSpec);
+	TileSet getTileSet(const TileSetSpec* charSetSpec);
 
 	/// Release a char set.
 	/// @param charSet: Char set to release
 	/// @return True if the char set is successfully deleted; false otherwise
-	bool releaseCharSet(CharSet charSet);
+	bool releaseTileSet(TileSet charSet);
 
 	/// Write graphical data to VRAM.
-	void writeCharSets();
+	void writeTileSets();
 
 	/// Defragment CHAR space.
 	/// @return True if memory was defragmented; false otherwise
@@ -86,7 +86,7 @@ singleton class CharSetManager : Object
 
 	/// Return the total number of char sets.
 	/// @return Total number of char sets
-	int32 getTotalCharSets();
+	int32 getTotalTileSets();
 }
 
 #endif

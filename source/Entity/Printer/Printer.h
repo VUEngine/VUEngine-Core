@@ -14,7 +14,7 @@
 // INCLUDES
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-#include <CharSet.h>
+#include <TileSet.h>
 #include <Entity.h>
 #include <Timer.h>
 
@@ -122,7 +122,7 @@ typedef struct FontSize
 typedef struct FontSpec
 {
 	/// Pointer to the char spec that the font uses
-	const CharSetSpec* charSetSpec;
+	const TileSetSpec* charSetSpec;
 
 	/// Offset at which character number the font starts
 	int16 offset;
@@ -130,7 +130,7 @@ typedef struct FontSpec
 	/// Number of characters in this font
 	uint16 characterCount;
 
-	/// Number of characters per line in charset
+	/// Number of characters per line in tileSet
 	uint16 charactersPerLineInCharset;
 
 	/// Size of a single character (in chars) ({width, height})
@@ -150,8 +150,8 @@ typedef struct FontData
 	/// Font spec
 	const struct FontSpec* fontSpec;
 
-	/// CharSet
-	CharSet charSet;
+	/// TileSet
+	TileSet charSet;
 
 } FontData;
 
@@ -195,11 +195,11 @@ singleton class Printer : Entity
 
 	/// @publicsection
 
-	/// Set mode to debug to bypass loading fonts through CharSets
+	/// Set mode to debug to bypass loading fonts through TileSets
 	static void setDebugMode();
 
-	/// Add fonts to internal VirtualList and preload CharSets for specified fonts.
-	/// @param fontSpecs: Array of font specs whose charset should pre preloaded
+	/// Add fonts to internal VirtualList and preload TileSets for specified fonts.
+	/// @param fontSpecs: Array of font specs whose tileSet should pre preloaded
 	static void loadFonts(FontSpec** fontSpecs);
 
 	/// Release fonts, free VRAM

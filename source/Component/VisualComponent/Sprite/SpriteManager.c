@@ -13,7 +13,7 @@
 
 #include <string.h>
 
-#include <CharSetManager.h>
+#include <TileSetManager.h>
 #include <Clock.h>
 #include <DebugConfig.h>
 #include <Mem.h>
@@ -139,11 +139,11 @@ void SpriteManager::enable()
 {
 	Base::enable(this);
 
-	CharSetManager::clearGraphicMemory(CharSetManager::getInstance());
+	TileSetManager::clearGraphicMemory(TileSetManager::getInstance());
 	TextureManager::clearGraphicMemory();
 	DisplayUnit::clearGraphicMemory();
 	Printer::reset(Printer::getInstance());
-	CharSetManager::reset(CharSetManager::getInstance());
+	TileSetManager::reset(TileSetManager::getInstance());
 	ParamTableManager::reset(ParamTableManager::getInstance());
 
 	for(int16 i = 0; i < __TOTAL_SPRITE_LISTS; i++)
@@ -418,7 +418,7 @@ void SpriteManager::render()
 	DisplayUnit::startRendering();
 
 	// Deframent video RAM
-	CharSetManager::defragment(CharSetManager::getInstance(), true);
+	TileSetManager::defragment(TileSetManager::getInstance(), true);
 
 	this->completeSort = SpriteManager::sortProgressively(this, this->completeSort);
 
@@ -520,11 +520,11 @@ void SpriteManager::commitGraphics()
 
 void SpriteManager::writeTextures()
 {
-	CharSetManager::writeCharSets(CharSetManager::getInstance());
+	TileSetManager::writeTileSets(TileSetManager::getInstance());
 
 	TextureManager::updateTextures(-1, false);
 
-	CharSetManager::writeCharSets(CharSetManager::getInstance());
+	TileSetManager::writeTileSets(TileSetManager::getInstance());
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

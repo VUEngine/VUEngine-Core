@@ -11,7 +11,7 @@
 // INCLUDES
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-#include <CharSetManager.h>
+#include <TileSetManager.h>
 #include <TextureManager.h>
 #include <Optics.h>
 #include <VirtualList.h>
@@ -23,7 +23,7 @@
 // CLASS' DECLARATIONS
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-friend class CharSet;
+friend class TileSet;
 friend class VirtualList;
 friend class VirtualNode;
 
@@ -111,7 +111,7 @@ static void Texture::updateDefault(Texture texture, int16 maximumTextureRowsToWr
 		return;
 	}
 
-	texture->generation = CharSet::write(texture->charSet);
+	texture->generation = TileSet::write(texture->charSet);
 
 	texture->status = kTextureWritten;
 }
@@ -150,7 +150,7 @@ void Texture::constructor(const TextureSpec* textureSpec, uint16 id)
 	this->charSet = NULL;
 	// Set the palette
 	this->palette = textureSpec->palette;
-	this->status = kTextureNoCharSet;
+	this->status = kTextureNoTileSet;
 	this->frame = 0;
 }
 
@@ -163,7 +163,7 @@ void Texture::destructor()
 	// Make sure that I'm not destroyed again
 	this->usageCount = 0;
 
-	Texture::releaseCharSet(this);
+	Texture::releaseTileSet(this);
 
 	// Always explicitly call the base's destructor 
 	Base::destructor();
@@ -189,9 +189,9 @@ void Texture::setSpec(TextureSpec* textureSpec)
 
 	if(this->textureSpec != textureSpec || kTextureWritten != this->status)
 	{
-		if(NULL != this->charSet && textureSpec->charSetSpec != CharSet::getSpec(this->charSet))
+		if(NULL != this->charSet && textureSpec->charSetSpec != TileSet::getSpec(this->charSet))
 		{
-			Texture::releaseCharSet(this);
+			Texture::releaseTileSet(this);
 		}
 
 		this->textureSpec = textureSpec;
@@ -212,11 +212,11 @@ const TextureSpec* Texture::getSpec()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-CharSet Texture::getCharSet(uint32 loadIfNeeded)
+TileSet Texture::getTileSet(uint32 loadIfNeeded)
 {
 	if(isDeleted(this->charSet) && loadIfNeeded)
 	{
-		Texture::loadCharSet(this);
+		Texture::loadTileSet(this);
 	}
 
 	return this->charSet;
@@ -238,11 +238,11 @@ bool Texture::decreaseUsageCount()
 		this->usageCount = 0;
 	}
 
-	// The commented code saves on lookups for a charset in Texture::setSpec, but can cause
+	// The commented code saves on lookups for a tileSet in Texture::setSpec, but can cause
 	// heavy char memory defragmentation
 	if(0 == this->usageCount)// && !this->textureSpec->recyclable)
 	{
-		Texture::releaseCharSet(this);
+		Texture::releaseTileSet(this);
 	}
 
 	return 0 == this->usageCount;
@@ -289,7 +289,7 @@ void Texture::setFrame(uint16 frame)
 
 		if(!isDeleted(this->charSet))
 		{
-			CharSet::setFrame(this->charSet, this->frame);		
+			TileSet::setFrame(this->charSet, this->frame);		
 		}
 	}
 }
@@ -328,7 +328,7 @@ bool Texture::isShared()
 {
 	if(!isDeleted(this->charSet))
 	{
-		return CharSet::isShared(this->charSet);
+		return TileSet::isShared(this->charSet);
 	}
 
 	if(NULL != this->textureSpec->charSetSpec)
@@ -343,7 +343,7 @@ bool Texture::isShared()
 
 bool Texture::isAnimated()
 {
-	return !isDeleted(this->charSet) && CharSet::hasMultipleFrames(this->charSet);
+	return !isDeleted(this->charSet) && TileSet::hasMultipleFrames(this->charSet);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -373,7 +373,7 @@ void Texture::addChar(const Point* textureChar, const uint32* newChar)
 		uint32 displacement = this->textureSpec->cols * textureChar->y + textureChar->x;
 		uint32 charToReplace = this->textureSpec->map[displacement] & 0x7FF;
 
-		CharSet::addChar(this->charSet, charToReplace, newChar);
+		TileSet::addChar(this->charSet, charToReplace, newChar);
 	}
 }
 
@@ -390,7 +390,7 @@ void Texture::putChar(const Point* textureChar, const uint32* newChar)
 		uint32 displacement = this->textureSpec->cols * textureChar->y + textureChar->x;
 		uint32 charToReplace = this->textureSpec->map[displacement] & 0x7FF;
 
-		CharSet::putChar(this->charSet, charToReplace, newChar);
+		TileSet::putChar(this->charSet, charToReplace, newChar);
 	}
 }
 
@@ -406,7 +406,7 @@ void Texture::putPixel(const Point* texturePixel, const Pixel* charSetPixel, uin
 	{
 		uint32 displacement = this->textureSpec->cols * texturePixel->y + texturePixel->x;
 		uint32 charToReplace = this->textureSpec->map[displacement] & 0x7FF;
-		CharSet::putPixel(this->charSet, charToReplace, charSetPixel, newPixelColor);
+		TileSet::putPixel(this->charSet, charToReplace, charSetPixel, newPixelColor);
 	}
 }
 
@@ -416,7 +416,7 @@ void Texture::prepare()
 {
 	if(isDeleted(this->charSet))
 	{
-		this->status = kTextureNoCharSet;
+		this->status = kTextureNoTileSet;
 	}
 }
 
@@ -427,15 +427,15 @@ uint8 Texture::update(int16 maximumTextureRowsToWrite)
 #ifndef __RELEASE		
 	if(NULL != this->charSet)
 	{
-		this->status = this->generation != CharSet::getGeneration(this->charSet)? kTexturePendingRewriting : this->status;
+		this->status = this->generation != TileSet::getGeneration(this->charSet)? kTexturePendingRewriting : this->status;
 	}
 #endif
 
 	switch(this->status)
 	{
-		case kTextureNoCharSet:
+		case kTextureNoTileSet:
 		{
-			Texture::loadCharSet(this);
+			Texture::loadTileSet(this);
 			break;
 		}
 		
@@ -476,16 +476,16 @@ bool Texture::write(int16 maximumTextureRowsToWrite __attribute__((unused)))
 		return false;
 	}
 
-	if(CharSet::isShared(this->charSet))
+	if(TileSet::isShared(this->charSet))
 	{
-		this->frame = CharSet::getFrame(this->charSet);
+		this->frame = TileSet::getFrame(this->charSet);
 	}
 
-	CharSet::setFrame(this->charSet, this->frame);		
+	TileSet::setFrame(this->charSet, this->frame);		
 
-	this->generation = CharSet::write(this->charSet);
+	this->generation = TileSet::write(this->charSet);
 
-	if(CharSet::isOptimized(this->charSet))
+	if(TileSet::isOptimized(this->charSet))
 	{
 		this->mapDisplacement = this->textureSpec->cols * this->textureSpec->rows * this->frame;
 	}
@@ -512,7 +512,7 @@ void Texture::rewrite()
 
 void Texture::setStatus(uint8 status)
 {
-	if(kTextureNoCharSet == this->status)
+	if(kTextureNoTileSet == this->status)
 	{
 		return;
 	}
@@ -522,7 +522,7 @@ void Texture::setStatus(uint8 status)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void Texture::loadCharSet()
+void Texture::loadTileSet()
 {
 	if(!isDeleted(this->charSet))
 	{
@@ -535,42 +535,42 @@ void Texture::loadCharSet()
 		return;
 	}
 
-	this->charSet = CharSet::get(this->textureSpec->charSetSpec);
+	this->charSet = TileSet::get(this->textureSpec->charSetSpec);
 
 	if(isDeleted(this->charSet))
 	{
-		this->status = kTextureNoCharSet;
+		this->status = kTextureNoTileSet;
 		return;
 	}
 
-	this->generation = CharSet::getGeneration(this->charSet);
+	this->generation = TileSet::getGeneration(this->charSet);
 
 	this->status = kTexturePendingWriting;
 
 	Texture::setupUpdateFunction(this);
 
-	if(CharSet::isShared(this->charSet))
+	if(TileSet::isShared(this->charSet))
 	{
-		if(1 == CharSet::getUsageCount(this->charSet))
+		if(1 == TileSet::getUsageCount(this->charSet))
 		{
-			CharSet::setFrame(this->charSet, this->frame);			
+			TileSet::setFrame(this->charSet, this->frame);			
 		}
 		else
 		{		
-			this->frame = CharSet::getFrame(this->charSet);
+			this->frame = TileSet::getFrame(this->charSet);
 		}
 	}
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void Texture::releaseCharSet()
+void Texture::releaseTileSet()
 {
 	this->status = kTextureInvalid;
 
 	if(!isDeleted(this->charSet))
 	{
-		CharSet::release(this->charSet);
+		TileSet::release(this->charSet);
 
 		this->charSet = NULL;
 	}
@@ -596,7 +596,7 @@ void Texture::setupUpdateFunction()
 		this->doUpdate = NULL;
 		//this->doUpdate = Texture::updateMulti;
 	}
-	else if(CharSet::isOptimized(this->charSet))
+	else if(TileSet::isOptimized(this->charSet))
 	{
 		this->doUpdate = Texture::updateOptimized;
 	}

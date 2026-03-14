@@ -20,7 +20,7 @@
 #include <BodyManager.h>
 #include <Camera.h>
 #include <Communications.h>
-#include <CharSetManager.h>
+#include <TileSetManager.h>
 #include <Clock.h>
 #include <ClockManager.h>
 #include <ColliderManager.h>
@@ -99,9 +99,9 @@ const ClassPointer CameraAuthorizedClasses[] =
 	NULL
 };
 
-const ClassPointer CharSetManagerAuthorizedClasses[] =
+const ClassPointer TileSetManagerAuthorizedClasses[] =
 {
-	typeofclass(CharSet),
+	typeofclass(TileSet),
 	typeofclass(Printer),
 	typeofclass(Stage),
 	typeofclass(SpriteManager),
@@ -248,7 +248,7 @@ static void Singleton::secure()
 	AnimationCoordinatorFactory::secure(&AnimationCoordinatorFactoryAuthorizedClasses);
 //	BgmapTextureManager::secure(&BgmapTextureManagerAuthorizedClasses);
 	Camera::secure(&CameraAuthorizedClasses);
-	CharSetManager::secure(&CharSetManagerAuthorizedClasses);
+	TileSetManager::secure(&TileSetManagerAuthorizedClasses);
 	ClockManager::secure(&ClockManagerAuthorizedClasses);
 	Communications::secure(&CommunicationsAuthorizedClasses);
 	FrameBuffers::secure(&FrameBuffersAuthorizedClasses);

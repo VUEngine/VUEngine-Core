@@ -11,12 +11,12 @@
 // INCLUDES
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-#include <CharSetManager.h>
+#include <TileSetManager.h>
 #include <DebugConfig.h>
 #include <Mem.h>
 #include <DisplayUnit.h>
 
-#include "CharSet.h"
+#include "TileSet.h"
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PUBLIC STATIC METHODS
@@ -24,23 +24,23 @@
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static CharSet CharSet::get(const CharSetSpec* charSetSpec)
+static TileSet TileSet::get(const TileSetSpec* charSetSpec)
 {
-	NM_ASSERT(NULL != charSetSpec, "CharSet::get: NULL charSetSpec");
+	NM_ASSERT(NULL != charSetSpec, "TileSet::get: NULL charSetSpec");
 
 	if(NULL == charSetSpec)
 	{
 		return NULL;
 	}
 
-	return CharSetManager::getCharSet(CharSetManager::getInstance(), charSetSpec);
+	return TileSetManager::getTileSet(TileSetManager::getInstance(), charSetSpec);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static bool CharSet::release(CharSet charSet)
+static bool TileSet::release(TileSet charSet)
 {
-	return CharSetManager::releaseCharSet(CharSetManager::getInstance(), charSet);
+	return TileSetManager::releaseTileSet(TileSetManager::getInstance(), charSet);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -49,7 +49,7 @@ static bool CharSet::release(CharSet charSet)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void CharSet::constructor(const CharSetSpec* charSetSpec, uint16 offset)
+void TileSet::constructor(const TileSetSpec* charSetSpec, uint16 offset)
 {
 	// Always explicitly call the base's constructor 
 	Base::constructor();
@@ -64,12 +64,12 @@ void CharSet::constructor(const CharSetSpec* charSetSpec, uint16 offset)
 	this->usageCount = 1;
 	this->written = false;
 
-	CharSet::write(this);
+	TileSet::write(this);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void CharSet::destructor()
+void TileSet::destructor()
 {
 	// Make sure that I'm not destroyed again
 	this->usageCount = 0;
@@ -80,14 +80,14 @@ void CharSet::destructor()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void CharSet::increaseUsageCount()
+void TileSet::increaseUsageCount()
 {
 	this->usageCount++;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-bool CharSet::decreaseUsageCount()
+bool TileSet::decreaseUsageCount()
 {
 	if(0 > --this->usageCount)
 	{
@@ -99,37 +99,37 @@ bool CharSet::decreaseUsageCount()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-int8 CharSet::getUsageCount()
+int8 TileSet::getUsageCount()
 {
 	return this->usageCount;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-bool CharSet::hasMultipleFrames()
+bool TileSet::hasMultipleFrames()
 {
 	return NULL != this->charSetSpec->frameOffsets;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-bool CharSet::isShared()
+bool TileSet::isShared()
 {
 	return this->charSetSpec->shared;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-bool CharSet::isOptimized()
+bool TileSet::isOptimized()
 {
 	return this->charSetSpec->optimized;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void CharSet::setOffset(uint16 offset)
+void TileSet::setOffset(uint16 offset)
 {
-	ASSERT(offset < 2048, "CharSet::setOffset: offset out of bounds");
+	ASSERT(offset < 2048, "TileSet::setOffset: offset out of bounds");
 
 	if(this->offset != offset)
 	{
@@ -139,34 +139,34 @@ void CharSet::setOffset(uint16 offset)
 		
 		this->offset = offset;
 
-		CharSet::fireEvent(this, kEventCharSetChangedOffset);
+		TileSet::fireEvent(this, kEventTileSetChangedOffset);
 	}
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-uint16 CharSet::getOffset()
+uint16 TileSet::getOffset()
 {
 	return this->offset;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-const CharSetSpec* CharSet::getSpec()
+const TileSetSpec* TileSet::getSpec()
 {
 	return this->charSetSpec;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-uint16 CharSet::getNumberOfChars()
+uint16 TileSet::getNumberOfChars()
 {
 	return this->charSetSpec->numberOfChars;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void CharSet::addChar(uint32 charToAddTo, const uint32* newChar)
+void TileSet::addChar(uint32 charToAddTo, const uint32* newChar)
 {
 	if(NULL != newChar && charToAddTo < this->charSetSpec->numberOfChars)
 	{
@@ -182,7 +182,7 @@ void CharSet::addChar(uint32 charToAddTo, const uint32* newChar)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void CharSet::putChar(uint32 charToReplace, const uint32* newChar)
+void TileSet::putChar(uint32 charToReplace, const uint32* newChar)
 {
 	if(NULL != newChar && charToReplace < this->charSetSpec->numberOfChars)
 	{
@@ -197,7 +197,7 @@ void CharSet::putChar(uint32 charToReplace, const uint32* newChar)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void CharSet::putPixel(const uint32 charToReplace, const Pixel* charSetPixel, uint8 newPixelColor)
+void TileSet::putPixel(const uint32 charToReplace, const Pixel* charSetPixel, uint8 newPixelColor)
 {
 	if(charSetPixel && charToReplace < this->charSetSpec->numberOfChars && charSetPixel->x < 8 && charSetPixel->y < 8)
 	{
@@ -224,7 +224,7 @@ void CharSet::putPixel(const uint32 charToReplace, const Pixel* charSetPixel, ui
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void CharSet::setFrame(uint16 frame)
+void TileSet::setFrame(uint16 frame)
 {	
 	if(this->frame != frame || !this->written)
 	{
@@ -247,28 +247,28 @@ void CharSet::setFrame(uint16 frame)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-uint16 CharSet::getFrame()
+uint16 TileSet::getFrame()
 {
 	return this->frame;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-uint32 CharSet::getGeneration()
+uint32 TileSet::getGeneration()
 {
 	return this->generation;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-uint32 CharSet::write()
+uint32 TileSet::write()
 {
 	if(this->written)
 	{
 		return this->generation;
 	}
 	
-	NM_ASSERT(0 < this->charSetSpec->numberOfChars, "CharSet::write: 0 chars");
+	NM_ASSERT(0 < this->charSetSpec->numberOfChars, "TileSet::write: 0 chars");
 
 	uint16 tilesToWrite = this->charSetSpec->numberOfChars;
 
@@ -281,7 +281,7 @@ uint32 CharSet::write()
 	{
 		case __CHAR_SET_COMPRESSION_RLE:
 		{
-			CharSet::writeRLE(this);
+			TileSet::writeRLE(this);
 			break;
 		}
 
@@ -316,7 +316,7 @@ uint32 CharSet::write()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void CharSet::writeRLE()
+void TileSet::writeRLE()
 {
 	// 1 poxel = 2 pixels = 4 bits = 1 hex digit
 	// So, each char has 32 poxels

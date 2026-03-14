@@ -7,8 +7,8 @@
  * that was distributed with this source code.
  */
 
-#ifndef CHARSET_H_
-#define CHARSET_H_
+#ifndef TILE_SET_H_
+#define TILE_SET_H_
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // INCLUDES
@@ -20,7 +20,7 @@
 // FORWARD DECLARATIONS
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-class CharSet;
+class TileSet;
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' MACROS
@@ -45,9 +45,9 @@ class CharSet;
 // CLASS' DATA
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-/// A CharSet spec
-/// @memberof CharSet
-typedef struct CharSetSpec
+/// A TileSet spec
+/// @memberof TileSet
+typedef struct TileSetSpec
 {
 	/// Number of CHARs in function of the number of frames to load at the same time
 	uint16 numberOfChars;
@@ -64,27 +64,27 @@ typedef struct CharSetSpec
 	/// Pointer to the array of frames offsets
 	uint32* frameOffsets;
 
-} CharSetSpec;
+} TileSetSpec;
 
-/// A CharSet spec that is stored in ROM
-/// @memberof CharSet
-typedef const CharSetSpec CharSetROMSpec;
+/// A TileSet spec that is stored in ROM
+/// @memberof TileSet
+typedef const TileSetSpec TileSetROMSpec;
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DECLARATION
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-/// Class CharSet
+/// Class TileSet
 ///
 /// Inherits from ListenerObject
 ///
 /// Manages the color data of tile array and writes it to VRAM.
-class CharSet : ListenerObject
+class TileSet : ListenerObject
 {
 	/// @protectedsection
 
 	/// Spec used in the construction of the char set
-	const CharSetSpec* charSetSpec;
+	const TileSetSpec* charSetSpec;
 
 	/// Keeps track of writes
 	uint32 generation;
@@ -108,18 +108,18 @@ class CharSet : ListenerObject
 
 	/// Get a charSet configured with the provided spec.
 	/// @param charSetSpec: Spec used to select or initialize a texture with
-	/// @return CharSet initialized with the provided spec
-	static CharSet get(const CharSetSpec* charSetSpec);
+	/// @return TileSet initialized with the provided spec
+	static TileSet get(const TileSetSpec* charSetSpec);
 
 	/// Release a charSet.
-	/// @param charSet: CharSet to release
+	/// @param charSet: TileSet to release
 	/// @return True if the char set is successfully deleted; false otherwise
-	static bool release(CharSet charSet);
+	static bool release(TileSet charSet);
 
 	/// Class' constructor
 	/// @param charSetSpec: Spec to use in the construction of the char set
 	/// @param offset: Offset in CHAR space where the block allocated for this char set starts
-	void constructor(const CharSetSpec* charSetSpec, uint16 offset);
+	void constructor(const TileSetSpec* charSetSpec, uint16 offset);
 
 	/// Increase the usage count.
 	void increaseUsageCount();
@@ -131,8 +131,8 @@ class CharSet : ListenerObject
 	/// @return Usage count
 	int8 getUsageCount();
 
-	/// Check if the CharSet has a non NULL array of frame offests.
-	/// @return True if the CharSet has an array of animation frames
+	/// Check if the TileSet has a non NULL array of frame offests.
+	/// @return True if the TileSet has an array of animation frames
 	bool hasMultipleFrames();
 
 	/// Check if the char set is shared.
@@ -153,7 +153,7 @@ class CharSet : ListenerObject
 
 	/// Retrieve the spec used in the construction of the char set.
 	/// @return Spec used in the construction of the char set
-	const CharSetSpec* getSpec();
+	const TileSetSpec* getSpec();
 
 	/// Retrieve the number of CHARs used by the char set.
 	/// @return Number of CHARs used by the char set

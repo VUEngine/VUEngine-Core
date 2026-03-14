@@ -217,7 +217,7 @@ bool Sprite::prepareToRender()
 	(
 		kTextureInvalid == this->texture->status 
 		|| 
-		kTextureNoCharSet == this->texture->status
+		kTextureNoTileSet == this->texture->status
 		||
 		kTexturePendingWriting == this->texture->status
 	)

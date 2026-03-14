@@ -14,7 +14,7 @@
 // INCLUDES
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-#include <CharSet.h>
+#include <TileSet.h>
 #include <Object.h>
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -35,7 +35,7 @@ enum TextureStatus
 	kTextureFrameChanged,
 	kTextureWritten,
 	kTextureInvalid,
-	kTextureNoCharSet
+	kTextureNoTileSet
 };
 
 /// A Texture spec
@@ -43,7 +43,7 @@ enum TextureStatus
 typedef struct TextureSpec
 {
 	/// Pointer to the char spec that the texture uses
-	CharSetSpec* charSetSpec;
+	TileSetSpec* charSetSpec;
 
 	/// Pointer to the map array that defines how to use the tiles from the char set
 	uint16* map;
@@ -82,7 +82,7 @@ typedef const TextureSpec TextureROMSpec;
 // CLASS' DECLARATION
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-/// Class CharSet
+/// Class TileSet
 ///
 /// Inherits from ListenerObject
 ///
@@ -93,7 +93,7 @@ abstract class Texture : Object
 	void (*doUpdate)(Texture, int16);
 
 	/// Char set that holds the pixel data used by the texture
-	CharSet charSet;
+	TileSet charSet;
 
 	/// Spec used to configure the texture
 	const TextureSpec* textureSpec;
@@ -154,7 +154,7 @@ abstract class Texture : Object
 	/// Retrieve the texture's char set.
 	/// @param loadIfNeeded: If true and the char set is not loaded, loads it
 	/// @return Texture's char set
-	CharSet getCharSet(uint32 loadIfNeeded);
+	TileSet getTileSet(uint32 loadIfNeeded);
 
 	/// Increase the usage count.
 	void increaseUsageCount();
@@ -203,7 +203,7 @@ abstract class Texture : Object
 	bool isShared();
 
 	/// Check if the texture is an animation or not.
-	/// @return True if the CharSet has an array of animation frames
+	/// @return True if the TileSet has an array of animation frames
 	bool isAnimated();
 
 	/// Check if the texture has only one frame.

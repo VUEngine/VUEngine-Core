@@ -11,13 +11,13 @@
 // INCLUDES
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-#include <CharSet.h>
+#include <TileSet.h>
 #include <Mem.h>
 #include <Printer.h>
 #include <Singleton.h>
 #include <VirtualList.h>
 
-#include "CharSetManager.h"
+#include "TileSetManager.h"
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DECLARATIONS
@@ -25,7 +25,7 @@
 
 friend class VirtualNode;
 friend class VirtualList;
-friend class CharSet;
+friend class TileSet;
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PUBLIC STATIC METHODS
@@ -33,18 +33,18 @@ friend class CharSet;
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void CharSetManager::print(int32 x __attribute__((unused)), int32 y __attribute__((unused)))
+static void TileSetManager::print(int32 x __attribute__((unused)), int32 y __attribute__((unused)))
 {
 #ifndef __SHIPPING
-	CharSetManager charSetManager = CharSetManager::getInstance();
+	TileSetManager charSetManager = TileSetManager::getInstance();
 	Printer::text("CHAR MEMORY USAGE", x, y++, NULL);
 
-	Printer::text("Total CharSets:        ", x, ++y, NULL);
+	Printer::text("Total TileSets:        ", x, ++y, NULL);
 	Printer::int32(VirtualList::getCount(charSetManager->charSets), x + 18, y, NULL);
 	Printer::text("Total used chars:      ", x, ++y, NULL);
-	Printer::int32(CharSetManager::getTotalUsedChars(charSetManager), x + 18, y, NULL);
+	Printer::int32(TileSetManager::getTotalUsedChars(charSetManager), x + 18, y, NULL);
 	Printer::text("Total free chars:      ", x, ++y, NULL);
-	Printer::int32(CharSetManager::getTotalFreeChars(charSetManager), x + 18, y, NULL);
+	Printer::int32(TileSetManager::getTotalFreeChars(charSetManager), x + 18, y, NULL);
 #endif
 }
 
@@ -54,7 +54,7 @@ static void CharSetManager::print(int32 x __attribute__((unused)), int32 y __att
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-secure void CharSetManager::reset()
+secure void TileSetManager::reset()
 {
 	if(this->charSets)
 	{
@@ -66,14 +66,14 @@ secure void CharSetManager::reset()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-secure void CharSetManager::clearGraphicMemory()
+secure void TileSetManager::clearGraphicMemory()
 {
 	Mem::clear((uint8*) __CHAR_SPACE_BASE_ADDRESS, 8192 * 4);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-secure void CharSetManager::loadCharSets(const CharSetSpec** charSetSpecs)
+secure void TileSetManager::loadTileSets(const TileSetSpec** charSetSpecs)
 {
 	if(NULL != charSetSpecs)
 	{
@@ -81,7 +81,7 @@ secure void CharSetManager::loadCharSets(const CharSetSpec** charSetSpecs)
 		{
 			if(charSetSpecs[i]->shared)
 			{
-				CharSetManager::getCharSet(this, (CharSetSpec*)charSetSpecs[i]);
+				TileSetManager::getTileSet(this, (TileSetSpec*)charSetSpecs[i]);
 			}
 		}
 	}
@@ -89,34 +89,34 @@ secure void CharSetManager::loadCharSets(const CharSetSpec** charSetSpecs)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-CharSet CharSetManager::getCharSet(const CharSetSpec* charSetSpec)
+TileSet TileSetManager::getTileSet(const TileSetSpec* charSetSpec)
 {
-	NM_ASSERT(NULL != charSetSpec, "CharSetManager::getCharSet: NULL charSetSpec");
+	NM_ASSERT(NULL != charSetSpec, "TileSetManager::getTileSet: NULL charSetSpec");
 
 	if(NULL == charSetSpec)
 	{
 		return NULL;
 	}
 
-	CharSet charSet = NULL;
+	TileSet charSet = NULL;
 
 	if(!charSetSpec->shared)
 	{
 		// Ask for allocation
-		charSet = CharSetManager::allocateCharSet(this, charSetSpec);
+		charSet = TileSetManager::allocateTileSet(this, charSetSpec);
 	}
 	else
 	{
-		// First try to find an already created charset
-		charSet = CharSetManager::findCharSet(this, charSetSpec);
+		// First try to find an already created tileSet
+		charSet = TileSetManager::findTileSet(this, charSetSpec);
 
 		if(NULL == charSet)
 		{
-			charSet = CharSetManager::allocateCharSet(this, charSetSpec);
+			charSet = TileSetManager::allocateTileSet(this, charSetSpec);
 		}
 		else
 		{
-			CharSet::increaseUsageCount(charSet);
+			TileSet::increaseUsageCount(charSet);
 		}
 	}
 
@@ -125,18 +125,18 @@ CharSet CharSetManager::getCharSet(const CharSetSpec* charSetSpec)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-secure bool CharSetManager::releaseCharSet(CharSet charSet)
+secure bool TileSetManager::releaseTileSet(TileSet charSet)
 {
 	if(isDeleted(charSet))
 	{
 		return false;
 	}
 
-	if(CharSet::decreaseUsageCount(charSet))
+	if(TileSet::decreaseUsageCount(charSet))
 	{
 		VirtualList::removeData(this->charSets, charSet);
 
-		uint32 offset = CharSet::getOffset(charSet);
+		uint32 offset = TileSet::getOffset(charSet);
 
 		if(1 == this->freedOffset || offset < this->freedOffset)
 		{
@@ -153,7 +153,7 @@ secure bool CharSetManager::releaseCharSet(CharSet charSet)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-secure void CharSetManager::defragment(bool deferred)
+secure void TileSetManager::defragment(bool deferred)
 {
 	if(1 < this->freedOffset)
 	{
@@ -163,21 +163,21 @@ secure void CharSetManager::defragment(bool deferred)
 
 			for(; NULL != node; node = node->next)
 			{
-				CharSet charSet = CharSet::safeCast(node->data);
+				TileSet charSet = TileSet::safeCast(node->data);
 
-				NM_ASSERT(!isDeleted(charSet), "CharSetManager::defragment: deleted charset");
+				NM_ASSERT(!isDeleted(charSet), "TileSetManager::defragment: deleted tileSet");
 
-				uint32 offset = CharSet::getOffset(charSet);
+				uint32 offset = TileSet::getOffset(charSet);
 
 				if(this->freedOffset < offset)
 				{
-					CharSet::setOffset(charSet, this->freedOffset);
-					this->freedOffset += CharSet::getNumberOfChars(charSet);
+					TileSet::setOffset(charSet, this->freedOffset);
+					this->freedOffset += TileSet::getNumberOfChars(charSet);
 					break;
 				}
 				else if(this->freedOffset == offset)
 				{
-					this->freedOffset += CharSet::getNumberOfChars(charSet);
+					this->freedOffset += TileSet::getNumberOfChars(charSet);
 				}
 			}
 
@@ -192,24 +192,24 @@ secure void CharSetManager::defragment(bool deferred)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-int32 CharSetManager::getTotalUsedChars()
+int32 TileSetManager::getTotalUsedChars()
 {
-	ASSERT(this->charSets, "CharSetManager::getTotalFreeChars: null charSets list");
+	ASSERT(this->charSets, "TileSetManager::getTotalFreeChars: null charSets list");
 
-	CharSet lastCharSet = VirtualList::back(this->charSets);
-	return (int32)CharSet::getOffset(lastCharSet) + CharSet::getNumberOfChars(lastCharSet);
+	TileSet lastTileSet = VirtualList::back(this->charSets);
+	return (int32)TileSet::getOffset(lastTileSet) + TileSet::getNumberOfChars(lastTileSet);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-int32 CharSetManager::getTotalFreeChars()
+int32 TileSetManager::getTotalFreeChars()
 {
-	return __CHAR_MEMORY_TOTAL_CHARS - CharSetManager::getTotalUsedChars(this);
+	return __CHAR_MEMORY_TOTAL_CHARS - TileSetManager::getTotalUsedChars(this);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-int32 CharSetManager::getTotalCharSets()
+int32 TileSetManager::getTotalTileSets()
 {
 	return VirtualList::getCount(this->charSets);
 }
@@ -222,7 +222,7 @@ int32 CharSetManager::getTotalCharSets()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void CharSetManager::constructor()
+void TileSetManager::constructor()
 {
 	// Always explicitly call the base's constructor 
 	Base::constructor();
@@ -233,9 +233,9 @@ void CharSetManager::constructor()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void CharSetManager::destructor()
+void TileSetManager::destructor()
 {
-	CharSetManager::reset(this);
+	TileSetManager::reset(this);
 
 	delete this->charSets;
 	this->charSets = NULL;
@@ -246,13 +246,13 @@ void CharSetManager::destructor()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-CharSet CharSetManager::findCharSet(const CharSetSpec* charSetSpec)
+TileSet TileSetManager::findTileSet(const TileSetSpec* charSetSpec)
 {
 	CACHE_RESET;
 
 	for(VirtualNode node = this->charSets->head; NULL != node; node = node->next)
 	{
-		CharSet charSet = CharSet::safeCast(node->data);
+		TileSet charSet = TileSet::safeCast(node->data);
 
 		if(!isDeleted(charSet) && charSet->charSetSpec->tiles == charSetSpec->tiles && charSet->charSetSpec->shared == charSetSpec->shared)
 		{
@@ -265,24 +265,24 @@ CharSet CharSetManager::findCharSet(const CharSetSpec* charSetSpec)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-CharSet CharSetManager::allocateCharSet(const CharSetSpec* charSetSpec)
+TileSet TileSetManager::allocateTileSet(const TileSetSpec* charSetSpec)
 {
-	NM_ASSERT(!isDeleted(this->charSets), "CharSetManager::allocateCharSet: null charSets");
-	NM_ASSERT(charSetSpec, "CharSetManager::allocateCharSet: null charSetSpec");
-	NM_ASSERT(charSetSpec->numberOfChars > 0, "CharSetManager::allocateCharSet: number of chars < 0");
-	NM_ASSERT(charSetSpec->numberOfChars < __CHAR_MEMORY_TOTAL_CHARS, "CharSetManager::allocateCharSet: too many chars in spec");
+	NM_ASSERT(!isDeleted(this->charSets), "TileSetManager::allocateTileSet: null charSets");
+	NM_ASSERT(charSetSpec, "TileSetManager::allocateTileSet: null charSetSpec");
+	NM_ASSERT(charSetSpec->numberOfChars > 0, "TileSetManager::allocateTileSet: number of chars < 0");
+	NM_ASSERT(charSetSpec->numberOfChars < __CHAR_MEMORY_TOTAL_CHARS, "TileSetManager::allocateTileSet: too many chars in spec");
 
 	uint16 offset = NULL != this->charSets->head ? 0 : 1;
 
 	if(NULL != this->charSets->head)
 	{
-		CharSet lastCharSet = CharSet::safeCast(VirtualList::back(this->charSets));
-		offset += CharSet::getOffset(lastCharSet) + CharSet::getNumberOfChars(lastCharSet);
+		TileSet lastTileSet = TileSet::safeCast(VirtualList::back(this->charSets));
+		offset += TileSet::getOffset(lastTileSet) + TileSet::getNumberOfChars(lastTileSet);
 	}
 
 	if((unsigned)offset + charSetSpec->numberOfChars < __CHAR_MEMORY_TOTAL_CHARS)
 	{
-		CharSet charSet = new CharSet(charSetSpec, offset);
+		TileSet charSet = new TileSet(charSetSpec, offset);
 
 		VirtualList::pushBack(this->charSets, charSet);
 
@@ -293,7 +293,7 @@ CharSet CharSetManager::allocateCharSet(const CharSetSpec* charSetSpec)
 	Printer::setDebugMode();
 	Printer::clear();
 
-	NM_ASSERT(false, "CharSetManager::allocateCharSet: CHAR mem depleted");
+	NM_ASSERT(false, "TileSetManager::allocateTileSet: CHAR mem depleted");
 #endif
 
 	return NULL;
@@ -301,13 +301,13 @@ CharSet CharSetManager::allocateCharSet(const CharSetSpec* charSetSpec)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-secure void CharSetManager::writeCharSets()
+secure void TileSetManager::writeTileSets()
 {
-	CharSetManager::defragment(this, false);
+	TileSetManager::defragment(this, false);
 
 	for(VirtualNode node = this->charSets->head; NULL != node; node = node->next)
 	{
-		CharSet::write(node->data);
+		TileSet::write(node->data);
 	}
 }
 

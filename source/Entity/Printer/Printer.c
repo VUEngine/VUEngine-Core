@@ -13,8 +13,8 @@
 
 #include <string.h>
 
-#include <CharSet.h>
-#include <CharSetManager.h>
+#include <TileSet.h>
+#include <TileSetManager.h>
 #include <ComponentManager.h>
 #include <DebugConfig.h>
 #include <Mem.h>
@@ -50,7 +50,7 @@ FontData VUENGINE_DEBUG_FONT_DATA =
 	// Font spec
 	(FontSpec*)&DefaultFontSpec,
 
-	// CharSet
+	// TileSet
 	NULL,
 };
 
@@ -84,7 +84,7 @@ static void Printer::loadFonts(FontSpec** fontSpecs)
 {
 	Printer printer = Printer::getInstance();
 
-	// Since fonts' charsets will be released, there is no reason to keep
+	// Since fonts' tileSets will be released, there is no reason to keep
 	// Anything in the printer area
 	Printer::clear();
 
@@ -95,10 +95,10 @@ static void Printer::loadFonts(FontSpec** fontSpecs)
 	Hardware::suspendInterrupts();
 
 	/// Must force CHAR defragmentation
-	CharSetManager::writeCharSets(CharSetManager::getInstance());
+	TileSetManager::writeTileSets(TileSetManager::getInstance());
 
 	// Iterate over all defined fonts and add to internal list
-	// Preload charset for font if in list of fonts to preload
+	// Preload tileSet for font if in list of fonts to preload
 	if(NULL != fontSpecs)
 	{
 		for(int16 i = 0; NULL != fontSpecs[i]; i++)
@@ -106,14 +106,14 @@ static void Printer::loadFonts(FontSpec** fontSpecs)
 			// Find defined font in list of fonts to preload
 			for(int16 j = 0; NULL != _fontData[j].fontSpec; j++)
 			{
-				// Preload charset and save charset reference, if font was found
+				// Preload tileSet and save tileSet reference, if font was found
 				if(fontSpecs[i] == _fontData[j].fontSpec)
 				{
-					_fontData[j].charSet = CharSet::get(_fontData[j].fontSpec->charSetSpec);
+					_fontData[j].charSet = TileSet::get(_fontData[j].fontSpec->charSetSpec);
 
 					if(NULL != _fontData[j].charSet)
 					{
-						CharSet::addEventListener(_fontData[j].charSet, ListenerObject::safeCast(printer), kEventCharSetChangedOffset);
+						TileSet::addEventListener(_fontData[j].charSet, ListenerObject::safeCast(printer), kEventTileSetChangedOffset);
 					}
 				}
 			}
@@ -138,12 +138,12 @@ static void Printer::releaseFonts()
 
 	for(int16 i = 0; NULL != _fontData[i].fontSpec; i++)
 	{
-		// Preload charset and save charset reference, if font was found
+		// Preload tileSet and save tileSet reference, if font was found
 		if(!isDeleted(_fontData[i].charSet))
 		{
-			CharSet::removeEventListener(_fontData[i].charSet, ListenerObject::safeCast(printer), kEventCharSetChangedOffset);
+			TileSet::removeEventListener(_fontData[i].charSet, ListenerObject::safeCast(printer), kEventTileSetChangedOffset);
 
-			while(!CharSet::release(_fontData[i].charSet));
+			while(!TileSet::release(_fontData[i].charSet));
 		}
 
 		_fontData[i].charSet = NULL;
@@ -314,8 +314,8 @@ static void Printer::setFontPage(const char* font, uint16 page)
 		return;
 	}
 
-	CharSet::setFrame(fontData->charSet, page);
-	CharSet::write(fontData->charSet);
+	TileSet::setFrame(fontData->charSet, page);
+	TileSet::write(fontData->charSet);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -573,11 +573,11 @@ static FontData* Printer::getFontByName(const char* font)
 
 		if(NULL == result->charSet && NULL != result->fontSpec->charSetSpec)
 		{
-			result->charSet = CharSet::get(result->fontSpec->charSetSpec);
+			result->charSet = TileSet::get(result->fontSpec->charSetSpec);
 
 			if(NULL != result->charSet)
 			{
-				CharSet::addEventListener(result->charSet, ListenerObject::safeCast(printer), kEventCharSetChangedOffset);
+				TileSet::addEventListener(result->charSet, ListenerObject::safeCast(printer), kEventTileSetChangedOffset);
 			}
 			else
 			{
@@ -730,7 +730,7 @@ static void Printer::out(uint8 x, uint8 y, const char* string, const char* font)
 		return;
 	}
 
-	uint32 offset = __PRINTING_MODE_DEBUG == printer->mode ? VUENGINE_DEBUG_FONT_CHARSET_OFFSET : CharSet::getOffset(fontData->charSet);
+	uint32 offset = __PRINTING_MODE_DEBUG == printer->mode ? VUENGINE_DEBUG_FONT_CHARSET_OFFSET : TileSet::getOffset(fontData->charSet);
 
 	if(isDeleted(printer->activePrintingSprite))
 	{
@@ -830,7 +830,7 @@ static void Printer::out(uint8 x, uint8 y, const char* string, const char* font)
 
 							*(offsetDisplacement + (charOffsetY << 6)) =
 								(
-									// Offset of charset in char memory + respective char of character
+									// Offset of tileSet in char memory + respective char of character
 									offset + stringEntryOffsetBySizeX + stringEntryOffsetBySizeY + charOffset								
 								)
 								| (printer->mask << 14);
@@ -843,7 +843,7 @@ static void Printer::out(uint8 x, uint8 y, const char* string, const char* font)
 
 					*(offsetDisplacement + (0 << 6)) =
 						(
-							// Offset of charset in char memory + respective char of character
+							// Offset of tileSet in char memory + respective char of character
 							offset + (string[i] - fontOffsetCache)								
 						)
 						| (printer->mask << 14);					
@@ -881,13 +881,13 @@ bool Printer::onEvent(ListenerObject eventFirer, uint16 eventCode)
 {
 	switch(eventCode)
 	{
-		case kEventCharSetChangedOffset:
+		case kEventTileSetChangedOffset:
 		{
-			CharSet charSet = CharSet::safeCast(eventFirer);
+			TileSet charSet = TileSet::safeCast(eventFirer);
 
 			if(!isDeleted(charSet))
 			{
-				CharSet::write(charSet);
+				TileSet::write(charSet);
 				Printer::fireEvent(this, kEventFontRewritten);
 				NM_ASSERT(!isDeleted(this), "Printer::onEvent: deleted printer during kEventFontRewritten");
 			}

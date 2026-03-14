@@ -44,7 +44,7 @@ const uint32 ProfilerFontTiles[] __attribute__((aligned(4))) =
 // DEFINITIONS
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-CharSetROMSpec ProfilerFontCharSet =
+TileSetROMSpec ProfilerFontTileSet =
 {
 	// Number of chars in function of the number of frames to load at the same time
 	45,
@@ -65,7 +65,7 @@ CharSetROMSpec ProfilerFontCharSet =
 FontROMSpec ProfilerFontSpec =
 {
 	// Pointer to the char spec that the font uses
-	(CharSetSpec*)&ProfilerFontCharSet,
+	(TileSetSpec*)&ProfilerFontTileSet,
 
 	// Offset at which character number the font starts
 	46,
@@ -73,7 +73,7 @@ FontROMSpec ProfilerFontSpec =
 	// Number of characters in this font
 	45,
 
-	// Number of characters per line in charset
+	// Number of characters per line in tileSet
 	1,
 
 	// Size of a single character (in chars) ({width, height})

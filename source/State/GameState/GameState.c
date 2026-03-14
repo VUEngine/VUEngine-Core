@@ -15,7 +15,7 @@
 #include <BodyManager.h>
 #include <Camera.h>
 #include <CameraEffectManager.h>
-#include <CharSetManager.h>
+#include <TileSetManager.h>
 #include <Clock.h>
 #include <ColliderManager.h>
 #include <FrameBuffers.h>
@@ -1199,7 +1199,7 @@ void GameState::debugging()
 #endif
 
 #ifdef __DEBUGGING_CHAR_MEMORY
-	CharSetManager::print(1, 1);
+	TileSetManager::print(1, 1);
 #endif
 
 #ifdef __DEBUGGING_BGMAP_MEMORY

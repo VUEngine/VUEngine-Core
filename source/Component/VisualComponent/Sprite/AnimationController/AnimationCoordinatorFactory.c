@@ -33,7 +33,7 @@ friend class VirtualNode;
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-AnimationCoordinator AnimationCoordinatorFactory::getCoordinator(AnimationController animationController, ListenerObject scope, const CharSetSpec* charSetSpec)
+AnimationCoordinator AnimationCoordinatorFactory::getCoordinator(AnimationController animationController, ListenerObject scope, const TileSetSpec* charSetSpec)
 {
 	NM_ASSERT(NULL != charSetSpec, "AnimationCoordinatorFactory::getCoordinator: null charSetSpec");
 
@@ -44,7 +44,7 @@ AnimationCoordinator AnimationCoordinatorFactory::getCoordinator(AnimationContro
 		{
 			AnimationCoordinator animationCoordinator = AnimationCoordinator::safeCast(node->data);
 
-			if(AnimationCoordinator::getCharSetSpec(animationCoordinator) == charSetSpec)
+			if(AnimationCoordinator::getTileSetSpec(animationCoordinator) == charSetSpec)
 			{
 				AnimationCoordinator::addAnimationController(animationCoordinator, animationController);
 				return animationCoordinator;
