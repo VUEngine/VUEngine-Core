@@ -1,9 +1,9 @@
 VUEngine
 ========
 
-[VUEngine](https://github.com/VUEngine/VUEngine-Core) ("Virtual Utopia Engine", based on the Virtual Boy's code name, "Virtual Utopia Experience") is a high-level, object oriented game engine for the Nintendo Virtual Boy. It is written in [Virtual C](https://www.vuengine.dev/documentation/language/introduction/), a custom C-dialect that resembles some of C++’ syntax that is converted by our custom transpiler to plain C with macros.
+[VUEngine](https://github.com/VUEngine/VUEngine-Core) ("Virtual Utopia Engine", based on the Virtual Boy's code name, "Virtual Utopia Experience") is a high-level, object oriented game engine for tile based consoles that started its life targeting the Nintendo Virtual Boy. It is written in [Virtual C](https://www.vuengine.dev/documentation/language/introduction/), a custom C-dialect that resembles some of C++’ syntax that is converted by our custom transpiler to plain C with macros.
 
-The engine aims to facilitate the creation of games for the Virtual Boy without having to worry about nor master its underlying hardware unless you want to. Instead, it provides higher level abstractions that are relevant for general game development. Check the documentation [here](https://www.vuengine.dev/documentation/user-guide/introduction/).
+The engine aims to facilitate the creation of games for retro tile based consoles, providing the hardware layer for each (only the Virtual Boy is currently supported) without having to worry about nor master its underlying hardware unless you want to. It provides higher level abstractions that are relevant for general game development. Check the documentation [here](https://www.vuengine.dev/documentation/user-guide/introduction/).
 
 Features:
 
@@ -36,13 +36,9 @@ Features:
 	- Recyclable
 
 - Rendering:
-	- TILE memory management
-	- BGAMP memory management
-	- OBJECT memory management
-	- WORLD memory management
-	- Direct frame buffer manipulation
-	- Affine/H-Bias effects
+	- Graphics memory management
 	- Transparency
+	- Special sprite efffects (affine, horizontal line parallax, etc.)
 	- Event driven frame based animation
 
 - Physics:
@@ -62,11 +58,7 @@ Features:
 		- Profiling data
 		- Streaming
 		- Hardware registers' usage
-		- VIP inspector:
-			- TILE memory
-			- BGMAP memory
-			- OBJECT memory
-			- WORLD memory
+		- Graphics memory inspector
 		- Colliders
 	- Stage editor
 	- Animations inspector
