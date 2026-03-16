@@ -106,9 +106,14 @@ Sound SoundManager::create(Entity owner, const SoundSpec* soundSpec)
 		return NULL;
 	}
 
-	Timer::addEventListener(Timer::getInstance(), ListenerObject::safeCast(this), kEventTimerInterrupt);
+	Sound sound = ((Sound (*)(Entity, const SoundSpec*)) ((ComponentSpec*)soundSpec)->allocator)(owner, soundSpec);
 
-	return ((Sound (*)(Entity, const SoundSpec*)) ((ComponentSpec*)soundSpec)->allocator)(owner, soundSpec);
+	if(!isDeleted(sound))
+	{	
+		Timer::addEventListener(Timer::getInstance(), ListenerObject::safeCast(this), kEventTimerInterrupt);
+	}
+
+	return sound;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
