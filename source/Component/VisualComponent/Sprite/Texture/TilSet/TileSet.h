@@ -49,7 +49,7 @@ class TileSet;
 /// @memberof TileSet
 typedef struct TileSetSpec
 {
-	/// Number of TILEs in function of the number of frames to load at the same time
+	/// Number of tiles in function of the number of frames to load at the same time
 	uint16 numberOfChars;
 
 	/// Whether the char set is shared or not
