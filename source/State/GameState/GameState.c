@@ -746,13 +746,13 @@ void GameState::createManagers()
 		if(NULL == this->componentManagers[i])
 		{
 			AllocatorPointer _componentManagerAllocators[kComponentTypes];
-			_componentManagerAllocators[kMutatorComponent] = __TYPE(MutatorManager);
-			_componentManagerAllocators[kBehaviorComponent] = __TYPE(BehaviorManager);
-			_componentManagerAllocators[kPhysicsComponent] = __TYPE(BodyManager);
-			_componentManagerAllocators[kColliderComponent] = __TYPE(ColliderManager);
-			_componentManagerAllocators[kSpriteComponent] = __TYPE(SpriteManager);
-			_componentManagerAllocators[kWireframeComponent] = __TYPE(WireframeManager);
-			_componentManagerAllocators[kSoundComponent] = __TYPE(SoundManager);
+			_componentManagerAllocators[kMutatorComponent] 		= __TYPE(MutatorManager);
+			_componentManagerAllocators[kBehaviorComponent] 	= __TYPE(BehaviorManager);
+			_componentManagerAllocators[kPhysicsComponent] 		= __TYPE(BodyManager);
+			_componentManagerAllocators[kColliderComponent] 	= __TYPE(ColliderManager);
+			_componentManagerAllocators[kSpriteComponent] 		= __TYPE(SpriteManager);
+			_componentManagerAllocators[kWireframeComponent] 	= __TYPE(WireframeManager);
+			_componentManagerAllocators[kSoundComponent] 		= __TYPE(SoundManager);
 
 			this->componentManagers[i] = ComponentManager::safeCast(_componentManagerAllocators[i]());
 		}

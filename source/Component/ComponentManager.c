@@ -53,6 +53,8 @@ static Component ComponentManager::createComponent(Entity owner, const Component
 
 	ComponentManager componentManager = ComponentManager::getManager(componentSpec->componentType);
 
+	NM_ASSERT(!isDeleted(componentManager), "ComponentManager::createComponent: no manager available");
+
 	if(NULL == componentManager)
 	{
 		return NULL;
