@@ -68,7 +68,7 @@ singleton class Debug : Tool
 	int32 objectSegment;
 
 	/// Currently displayed TILE memory segment
-	int32 charSegment;
+	int32 tileSegment;
 
 	/// Currently displayed SRAM page
 	int32 sramPage;
