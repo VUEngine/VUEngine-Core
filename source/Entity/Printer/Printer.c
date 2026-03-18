@@ -732,11 +732,6 @@ static void Printer::out(uint8 x, uint8 y, const char* string, const char* font)
 
 	uint32 offset = __PRINTING_MODE_DEBUG == printer->mode ? VUENGINE_DEBUG_FONT_TILESET_OFFSET : TileSet::getOffset(fontData->tileSet);
 
-	if(isDeleted(printer->activePrintingSprite))
-	{
-		return;
-	}
-
 	uint16 fontSizeX = fontData->fontSpec->fontSize.x;
 	uint16 fontSizeY = fontData->fontSpec->fontSize.y;
 
@@ -763,7 +758,7 @@ static void Printer::out(uint8 x, uint8 y, const char* string, const char* font)
 		}
 	}
 	
-	uint16* offsetDisplacementStart = (uint16*)PrintingSprite::getPrintingAddress(printer->activePrintingSprite, true);
+	uint16* offsetDisplacementStart = isDeleted(printer->activePrintingSprite) ? __TEXTURE_SPACE_BASE_ADDRESS : (uint16*)PrintingSprite::getPrintingAddress(printer->activePrintingSprite, true);
 	int16 tileLineSize = fontData->fontSpec->charactersPerLineInTileSet * fontSizeX;
 	int16 tileLineSizeYModifier = tileLineSize * (fontSizeY - 1);
 	uint16 fontOffsetCache = (uint8)fontData->fontSpec->offset;
