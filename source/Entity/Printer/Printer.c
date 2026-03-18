@@ -758,7 +758,11 @@ static void Printer::out(uint8 x, uint8 y, const char* string, const char* font)
 		}
 	}
 	
-	uint16* offsetDisplacementStart = isDeleted(printer->activePrintingSprite) ? __TEXTURE_SPACE_BASE_ADDRESS : (uint16*)PrintingSprite::getPrintingAddress(printer->activePrintingSprite, true);
+	uint16* offsetDisplacementStart = isDeleted(printer->activePrintingSprite) ? 
+		(uint16*)__TEXTURE_SPACE_BASE_ADDRESS 
+		: 
+		(uint16*)PrintingSprite::getPrintingAddress(printer->activePrintingSprite, true);
+
 	int16 tileLineSize = fontData->fontSpec->charactersPerLineInTileSet * fontSizeX;
 	int16 tileLineSizeYModifier = tileLineSize * (fontSizeY - 1);
 	uint16 fontOffsetCache = (uint8)fontData->fontSpec->offset;
