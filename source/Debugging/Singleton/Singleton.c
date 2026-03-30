@@ -243,22 +243,19 @@ const ClassPointer VUEngineAuthorizedClasses[] =
 
 static void Singleton::secure()
 {
-	return;
 #ifndef __RELEASE
 	AnimationCoordinatorFactory::secure(&AnimationCoordinatorFactoryAuthorizedClasses);
-//	BgmapTextureManager::secure(&BgmapTextureManagerAuthorizedClasses);
 	Camera::secure(&CameraAuthorizedClasses);
 	TileSetManager::secure(&TileSetManagerAuthorizedClasses);
 	ClockManager::secure(&ClockManagerAuthorizedClasses);
-	Communications::secure(&CommunicationsAuthorizedClasses);
+//	Communications::secure(&CommunicationsAuthorizedClasses);
 	FrameBuffers::secure(&FrameBuffersAuthorizedClasses);
 //	Keypad::secure(&KeypadAuthorizedClasses);
 	MessageDispatcher::secure(&MessageDispatcherAuthorizedClasses);
-	ObjectTextureManager::secure(&ObjectTextureManagerAuthorizedClasses);
-	ParamTableManager::secure(&ParamTableManagerAuthorizedClasses);
 	Printer::secure(&PrintingAuthorizedClasses);
+
 //	Rumble::secure(&RumbleAuthorizedClasses);
-//	SRAM::secure(&SRAMAuthorizedClasses);
+	SRAM::secure(&SRAMAuthorizedClasses);
 	StopwatchManager::secure(&StopwatchManagerAuthorizedClasses);
 	Timer::secure(&TimerAuthorizedClasses);
 	DisplayUnit::secure(&DisplayUnitAuthorizedClasses);	

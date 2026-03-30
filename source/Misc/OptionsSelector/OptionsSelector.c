@@ -51,7 +51,6 @@
 #include <Sphere.h>
 #include <Sprite.h>
 #include <SpriteManager.h>
-#include <SRAM.h>
 #include <Stage.h>
 #include <StageEditor.h>
 #include <StageEditorState.h>
