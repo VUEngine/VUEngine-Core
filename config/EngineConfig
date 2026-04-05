@@ -6,7 +6,7 @@
 	},
 	"animation": {
 		"maxAnimationFunctionNameLength": 16,
-		"maxFramesPerAnimationFunction": 16
+		"maxFramesPerAnimationFunction": 32
 	},
 	"brightness": {
 		"brightRed": 128,
@@ -14,9 +14,6 @@
 		"fadeDelay": 16,
 		"fadeIncrement": 1,
 		"mediumRed": 64
-	},
-	"tiles": {
-		"totalTiles": 2048
 	},
 	"debug": {
 		"alertGraphicsDepletion": true,
@@ -156,6 +153,9 @@
 				"y": 0
 			}
 		}
+	},
+	"tiles": {
+		"totalTiles": 2048
 	},
 	"wireframes": {
 		"frustumExtensionPower": 0,
