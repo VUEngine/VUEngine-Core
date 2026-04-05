@@ -268,13 +268,15 @@ fix7_9_ext SoundTrack::fastForward(uint32 cursor)
 
 	for(; this->cursor < cursor;)
 	{
-		SoundTrackKeyframe soundTrackKeyframe = this->soundTrackSpec->trackKeyframes[this->cursor++];
-		
-		elapsedTicks += __I_TO_FIX7_9_EXT(soundTrackKeyframe.tick);
+		SoundTrackKeyframe soundTrackKeyframe = this->soundTrackSpec->trackKeyframes[this->cursor];
 
 		SoundTrack::updateCursors(this);
-	}
 
+		this->cursor++;
+	
+		elapsedTicks += __I_TO_FIX7_9_EXT(soundTrackKeyframe.tick);
+	}
+	
 	return elapsedTicks;
 }
 
