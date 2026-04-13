@@ -218,9 +218,14 @@ int32 VirtualList::getCount()
 
 VirtualNode VirtualList::pushFront(const void* const data)
 {
-	VirtualNode newNode = new VirtualNode(data);
+	NM_ASSERT(data, "VirtualList::pushFront: null data");
 
-	ASSERT(data, "VirtualList::pushFront: null data");
+	if(NULL == data)
+	{
+		return NULL;
+	}
+	
+	VirtualNode newNode = new VirtualNode(data);
 
 	// Set the tail
 	if(NULL == this->tail)
@@ -246,9 +251,14 @@ VirtualNode VirtualList::pushFront(const void* const data)
 
 VirtualNode VirtualList::pushBack(const void* const data)
 {
-	VirtualNode newNode = new VirtualNode(data);
+	NM_ASSERT(data, "VirtualList::pushBack: null data");
 
-	ASSERT(data, "VirtualList::pushBack: null data");
+	if(NULL == data)
+	{
+		return NULL;
+	}
+
+	VirtualNode newNode = new VirtualNode(data);
 
 	// Set the tail
 	if(NULL == this->head)
@@ -293,7 +303,7 @@ VirtualNode VirtualList::insertAfter(VirtualNode node, const void* const data)
 
 		if(NULL == newNode)
 		{
-			return false;
+			return NULL;
 		}
 
 		newNode->next = node->next;
@@ -334,7 +344,7 @@ VirtualNode VirtualList::insertBefore(VirtualNode node, const void* const data)
 
 		if(NULL == newNode)
 		{
-			return false;
+			return NULL;
 		}
 
 		newNode->previous = node->previous;
