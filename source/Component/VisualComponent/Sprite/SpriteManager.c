@@ -715,15 +715,15 @@ bool SpriteManager::sortProgressively(bool complete)
 
 			for
 			(
-				VirtualNode node = complete ? this->spriteRegistry[i].sprites->head : this->spriteRegistry[i].sortingNode; 
-				NULL != node && NULL != node->next; 
+				VirtualNode node = complete ? this->spriteRegistry[i].sprites->head : this->spriteRegistry[i].sortingNode;
+				NULL != node && NULL != node->next;
 				node = node->next
 			)
 			{
 				VirtualNode nextNode = node->next;
 
 				NM_ASSERT(!isDeleted(node->data), "SpriteManager::sortProgressively: NULL node's data");
-				ASSERT(__GET_CAST(Sprite, nextNode->data), "SpriteManager::sortProgressively: node's data isn't a sprite");
+				ASSERT(__GET_CAST(Sprite, node->data), "SpriteManager::sortProgressively: node's data isn't a sprite");
 
 				Sprite sprite = Sprite::safeCast(node->data);
 
