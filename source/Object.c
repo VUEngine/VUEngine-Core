@@ -42,8 +42,8 @@ static Object Object::getCast(void* object, ClassPointer targetClassGetClassMeth
 
 	if(-1 == lp && -1 == sp)
 	{
+		__CPU_GET_LINK_POINTER(lp);
 		__CPU_GET_STACK_POINTER(sp);
-		__CPU_GET_STACK_POINTER(lp);
 	}
 
 #ifdef __DEBUG
