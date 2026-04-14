@@ -46,7 +46,7 @@ static ToolState ToolState::get(const UserInput* userInput __attribute__((unused
 
 	int32 i = 0;
 
-	for(; engineToolStates[i]; i++)
+	for(; NULL != engineToolStates[i]; i++)
 	{
 		// Check code to access special feature
 		if(ToolState::isKeyCombination(engineToolStates[i], userInput))
