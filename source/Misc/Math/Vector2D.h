@@ -214,6 +214,12 @@ static class Vector2D : Object
 	/// @param x: Screen x coordinate where to print
 	/// @param y: Screen y coordinate where to print
 	static void printRaw(Vector2D vector, int32 x, int32 y);
+	
+	/// Print the vector's components in pixels.
+	/// @param vector: Vector to print
+	/// @param x: Screen x coordinate where to print
+	/// @param y: Screen y coordinate where to print
+	static void printPixels(Vector2D vector, int32 x, int32 y);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

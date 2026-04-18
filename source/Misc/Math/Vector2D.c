@@ -45,4 +45,18 @@ static inline void Vector2D::printRaw(Vector2D vector, int32 x, int32 y)
 }
 #endif
 
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+#ifndef __SHIPPING
+static inline void Vector2D::printPixels(Vector2D vector, int32 x, int32 y)
+{
+	PRINT_TEXT("x:    ", x, y);
+	PRINT_TEXT("y:    ", x, y + 1);
+
+	PRINT_INT(__METERS_TO_PIXELS(vector.x), x + 2, y);
+	PRINT_INT(__METERS_TO_PIXELS(vector.y), x + 2, y + 1);
+}
+#endif
+
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

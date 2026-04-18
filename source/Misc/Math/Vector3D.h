@@ -258,6 +258,12 @@ static class Vector3D : Object
 	/// @param x: Screen x coordinate where to print
 	/// @param y: Screen y coordinate where to print
 	static void printRaw(Vector3D vector, int32 x, int32 y);
+
+	/// Print the vector's components in pixels.
+	/// @param vector: Vector to print
+	/// @param x: Screen x coordinate where to print
+	/// @param y: Screen y coordinate where to print
+	static void printPixels(Vector3D vector, int32 x, int32 y);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
