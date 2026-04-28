@@ -177,41 +177,45 @@ $(FINAL_SETUP_CLASSES_OBJECT).o: $(FINAL_SETUP_CLASSES_SOURCE).c
 
 # Compile asset files
 $(WORKING_FOLDER)/assets/$(NAME)/%.o: $(MY_HOME)/%.c
-	@$(eval SOURCE_FILE=$(shell echo $< | sed -E "s@$(MY_HOME)/assets/@@g"))
-	@echo "Compiling asset file: $(SOURCE_FILE)"
-	@$(eval OBJECT_FILE=$@)
-	@$(eval RELATIVE_OBJECT_FILE=$(shell echo $(OBJECT_FILE) | sed -E "s@$(GAME_HOME)@@g"))
-	@$(eval HASH_OBJECT=$(shell echo $(RELATIVE_OBJECT_FILE) | shasum | cut -d' ' -f1))
-	@rm -f $(OBJECT_FILE)
-	@$(CC) -c -Wp,-MD,$(WORKING_FOLDER)/assets/$(NAME)/$*.dd $(foreach INC,$(INCLUDE_PATHS),-I$(INC))\
-        $(foreach MACRO,$(MACROS),-D$(MACRO)) $(C_PARAMS_FOR_ASSETS) -x c $< -o $@ 2>&1 | bash $(ENGINE_HOME)/lib/compiler/preprocessor/processGCCOutput.sh -o $(OBJECT_FILE) -w $(WORKING_FOLDER) -h $(MY_HOME) -n $(NAME) -l $(PLUGINS_FOLDER)/../ -p "$(PLUGINS)"
-	@cp $(OBJECT_FILE) $(WORKING_FOLDER)/assets/$(NAME)/hashes/$(HASH_OBJECT).o
-	@sed -e '1s/^\(.*\)$$/$(subst /,\/,$(dir $@))\1/' $(WORKING_FOLDER)/assets/$(NAME)/$*.dd > $(WORKING_FOLDER)/assets/$(NAME)/$*.d
-
+	@set -e; \
+	SOURCE_FILE=$$(echo $< | sed -E "s@$(MY_HOME)/assets/@@g"); \
+	echo "Compiling asset file: $$SOURCE_FILE"; \
+	OBJECT_FILE=$@; \
+	RELATIVE_OBJECT_FILE=$$(echo $$OBJECT_FILE | sed -E "s@$(GAME_HOME)@@g"); \
+	HASH_OBJECT=$$(echo $$RELATIVE_OBJECT_FILE | shasum | cut -d' ' -f1); \
+	rm -f $$OBJECT_FILE; \
+	$(CC) -c -Wp,-MD,$(WORKING_FOLDER)/assets/$(NAME)/$*.dd $(foreach INC,$(INCLUDE_PATHS),-I$(INC)) \
+		$(foreach MACRO,$(MACROS),-D$(MACRO)) $(C_PARAMS_FOR_ASSETS) -x c $< -o $$OBJECT_FILE 2>&1 | bash $(ENGINE_HOME)/lib/compiler/preprocessor/processGCCOutput.sh -o $$OBJECT_FILE -w $(WORKING_FOLDER) -h $(MY_HOME) -n $(NAME) -l $(PLUGINS_FOLDER)/../ -p "$(PLUGINS)"; \
+	cp $$OBJECT_FILE $(WORKING_FOLDER)/assets/$(NAME)/hashes/$$HASH_OBJECT.o; \
+	sed -e '1s/^\(.*\)$$/$(subst /,\/,$(dir $@))\1/' $(WORKING_FOLDER)/assets/$(NAME)/$*.dd > $(WORKING_FOLDER)/assets/$(NAME)/$*.d
+	
 # Compile source files
 $(WORKING_FOLDER)/objects/$(BUILD_MODE)/$(NAME)/%.o: $(MY_HOME)/%.c
-	@$(eval RAW_SOURCE_FILE=$<)
-	@$(eval SOURCE_FILE=$(shell echo $< | sed -E "s@.*/(source|assets)/@$(WORKING_FOLDER)/objects/$(BUILD_MODE)/$(NAME)/\1/@g"))
-	@$(eval OBJECT_FILE=$@)
-	@$(eval RELATIVE_OBJECT_FILE=$(shell echo $(OBJECT_FILE) | sed -E "s@$(GAME_HOME)@@g"))
-	@$(eval HASH_OBJECT=$(shell echo $(RELATIVE_OBJECT_FILE) | shasum | cut -d' ' -f1))
-	@rm -f $(OBJECT_FILE)
-	@bash $(ENGINE_HOME)/lib/compiler/preprocessor/processSourceFile.sh -e $(ENGINE_HOME) -i $(RAW_SOURCE_FILE) -o $(SOURCE_FILE) -d -w $(WORKING_FOLDER) -c $(CLASSES_HIERARCHY_FILE) && \
+	@set -e; \
+	SOURCE_FILE=$$(echo $< | sed -E "s@.*/(source|assets)/@$(WORKING_FOLDER)/objects/$(BUILD_MODE)/$(NAME)/\1/@g"); \
+	OBJECT_FILE=$@; \
+	RELATIVE_OBJECT_FILE=$$(echo $$OBJECT_FILE | sed -E "s@$(GAME_HOME)@@g"); \
+	HASH_OBJECT=$$(echo $$RELATIVE_OBJECT_FILE | shasum | cut -d' ' -f1); \
+	OBJECT_DIR=$$(dirname $$OBJECT_FILE)/; \
+	ESCAPED_OBJECT_DIR=$$(echo $$OBJECT_DIR | sed -e 's@/@\\/@g'); \
+	rm -f $$OBJECT_FILE; \
+	bash $(ENGINE_HOME)/lib/compiler/preprocessor/processSourceFile.sh -e $(ENGINE_HOME) -i $< -o $$SOURCE_FILE -d -w $(WORKING_FOLDER) -c $(CLASSES_HIERARCHY_FILE) && \
 		$(CC) -c -Wp,-MD,$(WORKING_FOLDER)/objects/$(BUILD_MODE)/$(NAME)/$*.dd $(foreach INC,$(INCLUDE_PATHS),-I$(INC)) \
-        	$(foreach MACRO,$(MACROS),-D$(MACRO)) $(C_PARAMS) $(SOURCE_FILE) -o $(OBJECT_FILE) 2>&1 | bash $(ENGINE_HOME)/lib/compiler/preprocessor/processGCCOutput.sh -o $(OBJECT_FILE) -w $(WORKING_FOLDER) -h $(MY_HOME) -n $(NAME) -l $(PLUGINS_FOLDER)/../ -p "$(PLUGINS)"
-	@cp $(OBJECT_FILE) $(WORKING_FOLDER)/objects/$(BUILD_MODE)/hashes/$(NAME)/$(HASH_OBJECT).o
-	@sed -e '1s/^\(.*\)$$/$(subst /,\/,$(dir $(OBJECT_FILE)))\1/' $(WORKING_FOLDER)/objects/$(BUILD_MODE)/$(NAME)/$*.dd > $(WORKING_FOLDER)/objects/$(BUILD_MODE)/$(NAME)/$*.dd.tmp
-	@sed -e 's#$(SOURCE_FILE)##' $(WORKING_FOLDER)/objects/$(BUILD_MODE)/$(NAME)/$*.dd.tmp > $(WORKING_FOLDER)/objects/$(BUILD_MODE)/$(NAME)/$*.dd
-	@sed -e '/^[ 	\\]*$$/d' $(WORKING_FOLDER)/objects/$(BUILD_MODE)/$(NAME)/$*.dd > $(WORKING_FOLDER)/objects/$(BUILD_MODE)/$(NAME)/$*.d
-
+		$(foreach MACRO,$(MACROS),-D$(MACRO)) $(C_PARAMS) $$SOURCE_FILE -o $$OBJECT_FILE 2>&1 | bash $(ENGINE_HOME)/lib/compiler/preprocessor/processGCCOutput.sh -o $$OBJECT_FILE -w $(WORKING_FOLDER) -h $(MY_HOME) -n $(NAME) -l $(PLUGINS_FOLDER)/../ -p "$(PLUGINS)"; \
+	cp $$OBJECT_FILE $(WORKING_FOLDER)/objects/$(BUILD_MODE)/hashes/$(NAME)/$$HASH_OBJECT.o; \
+	sed -e '1s/^\(.*\)$$/$(subst /,\/,$(dir $$OBJECT_FILE))\1/' $(WORKING_FOLDER)/objects/$(BUILD_MODE)/$(NAME)/$*.dd > $(WORKING_FOLDER)/objects/$(BUILD_MODE)/$(NAME)/$*.dd.tmp; \
+	sed -e 's#$$SOURCE_FILE##' $(WORKING_FOLDER)/objects/$(BUILD_MODE)/$(NAME)/$*.dd.tmp > $(WORKING_FOLDER)/objects/$(BUILD_MODE)/$(NAME)/$*.dd; \
+	sed -e '/^[ 	\\]*$$/d' $(WORKING_FOLDER)/objects/$(BUILD_MODE)/$(NAME)/$*.dd > $(WORKING_FOLDER)/objects/$(BUILD_MODE)/$(NAME)/$*.d
+	
 # Compile assembler files
 $(WORKING_FOLDER)/objects/$(BUILD_MODE)/$(NAME)/%.o: $(MY_HOME)/%.s
-	@bash $(ENGINE_HOME)/lib/compiler/preprocessor/printCompilingInfo.sh $<
-	@$(eval OBJECT_FILE=$@)
-	@$(eval RELATIVE_OBJECT_FILE=$(shell echo $(OBJECT_FILE) | sed -E "s@$(GAME_HOME)@@g"))
-	@$(eval HASH_OBJECT=$(shell echo $(RELATIVE_OBJECT_FILE) | shasum | cut -d' ' -f1))
-	@$(AS) -o $@ $<
-	@cp $(OBJECT_FILE) $(WORKING_FOLDER)/objects/$(BUILD_MODE)/hashes/$(NAME)/$(HASH_OBJECT).o
+	@set -e; \
+	bash $(ENGINE_HOME)/lib/compiler/preprocessor/printCompilingInfo.sh $<; \
+	OBJECT_FILE=$@; \
+	RELATIVE_OBJECT_FILE=$$(echo $$OBJECT_FILE | sed -E "s@$(GAME_HOME)@@g"); \
+	HASH_OBJECT=$$(echo $$RELATIVE_OBJECT_FILE | shasum | cut -d' ' -f1); \
+	$(AS) -o $$OBJECT_FILE $<; \
+	cp $$OBJECT_FILE $(WORKING_FOLDER)/objects/$(BUILD_MODE)/hashes/$(NAME)/$$HASH_OBJECT.o
 
 $(WORKING_FOLDER)/objects/$(BUILD_MODE)/$(NAME)/%.bin: $(MY_HOME)/%.mid
 	@$(eval OLD_SYMBOL_NAME=_binary_$(shell echo $< | sed -e "s@[/-]@_@g" | sed -e "s@.mid@_mid_start@g"))
@@ -224,6 +228,7 @@ D_FILES := $(D_FILES) $(WORKING_FOLDER)/objects/$(BUILD_MODE)/$(NAME)/$(SETUP_CL
 
 -include $(D_FILES)
 
+.PHONY: phony
 phony:
 	@echo > /dev/null
 #	@echo ASSETS_OBJECTS $(ASSETS_OBJECTS)

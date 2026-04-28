@@ -354,6 +354,6 @@ objectsFiles:
 	$(file > $(WORKING_FOLDER)/objects/$(BUILD_MODE)/$(NAME)/ASSEMBLY_OBJECTS.txt, $(ASSEMBLY_OBJECTS_TEMP))
 	$(shell sed -i -e 's@'"$(MY_HOME)"/'@@g' $(WORKING_FOLDER)/objects/$(BUILD_MODE)/$(NAME)/ASSEMBLY_OBJECTS.txt)
 
-
+.PHONY: phony
 phony:
 	@echo > /dev/null

@@ -35,6 +35,6 @@ $(WORKING_FOLDER_CLEAR)/headers/$(NAME)/%.h: $(MY_HOME)/%.h
 $(SETUP_CLASSES_SOURCE).c: $(H_FILES)
 	@bash $(ENGINE_HOME)/lib/compiler/preprocessor/setupClasses.sh -n $(SETUP_CLASSES) -c $(CLASSES_HIERARCHY_FILE) -o $(SETUP_CLASSES_SOURCE).c -w $(WORKING_FOLDER) -b $(BUILD_MODE)
 
-phony:
+.PHONY: phony
 	@echo > /dev/null
 

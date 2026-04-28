@@ -218,6 +218,7 @@ D_FILES := $(D_FILES) $(WORKING_FOLDER)/objects/$(BUILD_MODE)/$(NAME)/$(SETUP_CL
 
 -include $(D_FILES)
 
+.PHONY: phony
 phony:
 	@echo > /dev/null
 #	@echo ASSETS_OBJECTS $(ASSETS_OBJECTS)
