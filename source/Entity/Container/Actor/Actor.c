@@ -434,11 +434,18 @@ bool Actor::onEvent(ListenerObject eventFirer, uint16 eventCode)
 
 		case kEventAnimationCompleted:
 		{
+			const char* playingAnimationName = this->playingAnimationName;
+			
 			Actor::fireEvent(this, kEventAnimationCompleted);
 
 			if(!AnimationController::isAnimationLooped(eventFirer))
 			{
-				this->playingAnimationName = NULL;
+				// Since the event firing handed over control to the client code
+				// it is possible that it trigger the playback of another animation
+				if(playingAnimationName == this->playingAnimationName)
+				{				
+					this->playingAnimationName = NULL;
+				}
 			}
 
 			return true;
