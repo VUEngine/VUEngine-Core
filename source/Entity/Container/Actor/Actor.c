@@ -434,6 +434,8 @@ bool Actor::onEvent(ListenerObject eventFirer, uint16 eventCode)
 
 		case kEventAnimationCompleted:
 		{
+			Actor::fireEvent(this, kEventAnimationCompleted);
+
 			if(!AnimationController::isAnimationLooped(eventFirer))
 			{
 				this->playingAnimationName = NULL;

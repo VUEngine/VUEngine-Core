@@ -609,7 +609,7 @@ Container Container::getChildByName(const char* childName, bool recursive)
 {
 	Container foundChild = NULL;
 
-	if(!this->deleteMe && childName && this->children)
+	if(!this->deleteMe && NULL != childName && NULL != this->children)
 	{
 		// Search through direct children
 		foundChild = Container::findChildByName(this, this->children, childName, false);
@@ -1113,7 +1113,7 @@ void Container::changeEnvironment(Transformation* environmentTransformation)
 
 Container Container::findChildByName(VirtualList children, const char* childName, bool recursive)
 {
-	if(this->deleteMe)
+	if(this->deleteMe || NULL == children || NULL == childName)
 	{
 		return NULL;
 	}
