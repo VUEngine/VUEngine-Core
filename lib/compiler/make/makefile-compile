@@ -7,6 +7,15 @@ override ENGINE_NAME = core
 # Engine's home
 override ENGINE_HOME = $(ENGINE_FOLDER)
 
+# JavaScript runtime
+JS_RUNTIME ?= qjs
+
+ifeq ($(shell command -v "$(JS_RUNTIME)" > /dev/null 2>&1 && echo found),)
+$(error JavaScript runtime not found at '$(JS_RUNTIME)'. Pass it explicitly, e.g. make JS_RUNTIME=/path/to/qjs)
+endif
+
+PREPROCESSOR = "$(JS_RUNTIME)" $(ENGINE_HOME)/lib/compiler/preprocessor.js/dist/preprocessor.mjs
+
 # Small data sections' usage
 MSDA_SIZE                       		= 0
 MEMORY_POOL_SECTION             		=
@@ -185,7 +194,7 @@ $(WORKING_FOLDER)/assets/$(NAME)/%.o: $(MY_HOME)/%.c
 	HASH_OBJECT=$$(echo $$RELATIVE_OBJECT_FILE | shasum | cut -d' ' -f1); \
 	rm -f $$OBJECT_FILE; \
 	$(CC) -c -Wp,-MD,$(WORKING_FOLDER)/assets/$(NAME)/$*.dd $(foreach INC,$(INCLUDE_PATHS),-I$(INC)) \
-		$(foreach MACRO,$(MACROS),-D$(MACRO)) $(C_PARAMS_FOR_ASSETS) -x c $< -o $$OBJECT_FILE 2>&1 | bash $(ENGINE_HOME)/lib/compiler/preprocessor/processGCCOutput.sh -o $$OBJECT_FILE -w $(WORKING_FOLDER) -h $(MY_HOME) -n $(NAME) -l $(PLUGINS_FOLDER)/../ -p "$(PLUGINS)"; \
+		$(foreach MACRO,$(MACROS),-D$(MACRO)) $(C_PARAMS_FOR_ASSETS) -x c $< -o $$OBJECT_FILE 2>&1 | $(PREPROCESSOR) gcc-output -o $$OBJECT_FILE -w $(WORKING_FOLDER) -h $(MY_HOME) -n $(NAME) -l $(PLUGINS_FOLDER)/../ -p "$(PLUGINS)"; \
 	cp $$OBJECT_FILE $(WORKING_FOLDER)/assets/$(NAME)/hashes/$$HASH_OBJECT.o; \
 	sed -e '1s/^\(.*\)$$/$(subst /,\/,$(dir $@))\1/' $(WORKING_FOLDER)/assets/$(NAME)/$*.dd > $(WORKING_FOLDER)/assets/$(NAME)/$*.d
 	
@@ -199,9 +208,9 @@ $(WORKING_FOLDER)/objects/$(BUILD_MODE)/$(NAME)/%.o: $(MY_HOME)/%.c
 	OBJECT_DIR=$$(dirname $$OBJECT_FILE)/; \
 	ESCAPED_OBJECT_DIR=$$(echo $$OBJECT_DIR | sed -e 's@/@\\/@g'); \
 	rm -f $$OBJECT_FILE; \
-	bash $(ENGINE_HOME)/lib/compiler/preprocessor/processSourceFile.sh -e $(ENGINE_HOME) -i $< -o $$SOURCE_FILE -d -w $(WORKING_FOLDER) -c $(CLASSES_HIERARCHY_FILE) && \
+	$(PREPROCESSOR) source -e $(ENGINE_HOME) -i $< -o $$SOURCE_FILE -d -w $(WORKING_FOLDER) -c $(CLASSES_HIERARCHY_FILE) && \
 		$(CC) -c -Wp,-MD,$(WORKING_FOLDER)/objects/$(BUILD_MODE)/$(NAME)/$*.dd $(foreach INC,$(INCLUDE_PATHS),-I$(INC)) \
-		$(foreach MACRO,$(MACROS),-D$(MACRO)) $(C_PARAMS) $$SOURCE_FILE -o $$OBJECT_FILE 2>&1 | bash $(ENGINE_HOME)/lib/compiler/preprocessor/processGCCOutput.sh -o $$OBJECT_FILE -w $(WORKING_FOLDER) -h $(MY_HOME) -n $(NAME) -l $(PLUGINS_FOLDER)/../ -p "$(PLUGINS)"; \
+		$(foreach MACRO,$(MACROS),-D$(MACRO)) $(C_PARAMS) $$SOURCE_FILE -o $$OBJECT_FILE 2>&1 | $(PREPROCESSOR) gcc-output -o $$OBJECT_FILE -w $(WORKING_FOLDER) -h $(MY_HOME) -n $(NAME) -l $(PLUGINS_FOLDER)/../ -p "$(PLUGINS)"; \
 	cp $$OBJECT_FILE $(WORKING_FOLDER)/objects/$(BUILD_MODE)/hashes/$(NAME)/$$HASH_OBJECT.o; \
 	sed -e '1s/^\(.*\)$$/$(subst /,\/,$(dir $$OBJECT_FILE))\1/' $(WORKING_FOLDER)/objects/$(BUILD_MODE)/$(NAME)/$*.dd > $(WORKING_FOLDER)/objects/$(BUILD_MODE)/$(NAME)/$*.dd.tmp; \
 	sed -e 's#$$SOURCE_FILE##' $(WORKING_FOLDER)/objects/$(BUILD_MODE)/$(NAME)/$*.dd.tmp > $(WORKING_FOLDER)/objects/$(BUILD_MODE)/$(NAME)/$*.dd; \
@@ -210,7 +219,7 @@ $(WORKING_FOLDER)/objects/$(BUILD_MODE)/$(NAME)/%.o: $(MY_HOME)/%.c
 # Compile assembler files
 $(WORKING_FOLDER)/objects/$(BUILD_MODE)/$(NAME)/%.o: $(MY_HOME)/%.s
 	@set -e; \
-	bash $(ENGINE_HOME)/lib/compiler/preprocessor/printCompilingInfo.sh $<; \
+	$(PREPROCESSOR) compiling-info $<; \
 	OBJECT_FILE=$@; \
 	RELATIVE_OBJECT_FILE=$$(echo $$OBJECT_FILE | sed -E "s@$(GAME_HOME)@@g"); \
 	HASH_OBJECT=$$(echo $$RELATIVE_OBJECT_FILE | shasum | cut -d' ' -f1); \

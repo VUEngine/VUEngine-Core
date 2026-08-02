@@ -4,6 +4,15 @@ override ENGINE_NAME = core
 # Engine's home
 override ENGINE_HOME = $(ENGINE_FOLDER)
 
+# JavaScript runtime
+JS_RUNTIME ?= qjs
+
+ifeq ($(shell command -v "$(JS_RUNTIME)" > /dev/null 2>&1 && echo found),)
+$(error JavaScript runtime not found at '$(JS_RUNTIME)'. Pass it explicitly, e.g. make JS_RUNTIME=/path/to/qjs)
+endif
+
+PREPROCESSOR = "$(JS_RUNTIME)" $(ENGINE_HOME)/lib/compiler/preprocessor.js/dist/preprocessor.mjs
+
 # List of header files.
 HEADERS_DIRS = $(shell find $(MY_HOME)/source -type d -print)
 HEADERS_DIRS := $(HEADERS_DIRS) $(shell find $(MY_HOME)/headers -type d -print)
@@ -30,10 +39,10 @@ PLUGINS_ARGUMENT=$(addprefix -l , $(PLUGINS:.=.))
 -include $(D_FILES)
 
 $(WORKING_FOLDER_CLEAR)/headers/$(NAME)/%.h: $(MY_HOME)/%.h
-	@bash $(ENGINE_HOME)/lib/compiler/preprocessor/processHeaderFile.sh -e $(ENGINE_HOME) -i $< -o $@ -m $(GAME_HOME) -w $(WORKING_FOLDER) -c $(CLASSES_HIERARCHY_FILE) -n $(NAME) -h $(MY_HOME) -t $(PLATFORMS_FOLDER) -p $(PLUGINS_FOLDER) -u $(USER_PLUGINS_FOLDER) -g makefile -x $(GAME_NAME) $(PLUGINS_ARGUMENT)
+	@$(PREPROCESSOR) header -e $(ENGINE_HOME) -i $< -o $@ -m $(GAME_HOME) -w $(WORKING_FOLDER) -c $(CLASSES_HIERARCHY_FILE) -n $(NAME) -h $(MY_HOME) -t $(PLATFORMS_FOLDER) -p $(PLUGINS_FOLDER) -u $(USER_PLUGINS_FOLDER) -g makefile -x $(GAME_NAME) $(PLUGINS_ARGUMENT)
 
 $(SETUP_CLASSES_SOURCE).c: $(H_FILES)
-	@bash $(ENGINE_HOME)/lib/compiler/preprocessor/setupClasses.sh -n $(SETUP_CLASSES) -c $(CLASSES_HIERARCHY_FILE) -o $(SETUP_CLASSES_SOURCE).c -w $(WORKING_FOLDER) -b $(BUILD_MODE)
+	@$(PREPROCESSOR) setup-classes -n $(SETUP_CLASSES) -c $(CLASSES_HIERARCHY_FILE) -o $(SETUP_CLASSES_SOURCE).c -w $(WORKING_FOLDER) -b $(BUILD_MODE)
 
 .PHONY: phony
 	@echo > /dev/null

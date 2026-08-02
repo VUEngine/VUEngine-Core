@@ -1,0 +1,19 @@
+{
+	"name": "@vuengine/preprocessor",
+	"version": "1.0.0",
+	"private": true,
+	"description": "Virtual C to C transpiler for VUEngine",
+	"license": "MIT",
+	"type": "module",
+	"scripts": {
+		"build": "node build.mjs",
+		"typecheck": "tsc --noEmit",
+		"test": "node --test test/*.test.ts",
+		"prepare": "npm run build"
+	},
+	"devDependencies": {
+		"@types/node": "^22.10.2",
+		"esbuild": "^0.24.2",
+		"typescript": "^5.7.2"
+	}
+}

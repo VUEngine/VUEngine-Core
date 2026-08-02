@@ -1,0 +1,22 @@
+{
+	"compilerOptions": {
+		"target": "ES2022",
+		"lib": ["ES2022"],
+		"module": "ESNext",
+		"moduleResolution": "bundler",
+		"allowImportingTsExtensions": true,
+		"rewriteRelativeImportExtensions": true,
+		"types": ["node"],
+		"strict": true,
+		"noUncheckedIndexedAccess": true,
+		"noImplicitOverride": true,
+		"noFallthroughCasesInSwitch": true,
+		"forceConsistentCasingInFileNames": true,
+		"skipLibCheck": true,
+		// Keeps the sources runnable under Node's type stripping, which the
+		// tests rely on: no enums, namespaces or parameter properties.
+		"erasableSyntaxOnly": true,
+		"noEmit": true
+	},
+	"include": ["src/**/*.ts", "build.mjs"]
+}
