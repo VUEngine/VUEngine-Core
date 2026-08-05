@@ -17,7 +17,7 @@
 // CLASS' MACROS
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-#define __Terminal_OUTPUT_ADDRESS	(unsigned char*) 0x02000030;
+#define __TERMINAL_OUTPUT_ADDRESS	(unsigned char*) 0x02000030;
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PUBLIC STATIC METHODS
@@ -33,7 +33,7 @@ static void Terminal::print(char* text)
 	}
 	
 #ifndef __SHIPPING
-	unsigned char* const terminalOut = __Terminal_OUTPUT_ADDRESS;
+	unsigned char* const terminalOut = __TERMINAL_OUTPUT_ADDRESS;
 
     while (0 != *text)
 	{

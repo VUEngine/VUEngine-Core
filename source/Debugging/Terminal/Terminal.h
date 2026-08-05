@@ -23,7 +23,7 @@
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 #define TERMINAL_TIME				Terminal::print(Utilities::itoa(Timer::getTotalElapsedMilliseconds(), 10, 1));
-#define TERMINAL_INT(n)			Terminal::print(Utilities::itoa(n, 10, 1));
+#define TERMINAL_INT(n)				Terminal::print(Utilities::itoa(n, 10, 1));
 #define TERMINAL_TEXT(t)			Terminal::print(t);
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
