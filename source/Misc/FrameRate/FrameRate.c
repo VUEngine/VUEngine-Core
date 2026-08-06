@@ -107,7 +107,7 @@ void FrameRate::gameFrameStarted(bool gameCycleEnded)
 			FrameRate::fireEvent(this, kEventFramerateReady);
 		}
 
-		if(this->targetFPS > this->FPS)
+		if(this->targetFPS > this->FPS && 0 < this->unevenFPS)
 		{
 			if(!isDeleted(this->events))
 			{
