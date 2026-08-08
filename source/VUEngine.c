@@ -436,7 +436,7 @@ void VUEngine::changedState()
 	DisplayUnit::startDrawing(DisplayUnit::getInstance());
 	DisplayUnit::startDisplaying(DisplayUnit::getInstance());
 
-	VUEngine::fireEvent(this, kEventNextStateSet);
+	VUEngine::fireEvent(this, kEventGameChangedState);
 
 	Hardware::enableInterrupts();
 }
@@ -455,7 +455,7 @@ void VUEngine::frameStarted(uint16 gameFrameDuration)
 	{
 		if(NULL != this->events)
 		{
-			VUEngine::fireEvent(this, kEventVUEngineNextSecondStarted);
+			VUEngine::fireEvent(this, kEventNextSecondStarted);
 		}
 
 		totalTime = 0;

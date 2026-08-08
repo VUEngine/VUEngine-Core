@@ -20,50 +20,22 @@ enum Events
 	kEventEngineFirst = 0,
 
 	// Add events here
+
+	// Game
+	kEventGamePaused,
+	kEventGameUnpaused,
+	kEventGameChangedState,
+
+	// Framerate
 	kEventFramerateReady,
 	kEventFramerateDipped,
 
-	kEventContainerAllChildrenDeleted,
-	kEventStageChildStreamedOut,
-	kEventColliderDeleted,
-	kEventColliderChanged,
-	kEventComponentDestroyed,
-
-	kEventGamePaused,
-	kEventGameUnpaused,
-
-	kEventNextStateSet,
-
+	// Time
 	kEventSecondChanged,
 	kEventMinuteChanged,
+	kEventNextSecondStarted,
 
-	kEventAnimationStarted,
-	kEventAnimationCompleted,
-	kEventTextureRewritten,
-	kEventTextureSetFrame,
-	kEventTileSetChangedFrame,
-	kEventTileSetChangedOffset,
-	kEventTileSetDeleted,
-	kEventFontRewritten,
-
-	kEventEffectFadeInComplete,
-	kEventEffectFadeOutComplete,
-	kEventEffectFadeStart,
-	kEventEffectFadeStop,
-
-	kEventCommunicationsConnected,
-	kEventCommunicationsTransmissionCompleted,
-
-	kEventActorDeleted,
-	kEventActorCreated,
-	kEventActorBounced,
-	kEventActorCannotMove,
-
-	kEventPlaySounds,
-
-	kEventSoundFinished,
-	kEventSoundReleased,
-
+	// DisplayUnit
 	kEventDisplayUnitTimeError,
 	kEventDisplayUnitScanError,
 	kEventDisplayUnitFrameStart,
@@ -72,10 +44,17 @@ enum Events
 	kEventDisplayUnitVBlank,
 	kEventDisplayUnitVBlankDuringGameStart,
 
+	// Timer
 	kEventTimerInterrupt,
 	
+	// Keypad
 	kEventKeypadRaisedPowerFlag,
 
+	// Communications
+	kEventCommunicationsConnected,
+	kEventCommunicationsTransmissionCompleted,
+
+	// State machine
 	kEventStateMachineWillCleanStack,
 	kEventStateMachineCleanedStack,
 	kEventStateMachineWillSwapState,
@@ -85,7 +64,45 @@ enum Events
 	kEventStateMachineWillPopState,
 	kEventStateMachinePoppedState,
 
-	kEventVUEngineNextSecondStarted,
+	// Stage
+	kEventLowStreamingRate,
+
+	// Actors
+	kEventActorDeleted,
+	kEventActorCreated,
+
+	// Components
+	kEventComponentDestroyed,
+
+	// Colliders
+	kEventColliderDeleted,
+	kEventColliderChanged,
+
+	// Sounds
+	kEventSoundFinished,
+	kEventSoundReleased,
+
+	// Animations
+	kEventAnimationStarted,
+	kEventAnimationCompleted,
+
+	// Textures
+	kEventTextureRewritten,
+	kEventTextureSetFrame,
+
+	// Tiles
+	kEventTileSetChangedFrame,
+	kEventTileSetChangedOffset,
+	kEventTileSetDeleted,
+
+	// Fonts
+	kEventFontRewritten,
+
+	// Fade effects
+	kEventEffectFadeInComplete,
+	kEventEffectFadeOutComplete,
+	kEventEffectFadeStart,
+	kEventEffectFadeStop,
 
 	// Do not remove me
 	kEventPluginsFirst = 1000,
