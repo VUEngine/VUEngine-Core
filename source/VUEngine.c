@@ -64,7 +64,7 @@ static void VUEngine::pause(GameState pauseState)
 	{
 		VUEngine::addState(pauseState);
 		vuEngine->isPaused = true;
-		// VUEngine::fireEvent(vuEngine, kEventGamePaused);
+		VUEngine::fireEvent(vuEngine, kEventGamePaused);
 	}
 }
 
