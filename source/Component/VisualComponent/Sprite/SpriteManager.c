@@ -408,8 +408,16 @@ void SpriteManager::sortSprites()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void SpriteManager::render()
+void SpriteManager::render(bool deferred)
 {
+	if(!deferred)
+	{
+		SpriteManager::writeTextures(this);
+		SpriteManager::sortSprites(this);
+		// This is unsafe since it calls external methods that could trigger modifications of the list of components
+		//SpriteManager::commitGraphics(this);
+	}
+	
 #ifdef __DEBUGGING_SPRITES
 	_renderedSprites = 0;
 #endif
@@ -488,19 +496,6 @@ void SpriteManager::render()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-// This is unsafe since it calls external methods that could trigger modifications of the list of components
-#ifdef __TOOLS
-void SpriteManager::renderAndDraw()
-{
-	SpriteManager::render(this);
-
-	// Write render data
-	SpriteManager::commitGraphics(this);
-}
-#endif
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
 void SpriteManager::commitGraphics()
 {
 #ifdef __DEBUGGING_SPRITES
@@ -521,9 +516,7 @@ void SpriteManager::commitGraphics()
 void SpriteManager::writeTextures()
 {
 	TileSetManager::writeTileSets(TileSetManager::getInstance());
-
 	TextureManager::updateTextures(-1, false);
-
 	TileSetManager::writeTileSets(TileSetManager::getInstance());
 }
 

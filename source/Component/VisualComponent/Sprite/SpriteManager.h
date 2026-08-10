@@ -184,10 +184,8 @@ class SpriteManager : ComponentManager
 	void deferSpecialEffectsProcessing(bool deferSpecialEffectsProcessing);
 
 	/// Render sprites.
-	void render();
-
-	/// Force the rendering and drawing of all sprites (available only when __TOOLS is defined).
-	void renderAndDraw();
+	/// @param deferred: If false, all the rendering pipeline is executed at once
+	void render(bool deferred);
 
 	/// Force the writing of graphical data to DRAM space.
 	void writeTextures();

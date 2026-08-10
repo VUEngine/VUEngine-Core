@@ -79,7 +79,8 @@ class WireframeManager : ComponentManager
 	void disable();
 
 	/// Prepare wireframe's graphical data for drawing
-	void render();
+	/// @param deferred: If false, all the rendering pipeline is executed at once
+	void render(bool deferred );
 
 	/// Invalidate the rendering status of all wireframes so they re-render again in the next cycle.
 	void invalidateRendering();

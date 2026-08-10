@@ -161,7 +161,7 @@ void GameState::update(void* owner)
 		Profiler::lap(kProfilerLapTypeNormalProcess, PROCESS_NAME_COMMUNICATE);
 #endif
 
-	GameState::render(this);
+	GameState::render(this, true);
 #ifdef __ENABLE_PROFILER
 	Profiler::lap(kProfilerLapTypeVIPInterruptGAMESTARTProcess, PROCESS_NAME_RENDER);
 #endif
@@ -854,11 +854,10 @@ void GameState::configureUI(StageSpec* stageSpec)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void GameState::render()
+void GameState::render(bool deferred)
 {
-	SpriteManager::render(this->componentManagers[kSpriteComponent]);
-	
-	WireframeManager::render(this->componentManagers[kWireframeComponent]);
+	SpriteManager::render(this->componentManagers[kSpriteComponent], deferred);
+	WireframeManager::render(this->componentManagers[kWireframeComponent], deferred);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -1021,12 +1020,15 @@ void GameState::stream(bool complete)
 				Stage::invalidateTransformation(this->stage);
 
 				// Render the game now that everything is in place
-				GameState::render(this);
+				GameState::render(this, true);
 			}
 			while(Stage::stream(this->stage));
 
 			// Make sure the streaming starts anew in the next game cycle
 			Stage::resetStreaming(this->stage);
+
+			// Render the game now that everything is in place
+			GameState::render(this, false);
 		}
 		else if(this->stream)
 		{

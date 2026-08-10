@@ -123,7 +123,7 @@ Wireframe WireframeManager::create(Entity owner, const WireframeSpec* wireframeS
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void WireframeManager::render()
+void WireframeManager::render(bool deferred __attribute__((unused)))
 {
 	if(NULL == this->components->head)
 	{
