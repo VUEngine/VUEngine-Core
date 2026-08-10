@@ -152,9 +152,8 @@ void ToolState::update(void* owner __attribute__ ((unused)))
 
 	if(NULL != this->currentGameState)
 	{
-		SpriteManager::render(this->currentGameState->componentManagers[kSpriteComponent]);
-		
-		WireframeManager::render(this->currentGameState->componentManagers[kWireframeComponent]);
+		SpriteManager::render(this->currentGameState->componentManagers[kSpriteComponent], false);		
+		WireframeManager::render(this->currentGameState->componentManagers[kWireframeComponent], false);
 	}
 }
 
