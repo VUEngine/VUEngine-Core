@@ -1194,7 +1194,7 @@ Clock GameState::getClock(uint32 clockEnum)
 void GameState::debugging()
 {
 	Printer::resetScreenPosition();
-	Printer::setWorldCoordinates(0, 0, -256, 0);
+	Printer::setScreenPosition(0, 0, -256, 0);
 
 #ifdef __DEBUGGING_STACK_STATUS
 	Hardware::printStackStatus(1, 1, false);
