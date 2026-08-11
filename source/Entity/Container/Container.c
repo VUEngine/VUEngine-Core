@@ -114,7 +114,7 @@ void Container::destructor()
 	}
 
 	// First remove from parent
-	if(this->parent)
+	if(NULL != this->parent)
 	{
 		ASSERT(this != this->parent, "Container::destructor: I'm my own father");
 		// Don't allow my parent to try to delete me again
@@ -489,7 +489,7 @@ void Container::removeChild(Container child, bool deleteChild)
 			Container::destroyComponents(child);
 		}
 
-		this->pendingChildrenPurging = true;
+		Container::scheduleChildrenPurge(this);
 	}
 #ifndef __RELEASE
 	else
@@ -1255,6 +1255,17 @@ void Container::doTransform(const Transformation* environmentTransformation, uin
 
 	// Don't update position on next transformation cycle
 	this->transformation.invalid = __VALID_TRANSFORMATION;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+void Container::scheduleChildrenPurge()
+{
+	this->pendingChildrenPurging = true;
+
+	if(NULL != this->parent)
+	{
+		Container::scheduleChildrenPurge(this->parent);
+	}
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
