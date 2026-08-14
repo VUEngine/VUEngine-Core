@@ -611,9 +611,7 @@ secure void VUEngine::run(GameState currentGameState)
 	while(NULL != this->currentGameState)
 	{
 		VUEngine::startGameFrame(this);
-
 		VUEngine::updateGameFrame(this);
-
 		VUEngine::endGameFrame(this);
 	}
 
