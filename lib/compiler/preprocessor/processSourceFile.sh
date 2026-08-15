@@ -64,11 +64,20 @@ do
 done
 
 GENERAL_CLASSES_HIERARCHY_FILE=$WORKING_FOLDER/classes/hierarchies/classesHierarchy.txt
+LOCK_DIR=$WORKING_FOLDER/classes/hierarchies/classesHierarchy.lock
+
+# Acquire lock — mkdir is atomic on POSIX systems
+while ! mkdir "$LOCK_DIR" 2>/dev/null; do
+    sleep 0.1
+done
 
 # Critical section
 cat $CLASSES_HIERARCHY_FILE >> $GENERAL_CLASSES_HIERARCHY_FILE
 awk '!visited[$0]++' $GENERAL_CLASSES_HIERARCHY_FILE > $GENERAL_CLASSES_HIERARCHY_FILE.tmp
 mv $GENERAL_CLASSES_HIERARCHY_FILE.tmp $GENERAL_CLASSES_HIERARCHY_FILE
+
+# Release lock
+rmdir "$LOCK_DIR"
 
 CLASSES_HIERARCHY_FILE=$GENERAL_CLASSES_HIERARCHY_FILE
 #echo CLASSES_HIERARCHY_FILE $CLASSES_HIERARCHY_FILE
