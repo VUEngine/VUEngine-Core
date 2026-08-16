@@ -81,11 +81,6 @@ static uint8* MemoryPool::allocate(int32 numberOfBytes)
 		uint8* poolLocationEnd = poolLocationStart + memoryPool->poolSizes[pool][ePoolSize] - blockSize;
 		uint8* poolLocation = NULL;
 
-		if(100 < memoryPool->poolSizes[pool][ePoolSize] / blockSize)
-		{
-			CACHE_RESET;
-		}
-
 		do
 		{
 			if(poolLocationRight <= poolLocationEnd)

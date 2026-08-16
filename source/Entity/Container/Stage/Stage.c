@@ -539,8 +539,6 @@ bool Stage::unloadOutOfRangeActors(int32 defer __attribute__((unused)))
 
 	VirtualNode node = this->children->head;
 
-	CACHE_RESET;
-
 	// Check which entites must be unloaded
 	for(; NULL != node; node = node->next)
 	{
@@ -606,8 +604,6 @@ bool Stage::unloadOutOfRangeActors(int32 defer __attribute__((unused)))
 bool Stage::loadInRangeActors(int32 defer)
 {
 	bool loadedActors = false;
-
-	CACHE_RESET;
 
 	if(this->reverseStreaming)
 	{

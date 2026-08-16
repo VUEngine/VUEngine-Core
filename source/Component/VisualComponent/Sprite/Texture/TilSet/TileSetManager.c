@@ -248,8 +248,6 @@ void TileSetManager::destructor()
 
 TileSet TileSetManager::findTileSet(const TileSetSpec* tileSetSpec)
 {
-	CACHE_RESET;
-
 	for(VirtualNode node = this->tileSets->head; NULL != node; node = node->next)
 	{
 		TileSet tileSet = TileSet::safeCast(node->data);

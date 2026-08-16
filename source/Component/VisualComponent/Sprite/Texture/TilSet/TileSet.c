@@ -287,11 +287,6 @@ uint32 TileSet::write()
 
 		default:
 		{
-			if(100 < tilesToWrite)
-			{
-				CACHE_RESET;
-			}
-
 			Mem::copyWORD
 			(
 				(uint32*)(__TILE_SPACE_BASE_ADDRESS + (((uint32)this->offset) << 4)),

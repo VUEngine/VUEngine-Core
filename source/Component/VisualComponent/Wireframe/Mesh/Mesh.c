@@ -248,8 +248,6 @@ void Mesh::render(Vector3D relativePosition)
 
 	if(!scale && !rotate)
 	{
-		CACHE_RESET;
-
 		for(VirtualNode node = this->vertices->head; NULL != node; node = node->next)
 		{
 			Vertex* vertex = (Vertex*)node->data;
@@ -261,8 +259,6 @@ void Mesh::render(Vector3D relativePosition)
 	}
 	else if(scale && rotate)
 	{
-		CACHE_RESET;
-
 		Rotation rotation = this->transformation->rotation;
 		Scale scale = this->transformation->scale;
 
@@ -282,8 +278,6 @@ void Mesh::render(Vector3D relativePosition)
 	}
 	else if(rotate)
 	{
-		CACHE_RESET;
-
 		Rotation rotation = this->transformation->rotation;
 
 		for(VirtualNode node = this->vertices->head; NULL != node; node = node->next)
@@ -301,8 +295,6 @@ void Mesh::render(Vector3D relativePosition)
 	}
 	else if(scale)
 	{
-		CACHE_RESET;
-
 		Scale scale = this->transformation->scale;
 
 		for(VirtualNode node = this->vertices->head; NULL != node; node = node->next)
