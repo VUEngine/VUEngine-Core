@@ -56,7 +56,6 @@ void Sprite::constructor(Entity owner, const SpriteSpec* spriteSpec)
 	this->texture = NULL;
 	this->halfWidth = 0;
 	this->halfHeight = 0;
-	this->transparency = __TRANSPARENCY_NONE;
 	this->checkIfWithinScreenSpace = true;
 	this->position = (PixelVector){0, 0, 0, 0};
 	this->rotation = (Rotation){0, 0, 0};

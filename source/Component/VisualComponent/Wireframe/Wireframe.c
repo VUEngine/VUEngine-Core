@@ -41,7 +41,6 @@ void Wireframe::constructor(Entity owner, const WireframeSpec* wireframeSpec)
 		this->color = __COLOR_BRIGHT_RED;
 		this->displacement = Vector3D::zero();
 		this->interlaced = false;
-		this->transparency = __TRANSPARENCY_NONE;
 	}
 	else
 	{

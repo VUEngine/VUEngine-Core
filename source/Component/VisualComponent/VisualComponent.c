@@ -44,6 +44,7 @@ void VisualComponent::constructor(Entity owner, const VisualComponentSpec* visua
 
 	this->show = __SHOW;
 	this->rendered = false;
+	this->transparency = __TRANSPARENCY_NONE;
 	this->animationController = NULL;
 	this->updateAnimationFrame = false;
 }
