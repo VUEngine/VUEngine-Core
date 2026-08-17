@@ -136,6 +136,8 @@ void WireframeManager::render(bool deferred __attribute__((unused)))
 
 	Vector3D cameraDirection = Vector3D::rotate((Vector3D){0, 0, __1I_FIXED}, *_cameraRotation);
 
+	Hardware::suspendInterrupts();
+
 	for(VirtualNode node = this->components->head, nextNode = NULL; NULL != node; node = nextNode)
 	{
 		nextNode = node->next;
@@ -171,17 +173,15 @@ void WireframeManager::render(bool deferred __attribute__((unused)))
 		{
 			continue;
 		}
-
-		Hardware::suspendInterrupts();
 	
 		Wireframe::render(wireframe, relativePosition);
-
-		Hardware::resumeInterrupts();
 
 #ifdef __PROFILE_WIREFRAMES
 		this->renderedWireframes++;
 #endif
 	}
+
+	Hardware::resumeInterrupts();
 
 #ifdef __PROFILE_WIREFRAMES
 	WireframeManager::print(this, 1, 1);

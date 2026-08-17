@@ -750,8 +750,8 @@ void GameState::createManagers()
 			_componentManagerAllocators[kBehaviorComponent] 	= __TYPE(BehaviorManager);
 			_componentManagerAllocators[kPhysicsComponent] 		= __TYPE(BodyManager);
 			_componentManagerAllocators[kColliderComponent] 	= __TYPE(ColliderManager);
-			_componentManagerAllocators[kSpriteComponent] 		= __TYPE(SpriteManager);
 			_componentManagerAllocators[kWireframeComponent] 	= __TYPE(WireframeManager);
+			_componentManagerAllocators[kSpriteComponent] 		= __TYPE(SpriteManager);
 			_componentManagerAllocators[kSoundComponent] 		= __TYPE(SoundManager);
 
 			this->componentManagers[i] = ComponentManager::safeCast(_componentManagerAllocators[i]());
@@ -856,8 +856,8 @@ void GameState::configureUI(StageSpec* stageSpec)
 
 void GameState::render(bool deferred)
 {
-	SpriteManager::render(this->componentManagers[kSpriteComponent], deferred);
 	WireframeManager::render(this->componentManagers[kWireframeComponent], deferred);
+	SpriteManager::render(this->componentManagers[kSpriteComponent], deferred);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
