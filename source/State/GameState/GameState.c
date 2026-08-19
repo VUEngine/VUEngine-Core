@@ -171,7 +171,7 @@ void GameState::update(void* owner)
 	Profiler::lap(kProfilerLapTypeVIPInterruptGAMESTARTProcess, PROCESS_NAME_CAMERA);
 #endif
 
-//	GameState::applyTransformationsUI(this);
+	GameState::applyTransformationsUI(this);
 #ifdef __ENABLE_PROFILER
 	Profiler::lap(kProfilerLapTypeNormalProcess, PROCESS_NAME_UI_TRANSFORMS);
 #endif
