@@ -171,7 +171,7 @@ void GameState::update(void* owner)
 	Profiler::lap(kProfilerLapTypeVIPInterruptGAMESTARTProcess, PROCESS_NAME_CAMERA);
 #endif
 
-	GameState::applyTransformationsUI(this);
+//	GameState::applyTransformationsUI(this);
 #ifdef __ENABLE_PROFILER
 	Profiler::lap(kProfilerLapTypeNormalProcess, PROCESS_NAME_UI_TRANSFORMS);
 #endif
@@ -181,12 +181,12 @@ void GameState::update(void* owner)
 		Profiler::lap(kProfilerLapTypeNormalProcess, PROCESS_NAME_INPUT);
 #endif
 
-	GameState::processBehaviors(this);
+//	GameState::processBehaviors(this);
 #ifdef __ENABLE_PROFILER
 	Profiler::lap(kProfilerLapTypeNormalProcess, PROCESS_NAME_BEHAVIORS);
 #endif
 
-	GameState::processMutators(this);
+//	GameState::processMutators(this);
 #ifdef __ENABLE_PROFILER
 	Profiler::lap(kProfilerLapTypeNormalProcess, PROCESS_NAME_MUTATORS);
 #endif
@@ -201,7 +201,7 @@ void GameState::update(void* owner)
 	Profiler::lap(kProfilerLapTypeNormalProcess, PROCESS_NAME_TRANSFORMS);
 #endif
 
-	GameState::processCollisions(this);
+//	GameState::processCollisions(this);
 #ifdef __ENABLE_PROFILER
 	Profiler::lap(kProfilerLapTypeNormalProcess, PROCESS_NAME_COLLISIONS);
 #endif
@@ -1044,8 +1044,10 @@ void GameState::stream(bool complete)
 				{
 					VUEngine::fireEvent(VUEngine::getInstance(), kEventLowStreamingRate);
 				}
-
-				while(Stage::stream(this->stage) && !VUEngine::hasGameFrameStarted());
+				else
+				{				
+					while(Stage::stream(this->stage) && !VUEngine::hasGameFrameStarted());
+				}
 			}
 	#endif
 		}
