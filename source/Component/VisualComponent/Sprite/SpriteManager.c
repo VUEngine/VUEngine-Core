@@ -788,7 +788,7 @@ void SpriteManager::applySpecialEffects()
 
 		Sprite sprite = Sprite::safeCast(node->data);
 
-		if(sprite->deleteMe || __HIDE == sprite->show)
+		if(sprite->deleteMe || __HIDE == sprite->show || (sprite->transparency & this->evenFrame))
 		{
 			continue;
 		}
