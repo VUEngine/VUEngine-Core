@@ -139,7 +139,7 @@ void Sprite::createAnimationController()
 		return;
 	}
 
-	this->animationController = new AnimationController(this->owner, this->texture);
+	this->animationController = new AnimationController(ListenerObject::safeCast(this->owner), this->texture);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
