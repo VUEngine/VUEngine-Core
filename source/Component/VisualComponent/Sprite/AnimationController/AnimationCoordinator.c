@@ -111,7 +111,7 @@ void AnimationCoordinator::addAnimationController(AnimationController animationC
 
 void AnimationCoordinator::removeAnimationController(AnimationController animationController)
 {
-	NM_ASSERT(this->animationControllers->head, "AnimationCoordinator::removeAnimationController: null this");
+	ASSERT(animationController, "AnimationCoordinator::removeAnimationController: null animationController");
 
 	bool mustChangeLeader = animationController == AnimationController::safeCast(VirtualList::front(this->animationControllers));
 	VirtualList::removeData(this->animationControllers, animationController);

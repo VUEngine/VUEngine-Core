@@ -25,7 +25,7 @@
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void AnimationController::constructor()
+void AnimationController::constructor(ListenerObject scope, Texture texture)
 {
 	// Always explicitly call the base's constructor 
 	Base::constructor();
@@ -44,6 +44,18 @@ void AnimationController::constructor()
 
 	// Not playing anything yet
 	this->playing = false;
+
+	if(!isDeleted(scope) && !isDeleted(texture) && Texture::isSingleFrame(texture) && Texture::isShared(texture))
+	{
+		this->animationCoordinator =
+			AnimationCoordinatorFactory::getCoordinator
+			(
+				AnimationCoordinatorFactory::getInstance(),
+				this, 
+				scope, 
+				Texture::getSpec(texture)->tileSetSpec
+			);
+	}
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -52,7 +64,13 @@ void AnimationController::destructor()
 {
 	if(!isDeleted(this->animationCoordinator))
 	{
-		AnimationCoordinator::removeAnimationController(this->animationCoordinator, this);
+		AnimationCoordinatorFactory::releaseCoordinator
+		(
+			AnimationCoordinatorFactory::getInstance(),
+			this->animationCoordinator,
+			this
+		);
+
 		this->animationCoordinator = NULL;
 	}
 
@@ -411,21 +429,6 @@ void AnimationController::setFrameDurationDecrement(uint8 frameDurationDecrement
 uint8 AnimationController::getFrameDurationDecrement()
 {
 	return this->frameDurationDecrement;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void AnimationController::setAnimationCoordinator(AnimationCoordinator animationCoordinator)
-{
-	// Animation coordinator
-	this->animationCoordinator = animationCoordinator; 
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-AnimationCoordinator AnimationController::getAnimationCoordinator()
-{
-	return this->animationCoordinator;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

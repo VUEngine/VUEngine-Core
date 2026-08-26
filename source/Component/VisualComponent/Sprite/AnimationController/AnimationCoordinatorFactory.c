@@ -24,6 +24,7 @@
 // CLASS' DECLARATIONS
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+friend class AnimationCoordinator;
 friend class VirtualList;
 friend class VirtualNode;
 
@@ -62,6 +63,20 @@ AnimationCoordinator AnimationCoordinatorFactory::getCoordinator(AnimationContro
 	}
 
 	return NULL;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void AnimationCoordinatorFactory::releaseCoordinator(AnimationCoordinator animationCoordinator, AnimationController animationController)
+{
+	AnimationCoordinator::removeAnimationController(animationCoordinator, animationController);
+
+	if(isDeleted(animationCoordinator->animationControllers->head))
+	{
+		VirtualList::removeData(this->animationCoordinators, animationCoordinator);
+
+		delete animationCoordinator;
+	}
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

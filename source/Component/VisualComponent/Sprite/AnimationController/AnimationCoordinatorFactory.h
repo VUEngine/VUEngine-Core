@@ -49,6 +49,11 @@ singleton class AnimationCoordinatorFactory : Object
 	/// @param tileSetSpec: TileSetSpec shared by the animation controllers to coordinate	
 	/// @return ClockManager singleton
 	AnimationCoordinator getCoordinator(AnimationController animationController, ListenerObject scope, const TileSetSpec* tileSetSpec);
+
+	/// Get an animation coordinator.
+	/// @param animationCoordinator: Animation coordinator to release
+	/// @param animationController: Animation controller that releases the coordinator
+	void releaseCoordinator(AnimationCoordinator animationCoordinator, AnimationController animationController);
 }
 
 #endif

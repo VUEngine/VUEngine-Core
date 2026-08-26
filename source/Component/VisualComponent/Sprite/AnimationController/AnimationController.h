@@ -60,7 +60,9 @@ class AnimationController : ListenerObject
 	/// @publicsection
 
 	/// Class' constructor
-	void constructor();
+	/// @param scope: Object that might need to listen for playback related events
+	/// @param texture: Texture for the associated sprite	
+	void constructor(ListenerObject scope, Texture texture);
 
 	/// Play the animation with the provided name from the provided array of animation functions.
 	/// @param animationFunctions: Array of functions where to look for the animation to play
@@ -131,14 +133,6 @@ class AnimationController : ListenerObject
 	/// Retrieve the decrement to frameDuration in each game cycle for each frame of animation.
 	/// @return Decrement to frameDuration in each game cycle for each frame of animation
 	uint8 getFrameDurationDecrement();
-
-	/// Set the animation coordinator for this animation controller.
-	/// @param animationCoordinator: Animation coordinator for this animation controller
-	void setAnimationCoordinator(AnimationCoordinator animationCoordinator);
-
-	/// Retrieve the animation coordinator for this animation controller.
-	/// @return Animation coordinator for this animation controller
-	AnimationCoordinator getAnimationCoordinator();
 
 	/// Retrieve the animation function currently playing if any
 	/// @return Animation function currently playing if any

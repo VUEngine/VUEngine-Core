@@ -139,28 +139,7 @@ void Sprite::createAnimationController()
 		return;
 	}
 
-	this->animationController = new AnimationController();
-
-	if(isDeleted(this->animationController))
-	{
-		this->animationController = NULL;
-		return;
-	}
-	
-	if(!isDeleted(this->texture) && Texture::isSingleFrame(this->texture) && Texture::isShared(this->texture))
-	{
-		AnimationController::setAnimationCoordinator
-		(
-			this->animationController,
-			AnimationCoordinatorFactory::getCoordinator
-			(
-				AnimationCoordinatorFactory::getInstance(),
-				this->animationController, 
-				ListenerObject::safeCast(this->owner), 
-				Texture::getSpec(this->texture)->tileSetSpec
-			)
-		);
-	}
+	this->animationController = new AnimationController(this->owner, this->texture);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
