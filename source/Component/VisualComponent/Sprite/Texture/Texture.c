@@ -424,13 +424,6 @@ void Texture::prepare()
 
 uint8 Texture::update(int16 maximumTextureRowsToWrite)
 {
-#ifndef __RELEASE		
-	if(NULL != this->tileSet)
-	{
-		this->status = this->generation != TileSet::getGeneration(this->tileSet)? kTexturePendingRewriting : this->status;
-	}
-#endif
-
 	switch(this->status)
 	{
 		case kTextureNoTileSet:
