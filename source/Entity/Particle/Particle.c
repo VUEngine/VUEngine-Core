@@ -159,7 +159,12 @@ void Particle::setup
 
 void Particle::resume(const ComponentSpec* visualComponentSpec)
 {
-	Particle::addComponent(this, visualComponentSpec);
+	if(NULL != visualComponentSpec)
+	{
+		Particle::removeComponents(this, kSpriteComponent);
+		Particle::removeComponents(this, kWireframeComponent);
+		this->visualComponent = VisualComponent::safeCast(Particle::addComponent(this, visualComponentSpec));
+	}
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
