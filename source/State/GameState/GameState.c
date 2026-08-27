@@ -342,6 +342,9 @@ void GameState::unpause(void* owner)
 		// Make sure that the rendering is up to date with any change made by the 
 		// derive implementation of resume
 		GameState::invalidateRendering(this);
+
+		// Render the game now that everything is in place
+		GameState::render(this, false);
 	}
 #ifdef __TOOLS
 	else
@@ -971,11 +974,6 @@ void GameState::applyTransformations()
 void GameState::processCollisions()
 {
 	if(!this->processCollisions || isDeleted(this->componentManagers[kColliderComponent]))
-	{
-		return;
-	}
-
-	if(Clock::isPaused(this->physicsClock))
 	{
 		return;
 	}
