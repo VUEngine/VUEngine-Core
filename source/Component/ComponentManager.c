@@ -747,8 +747,8 @@ Component ComponentManager::allocateComponent(Entity owner, const ComponentSpec*
 	extern uint32 _textStart __attribute__((unused));
 	extern uint32 _textEnd __attribute__((unused));
 	
-	NM_ASSERT(_textStart <= (uint32)componentSpec->allocator, "SpriteManager::create: invalid allocator");
-	NM_ASSERT(_textEnd >= (uint32)componentSpec->allocator, "SpriteManager::create: invalid allocator");
+	NM_ASSERT(_textStart <= (uint32)componentSpec->allocator, "ComponentManager::create: invalid allocator");
+	NM_ASSERT(_textEnd >= (uint32)componentSpec->allocator, "ComponentManager::create: invalid allocator");
 #endif
 
 	if(kComponentTypes <= componentSpec->componentType)
