@@ -451,7 +451,7 @@ void Entity::createComponents(ComponentSpec** componentSpecs)
 {
 	if(NULL == componentSpecs || 0 < ComponentManager::getComponentsCount(this, kComponentTypes))
 	{
-		// Components creation must happen only once in the spatial object's life cycle,
+		// Components creation must happen only once in the entity's life cycle,
 		// But deferred instantiation can cause multiple calls to this method.
 		return;
 	}

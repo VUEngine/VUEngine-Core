@@ -37,7 +37,7 @@ class VirtualList;
 ///
 /// Inherits from Entity
 ///
-/// Adds parenting cababilities to spatial objects.
+/// Adds parenting cababilities to entities.
 abstract class Container : Entity
 {
 	/// @protectedsection

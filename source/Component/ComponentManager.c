@@ -741,6 +741,16 @@ void ComponentManager::purgeComponents()
 
 Component ComponentManager::allocateComponent(Entity owner, const ComponentSpec* componentSpec)
 {
+	NM_ASSERT(NULL != componentSpec, "ComponentManager::allocateComponent: NULL componentSpec");
+
+#ifndef __RELEASE
+	extern uint32 _textStart __attribute__((unused));
+	extern uint32 _textEnd __attribute__((unused));
+	
+	NM_ASSERT(_textStart <= componentSpec->allocator, "SpriteManager::create: invalid allocator");
+	NM_ASSERT(_textEnd >= componentSpec->allocator, "SpriteManager::create: invalid allocator");
+#endif
+
 	if(kComponentTypes <= componentSpec->componentType)
 	{
 		return NULL;
