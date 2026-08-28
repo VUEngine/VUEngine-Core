@@ -143,6 +143,11 @@ static void ComponentManager::removeComponent(Entity owner, Component component)
 
 static void ComponentManager::addComponents(Entity owner, ComponentSpec** componentSpecs, uint32 componentType)
 {
+	if(NULL == componentSpecs)
+	{
+		return;
+	}
+
 	for(int32 i = 0; NULL != componentSpecs[i] && NULL != componentSpecs[i]->allocator; i++)
 	{
 		if(kComponentTypes <= componentType || componentSpecs[i]->componentType == componentType)
@@ -746,7 +751,16 @@ Component ComponentManager::allocateComponent(Entity owner, const ComponentSpec*
 #ifndef __RELEASE
 	extern uint32 _textStart __attribute__((unused));
 	extern uint32 _textEnd __attribute__((unused));
-	
+
+	if(owner && (_textStart > componentSpec->allocator || _textEnd < componentSpec->allocator))
+	{
+		Printer::setDebugMode();
+		Printer::clear();
+		Printer::text(__GET_CLASS_NAME(owner), 20, 26,"Debug");
+
+		Error::triggerException("MemoryPool::allocate: pool exhausted", NULL);				
+	}
+
 	NM_ASSERT(_textStart <= (uint32)componentSpec->allocator, "ComponentManager::create: invalid allocator");
 	NM_ASSERT(_textEnd >= (uint32)componentSpec->allocator, "ComponentManager::create: invalid allocator");
 #endif
