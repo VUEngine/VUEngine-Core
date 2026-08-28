@@ -188,7 +188,7 @@ uint32 ColliderManager::update()
 					(
 						Vector3D::getFromPixelVector(((ColliderSpec*)colliderToCheck->componentSpec)->displacement), 
 						colliderToCheck->transformation->rotation
-					);	
+					);
 				
 				colliderToCheck->position = Vector3D::sum(colliderToCheck->transformation->position, displacement);
 				colliderToCheck->positionGeneration = this->positionGeneration;
