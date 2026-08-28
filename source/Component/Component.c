@@ -43,22 +43,6 @@ void Component::constructor(Entity owner, const ComponentSpec* componentSpec)
 {
 	// Always explicitly call the base's constructor 
 	Base::constructor();
-	
-#ifndef __SHIPPING
-#ifndef __TOOLS
-	extern uint32 _textStart __attribute__((unused));
-	extern uint32 _dataLma __attribute__((unused));
-
-	if(NULL != componentSpec && !(&_textStart < (uint32*)componentSpec && (uint32*)componentSpec < &_dataLma))
-	{
-		Printer::setDebugMode();
-		Printer::clear();
-		Printer::text(__GET_CLASS_NAME(this), 1, 25, NULL);
-		Printer::hex((uint32)componentSpec, 1, 26, 8, NULL);
-		NM_ASSERT(false, "Component::constructor: the provided spec lives in WRAM");
-	}
-#endif
-#endif
 
 	this->componentSpec = componentSpec;
 	this->owner = owner;
