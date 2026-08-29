@@ -707,7 +707,6 @@ void ComponentManager::enable()
 
 void ComponentManager::disable()
 {
-	ComponentManager::purgeComponents(this);
 	ComponentManager::dontUseManager(this);
 }
 

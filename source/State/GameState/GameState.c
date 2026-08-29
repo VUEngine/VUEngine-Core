@@ -998,16 +998,12 @@ void GameState::stream(bool complete)
 		{
 			// Make sure the streaming starts anew before streaming everything
 			Stage::resetStreaming(this->stage);
+
+			bool streamed = false;
 			
 			// Stream in and out all relevant actors
 			do
 			{
-				// Make sure the stage deletes any pending child
-				Stage::purgeChildren(this->stage);
-
-				// Be sure that the manager's removed components are deleted
-				GameState::purgeComponentManagers(this);
-
 				// Make sure that the focus actor is transformed before focusing the camera
 				GameState::applyTransformations(this);
 
@@ -1018,15 +1014,20 @@ void GameState::stream(bool complete)
 				Stage::invalidateTransformation(this->stage);
 
 				// Render the game now that everything is in place
-				GameState::render(this, true);
+				GameState::render(this, false);
+
+				streamed = Stage::stream(this->stage);
+
+				// Make sure the stage deletes any pending child
+				Stage::purgeChildren(this->stage);
+
+				// Be sure that the manager's removed components are deleted
+				GameState::purgeComponentManagers(this);
 			}
-			while(Stage::stream(this->stage));
+			while(streamed);
 
 			// Make sure the streaming starts anew in the next game cycle
 			Stage::resetStreaming(this->stage);
-
-			// Render the game now that everything is in place
-			GameState::render(this, false);
 		}
 		else if(this->stream)
 		{
