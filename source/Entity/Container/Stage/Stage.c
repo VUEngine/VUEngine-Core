@@ -270,7 +270,7 @@ void Stage::registerActors(VirtualList positionedActorsToIgnore)
 			(stageActorDescription->rightBox.z1 - stageActorDescription->rightBox.z0) / 2)
 		};
 
-		VirtualNode closestEnitryDescriptionNode = NULL;
+		VirtualNode closestEntryDescriptionNode = NULL;
 		VirtualNode auxNode = this->stageActorDescriptions->head;
 		StageActorDescription* auxStageActorDescription = (StageActorDescription*)auxNode->data;
 
@@ -298,29 +298,29 @@ void Stage::registerActors(VirtualList positionedActorsToIgnore)
 
 			fixed_ext_t squaredDistance = Vector3D::squareLength(Vector3D::get(stageActorPosition, auxStageActorPosition));
 
-			if(NULL == closestEnitryDescriptionNode || closestDistance > squaredDistance)
+			if(NULL == closestEntryDescriptionNode || closestDistance > squaredDistance)
 			{
-				closestEnitryDescriptionNode = auxNode;
+				closestEntryDescriptionNode = auxNode;
 				closestDistance = squaredDistance;
 			}
 		}
 
-		if(NULL == auxNode)
+		if(NULL == closestEntryDescriptionNode)
 		{
 			VirtualList::pushBack(this->stageActorDescriptions, stageActorDescription);
 		}
 		else
 		{
 			uint32 stageActorDistanceToOrigin = Stage::computeDistanceToOrigin(stageActorDescription);
-			uint32 auxStageActorDistanceToOrigin = Stage::computeDistanceToOrigin(auxStageActorDescription);
+			uint32 closestStageActorDistanceToOrigin = Stage::computeDistanceToOrigin((StageActorDescription*)closestEntryDescriptionNode->data);
 
-			if(stageActorDistanceToOrigin > auxStageActorDistanceToOrigin)
+			if(stageActorDistanceToOrigin > closestStageActorDistanceToOrigin)
 			{
-				VirtualList::insertAfter(this->stageActorDescriptions, auxNode, stageActorDescription);
+				VirtualList::insertAfter(this->stageActorDescriptions, closestEntryDescriptionNode, stageActorDescription);
 			}
 			else
 			{
-				VirtualList::insertBefore(this->stageActorDescriptions, auxNode, stageActorDescription);
+				VirtualList::insertBefore(this->stageActorDescriptions, closestEntryDescriptionNode, stageActorDescription);
 			}
 		}
 	}
