@@ -813,9 +813,8 @@ int32 Stage::isActorInLoadRange(ScreenPixelVector onScreenPosition, const RightB
 		
 		RightBox helperRightBox =
 		{
-			-padding, padding,
-			-padding, padding,
-			-padding, padding
+			-padding, -padding, -padding, 
+			padding, padding, padding
 		};
 
 		return Actor::isInsideFrustrum(Vector3D::getFromScreenPixelVector(onScreenPosition), helperRightBox);
