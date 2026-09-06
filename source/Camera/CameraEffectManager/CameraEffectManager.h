@@ -62,9 +62,6 @@ singleton class CameraEffectManager : ListenerObject
 	/// Fade increment
 	uint8 fadeEffectIncrement;
 
-	/// Flag to signal that the current event listener has to be removed when the effect is complete
-	bool startingANewEffect;
-
 	/// @publicsection
 	
 	/// Class' constructor

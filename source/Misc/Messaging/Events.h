@@ -99,6 +99,7 @@ enum Events
 	kEventFontRewritten,
 
 	// Fade effects
+	kEventEffectFadeComplete,
 	kEventEffectFadeInComplete,
 	kEventEffectFadeOutComplete,
 	kEventEffectFadeStart,

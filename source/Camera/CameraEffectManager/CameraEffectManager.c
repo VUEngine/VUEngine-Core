@@ -43,7 +43,6 @@ void CameraEffectManager::constructor()
 	this->fadeDelay = 0;
 	this->fadeScope = NULL;
 	this->fadeEffectIncrement = __CAMERA_EFFECT_FADE_INCREMENT;
-	this->startingANewEffect = false;
 	this->targetDisplayColorConfig = DisplayUnit::getColorConfig();
 }
 
@@ -187,8 +186,6 @@ void CameraEffectManager::fadeAsyncStart
 	// Stop previous effect
 	CameraEffectManager::stopEffect(this, kFadeTo);
 
-	this->startingANewEffect = true;
-
 	// Set target brightness
 	if(NULL == targetDisplayColorConfig)
 	{
@@ -209,12 +206,16 @@ void CameraEffectManager::fadeAsyncStart
 		int16 fadeDirection = DisplayUnit::getBrightnessDirection(this->targetDisplayColorConfig);
 
 		if(0 < fadeDirection)
-		{		
+		{
 			CameraEffectManager::addEventListener(this, scope, kEventEffectFadeInComplete);
 		}
 		else if(0 > fadeDirection)
-		{		
+		{
 			CameraEffectManager::addEventListener(this, scope, kEventEffectFadeOutComplete);
+		}
+		else
+		{
+			CameraEffectManager::addEventListener(this, scope, kEventEffectFadeComplete);
 		}
 	}
 	
@@ -256,14 +257,14 @@ void CameraEffectManager::fadeAsync()
 
 	if(DisplayUnit::modifyBrightness(this->fadeEffectIncrement, this->targetDisplayColorConfig))
 	{
-		this->startingANewEffect = false;
+		if(!isDeleted(this->events))
+		{			
+			// Fire effect ended event
+			CameraEffectManager::fireEvent(this, kEventEffectFadeComplete);
+			CameraEffectManager::fireEvent(this, kEventEffectFadeInComplete);
+			CameraEffectManager::fireEvent(this, kEventEffectFadeOutComplete);
 
-		// Fire effect ended event
-		CameraEffectManager::fireEvent(this, kEventEffectFadeInComplete);
-		CameraEffectManager::fireEvent(this, kEventEffectFadeOutComplete);
-
-		if(!this->startingANewEffect)
-		{
+			CameraEffectManager::removeEventListeners(this, NULL, kEventEffectFadeComplete);
 			CameraEffectManager::removeEventListeners(this, NULL, kEventEffectFadeInComplete);
 			CameraEffectManager::removeEventListeners(this, NULL, kEventEffectFadeOutComplete);
 		}
