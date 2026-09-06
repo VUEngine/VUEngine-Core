@@ -49,7 +49,7 @@ friend class VirtualList;
 // CLASS' DATA
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-typedef bool (*StreamingPhase)(void*, int32);
+typedef bool (*StreamingPhase)(void*, bool);
 
 typedef struct ActorLoadingListener
 {
@@ -468,7 +468,7 @@ void Stage::resetStreaming()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-bool Stage::stream()
+bool Stage::stream(bool complete)
 {
 	bool result = false;
 	uint8 streamingPhase = this->streamingPhase;
@@ -483,7 +483,7 @@ bool Stage::stream()
 
 	do
 	{	
-		result = streamingPhases[this->streamingPhase](this, this->stageSpec->streaming.deferred);
+		result = streamingPhases[this->streamingPhase](this, complete);
 
 		if(result)
 		{
@@ -528,7 +528,7 @@ void Stage::configure(VirtualList positionedActorsToIgnore)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-bool Stage::unloadOutOfRangeActors(int32 defer __attribute__((unused)))
+bool Stage::unloadOutOfRangeActors(bool complete __attribute__((unused)))
 {
 	if(isDeleted(this->children))
 	{
@@ -601,130 +601,67 @@ bool Stage::unloadOutOfRangeActors(int32 defer __attribute__((unused)))
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-bool Stage::loadInRangeActors(int32 defer)
+bool Stage::loadInRangeActors(bool complete)
 {
 	bool loadedActors = false;
+	int16 streamingAmplitude = complete ? VirtualList::getCount(this->stageActorDescriptions) : this->streamingAmplitude;
 
-	int16 streamingAmplitude = defer ? VirtualList::getCount(this->stageActorDescriptions): this->streamingAmplitude;
-
-	if(this->reverseStreaming)
+	if(NULL == this->streamingHeadNode || complete)
 	{
-		if(NULL == this->streamingHeadNode)
-		{
-			this->streamingHeadNode = this->stageActorDescriptions->tail;
-		}
-
-		bool negativeStreamingAmplitude = 0 > ((int16)this->streamingAmplitude);
-
-		for
-		(
-			uint16 counter = 0; counter < streamingAmplitude;
-			this->streamingHeadNode = this->streamingHeadNode->previous, 
-			counter++
-		)
-		{
-			if(NULL == this->streamingHeadNode)
-			{
-				this->streamingHeadNode = this->stageActorDescriptions->tail;
-
-				if(negativeStreamingAmplitude)
-				{
-					break;
-				}
-			}
-
-			StageActorDescription* stageActorDescription = (StageActorDescription*)this->streamingHeadNode->data;
-
-			if(0 > stageActorDescription->internalId)
-			{
-				// If actor in load range
-				if
-				(
-					Stage::isActorInLoadRange
-					(
-						this, stageActorDescription->positionedActor->onScreenPosition, stageActorDescription->validRightBox ? 
-						&stageActorDescription->rightBox : NULL
-					)
-				)
-				{
-					loadedActors = true;
-
-					stageActorDescription->internalId = this->nextActorId++;
-
-					if(defer)
-					{
-						ActorFactory::spawnActor
-						(
-							this->actorFactory, stageActorDescription->positionedActor, Container::safeCast(this), 
-							stageActorDescription->internalId, false
-						);
-					}
-					else
-					{
-						Stage::doAddChildActor
-						(
-							this, stageActorDescription->positionedActor, false, stageActorDescription->internalId
-						);
-					}
-				}
-			}
-		}
+		this->streamingHeadNode = this->reverseStreaming ? this->stageActorDescriptions->tail : this->stageActorDescriptions->head;
 	}
-	else
+
+	bool negativeStreamingAmplitude = 0 > ((int16)this->streamingAmplitude);
+
+	for
+	(
+		uint16 counter = 0; counter < streamingAmplitude;
+		this->streamingHeadNode = this->reverseStreaming ? this->streamingHeadNode->previous : this->streamingHeadNode->next, 
+		counter++
+	)
 	{
 		if(NULL == this->streamingHeadNode)
 		{
-			this->streamingHeadNode = this->stageActorDescriptions->head;
+			this->streamingHeadNode = this->reverseStreaming ? this->stageActorDescriptions->tail : this->stageActorDescriptions->head;
+
+			if(negativeStreamingAmplitude)
+			{
+				break;
+			}
 		}
 
-		bool negativeStreamingAmplitude = 0 > ((int16)this->streamingAmplitude);
+		StageActorDescription* stageActorDescription = (StageActorDescription*)this->streamingHeadNode->data;
 
-		for(uint16 counter = 0; counter < streamingAmplitude; this->streamingHeadNode = this->streamingHeadNode->next, counter++)
+		if(0 > stageActorDescription->internalId)
 		{
-			if(NULL == this->streamingHeadNode)
-			{
-				this->streamingHeadNode = this->stageActorDescriptions->head;
-
-				if(negativeStreamingAmplitude)
-				{
-					break;
-				}
-			}
-
-			StageActorDescription* stageActorDescription = (StageActorDescription*)this->streamingHeadNode->data;
-
-			if(0 > stageActorDescription->internalId)
-			{
-				// If actor in load range
-				if
+			// If actor is in load range
+			if
+			(
+				Stage::isActorInLoadRange
 				(
-					Stage::isActorInLoadRange
-					(
-						this, stageActorDescription->positionedActor->onScreenPosition, 
-						stageActorDescription->validRightBox ? 
-							&stageActorDescription->rightBox : NULL
-					)
+					this, stageActorDescription->positionedActor->onScreenPosition, stageActorDescription->validRightBox ? 
+					&stageActorDescription->rightBox : NULL
 				)
+			)
+			{
+				loadedActors = true;
+
+				stageActorDescription->internalId = this->nextActorId++;
+
+				if(this->stageSpec->streaming.deferred)
 				{
-					loadedActors = true;
-
-					stageActorDescription->internalId = this->nextActorId++;
-
-					if(defer)
-					{
-						ActorFactory::spawnActor
-						(
-							this->actorFactory, stageActorDescription->positionedActor, Container::safeCast(this), 
-							stageActorDescription->internalId, false
-						);
-					}
-					else
-					{
-						Stage::doAddChildActor
-						(
-							this, stageActorDescription->positionedActor, false, stageActorDescription->internalId
-						);
-					}
+					ActorFactory::spawnActor
+					(
+						this->actorFactory, stageActorDescription->positionedActor, Container::safeCast(this), 
+						stageActorDescription->internalId, false
+					);
+				}
+				else
+				{
+					Stage::doAddChildActor
+					(
+						this, stageActorDescription->positionedActor, false, stageActorDescription->internalId
+					);
 				}
 			}
 		}
@@ -893,14 +830,14 @@ int32 Stage::isActorInLoadRange(ScreenPixelVector onScreenPosition, const RightB
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-bool Stage::purgeActors(int32 defer __attribute__((unused)))
+bool Stage::purgeActors(bool complete __attribute__((unused)))
 {
 	return this->pendingChildrenPurging && Stage::purgeChildren(this);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-bool Stage::updateActorFactory(int32 defer __attribute__((unused)))
+bool Stage::updateActorFactory(bool complete __attribute__((unused)))
 {	
 	return ActorFactory::hasActorsPending(this->actorFactory) && ActorFactory::createNextActor(this->actorFactory);
 }

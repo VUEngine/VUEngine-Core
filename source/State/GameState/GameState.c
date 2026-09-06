@@ -1016,7 +1016,7 @@ void GameState::stream(bool complete)
 				// Render the game now that everything is in place
 				GameState::render(this, false);
 
-				streamed = Stage::stream(this->stage);
+				streamed = Stage::stream(this->stage, true);
 
 				// Make sure the stage deletes any pending child
 				Stage::purgeChildren(this->stage);
@@ -1034,10 +1034,10 @@ void GameState::stream(bool complete)
 	#ifdef __ENABLE_PROFILER
 			if(!VUEngine::hasGameFrameStarted())
 			{
-				Stage::stream(this->stage);
+				Stage::stream(this->stage, false);
 			}
 	#else
-			if(Stage::stream(this->stage))
+			if(Stage::stream(this->stage, false))
 			{
 				if(VUEngine::hasGameFrameStarted())
 				{
@@ -1045,7 +1045,7 @@ void GameState::stream(bool complete)
 				}
 				else
 				{				
-					while(Stage::stream(this->stage) && !VUEngine::hasGameFrameStarted());
+					while(Stage::stream(this->stage, false) && !VUEngine::hasGameFrameStarted());
 				}
 			}
 	#endif

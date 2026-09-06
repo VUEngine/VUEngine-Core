@@ -256,7 +256,8 @@ class Stage : Container
 	virtual void resetStreaming();
 	
 	/// Stream in or out actors within or outside the camera's range.
-	virtual bool stream();
+	/// @param complete: If true, the streaming will check all the actors in the list of specs
+	virtual bool stream(bool complete);
 
 	/// Configure the stage with the actors defined in its spec.
 	/// @param positionedActorsToIgnore: List of positioned actor structs to register for streaming
@@ -267,10 +268,10 @@ class Stage : Container
 	/// These are not meant to be called externally. They are declared here
 	/// because of the preprocessor's limitations for forward declarations
 	/// in source files. Don't call these.
-	bool unloadOutOfRangeActors(int32 defer);
-	bool loadInRangeActors(int32 defer);
-	bool updateActorFactory(int32 defer);
-	bool purgeActors(int32 defer);
+	bool unloadOutOfRangeActors(bool defer);
+	bool loadInRangeActors(bool defer);
+	bool updateActorFactory(bool defer);
+	bool purgeActors(bool defer);
 }
 
 #endif
