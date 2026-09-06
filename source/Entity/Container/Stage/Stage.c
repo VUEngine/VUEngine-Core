@@ -605,6 +605,8 @@ bool Stage::loadInRangeActors(int32 defer)
 {
 	bool loadedActors = false;
 
+	int16 streamingAmplitude = defer ? VirtualList::getCount(this->stageActorDescriptions): this->streamingAmplitude;
+
 	if(this->reverseStreaming)
 	{
 		if(NULL == this->streamingHeadNode)
@@ -616,7 +618,7 @@ bool Stage::loadInRangeActors(int32 defer)
 
 		for
 		(
-			uint16 counter = 0; counter < this->streamingAmplitude; 
+			uint16 counter = 0; counter < streamingAmplitude;
 			this->streamingHeadNode = this->streamingHeadNode->previous, 
 			counter++
 		)
@@ -677,7 +679,7 @@ bool Stage::loadInRangeActors(int32 defer)
 
 		bool negativeStreamingAmplitude = 0 > ((int16)this->streamingAmplitude);
 
-		for(uint16 counter = 0; counter < this->streamingAmplitude; this->streamingHeadNode = this->streamingHeadNode->next, counter++)
+		for(uint16 counter = 0; counter < streamingAmplitude; this->streamingHeadNode = this->streamingHeadNode->next, counter++)
 		{
 			if(NULL == this->streamingHeadNode)
 			{
