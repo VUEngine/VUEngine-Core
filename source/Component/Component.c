@@ -45,18 +45,11 @@ void Component::constructor(Entity owner, const ComponentSpec* componentSpec)
 	Base::constructor();
 
 	this->componentSpec = componentSpec;
-	this->owner = owner;
+	this->owner = NULL;
+	this->transformation = &_dummyTransformation;
 	this->deleteMe = false;
 
-	if(isDeleted(this->owner))
-	{
-		this->owner = NULL;
-		this->transformation = &_dummyTransformation;
-	}
-	else
-	{
-		this->transformation = Entity::getTransformation(this->owner);
-	}
+	Component::setOwner(this, owner);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -79,6 +72,23 @@ void Component::destructor()
 ComponentSpec* Component::getSpec()
 {
 	return (ComponentSpec*)this->componentSpec;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void Component::setOwner(Entity owner)
+{
+	if(!isDeleted(owner) && owner != this->owner)
+	{
+		if(!isDeleted(this->owner))
+		{
+			Entity::clearComponentLists(this->owner, Component::getType(this));
+		}
+		
+		this->owner = owner;
+		this->transformation = Entity::getTransformation(this->owner);
+		Entity::clearComponentLists(this->owner, Component::getType(this));
+	}
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

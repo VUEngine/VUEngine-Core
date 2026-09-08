@@ -106,7 +106,11 @@ abstract class Component : ListenerObject
 	/// @return Component spec pointer
 	ComponentSpec* getSpec();
 
-	/// Retrieve the collider's owner.
+	/// Set the components's owner.
+	/// @param owner: Entity to which the component attaches to
+	void setOwner(Entity owner);
+
+	/// Retrieve the components's owner.
 	Entity getOwner();
 
 	/// Retrieve the component's type.
