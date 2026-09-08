@@ -61,6 +61,17 @@ enum SoundGroup
 	kSoundGroupOther
 };
 
+/// SoundComponent commands
+/// @memberof SoundComponent
+enum SoundComponentCommands
+{
+	cSoundComponentCommandPlay = cComponentCommandLast + 1,
+	cSoundComponentCommandPause,
+	cSoundComponentCommandUnpause,
+	cSoundComponentCommandStop,
+	cSoundComponentCommandLast
+};
+
 /// A Sound spec
 /// @memberof Sound
 typedef struct SoundSpec
@@ -179,6 +190,11 @@ class Sound : Component
 	/// @param owner: Entity to which the component attaches to
 	/// @param soundSpec: Pointer to the spec that defines how to initialize the component
 	void constructor(Entity owner, const SoundSpec* soundSpec);
+
+	/// Handle a command.
+	/// @param command: Command to handle
+	/// @param args: Variable arguments list depending on the command to handle
+	override void handleCommand(int32 command, va_list args);
 
 	/// Retrieve the spec pointer that defined how to initialized the sound
 	/// @return Sound spec pointer

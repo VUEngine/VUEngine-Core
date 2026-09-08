@@ -53,6 +53,8 @@ enum MessagesTypes
 	kMessageShow,
 	kMessageHide,
 	kMessageSetTransparency,
+	kMessageAnimationCompleted,
+	kMessageLoopingAnimationCompleted,
 
 	// Don't place messages below this
 	kMessageLastEngine

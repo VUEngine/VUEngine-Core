@@ -19,6 +19,7 @@
 #include <DebugConfig.h>
 #include <Mesh.h>
 #include <Printer.h>
+#include <Sound.h>
 #include <Sprite.h>
 #include <Telegram.h>
 #include <VirtualList.h>
@@ -433,26 +434,51 @@ bool Actor::onEvent(ListenerObject eventFirer, uint16 eventCode)
 		}
 
 		case kEventAnimationCompleted:
+		{			
+			// This is a walk around a race condition two sprites running the same animation and
+			// getting out of sync if another animation is triggered by this event
+			bool isAnimationLooped = AnimationController::isAnimationLooped(eventFirer);
+			int32 message = isAnimationLooped ? kMessageLoopingAnimationCompleted : kMessageAnimationCompleted; 
+			Actor::discardMessages(this, message);
+			Actor::sendMessageToSelf(this, message, 1, 0);
+
+			return AnimationController::isAnimationLooped(eventFirer);
+		}
+	}
+
+	return Base::onEvent(this, eventFirer, eventCode);
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+bool Actor::handleMessage(Telegram telegram)
+{
+	switch(Telegram::getMessage(telegram))
+	{
+		case kMessageAnimationCompleted:
+		{
+			Actor::fireEvent(this, kEventAnimationCompleted);
+			return true;
+		}
+
+		case kMessageLoopingAnimationCompleted:
 		{
 			const char* playingAnimationName = this->playingAnimationName;
-			
+
 			Actor::fireEvent(this, kEventAnimationCompleted);
 
-			if(!AnimationController::isAnimationLooped(eventFirer))
+			// Since the event firing handed over control to the client code
+			// it is possible that it triggers the playback of another animation
+			if(playingAnimationName == this->playingAnimationName)
 			{
-				// Since the event firing handed over control to the client code
-				// it is possible that it trigger the playback of another animation
-				if(playingAnimationName == this->playingAnimationName)
-				{				
-					this->playingAnimationName = NULL;
-				}
+				this->playingAnimationName = NULL;
 			}
 
 			return true;
 		}
 	}
 
-	return Base::onEvent(this, eventFirer, eventCode);
+	return Base::handleMessage(this, telegram);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -518,6 +544,7 @@ void Actor::ready(bool recursive)
 	Base::ready(this, recursive);
 
 	Actor::playAnimation(this, ((ActorSpec*)this->actorSpec)->initialAnimation);
+	Actor::playSounds(this);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -545,6 +572,7 @@ void Actor::resume()
 	}
 
 	Actor::playAnimation(this, this->playingAnimationName);
+	Actor::playSounds(this);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -920,6 +948,16 @@ bool Actor::isPlayingAnimation(char* animationName)
 const char* Actor::getPlayingAnimationName()
 {
 	return this->playingAnimationName;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void Actor::playSounds()
+{
+	ComponentManager::propagateCommand
+	(
+		cSoundComponentCommandPlay, Entity::safeCast(this), kSoundComponent, kSoundPlaybackNormal
+	);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

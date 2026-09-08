@@ -109,7 +109,7 @@ Sound SoundManager::create(Entity owner, const SoundSpec* soundSpec)
 	Sound sound = ((Sound (*)(Entity, const SoundSpec*)) ((ComponentSpec*)soundSpec)->allocator)(owner, soundSpec);
 
 	if(!isDeleted(sound))
-	{	
+	{
 		Timer::addEventListener(Timer::getInstance(), ListenerObject::safeCast(this), kEventTimerInterrupt);
 	}
 
@@ -145,7 +145,7 @@ void SoundManager::update()
 
 		Sound sound = Sound::safeCast(node->data);
 
-		if(!Sound::updatePlaybackState(sound))
+		if(sound->deleteMe || !Sound::updatePlaybackState(sound))
 		{
 			VirtualList::removeNode(this->components, node);
 			delete sound;

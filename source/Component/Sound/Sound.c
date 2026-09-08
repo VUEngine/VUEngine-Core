@@ -197,6 +197,38 @@ void Sound::destructor()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+void Sound::handleCommand(int32 command, va_list args)
+{
+	switch(command)
+	{
+		case cSoundComponentCommandPlay:
+		{
+			Sound::play(this, (uint32)va_arg(args, uint32));
+			break;
+		}
+
+		case cSoundComponentCommandPause:
+		{
+			Sound::pause(this);
+			break;
+		}
+
+		case cSoundComponentCommandUnpause:
+		{
+			Sound::unpause(this);
+			break;
+		}
+
+		case cSoundComponentCommandStop:
+		{
+			Sound::stop(this);
+			break;
+		}
+	}
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 const SoundSpec* Sound::getSpec()
 {
 	return ((SoundSpec*)this->componentSpec);

@@ -175,6 +175,11 @@ class Actor : Container
 	/// @return False if the listener has to be removed; true to keep it
 	override bool onEvent(ListenerObject eventFirer, uint16 eventCode);
 
+	/// Receive and process a Telegram.
+	/// @param telegram: Received telegram to process
+	/// @return True if the telegram was processed
+	override bool handleMessage(Telegram telegram);
+
 	/// Add the components that must attach to this actor.
 	/// Create the components that must attach to this container. 	
 	/// @param componentSpecs: Specifications to be used to configure the new components
