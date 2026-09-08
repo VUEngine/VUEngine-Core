@@ -249,6 +249,14 @@ class Sound : Component
 	/// @return Elapsed ticks since playback started
 	uint32 getTotalElapsedTicks();
 
+	/// Set a constant volume reduction.
+	/// @param volumeReduction: Volume reduction to apply
+	void setVolumeReduction(fix7_9 volumeReduction);
+
+	/// Retrieve the applied volume reduction.
+	/// @return Current volume reduction
+	fix7_9 getVolumeReduction();
+
 	/// Check if the sound is playing.
 	/// @return True if playback is going on
 	bool isPlaying();

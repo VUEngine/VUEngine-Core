@@ -562,6 +562,34 @@ uint32 Sound::getTotalElapsedTicks()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+void Sound::setVolumeReduction(fix7_9 volumeReduction)
+{
+	if(Sound::isFadingIn(this) || Sound::isFadingOut(this))
+	{
+		return;
+	}
+
+	if(0 > volumeReduction)
+	{
+		volumeReduction = 0;
+	}
+	else if(__I_TO_FIX7_9(_soundGroups[((SoundSpec*)this->componentSpec)->soundGroup]) < volumeReduction)
+	{
+		volumeReduction = __I_TO_FIX7_9(_soundGroups[((SoundSpec*)this->componentSpec)->soundGroup]);
+	}
+
+	this->volumeReduction = volumeReduction;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+fix7_9 Sound::getVolumeReduction()
+{
+	return this->volumeReduction;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 bool Sound::isPlaying()
 {
 	return kSoundPlaying == this->state;
@@ -849,27 +877,6 @@ void Sound::printPlaybackProgress(int32 x, int32 y, int32 width)
 fix7_9_ext Sound::computeTimerResolutionFactor()
 {
 	return Timer::computeTimerResolutionFactor(((SoundSpec*)this->componentSpec)->targetTimerResolutionUS, __SOUND_TARGET_US_PER_TICK);
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void Sound::setVolumeReduction(fix7_9 volumeReduction)
-{
-	if(Sound::isFadingIn(this) || Sound::isFadingOut(this))
-	{
-		return;
-	}
-
-	if(0 > volumeReduction)
-	{
-		volumeReduction = 0;
-	}
-	else if(__I_TO_FIX7_9(_soundGroups[((SoundSpec*)this->componentSpec)->soundGroup]) < volumeReduction)
-	{
-		volumeReduction = __I_TO_FIX7_9(_soundGroups[((SoundSpec*)this->componentSpec)->soundGroup]);
-	}
-
-	this->volumeReduction = volumeReduction;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
