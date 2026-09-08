@@ -142,9 +142,19 @@ void AnimationCoordinator::removeAnimationController(AnimationController animati
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+bool AnimationCoordinator::isMainAnimationController(AnimationController animationController)
+{
+	if(NULL == this->animationControllers || NULL == animationController)
+	{
+		return false;
+	}
+	
+	return AnimationController::safeCast(VirtualList::front(this->animationControllers)) == animationController;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 const TileSetSpec* AnimationCoordinator::getTileSetSpec()
 {
 	return this->tileSetSpec;
 }
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

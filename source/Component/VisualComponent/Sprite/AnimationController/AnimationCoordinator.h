@@ -68,6 +68,11 @@ class AnimationCoordinator : ListenerObject
 	/// @param animationController: Coordinated animation controller to remove
 	void removeAnimationController(AnimationController animationController);
 
+	/// Check if the provided animation controller is the main one.
+	/// @param animationController: Coordinated animation controller to check
+	/// @return True if the provided animation controller is the main one of this coordinator
+	bool AnimationCoordinator::isMainAnimationController(AnimationController animationController);
+
 	/// Retrieve the spec shared by the animation controllers to coordinate.
 	/// @return Pointer to spec shared by the animation controllers to coordinate
 	const TileSetSpec* getTileSetSpec();

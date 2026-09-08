@@ -243,6 +243,14 @@ bool AnimationController::updateAnimation()
 		return false;
 	}
 
+	if(!isDeleted(this->animationCoordinator))
+	{
+		if(!AnimationCoordinator::isMainAnimationController(this->animationCoordinator, this))
+		{
+			return false;
+		}
+	}
+
 	// Reduce frame delay count
 	if(this->frameDuration > this->frameDurationDecrement)
 	{
