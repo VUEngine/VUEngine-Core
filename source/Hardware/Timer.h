@@ -51,6 +51,10 @@ singleton class Timer : ListenerObject
 	/// @param resolution: Timer's target resolution
 	static void setResolution(uint16 resolution);
 
+	/// Retrieve the elapsed per interruption time 
+	/// @return Elapsed microseconds during the last interrupt
+	static uint16 getMicrosecondsPerInterrupt();
+
 	/// Retrieve the timer's resolution.
 	/// @return Timer's resolution
 	static uint16 getResolution();
