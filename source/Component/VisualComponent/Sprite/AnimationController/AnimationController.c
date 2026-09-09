@@ -146,7 +146,9 @@ bool AnimationController::play(const AnimationFunction* animationFunctions[], co
 
 	return true;
 }
-//--------------------------------------------------------------------------------------------------------
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void AnimationController::playAnimationFunction(const AnimationFunction* animationFunction, ListenerObject scope)
 {
 	ASSERT(animationFunction, "AnimationController::playAnimationFunction: null animationFunction");
@@ -241,14 +243,6 @@ bool AnimationController::updateAnimation()
 	if(-1 == this->actualFrame)
 	{
 		return false;
-	}
-
-	if(!isDeleted(this->animationCoordinator))
-	{
-		if(!AnimationCoordinator::isMainAnimationController(this->animationCoordinator, this))
-		{
-			return false;
-		}
 	}
 
 	// Reduce frame delay count
