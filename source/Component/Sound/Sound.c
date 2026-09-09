@@ -33,7 +33,7 @@ friend class VirtualList;
 
 #define __MIDI_CONVERTER_FREQUENCY_US			20
 #define __SOUND_TARGET_US_PER_TICK				__MIDI_CONVERTER_FREQUENCY_US
-#define __SOUND_FADE_INCREMENT					__F_TO_FIX7_9(0.05f)
+#define __SOUND_FADE_INCREMENT					__F_TO_FIX7_9(0.08f)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' ATTRIBUTES
@@ -309,8 +309,8 @@ void Sound::play(uint32 playbackType)
 			break;
 		}
 
-		case kSoundPlaybackNormal:
-		{	
+		default:
+		{
 			Sound::setVolumeReduction(this, 0);
 			break;
 		}
@@ -596,11 +596,6 @@ uint32 Sound::getTotalElapsedTicks()
 
 void Sound::setVolumeReduction(fix7_9 volumeReduction)
 {
-	if(Sound::isFadingIn(this) || Sound::isFadingOut(this))
-	{
-		return;
-	}
-
 	if(0 > volumeReduction)
 	{
 		volumeReduction = 0;
