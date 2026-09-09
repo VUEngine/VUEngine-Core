@@ -67,6 +67,7 @@ void ListenerObject::destructor()
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void ListenerObject::addEventListener(ListenerObject listener, uint16 eventCode)
 {
 	// Don't remove these asserts!
@@ -198,12 +199,18 @@ void ListenerObject::fireEvent(uint16 eventCode)
 {
 	if(NULL != this->events)
 	{
-		Hardware::suspendInterrupts();
-
 		this->eventFirings++;
 
 		for(VirtualNode node = this->events->head, nextNode; NULL != this->events && NULL != node; node = nextNode)
 		{
+			Hardware::suspendInterrupts();
+
+			if(NULL == this->events)
+			{
+				Hardware::resumeInterrupts();
+				break;
+			}
+
 			nextNode = node->next;
 
 			Event* event = (Event*)node->data;
@@ -223,6 +230,8 @@ void ListenerObject::fireEvent(uint16 eventCode)
 			}
 			else if(eventCode == event->code)
 			{
+				Hardware::resumeInterrupts();
+
 				event->remove = !ListenerObject::onEvent(event->listener, this, event->code);
 
 				// Safe check in case that I have been deleted during the previous event
@@ -240,6 +249,8 @@ void ListenerObject::fireEvent(uint16 eventCode)
 					break;
 				}
 
+				Hardware::suspendInterrupts();
+
 				if(1 == this->eventFirings)
 				{
 					if(isDeleted(event) || isDeleted(event->listener) || event->remove)
@@ -254,6 +265,8 @@ void ListenerObject::fireEvent(uint16 eventCode)
 					}
 				}
 			}
+
+			Hardware::resumeInterrupts();
 		}
 
 		this->eventFirings--;
@@ -263,8 +276,6 @@ void ListenerObject::fireEvent(uint16 eventCode)
             delete this->events;
             this->events = NULL;
         }
-		
-		Hardware::resumeInterrupts();
 	}
 }
 
