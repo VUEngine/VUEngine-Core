@@ -64,8 +64,13 @@
 		__CALL_CHECK_VTABLE(ClassName);																									\
 																																		\
 		/* allocate object */																											\
-		uint16* memoryBlock = (uint16*)MemoryPool_allocate(				 																\
-						sizeof(ClassName ## _str) + __DYNAMIC_STRUCT_PAD);																\
+		uint16* memoryBlock = (uint16*)MemoryPool_allocate(sizeof(ClassName ## _str) + __DYNAMIC_STRUCT_PAD);							\
+																																		\
+		/* check the object */																											\
+		if(NULL == memoryBlock)											 																\
+		{																																\
+			return NULL;																												\
+		}																																\
 																																		\
 		/* mark memory block as used by an object */																					\
 		*memoryBlock = __OBJECT_MEMORY_FOOT_PRINT;																						\
@@ -128,7 +133,7 @@
 	{																																	\
 		void* object = (void*)objectToDelete;																							\
 																																		\
-		Hardware_suspendInterrupts();																							\
+		Hardware_suspendInterrupts();																									\
 																																		\
 		if(__OBJECT_MEMORY_FOOT_PRINT == *(uint16*)((uint32)object - __DYNAMIC_STRUCT_PAD))												\
 		{																																\
