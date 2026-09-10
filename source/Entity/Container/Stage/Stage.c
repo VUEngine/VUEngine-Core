@@ -898,7 +898,6 @@ void Stage::configureGraphics()
 
 	Printer::loadFonts(this->stageSpec->assets.fontSpecs);
 	TileSetManager::loadTileSets(TileSetManager::getInstance(), (const TileSetSpec**)this->stageSpec->assets.tileSetSpecs);
-
 	TextureManager::loadTextures((const TextureSpec**)this->stageSpec->assets.textureSpecs);
 }
 
