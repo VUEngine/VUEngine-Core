@@ -780,7 +780,8 @@ void Sound::update()
 			Sound::loop(this);
 		}
 	}
-	else if(kSoundPlaybackNormal != this->playbackType)
+	
+	if(kSoundPlaybackNormal != this->playbackType)
 	{
 		Sound::updateVolumeReduction(this);
 	}

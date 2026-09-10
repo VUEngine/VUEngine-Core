@@ -48,7 +48,7 @@ typedef struct SoundTrackSpec
 	AllocatorPointer allocator;
 
 	/// Priority for sound channel usage
-	uint8 priority;
+	int8 priority;
 
 	/// Skip if no sound source available?
 	bool skip;
