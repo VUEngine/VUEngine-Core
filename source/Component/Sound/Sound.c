@@ -736,10 +736,17 @@ void Sound::update()
 				(
 					__FIXED_EXT_DIV(squaredDistanceToRightEar, __FIXED_SQUARE(__PIXELS_TO_METERS(__SOUND_STEREO_ATTENUATION_DISTANCE)))
 				)
-			); 
+			);
 
 		leftVolumeReduction = maximumVolume < leftVolumeReduction ? maximumVolume : leftVolumeReduction;
 		rightVolumeReduction = maximumVolume < rightVolumeReduction ? maximumVolume : rightVolumeReduction;
+	}
+
+	uint8 volumeReduction = __FIX7_9_TO_I(this->volumeReduction);
+	
+	if(__MAXIMUM_VOLUME < volumeReduction)
+	{
+		volumeReduction = __MAXIMUM_VOLUME;
 	}
 
 	for(VirtualNode node = this->soundTracks->head; NULL != node; node = node->next)
@@ -755,7 +762,7 @@ void Sound::update()
 				_soundGroups[((SoundSpec*)this->componentSpec)->soundGroup],
 				__FIX7_9_EXT_TO_I(leftVolumeReduction), 
 				__FIX7_9_EXT_TO_I(rightVolumeReduction), 
-				__FIX7_9_TO_I(this->volumeReduction), 
+				volumeReduction, 
 				this->frequencyDelta
 			) && finished;
 	}
