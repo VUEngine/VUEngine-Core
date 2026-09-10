@@ -149,6 +149,9 @@ class Sound : Component
 	/// Volume reduction used for fade effects
 	fix7_9 volumeReduction;
 
+	/// Target volume reduction
+	fix7_9 targetVolumeReduction;
+
 	/// Type of playback to perform (SoundPlaybackTypes)
 	uint8 playbackType;
 

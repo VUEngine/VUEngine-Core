@@ -168,6 +168,7 @@ void Sound::constructor(Entity owner, const SoundSpec* soundSpec)
 	this->soundTracks = NULL;
 	this->mainSoundTrack = NULL;
 	this->volumeReduction = 0;
+	this->targetVolumeReduction = 0;
 	this->frequencyDelta = 0;
 
 	Sound::configureTracks(this);
@@ -283,7 +284,7 @@ void Sound::fastForward(uint32 elapsedTicks)
 
 void Sound::play(uint32 playbackType)
 {
-	if(kSoundRelease == this->state)
+	if(kSoundRelease == this->state || Sound::isFadingOut(this))
 	{
 		return;
 	}
@@ -299,19 +300,13 @@ void Sound::play(uint32 playbackType)
 		{
 			if(kSoundPlaying != this->state)
 			{
-				Sound::setVolumeReduction(this, __I_TO_FIX7_9(_soundGroups[((SoundSpec*)this->componentSpec)->soundGroup]));
+				this->volumeReduction = __I_TO_FIX7_9(_soundGroups[((SoundSpec*)this->componentSpec)->soundGroup]);
 			}
 			else
 			{
 				return;
 			}
 
-			break;
-		}
-
-		default:
-		{
-			Sound::setVolumeReduction(this, 0);
 			break;
 		}
 	}
@@ -606,6 +601,7 @@ void Sound::setVolumeReduction(fix7_9 volumeReduction)
 	}
 
 	this->volumeReduction = volumeReduction;
+	this->targetVolumeReduction = volumeReduction;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -963,9 +959,9 @@ void Sound::updateVolumeReduction()
 			{
 				this->volumeReduction -= __SOUND_FADE_INCREMENT;
 
-				if(0 >= this->volumeReduction)
+				if(this->targetVolumeReduction >= this->volumeReduction)
 				{
-					this->volumeReduction = 0;
+					this->volumeReduction = this->targetVolumeReduction;
 					this->playbackType = kSoundPlaybackNormal;
 				}
 
