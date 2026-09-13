@@ -195,6 +195,8 @@ static uint8* MemoryPool::allocate(int32 numberOfBytes)
 	Error::triggerException("MemoryPool::allocate: pool exhausted", NULL);		
 #endif
 
+	Hardware::resumeInterrupts();
+
 	// Return designed address
 	return NULL;
 }
