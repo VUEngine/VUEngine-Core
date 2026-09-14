@@ -156,7 +156,7 @@ void CameraEffectManager::fadeStart(int32 effect, int32 delay)
 	{
 		case kFadeIn:
 		{
-			while(DisplayUnit::upBrightness(__ABS(this->fadeEffectIncrement)))
+			while(!DisplayUnit::upBrightness(__ABS(this->fadeEffectIncrement)))
 			{
 				Timer::wait(delay);
 			};
