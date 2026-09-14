@@ -460,17 +460,16 @@ void Stage::resetStreaming()
 {
 	this->streamingPhase = 0;
 
-	while(Stage::unloadOutOfRangeActors(this, false));
-	while(Stage::purgeActors(this, false));
-	while(Stage::loadInRangeActors(this, false));
-	while(Stage::updateActorFactory(this, false));
+	while(Stage::unloadOutOfRangeActors(this, true));
+	while(Stage::purgeActors(this, true));
+	while(Stage::loadInRangeActors(this, true));
+	while(Stage::updateActorFactory(this, true));
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 bool Stage::stream(bool complete)
 {
-	bool result = false;
 	uint8 streamingPhase = this->streamingPhase;
 
 	static const StreamingPhase streamingPhases[] =
@@ -482,12 +481,10 @@ bool Stage::stream(bool complete)
 	};
 
 	do
-	{	
-		result = streamingPhases[this->streamingPhase](this, complete);
-
-		if(result)
+	{
+		if(streamingPhases[this->streamingPhase](this, complete))
 		{
-			break;
+			return true;
 		}
 
 		if(++this->streamingPhase >= sizeof(streamingPhases) / sizeof(StreamingPhase))
@@ -497,7 +494,7 @@ bool Stage::stream(bool complete)
 
 	} while(!VUEngine::hasGameFrameStarted() && streamingPhase != this->streamingPhase);
 
-	return result;
+	return false;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -837,7 +834,14 @@ bool Stage::purgeActors(bool complete __attribute__((unused)))
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 bool Stage::updateActorFactory(bool complete __attribute__((unused)))
-{	
+{
+	if(complete)
+	{
+		while(ActorFactory::hasActorsPending(this->actorFactory) && ActorFactory::createNextActor(this->actorFactory));
+
+		return false;
+	}
+	
 	return ActorFactory::hasActorsPending(this->actorFactory) && ActorFactory::createNextActor(this->actorFactory);
 }
 
