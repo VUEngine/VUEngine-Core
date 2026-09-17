@@ -49,6 +49,7 @@ enum Events
 	
 	// Keypad
 	kEventKeypadRaisedPowerFlag,
+	kEventKeypadInputRead,
 
 	// Communications
 	kEventCommunicationsConnected,
