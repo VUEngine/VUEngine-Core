@@ -318,6 +318,9 @@ void Sound::play(uint32 playbackType)
 		case kSoundPlaybackFadeIn:
 		case kSoundPlaybackNormal:
 		{
+			this->targetTimerResolutionFactor = Sound::computeTimerResolutionFactor(this);
+			this->tickStep = __FIX7_9_EXT_MULT(this->speed, this->targetTimerResolutionFactor);
+			
 			bool wasPaused = kSoundPaused == this->state;
 
 			this->state = kSoundPlaying;
@@ -498,9 +501,6 @@ void Sound::rewind()
 	{
 		return;
 	}
-
-	this->targetTimerResolutionFactor = Sound::computeTimerResolutionFactor(this);
-	this->tickStep = __FIX7_9_EXT_MULT(this->speed, this->targetTimerResolutionFactor);
 
 	this->previouslyElapsedTicks = 0;
     this->totalElapsedTicks = 0;
@@ -1023,9 +1023,6 @@ void Sound::loop()
 	{
 		return;
 	}
-
-	this->targetTimerResolutionFactor = Sound::computeTimerResolutionFactor(this);
-	this->tickStep = __FIX7_9_EXT_MULT(this->speed, this->targetTimerResolutionFactor);
 
 	this->previouslyElapsedTicks = 0;
     this->totalElapsedTicks = 0;
