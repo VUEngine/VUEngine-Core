@@ -17,7 +17,8 @@
 // CLASS' MACROS
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-#define __TERMINAL_OUTPUT_ADDRESS	(unsigned char*) 0x02000030;
+#define __TERMINAL_OUTPUT_ADDRESS		(unsigned char*) 0x02000030;
+#define __TERMINAL_BUFFER_SIZE			256 
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' PUBLIC STATIC METHODS
@@ -25,7 +26,7 @@
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static void Terminal::print(char* text)
+static void Terminal::print(const char* text)
 {
 	if(NULL == text)
 	{
@@ -46,3 +47,60 @@ static void Terminal::print(char* text)
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+static void Terminal::info(const char* text)
+{
+	char buffer[__TERMINAL_BUFFER_SIZE];
+
+	Terminal::print(Terminal::addPrefix(buffer, __TERMINAL_BUFFER_SIZE, "INFO: ", text));
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+static void Terminal::warning(const char* text)
+{
+	char buffer[__TERMINAL_BUFFER_SIZE];
+
+	Terminal::print(Terminal::addPrefix(buffer, __TERMINAL_BUFFER_SIZE, "WARNING: ", text));
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+static void Terminal::error(const char* text)
+{
+	char buffer[__TERMINAL_BUFFER_SIZE];
+
+	Terminal::print(Terminal::addPrefix(buffer, __TERMINAL_BUFFER_SIZE, "ERROR: ", text));
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+// CLASS' PRIVATE STATIC METHODS
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+static char* Terminal::addPrefix(char* buffer, int16 bufferSize, const char* prefix, const char* text)
+{
+    if(NULL == prefix || NULL == text || 0 >= bufferSize)
+    {
+		return NULL;
+    }
+
+	char* bufferHelper = buffer;
+	
+    while(0 != *prefix && 1 < bufferSize--)
+	{
+		*bufferHelper++ = *prefix++;
+	}
+	
+    while(0 != *text && 1 < bufferSize--)
+	{
+		*bufferHelper++ = *text++;		
+	}
+		
+	*bufferHelper = '\0';
+	
+    return buffer;
+}

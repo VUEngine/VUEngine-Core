@@ -41,7 +41,19 @@ static class Terminal : Object
 
 	/// Prints the provided text to the emulator's Terminal.
 	/// @param text: Pointer to the string to print
-	static void print(char* text);
+	static void print(const char* text);
+
+	/// Prints the provided text to the emulator's Terminal prefixed with INFO:.
+	/// @param text: Pointer to the string to print
+	static void info(const char* text)
+
+	/// Prints the provided text to the emulator's Terminal prefixed with WARNING:.
+	/// @param text: Pointer to the string to print
+	static void warning(const char* text)
+
+	/// Prints the provided text to the emulator's Terminal prefixed with ERROR:.
+	/// @param text: Pointer to the string to print
+	static void error(const char* text)
 }
 
 #endif
