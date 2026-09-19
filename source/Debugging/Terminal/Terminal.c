@@ -52,7 +52,7 @@ static void Terminal::info(const char* text)
 {
 	char buffer[__TERMINAL_BUFFER_SIZE];
 
-	Terminal::print(Terminal::addPrefix(buffer, __TERMINAL_BUFFER_SIZE, "INFO: ", text));
+	Terminal::print(Terminal::addPrefix(buffer, __TERMINAL_BUFFER_SIZE, "Info: ", text));
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -61,7 +61,7 @@ static void Terminal::warning(const char* text)
 {
 	char buffer[__TERMINAL_BUFFER_SIZE];
 
-	Terminal::print(Terminal::addPrefix(buffer, __TERMINAL_BUFFER_SIZE, "WARNING: ", text));
+	Terminal::print(Terminal::addPrefix(buffer, __TERMINAL_BUFFER_SIZE, "Warning: ", text));
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -70,7 +70,7 @@ static void Terminal::error(const char* text)
 {
 	char buffer[__TERMINAL_BUFFER_SIZE];
 
-	Terminal::print(Terminal::addPrefix(buffer, __TERMINAL_BUFFER_SIZE, "ERROR: ", text));
+	Terminal::print(Terminal::addPrefix(buffer, __TERMINAL_BUFFER_SIZE, "Error: ", text));
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
