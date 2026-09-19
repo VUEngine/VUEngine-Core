@@ -245,7 +245,7 @@ variable entirely: its behaviour no longer depends on what is installed.
 
 ## Deviations
 
-Three, all deliberate.
+Four, all deliberate.
 
 1. **Stale locks are reclaimed.** The shell version's check read
    `[ ! kill -0 $PID ]`, which is a shell syntax error rather than a process
@@ -262,6 +262,24 @@ Three, all deliberate.
 
 3. **No `sed -i.b` backups.** The shell version left a `.b` copy of every file
    beside it in the working folder. Nothing reads them.
+
+4. **The source pass keeps a file's line numbering.** It always meant to —
+   the class definition is prepended to an existing line rather than inserted
+   on one of its own, which is a line-preserving move and pointless otherwise
+   — but `extractPrototypes` left the two folding marks in the prototypes it
+   built. Those are injected ahead of the code, and `cleanUpMarkers` turns
+   each one back into a newline, so a class with a wrapped parameter list
+   pushed everything below it down a line. Seven of the engine's eighty
+   sources drifted, some of them by line forty.
+
+   The marks are now stripped there, as `LINE_MARK` already was. The generated
+   C is unchanged apart from the spurious breaks — byte for byte, once
+   newlines are ignored.
+
+   This matters outside the compiler. GCC records line numbers against the
+   file it reads, which is the generated one, so a debugger that resolves a
+   breakpoint on line N of somebody's own source needs N to mean the same
+   thing in both. `test/lines.test.ts` is what keeps it that way.
 
 ## Known bugs preserved
 

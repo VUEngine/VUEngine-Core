@@ -56,6 +56,12 @@ const LINE_MARK = '@N@';
 /** Sentinel appended to a line ending in a comma, i.e. a wrapped parameter list. */
 const CONTINUATION_MARK = '<Â·>';
 
+/**
+ * Marks where a parameter list that was wrapped onto its own line was pulled
+ * back up, so `cleanUpMarkers` can put the line break back.
+ */
+const WRAPPED_MARK = '<NEW_LINE>';
+
 interface Settings {
 	engineHome: string;
 	inputFile: string;
@@ -112,7 +118,7 @@ function run(settings: Settings): void {
 	// Pull a parameter list that was wrapped onto its own line back up, so a
 	// method's signature and its opening brace end up in one pattern space.
 	text = subst(text, '^[\t]\\+(', '(', { global: true });
-	text = substWhole(text, '\n(', '(<NEW_LINE>', { global: true });
+	text = substWhole(text, '\n(', `(${WRAPPED_MARK}`, { global: true });
 
 	writeText(outputFile, text);
 
@@ -453,6 +459,14 @@ function extractPrototypes(text: string): string {
 	prototypes = subst(prototypes, '{<START_BLOCK>.*<method>.*<%method>', ';', { global: true });
 	prototypes = subst(prototypes, '{<\\(STATIC\\|SECURE\\)><START_BLOCK>.*<method>.*<%method>', ';', { global: true });
 	prototypes = subst(prototypes, LINE_MARK, '', { global: true });
+	// And the two folding marks, for the same reason `LINE_MARK` goes: a
+	// prototype is one line by construction, and these are what `cleanUpMarkers`
+	// later turns back into newlines. A declaration whose parameter list was
+	// wrapped in the source carries one, and the prototypes are injected ahead
+	// of the code — so leaving it here spends a newline the source never had,
+	// and every line below it in the file moves down by one.
+	prototypes = subst(prototypes, WRAPPED_MARK, '', { global: true });
+	prototypes = subst(prototypes, CONTINUATION_MARK, '', { global: true });
 	prototypes = subst(prototypes, '<%>', '', { global: true });
 	prototypes = trDelete(prototypes, '\r\n');
 
