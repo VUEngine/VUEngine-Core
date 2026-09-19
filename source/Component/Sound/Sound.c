@@ -265,7 +265,8 @@ void Sound::fastForward(uint32 elapsedTicks)
 
 			SoundTrack::update
 			(
-				soundTrack, 
+				soundTrack,
+				((SoundSpec*)this->componentSpec)->loop,
 				this->tickStep, 
 				this->targetTimerResolutionFactor,
 				0,
@@ -756,7 +757,8 @@ void Sound::update()
 		finished = 
 			SoundTrack::update
 			(
-				soundTrack, 
+				soundTrack,
+				((SoundSpec*)this->componentSpec)->loop,
 				this->tickStep, 
 				this->targetTimerResolutionFactor,
 				_soundGroups[((SoundSpec*)this->componentSpec)->soundGroup],
@@ -785,6 +787,8 @@ void Sound::update()
 	{
 		Sound::updateVolumeReduction(this);
 	}
+
+	Sound::updatePlaybackState(this);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

@@ -14,7 +14,7 @@
 // INCLUDES
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-#include <Object.h>
+#include <ListenerObject.h>
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DECLARATION
@@ -25,7 +25,7 @@
 /// Inherits from Object
 ///
 /// Manages the platform's sound hardware.
-singleton class SoundUnit : Object
+singleton class SoundUnit : ListenerObject
 {
 	/// @publicsection
 
@@ -57,9 +57,6 @@ singleton class SoundUnit : Object
 	/// Reset the manager's state.
 	static void reset();
 
-	/// Update the manager.
-	static void update();
-
 	/// Stop all sound sources.
 	static void stopAllSounds();
 
@@ -73,6 +70,12 @@ singleton class SoundUnit : Object
 
 	/// Flush all pending sound requests.
 	static void flushQueuedSounds();
+
+	/// Process an event that the instance is listening for.
+	/// @param eventFirer: ListenerObject that signals the event
+	/// @param eventCode: Code of the firing event
+	/// @return False if the listener has to be removed; true to keep it
+	override bool onEvent(ListenerObject eventFirer, uint16 eventCode);
 }
 
 #endif

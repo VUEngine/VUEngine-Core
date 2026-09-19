@@ -78,8 +78,8 @@ fix7_9_ext SoundTrack::loop()
 
 bool SoundTrack::update
 (
-	fix7_9_ext tickStep, fix7_9_ext targetTimerResolutionFactor, uint8 maximumVolume, uint8 leftVolumeReduction, 
-	uint8 rightVolumeReduction, uint8 volumeReduction, uint16 frequencyDelta
+	bool loop, fix7_9_ext tickStep, fix7_9_ext targetTimerResolutionFactor, uint8 maximumVolume, 
+	uint8 leftVolumeReduction, uint8 rightVolumeReduction, uint8 volumeReduction, uint16 frequencyDelta
 )
 {
 	if(this->finished)
@@ -98,10 +98,21 @@ bool SoundTrack::update
 
 	this->elapsedTicks -= this->nextElapsedTicksTarget;
 
-	if(this->cursor >= this->samples)
+	if(loop)
 	{
-		this->finished = true;
-		return this->finished;
+		if(this->cursor >= this->samples)
+		{
+			this->finished = true;
+			return this->finished;
+		}
+	}
+	else
+	{
+		if(this->cursor > this->samples)
+		{
+			this->finished = true;
+			return this->finished;
+		}		
 	}
 
 	SoundTrackKeyframe soundTrackKeyframe = this->soundTrackSpec->trackKeyframes[this->cursor];

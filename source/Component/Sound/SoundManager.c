@@ -92,7 +92,7 @@ void SoundManager::disable()
 {
 	Base::disable(this);
 
-	SoundUnit::flushQueuedSounds(SoundUnit::getInstance());
+	SoundUnit::flushQueuedSounds();
 
 	SoundManager::destroyAllComponents(this);
 }
@@ -120,7 +120,7 @@ Sound SoundManager::create(Entity owner, const SoundSpec* soundSpec)
 
 void SoundManager::purgeComponents()
 {
-	SoundUnit::flushQueuedSounds(SoundUnit::getInstance());
+	SoundUnit::flushQueuedSounds();
 
 	Base::purgeComponents(this);	
 
@@ -145,7 +145,7 @@ void SoundManager::update()
 
 		Sound sound = Sound::safeCast(node->data);
 
-		if(sound->deleteMe || !Sound::updatePlaybackState(sound))
+		if(sound->deleteMe || kSoundRelease == sound->state)
 		{
 			VirtualList::removeNode(this->components, node);
 			delete sound;
@@ -163,8 +163,6 @@ void SoundManager::update()
 
 bool SoundManager::playSounds()
 {
-	SoundUnit::update(SoundUnit::getInstance());
-
 	for(VirtualNode node = this->components->head; NULL != node; node = node->next)
 	{
 		Sound sound = Sound::safeCast(node->data);
@@ -339,7 +337,7 @@ void SoundManager::stopAllSounds(bool release, SoundSpec** excludedSounds)
 
 	if(NULL == excludedSounds)
 	{
-		SoundUnit::stopAllSounds(SoundUnit::getInstance());
+		SoundUnit::stopAllSounds();
 	}
 }
 

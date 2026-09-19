@@ -135,18 +135,19 @@ abstract class SoundTrack : Object
 	fix7_9_ext loop();
 
 	/// Advance the playback on the sound's MIDI tracks.
+	/// @param loop: Flag to let know the sound track if it will loop
 	/// @param tickStep: Tick step per timer interrupt
 	/// @param targetTimerResolutionFactor: Factor to apply to the tick step
 	/// @param maximumVolume: Maximum volume for the sound track's playback
 	/// @param leftVolumeReduction: Volume reduction to apply to the left speaker's volume
 	/// @param rightVolumeReduction: Volume reduction to apply to the right speaker's volume
 	/// @param volumeReduction: Volume reduction used for fade effects
-	/// @param frequencyDelta: added to the frequency registers
+	/// @param frequencyDelta: Added to the frequency registers
 	/// @return True if the playback is complete; false otherwise
 	bool update
 	(
-		fix7_9_ext tickStep, fix7_9_ext targetTimerResolutionFactor, uint8 maximumVolume, uint8 leftVolumeReduction,
-		uint8 rightVolumeReduction, uint8 volumeReduction, uint16 frequencyDelta
+		bool loop, fix7_9_ext tickStep, fix7_9_ext targetTimerResolutionFactor, uint8 maximumVolume, 
+		uint8 leftVolumeReduction, uint8 rightVolumeReduction, uint8 volumeReduction, uint16 frequencyDelta
 	);
 
 	/// Retrieve the sound track's total ticks.
