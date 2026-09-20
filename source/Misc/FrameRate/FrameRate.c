@@ -128,7 +128,15 @@ void FrameRate::print(int32 x, int32 y)
 	Printer::text("FPS     |TORN  |AVR     ", x, y, NULL);
 	Printer::int32(this->FPS, x + 4, y, NULL);
 	Printer::int32(this->unevenFPS, x + 14, y, NULL);
-	Printer::int32(((float)this->totalFPS / this->seconds) + 0.5f, x + 20, y, NULL);
+
+	if(0 < this->seconds)
+	{
+		Printer::int32(0, x + 20, y, NULL);
+	}
+	else
+	{
+		Printer::int32(((float)this->totalFPS / this->seconds) + 0.5f, x + 20, y, NULL);		
+	}
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
