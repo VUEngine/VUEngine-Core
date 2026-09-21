@@ -127,7 +127,7 @@ void Particle::setup
 	{
 		Particle::removeComponents(this, kColliderComponent);
 		Particle::addComponent(this, colliderComponentSpec);
-		Particle::registerCollisions(this, false);
+		Particle::registerCollisions(this, false, false);
 
 		if(!isDeleted(this->body))
 		{

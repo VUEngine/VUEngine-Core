@@ -69,7 +69,7 @@ bool Entity::handleMessage(Telegram telegram)
 	{
 		case kMessageBodyStartedMoving:
 		{
-			Entity::checkCollisions(this, true);
+			Entity::checkCollisions(this, true, false);
 			return true;
 		}
 		
@@ -77,7 +77,7 @@ bool Entity::handleMessage(Telegram telegram)
 		{
 			if(NULL == this->body || __NO_AXIS == Body::getMovementOnAllAxis(this->body))
 			{
-				Entity::checkCollisions(this, false);
+				Entity::checkCollisions(this, false, false);
 			}
 			
 			break;
@@ -355,37 +355,72 @@ fixed_t Entity::getFrictionCoefficient()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void Entity::enableCollisions()
+void Entity::enableCollisions(bool cache)
 {
-	ComponentManager::propagateCommand(cComponentCommandEnable, this, kColliderComponent);
+	if(cache)
+	{
+		Entity::sendCommandToComponents(this, kColliderComponent, cComponentCommandEnable);
+	}
+	else
+	{
+		ComponentManager::propagateCommand(cComponentCommandEnable, this, kColliderComponent);
+	}
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void Entity::disableCollisions()
+void Entity::disableCollisions(bool cache)
 {
-	ComponentManager::propagateCommand(cComponentCommandDisable, this, kColliderComponent);
+	if(cache)
+	{
+		Entity::sendCommandToComponents(this, kColliderComponent, cComponentCommandDisable);
+	}
+	else
+	{
+		ComponentManager::propagateCommand(cComponentCommandDisable, this, kColliderComponent);
+	}
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void Entity::checkCollisions(bool active)
+void Entity::checkCollisions(bool active, bool cache)
 {
-	ComponentManager::propagateCommand(cColliderComponentCommandCheckCollisions, this, kColliderComponent, (uint32)active);
+	if(cache)
+	{
+		Entity::sendCommandToComponents(this, kColliderComponent, cColliderComponentCommandCheckCollisions, (uint32)active);
+	}
+	else
+	{
+		ComponentManager::propagateCommand(cColliderComponentCommandCheckCollisions, this, kColliderComponent, (uint32)active);
+	}
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void Entity::registerCollisions(bool value)
+void Entity::registerCollisions(bool value, bool cache)
 {
-	ComponentManager::propagateCommand(cColliderComponentCommandRegisterCollisions, this, kColliderComponent, (uint32)value);
+	if(cache)
+	{
+		Entity::sendCommandToComponents(this, kColliderComponent, cColliderComponentCommandRegisterCollisions, (uint32)value);
+	}
+	else
+	{
+		ComponentManager::propagateCommand(cColliderComponentCommandRegisterCollisions, this, kColliderComponent, (uint32)value);
+	}
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void Entity::setCollidersLayers(uint32 layers)
+void Entity::setCollidersLayers(uint32 layers, bool cache)
 {
-	ComponentManager::propagateCommand(cColliderComponentCommandSetLayers, this, kColliderComponent, (uint32)layers);
+	if(cache)
+	{
+		Entity::sendCommandToComponents(this, kColliderComponent, cColliderComponentCommandSetLayers, (uint32)layers);
+	}
+	else
+	{
+		ComponentManager::propagateCommand(cColliderComponentCommandSetLayers, this, kColliderComponent, (uint32)layers);
+	}
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -408,9 +443,16 @@ uint32 Entity::getCollidersLayers()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void Entity::setCollidersLayersToIgnore(uint32 layersToIgnore)
+void Entity::setCollidersLayersToIgnore(uint32 layersToIgnore, bool cache)
 {
-	ComponentManager::propagateCommand(cColliderComponentCommandSetLayersToIgnore, this, (uint32)layersToIgnore);
+	if(cache)
+	{
+		Entity::sendCommandToComponents(this, kColliderComponent, cColliderComponentCommandSetLayersToIgnore, (uint32)layersToIgnore);
+	}
+	else
+	{
+		ComponentManager::propagateCommand(cColliderComponentCommandSetLayersToIgnore, this, (uint32)layersToIgnore);
+	}
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -827,6 +869,39 @@ fixed_t Entity::getSurroundingFrictionCoefficient()
 	}
 
 	return totalFrictionCoefficient;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+// CLASS' PRIVATE METHODS
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void Entity::sendCommandToComponents(int32 componentType, int32 command, ...)
+{
+	VirtualList components = Entity::getComponents(this, componentType);
+
+	if(isDeleted(components))
+	{
+		return;
+	}
+
+	for(VirtualNode node = components->head; NULL != node; node = node->next)
+	{
+		Component component = Component::safeCast(node->data);
+		
+		if(!isDeleted(component))
+		{
+			va_list args;
+			va_start(args, command);
+
+			Component::handleCommand(component, command, args);
+
+			va_end(args);		
+		}
+	}	
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
