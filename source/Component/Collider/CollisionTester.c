@@ -272,7 +272,7 @@ static void CollisionTester::getSolutionVectorBetweenBallAndLineField(Ball ball,
 {
 	// TODO: this misses some cases when the ball's radius is bigger than the line field's length
 	// A first check should compare them and use the bigger's collider axis as the line onto which
-	// Project the other collider's points
+	// project the other collider's points
 	fixed_t ballRadius = ball->radius;
 	fixed_t ballDiameter = ballRadius << 1;
 

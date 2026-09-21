@@ -198,7 +198,7 @@ bool ActorFactory::createNextActor()
 
 	while(__LIST_EMPTY == result)
 	{
-		if(!--counter)
+		if(0 == --counter)
 		{
 			return false;
 		}
@@ -353,7 +353,7 @@ uint32 ActorFactory::transformActors()
 		if(!positionedActorDescription->componentsCreated)
 		{
 			const ActorSpec* actorSpec = Actor::getSpec(positionedActorDescription->actor);
-			
+
 			if
 			(
 				NULL != actorSpec && NULL != actorSpec->componentSpecs && 
@@ -366,7 +366,7 @@ uint32 ActorFactory::transformActors()
 						positionedActorDescription->actor, 
 						(ComponentSpec*)actorSpec->componentSpecs[positionedActorDescription->componentIndex]
 					);
-					
+
 				positionedActorDescription->componentIndex++;
 
 				if(createdComponent)
