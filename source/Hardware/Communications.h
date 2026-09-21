@@ -49,10 +49,10 @@ singleton class Communications : ListenerObject
 	static void disableCommunications();
 
 	/// Cancel all pending transmissions on the EXT port.
-	static bool cancelCommunications();
+	static void cancelCommunications();
 
 	/// Cancel all pending broadcasts on the EXT port.
-	static bool cancelBroadcasts();
+	static void cancelBroadcasts();
 
 	/// Start the sync procedure according to the official documentation once a connection
 	/// has been stablished.
