@@ -109,6 +109,7 @@ void Particle::setup
 		Particle::removeComponents(this, kSpriteComponent);
 		Particle::removeComponents(this, kWireframeComponent);
 		this->visualComponent = VisualComponent::safeCast(Particle::addComponent(this, visualComponentSpec));
+		Particle::playAnimation(this, this->particleSpec->initialAnimation);
 	}
 
 	if(NULL != physicsComponentSpec && NULL == this->body)
@@ -133,8 +134,6 @@ void Particle::setup
 			Body::sendMessages(this->body, true);
 		}
 	}
-
-	Particle::playAnimation(this, this->particleSpec->initialAnimation);
 
 	if(!isDeleted(this->body))
 	{

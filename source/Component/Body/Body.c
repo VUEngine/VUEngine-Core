@@ -1155,9 +1155,7 @@ void Body::computeDirectionAndSpeed(bool useExternalForceForDirection)
 
 		this->direction = Vector3D::scalarDivision(this->velocity, this->speed);
 #else
-		fix7_9_ext speed = __F_TO_FIX7_9_EXT(Math::squareRoot(__FIXED_EXT_TO_F(Vector3D::squareLength(this->velocity))));
-
-		this->speed = __FIX7_9_EXT_TO_FIXED(speed);
+		this->speed = __FIXED_TO_FIX7_9_EXT(Math::squareRootFixed(Vector3D::squareLength(this->velocity)));
 
 		if(0 < speed)
 		{
