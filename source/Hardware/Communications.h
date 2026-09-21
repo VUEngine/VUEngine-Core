@@ -51,6 +51,9 @@ singleton class Communications : ListenerObject
 	/// Cancel all pending transmissions on the EXT port.
 	static bool cancelCommunications();
 
+	/// Cancel all pending broadcasts on the EXT port.
+	static bool cancelBroadcasts();
+
 	/// Start the sync procedure according to the official documentation once a connection
 	/// has been stablished.
 	static void startSyncCycle();
