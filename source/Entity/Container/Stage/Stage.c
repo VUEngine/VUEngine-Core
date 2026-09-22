@@ -405,6 +405,37 @@ void Stage::destroyChildActor(Actor child)
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+bool Stage::stream(bool complete)
+{
+	uint8 streamingPhase = this->streamingPhase;
+
+	StreamingPhase streamingPhases[] =
+	{
+		&Stage::unloadOutOfRangeActors,
+		&Stage::purgeActors,
+		&Stage::loadInRangeActors,
+		&Stage::updateActorFactory
+	};
+
+	do
+	{
+		if(streamingPhases[this->streamingPhase](this, complete))
+		{
+			return true;
+		}
+
+		if(++this->streamingPhase >= sizeof(streamingPhases) / sizeof(StreamingPhase))
+		{
+			this->streamingPhase = 0;
+		}
+
+	} while(!VUEngine::hasGameFrameStarted() && streamingPhase != this->streamingPhase);
+
+	return false;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 #ifndef __SHIPPING
 void Stage::print(int32 x, int32 y)
 {
@@ -468,37 +499,6 @@ void Stage::resetStreaming()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-bool Stage::stream(bool complete)
-{
-	uint8 streamingPhase = this->streamingPhase;
-
-	static const StreamingPhase streamingPhases[] =
-	{
-		&Stage::unloadOutOfRangeActors,
-		&Stage::purgeActors,
-		&Stage::loadInRangeActors,
-		&Stage::updateActorFactory,
-	};
-
-	do
-	{
-		if(streamingPhases[this->streamingPhase](this, complete))
-		{
-			return true;
-		}
-
-		if(++this->streamingPhase >= sizeof(streamingPhases) / sizeof(StreamingPhase))
-		{
-			this->streamingPhase = 0;
-		}
-
-	} while(!VUEngine::hasGameFrameStarted() && streamingPhase != this->streamingPhase);
-
-	return false;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
 void Stage::configure(VirtualList positionedActorsToIgnore)
 {
 	Stage::configureCamera(this, true);
@@ -515,6 +515,13 @@ void Stage::configure(VirtualList positionedActorsToIgnore)
 
 	// Apply transformations
 	Stage::transform(this, NULL, __INVALIDATE_TRANSFORMATION);
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+bool Stage::customStreamingPhase(bool defer __attribute__((unused)))
+{
+	return false;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

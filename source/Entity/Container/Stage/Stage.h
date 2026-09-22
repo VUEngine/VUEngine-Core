@@ -246,7 +246,11 @@ class Stage : Container
 	/// Destroy a stage's child.
 	/// @param child: Actor to destroy
 	void destroyChildActor(Actor child);
-
+	
+	/// Stream in or out actors within or outside the camera's range.
+	/// @param complete: If true, the streaming will check all the actors in the list of specs
+	bool stream(bool complete);
+	
 	/// Print the stage's state.
 	/// @param x: Screen x coordinate where to print
 	/// @param y: Screen y coordinate where to print
@@ -254,10 +258,6 @@ class Stage : Container
 
 	/// Reset the streaming state so the new cycle starts anew.
 	virtual void resetStreaming();
-	
-	/// Stream in or out actors within or outside the camera's range.
-	/// @param complete: If true, the streaming will check all the actors in the list of specs
-	virtual bool stream(bool complete);
 
 	/// Configure the stage with the actors defined in its spec.
 	/// @param positionedActorsToIgnore: List of positioned actor structs to register for streaming
