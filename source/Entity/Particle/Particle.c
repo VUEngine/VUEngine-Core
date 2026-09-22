@@ -111,6 +111,10 @@ void Particle::setup
 		this->visualComponent = VisualComponent::safeCast(Particle::addComponent(this, visualComponentSpec));
 		Particle::playAnimation(this, this->particleSpec->initialAnimation);
 	}
+	else
+	{
+		Particle::replayAnimation(this);
+	}
 
 	if(NULL != physicsComponentSpec && NULL == this->body)
 	{
@@ -233,6 +237,18 @@ void Particle::playAnimation(const char* animationName)
 	}
 
 	VisualComponent::play(this->visualComponent, animationName, NULL);
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void Particle::replayAnimation()
+{
+	if(isDeleted(this->visualComponent))
+	{
+		return;
+	}
+
+	VisualComponent::replay(this->visualComponent);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
