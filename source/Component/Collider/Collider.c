@@ -76,7 +76,11 @@ void Collider::constructor(Entity owner, const ColliderSpec* colliderSpec)
 
 void Collider::destructor()
 {
-	Collider::hide(this);
+	if(!isDeleted(this->wireframe))
+	{
+		ComponentManager::destroyComponent(this->owner, Component::safeCast(this->wireframe));
+		this->wireframe = NULL;
+	}
 
 	if(NULL != this->events)
 	{
@@ -550,11 +554,11 @@ void Collider::show()
 	if(isDeleted(this->wireframe))
 	{
 		Collider::configureWireframe(this);
+	}
 
-		if(!isDeleted(this->wireframe))
-		{
-			Wireframe::show(this->wireframe);
-		}
+	if(!isDeleted(this->wireframe))
+	{
+		Wireframe::show(this->wireframe);
 	}
 }
 
@@ -564,8 +568,7 @@ void Collider::hide()
 {
 	if(!isDeleted(this->wireframe))
 	{
-		ComponentManager::destroyComponent(this->owner, Component::safeCast(this->wireframe));
-		this->wireframe = NULL;
+		Wireframe::hide(this->wireframe);
 	}
 }
 
