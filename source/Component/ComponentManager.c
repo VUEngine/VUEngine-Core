@@ -795,7 +795,7 @@ void ComponentManager::releaseComponent(Entity owner, Component component)
 
 	component->deleteMe = true;
 
-	if(NULL == owner || NULL == component->componentSpec || kComponentTypes <= component->componentSpec->componentType)
+	if(isDeleted(owner) || NULL == component->componentSpec || kComponentTypes <= component->componentSpec->componentType)
 	{
 		return;
 	}
