@@ -153,6 +153,12 @@ class SpriteManager : ComponentManager
 	/// @param animationsClock: Clock for the animations
 	void configure(RenderingConfig renderingConfig, Clock animationsClock);
 
+	/// Suspend rendering operations.
+	void suspendRendering();
+
+	/// Resume rendering operations.
+	void resumeRendering();
+
 	/// Set the clock that determines if the animations must be updated or not.
 	/// @param clock: Clock for the animations
 	void setAnimationsClock(Clock animationsClock);

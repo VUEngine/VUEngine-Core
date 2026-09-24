@@ -285,6 +285,20 @@ void SpriteManager::configure(RenderingConfig renderingConfig, Clock animationsC
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+void SpriteManager::suspendRendering()
+{
+	SpriteManager::stopListeningForVBlank(this);
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void SpriteManager::resumeRendering()
+{
+	SpriteManager::startListeningForVBlank(this);
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void SpriteManager::setAnimationsClock(Clock clock)
 {
 	this->animationsClock = clock;
