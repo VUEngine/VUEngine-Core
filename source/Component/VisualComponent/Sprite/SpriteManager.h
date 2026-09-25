@@ -97,6 +97,9 @@ class SpriteManager : ComponentManager
 	/// List of special sprites
 	VirtualList specialSprites;
 
+	/// Counter to skip commiting graphics to memory in sync with the frame rate
+	int8 gameCycleCounter;
+
 	/// Total pixels currently drawn
 	int32 totalPixelsDrawn;
 	

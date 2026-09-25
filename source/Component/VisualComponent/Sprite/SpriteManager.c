@@ -13,17 +13,18 @@
 
 #include <string.h>
 
-#include <TileSetManager.h>
+#include <DisplayUnit.h>
 #include <Clock.h>
 #include <DebugConfig.h>
+#include <FrameRate.h>
 #include <Mem.h>
 #include <ParamTableManager.h>
 #include <Printer.h>
 #include <Sprite.h>
 #include <TextureManager.h>
+#include <TileSetManager.h>
 #include <VirtualList.h>
 #include <VirtualNode.h>
-#include <DisplayUnit.h>
 
 #include "SpriteManager.h"
 
@@ -64,6 +65,7 @@ void SpriteManager::constructor()
 	// Always explicitly call the base's constructor 
 	Base::constructor();
 
+	this->gameCycleCounter = 0;
 	this->totalPixelsDrawn = 0;
 	this->specialEffectsRowsPerFrame = -1;
 	this->animationsClock = NULL;
@@ -117,7 +119,12 @@ bool SpriteManager::onEvent(ListenerObject eventFirer, uint16 eventCode)
 	{
 		case kEventDisplayUnitVBlank:
 		{
-			SpriteManager::commitGraphics(this);
+			if(0 > --this->gameCycleCounter)
+			{
+				this->gameCycleCounter = __MAXIMUM_FPS / FrameRate::getTargetFPS(FrameRate::getInstance()) - 1;
+
+				SpriteManager::commitGraphics(this);
+			}
 		
 			return true;
 		}
@@ -157,6 +164,7 @@ void SpriteManager::enable()
 
 	this->completeSort = true;
 	this->evenFrame = __TRANSPARENCY_EVEN;
+	this->gameCycleCounter = 0;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
