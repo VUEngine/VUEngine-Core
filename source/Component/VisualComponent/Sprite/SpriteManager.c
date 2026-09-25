@@ -65,7 +65,6 @@ void SpriteManager::constructor()
 	// Always explicitly call the base's constructor 
 	Base::constructor();
 
-	this->gameCycleCounter = 0;
 	this->totalPixelsDrawn = 0;
 	this->specialEffectsRowsPerFrame = -1;
 	this->animationsClock = NULL;
@@ -119,12 +118,7 @@ bool SpriteManager::onEvent(ListenerObject eventFirer, uint16 eventCode)
 	{
 		case kEventDisplayUnitVBlank:
 		{
-			if(0 > --this->gameCycleCounter)
-			{
-				this->gameCycleCounter = __MAXIMUM_FPS / FrameRate::getTargetFPS(FrameRate::getInstance()) - 1;
-
-				SpriteManager::commitGraphics(this);
-			}
+			SpriteManager::commitGraphics(this);
 		
 			return true;
 		}
@@ -164,7 +158,6 @@ void SpriteManager::enable()
 
 	this->completeSort = true;
 	this->evenFrame = __TRANSPARENCY_EVEN;
-	this->gameCycleCounter = 0;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

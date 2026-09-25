@@ -250,13 +250,6 @@ bool VUEngine::onEvent(ListenerObject eventFirer, uint16 eventCode)
 {
 	switch(eventCode)
 	{
-		case kEventDisplayUnitFrameStart:
-		{
-			VUEngine::frameStarted(this, __MILLISECONDS_PER_SECOND / __MAXIMUM_FPS);
-
-			return true;
-		}
-
 		case kEventDisplayUnitGameStart:
 		{
 			VUEngine::gameFrameStarted(this, DisplayUnit::getGameFrameDuration(eventFirer));
@@ -443,8 +436,10 @@ void VUEngine::changedState()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void VUEngine::frameStarted(uint16 gameFrameDuration)
+void VUEngine::gameFrameStarted(uint16 gameFrameDuration)
 {
+	this->gameFrameStarted = true;
+
 	static uint16 totalTime = 0;
 
 	totalTime += gameFrameDuration;
@@ -462,13 +457,6 @@ void VUEngine::frameStarted(uint16 gameFrameDuration)
 	}
 
 	_gameRandomSeed = Math::randomSeed();
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void VUEngine::gameFrameStarted(uint16 gameFrameDuration)
-{
-	this->gameFrameStarted = true;
 
 	ClockManager::update(ClockManager::getInstance(), gameFrameDuration);
 
@@ -603,7 +591,6 @@ secure void VUEngine::run(GameState currentGameState)
 		return;
 	}
 
-	DisplayUnit::addEventListener(DisplayUnit::getInstance(), ListenerObject::safeCast(this), kEventDisplayUnitFrameStart);
 	DisplayUnit::addEventListener(DisplayUnit::getInstance(), ListenerObject::safeCast(this), kEventDisplayUnitGameStart);
 
 	VUEngine::setState(currentGameState);
@@ -630,7 +617,6 @@ bool VUEngine::isInState(GameState gameState)
 
 void VUEngine::cleanUp()
 {
-	DisplayUnit::removeEventListener(DisplayUnit::getInstance(), ListenerObject::safeCast(this), kEventDisplayUnitFrameStart);
 	DisplayUnit::removeEventListener(DisplayUnit::getInstance(), ListenerObject::safeCast(this), kEventDisplayUnitGameStart);
 }
 
