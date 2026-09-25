@@ -817,6 +817,7 @@ void SpriteManager::applySpecialEffects()
 void SpriteManager::startListeningForVBlank()
 {
 	DisplayUnit::addEventListener(DisplayUnit::getInstance(), ListenerObject::safeCast(this), kEventDisplayUnitVBlank);
+	DisplayUnit::startListeningForVBlank();
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -824,6 +825,7 @@ void SpriteManager::startListeningForVBlank()
 void SpriteManager::stopListeningForVBlank()
 {
 	DisplayUnit::removeEventListener(DisplayUnit::getInstance(), ListenerObject::safeCast(this), kEventDisplayUnitVBlank);
+	DisplayUnit::stopListeningForVBlank();
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

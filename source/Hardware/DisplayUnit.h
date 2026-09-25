@@ -166,6 +166,12 @@ singleton class DisplayUnit : ListenerObject
 	/// Disable rendering operations.
 	static void disableRendering();
 
+	/// Make the display unit to acknowledge vblank.
+	static void startListeningForVBlank();
+
+	/// Prevent the display unit to acknowledge vblank.
+	static void stopListeningForVBlank();
+
 	/// Commit graphics to memory.
 	static void commitGraphics();
 
