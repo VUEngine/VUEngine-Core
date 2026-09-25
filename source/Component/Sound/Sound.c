@@ -41,27 +41,32 @@ friend class VirtualList;
 
 static Mirror _mirror = {false, false, false};
 static uint8 _soundGroups[kSoundGroupOther + 1] = 
-{ 
+{
+	//kSoundGroupNone
 	__MAXIMUM_VOLUME,
-
+	
+	// kSoundGroupGeneral
 #ifdef __MAXIMUM_VOLUME_GROUP_GENERAL
 	__MAXIMUM_VOLUME_GROUP_GENERAL,
 #else
 	__MAXIMUM_VOLUME,
 #endif
 
+	//kSoundGroupEffects
 #ifdef __MAXIMUM_VOLUME_GROUP_EFFECTS
 	__MAXIMUM_VOLUME_GROUP_EFFECTS,
 #else
 	__MAXIMUM_VOLUME,
 #endif
 
+	//kSoundGroupMusic
 #ifdef __MAXIMUM_VOLUME_GROUP_MUSIC
 	__MAXIMUM_VOLUME_GROUP_MUSIC,
 #else
 	__MAXIMUM_VOLUME,
 #endif
 
+	//kSoundGroupOther
 #ifdef __MAXIMUM_VOLUME_GROUP_OTHER
 	__MAXIMUM_VOLUME_GROUP_OTHER
 #else
@@ -680,6 +685,8 @@ void Sound::update()
 	bool finished = true;
 	fix7_9_ext leftVolumeReduction = 0;
 	fix7_9_ext rightVolumeReduction = 0;
+	int16 minimumVolumeReduction = __MAXIMUM_VOLUME - _soundGroups[((SoundSpec*)this->componentSpec)->soundGroup];
+	fix7_9_ext maximumVolume = __I_TO_FIX7_9(__MAXIMUM_VOLUME - minimumVolumeReduction);
 
 	if(NULL != this->transformation && __NON_TRANSFORMED != this->transformation->invalid)
 	{
@@ -719,8 +726,6 @@ void Sound::update()
 		fixed_ext_t squaredDistanceToLeftEar = Vector3D::squareLength(Vector3D::get(leftEar, relativePosition));
 		fixed_ext_t squaredDistanceToRightEar = Vector3D::squareLength(Vector3D::get(rightEar, relativePosition));
 
-		fix7_9_ext maximumVolume = __I_TO_FIX7_9(_soundGroups[((SoundSpec*)this->componentSpec)->soundGroup]);
-
 		leftVolumeReduction = __FIX7_9_EXT_MULT
 			(
 				maximumVolume,
@@ -743,7 +748,7 @@ void Sound::update()
 		rightVolumeReduction = maximumVolume < rightVolumeReduction ? maximumVolume : rightVolumeReduction;
 	}
 
-	uint8 volumeReduction = __FIX7_9_TO_I(this->volumeReduction);
+	uint8 volumeReduction = __FIX7_9_TO_I(this->volumeReduction) + minimumVolumeReduction;
 	
 	if(__MAXIMUM_VOLUME < volumeReduction)
 	{
