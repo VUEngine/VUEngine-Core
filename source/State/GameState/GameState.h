@@ -77,6 +77,9 @@ class GameState : State
 	/// A clock for physics
 	Clock physicsClock;
 	
+	/// Flags to enable or disable the rendering
+	bool render;
+	
 	/// Flags to enable or disable the streaming
 	bool stream;
 

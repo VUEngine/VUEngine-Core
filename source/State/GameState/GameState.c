@@ -57,6 +57,7 @@ void GameState::constructor()
 	this->animationsClock = new Clock();
 	this->physicsClock = new Clock();
 
+	this->render = true;
 	this->stream = true;
 	this->transform = true;
 	this->processMutators = true;
@@ -244,6 +245,7 @@ void GameState::stop(void* owner)
 {
 	GameState::discardMessages(this, kMessageRestoreFPS); 
 
+	this->render = true;
 	this->stream = true;
 	this->transform = true;
 	this->updatePhysics = true;
@@ -861,6 +863,11 @@ void GameState::configureUI(StageSpec* stageSpec)
 
 void GameState::render(bool deferred)
 {
+	if(!this->render)
+	{
+		return;
+	}
+	
 	WireframeManager::render(this->componentManagers[kWireframeComponent], deferred);
 	SpriteManager::render(this->componentManagers[kSpriteComponent], deferred);
 }
