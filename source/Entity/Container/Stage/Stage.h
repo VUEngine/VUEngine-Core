@@ -43,7 +43,7 @@ typedef struct StageSpec
 	AllocatorPointer allocator;
 
 	/// Timer configuration
-    TimerConfig timerConfig;
+    TimerConfiguration timerConfiguration;
 
 	/// General stage's attributes
 	struct Level

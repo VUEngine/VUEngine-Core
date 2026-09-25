@@ -1122,7 +1122,7 @@ void GameState::configureTimer()
 
 	const StageSpec* stageSpec = Stage::getSpec(this->stage);
 
-	Timer::configure(stageSpec->timerConfig);
+	Timer::setConfiguration(stageSpec->timerConfiguration);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

@@ -30,9 +30,13 @@ singleton class Timer : ListenerObject
 	/// Interrupt handler for timer's interrupts
 	static void interruptHandler();
 
-	/// Configure the timer with the provided arguments.
-	/// @param timerConfig: Configuration data
-	static void configure(TimerConfig timerConfig);
+	/// Configure the timer with the provided data.
+	/// @param timerConfiguration: Configuration data
+	static void setConfiguration(TimerConfiguration timerConfiguration);
+
+	/// Retrieve the current timer configuration.
+	/// @return Configuration data
+	static TimerConfiguration getConfiguration();
 
 	/// Apply the settings to the hardware timer.
 	/// @param enable: If true, the hardware timer is enabled
