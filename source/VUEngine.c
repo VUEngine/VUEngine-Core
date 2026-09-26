@@ -575,7 +575,7 @@ void VUEngine::endGameFrame()
 	if(NULL != this->currentGameState && GameState::lockFrameRate(this->currentGameState))
 	{
 		//  Wait for the next game start
-		while(!this->gameFrameStarted)
+		while(!VUEngine::hasGameFrameStarted())
 		{
 #ifndef __SHIPPING
 			Hardware::halt();
