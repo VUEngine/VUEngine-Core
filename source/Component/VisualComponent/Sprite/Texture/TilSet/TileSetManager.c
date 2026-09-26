@@ -62,6 +62,8 @@ secure void TileSetManager::reset()
 	}
 
 	this->freedOffset = 1;
+	this->defragmentationCycle = 0;
+	this->defragmentationDelay = 0;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -69,6 +71,13 @@ secure void TileSetManager::reset()
 secure void TileSetManager::clearGraphicMemory()
 {
 	Mem::clear((uint8*) __TILE_SPACE_BASE_ADDRESS, 8192 * 4);
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void TileSetManager::setDefragmentationDelay(int16 defragmentationDelay)
+{
+	this->defragmentationDelay = defragmentationDelay;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -157,6 +166,13 @@ secure void TileSetManager::defragment(bool deferred)
 {
 	if(1 < this->freedOffset)
 	{
+		if(++this->defragmentationCycle < this->defragmentationDelay)
+		{
+			return;
+		}
+
+		this->defragmentationCycle = 0;
+
 		do
 		{
 			VirtualNode node = this->tileSets->head;
@@ -229,6 +245,8 @@ void TileSetManager::constructor()
 
 	this->tileSets = new VirtualList();
 	this->freedOffset = 1;
+	this->defragmentationCycle = 0;
+	this->defragmentationDelay = 0;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

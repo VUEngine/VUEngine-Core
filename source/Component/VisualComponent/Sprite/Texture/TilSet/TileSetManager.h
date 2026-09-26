@@ -42,6 +42,12 @@ singleton class TileSetManager : Object
 	/// Start offset in TILE space when free memory starts
 	uint16 freedOffset;
 
+	/// Delays defragmentation by the configured amount
+	int16 defragmentationDelay;
+
+	/// Keeps track of the defragmentation cycle
+	int16 defragmentationCycle;
+
 	/// @publicsection
 	
 	/// Print the manager's status.
@@ -54,6 +60,10 @@ singleton class TileSetManager : Object
 
 	/// Erase the contents of TILE memory space.
 	void clearGraphicMemory();
+
+	/// Set the desired delay for defragmentation.
+	/// @param: Number of cycles to delay the defragmentation
+	void setDefragmentationDelay(int16 defragmentationDelay);
 
 	/// Load char sets in function of the provided array of specs.
 	/// @param tileSetSpecs: Array of char set specs in function of which to load char sets 
