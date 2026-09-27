@@ -140,9 +140,10 @@ void SpriteManager::enable()
 {
 	Base::enable(this);
 
-	TileSetManager::clearGraphicMemory(TileSetManager::getInstance());
-	TextureManager::clearGraphicMemory();
 	DisplayUnit::clearGraphicMemory();
+	TextureManager::clearGraphicMemory();
+	TileSetManager::clearGraphicMemory(TileSetManager::getInstance());
+
 	Printer::reset(Printer::getInstance());
 	TileSetManager::reset(TileSetManager::getInstance());
 	ParamTableManager::reset(ParamTableManager::getInstance());
