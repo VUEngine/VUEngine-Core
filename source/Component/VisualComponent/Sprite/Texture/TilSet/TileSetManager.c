@@ -70,6 +70,8 @@ secure void TileSetManager::reset()
 
 secure void TileSetManager::clearGraphicMemory()
 {
+	CACHE_RESET;
+
 	Mem::clear((uint8*) __TILE_SPACE_BASE_ADDRESS, 8192 * 4);
 }
 
