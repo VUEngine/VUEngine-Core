@@ -519,7 +519,7 @@ static inline int32 Math::random(uint32 seed, int32 range)
 
 static inline int32 Math::haveEqualSign(int32 a, int32 b)
 {
-	return ((a & (1 << sizeof(int32))) ==	(b & (1 << sizeof(int32))));
+	return (0 == (a & b)) || ((a & (1 << sizeof(int32))) == (b & (1 << sizeof(int32))));
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
