@@ -142,10 +142,6 @@ abstract class Sprite : VisualComponent
 	/// @return True if the sprite is hidden; false otherwise
 	bool isHidden();
 
-	/// Set the position cache.
-	/// @param position: Position cache to save
-	void setPosition(const PixelVector* position);
-
 	/// Retrieve the position cache.
 	const PixelVector* getPosition();
 
@@ -218,6 +214,10 @@ abstract class Sprite : VisualComponent
 
 	/// Forcefully hide the sprite
 	virtual void forceHide();
+
+	/// Set the position cache.
+	/// @param position: Position cache to save
+	virtual void setPosition(const PixelVector* position);
 
 	/// Set the rotation cache.
 	/// @param rotation: Rotation cache to save

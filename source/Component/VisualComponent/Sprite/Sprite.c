@@ -339,19 +339,6 @@ bool Sprite::isHidden()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void Sprite::setPosition(const PixelVector* position)
-{
-	if(NULL == position)
-	{
-		return;
-	}
-
-	this->position = *position;
-	this->rendered = false;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
 const PixelVector* Sprite::getPosition()
 {
 	return (const PixelVector*)&this->position;
@@ -499,6 +486,19 @@ void Sprite::forceHide()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+void Sprite::setPosition(const PixelVector* position)
+{
+	if(NULL == position)
+	{
+		return;
+	}
+
+	this->position = *position;
+	this->rendered = false;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void Sprite::setRotation(const Rotation* rotation)
 {
 	if(NULL == rotation)
@@ -558,7 +558,15 @@ void Sprite::position()
 	}
 #endif
 
-	Sprite::setPosition(this, &position);
+	if(Sprite::overrides(this, setPosition))
+	{
+		Sprite::setPosition(this, &position);
+	}
+	else
+	{
+		this->position = position;
+		this->rendered = false;
+	}
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -574,6 +582,7 @@ void Sprite::rotate()
 	else
 	{
 		this->rotation = this->transformation->rotation;
+		this->rendered = false;
 	}
 }
 
@@ -596,6 +605,7 @@ void Sprite::scale()
 	else
 	{
 		this->scale = scale;
+		this->rendered = false;
 	}
 }
 
