@@ -549,7 +549,7 @@ void Texture::loadTileSet()
 			TileSet::setFrame(this->tileSet, this->frame);			
 		}
 		else
-		{		
+		{
 			this->frame = TileSet::getFrame(this->tileSet);
 		}
 	}
@@ -594,7 +594,7 @@ void Texture::setupUpdateFunction()
 		this->doUpdate = Texture::updateOptimized;
 	}
 	else
-	{			
+	{
 		this->doUpdate = Texture::updateDefault;
 	}
 }

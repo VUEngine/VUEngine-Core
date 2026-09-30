@@ -302,7 +302,7 @@ secure bool MessageDispatcher::dispatchDelayedMessages()
 		DelayedMessage* delayedMessage = (DelayedMessage*)node->data;
 
 		if(isDeleted(delayedMessage))
-		{	
+		{
 			VirtualList::removeNode(this->delayedMessages, node);
 
 			continue;	
@@ -378,7 +378,7 @@ secure bool MessageDispatcher::dispatchDelayedMessages()
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 secure bool MessageDispatcher::discardDelayedMessagesWithClock(Clock clock)
-{	
+{
 	bool messagesWereDiscarded = false;
 	VirtualNode node = this->delayedMessages->head;
 

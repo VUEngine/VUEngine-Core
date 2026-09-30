@@ -434,7 +434,7 @@ bool Actor::onEvent(ListenerObject eventFirer, uint16 eventCode)
 		}
 
 		case kEventAnimationCompleted:
-		{			
+		{
 			// This is a walk around a race condition two sprites running the same animation and
 			// getting out of sync if another animation is triggered by this event
 			bool isAnimationLooped = AnimationController::isAnimationLooped(eventFirer);

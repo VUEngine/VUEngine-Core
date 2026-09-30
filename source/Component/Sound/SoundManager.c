@@ -45,7 +45,7 @@ void SoundManager::constructor()
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void SoundManager::destructor()
-{	
+{
 	Timer::removeEventListener(Timer::getInstance(), ListenerObject::safeCast(this), kEventTimerInterrupt);
 
 	// Always explicitly call the base's destructor 

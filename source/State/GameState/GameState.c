@@ -1053,7 +1053,7 @@ void GameState::stream(bool complete)
 					VUEngine::fireEvent(VUEngine::getInstance(), kEventLowStreamingRate);
 				}
 				else
-				{				
+				{
 					while(Stage::stream(this->stage, false) && !VUEngine::hasGameFrameStarted());
 				}
 			}

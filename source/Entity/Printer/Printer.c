@@ -813,7 +813,7 @@ static void Printer::out(uint8 x, uint8 y, const char* string, const char* font)
 			default:
 			{
 				if(1 < fontSizeX || 1 < fontSizeY)
-				{					
+				{
 					uint16 stringEntryOffset = (uint8)(string[i] - fontOffsetCache);
 					uint16 stringEntryOffsetBySizeX = stringEntryOffset * fontSizeX;
 					uint16 stringEntryOffsetBySizeY = 

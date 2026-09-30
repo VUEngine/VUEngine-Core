@@ -174,11 +174,11 @@ void ActorFactory::spawnActor(const PositionedActor* positionedActor, Container 
 	positionedActorDescription->componentIndex = 0;
 
 	if(highPriority)
-	{	
+	{
 		VirtualList::pushFront(this->actorsToInstantiate, positionedActorDescription);
 	}
 	else
-	{	
+	{
 		VirtualList::pushBack(this->actorsToInstantiate, positionedActorDescription);
 	}
 }
@@ -232,7 +232,7 @@ bool ActorFactory::hasActorsPending()
 
 #ifndef __SHIPPING
 void ActorFactory::print(int32 x, int32 y)
-{	int32 xDisplacement = 18;
+{int32 xDisplacement = 18;
 
 	Printer::text("Factory's status", x, y++, NULL);
 	Printer::text("", x, y++, NULL);

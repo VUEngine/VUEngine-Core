@@ -32,7 +32,7 @@ void Sphere::constructor(Entity owner, const SphereSpec* sphereSpec)
 	this->position = PixelVector::zero();
 
 	if(NULL == sphereSpec)
-	{		
+	{
 		this->radius = __PIXELS_TO_METERS(8);
 		this->drawCenter = false;
 	}

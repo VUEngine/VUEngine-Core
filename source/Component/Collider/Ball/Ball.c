@@ -136,7 +136,7 @@ void Ball::configureWireframe()
 	this->wireframe = Wireframe::safeCast(ComponentManager::createComponent(this->owner, (const ComponentSpec*)this->sphereSpec));
 
 	if(!isDeleted(this->wireframe))
-	{		
+	{
 		if(NULL != this->componentSpec)
 		{
 			Sphere::setDisplacement(this->wireframe, Vector3D::getFromPixelVector(((ColliderSpec*)this->componentSpec)->displacement));

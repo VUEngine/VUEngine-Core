@@ -55,7 +55,7 @@ void Component::constructor(Entity owner, const ComponentSpec* componentSpec)
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void Component::destructor()
-{	
+{
 	this->owner = NULL;
 
 	if(NULL != this->events)

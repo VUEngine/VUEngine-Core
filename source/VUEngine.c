@@ -502,7 +502,7 @@ void VUEngine::toggleTool(ToolState toolState)
 			VUEngine::removeState(this, NULL);
 		}
 		else
-		{		
+		{
 			VUEngine::addState(GameState::safeCast(toolState));
 		}
 	}

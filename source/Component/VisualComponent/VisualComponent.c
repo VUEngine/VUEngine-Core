@@ -52,7 +52,7 @@ void VisualComponent::constructor(Entity owner, const VisualComponentSpec* visua
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void VisualComponent::destructor()
-{	
+{
 	if(!isDeleted(this->animationController))
 	{
 		delete this->animationController;

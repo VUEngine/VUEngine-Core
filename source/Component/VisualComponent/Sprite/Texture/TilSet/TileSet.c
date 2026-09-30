@@ -225,7 +225,7 @@ void TileSet::putPixel(const uint32 charToReplace, const Pixel* tileSetPixel, ui
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void TileSet::setFrame(uint16 frame)
-{	
+{
 	if(this->frame != frame || !this->written)
 	{
 		this->written = false;

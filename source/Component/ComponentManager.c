@@ -200,7 +200,7 @@ static void ComponentManager::removeComponents(Entity owner, uint32 componentTyp
 		}
 	}
 	else
-	{		
+	{
 		removeComponents(ComponentManager::getManager(componentType));
 	}
 }
@@ -445,7 +445,7 @@ static void ComponentManager::propagateCommand(int32 command, Entity owner, uint
 		}
 	}
 	else
-	{		
+	{
 		va_list args;
 		va_start(args, componentType);
 	

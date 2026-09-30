@@ -64,7 +64,7 @@ bool CameraEffectManager::handleMessage(Telegram telegram)
 	switch(Telegram::getMessage(telegram))
 	{
 		case kFadeTo:
-		{				
+		{
 			CameraEffectManager::fadeAsync(this);
 			break;
 		}	
@@ -258,7 +258,7 @@ void CameraEffectManager::fadeAsync()
 	if(DisplayUnit::modifyBrightness(this->fadeEffectIncrement, this->targetDisplayColorConfig))
 	{
 		if(!isDeleted(this->events))
-		{			
+		{
 			// Fire effect ended event
 			CameraEffectManager::fireEvent(this, kEventEffectFadeComplete);
 			CameraEffectManager::fireEvent(this, kEventEffectFadeInComplete);
