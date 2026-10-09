@@ -161,7 +161,7 @@ void GameState::update(void* owner)
 {
 	GameState::communicate(this, owner);
 #ifdef __ENABLE_PROFILER
-		Profiler::lap(kProfilerLapTypeNormalProcess, PROCESS_NAME_COMMUNICATE);
+	Profiler::lap(kProfilerLapTypeNormalProcess, PROCESS_NAME_COMMUNICATE);
 #endif
 
 	GameState::render(this, true);
