@@ -143,7 +143,6 @@ static inline void Hardware::resumeInterrupts()
 		{
 			_suspendInterruptRequest = 0;
 			__CPU_ENABLE_INTERRUPTS;
-			Hardware::setInterruptLevel(0);
 		}
 	}
 }
@@ -156,7 +155,6 @@ static inline void Hardware::suspendInterrupts()
 	{
 		_suspendInterruptRequest++;
 		__CPU_SUSPEND_INTERRUPTS;
-		Hardware::setInterruptLevel(5);
 	}
 }
 
