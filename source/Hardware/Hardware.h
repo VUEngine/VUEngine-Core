@@ -153,8 +153,10 @@ static inline void Hardware::suspendInterrupts()
 {
 	if(_enabledInterrupts)
 	{
-		_suspendInterruptRequest++;
-		__CPU_SUSPEND_INTERRUPTS;
+		if(0 == _suspendInterruptRequest++)
+		{
+			__CPU_SUSPEND_INTERRUPTS;
+		}
 	}
 }
 
