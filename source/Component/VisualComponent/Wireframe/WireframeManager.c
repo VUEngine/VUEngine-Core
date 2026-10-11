@@ -136,8 +136,6 @@ void WireframeManager::render(bool deferred __attribute__((unused)))
 
 	Vector3D cameraDirection = Vector3D::rotate((Vector3D){0, 0, __1I_FIXED}, *_cameraRotation);
 
-	Hardware::suspendInterrupts();
-
 	for(VirtualNode node = this->components->head, nextNode = NULL; NULL != node; node = nextNode)
 	{
 		nextNode = node->next;
@@ -180,8 +178,6 @@ void WireframeManager::render(bool deferred __attribute__((unused)))
 		this->renderedWireframes++;
 #endif
 	}
-
-	Hardware::resumeInterrupts();
 
 #ifdef __PROFILE_WIREFRAMES
 	WireframeManager::print(this, 1, 1);
@@ -308,24 +304,16 @@ void WireframeManager::print(int32 x, int32 y)
 
 void WireframeManager::startListeningForVBlank()
 {
-	Hardware::suspendInterrupts();
-
 	DisplayUnit::addEventListener(DisplayUnit::getInstance(), ListenerObject::safeCast(this), kEventDisplayUnitVBlank);
 	DisplayUnit::addEventListener(DisplayUnit::getInstance(), ListenerObject::safeCast(this), kEventDisplayUnitVBlankDuringGameStart);
-
-	Hardware::resumeInterrupts();
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void WireframeManager::stopListeningForVBlank()
 {
-	Hardware::suspendInterrupts();
-
 	DisplayUnit::removeEventListener(DisplayUnit::getInstance(), ListenerObject::safeCast(this), kEventDisplayUnitVBlank);
 	DisplayUnit::removeEventListener(DisplayUnit::getInstance(), ListenerObject::safeCast(this), kEventDisplayUnitVBlankDuringGameStart);
-
-	Hardware::resumeInterrupts();
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

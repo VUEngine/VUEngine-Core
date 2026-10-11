@@ -868,8 +868,12 @@ void GameState::render(bool deferred)
 		return;
 	}
 	
+	DisplayUnit::startRendering();
+
 	WireframeManager::render(this->componentManagers[kWireframeComponent], deferred);
 	SpriteManager::render(this->componentManagers[kSpriteComponent], deferred);
+
+	DisplayUnit::stopRendering();
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

@@ -438,9 +438,6 @@ void SpriteManager::render(bool deferred)
 	_renderedSprites = 0;
 #endif
 
-	Hardware::suspendInterrupts();
-	DisplayUnit::startRendering();
-
 	// Deframent video RAM
 	TileSetManager::defragment(TileSetManager::getInstance(), true);
 
@@ -501,9 +498,6 @@ void SpriteManager::render(bool deferred)
 			}
 		}
 	}
-
-	DisplayUnit::stopRendering();
-	Hardware::resumeInterrupts();
 
 #ifdef __DEBUGGING_SPRITES
 	SpriteManager::computeTotalPixelsDrawn(this);

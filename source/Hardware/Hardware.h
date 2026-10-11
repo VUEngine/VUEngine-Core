@@ -56,11 +56,11 @@ static class Hardware : Object
 	/// Disable interrupts.
 	static inline void disableInterrupts();
 
-	/// Resume interrupts.
-	static inline void resumeInterrupts();
-
 	/// Suspend interrupts.
 	static inline void suspendInterrupts();
+
+	/// Resume interrupts.
+	static inline void resumeInterrupts();
 
 	/// Enable multiplexed interrupts.
 	static inline void enableMultiplexedInterrupts();
@@ -115,7 +115,6 @@ static inline void Hardware::enableInterrupts()
 		_suspendInterruptRequest = 0;
 
 		__CPU_ENABLE_INTERRUPTS;
-		Hardware::setInterruptLevel(0);
 	}
 }
 
@@ -128,8 +127,20 @@ static inline void Hardware::disableInterrupts()
 		_enabledInterrupts = false;
 		_suspendInterruptRequest = 0;
 
-		__CPU_SUSPEND_INTERRUPTS;
-		Hardware::setInterruptLevel(5);
+		__CPU_DISABLE_INTERRUPTS;
+	}
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+static inline void Hardware::suspendInterrupts()
+{
+	if(_enabledInterrupts)
+	{
+		if(0 == _suspendInterruptRequest++)
+		{
+			__CPU_DISABLE_INTERRUPTS;
+		}
 	}
 }
 
@@ -149,19 +160,6 @@ static inline void Hardware::resumeInterrupts()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-static inline void Hardware::suspendInterrupts()
-{
-	if(_enabledInterrupts)
-	{
-		if(0 == _suspendInterruptRequest++)
-		{
-			__CPU_SUSPEND_INTERRUPTS;
-		}
-	}
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
 static inline void Hardware::enableMultiplexedInterrupts()
 {
 	__CPU_MULTIPLEX_INTERRUPTS;
@@ -171,7 +169,7 @@ static inline void Hardware::enableMultiplexedInterrupts()
 
 static inline void Hardware::disableMultiplexedInterrupts()
 {
-	__CPU_SUSPEND_INTERRUPTS;
+	__CPU_DISABLE_INTERRUPTS;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

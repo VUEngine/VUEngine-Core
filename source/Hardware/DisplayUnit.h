@@ -70,6 +70,12 @@ singleton class DisplayUnit : ListenerObject
 	/// @param enabledMultiplexedInterrupts: Multiplexed interrupts to allow
 	static void enableMultiplexedInterrupts(uint32 enabledMultiplexedInterrupts);
 
+	/// Suspend interrupts.
+	static void suspendInterrupts();
+
+	/// Resume interrupts.
+	static void resumeInterrupts();
+
 	/// Configure the Display unit with the provided configuration.
 	/// @param displayUnitConfig: Display configuration data
 	static void configure(DisplayUnitConfig displayUnitConfig);

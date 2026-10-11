@@ -91,9 +91,6 @@ static void Printer::loadFonts(FontSpec** fontSpecs)
 	// Empty list of registered fonts
 	Printer::releaseFonts();
 
-	// Prevent VIP's interrupt from calling render during printer process
-	Hardware::suspendInterrupts();
-
 	/// Must force TILE defragmentation
 	TileSetManager::writeTileSets(TileSetManager::getInstance());
 
@@ -124,8 +121,6 @@ static void Printer::loadFonts(FontSpec** fontSpecs)
 	{
 		Printer::addSprite(printer);
 	}
-
-	Hardware::resumeInterrupts();
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
