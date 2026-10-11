@@ -151,8 +151,6 @@ void GameState::start(void* owner)
 	// Make sure that the rendering is up to date with any change made by the 
 	// derive implementation of resume
 	GameState::invalidateRendering(this);
-
-	CACHE_RESET;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
