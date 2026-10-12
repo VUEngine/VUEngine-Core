@@ -94,6 +94,9 @@ abstract class Sprite : VisualComponent
 	/// Scale cache
 	PixelScale scale;
 
+	/// Flag that determines which transformation elements affect the sprite (position, rotation, scale)
+	uint8 transformationFlag;
+
 	/// @publicsection
 
 	/// Class' constructor
@@ -159,6 +162,14 @@ abstract class Sprite : VisualComponent
 	/// Retrieve the cached position plus the position displacement.
 	/// @return Cached position plus the position displacement
 	PixelVector getDisplacedPosition();
+
+	/// Set the transformation flag to cull transformation updates.
+	/// @param transformationFlag: Flag configuration (__INVALIDATE_POSITION, __INVALIDATE_ROTATION, __INVALIDATE_SCALE)
+	void setTransformationFlag(uint8 transformationFlag);
+
+	/// Retrieve the current transformation flag.
+	/// @return The flag used to cull transformation updates
+	uint8 getTransformationFlag();
 
 	/// Add the color provided color data to a TILE in the sprite's texture.
 	/// @param texturePoint: Coordinate in texture's space of the TILE to replace

@@ -62,6 +62,7 @@ void Sprite::constructor(Entity owner, const SpriteSpec* spriteSpec)
 	this->scale = (PixelScale){__1I_FIX7_9, __1I_FIX7_9};
 	this->displacement = PixelVector::zero();
 	this->hasTextures = true;
+	this->transformationFlag = ((SpriteSpec*)this->componentSpec)->transformationFlag;
 
 	if(NULL != spriteSpec)
 	{
@@ -208,12 +209,12 @@ inline bool Sprite::prepareToRender()
 		return false;
 	}
 
-	if(0 != (__INVALIDATE_POSITION & ((SpriteSpec*)this->componentSpec)->transformationFlag))
+	if(0 != (__INVALIDATE_POSITION & this->transformationFlag))
 	{
 		Sprite::position(this);
 	}
 
-	if(0 != (__INVALIDATE_ROTATION & ((SpriteSpec*)this->componentSpec)->transformationFlag))
+	if(0 != (__INVALIDATE_ROTATION & this->transformationFlag))
 	{
 		if
 		(
@@ -228,7 +229,7 @@ inline bool Sprite::prepareToRender()
 		}
 	}
 
-	if(0 != (__INVALIDATE_SCALE & ((SpriteSpec*)this->componentSpec)->transformationFlag))
+	if(0 != (__INVALIDATE_SCALE & this->transformationFlag))
 	{
 		if
 		(
@@ -372,6 +373,20 @@ PixelVector Sprite::getDisplacedPosition()
 	};
 
 	return position;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void Sprite::setTransformationFlag(uint8 transformationFlag)
+{
+	this->transformationFlag = transformationFlag;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+uint8 Sprite::getTransformationFlag()
+{
+	return this->transformationFlag;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
