@@ -212,11 +212,11 @@ inline bool Sprite::prepareToRender()
 
 	if
 	(
-		(this->rotation.x ^ this->transformation->rotation.x)
+		__FIXED_INT_PART(this->rotation.x ^ this->transformation->rotation.x)
 		|
-		(this->rotation.y ^ this->transformation->rotation.y)
+		__FIXED_INT_PART(this->rotation.y ^ this->transformation->rotation.y)
 		|
-		(this->rotation.z ^ this->transformation->rotation.z)
+		__FIXED_INT_PART(this->rotation.z ^ this->transformation->rotation.z)
 	)
 	{
 		Sprite::rotate(this);
@@ -549,14 +549,12 @@ void Sprite::position()
 	}
 #endif
 
+	this->position = position;
+	this->rendered = false;
+
 	if(Sprite::overrides(this, setPosition))
 	{
 		Sprite::setPosition(this, &position);
-	}
-	else
-	{
-		this->position = position;
-		this->rendered = false;
 	}
 }
 
@@ -565,15 +563,11 @@ void Sprite::position()
 void Sprite::rotate()
 {
 	this->rendered = false;
+	this->rotation = this->transformation->rotation;
 
 	if(Sprite::overrides(this, setRotation))
 	{
 		Sprite::setRotation(this, &this->transformation->rotation);
-	}
-	else
-	{
-		this->rotation = this->transformation->rotation;
-		this->rendered = false;
 	}
 }
 
@@ -589,14 +583,11 @@ void Sprite::scale()
 		this->transformation->scale.y
 	};
 
+	this->scale = scale;
+
 	if(Sprite::overrides(this, setScale))
 	{
 		Sprite::setScale(this, &scale);
-	}
-	else
-	{
-		this->scale = scale;
-		this->rendered = false;
 	}
 }
 
