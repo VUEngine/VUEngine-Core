@@ -255,12 +255,12 @@ int16 Sprite::render(int16 index, bool updateAnimation)
 	}
 	else 
 	{
-#ifdef __SHOW_SPRITES_PROFILING
-		extern int32 _renderedSprites;
-		_renderedSprites++;
-#endif
 		if((!this->rendered) | (this->index ^ index))
 		{
+#ifdef __DEBUGGING_SPRITES
+			extern int32 _renderedSprites;
+			_renderedSprites++;
+#endif
 			this->rendered = true;
 			this->usedSlots = Sprite::doRender(this, index);
 
