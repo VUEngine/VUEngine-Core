@@ -61,10 +61,10 @@ abstract class Sprite : VisualComponent
 	/// @protectedsection
 
 	/// Flag to check if rendered even if outside the screen
-	bool checkIfWithinScreenSpace : 1;
+	bool checkIfWithinScreenSpace;
 
 	/// Flag for special sprites
-	bool hasTextures : 1;
+	bool hasTextures;
 
 	/// Index of the block in DRAM that the sprite configures to
 	/// display its texture
