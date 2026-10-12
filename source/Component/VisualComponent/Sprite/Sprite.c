@@ -208,28 +208,37 @@ inline bool Sprite::prepareToRender()
 		return false;
 	}
 
-	Sprite::position(this);
-
-	if
-	(
-		__FIXED_INT_PART(this->rotation.x ^ this->transformation->rotation.x)
-		|
-		__FIXED_INT_PART(this->rotation.y ^ this->transformation->rotation.y)
-		|
-		__FIXED_INT_PART(this->rotation.z ^ this->transformation->rotation.z)
-	)
+	if(0 != (__INVALIDATE_POSITION & ((SpriteSpec*)this->componentSpec)->transformationFlag))
 	{
-		Sprite::rotate(this);
+		Sprite::position(this);
 	}
 
-	if
-	(
-		(this->scale.x ^ this->transformation->scale.x)
-		|
-		(this->scale.y ^ this->transformation->scale.y)
-	)
+	if(0 != (__INVALIDATE_ROTATION & ((SpriteSpec*)this->componentSpec)->transformationFlag))
 	{
-		Sprite::scale(this);
+		if
+		(
+			__FIXED_INT_PART(this->rotation.x ^ this->transformation->rotation.x)
+			|
+			__FIXED_INT_PART(this->rotation.y ^ this->transformation->rotation.y)
+			|
+			__FIXED_INT_PART(this->rotation.z ^ this->transformation->rotation.z)
+		)
+		{
+			Sprite::rotate(this);
+		}
+	}
+
+	if(0 != (__INVALIDATE_SCALE & ((SpriteSpec*)this->componentSpec)->transformationFlag))
+	{
+		if
+		(
+			(this->scale.x ^ this->transformation->scale.x)
+			|
+			(this->scale.y ^ this->transformation->scale.y)
+		)
+		{
+			Sprite::scale(this);
+		}
 	}
 
 	// Do not remove this check, it prevents sprites from looping

@@ -38,6 +38,9 @@ typedef struct SpriteSpec
 	/// Displacement added to the sprite's position
 	PixelVector displacement;
 
+	/// Flag that determines which transformation elements affect the sprite (position, rotation, scale)
+	uint8 transformationFlag;
+	
 } SpriteSpec;
 
 /// A Sprite spec that is stored in ROM
