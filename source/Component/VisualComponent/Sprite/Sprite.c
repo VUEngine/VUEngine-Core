@@ -79,10 +79,7 @@ void Sprite::constructor(Entity owner, const SpriteSpec* spriteSpec)
 
 void Sprite::destructor()
 {
-	if(NULL != this->texture)
-	{
-		Sprite::releaseTexture(this);
-	}
+	Sprite::releaseTexture(this);
 
 	// Always explicitly call the base's destructor 
 	Base::destructor();
