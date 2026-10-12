@@ -215,11 +215,11 @@ inline bool Sprite::prepareToRender()
 
 	if
 	(
-		this->rotation.x != this->transformation->rotation.x
-		||
-		this->rotation.y != this->transformation->rotation.y
-		||
-		this->rotation.z != this->transformation->rotation.z
+		(this->rotation.x ^ this->transformation->rotation.x)
+		|
+		(this->rotation.y ^ this->transformation->rotation.y)
+		|
+		(this->rotation.z ^ this->transformation->rotation.z)
 	)
 	{
 		Sprite::rotate(this);
@@ -227,9 +227,9 @@ inline bool Sprite::prepareToRender()
 
 	if
 	(
-		this->scale.x != this->transformation->scale.x
-		||
-		this->scale.y != this->transformation->scale.y
+		(this->scale.x ^ this->transformation->scale.x)
+		|
+		(this->scale.y ^ this->transformation->scale.y)
 	)
 	{
 		Sprite::scale(this);
@@ -259,7 +259,7 @@ int16 Sprite::render(int16 index, bool updateAnimation)
 		extern int32 _renderedSprites;
 		_renderedSprites++;
 #endif
-		if(!this->rendered || this->index != index)
+		if((!this->rendered) | (this->index ^ index))
 		{
 			this->rendered = true;
 
@@ -276,7 +276,7 @@ int16 Sprite::render(int16 index, bool updateAnimation)
 					Entity::setVisible(this->owner);
 				}
 
-				this->updateAnimationFrame = this->updateAnimationFrame || __NO_RENDER_INDEX == previousIndex;
+				this->updateAnimationFrame |= __NO_RENDER_INDEX == previousIndex;
 			}
 			else
 			{
@@ -640,22 +640,29 @@ inline bool Sprite::isWithinScreenSpace()
 	int16 halfWidth = this->halfWidth;
 	int16 halfHeight = this->halfHeight;
 
-	uint16 dx = (unsigned)(this->position.x + this->displacement.x - _cameraFrustum->x0 + halfWidth);
-	uint16 dy = (unsigned)(this->position.y + this->displacement.y - _cameraFrustum->y0 + halfHeight);
-//	uint16 dz = (unsigned)(this->position.z + this->displacement.z - _cameraFrustum->z0);
+	uint16 dx1 = (unsigned)(this->position.x + this->displacement.x - _cameraFrustum->x0 + halfWidth);
+	uint16 dx2 = (unsigned)(_cameraFrustum->width + (halfWidth << 1));
 
-	if(!(dx < (unsigned)(_cameraFrustum->width + (halfWidth << 1))))
+	if(!(dx1 < dx2))
 	{
 		return false;
 	}
 
-	if(!(dy < (unsigned)(_cameraFrustum->height + (halfHeight << 1))))
+	uint16 dy1 = (unsigned)(this->position.y + this->displacement.y - _cameraFrustum->y0 + halfHeight);
+	uint16 dy2 = (unsigned)(_cameraFrustum->height + (halfHeight << 1));
+
+	if(!(dy1 < dy2))
 	{
 		return false;
 	}
+
+//	return (dx1 < dx2) & (dy1 < dy2);
 
 /*
-	if(!(dz < (unsigned)(_cameraFrustum->depth)))
+	uint16 dz1 = (unsigned)(this->position.z + this->displacement.z - _cameraFrustum->z0);
+	uint16 dz2 = (unsigned)(_cameraFrustum->depth);
+
+	if(!(dz1 < dz2))
 	{
 		return false;
 	}
