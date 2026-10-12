@@ -203,11 +203,8 @@ void ListenerObject::fireEvent(uint16 eventCode)
 
 		for(VirtualNode node = this->events->head, nextNode; NULL != this->events && NULL != node; node = nextNode)
 		{
-			Hardware::suspendInterrupts();
-
 			if(NULL == this->events)
 			{
-				Hardware::resumeInterrupts();
 				break;
 			}
 
@@ -230,8 +227,6 @@ void ListenerObject::fireEvent(uint16 eventCode)
 			}
 			else if(eventCode == event->code)
 			{
-				Hardware::resumeInterrupts();
-
 				event->remove = !ListenerObject::onEvent(event->listener, this, event->code);
 
 				// Safe check in case that I have been deleted during the previous event
@@ -249,8 +244,6 @@ void ListenerObject::fireEvent(uint16 eventCode)
 					break;
 				}
 
-				Hardware::suspendInterrupts();
-
 				if(1 == this->eventFirings)
 				{
 					if(isDeleted(event) || isDeleted(event->listener) || event->remove)
@@ -265,8 +258,6 @@ void ListenerObject::fireEvent(uint16 eventCode)
 					}
 				}
 			}
-
-			Hardware::resumeInterrupts();
 		}
 
 		this->eventFirings--;
