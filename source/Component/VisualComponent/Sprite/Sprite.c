@@ -605,7 +605,7 @@ void Sprite::scale()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void Sprite::update()
+inline void Sprite::update()
 {
 	if(NULL == this->animationController)
 	{
