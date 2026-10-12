@@ -549,12 +549,14 @@ void Sprite::position()
 	}
 #endif
 
-	this->position = position;
-	this->rendered = false;
-
 	if(Sprite::overrides(this, setPosition))
 	{
 		Sprite::setPosition(this, &position);
+	}
+	else
+	{
+		this->position = position;
+		this->rendered = false;
 	}
 }
 
@@ -562,12 +564,14 @@ void Sprite::position()
 
 void Sprite::rotate()
 {
-	this->rendered = false;
-	this->rotation = this->transformation->rotation;
-
 	if(Sprite::overrides(this, setRotation))
 	{
 		Sprite::setRotation(this, &this->transformation->rotation);
+	}
+	else
+	{
+		this->rendered = false;
+		this->rotation = this->transformation->rotation;
 	}
 }
 
@@ -575,19 +579,20 @@ void Sprite::rotate()
 
 void Sprite::scale()
 {
-	this->rendered = false;
-
 	PixelScale scale = 
 	{
 		this->transformation->scale.x,
 		this->transformation->scale.y
 	};
 
-	this->scale = scale;
-
 	if(Sprite::overrides(this, setScale))
 	{
 		Sprite::setScale(this, &scale);
+	}
+	else
+	{
+		this->rendered = false;
+		this->scale = scale;
 	}
 }
 
