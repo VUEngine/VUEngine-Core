@@ -1267,9 +1267,9 @@ MovementResult Body::updateMovement(uint16 cycle, fix7_9_ext elapsedTime)
 		this->velocity.z = __FIX7_9_EXT_TO_FIXED(this->internalVelocity.z);
 	}
 
-	if(previousVelocity.x != this->velocity.x || previousVelocity.y != this->velocity.y || previousVelocity.z != this->velocity.z)
+	if((previousVelocity.x ^ this->velocity.x) | (previousVelocity.y ^ this->velocity.y) | (previousVelocity.z ^ this->velocity.z))
 	{
-		Body::clampVelocity(this, 0 == previousVelocity.x && 0 == previousVelocity.y && 0 == previousVelocity.z);
+		Body::clampVelocity(this, 0 == (previousVelocity.x | previousVelocity.y | previousVelocity.z));
 	}	
 
 	if(__NO_MOVEMENT != this->movementType.x)
