@@ -898,7 +898,17 @@ void Stage::configureCamera(bool reset)
 
 	Camera::setStageSize(Camera::getInstance(), Size::getFromPixelSize(this->stageSpec->level.pixelSize));
 	Camera::setTransformation(Camera::getInstance(), this->cameraTransformation, false);
-	Camera::setup(Camera::getInstance(), this->stageSpec->renderingConfig.pixelOptical, this->stageSpec->level.cameraFrustum);
+
+	CameraFrustum cameraFrustum =
+	{
+		this->stageSpec->level.cameraFrustum.x0, this->stageSpec->level.cameraFrustum.y0, this->stageSpec->level.cameraFrustum.z0,
+		this->stageSpec->level.cameraFrustum.x1, this->stageSpec->level.cameraFrustum.y1, this->stageSpec->level.cameraFrustum.z1,
+		this->stageSpec->level.cameraFrustum.x1 - this->stageSpec->level.cameraFrustum.x0,
+		this->stageSpec->level.cameraFrustum.y1 - this->stageSpec->level.cameraFrustum.y0,
+		this->stageSpec->level.cameraFrustum.z1 - this->stageSpec->level.cameraFrustum.z0
+	};
+	
+	Camera::setup(Camera::getInstance(), this->stageSpec->renderingConfig.pixelOptical, cameraFrustum);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————

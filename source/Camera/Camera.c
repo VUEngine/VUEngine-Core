@@ -553,6 +553,10 @@ CameraFrustum Camera::computeClampledFrustum(CameraFrustum cameraFrustum)
 		cameraFrustum.z0 = cameraFrustum.z1 - 1;
 	}
 
+	cameraFrustum.width 	= cameraFrustum.x1 - cameraFrustum.x0;
+	cameraFrustum.height 	= cameraFrustum.y1 - cameraFrustum.y0;
+	cameraFrustum.depth 	= cameraFrustum.z1 - cameraFrustum.z0;
+
 	return cameraFrustum;
 }
 

@@ -329,6 +329,11 @@ typedef struct CameraFrustum
 	/// z1 frustum
 	int16 z1;
 
+	/// Cache the size
+	int16 width;
+	int16 height;
+	int16 depth;
+
 } CameraFrustum;
 
 typedef struct Mirror

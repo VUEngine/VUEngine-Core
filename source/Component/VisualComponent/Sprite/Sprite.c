@@ -167,7 +167,7 @@ inline void Sprite::transform()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-bool Sprite::prepareToRender()
+inline bool Sprite::prepareToRender()
 {
 	// If the client code makes these checks before calling this method,
 	// It saves on method calls quite a bit when there are lots of
@@ -191,16 +191,14 @@ bool Sprite::prepareToRender()
 		return NULL != this->texture;
 	}
 
-	if
-	(
-		kTextureInvalid == this->texture->status 
-		|| 
-		kTextureNoTileSet == this->texture->status
-		||
-		kTexturePendingWriting == this->texture->status
-	)
+	switch(this->texture->status)
 	{
-		return false;
+		case kTexturePendingWriting:
+		case kTextureInvalid:
+		case kTextureNoTileSet:
+		{
+			return false;
+		}
 	}
 
 	if(NULL == this->owner)
@@ -637,37 +635,32 @@ void Sprite::update()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-bool Sprite::isWithinScreenSpace()
+inline bool Sprite::isWithinScreenSpace() 
 {
-	if
-	(
-		!(
-			(unsigned)(this->position.x + this->displacement.x - (_cameraFrustum->x0 - this->halfWidth)) 
-			< 
-			(unsigned)(_cameraFrustum->x1 + this->halfWidth - (_cameraFrustum->x0 - this->halfWidth))
-		)
-	)
+	int16 halfWidth = this->halfWidth;
+	int16 halfHeight = this->halfHeight;
+
+	uint16 dx = (unsigned)(this->position.x + this->displacement.x - _cameraFrustum->x0 + halfWidth);
+	uint16 dy = (unsigned)(this->position.y + this->displacement.y - _cameraFrustum->y0 + halfHeight);
+//	uint16 dz = (unsigned)(this->position.z + this->displacement.z - _cameraFrustum->z0);
+
+	if(!(dx < (unsigned)(_cameraFrustum->width + (halfWidth << 1))))
 	{
 		return false;
 	}
 
-	if
-	(
-		!(
-			(unsigned)(this->position.y + this->displacement.y - (_cameraFrustum->y0 - this->halfHeight)) 
-			< 
-			(unsigned)(_cameraFrustum->y1 + this->halfHeight - (_cameraFrustum->y0 - this->halfHeight))
-		)
-	)
+	if(!(dy < (unsigned)(_cameraFrustum->height + (halfHeight << 1))))
 	{
 		return false;
 	}
+
 /*
-	if(!((unsigned)(this->position.z + this->displacement.z - _cameraFrustum->z0) < (unsigned)(_cameraFrustum->z1 - _cameraFrustum->z0)))
+	if(!(dz < (unsigned)(_cameraFrustum->depth)))
 	{
 		return false;
 	}
 */
+
 	return true;
 }
 
