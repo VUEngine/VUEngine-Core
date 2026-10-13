@@ -180,6 +180,7 @@ void Body::constructor(Entity owner, const BodySpec* bodySpec)
 	this->maximumVelocity 		= bodySpec->maximumVelocity;
 	this->maximumSpeed 			= bodySpec->maximumSpeed;
 	this->speed 				= 0;
+	this->previousSpeed			= 0;
 	this->skipCycles 			= 0;
 	this->skipedCycles 			= 0;
 
@@ -540,6 +541,7 @@ uint16 Body::stopMovement(uint16 axis)
 		axisOfStopping |= axisOfMovement & __Z_AXIS;
 	}
 
+	this->previousSpeed = this->speed;
 	this->speed = Vector3D::length(this->velocity);
 
 	Body::setMovementType(this, __NO_MOVEMENT, axisOfStopping);
@@ -804,6 +806,20 @@ void Body::setSurroundingFrictionCoefficient(fixed_t surroundingFrictionCoeffici
 fixed_t Body::getSpeed()
 {
 	return this->speed;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+bool Body::isSpeedingUp()
+{
+	return this->speed > this->previousSpeed;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+bool Body::isSlowingDown()
+{
+	return this->speed < this->previousSpeed;
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -1144,6 +1160,7 @@ void Body::computeDirectionAndSpeed(bool useExternalForceForDirection)
 {
 	if(useExternalForceForDirection)
 	{
+		this->previousSpeed = this->speed;
 		this->speed = Vector3D::length(this->velocity);
 		this->direction = Vector3D::normalize(this->externalForce);
 		this->velocity = Vector3D::scalarProduct(this->direction, this->speed);
@@ -1151,10 +1168,12 @@ void Body::computeDirectionAndSpeed(bool useExternalForceForDirection)
 	else
 	{
 #ifndef __PHYSICS_HIGH_PRECISION
+		this->previousSpeed = this->speed;
 		this->speed = Vector3D::length(this->velocity);
 
 		this->direction = Vector3D::scalarDivision(this->velocity, this->speed);
 #else
+		this->previousSpeed = this->speed;
 		this->speed = __FIXED_TO_FIX7_9_EXT(Math::squareRootFixed(Vector3D::squareLength(this->velocity)));
 
 		if(0 < speed)
@@ -1176,6 +1195,7 @@ void Body::clampVelocity(bool useExternalForceForDirection)
 	// First check if must clamp speed
 	if(0 != this->maximumSpeed && this->maximumSpeed < this->speed)
 	{
+		this->previousSpeed = this->speed;
 		this->speed = this->maximumSpeed;
 
 		this->velocity = Vector3D::scalarProduct(this->direction, this->maximumSpeed);

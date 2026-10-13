@@ -163,6 +163,9 @@ class Body : Component
 	/// Speed magnitude
 	fixed_t speed;
 
+	/// Cache to determine if speeding up or slowing down
+	fixed_t previousSpeed;
+
 	/// Maximum speed
 	fixed_t maximumSpeed;
 
@@ -353,6 +356,14 @@ class Body : Component
 	/// Retrieve the body's current speed (velocity vector's magnitude).
 	/// @return Body's current speed (velocity vector's magnitude)
 	fixed_t getSpeed();
+
+	/// Determines if the body is speeding up.
+	/// @return True if speed is increasing
+	bool isSpeedingUp();
+
+	/// Determines if the body is slowing down.
+	/// @return True if speed is decreasing
+	bool isSlowingDown();
 
 	/// Retrieve the body's current movement state
 	/// @return Flag containing the body's current movement state on each axis
