@@ -297,9 +297,11 @@ class Actor : Container
 	/// @return Actual frame of the playing animation if any
 	int16 getActualFrame();
 
-	/// Retrieve the number of frames in the currently playing animation if any.
-	/// @return The numer of frames if an animation is playing; o otherwise
-	int32 getNumberOfFrames();
+	/// Start playback on sound components.
+	void playSounds();
+
+	/// Stop playback on sound components.
+	void stopSounds();
 
 	/// Set the actor's spec.
 	/// @param actorSpec: Specification that determines how to configure the actor

@@ -868,6 +868,46 @@ void Actor::stopAnimation()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+bool Actor::isPlaying()
+{
+	if(NULL == this->playingAnimationName)
+	{
+		return false;
+	}
+
+	VirtualList sprites = Actor::getComponents(this, kSpriteComponent);
+
+	for(VirtualNode node = sprites->head; NULL != node; node = node->next)
+	{
+		if(Sprite::isPlaying(node->data))
+		{
+			Actor::clearComponentLists(this, kSpriteComponent);
+
+			return true;
+		}
+	}
+
+	Actor::clearComponentLists(this, kSpriteComponent);
+
+	return false;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+bool Actor::isPlayingAnimation(char* animationName)
+{
+	return 0 == strcmp(this->playingAnimationName, animationName);
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+const char* Actor::getPlayingAnimationName()
+{
+	return this->playingAnimationName;
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 void Actor::nextFrame()
 {
 	ComponentManager::propagateCommand(cVisualComponentCommandNextFrame, Entity::safeCast(this), kSpriteComponent);
@@ -912,51 +952,21 @@ int16 Actor::getActualFrame()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-bool Actor::isPlaying()
-{
-	if(NULL == this->playingAnimationName)
-	{
-		return false;
-	}
-
-	VirtualList sprites = Actor::getComponents(this, kSpriteComponent);
-
-	for(VirtualNode node = sprites->head; NULL != node; node = node->next)
-	{
-		if(Sprite::isPlaying(node->data))
-		{
-			Actor::clearComponentLists(this, kSpriteComponent);
-
-			return true;
-		}
-	}
-
-	Actor::clearComponentLists(this, kSpriteComponent);
-
-	return false;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-bool Actor::isPlayingAnimation(char* animationName)
-{
-	return 0 == strcmp(this->playingAnimationName, animationName);
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-const char* Actor::getPlayingAnimationName()
-{
-	return this->playingAnimationName;
-}
-
-//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
 void Actor::playSounds()
 {
 	ComponentManager::propagateCommand
 	(
 		cSoundComponentCommandPlay, Entity::safeCast(this), kSoundComponent, kSoundPlaybackNormal
+	);
+}
+
+//——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void Actor::stopSounds()
+{
+	ComponentManager::propagateCommand
+	(
+		cSoundComponentCommandStop, Entity::safeCast(this), kSoundComponent
 	);
 }
 
