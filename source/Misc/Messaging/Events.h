@@ -107,9 +107,12 @@ enum Events
 	kEventEffectFadeStop,
 
 	// Do not remove me
-	kEventPluginsFirst = 1000,
-	kEventGameFirst = 10000,
-	kEventEngineLast
+	kEventEngineLast,
+
+	kEventPlatformFirst = 1000,
+	kEventPluginsFirst 	= 2000,
+	kEventUserFirst 	= 3000,
+	kEventGameFirst 	= 4000
 };
 
 #endif
