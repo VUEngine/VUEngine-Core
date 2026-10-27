@@ -648,15 +648,16 @@ inline void Sprite::update()
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-inline bool Sprite::isWithinScreenSpace() 
+inline bool Sprite::isWithinScreenSpace()
 {
 	int16 halfWidth = this->halfWidth;
 	int16 halfHeight = this->halfHeight;
 
-	uint16 dx1 = (unsigned)(this->position.x + this->displacement.x - _cameraFrustum->x0 + halfWidth);
+	uint16 dx1Left = (unsigned)(this->position.x + this->displacement.x - this->position.parallax - _cameraFrustum->x0 + halfWidth);
+	uint16 dx1Right = (unsigned)(this->position.x + this->displacement.x + this->position.parallax - _cameraFrustum->x0 + halfWidth);
 	uint16 dx2 = (unsigned)(_cameraFrustum->width + (halfWidth << 1));
 
-	if(!(dx1 < dx2))
+	if(!(dx1Left < dx2) && !(dx1Right < dx2))
 	{
 		return false;
 	}
