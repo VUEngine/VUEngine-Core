@@ -698,11 +698,10 @@ void Sound::update()
 			(
 				Vector3D::sub
 				(
-					Vector3D::getRelativeToCamera
-					(
-						this->transformation->position), (Vector3D){__HALF_SCREEN_WIDTH_METERS, __HALF_SCREEN_HEIGHT_METERS, 0}
-					), 
-					*_cameraInvertedRotation
+					Vector3D::getRelativeToCamera(this->transformation->position), 
+					(Vector3D){__HALF_SCREEN_WIDTH_METERS, __HALF_SCREEN_HEIGHT_METERS, 0}
+				), 
+				*_cameraInvertedRotation
 			);
 #endif
 		if(_mirror.x)
@@ -746,7 +745,10 @@ void Sound::update()
 
 		leftVolumeReduction = maximumVolume < leftVolumeReduction ? maximumVolume : leftVolumeReduction;
 		rightVolumeReduction = maximumVolume < rightVolumeReduction ? maximumVolume : rightVolumeReduction;
+	PRINT_INT(leftVolumeReduction, 20, 0);
+	PRINT_INT(rightVolumeReduction, 30, 0);
 	}
+
 
 	uint8 volumeReduction = __FIX7_9_TO_I(this->volumeReduction) + minimumVolumeReduction;
 	
