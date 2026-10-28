@@ -745,8 +745,6 @@ void Sound::update()
 
 		leftVolumeReduction = maximumVolume < leftVolumeReduction ? maximumVolume : leftVolumeReduction;
 		rightVolumeReduction = maximumVolume < rightVolumeReduction ? maximumVolume : rightVolumeReduction;
-	PRINT_INT(leftVolumeReduction, 20, 0);
-	PRINT_INT(rightVolumeReduction, 30, 0);
 	}
 
 
