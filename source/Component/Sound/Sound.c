@@ -947,7 +947,6 @@ void Sound::configureTracks()
 		{
 			longestSoundTrack = soundTrack;
 		}
-
 	}
 
 	this->mainSoundTrack = longestSoundTrack;

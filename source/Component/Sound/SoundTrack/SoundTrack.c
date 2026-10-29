@@ -88,7 +88,6 @@ bool SoundTrack::update
 	}
 
 	this->finished = false;
-	
 	this->elapsedTicks += tickStep;
 
 	if(this->elapsedTicks < this->nextElapsedTicksTarget)
@@ -225,7 +224,7 @@ void SoundTrack::constructor(const SoundTrackSpec* soundTrackSpec)
 	Base::constructor();
 
 	static uint32 id = 0;
-	this->id = id++;
+	this->id = ++id;
 
 	this->soundTrackSpec = soundTrackSpec;
 	this->samples = 0;
