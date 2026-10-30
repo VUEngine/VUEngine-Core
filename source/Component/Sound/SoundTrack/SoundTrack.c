@@ -90,44 +90,45 @@ bool SoundTrack::update
 	this->finished = false;
 	this->elapsedTicks += tickStep;
 
-	if(this->elapsedTicks < this->nextElapsedTicksTarget)
+	while(this->elapsedTicks >= this->nextElapsedTicksTarget)
 	{
-		return this->finished;
-	}
+		this->elapsedTicks -= this->nextElapsedTicksTarget;
 
-	this->elapsedTicks -= this->nextElapsedTicksTarget;
-
-	if(loop)
-	{
-		if(this->cursor >= this->samples)
+		if(loop)
 		{
-			this->finished = true;
-			return this->finished;
+			if(this->cursor >= this->samples)
+			{
+				this->finished = true;
+				return this->finished;
+			}
 		}
-	}
-	else
-	{
-		if(this->cursor > this->samples)
+		else
 		{
-			this->finished = true;
-			return this->finished;
-		}		
+			if(this->cursor > this->samples)
+			{
+				this->finished = true;
+				return this->finished;
+			}		
+		}
+
+		SoundTrackKeyframe soundTrackKeyframe = this->soundTrackSpec->trackKeyframes[this->cursor];
+
+		this->nextElapsedTicksTarget = __I_TO_FIX7_9_EXT(soundTrackKeyframe.tick);
+
+		SoundTrack::updateCursors(this);
+
+		if(this->elapsedTicks < this->nextElapsedTicksTarget)
+		{
+			SoundTrack::sendSoundRequest
+			(
+				this, targetTimerResolutionFactor, maximumVolume, leftVolumeReduction, 
+				rightVolumeReduction, volumeReduction, frequencyDelta
+			);
+		}
+
+		this->cursor++;
 	}
-
-	SoundTrackKeyframe soundTrackKeyframe = this->soundTrackSpec->trackKeyframes[this->cursor];
-
-	this->nextElapsedTicksTarget = __I_TO_FIX7_9_EXT(soundTrackKeyframe.tick);
-
-	SoundTrack::updateCursors(this);
-
-	SoundTrack::sendSoundRequest
-	(
-		this, targetTimerResolutionFactor, maximumVolume, leftVolumeReduction, 
-		rightVolumeReduction, volumeReduction, frequencyDelta
-	);
-
-	this->cursor++;
-
+ 
 	return this->finished;
 }
 
