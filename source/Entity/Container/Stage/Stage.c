@@ -915,7 +915,7 @@ void Stage::configureCamera(bool reset)
 
 void Stage::configureGraphics()
 {
-	TextureManager::reset();
+	TextureManager::resetManager();
 
 	Printer::loadFonts(this->stageSpec->assets.fontSpecs);
 	TileSetManager::loadTileSets(TileSetManager::getInstance(), (const TileSetSpec**)this->stageSpec->assets.tileSetSpecs);

@@ -22,6 +22,7 @@
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 class Texture;
+class TextureManager;
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CLASS' DATA
@@ -246,6 +247,10 @@ abstract class Texture : Object
 
 	/// Rewrite graphical data to the allocated DRAM space.
 	virtual void rewrite();
+
+	/// Retrieve the texture manager for this texture.
+	/// @return The manager's intance that handles this texture
+	virtual TextureManager getTextureManager() = 0;
 }
 
 #endif

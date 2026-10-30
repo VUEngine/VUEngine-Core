@@ -92,7 +92,7 @@ void Sprite::releaseTexture()
 {
 	if(!isDeleted(this->texture))
 	{
-		TextureManager::release(this->texture);
+		TextureManager::releaseTexture(this->texture);
 	}
 
 	this->texture = NULL;
@@ -439,7 +439,7 @@ void Sprite::loadTexture(ClassPointer textureClass)
 		return;
 	}
 
-	this->texture = TextureManager::get(textureClass, ((SpriteSpec*)this->componentSpec)->textureSpec);
+	this->texture = TextureManager::getTexture(textureClass, ((SpriteSpec*)this->componentSpec)->textureSpec);
 }
 
 //——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
